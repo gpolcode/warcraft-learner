@@ -9,39 +9,17 @@
  */
 import { AnalysisResult, AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../models/analysis.models';
 import { EncounterBench, PerDefensiveBenchmark } from '../models/encounter.models';
+import { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule } from '../models/rulebook.models';
+import { WclEvent, WclAbility } from '../models/wcl.models';
 
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
 const BLOODLUST_DURATION_S = 40;
 
+type Severity = AnalysisFinding['severity'];
+
 function _fmt(s: number): string {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 }
-
-export interface WclEvent {
-  type: string;
-  timestamp: number;
-  abilityGameID: number;
-  amount?: number;
-  absorbed?: number;
-}
-
-export interface CdSpec { name: string; spell_id: number; cooldown: number; duration?: number; align_with_bloodlust?: boolean; }
-interface Rule { condition?: { kind: string; [k: string]: unknown }; priority?: string; action?: string; }
-
-export type BenchData = Partial<EncounterBench> & {
-  per_cd_benchmarks?: Record<string, {
-    avg_first_cast_s?: number; stddev_first_cast_s?: number;
-    avg_gap_s?: number; stddev_gap_s?: number;
-    avg_bl_offset_s?: number; stddev_bl_offset_s?: number;
-    hold_targets?: Record<string, { target_s: number; stddev_s?: number; count: number; total_samples: number }>;
-  }>;
-  downtime_threshold_ms?: number;
-  top_avg_efficiency?: number;
-  top_efficiency_stddev?: number;
-  top_defensives_summary?: unknown[];
-  top_dtk_comparison?: unknown[];
-  top_dtk_segments?: unknown[];
-};
 
 /** Everything the pure computation needs — all data already fetched on the main thread. */
 export interface AnalysisInput {
@@ -53,9 +31,9 @@ export interface AnalysisInput {
   buffEvents: WclEvent[];
   dmgEvents: WclEvent[];
   dtEvents: WclEvent[];
-  rulebook: Record<string, unknown> | null;
-  bench: BenchData | null;
-  masterAbilities: { gameID: number; name: string; icon: string }[];
+  rulebook: Rulebook | null;
+  bench: EncounterBench | null;
+  masterAbilities: WclAbility[];
 }
 
 /**
@@ -75,44 +53,41 @@ export function computeAnalysis(input: AnalysisInput): AnalysisResult {
     Object.entries(abilityMap).map(([id, v]) => [id, { icon: v.icon.replace(/\.jpg$/i, ''), name: v.name }])
   );
 
-  const specCds: CdSpec[] | null = (rulebook as { major_cooldowns?: CdSpec[] })?.major_cooldowns ?? null;
-  const rules: Rule[] = (rulebook as { rules?: Rule[] })?.rules ?? [];
-  const rbSrc = rulebook ? 'generated' : 'none';
+  const specCds = rulebook?.major_cooldowns ?? null;
+  const rules = rulebook?.rules ?? [];
+  const defensives = rulebook?.defensives ?? [];
 
   const result = _analyzeCore(playerName, spec, fStart, fEnd, castEvents, buffEvents, specCds, rules, bench);
   result.spec = spec;
-  result.rulebook_source = rbSrc as 'generated' | 'static' | 'none';
+  result.rulebook_source = rulebook ? 'generated' : 'none';
   result.player_fight_duration_s = result.player_fight_duration_s ?? (fEnd - fStart) / 1000;
-  result.cd_spell_ids = Object.fromEntries((specCds || []).map(cd => [cd.name, cd.spell_id]));
+  result.cd_spell_ids = Object.fromEntries((specCds ?? []).map(cd => [cd.name, cd.spell_id]));
   result.ability_icons = ability_icons;
 
   if (bench) {
-    if (bench.burst_windows?.length) result.burst_windows = bench.burst_windows as unknown as BurstWindow[];
-    if (bench.top_defensives_summary?.length) result.top_defensives_summary = bench.top_defensives_summary as never;
-    if (bench.top_dtk_comparison?.length) result.top_dtk_comparison = bench.top_dtk_comparison as never;
-    if (bench.top_dtk_segments?.length) result.top_dtk_segments = bench.top_dtk_segments as never;
+    if (bench.burst_windows?.length) result.burst_windows = bench.burst_windows;
+    if (bench.top_defensives_summary?.length) result.top_defensives_summary = bench.top_defensives_summary;
+    if (bench.top_dtk_comparison?.length) result.top_dtk_comparison = bench.top_dtk_comparison;
+    if (bench.top_dtk_segments?.length) result.top_dtk_segments = bench.top_dtk_segments;
   }
 
   if (result.burst_windows?.length) {
     result.player_burst_windows = _findPlayerBurstWindows(result.burst_windows, dmgEvents, fStart);
   }
-  result.player_defensives = _analyzeDefensives(castEvents, buffEvents, dtEvents, fStart, fEnd, rulebook);
+  result.player_defensives = _analyzeDefensives(defensives, castEvents, buffEvents, dtEvents, fStart, fEnd);
 
-  const specDefs = (rulebook as { defensives?: CdSpec[] } | null)?.defensives ?? null;
-  if (specDefs?.length && result.player_defensives.length) {
+  if (defensives.length && result.player_defensives.length) {
     result.defensive_findings = _analyzeDefensiveFindings(
       result.player_defensives,
-      (bench as Partial<EncounterBench>)?.per_defensive_benchmarks ?? {},
+      bench?.per_defensive_benchmarks ?? {},
       (fEnd - fStart) / 1000,
     );
   }
 
-  const topDefWindows = (bench as Partial<EncounterBench>)?.defensive_windows;
+  const topDefWindows = bench?.defensive_windows;
   if (topDefWindows?.length) {
-    result.top_defensive_windows = topDefWindows as unknown as BurstWindow[];
-    result.player_defensive_windows = _computePlayerDefensiveWindows(
-      result.top_defensive_windows, dtEvents, fStart,
-    );
+    result.top_defensive_windows = topDefWindows;
+    result.player_defensive_windows = _computePlayerDefensiveWindows(topDefWindows, dtEvents, fStart);
   }
 
   const dtk = _analyzeDamageTaken(dtEvents, abilityMap, fStart, fEnd);
@@ -125,8 +100,8 @@ export function computeAnalysis(input: AnalysisInput): AnalysisResult {
 
 function _analyzeCore(
   playerName: string, spec: string, fStart: number, fEnd: number,
-  castEvents: WclEvent[], buffEvents: WclEvent[], specCds: CdSpec[] | null,
-  rules: Rule[], bench: BenchData | null,
+  castEvents: WclEvent[], buffEvents: WclEvent[], specCds: RulebookCooldown[] | null,
+  rules: RulebookRule[], bench: EncounterBench | null,
 ): AnalysisResult {
   const fightDurS = (fEnd - fStart) / 1000;
   const rel = (ts: number) => ts - fStart;
@@ -235,7 +210,7 @@ function _analyzeCore(
     }
   }
 
-  if (rules.length) findings.push(..._evaluateRules(rules, casts, fStart, fightDurS));
+  if (rules.length) findings.push(..._evaluateRules(rules, casts, fStart));
 
   if (casts.length >= 2) {
     const gaps: { start_ms: number; duration_ms: number }[] = [];
@@ -249,24 +224,23 @@ function _analyzeCore(
       const topSD = bench?.top_efficiency_stddev ?? null;
       const effPct = Math.max(0, (1 - totalDtS / fightDurS) * 100);
       const delta = topE != null ? effPct - topE : null;
-      let severity: 'warning' | 'critical' = 'warning';
+      let severity: Severity = 'warning';
       if (delta != null && topSD != null && delta < -topSD) severity = 'critical';
       findings.push({ severity, category: 'cast_efficiency',
         message: `Cast efficiency: ${effPct.toFixed(1)}% (${topE != null ? `top avg ${topE.toFixed(0)}%` : 'no benchmark'}) — ${totalDtS.toFixed(1)}s in gaps.` });
     }
   }
 
-  const order: Record<string, number> = { critical: 0, warning: 1, info: 2, success: 3 };
-  findings.sort((a, b) => (order[a.severity] ?? 4) - (order[b.severity] ?? 4));
+  _sortBySeverity(findings);
 
   return {
-    player: playerName, spec: spec as never, rulebook_source: 'none',
+    player: playerName, spec, rulebook_source: 'none',
     findings, cd_spell_ids: {}, ability_icons: {},
     player_fight_duration_s: Math.round(fightDurS * 10) / 10,
   };
 }
 
-function _evaluateRules(rules: Rule[], casts: WclEvent[], fStart: number, _fightDurS: number): AnalysisFinding[] {
+function _evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: number): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   const castTimes: Record<number, number[]> = {};
   for (const c of casts) {
@@ -275,15 +249,13 @@ function _evaluateRules(rules: Rule[], casts: WclEvent[], fStart: number, _fight
   for (const rule of rules) {
     const cond = rule.condition;
     if (!cond) continue;
-    const severity: 'critical' | 'warning' = rule.priority === 'critical' ? 'critical' : 'warning';
+    const severity: Severity = rule.priority === 'critical' ? 'critical' : 'warning';
 
-    if (cond['kind'] === 'cast_without_prior') {
-      const sid = cond['spell_id'] as number, reqSid = cond['required_spell_id'] as number;
-      const spellName = cond['spell_name'] as string, reqName = cond['required_spell_name'] as string;
-      const win = (cond['window_s'] as number) ?? 5;
-      const exc = cond['exception'] as { context_spell_id: number; context_window_s?: number; position?: string } | undefined;
-      const primary = [...(castTimes[sid] ?? [])].sort((a, b) => a - b);
-      const required = castTimes[reqSid] ?? [];
+    if (cond.kind === 'cast_without_prior') {
+      const win = cond.window_s ?? 5;
+      const exc = cond.exception;
+      const primary = [...(castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
+      const required = castTimes[cond.required_spell_id] ?? [];
       const violations: number[] = [];
       for (const t of primary) {
         if (required.some(rt => Math.abs(t - rt) <= win)) continue;
@@ -296,21 +268,19 @@ function _evaluateRules(rules: Rule[], casts: WclEvent[], fStart: number, _fight
       }
       if (violations.length) findings.push({ severity, category: 'rule_violation',
         timestamp_ms: Math.round(violations[0] * 1000),
-        message: `${spellName} without ${reqName}: ${violations.length} of ${primary.length} cast(s).`,
+        message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s).`,
         details: rule.action ? { remedy: rule.action } : undefined });
 
-    } else if (cond['kind'] === 'hold_cooldown_for_anchor') {
-      const spellIds = cond['spell_ids'] as number[], spellNames = cond['spell_names'] as string[];
-      const aSid = cond['anchor_spell_id'] as number, anchorName = cond['anchor_spell_name'] as string;
-      const hw = (cond['hold_window_s'] as number) ?? 15;
-      const anchorTimes = [...(castTimes[aSid] ?? [])].sort((a, b) => a - b);
+    } else if (cond.kind === 'hold_cooldown_for_anchor') {
+      const hw = cond.hold_window_s ?? 15;
+      const anchorTimes = [...(castTimes[cond.anchor_spell_id] ?? [])].sort((a, b) => a - b);
       const violations: [string, string, string][] = [];
       let firstT: number | null = null;
       for (const at of anchorTimes.slice(1)) {
-        for (let i = 0; i < spellIds.length; i++) {
-          for (const ct of (castTimes[spellIds[i]] ?? [])) {
+        for (let i = 0; i < cond.spell_ids.length; i++) {
+          for (const ct of (castTimes[cond.spell_ids[i]] ?? [])) {
             if (ct >= at - hw && ct < at) {
-              violations.push([spellNames?.[i] ?? String(spellIds[i]), _fmt(ct), _fmt(at)]);
+              violations.push([cond.spell_names?.[i] ?? String(cond.spell_ids[i]), _fmt(ct), _fmt(at)]);
               firstT ??= ct;
             }
           }
@@ -318,7 +288,7 @@ function _evaluateRules(rules: Rule[], casts: WclEvent[], fStart: number, _fight
       }
       if (violations.length) findings.push({ severity, category: 'rule_violation',
         timestamp_ms: firstT != null ? Math.round(firstT * 1000) : undefined,
-        message: `${[...new Set(violations.map(v => v[0]))].join('/')} used in the ${hw}s hold window before ${anchorName}: ${violations.length} charge(s).`,
+        message: `${[...new Set(violations.map(v => v[0]))].join('/')} used in the ${hw}s hold window before ${cond.anchor_spell_name}: ${violations.length} charge(s).`,
         details: rule.action ? { remedy: rule.action } : undefined });
     }
   }
@@ -425,8 +395,7 @@ function _analyzeDefensiveFindings(
     if (uses > 0) findings.push(...suggestions);
   }
 
-  const order: Record<string, number> = { critical: 0, warning: 1, info: 2, success: 3 };
-  findings.sort((a, b) => (order[a.severity] ?? 4) - (order[b.severity] ?? 4));
+  _sortBySeverity(findings);
   return findings;
 }
 
@@ -456,11 +425,9 @@ function _computePlayerDefensiveWindows(
 }
 
 function _analyzeDefensives(
-  castEvents: WclEvent[], buffEvents: WclEvent[],
+  defs: RulebookDefensive[], castEvents: WclEvent[], buffEvents: WclEvent[],
   dtEvents: WclEvent[], fStart: number, fEnd: number,
-  rulebook: Record<string, unknown> | null,
 ): PlayerDefensive[] {
-  const defs: CdSpec[] = (rulebook as { defensives?: CdSpec[] } | null)?.defensives ?? [];
   if (!defs.length) return [];
   const rel = (ts: number) => ts - fStart;
   // Pre-filter damage-taken events once instead of re-scanning per window.
@@ -514,4 +481,9 @@ function _analyzeDamageTaken(
   const top = Object.entries(byAb).sort((a, b) => b[1] - a[1]).slice(0, 10)
     .map(([sid, dmg]) => ({ spell_id: parseInt(sid, 10), name: abilityMap[sid]?.name || '', damage: Math.round(dmg), pct: total ? Math.round(dmg / total * 1000) / 1000 : 0 }));
   return { segmentPcts, top, total: Math.round(total) };
+}
+
+function _sortBySeverity(findings: AnalysisFinding[]): void {
+  const order: Record<Severity, number> = { critical: 0, warning: 1, info: 2, hold_suggestion: 2, success: 3 };
+  findings.sort((a, b) => (order[a.severity] ?? 4) - (order[b.severity] ?? 4));
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EncounterEntry, EncounterBench } from '../models/encounter.models';
+import { Rulebook } from '../models/rulebook.models';
 
 const DATA_BASE = new URL('data/specs/', document.baseURI).href;
 
@@ -25,7 +26,7 @@ export class EncounterService {
     return null;
   }
 
-  async getRulebook(spec: string): Promise<{ major_cooldowns?: unknown[]; [key: string]: unknown } | null> {
+  async getRulebook(spec: string): Promise<Rulebook | null> {
     try {
       const resp = await fetch(`${DATA_BASE}${spec}/rulebook.json`);
       if (resp.ok) return resp.json();
