@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnChanges, OnDestroy, AfterViewInit, input, inject, viewChild, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnChanges, OnDestroy, AfterViewInit, input, inject, viewChild, computed } from '@angular/core';
 import {
   Chart,
   BarController,
@@ -34,6 +34,7 @@ interface OverlayPoint {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-range-chart',
   template: `
     <div class="rc-legend">
