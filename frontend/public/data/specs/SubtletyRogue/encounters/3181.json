@@ -4,7 +4,7 @@
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
   "avg_duration_s": 487.8,
-  "last_ingested": "2026-06-12 12:38:48",
+  "last_ingested": "2026-06-12 13:29:51",
   "downtime_threshold_ms": 1768,
   "top_avg_efficiency": 66.9,
   "top_efficiency_stddev": 5.4,
@@ -734,465 +734,451 @@
   },
   "defensive_windows": [
     {
-      "time_s": 9.3,
-      "stddev_s": 6.3,
-      "count": 8,
+      "time_s": 16.6,
+      "stddev_s": 8.7,
+      "window_length_s": 6,
+      "count": 5,
       "total_samples": 10,
-      "pct_avg": 0.037,
-      "pct_stddev": 0.003,
-      "pct_min": 0.032,
-      "pct_max": 0.04,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.547,
-          "min_pct": 0.459,
-          "max_pct": 0.623,
-          "count": 4
-        },
-        {
-          "spell_id": 1281707,
-          "avg_pct": 0.396,
-          "min_pct": 0.242,
-          "max_pct": 0.583,
-          "count": 8
-        },
-        {
-          "spell_id": 1243743,
-          "avg_pct": 0.149,
-          "min_pct": 0.116,
-          "max_pct": 0.19,
-          "count": 8
-        }
-      ],
-      "common_defensives": []
-    },
-    {
-      "time_s": 29.6,
-      "stddev_s": 4.1,
-      "count": 4,
-      "total_samples": 10,
-      "pct_avg": 0.04,
-      "pct_stddev": 0.009,
-      "pct_min": 0.031,
-      "pct_max": 0.052,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.482,
-          "min_pct": 0.234,
-          "max_pct": 0.676,
-          "count": 3
-        },
-        {
-          "spell_id": 1281707,
-          "avg_pct": 0.383,
-          "min_pct": 0.3,
-          "max_pct": 0.463,
-          "count": 4
-        },
-        {
-          "spell_id": 1261531,
-          "avg_pct": 0.195,
-          "min_pct": 0.175,
-          "max_pct": 0.214,
-          "count": 2
-        },
-        {
-          "spell_id": 1233826,
-          "avg_pct": 0.189,
-          "min_pct": 0.17,
-          "max_pct": 0.208,
-          "count": 2
-        },
-        {
-          "spell_id": 1243743,
-          "avg_pct": 0.128,
-          "min_pct": 0.122,
-          "max_pct": 0.134,
-          "count": 2
-        }
-      ],
+      "pct_avg": 0.014,
+      "pct_stddev": 0.007,
+      "pct_min": 0.007,
+      "pct_max": 0.023,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
       "common_defensives": [
         "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_pct": 0.53,
+          "min_pct": 0.254,
+          "max_pct": 0.716,
+          "count": 4
+        },
+        {
+          "spell_id": 1281707,
+          "avg_pct": 0.479,
+          "min_pct": 0.284,
+          "max_pct": 0.815,
+          "count": 5
+        }
       ]
     },
     {
-      "time_s": 187.5,
-      "stddev_s": 0.5,
-      "count": 4,
+      "time_s": 61.2,
+      "stddev_s": 9.6,
+      "window_length_s": 6,
+      "count": 5,
       "total_samples": 10,
-      "pct_avg": 0.036,
-      "pct_stddev": 0.001,
-      "pct_min": 0.035,
-      "pct_max": 0.038,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.515,
-          "min_pct": 0.486,
-          "max_pct": 0.563,
-          "count": 4
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.255,
-          "min_pct": 0.226,
-          "max_pct": 0.283,
-          "count": 4
-        },
-        {
-          "spell_id": 1261289,
-          "avg_pct": 0.132,
-          "min_pct": 0.039,
-          "max_pct": 0.17,
-          "count": 4
-        },
-        {
-          "spell_id": 1260000,
-          "avg_pct": 0.098,
-          "min_pct": 0.089,
-          "max_pct": 0.115,
-          "count": 4
-        }
+      "pct_avg": 0.014,
+      "pct_stddev": 0.006,
+      "pct_min": 0.006,
+      "pct_max": 0.021,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
       ],
-      "common_defensives": []
-    },
-    {
-      "time_s": 210.2,
-      "stddev_s": 2.7,
-      "count": 4,
-      "total_samples": 10,
-      "pct_avg": 0.037,
-      "pct_stddev": 0.005,
-      "pct_min": 0.031,
-      "pct_max": 0.041,
-      "avg_targets": 1,
+      "common_cds": [
+        "Feint"
+      ],
       "ability_breakdown": [
         {
-          "spell_id": 1260027,
-          "avg_pct": 0.468,
-          "min_pct": 0.269,
-          "max_pct": 0.674,
+          "spell_id": 1233649,
+          "avg_pct": 0.516,
+          "min_pct": 0.468,
+          "max_pct": 0.589,
           "count": 3
         },
         {
-          "spell_id": 1260019,
-          "avg_pct": 0.293,
+          "spell_id": 1281707,
+          "avg_pct": 0.304,
+          "min_pct": 0.255,
+          "max_pct": 0.411,
+          "count": 5
+        },
+        {
+          "spell_id": 1233826,
+          "avg_pct": 0.251,
           "min_pct": 0.206,
-          "max_pct": 0.356,
-          "count": 4
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.247,
-          "min_pct": 0.227,
-          "max_pct": 0.257,
+          "max_pct": 0.285,
           "count": 3
-        },
-        {
-          "spell_id": 1233826,
-          "avg_pct": 0.215,
-          "min_pct": 0.2,
-          "max_pct": 0.23,
-          "count": 2
         }
-      ],
-      "common_defensives": [
-        "Feint"
       ]
     },
     {
-      "time_s": 239.4,
-      "stddev_s": 5.6,
-      "count": 8,
+      "time_s": 91.3,
+      "stddev_s": 9.8,
+      "window_length_s": 6,
+      "count": 4,
       "total_samples": 10,
-      "pct_avg": 0.038,
-      "pct_stddev": 0.005,
-      "pct_min": 0.03,
-      "pct_max": 0.045,
-      "avg_targets": 1,
+      "pct_avg": 0.013,
+      "pct_stddev": 0.008,
+      "pct_min": 0.003,
+      "pct_max": 0.021,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
       "ability_breakdown": [
         {
           "spell_id": 1260027,
-          "avg_pct": 0.477,
-          "min_pct": 0.423,
-          "max_pct": 0.569,
-          "count": 5
+          "avg_pct": 0.776,
+          "min_pct": 0.748,
+          "max_pct": 0.803,
+          "count": 2
         },
         {
-          "spell_id": 1260019,
-          "avg_pct": 0.266,
-          "min_pct": 0.196,
-          "max_pct": 0.329,
-          "count": 7
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.226,
-          "min_pct": 0.141,
-          "max_pct": 0.32,
-          "count": 7
-        },
-        {
-          "spell_id": 1260000,
-          "avg_pct": 0.111,
-          "min_pct": 0.065,
-          "max_pct": 0.142,
-          "count": 5
+          "spell_id": 1281707,
+          "avg_pct": 0.408,
+          "min_pct": 0.184,
+          "max_pct": 1,
+          "count": 4
         }
-      ],
-      "common_defensives": []
+      ]
     },
     {
-      "time_s": 258.2,
-      "stddev_s": 4.2,
+      "time_s": 104.5,
+      "stddev_s": 7.6,
+      "window_length_s": 5,
+      "count": 8,
+      "total_samples": 10,
+      "pct_avg": 0.002,
+      "pct_stddev": 0.004,
+      "pct_min": 0,
+      "pct_max": 0.011,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 120.1,
+      "stddev_s": 5,
+      "window_length_s": 6,
       "count": 6,
       "total_samples": 10,
-      "pct_avg": 0.035,
+      "pct_avg": 0.005,
       "pct_stddev": 0.005,
-      "pct_min": 0.03,
-      "pct_max": 0.043,
-      "avg_targets": 1,
+      "pct_min": 0,
+      "pct_max": 0.012,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
       "ability_breakdown": [
         {
-          "spell_id": 1259869,
-          "avg_pct": 0.427,
-          "min_pct": 0.378,
-          "max_pct": 0.459,
+          "spell_id": 1281707,
+          "avg_pct": 0.598,
+          "min_pct": 0.217,
+          "max_pct": 1,
+          "count": 5
+        },
+        {
+          "spell_id": 1260027,
+          "avg_pct": 0.432,
+          "min_pct": 0.379,
+          "max_pct": 0.471,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 149.8,
+      "stddev_s": 8.4,
+      "window_length_s": 6,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.004,
+      "pct_stddev": 0.002,
+      "pct_min": 0.001,
+      "pct_max": 0.005,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1243981,
+          "avg_pct": 0.696,
+          "min_pct": 0.632,
+          "max_pct": 0.75,
           "count": 3
         },
         {
-          "spell_id": 1233826,
-          "avg_pct": 0.238,
-          "min_pct": 0.213,
-          "max_pct": 0.275,
+          "spell_id": 1234570,
+          "avg_pct": 0.478,
+          "min_pct": 0.25,
+          "max_pct": 1,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 246.1,
+      "stddev_s": 4.1,
+      "window_length_s": 6,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.014,
+      "pct_stddev": 0.001,
+      "pct_min": 0.013,
+      "pct_max": 0.015,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1237040,
+          "avg_pct": 0.49,
+          "min_pct": 0.42,
+          "max_pct": 0.577,
+          "count": 4
+        },
+        {
+          "spell_id": 1260027,
+          "avg_pct": 0.4,
+          "min_pct": 0.353,
+          "max_pct": 0.447,
+          "count": 2
+        },
+        {
+          "spell_id": 1260000,
+          "avg_pct": 0.224,
+          "min_pct": 0.123,
+          "max_pct": 0.325,
+          "count": 2
+        },
+        {
+          "spell_id": 1260019,
+          "avg_pct": 0.176,
+          "min_pct": 0.063,
+          "max_pct": 0.423,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 300.1,
+      "stddev_s": 2,
+      "window_length_s": 6,
+      "count": 5,
+      "total_samples": 10,
+      "pct_avg": 0.014,
+      "pct_stddev": 0.007,
+      "pct_min": 0.003,
+      "pct_max": 0.02,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_pct": 0.522,
+          "min_pct": 0.39,
+          "max_pct": 0.722,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_pct": 0.387,
+          "min_pct": 0.348,
+          "max_pct": 0.424,
           "count": 4
         },
         {
           "spell_id": 1260019,
-          "avg_pct": 0.226,
-          "min_pct": 0.136,
-          "max_pct": 0.372,
+          "avg_pct": 0.161,
+          "min_pct": 0.1,
+          "max_pct": 0.278,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 357.7,
+      "stddev_s": 8.5,
+      "window_length_s": 6,
+      "count": 9,
+      "total_samples": 10,
+      "pct_avg": 0.014,
+      "pct_stddev": 0.005,
+      "pct_min": 0.008,
+      "pct_max": 0.024,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_pct": 0.658,
+          "min_pct": 0.361,
+          "max_pct": 0.84,
           "count": 6
         },
         {
-          "spell_id": 1237040,
-          "avg_pct": 0.19,
-          "min_pct": 0.098,
-          "max_pct": 0.263,
-          "count": 5
+          "spell_id": 1261289,
+          "avg_pct": 0.278,
+          "min_pct": 0.156,
+          "max_pct": 0.472,
+          "count": 8
         }
-      ],
-      "common_defensives": []
+      ]
     },
     {
-      "time_s": 291.7,
-      "stddev_s": 9.4,
-      "count": 10,
+      "time_s": 386.7,
+      "stddev_s": 8.3,
+      "window_length_s": 6,
+      "count": 6,
       "total_samples": 10,
-      "pct_avg": 0.039,
-      "pct_stddev": 0.01,
-      "pct_min": 0.03,
-      "pct_max": 0.061,
-      "avg_targets": 1,
+      "pct_avg": 0.016,
+      "pct_stddev": 0.005,
+      "pct_min": 0.008,
+      "pct_max": 0.022,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
       "ability_breakdown": [
         {
-          "spell_id": 1259869,
-          "avg_pct": 0.306,
-          "min_pct": 0.147,
-          "max_pct": 0.537,
+          "spell_id": 1237040,
+          "avg_pct": 0.518,
+          "min_pct": 0.073,
+          "max_pct": 1,
           "count": 5
         },
         {
-          "spell_id": 1260019,
-          "avg_pct": 0.265,
-          "min_pct": 0.179,
-          "max_pct": 0.368,
+          "spell_id": 1239095,
+          "avg_pct": 0.446,
+          "min_pct": 0.305,
+          "max_pct": 0.746,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 419.6,
+      "stddev_s": 9.7,
+      "window_length_s": 6.9,
+      "count": 11,
+      "total_samples": 10,
+      "pct_avg": 0.019,
+      "pct_stddev": 0.009,
+      "pct_min": 0.005,
+      "pct_max": 0.033,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_pct": 0.483,
+          "min_pct": 0.18,
+          "max_pct": 0.804,
+          "count": 10
+        },
+        {
+          "spell_id": 1237040,
+          "avg_pct": 0.29,
+          "min_pct": 0.07,
+          "max_pct": 0.474,
+          "count": 8
+        },
+        {
+          "spell_id": 1261289,
+          "avg_pct": 0.13,
+          "min_pct": 0.053,
+          "max_pct": 0.257,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 475.9,
+      "stddev_s": 12.4,
+      "window_length_s": 5.9,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.016,
+      "pct_stddev": 0.005,
+      "pct_min": 0.008,
+      "pct_max": 0.023,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_pct": 0.476,
+          "min_pct": 0.242,
+          "max_pct": 0.677,
           "count": 7
         },
         {
-          "spell_id": 1233826,
-          "avg_pct": 0.244,
-          "min_pct": 0.059,
-          "max_pct": 0.368,
-          "count": 5
-        },
-        {
           "spell_id": 1237040,
-          "avg_pct": 0.216,
-          "min_pct": 0.173,
-          "max_pct": 0.29,
+          "avg_pct": 0.384,
+          "min_pct": 0.089,
+          "max_pct": 1,
           "count": 9
         },
         {
-          "spell_id": 1260000,
-          "avg_pct": 0.119,
-          "min_pct": 0.081,
-          "max_pct": 0.197,
-          "count": 8
-        }
-      ],
-      "common_defensives": []
-    },
-    {
-      "time_s": 399.8,
-      "stddev_s": 6.5,
-      "count": 6,
-      "total_samples": 10,
-      "pct_avg": 0.038,
-      "pct_stddev": 0.006,
-      "pct_min": 0.031,
-      "pct_max": 0.047,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1239095,
-          "avg_pct": 0.567,
-          "min_pct": 0.5,
-          "max_pct": 0.656,
-          "count": 5
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.27,
-          "min_pct": 0.211,
-          "max_pct": 0.331,
-          "count": 6
-        },
-        {
-          "spell_id": 1233826,
-          "avg_pct": 0.179,
-          "min_pct": 0.153,
-          "max_pct": 0.203,
-          "count": 4
-        }
-      ],
-      "common_defensives": []
-    },
-    {
-      "time_s": 428.9,
-      "stddev_s": 7.7,
-      "count": 7,
-      "total_samples": 10,
-      "pct_avg": 0.046,
-      "pct_stddev": 0.011,
-      "pct_min": 0.035,
-      "pct_max": 0.066,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.464,
-          "min_pct": 0.359,
-          "max_pct": 0.589,
-          "count": 6
-        },
-        {
-          "spell_id": 1239095,
-          "avg_pct": 0.322,
-          "min_pct": 0.187,
-          "max_pct": 0.582,
-          "count": 5
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.187,
-          "min_pct": 0.032,
-          "max_pct": 0.26,
-          "count": 7
-        },
-        {
           "spell_id": 1261289,
-          "avg_pct": 0.175,
-          "min_pct": 0.119,
-          "max_pct": 0.235,
-          "count": 5
+          "avg_pct": 0.203,
+          "min_pct": 0.126,
+          "max_pct": 0.237,
+          "count": 6
         }
-      ],
-      "common_defensives": [
-        "Feint"
       ]
-    },
-    {
-      "time_s": 456.6,
-      "stddev_s": 4.6,
-      "count": 6,
-      "total_samples": 10,
-      "pct_avg": 0.036,
-      "pct_stddev": 0.004,
-      "pct_min": 0.031,
-      "pct_max": 0.041,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1239095,
-          "avg_pct": 0.487,
-          "min_pct": 0.428,
-          "max_pct": 0.548,
-          "count": 5
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.25,
-          "min_pct": 0.032,
-          "max_pct": 0.354,
-          "count": 6
-        },
-        {
-          "spell_id": 1233826,
-          "avg_pct": 0.22,
-          "min_pct": 0.187,
-          "max_pct": 0.279,
-          "count": 5
-        }
-      ],
-      "common_defensives": []
-    },
-    {
-      "time_s": 484.5,
-      "stddev_s": 5.6,
-      "count": 5,
-      "total_samples": 10,
-      "pct_avg": 0.038,
-      "pct_stddev": 0.006,
-      "pct_min": 0.03,
-      "pct_max": 0.044,
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 1239095,
-          "avg_pct": 0.41,
-          "min_pct": 0.155,
-          "max_pct": 0.546,
-          "count": 4
-        },
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.351,
-          "min_pct": 0.263,
-          "max_pct": 0.427,
-          "count": 3
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.245,
-          "min_pct": 0.188,
-          "max_pct": 0.318,
-          "count": 5
-        },
-        {
-          "spell_id": 1261289,
-          "avg_pct": 0.232,
-          "min_pct": 0.128,
-          "max_pct": 0.352,
-          "count": 4
-        }
-      ],
-      "common_defensives": []
     }
   ],
   "top_dtk_comparison": [
