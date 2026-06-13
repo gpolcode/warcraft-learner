@@ -45,6 +45,7 @@
 <mat-sidenav-container class="shell-container" [autosize]="!isMobile()">
   <mat-sidenav [mode]="sidenavMode()" [opened]="sidenavOpened()"
                (openedChange)="onOpenedChange($event)"
+               [class.shell-rail-collapsed]="!showLabels()"
                [style.width.px]="showLabels() ? 240 : 72">
     @if (isMobile()) {
       <a routerLink="/" class="shell-drawer-brand" (click)="onNavigate()"
@@ -66,13 +67,13 @@
       <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
          [activated]="pre.isActive" (click)="onNavigate()"
          matTooltip="Pre-Fight" matTooltipPosition="right" [matTooltipDisabled]="showLabels()">
-        <mat-icon matListItemIcon>shield</mat-icon>
+        <mat-icon matListItemIcon>lightbulb</mat-icon>
         @if (showLabels()) { <span matListItemTitle>Pre-Fight</span> }
       </a>
       <a mat-list-item routerLink="/live" routerLinkActive #live="routerLinkActive"
          [activated]="live.isActive" (click)="onNavigate()"
          matTooltip="Live" matTooltipPosition="right" [matTooltipDisabled]="showLabels()">
-        <mat-icon matListItemIcon>sensors</mat-icon>
+        <mat-icon matListItemIcon>bolt_boost</mat-icon>
         @if (showLabels()) { <span matListItemTitle>Live</span> }
       </a>
       <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"

@@ -38,3 +38,23 @@
 
 .shell-brand__shield { fill: var(--gold); }
 .shell-brand__bars { fill: var(--surface); }
+
+// Icon-only rail: center each row inside the narrow drawer and render the
+// active highlight as a circle around the icon (Keep-style), instead of the
+// default full-width pill.
+.shell-rail-collapsed ::ng-deep {
+  .mat-mdc-list-item {
+    width: 48px;
+    height: 48px;
+    margin: 4px auto;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    justify-content: center;
+  }
+
+  .mat-mdc-list-item-icon {
+    margin: 0;
+    padding: 0;
+  }
+}
