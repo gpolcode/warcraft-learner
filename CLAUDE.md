@@ -12,7 +12,7 @@ The app is a **fully static Angular SPA** deployed on GitHub Pages. There is no 
   - `favicon.ico` is **regenerated from** `favicon.svg` (16/32/48px) — do not hand-edit the binary. Regen with `sharp` + `png-to-ico` (rasterize the SVG at high density, resize to each size, pack into one `.ico`).
   - `index.html` references the SVG favicon first (`type="image/svg+xml"`) with the `.ico` as legacy fallback.
   - The nav-bar logo (`shared/components/page-nav`) is the **same artwork inlined as SVG** in the template, so it themes with CSS vars. Set its fills via SCSS classes (`fill: var(--gold)` / `var(--surface)`) — **not** `fill="var(--…)"` presentation attributes, which browsers don't reliably honor.
-  - Brand gold is `--gold` (`#c8a96e`); the favicon's literal hex colors must track the design tokens in `styles.scss`.
+  - Brand gold is `--gold` (`#e5cc80`) — the Warcraft Logs 100-parse ("Astounding") gold, chosen deliberately since the tool benchmarks against top parses. The favicon's literal hex colors must track the design tokens in `styles.scss`.
 
 ## URL routing
 
