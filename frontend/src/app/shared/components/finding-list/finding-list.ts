@@ -22,13 +22,6 @@ export interface FindingEntry {
   selector: 'wl-finding-list',
   imports: [MatCardModule, MatIconModule, MatButtonModule, SpellIconComponent, FormatDurationPipe],
   templateUrl: './finding-list.html',
-  // Material's card-header padding is asymmetric (16px top, 0 bottom) - fine when a
-  // content block follows, but leaves the empty "Doing Well" rows hugging the bottom
-  // edge. Balance the header padding and tighten the content gap so every row reads the same.
-  styles: `
-    mat-card-header.mat-mdc-card-header { padding: 12px 16px; }
-    mat-card-content.mat-mdc-card-content { padding: 0 16px 12px; }
-  `,
 })
 export class FindingListComponent {
   readonly entries = input.required<FindingEntry[]>();
