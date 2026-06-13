@@ -114,6 +114,8 @@ Runs `frontend/scripts/ingest.mjs`. Also runs as `ingest-parses.yml` GHA daily +
 
 GHA commits `frontend/public/data/specs/**`, which triggers `deploy-pages.yml` to rebuild and redeploy.
 
+**Offline re-aggregation**: `node scripts/ingest.mjs --rebuild [--spec SpecName]` re-runs only step 6/7 (`syncEncounterFile` + index) from the already-stored `parse_samples`, with no WCL access. Use it to regenerate bench files after changing an aggregation formula without re-fetching parses.
+
 > **Keep data shapes in sync.** The bench/sample shape that `ingest.mjs` writes is mirrored in the frontend consumers - `core/models/analysis.models.ts`, `core/models/encounter.models.ts`, `core/services/analysis-core.ts` - and documented in the **Data models** section below. **Whenever you change what ingestion emits (add/remove/rename a field), check and update all of these together, plus the rulebook skill + schema** (`prompts/rulebook_skill.md`, `prompts/rulebook.schema.json`) since ingestion consumes the rulebook (`duration`, `spell_id`s). Dropping a feature end-to-end means removing it from ingestion **and** every consumer above. Already-committed JSON under `data/specs/**` keeps stale fields until the next re-ingest - harmless, since consumers ignore unknown fields.
 
 ### Rulebook management (`npm run admin` / `npm run scrape`)
@@ -283,29 +285,30 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 **Per-parse**:
 1. Build candidate windows from CD cast times × CD durations (from rulebook `duration`).
 2. Merge overlapping or near-adjacent windows (≤3s gap) into one.
-3. Compute `pct_of_total` = window damage / total fight damage.
+3. Compute `window_damage` (absolute) plus `pct_of_total` = window damage / total fight damage (kept for the ≥3% significance gate).
 4. Discard windows below ≥3% significance threshold.
-5. Each window: `time_s`, `window_length_s` (variable), `pct_of_total`, `active_cds`, ability breakdown (top 6).
+5. Each window: `time_s`, `window_length_s` (variable), `window_damage`, `pct_of_total`, `active_cds`, ability breakdown (top 6, each with absolute `damage`).
 6. Falls back to 8s sliding window if no CD duration data.
 
-**Across parses** (`clusterBurstWindows`):
+**Across parses** (`clusterBurstWindows` → `clusterBaseStats`):
 1. `groupByTime(windows, 15s)` - greedy: windows within 15s of cluster median go in same group.
 2. Discard clusters in fewer than max(2, 35% of samples).
 3. Surface CDs and abilities in ≥50% of member parses.
 4. `window_length_s` = mean of member window lengths.
+5. Emits **absolute damage** stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`, per-ability `avg_damage`/`min_damage`/`max_damage`) - **not** percentages. The player vs top-parse comparison and the Burst/Defensive Windows cards compare raw damage so the numbers stay meaningful on progression (a wipe's short fight-total would otherwise inflate every window's share). `top_dtk_comparison` (the separate Damage Taken card) still uses percentages.
 
 ### Defensive window definition (`ingest.mjs` → `findDefensiveWindows` / `clusterDefensiveWindows`)
 
 **Per-parse**:
 1. For each defensive in rulebook, find buff apply/remove pairs matching its `spell_id`.
 2. Each apply→remove pair = window: `time_s` = apply, `window_length_s` = remove − apply.
-3. `pct_of_total` = damage taken during window / total fight damage taken.
+3. `window_damage` = damage taken during window (absolute); `pct_of_total` = that / total fight damage taken (kept on the sample).
 
-**Across parses** (`clusterDefensiveWindows`):
+**Across parses** (`clusterDefensiveWindows` → `clusterBaseStats`):
 1. Group by defensive name first.
 2. `groupByTime(group, 20s)` per defensive.
 3. Discard clusters in fewer than max(2, 35% of samples).
-4. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, ability breakdown of damage sources.
+4. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), ability breakdown of damage sources (absolute `avg_damage`).
 
 Both cluster functions share `groupByTime()` and `clusterBaseStats()` helpers.
 
