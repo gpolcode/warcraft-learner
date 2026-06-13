@@ -5,23 +5,28 @@
     <div class="mb-2.5 text-xs text-[var(--warning)]">{{ outlierCount() }} {{ outlierCount() === 1 ? 'source' : 'sources' }} above top-10 avg</div>
   }
 
-  @if (segmentRows().length) {
-    <p class="mt-3.5 mb-1 text-xs text-[var(--muted)]">Over time - % of total damage taken per 30s segment</p>
-    <wl-range-chart
-      [rows]="segmentRows()"
-      unit="pct"
-      [higherIsBetter]="false"
-      [maxVal]="segMaxVal()">
-    </wl-range-chart>
-  }
-
   @if (abilityRows().length) {
-    <p class="mt-3.5 mb-1 text-xs text-[var(--muted)]">By ability - % of total damage taken</p>
-    <wl-range-chart
-      [rows]="abilityRows()"
-      unit="pct"
-      [higherIsBetter]="false"
-      [maxVal]="maxVal()">
-    </wl-range-chart>
+    <div class="flex items-start">
+      <div class="flex flex-col shrink-0">
+        @for (row of abilityRows(); track row.spellId) {
+          <div class="flex h-[52px] items-center">
+            @if (row.spellId) {
+              <wl-spell-icon [spellId]="row.spellId"></wl-spell-icon>
+            }
+          </div>
+        }
+        <div class="h-7"></div>
+      </div>
+      <div class="min-w-0 flex-1">
+        <wl-range-chart
+          [rows]="abilityRows()"
+          unit="pct"
+          [higherIsBetter]="false"
+          [maxVal]="maxVal()"
+          [showLabels]="false"
+          [showLegend]="false">
+        </wl-range-chart>
+      </div>
+    </div>
   }
 </div>

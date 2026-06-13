@@ -25,7 +25,7 @@
 
 <!-- Offensive cooldowns -->
 <p class="mt-6 text-xl font-medium">Offensives</p>
-<p class="text-sm text-[var(--muted)]">How your offensive cooldowns compare to top parses — expand a row for details.</p>
+<p class="text-sm text-[var(--muted)]">How your offensive cooldowns compare to top parses - expand a row for details.</p>
 <wl-finding-list [entries]="cdEntries()"></wl-finding-list>
 @if (cdEntries().length === 0 && cdBuckets().ruleFindings.length === 0) {
   <div class="py-2.5 text-sm text-[var(--success)]">✓ No significant cooldown issues detected.</div>
@@ -56,9 +56,6 @@
 @if (data().player_dmg_taken_by_ability?.length || data().top_dtk_comparison?.length) {
   <wl-damage-taken
     [byAbility]="data().player_dmg_taken_by_ability || []"
-    [total]="data().player_total_dmg_taken || 0"
-    [topComparison]="data().top_dtk_comparison || []"
-    [segmentPcts]="data().player_dmg_taken_segment_pcts || []"
-    [topSegments]="data().top_dtk_segments || []">
+    [topComparison]="data().top_dtk_comparison || []">
   </wl-damage-taken>
 }
