@@ -9,15 +9,14 @@ type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
 interface WclGearItem { id?: number | string; name?: string; permanentEnchant?: number | string; permanentEnchantName?: string; }
 interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
-type WclTalentTree = { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]> };
-type WclTalents = string | Array<{ talentID?: number; id?: number }> | WclTalentTree;
+interface WclTalentTree { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]>; }
 interface WclRankEntry {
   startTime?: number;
   spec?: string;
   class?: number;
   report?: { code?: string };
   gear?: WclGearItem[];
-  talents?: WclTalents;
+  talents?: WclTalentTree;
 }
 
 const API_URL = 'https://www.warcraftlogs.com/api/v2/user';
@@ -106,10 +105,8 @@ export class WclApiService {
   }
 
   async getPlayerDetails(code: string, fightId: number): Promise<Record<number | string, string>> {
-    const d = await this.query<{ reportData: { report: { playerDetails: string | { data?: { playerDetails?: PlayerDetailGroups } } } } }>(PD_Q, { code, fightIDs: [fightId] });
-    const raw = d.reportData.report.playerDetails;
-    const outer = (typeof raw === 'string' ? JSON.parse(raw) : raw) as { data?: { playerDetails?: PlayerDetailGroups } } & PlayerDetailGroups;
-    const details: PlayerDetailGroups = outer?.data?.playerDetails ?? outer ?? {};
+    const d = await this.query<{ reportData: { report: { playerDetails: { data: { playerDetails: PlayerDetailGroups } } } } }>(PD_Q, { code, fightIDs: [fightId] });
+    const details = d.reportData.report.playerDetails.data.playerDetails;
     const map: Record<number | string, string> = {};
     for (const role of ['dps', 'healers', 'tanks', 'unknown']) {
       for (const p of (details[role] || [])) {
@@ -197,66 +194,57 @@ export class WclApiService {
       (r.startTime || 0) > (best.startTime || 0) ? r : best
     );
 
-    const gear = this._extractCombatantInfo(mostRecent);
+    const { trinkets, enchants } = this._extractGear(mostRecent);
+    const talent_key = this._talentKeyV2(mostRecent.talents);
     const specPart = mostRecent.spec || '';
     const className = CLASS_NAMES[mostRecent.class ?? -1] || '';
     const fullSpec = specPart && className ? specPart + className : specPart;
 
-    const enchantIds = [...new Set(gear.enchants!.filter(e => e.id).map(e => e.id))];
+    const enchantIds = [...new Set(enchants.filter(e => e.id).map(e => e.id))];
     if (enchantIds.length) {
       try {
         const parts = enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`).join(' ');
         const encD = await this.query<{ gameData: Record<string, { id: number; name: string }> }>(`query{gameData{${parts}}}`);
         const gd = encD?.gameData || {};
-        for (const e of gear.enchants!) {
+        for (const e of enchants) {
           if (!e.name && e.id) e.name = gd[`e${e.id}`]?.name || '';
         }
       } catch { /* enchant names are non-critical */ }
     }
 
-    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, ...gear };
+    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants };
   }
 
-  private _extractCombatantInfo(entry: WclRankEntry): Partial<CharacterGear> {
-    if (!entry) return { talent_key: '', trinkets: [], enchants: [] };
-    const gearArr = entry.gear || [];
-    const talentsR = entry.talents;
-    const trinkets: CharacterGear['trinkets'] = [];
-    const enchants: CharacterGear['enchants'] = [];
-
-    gearArr.forEach((item, idx) => {
+  /** Trinkets (gear slots 12/13) and permanent enchants from a ranking's combatant info. */
+  private _extractGear(entry: WclRankEntry): { trinkets: NonNullable<CharacterGear['trinkets']>; enchants: NonNullable<CharacterGear['enchants']> } {
+    const trinkets: NonNullable<CharacterGear['trinkets']> = [];
+    const enchants: NonNullable<CharacterGear['enchants']> = [];
+    (entry.gear || []).forEach((item, idx) => {
       if (item?.id == null) return;
       const id = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
-      const name = item.name || '';
-      if (idx === 12 || idx === 13) trinkets!.push({ slot: idx, id, name });
+      if (idx === 12 || idx === 13) trinkets.push({ slot: idx, id, name: item.name || '' });
       const enc = item.permanentEnchant;
       if (enc) {
         const eid = typeof enc === 'string' ? parseInt(enc, 10) : enc;
-        enchants!.push({ slot: idx, id: eid, name: item.permanentEnchantName || '' });
+        enchants.push({ slot: idx, id: eid, name: item.permanentEnchantName || '' });
       }
     });
+    return { trinkets, enchants };
+  }
 
-    let talentKey = '';
-    if (typeof talentsR === 'string' && talentsR) {
-      talentKey = talentsR;
-    } else if (Array.isArray(talentsR) && talentsR.length) {
-      const ids = talentsR.filter(t => t?.talentID || t?.id).map(t => (t.talentID ?? t.id)!);
-      if (ids.length) talentKey = 'v1:' + [...ids].sort().join(',');
-    } else if (talentsR && typeof talentsR === 'object' && !Array.isArray(talentsR)) {
-      const ids: number[] = [];
-      for (const section of [talentsR.class, talentsR.spec]) {
-        if (!section) continue;
-        for (const rowArr of Object.values(section)) {
-          if (!Array.isArray(rowArr)) continue;
-          for (const e of rowArr) {
-            const nid = e?.node?.nodeId ?? e?.nodeId;
-            if (nid != null) ids.push(nid);
-          }
+  /** Midnight talent tree (from `encounterRankings`) → sorted `v2:` node-id key. */
+  private _talentKeyV2(talents: WclTalentTree | undefined): string {
+    if (!talents) return '';
+    const ids: number[] = [];
+    for (const section of [talents.class, talents.spec]) {
+      if (!section) continue;
+      for (const rowArr of Object.values(section)) {
+        for (const e of (rowArr || [])) {
+          const nid = e?.node?.nodeId ?? e?.nodeId;
+          if (nid != null) ids.push(nid);
         }
       }
-      if (ids.length) talentKey = 'v2:' + [...new Set(ids)].sort((a, b) => a - b).join(',');
     }
-
-    return { talent_key: talentKey, trinkets, enchants };
+    return ids.length ? 'v2:' + [...new Set(ids)].sort((a, b) => a - b).join(',') : '';
   }
 }

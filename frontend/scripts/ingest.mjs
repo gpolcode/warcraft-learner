@@ -298,12 +298,10 @@ async function getEncounters(wcl) {
 
 const TRINKET_INDICES = new Set([12, 13]);
 
-function extractCombatantInfo(rankingEntry) {
-  if (!rankingEntry) return { talent_key: '', trinkets: [], enchants: [] };
-
+// Trinkets (gear slots 12/13) and permanent enchants. Gear shape is identical
+// across both ranking APIs, so this is shared.
+function extractGear(rankingEntry) {
   const gear = rankingEntry.gear || [];
-  const talentsRaw = rankingEntry.talents;
-
   const trinkets = [];
   const enchants = [];
   for (let idx = 0; idx < gear.length; idx++) {
@@ -322,38 +320,36 @@ function extractCombatantInfo(rankingEntry) {
       enchants.push({ slot: idx, id: encId, name: item.permanentEnchantName || '' });
     }
   }
+  return { trinkets, enchants };
+}
 
-  let talentKey = '';
-  if (typeof talentsRaw === 'string') {
-    talentKey = talentsRaw;
-  } else if (Array.isArray(talentsRaw) && talentsRaw.length > 0) {
-    // Old WCL format: [{talentID: N, points: P}]
-    const ids = talentsRaw
-      .filter(t => t)
-      .map(t => String(t.talentID || t.id || ''))
-      .filter(x => x)
-      .sort();
-    talentKey = 'v1:' + ids.join(',');
-  } else if (talentsRaw && typeof talentsRaw === 'object') {
-    // Midnight format: {class: {row: [{node: {nodeId: N}}]}, spec: {...}}
-    const nodeIds = [];
-    for (const sectionKey of ['class', 'spec']) {
-      const section = talentsRaw[sectionKey] || {};
-      if (typeof section === 'object') {
-        for (const rowNodes of Object.values(section)) {
-          if (Array.isArray(rowNodes)) {
-            for (const entry of rowNodes) {
-              const nid = (entry.node || {}).nodeId;
-              if (nid) nodeIds.push(String(nid));
-            }
-          }
-        }
+// `characterRankings` talents — old WCL format: [{talentID: N, points: P}].
+function talentKeyV1(talents) {
+  if (!Array.isArray(talents) || !talents.length) return '';
+  const ids = talents
+    .filter(t => t)
+    .map(t => String(t.talentID || t.id || ''))
+    .filter(x => x)
+    .sort();
+  return ids.length ? 'v1:' + ids.join(',') : '';
+}
+
+// `encounterRankings` talents — Midnight format: {class:{row:[{node:{nodeId}}]}, spec:{...}}.
+function talentKeyV2(talents) {
+  if (!talents || typeof talents !== 'object') return '';
+  const nodeIds = [];
+  for (const sectionKey of ['class', 'spec']) {
+    const section = talents[sectionKey] || {};
+    if (typeof section !== 'object') continue;
+    for (const rowNodes of Object.values(section)) {
+      if (!Array.isArray(rowNodes)) continue;
+      for (const entry of rowNodes) {
+        const nid = (entry.node || {}).nodeId;
+        if (nid) nodeIds.push(String(nid));
       }
     }
-    talentKey = 'v2:' + nodeIds.sort().join(',');
   }
-
-  return { talent_key: talentKey, trinkets, enchants };
+  return nodeIds.length ? 'v2:' + nodeIds.sort().join(',') : '';
 }
 
 async function fetchV2Talent(wcl, name, serverSlug, serverRegion, encounterId) {
@@ -368,7 +364,7 @@ async function fetchV2Talent(wcl, name, serverSlug, serverRegion, encounterId) {
     const ranks = (rankingsData.ranks || []);
     if (!ranks.length) return '';
     const mostRecent = ranks.reduce((a, b) => (a.startTime || 0) > (b.startTime || 0) ? a : b);
-    return extractCombatantInfo(mostRecent).talent_key || '';
+    return talentKeyV2(mostRecent.talents);
   } catch {
     return '';
   }
@@ -406,9 +402,10 @@ async function fetchTopRankings(wcl, spec, encounterId, count = 10) {
   );
 
   return rankings.map((r, i) => {
-    const ci = { ...r };
-    if (talentKeys[i]) ci.talents = talentKeys[i];
     const [serverSlug, serverRegion] = slugsFor(r);
+    // Prefer the Midnight `v2:` key from encounterRankings; fall back to the
+    // characterRankings `v1:` key only if the per-player v2 query came up empty.
+    const talent_key = talentKeys[i] || talentKeyV1(r.talents);
     return {
       rank: i + 1,
       player: r.name,
@@ -419,7 +416,7 @@ async function fetchTopRankings(wcl, spec, encounterId, count = 10) {
       server: (r.server || {}).name,
       server_slug: serverSlug,
       server_region: serverRegion,
-      combatant_info: ci,
+      combatant_info: { talent_key, ...extractGear(r) },
     };
   });
 }
@@ -675,9 +672,8 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   if (!fight) return null;
 
   const actors = report.masterData.actors;
-  let player = playerName ? actors.find(a => a.name === playerName) : null;
-  if (!player) player = actors.find(a => a.subType === spec);
-  if (!player) return null;
+  const player = actors.find(a => a.name === playerName);
+  if (!player) throw new Error(`Player "${playerName}" not found in report ${reportCode} (fight ${fightId}).`);
 
   const start = fight.startTime;
   const end = fight.endTime;
@@ -780,7 +776,8 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   const burstWindows = findBurstWindows(damageEvents, start, cdSummary, specCds);
 
   // Gear data from combatant info
-  const gearData = combatantInfo ? extractCombatantInfo(combatantInfo) : {};
+  // combatant_info already carries parsed { talent_key, trinkets, enchants } from fetchTopRankings.
+  const gearData = combatantInfo || {};
 
   // Defensive tracking
   // Build buff window lookup: Map<spell_id, [[start_s, end_s|null], ...]>
