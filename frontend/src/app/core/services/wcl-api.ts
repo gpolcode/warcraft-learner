@@ -42,6 +42,9 @@ query($code:String!,$fightIDs:[Int]!){
   reportData{report(code:$code){playerDetails(fightIDs:$fightIDs)}}
 }`;
 
+const FIGHTS_Q = `
+query($code:String!){reportData{report(code:$code){fights(killType:All){id}}}}`;
+
 const EVENTS_Q = `
 query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$startTime:Float,$endTime:Float){
   reportData{report(code:$code){
@@ -167,14 +170,17 @@ export class WclApiService {
     if (!reports.length) throw new Error('No recent WCL reports found for this character.');
     sourceReport = reports[0].code;
 
+    const target = char.name.toLowerCase();
     for (const rep of reports.slice(0, 3)) {
       try {
-        const rd = await this.getReport(rep.code);
-        const fights = rd.fights || [];
+        const fd = await this.query<{ reportData: { report: { fights: Array<{ id: number }> } } }>(FIGHTS_Q, { code: rep.code });
+        const fights = fd.reportData.report.fights || [];
         if (!fights.length) continue;
         const specMap = await this.getPlayerDetails(rep.code, fights[0].id);
-        const actor = (rd.masterData?.actors || []).find(a => a.name.toLowerCase() === char.name.toLowerCase());
-        if (actor && specMap[actor.id]) { spec = specMap[actor.id]; sourceReport = rep.code; break; }
+        // playerDetails carries both `id -> spec` and `name_${id} -> name`; match by name.
+        const nameKey = Object.keys(specMap).find(k => k.startsWith('name_') && specMap[k].toLowerCase() === target);
+        const id = nameKey?.slice('name_'.length);
+        if (id && specMap[id]) { spec = specMap[id]; sourceReport = rep.code; break; }
       } catch { /* try next report */ }
     }
     return { name: char.name, spec, server: serverSlug, region: serverRegion, source_report: sourceReport };
