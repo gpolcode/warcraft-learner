@@ -1,54 +1,13 @@
-<p class="section-label">Defensives</p>
+<p class="text-xl font-medium">Defensives</p>
 
 <!-- Per-defensive findings -->
 @if (defEntries().length > 0) {
-  <div class="cd-list">
-    @for (entry of defEntries(); track entry.name) {
-      <mat-expansion-panel
-        [class.panel-warning]="entry.hasIssue && !entry.hasCritical"
-        [class.panel-critical]="entry.hasCritical"
-        [expanded]="entry.hasIssue"
-        [disabled]="!entry.hasIssue">
-        <mat-expansion-panel-header>
-          <mat-panel-title class="cd-panel-title">
-            <div class="cd-dot"
-                 [class.dot-warn]="entry.hasIssue && !entry.hasCritical"
-                 [class.dot-crit]="entry.hasCritical"></div>
-            @if (entry.spellId) {
-              <wl-spell-icon [spellId]="entry.spellId"></wl-spell-icon>
-            }
-            <span class="cd-name">{{ entry.name }}</span>
-          </mat-panel-title>
-          @if (entry.metaItems.length) {
-            <mat-panel-description class="cd-meta">
-              @for (item of entry.metaItems; track item; let last = $last) {
-                <span class="cd-meta-item">{{ item }}</span>{{ !last ? ' · ' : '' }}
-              }
-            </mat-panel-description>
-          }
-        </mat-expansion-panel-header>
-
-        <div class="cd-findings">
-          @for (f of entry.allFindings; track f.message) {
-            <div class="cd-issue">
-              @if (f.timestamp_ms != null) {
-                <span class="cd-issue-ts">{{ formatMs(f.timestamp_ms) }}</span>
-              }
-              <span class="cd-issue-msg">{{ f.message }}</span>
-              @if (f.details?.remedy) {
-                <div class="cd-remedy">{{ f.details!.remedy }}</div>
-              }
-            </div>
-          }
-        </div>
-      </mat-expansion-panel>
-    }
-  </div>
+  <wl-finding-list [entries]="defEntries()"></wl-finding-list>
 }
 
 <!-- Defensive windows: when top parsers use each defensive and how much damage they absorbed -->
 @if (defWindows().length > 0) {
   <p class="text-xl font-medium">Defensive Windows</p>
-  <p class="section-note">Each bar is the damage taken while the defensive was active, as a share of your total damage taken this fight - lower is better.</p>
+  <p class="text-sm text-[var(--muted)]">Each bar is the damage taken while the defensive was active, as a share of your total damage taken this fight - lower is better.</p>
   <wl-window-comparison [windows]="defWindows()" [higherIsBetter]="false"></wl-window-comparison>
 }

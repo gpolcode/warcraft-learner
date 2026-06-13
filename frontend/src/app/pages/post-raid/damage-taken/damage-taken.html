@@ -1,17 +1,17 @@
-<p class="section-label">Damage Taken</p>
-<p class="dtk-note">Charts show each source as a share of your total damage taken this fight - not raw damage - so they line up with the top-10 parse range.</p>
-<div class="dtk-section">
-  <div class="dtk-header">
+<p class="text-xl font-medium">Damage Taken</p>
+<p class="text-sm text-[var(--muted)]">Charts show each source as a share of your total damage taken this fight - not raw damage - so they line up with the top-10 parse range.</p>
+<div class="pb-2">
+  <div class="mb-2.5 flex items-center gap-3 text-xs">
     @if (total() > 0) {
-      <span class="dtk-total">Total taken: <strong>{{ total() | number }}</strong></span>
+      <span class="text-[var(--text)]">Total taken: <strong>{{ total() | number }}</strong></span>
     }
     @if (outlierCount()) {
-      <span class="outlier-note">{{ outlierCount() }} {{ outlierCount() === 1 ? 'source' : 'sources' }} above top-10 avg</span>
+      <span class="text-[var(--warning)]">{{ outlierCount() }} {{ outlierCount() === 1 ? 'source' : 'sources' }} above top-10 avg</span>
     }
   </div>
 
   @if (segmentRows().length) {
-    <p class="dtk-subhead">Over time - % of total damage taken per 30s segment</p>
+    <p class="mt-3.5 mb-1 text-xs text-[var(--muted)]">Over time - % of total damage taken per 30s segment</p>
     <wl-range-chart
       [rows]="segmentRows()"
       unit="pct"
@@ -21,7 +21,7 @@
   }
 
   @if (abilityRows().length) {
-    <p class="dtk-subhead">By ability - % of total damage taken</p>
+    <p class="mt-3.5 mb-1 text-xs text-[var(--muted)]">By ability - % of total damage taken</p>
     <wl-range-chart
       [rows]="abilityRows()"
       unit="pct"

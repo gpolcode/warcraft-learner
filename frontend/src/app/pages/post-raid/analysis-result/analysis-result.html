@@ -1,63 +1,25 @@
-<div class="result-header">
-  <h2>{{ data().player }} <span class="result-spec">{{ data().spec | formatSpec }}</span></h2>
+<div class="mb-4 flex flex-wrap items-center gap-3 border-b border-[var(--border)] pb-3">
+  <h2 class="m-0 text-lg font-semibold">{{ data().player }}</h2>
+  <span class="text-sm font-normal text-[var(--muted)]">{{ data().spec | formatSpec }}</span>
 </div>
 
 <!-- Cooldown panels -->
-<div class="cd-list">
-  @for (entry of cdEntries(); track entry.name) {
-    <mat-expansion-panel
-      [class.panel-warning]="entry.hasIssue && !entry.hasCritical"
-      [class.panel-critical]="entry.hasCritical"
-      [expanded]="entry.hasIssue"
-      [disabled]="!entry.hasIssue">
-      <mat-expansion-panel-header>
-        <mat-panel-title class="cd-panel-title">
-          <div class="cd-dot"
-               [class.dot-warn]="entry.hasIssue && !entry.hasCritical"
-               [class.dot-crit]="entry.hasCritical"></div>
-          @if (entry.spellId) {
-            <wl-spell-icon [spellId]="entry.spellId"></wl-spell-icon>
-          }
-          <span class="cd-name">{{ entry.name }}</span>
-        </mat-panel-title>
-        @if (entry.metaItems.length) {
-          <mat-panel-description class="cd-meta">
-            @for (item of entry.metaItems; track item; let last = $last) {
-              <span class="cd-meta-item">{{ item }}</span>{{ !last ? ' · ' : '' }}
-            }
-          </mat-panel-description>
-        }
-      </mat-expansion-panel-header>
-
-      <div class="cd-findings">
-        @for (f of entry.allFindings; track f.message) {
-          <div class="cd-issue">
-            @if (f.timestamp_ms != null) {
-              <span class="cd-issue-ts">{{ formatMs(f.timestamp_ms) }}</span>
-            }
-            <span class="cd-issue-msg">{{ f.message }}</span>
-            @if (f.details?.remedy) {
-              <div class="cd-remedy">{{ f.details!.remedy }}</div>
-            }
-          </div>
-        }
-      </div>
-    </mat-expansion-panel>
-  }
-  @if (cdEntries().length === 0 && cdBuckets().ruleFindings.length === 0) {
-    <div class="no-findings">✓ No significant cooldown issues detected.</div>
-  }
-</div>
+<wl-finding-list [entries]="cdEntries()"></wl-finding-list>
+@if (cdEntries().length === 0 && cdBuckets().ruleFindings.length === 0) {
+  <div class="py-2.5 text-sm text-[var(--success)]">✓ No significant cooldown issues detected.</div>
+}
 
 <!-- Rule violations -->
 @if (cdBuckets().ruleFindings.length) {
-  <p class="section-label" style="margin-top:18px">Rotation Rules</p>
-  <div class="rule-list">
+  <p class="mt-4 text-xl font-medium">Rotation Rules</p>
+  <div class="flex flex-col gap-1.5">
     @for (f of cdBuckets().ruleFindings; track f.message) {
-      <div class="rule-item" [class.sev-warning]="f.severity === 'warning'">
-        <span class="rule-item-msg">{{ f.message }}</span>
+      <div
+        class="rounded-lg border-l-[3px] bg-[var(--surface-alt)] px-3.5 py-2.5 text-sm"
+        [style.border-left-color]="f.severity === 'warning' ? 'var(--warning)' : 'var(--border)'">
+        <span class="block font-medium">{{ f.message }}</span>
         @if (f.details?.remedy) {
-          <div class="rule-remedy">{{ f.details!.remedy }}</div>
+          <div class="mt-1 text-xs text-[var(--muted)]">{{ f.details!.remedy }}</div>
         }
       </div>
     }

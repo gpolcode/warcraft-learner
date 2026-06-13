@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { AnalysisFinding, PlayerDefensive, BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { SpellIconComponent } from '../../../shared/components/spell-icon/spell-icon';
 import { IconCacheService } from '../../../core/services/icon-cache';
+import { FindingEntry, FindingListComponent } from '../../../shared/components/finding-list/finding-list';
 import {
   ComparisonWindow,
   WindowComparisonComponent,
@@ -28,9 +27,8 @@ function mmss(seconds: number): string {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensives-section',
-  imports: [MatExpansionModule, SpellIconComponent, WindowComparisonComponent],
+  imports: [FindingListComponent, WindowComparisonComponent],
   templateUrl: './defensives-section.html',
-  styleUrl: './defensives-section.scss',
 })
 export class DefensivesSectionComponent {
   private readonly icons = inject(IconCacheService);
@@ -41,7 +39,7 @@ export class DefensivesSectionComponent {
   readonly playerDefensiveWindows = input<PlayerBurstWindow[]>([]);
   readonly fightDuration = input<number>(0);
 
-  protected readonly defEntries = computed(() => {
+  protected readonly defEntries = computed<FindingEntry[]>(() => {
     const findings = this.defensiveFindings();
     const defensives = this.defensives();
     const byName: Record<string, CdBucket> = {};
@@ -76,17 +74,12 @@ export class DefensivesSectionComponent {
       }
       if (bucket.holds.length) metaItems.push(`${bucket.holds.length} hold tip${bucket.holds.length > 1 ? 's' : ''}`);
       return {
-        name, bucket, spellId: spellMap[name] ?? null,
+        name, spellId: spellMap[name] ?? null,
         hasCritical, hasIssue, metaItems,
-        allFindings: [...bucket.issues, ...bucket.holds],
+        findings: [...bucket.issues, ...bucket.holds],
       };
     });
   });
-
-  protected formatMs(ms: number | undefined): string {
-    if (ms == null) return '';
-    return mmss(ms / 1000);
-  }
 
   protected readonly defWindows = computed<ComparisonWindow[]>(() => {
     const fightDur = this.fightDuration();

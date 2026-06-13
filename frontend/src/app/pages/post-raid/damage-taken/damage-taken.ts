@@ -11,7 +11,6 @@ const SEGMENT_LENGTH_S = 30;
   selector: 'wl-damage-taken',
   imports: [DecimalPipe, RangeChartComponent],
   templateUrl: './damage-taken.html',
-  styleUrl: './damage-taken.scss',
 })
 export class DamageTakenComponent {
   private readonly icons = inject(IconCacheService);
