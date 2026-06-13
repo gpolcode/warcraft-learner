@@ -17,31 +17,41 @@ The codebase has two structural reasons for so many fallbacks:
 
 ---
 
-## 1. Statistical thresholds → hard-coded constants
+## 1. Statistical thresholds — fallbacks REMOVED (now bench-only by design)
 
-These are the "designed" fallbacks documented in `CLAUDE.md`'s *Analysis thresholds*
-table. The **primary** path uses top-parse `avg ± 2σ` from the encounter bench file;
-the **fallback** fires when the bench (or a specific per-CD benchmark field) is absent.
+> **Status:** The constant fallbacks in this section were **removed**. The goal is to
+> support every class/spec end-to-end, so missing-data cases are prevented *by design*
+> (every spec/encounter gets a bench file) rather than patched per-feature. These
+> findings now fire **only** when the encounter bench carries the relevant
+> `avg_*` **and** `stddev_*` values; otherwise the finding is simply skipped.
 
-| Concern | Primary (data-derived) | Fallback constant | Location |
+The **primary** path uses top-parse `avg ± 2σ` from the encounter bench file. There is
+no longer a hardcoded-constant fallback for any of these:
+
+| Concern | Primary (data-derived) | Old fallback (removed) | Location |
 |---|---|---|---|
-| First-cast / opener delay (offensive CD) | `avg_first_cast_s + 2·(stddev_first_cast_s ?? 10)` | flag if `firstS > 30s` | `analysis-core.ts:146-155` |
-| First-use delay (defensive) | `avg_first_cast_s + 2·(stddev_first_cast_s ?? 15)` | flag if `firstS > 90s` | `analysis-core.ts:347-358` |
-| Bloodlust alignment | `|offset − avg_bl_offset_s| > 2·(stddev_bl_offset_s ?? 5)` | binary in/out-of-BL-window check | `analysis-core.ts:159-176` |
-| Gap between CD uses (held past reset) | `avg_gap_s + 2·(stddev_gap_s ?? cooldown·0.2)` | flag if `gap > cooldown · 1.2` | `analysis-core.ts:181-190` (offensive), `362-373` (defensive) |
-| Downtime gap floor | `bench.downtime_threshold_ms` (p90 of pooled gaps) | `1500` ms | `analysis-core.ts:121` |
-| Cast-efficiency severity | `delta < −top_efficiency_stddev` → critical | `warning` severity (no benchmark) | `analysis-core.ts:223-230` |
-| Hold-suggestion tolerance | `target.stddev_s ?? 20`, floored at `15s` | `Math.max(… ?? 20, 15)` | `analysis-core.ts:198, 381` |
+| First-cast / opener delay (offensive CD) | `avg_first_cast_s + 2·stddev_first_cast_s` | ~~flag if `firstS > 30s`~~ | `analysis-core.ts` `_analyzeCore` |
+| First-use delay (defensive) | `avg_first_cast_s + 2·stddev_first_cast_s` | ~~flag if `firstS > 90s`~~ | `analysis-core.ts` `_analyzeDefensiveFindings` |
+| Gap between CD uses (held past reset) | `avg_gap_s + 2·stddev_gap_s` | ~~flag if `gap > cooldown · 1.2`~~ | offensive + defensive |
+| Downtime gap floor | `bench.downtime_threshold_ms` (p90 of pooled gaps) | ~~`1500` ms (`?? 1500`)~~ | `_analyzeCore` |
+| Cast-efficiency severity | `delta < −top_efficiency_stddev` → critical | ~~flat `warning` "no benchmark"~~ | `_analyzeCore` |
+| Hold-suggestion tolerance | `target.stddev_s` | ~~`Math.max(… ?? 20, 15)`~~ | offensive + defensive |
 
-**Why:** A late opener or a held cooldown is only meaningfully "late" relative to how
-top parsers play. When that comparison data is missing, the engine still wants to flag
-egregious cases, so it uses a conservative absolute threshold (30s opener, 90s
-defensive, cooldown×1.2 gap) chosen to only fire on clearly bad play.
+### Secondary `?? N` σ-fallbacks → replaced by ingestion-computed σ
 
-**Note on the `?? N` inside the primary path** (e.g. `stddev_first_cast_s ?? 10`):
-this is a *secondary* fallback — the bench has an average but is missing the standard
-deviation. A default σ keeps the ±2σ band from collapsing to zero (which would flag
-everything) or exploding.
+Previously the primary path itself carried a *secondary* fallback (e.g.
+`stddev_first_cast_s ?? 10`) for the case where the bench had an average but no standard
+deviation. This was caused by ingestion only computing σ when `length > 1`.
+
+**Fix:** ingestion (`ingest.mjs`) now computes σ whenever the matching mean exists —
+`stdev()` already returns `0` for a single sample — so `stddev_first_cast_s`,
+`stddev_gap_s`, `stddev_bl_offset_s`, hold-target `stddev_s`, and `top_efficiency_stddev`
+are non-null whenever their mean is. The engine reads the bench σ directly; all
+`?? 10 / ?? 15 / ?? 5 / ?? 20 / ?? cooldown·0.2` secondary fallbacks were removed.
+
+**Still present (intentionally):** the **Bloodlust alignment** binary in/out-of-window
+check (`analysis-core.ts` `_analyzeCore`) remains as the fallback when a CD has no
+`avg_bl_offset_s` benchmark — this was not in scope for removal.
 
 ---
 
@@ -161,7 +171,8 @@ Pervasive small fallbacks that prevent `NaN`/`undefined` from propagating:
 Most entries above are defensive guards. The ones that genuinely swap in a *different
 strategy* (and are therefore the most important to understand) are:
 
-1. **Statistical → constant thresholds** (§1) — the core "no benchmark" story.
+1. ~~**Statistical → constant thresholds** (§1)~~ — **removed**; these findings are now
+   bench-only and skipped when no bench data exists (missing data prevented by design).
 2. **Spec resolution cascade** (§2.1) — `playerDetails` → `subType`/name → Unknown → skip.
 3. **Talent `v1:`/`v2:` format branching** (§2.3).
 4. **Burst windows: CD-anchored → 8s sliding scan** (§3).

@@ -1184,7 +1184,7 @@ function syncEncounterFile(spec, encounterId) {
     }
   }
   const topAvgEfficiency = effVals.length ? round(mean(effVals)) : null;
-  const topEfficiencyStddev = effVals.length > 1 ? round(stdev(effVals)) : null;
+  const topEfficiencyStddev = effVals.length ? round(stdev(effVals)) : null;
 
   // Per-CD benchmarks
   const agg = new Map();
@@ -1219,7 +1219,7 @@ function syncEncounterFile(spec, encounterId) {
       if (times.length >= Math.max(2, entries.length * 0.4)) {
         holdTargets[String(castIdx)] = {
           target_s: round(median(times)),
-          stddev_s: round(times.length > 1 ? stdev(times) : 20.0),
+          stddev_s: round(stdev(times)),
           count: times.length,
           total_samples: entries.length,
         };
@@ -1234,11 +1234,11 @@ function syncEncounterFile(spec, encounterId) {
     perCdBenchmarks[cdName] = {
       sample_count: entries.length,
       avg_first_cast_s: topFirstCasts.length ? round(mean(topFirstCasts)) : null,
-      stddev_first_cast_s: topFirstCasts.length > 1 ? round(stdev(topFirstCasts)) : null,
+      stddev_first_cast_s: topFirstCasts.length ? round(stdev(topFirstCasts)) : null,
       avg_gap_s: allCdGaps.length ? round(mean(allCdGaps)) : null,
-      stddev_gap_s: allCdGaps.length > 1 ? round(stdev(allCdGaps)) : null,
+      stddev_gap_s: allCdGaps.length ? round(stdev(allCdGaps)) : null,
       avg_bl_offset_s: blOffsets.length ? round(mean(blOffsets)) : null,
-      stddev_bl_offset_s: blOffsets.length > 1 ? round(stdev(blOffsets)) : null,
+      stddev_bl_offset_s: blOffsets.length ? round(stdev(blOffsets)) : null,
       hold_targets: holdTargets,
       uses_per_min: benchUsesPerMin(entries),
       avg_uses: entries.length ? round(mean(entries.map(e => e.total_uses || 0))) : 0,
@@ -1317,7 +1317,7 @@ function syncEncounterFile(spec, encounterId) {
       if (times.length >= Math.max(2, entries.length * 0.4)) {
         holdTargets[String(castIdx)] = {
           target_s: round(median(times)),
-          stddev_s: round(times.length > 1 ? stdev(times) : 20.0),
+          stddev_s: round(stdev(times)),
           count: times.length,
           total_samples: entries.length,
         };
@@ -1332,9 +1332,9 @@ function syncEncounterFile(spec, encounterId) {
     perDefensiveBenchmarks[defName] = {
       sample_count: entries.length,
       avg_first_cast_s: topFirstCasts.length ? round(mean(topFirstCasts)) : null,
-      stddev_first_cast_s: topFirstCasts.length > 1 ? round(stdev(topFirstCasts)) : null,
+      stddev_first_cast_s: topFirstCasts.length ? round(stdev(topFirstCasts)) : null,
       avg_gap_s: allDefGaps.length ? round(mean(allDefGaps)) : null,
-      stddev_gap_s: allDefGaps.length > 1 ? round(stdev(allDefGaps)) : null,
+      stddev_gap_s: allDefGaps.length ? round(stdev(allDefGaps)) : null,
       hold_targets: holdTargets,
       avg_uses: avgUsesList.length ? round(mean(avgUsesList)) : 0,
       avg_uses_per_min: upmList.length ? round(mean(upmList), 2) : null,
