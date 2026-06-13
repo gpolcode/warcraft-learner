@@ -7,7 +7,7 @@ import { WclReport, CharacterInfo, CharacterGear, WclUserCharacter, WclEvent } f
 interface PlayerDetailEntry { id: number; type: string; name: string; specs?: Array<{ spec: string }>; }
 type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
-interface WclGearItem { id?: number | string; name?: string; permanentEnchant?: number | string; permanentEnchantName?: string; }
+interface WclGearItem { id?: number | string; name?: string; permanentEnchant?: number | string; permanentEnchantName?: string; gems?: Array<{ id?: number | string }>; }
 interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
 interface WclTalentTree { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]>; }
 interface WclRankEntry {
@@ -194,7 +194,7 @@ export class WclApiService {
       (r.startTime || 0) > (best.startTime || 0) ? r : best
     );
 
-    const { trinkets, enchants } = this._extractGear(mostRecent);
+    const { trinkets, enchants, gem_count } = this._extractGear(mostRecent);
     const talent_key = this._talentKeyV2(mostRecent.talents);
     const specPart = mostRecent.spec || '';
     const className = CLASS_NAMES[mostRecent.class ?? -1] || '';
@@ -213,13 +213,14 @@ export class WclApiService {
       }
     }
 
-    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants };
+    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants, gem_count };
   }
 
-  /** Trinkets (gear slots 12/13) and permanent enchants from a ranking's combatant info. */
-  private _extractGear(entry: WclRankEntry): { trinkets: NonNullable<CharacterGear['trinkets']>; enchants: NonNullable<CharacterGear['enchants']> } {
+  /** Trinkets (slots 12/13), permanent enchants and filled-socket count from a ranking's combatant info. */
+  private _extractGear(entry: WclRankEntry): { trinkets: NonNullable<CharacterGear['trinkets']>; enchants: NonNullable<CharacterGear['enchants']>; gem_count: number } {
     const trinkets: NonNullable<CharacterGear['trinkets']> = [];
     const enchants: NonNullable<CharacterGear['enchants']> = [];
+    let gem_count = 0;
     (entry.gear || []).forEach((item, idx) => {
       if (item?.id == null) return;
       const id = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
@@ -229,8 +230,11 @@ export class WclApiService {
         const eid = typeof enc === 'string' ? parseInt(enc, 10) : enc;
         enchants.push({ slot: idx, id: eid, name: item.permanentEnchantName || '' });
       }
+      for (const g of (item.gems || [])) {
+        if (g?.id != null) gem_count++;
+      }
     });
-    return { trinkets, enchants };
+    return { trinkets, enchants, gem_count };
   }
 
   /** Midnight talent tree (from `encounterRankings`) → sorted `v2:` node-id key. */

@@ -64,7 +64,7 @@
     }
 
     @if (selectedEncId() && !loadingBrief()) {
-      <!-- Gear / Talent / Trinket / Enchant cards -->
+      <!-- Gear / Talent / Trinket / Enchant / Gem cards -->
       @if (gearStats() || charGear()) {
         <div class="gear-grid">
           <!-- Talents -->
@@ -74,7 +74,19 @@
               <span class="gear-dot" [class]="ts.status"></span>
               <span class="gear-title">Talents</span>
             </div>
-            <p>{{ talentStatus(gearStats()).note }}</p>
+            <p class="gear-note">{{ ts.note }}</p>
+            @for (b of talentBuilds(); track b.label) {
+              <div class="gear-row">
+                <span class="gear-slot">{{ b.label }}</span>
+                <span>{{ b.pct }}% of top parsers</span>
+                @if (b.isPlayer) {
+                  <span class="tag-you">yours</span>
+                }
+                @if (b.link) {
+                  <a class="gear-top link" [href]="b.link" target="_blank" rel="noopener">view parse</a>
+                }
+              </div>
+            }
           </mat-card>
 
           <!-- Trinkets -->
@@ -105,22 +117,78 @@
           <!-- Enchants -->
           <mat-card class="gear-card">
             <div class="gear-card-head">
-              <span class="gear-dot ok"></span>
+              <span class="gear-dot" [class]="enchantDot()"></span>
               <span class="gear-title">Enchants</span>
             </div>
-            @if (charGear()) {
-              @for (enc of charGear()!.enchants || []; track enc.slot) {
+            @if (enchantRows().length) {
+              @for (row of enchantRows(); track row.slotName) {
                 <div class="gear-row">
-                  <span class="gear-slot">{{ slotName(enc.slot) }}</span>
-                  <span>{{ enc.name || 'Enchant #' + enc.id }}</span>
+                  <span class="gear-slot">{{ row.slotName }}</span>
+                  <span [class.missing]="row.status === 'warn'">{{ row.note }}</span>
                 </div>
               }
+            } @else {
+              <p class="gear-note">No enchant data yet.</p>
             }
           </mat-card>
+
+          <!-- Gems / sockets -->
+          @if (gemCheck(); as gem) {
+            <mat-card class="gear-card">
+              <div class="gear-card-head">
+                <span class="gear-dot" [class]="gem.status"></span>
+                <span class="gear-title">Sockets</span>
+              </div>
+              <div class="gear-row">
+                <span class="gear-slot">Gems</span>
+                <span [class.missing]="gem.status === 'warn'">{{ gem.count }} / {{ gem.expected }}</span>
+              </div>
+              <p class="gear-note">{{ gem.note }}</p>
+            </mat-card>
+          }
         </div>
       }
 
-      <!-- Brief: burst windows + CD guide -->
+      <!-- Cooldown plan -->
+      @if (cdPlan().length) {
+        <mat-card class="brief-card">
+          <p class="card-title">Cooldown plan</p>
+          @for (cd of cdPlan(); track cd.name) {
+            <div class="plan-item">
+              <div class="plan-head">{{ cd.name }}</div>
+              <div class="plan-meta">
+                @if (cd.openLabel) { <span class="chip">{{ cd.openLabel }}</span> }
+                @if (cd.usesLabel) { <span class="chip">{{ cd.usesLabel }}</span> }
+                @if (cd.blLabel) { <span class="chip bl">{{ cd.blLabel }}</span> }
+                @for (h of cd.holdLabels; track h) { <span class="chip hold">{{ h }}</span> }
+              </div>
+              @if (cd.rule) { <p class="plan-rule">{{ cd.rule }}</p> }
+            </div>
+          }
+        </mat-card>
+      }
+
+      <!-- Defensive plan -->
+      @if (defensivePlan().length) {
+        <mat-card class="brief-card">
+          <p class="card-title">Defensive plan</p>
+          @for (def of defensivePlan(); track def.name) {
+            <div class="plan-item">
+              <div class="plan-head">{{ def.name }}</div>
+              <div class="plan-meta">
+                @if (def.usesLabel) { <span class="chip">{{ def.usesLabel }}</span> }
+                @if (def.firstLabel) { <span class="chip">{{ def.firstLabel }}</span> }
+                @if (def.windowLabels.length) {
+                  <span class="chip def">Top windows: {{ def.windowLabels.join(', ') }}</span>
+                }
+              </div>
+              @if (def.rule) { <p class="plan-rule">{{ def.rule }}</p> }
+            </div>
+          }
+        </mat-card>
+      }
+
+      <!-- Brief: burst windows -->
       @if (bench()) {
         <mat-card class="brief-card">
           <div class="stats-bar">
@@ -144,6 +212,12 @@
               <div class="bw-row">
                 <span class="bw-time">{{ bw.time_s | formatDuration }}</span>
                 <span class="bw-cds">{{ bw.common_cds?.join(', ') || 'no tracked CD' }}</span>
+                @if (bw.window_length_s) {
+                  <span class="bw-len">{{ bw.window_length_s }}s</span>
+                }
+                @if (fmtDmg(bw.dmg_avg); as dmg) {
+                  <span class="bw-dmg">{{ dmg }}</span>
+                }
                 @if ((bw.avg_targets ?? 1) >= 2) {
                   <span class="bw-aoe">AoE</span>
                 }

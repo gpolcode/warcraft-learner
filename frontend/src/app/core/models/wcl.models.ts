@@ -57,6 +57,7 @@ export interface CharacterGear {
   trinkets?: Array<{ slot: number; id: number; name: string }>;
   enchants?: Array<{ slot: number; id: number; name: string }>;
   missing_enchant_slots?: number[];
+  gem_count?: number;
   message?: string;
 }
 

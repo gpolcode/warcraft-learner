@@ -176,6 +176,7 @@ List of raw parse samples. Source of truth for bench files.
 | `talent_key` | top-level | `v2:`-prefixed sorted talent node IDs (Midnight format) |
 | `trinkets` | top-level | `{slot, id, name}` for slots 12 and 13 |
 | `enchants` | top-level | `{slot, id, name}` for all enchanted slots |
+| `gems` | top-level | `{slot, id}` per socketed gem. Only the count is used (filled-socket check on `/pre`); gem choice is a sim question, so ids are not aggregated. Bench `gear.gems` = `{avg_count, max_count, sample_count}` |
 
 ### Rulebook JSON schema
 

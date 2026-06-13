@@ -65,14 +65,18 @@
 
   &.ok      { background: var(--success); }
   &.warn    { background: var(--warning); }
+  &.info    { background: var(--accent); }
   &.unknown { background: var(--muted); }
 }
 
 .gear-title { font-weight: 600; font-size: 13px; color: var(--text); }
 
+.gear-note { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+
 .gear-row {
   display: flex;
   gap: 8px;
+  align-items: center;
   font-size: 12px;
   padding: 4px 0;
   border-bottom: 1px solid var(--border);
@@ -82,7 +86,48 @@
 
 .gear-slot { color: var(--muted); min-width: 64px; flex-shrink: 0; }
 .gear-top  { font-size: 11px; color: var(--muted); }
+.gear-top.link, a.link { color: var(--accent); text-decoration: none; }
+.gear-top.link:hover, a.link:hover { text-decoration: underline; }
 .missing   { color: var(--critical); }
+
+.tag-you {
+  font-size: 10px;
+  color: var(--gold, var(--accent));
+  border: 1px solid var(--gold, var(--accent));
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.plan-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child { border-bottom: none; }
+}
+
+.plan-head { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+
+.plan-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-variant-numeric: tabular-nums;
+
+  &.bl   { color: var(--accent); border-color: var(--accent); }
+  &.hold { color: var(--warning); border-color: var(--warning); }
+  &.def  { color: var(--text); }
+}
+
+.plan-rule { font-size: 12px; color: var(--muted); margin: 6px 0 0; line-height: 1.4; }
 
 .brief-card { padding: 16px; }
 
@@ -111,4 +156,6 @@
 
 .bw-time { color: var(--accent); font-variant-numeric: tabular-nums; min-width: 44px; font-weight: 600; }
 .bw-cds  { flex: 1; color: var(--text); }
+.bw-len  { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bw-dmg  { font-size: 11px; color: var(--text); font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
 .bw-aoe  { font-size: 10px; color: var(--warning); border: 1px solid var(--warning); border-radius: 4px; padding: 1px 4px; }

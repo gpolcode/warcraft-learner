@@ -25,6 +25,44 @@ const SLOT_NAMES: Record<number, string> = {
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
 };
 
+interface CdPlanItem {
+  name: string;
+  openLabel: string | null;
+  usesLabel: string | null;
+  blLabel: string | null;
+  holdLabels: string[];
+  rule: string | null;
+}
+
+interface DefPlanItem {
+  name: string;
+  usesLabel: string | null;
+  firstLabel: string | null;
+  windowLabels: string[];
+  rule: string | null;
+}
+
+interface EnchantRow {
+  slotName: string;
+  status: 'ok' | 'warn' | 'info';
+  note: string;
+}
+
+interface TalentBuildRow {
+  pct: number;
+  isPlayer: boolean;
+  link: string | null;
+  playerName: string;
+  label: string;
+}
+
+interface GemCheck {
+  count: number;
+  expected: number;
+  status: 'ok' | 'warn';
+  note: string;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
@@ -58,6 +96,134 @@ export class PreFightComponent implements OnInit {
   protected readonly loadingBrief = signal(false);
   protected readonly error = signal('');
   protected readonly gearStats = computed(() => this.bench()?.gear ?? null);
+
+  // Cooldown game plan: target opener timing, expected uses, BL alignment and
+  // hold targets per major cooldown, drawn from the top-parse benchmarks.
+  protected readonly cdPlan = computed<CdPlanItem[]>(() => {
+    const rb = this.rulebook();
+    if (!rb?.major_cooldowns?.length) return [];
+    const benchmarks = this.bench()?.per_cd_benchmarks ?? {};
+    const cds = [...rb.major_cooldowns].sort((a, b) => {
+      const pa = a.opener_priority ?? 99;
+      const pb = b.opener_priority ?? 99;
+      return pa !== pb ? pa - pb : a.name.localeCompare(b.name);
+    });
+    return cds.map(cd => {
+      const b = benchmarks[cd.name];
+      const openLabel = b?.avg_first_cast_s != null
+        ? `First cast ~${this._fmtTime(b.avg_first_cast_s)}` : null;
+      let usesLabel: string | null = null;
+      if (b?.avg_uses) {
+        const upm = b.uses_per_min?.avg ?? b.avg_uses_per_min ?? null;
+        usesLabel = `~${Math.round(b.avg_uses)} use${b.avg_uses >= 1.5 ? 's' : ''}`
+          + (upm ? ` (${upm.toFixed(1)}/min)` : '');
+      }
+      let blLabel: string | null = null;
+      if (cd.align_with_bloodlust) {
+        blLabel = b && b.bl_pct >= 40
+          ? `Align with Bloodlust - ${b.bl_pct}% of top parsers do`
+          : 'Align with Bloodlust';
+      }
+      const holdLabels: string[] = [];
+      if (b?.majority_hold && b.hold_targets) {
+        const entries = Object.entries(b.hold_targets).sort((a, c) => Number(a[0]) - Number(c[0]));
+        for (const [idx, h] of entries) {
+          holdLabels.push(`Hold cast #${Number(idx) + 1} until ~${this._fmtTime(h.target_s)}`);
+        }
+      }
+      return { name: cd.name, openLabel, usesLabel, blLabel, holdLabels, rule: cd.usage_rule ?? null };
+    });
+  });
+
+  // Defensive plan: when top parsers fire each defensive and how often.
+  protected readonly defensivePlan = computed<DefPlanItem[]>(() => {
+    const rb = this.rulebook();
+    if (!rb?.defensives?.length) return [];
+    const benchmarks = this.bench()?.per_defensive_benchmarks ?? {};
+    const windows = this.bench()?.defensive_windows ?? [];
+    return rb.defensives.map(def => {
+      const b = benchmarks[def.name];
+      const windowLabels = windows
+        .filter(w => (w.defensive_name ?? w.common_defensives?.[0]) === def.name)
+        .sort((a, c) => a.time_s - c.time_s)
+        .map(w => this._fmtTime(w.time_s));
+      const usesLabel = b?.avg_uses
+        ? `~${Math.round(b.avg_uses)} use${b.avg_uses >= 1.5 ? 's' : ''}` : null;
+      const firstLabel = b?.avg_first_cast_s != null
+        ? `First use ~${this._fmtTime(b.avg_first_cast_s)}` : null;
+      return { name: def.name, usesLabel, firstLabel, windowLabels, rule: def.usage_rule ?? null };
+    }).filter(d => d.usesLabel || d.firstLabel || d.windowLabels.length || d.rule);
+  });
+
+  // Enchants: flag slots the player left un-enchanted that top parsers consider
+  // mandatory, and surface where the player differs from the consensus enchant.
+  protected readonly enchantRows = computed<EnchantRow[]>(() => {
+    const gear = this.charGear();
+    const stats = this.gearStats();
+    const topEnch = stats?.enchants ?? {};
+    const playerEnch = gear?.enchants ?? [];
+    if (!Object.keys(topEnch).length && !playerEnch.length) return [];
+    const slots = new Set<number>();
+    for (const k of Object.keys(topEnch)) slots.add(Number(k));
+    for (const e of playerEnch) slots.add(e.slot);
+
+    const rows: EnchantRow[] = [];
+    for (const slot of [...slots].sort((a, b) => a - b)) {
+      const top = topEnch[slot]?.[0];
+      const topName = top ? (top.name || `Enchant #${top.id}`) : '';
+      const player = playerEnch.find(e => e.slot === slot);
+      if (!player) {
+        if (top && top.pct >= 70) {
+          rows.push({ slotName: this.slotName(slot), status: 'warn',
+            note: `Missing - ${top.pct}% of top parsers enchant this slot` });
+        } else if (top && top.pct >= 40) {
+          rows.push({ slotName: this.slotName(slot), status: 'info',
+            note: `Optional - ${top.pct}% of top parsers enchant here` });
+        }
+        continue;
+      }
+      const playerName = player.name || `Enchant #${player.id}`;
+      if (top && player.id === top.id) {
+        rows.push({ slotName: this.slotName(slot), status: 'ok', note: `${playerName} - matches top (${top.pct}%)` });
+      } else if (top) {
+        rows.push({ slotName: this.slotName(slot), status: 'info', note: `${playerName} - top parsers use ${topName} (${top.pct}%)` });
+      } else {
+        rows.push({ slotName: this.slotName(slot), status: 'ok', note: playerName });
+      }
+    }
+    return rows;
+  });
+
+  protected readonly enchantDot = computed(() =>
+    this.enchantRows().some(r => r.status === 'warn') ? 'warn' : 'ok');
+
+  // Top-parse talent builds with a link to an example parse running each one.
+  protected readonly talentBuilds = computed<TalentBuildRow[]>(() => {
+    const builds = this.gearStats()?.talent_builds ?? [];
+    if (!builds.length) return [];
+    const playerKey = this.charGear()?.talent_key ?? '';
+    return builds.map((b, i) => ({
+      pct: b.pct,
+      isPlayer: !!playerKey && b.key === playerKey,
+      link: b.report_code ? `https://www.warcraftlogs.com/reports/${b.report_code}#fight=${b.fight_id ?? 0}` : null,
+      playerName: b.player_name || '',
+      label: i === 0 ? 'Most common build' : `Alt build ${i}`,
+    }));
+  });
+
+  // Filled-socket check: compare the player's gem count to the top-parse total.
+  protected readonly gemCheck = computed<GemCheck | null>(() => {
+    const gems = this.gearStats()?.gems;
+    const count = this.charGear()?.gem_count;
+    if (!gems || count == null) return null;
+    const expected = gems.max_count;
+    if (count >= expected) {
+      return { count, expected, status: 'ok', note: `All ${expected} socket${expected === 1 ? '' : 's'} filled` };
+    }
+    const diff = expected - count;
+    return { count, expected, status: 'warn',
+      note: `${diff} socket${diff === 1 ? '' : 's'} may be unfilled - top parsers gem ${expected}` };
+  });
 
   async ngOnInit(): Promise<void> {
     if (!this.auth.isLoggedIn()) return;
@@ -155,6 +321,19 @@ export class PreFightComponent implements OnInit {
   }
 
   protected slotName(slot: number): string { return SLOT_NAMES[slot] || `Slot ${slot}`; }
+
+  private _fmtTime(s: number): string {
+    const m = Math.floor(s / 60);
+    const sec = Math.round(s % 60);
+    return `${m}:${String(sec).padStart(2, '0')}`;
+  }
+
+  protected fmtDmg(n: number | undefined | null): string {
+    if (!n) return '';
+    if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+    if (n >= 1e3) return `${Math.round(n / 1e3)}K`;
+    return String(Math.round(n));
+  }
 
   protected talentStatus(topStats: EncounterGearStats | null): { status: string; note: string } {
     if (!topStats?.talent_builds?.length) return { status: 'unknown', note: 'No talent data yet.' };
