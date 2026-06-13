@@ -6,6 +6,12 @@
 
 .input-card { padding: 20px; margin-bottom: 20px; }
 
+@media (max-width: 600px) {
+  .container { padding: 16px 8px 48px; }
+  .input-card { padding: 14px; }
+  .result-card { padding: 14px; }
+}
+
 .input-row {
   display: flex;
   gap: 12px;

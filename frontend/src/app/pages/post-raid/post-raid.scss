@@ -9,6 +9,13 @@
   padding: 20px;
 }
 
+@media (max-width: 600px) {
+  .container { padding: 16px 8px 48px; }
+  .input-card { padding: 14px; }
+  .result-card { padding: 14px; }
+  .selector-row { flex-direction: column; gap: 0; }
+}
+
 .full-width { width: 100%; }
 
 .selectors {

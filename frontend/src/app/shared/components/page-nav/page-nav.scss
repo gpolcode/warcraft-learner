@@ -1,17 +1,16 @@
 .page-nav {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  // mat-toolbar defaults to a tall bar; keep it compact like the rest of the UI.
+  height: auto;
+  min-height: 0;
   padding: 4px 16px;
-  position: relative;
   gap: 4px;
 }
 
+.nav-spacer { flex: 1 1 auto; }
+
 .nav-brand {
-  position: absolute;
-  left: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -35,11 +34,6 @@
   }
 
   &:hover &__name { color: var(--text); }
-
-  // Wordmark would crowd the centered links on narrow viewports.
-  @media (max-width: 600px) {
-    &__name { display: none; }
-  }
 }
 
 .nav-links {
@@ -55,20 +49,13 @@
   }
 }
 
-.nav-right {
-  position: absolute;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+// The hamburger menu only appears on narrow viewports.
+.nav-menu-trigger { display: none; }
 
-.auth-btn {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-
-  &--connected {
-    color: var(--success);
-  }
+@media (max-width: 600px) {
+  .nav-brand__name { display: none; }
+  .nav-links { display: none; }
+  .nav-menu-trigger { display: inline-flex; }
+  // Collapse the auth button to its icon to save horizontal space.
+  .nav-auth__label { display: none; }
 }
