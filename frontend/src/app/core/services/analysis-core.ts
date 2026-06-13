@@ -294,7 +294,7 @@ function _findPlayerBurstWindows(
   const totalDmg = sorted.reduce((s, e) => s + (e.amount || 0) + (e.absorbed || 0), 0) || 1;
 
   return topBurstWindows.map(bw => {
-    const winLenS = bw.window_length_s ?? 8;
+    const winLenS = bw.window_length_s;
     const winEvents = sorted.filter(e => {
       const tS = (e.timestamp - fStart) / 1000;
       return tS >= bw.time_s && tS < bw.time_s + winLenS;
@@ -390,7 +390,7 @@ function _computePlayerDefensiveWindows(
   const totalDmg = sorted.reduce((s, e) => s + (e.amount || 0) + (e.absorbed || 0), 0) || 1;
 
   return topDefWindows.map(dw => {
-    const winLenS = dw.window_length_s ?? 8;
+    const winLenS = dw.window_length_s;
     const winEvents = sorted.filter(e => {
       const tS = (e.timestamp - fStart) / 1000;
       return tS >= dw.time_s && tS < dw.time_s + winLenS;

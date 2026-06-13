@@ -423,52 +423,6 @@ async function fetchTopRankings(wcl, spec, encounterId, count = 10) {
 
 // ── Burst window analysis ─────────────────────────────────────────────────────
 
-function findSignificantWindows(hitsTs, hitsDmg, hitsAids, fightStartMs, total, windowMs, minPctThreshold) {
-  const n = hitsTs.length;
-  let j = 0;
-  let windowSum = 0;
-  const candidates = [];
-
-  for (let i = 0; i < n; i++) {
-    while (j < n && hitsTs[j] <= hitsTs[i] + windowMs) {
-      windowSum += hitsDmg[j];
-      j++;
-    }
-    candidates.push([hitsTs[i], windowSum]);
-    windowSum -= hitsDmg[i];
-  }
-
-  const minDmg = total * minPctThreshold;
-  candidates.sort((a, b) => b[1] - a[1]);
-
-  const selected = [];
-  for (const [ts, dmg] of candidates) {
-    if (dmg < minDmg) break;
-    if (selected.some(s => Math.abs(ts - (fightStartMs + s.time_s * 1000)) < windowMs)) continue;
-    const tEnd = ts + windowMs;
-    const abilityDmg = new Map();
-    for (let k = 0; k < n; k++) {
-      if (hitsTs[k] < ts || hitsTs[k] > tEnd) continue;
-      if (hitsAids[k]) {
-        abilityDmg.set(hitsAids[k], (abilityDmg.get(hitsAids[k]) || 0) + hitsDmg[k]);
-      }
-    }
-    const topAbilities = [...abilityDmg.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([sid, d]) => ({ spell_id: sid, damage: d, pct: dmg ? Math.round(d / dmg * 1000) / 1000 : 0 }));
-
-    selected.push({
-      time_s: Math.round((ts - fightStartMs) / 100) / 10,
-      pct_of_total: Math.round(dmg / total * 1000) / 1000,
-      window_damage: dmg,
-      total_damage: total,
-      ability_breakdown: topAbilities,
-    });
-  }
-  return selected.sort((a, b) => a.time_s - b.time_s);
-}
-
 function findBurstWindows(damageEvents, fightStartMs, cdSummary, specCds, minPctThreshold = 0.03) {
   const hits = damageEvents
     .filter(e => e.type === 'damage' && (e.amount || 0) + (e.absorbed || 0) > 0)
@@ -489,16 +443,7 @@ function findBurstWindows(damageEvents, fightStartMs, cdSummary, specCds, minPct
       rawWins.push({ startS: castS, endS: castS + dur, cdNames: [cdEntry.name] });
     }
   }
-
-  // Fall back to 8s sliding window when no CD duration info is available
-  if (!rawWins.length) {
-    const fallback = findSignificantWindows(
-      hits.map(h => h[0]), hits.map(h => h[1]), hits.map(h => h[3]),
-      fightStartMs, total, 8000, minPctThreshold,
-    );
-    for (const w of fallback) { w.active_cds = []; w.target_count = 1; w.window_length_s = 8; }
-    return fallback;
-  }
+  if (!rawWins.length) return [];
 
   // Merge overlapping or near-adjacent windows (≤3s gap)
   rawWins.sort((a, b) => a.startS - b.startS);
@@ -618,7 +563,7 @@ function clusterDefensiveWindows(windows, totalSamples, mergeS = 20.0) {
       const base = clusterBaseStats(cl, totalSamples);
       result.push({
         ...base,
-        window_length_s: round(mean(cl.map(c => c.window_length_s || 5))),
+        window_length_s: round(mean(cl.map(c => c.window_length_s))),
         defensive_name: defensiveName,
         spell_id: cl[0].spell_id,
         common_defensives: [defensiveName],
@@ -1011,7 +956,7 @@ function clusterBurstWindows(windows, totalSamples, mergeS = 15.0) {
       .sort((a, b) => b[1] - a[1])
       .filter(([, cnt]) => cnt >= cl.length * 0.5)
       .map(([name]) => name);
-    const window_length_s = round(mean(cl.map(c => c.window_length_s || 8)));
+    const window_length_s = round(mean(cl.map(c => c.window_length_s)));
     result.push({ ...base, common_cds, avg_targets: round(mean(cl.map(c => c.target_count || 1))), window_length_s });
   }
   return result.sort((a, b) => a.time_s - b.time_s);

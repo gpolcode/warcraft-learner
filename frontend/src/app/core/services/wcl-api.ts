@@ -143,18 +143,12 @@ export class WclApiService {
   async fetchUserCharacters(): Promise<WclUserCharacter[]> {
     const d = await this.query<{ userData: { currentUser: { characters: Array<{ id: number; name: string; server: { slug: string; region: { slug: string } } }> } } }>(USER_CHARS_Q);
     const raw = d?.userData?.currentUser?.characters || [];
-    const chars: WclUserCharacter[] = raw.map(c => ({
+    return raw.map(c => ({
       id: c.id,
       name: c.name,
       serverSlug: c.server?.slug || '',
       serverRegion: c.server?.region?.slug || '',
     }));
-    try { localStorage.setItem('wcl_user_chars', JSON.stringify(chars)); } catch { /* ignore */ }
-    return chars;
-  }
-
-  getCachedUserChars(): WclUserCharacter[] {
-    try { return JSON.parse(localStorage.getItem('wcl_user_chars') || '[]') || []; } catch { return []; }
   }
 
   async charLookup(name: string, serverSlug: string, serverRegion: string): Promise<CharacterInfo> {
@@ -208,14 +202,15 @@ export class WclApiService {
 
     const enchantIds = [...new Set(enchants.filter(e => e.id).map(e => e.id))];
     if (enchantIds.length) {
+      let gd: Record<string, { id: number; name: string }> = {};
       try {
         const parts = enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`).join(' ');
         const encD = await this.query<{ gameData: Record<string, { id: number; name: string }> }>(`query{gameData{${parts}}}`);
-        const gd = encD?.gameData || {};
-        for (const e of enchants) {
-          if (!e.name && e.id) e.name = gd[`e${e.id}`]?.name || '';
-        }
-      } catch { /* enchant names are non-critical */ }
+        gd = encD?.gameData || {};
+      } catch { /* leave gd empty — any unresolved name surfaces as a visible marker below */ }
+      for (const e of enchants) {
+        if (!e.name && e.id) e.name = gd[`e${e.id}`]?.name || 'Unknown enchant';
+      }
     }
 
     return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants };

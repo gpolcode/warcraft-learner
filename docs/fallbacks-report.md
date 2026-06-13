@@ -106,18 +106,18 @@ code path handle both the old and new shapes.
 
 ---
 
-## 3. Burst-window detection → 8s sliding window
+## 3. Burst-window detection — 8s sliding window REMOVED
 
-- **`ingest.mjs:475-504`.**
-- Primary: build burst windows from each CD's cast times × the CD `duration` from the
-  rulebook.
-- Fallback: if no CD has duration data (`rawWins.length === 0`), run a blind **8-second
-  sliding window** significance scan and tag the windows with `active_cds: []`.
-- Client mirror at **`analysis-core.ts:307, 411`**: `window_length_s ?? 8` when sizing a
-  window for player damage attribution.
-- **Why:** Without rulebook durations there is no CD-anchored window to measure, so the
-  tool falls back to a purely statistical "where did damage spike" heuristic so the
-  Burst Windows card is never empty.
+- **`ingest.mjs` `findBurstWindows`.** Burst windows are built **only** from CD cast
+  times × the CD `duration`. If no CD has duration data, `findBurstWindows` returns `[]`
+  (no Burst Windows card) instead of running a blind sliding-window scan. The dead
+  `findSignificantWindows` helper was deleted.
+- Because every emitted window now carries `window_length_s`, that field is **required**
+  in the `BurstWindow` / `BurstWindowBench` / `DefensiveWindowBench` models and the
+  client `window_length_s ?? 8` fallbacks (engine + `burst-windows`/`defensives-section`
+  components) were removed — the value is read directly.
+- **Why:** "no data is not a use case to handle" — a spec/encounter without rulebook CD
+  durations shouldn't get a guessed statistical window; it gets nothing until ingested.
 
 ## 3b. Defensive window detection → cast-event fallback
 
@@ -139,8 +139,8 @@ empty/neutral value so the UI keeps working.
 |---|---|---|---|
 | `encounter.ts:13-32` | HTTP-fetch `encounters.json` / bench / rulebook | `[]` / `null` | Missing static data file (404) must not crash the page |
 | `wcl-api.ts:83-101` | GraphQL POST returns `data` | 401 → `auth.logout()` + "session expired"; other → "WCL API error (status)"; GraphQL errors → first message | Distinguish auth failure (needs re-login) from transient errors |
-| `wcl-api.ts:205-215` | `gameData.enchant(id)` name lookup | leave name `''` | Enchant **names** are cosmetic; analysis works on IDs |
-| `wcl-api.ts:152, 156-158` | `localStorage` read/write of cached chars | `'[]'` → `[]`; silent write failure | Private-mode / quota-denied browsers |
+| `wcl-api.ts` `getCharGear` | `gameData.enchant(id)` name lookup | **REMOVED** — unresolved names now display `"Unknown enchant"` (visible to the user) instead of `''` | Surface the gap rather than hide it |
+| ~~`localStorage` cached chars~~ | **REMOVED** — `getCachedUserChars` and the `wcl_user_chars` read/write/clear are gone; callers `await fetchUserCharacters()` and hold the result in a component field | Simpler: call the API instead of persisting a cache |
 | `analysis.worker.ts:6-11` | `computeAnalysis(input)` | `postMessage({ error })` | A compute exception reports back instead of killing the worker |
 | `icon-cache.ts:29-36` | cached icon URL | `null` | Spell not in `masterData.abilities` → UI renders text instead of an icon |
 
@@ -148,7 +148,8 @@ empty/neutral value so the UI keeps working.
 
 ## 5. Arithmetic & field-presence guards
 
-Pervasive small fallbacks that prevent `NaN`/`undefined` from propagating:
+Pervasive small fallbacks that prevent `NaN`/`undefined` from propagating. (Note: the
+`window_length_s ?? 8` sizing guards listed here previously were removed — see §3.)
 
 - **Divide-by-zero guards:** `… || 1` on denominators — `analysis-core.ts:304, 318,
   408, 422` (`winTotal || 1`, `totalDmg … || 1`).
@@ -181,8 +182,9 @@ strategy* (and are therefore the most important to understand) are:
    (throws) instead of falling back to `subType`/`'Unknown'`.
 3. **Talent `v1:`/`v2:`** (§2.3) — now two single-format functions per source API, not one
    branching parser; rankings carry the resolved key value.
-4. **Burst windows: CD-anchored → 8s sliding scan** (§3).
-5. **Defensive windows: buff pairs → cast events** (§3b).
+4. ~~**Burst windows: CD-anchored → 8s sliding scan** (§3)~~ — **removed**; CD-anchored
+   only, returns nothing without rulebook durations.
+5. **Defensive windows: buff pairs → cast events** (§3b) — retained (you said 3b is fine).
 6. **Character lookup: retry across 3 reports** (§2.4) — retained (tolerates deleted/private
    reports) but lightened to a fights-only query + name match in `playerDetails`.
 
