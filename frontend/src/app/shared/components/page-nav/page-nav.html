@@ -3,19 +3,17 @@
     <mat-icon>menu</mat-icon>
   </button>
 
-  @if (!isMobile()) {
-    <a routerLink="/" class="shell-brand" aria-label="warcraft-learner home">
-      <svg class="shell-brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <path class="shell-brand__shield" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-        <g class="shell-brand__bars">
-          <rect x="9.5" y="18" width="3" height="4" rx="1"/>
-          <rect x="14.5" y="14" width="3" height="8" rx="1"/>
-          <rect x="19.5" y="10" width="3" height="12" rx="1"/>
-        </g>
-      </svg>
-      <span class="shell-brand__name">warcraft-learner</span>
-    </a>
-  }
+  <a routerLink="/" class="shell-brand" aria-label="warcraft-learner home">
+    <svg class="shell-brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <path class="shell-brand__shield" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
+      <g class="shell-brand__bars">
+        <rect x="9.5" y="18" width="3" height="4" rx="1"/>
+        <rect x="14.5" y="14" width="3" height="8" rx="1"/>
+        <rect x="19.5" y="10" width="3" height="12" rx="1"/>
+      </g>
+    </svg>
+    <span class="shell-brand__name">warcraft-learner</span>
+  </a>
 
   <span class="shell-spacer"></span>
 
@@ -42,45 +40,24 @@
   </mat-menu>
 </mat-toolbar>
 
-<mat-sidenav-container class="shell-container" [autosize]="!isMobile()">
+<mat-sidenav-container class="shell-container">
   <mat-sidenav [mode]="sidenavMode()" [opened]="sidenavOpened()"
-               (openedChange)="onOpenedChange($event)"
-               [class.shell-rail-collapsed]="!showLabels()"
-               [style.width.px]="showLabels() ? 240 : 72">
-    @if (isMobile()) {
-      <a routerLink="/" class="shell-drawer-brand" (click)="onNavigate()"
-         aria-label="warcraft-learner home">
-        <svg class="shell-brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path class="shell-brand__shield" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-          <g class="shell-brand__bars">
-            <rect x="9.5" y="18" width="3" height="4" rx="1"/>
-            <rect x="14.5" y="14" width="3" height="8" rx="1"/>
-            <rect x="19.5" y="10" width="3" height="12" rx="1"/>
-          </g>
-        </svg>
-        <span class="shell-brand__name">warcraft-learner</span>
-      </a>
-      <mat-divider />
-    }
-
+               (openedChange)="onOpenedChange($event)">
     <mat-nav-list>
       <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
-         [activated]="pre.isActive" (click)="onNavigate()"
-         matTooltip="Pre-Fight" matTooltipPosition="right" [matTooltipDisabled]="showLabels()">
+         [activated]="pre.isActive" (click)="onNavigate()">
         <mat-icon matListItemIcon>lightbulb</mat-icon>
-        @if (showLabels()) { <span matListItemTitle>Pre-Fight</span> }
+        <span matListItemTitle>Pre-Fight</span>
       </a>
       <a mat-list-item routerLink="/live" routerLinkActive #live="routerLinkActive"
-         [activated]="live.isActive" (click)="onNavigate()"
-         matTooltip="Live" matTooltipPosition="right" [matTooltipDisabled]="showLabels()">
+         [activated]="live.isActive" (click)="onNavigate()">
         <mat-icon matListItemIcon>bolt_boost</mat-icon>
-        @if (showLabels()) { <span matListItemTitle>Live</span> }
+        <span matListItemTitle>Live</span>
       </a>
       <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"
-         [routerLinkActiveOptions]="{exact:true}" [activated]="post.isActive" (click)="onNavigate()"
-         matTooltip="Post-Raid" matTooltipPosition="right" [matTooltipDisabled]="showLabels()">
+         [routerLinkActiveOptions]="{exact:true}" [activated]="post.isActive" (click)="onNavigate()">
         <mat-icon matListItemIcon>analytics</mat-icon>
-        @if (showLabels()) { <span matListItemTitle>Post-Raid</span> }
+        <span matListItemTitle>Post-Raid</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>

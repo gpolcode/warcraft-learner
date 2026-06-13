@@ -1,4 +1,4 @@
-// The shell fills the viewport: fixed toolbar on top, sidenav + content below.
+// Shell scaffold: fixed toolbar on top, sidenav + content fill the rest.
 :host {
   display: flex;
   flex-direction: column;
@@ -15,10 +15,9 @@
 
 .shell-container { flex: 1; }
 
-// Brand wordmark + inlined logo. Fills are themed via SCSS (per project brand
-// guidelines) rather than presentation attributes.
-.shell-brand,
-.shell-drawer-brand {
+// Brand wordmark + inlined logo. SVG fills are themed via SCSS (project brand
+// guideline) rather than presentation attributes.
+.shell-brand {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -28,8 +27,6 @@
   font-size: 15px;
 }
 
-.shell-drawer-brand { padding: 12px 16px; }
-
 .shell-brand__mark {
   width: 24px;
   height: 24px;
@@ -38,23 +35,3 @@
 
 .shell-brand__shield { fill: var(--gold); }
 .shell-brand__bars { fill: var(--surface); }
-
-// Icon-only rail: shrink each row to a centered circle so the icon sits in the
-// middle of the narrow drawer with a circular active highlight (Keep-style),
-// instead of the default full-width, left-aligned pill. !important is required
-// to beat Material's token-driven sizing/margins.
-.shell-rail-collapsed ::ng-deep {
-  .mat-mdc-list-item {
-    width: 48px !important;
-    height: 48px !important;
-    margin: 4px auto !important;
-    padding: 0 !important;
-    border-radius: 50% !important;
-    justify-content: center;
-  }
-
-  .mat-mdc-list-item .mdc-list-item__start {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
