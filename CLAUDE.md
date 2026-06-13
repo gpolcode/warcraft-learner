@@ -14,6 +14,10 @@ The app is a **fully static Angular SPA** deployed on GitHub Pages. There is no 
   - The nav-bar logo (`shared/components/page-nav`) is the **same artwork inlined as SVG** in the template, so it themes with CSS vars. Set its fills via SCSS classes (`fill: var(--gold)` / `var(--surface)`) - **not** `fill="var(--…)"` presentation attributes, which browsers don't reliably honor.
   - Brand gold is `--gold` (`#e5cc80`) - the Warcraft Logs 100-parse ("Astounding") gold, chosen deliberately since the tool benchmarks against top parses. The favicon's literal hex colors must track the design tokens in `styles.scss`.
 
+## Writing style
+
+- **Never use em-dashes (U+2014) or en-dashes (U+2013)** anywhere - not in docs, code comments, commit messages, UI copy, or generated output. Also avoid the Unicode minus (U+2212). Use a plain ASCII hyphen (`-`) for ranges and parenthetical asides, or rephrase. This applies to every file in the repo and any text the tooling emits.
+
 ## URL routing
 
 All state is persisted in URL query parameters. Every navigable state must be linkable and bookmarkable.
@@ -248,7 +252,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 |---|---|
 | **`actor.subType` changed in Midnight** | Now returns class-only (`Rogue`). Use `playerDetails(fightIDs:[...])` to get full spec info. `_build_spec_map()` in `analysis-engine.ts` handles the conversion. |
 | **Gear array is positionally indexed** | WCL returns gear as a bare array; the array index (0-based) IS the slot number. No `slot` field. |
-| **Weapon slots shifted in Midnight** | Gear array has 17 entries (0–16). Weapons at index 15 (MH) and 16 (OH). Index 14 is Back/Cloak. |
+| **Weapon slots shifted in Midnight** | Gear array has 17 entries (0-16). Weapons at index 15 (MH) and 16 (OH). Index 14 is Back/Cloak. |
 | **Trinket slots are 12 and 13** | Confirmed from `encounterRankings` responses. |
 | **`permanentEnchant` is a string** | Numeric ID returned as string. `permanentEnchantName` is never populated. Enchant names resolved via `gameData.enchant(id)` in `ingest.mjs`. |
 | **Two incompatible talent formats** | `characterRankings` → old format (`{talentID, points}` list) → `v1:` key. `encounterRankings` → Midnight format (nested `nodeId` dict) → `v2:` key. ID spaces are incompatible; cannot compare directly. |
@@ -301,7 +305,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 
 **Per-parse**:
 1. For each defensive in rulebook, find buff apply/remove pairs matching its `spell_id`.
-2. Each apply→remove pair = window: `time_s` = apply, `window_length_s` = remove − apply.
+2. Each apply→remove pair = window: `time_s` = apply, `window_length_s` = remove - apply.
 3. `window_damage` = damage taken during window (absolute); `pct_of_total` = that / total fight damage taken (kept on the sample).
 
 **Across parses** (`clusterDefensiveWindows` → `clusterBaseStats`):

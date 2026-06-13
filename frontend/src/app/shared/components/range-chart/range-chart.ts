@@ -237,7 +237,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
                 if (!items.length) return [];
                 const r = rows[items[0].dataIndex];
                 const top = r.topAvg != null
-                  ? `Top average: ${this.fmt(r.topAvg)} (${this.fmt(r.topMin)}–${this.fmt(r.topMax)})`
+                  ? `Top average: ${this.fmt(r.topAvg)} (${this.fmt(r.topMin)}-${this.fmt(r.topMax)})`
                   : 'Top average: -';
                 return [`You: ${this.fmt(r.playerPct)}`, top];
               },
