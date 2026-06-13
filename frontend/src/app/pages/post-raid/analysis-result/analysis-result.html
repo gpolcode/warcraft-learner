@@ -69,7 +69,8 @@
   <wl-burst-windows
     [topWindows]="data().burst_windows!"
     [playerWindows]="data().player_burst_windows || []"
-    [fightDuration]="data().player_fight_duration_s || 0">
+    [fightDuration]="data().player_fight_duration_s || 0"
+    [cdSpellIds]="data().cd_spell_ids || {}">
   </wl-burst-windows>
 }
 
