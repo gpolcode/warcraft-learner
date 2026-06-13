@@ -1,61 +1,40 @@
-.page-nav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  // mat-toolbar defaults to a tall bar; keep it compact like the rest of the UI.
-  height: auto;
-  min-height: 0;
-  padding: 4px 16px;
-  gap: 4px;
+// The shell fills the viewport: fixed toolbar on top, sidenav + content below.
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
 }
 
-.nav-spacer { flex: 1 1 auto; }
+.shell-toolbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
 
-.nav-brand {
+.shell-spacer { flex: 1 1 auto; }
+
+.shell-container { flex: 1; }
+
+// Brand wordmark + inlined logo. Fills are themed via SCSS (per project brand
+// guidelines) rather than presentation attributes.
+.shell-brand,
+.shell-drawer-brand {
   display: flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: var(--text);
-
-  &__mark {
-    width: 24px;
-    height: 24px;
-    display: block;
-  }
-
-  &__shield { fill: var(--gold); }
-  &__bars { fill: var(--surface); }
-
-  &__name {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    color: var(--gold);
-  }
-
-  &:hover &__name { color: var(--text); }
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 15px;
 }
 
-.nav-links {
-  display: flex;
-  gap: 2px;
+.shell-drawer-brand { padding: 12px 16px; }
 
-  a {
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-
-    &.active { color: var(--gold); }
-  }
+.shell-brand__mark {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
-// The hamburger menu only appears on narrow viewports.
-.nav-menu-trigger { display: none; }
-
-@media (max-width: 600px) {
-  .nav-brand__name { display: none; }
-  .nav-links { display: none; }
-  .nav-menu-trigger { display: inline-flex; }
-  // Collapse the auth button to its icon to save horizontal space.
-  .nav-auth__label { display: none; }
-}
+.shell-brand__shield { fill: var(--gold); }
+.shell-brand__bars { fill: var(--surface); }

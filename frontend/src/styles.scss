@@ -54,15 +54,6 @@ body {
 
 .mat-mdc-form-field-subscript-wrapper { display: none; }
 
-// ── Mobile density ──────────────────────────────────────────────────────────
-// On narrow viewports the nested padding (container → card → expansion panel)
-// squeezes content. Trim the Material expansion-panel chrome so the analysis
-// content gets the horizontal room it needs.
-@media (max-width: 600px) {
-  .mat-expansion-panel-header { padding: 0 12px !important; }
-  .mat-expansion-panel-body { padding: 0 12px 12px !important; }
-}
-
 // ── Shared comparison candle styles (legends used by burst-windows, defensives, damage-taken) ──
 .cmp-legend {
   display: flex;
