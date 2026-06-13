@@ -1470,26 +1470,6 @@ async function main() {
   const cliAll = argv.includes('--all');
   const cliTopN = parseInt(argv.find((_, i) => argv[i - 1] === '--top-n') || '10', 10) || 10;
 
-  // ── Rebuild mode: re-aggregate bench files from stored parse_samples only ────
-  // No WCL access needed - useful after changing aggregation formulas.
-  if (argv.includes('--rebuild')) {
-    const specs = cliSpec ? [cliSpec] : getKnownSpecs();
-    for (const spec of specs) {
-      const samplesDir = path.join(DATA_DIR, spec, 'parse_samples');
-      if (!fs.existsSync(samplesDir)) continue;
-      for (const f of fs.readdirSync(samplesDir).sort()) {
-        if (!f.endsWith('.json')) continue;
-        const encId = parseInt(f, 10);
-        if (!Number.isFinite(encId)) continue;
-        syncEncounterFile(spec, encId);
-        console.log(`  rebuilt ${spec}/${encId}`);
-      }
-      syncEncountersIndex(spec);
-    }
-    rl.close();
-    return;
-  }
-
   let wcl;
   try {
     wcl = new WCLClient();
