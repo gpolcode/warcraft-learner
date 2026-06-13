@@ -27,6 +27,7 @@ const __dirname = path.dirname(__filename);
 const FRONTEND_ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
 const PROMPTS_DIR = path.resolve(__dirname, '..', '..', 'prompts');
+const SCHEMA_PATH = path.join(PROMPTS_DIR, 'rulebook.schema.json');
 const MAX_GUIDE_CHARS = 60_000;
 
 // ── Readline helpers ──────────────────────────────────────────────────────────
@@ -110,12 +111,25 @@ async function copyToClipboard(text) {
 
 // ── Prompt building ───────────────────────────────────────────────────────────
 
+function loadSchema() {
+  if (!fs.existsSync(SCHEMA_PATH)) throw new Error(`Schema file not found: ${SCHEMA_PATH}`);
+  const raw = fs.readFileSync(SCHEMA_PATH, 'utf8');
+  try {
+    return { text: raw, schema: JSON.parse(raw) };
+  } catch (err) {
+    throw new Error(`Schema file is not valid JSON: ${err.message}`);
+  }
+}
+
 function buildPrompt(spec) {
   const skillPath = path.join(PROMPTS_DIR, 'rulebook_skill.md');
   if (!fs.existsSync(skillPath)) throw new Error(`Skill file not found: ${skillPath}`);
 
+  const { text: schemaText } = loadSchema();
+
   let skill = fs.readFileSync(skillPath, 'utf8');
   skill = skill.replace(/\{\{spec\}\}/g, spec);
+  skill = skill.replace(/\{\{schema\}\}/g, () => schemaText.trim());
 
   const guidesPath = path.join(DATA_DIR, spec, 'guides.json');
   const guides = readJson(guidesPath) || [];
@@ -130,6 +144,114 @@ function buildPrompt(spec) {
   );
 
   return `${skill}\n\n## Guide Content\n\n${sections.join('\n\n')}`;
+}
+
+// ── JSON Schema validation ──────────────────────────────────────────────────
+//
+// Minimal, dependency-free validator covering the subset of JSON Schema
+// (draft-07) used by rulebook.schema.json: type, enum, const, required,
+// properties, additionalProperties, items, minItems, minimum,
+// exclusiveMinimum, anyOf, and local $ref (#/$defs/...). It is deliberately
+// small - the schema and the validator are maintained together.
+
+function jsonType(value) {
+  if (value === null) return 'null';
+  if (Array.isArray(value)) return 'array';
+  if (Number.isInteger(value)) return 'integer';
+  return typeof value; // 'number' | 'string' | 'boolean' | 'object'
+}
+
+function typeMatches(value, expected) {
+  const actual = jsonType(value);
+  if (expected === 'number') return actual === 'number' || actual === 'integer';
+  if (expected === 'integer') return actual === 'integer';
+  return actual === expected;
+}
+
+function resolveRef(ref, root) {
+  if (!ref.startsWith('#/')) throw new Error(`Unsupported $ref: ${ref}`);
+  return ref
+    .slice(2)
+    .split('/')
+    .reduce((node, key) => (node ? node[decodeURIComponent(key)] : undefined), root);
+}
+
+// Returns an array of human-readable error strings (empty = valid).
+function validateAgainstSchema(value, schema, root = schema, instancePath = '') {
+  const errors = [];
+  const where = instancePath || '(root)';
+
+  if (schema.$ref) {
+    const resolved = resolveRef(schema.$ref, root);
+    if (!resolved) return [`${where}: unresolved $ref ${schema.$ref}`];
+    return validateAgainstSchema(value, resolved, root, instancePath);
+  }
+
+  if (schema.anyOf) {
+    const branchErrors = schema.anyOf.map(sub =>
+      validateAgainstSchema(value, sub, root, instancePath)
+    );
+    if (branchErrors.every(e => e.length > 0)) {
+      errors.push(`${where}: does not match any allowed shape`);
+    }
+    return errors;
+  }
+
+  if ('const' in schema && value !== schema.const) {
+    errors.push(`${where}: must equal ${JSON.stringify(schema.const)}`);
+    return errors;
+  }
+
+  if (schema.type) {
+    const allowed = Array.isArray(schema.type) ? schema.type : [schema.type];
+    if (!allowed.some(t => typeMatches(value, t))) {
+      errors.push(`${where}: expected ${allowed.join(' or ')}, got ${jsonType(value)}`);
+      return errors;
+    }
+  }
+
+  if (schema.enum && !schema.enum.includes(value)) {
+    errors.push(`${where}: must be one of ${schema.enum.map(v => JSON.stringify(v)).join(', ')}`);
+  }
+
+  if (typeof value === 'number') {
+    if (typeof schema.minimum === 'number' && value < schema.minimum) {
+      errors.push(`${where}: must be >= ${schema.minimum}`);
+    }
+    if (typeof schema.exclusiveMinimum === 'number' && value <= schema.exclusiveMinimum) {
+      errors.push(`${where}: must be > ${schema.exclusiveMinimum}`);
+    }
+  }
+
+  if (jsonType(value) === 'array') {
+    if (typeof schema.minItems === 'number' && value.length < schema.minItems) {
+      errors.push(`${where}: must have at least ${schema.minItems} item(s)`);
+    }
+    if (schema.items) {
+      value.forEach((item, i) => {
+        errors.push(...validateAgainstSchema(item, schema.items, root, `${instancePath}[${i}]`));
+      });
+    }
+  }
+
+  if (jsonType(value) === 'object') {
+    const props = schema.properties || {};
+    for (const key of schema.required || []) {
+      if (!(key in value)) errors.push(`${where}: missing required field "${key}"`);
+    }
+    if (schema.additionalProperties === false) {
+      for (const key of Object.keys(value)) {
+        if (!(key in props)) errors.push(`${where}: unexpected field "${key}"`);
+      }
+    }
+    for (const [key, subSchema] of Object.entries(props)) {
+      if (key in value) {
+        errors.push(...validateAgainstSchema(value[key], subSchema, root, `${instancePath}.${key}`));
+      }
+    }
+  }
+
+  return errors;
 }
 
 // ── Rulebook management ───────────────────────────────────────────────────────
@@ -204,6 +326,16 @@ async function rulebookMenu(spec) {
         const parsed = JSON.parse(json);
         if (!parsed.spec) parsed.spec = spec;
 
+        const { schema } = loadSchema();
+        const errors = validateAgainstSchema(parsed, schema);
+        if (errors.length) {
+          console.error(`\n✗ Pasted JSON failed schema validation (${errors.length} error(s)):`);
+          errors.slice(0, 20).forEach(e => console.error(`  - ${e}`));
+          if (errors.length > 20) console.error(`  ...and ${errors.length - 20} more`);
+          console.error('\nRulebook NOT saved. Fix the issues and paste again.');
+          continue;
+        }
+
         const guidesPath = path.join(DATA_DIR, spec, 'guides.json');
         const guides = readJson(guidesPath) || [];
         const guideCount = guides.filter(g => g.status === 'scraped').length;
@@ -260,7 +392,12 @@ async function main() {
   rl.close();
 }
 
-main().catch(err => {
-  console.error('\nFatal error:', err.message);
-  process.exit(1);
-});
+// Only run the interactive CLI when invoked directly (not when imported, e.g. by tests).
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  main().catch(err => {
+    console.error('\nFatal error:', err.message);
+    process.exit(1);
+  });
+}
+
+export { loadSchema, buildPrompt, validateAgainstSchema };
