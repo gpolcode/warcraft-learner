@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnChanges } from '@angular/core';
 import { AnalysisResult as IAnalysisResult, AnalysisFinding } from '../../../core/models/analysis.models';
 import { IconCacheService } from '../../../core/services/icon-cache';
-import { FormatSpecPipe } from '../../../shared/pipes/format-spec-pipe';
 import { FindingEntry, FindingListComponent } from '../../../shared/components/finding-list/finding-list';
 import { BurstWindowsComponent } from '../burst-windows/burst-windows';
 import { DefensivesSectionComponent } from '../defensives-section/defensives-section';
@@ -21,7 +20,7 @@ const CAT_LABEL: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-analysis-result',
   imports: [
-    FormatSpecPipe, FindingListComponent,
+    FindingListComponent,
     BurstWindowsComponent, DefensivesSectionComponent, DamageTakenComponent,
   ],
   templateUrl: './analysis-result.html',

@@ -7,12 +7,6 @@ import {
   WindowStatus,
 } from '../../../shared/components/window-comparison/window-comparison';
 
-function mmss(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-burst-windows',
@@ -68,7 +62,8 @@ export class BurstWindowsComponent {
       }));
 
       return {
-        timeLabel: `${mmss(bw.time_s)} - ${mmss(bw.time_s + bw.window_length_s)}`,
+        timeStartS: bw.time_s,
+        timeEndS: bw.time_s + bw.window_length_s,
         spellIds,
         labels,
         status,

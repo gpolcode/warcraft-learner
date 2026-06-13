@@ -18,12 +18,6 @@ const CAT_LABEL: Record<string, string> = {
 
 interface CdBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; success?: AnalysisFinding; }
 
-function mmss(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensives-section',
@@ -119,7 +113,8 @@ export class DefensivesSectionComponent {
       }));
 
       return {
-        timeLabel: `${mmss(dw.time_s)} - ${mmss(dw.time_s + dw.window_length_s)}`,
+        timeStartS: dw.time_s,
+        timeEndS: dw.time_s + dw.window_length_s,
         spellIds,
         labels,
         status,

@@ -1,19 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { DmgTakenAbility, TopDtkComparison, DmgTakenSegment } from '../../../core/models/analysis.models';
 import { RangeChartComponent, RangeRow } from '../../../shared/components/range-chart/range-chart';
 import { IconCacheService } from '../../../core/services/icon-cache';
+import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
 
 const SEGMENT_LENGTH_S = 30;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-damage-taken',
-  imports: [DecimalPipe, RangeChartComponent],
+  imports: [RangeChartComponent],
   templateUrl: './damage-taken.html',
 })
 export class DamageTakenComponent {
   private readonly icons = inject(IconCacheService);
+  private readonly duration = new FormatDurationPipe();
   readonly byAbility = input<DmgTakenAbility[]>([]);
   readonly total = input<number>(0);
   readonly topComparison = input<TopDtkComparison[]>([]);
@@ -53,7 +54,7 @@ export class DamageTakenComponent {
     return this.segmentPcts().map((p, i) => {
       const t = tsm[i];
       return {
-        label: this.fmtTime(i * SEGMENT_LENGTH_S),
+        label: this.duration.transform(i * SEGMENT_LENGTH_S),
         playerPct: p,
         topAvg: t?.avg_pct ?? null,
         topMin: t ? Math.max(0, t.avg_pct - t.stddev_pct) : null,
@@ -93,8 +94,4 @@ export class DamageTakenComponent {
       return t != null && ab.pct > t.avg_pct + Math.max(t.stddev_pct ?? 0, 0.02);
     }).length;
   });
-
-  private fmtTime(s: number): string {
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-  }
 }

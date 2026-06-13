@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { RangeChartComponent, RangeRow } from '../range-chart/range-chart';
 import { SpellIconComponent } from '../spell-icon/spell-icon';
+import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 
 export type WindowStatus = 'good' | 'warn' | 'bad' | 'muted';
 
@@ -14,8 +15,9 @@ export type WindowStatus = 'good' | 'warn' | 'bad' | 'muted';
  * scaling and expand/collapse behaviour can be shared.
  */
 export interface ComparisonWindow {
-  /** Leading time text, e.g. `0:30 – 0:50` or `1:20 (8s)`. */
-  timeLabel: string;
+  /** Window bounds in seconds; rendered as a `m:ss - m:ss` range. */
+  timeStartS: number;
+  timeEndS: number;
   /** Spell-icon ids shown in the header (CDs, or the defensive itself). */
   spellIds: number[];
   /** Plain-text header labels for entries that have no spell id. */
@@ -33,7 +35,7 @@ export interface ComparisonWindow {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-window-comparison',
-  imports: [MatIconModule, MatButtonModule, MatCardModule, MatDividerModule, RangeChartComponent, SpellIconComponent],
+  imports: [MatIconModule, MatButtonModule, MatCardModule, MatDividerModule, RangeChartComponent, SpellIconComponent, FormatDurationPipe],
   templateUrl: './window-comparison.html',
 })
 export class WindowComparisonComponent {

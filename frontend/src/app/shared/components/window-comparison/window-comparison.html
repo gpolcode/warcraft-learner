@@ -9,7 +9,7 @@
         [class.badge-critical]="w.status === 'bad'">
         {{ w.statusIcon }}
       </mat-icon>
-      <span class="mr-auto tabular-nums">{{ w.timeLabel }}</span>
+      <span class="mr-auto tabular-nums">{{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}</span>
       @for (sid of w.spellIds; track sid) {
         <wl-spell-icon class="mr-2" [spellId]="sid"></wl-spell-icon>
       }

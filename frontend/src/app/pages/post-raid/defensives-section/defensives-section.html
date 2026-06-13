@@ -1,4 +1,5 @@
-<p class="text-xl font-medium">Defensives</p>
+<p class="mt-6 text-xl font-medium">Defensives</p>
+<p class="text-sm text-[var(--muted)]">How your defensive cooldowns compare to top parses — expand a row for details.</p>
 
 <!-- Per-defensive findings -->
 @if (defEntries().length > 0) {
@@ -7,7 +8,7 @@
 
 <!-- Defensive windows: when top parsers use each defensive and how much damage they absorbed -->
 @if (defWindows().length > 0) {
-  <p class="text-xl font-medium">Defensive Windows</p>
+  <p class="mt-6 text-xl font-medium">Defensive Windows</p>
   <p class="text-sm text-[var(--muted)]">Each bar is the damage taken while the defensive was active, as a share of your total damage taken this fight - lower is better.</p>
   <wl-window-comparison [windows]="defWindows()" [higherIsBetter]="false"></wl-window-comparison>
 }
