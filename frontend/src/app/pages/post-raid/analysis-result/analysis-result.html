@@ -2,18 +2,25 @@
 @if (cdBuckets().ruleFindings.length) {
   <p class="text-xl font-medium">Rotation Rules</p>
   <p class="text-sm text-[var(--muted)]">Spec rotation rules you broke during the fight.</p>
-  <div class="flex flex-col gap-1.5">
-    @for (f of cdBuckets().ruleFindings; track f.message) {
-      <div
-        class="rounded-lg border-l-[3px] bg-[var(--surface-alt)] px-3.5 py-2.5 text-sm"
-        [style.border-left-color]="f.severity === 'warning' ? 'var(--warning)' : 'var(--border)'">
-        <span class="block font-medium">{{ f.message }}</span>
-        @if (f.details?.remedy) {
-          <div class="mt-1 text-xs text-[var(--muted)]">{{ f.details!.remedy }}</div>
-        }
-      </div>
-    }
-  </div>
+  @for (f of cdBuckets().ruleFindings; track f.message) {
+    <mat-card class="mt-2">
+      <mat-card-header class="items-center">
+        <mat-icon
+          [class.badge-critical]="f.severity === 'critical'"
+          [class.badge-warning]="f.severity !== 'critical'">
+          {{ f.severity === 'critical' ? 'error' : 'warning_amber' }}
+        </mat-icon>
+        <span class="font-medium">{{ f.message }}</span>
+      </mat-card-header>
+      @if (f.details?.remedy) {
+        <mat-card-content>
+          <div class="rounded-r border-l-2 border-[var(--accent)] bg-[rgba(88,166,255,0.07)] px-2.5 py-1.5 text-[11px] leading-relaxed text-[var(--muted)]">
+            {{ f.details!.remedy }}
+          </div>
+        </mat-card-content>
+      }
+    </mat-card>
+  }
 }
 
 <!-- Offensive cooldowns -->

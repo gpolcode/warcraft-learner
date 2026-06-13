@@ -22,7 +22,6 @@ import { IconCacheService } from '../../../core/services/icon-cache';
       </a>
     }
   `,
-  styleUrl: './spell-icon.scss',
 })
 export class SpellIconComponent {
   private readonly iconCache = inject(IconCacheService);

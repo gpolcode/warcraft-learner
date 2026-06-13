@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnChanges } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { AnalysisResult as IAnalysisResult, AnalysisFinding } from '../../../core/models/analysis.models';
 import { IconCacheService } from '../../../core/services/icon-cache';
 import { FindingEntry, FindingListComponent } from '../../../shared/components/finding-list/finding-list';
@@ -20,7 +22,7 @@ const CAT_LABEL: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-analysis-result',
   imports: [
-    FindingListComponent,
+    MatCardModule, MatIconModule, FindingListComponent,
     BurstWindowsComponent, DefensivesSectionComponent, DamageTakenComponent,
   ],
   templateUrl: './analysis-result.html',
