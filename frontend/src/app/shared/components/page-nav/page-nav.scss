@@ -39,22 +39,22 @@
 .shell-brand__shield { fill: var(--gold); }
 .shell-brand__bars { fill: var(--surface); }
 
-// Icon-only rail: center each row inside the narrow drawer and render the
-// active highlight as a circle around the icon (Keep-style), instead of the
-// default full-width pill.
+// Icon-only rail: shrink each row to a centered circle so the icon sits in the
+// middle of the narrow drawer with a circular active highlight (Keep-style),
+// instead of the default full-width, left-aligned pill. !important is required
+// to beat Material's token-driven sizing/margins.
 .shell-rail-collapsed ::ng-deep {
   .mat-mdc-list-item {
-    width: 48px;
-    height: 48px;
-    margin: 4px auto;
-    padding: 0;
-    border-radius: 50%;
-    overflow: hidden;
+    width: 48px !important;
+    height: 48px !important;
+    margin: 4px auto !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
     justify-content: center;
   }
 
-  .mat-mdc-list-item-icon {
-    margin: 0;
-    padding: 0;
+  .mat-mdc-list-item .mdc-list-item__start {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }
