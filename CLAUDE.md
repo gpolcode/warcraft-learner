@@ -172,7 +172,7 @@ List of raw parse samples. Source of truth for bench files.
 | `cooldowns[].hold_windows` | per-CD | `{cast_index, expected_s, actual_s, hold_amount_s}` for casts delayed >8s |
 | `cooldowns[].cast_pattern` | per-CD | `"hold"` or `"on_cooldown"` |
 | `burst_windows` | top-level | Variable-count, variable-length windows anchored to CD cast times |
-| `defensive_windows` | top-level | Per-defensive buff windows with damage-taken fraction |
+| `defensive_windows` | top-level | Per-defensive buff windows with absolute `window_damage` (taken) + `pct_of_total` |
 | `talent_key` | top-level | `v2:`-prefixed sorted talent node IDs (Midnight format) |
 | `trinkets` | top-level | `{slot, id, name}` for slots 12 and 13 |
 | `enchants` | top-level | `{slot, id, name}` for all enchanted slots |
