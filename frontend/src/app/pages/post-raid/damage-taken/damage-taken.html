@@ -1,39 +1,32 @@
 <p class="section-label">Damage Taken</p>
+<p class="dtk-note">Charts show each source as a share of your total damage taken this fight — not raw damage — so they line up with the top-10 parse range.</p>
 <div class="dtk-section">
   <div class="dtk-header">
     @if (total() > 0) {
-      <span class="dtk-total">Total: <strong>{{ total() | number }}</strong></span>
+      <span class="dtk-total">Total taken: <strong>{{ total() | number }}</strong></span>
     }
-    @if (outliers().length) {
-      <span class="outlier-note">{{ outliers().length }} {{ outliers().length === 1 ? 'source' : 'sources' }} above top-10 avg</span>
+    @if (outlierCount()) {
+      <span class="outlier-note">{{ outlierCount() }} {{ outlierCount() === 1 ? 'source' : 'sources' }} above top-10 avg</span>
     }
   </div>
 
-  @if (segmentPcts().length) {
-    <div class="dtk-legend">
-      <span class="dtk-dot dtk-dot-player"></span> You
-      @if (topSegments().length) {
-        <span class="dtk-dot dtk-dot-top" style="margin-left:8px"></span> Top avg
-      }
-    </div>
-    <div class="dtk-bars">
-      @for (pct of segmentPcts(); track $index; let i = $index) {
-        <div class="dtk-bar-group" [class.dtk-bar-high]="isHighSeg(i)"
-             [title]="segTime(i) + 's: ' + (pct * 100 | number:'1.1-1') + '%'">
-          @if (topSegMap()[i]) {
-            <div class="dtk-bar-top" [style.height.px]="barHeight(topSegMap()[i].avg_pct, segMaxVal())"></div>
-          }
-          <div class="dtk-bar-player" [style.height.px]="barHeight(pct, segMaxVal())"></div>
-          <div class="dtk-bar-label">{{ segTime(i) | formatDuration }}</div>
-        </div>
-      }
-    </div>
+  @if (segmentRows().length) {
+    <p class="dtk-subhead">Over time — % of total damage taken per 30s segment</p>
+    <wl-range-chart
+      [rows]="segmentRows()"
+      unit="pct"
+      [higherIsBetter]="false"
+      [maxVal]="segMaxVal()">
+    </wl-range-chart>
   }
 
-  <wl-comparison-chart
-    [rows]="chartRows()"
-    [higherIsBetter]="false"
-    unit="pct"
-    [maxVal]="maxVal()">
-  </wl-comparison-chart>
+  @if (abilityRows().length) {
+    <p class="dtk-subhead">By ability — % of total damage taken</p>
+    <wl-range-chart
+      [rows]="abilityRows()"
+      unit="pct"
+      [higherIsBetter]="false"
+      [maxVal]="maxVal()">
+    </wl-range-chart>
+  }
 </div>

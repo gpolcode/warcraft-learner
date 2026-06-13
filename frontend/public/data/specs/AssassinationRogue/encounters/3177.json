@@ -3,29 +3,29 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 234.1,
-  "last_ingested": "2026-06-11 17:08:35",
-  "downtime_threshold_ms": 1061,
-  "top_avg_efficiency": 73.8,
-  "top_efficiency_stddev": 6.7,
+  "avg_duration_s": 237.4,
+  "last_ingested": "2026-06-13 11:37:20",
+  "downtime_threshold_ms": 1043,
+  "top_avg_efficiency": 74.2,
+  "top_efficiency_stddev": 6.4,
   "per_cd_benchmarks": {
     "Deathmark": {
       "sample_count": 10,
       "avg_first_cast_s": 8.3,
       "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 124.4,
+      "avg_gap_s": 124.3,
       "stddev_gap_s": 3.8,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 0.61,
-        "stddev": 0.054,
-        "min": 0.539,
+        "avg": 0.602,
+        "stddev": 0.063,
+        "min": 0.508,
         "max": 0.686
       },
       "avg_uses": 2.4,
-      "avg_uses_per_min": 0.61,
+      "avg_uses_per_min": 0.6,
       "bl_pct": 0,
       "majority_hold": false
     },
@@ -33,183 +33,338 @@
       "sample_count": 10,
       "avg_first_cast_s": 9.3,
       "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 62.0,
-      "stddev_gap_s": 2.9,
+      "avg_gap_s": 62.2,
+      "stddev_gap_s": 3,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 1.102,
-        "stddev": 0.078,
+        "avg": 1.085,
+        "stddev": 0.076,
         "min": 0.915,
         "max": 1.188
       },
       "avg_uses": 4.3,
-      "avg_uses_per_min": 1.1,
+      "avg_uses_per_min": 1.09,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 68.5,
-      "stddev_first_cast_s": 61.7,
-      "avg_gap_s": 122.6,
+      "avg_first_cast_s": 68.4,
+      "stddev_first_cast_s": 61.8,
+      "avg_gap_s": 122.4,
       "stddev_gap_s": 1.9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 0.479,
-        "stddev": 0.152,
+        "avg": 0.471,
+        "stddev": 0.147,
         "min": 0.27,
         "max": 0.684
       },
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.48,
+      "avg_uses_per_min": 0.47,
       "bl_pct": 0,
       "majority_hold": false
     }
   },
   "burst_windows": [
     {
-      "time_s": 13.5,
-      "stddev_s": 5.1,
-      "count": 21,
+      "time_s": 9.5,
+      "stddev_s": 1.5,
+      "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.09,
-      "pct_stddev": 0.019,
-      "pct_min": 0.057,
-      "pct_max": 0.13,
-      "common_cds": [
-        "Kingsbane"
-      ],
-      "avg_targets": 1,
+      "pct_avg": 0.158,
+      "pct_stddev": 0.016,
+      "pct_min": 0.139,
+      "pct_max": 0.177,
       "ability_breakdown": [
         {
           "spell_id": 385627,
-          "avg_pct": 0.141,
-          "count": 19
-        },
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.139,
-          "count": 19
-        },
-        {
-          "spell_id": 703,
-          "avg_pct": 0.137,
-          "count": 21
-        },
-        {
-          "spell_id": 383414,
-          "avg_pct": 0.101,
-          "count": 19
-        },
-        {
-          "spell_id": 1943,
-          "avg_pct": 0.099,
-          "count": 15
-        },
-        {
-          "spell_id": 113780,
-          "avg_pct": 0.098,
-          "count": 17
-        }
-      ]
-    },
-    {
-      "time_s": 139.6,
-      "stddev_s": 6.8,
-      "count": 14,
-      "total_samples": 10,
-      "pct_avg": 0.082,
-      "pct_stddev": 0.015,
-      "pct_min": 0.061,
-      "pct_max": 0.109,
-      "common_cds": [
-        "Kingsbane",
-        "Deathmark"
-      ],
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.171,
-          "count": 14
-        },
-        {
-          "spell_id": 385627,
-          "avg_pct": 0.171,
-          "count": 14
-        },
-        {
-          "spell_id": 452538,
           "avg_pct": 0.145,
-          "count": 7
+          "min_pct": 0.109,
+          "max_pct": 0.18,
+          "count": 9
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.136,
+          "min_pct": 0.102,
+          "max_pct": 0.169,
+          "count": 10
         },
         {
           "spell_id": 703,
-          "avg_pct": 0.131,
-          "count": 14
+          "avg_pct": 0.135,
+          "min_pct": 0.106,
+          "max_pct": 0.178,
+          "count": 10
         },
         {
           "spell_id": 383414,
-          "avg_pct": 0.098,
+          "avg_pct": 0.103,
+          "min_pct": 0.07,
+          "max_pct": 0.126,
           "count": 10
         },
         {
           "spell_id": 1943,
-          "avg_pct": 0.088,
-          "count": 11
-        }
-      ]
-    },
-    {
-      "time_s": 252.0,
-      "stddev_s": 6.7,
-      "count": 5,
-      "total_samples": 10,
-      "pct_avg": 0.075,
-      "pct_stddev": 0.012,
-      "pct_min": 0.06,
-      "pct_max": 0.087,
-      "common_cds": [
-        "Deathmark",
-        "Kingsbane"
-      ],
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 385627,
-          "avg_pct": 0.175,
-          "count": 5
-        },
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.171,
-          "count": 5
-        },
-        {
-          "spell_id": 703,
-          "avg_pct": 0.121,
-          "count": 5
+          "avg_pct": 0.1,
+          "min_pct": 0.08,
+          "max_pct": 0.114,
+          "count": 7
         },
         {
           "spell_id": 113780,
-          "avg_pct": 0.094,
+          "avg_pct": 0.097,
+          "min_pct": 0.07,
+          "max_pct": 0.12,
+          "count": 10
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 70.1,
+      "stddev_s": 1.7,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.057,
+      "pct_stddev": 0.014,
+      "pct_min": 0.038,
+      "pct_max": 0.084,
+      "ability_breakdown": [
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.163,
+          "min_pct": 0.096,
+          "max_pct": 0.276,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.16,
+          "min_pct": 0.101,
+          "max_pct": 0.194,
+          "count": 10
+        },
+        {
+          "spell_id": 452538,
+          "avg_pct": 0.116,
+          "min_pct": 0.058,
+          "max_pct": 0.183,
+          "count": 10
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.111,
+          "min_pct": 0.054,
+          "max_pct": 0.14,
           "count": 5
         },
         {
           "spell_id": 1943,
-          "avg_pct": 0.094,
+          "avg_pct": 0.099,
+          "min_pct": 0.053,
+          "max_pct": 0.154,
+          "count": 8
+        },
+        {
+          "spell_id": 1,
+          "avg_pct": 0.088,
+          "min_pct": 0.072,
+          "max_pct": 0.106,
+          "count": 8
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 134.4,
+      "stddev_s": 4.8,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.132,
+      "pct_stddev": 0.028,
+      "pct_min": 0.085,
+      "pct_max": 0.164,
+      "ability_breakdown": [
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.17,
+          "min_pct": 0.098,
+          "max_pct": 0.211,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.163,
+          "min_pct": 0.117,
+          "max_pct": 0.208,
+          "count": 10
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.122,
+          "min_pct": 0.09,
+          "max_pct": 0.154,
+          "count": 10
+        },
+        {
+          "spell_id": 383414,
+          "avg_pct": 0.095,
+          "min_pct": 0.07,
+          "max_pct": 0.121,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.09,
+          "min_pct": 0.078,
+          "max_pct": 0.11,
+          "count": 7
+        },
+        {
+          "spell_id": 113780,
+          "avg_pct": 0.081,
+          "min_pct": 0.067,
+          "max_pct": 0.09,
+          "count": 9
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 197.1,
+      "stddev_s": 4.7,
+      "count": 9,
+      "total_samples": 10,
+      "pct_avg": 0.062,
+      "pct_stddev": 0.016,
+      "pct_min": 0.042,
+      "pct_max": 0.082,
+      "ability_breakdown": [
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.197,
+          "min_pct": 0.095,
+          "max_pct": 0.27,
+          "count": 9
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.186,
+          "min_pct": 0.097,
+          "max_pct": 0.233,
+          "count": 9
+        },
+        {
+          "spell_id": 452538,
+          "avg_pct": 0.131,
+          "min_pct": 0.05,
+          "max_pct": 0.262,
+          "count": 7
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.092,
+          "min_pct": 0.063,
+          "max_pct": 0.171,
+          "count": 8
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.087,
+          "min_pct": 0.049,
+          "max_pct": 0.173,
+          "count": 6
+        },
+        {
+          "spell_id": 1,
+          "avg_pct": 0.074,
+          "min_pct": 0.06,
+          "max_pct": 0.086,
+          "count": 9
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 252.5,
+      "stddev_s": 4.2,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.111,
+      "pct_stddev": 0.028,
+      "pct_min": 0.075,
+      "pct_max": 0.135,
+      "ability_breakdown": [
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.169,
+          "min_pct": 0.098,
+          "max_pct": 0.202,
+          "count": 4
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.158,
+          "min_pct": 0.141,
+          "max_pct": 0.189,
+          "count": 4
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.124,
+          "min_pct": 0.084,
+          "max_pct": 0.144,
+          "count": 4
+        },
+        {
+          "spell_id": 113780,
+          "avg_pct": 0.095,
+          "min_pct": 0.086,
+          "max_pct": 0.105,
           "count": 4
         },
         {
           "spell_id": 383414,
-          "avg_pct": 0.087,
-          "count": 3
+          "avg_pct": 0.092,
+          "min_pct": 0.081,
+          "max_pct": 0.117,
+          "count": 4
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.089,
+          "min_pct": 0.076,
+          "max_pct": 0.101,
+          "count": 4
         }
-      ]
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
     }
   ],
   "gear": {
@@ -273,17 +428,17 @@
         {
           "id": 8017,
           "name": "",
-          "count": 7,
-          "pct": 70
-        },
-        {
-          "id": 7961,
-          "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 7991,
+          "name": "",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 7961,
           "name": "",
           "count": 1,
           "pct": 10
@@ -293,14 +448,14 @@
         {
           "id": 8001,
           "name": "",
-          "count": 7,
-          "pct": 70
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 7973,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 8031,
@@ -329,20 +484,28 @@
         {
           "id": 7963,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 4,
+          "pct": 40
         },
         {
           "id": 8019,
           "name": "",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
         },
         {
           "id": 7993,
           "name": "",
           "count": 2,
           "pct": 20
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "",
+          "count": 1,
+          "pct": 10
         }
       ],
       "10": [
@@ -363,16 +526,16 @@
       ],
       "15": [
         {
-          "id": 8039,
-          "name": "",
-          "count": 6,
-          "pct": 60
-        },
-        {
           "id": 7981,
           "name": "",
-          "count": 4,
-          "pct": 40
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 8039,
+          "name": "",
+          "count": 5,
+          "pct": 50
         }
       ],
       "16": [
@@ -388,14 +551,6 @@
           "count": 1,
           "pct": 10
         }
-      ],
-      "9": [
-        {
-          "id": 2841,
-          "name": "",
-          "count": 1,
-          "pct": 10
-        }
       ]
     }
   },
@@ -403,10 +558,10 @@
     {
       "name": "Cloak of Shadows",
       "spell_id": 31224,
-      "avg_uses": 1.4,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2,
-      "sample_count": 7
+      "sample_count": 8
     },
     {
       "name": "Evasion",
@@ -414,69 +569,230 @@
       "avg_uses": 1,
       "min_uses": 1,
       "max_uses": 1,
-      "sample_count": 3
+      "sample_count": 2
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "avg_uses": 3,
+      "min_uses": 1,
+      "max_uses": 9,
+      "sample_count": 5
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 5,
+      "avg_first_cast_s": 65.7,
+      "stddev_first_cast_s": 11.8,
+      "avg_gap_s": 30.6,
+      "stddev_gap_s": 38.3,
+      "hold_targets": {},
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.71,
+      "majority_hold": false
+    },
+    "Cloak of Shadows": {
+      "sample_count": 8,
+      "avg_first_cast_s": 123,
+      "stddev_first_cast_s": 63.9,
+      "avg_gap_s": 122.4,
+      "stddev_gap_s": 1.8,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.39,
+      "majority_hold": false
+    },
+    "Evasion": {
+      "sample_count": 2,
+      "avg_first_cast_s": 138.1,
+      "stddev_first_cast_s": 89.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.25,
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 2,
+      "avg_first_cast_s": 159.4,
+      "stddev_first_cast_s": 75.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 61.7,
+      "stddev_s": 6.9,
+      "count": 5,
+      "total_samples": 10,
+      "pct_avg": 0.032,
+      "pct_stddev": 0.011,
+      "pct_min": 0.017,
+      "pct_max": 0.045,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_pct": 0.904,
+          "min_pct": 0.886,
+          "max_pct": 0.921,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_pct": 0.109,
+          "min_pct": 0.079,
+          "max_pct": 0.158,
+          "count": 5
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 184.4,
+      "stddev_s": 1.7,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0,
+      "pct_stddev": 0,
+      "pct_min": 0,
+      "pct_max": 0,
+      "ability_breakdown": [],
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    },
+    {
+      "time_s": 190.2,
+      "stddev_s": 8.6,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.015,
+      "pct_stddev": 0.006,
+      "pct_min": 0.011,
+      "pct_max": 0.024,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_pct": 0.697,
+          "min_pct": 0.492,
+          "max_pct": 0.902,
+          "count": 2
+        },
+        {
+          "spell_id": 1272328,
+          "avg_pct": 0.566,
+          "min_pct": 0.566,
+          "max_pct": 0.566,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_pct": 0.369,
+          "min_pct": 0.098,
+          "max_pct": 0.508,
+          "count": 4
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
     }
   ],
   "top_dtk_comparison": [
     {
       "spell_id": 1272950,
-      "avg_pct": 0.2923,
-      "min_pct": 0.278,
+      "avg_pct": 0.2903,
+      "min_pct": 0.267,
       "max_pct": 0.311,
-      "stddev_pct": 0.0101,
+      "stddev_pct": 0.0128,
       "sample_count": 10
     },
     {
       "spell_id": 1280101,
-      "avg_pct": 0.1422,
+      "avg_pct": 0.1481,
       "min_pct": 0.105,
       "max_pct": 0.2,
-      "stddev_pct": 0.0316,
+      "stddev_pct": 0.0355,
       "sample_count": 10
     },
     {
       "spell_id": 1241808,
-      "avg_pct": 0.1314,
+      "avg_pct": 0.1279,
       "min_pct": 0.103,
       "max_pct": 0.153,
-      "stddev_pct": 0.0145,
+      "stddev_pct": 0.0158,
       "sample_count": 10
     },
     {
       "spell_id": 1259186,
-      "avg_pct": 0.1181,
+      "avg_pct": 0.1169,
       "min_pct": 0.064,
       "max_pct": 0.172,
-      "stddev_pct": 0.0319,
+      "stddev_pct": 0.0335,
       "sample_count": 10
     },
     {
       "spell_id": 1272328,
-      "avg_pct": 0.1141,
+      "avg_pct": 0.1121,
       "min_pct": 0.09,
       "max_pct": 0.139,
-      "stddev_pct": 0.0162,
+      "stddev_pct": 0.0159,
       "sample_count": 10
     },
     {
       "spell_id": 1275558,
-      "avg_pct": 0.0905,
+      "avg_pct": 0.0888,
       "min_pct": 0.015,
       "max_pct": 0.137,
-      "stddev_pct": 0.0375,
+      "stddev_pct": 0.0359,
       "sample_count": 10
     },
     {
       "spell_id": 1260052,
-      "avg_pct": 0.0705,
-      "min_pct": 0.062,
+      "avg_pct": 0.0689,
+      "min_pct": 0.054,
       "max_pct": 0.079,
-      "stddev_pct": 0.0056,
+      "stddev_pct": 0.0077,
       "sample_count": 10
     },
     {
       "spell_id": 1243270,
-      "avg_pct": 0.0382,
+      "avg_pct": 0.0383,
       "min_pct": 0.008,
       "max_pct": 0.091,
       "stddev_pct": 0.0367,
@@ -486,51 +802,51 @@
   "top_dtk_segments": [
     {
       "seg_index": 0,
-      "avg_pct": 0.0763,
-      "stddev_pct": 0.0153,
+      "avg_pct": 0.0738,
+      "stddev_pct": 0.0144,
       "sample_count": 10
     },
     {
       "seg_index": 1,
-      "avg_pct": 0.0925,
-      "stddev_pct": 0.0175,
+      "avg_pct": 0.0907,
+      "stddev_pct": 0.017,
       "sample_count": 10
     },
     {
       "seg_index": 2,
-      "avg_pct": 0.1517,
-      "stddev_pct": 0.0342,
+      "avg_pct": 0.1491,
+      "stddev_pct": 0.0315,
       "sample_count": 10
     },
     {
       "seg_index": 3,
-      "avg_pct": 0.1705,
-      "stddev_pct": 0.0462,
+      "avg_pct": 0.1657,
+      "stddev_pct": 0.0449,
       "sample_count": 10
     },
     {
       "seg_index": 4,
-      "avg_pct": 0.1096,
+      "avg_pct": 0.1064,
       "stddev_pct": 0.0289,
       "sample_count": 10
     },
     {
       "seg_index": 5,
-      "avg_pct": 0.1222,
-      "stddev_pct": 0.0316,
+      "avg_pct": 0.1189,
+      "stddev_pct": 0.0315,
       "sample_count": 10
     },
     {
       "seg_index": 6,
-      "avg_pct": 0.1404,
-      "stddev_pct": 0.0492,
+      "avg_pct": 0.1453,
+      "stddev_pct": 0.052,
       "sample_count": 10
     },
     {
       "seg_index": 7,
-      "avg_pct": 0.1259,
-      "stddev_pct": 0.0526,
-      "sample_count": 7
+      "avg_pct": 0.1268,
+      "stddev_pct": 0.0488,
+      "sample_count": 8
     },
     {
       "seg_index": 8,

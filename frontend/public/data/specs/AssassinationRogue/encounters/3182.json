@@ -3,224 +3,382 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 312.2,
-  "last_ingested": "2026-06-11 17:08:35",
-  "downtime_threshold_ms": 1232,
-  "top_avg_efficiency": 69.0,
+  "avg_duration_s": 315,
+  "last_ingested": "2026-06-13 11:38:47",
+  "downtime_threshold_ms": 1235,
+  "top_avg_efficiency": 69.4,
   "top_efficiency_stddev": 4.6,
   "per_cd_benchmarks": {
     "Deathmark": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.3,
+      "avg_first_cast_s": 7.1,
       "stddev_first_cast_s": 1.2,
-      "avg_gap_s": 139.6,
-      "stddev_gap_s": 18.8,
+      "avg_gap_s": 140.7,
+      "stddev_gap_s": 19.7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "3": {
-          "target_s": 286.4,
-          "stddev_s": 6.4,
+          "target_s": 288.4,
+          "stddev_s": 5.7,
           "count": 10,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.577,
+        "avg": 0.572,
         "stddev": 0.015,
-        "min": 0.551,
-        "max": 0.598
+        "min": 0.548,
+        "max": 0.594
       },
       "avg_uses": 3,
-      "avg_uses_per_min": 0.58,
+      "avg_uses_per_min": 0.57,
       "bl_pct": 0,
       "majority_hold": true
     },
     "Kingsbane": {
       "sample_count": 10,
-      "avg_first_cast_s": 8.3,
-      "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 69.8,
-      "stddev_gap_s": 15.1,
+      "avg_first_cast_s": 8.1,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 70.3,
+      "stddev_gap_s": 16,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "5": {
-          "target_s": 287.4,
-          "stddev_s": 6.4,
+          "target_s": 289.4,
+          "stddev_s": 5.7,
           "count": 10,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.962,
-        "stddev": 0.025,
-        "min": 0.919,
-        "max": 0.997
+        "avg": 0.953,
+        "stddev": 0.026,
+        "min": 0.913,
+        "max": 0.991
       },
       "avg_uses": 5,
-      "avg_uses_per_min": 0.96,
+      "avg_uses_per_min": 0.95,
       "bl_pct": 0,
       "majority_hold": true
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 42.2,
-      "stddev_first_cast_s": 51.6,
-      "avg_gap_s": 141.8,
-      "stddev_gap_s": 19.2,
+      "avg_first_cast_s": 30.9,
+      "stddev_first_cast_s": 43.8,
+      "avg_gap_s": 142,
+      "stddev_gap_s": 20.2,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "3": {
-          "target_s": 283.7,
-          "stddev_s": 8.4,
-          "count": 7,
-          "total_samples": 10
-        },
-        "2": {
-          "target_s": 273.4,
-          "stddev_s": 70.5,
-          "count": 4,
+          "target_s": 284.5,
+          "stddev_s": 9.3,
+          "count": 8,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.518,
-        "stddev": 0.09,
+        "avg": 0.533,
+        "stddev": 0.08,
         "min": 0.384,
         "max": 0.594
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.53,
       "bl_pct": 0,
       "majority_hold": true
     }
   },
   "burst_windows": [
     {
-      "time_s": 16.3,
-      "stddev_s": 7.0,
-      "count": 7,
+      "time_s": 8.1,
+      "stddev_s": 1.2,
+      "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.056,
-      "pct_stddev": 0.006,
-      "pct_min": 0.048,
-      "pct_max": 0.063,
-      "common_cds": [
-        "Kingsbane"
-      ],
-      "avg_targets": 2.6,
-      "ability_breakdown": [
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.163,
-          "count": 7
-        },
-        {
-          "spell_id": 703,
-          "avg_pct": 0.15,
-          "count": 7
-        },
-        {
-          "spell_id": 385627,
-          "avg_pct": 0.142,
-          "count": 6
-        },
-        {
-          "spell_id": 421979,
-          "avg_pct": 0.126,
-          "count": 4
-        },
-        {
-          "spell_id": 1943,
-          "avg_pct": 0.104,
-          "count": 7
-        }
-      ]
-    },
-    {
-      "time_s": 134.6,
-      "stddev_s": 4.6,
-      "count": 13,
-      "total_samples": 10,
-      "pct_avg": 0.077,
-      "pct_stddev": 0.013,
-      "pct_min": 0.062,
-      "pct_max": 0.098,
-      "common_cds": [
-        "Deathmark",
-        "Kingsbane"
-      ],
-      "avg_targets": 1,
-      "ability_breakdown": [
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.179,
-          "count": 12
-        },
-        {
-          "spell_id": 385627,
-          "avg_pct": 0.158,
-          "count": 13
-        },
-        {
-          "spell_id": 703,
-          "avg_pct": 0.155,
-          "count": 13
-        },
-        {
-          "spell_id": 1943,
-          "avg_pct": 0.095,
-          "count": 13
-        },
-        {
-          "spell_id": 1,
-          "avg_pct": 0.079,
-          "count": 11
-        }
-      ]
-    },
-    {
-      "time_s": 290.8,
-      "stddev_s": 6.8,
-      "count": 17,
-      "total_samples": 10,
-      "pct_avg": 0.076,
-      "pct_stddev": 0.014,
-      "pct_min": 0.056,
-      "pct_max": 0.099,
-      "common_cds": [
-        "Kingsbane"
-      ],
-      "avg_targets": 1.6,
+      "pct_avg": 0.078,
+      "pct_stddev": 0.008,
+      "pct_min": 0.068,
+      "pct_max": 0.095,
       "ability_breakdown": [
         {
           "spell_id": 385627,
-          "avg_pct": 0.178,
-          "count": 17
-        },
-        {
-          "spell_id": 32645,
-          "avg_pct": 0.171,
-          "count": 16
+          "avg_pct": 0.162,
+          "min_pct": 0.123,
+          "max_pct": 0.213,
+          "count": 10
         },
         {
           "spell_id": 703,
-          "avg_pct": 0.155,
-          "count": 17
+          "avg_pct": 0.16,
+          "min_pct": 0.105,
+          "max_pct": 0.2,
+          "count": 10
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.137,
+          "min_pct": 0.101,
+          "max_pct": 0.181,
+          "count": 10
         },
         {
           "spell_id": 1943,
-          "avg_pct": 0.087,
-          "count": 16
+          "avg_pct": 0.092,
+          "min_pct": 0.077,
+          "max_pct": 0.109,
+          "count": 10
         },
         {
           "spell_id": 383414,
-          "avg_pct": 0.073,
+          "avg_pct": 0.072,
+          "min_pct": 0.057,
+          "max_pct": 0.09,
+          "count": 8
+        },
+        {
+          "spell_id": 113780,
+          "avg_pct": 0.062,
+          "min_pct": 0.043,
+          "max_pct": 0.077,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 69.6,
+      "stddev_s": 2.4,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.066,
+      "pct_stddev": 0.011,
+      "pct_min": 0.05,
+      "pct_max": 0.084,
+      "ability_breakdown": [
+        {
+          "spell_id": 421979,
+          "avg_pct": 0.158,
+          "min_pct": 0.081,
+          "max_pct": 0.201,
+          "count": 9
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.148,
+          "min_pct": 0.106,
+          "max_pct": 0.171,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.127,
+          "min_pct": 0.068,
+          "max_pct": 0.177,
+          "count": 10
+        },
+        {
+          "spell_id": 452538,
+          "avg_pct": 0.107,
+          "min_pct": 0.053,
+          "max_pct": 0.166,
+          "count": 7
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.103,
+          "min_pct": 0.089,
+          "max_pct": 0.14,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.093,
+          "min_pct": 0.075,
+          "max_pct": 0.111,
+          "count": 9
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 130.4,
+      "stddev_s": 2.3,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.125,
+      "pct_stddev": 0.019,
+      "pct_min": 0.092,
+      "pct_max": 0.147,
+      "ability_breakdown": [
+        {
+          "spell_id": 703,
+          "avg_pct": 0.159,
+          "min_pct": 0.12,
+          "max_pct": 0.202,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.15,
+          "min_pct": 0.103,
+          "max_pct": 0.179,
+          "count": 10
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.15,
+          "min_pct": 0.102,
+          "max_pct": 0.219,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.098,
+          "min_pct": 0.071,
+          "max_pct": 0.118,
+          "count": 10
+        },
+        {
+          "spell_id": 383414,
+          "avg_pct": 0.083,
+          "min_pct": 0.075,
+          "max_pct": 0.096,
+          "count": 5
+        },
+        {
+          "spell_id": 113780,
+          "avg_pct": 0.079,
+          "min_pct": 0.066,
+          "max_pct": 0.095,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 191.7,
+      "stddev_s": 3.7,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.051,
+      "pct_stddev": 0.009,
+      "pct_min": 0.037,
+      "pct_max": 0.066,
+      "ability_breakdown": [
+        {
+          "spell_id": 421979,
+          "avg_pct": 0.149,
+          "min_pct": 0.075,
+          "max_pct": 0.193,
+          "count": 8
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.137,
+          "min_pct": 0.081,
+          "max_pct": 0.19,
+          "count": 9
+        },
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.133,
+          "min_pct": 0.066,
+          "max_pct": 0.206,
+          "count": 10
+        },
+        {
+          "spell_id": 452538,
+          "avg_pct": 0.127,
+          "min_pct": 0.108,
+          "max_pct": 0.165,
+          "count": 5
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.095,
+          "min_pct": 0.074,
+          "max_pct": 0.122,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.09,
+          "min_pct": 0.06,
+          "max_pct": 0.122,
           "count": 10
         }
-      ]
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 289.4,
+      "stddev_s": 5.7,
+      "count": 10,
+      "total_samples": 10,
+      "pct_avg": 0.129,
+      "pct_stddev": 0.021,
+      "pct_min": 0.095,
+      "pct_max": 0.155,
+      "ability_breakdown": [
+        {
+          "spell_id": 385627,
+          "avg_pct": 0.161,
+          "min_pct": 0.102,
+          "max_pct": 0.24,
+          "count": 10
+        },
+        {
+          "spell_id": 703,
+          "avg_pct": 0.16,
+          "min_pct": 0.125,
+          "max_pct": 0.196,
+          "count": 10
+        },
+        {
+          "spell_id": 32645,
+          "avg_pct": 0.154,
+          "min_pct": 0.106,
+          "max_pct": 0.202,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_pct": 0.093,
+          "min_pct": 0.078,
+          "max_pct": 0.122,
+          "count": 10
+        },
+        {
+          "spell_id": 383414,
+          "avg_pct": 0.067,
+          "min_pct": 0.056,
+          "max_pct": 0.097,
+          "count": 8
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
     }
   ],
   "gear": {
@@ -228,19 +386,19 @@
     "talent_builds": [
       {
         "key": "v2:110433,110433,110433,90640,90692,90748,90749,90750,90751,90752,90756,90758,90759,90760,90766,90767,90768,90770,90771,90776,90777,90784,90785,90786,94553",
-        "count": 6,
-        "pct": 60,
+        "count": 5,
+        "pct": 50,
         "report_code": "rp4afDtkzGmVHh8g",
         "fight_id": 35,
         "player_name": "Decapre"
       },
       {
         "key": "v2:110433,110433,110433,90640,90692,90748,90749,90750,90751,90752,90756,90758,90759,90760,90766,90767,90768,90770,90775,90776,90777,90784,90785,94553",
-        "count": 2,
-        "pct": 20,
-        "report_code": "QXxpV3KvdtTWNMDH",
-        "fight_id": 55,
-        "player_name": "Dagger"
+        "count": 3,
+        "pct": 30,
+        "report_code": "jhNxyRdZ8aM7pL9P",
+        "fight_id": 77,
+        "player_name": "Sap"
       },
       {
         "key": "v2:110433,110433,110433,90640,90692,90748,90749,90750,90751,90752,90756,90758,90759,90760,90766,90767,90768,90770,90771,90777,90784,90785,90786,94552,94553",
@@ -264,28 +422,28 @@
         {
           "id": 193701,
           "name": "Algeth'ar Puzzle Box",
-          "count": 7,
-          "pct": 70
+          "count": 8,
+          "pct": 80
         },
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 3,
-          "pct": 30
+          "count": 2,
+          "pct": 20
         }
       ],
       "13": [
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 7,
-          "pct": 70
+          "count": 8,
+          "pct": 80
         },
         {
           "id": 193701,
           "name": "Algeth'ar Puzzle Box",
-          "count": 3,
-          "pct": 30
+          "count": 2,
+          "pct": 20
         }
       ]
     },
@@ -294,14 +452,14 @@
         {
           "id": 7961,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 4,
+          "pct": 40
         },
         {
           "id": 7991,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 8017,
@@ -312,19 +470,19 @@
       ],
       "2": [
         {
-          "id": 8031,
+          "id": 7973,
           "name": "",
           "count": 4,
           "pct": 40
         },
         {
-          "id": 7973,
+          "id": 8001,
           "name": "",
           "count": 3,
           "pct": 30
         },
         {
-          "id": 8001,
+          "id": 8031,
           "name": "",
           "count": 3,
           "pct": 30
@@ -348,13 +506,13 @@
       ],
       "7": [
         {
-          "id": 7963,
+          "id": 8019,
           "name": "",
           "count": 4,
           "pct": 40
         },
         {
-          "id": 8019,
+          "id": 7963,
           "name": "",
           "count": 3,
           "pct": 30
@@ -392,28 +550,28 @@
         {
           "id": 7981,
           "name": "",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
         },
         {
           "id": 7983,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         }
       ],
       "16": [
         {
           "id": 8039,
           "name": "",
-          "count": 7,
-          "pct": 70
+          "count": 8,
+          "pct": 80
         },
         {
           "id": 7983,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         },
         {
           "id": 7981,
@@ -428,7 +586,7 @@
     {
       "name": "Cloak of Shadows",
       "spell_id": 31224,
-      "avg_uses": 1.6,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2,
       "sample_count": 9
@@ -440,39 +598,366 @@
       "min_uses": 1,
       "max_uses": 1,
       "sample_count": 3
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "avg_uses": 3.9,
+      "min_uses": 2,
+      "max_uses": 9,
+      "sample_count": 9
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 5
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 9,
+      "avg_first_cast_s": 163.5,
+      "stddev_first_cast_s": 65.2,
+      "avg_gap_s": 164.2,
+      "stddev_gap_s": 40.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 299.3,
+          "stddev_s": 35.9,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.28,
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 9,
+      "avg_first_cast_s": 90.8,
+      "stddev_first_cast_s": 38.6,
+      "avg_gap_s": 66.5,
+      "stddev_gap_s": 60.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 209,
+          "stddev_s": 52.2,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 272.5,
+          "stddev_s": 62.9,
+          "count": 7,
+          "total_samples": 9
+        },
+        "3": {
+          "target_s": 283.4,
+          "stddev_s": 70.9,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 0.74,
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 3,
+      "avg_first_cast_s": 291.7,
+      "stddev_first_cast_s": 6.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.19,
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 5,
+      "avg_first_cast_s": 124.6,
+      "stddev_first_cast_s": 47.7,
+      "avg_gap_s": 129.1,
+      "stddev_gap_s": 69.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 268.5,
+          "stddev_s": 7.1,
+          "count": 3,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.31,
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 53.3,
+      "stddev_s": 7.5,
+      "count": 6,
+      "total_samples": 10,
+      "pct_avg": 0.022,
+      "pct_stddev": 0.008,
+      "pct_min": 0.012,
+      "pct_max": 0.03,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_pct": 0.857,
+          "min_pct": 0.84,
+          "max_pct": 0.882,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.189,
+          "min_pct": 0.118,
+          "max_pct": 0.297,
+          "count": 6
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 103.4,
+      "stddev_s": 4.1,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.009,
+      "pct_stddev": 0.007,
+      "pct_min": 0.003,
+      "pct_max": 0.016,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_pct": 0.781,
+          "min_pct": 0.778,
+          "max_pct": 0.784,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.609,
+          "min_pct": 0.216,
+          "max_pct": 1,
+          "count": 4
+        }
+      ],
+      "window_length_s": 4,
+      "defensive_name": "Crimson Vial",
+      "spell_id": 185311,
+      "common_defensives": [
+        "Crimson Vial"
+      ],
+      "common_cds": [
+        "Crimson Vial"
+      ]
+    },
+    {
+      "time_s": 113.1,
+      "stddev_s": 1.1,
+      "count": 5,
+      "total_samples": 10,
+      "pct_avg": 0.014,
+      "pct_stddev": 0.007,
+      "pct_min": 0.01,
+      "pct_max": 0.027,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241333,
+          "avg_pct": 0.579,
+          "min_pct": 0.23,
+          "max_pct": 0.679,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.291,
+          "min_pct": 0.121,
+          "max_pct": 0.342,
+          "count": 5
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 152,
+      "stddev_s": 4.7,
+      "count": 4,
+      "total_samples": 10,
+      "pct_avg": 0.031,
+      "pct_stddev": 0.012,
+      "pct_min": 0.018,
+      "pct_max": 0.044,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_pct": 0.911,
+          "min_pct": 0.905,
+          "max_pct": 0.916,
+          "count": 2
+        },
+        {
+          "spell_id": 1241932,
+          "avg_pct": 0.578,
+          "min_pct": 0.285,
+          "max_pct": 0.87,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.124,
+          "min_pct": 0.084,
+          "max_pct": 0.187,
+          "count": 4
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 162.7,
+      "stddev_s": 2.6,
+      "count": 6,
+      "total_samples": 10,
+      "pct_avg": 0,
+      "pct_stddev": 0,
+      "pct_min": 0,
+      "pct_max": 0,
+      "ability_breakdown": [],
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    },
+    {
+      "time_s": 265.8,
+      "stddev_s": 13.9,
+      "count": 11,
+      "total_samples": 10,
+      "pct_avg": 0.016,
+      "pct_stddev": 0.009,
+      "pct_min": 0.003,
+      "pct_max": 0.032,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.381,
+          "min_pct": 0.126,
+          "max_pct": 1,
+          "count": 11
+        }
+      ],
+      "window_length_s": 6.3,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 299.6,
+      "stddev_s": 8.9,
+      "count": 6,
+      "total_samples": 10,
+      "pct_avg": 0.031,
+      "pct_stddev": 0.011,
+      "pct_min": 0.022,
+      "pct_max": 0.047,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_pct": 0.865,
+          "min_pct": 0.828,
+          "max_pct": 0.918,
+          "count": 6
+        },
+        {
+          "spell_id": 1264650,
+          "avg_pct": 0.135,
+          "min_pct": 0.082,
+          "max_pct": 0.172,
+          "count": 6
+        }
+      ],
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
     }
   ],
   "top_dtk_comparison": [
     {
       "spell_id": 1242803,
-      "avg_pct": 0.3189,
+      "avg_pct": 0.3057,
       "min_pct": 0.157,
       "max_pct": 0.383,
-      "stddev_pct": 0.0866,
-      "sample_count": 9
+      "stddev_pct": 0.0916,
+      "sample_count": 10
     },
     {
       "spell_id": 1264650,
-      "avg_pct": 0.3037,
+      "avg_pct": 0.3006,
       "min_pct": 0.276,
       "max_pct": 0.323,
-      "stddev_pct": 0.0193,
+      "stddev_pct": 0.0187,
       "sample_count": 10
     },
     {
       "spell_id": 1241932,
-      "avg_pct": 0.2333,
-      "min_pct": 0.18,
+      "avg_pct": 0.2375,
+      "min_pct": 0.211,
       "max_pct": 0.256,
-      "stddev_pct": 0.0238,
+      "stddev_pct": 0.0157,
       "sample_count": 10
     },
     {
       "spell_id": 1242094,
-      "avg_pct": 0.029,
-      "min_pct": 0.022,
+      "avg_pct": 0.0267,
+      "min_pct": 0.019,
       "max_pct": 0.041,
-      "stddev_pct": 0.0084,
+      "stddev_pct": 0.0098,
       "sample_count": 4
     },
     {
@@ -485,7 +970,7 @@
     },
     {
       "spell_id": 1241333,
-      "avg_pct": 0.0222,
+      "avg_pct": 0.022,
       "min_pct": 0.014,
       "max_pct": 0.028,
       "stddev_pct": 0.0055,
@@ -493,94 +978,94 @@
     },
     {
       "spell_id": 1242991,
-      "avg_pct": 0.0198,
+      "avg_pct": 0.0205,
       "min_pct": 0.013,
       "max_pct": 0.025,
-      "stddev_pct": 0.0058,
-      "sample_count": 5
-    },
-    {
-      "spell_id": 1262573,
-      "avg_pct": 0.0145,
-      "min_pct": 0.01,
-      "max_pct": 0.018,
-      "stddev_pct": 0.0026,
-      "sample_count": 8
+      "stddev_pct": 0.0055,
+      "sample_count": 6
     },
     {
       "spell_id": 1244348,
-      "avg_pct": 0.0144,
+      "avg_pct": 0.0168,
       "min_pct": 0.005,
-      "max_pct": 0.021,
-      "stddev_pct": 0.0066,
-      "sample_count": 5
+      "max_pct": 0.029,
+      "stddev_pct": 0.0084,
+      "sample_count": 6
+    },
+    {
+      "spell_id": 1262573,
+      "avg_pct": 0.0143,
+      "min_pct": 0.01,
+      "max_pct": 0.018,
+      "stddev_pct": 0.0028,
+      "sample_count": 7
     }
   ],
   "top_dtk_segments": [
     {
       "seg_index": 0,
-      "avg_pct": 0.0761,
-      "stddev_pct": 0.008,
+      "avg_pct": 0.0757,
+      "stddev_pct": 0.0082,
       "sample_count": 10
     },
     {
       "seg_index": 1,
-      "avg_pct": 0.0849,
-      "stddev_pct": 0.0129,
+      "avg_pct": 0.0842,
+      "stddev_pct": 0.0135,
       "sample_count": 10
     },
     {
       "seg_index": 2,
-      "avg_pct": 0.0368,
-      "stddev_pct": 0.0093,
+      "avg_pct": 0.036,
+      "stddev_pct": 0.0097,
       "sample_count": 10
     },
     {
       "seg_index": 3,
-      "avg_pct": 0.0816,
-      "stddev_pct": 0.0175,
+      "avg_pct": 0.0815,
+      "stddev_pct": 0.0176,
       "sample_count": 10
     },
     {
       "seg_index": 4,
-      "avg_pct": 0.1881,
-      "stddev_pct": 0.0241,
+      "avg_pct": 0.1839,
+      "stddev_pct": 0.0249,
       "sample_count": 10
     },
     {
       "seg_index": 5,
-      "avg_pct": 0.0996,
-      "stddev_pct": 0.0181,
+      "avg_pct": 0.0988,
+      "stddev_pct": 0.0185,
       "sample_count": 10
     },
     {
       "seg_index": 6,
-      "avg_pct": 0.0602,
-      "stddev_pct": 0.0186,
+      "avg_pct": 0.0595,
+      "stddev_pct": 0.018,
       "sample_count": 10
     },
     {
       "seg_index": 7,
-      "avg_pct": 0.0792,
-      "stddev_pct": 0.0172,
+      "avg_pct": 0.0756,
+      "stddev_pct": 0.0128,
       "sample_count": 10
     },
     {
       "seg_index": 8,
-      "avg_pct": 0.0782,
-      "stddev_pct": 0.0261,
+      "avg_pct": 0.0817,
+      "stddev_pct": 0.0243,
       "sample_count": 10
     },
     {
       "seg_index": 9,
-      "avg_pct": 0.1455,
-      "stddev_pct": 0.0323,
+      "avg_pct": 0.1353,
+      "stddev_pct": 0.0299,
       "sample_count": 10
     },
     {
       "seg_index": 10,
-      "avg_pct": 0.0698,
-      "stddev_pct": 0.0529,
+      "avg_pct": 0.0879,
+      "stddev_pct": 0.0571,
       "sample_count": 10
     }
   ]
