@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subscription, fromEvent, timer } from 'rxjs';
+import { distinctUntilChanged, exhaustMap, map, startWith, switchMap, throttleTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,11 +36,13 @@ function extractCode(url: string): string {
   templateUrl: './live.html',
   styleUrl: './live.scss',
 })
-export class LiveComponent implements OnInit, OnDestroy {
+export class LiveComponent implements OnInit {
   private readonly auth = inject(WclAuthService);
   private readonly wclApi = inject(WclApiService);
   private readonly analysisSvc = inject(AnalysisService);
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly reportControl = new FormControl('', { nonNullable: true });
   protected readonly loading = signal(false);
@@ -47,22 +53,15 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   private _reportCode = '';
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
-  private _pollTimer: ReturnType<typeof setInterval> | null = null;
+  private _pollSub: Subscription | null = null;
   private _fights: WclFight[] = [];
   private _players: { id: number; name: string; spec: string; server: string }[] = [];
   private _userChars: WclUserCharacter[] = [];
-  private _lastPollTime = 0;
-  private _visibilityHandler: (() => void) | null = null;
 
   async ngOnInit(): Promise<void> {
     if (!this.auth.isLoggedIn()) return;
     this._userChars = await this.wclApi.fetchUserCharacters().catch(() => []);
     if (this._userChars.length) await this._autoStart();
-  }
-
-  ngOnDestroy(): void {
-    this._stopPolling();
-    this._removeVisibilityListener();
   }
 
   private async _autoStart(): Promise<void> {
@@ -77,52 +76,39 @@ export class LiveComponent implements OnInit, OnDestroy {
       const code = d?.characterData?.character?.recentReports?.data?.[0]?.code;
       if (code) {
         this.reportControl.setValue(code);
-        await this.startLive();
+        this.startLive();
       }
     } catch { /* silent - user can enter manually */ }
   }
 
-  protected async startLive(): Promise<void> {
-    this._stopPolling();
+  protected startLive(): void {
+    this._pollSub?.unsubscribe();
     const url = this.reportControl.value.trim();
     if (!url) return;
     this._reportCode = extractCode(url);
-    this._addVisibilityListener();
-    await this._poll();
-    this._startInterval();
+
+    // Poll only while the tab is visible. switchMap cancels the interval when the
+    // tab is hidden and restarts it (firing immediately, via timer's 0 initial delay)
+    // when it returns. throttleTime is the 12s cooldown: it lets the first poll
+    // through but suppresses a refocus that lands within POLL_MS of the last one.
+    const visible$ = fromEvent(this.document, 'visibilitychange').pipe(
+      map(() => this.document.visibilityState === 'visible'),
+      startWith(this.document.visibilityState === 'visible'),
+      distinctUntilChanged(),
+    );
+
+    this._pollSub = visible$.pipe(
+      switchMap(visible => visible ? timer(0, POLL_MS) : EMPTY),
+      throttleTime(POLL_MS),
+      exhaustMap(() => this._poll()),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
   }
 
   protected stopLive(): void {
-    this._stopPolling();
-    this._removeVisibilityListener();
+    this._pollSub?.unsubscribe();
+    this._pollSub = null;
     this.status.set('Stopped.');
-  }
-
-  private _startInterval(): void {
-    this._pollTimer = setInterval(() => {
-      if (document.visibilityState === 'visible') this._poll();
-    }, POLL_MS);
-  }
-
-  private _stopPolling(): void {
-    if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = null; }
-  }
-
-  private _addVisibilityListener(): void {
-    this._removeVisibilityListener();
-    this._visibilityHandler = () => {
-      if (document.visibilityState !== 'visible') return;
-      const elapsed = Date.now() - this._lastPollTime;
-      if (elapsed >= POLL_MS) this._poll();
-    };
-    document.addEventListener('visibilitychange', this._visibilityHandler);
-  }
-
-  private _removeVisibilityListener(): void {
-    if (this._visibilityHandler) {
-      document.removeEventListener('visibilitychange', this._visibilityHandler);
-      this._visibilityHandler = null;
-    }
   }
 
   private _syncUrl(fightId: number, playerId: number): void {
@@ -134,7 +120,6 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   private async _poll(): Promise<void> {
-    this._lastPollTime = Date.now();
     this.error.set('');
     this.status.set('Checking for new pulls…');
     try {
