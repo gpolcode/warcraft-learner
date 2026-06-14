@@ -3,42 +3,36 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 488.5,
-  "last_ingested": "2026-06-13 18:43:31",
-  "downtime_threshold_ms": 1694,
-  "top_avg_efficiency": 67.2,
+  "avg_duration_s": 491.4,
+  "last_ingested": "2026-06-14 09:10:11",
+  "downtime_threshold_ms": 1720,
+  "top_avg_efficiency": 66.9,
   "top_efficiency_stddev": 3.4,
   "per_cd_benchmarks": {
     "Shadow Blades": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.7,
-      "stddev_first_cast_s": 3,
-      "avg_gap_s": 94.6,
-      "stddev_gap_s": 6.3,
+      "avg_first_cast_s": 6.3,
+      "stddev_first_cast_s": 2.8,
+      "avg_gap_s": 94.8,
+      "stddev_gap_s": 6.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
-        "4": {
-          "target_s": 287,
-          "stddev_s": 7.3,
-          "count": 4,
-          "total_samples": 10
-        },
         "5": {
-          "target_s": 385.2,
+          "target_s": 383.8,
           "stddev_s": 11.2,
           "count": 8,
           "total_samples": 10
         },
         "6": {
           "target_s": 476.4,
-          "stddev_s": 10.6,
+          "stddev_s": 10.9,
           "count": 8,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.712,
+        "avg": 0.708,
         "stddev": 0.039,
         "min": 0.626,
         "max": 0.761
@@ -50,136 +44,136 @@
     },
     "Shadow Dance": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.8,
-      "stddev_first_cast_s": 2.9,
-      "avg_gap_s": 20.2,
-      "stddev_gap_s": 10,
+      "avg_first_cast_s": 6.3,
+      "stddev_first_cast_s": 2.7,
+      "avg_gap_s": 20.1,
+      "stddev_gap_s": 9.8,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 3.009,
-        "stddev": 0.094,
+        "avg": 3.027,
+        "stddev": 0.099,
         "min": 2.879,
         "max": 3.151
       },
-      "avg_uses": 24.5,
-      "avg_uses_per_min": 3.01,
+      "avg_uses": 24.8,
+      "avg_uses_per_min": 3.03,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Secret Technique": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.9,
-      "stddev_first_cast_s": 3,
-      "avg_gap_s": 22.7,
-      "stddev_gap_s": 10.4,
+      "avg_first_cast_s": 6.4,
+      "stddev_first_cast_s": 2.8,
+      "avg_gap_s": 22.6,
+      "stddev_gap_s": 10.1,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 2.684,
-        "stddev": 0.206,
+        "avg": 2.692,
+        "stddev": 0.209,
         "min": 2.144,
         "max": 2.929
       },
-      "avg_uses": 21.9,
-      "avg_uses_per_min": 2.68,
+      "avg_uses": 22.1,
+      "avg_uses_per_min": 2.69,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 34,
-      "stddev_first_cast_s": 77,
-      "avg_gap_s": 164.9,
-      "stddev_gap_s": 41.2,
+      "avg_first_cast_s": 29.5,
+      "stddev_first_cast_s": 77.5,
+      "avg_gap_s": 163.7,
+      "stddev_gap_s": 40.9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
-          "target_s": 186.9,
-          "stddev_s": 83,
+          "target_s": 185.9,
+          "stddev_s": 84.3,
           "count": 9,
           "total_samples": 10
         },
         "3": {
           "target_s": 311.2,
-          "stddev_s": 39.5,
+          "stddev_s": 39,
           "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 443,
-          "stddev_s": 4.9,
-          "count": 4,
+          "target_s": 445.7,
+          "stddev_s": 7.2,
+          "count": 5,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.371,
-        "stddev": 0.136,
+        "avg": 0.38,
+        "stddev": 0.139,
         "min": 0.117,
         "max": 0.536
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.37,
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.38,
       "bl_pct": 0,
       "majority_hold": true
     }
   },
   "burst_windows": [
     {
-      "time_s": 3.7,
-      "stddev_s": 3.7,
+      "time_s": 2.6,
+      "stddev_s": 3.4,
       "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.172,
-      "pct_stddev": 0.033,
-      "pct_min": 0.13,
-      "pct_max": 0.229,
+      "dmg_avg": 18201780,
+      "dmg_stddev": 3445137,
+      "dmg_min": 13972196,
+      "dmg_max": 25003485,
       "ability_breakdown": [
         {
           "spell_id": 196819,
-          "avg_pct": 0.17,
-          "min_pct": 0.134,
-          "max_pct": 0.227,
+          "avg_damage": 3112638,
+          "min_damage": 1871775,
+          "max_damage": 4494494,
           "count": 10
         },
         {
           "spell_id": 279043,
-          "avg_pct": 0.148,
-          "min_pct": 0.113,
-          "max_pct": 0.199,
+          "avg_damage": 2722112,
+          "min_damage": 1839232,
+          "max_damage": 3890741,
           "count": 10
         },
         {
           "spell_id": 1269205,
-          "avg_pct": 0.124,
-          "min_pct": 0.079,
-          "max_pct": 0.166,
+          "avg_damage": 2212876,
+          "min_damage": 1477523,
+          "max_damage": 2813255,
           "count": 10
         },
         {
           "spell_id": 282449,
-          "avg_pct": 0.105,
-          "min_pct": 0.062,
-          "max_pct": 0.168,
+          "avg_damage": 1938628,
+          "min_damage": 932955,
+          "max_damage": 2811588,
           "count": 10
         },
         {
           "spell_id": 185438,
-          "avg_pct": 0.079,
-          "min_pct": 0.052,
-          "max_pct": 0.104,
+          "avg_damage": 1446412,
+          "min_damage": 732532,
+          "max_damage": 2603905,
           "count": 9
         },
         {
           "spell_id": 328082,
-          "avg_pct": 0.077,
-          "min_pct": 0.053,
-          "max_pct": 0.106,
-          "count": 8
+          "avg_damage": 1429157,
+          "min_damage": 738273,
+          "max_damage": 2144027,
+          "count": 9
         }
       ],
       "common_cds": [
@@ -188,118 +182,59 @@
         "Vanish"
       ],
       "avg_targets": 1,
-      "window_length_s": 30.5
+      "window_length_s": 30.8
     },
     {
       "time_s": 50.5,
       "stddev_s": 6.8,
       "count": 12,
       "total_samples": 10,
-      "pct_avg": 0.049,
-      "pct_stddev": 0.013,
-      "pct_min": 0.032,
-      "pct_max": 0.078,
+      "dmg_avg": 4900388,
+      "dmg_stddev": 1216288,
+      "dmg_min": 3092587,
+      "dmg_max": 7694106,
       "ability_breakdown": [
         {
           "spell_id": 282449,
-          "avg_pct": 0.21,
-          "min_pct": 0.115,
-          "max_pct": 0.285,
+          "avg_damage": 1014092,
+          "min_damage": 587049,
+          "max_damage": 1511138,
           "count": 12
         },
         {
           "spell_id": 1269205,
-          "avg_pct": 0.127,
-          "min_pct": 0.074,
-          "max_pct": 0.174,
-          "count": 12
+          "avg_damage": 667596,
+          "min_damage": 365922,
+          "max_damage": 1305179,
+          "count": 11
         },
         {
           "spell_id": 185438,
-          "avg_pct": 0.12,
-          "min_pct": 0.063,
-          "max_pct": 0.209,
+          "avg_damage": 647670,
+          "min_damage": 253436,
+          "max_damage": 1231413,
           "count": 9
         },
         {
           "spell_id": 196819,
-          "avg_pct": 0.111,
-          "min_pct": 0.065,
-          "max_pct": 0.181,
+          "avg_damage": 524982,
+          "min_damage": 353554,
+          "max_damage": 956844,
           "count": 12
         },
         {
           "spell_id": 1264397,
-          "avg_pct": 0.079,
-          "min_pct": 0.059,
-          "max_pct": 0.114,
+          "avg_damage": 394203,
+          "min_damage": 235076,
+          "max_damage": 877589,
           "count": 12
         },
         {
           "spell_id": 328082,
-          "avg_pct": 0.073,
-          "min_pct": 0.058,
-          "max_pct": 0.096,
-          "count": 6
-        }
-      ],
-      "common_cds": [
-        "Shadow Dance"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 8.2
-    },
-    {
-      "time_s": 70.2,
-      "stddev_s": 3.1,
-      "count": 8,
-      "total_samples": 10,
-      "pct_avg": 0.072,
-      "pct_stddev": 0.015,
-      "pct_min": 0.051,
-      "pct_max": 0.093,
-      "ability_breakdown": [
-        {
-          "spell_id": 282449,
-          "avg_pct": 0.253,
-          "min_pct": 0.193,
-          "max_pct": 0.31,
-          "count": 8
-        },
-        {
-          "spell_id": 196819,
-          "avg_pct": 0.134,
-          "min_pct": 0.068,
-          "max_pct": 0.205,
-          "count": 8
-        },
-        {
-          "spell_id": 1269205,
-          "avg_pct": 0.117,
-          "min_pct": 0.082,
-          "max_pct": 0.186,
+          "avg_damage": 317606,
+          "min_damage": 181696,
+          "max_damage": 455997,
           "count": 7
-        },
-        {
-          "spell_id": 185438,
-          "avg_pct": 0.091,
-          "min_pct": 0.054,
-          "max_pct": 0.128,
-          "count": 7
-        },
-        {
-          "spell_id": 1264397,
-          "avg_pct": 0.082,
-          "min_pct": 0.056,
-          "max_pct": 0.118,
-          "count": 7
-        },
-        {
-          "spell_id": 328082,
-          "avg_pct": 0.059,
-          "min_pct": 0.048,
-          "max_pct": 0.073,
-          "count": 5
         }
       ],
       "common_cds": [
@@ -309,55 +244,114 @@
       "window_length_s": 8
     },
     {
-      "time_s": 99.1,
-      "stddev_s": 5.3,
+      "time_s": 70.4,
+      "stddev_s": 3.1,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 7847301,
+      "dmg_stddev": 1731074,
+      "dmg_min": 5477029,
+      "dmg_max": 10006842,
+      "ability_breakdown": [
+        {
+          "spell_id": 282449,
+          "avg_damage": 2059706,
+          "min_damage": 1082162,
+          "max_damage": 3157578,
+          "count": 8
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 1101869,
+          "min_damage": 610903,
+          "max_damage": 1549768,
+          "count": 8
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 750736,
+          "min_damage": 523352,
+          "max_damage": 1076342,
+          "count": 7
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 666646,
+          "min_damage": 422791,
+          "max_damage": 953599,
+          "count": 7
+        },
+        {
+          "spell_id": 1264397,
+          "avg_damage": 650353,
+          "min_damage": 416290,
+          "max_damage": 1177267,
+          "count": 7
+        },
+        {
+          "spell_id": 328082,
+          "avg_damage": 432169,
+          "min_damage": 313610,
+          "max_damage": 512016,
+          "count": 4
+        }
+      ],
+      "common_cds": [
+        "Shadow Dance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 8
+    },
+    {
+      "time_s": 98.1,
+      "stddev_s": 4.9,
       "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.262,
-      "pct_stddev": 0.05,
-      "pct_min": 0.2,
-      "pct_max": 0.359,
+      "dmg_avg": 28566765,
+      "dmg_stddev": 5591725,
+      "dmg_min": 21204226,
+      "dmg_max": 38510251,
       "ability_breakdown": [
         {
           "spell_id": 279043,
-          "avg_pct": 0.231,
-          "min_pct": 0.19,
-          "max_pct": 0.244,
+          "avg_damage": 6536183,
+          "min_damage": 5058882,
+          "max_damage": 8342285,
           "count": 10
         },
         {
           "spell_id": 196819,
-          "avg_pct": 0.141,
-          "min_pct": 0.086,
-          "max_pct": 0.196,
+          "avg_damage": 3889347,
+          "min_damage": 2557066,
+          "max_damage": 5152764,
+          "count": 10
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 3545764,
+          "min_damage": 2038012,
+          "max_damage": 4622799,
           "count": 10
         },
         {
           "spell_id": 282449,
-          "avg_pct": 0.123,
-          "min_pct": 0.079,
-          "max_pct": 0.155,
+          "avg_damage": 3512479,
+          "min_damage": 1976727,
+          "max_damage": 5950501,
           "count": 9
         },
         {
-          "spell_id": 1269205,
-          "avg_pct": 0.122,
-          "min_pct": 0.092,
-          "max_pct": 0.176,
-          "count": 10
-        },
-        {
           "spell_id": 328082,
-          "avg_pct": 0.08,
-          "min_pct": 0.059,
-          "max_pct": 0.105,
+          "avg_damage": 2025719,
+          "min_damage": 1518338,
+          "max_damage": 2763750,
           "count": 5
         },
         {
           "spell_id": 185438,
-          "avg_pct": 0.063,
-          "min_pct": 0.048,
-          "max_pct": 0.087,
+          "avg_damage": 1873238,
+          "min_damage": 1252779,
+          "max_damage": 3254610,
           "count": 8
         }
       ],
@@ -369,55 +363,55 @@
       "window_length_s": 21.1
     },
     {
-      "time_s": 190.6,
-      "stddev_s": 2.9,
+      "time_s": 189.9,
+      "stddev_s": 2.4,
       "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.058,
-      "pct_stddev": 0.008,
-      "pct_min": 0.043,
-      "pct_max": 0.071,
+      "dmg_avg": 5917924,
+      "dmg_stddev": 717894,
+      "dmg_min": 4631961,
+      "dmg_max": 7244793,
       "ability_breakdown": [
         {
           "spell_id": 279043,
-          "avg_pct": 0.236,
-          "min_pct": 0.22,
-          "max_pct": 0.245,
+          "avg_damage": 1394348,
+          "min_damage": 1085321,
+          "max_damage": 1685012,
           "count": 10
         },
         {
           "spell_id": 282449,
-          "avg_pct": 0.157,
-          "min_pct": 0.085,
-          "max_pct": 0.201,
+          "avg_damage": 945778,
+          "min_damage": 511785,
+          "max_damage": 1260472,
           "count": 10
         },
         {
           "spell_id": 196819,
-          "avg_pct": 0.132,
-          "min_pct": 0.094,
-          "max_pct": 0.21,
+          "avg_damage": 774384,
+          "min_damage": 533774,
+          "max_damage": 1261213,
           "count": 10
         },
         {
           "spell_id": 1269205,
-          "avg_pct": 0.111,
-          "min_pct": 0.06,
-          "max_pct": 0.173,
+          "avg_damage": 624604,
+          "min_damage": 341638,
+          "max_damage": 814548,
           "count": 10
         },
         {
           "spell_id": 185438,
-          "avg_pct": 0.066,
-          "min_pct": 0.053,
-          "max_pct": 0.075,
-          "count": 8
+          "avg_damage": 399153,
+          "min_damage": 296000,
+          "max_damage": 541768,
+          "count": 7
         },
         {
           "spell_id": 328082,
-          "avg_pct": 0.065,
-          "min_pct": 0.053,
-          "max_pct": 0.08,
+          "avg_damage": 388851,
+          "min_damage": 314604,
+          "max_damage": 482202,
           "count": 5
         }
       ],
@@ -429,55 +423,55 @@
       "window_length_s": 21.1
     },
     {
-      "time_s": 284,
-      "stddev_s": 5.2,
+      "time_s": 283.4,
+      "stddev_s": 5,
       "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.053,
-      "pct_stddev": 0.007,
-      "pct_min": 0.042,
-      "pct_max": 0.064,
+      "dmg_avg": 5424259,
+      "dmg_stddev": 624986,
+      "dmg_min": 4443958,
+      "dmg_max": 6074042,
       "ability_breakdown": [
         {
           "spell_id": 279043,
-          "avg_pct": 0.22,
-          "min_pct": 0.195,
-          "max_pct": 0.236,
+          "avg_damage": 1204356,
+          "min_damage": 1012759,
+          "max_damage": 1436294,
           "count": 10
         },
         {
           "spell_id": 282449,
-          "avg_pct": 0.135,
-          "min_pct": 0.091,
-          "max_pct": 0.205,
+          "avg_damage": 742926,
+          "min_damage": 541878,
+          "max_damage": 1175217,
           "count": 10
         },
         {
           "spell_id": 196819,
-          "avg_pct": 0.125,
-          "min_pct": 0.078,
-          "max_pct": 0.174,
+          "avg_damage": 694020,
+          "min_damage": 419507,
+          "max_damage": 1053927,
           "count": 10
         },
         {
           "spell_id": 1269205,
-          "avg_pct": 0.096,
-          "min_pct": 0.068,
-          "max_pct": 0.138,
+          "avg_damage": 528129,
+          "min_damage": 310043,
+          "max_damage": 827503,
           "count": 10
         },
         {
           "spell_id": 459497,
-          "avg_pct": 0.082,
-          "min_pct": 0.046,
-          "max_pct": 0.132,
-          "count": 6
+          "avg_damage": 403034,
+          "min_damage": 202701,
+          "max_damage": 579662,
+          "count": 5
         },
         {
           "spell_id": 328082,
-          "avg_pct": 0.067,
-          "min_pct": 0.053,
-          "max_pct": 0.081,
+          "avg_damage": 353283,
+          "min_damage": 216863,
+          "max_damage": 455738,
           "count": 9
         }
       ],
@@ -490,55 +484,55 @@
     },
     {
       "time_s": 377.7,
-      "stddev_s": 7,
+      "stddev_s": 6.8,
       "count": 9,
       "total_samples": 10,
-      "pct_avg": 0.049,
-      "pct_stddev": 0.007,
-      "pct_min": 0.042,
-      "pct_max": 0.06,
+      "dmg_avg": 5295173,
+      "dmg_stddev": 758731,
+      "dmg_min": 4219390,
+      "dmg_max": 6514585,
       "ability_breakdown": [
         {
           "spell_id": 279043,
-          "avg_pct": 0.228,
-          "min_pct": 0.174,
-          "max_pct": 0.245,
+          "avg_damage": 1200388,
+          "min_damage": 969271,
+          "max_damage": 1500531,
           "count": 9
         },
         {
           "spell_id": 196819,
-          "avg_pct": 0.14,
-          "min_pct": 0.057,
-          "max_pct": 0.179,
+          "avg_damage": 751112,
+          "min_damage": 287125,
+          "max_damage": 1026779,
           "count": 9
         },
         {
           "spell_id": 282449,
-          "avg_pct": 0.133,
-          "min_pct": 0.097,
-          "max_pct": 0.174,
+          "avg_damage": 737921,
+          "min_damage": 437195,
+          "max_damage": 1014218,
           "count": 9
         },
         {
           "spell_id": 1269205,
-          "avg_pct": 0.107,
-          "min_pct": 0.079,
-          "max_pct": 0.127,
+          "avg_damage": 568701,
+          "min_damage": 414320,
+          "max_damage": 807789,
           "count": 8
         },
         {
-          "spell_id": 185438,
-          "avg_pct": 0.072,
-          "min_pct": 0.053,
-          "max_pct": 0.09,
-          "count": 7
+          "spell_id": 328082,
+          "avg_damage": 372573,
+          "min_damage": 211257,
+          "max_damage": 463641,
+          "count": 6
         },
         {
-          "spell_id": 328082,
-          "avg_pct": 0.07,
-          "min_pct": 0.047,
-          "max_pct": 0.084,
-          "count": 6
+          "spell_id": 185438,
+          "avg_damage": 367954,
+          "min_damage": 264554,
+          "max_damage": 500225,
+          "count": 7
         }
       ],
       "common_cds": [
@@ -574,16 +568,28 @@
         {
           "id": 249344,
           "name": "Light Company Guidon",
-          "count": 10,
-          "pct": 100
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 1,
+          "pct": 10
         }
       ],
       "13": [
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 9,
-          "pct": 90
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 249344,
+          "name": "Light Company Guidon",
+          "count": 1,
+          "pct": 10
         },
         {
           "id": 249805,
@@ -602,13 +608,13 @@
           "pct": 60
         },
         {
-          "id": 7959,
+          "id": 7991,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         },
         {
-          "id": 7991,
+          "id": 7959,
           "name": "",
           "count": 1,
           "pct": 10
@@ -622,13 +628,13 @@
           "pct": 60
         },
         {
-          "id": 8029,
+          "id": 7973,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         },
         {
-          "id": 7973,
+          "id": 8029,
           "name": "",
           "count": 1,
           "pct": 10
@@ -654,8 +660,8 @@
         {
           "id": 7963,
           "name": "",
-          "count": 7,
-          "pct": 70
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 8019,
@@ -692,16 +698,21 @@
         {
           "id": 8039,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 8041,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 3,
+          "pct": 30
         }
       ]
+    },
+    "gems": {
+      "avg_count": 4.6,
+      "max_count": 8,
+      "sample_count": 10
     }
   },
   "top_defensives_summary": [
@@ -724,15 +735,15 @@
     {
       "name": "Crimson Vial",
       "spell_id": 185311,
-      "avg_uses": 2.9,
+      "avg_uses": 2,
       "min_uses": 1,
-      "max_uses": 8,
+      "max_uses": 4,
       "sample_count": 7
     },
     {
       "name": "Feint",
       "spell_id": 1966,
-      "avg_uses": 8.4,
+      "avg_uses": 7.4,
       "min_uses": 3,
       "max_uses": 15,
       "sample_count": 10
@@ -741,14 +752,14 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 9,
-      "avg_first_cast_s": 98.9,
-      "stddev_first_cast_s": 16.4,
-      "avg_gap_s": 292.2,
-      "stddev_gap_s": 84,
+      "avg_first_cast_s": 97.2,
+      "stddev_first_cast_s": 15.7,
+      "avg_gap_s": 293.3,
+      "stddev_gap_s": 84.6,
       "hold_targets": {
         "1": {
-          "target_s": 426.3,
-          "stddev_s": 89.4,
+          "target_s": 424.9,
+          "stddev_s": 89.1,
           "count": 8,
           "total_samples": 9
         }
@@ -759,44 +770,44 @@
     },
     "Crimson Vial": {
       "sample_count": 7,
-      "avg_first_cast_s": 233.6,
-      "stddev_first_cast_s": 135.9,
-      "avg_gap_s": 91.2,
-      "stddev_gap_s": 66.3,
+      "avg_first_cast_s": 266.3,
+      "stddev_first_cast_s": 106.4,
+      "avg_gap_s": 139.2,
+      "stddev_gap_s": 81.2,
       "hold_targets": {
         "1": {
-          "target_s": 357.5,
-          "stddev_s": 124.4,
+          "target_s": 369.8,
+          "stddev_s": 57.1,
           "count": 5,
           "total_samples": 7
         }
       },
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.24,
       "majority_hold": true
     },
     "Feint": {
       "sample_count": 10,
-      "avg_first_cast_s": 47.2,
-      "stddev_first_cast_s": 33.4,
-      "avg_gap_s": 56.5,
-      "stddev_gap_s": 57.6,
+      "avg_first_cast_s": 51.8,
+      "stddev_first_cast_s": 31.8,
+      "avg_gap_s": 64.4,
+      "stddev_gap_s": 68,
       "hold_targets": {
         "1": {
-          "target_s": 104.4,
-          "stddev_s": 112.3,
-          "count": 9,
+          "target_s": 114.2,
+          "stddev_s": 129.3,
+          "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 179.1,
-          "stddev_s": 140.6,
+          "target_s": 286.5,
+          "stddev_s": 142.4,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 228.3,
-          "stddev_s": 137.7,
+          "target_s": 329.2,
+          "stddev_s": 139.4,
           "count": 6,
           "total_samples": 10
         },
@@ -807,26 +818,26 @@
           "total_samples": 10
         },
         "5": {
-          "target_s": 273.4,
-          "stddev_s": 75.4,
-          "count": 6,
+          "target_s": 300.5,
+          "stddev_s": 68.1,
+          "count": 5,
           "total_samples": 10
         },
         "6": {
-          "target_s": 315.5,
-          "stddev_s": 87.5,
-          "count": 6,
+          "target_s": 348.4,
+          "stddev_s": 91.4,
+          "count": 5,
           "total_samples": 10
         },
         "7": {
-          "target_s": 378.2,
-          "stddev_s": 69.6,
-          "count": 5,
+          "target_s": 407.3,
+          "stddev_s": 71,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 8.4,
-      "avg_uses_per_min": 1.03,
+      "avg_uses": 7.4,
+      "avg_uses_per_min": 0.91,
       "majority_hold": true
     },
     "Evasion": {
@@ -843,28 +854,28 @@
   },
   "defensive_windows": [
     {
-      "time_s": 16.2,
-      "stddev_s": 8.8,
-      "count": 6,
+      "time_s": 15.6,
+      "stddev_s": 7.2,
+      "count": 4,
       "total_samples": 10,
-      "pct_avg": 0.015,
-      "pct_stddev": 0.007,
-      "pct_min": 0.007,
-      "pct_max": 0.023,
+      "dmg_avg": 352893,
+      "dmg_stddev": 151602,
+      "dmg_min": 173562,
+      "dmg_max": 523077,
       "ability_breakdown": [
         {
           "spell_id": 1260027,
-          "avg_pct": 0.541,
-          "min_pct": 0.254,
-          "max_pct": 0.716,
-          "count": 5
+          "avg_damage": 189322,
+          "min_damage": 44088,
+          "max_damage": 304774,
+          "count": 4
         },
         {
           "spell_id": 1281707,
-          "avg_pct": 0.441,
-          "min_pct": 0.251,
-          "max_pct": 0.815,
-          "count": 6
+          "avg_damage": 118979,
+          "min_damage": 105381,
+          "max_damage": 131198,
+          "count": 4
         }
       ],
       "window_length_s": 6,
@@ -878,35 +889,28 @@
       ]
     },
     {
-      "time_s": 61.5,
-      "stddev_s": 9,
-      "count": 6,
+      "time_s": 61.7,
+      "stddev_s": 8.4,
+      "count": 7,
       "total_samples": 10,
-      "pct_avg": 0.015,
-      "pct_stddev": 0.006,
-      "pct_min": 0.006,
-      "pct_max": 0.021,
+      "dmg_avg": 334271,
+      "dmg_stddev": 114833,
+      "dmg_min": 128528,
+      "dmg_max": 446371,
       "ability_breakdown": [
         {
-          "spell_id": 1233649,
-          "avg_pct": 0.516,
-          "min_pct": 0.468,
-          "max_pct": 0.589,
-          "count": 3
-        },
-        {
           "spell_id": 1281707,
-          "avg_pct": 0.296,
-          "min_pct": 0.254,
-          "max_pct": 0.411,
-          "count": 6
+          "avg_damage": 94819,
+          "min_damage": 32796,
+          "max_damage": 118201,
+          "count": 7
         },
         {
           "spell_id": 1233826,
-          "avg_pct": 0.252,
-          "min_pct": 0.206,
-          "max_pct": 0.285,
-          "count": 4
+          "avg_damage": 85211,
+          "min_damage": 55342,
+          "max_damage": 113250,
+          "count": 5
         }
       ],
       "window_length_s": 6,
@@ -924,23 +928,23 @@
       "stddev_s": 9.8,
       "count": 4,
       "total_samples": 10,
-      "pct_avg": 0.013,
-      "pct_stddev": 0.008,
-      "pct_min": 0.003,
-      "pct_max": 0.021,
+      "dmg_avg": 279563,
+      "dmg_stddev": 174767,
+      "dmg_min": 75014,
+      "dmg_max": 476588,
       "ability_breakdown": [
         {
           "spell_id": 1260027,
-          "avg_pct": 0.776,
-          "min_pct": 0.748,
-          "max_pct": 0.803,
+          "avg_damage": 262223,
+          "min_damage": 168085,
+          "max_damage": 356360,
           "count": 2
         },
         {
           "spell_id": 1281707,
-          "avg_pct": 0.408,
-          "min_pct": 0.184,
-          "max_pct": 1,
+          "avg_damage": 75553,
+          "min_damage": 41272,
+          "max_damage": 120228,
           "count": 4
         }
       ],
@@ -955,14 +959,14 @@
       ]
     },
     {
-      "time_s": 104.3,
-      "stddev_s": 7.4,
+      "time_s": 102.8,
+      "stddev_s": 7,
       "count": 8,
       "total_samples": 10,
-      "pct_avg": 0.002,
-      "pct_stddev": 0.004,
-      "pct_min": 0,
-      "pct_max": 0.011,
+      "dmg_avg": 14999,
+      "dmg_stddev": 42424,
+      "dmg_min": 0,
+      "dmg_max": 119993,
       "ability_breakdown": [],
       "window_length_s": 5,
       "defensive_name": "Cloak of Shadows",
@@ -976,62 +980,20 @@
     },
     {
       "time_s": 124,
-      "stddev_s": 11.5,
-      "count": 10,
+      "stddev_s": 10.8,
+      "count": 8,
       "total_samples": 10,
-      "pct_avg": 0.004,
-      "pct_stddev": 0.004,
-      "pct_min": 0,
-      "pct_max": 0.012,
+      "dmg_avg": 77585,
+      "dmg_stddev": 92891,
+      "dmg_min": 0,
+      "dmg_max": 280046,
       "ability_breakdown": [
         {
           "spell_id": 1281707,
-          "avg_pct": 0.665,
-          "min_pct": 0.217,
-          "max_pct": 1,
-          "count": 6
-        }
-      ],
-      "window_length_s": 6,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ]
-    },
-    {
-      "time_s": 215.8,
-      "stddev_s": 7.4,
-      "count": 4,
-      "total_samples": 10,
-      "pct_avg": 0.017,
-      "pct_stddev": 0.006,
-      "pct_min": 0.008,
-      "pct_max": 0.021,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.685,
-          "min_pct": 0.551,
-          "max_pct": 0.812,
-          "count": 3
-        },
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.237,
-          "min_pct": 0.205,
-          "max_pct": 0.269,
-          "count": 2
-        },
-        {
-          "spell_id": 1260019,
-          "avg_pct": 0.157,
-          "min_pct": 0.104,
-          "max_pct": 0.188,
-          "count": 3
+          "avg_damage": 35135,
+          "min_damage": 20022,
+          "max_damage": 60881,
+          "count": 5
         }
       ],
       "window_length_s": 6,
@@ -1049,37 +1011,37 @@
       "stddev_s": 3.6,
       "count": 5,
       "total_samples": 10,
-      "pct_avg": 0.016,
-      "pct_stddev": 0.004,
-      "pct_min": 0.013,
-      "pct_max": 0.022,
+      "dmg_avg": 349689,
+      "dmg_stddev": 111844,
+      "dmg_min": 273334,
+      "dmg_max": 545483,
       "ability_breakdown": [
         {
           "spell_id": 1237040,
-          "avg_pct": 0.474,
-          "min_pct": 0.409,
-          "max_pct": 0.577,
+          "avg_damage": 162030,
+          "min_damage": 120286,
+          "max_damage": 223107,
           "count": 5
         },
         {
           "spell_id": 1260027,
-          "avg_pct": 0.383,
-          "min_pct": 0.348,
-          "max_pct": 0.447,
+          "avg_damage": 143566,
+          "min_damage": 118704,
+          "max_damage": 189829,
           "count": 3
         },
         {
           "spell_id": 1260000,
-          "avg_pct": 0.181,
-          "min_pct": 0.095,
-          "max_pct": 0.325,
+          "avg_damage": 63749,
+          "min_damage": 41539,
+          "max_damage": 98135,
           "count": 3
         },
         {
           "spell_id": 1260019,
-          "avg_pct": 0.161,
-          "min_pct": 0.063,
-          "max_pct": 0.423,
+          "avg_damage": 52549,
+          "min_damage": 19147,
+          "max_damage": 123218,
           "count": 5
         }
       ],
@@ -1098,44 +1060,44 @@
       "stddev_s": 2,
       "count": 4,
       "total_samples": 10,
-      "pct_avg": 0.014,
-      "pct_stddev": 0.007,
-      "pct_min": 0.003,
-      "pct_max": 0.02,
+      "dmg_avg": 297112,
+      "dmg_stddev": 154548,
+      "dmg_min": 68483,
+      "dmg_max": 405274,
       "ability_breakdown": [
         {
-          "spell_id": 1260027,
-          "avg_pct": 0.556,
-          "min_pct": 0.39,
-          "max_pct": 0.722,
-          "count": 2
-        },
-        {
           "spell_id": 1237040,
-          "avg_pct": 0.375,
-          "min_pct": 0.348,
-          "max_pct": 0.391,
+          "avg_damage": 139739,
+          "min_damage": 132514,
+          "max_damage": 145490,
           "count": 3
         },
         {
+          "spell_id": 1260027,
+          "avg_damage": 97264,
+          "min_damage": 49451,
+          "max_damage": 145077,
+          "count": 2
+        },
+        {
           "spell_id": 1260000,
-          "avg_pct": 0.244,
-          "min_pct": 0.119,
-          "max_pct": 0.368,
+          "avg_damage": 85187,
+          "min_damage": 44204,
+          "max_damage": 126170,
           "count": 2
         },
         {
           "spell_id": 1260019,
-          "avg_pct": 0.171,
-          "min_pct": 0.1,
-          "max_pct": 0.278,
+          "avg_damage": 42331,
+          "min_damage": 19032,
+          "max_damage": 59491,
           "count": 4
         },
         {
           "spell_id": 1233826,
-          "avg_pct": 0.064,
-          "min_pct": 0.055,
-          "max_pct": 0.072,
+          "avg_damage": 23333,
+          "min_damage": 22148,
+          "max_damage": 24517,
           "count": 2
         }
       ],
@@ -1150,28 +1112,28 @@
       ]
     },
     {
-      "time_s": 359.6,
-      "stddev_s": 10.2,
-      "count": 9,
+      "time_s": 373.3,
+      "stddev_s": 11.6,
+      "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.013,
-      "pct_stddev": 0.005,
-      "pct_min": 0.008,
-      "pct_max": 0.024,
+      "dmg_avg": 288551,
+      "dmg_stddev": 86389,
+      "dmg_min": 170936,
+      "dmg_max": 443156,
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_pct": 0.574,
-          "min_pct": 0.305,
-          "max_pct": 0.84,
-          "count": 6
+          "avg_damage": 157318,
+          "min_damage": 89486,
+          "max_damage": 221270,
+          "count": 7
         },
         {
           "spell_id": 1261289,
-          "avg_pct": 0.29,
-          "min_pct": 0.156,
-          "max_pct": 0.472,
-          "count": 7
+          "avg_damage": 67020,
+          "min_damage": 39708,
+          "max_damage": 101506,
+          "count": 6
         }
       ],
       "window_length_s": 6,
@@ -1185,80 +1147,38 @@
       ]
     },
     {
-      "time_s": 396.7,
-      "stddev_s": 13.2,
-      "count": 8,
+      "time_s": 423,
+      "stddev_s": 12.3,
+      "count": 12,
       "total_samples": 10,
-      "pct_avg": 0.018,
-      "pct_stddev": 0.007,
-      "pct_min": 0.008,
-      "pct_max": 0.032,
-      "ability_breakdown": [
-        {
-          "spell_id": 1237040,
-          "avg_pct": 0.461,
-          "min_pct": 0.073,
-          "max_pct": 1,
-          "count": 7
-        },
-        {
-          "spell_id": 1239095,
-          "avg_pct": 0.418,
-          "min_pct": 0.265,
-          "max_pct": 0.746,
-          "count": 6
-        }
-      ],
-      "window_length_s": 6.7,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ]
-    },
-    {
-      "time_s": 427.8,
-      "stddev_s": 7.9,
-      "count": 8,
-      "total_samples": 10,
-      "pct_avg": 0.018,
-      "pct_stddev": 0.009,
-      "pct_min": 0.005,
-      "pct_max": 0.033,
+      "dmg_avg": 383971,
+      "dmg_stddev": 166203,
+      "dmg_min": 101702,
+      "dmg_max": 720993,
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_pct": 0.493,
-          "min_pct": 0.18,
-          "max_pct": 0.804,
-          "count": 7
+          "avg_damage": 176579,
+          "min_damage": 81498,
+          "max_damage": 283373,
+          "count": 11
         },
         {
           "spell_id": 1237040,
-          "avg_pct": 0.277,
-          "min_pct": 0.132,
-          "max_pct": 0.436,
-          "count": 5
-        },
-        {
-          "spell_id": 1260027,
-          "avg_pct": 0.274,
-          "min_pct": 0.217,
-          "max_pct": 0.372,
-          "count": 4
+          "avg_damage": 140765,
+          "min_damage": 27844,
+          "max_damage": 314249,
+          "count": 9
         },
         {
           "spell_id": 1261289,
-          "avg_pct": 0.15,
-          "min_pct": 0.053,
-          "max_pct": 0.257,
-          "count": 7
+          "avg_damage": 59120,
+          "min_damage": 15348,
+          "max_damage": 90597,
+          "count": 8
         }
       ],
-      "window_length_s": 6.6,
+      "window_length_s": 6.8,
       "defensive_name": "Feint",
       "spell_id": 1966,
       "common_defensives": [
@@ -1269,31 +1189,31 @@
       ]
     },
     {
-      "time_s": 475.8,
-      "stddev_s": 12.2,
-      "count": 11,
+      "time_s": 475.3,
+      "stddev_s": 11.3,
+      "count": 10,
       "total_samples": 10,
-      "pct_avg": 0.016,
-      "pct_stddev": 0.005,
-      "pct_min": 0.008,
-      "pct_max": 0.023,
+      "dmg_avg": 385396,
+      "dmg_stddev": 115148,
+      "dmg_min": 150170,
+      "dmg_max": 502547,
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_pct": 0.442,
-          "min_pct": 0.242,
-          "max_pct": 0.56,
+          "avg_damage": 201966,
+          "min_damage": 87264,
+          "max_damage": 281577,
           "count": 6
         },
         {
           "spell_id": 1237040,
-          "avg_pct": 0.431,
-          "min_pct": 0.254,
-          "max_pct": 1,
-          "count": 10
+          "avg_damage": 139325,
+          "min_damage": 119262,
+          "max_damage": 158716,
+          "count": 9
         }
       ],
-      "window_length_s": 5.9,
+      "window_length_s": 6,
       "defensive_name": "Feint",
       "spell_id": 1966,
       "common_defensives": [
@@ -1307,58 +1227,58 @@
   "top_dtk_comparison": [
     {
       "spell_id": 1237040,
-      "avg_pct": 0.2236,
+      "avg_pct": 0.2296,
       "min_pct": 0.104,
       "max_pct": 0.297,
-      "stddev_pct": 0.0608,
+      "stddev_pct": 0.0585,
       "sample_count": 10
     },
     {
       "spell_id": 1281707,
-      "avg_pct": 0.1435,
+      "avg_pct": 0.1417,
       "min_pct": 0.119,
       "max_pct": 0.169,
-      "stddev_pct": 0.0155,
+      "stddev_pct": 0.0159,
       "sample_count": 10
     },
     {
       "spell_id": 1260027,
-      "avg_pct": 0.1277,
+      "avg_pct": 0.1276,
       "min_pct": 0.052,
-      "max_pct": 0.192,
-      "stddev_pct": 0.0454,
+      "max_pct": 0.191,
+      "stddev_pct": 0.0452,
       "sample_count": 10
     },
     {
       "spell_id": 1260019,
-      "avg_pct": 0.0946,
+      "avg_pct": 0.0933,
       "min_pct": 0.073,
       "max_pct": 0.121,
-      "stddev_pct": 0.015,
+      "stddev_pct": 0.0151,
       "sample_count": 10
     },
     {
       "spell_id": 1261289,
-      "avg_pct": 0.0933,
+      "avg_pct": 0.0926,
       "min_pct": 0.065,
       "max_pct": 0.118,
-      "stddev_pct": 0.0147,
+      "stddev_pct": 0.0145,
       "sample_count": 10
     },
     {
       "spell_id": 1233826,
-      "avg_pct": 0.0932,
-      "min_pct": 0.083,
+      "avg_pct": 0.0911,
+      "min_pct": 0.076,
       "max_pct": 0.099,
-      "stddev_pct": 0.0064,
+      "stddev_pct": 0.0082,
       "sample_count": 10
     },
     {
       "spell_id": 1239095,
-      "avg_pct": 0.0693,
+      "avg_pct": 0.0677,
       "min_pct": 0.051,
       "max_pct": 0.081,
-      "stddev_pct": 0.0102,
+      "stddev_pct": 0.0114,
       "sample_count": 10
     },
     {
