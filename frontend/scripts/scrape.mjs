@@ -163,10 +163,6 @@ async function scrapeGuide(guide) {
 
 // ── Guide management ──────────────────────────────────────────────────────────
 
-function nextId(guides) {
-  return guides.length === 0 ? 1 : Math.max(...guides.map(g => g.id || 0)) + 1;
-}
-
 async function scrapeGuideById(spec, guideId) {
   const guides = loadGuides(spec);
   const idx = guides.findIndex(g => g.id === guideId);
@@ -207,22 +203,6 @@ async function main() {
 
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
-  const cliUrl  = argv.find((_, i) => argv[i - 1] === '--url');
-  const cliType = argv.find((_, i) => argv[i - 1] === '--type') || 'web';
-
-  if (cliSpec && cliUrl) {
-    if (!['web', 'youtube', 'simc'].includes(cliType)) {
-      console.error(`Unknown guide type: ${cliType}. Use web, youtube, or simc.`);
-      process.exit(1);
-    }
-    const guides = loadGuides(cliSpec);
-    const newGuide = { id: nextId(guides), spec: cliSpec, url: cliUrl, guide_type: cliType, content: '', status: 'pending' };
-    guides.push(newGuide);
-    saveGuides(cliSpec, guides);
-    console.log(`Added guide #${newGuide.id} for ${cliSpec}. Scraping...`);
-    await scrapeGuideById(cliSpec, newGuide.id);
-    return;
-  }
 
   const specs = cliSpec ? [cliSpec] : getKnownSpecs();
   if (!specs.length) {
