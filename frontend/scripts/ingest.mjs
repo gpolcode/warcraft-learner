@@ -23,7 +23,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const FRONTEND_ROOT = path.resolve(__dirname, '..');
-const DATA_DIR = path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
+// WL_DATA_DIR lets a test/dry run write elsewhere instead of the committed data dir.
+const DATA_DIR = process.env.WL_DATA_DIR || path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
 
 // ── Env loading ───────────────────────────────────────────────────────────────
 
@@ -1653,6 +1654,7 @@ async function main() {
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
   const cliAll = argv.includes('--all');
   const cliTopN = parseInt(argv.find((_, i) => argv[i - 1] === '--top-n') || '10', 10) || 10;
+  const cliLimitEnc = parseInt(argv.find((_, i) => argv[i - 1] === '--limit-enc') || '0', 10) || 0;
 
   let wcl;
   try {
@@ -1678,8 +1680,9 @@ async function main() {
       console.error('No specs found in data directory. Run with --spec SpecName to specify one.');
       process.exit(1);
     }
+    const encs = cliLimitEnc > 0 ? encounters.slice(0, cliLimitEnc) : encounters;
     for (const spec of specs) {
-      await ingestSpecNonInteractive(wcl, spec, encounters, cliTopN);
+      await ingestSpecNonInteractive(wcl, spec, encs, cliTopN);
     }
     rl.close();
     return;
