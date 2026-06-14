@@ -16,7 +16,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import readline from 'readline';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,24 +24,6 @@ const FRONTEND_ROOT = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
 
 const MAX_CONTENT_CHARS = 60_000;
-
-// ── Readline helpers ──────────────────────────────────────────────────────────
-
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-function ask(prompt) {
-  return new Promise(resolve => rl.question(prompt, resolve));
-}
-
-async function askList(prompt, choices) {
-  const lines = choices.map((c, i) => `  [${i + 1}] ${c}`).join('\n');
-  while (true) {
-    const ans = await ask(`${prompt}\n${lines}\n> `);
-    const n = parseInt(ans);
-    if (n >= 1 && n <= choices.length) return n - 1;
-    console.log('Invalid choice, try again.');
-  }
-}
 
 // ── File I/O ──────────────────────────────────────────────────────────────────
 
@@ -186,32 +167,6 @@ function nextId(guides) {
   return guides.length === 0 ? 1 : Math.max(...guides.map(g => g.id || 0)) + 1;
 }
 
-async function addGuide(spec) {
-  const url = (await ask('Guide URL: ')).trim();
-  if (!url) return;
-
-  const typeIdx = await askList('Guide type:', ['web', 'youtube', 'simc']);
-  const guideType = ['web', 'youtube', 'simc'][typeIdx];
-
-  const guides = loadGuides(spec);
-  const newGuide = {
-    id: nextId(guides),
-    spec,
-    url,
-    guide_type: guideType,
-    content: '',
-    status: 'pending',
-  };
-  guides.push(newGuide);
-  saveGuides(spec, guides);
-  console.log(`Added guide #${newGuide.id}`);
-
-  const doScrape = await ask('Scrape now? [Y/n] ');
-  if (doScrape.trim().toLowerCase() !== 'n') {
-    await scrapeGuideById(spec, newGuide.id);
-  }
-}
-
 async function scrapeGuideById(spec, guideId) {
   const guides = loadGuides(spec);
   const idx = guides.findIndex(g => g.id === guideId);
@@ -231,46 +186,6 @@ async function scrapeGuideById(spec, guideId) {
   }
 }
 
-async function guidesMenu(spec) {
-  while (true) {
-    const guides = loadGuides(spec);
-    console.log(`\n── Guides for ${spec} (${guides.length}) ──────────────────────────`);
-    guides.forEach((g, i) =>
-      console.log(`  ${i + 1}. [${g.status.padEnd(7)}] ${g.guide_type.toUpperCase().padEnd(7)} ${g.url.slice(0, 70)}`));
-
-    const actions = [
-      'Add guide',
-      'Scrape a guide',
-      'Scrape all pending',
-      'Delete a guide',
-      'Back',
-    ];
-    const choice = await askList('\nAction:', actions);
-
-    if (choice === 0) {
-      await addGuide(spec);
-    } else if (choice === 1) {
-      if (!guides.length) { console.log('No guides.'); continue; }
-      const n = parseInt(await ask('Guide number to scrape: '));
-      if (n >= 1 && n <= guides.length) await scrapeGuideById(spec, guides[n - 1].id);
-    } else if (choice === 2) {
-      const pending = guides.filter(g => g.status !== 'scraped');
-      if (!pending.length) { console.log('No pending guides.'); continue; }
-      for (const g of pending) await scrapeGuideById(spec, g.id);
-    } else if (choice === 3) {
-      if (!guides.length) { console.log('No guides.'); continue; }
-      const n = parseInt(await ask('Guide number to delete: '));
-      if (n >= 1 && n <= guides.length) {
-        const removed = guides.splice(n - 1, 1)[0];
-        saveGuides(spec, guides);
-        console.log(`Deleted guide #${removed.id}`);
-      }
-    } else {
-      break;
-    }
-  }
-}
-
 async function scrapeAllGuides(wclSpecs) {
   console.log(`\nScraping all guides for ${wclSpecs.length} specs...`);
   for (const spec of wclSpecs) {
@@ -285,30 +200,15 @@ async function scrapeAllGuides(wclSpecs) {
   console.log('\nBulk scraping complete.');
 }
 
-// ── Spec selection ────────────────────────────────────────────────────────────
-
-async function pickSpec() {
-  const specs = getKnownSpecs();
-  console.log('\nKnown specs in data/specs/:');
-  if (specs.length) specs.forEach((s, i) => console.log(`  [${i + 1}] ${s}`));
-  else console.log('  (none yet)');
-  const raw = await ask('\nEnter spec name or number (e.g. SubtletyRogue): ');
-  const n = parseInt(raw);
-  if (n >= 1 && n <= specs.length) return specs[n - 1];
-  return raw.trim();
-}
-
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
   console.log('warcraft-learner - Guide Scraper CLI');
 
-  // ── CLI mode ────────────────────────────────────────────────────────────────
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
   const cliUrl  = argv.find((_, i) => argv[i - 1] === '--url');
   const cliType = argv.find((_, i) => argv[i - 1] === '--type') || 'web';
-  const cliInteractive = argv.includes('--interactive');
 
   if (cliSpec && cliUrl) {
     if (!['web', 'youtube', 'simc'].includes(cliType)) {
@@ -321,32 +221,15 @@ async function main() {
     saveGuides(cliSpec, guides);
     console.log(`Added guide #${newGuide.id} for ${cliSpec}. Scraping...`);
     await scrapeGuideById(cliSpec, newGuide.id);
-    rl.close();
     return;
   }
 
-  if (cliInteractive) {
-    // ── Interactive mode ────────────────────────────────────────────────────────
-    while (true) {
-      const spec = await pickSpec();
-      if (!spec) break;
-
-      await guidesMenu(spec);
-
-      const again = await ask('\nManage another spec? [y/N] ');
-      if (again.trim().toLowerCase() !== 'y') break;
-    }
-  } else {
-    // ── Non-interactive mode (Default) ────────────────────────────────────────
-    const specs = cliSpec ? [cliSpec] : getKnownSpecs();
-    if (!specs.length) {
-      console.error('No specs found in data directory.');
-      process.exit(1);
-    }
-    await scrapeAllGuides(specs);
+  const specs = cliSpec ? [cliSpec] : getKnownSpecs();
+  if (!specs.length) {
+    console.error('No specs found in data directory.');
+    process.exit(1);
   }
-
-  rl.close();
+  await scrapeAllGuides(specs);
 }
 
 main().catch(err => {
