@@ -10,12 +10,16 @@ import { MatCardModule } from '@angular/material/card';
 import { WclAuthService } from '../../core/services/wcl-auth';
 import { WclApiService } from '../../core/services/wcl-api';
 import { AnalysisService } from '../../core/services/analysis';
+import { EncounterService } from '../../core/services/encounter';
 import { IconCacheService } from '../../core/services/icon-cache';
+import { PositioningPanelService } from '../../core/services/positioning-panel';
+import { buildActorTimelines, listReferenceEnemies } from '../../core/services/positioning-core';
+import { LiveOverlay } from '../../shared/components/positioning-map/positioning-map';
 import { WclFight, WclPlayer, WclUserCharacter, WclAbility } from '../../core/models/wcl.models';
+import { EncounterPositions } from '../../core/models/positioning.models';
 import { AnalysisResult } from '../../core/models/analysis.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { AnalysisResultComponent } from './analysis-result/analysis-result';
-import { PositioningCardComponent } from './positioning-card/positioning-card';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 
@@ -30,7 +34,7 @@ function extractCode(url: string): string {
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinnerComponent, AnalysisResultComponent, PositioningCardComponent,
+    LoadingSpinnerComponent, AnalysisResultComponent,
     FormatDurationPipe, FormatSpecPipe,
   ],
   templateUrl: './post-raid.html',
@@ -39,7 +43,9 @@ export class PostRaidComponent implements OnInit {
   private readonly auth = inject(WclAuthService);
   private readonly wclApi = inject(WclApiService);
   private readonly analysisSvc = inject(AnalysisService);
+  private readonly encounterSvc = inject(EncounterService);
   private readonly icons = inject(IconCacheService);
+  private readonly panel = inject(PositioningPanelService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -63,6 +69,7 @@ export class PostRaidComponent implements OnInit {
 
   private _reportCode = '';
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
+  private _enemies: { id: number; name: string; gameID: number }[] = [];
   private _userChars: WclUserCharacter[] = [];
 
   protected readonly visiblePlayers = computed(() => {
@@ -97,6 +104,7 @@ export class PostRaidComponent implements OnInit {
     this.fights.set([]);
     this.players.set([]);
     this.result.set(null);
+    this.panel.clear();
 
     try {
       if (!this.auth.isLoggedIn()) {
@@ -122,6 +130,7 @@ export class PostRaidComponent implements OnInit {
           .sort((a, b) => a.name.localeCompare(b.name))
       );
       this._masterAbilities = report.masterData?.abilities || [];
+      this._enemies = report.masterData?.enemies || [];
       this.masterAbilitiesSig.set(this._masterAbilities);
       if (report.masterData?.abilities) this.icons.seed(report.masterData.abilities);
 
@@ -156,15 +165,48 @@ export class PostRaidComponent implements OnInit {
 
     this.loadingAnalysis.set(true);
     this.result.set(null);
+    this.panel.clear();
     this.loadingMsg.set('Fetching events…');
     try {
       const data = await this.analysisSvc.analyze(this._reportCode, fightId, playerId, this.fights(), this._masterAbilities);
       this.result.set(data);
+      void this._prepareMap(fightId, playerId, data.spec);
     } catch (err) {
       this.error.set(err instanceof Error ? err.message : 'Analysis failed.');
     } finally {
       this.loadingAnalysis.set(false);
     }
+  }
+
+  /** Load ingested top-parse positions and assemble the live overlay for the map. */
+  private async _prepareMap(fightId: number, playerId: number, spec: string): Promise<void> {
+    const fight = this.fights().find(f => f.id === fightId);
+    if (!fight?.encounterID) return;
+    try {
+      const positions = await this.encounterSvc.getPositions(spec, fight.encounterID);
+      if (!positions) { this.panel.setContext(null, null); return; }
+      const live = await this._buildLiveOverlay(positions, fight, playerId);
+      this.panel.setContext(positions, live);
+    } catch { this.panel.setContext(null, null); }
+  }
+
+  private async _buildLiveOverlay(positions: EncounterPositions, fight: WclFight, playerId: number): Promise<LiveOverlay | null> {
+    const { startTime, endTime } = fight;
+    const refActorByGameId = new Map<number, number>();
+    for (const e of this._enemies) if (e.gameID != null) refActorByGameId.set(e.gameID, e.id);
+    const bossGameId = listReferenceEnemies(positions).find(e => e.isBoss)?.gameId;
+    const bossActorId = bossGameId != null ? (refActorByGameId.get(bossGameId) ?? null) : null;
+
+    const [playerCasts, enemyCasts, bossDamage] = await Promise.all([
+      this.wclApi.getAllEvents(this._reportCode, fight.id, 'Casts', startTime, endTime, playerId, true),
+      this.wclApi.getAllEvents(this._reportCode, fight.id, 'Casts', startTime, endTime, undefined, true, 'Enemies'),
+      bossActorId != null
+        ? this.wclApi.getAllEvents(this._reportCode, fight.id, 'DamageDone', startTime, endTime, bossActorId, true)
+        : Promise.resolve([]),
+    ]);
+    const timelines = buildActorTimelines([...playerCasts, ...enemyCasts, ...bossDamage], startTime);
+    if (!timelines.get(playerId)?.samples.length) return null;
+    return { timelines, playerId, bossActorId, refActorByGameId };
   }
 
   private _applyAutoPlayer(autoPlayer: number | null): void {

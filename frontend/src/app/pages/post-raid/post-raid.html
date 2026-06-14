@@ -45,14 +45,5 @@
       <mat-card class="p-4">
         <wl-analysis-result [data]="result()!"></wl-analysis-result>
       </mat-card>
-
-      @if (selectedFightId() && selectedPlayerId()) {
-        <wl-positioning-card
-          [reportCode]="reportCodeSig()"
-          [fightId]="selectedFightId()!"
-          [playerId]="selectedPlayerId()!"
-          [fights]="fights()"
-          [masterAbilities]="masterAbilitiesSig()"></wl-positioning-card>
-      }
     }
 </div>
