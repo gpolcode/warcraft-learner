@@ -105,6 +105,8 @@ export class PositioningCardComponent {
     const refPos = positionAt(tl.get(ref), t);
     const pPos = positionAt(tl.get(this.playerId()), t);
     if (!refPos || !pPos) return null;
+    // Different map/phase - positions are not comparable.
+    if (refPos.mapID != null && pPos.mapID != null && refPos.mapID !== pPos.mapID) return null;
     const player = toReferenceLocal(pPos, refPos, t);
 
     const cohort = (fight?.friendlyPlayers ?? []).filter(id => id !== this.playerId());
@@ -370,9 +372,30 @@ export class PositioningCardComponent {
       }
     }
 
-    // Player current position at the scrubbed moment (filled gold dot).
+    // Player current position at the scrubbed moment (filled gold dot + facing arrow).
     if (read?.player) {
       const [x, y] = toScreen(read.player);
+      // Facing arrow: heading unit vector in the reference frame -> screen (up = -fwd).
+      if (read.player.headFwd != null && read.player.headRight != null) {
+        const len = 16;
+        const ex = x + read.player.headRight * len;
+        const ey = y - read.player.headFwd * len;
+        ctx.strokeStyle = gold;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        // Arrowhead.
+        const ang = Math.atan2(ey - y, ex - x);
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - 5 * Math.cos(ang - 0.4), ey - 5 * Math.sin(ang - 0.4));
+        ctx.lineTo(ex - 5 * Math.cos(ang + 0.4), ey - 5 * Math.sin(ang + 0.4));
+        ctx.closePath();
+        ctx.fillStyle = gold;
+        ctx.fill();
+      }
       ctx.fillStyle = gold;
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, 2 * Math.PI);

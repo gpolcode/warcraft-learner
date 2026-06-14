@@ -18,6 +18,8 @@ export interface PosSample {
   x: number;
   y: number;
   facing?: number;
+  /** Map/phase the actor was on; positions are only comparable within one mapID. */
+  mapID?: number;
 }
 
 export interface ActorTimeline {
@@ -36,6 +38,9 @@ export interface RelPos {
   dist: number;
   /** Clock angle around the reference, degrees (0 = directly in front). */
   angleDeg: number;
+  /** Player's own facing as a unit vector in the reference frame (forward/right components). */
+  headFwd?: number;
+  headRight?: number;
 }
 
 export interface AbilityInstance {
@@ -101,6 +106,7 @@ export function buildActorTimelines(events: WclEvent[], fStart: number): Map<num
       x: e.x! * RAW_TO_YARDS,
       y: e.y! * RAW_TO_YARDS,
       facing: typeof e.facing === 'number' ? e.facing * FACING_TO_RAD : undefined,
+      mapID: e.mapID,
     });
   }
   const out = new Map<number, ActorTimeline>();
@@ -147,7 +153,9 @@ export function positionAt(tl: ActorTimeline | undefined, t: number, tolerance =
   } else {
     facing = a.facing ?? b.facing;
   }
-  return { t, x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, facing };
+  // mapID is categorical, never interpolated - take the nearer sample's value.
+  const mapID = f < 0.5 ? a.mapID : b.mapID;
+  return { t, x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, facing, mapID };
 }
 
 /**
@@ -162,7 +170,7 @@ const FACING_OFFSET_RAD = -Math.PI / 2;
  * relative to the reference's facing, plus distance and clock angle. When the
  * reference has no facing, world axes are used (forward = +y).
  */
-export function toReferenceLocal(player: { x: number; y: number }, ref: PosSample, t = 0): RelPos {
+export function toReferenceLocal(player: PosSample, ref: PosSample, t = 0): RelPos {
   const dx = player.x - ref.x;
   const dy = player.y - ref.y;
   const f = (ref.facing ?? Math.PI / 2) + FACING_OFFSET_RAD;
@@ -172,7 +180,22 @@ export function toReferenceLocal(player: { x: number; y: number }, ref: PosSampl
   const right = dx * sin - dy * cos;
   const dist = Math.hypot(dx, dy);
   const angleDeg = (Math.atan2(right, fwd) * 180) / Math.PI;
-  return { t, fwd, right, dist, angleDeg };
+
+  // Player's own facing, expressed in the reference frame. The empirical offset
+  // is shared by both facings, so it cancels and only the difference matters.
+  let headFwd: number | undefined;
+  let headRight: number | undefined;
+  if (player.facing != null && ref.facing != null) {
+    const d = player.facing - ref.facing;
+    headFwd = Math.cos(d);
+    headRight = -Math.sin(d);
+  }
+  return { t, fwd, right, dist, angleDeg, headFwd, headRight };
+}
+
+/** Two samples are comparable only if they share a mapID (same phase/map). */
+function _sameMap(a: PosSample, b: PosSample): boolean {
+  return a.mapID == null || b.mapID == null || a.mapID === b.mapID;
 }
 
 /** Mean distance of points to their centroid (a simple spread metric), yards. */
@@ -200,7 +223,7 @@ export function relativePositionsAt(
   for (const id of actorIds) {
     if (id === refId) continue;
     const p = positionAt(timelines.get(id), t);
-    if (p) out.set(id, toReferenceLocal(p, ref, t));
+    if (p && _sameMap(p, ref)) out.set(id, toReferenceLocal(p, ref, t));
   }
   return out;
 }
@@ -224,7 +247,7 @@ export function buildTrail(
   for (let t = tCast - pre; t <= tCast + post + 1e-6; t += step) {
     const ref = positionAt(refTl, t);
     const p = positionAt(actorTl, t);
-    if (ref && p) trail.push(toReferenceLocal(p, ref, t));
+    if (ref && p && _sameMap(p, ref)) trail.push(toReferenceLocal(p, ref, t));
   }
   return trail;
 }
