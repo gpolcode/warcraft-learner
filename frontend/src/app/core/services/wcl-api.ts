@@ -2,12 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { WclAuthService } from './wcl-auth';
-import { WclReport, CharacterInfo, CharacterGear, WclUserCharacter, WclEvent } from '../models/wcl.models';
+import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclUserCharacter, WclEvent } from '../models/wcl.models';
 
 interface PlayerDetailEntry { id: number; type: string; name: string; specs?: Array<{ spec: string }>; }
 type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
-interface WclGearItem { id?: number | string; name?: string; permanentEnchant?: number | string; permanentEnchantName?: string; gems?: Array<{ id?: number | string }>; }
+interface WclGearItem { id?: number | string; name?: string; icon?: string; permanentEnchant?: number | string; permanentEnchantName?: string; gems?: Array<{ id?: number | string }>; }
 interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
 interface WclTalentTree { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]>; }
 interface WclRankEntry {
@@ -105,6 +105,18 @@ export class WclApiService {
   async getReport(code: string): Promise<WclReport> {
     const d = await this.query<{ reportData: { report: WclReport } }>(REPORT_Q, { code });
     return d.reportData.report;
+  }
+
+  /** Lightweight fetch of just a report's ability icons, for seeding the icon cache. */
+  async getReportAbilities(code: string): Promise<WclAbility[]> {
+    const Q = `query($code:String!){reportData{report(code:$code){masterData{abilities{gameID name icon}}}}}`;
+    const d = await this.query<{ reportData: { report: { masterData: { abilities: WclAbility[] } } } }>(Q, { code });
+    return d?.reportData?.report?.masterData?.abilities ?? [];
+  }
+
+  /** Normalize a WCL gear icon ("inv_x.jpg") to the bare filename used by zamimg. */
+  private _iconFile(icon?: string): string {
+    return (icon || '').replace(/\.jpg$/i, '');
   }
 
   async getPlayerDetails(code: string, fightId: number): Promise<Record<number | string, string>> {
@@ -224,7 +236,9 @@ export class WclApiService {
     (entry.gear || []).forEach((item, idx) => {
       if (item?.id == null) return;
       const id = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
-      if (idx === 12 || idx === 13) trinkets.push({ slot: idx, id, name: item.name || '' });
+      if (idx === 12 || idx === 13) {
+        trinkets.push({ slot: idx, id, name: item.name || '', icon: this._iconFile(item.icon) });
+      }
       const enc = item.permanentEnchant;
       if (enc) {
         const eid = typeof enc === 'string' ? parseInt(enc, 10) : enc;

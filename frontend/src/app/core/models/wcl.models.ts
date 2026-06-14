@@ -54,7 +54,7 @@ export interface CharacterGear {
   spec?: string;
   source_report?: string | null;
   talent_key?: string;
-  trinkets?: Array<{ slot: number; id: number; name: string }>;
+  trinkets?: Array<{ slot: number; id: number; name: string; icon?: string }>;
   enchants?: Array<{ slot: number; id: number; name: string }>;
   missing_enchant_slots?: number[];
   gem_count?: number;

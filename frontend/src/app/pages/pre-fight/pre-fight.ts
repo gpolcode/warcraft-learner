@@ -17,8 +17,10 @@ import { EncounterService } from '../../core/services/encounter';
 import { CharacterInfo, CharacterGear, WclUserCharacter } from '../../core/models/wcl.models';
 import { EncounterEntry, EncounterBench, EncounterGearStats } from '../../core/models/encounter.models';
 import { Rulebook } from '../../core/models/rulebook.models';
+import { IconCacheService } from '../../core/services/icon-cache';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { CalloutComponent } from '../../shared/components/callout/callout';
+import { GameIconComponent } from '../../shared/components/game-icon/game-icon';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../shared/pipes/format-damage-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
@@ -41,6 +43,7 @@ const STATUS_CLASSES: Record<GearStatus, string> = {
 
 interface CdPlanItem {
   name: string;
+  spellId: number | null;
   firstCastS: number | null;
   uses: number | null;
   usesPerMin: number | null;
@@ -52,6 +55,7 @@ interface CdPlanItem {
 
 interface DefPlanItem {
   name: string;
+  spellId: number | null;
   uses: number | null;
   firstCastS: number | null;
   windowsS: number[];
@@ -79,13 +83,21 @@ interface GemCheck {
   status: GearStatus;
 }
 
+interface BurstWindowVm {
+  startS: number;
+  endS: number;
+  cds: Array<{ name: string; spellId: number | null }>;
+  aoe: boolean;
+  dmg: number | null;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatIconModule,
-    LoadingSpinnerComponent, CalloutComponent,
+    LoadingSpinnerComponent, CalloutComponent, GameIconComponent,
     DecimalPipe, FormatDurationPipe, FormatDamagePipe, FormatSpecPipe,
   ],
   templateUrl: './pre-fight.html',
@@ -93,6 +105,7 @@ interface GemCheck {
 export class PreFightComponent implements OnInit {
   private readonly auth = inject(WclAuthService);
   private readonly wclApi = inject(WclApiService);
+  private readonly icons = inject(IconCacheService);
   private readonly encounterSvc = inject(EncounterService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -133,6 +146,7 @@ export class PreFightComponent implements OnInit {
         : [];
       return {
         name: cd.name,
+        spellId: cd.spell_id ?? null,
         firstCastS: b?.avg_first_cast_s ?? null,
         uses: b?.avg_uses ?? null,
         usesPerMin: b?.uses_per_min?.avg ?? b?.avg_uses_per_min ?? null,
@@ -158,6 +172,7 @@ export class PreFightComponent implements OnInit {
         .sort((a, c) => a - c);
       return {
         name: def.name,
+        spellId: def.spell_id ?? null,
         uses: b?.avg_uses ?? null,
         firstCastS: b?.avg_first_cast_s ?? null,
         windowsS,
@@ -230,6 +245,26 @@ export class PreFightComponent implements OnInit {
     if (!gems || count == null) return null;
     const expected = gems.max_count;
     return { count, expected, status: count >= expected ? 'ok' : 'warn' };
+  });
+
+  // Map cooldown/defensive names (used as keys in burst windows) to spell ids.
+  private readonly spellIdByName = computed<Record<string, number>>(() => {
+    const rb = this.rulebook();
+    const map: Record<string, number> = {};
+    for (const cd of rb?.major_cooldowns ?? []) if (cd.spell_id) map[cd.name] = cd.spell_id;
+    for (const d of rb?.defensives ?? []) if (d.spell_id) map[d.name] = d.spell_id;
+    return map;
+  });
+
+  protected readonly burstWindows = computed<BurstWindowVm[]>(() => {
+    const map = this.spellIdByName();
+    return (this.bench()?.burst_windows ?? []).map(bw => ({
+      startS: bw.time_s,
+      endS: bw.time_s + bw.window_length_s,
+      cds: (bw.common_cds ?? []).map(n => ({ name: n, spellId: map[n] ?? null })),
+      aoe: (bw.avg_targets ?? 1) >= 2,
+      dmg: bw.dmg_avg ?? null,
+    }));
   });
 
   async ngOnInit(): Promise<void> {
@@ -320,11 +355,22 @@ export class PreFightComponent implements OnInit {
       if ((gearData as CharacterGear).found) this.charGear.set(gearData as CharacterGear);
       this.bench.set(benchData);
       this.rulebook.set(rulebookData);
+      await this._seedSpellIcons();
     } catch (err) {
       this.error.set(err instanceof Error ? err.message : 'Failed to load encounter data.');
     } finally {
       this.loadingBrief.set(false);
     }
+  }
+
+  // Spell icon art only comes from a report's masterData, so seed the cache from
+  // the character's most recent report to give the plan/burst cards spell icons.
+  private async _seedSpellIcons(): Promise<void> {
+    const report = this.charGear()?.source_report || this.charInfo()?.source_report;
+    if (!report) return;
+    try {
+      this.icons.seed(await this.wclApi.getReportAbilities(report));
+    } catch { /* icons are best-effort; names still render without art */ }
   }
 
   protected slotName(slot: number): string { return SLOT_NAMES[slot] || `Slot ${slot}`; }
