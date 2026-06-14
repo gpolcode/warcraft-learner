@@ -200,7 +200,7 @@ function _analyzeCore(
     }
   }
 
-  if (rules.length) findings.push(..._evaluateRules(rules, casts, buffEvents, fStart));
+  if (rules.length) findings.push(..._evaluateRules(rules, casts, fStart));
 
   if (casts.length >= 2 && downtimeThreshMs != null) {
     const gaps: { start_ms: number; duration_ms: number }[] = [];
@@ -228,12 +228,11 @@ function _analyzeCore(
   };
 }
 
-function _evaluateRules(rules: RulebookRule[], casts: WclEvent[], buffs: WclEvent[], fStart: number): AnalysisFinding[] {
+function _evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: number): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
-  const rel = (ts: number) => (ts - fStart) / 1000;
   const castTimes: Record<number, number[]> = {};
   for (const c of casts) {
-    if (c.type === 'cast' && c.abilityGameID) (castTimes[c.abilityGameID] ??= []).push(rel(c.timestamp));
+    if (c.type === 'cast' && c.abilityGameID) (castTimes[c.abilityGameID] ??= []).push((c.timestamp - fStart) / 1000);
   }
   for (const rule of rules) {
     const cond = rule.condition;
@@ -279,44 +278,9 @@ function _evaluateRules(rules: RulebookRule[], casts: WclEvent[], buffs: WclEven
         timestamp_ms: firstT != null ? Math.round(firstT * 1000) : undefined,
         message: `${[...new Set(violations.map(v => v[0]))].join('/')} used in the ${hw}s hold window before ${cond.anchor_spell_name}: ${violations.length} charge(s).`,
         details: rule.action ? { remedy: rule.action } : undefined });
-
-    } else if (cond.kind === 'cast_without_buff' || cond.kind === 'cast_with_buff') {
-      const primary = [...(castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
-      const buffWins = _getBuffWindows(buffs, cond.buff_id, fStart);
-      const violations: number[] = [];
-      for (const t of primary) {
-        const active = buffWins.some(([start, end]) => t >= start && (end === null || t <= end));
-        if (cond.kind === 'cast_without_buff' && !active) violations.push(t);
-        else if (cond.kind === 'cast_with_buff' && active) violations.push(t);
-      }
-      if (violations.length) {
-        const msg = cond.kind === 'cast_without_buff'
-          ? `${cond.spell_name} without ${cond.buff_name} active: ${violations.length} of ${primary.length} cast(s).`
-          : `${cond.spell_name} while ${cond.buff_name} active: ${violations.length} of ${primary.length} cast(s).`;
-        findings.push({ severity, category: 'rule_violation',
-          timestamp_ms: Math.round(violations[0] * 1000),
-          message: msg,
-          details: rule.action ? { remedy: rule.action } : undefined });
-      }
     }
   }
   return findings;
-}
-
-function _getBuffWindows(buffs: WclEvent[], buffId: number, fStart: number): [number, number | null][] {
-  const rel = (ts: number) => (ts - fStart) / 1000;
-  const windows: [number, number | null][] = [];
-  for (const e of buffs) {
-    if (e.abilityGameID !== buffId) continue;
-    const tS = rel(e.timestamp);
-    if (e.type === 'applybuff') windows.push([tS, null]);
-    else if (e.type === 'removebuff') {
-      for (let i = windows.length - 1; i >= 0; i--) {
-        if (windows[i][1] === null) { windows[i][1] = tS; break; }
-      }
-    }
-  }
-  return windows;
 }
 
 function _findPlayerBurstWindows(

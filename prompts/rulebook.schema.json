@@ -132,9 +132,7 @@
           "anyOf": [
             { "type": "null" },
             { "$ref": "#/$defs/castWithoutPrior" },
-            { "$ref": "#/$defs/holdCooldownForAnchor" },
-            { "$ref": "#/$defs/castWithoutBuff" },
-            { "$ref": "#/$defs/castWithBuff" }
+            { "$ref": "#/$defs/holdCooldownForAnchor" }
           ]
         },
         "action": {
@@ -202,32 +200,6 @@
           "hold_window_s": 15
         }
       ]
-    },
-    "castWithoutBuff": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Flag each cast of spell_id that occurs while buff_id is NOT active on the player.",
-      "required": ["kind", "spell_id", "spell_name", "buff_id", "buff_name"],
-      "properties": {
-        "kind": { "const": "cast_without_buff" },
-        "spell_id": { "type": "integer", "description": "The spell whose casts are checked." },
-        "spell_name": { "type": "string" },
-        "buff_id": { "type": "integer", "description": "The buff that must be active." },
-        "buff_name": { "type": "string" }
-      }
-    },
-    "castWithBuff": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Flag each cast of spell_id that occurs while buff_id IS active on the player (used for anti-synergy rules).",
-      "required": ["kind", "spell_id", "spell_name", "buff_id", "buff_name"],
-      "properties": {
-        "kind": { "const": "cast_with_buff" },
-        "spell_id": { "type": "integer", "description": "The spell whose casts are checked." },
-        "spell_name": { "type": "string" },
-        "buff_id": { "type": "integer", "description": "The forbidden buff." },
-        "buff_name": { "type": "string" }
-      }
     }
   }
 }
