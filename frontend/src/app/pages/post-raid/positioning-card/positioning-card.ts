@@ -217,6 +217,20 @@ export class PositioningCardComponent {
         casts, fStart: startTime, timelines, friendlyIds, abilityMap, hitPlayerAbilityIds,
       });
 
+      if (!ranked.length) {
+        // Why no enemy mechanics? Log the cast-source breakdown so we can see
+        // whether the friendly/enemy split is wrong or enemies just don't cast.
+        const castEvents = casts.filter(e => e.type === 'cast' || e.type === 'begincast');
+        const bySource = new Map<number, number>();
+        for (const e of castEvents) if (e.sourceID != null) bySource.set(e.sourceID, (bySource.get(e.sourceID) ?? 0) + 1);
+        const sources = [...bySource.entries()]
+          .map(([id, count]) => ({ id, count, friendly: friendlyIds.has(id) }))
+          .sort((a, b) => b.count - a.count);
+        console.log('[positioning] friendlyIds:', [...friendlyIds]);
+        console.log('[positioning] cast sources (id, count, friendly):', sources);
+        console.log('[positioning] enemy cast sources:', sources.filter(s => !s.friendly));
+      }
+
       this.refLabels.set(this._buildRefLabels(casts, friendlyIds, abilityMap));
       this.timelines.set(timelines);
       this.ranked.set(ranked);
