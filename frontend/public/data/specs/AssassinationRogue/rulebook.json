@@ -5,31 +5,25 @@
       "name": "Deathmark",
       "spell_id": 360194,
       "cooldown": 120,
-      "duration": 16,
       "align_with_bloodlust": true,
-      "usage_rule": "Use on cooldown when Garrote and Rupture are active, ideally with Kingsbane."
+      "opener_priority": 7,
+      "usage_rule": "Cast on cooldown and synchronize with Vanish and Kingsbane to maximize burst."
     },
     {
       "name": "Kingsbane",
-      "spell_id": 192759,
+      "spell_id": 385627,
       "cooldown": 60,
       "duration": 14,
       "align_with_bloodlust": false,
-      "usage_rule": "Use on cooldown immediately after Deathmark, or when Envenom is up."
+      "opener_priority": 8,
+      "usage_rule": "Cast on cooldown, making sure every other cast is strictly paired immediately following Deathmark."
     },
     {
       "name": "Vanish",
       "spell_id": 1856,
       "cooldown": 120,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use offensively to apply Improved Garrote, lining up with Deathmark."
-    },
-    {
-      "name": "Thistle Tea",
-      "spell_id": 381623,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use when energy is below 50%."
+      "align_with_bloodlust": true,
+      "usage_rule": "Use offensively to apply Improved Garrote, ensuring it is synced with your 2-minute Deathmark window."
     }
   ],
   "defensives": [
@@ -38,59 +32,82 @@
       "spell_id": 31224,
       "cooldown": 120,
       "duration": 5,
-      "usage_rule": "Use to clear and immune magic effects."
+      "usage_rule": "Use to clear magical debuffs and gain immunity to incoming magical damage."
     },
     {
       "name": "Evasion",
       "spell_id": 5277,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Use against heavy physical attacks."
+      "usage_rule": "Use to gain a 100% dodge chance against physical melee attacks."
     },
     {
       "name": "Feint",
       "spell_id": 1966,
       "cooldown": 15,
-      "duration": 5,
-      "usage_rule": "Use preemptively to reduce incoming AoE damage."
+      "duration": 6,
+      "usage_rule": "Use proactively when anticipating heavy, unavoidable area-of-effect damage."
     },
     {
       "name": "Crimson Vial",
       "spell_id": 185311,
       "cooldown": 30,
       "duration": 4,
-      "usage_rule": "Use for self-healing."
+      "usage_rule": "Use to restore a significant portion of your health when dropping low."
     }
   ],
   "rules": [
     {
       "type": "cooldown_pairing",
       "priority": "critical",
-      "description": "Kingsbane with Deathmark",
+      "description": "Sync Kingsbane with Deathmark",
       "condition": null,
-      "action": "Always cast Kingsbane immediately after Deathmark when both are available."
+      "action": "Always cast Kingsbane immediately following your Deathmark application; never unsync these two abilities."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Vanish during Deathmark",
+      "condition": null,
+      "action": "Cast Vanish and apply Garrote during your Deathmark window to duplicate the 100% damage amplified Improved Garrote."
     },
     {
       "type": "rotation",
       "priority": "high",
-      "description": "Vanish for Improved Garrote",
+      "description": "Darkest Night Envenom at Max CP",
       "condition": null,
-      "action": "Use Vanish exclusively to apply Improved Garrote, ideally synced with Deathmark."
+      "action": "When playing Deathstalker, always build to your maximum (7) combo points before casting Envenom to consume the Darkest Night buff."
     },
     {
-      "type": "resource_management",
-      "priority": "high",
-      "description": "Spend combo points at 5+",
-      "condition": null,
-      "action": "Cast Envenom or Rupture at 5 or more combo points, never overcap."
-    },
-    {
-      "type": "buff_maintenance",
+      "type": "rotation",
       "priority": "critical",
-      "description": "Maintain Bleeds before Deathmark",
+      "description": "Do not Rupture during Darkest Night",
       "condition": null,
-      "action": "Ensure Garrote and Rupture are ticking before casting Deathmark."
+      "action": "Never cast Rupture when you have the Darkest Night buff active; plan ahead so you do not lose the Deathstalker's mark trigger."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Pool Energy with Implacable",
+      "condition": null,
+      "action": "Let your Envenom buff expire intentionally once it reaches 80 stacks to trigger massive energy regeneration, unless overcapping during Bloodlust or heavy AoE."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "critical",
+      "description": "Spread Bleeds in AoE",
+      "condition": null,
+      "action": "In multi-target, prioritize casting Crimson Tempest repeatedly until all enemies are bleeding before switching to spending combo points on Envenom."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Double Garrote Opener",
+      "condition": null,
+      "action": "Open from stealth with Garrote, build to 5+ CP, cast Rupture, and then apply a second Garrote to maximize your Improved Garrote extension before using major cooldowns."
     }
   ],
-  "source_summary": "Assassination Rogue relies on careful energy and combo point management, prioritizing bleed uptime (Garrote, Rupture) before executing burst windows. Deathmark, Kingsbane, and Vanish (for Improved Garrote) form the core cooldown trio, cast together for massive damage."
+  "source_summary": "Assassination heavily relies on energy management, bleed maintenance, and strict cooldown synchronization. You must align your 1-minute Kingsbane and 2-minute Vanish closely around the 2-minute Deathmark window to maximize burst. Furthermore, optimizing hero talent mechanics like dropping Envenom buffs for Implacable energy regen or channeling max-CP Envenoms into Darkest Night is vital for optimal damage.",
+  "guide_count": 2,
+  "saved_at": "2026-06-13 11:35:45"
 }
