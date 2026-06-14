@@ -178,25 +178,28 @@ export class PositioningCardComponent {
 
     try {
       const { startTime, endTime } = fight;
-      // includeResources:true attaches per-actor position (source/targetResources).
-      const [casts, dmgDone, dmgTaken] = await Promise.all([
-        this.wclApi.getAllEvents(report, fight.id, 'Casts', startTime, endTime, undefined, true),
+      // includeResources:true attaches per-actor position; the events query
+      // defaults to friendly events, so enemy casts need an explicit fetch.
+      const [friendlyCasts, enemyCasts, dmgDone, dmgTaken] = await Promise.all([
+        this.wclApi.getAllEvents(report, fight.id, 'Casts', startTime, endTime, undefined, true, 'Friendlies'),
+        this.wclApi.getAllEvents(report, fight.id, 'Casts', startTime, endTime, undefined, true, 'Enemies'),
         this.wclApi.getAllEvents(report, fight.id, 'DamageDone', startTime, endTime, playerId, true),
         // DamageTaken scoped to the player (matches the convention in analysis-engine).
         this.wclApi.getAllEvents(report, fight.id, 'DamageTaken', startTime, endTime, playerId, true),
       ]);
 
-      // Positions: casts (all actors) plus the player's own damage to densify the trail.
-      const pool = [...casts, ...dmgDone];
+      // Positions for the raid (friendly casts) + the enemies they fight (enemy
+      // casts give boss/add positions) + the player's own damage to densify.
+      const pool = [...friendlyCasts, ...enemyCasts, ...dmgDone];
       const timelines = buildActorTimelines(pool, startTime);
       const playerTl = timelines.get(playerId);
       if (!timelines.size || !playerTl?.samples.length) {
         // Diagnose: did the API return coordinates at all?
         const posCount = pool.filter(e => hasAnyPosition([e])).length;
-        const sample = casts.find(e => typeof e.x === 'number') ?? casts[0] ?? pool[0];
+        const sample = pool.find(e => typeof e.x === 'number') ?? pool[0];
         const sampleKeys = sample ? Object.keys(sample) : [];
         if (sample) console.log('[positioning] sample event:', sample);
-        this.diag.set({ castCount: casts.length, posCount, sampleKeys });
+        this.diag.set({ castCount: friendlyCasts.length, posCount, sampleKeys });
         this.noPositionData.set(true);
         return;
       }
@@ -213,25 +216,12 @@ export class PositioningCardComponent {
         if (a.gameID) abilityMap[a.gameID] = { name: a.name || '', icon: a.icon || '' };
       }
 
+      // Mechanics to inspect come from enemy casts (boss/adds).
       const ranked = rankAbilities({
-        casts, fStart: startTime, timelines, friendlyIds, abilityMap, hitPlayerAbilityIds,
+        casts: enemyCasts, fStart: startTime, timelines, friendlyIds, abilityMap, hitPlayerAbilityIds,
       });
 
-      if (!ranked.length) {
-        // Why no enemy mechanics? Log the cast-source breakdown so we can see
-        // whether the friendly/enemy split is wrong or enemies just don't cast.
-        const castEvents = casts.filter(e => e.type === 'cast' || e.type === 'begincast');
-        const bySource = new Map<number, number>();
-        for (const e of castEvents) if (e.sourceID != null) bySource.set(e.sourceID, (bySource.get(e.sourceID) ?? 0) + 1);
-        const sources = [...bySource.entries()]
-          .map(([id, count]) => ({ id, count, friendly: friendlyIds.has(id) }))
-          .sort((a, b) => b.count - a.count);
-        console.log('[positioning] friendlyIds:', [...friendlyIds]);
-        console.log('[positioning] cast sources (id, count, friendly):', sources);
-        console.log('[positioning] enemy cast sources:', sources.filter(s => !s.friendly));
-      }
-
-      this.refLabels.set(this._buildRefLabels(casts, friendlyIds, abilityMap));
+      this.refLabels.set(this._buildRefLabels(enemyCasts, friendlyIds, abilityMap));
       this.timelines.set(timelines);
       this.ranked.set(ranked);
       if (ranked.length) { this.selectedAbilityId.set(ranked[0].abilityGameId); this._resetSelection(); }

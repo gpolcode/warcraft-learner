@@ -46,10 +46,10 @@ const FIGHTS_Q = `
 query($code:String!){reportData{report(code:$code){fights(killType:All){id}}}}`;
 
 const EVENTS_Q = `
-query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$startTime:Float,$endTime:Float,$includeResources:Boolean){
+query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$startTime:Float,$endTime:Float,$includeResources:Boolean,$hostilityType:HostilityType){
   reportData{report(code:$code){
     events(fightIDs:$fightIDs,dataType:$dataType,sourceID:$sourceID,
-           startTime:$startTime,endTime:$endTime,includeResources:$includeResources,limit:10000){data nextPageTimestamp}
+           startTime:$startTime,endTime:$endTime,includeResources:$includeResources,hostilityType:$hostilityType,limit:10000){data nextPageTimestamp}
   }}
 }`;
 
@@ -136,7 +136,8 @@ export class WclApiService {
 
   async getAllEvents(
     code: string, fightId: number, dataType: string,
-    startTime: number, endTime: number, sourceId?: number, includeResources = false
+    startTime: number, endTime: number, sourceId?: number,
+    includeResources = false, hostilityType?: 'Friendlies' | 'Enemies'
   ): Promise<WclEvent[]> {
     const events: WclEvent[] = [];
     let ts = startTime;
@@ -144,6 +145,7 @@ export class WclApiService {
       const vars: Record<string, unknown> = { code, fightIDs: [fightId], dataType, startTime: ts, endTime };
       if (sourceId != null) vars['sourceID'] = sourceId;
       if (includeResources) vars['includeResources'] = true;
+      if (hostilityType) vars['hostilityType'] = hostilityType;
       const d = await this.query<{ reportData: { report: { events: { data: WclEvent[]; nextPageTimestamp?: number } } } }>(EVENTS_Q, vars);
       const page = d.reportData.report.events;
       events.push(...(page.data || []));
