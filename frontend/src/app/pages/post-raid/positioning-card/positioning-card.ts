@@ -42,6 +42,8 @@ export class PositioningCardComponent {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   protected readonly noPositionData = signal(false);
+  /** When no positions are found, what the API actually returned, so we can tell a bug from an API limitation. */
+  protected readonly diag = signal<{ castCount: number; posCount: number; sampleKeys: string[] } | null>(null);
 
   private readonly timelines = signal<Map<number, ActorTimeline>>(new Map());
   protected readonly ranked = signal<RankedAbility[]>([]);
@@ -170,6 +172,7 @@ export class PositioningCardComponent {
     this.loading.set(true);
     this.error.set('');
     this.noPositionData.set(false);
+    this.diag.set(null);
     this.ranked.set([]);
     this.timelines.set(new Map());
 
@@ -186,6 +189,14 @@ export class PositioningCardComponent {
       const timelines = buildActorTimelines([...casts, ...dmgDone], startTime);
       const playerTl = timelines.get(playerId);
       if (!timelines.size || !playerTl?.samples.length) {
+        // Diagnose: did the API return coordinates at all? (The public WCL API may
+        // not expose x/y - the Replay view uses an internal source.)
+        const pool = [...casts, ...dmgDone];
+        const posCount = pool.filter(e => typeof e.x === 'number' && typeof e.y === 'number').length;
+        const sample = casts.find(e => e.type === 'cast') ?? pool[0];
+        const sampleKeys = sample ? Object.keys(sample) : [];
+        if (sample) console.log('[positioning] sample event:', sample);
+        this.diag.set({ castCount: casts.length, posCount, sampleKeys });
         this.noPositionData.set(true);
         return;
       }

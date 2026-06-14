@@ -14,8 +14,13 @@
     <div class="rounded-lg border border-[rgba(248,81,73,0.3)] bg-[rgba(248,81,73,0.1)] px-4 py-3 text-[13px] text-[var(--critical)]">⚠ {{ error() }}</div>
   } @else if (noPositionData()) {
     <p class="text-[13px] text-[var(--muted)]">
-      No position data was found in this report's events. WCL only includes coordinates for some logs and event types, so this fight cannot be analysed for positioning.
+      No coordinates were returned for this fight. The WCL Replay shows positions, but the public API does not appear to expose <code>x</code>/<code>y</code> on events.
     </p>
+    @if (diag(); as d) {
+      <p class="mt-1 text-[11px] text-[var(--muted)]">
+        Diagnostic: {{ d.castCount }} cast events, {{ d.posCount }} with coordinates. Fields on a sample event: <code>{{ d.sampleKeys.join(', ') || 'none' }}</code>.
+      </p>
+    }
   } @else if (!ranked().length) {
     <p class="text-[13px] text-[var(--muted)]">No enemy abilities with positioning relevance were found in this fight.</p>
   } @else {
