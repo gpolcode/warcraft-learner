@@ -11,10 +11,11 @@ import { WclAuthService } from '../../core/services/wcl-auth';
 import { WclApiService } from '../../core/services/wcl-api';
 import { AnalysisService } from '../../core/services/analysis';
 import { IconCacheService } from '../../core/services/icon-cache';
-import { WclFight, WclPlayer, WclUserCharacter } from '../../core/models/wcl.models';
+import { WclFight, WclPlayer, WclUserCharacter, WclAbility } from '../../core/models/wcl.models';
 import { AnalysisResult } from '../../core/models/analysis.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { AnalysisResultComponent } from './analysis-result/analysis-result';
+import { PositioningCardComponent } from './positioning-card/positioning-card';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 
@@ -29,7 +30,7 @@ function extractCode(url: string): string {
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinnerComponent, AnalysisResultComponent,
+    LoadingSpinnerComponent, AnalysisResultComponent, PositioningCardComponent,
     FormatDurationPipe, FormatSpecPipe,
   ],
   templateUrl: './post-raid.html',
@@ -56,6 +57,9 @@ export class PostRaidComponent implements OnInit {
   protected readonly selectedFightId = toSignal(this.fightControl.valueChanges, { initialValue: this.fightControl.value });
   protected readonly selectedPlayerId = toSignal(this.playerControl.valueChanges, { initialValue: this.playerControl.value });
   protected readonly result = signal<AnalysisResult | null>(null);
+  // Exposed to the template for the positioning card.
+  protected readonly reportCodeSig = signal('');
+  protected readonly masterAbilitiesSig = signal<WclAbility[]>([]);
 
   private _reportCode = '';
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
@@ -87,6 +91,7 @@ export class PostRaidComponent implements OnInit {
     const url = this.reportControl.value.trim();
     if (!url) return;
     this._reportCode = extractCode(url);
+    this.reportCodeSig.set(this._reportCode);
 
     this.loadingReport.set(true);
     this.fights.set([]);
@@ -117,6 +122,7 @@ export class PostRaidComponent implements OnInit {
           .sort((a, b) => a.name.localeCompare(b.name))
       );
       this._masterAbilities = report.masterData?.abilities || [];
+      this.masterAbilitiesSig.set(this._masterAbilities);
       if (report.masterData?.abilities) this.icons.seed(report.masterData.abilities);
 
       const lastFight = this.fights()[this.fights().length - 1];

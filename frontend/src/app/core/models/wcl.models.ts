@@ -30,6 +30,15 @@ export interface WclEvent {
   abilityGameID: number;
   amount?: number;
   absorbed?: number;
+  // Positioning fields. WCL returns these in the raw event blob for many event
+  // types (cast, damage, ...); they were previously discarded. Coordinates are
+  // in hundredths of a yard, facing in radians. Not every event carries them.
+  sourceID?: number;
+  targetID?: number;
+  x?: number;
+  y?: number;
+  facing?: number;
+  mapID?: number;
 }
 
 export interface WclReport {
