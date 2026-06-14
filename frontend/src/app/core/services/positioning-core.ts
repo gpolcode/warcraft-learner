@@ -151,6 +151,13 @@ export function positionAt(tl: ActorTimeline | undefined, t: number, tolerance =
 }
 
 /**
+ * WoW's `facing` zero-point does not align with our forward axis; empirically a
+ * -90 degree offset puts "behind the boss" below the reference. Calibrated
+ * against a known melee log; flip the sign here if left/right ever mirrors.
+ */
+const FACING_OFFSET_RAD = -Math.PI / 2;
+
+/**
  * Express a player position in the reference's local frame: forward/right
  * relative to the reference's facing, plus distance and clock angle. When the
  * reference has no facing, world axes are used (forward = +y).
@@ -158,7 +165,7 @@ export function positionAt(tl: ActorTimeline | undefined, t: number, tolerance =
 export function toReferenceLocal(player: { x: number; y: number }, ref: PosSample, t = 0): RelPos {
   const dx = player.x - ref.x;
   const dy = player.y - ref.y;
-  const f = ref.facing ?? Math.PI / 2; // default so +y reads as "forward"
+  const f = (ref.facing ?? Math.PI / 2) + FACING_OFFSET_RAD;
   const cos = Math.cos(f), sin = Math.sin(f);
   // Rotate the offset by -f: forward aligns with the reference's facing.
   const fwd = dx * cos + dy * sin;
