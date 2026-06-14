@@ -1,0 +1,118 @@
+{
+  "spec": "ElementalShaman",
+  "major_cooldowns": [
+    {
+      "name": "Stormkeeper",
+      "spell_id": 191634,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Cast on cooldown, unless Ascendance is ready within 10 seconds."
+    },
+    {
+      "name": "Ancestral Swiftness",
+      "spell_id": 443454,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast on cooldown to spawn Ancestors, aligning with your burst window."
+    },
+    {
+      "name": "Ascendance",
+      "spell_id": 114050,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Cast roughly on cooldown, but always ensure Stormkeeper is cast prior."
+    },
+    {
+      "name": "On-use Trinket",
+      "spell_id": 314532,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Sync with Ascendance, or use if Ascendance has >20s cooldown remaining (using generic trinket spell ID 314532 as best guess)."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Use to significantly reduce incoming damage during predictable damage events."
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Use as a major defensive cooldown for the maximum health increase, or to tank enemies in emergencies."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Stormkeeper for Ascendance",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          191634
+        ],
+        "spell_names": [
+          "Stormkeeper"
+        ],
+        "anchor_spell_id": 114050,
+        "anchor_spell_name": "Ascendance",
+        "hold_window_s": 10
+      },
+      "action": "Delay Stormkeeper if Ascendance will be off cooldown within 10 seconds to ensure they can be stacked."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Stormkeeper before Ascendance",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 114050,
+        "spell_name": "Ascendance",
+        "required_spell_id": 191634,
+        "required_spell_name": "Stormkeeper",
+        "window_s": 15
+      },
+      "action": "Always cast Stormkeeper within 15 seconds before casting Ascendance to maximize the resulting overloads."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Prevent Maelstrom Capping",
+      "condition": null,
+      "action": "Cast Earth Shock, Elemental Blast, or Earthquake to spend Maelstrom before you overcap, ensuring resources are not wasted."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Master of the Elements Spending",
+      "condition": null,
+      "action": "Spend your Master of the Elements buffs (gained from Lava Burst) on your strongest spenders like Tempest or Earth Shock."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Farseer Burst Window Sequence",
+      "condition": null,
+      "action": "When playing Farseer, execute your burst window in this exact order: Stormkeeper, then Ancestral Swiftness, then Voltaic Blaze, and finally Ascendance."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "low",
+      "description": "Purging Flames Min-Max Target Swapping",
+      "condition": null,
+      "action": "If fighting fewer than 6 targets, cast Lava Burst on a target without the Flame Shock debuff to guarantee an extra Purging Flames echo."
+    }
+  ],
+  "source_summary": "The guides emphasize strict cooldown pairing, ensuring Stormkeeper is cast prior to Ascendance to maximize spell overloads. Maelstrom resource management and capitalizing on procs like Master of the Elements for Tempest casts are central to optimizing both single-target and AoE damage.",
+  "guide_count": 2,
+  "saved_at": "2026-06-14 10:19:20"
+}

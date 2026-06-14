@@ -1,0 +1,4382 @@
+[
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "XJgbf4MHmhkxnr9P",
+    "fight_id": 3,
+    "player_name": "不知枫叶",
+    "sampled_at": "2026-06-14 10:21:18",
+    "cooldown_data": {
+      "player": "不知枫叶",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 145.4,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 43.3,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        93,
+        94,
+        101,
+        137,
+        139,
+        143,
+        155,
+        162,
+        183,
+        198,
+        226,
+        271,
+        327,
+        330,
+        555,
+        647,
+        704,
+        722,
+        727,
+        732,
+        733,
+        764,
+        769,
+        782,
+        788,
+        789,
+        806,
+        817,
+        846,
+        848,
+        850,
+        851,
+        862,
+        877,
+        894,
+        914,
+        938,
+        948,
+        954,
+        994,
+        1004,
+        1007,
+        1026,
+        1029,
+        1039,
+        1057,
+        1106,
+        1127,
+        1128,
+        1187,
+        1193,
+        1199,
+        1213,
+        1218,
+        1269,
+        1309,
+        1346,
+        1346,
+        1349,
+        1358,
+        1365,
+        1367,
+        1374,
+        1382,
+        1424,
+        1444,
+        1454,
+        1459,
+        1472,
+        1495,
+        1582,
+        1595,
+        1603,
+        1606,
+        1613,
+        1619,
+        1620,
+        1679,
+        1705,
+        1722,
+        1736,
+        1796,
+        1818,
+        1843,
+        1868,
+        1967,
+        1979,
+        1992,
+        1995,
+        1998,
+        2000,
+        2014,
+        2187,
+        2212,
+        2346,
+        2380,
+        2517,
+        2530,
+        2542,
+        2561,
+        2590,
+        2651,
+        2672,
+        2756,
+        2771,
+        3044,
+        3074,
+        4329
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 2,
+          "first_cast_s": 47.1,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            47.06,
+            119.15
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 107.1,
+              "actual_s": 119.2,
+              "hold_amount_s": 12.1
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.39,
+            122.05
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.4,
+          "window_length_s": 15,
+          "pct_of_total": 0.241,
+          "window_damage": 6944381,
+          "total_damage": 28764840,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1444540,
+              "pct": 0.208
+            },
+            {
+              "spell_id": 188196,
+              "damage": 926198,
+              "pct": 0.133
+            },
+            {
+              "spell_id": 463351,
+              "damage": 839636,
+              "pct": 0.121
+            },
+            {
+              "spell_id": 285466,
+              "damage": 611485,
+              "pct": 0.088
+            },
+            {
+              "spell_id": 57984,
+              "damage": 563853,
+              "pct": 0.081
+            },
+            {
+              "spell_id": 117014,
+              "damage": 452125,
+              "pct": 0.065
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 122.1,
+          "window_length_s": 15,
+          "pct_of_total": 0.191,
+          "window_damage": 5488584,
+          "total_damage": 28764840,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1608866,
+              "pct": 0.293
+            },
+            {
+              "spell_id": 188196,
+              "damage": 577853,
+              "pct": 0.105
+            },
+            {
+              "spell_id": 452201,
+              "damage": 550730,
+              "pct": 0.1
+            },
+            {
+              "spell_id": 463351,
+              "damage": 543914,
+              "pct": 0.099
+            },
+            {
+              "spell_id": 197568,
+              "damage": 379260,
+              "pct": 0.069
+            },
+            {
+              "spell_id": 57984,
+              "damage": 355050,
+              "pct": 0.065
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            72
+          ],
+          "first_cast_s": 72,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 72,
+              "end_s": 84,
+              "dmg_during": 348925
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 72,
+          "window_length_s": 12,
+          "pct_of_total": 0.103,
+          "window_damage": 348925,
+          "total_damage": 3374957,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 209121,
+              "pct": 0.599
+            },
+            {
+              "spell_id": 1258610,
+              "damage": 98054,
+              "pct": 0.281
+            },
+            {
+              "spell_id": 1246653,
+              "damage": 41750,
+              "pct": 0.12
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 1986491,
+          "pct": 0.589
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 755842,
+          "pct": 0.224
+        },
+        {
+          "spell_id": 1258192,
+          "damage": 293841,
+          "pct": 0.087
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 246314,
+          "pct": 0.073
+        },
+        {
+          "spell_id": 1267201,
+          "damage": 92469,
+          "pct": 0.027
+        }
+      ],
+      "total_dmg_taken": 3374957,
+      "talent_key": "v2:103584,103586,103593,103599,103607,103612,103617,103620,103624,103625,103626,103634,103640,109387,109388,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240904
+        },
+        {
+          "slot": 1,
+          "id": 240983
+        },
+        {
+          "slot": 5,
+          "id": 240908
+        },
+        {
+          "slot": 8,
+          "id": 240904
+        },
+        {
+          "slot": 10,
+          "id": 240904
+        },
+        {
+          "slot": 11,
+          "id": 240904
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "6VLRZJcMwhv2kPAN",
+    "fight_id": 16,
+    "player_name": "尐尐抓",
+    "sampled_at": "2026-06-14 10:21:19",
+    "cooldown_data": {
+      "player": "尐尐抓",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 149.6,
+      "bloodlust_s": 0.2,
+      "cast_efficiency_pct": 43.5,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        34,
+        43,
+        53,
+        73,
+        89,
+        119,
+        121,
+        132,
+        144,
+        145,
+        149,
+        165,
+        168,
+        181,
+        212,
+        241,
+        244,
+        448,
+        741,
+        748,
+        765,
+        765,
+        772,
+        774,
+        793,
+        847,
+        848,
+        874,
+        887,
+        943,
+        969,
+        971,
+        982,
+        982,
+        989,
+        1001,
+        1003,
+        1003,
+        1013,
+        1017,
+        1019,
+        1022,
+        1030,
+        1034,
+        1060,
+        1075,
+        1116,
+        1135,
+        1169,
+        1172,
+        1183,
+        1183,
+        1204,
+        1234,
+        1272,
+        1292,
+        1300,
+        1304,
+        1311,
+        1319,
+        1321,
+        1321,
+        1329,
+        1368,
+        1408,
+        1415,
+        1416,
+        1420,
+        1423,
+        1423,
+        1425,
+        1434,
+        1471,
+        1510,
+        1521,
+        1541,
+        1630,
+        1632,
+        1659,
+        1677,
+        1679,
+        1684,
+        1689,
+        1713,
+        1728,
+        1838,
+        1841,
+        1868,
+        1900,
+        1976,
+        2026,
+        2072,
+        2081,
+        2086,
+        2088,
+        2093,
+        2153,
+        2188,
+        2227,
+        2291,
+        2328,
+        2461,
+        2465,
+        2465,
+        2468,
+        2498,
+        2686,
+        2704,
+        2714,
+        2739,
+        2782,
+        2889,
+        2918
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 3,
+          "first_cast_s": 0.2,
+          "bl_aligned": true,
+          "bl_offset_s": 0,
+          "cast_times_s": [
+            0.2,
+            51.06,
+            122.88
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.3,
+          "bl_aligned": true,
+          "bl_offset_s": 0.1,
+          "cast_times_s": [
+            0.33,
+            122.92
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.3,
+          "window_length_s": 15,
+          "pct_of_total": 0.265,
+          "window_damage": 7414903,
+          "total_damage": 27968863,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 2050348,
+              "pct": 0.277
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1146465,
+              "pct": 0.155
+            },
+            {
+              "spell_id": 188196,
+              "damage": 948333,
+              "pct": 0.128
+            },
+            {
+              "spell_id": 285466,
+              "damage": 527592,
+              "pct": 0.071
+            },
+            {
+              "spell_id": 57984,
+              "damage": 513198,
+              "pct": 0.069
+            },
+            {
+              "spell_id": 452201,
+              "damage": 395024,
+              "pct": 0.053
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 122.9,
+          "window_length_s": 15,
+          "pct_of_total": 0.225,
+          "window_damage": 6287746,
+          "total_damage": 27968863,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1093962,
+              "pct": 0.174
+            },
+            {
+              "spell_id": 463351,
+              "damage": 951866,
+              "pct": 0.151
+            },
+            {
+              "spell_id": 120588,
+              "damage": 720604,
+              "pct": 0.115
+            },
+            {
+              "spell_id": 188196,
+              "damage": 632395,
+              "pct": 0.101
+            },
+            {
+              "spell_id": 57984,
+              "damage": 520440,
+              "pct": 0.083
+            },
+            {
+              "spell_id": 117014,
+              "damage": 485911,
+              "pct": 0.077
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            70.4
+          ],
+          "first_cast_s": 70.4,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 70.4,
+              "end_s": 82.4,
+              "dmg_during": 284813
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 70.4,
+          "window_length_s": 12,
+          "pct_of_total": 0.078,
+          "window_damage": 284813,
+          "total_damage": 3647223,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 241367,
+              "pct": 0.847
+            },
+            {
+              "spell_id": 1246653,
+              "damage": 43446,
+              "pct": 0.153
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 2094081,
+          "pct": 0.574
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 995637,
+          "pct": 0.273
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 360738,
+          "pct": 0.099
+        },
+        {
+          "spell_id": 1267201,
+          "damage": 196767,
+          "pct": 0.054
+        }
+      ],
+      "total_dmg_taken": 3647223,
+      "talent_key": "v2:103584,103586,103593,103607,103612,103617,103620,103624,103625,103626,103634,103636,103640,109386,109387,110402,110402,110402,80978,80989,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        },
+        {
+          "slot": 13,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 7961,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8031,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7993,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240906
+        },
+        {
+          "slot": 1,
+          "id": 240983
+        },
+        {
+          "slot": 5,
+          "id": 240898
+        },
+        {
+          "slot": 8,
+          "id": 240906
+        },
+        {
+          "slot": 10,
+          "id": 240908
+        },
+        {
+          "slot": 11,
+          "id": 240906
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "jz9DwWmV6P7p3GAF",
+    "fight_id": 4,
+    "player_name": "Brylen",
+    "sampled_at": "2026-06-14 10:21:20",
+    "cooldown_data": {
+      "player": "Brylen",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 142.4,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 50.3,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        24,
+        37,
+        41,
+        46,
+        48,
+        84,
+        147,
+        161,
+        287,
+        413,
+        523,
+        592,
+        679,
+        734,
+        739,
+        744,
+        750,
+        750,
+        750,
+        750,
+        756,
+        758,
+        759,
+        769,
+        772,
+        790,
+        821,
+        870,
+        884,
+        891,
+        892,
+        900,
+        912,
+        927,
+        929,
+        936,
+        954,
+        1026,
+        1047,
+        1055,
+        1081,
+        1081,
+        1098,
+        1098,
+        1101,
+        1102,
+        1108,
+        1112,
+        1152,
+        1198,
+        1220,
+        1239,
+        1263,
+        1272,
+        1305,
+        1336,
+        1342,
+        1346,
+        1349,
+        1351,
+        1360,
+        1364,
+        1366,
+        1384,
+        1395,
+        1399,
+        1403,
+        1420,
+        1440,
+        1447,
+        1465,
+        1480,
+        1486,
+        1493,
+        1532,
+        1533,
+        1535,
+        1537,
+        1550,
+        1610,
+        1613,
+        1652,
+        1662,
+        1685,
+        1704,
+        1713,
+        1734,
+        1737,
+        1764,
+        1804,
+        1809,
+        1910,
+        2023,
+        2042,
+        2146,
+        2195,
+        2197,
+        2236,
+        2245,
+        2368,
+        2395,
+        2424,
+        2669,
+        2815,
+        2835,
+        2865,
+        3126,
+        4145
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 2,
+          "first_cast_s": 47.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            47.81,
+            120.94
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 107.8,
+              "actual_s": 120.9,
+              "hold_amount_s": 13.1
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.54,
+            121.54
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.5,
+          "window_length_s": 15,
+          "pct_of_total": 0.334,
+          "window_damage": 9146702,
+          "total_damage": 27384664,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1823838,
+              "pct": 0.199
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1711714,
+              "pct": 0.187
+            },
+            {
+              "spell_id": 188196,
+              "damage": 825926,
+              "pct": 0.09
+            },
+            {
+              "spell_id": 57984,
+              "damage": 711276,
+              "pct": 0.078
+            },
+            {
+              "spell_id": 452201,
+              "damage": 666554,
+              "pct": 0.073
+            },
+            {
+              "spell_id": 120588,
+              "damage": 620920,
+              "pct": 0.068
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 121.5,
+          "window_length_s": 15,
+          "pct_of_total": 0.22,
+          "window_damage": 6033476,
+          "total_damage": 27384664,
+          "ability_breakdown": [
+            {
+              "spell_id": 463351,
+              "damage": 1241008,
+              "pct": 0.206
+            },
+            {
+              "spell_id": 45284,
+              "damage": 1179206,
+              "pct": 0.195
+            },
+            {
+              "spell_id": 188196,
+              "damage": 616310,
+              "pct": 0.102
+            },
+            {
+              "spell_id": 117014,
+              "damage": 545756,
+              "pct": 0.09
+            },
+            {
+              "spell_id": 57984,
+              "damage": 464520,
+              "pct": 0.077
+            },
+            {
+              "spell_id": 120588,
+              "damage": 403782,
+              "pct": 0.067
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            70.9
+          ],
+          "first_cast_s": 70.9,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 70.9,
+              "end_s": 82.9,
+              "dmg_during": 393448
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 70.9,
+          "window_length_s": 12,
+          "pct_of_total": 0.123,
+          "window_damage": 393448,
+          "total_damage": 3186711,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 344701,
+              "pct": 0.876
+            },
+            {
+              "spell_id": 1246653,
+              "damage": 48747,
+              "pct": 0.124
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 2017998,
+          "pct": 0.633
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 629805,
+          "pct": 0.198
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 344574,
+          "pct": 0.108
+        },
+        {
+          "spell_id": 1267201,
+          "damage": 194334,
+          "pct": 0.061
+        }
+      ],
+      "total_dmg_taken": 3186711,
+      "talent_key": "v2:103584,103586,103593,103607,103612,103617,103620,103624,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        },
+        {
+          "slot": 13,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8041,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240914
+        },
+        {
+          "slot": 1,
+          "id": 240967
+        },
+        {
+          "slot": 8,
+          "id": 240892
+        },
+        {
+          "slot": 10,
+          "id": 240908
+        },
+        {
+          "slot": 11,
+          "id": 240898
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "8afjdRVn27ymGtv6",
+    "fight_id": 31,
+    "player_name": "Groovilink",
+    "sampled_at": "2026-06-14 10:21:22",
+    "cooldown_data": {
+      "player": "Groovilink",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 138.3,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 49.9,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        13,
+        28,
+        55,
+        62,
+        82,
+        95,
+        98,
+        128,
+        142,
+        171,
+        194,
+        204,
+        223,
+        282,
+        306,
+        339,
+        587,
+        742,
+        749,
+        755,
+        756,
+        756,
+        757,
+        759,
+        762,
+        763,
+        764,
+        767,
+        790,
+        856,
+        859,
+        868,
+        870,
+        879,
+        896,
+        911,
+        937,
+        1002,
+        1005,
+        1032,
+        1038,
+        1059,
+        1072,
+        1074,
+        1088,
+        1094,
+        1125,
+        1129,
+        1160,
+        1180,
+        1211,
+        1216,
+        1221,
+        1221,
+        1242,
+        1267,
+        1268,
+        1340,
+        1347,
+        1347,
+        1355,
+        1363,
+        1365,
+        1367,
+        1379,
+        1385,
+        1390,
+        1392,
+        1393,
+        1395,
+        1399,
+        1403,
+        1421,
+        1423,
+        1432,
+        1478,
+        1508,
+        1576,
+        1584,
+        1591,
+        1606,
+        1608,
+        1610,
+        1617,
+        1623,
+        1626,
+        1637,
+        1639,
+        1652,
+        1669,
+        1689,
+        1717,
+        1928,
+        2152,
+        2158,
+        2247,
+        2275,
+        2319,
+        2340,
+        2357,
+        2477,
+        2571,
+        2590,
+        2608,
+        2612,
+        2618,
+        2629,
+        3709,
+        3786
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 2,
+          "first_cast_s": 61.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            61.51,
+            120.82
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.53,
+            120.82
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.5,
+          "window_length_s": 15,
+          "pct_of_total": 0.295,
+          "window_damage": 7871550,
+          "total_damage": 26679780,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1759743,
+              "pct": 0.224
+            },
+            {
+              "spell_id": 188196,
+              "damage": 968112,
+              "pct": 0.123
+            },
+            {
+              "spell_id": 463351,
+              "damage": 721266,
+              "pct": 0.092
+            },
+            {
+              "spell_id": 57984,
+              "damage": 571476,
+              "pct": 0.073
+            },
+            {
+              "spell_id": 120588,
+              "damage": 452475,
+              "pct": 0.057
+            },
+            {
+              "spell_id": 285466,
+              "damage": 446763,
+              "pct": 0.057
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 120.8,
+          "window_length_s": 15,
+          "pct_of_total": 0.234,
+          "window_damage": 6245266,
+          "total_damage": 26679780,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 960884,
+              "pct": 0.154
+            },
+            {
+              "spell_id": 463351,
+              "damage": 790417,
+              "pct": 0.127
+            },
+            {
+              "spell_id": 188196,
+              "damage": 724469,
+              "pct": 0.116
+            },
+            {
+              "spell_id": 117014,
+              "damage": 571996,
+              "pct": 0.092
+            },
+            {
+              "spell_id": 452201,
+              "damage": 551443,
+              "pct": 0.088
+            },
+            {
+              "spell_id": 120588,
+              "damage": 490975,
+              "pct": 0.079
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [],
+      "defensive_windows": [],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 1846510,
+          "pct": 0.65
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 565177,
+          "pct": 0.199
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 326486,
+          "pct": 0.115
+        },
+        {
+          "spell_id": 1262305,
+          "damage": 102534,
+          "pct": 0.036
+        }
+      ],
+      "total_dmg_taken": 2840707,
+      "talent_key": "v2:103584,103586,103587,103593,103599,103612,103617,103620,103624,103626,103634,103640,109386,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240967
+        },
+        {
+          "slot": 1,
+          "id": 240890
+        },
+        {
+          "slot": 5,
+          "id": 240898
+        },
+        {
+          "slot": 8,
+          "id": 240918
+        },
+        {
+          "slot": 10,
+          "id": 240908
+        },
+        {
+          "slot": 11,
+          "id": 240898
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "mAJdtf69Pgwb3Q4Z",
+    "fight_id": 13,
+    "player_name": "Azaghal",
+    "sampled_at": "2026-06-14 10:21:23",
+    "cooldown_data": {
+      "player": "Azaghal",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 149,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 46.3,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        33,
+        61,
+        70,
+        81,
+        84,
+        117,
+        134,
+        152,
+        159,
+        247,
+        248,
+        250,
+        323,
+        345,
+        380,
+        412,
+        571,
+        572,
+        661,
+        715,
+        732,
+        742,
+        744,
+        749,
+        757,
+        759,
+        760,
+        762,
+        764,
+        765,
+        796,
+        802,
+        921,
+        922,
+        930,
+        932,
+        948,
+        948,
+        950,
+        979,
+        984,
+        991,
+        1025,
+        1034,
+        1035,
+        1068,
+        1071,
+        1093,
+        1125,
+        1135,
+        1142,
+        1171,
+        1176,
+        1177,
+        1196,
+        1201,
+        1202,
+        1208,
+        1215,
+        1282,
+        1295,
+        1311,
+        1314,
+        1315,
+        1330,
+        1345,
+        1346,
+        1358,
+        1379,
+        1399,
+        1430,
+        1447,
+        1449,
+        1457,
+        1491,
+        1492,
+        1515,
+        1523,
+        1534,
+        1540,
+        1556,
+        1608,
+        1616,
+        1631,
+        1666,
+        1736,
+        1747,
+        1755,
+        1769,
+        1950,
+        2046,
+        2048,
+        2056,
+        2081,
+        2099,
+        2102,
+        2107,
+        2162,
+        2162,
+        2232,
+        2244,
+        2256,
+        2324,
+        2335,
+        2512,
+        2536,
+        2564,
+        2569,
+        2637,
+        2642,
+        2697,
+        2751,
+        2822,
+        2933
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 4,
+          "first_cast_s": 1.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.66,
+            50.32,
+            98.07,
+            144.34
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 1.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.66,
+            122.69
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.7,
+          "window_length_s": 15,
+          "pct_of_total": 0.283,
+          "window_damage": 8085193,
+          "total_damage": 28523449,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1519095,
+              "pct": 0.188
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1330048,
+              "pct": 0.165
+            },
+            {
+              "spell_id": 188196,
+              "damage": 824545,
+              "pct": 0.102
+            },
+            {
+              "spell_id": 57984,
+              "damage": 767642,
+              "pct": 0.095
+            },
+            {
+              "spell_id": 117014,
+              "damage": 557908,
+              "pct": 0.069
+            },
+            {
+              "spell_id": 285466,
+              "damage": 522605,
+              "pct": 0.065
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 122.7,
+          "window_length_s": 15,
+          "pct_of_total": 0.156,
+          "window_damage": 4456864,
+          "total_damage": 28523449,
+          "ability_breakdown": [
+            {
+              "spell_id": 463351,
+              "damage": 935859,
+              "pct": 0.21
+            },
+            {
+              "spell_id": 45284,
+              "damage": 488389,
+              "pct": 0.11
+            },
+            {
+              "spell_id": 117014,
+              "damage": 455176,
+              "pct": 0.102
+            },
+            {
+              "spell_id": 188196,
+              "damage": 437919,
+              "pct": 0.098
+            },
+            {
+              "spell_id": 57984,
+              "damage": 360149,
+              "pct": 0.081
+            },
+            {
+              "spell_id": 452201,
+              "damage": 354143,
+              "pct": 0.079
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            74.3
+          ],
+          "first_cast_s": 74.3,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 74.3,
+              "end_s": 86.3,
+              "dmg_during": 263169
+            }
+          ]
+        },
+        {
+          "name": "Earth Elemental",
+          "spell_id": 198103,
+          "cooldown": 300,
+          "uses": 1,
+          "cast_times_s": [
+            79
+          ],
+          "first_cast_s": 79,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 79,
+              "end_s": 139,
+              "dmg_during": 959341
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 74.3,
+          "window_length_s": 12,
+          "pct_of_total": 0.076,
+          "window_damage": 263169,
+          "total_damage": 3470626,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 165174,
+              "pct": 0.628
+            },
+            {
+              "spell_id": 1258610,
+              "damage": 97995,
+              "pct": 0.372
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        },
+        {
+          "time_s": 79,
+          "window_length_s": 60,
+          "pct_of_total": 0.276,
+          "window_damage": 959341,
+          "total_damage": 3470626,
+          "ability_breakdown": [
+            {
+              "spell_id": 1246653,
+              "damage": 861346,
+              "pct": 0.898
+            },
+            {
+              "spell_id": 1258610,
+              "damage": 97995,
+              "pct": 0.102
+            }
+          ],
+          "active_cds": [
+            "Earth Elemental"
+          ],
+          "defensive_name": "Earth Elemental",
+          "spell_id": 198103
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 2089413,
+          "pct": 0.602
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 1119893,
+          "pct": 0.323
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 261320,
+          "pct": 0.075
+        }
+      ],
+      "total_dmg_taken": 3470626,
+      "talent_key": "v2:103584,103586,103593,103599,103607,103617,103620,103624,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240914
+        },
+        {
+          "slot": 1,
+          "id": 240967
+        },
+        {
+          "slot": 5,
+          "id": 240890
+        },
+        {
+          "slot": 8,
+          "id": 240906
+        },
+        {
+          "slot": 10,
+          "id": 240898
+        },
+        {
+          "slot": 11,
+          "id": 240906
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "KL1yr2d7WbmnpZ3D",
+    "fight_id": 4,
+    "player_name": "펩시충",
+    "sampled_at": "2026-06-14 10:21:24",
+    "cooldown_data": {
+      "player": "펩시충",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 149.1,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 47.8,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        8,
+        67,
+        68,
+        70,
+        97,
+        109,
+        115,
+        140,
+        179,
+        215,
+        261,
+        316,
+        411,
+        435,
+        451,
+        639,
+        679,
+        747,
+        748,
+        752,
+        754,
+        759,
+        763,
+        765,
+        766,
+        766,
+        782,
+        790,
+        790,
+        790,
+        795,
+        798,
+        803,
+        805,
+        831,
+        831,
+        857,
+        877,
+        897,
+        911,
+        949,
+        998,
+        1049,
+        1057,
+        1061,
+        1064,
+        1076,
+        1084,
+        1165,
+        1168,
+        1172,
+        1180,
+        1183,
+        1189,
+        1195,
+        1228,
+        1230,
+        1237,
+        1244,
+        1246,
+        1262,
+        1267,
+        1317,
+        1362,
+        1362,
+        1365,
+        1369,
+        1383,
+        1413,
+        1417,
+        1423,
+        1427,
+        1432,
+        1437,
+        1441,
+        1442,
+        1447,
+        1452,
+        1505,
+        1506,
+        1517,
+        1550,
+        1550,
+        1567,
+        1583,
+        1592,
+        1622,
+        1635,
+        1636,
+        1642,
+        1644,
+        1657,
+        1673,
+        1791,
+        1792,
+        1801,
+        1808,
+        1817,
+        1887,
+        1957,
+        2097,
+        2197,
+        2199,
+        2392,
+        2407,
+        2497,
+        2572,
+        2590,
+        2684,
+        2706,
+        2708,
+        2721,
+        2745,
+        2827,
+        2852,
+        2959
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 3,
+          "first_cast_s": 46.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            46.28,
+            93.24,
+            139.39
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.9,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.86,
+            139.8
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.9,
+          "window_length_s": 15,
+          "pct_of_total": 0.268,
+          "window_damage": 7868685,
+          "total_damage": 29371954,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1660662,
+              "pct": 0.211
+            },
+            {
+              "spell_id": 188196,
+              "damage": 867244,
+              "pct": 0.11
+            },
+            {
+              "spell_id": 463351,
+              "damage": 763022,
+              "pct": 0.097
+            },
+            {
+              "spell_id": 57984,
+              "damage": 738582,
+              "pct": 0.094
+            },
+            {
+              "spell_id": 285466,
+              "damage": 548205,
+              "pct": 0.07
+            },
+            {
+              "spell_id": 285452,
+              "damage": 479860,
+              "pct": 0.061
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 139.8,
+          "window_length_s": 15,
+          "pct_of_total": 0.187,
+          "window_damage": 5484356,
+          "total_damage": 29371954,
+          "ability_breakdown": [
+            {
+              "spell_id": 463351,
+              "damage": 1075775,
+              "pct": 0.196
+            },
+            {
+              "spell_id": 45284,
+              "damage": 1063785,
+              "pct": 0.194
+            },
+            {
+              "spell_id": 188196,
+              "damage": 716087,
+              "pct": 0.131
+            },
+            {
+              "spell_id": 117014,
+              "damage": 614463,
+              "pct": 0.112
+            },
+            {
+              "spell_id": 197568,
+              "damage": 371615,
+              "pct": 0.068
+            },
+            {
+              "spell_id": 452201,
+              "damage": 359586,
+              "pct": 0.066
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [],
+      "defensive_windows": [],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 2061732,
+          "pct": 0.57
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 1232287,
+          "pct": 0.341
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 322450,
+          "pct": 0.089
+        }
+      ],
+      "total_dmg_taken": 3616469,
+      "talent_key": "v2:103584,103586,103593,103599,103607,103612,103617,103620,103624,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 7961,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 9,
+          "id": 2841,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240967
+        },
+        {
+          "slot": 1,
+          "id": 240900
+        },
+        {
+          "slot": 1,
+          "id": 240914
+        },
+        {
+          "slot": 5,
+          "id": 240908
+        },
+        {
+          "slot": 8,
+          "id": 240908
+        },
+        {
+          "slot": 10,
+          "id": 240890
+        },
+        {
+          "slot": 11,
+          "id": 240908
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "Va8pMJ7cDm14YXnj",
+    "fight_id": 42,
+    "player_name": "Toxicage",
+    "sampled_at": "2026-06-14 10:21:26",
+    "cooldown_data": {
+      "player": "Toxicage",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 141.5,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 45.9,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        26,
+        58,
+        60,
+        88,
+        195,
+        217,
+        272,
+        356,
+        703,
+        732,
+        742,
+        743,
+        746,
+        753,
+        754,
+        758,
+        759,
+        761,
+        762,
+        772,
+        773,
+        805,
+        814,
+        819,
+        835,
+        838,
+        854,
+        862,
+        863,
+        905,
+        991,
+        999,
+        1000,
+        1006,
+        1010,
+        1011,
+        1020,
+        1026,
+        1027,
+        1053,
+        1063,
+        1088,
+        1162,
+        1192,
+        1192,
+        1201,
+        1232,
+        1236,
+        1242,
+        1248,
+        1290,
+        1308,
+        1342,
+        1343,
+        1346,
+        1347,
+        1358,
+        1371,
+        1371,
+        1374,
+        1383,
+        1412,
+        1414,
+        1441,
+        1456,
+        1473,
+        1498,
+        1565,
+        1589,
+        1592,
+        1607,
+        1612,
+        1614,
+        1615,
+        1619,
+        1627,
+        1628,
+        1690,
+        1691,
+        1747,
+        1762,
+        1784,
+        1887,
+        1903,
+        1925,
+        1970,
+        2150,
+        2164,
+        2257,
+        2298,
+        2369,
+        2390,
+        2402,
+        2418,
+        2552,
+        2604,
+        2672,
+        2685,
+        2814,
+        2821,
+        2911,
+        3020,
+        3522
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 3,
+          "first_cast_s": 0.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.74,
+            52.05,
+            123.22
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 1.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.44,
+            123.22
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.4,
+          "window_length_s": 15,
+          "pct_of_total": 0.33,
+          "window_damage": 8958713,
+          "total_damage": 27107461,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1856251,
+              "pct": 0.207
+            },
+            {
+              "spell_id": 188196,
+              "damage": 1127563,
+              "pct": 0.126
+            },
+            {
+              "spell_id": 463351,
+              "damage": 942467,
+              "pct": 0.105
+            },
+            {
+              "spell_id": 120588,
+              "damage": 825783,
+              "pct": 0.092
+            },
+            {
+              "spell_id": 452201,
+              "damage": 650105,
+              "pct": 0.073
+            },
+            {
+              "spell_id": 57984,
+              "damage": 634290,
+              "pct": 0.071
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 123.2,
+          "window_length_s": 15,
+          "pct_of_total": 0.212,
+          "window_damage": 5750835,
+          "total_damage": 27107461,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1470772,
+              "pct": 0.256
+            },
+            {
+              "spell_id": 463351,
+              "damage": 765838,
+              "pct": 0.133
+            },
+            {
+              "spell_id": 188196,
+              "damage": 682038,
+              "pct": 0.119
+            },
+            {
+              "spell_id": 285466,
+              "damage": 377834,
+              "pct": 0.066
+            },
+            {
+              "spell_id": 197568,
+              "damage": 369377,
+              "pct": 0.064
+            },
+            {
+              "spell_id": 117014,
+              "damage": 367009,
+              "pct": 0.064
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            75.6
+          ],
+          "first_cast_s": 75.6,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 75.6,
+              "end_s": 87.6,
+              "dmg_during": 251191
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 75.6,
+          "window_length_s": 12,
+          "pct_of_total": 0.09,
+          "window_damage": 251191,
+          "total_damage": 2801189,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 152579,
+              "pct": 0.607
+            },
+            {
+              "spell_id": 1258610,
+              "damage": 98612,
+              "pct": 0.393
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 1980793,
+          "pct": 0.707
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 564952,
+          "pct": 0.202
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 255444,
+          "pct": 0.091
+        }
+      ],
+      "total_dmg_taken": 2801189,
+      "talent_key": "v2:103584,103586,103587,103593,103607,103612,103617,103620,103624,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240908
+        },
+        {
+          "slot": 1,
+          "id": 240908
+        },
+        {
+          "slot": 5,
+          "id": 240908
+        },
+        {
+          "slot": 10,
+          "id": 240908
+        },
+        {
+          "slot": 11,
+          "id": 240983
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "gqRhM3cAfwpBXC1F",
+    "fight_id": 21,
+    "player_name": "Tigel",
+    "sampled_at": "2026-06-14 10:21:27",
+    "cooldown_data": {
+      "player": "Tigel",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 141,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 44.5,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        56,
+        79,
+        89,
+        94,
+        105,
+        131,
+        175,
+        179,
+        184,
+        185,
+        185,
+        222,
+        233,
+        303,
+        306,
+        313,
+        329,
+        696,
+        724,
+        750,
+        753,
+        753,
+        757,
+        760,
+        762,
+        769,
+        772,
+        775,
+        776,
+        787,
+        851,
+        909,
+        989,
+        1022,
+        1023,
+        1024,
+        1026,
+        1037,
+        1037,
+        1037,
+        1046,
+        1046,
+        1049,
+        1053,
+        1068,
+        1071,
+        1071,
+        1090,
+        1169,
+        1172,
+        1199,
+        1212,
+        1216,
+        1222,
+        1229,
+        1240,
+        1242,
+        1325,
+        1354,
+        1371,
+        1374,
+        1376,
+        1377,
+        1378,
+        1385,
+        1394,
+        1401,
+        1437,
+        1474,
+        1480,
+        1507,
+        1527,
+        1559,
+        1577,
+        1606,
+        1642,
+        1732,
+        1739,
+        1743,
+        1753,
+        1771,
+        1784,
+        1821,
+        1851,
+        1853,
+        1885,
+        2093,
+        2097,
+        2132,
+        2145,
+        2168,
+        2207,
+        2387,
+        2443,
+        2450,
+        2556,
+        2592,
+        2595,
+        2620,
+        2643,
+        2662,
+        2745,
+        2813,
+        3077,
+        3196,
+        3200
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 3,
+          "first_cast_s": 0.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.54,
+            48.25,
+            122.01
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.62,
+            122.1
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.6,
+          "window_length_s": 15,
+          "pct_of_total": 0.331,
+          "window_damage": 8870506,
+          "total_damage": 26773952,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1522774,
+              "pct": 0.172
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1151961,
+              "pct": 0.13
+            },
+            {
+              "spell_id": 188196,
+              "damage": 896684,
+              "pct": 0.101
+            },
+            {
+              "spell_id": 120588,
+              "damage": 858179,
+              "pct": 0.097
+            },
+            {
+              "spell_id": 117014,
+              "damage": 778613,
+              "pct": 0.088
+            },
+            {
+              "spell_id": 452201,
+              "damage": 615879,
+              "pct": 0.069
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 122.1,
+          "window_length_s": 15,
+          "pct_of_total": 0.217,
+          "window_damage": 5803232,
+          "total_damage": 26773952,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1599749,
+              "pct": 0.276
+            },
+            {
+              "spell_id": 188196,
+              "damage": 735710,
+              "pct": 0.127
+            },
+            {
+              "spell_id": 117014,
+              "damage": 495468,
+              "pct": 0.085
+            },
+            {
+              "spell_id": 120588,
+              "damage": 467894,
+              "pct": 0.081
+            },
+            {
+              "spell_id": 57984,
+              "damage": 439341,
+              "pct": 0.076
+            },
+            {
+              "spell_id": 197568,
+              "damage": 346346,
+              "pct": 0.06
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            71.5
+          ],
+          "first_cast_s": 71.5,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 71.5,
+              "end_s": 83.5,
+              "dmg_during": 333264
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 71.5,
+          "window_length_s": 12,
+          "pct_of_total": 0.115,
+          "window_damage": 333264,
+          "total_damage": 2900589,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 305206,
+              "pct": 0.916
+            },
+            {
+              "spell_id": 1246653,
+              "damage": 28058,
+              "pct": 0.084
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 1875951,
+          "pct": 0.647
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 429204,
+          "pct": 0.148
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 323577,
+          "pct": 0.112
+        },
+        {
+          "spell_id": 1267201,
+          "damage": 271857,
+          "pct": 0.094
+        }
+      ],
+      "total_dmg_taken": 2900589,
+      "talent_key": "v2:103584,103586,103587,103593,103599,103612,103617,103620,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        },
+        {
+          "slot": 13,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240898
+        },
+        {
+          "slot": 1,
+          "id": 240898
+        },
+        {
+          "slot": 1,
+          "id": 240898
+        },
+        {
+          "slot": 5,
+          "id": 240898
+        },
+        {
+          "slot": 10,
+          "id": 240983
+        },
+        {
+          "slot": 11,
+          "id": 240898
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "nR8kry12GvD9Xa4Y",
+    "fight_id": 6,
+    "player_name": "太菜了二狗",
+    "sampled_at": "2026-06-14 10:21:28",
+    "cooldown_data": {
+      "player": "太菜了二狗",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 149,
+      "bloodlust_s": 0.8,
+      "cast_efficiency_pct": 35.4,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        19,
+        32,
+        37,
+        58,
+        70,
+        105,
+        112,
+        119,
+        122,
+        129,
+        135,
+        141,
+        150,
+        163,
+        175,
+        190,
+        214,
+        506,
+        759,
+        803,
+        812,
+        816,
+        882,
+        886,
+        889,
+        910,
+        919,
+        921,
+        923,
+        952,
+        963,
+        973,
+        1011,
+        1046,
+        1052,
+        1065,
+        1080,
+        1081,
+        1112,
+        1120,
+        1144,
+        1201,
+        1202,
+        1213,
+        1216,
+        1252,
+        1254,
+        1255,
+        1256,
+        1264,
+        1265,
+        1268,
+        1272,
+        1286,
+        1304,
+        1311,
+        1335,
+        1338,
+        1356,
+        1369,
+        1392,
+        1477,
+        1519,
+        1527,
+        1537,
+        1537,
+        1580,
+        1593,
+        1644,
+        1675,
+        1726,
+        1764,
+        1770,
+        1783,
+        1795,
+        1812,
+        1882,
+        1897,
+        2068,
+        2075,
+        2152,
+        2194,
+        2203,
+        2214,
+        2218,
+        2219,
+        2248,
+        2266,
+        2289,
+        2312,
+        2351,
+        2380,
+        2436,
+        2533,
+        2547,
+        2549,
+        2557,
+        2607,
+        2673,
+        2765,
+        2800,
+        2882,
+        2887,
+        2895,
+        2905,
+        3047
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 3,
+          "first_cast_s": 46.4,
+          "bl_aligned": true,
+          "bl_offset_s": 45.7,
+          "cast_times_s": [
+            46.41,
+            93.42,
+            140.91
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.8,
+          "bl_aligned": true,
+          "bl_offset_s": 0,
+          "cast_times_s": [
+            0.76,
+            122.56
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.8,
+          "window_length_s": 15,
+          "pct_of_total": 0.281,
+          "window_damage": 7752654,
+          "total_damage": 27570887,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1515873,
+              "pct": 0.196
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1454160,
+              "pct": 0.188
+            },
+            {
+              "spell_id": 188196,
+              "damage": 931504,
+              "pct": 0.12
+            },
+            {
+              "spell_id": 452201,
+              "damage": 611358,
+              "pct": 0.079
+            },
+            {
+              "spell_id": 57984,
+              "damage": 566237,
+              "pct": 0.073
+            },
+            {
+              "spell_id": 197568,
+              "damage": 461664,
+              "pct": 0.06
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 122.6,
+          "window_length_s": 15,
+          "pct_of_total": 0.152,
+          "window_damage": 4199334,
+          "total_damage": 27570887,
+          "ability_breakdown": [
+            {
+              "spell_id": 463351,
+              "damage": 1370406,
+              "pct": 0.326
+            },
+            {
+              "spell_id": 452201,
+              "damage": 518024,
+              "pct": 0.123
+            },
+            {
+              "spell_id": 45284,
+              "damage": 515647,
+              "pct": 0.123
+            },
+            {
+              "spell_id": 188196,
+              "damage": 292908,
+              "pct": 0.07
+            },
+            {
+              "spell_id": 57984,
+              "damage": 280810,
+              "pct": 0.067
+            },
+            {
+              "spell_id": 285466,
+              "damage": 273779,
+              "pct": 0.065
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Astral Shift",
+          "spell_id": 108271,
+          "cooldown": 90,
+          "uses": 1,
+          "cast_times_s": [
+            63.1
+          ],
+          "first_cast_s": 63.1,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 63.1,
+              "end_s": 75.1,
+              "dmg_during": 340883
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 63.1,
+          "window_length_s": 12,
+          "pct_of_total": 0.102,
+          "window_damage": 340883,
+          "total_damage": 3341250,
+          "ability_breakdown": [
+            {
+              "spell_id": 1273112,
+              "damage": 193231,
+              "pct": 0.567
+            },
+            {
+              "spell_id": 1246653,
+              "damage": 147652,
+              "pct": 0.433
+            }
+          ],
+          "active_cds": [
+            "Astral Shift"
+          ],
+          "defensive_name": "Astral Shift",
+          "spell_id": 108271
+        }
+      ],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 1921841,
+          "pct": 0.575
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 1005735,
+          "pct": 0.301
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 327198,
+          "pct": 0.098
+        },
+        {
+          "spell_id": 1267201,
+          "damage": 86476,
+          "pct": 0.026
+        }
+      ],
+      "total_dmg_taken": 3341250,
+      "talent_key": "v2:103584,103586,103593,103612,103617,103620,103624,103625,103626,103634,103640,109387,109388,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 1,
+          "id": 240898
+        },
+        {
+          "slot": 5,
+          "id": 240983
+        },
+        {
+          "slot": 10,
+          "id": 240908
+        },
+        {
+          "slot": 11,
+          "id": 240908
+        }
+      ]
+    }
+  },
+  {
+    "spec": "ElementalShaman",
+    "encounter_id": 3306,
+    "encounter_name": "Chimaerus, the Undreamt God",
+    "report_code": "z9NxHCKqm1ABPZc8",
+    "fight_id": 2,
+    "player_name": "Zaappers",
+    "sampled_at": "2026-06-14 10:21:29",
+    "cooldown_data": {
+      "player": "Zaappers",
+      "spec": "ElementalShaman",
+      "fight_duration_s": 142.4,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 52.1,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        39,
+        58,
+        86,
+        95,
+        106,
+        108,
+        117,
+        157,
+        193,
+        206,
+        231,
+        246,
+        277,
+        279,
+        322,
+        371,
+        385,
+        392,
+        491,
+        523,
+        726,
+        745,
+        746,
+        747,
+        754,
+        756,
+        759,
+        761,
+        762,
+        763,
+        767,
+        820,
+        867,
+        871,
+        872,
+        903,
+        907,
+        934,
+        997,
+        998,
+        1005,
+        1012,
+        1014,
+        1034,
+        1045,
+        1057,
+        1066,
+        1072,
+        1079,
+        1083,
+        1091,
+        1100,
+        1101,
+        1128,
+        1162,
+        1237,
+        1250,
+        1255,
+        1255,
+        1268,
+        1275,
+        1289,
+        1327,
+        1350,
+        1352,
+        1359,
+        1400,
+        1406,
+        1408,
+        1408,
+        1411,
+        1412,
+        1418,
+        1419,
+        1428,
+        1429,
+        1435,
+        1435,
+        1451,
+        1470,
+        1491,
+        1505,
+        1506,
+        1584,
+        1607,
+        1614,
+        1617,
+        1675,
+        1686,
+        1729,
+        1760,
+        1794,
+        1800,
+        1801,
+        1818,
+        1873,
+        2031,
+        2047,
+        2059,
+        2244,
+        2257,
+        2367,
+        2447,
+        2553,
+        2666,
+        2671,
+        2822,
+        2847,
+        2931,
+        2968,
+        2985,
+        4865
+      ],
+      "cooldowns": [
+        {
+          "name": "Stormkeeper",
+          "spell_id": 191634,
+          "total_uses": 2,
+          "first_cast_s": 46.9,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            46.91,
+            121.12
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 106.9,
+              "actual_s": 121.1,
+              "hold_amount_s": 14.2
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Ancestral Swiftness",
+          "spell_id": 443454,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Ascendance",
+          "spell_id": 114050,
+          "total_uses": 2,
+          "first_cast_s": 0.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.57,
+            121.21
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "On-use Trinket",
+          "spell_id": 314532,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.6,
+          "window_length_s": 15,
+          "pct_of_total": 0.308,
+          "window_damage": 8262353,
+          "total_damage": 26802117,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1789613,
+              "pct": 0.217
+            },
+            {
+              "spell_id": 188196,
+              "damage": 1153458,
+              "pct": 0.14
+            },
+            {
+              "spell_id": 463351,
+              "damage": 1040375,
+              "pct": 0.126
+            },
+            {
+              "spell_id": 57984,
+              "damage": 779954,
+              "pct": 0.094
+            },
+            {
+              "spell_id": 117014,
+              "damage": 475502,
+              "pct": 0.058
+            },
+            {
+              "spell_id": 197568,
+              "damage": 470535,
+              "pct": 0.057
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 121.2,
+          "window_length_s": 15,
+          "pct_of_total": 0.256,
+          "window_damage": 6857091,
+          "total_damage": 26802117,
+          "ability_breakdown": [
+            {
+              "spell_id": 45284,
+              "damage": 1753036,
+              "pct": 0.256
+            },
+            {
+              "spell_id": 463351,
+              "damage": 997876,
+              "pct": 0.146
+            },
+            {
+              "spell_id": 188196,
+              "damage": 529411,
+              "pct": 0.077
+            },
+            {
+              "spell_id": 452201,
+              "damage": 528683,
+              "pct": 0.077
+            },
+            {
+              "spell_id": 120588,
+              "damage": 510534,
+              "pct": 0.074
+            },
+            {
+              "spell_id": 57984,
+              "damage": 493558,
+              "pct": 0.072
+            }
+          ],
+          "active_cds": [
+            "Ascendance"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [],
+      "defensive_windows": [],
+      "dmg_taken_by_ability": [
+        {
+          "spell_id": 1246653,
+          "damage": 2033396,
+          "pct": 0.556
+        },
+        {
+          "spell_id": 1273112,
+          "damage": 820392,
+          "pct": 0.224
+        },
+        {
+          "spell_id": 1258610,
+          "damage": 332006,
+          "pct": 0.091
+        },
+        {
+          "spell_id": 1249207,
+          "damage": 271803,
+          "pct": 0.074
+        },
+        {
+          "spell_id": 1262305,
+          "damage": 200675,
+          "pct": 0.055
+        }
+      ],
+      "total_dmg_taken": 3658272,
+      "talent_key": "v2:103586,103593,103599,103607,103612,103617,103625,103871,109190,109192,109193,109386,109387,109909,110401,110401,80949,80950,80951,80953,80959,80962,80963,80964,80973,80975,92219",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 250144,
+          "name": "Emberwing Feather"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8041,
+          "name": ""
+        }
+      ],
+      "gems": [
+        {
+          "slot": 0,
+          "id": 240898
+        },
+        {
+          "slot": 1,
+          "id": 240908
+        },
+        {
+          "slot": 1,
+          "id": 240908
+        },
+        {
+          "slot": 5,
+          "id": 240908
+        },
+        {
+          "slot": 8,
+          "id": 240918
+        },
+        {
+          "slot": 10,
+          "id": 240892
+        },
+        {
+          "slot": 11,
+          "id": 240967
+        }
+      ]
+    }
+  }
+]
