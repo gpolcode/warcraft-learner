@@ -177,10 +177,12 @@ class WCLClient {
       query GetEvents(
         $code: String! $fightIDs: [Int]! $dataType: EventDataType
         $sourceID: Int $targetID: Int $startTime: Float $endTime: Float
+        $includeResources: Boolean $hostilityType: HostilityType
       ) {
         reportData { report(code: $code) {
           events(fightIDs: $fightIDs dataType: $dataType sourceID: $sourceID
-                 targetID: $targetID startTime: $startTime endTime: $endTime limit: 10000) {
+                 targetID: $targetID startTime: $startTime endTime: $endTime
+                 includeResources: $includeResources hostilityType: $hostilityType limit: 10000) {
             data nextPageTimestamp
           }
         }}
@@ -191,6 +193,8 @@ class WCLClient {
       const vars = { code, fightIDs: [fightId], dataType, startTime: currentStart, endTime };
       if (options.sourceId != null) vars.sourceID = options.sourceId;
       if (options.targetId != null) vars.targetID = options.targetId;
+      if (options.includeResources) vars.includeResources = true;
+      if (options.hostilityType) vars.hostilityType = options.hostilityType;
       const data = await this.query(EVENTS_QUERY, vars);
       const page = data.reportData.report.events;
       if (page.data) events.push(...page.data);
@@ -603,6 +607,106 @@ function getSpecDefensives(spec) {
   return [];
 }
 
+// ── Position timelines ───────────────────────────────────────────────────────
+// Positions come from events fetched with includeResources:true, which flattens
+// one actor's snapshot onto the event (top-level x/y/facing/mapID); resourceActor
+// says whose (1 = source, 2 = target). x/y are hundredths of a yard, facing
+// milliradians - stored raw here and scaled by the frontend (positioning-core).
+
+const POSITIONS_INTERVAL_S = 1.5;
+const MAX_TRACKED_ENEMIES = 6;
+
+function posActorId(e) {
+  if (typeof e.x !== 'number' || typeof e.y !== 'number') return null;
+  return e.resourceActor === 2 ? e.targetID : e.sourceID;
+}
+
+/** Group raw position samples per actor id from resource-bearing events. */
+function collectPositionSamples(events, fightStartMs) {
+  const byActor = new Map();
+  for (const e of events) {
+    const id = posActorId(e);
+    if (id == null) continue;
+    let arr = byActor.get(id);
+    if (!arr) { arr = []; byActor.set(id, arr); }
+    arr.push({
+      t: (e.timestamp - fightStartMs) / 1000,
+      x: e.x, y: e.y,
+      facing: typeof e.facing === 'number' ? e.facing : null,
+      mapID: typeof e.mapID === 'number' ? e.mapID : null,
+      maxHp: typeof e.maxHitPoints === 'number' ? e.maxHitPoints : 0,
+    });
+  }
+  for (const arr of byActor.values()) arr.sort((a, b) => a.t - b.t);
+  return byActor;
+}
+
+/** Resample to a fixed cadence: [t, x, y, facing, mapID] rows, linear for x/y, nearest for facing/mapID. */
+function resampleTimeline(samples, durationS, intervalS) {
+  if (!samples.length) return [];
+  const first = samples[0].t, last = samples[samples.length - 1].t;
+  const out = [];
+  let idx = 0;
+  for (let t = 0; t <= durationS + 1e-6; t += intervalS) {
+    if (t < first - intervalS || t > last + intervalS) continue;
+    while (idx + 1 < samples.length && samples[idx + 1].t <= t) idx++;
+    const a = samples[idx];
+    const b = samples[idx + 1];
+    let x = a.x, y = a.y, near = a;
+    if (b && b.t > a.t && t >= a.t) {
+      const f = Math.min(1, Math.max(0, (t - a.t) / (b.t - a.t)));
+      x = a.x + (b.x - a.x) * f;
+      y = a.y + (b.y - a.y) * f;
+      near = f < 0.5 ? a : b;
+    }
+    out.push([
+      Math.round(t * 10) / 10, Math.round(x), Math.round(y),
+      near.facing == null ? null : Math.round(near.facing), near.mapID,
+    ]);
+  }
+  return out;
+}
+
+/**
+ * Build the per-parse position payload: the ranked player's timeline plus the
+ * notable enemy timelines (boss = highest maxHitPoints). Enemies are keyed by
+ * gameID so the frontend can match "the same boss/add" across parses.
+ */
+function buildParsePositions(reportCode, fightId, playerName, playerId, npcById, posEvents, fightStartMs, durationS) {
+  const byActor = collectPositionSamples(posEvents, fightStartMs);
+  const playerSamples = byActor.get(playerId) || [];
+
+  const enemies = [];
+  for (const [id, samples] of byActor) {
+    if (id === playerId || !npcById.has(id)) continue;
+    const maxHp = samples.reduce((m, s) => Math.max(m, s.maxHp), 0);
+    enemies.push({ actorId: id, count: samples.length, maxHp, samples, meta: npcById.get(id) });
+  }
+  enemies.sort((a, b) => b.count - a.count);
+  const bossId = enemies.reduce((best, e) => (e.maxHp > (best?.maxHp ?? -1) ? e : best), null)?.actorId;
+  // Keep the boss plus the most-active enemies (likely add/mechanic casters).
+  const kept = enemies.slice(0, MAX_TRACKED_ENEMIES);
+  if (bossId != null && !kept.some(e => e.actorId === bossId)) {
+    const boss = enemies.find(e => e.actorId === bossId);
+    if (boss) kept.push(boss);
+  }
+
+  return {
+    report_code: reportCode,
+    fight_id: fightId,
+    player_name: playerName,
+    duration_s: Math.round(durationS * 10) / 10,
+    interval_s: POSITIONS_INTERVAL_S,
+    player: resampleTimeline(playerSamples, durationS, POSITIONS_INTERVAL_S),
+    enemies: kept.map(e => ({
+      game_id: e.meta.gameID ?? null,
+      name: e.meta.name || '',
+      is_boss: e.actorId === bossId,
+      samples: resampleTimeline(e.samples, durationS, POSITIONS_INTERVAL_S),
+    })).filter(e => e.samples.length),
+  };
+}
+
 async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatantInfo) {
   const specCds = getSpecCooldowns(spec) || [];
   const specDefensives = getSpecDefensives(spec);
@@ -613,7 +717,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
       query($code: String!) {
         reportData { report(code: $code) {
           fights(killType: Kills) { id startTime endTime encounterID }
-          masterData { actors(type: "Player") { id name subType } }
+          masterData { actors { id name type subType gameID } }
         }}
       }`;
     meta = await wcl.query(REPORT_META_Q, { code: reportCode });
@@ -626,21 +730,26 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   if (!fight) return null;
 
   const actors = report.masterData.actors;
-  const player = actors.find(a => a.name === playerName);
+  const player = actors.find(a => a.name === playerName && a.type === 'Player');
   if (!player) throw new Error(`Player "${playerName}" not found in report ${reportCode} (fight ${fightId}).`);
+  // Enemy actor lookup (by actor id) for position timelines, keyed later by gameID.
+  const npcById = new Map(actors.filter(a => a.type !== 'Player').map(a => [a.id, a]));
 
   const start = fight.startTime;
   const end = fight.endTime;
   const fightDurS = (end - start) / 1000;
 
-  // Fetch all event types in parallel
-  let castEvents, buffEvents, damageEvents, damageTakenEvents;
+  // Fetch all event types in parallel. DamageDone/DamageTaken carry includeResources
+  // so they double as the player's position source; a separate enemy DamageDone
+  // fetch supplies boss/add positions.
+  let castEvents, buffEvents, damageEvents, damageTakenEvents, enemyDamageEvents;
   try {
-    [castEvents, buffEvents, damageEvents, damageTakenEvents] = await Promise.all([
+    [castEvents, buffEvents, damageEvents, damageTakenEvents, enemyDamageEvents] = await Promise.all([
       wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { sourceId: player.id }),
       wcl.getAllEvents(reportCode, fightId, 'Buffs',       start, end, { targetId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { sourceId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageTaken', start, end, { sourceId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { sourceId: player.id, includeResources: true }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageTaken', start, end, { sourceId: player.id, includeResources: true }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { includeResources: true, hostilityType: 'Enemies' }).catch(() => []),
     ]);
   } catch {
     return null;
@@ -844,7 +953,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
       pct: totalDmgTaken ? Math.round(dmg / totalDmgTaken * 1000) / 1000 : 0,
     }));
 
-  return {
+  const cooldownData = {
     player: player.name,
     spec,
     fight_duration_s: Math.round(fightDurS * 10) / 10,
@@ -862,6 +971,17 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
     enchants: gearData.enchants || [],
     gems: gearData.gems || [],
   };
+
+  let positions = null;
+  try {
+    positions = buildParsePositions(
+      reportCode, fightId, player.name, player.id, npcById,
+      [...damageEvents, ...damageTakenEvents, ...enemyDamageEvents], start, fightDurS,
+    );
+    if (!positions.player.length) positions = null;
+  } catch { positions = null; }
+
+  return { cooldown_data: cooldownData, positions };
 }
 
 // ── Analysis utils (JS port of analysis_utils.py) ────────────────────────────
@@ -1072,6 +1192,24 @@ function getSamplesPath(spec, encounterId) {
 
 function getEncounterPath(spec, encounterId) {
   return path.join(DATA_DIR, spec, 'encounters', `${encounterId}.json`);
+}
+
+function getPositionsPath(spec, encounterId) {
+  return path.join(DATA_DIR, spec, 'positions', `${encounterId}.json`);
+}
+
+/** Append a parse's position timelines (deduped by report+fight) to the positions file. */
+function savePositions(spec, encounterId, encounterName, positions) {
+  if (!positions) return;
+  const file = getPositionsPath(spec, encounterId);
+  const existing = readJson(file) || {};
+  let parses = Array.isArray(existing.parses) ? existing.parses : [];
+  parses = parses.filter(p => !(p.report_code === positions.report_code && p.fight_id === positions.fight_id));
+  parses.push(positions);
+  writeJson(file, {
+    spec, encounter_id: encounterId, encounter_name: encounterName,
+    interval_s: POSITIONS_INTERVAL_S, sample_count: parses.length, parses,
+  });
 }
 
 function saveParseSample(spec, encounterId, encounterName, reportCode, fightId, playerName, cooldownData) {
@@ -1454,13 +1592,14 @@ async function ingestSpec(wcl, spec, encounters) {
     for (const ranking of rankings) {
       process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
       try {
-        const cooldownData = await analyzeParse(
+        const res = await analyzeParse(
           wcl, spec,
           ranking.report_code, ranking.fight_id,
           ranking.player, ranking.combatant_info,
         );
-        if (cooldownData) {
-          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, cooldownData);
+        if (res?.cooldown_data) {
+          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, res.cooldown_data);
+          savePositions(spec, enc.id, enc.name, res.positions);
         }
       } catch (err) {
         // Log but continue
@@ -1554,11 +1693,12 @@ async function ingestSpecNonInteractive(wcl, spec, encounters, topN = 10) {
     for (const ranking of rankings) {
       process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
       try {
-        const cooldownData = await analyzeParse(
+        const res = await analyzeParse(
           wcl, spec, ranking.report_code, ranking.fight_id, ranking.player, ranking.combatant_info,
         );
-        if (cooldownData) {
-          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, cooldownData);
+        if (res?.cooldown_data) {
+          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, res.cooldown_data);
+          savePositions(spec, enc.id, enc.name, res.positions);
         }
       } catch (err) {
         process.stdout.write(` (skip: ${err.message.slice(0, 40)})`);

@@ -71,8 +71,10 @@ warcraft-learner/
 │   │           ├── encounters.json     # Index: [{id, name, sample_count}]
 │   │           ├── encounters/
 │   │           │   └── {enc_id}.json  # Pre-computed bench data
-│   │           └── parse_samples/
-│   │               └── {enc_id}.json  # Raw parse samples
+│   │           ├── parse_samples/
+│   │           │   └── {enc_id}.json  # Raw parse samples
+│   │           └── positions/
+│   │               └── {enc_id}.json  # Top-parse position timelines (map feature)
 │   └── scripts/                # Node.js CLI tools (no server needed)
 │       ├── ingest.mjs   # Fetch top WCL parses → write bench + sample files
 │       ├── admin.mjs    # Rulebook management (build prompt, save AI output)
@@ -123,6 +125,7 @@ Runs `frontend/scripts/ingest.mjs`. Also runs as `ingest-parses.yml` GHA daily +
 4. Computes per-parse: CD timing summaries, `burst_windows` (CD-cast-centric), `defensive_windows` (buff-window-centric), talent key, trinkets, enchants.
 5. Writes raw samples → `parse_samples/{enc_id}.json`.
 6. Aggregates across parses → `encounters/{enc_id}.json` (bench file: per-CD thresholds, clustered burst/defensive windows, gear aggregates).
+7. Writes per-parse position timelines (ranked player + notable enemies, resampled) → `positions/{enc_id}.json` for the positioning map. Requires `includeResources`/`hostilityType` event fetches (see WCL API quirks).
 7. Updates `encounters.json` index.
 
 GHA commits `frontend/public/data/specs/**`, which triggers `deploy-pages.yml` to rebuild and redeploy.
@@ -166,6 +169,9 @@ Encounters loaded from `/data/specs/{spec}/encounters.json` (static file). Filte
 
 ### `rulebook.json` (`frontend/public/data/specs/{spec}/rulebook.json`)
 AI-generated rulebook. Extra top-level fields added on save: `guide_count`, `saved_at`.
+
+### `positions/{enc_id}.json`
+Per-parse position timelines for the positioning map (written by `ingest.mjs` `buildParsePositions`/`savePositions`; consumed by `core/services/positioning-core.ts` + `core/models/positioning.models.ts`). Top-level: `{spec, encounter_id, encounter_name, interval_s, sample_count, parses[]}`. Each parse: `{report_code, fight_id, player_name, duration_s, interval_s, player: PosRow[], enemies: [{game_id, name, is_boss, samples: PosRow[]}]}`. A `PosRow` is `[t_s, x, y, facing|null, mapID|null]` with **raw** WCL units (x/y in hundredths of a yard, facing in milliradians) - the frontend scales them. Enemies are keyed by `game_id` so the same boss/add matches across parses; `is_boss` = the enemy with the highest `maxHitPoints`.
 
 ### `parse_samples/{enc_id}.json`
 List of raw parse samples. Source of truth for bench files.

@@ -11,6 +11,7 @@
  * into a Web Worker later, mirroring `analysis-core.ts`.
  */
 import { WclEvent } from '../models/wcl.models';
+import { EncounterPositions, ParsePositions, PosRow, ReferenceSelector } from '../models/positioning.models';
 
 /** One position sample for an actor, fight-relative time in seconds, coords in yards. */
 export interface PosSample {
@@ -334,4 +335,79 @@ export function rankAbilities(input: RankInput): RankedAbility[] {
 
   ranked.sort((a, b) => b.relevance - a.relevance);
   return ranked;
+}
+
+// ── Ingested top-parse positions ─────────────────────────────────────────────
+
+/** Build an actor timeline from stored position rows (scaling raw units to yards/radians). */
+export function rowsToTimeline(id: number, rows: PosRow[]): ActorTimeline {
+  const samples: PosSample[] = rows.map(([t, x, y, facing, mapID]) => ({
+    t,
+    x: x * RAW_TO_YARDS,
+    y: y * RAW_TO_YARDS,
+    facing: facing == null ? undefined : facing * FACING_TO_RAD,
+    mapID: mapID == null ? undefined : mapID,
+  }));
+  return { id, samples };
+}
+
+function _refRows(parse: ParsePositions, selector: ReferenceSelector): PosRow[] | null {
+  if (selector.kind === 'boss') {
+    const boss = parse.enemies.find(e => e.is_boss) ?? parse.enemies[0];
+    return boss?.samples ?? null;
+  }
+  return parse.enemies.find(e => e.game_id === selector.gameId)?.samples ?? null;
+}
+
+/** Distinct reference enemies across all parses, for the map's reference picker. */
+export function listReferenceEnemies(positions: EncounterPositions): Array<{ gameId: number; name: string; isBoss: boolean }> {
+  const map = new Map<number, { gameId: number; name: string; isBoss: boolean }>();
+  for (const parse of positions.parses) {
+    for (const e of parse.enemies) {
+      if (e.game_id == null) continue;
+      const cur = map.get(e.game_id);
+      if (!cur) map.set(e.game_id, { gameId: e.game_id, name: e.name, isBoss: e.is_boss });
+      else if (e.is_boss) cur.isBoss = true;
+    }
+  }
+  return [...map.values()].sort((a, b) => (b.isBoss ? 1 : 0) - (a.isBoss ? 1 : 0));
+}
+
+/** Each top parse's player position relative to the chosen reference at time `t`. */
+export function topParsePoints(positions: EncounterPositions, selector: ReferenceSelector, t: number): RelPos[] {
+  const out: RelPos[] = [];
+  for (const parse of positions.parses) {
+    const rRows = _refRows(parse, selector);
+    if (!rRows) continue;
+    const ref = positionAt(rowsToTimeline(-2, rRows), t);
+    const p = positionAt(rowsToTimeline(-1, parse.player), t);
+    if (ref && p && _sameMap(p, ref)) out.push(toReferenceLocal(p, ref, t));
+  }
+  return out;
+}
+
+/** Each top parse's player trail relative to the chosen reference across the window. */
+export function topParseTrails(
+  positions: EncounterPositions,
+  selector: ReferenceSelector,
+  t: number,
+  pre: number,
+  post: number,
+  step: number,
+): RelPos[][] {
+  const trails: RelPos[][] = [];
+  for (const parse of positions.parses) {
+    const rRows = _refRows(parse, selector);
+    if (!rRows) continue;
+    const refTl = rowsToTimeline(-2, rRows);
+    const playerTl = rowsToTimeline(-1, parse.player);
+    const trail: RelPos[] = [];
+    for (let tt = t - pre; tt <= t + post + 1e-6; tt += step) {
+      const ref = positionAt(refTl, tt);
+      const p = positionAt(playerTl, tt);
+      if (ref && p && _sameMap(p, ref)) trail.push(toReferenceLocal(p, ref, tt));
+    }
+    if (trail.length) trails.push(trail);
+  }
+  return trails;
 }
