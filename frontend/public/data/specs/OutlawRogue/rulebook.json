@@ -7,36 +7,47 @@
       "cooldown": 180,
       "duration": 20,
       "align_with_bloodlust": true,
-      "usage_rule": "Use on cooldown for energy regeneration and attack speed."
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown, ideally at low combo points if running Improved Adrenaline Rush."
     },
     {
       "name": "Blade Rush",
       "spell_id": 271877,
       "cooldown": 45,
       "align_with_bloodlust": false,
-      "usage_rule": "Use on cooldown as an energy builder and damage burst."
+      "opener_priority": 5,
+      "usage_rule": "Use on cooldown as long as it won't cap your energy."
     },
     {
       "name": "Keep It Rolling",
       "spell_id": 381989,
       "cooldown": 420,
       "align_with_bloodlust": true,
-      "usage_rule": "Use when you have good Roll the Bones buffs to extend their duration."
-    },
-    {
-      "name": "Ghostly Strike",
-      "spell_id": 196937,
-      "cooldown": 35,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use on cooldown to increase damage taken by the target."
+      "opener_priority": 3,
+      "usage_rule": "Use when you have at least 3 Roll the Bones buffs active to extend them."
     },
     {
       "name": "Between the Eyes",
       "spell_id": 315341,
       "cooldown": 45,
       "align_with_bloodlust": false,
-      "usage_rule": "Use on cooldown with max combo points for damage and crit buff."
+      "opener_priority": 7,
+      "usage_rule": "Use on cooldown at 6+ combo points for damage and the crit buff."
+    },
+    {
+      "name": "Preparation",
+      "spell_id": 14185,
+      "cooldown": 600,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use to reset Adrenaline Rush and Between the Eyes when both are on cooldown."
+    },
+    {
+      "name": "Killing Spree",
+      "spell_id": 51690,
+      "cooldown": 120,
+      "duration": 2,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use at 5+ combo points; cancel early if you are going to overcap energy."
     }
   ],
   "defensives": [
@@ -45,7 +56,7 @@
       "spell_id": 31224,
       "cooldown": 120,
       "duration": 5,
-      "usage_rule": "Use to clear and immune magic effects."
+      "usage_rule": "Use to immune magic damage and clear debuffs."
     },
     {
       "name": "Evasion",
@@ -73,17 +84,37 @@
     {
       "type": "cooldown_pairing",
       "priority": "high",
-      "description": "Ghostly Strike before Between the Eyes",
-      "condition": null,
-      "action": "Ensure Ghostly Strike is active before pressing Between the Eyes."
+      "description": "Don't Preparation while Adrenaline Rush is up",
+      "condition": {
+        "kind": "cast_without_buff",
+        "spell_id": 14185,
+        "spell_name": "Preparation",
+        "buff_id": 13750,
+        "buff_name": "Adrenaline Rush"
+      },
+      "action": "Hold Preparation until Adrenaline Rush fades, otherwise you waste the reset."
     },
     {
       "type": "rotation",
       "priority": "critical",
       "description": "Do not cap combo points",
       "condition": null,
-      "action": "Use Dispatch or Between the Eyes before overcapping combo points."
+      "action": "Use Dispatch or Between the Eyes at 6+ combo points before overcapping."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Keep It Rolling for strong RtB buffs",
+      "condition": null,
+      "action": "Only cast Keep It Rolling when you have at least 3 Roll the Bones buffs active (or 2 if rerolling is unsafe)."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Cancel Killing Spree to avoid energy cap",
+      "condition": null,
+      "action": "Interrupt Killing Spree with a builder or finisher if your energy is about to cap."
     }
   ],
-  "source_summary": "Outlaw Rogue relies on high APM, using minor cooldowns like Blade Rush and Between the Eyes strictly on cooldown. Roll the Bones RNG management and non-stop combo point generation/spending drive the rotation."
+  "source_summary": "Outlaw Rogue relies on high APM and zero-downtime resource generation. The rotation prioritizes maintaining Adrenaline Rush and Between the Eyes, using Keep It Rolling to lock in strong Roll the Bones buffs, and avoiding combo point or energy overcaps."
 }
