@@ -271,14 +271,13 @@ async function guidesMenu(spec) {
   }
 }
 
-async function scrapeAllPending(wclSpecs) {
-  console.log(`\nScraping all pending guides for ${wclSpecs.length} specs...`);
+async function scrapeAllGuides(wclSpecs) {
+  console.log(`\nScraping all guides for ${wclSpecs.length} specs...`);
   for (const spec of wclSpecs) {
     const guides = loadGuides(spec);
-    const pending = guides.filter(g => g.status !== 'scraped');
-    if (pending.length > 0) {
-      console.log(`\n[${spec}] Scraping ${pending.length} pending guides...`);
-      for (const g of pending) {
+    if (guides.length > 0) {
+      console.log(`\n[${spec}] Scraping ${guides.length} guides...`);
+      for (const g of guides) {
         await scrapeGuideById(spec, g.id);
       }
     }
@@ -344,7 +343,7 @@ async function main() {
       console.error('No specs found in data directory.');
       process.exit(1);
     }
-    await scrapeAllPending(specs);
+    await scrapeAllGuides(specs);
   }
 
   rl.close();
