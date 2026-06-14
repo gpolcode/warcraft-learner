@@ -614,11 +614,26 @@ function getSpecDefensives(spec) {
 // milliradians - stored raw here and scaled by the frontend (positioning-core).
 
 const POSITIONS_INTERVAL_S = 1.5;
-const MAX_TRACKED_ENEMIES = 6;
+const MAX_TRACKED_ENEMIES = 5;
+const MIN_ENEMY_SAMPLES = 4;
 
 function posActorId(e) {
   if (typeof e.x !== 'number' || typeof e.y !== 'number') return null;
   return e.resourceActor === 2 ? e.targetID : e.sourceID;
+}
+
+/** Boss actor id = the NPC with the highest maxHitPoints across resource snapshots. */
+function pickBossActorId(events, npcById) {
+  const maxHp = new Map();
+  for (const e of events) {
+    const id = posActorId(e);
+    if (id == null || !npcById.has(id)) continue;
+    const hp = typeof e.maxHitPoints === 'number' ? e.maxHitPoints : 0;
+    if (hp > (maxHp.get(id) ?? -1)) maxHp.set(id, hp);
+  }
+  let bossId = null, best = -1;
+  for (const [id, hp] of maxHp) if (hp > best) { best = hp; bossId = id; }
+  return bossId;
 }
 
 /** Group raw position samples per actor id from resource-bearing events. */
@@ -703,7 +718,7 @@ function buildParsePositions(reportCode, fightId, playerName, playerId, npcById,
       name: e.meta.name || '',
       is_boss: e.actorId === bossId,
       samples: resampleTimeline(e.samples, durationS, POSITIONS_INTERVAL_S),
-    })).filter(e => e.samples.length),
+    })).filter(e => e.is_boss || e.samples.length >= MIN_ENEMY_SAMPLES),
   };
 }
 
@@ -739,20 +754,31 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   const end = fight.endTime;
   const fightDurS = (end - start) / 1000;
 
-  // Fetch all event types in parallel. DamageDone/DamageTaken carry includeResources
-  // so they double as the player's position source; a separate enemy DamageDone
-  // fetch supplies boss/add positions.
-  let castEvents, buffEvents, damageEvents, damageTakenEvents, enemyDamageEvents;
+  // Fetch all event types in parallel. Positions ride along on the (smaller)
+  // Casts streams via includeResources, keeping the dense damage streams plain.
+  // The boss reference gets one targeted DamageDone stream below (single actor),
+  // which is far cheaper than fetching every enemy's damage with resources.
+  let castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents;
   try {
-    [castEvents, buffEvents, damageEvents, damageTakenEvents, enemyDamageEvents] = await Promise.all([
-      wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { sourceId: player.id }),
+    [castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents] = await Promise.all([
+      wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { sourceId: player.id, includeResources: true }),
       wcl.getAllEvents(reportCode, fightId, 'Buffs',       start, end, { targetId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { sourceId: player.id, includeResources: true }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageTaken', start, end, { sourceId: player.id, includeResources: true }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { includeResources: true, hostilityType: 'Enemies' }).catch(() => []),
+      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { sourceId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageTaken', start, end, { sourceId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { includeResources: true, hostilityType: 'Enemies' }).catch(() => []),
     ]);
   } catch {
     return null;
+  }
+
+  // Dense boss positions from a single targeted stream (boss auto-attacks),
+  // identified as the highest-maxHitPoints enemy in the enemy cast snapshots.
+  let bossDamageEvents = [];
+  const bossActorId = pickBossActorId(enemyCastEvents, npcById);
+  if (bossActorId != null) {
+    bossDamageEvents = await wcl
+      .getAllEvents(reportCode, fightId, 'DamageDone', start, end, { sourceId: bossActorId, includeResources: true })
+      .catch(() => []);
   }
 
   // Detect Bloodlust
@@ -976,7 +1002,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   try {
     positions = buildParsePositions(
       reportCode, fightId, player.name, player.id, npcById,
-      [...damageEvents, ...damageTakenEvents, ...enemyDamageEvents], start, fightDurS,
+      [...castEvents, ...enemyCastEvents, ...bossDamageEvents], start, fightDurS,
     );
     if (!positions.player.length) positions = null;
   } catch { positions = null; }
@@ -1181,9 +1207,9 @@ function readJson(filePath) {
   try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch { return null; }
 }
 
-function writeJson(filePath, data) {
+function writeJson(filePath, data, compact = false) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  fs.writeFileSync(filePath, JSON.stringify(data, null, compact ? 0 : 2), 'utf8');
 }
 
 function getSamplesPath(spec, encounterId) {
@@ -1209,7 +1235,7 @@ function savePositions(spec, encounterId, encounterName, positions) {
   writeJson(file, {
     spec, encounter_id: encounterId, encounter_name: encounterName,
     interval_s: POSITIONS_INTERVAL_S, sample_count: parses.length, parses,
-  });
+  }, true);
 }
 
 function saveParseSample(spec, encounterId, encounterName, reportCode, fightId, playerName, cooldownData) {
