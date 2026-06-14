@@ -15,7 +15,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
 import {
   ActorTimeline, RankedAbility, RelPos, buildActorTimelines, buildTrail,
-  positionAt, rankAbilities, relativePositionsAt, toReferenceLocal,
+  hasAnyPosition, positionAt, rankAbilities, relativePositionsAt, toReferenceLocal,
 } from '../../../core/services/positioning-core';
 
 const TRAIL_STEP_S = 0.5;
@@ -178,23 +178,25 @@ export class PositioningCardComponent {
 
     try {
       const { startTime, endTime } = fight;
+      // includeResources:true attaches per-actor position (source/targetResources).
       const [casts, dmgDone, dmgTaken] = await Promise.all([
-        this.wclApi.getAllEvents(report, fight.id, 'Casts', startTime, endTime),
-        this.wclApi.getAllEvents(report, fight.id, 'DamageDone', startTime, endTime, playerId),
+        this.wclApi.getAllEvents(report, fight.id, 'Casts', startTime, endTime, undefined, true),
+        this.wclApi.getAllEvents(report, fight.id, 'DamageDone', startTime, endTime, playerId, true),
         // DamageTaken scoped to the player (matches the convention in analysis-engine).
-        this.wclApi.getAllEvents(report, fight.id, 'DamageTaken', startTime, endTime, playerId),
+        this.wclApi.getAllEvents(report, fight.id, 'DamageTaken', startTime, endTime, playerId, true),
       ]);
 
       // Positions: casts (all actors) plus the player's own damage to densify the trail.
-      const timelines = buildActorTimelines([...casts, ...dmgDone], startTime);
+      const pool = [...casts, ...dmgDone];
+      const timelines = buildActorTimelines(pool, startTime);
       const playerTl = timelines.get(playerId);
       if (!timelines.size || !playerTl?.samples.length) {
-        // Diagnose: did the API return coordinates at all? (The public WCL API may
-        // not expose x/y - the Replay view uses an internal source.)
-        const pool = [...casts, ...dmgDone];
-        const posCount = pool.filter(e => typeof e.x === 'number' && typeof e.y === 'number').length;
-        const sample = casts.find(e => e.type === 'cast') ?? pool[0];
-        const sampleKeys = sample ? Object.keys(sample) : [];
+        // Diagnose: did the API return resources/coordinates at all?
+        const posCount = pool.filter(e => hasAnyPosition([e])).length;
+        const sample = casts.find(e => e.sourceResources) ?? casts[0] ?? pool[0];
+        const sampleKeys = sample
+          ? [...Object.keys(sample), ...(sample.sourceResources ? Object.keys(sample.sourceResources).map(k => `sourceResources.${k}`) : [])]
+          : [];
         if (sample) console.log('[positioning] sample event:', sample);
         this.diag.set({ castCount: casts.length, posCount, sampleKeys });
         this.noPositionData.set(true);
