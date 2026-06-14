@@ -48,6 +48,7 @@ export interface WclReport {
   fights: WclFight[];
   masterData: {
     actors: Array<{ id: number; name: string; subType: string; server: string }>;
+    enemies?: Array<{ id: number; name: string; gameID: number }>;
     abilities: WclAbility[];
   };
 }

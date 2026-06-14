@@ -33,6 +33,7 @@ query($code:String!){reportData{report(code:$code){
   fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers}
   masterData{
     actors(type:"Player"){id name subType server}
+    enemies:actors(type:"NPC"){id name gameID}
     abilities{gameID name icon}
   }
 }}}`;
