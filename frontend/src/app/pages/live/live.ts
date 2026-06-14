@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subscription, fromEvent, timer } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, startWith, switchMap, throttleTime } from 'rxjs/operators';
+import { Subscription, from, fromEvent, interval, merge, of } from 'rxjs';
+import { exhaustMap, filter } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -87,20 +87,24 @@ export class LiveComponent implements OnInit {
     if (!url) return;
     this._reportCode = extractCode(url);
 
-    // Poll only while the tab is visible. switchMap cancels the interval when the
-    // tab is hidden and restarts it (firing immediately, via timer's 0 initial delay)
-    // when it returns. throttleTime is the 12s cooldown: it lets the first poll
-    // through but suppresses a refocus that lands within POLL_MS of the last one.
-    const visible$ = fromEvent(this.document, 'visibilitychange').pipe(
-      map(() => this.document.visibilityState === 'visible'),
-      startWith(this.document.visibilityState === 'visible'),
-      distinctUntilChanged(),
+    const isVisible = () => this.document.visibilityState === 'visible';
+    let lastPollAt = 0;
+
+    // Regular tick: fires every POLL_MS but is filtered out while hidden,
+    // so no network requests happen when the tab is not visible.
+    const tick$ = interval(POLL_MS).pipe(filter(isVisible));
+
+    // Refocus: when the tab becomes visible, poll immediately if POLL_MS has
+    // elapsed since the last poll (12s cooldown prevents accidental spam).
+    const refocus$ = fromEvent(this.document, 'visibilitychange').pipe(
+      filter(() => isVisible() && Date.now() - lastPollAt >= POLL_MS),
     );
 
-    this._pollSub = visible$.pipe(
-      switchMap(visible => visible ? timer(0, POLL_MS) : EMPTY),
-      throttleTime(POLL_MS),
-      exhaustMap(() => this._poll()),
+    this._pollSub = merge(of(0), tick$, refocus$).pipe(
+      exhaustMap(() => {
+        lastPollAt = Date.now();
+        return from(this._poll());
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
