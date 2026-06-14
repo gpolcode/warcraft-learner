@@ -51,6 +51,8 @@ export class LiveComponent implements OnInit, OnDestroy {
   private _fights: WclFight[] = [];
   private _players: { id: number; name: string; spec: string; server: string }[] = [];
   private _userChars: WclUserCharacter[] = [];
+  private _lastPollTime = 0;
+  private _visibilityHandler: (() => void) | null = null;
 
   async ngOnInit(): Promise<void> {
     if (!this.auth.isLoggedIn()) return;
@@ -60,6 +62,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._stopPolling();
+    this._removeVisibilityListener();
   }
 
   private async _autoStart(): Promise<void> {
@@ -84,17 +87,42 @@ export class LiveComponent implements OnInit, OnDestroy {
     const url = this.reportControl.value.trim();
     if (!url) return;
     this._reportCode = extractCode(url);
+    this._addVisibilityListener();
     await this._poll();
-    this._pollTimer = setInterval(() => this._poll(), POLL_MS);
+    this._startInterval();
   }
 
   protected stopLive(): void {
     this._stopPolling();
+    this._removeVisibilityListener();
     this.status.set('Stopped.');
+  }
+
+  private _startInterval(): void {
+    this._pollTimer = setInterval(() => {
+      if (document.visibilityState === 'visible') this._poll();
+    }, POLL_MS);
   }
 
   private _stopPolling(): void {
     if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = null; }
+  }
+
+  private _addVisibilityListener(): void {
+    this._removeVisibilityListener();
+    this._visibilityHandler = () => {
+      if (document.visibilityState !== 'visible') return;
+      const elapsed = Date.now() - this._lastPollTime;
+      if (elapsed >= POLL_MS) this._poll();
+    };
+    document.addEventListener('visibilitychange', this._visibilityHandler);
+  }
+
+  private _removeVisibilityListener(): void {
+    if (this._visibilityHandler) {
+      document.removeEventListener('visibilitychange', this._visibilityHandler);
+      this._visibilityHandler = null;
+    }
   }
 
   private _syncUrl(fightId: number, playerId: number): void {
@@ -106,6 +134,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   private async _poll(): Promise<void> {
+    this._lastPollTime = Date.now();
     this.error.set('');
     this.status.set('Checking for new pulls…');
     try {
