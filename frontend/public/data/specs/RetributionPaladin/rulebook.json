@@ -1,0 +1,82 @@
+{
+  "spec": "RetributionPaladin",
+  "major_cooldowns": [
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use strictly on cooldown alongside your 1-minute burst tools for massive damage windows."
+    },
+    {
+      "name": "Execution Sentence",
+      "spell_id": 343527,
+      "cooldown": 60,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use as the opener to your 1-minute burst window to soak up subsequent damage."
+    },
+    {
+      "name": "Wake of Ashes",
+      "spell_id": 255937,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use immediately after Execution Sentence to generate Holy Power and deal massive AoE."
+    },
+    {
+      "name": "Divine Toll",
+      "spell_id": 343721,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use inside the Execution Sentence window to mass-apply Judgment."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to immune all incoming damage and completely ignore lethal mechanics."
+    },
+    {
+      "name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Use proactively to absorb damage and reflect it back to attackers."
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use frequently on incoming moderate damage."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "1-Minute Burst Window",
+      "condition": null,
+      "action": "Always sync Execution Sentence, Wake of Ashes, and Divine Toll together. Add Avenging Wrath to this combo every 2 minutes."
+    },
+    {
+      "type": "resource_management",
+      "priority": "critical",
+      "description": "Never overcap Holy Power",
+      "condition": null,
+      "action": "Spend Holy Power on Templar's Verdict or Divine Storm before hitting the maximum of 5."
+    },
+    {
+      "type": "buff_maintenance",
+      "priority": "high",
+      "description": "Judgment debuff uptime",
+      "condition": null,
+      "action": "Ensure the target has the Judgment debuff before casting high-damage Holy Power spenders."
+    }
+  ],
+  "source_summary": "Retribution Paladin revolves around highly structured 1-minute and 2-minute burst windows. Between these windows, the goal is simply to build and spend Holy Power efficiently without overcapping."
+}

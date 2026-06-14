@@ -1,0 +1,89 @@
+{
+  "spec": "FuryWarrior",
+  "major_cooldowns": [
+    {
+      "name": "Recklessness",
+      "spell_id": 1719,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use on cooldown to massively increase rage generation and critical strike chance."
+    },
+    {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use exactly alongside Recklessness."
+    },
+    {
+      "name": "Odyn's Fury",
+      "spell_id": 385059,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use as a massive burst of AoE damage and rage generation, ensuring you are Enraged first."
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use alongside Recklessness for massive AoE damage and passive rage."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use for extreme self-healing via Bloodthirst and immediate damage reduction."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use right before an incoming magic cast to reflect it and reduce magic damage taken."
+    },
+    {
+      "name": "Ignore Pain",
+      "spell_id": 190456,
+      "cooldown": 12,
+      "usage_rule": "Use as a rage dump for survivability when taking sustained damage."
+    }
+  ],
+  "rules": [
+    {
+      "type": "buff_maintenance",
+      "priority": "critical",
+      "description": "Maintain Enrage",
+      "condition": null,
+      "action": "Always prioritize casting Rampage when available to maintain the Enrage buff, which is the core of Fury's damage."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Stack Recklessness and Avatar",
+      "condition": null,
+      "action": "Ensure Recklessness and Avatar are always pressed together to maximize burst damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Odyn's Fury while Enraged",
+      "condition": null,
+      "action": "Only cast Odyn's Fury while the Enrage buff is active to benefit from the mastery damage increase."
+    },
+    {
+      "type": "buff_maintenance",
+      "priority": "high",
+      "description": "Whirlwind for Cleave",
+      "condition": null,
+      "action": "In multi-target situations, cast Whirlwind to buff your next single-target attacks to cleave onto additional enemies."
+    }
+  ],
+  "source_summary": "Fury Warrior is an incredibly fast-paced, high APM spec focused entirely on generating rage rapidly to cast Rampage, thereby maintaining the Enrage buff."
+}

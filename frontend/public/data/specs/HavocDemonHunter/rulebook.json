@@ -1,0 +1,75 @@
+{
+  "spec": "HavocDemonHunter",
+  "major_cooldowns": [
+    {
+      "name": "Metamorphosis",
+      "spell_id": 191427,
+      "cooldown": 120,
+      "duration": 24,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use on cooldown for massive damage and haste increases, ideally paired with Eye Beam and Essence Break."
+    },
+    {
+      "name": "Eye Beam",
+      "spell_id": 198013,
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown to trigger the Demonic talent and enter short Metamorphosis windows."
+    },
+    {
+      "name": "Essence Break",
+      "spell_id": 258860,
+      "cooldown": 40,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use immediately after Eye Beam finishes channeling to amplify Chaos Strike and Blade Dance."
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 370965,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown, ideally during a Metamorphosis window or as an opener."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Use proactively on a short cooldown to dodge physical attacks and reduce damage by 20%."
+    },
+    {
+      "name": "Netherwalk",
+      "spell_id": 212800,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use to immune all damage, often used to soak lethal mechanics."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Essence Break Window",
+      "condition": null,
+      "action": "Always cast Essence Break immediately after Eye Beam. Dump all Fury on Chaos Strike or Blade Dance within the 4-second debuff window."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Metamorphosis Timing",
+      "condition": null,
+      "action": "Cast Metamorphosis immediately after an Eye Beam + Essence Break combo finishes to reset Eye Beam and Blade Dance."
+    },
+    {
+      "type": "resource_management",
+      "priority": "high",
+      "description": "Don't overcap Fury",
+      "condition": null,
+      "action": "Use Chaos Strike or Blade Dance to prevent Fury from reaching its maximum."
+    }
+  ],
+  "source_summary": "Havoc Demon Hunter revolves around the 'Demonic' window. The spec builds up to a highly concentrated burst sequence consisting of Eye Beam followed instantly by Essence Break, dumping resources into the short vulnerability window."
+}
