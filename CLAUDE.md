@@ -132,9 +132,10 @@ GHA commits `frontend/public/data/specs/**`, which triggers `deploy-pages.yml` t
 ### Rulebook management (`npm run admin` / `npm run scrape`)
 No web UI for admin. Everything is CLI.
 
-1. **Add + scrape guides** - `npm run scrape`: add guide URLs, scrape content (web/YouTube/SimC APL), store in `guides.json`.
-2. **Build AI prompt** - `npm run admin` → "Copy prompt": assembles `prompts/rulebook_skill.md` + all scraped guide content into a clipboard-ready prompt.
-3. **Save rulebook** - paste AI output → `npm run admin` → "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates schema directly.
+1. **Manage guides** - Edit `frontend/public/data/specs/{spec}/guides.json` to add/remove guide URLs.
+2. **Refresh content** - `npm run scrape`: refreshes content for all guides in the repo (web/YouTube/SimC APL).
+3. **Build AI prompt** - `npm run admin` → "Copy prompt": assembles `prompts/rulebook_skill.md` + all scraped guide content into a clipboard-ready prompt.
+4. **Save rulebook** - paste AI output → `npm run admin` → "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates schema directly.
 
 ### Pre-fight gear check (`/pre`)
 Entirely client-side. No backend calls.

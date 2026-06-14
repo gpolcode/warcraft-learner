@@ -19,8 +19,8 @@ The build is deployed to GitHub Pages via `.github/workflows/deploy-pages.yml` -
 ## Scripts
 
 ```bash
-npm run ingest   # Fetch top WCL parses → write bench + sample files
-npm run scrape   # Add and scrape guide URLs
+npm run ingest   # Fetch top WCL parses for all specs → write bench + sample files
+npm run scrape   # Refresh content for all guides defined in guides.json
 npm run admin    # Rulebook management (generate prompt, save AI output)
 ```
 

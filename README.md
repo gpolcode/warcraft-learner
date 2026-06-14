@@ -27,8 +27,8 @@ The Angular app is fully static and communicates directly with the WCL API via O
 ## Setup flow
 
 1. **Admin CLI**: `npm run admin` - interactive CLI for guide management and rulebook generation.
-2. **Ingest parses**: `npm run ingest` - fetches and analyzes the top 10 WCL parses for every current-expansion boss. Powers data-derived thresholds, hold pattern detection, and burst window analysis.
-3. **Add guides**: `npm run scrape` - add guide URLs (web, YouTube, SimC APL), scrape their content.
+2. **Ingest parses**: `npm run ingest` - fetches and analyzes the top 10 WCL parses for every spec and boss. Powers data-derived thresholds, hold pattern detection, and burst window analysis.
+3. **Manage guides**: Edit `frontend/public/data/specs/{spec}/guides.json` to add guide URLs (web, YouTube, SimC APL), then run `npm run scrape` to refresh all content.
 4. **Generate rulebook**: in `npm run admin`, select a spec → "Print AI prompt" → paste into any LLM (Claude, ChatGPT, etc.) → paste the JSON output back to save the rulebook.
 5. **Player page**: sign in with WCL, paste a report URL - fight and player selectors appear automatically.
 
@@ -42,8 +42,8 @@ All scripts run from `frontend/`:
 |---|---|
 | `npm start` | Angular dev server (port 4200) |
 | `npm run build` | Production build to `../static/angular/` |
-| `npm run ingest` | Ingest top WCL parses for a spec (interactive or `--spec Name --all`) |
-| `npm run scrape` | Add and scrape guide URLs (interactive or `--spec --url --type`) |
+| `npm run ingest` | Ingest top WCL parses for all specs (or `--spec Name`) |
+| `npm run scrape` | Refresh content for all guides (or `--spec Name`) |
 | `npm run admin` | Manage rulebooks (generate prompt, save AI JSON output) |
 
 ## GitHub Actions automation
