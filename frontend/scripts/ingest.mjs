@@ -95,24 +95,6 @@ const SPEC_TO_WCL = {
 
 const EXCLUDE_ZONE_PATTERNS = ['beta', 'ptr', 'mythic+', 'complete raids', 'delves', 'torghast'];
 
-// ── Readline helpers ──────────────────────────────────────────────────────────
-
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-function ask(prompt) {
-  return new Promise(resolve => rl.question(prompt, resolve));
-}
-
-async function askList(prompt, choices) {
-  const lines = choices.map((c, i) => `  [${i + 1}] ${c}`).join('\n');
-  while (true) {
-    const ans = await ask(`${prompt}\n${lines}\n> `);
-    const n = parseInt(ans);
-    if (n >= 1 && n <= choices.length) return n - 1;
-    console.log('Invalid choice, try again.');
-  }
-}
-
 // ── WCL OAuth2 client ─────────────────────────────────────────────────────────
 
 class WCLClient {
@@ -1374,120 +1356,13 @@ function syncEncountersIndex(spec) {
   writeJson(path.join(DATA_DIR, spec, 'encounters.json'), entries);
 }
 
-// ── Spec selection ────────────────────────────────────────────────────────────
-
-function getKnownSpecs() {
-  if (!fs.existsSync(DATA_DIR)) return [];
-  return fs.readdirSync(DATA_DIR).filter(d => {
-    try { return fs.statSync(path.join(DATA_DIR, d)).isDirectory(); } catch { return false; }
-  }).sort();
-}
-
-async function pickSpec() {
-  const specs = getKnownSpecs();
-  const allSpecs = Object.keys(SPEC_TO_WCL).sort();
-  console.log('\nKnown specs in data/specs/:');
-  if (specs.length) specs.forEach((s, i) => console.log(`  [${i + 1}] ${s}`));
-  else console.log('  (none yet)');
-  const raw = await ask('\nEnter spec name or number from list: ');
-  const n = parseInt(raw);
-  if (n >= 1 && n <= specs.length) return specs[n - 1];
-  const trimmed = raw.trim();
-  if (SPEC_TO_WCL[trimmed]) return trimmed;
-  console.log(`Warning: "${trimmed}" is not in SPEC_TO_WCL - WCL rankings may fail.`);
-  return trimmed;
-}
-
 // ── Main ingestion flow ───────────────────────────────────────────────────────
-
-async function ingestSpec(wcl, spec, encounters) {
-  console.log(`\nIngesting ${spec} - ${encounters.length} encounter(s) available`);
-
-  const allEncs = encounters;
-  if (!allEncs.length) {
-    console.log('No encounters found for current expansion.');
-    return;
-  }
-
-  // Show encounter list with existing sample counts
-  const existingSamples = new Map();
-  for (const enc of allEncs) {
-    const samplesPath = getSamplesPath(spec, enc.id);
-    const existing = readJson(samplesPath) || [];
-    existingSamples.set(enc.id, existing.length);
-  }
-
-  console.log(`\nEncounters (${allEncs.length} total):`);
-  allEncs.forEach((enc, i) => {
-    const count = existingSamples.get(enc.id) || 0;
-    console.log(`  [${i + 1}] ${enc.name} - ${count} samples`);
-  });
-
-  const choice = await ask('\nEnter encounter number(s) to ingest (comma-separated), "all", or "back": ');
-  if (choice.trim().toLowerCase() === 'back') return;
-
-  let selectedEncs;
-  if (choice.trim().toLowerCase() === 'all') {
-    selectedEncs = allEncs;
-  } else {
-    const nums = choice.split(',').map(s => parseInt(s.trim())).filter(n => n >= 1 && n <= allEncs.length);
-    if (!nums.length) { console.log('No valid selection.'); return; }
-    selectedEncs = nums.map(n => allEncs[n - 1]);
-  }
-
-  for (const enc of selectedEncs) {
-    process.stdout.write(`\n[${enc.name}] Fetching top 10 rankings...`);
-    let rankings;
-    try {
-      rankings = await fetchTopRankings(wcl, spec, enc.id, 10);
-    } catch (err) {
-      console.log(` FAILED: ${err.message}`);
-      continue;
-    }
-    console.log(` ${rankings.length} rankings found`);
-
-    // Clear existing samples for this encounter
-    const samplesPath = getSamplesPath(spec, enc.id);
-    if (fs.existsSync(samplesPath)) fs.unlinkSync(samplesPath);
-
-    let done = 0;
-    for (const ranking of rankings) {
-      process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
-      try {
-        const cooldownData = await analyzeParse(
-          wcl, spec,
-          ranking.report_code, ranking.fight_id,
-          ranking.player, ranking.combatant_info,
-        );
-        if (cooldownData) {
-          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, cooldownData);
-        }
-      } catch (err) {
-        // Log but continue
-        process.stdout.write(` (skip: ${err.message.slice(0, 40)})`);
-      }
-      done++;
-    }
-    process.stdout.write(`\r  [${enc.name}] ${done}/${rankings.length} parses analyzed.          \n`);
-
-    // Compute bench data
-    process.stdout.write(`  [${enc.name}] Computing bench data...`);
-    syncEncounterFile(spec, enc.id);
-    console.log(' done');
-  }
-  console.log(`\nIngestion complete for ${spec}.`);
-}
-
-// ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
   console.log('warcraft-learner - Parse Ingestion CLI');
 
-  // ── CLI mode ────────────────────────────────────────────────────────────────
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
-  const cliAll = argv.includes('--all');
-  const cliInteractive = argv.includes('--interactive');
   const cliTopN = parseInt(argv.find((_, i) => argv[i - 1] === '--top-n') || '10', 10) || 10;
 
   let wcl;
@@ -1508,35 +1383,17 @@ async function main() {
     process.exit(1);
   }
 
-  // ── Execution mode ─────────────────────────────────────────────────────────
-  if (cliInteractive) {
-    // ── Interactive mode ──────────────────────────────────────────────────────
-    while (true) {
-      const spec = await pickSpec();
-      if (!spec) break;
-
-      await ingestSpec(wcl, spec, encounters);
-
-      const again = await ask('\nIngest another spec? [y/N] ');
-      if (again.trim().toLowerCase() !== 'y') break;
-    }
+  const specs = cliSpec ? [cliSpec] : Object.keys(SPEC_TO_WCL).sort();
+  
+  if (!cliSpec) {
+    console.log(`Ingesting all ${specs.length} specs defined in SPEC_TO_WCL...`);
   } else {
-    // ── Non-interactive mode (Default) ────────────────────────────────────────
-    // Default to all known specs from mapping if none specified
-    const specs = cliSpec ? [cliSpec] : Object.keys(SPEC_TO_WCL).sort();
-    
-    if (!cliSpec) {
-      console.log(`Ingesting all ${specs.length} specs defined in SPEC_TO_WCL...`);
-    } else {
-      console.log(`Ingesting spec: ${cliSpec}`);
-    }
-
-    for (const spec of specs) {
-      await ingestSpecNonInteractive(wcl, spec, encounters, cliTopN);
-    }
+    console.log(`Ingesting spec: ${cliSpec}`);
   }
 
-  rl.close();
+  for (const spec of specs) {
+    await ingestSpecNonInteractive(wcl, spec, encounters, cliTopN);
+  }
 }
 
 async function ingestSpecNonInteractive(wcl, spec, encounters, topN = 10) {
