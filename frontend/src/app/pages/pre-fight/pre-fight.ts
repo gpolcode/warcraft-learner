@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal, computed } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -7,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { WclAuthService } from '../../core/services/wcl-auth';
 import { WclApiService } from '../../core/services/wcl-api';
@@ -15,9 +18,12 @@ import { CharacterInfo, CharacterGear, WclUserCharacter } from '../../core/model
 import { EncounterEntry, EncounterBench, EncounterGearStats } from '../../core/models/encounter.models';
 import { Rulebook } from '../../core/models/rulebook.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { CalloutComponent } from '../../shared/components/callout/callout';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
+import { FormatDamagePipe } from '../../shared/pipes/format-damage-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 
+type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
 
 const SLOT_NAMES: Record<number, string> = {
   0:'Head', 1:'Neck', 2:'Shoulder', 3:'Back', 4:'Chest', 5:'Waist', 6:'Legs',
@@ -25,27 +31,38 @@ const SLOT_NAMES: Record<number, string> = {
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
 };
 
+const STATUS_ICONS: Record<GearStatus, string> = {
+  ok: 'check_circle', warn: 'warning', info: 'info', unknown: 'help_outline',
+};
+
+const STATUS_CLASSES: Record<GearStatus, string> = {
+  ok: 'badge-success', warn: 'badge-warning', info: 'badge-info', unknown: 'text-[var(--muted)]',
+};
+
 interface CdPlanItem {
   name: string;
-  openLabel: string | null;
-  usesLabel: string | null;
-  blLabel: string | null;
-  holdLabels: string[];
+  firstCastS: number | null;
+  uses: number | null;
+  usesPerMin: number | null;
+  bloodlust: boolean;
+  bloodlustPct: number | null;
+  holds: Array<{ castIndex: number; targetS: number }>;
   rule: string | null;
 }
 
 interface DefPlanItem {
   name: string;
-  usesLabel: string | null;
-  firstLabel: string | null;
-  windowLabels: string[];
+  uses: number | null;
+  firstCastS: number | null;
+  windowsS: number[];
   rule: string | null;
 }
 
 interface EnchantRow {
   slotName: string;
-  status: 'ok' | 'warn' | 'info';
-  note: string;
+  status: GearStatus;
+  name: string;
+  note: string | null;
 }
 
 interface TalentBuildRow {
@@ -59,8 +76,7 @@ interface TalentBuildRow {
 interface GemCheck {
   count: number;
   expected: number;
-  status: 'ok' | 'warn';
-  note: string;
+  status: GearStatus;
 }
 
 @Component({
@@ -68,11 +84,11 @@ interface GemCheck {
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatButtonModule, MatCardModule, MatIconModule,
-    LoadingSpinnerComponent, FormatDurationPipe, FormatSpecPipe,
+    MatButtonModule, MatCardModule, MatChipsModule, MatDividerModule, MatIconModule,
+    LoadingSpinnerComponent, CalloutComponent,
+    DecimalPipe, FormatDurationPipe, FormatDamagePipe, FormatSpecPipe,
   ],
   templateUrl: './pre-fight.html',
-  styleUrl: './pre-fight.scss',
 })
 export class PreFightComponent implements OnInit {
   private readonly auth = inject(WclAuthService);
@@ -110,28 +126,21 @@ export class PreFightComponent implements OnInit {
     });
     return cds.map(cd => {
       const b = benchmarks[cd.name];
-      const openLabel = b?.avg_first_cast_s != null
-        ? `First cast ~${this._fmtTime(b.avg_first_cast_s)}` : null;
-      let usesLabel: string | null = null;
-      if (b?.avg_uses) {
-        const upm = b.uses_per_min?.avg ?? b.avg_uses_per_min ?? null;
-        usesLabel = `~${Math.round(b.avg_uses)} use${b.avg_uses >= 1.5 ? 's' : ''}`
-          + (upm ? ` (${upm.toFixed(1)}/min)` : '');
-      }
-      let blLabel: string | null = null;
-      if (cd.align_with_bloodlust) {
-        blLabel = b && b.bl_pct >= 40
-          ? `Align with Bloodlust - ${b.bl_pct}% of top parsers do`
-          : 'Align with Bloodlust';
-      }
-      const holdLabels: string[] = [];
-      if (b?.majority_hold && b.hold_targets) {
-        const entries = Object.entries(b.hold_targets).sort((a, c) => Number(a[0]) - Number(c[0]));
-        for (const [idx, h] of entries) {
-          holdLabels.push(`Hold cast #${Number(idx) + 1} until ~${this._fmtTime(h.target_s)}`);
-        }
-      }
-      return { name: cd.name, openLabel, usesLabel, blLabel, holdLabels, rule: cd.usage_rule ?? null };
+      const holds = b?.majority_hold && b.hold_targets
+        ? Object.entries(b.hold_targets)
+            .sort((a, c) => Number(a[0]) - Number(c[0]))
+            .map(([idx, h]) => ({ castIndex: Number(idx), targetS: h.target_s }))
+        : [];
+      return {
+        name: cd.name,
+        firstCastS: b?.avg_first_cast_s ?? null,
+        uses: b?.avg_uses ?? null,
+        usesPerMin: b?.uses_per_min?.avg ?? b?.avg_uses_per_min ?? null,
+        bloodlust: !!cd.align_with_bloodlust,
+        bloodlustPct: cd.align_with_bloodlust && b && b.bl_pct >= 40 ? b.bl_pct : null,
+        holds,
+        rule: cd.usage_rule ?? null,
+      };
     });
   });
 
@@ -143,16 +152,18 @@ export class PreFightComponent implements OnInit {
     const windows = this.bench()?.defensive_windows ?? [];
     return rb.defensives.map(def => {
       const b = benchmarks[def.name];
-      const windowLabels = windows
+      const windowsS = windows
         .filter(w => (w.defensive_name ?? w.common_defensives?.[0]) === def.name)
-        .sort((a, c) => a.time_s - c.time_s)
-        .map(w => this._fmtTime(w.time_s));
-      const usesLabel = b?.avg_uses
-        ? `~${Math.round(b.avg_uses)} use${b.avg_uses >= 1.5 ? 's' : ''}` : null;
-      const firstLabel = b?.avg_first_cast_s != null
-        ? `First use ~${this._fmtTime(b.avg_first_cast_s)}` : null;
-      return { name: def.name, usesLabel, firstLabel, windowLabels, rule: def.usage_rule ?? null };
-    }).filter(d => d.usesLabel || d.firstLabel || d.windowLabels.length || d.rule);
+        .map(w => w.time_s)
+        .sort((a, c) => a - c);
+      return {
+        name: def.name,
+        uses: b?.avg_uses ?? null,
+        firstCastS: b?.avg_first_cast_s ?? null,
+        windowsS,
+        rule: def.usage_rule ?? null,
+      };
+    }).filter(d => d.uses != null || d.firstCastS != null || d.windowsS.length || d.rule);
   });
 
   // Enchants: flag slots the player left un-enchanted that top parsers consider
@@ -169,32 +180,33 @@ export class PreFightComponent implements OnInit {
 
     const rows: EnchantRow[] = [];
     for (const slot of [...slots].sort((a, b) => a - b)) {
+      const slotName = this.slotName(slot);
       const top = topEnch[slot]?.[0];
       const topName = top ? (top.name || `Enchant #${top.id}`) : '';
       const player = playerEnch.find(e => e.slot === slot);
       if (!player) {
         if (top && top.pct >= 70) {
-          rows.push({ slotName: this.slotName(slot), status: 'warn',
-            note: `Missing - ${top.pct}% of top parsers enchant this slot` });
+          rows.push({ slotName, status: 'warn', name: 'Not enchanted',
+            note: `${top.pct}% of top parsers enchant this slot` });
         } else if (top && top.pct >= 40) {
-          rows.push({ slotName: this.slotName(slot), status: 'info',
-            note: `Optional - ${top.pct}% of top parsers enchant here` });
+          rows.push({ slotName, status: 'info', name: 'Not enchanted',
+            note: `${top.pct}% of top parsers enchant this slot` });
         }
         continue;
       }
       const playerName = player.name || `Enchant #${player.id}`;
       if (top && player.id === top.id) {
-        rows.push({ slotName: this.slotName(slot), status: 'ok', note: `${playerName} - matches top (${top.pct}%)` });
+        rows.push({ slotName, status: 'ok', name: playerName, note: `Matches top parsers (${top.pct}%)` });
       } else if (top) {
-        rows.push({ slotName: this.slotName(slot), status: 'info', note: `${playerName} - top parsers use ${topName} (${top.pct}%)` });
+        rows.push({ slotName, status: 'info', name: playerName, note: `Top parsers use ${topName} (${top.pct}%)` });
       } else {
-        rows.push({ slotName: this.slotName(slot), status: 'ok', note: playerName });
+        rows.push({ slotName, status: 'ok', name: playerName, note: null });
       }
     }
     return rows;
   });
 
-  protected readonly enchantDot = computed(() =>
+  protected readonly enchantStatus = computed<GearStatus>(() =>
     this.enchantRows().some(r => r.status === 'warn') ? 'warn' : 'ok');
 
   // Top-parse talent builds with a link to an example parse running each one.
@@ -217,12 +229,7 @@ export class PreFightComponent implements OnInit {
     const count = this.charGear()?.gem_count;
     if (!gems || count == null) return null;
     const expected = gems.max_count;
-    if (count >= expected) {
-      return { count, expected, status: 'ok', note: `All ${expected} socket${expected === 1 ? '' : 's'} filled` };
-    }
-    const diff = expected - count;
-    return { count, expected, status: 'warn',
-      note: `${diff} socket${diff === 1 ? '' : 's'} may be unfilled - top parsers gem ${expected}` };
+    return { count, expected, status: count >= expected ? 'ok' : 'warn' };
   });
 
   async ngOnInit(): Promise<void> {
@@ -322,20 +329,10 @@ export class PreFightComponent implements OnInit {
 
   protected slotName(slot: number): string { return SLOT_NAMES[slot] || `Slot ${slot}`; }
 
-  private _fmtTime(s: number): string {
-    const m = Math.floor(s / 60);
-    const sec = Math.round(s % 60);
-    return `${m}:${String(sec).padStart(2, '0')}`;
-  }
+  protected statusIcon(status: GearStatus): string { return STATUS_ICONS[status]; }
+  protected statusClass(status: GearStatus): string { return STATUS_CLASSES[status]; }
 
-  protected fmtDmg(n: number | undefined | null): string {
-    if (!n) return '';
-    if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-    if (n >= 1e3) return `${Math.round(n / 1e3)}K`;
-    return String(Math.round(n));
-  }
-
-  protected talentStatus(topStats: EncounterGearStats | null): { status: string; note: string } {
+  protected talentStatus(topStats: EncounterGearStats | null): { status: GearStatus; note: string } {
     if (!topStats?.talent_builds?.length) return { status: 'unknown', note: 'No talent data yet.' };
     const gear = this.charGear();
     if (!gear?.talent_key) return { status: 'unknown', note: 'Talent data unavailable from WCL.' };
