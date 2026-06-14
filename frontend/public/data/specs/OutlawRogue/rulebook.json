@@ -1,0 +1,89 @@
+{
+  "spec": "OutlawRogue",
+  "major_cooldowns": [
+    {
+      "name": "Adrenaline Rush",
+      "spell_id": 13750,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use on cooldown for energy regeneration and attack speed."
+    },
+    {
+      "name": "Blade Rush",
+      "spell_id": 271877,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown as an energy builder and damage burst."
+    },
+    {
+      "name": "Keep It Rolling",
+      "spell_id": 381989,
+      "cooldown": 420,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use when you have good Roll the Bones buffs to extend their duration."
+    },
+    {
+      "name": "Ghostly Strike",
+      "spell_id": 196937,
+      "cooldown": 35,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown to increase damage taken by the target."
+    },
+    {
+      "name": "Between the Eyes",
+      "spell_id": 315341,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown with max combo points for damage and crit buff."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to clear and immune magic effects."
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use against heavy physical attacks."
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 5,
+      "usage_rule": "Use preemptively to reduce incoming AoE damage."
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use for self-healing."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Ghostly Strike before Between the Eyes",
+      "condition": null,
+      "action": "Ensure Ghostly Strike is active before pressing Between the Eyes."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Do not cap combo points",
+      "condition": null,
+      "action": "Use Dispatch or Between the Eyes before overcapping combo points."
+    }
+  ],
+  "source_summary": "Outlaw Rogue relies on high APM, using minor cooldowns like Blade Rush and Between the Eyes strictly on cooldown. Roll the Bones RNG management and non-stop combo point generation/spending drive the rotation."
+}

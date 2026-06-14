@@ -33,10 +33,14 @@ const MAX_GUIDE_CHARS = 60_000;
 
 // ── Readline helpers ──────────────────────────────────────────────────────────
 
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+let rl = null;
+function getRl() {
+  if (!rl) rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return rl;
+}
 
 function ask(prompt) {
-  return new Promise(resolve => rl.question(prompt, resolve));
+  return new Promise(resolve => getRl().question(prompt, resolve));
 }
 
 async function askList(prompt, choices) {
@@ -183,12 +187,12 @@ function readJsonPaste() {
       if (acc.startsWith('{') || acc.startsWith('[')) {
         try {
           JSON.parse(acc);
-          rl.removeListener('line', onLine);
+          getRl().removeListener('line', onLine);
           resolve(acc);
         } catch { /* keep reading */ }
       }
     };
-    rl.on('line', onLine);
+    getRl().on('line', onLine);
   });
 }
 
@@ -303,7 +307,7 @@ async function main() {
     if (again.trim().toLowerCase() !== 'y') break;
   }
 
-  rl.close();
+  if (rl) rl.close();
 }
 
 // Only run the interactive CLI when invoked directly (not when imported, e.g. by tests).
