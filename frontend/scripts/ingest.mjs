@@ -1483,10 +1483,11 @@ async function ingestSpec(wcl, spec, encounters) {
 async function main() {
   console.log('warcraft-learner - Parse Ingestion CLI');
 
-  // ── CLI mode (non-interactive) ──────────────────────────────────────────────
+  // ── CLI mode ────────────────────────────────────────────────────────────────
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
   const cliAll = argv.includes('--all');
+  const cliInteractive = argv.includes('--interactive');
   const cliTopN = parseInt(argv.find((_, i) => argv[i - 1] === '--top-n') || '10', 10) || 10;
 
   let wcl;
@@ -1507,28 +1508,32 @@ async function main() {
     process.exit(1);
   }
 
-  if (cliSpec || cliAll) {
-    const specs = cliAll ? getKnownSpecs() : [cliSpec];
-    if (!specs.length) {
-      console.error('No specs found in data directory. Run with --spec SpecName to specify one.');
-      process.exit(1);
+  // ── Execution mode ─────────────────────────────────────────────────────────
+  if (cliInteractive) {
+    // ── Interactive mode ──────────────────────────────────────────────────────
+    while (true) {
+      const spec = await pickSpec();
+      if (!spec) break;
+
+      await ingestSpec(wcl, spec, encounters);
+
+      const again = await ask('\nIngest another spec? [y/N] ');
+      if (again.trim().toLowerCase() !== 'y') break;
     }
+  } else {
+    // ── Non-interactive mode (Default) ────────────────────────────────────────
+    // Default to all known specs from mapping if none specified
+    const specs = cliSpec ? [cliSpec] : Object.keys(SPEC_TO_WCL).sort();
+    
+    if (!cliSpec) {
+      console.log(`Ingesting all ${specs.length} specs defined in SPEC_TO_WCL...`);
+    } else {
+      console.log(`Ingesting spec: ${cliSpec}`);
+    }
+
     for (const spec of specs) {
       await ingestSpecNonInteractive(wcl, spec, encounters, cliTopN);
     }
-    rl.close();
-    return;
-  }
-
-  // ── Interactive mode ────────────────────────────────────────────────────────
-  while (true) {
-    const spec = await pickSpec();
-    if (!spec) break;
-
-    await ingestSpec(wcl, spec, encounters);
-
-    const again = await ask('\nIngest another spec? [y/N] ');
-    if (again.trim().toLowerCase() !== 'y') break;
   }
 
   rl.close();

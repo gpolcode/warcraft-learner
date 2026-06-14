@@ -39,7 +39,23 @@ export interface HoldCooldownForAnchorCondition {
   hold_window_s?: number;
 }
 
-export type RuleCondition = CastWithoutPriorCondition | HoldCooldownForAnchorCondition;
+export interface CastWithoutBuffCondition {
+  kind: 'cast_without_buff';
+  spell_id: number;
+  spell_name: string;
+  buff_id: number;
+  buff_name: string;
+}
+
+export interface CastWithBuffCondition {
+  kind: 'cast_with_buff';
+  spell_id: number;
+  spell_name: string;
+  buff_id: number;
+  buff_name: string;
+}
+
+export type RuleCondition = CastWithoutPriorCondition | HoldCooldownForAnchorCondition | CastWithoutBuffCondition | CastWithBuffCondition;
 
 export interface RulebookRule {
   type?: string;

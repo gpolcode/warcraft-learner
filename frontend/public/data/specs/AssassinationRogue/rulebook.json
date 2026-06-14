@@ -82,7 +82,13 @@
       "type": "rotation",
       "priority": "critical",
       "description": "Do not Rupture during Darkest Night",
-      "condition": null,
+      "condition": {
+        "kind": "cast_with_buff",
+        "spell_id": 1943,
+        "spell_name": "Rupture",
+        "buff_id": 441064,
+        "buff_name": "Darkest Night"
+      },
       "action": "Never cast Rupture when you have the Darkest Night buff active; plan ahead so you do not lose the Deathstalker's mark trigger."
     },
     {

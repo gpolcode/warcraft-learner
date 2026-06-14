@@ -12,7 +12,7 @@ You are a World of Warcraft theorycrafting assistant. Read the guide content at 
 
 ## Output schema
 
-Your output **must validate** against the JSON Schema below. Every field's requirements, allowed values, and meaning are documented in the schema's `description` fields - read them carefully. The two supported machine-readable `condition` kinds (`cast_without_prior` and `hold_cooldown_for_anchor`) are defined under `$defs`, each with an `examples` entry showing the exact shape; leave `condition` as `null` when a rule does not map cleanly to one of them.
+Your output **must validate** against the JSON Schema below. Every field's requirements, allowed values, and meaning are documented in the schema's `description` fields - read them carefully. The four supported machine-readable `condition` kinds (`cast_without_prior`, `hold_cooldown_for_anchor`, `cast_without_buff`, and `cast_with_buff`) are defined under `$defs`, each with an `examples` entry showing the exact shape; leave `condition` as `null` when a rule does not map cleanly to one of them.
 
 ```json
 {{schema}}
