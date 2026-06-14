@@ -201,10 +201,7 @@ async function scrapeAllGuides(wclSpecs) {
 async function main() {
   console.log('warcraft-learner - Guide Scraper CLI');
 
-  const argv = process.argv.slice(2);
-  const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
-
-  const specs = cliSpec ? [cliSpec] : getKnownSpecs();
+  const specs = getKnownSpecs();
   if (!specs.length) {
     console.error('No specs found in data directory.');
     process.exit(1);

@@ -43,7 +43,7 @@ All scripts run from `frontend/`:
 | `npm start` | Angular dev server (port 4200) |
 | `npm run build` | Production build to `../static/angular/` |
 | `npm run ingest` | Ingest top WCL parses for all specs (or `--spec Name`) |
-| `npm run scrape` | Refresh content for all guides (or `--spec Name`) |
+| `npm run scrape` | Refresh content for all guides |
 | `npm run admin` | Manage rulebooks (generate prompt, save AI JSON output) |
 
 ## GitHub Actions automation

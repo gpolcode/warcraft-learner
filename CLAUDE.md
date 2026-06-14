@@ -76,7 +76,7 @@ warcraft-learner/
 │   └── scripts/                # Node.js CLI tools (no server needed)
 │       ├── ingest.mjs   # Fetch top WCL parses → write bench + sample files
 │       ├── admin.mjs    # Rulebook management (build prompt, save AI output)
-│       └── scrape.mjs   # Add + scrape guide URLs
+│       └── scrape.mjs   # Bulk-scrape guide content
 ├── prompts/
 │   └── rulebook_skill.md       # LLM prompt template for rulebook generation
 ├── .github/workflows/
