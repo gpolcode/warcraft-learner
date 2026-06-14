@@ -191,12 +191,10 @@ export class PositioningCardComponent {
       const timelines = buildActorTimelines(pool, startTime);
       const playerTl = timelines.get(playerId);
       if (!timelines.size || !playerTl?.samples.length) {
-        // Diagnose: did the API return resources/coordinates at all?
+        // Diagnose: did the API return coordinates at all?
         const posCount = pool.filter(e => hasAnyPosition([e])).length;
-        const sample = casts.find(e => e.sourceResources) ?? casts[0] ?? pool[0];
-        const sampleKeys = sample
-          ? [...Object.keys(sample), ...(sample.sourceResources ? Object.keys(sample.sourceResources).map(k => `sourceResources.${k}`) : [])]
-          : [];
+        const sample = casts.find(e => typeof e.x === 'number') ?? casts[0] ?? pool[0];
+        const sampleKeys = sample ? Object.keys(sample) : [];
         if (sample) console.log('[positioning] sample event:', sample);
         this.diag.set({ castCount: casts.length, posCount, sampleKeys });
         this.noPositionData.set(true);

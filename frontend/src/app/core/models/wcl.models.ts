@@ -23,16 +23,6 @@ export interface WclAbility {
   icon: string;
 }
 
-/** Per-actor resource snapshot attached to events when `includeResources: true`. */
-export interface WclResources {
-  hitPoints?: number;
-  maxHitPoints?: number;
-  x?: number;
-  y?: number;
-  facing?: number;
-  mapID?: number;
-}
-
 /** A single combat-log event row as returned by WCL's `events` query. */
 export interface WclEvent {
   type: string;
@@ -42,11 +32,15 @@ export interface WclEvent {
   absorbed?: number;
   sourceID?: number;
   targetID?: number;
-  // Position lives in the resource snapshots, present only when the events
-  // query is made with `includeResources: true`. Coordinates appear to be in
-  // hundredths of a yard, facing in radians. Either may be null/absent.
-  sourceResources?: WclResources;
-  targetResources?: WclResources;
+  // Position is present only when the events query is made with
+  // `includeResources: true`. WCL flattens one actor's resource snapshot onto
+  // the event; `resourceActor` says whose it is (1 = source, 2 = target).
+  // Coordinates are in hundredths of a yard, facing in milliradians.
+  resourceActor?: number;
+  x?: number;
+  y?: number;
+  facing?: number;
+  mapID?: number;
 }
 
 export interface WclReport {

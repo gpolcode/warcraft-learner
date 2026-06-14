@@ -10,7 +10,7 @@
  * No Angular dependencies - kept pure so it stays easy to test and could move
  * into a Web Worker later, mirroring `analysis-core.ts`.
  */
-import { WclEvent, WclResources } from '../models/wcl.models';
+import { WclEvent } from '../models/wcl.models';
 
 /** One position sample for an actor, fight-relative time in seconds, coords in yards. */
 export interface PosSample {
@@ -67,38 +67,41 @@ export interface RankedAbility {
 }
 
 const RAW_TO_YARDS = 1 / 100;
+const FACING_TO_RAD = 1 / 1000;
 
-function _hasPos(r: WclResources | undefined): r is WclResources {
-  return !!r && typeof r.x === 'number' && typeof r.y === 'number';
+function _hasPos(e: WclEvent): boolean {
+  return typeof e.x === 'number' && typeof e.y === 'number';
+}
+
+/** The actor the event's flattened position describes (resourceActor: 1 = source, 2 = target). */
+function _posActorId(e: WclEvent): number | undefined {
+  if (!_hasPos(e)) return undefined;
+  return e.resourceActor === 2 ? e.targetID : e.sourceID;
 }
 
 /** True if any event carries a position - used to distinguish a bug from an API limitation. */
 export function hasAnyPosition(events: WclEvent[]): boolean {
-  return events.some(e => _hasPos(e.sourceResources) || _hasPos(e.targetResources));
+  return events.some(_hasPos);
 }
 
 /**
  * Build per-actor position timelines from events fetched with
- * `includeResources: true`. Each event contributes a sample for both its
- * source and target actor (from their resource snapshots), sorted by time.
+ * `includeResources: true`. WCL flattens one actor's position onto each event
+ * (the actor named by `resourceActor`), so each event yields one sample.
  */
 export function buildActorTimelines(events: WclEvent[], fStart: number): Map<number, ActorTimeline> {
   const byActor = new Map<number, PosSample[]>();
-  const add = (id: number | undefined, t: number, r: WclResources | undefined): void => {
-    if (id == null || !_hasPos(r)) return;
+  for (const e of events) {
+    const id = _posActorId(e);
+    if (id == null) continue;
     let arr = byActor.get(id);
     if (!arr) { arr = []; byActor.set(id, arr); }
     arr.push({
-      t,
-      x: r.x! * RAW_TO_YARDS,
-      y: r.y! * RAW_TO_YARDS,
-      facing: typeof r.facing === 'number' ? r.facing : undefined,
+      t: (e.timestamp - fStart) / 1000,
+      x: e.x! * RAW_TO_YARDS,
+      y: e.y! * RAW_TO_YARDS,
+      facing: typeof e.facing === 'number' ? e.facing * FACING_TO_RAD : undefined,
     });
-  };
-  for (const e of events) {
-    const t = (e.timestamp - fStart) / 1000;
-    add(e.sourceID, t, e.sourceResources);
-    add(e.targetID, t, e.targetResources);
   }
   const out = new Map<number, ActorTimeline>();
   for (const [id, samples] of byActor) {
