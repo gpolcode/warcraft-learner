@@ -379,16 +379,19 @@ export class PreFightComponent implements OnInit {
   protected statusClass(status: GearStatus): string { return STATUS_CLASSES[status]; }
 
   protected talentStatus(topStats: EncounterGearStats | null): { status: GearStatus; note: string } {
-    if (!topStats?.talent_builds?.length) return { status: 'unknown', note: 'No talent data yet.' };
-    const gear = this.charGear();
-    if (!gear?.talent_key) return { status: 'unknown', note: 'Talent data unavailable from WCL.' };
-    const pv = gear.talent_key.split(':')[0];
-    const tv = (topStats.talent_builds[0]?.key || '').split(':')[0];
-    if (pv !== tv) return { status: 'unknown', note: 'Talent comparison unavailable (format mismatch).' };
-    const match = topStats.talent_builds.find(b => b.key === gear.talent_key);
-    if (match && match.pct >= 40) return { status: 'ok', note: `Matches top parse build (${match.pct}% of parses)` };
-    const top = topStats.talent_builds[0];
-    return { status: 'warn', note: `Build differs - most common used by ${top?.pct ?? 0}% of top parsers` };
+    const builds = topStats?.talent_builds ?? [];
+    if (!builds.length) return { status: 'unknown', note: 'No talent data yet.' };
+    const topPct = builds[0]?.pct ?? 0;
+    const key = this.charGear()?.talent_key ?? '';
+    // No comparable player build (not ranked here, or format mismatch): just
+    // present the consensus build positively rather than flagging it.
+    if (!key || key.split(':')[0] !== (builds[0]?.key ?? '').split(':')[0]) {
+      return { status: 'ok', note: `Most common build used by ${topPct}% of top parsers` };
+    }
+    if (builds.some(b => b.key === key)) {
+      return { status: 'ok', note: 'On a top-parse build' };
+    }
+    return { status: 'warn', note: `Your build differs - most common used by ${topPct}% of top parsers` };
   }
 
 }
