@@ -271,6 +271,21 @@ async function guidesMenu(spec) {
   }
 }
 
+async function scrapeAllPending(wclSpecs) {
+  console.log(`\nScraping all pending guides for ${wclSpecs.length} specs...`);
+  for (const spec of wclSpecs) {
+    const guides = loadGuides(spec);
+    const pending = guides.filter(g => g.status !== 'scraped');
+    if (pending.length > 0) {
+      console.log(`\n[${spec}] Scraping ${pending.length} pending guides...`);
+      for (const g of pending) {
+        await scrapeGuideById(spec, g.id);
+      }
+    }
+  }
+  console.log('\nBulk scraping complete.');
+}
+
 // ── Spec selection ────────────────────────────────────────────────────────────
 
 async function pickSpec() {
@@ -289,11 +304,12 @@ async function pickSpec() {
 async function main() {
   console.log('warcraft-learner - Guide Scraper CLI');
 
-  // ── CLI mode (non-interactive) ──────────────────────────────────────────────
+  // ── CLI mode ────────────────────────────────────────────────────────────────
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
   const cliUrl  = argv.find((_, i) => argv[i - 1] === '--url');
   const cliType = argv.find((_, i) => argv[i - 1] === '--type') || 'web';
+  const cliInteractive = argv.includes('--interactive');
 
   if (cliSpec && cliUrl) {
     if (!['web', 'youtube', 'simc'].includes(cliType)) {
@@ -310,15 +326,25 @@ async function main() {
     return;
   }
 
-  // ── Interactive mode ────────────────────────────────────────────────────────
-  while (true) {
-    const spec = await pickSpec();
-    if (!spec) break;
+  if (cliInteractive) {
+    // ── Interactive mode ────────────────────────────────────────────────────────
+    while (true) {
+      const spec = await pickSpec();
+      if (!spec) break;
 
-    await guidesMenu(spec);
+      await guidesMenu(spec);
 
-    const again = await ask('\nManage another spec? [y/N] ');
-    if (again.trim().toLowerCase() !== 'y') break;
+      const again = await ask('\nManage another spec? [y/N] ');
+      if (again.trim().toLowerCase() !== 'y') break;
+    }
+  } else {
+    // ── Non-interactive mode (Default) ────────────────────────────────────────
+    const specs = cliSpec ? [cliSpec] : getKnownSpecs();
+    if (!specs.length) {
+      console.error('No specs found in data directory.');
+      process.exit(1);
+    }
+    await scrapeAllPending(specs);
   }
 
   rl.close();
