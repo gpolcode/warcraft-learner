@@ -237,8 +237,9 @@ export class PositioningMapComponent {
     // ability, and we only sample facing at casts, so it is uninformative.)
     if (read?.player) {
       const [x, y] = toScreen(read.player);
+      const r = 5;
       ctx.fillStyle = gold;
-      ctx.beginPath(); ctx.arc(x, y, 5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(x, y - r); ctx.lineTo(x + r, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r, y); ctx.closePath(); ctx.fill();
       ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
     }
   }

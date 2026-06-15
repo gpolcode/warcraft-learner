@@ -27,10 +27,10 @@
   <div class="relative rounded-lg border border-[var(--border)] bg-[var(--surface-alt)]">
     <canvas #canvas class="block h-[420px] w-full"></canvas>
     <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-[10px]">
-      <span class="text-[#e05252]">▲ reference (facing up)</span>
+      @if (live()) { <span class="text-[var(--gold)]">◆ you</span> }
       <span class="text-[var(--muted)]">● top parses</span>
       <span class="text-[#5b9bd5]">◯ top-parse centre</span>
-      @if (live()) { <span class="text-[var(--gold)]">◆ you</span> }
+      <span class="text-[#e05252]">▲ reference (facing up)</span>
     </div>
   </div>
 
