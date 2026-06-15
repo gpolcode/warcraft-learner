@@ -13,6 +13,7 @@ import {
   toReferenceLocal, topParsePoints, topParseTrails,
 } from '../../../core/services/positioning-core';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
+import { GameIconComponent } from '../game-icon/game-icon';
 
 const STEP_S = 0.5;
 /** Playback timer cadence and how much window-time advances per tick (roughly real time). */
@@ -38,7 +39,7 @@ export interface LiveOverlay {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-positioning-map',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, DecimalPipe, FormatDurationPipe],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, DecimalPipe, FormatDurationPipe, GameIconComponent],
   templateUrl: './positioning-map.html',
 })
 export class PositioningMapComponent {
@@ -47,6 +48,7 @@ export class PositioningMapComponent {
   readonly pre = input(6);
   readonly post = input(3);
   readonly contextLabel = input('');
+  readonly contextSpellIds = input<number[]>([]);
   readonly live = input<LiveOverlay | null>(null);
   /** Initial reference: boss (default) or a specific enemy gameID. */
   readonly defaultReference = input<ReferenceSelector>({ kind: 'boss' });
