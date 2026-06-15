@@ -1240,8 +1240,8 @@ function getSamplesPath(spec, encounterId) {
   return path.join(DATA_DIR, spec, 'parse_samples', `${encounterId}.json`);
 }
 
-function parseKey(reportCode, fightId) {
-  return `${reportCode}:${fightId}`;
+function parseKey(reportCode, fightId, hash = INGEST_HASH) {
+  return `${reportCode}:${fightId}:${hash}`;
 }
 
 function getEncounterPath(spec, encounterId) {
@@ -1643,7 +1643,7 @@ async function ingestSpec(wcl, spec, encounters) {
     // Keep cached samples still in the current top 10 AND produced by this script version
     const existingSamples = readJson(samplesPath) || [];
     const keptSamples = existingSamples.filter(s =>
-      currentTopKeys.has(parseKey(s.report_code, s.fight_id)) && s.ingest_hash === INGEST_HASH
+      currentTopKeys.has(parseKey(s.report_code, s.fight_id, s.ingest_hash))
     );
     const cachedKeys = new Set(keptSamples.map(s => parseKey(s.report_code, s.fight_id)));
     writeJson(samplesPath, keptSamples);
@@ -1771,7 +1771,7 @@ async function ingestSpecNonInteractive(wcl, spec, encounters, topN = 10) {
     // Keep cached samples still in the current top N AND produced by this script version
     const existingSamples = readJson(samplesPath) || [];
     const keptSamples = existingSamples.filter(s =>
-      currentTopKeys.has(parseKey(s.report_code, s.fight_id)) && s.ingest_hash === INGEST_HASH
+      currentTopKeys.has(parseKey(s.report_code, s.fight_id, s.ingest_hash))
     );
     const cachedKeys = new Set(keptSamples.map(s => parseKey(s.report_code, s.fight_id)));
     writeJson(samplesPath, keptSamples);
