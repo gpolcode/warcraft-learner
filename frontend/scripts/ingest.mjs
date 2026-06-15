@@ -1570,7 +1570,10 @@ function syncEncountersIndex(spec) {
 function getKnownSpecs() {
   if (!fs.existsSync(DATA_DIR)) return [];
   return fs.readdirSync(DATA_DIR).filter(d => {
-    try { return fs.statSync(path.join(DATA_DIR, d)).isDirectory(); } catch { return false; }
+    try {
+      if (!fs.statSync(path.join(DATA_DIR, d)).isDirectory()) return false;
+      return fs.existsSync(path.join(DATA_DIR, d, 'rulebook.json'));
+    } catch { return false; }
   }).sort();
 }
 
