@@ -331,7 +331,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 1. Group by defensive name first.
 2. `groupByTime(group, 20s)` per defensive.
 3. Discard clusters in fewer than max(2, 35% of samples).
-4. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), ability breakdown of damage sources (absolute `avg_damage`).
+4. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), ability breakdown of damage sources (absolute `avg_damage`), and `ref_game_id` (the gameID of the enemy dealing the window's main damage - the positioning map's default reference for defensive windows). `ref_game_id` is null for burst clusters.
 
 Both cluster functions share `groupByTime()` and `clusterBaseStats()` helpers.
 

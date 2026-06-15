@@ -503,10 +503,10 @@ function findBurstWindows(damageEvents, fightStartMs, cdSummary, specCds, minPct
   return result.sort((a, b) => a.time_s - b.time_s);
 }
 
-function findDefensiveWindows(damageTakenEvents, fightStartMs, buffWindows, specDefensives) {
+function findDefensiveWindows(damageTakenEvents, fightStartMs, buffWindows, specDefensives, npcById) {
   const hits = damageTakenEvents
     .filter(e => e.type === 'damage' && (e.amount || 0) + (e.absorbed || 0) > 0)
-    .map(e => [e.timestamp, (e.amount || 0) + (e.absorbed || 0), e.abilityGameID || 0])
+    .map(e => [e.timestamp, (e.amount || 0) + (e.absorbed || 0), e.abilityGameID || 0, e.sourceID ?? null])
     .sort((a, b) => a[0] - b[0]);
 
   if (!hits.length) return [];
@@ -543,6 +543,14 @@ function findDefensiveWindows(damageTakenEvents, fightStartMs, buffWindows, spec
           pct: windowDmg ? Math.round(d / windowDmg * 1000) / 1000 : 0,
         }));
 
+      // Reference for the map = the enemy that dealt the most damage in the window.
+      const dmgBySource = new Map();
+      for (const [, dmg, , src] of windowHits) {
+        if (src != null && npcById?.has(src)) dmgBySource.set(src, (dmgBySource.get(src) || 0) + dmg);
+      }
+      const topSource = [...dmgBySource.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+      const refGameId = topSource != null ? (npcById.get(topSource)?.gameID ?? null) : null;
+
       result.push({
         time_s: Math.round(startS * 10) / 10,
         window_length_s: Math.round((endS - startS) * 10) / 10,
@@ -553,6 +561,7 @@ function findDefensiveWindows(damageTakenEvents, fightStartMs, buffWindows, spec
         active_cds: [defn.name],
         defensive_name: defn.name,
         spell_id: sid,
+        ref_game_id: refGameId,
       });
     }
   }
@@ -956,7 +965,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
     }
   }
 
-  const defensiveWindows = findDefensiveWindows(damageTakenEvents, start, buffWindows, specDefensives);
+  const defensiveWindows = findDefensiveWindows(damageTakenEvents, start, buffWindows, specDefensives, npcById);
 
   // Damage taken analysis
   const abilityDmgTaken = new Map();
@@ -1081,6 +1090,11 @@ function clusterBaseStats(cl, totalSamples) {
     .sort((a, b) => b.avg_damage - a.avg_damage)
     .slice(0, 6);
 
+  // Majority map-reference enemy across members (defensive windows only; null for burst).
+  const refCounts = new Map();
+  for (const c of cl) if (c.ref_game_id != null) refCounts.set(c.ref_game_id, (refCounts.get(c.ref_game_id) || 0) + 1);
+  const ref_game_id = [...refCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+
   return {
     time_s: round(median(times)),
     stddev_s: round(stdev(times)),
@@ -1091,6 +1105,7 @@ function clusterBaseStats(cl, totalSamples) {
     dmg_min: Math.round(sorted[0]),
     dmg_max: Math.round(sorted[sorted.length - 1]),
     ability_breakdown,
+    ref_game_id,
   };
 }
 
