@@ -10,10 +10,6 @@ on:
         description: 'Spec to ingest (leave empty to ingest all specs with existing data)'
         required: false
         default: ''
-      top_n:
-        description: 'Number of top parses per boss'
-        required: false
-        default: '10'
 
 jobs:
   ingest:
@@ -42,11 +38,10 @@ jobs:
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
         run: |
           SPEC="${{ github.event.inputs.spec }}"
-          TOP_N="${{ github.event.inputs.top_n || '10' }}"
           if [ -n "$SPEC" ]; then
-            node frontend/scripts/ingest.mjs --spec "$SPEC" --top-n "$TOP_N"
+            node frontend/scripts/ingest.mjs --spec "$SPEC"
           else
-            node frontend/scripts/ingest.mjs --all --top-n "$TOP_N"
+            node frontend/scripts/ingest.mjs --all
           fi
 
       - name: Commit updated spec files

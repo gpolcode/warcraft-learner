@@ -35,12 +35,11 @@ const INGEST_HASH = crypto.createHash('sha256')
   .digest('hex')
   .slice(0, 12);
 
-// ── Env loading ───────────────────────────────────────────────────────────────
-
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
+const TOP_N = 10;
 
 const BLOODLUST_SPELL_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
 
@@ -1690,7 +1689,6 @@ async function main() {
   const argv = process.argv.slice(2);
   const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
   const cliAll = argv.includes('--all');
-  const cliTopN = parseInt(argv.find((_, i) => argv[i - 1] === '--top-n') || '10', 10) || 10;
   const cliLimitEnc = parseInt(argv.find((_, i) => argv[i - 1] === '--limit-enc') || '0', 10) || 0;
 
   let wcl;
@@ -1719,7 +1717,7 @@ async function main() {
     }
     const encs = cliLimitEnc > 0 ? encounters.slice(0, cliLimitEnc) : encounters;
     for (const spec of specs) {
-      await ingestSpecNonInteractive(wcl, spec, encs, cliTopN);
+      await ingestSpecNonInteractive(wcl, spec, encs);
     }
     rl.close();
     return;
@@ -1739,13 +1737,13 @@ async function main() {
   rl.close();
 }
 
-async function ingestSpecNonInteractive(wcl, spec, encounters, topN = 10) {
-  console.log(`\nIngesting ${spec} - all ${encounters.length} encounters (top ${topN})`);
+async function ingestSpecNonInteractive(wcl, spec, encounters) {
+  console.log(`\nIngesting ${spec} - all ${encounters.length} encounters (top ${TOP_N})`);
   for (const enc of encounters) {
-    process.stdout.write(`\n[${enc.name}] Fetching top ${topN} rankings...`);
+    process.stdout.write(`\n[${enc.name}] Fetching top ${TOP_N} rankings...`);
     let rankings;
     try {
-      rankings = await fetchTopRankings(wcl, spec, enc.id, topN);
+      rankings = await fetchTopRankings(wcl, spec, enc.id, TOP_N);
     } catch (err) {
       console.log(` FAILED: ${err.message}`);
       continue;
