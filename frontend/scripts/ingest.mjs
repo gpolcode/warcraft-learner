@@ -1280,7 +1280,7 @@ function benchUsesPerMin(entries) {
   };
 }
 
-function syncEncounterFile(spec, encounterId) {
+async function syncEncounterFile(spec, encounterId, wcl = null) {
   const samplesPath = getSamplesPath(spec, encounterId);
   const samples = readJson(samplesPath) || [];
   if (!samples.length) return;
@@ -1394,6 +1394,26 @@ function syncEncounterFile(spec, encounterId) {
 
   // Gear
   const gear = aggregateGear(samples);
+
+  // Resolve bench enchant names via WCL gameData (names are absent in the raw
+  // characterRankings gear blobs that ingest collects, so we look them up here).
+  if (wcl && gear.enchants && Object.keys(gear.enchants).length) {
+    const allIds = [...new Set(
+      Object.values(gear.enchants).flat().map(e => e.id).filter(Boolean)
+    )];
+    if (allIds.length) {
+      try {
+        const parts = allIds.map(id => `e${id}: enchant(id:${id}){id name}`).join(' ');
+        const encD = await wcl.query(`query{gameData{${parts}}}`);
+        const gd = encD?.gameData || {};
+        for (const entries of Object.values(gear.enchants)) {
+          for (const e of entries) {
+            if (!e.name && e.id) e.name = gd[`e${e.id}`]?.name || '';
+          }
+        }
+      } catch { /* leave names empty - non-fatal */ }
+    }
+  }
 
   // Defensive benchmarks
   const specDefensives = getSpecDefensives(spec);
@@ -1674,7 +1694,7 @@ async function ingestSpec(wcl, spec, encounters) {
 
     // Compute bench data
     process.stdout.write(`  [${enc.name}] Computing bench data...`);
-    syncEncounterFile(spec, enc.id);
+    await syncEncounterFile(spec, enc.id, wcl);
     console.log(' done');
   }
   console.log(`\nIngestion complete for ${spec}.`);
@@ -1797,7 +1817,7 @@ async function ingestSpecNonInteractive(wcl, spec, encounters) {
     process.stdout.write(`\r  [${enc.name}] ${rankings.length - cached} analyzed, ${cached} cached.          \n`);
 
     process.stdout.write(`  [${enc.name}] Computing bench data...`);
-    syncEncounterFile(spec, enc.id);
+    await syncEncounterFile(spec, enc.id, wcl);
     console.log(' done');
   }
   console.log(`\nIngestion complete for ${spec}.`);

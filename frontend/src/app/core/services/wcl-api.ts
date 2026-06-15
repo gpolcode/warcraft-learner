@@ -14,10 +14,11 @@ interface WclRankEntry {
   startTime?: number;
   spec?: string;
   class?: number;
-  report?: { code?: string };
+  report?: { code?: string; fightID?: number };
   gear?: WclGearItem[];
   talents?: WclTalentTree;
 }
+interface WclCombatantInfoEvent { type: string; sourceID: number; gear?: WclGearItem[]; }
 
 const API_URL = 'https://www.warcraftlogs.com/api/v2/user';
 
@@ -68,6 +69,14 @@ const CHAR_ENC_Q = `
 query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
   characterData{character(name:$name,serverSlug:$serverSlug,serverRegion:$serverRegion){
     encounterRankings(encounterID:$encID,includeCombatantInfo:true)
+  }}
+}`;
+
+const COMBATANT_INFO_Q = `
+query($code:String!,$fightID:Int!){
+  reportData{report(code:$code){
+    masterData{actors(type:"Player"){id name}}
+    events(fightIDs:[$fightID],dataType:CombatantInfo,limit:50){data}
   }}
 }`;
 
@@ -210,11 +219,23 @@ export class WclApiService {
       (r.startTime || 0) > (best.startTime || 0) ? r : best
     );
 
-    const { trinkets, enchants, gem_count } = this._extractGear(mostRecent);
+    const { trinkets, enchants: rankEnchants, gem_count } = this._extractGear(mostRecent);
     const talent_key = this._talentKeyV2(mostRecent.talents);
     const specPart = mostRecent.spec || '';
     const className = CLASS_NAMES[mostRecent.class ?? -1] || '';
     const fullSpec = specPart && className ? specPart + className : specPart;
+
+    // encounterRankings gear omits permanentEnchant in WCL's current API - fetch
+    // from the fight's CombatantInfo events which always carry the full enchant data.
+    let enchants = rankEnchants;
+    const reportCode = mostRecent.report?.code;
+    const fightID = mostRecent.report?.fightID;
+    if (reportCode && fightID) {
+      try {
+        const ci = await this._fetchCombatantEnchants(name, reportCode, fightID);
+        if (ci.length) enchants = ci;
+      } catch { /* leave enchants from ranking gear as fallback */ }
+    }
 
     const enchantIds = [...new Set(enchants.filter(e => e.id).map(e => e.id))];
     if (enchantIds.length) {
@@ -229,7 +250,32 @@ export class WclApiService {
       }
     }
 
-    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants, gem_count };
+    return { found: true, spec: fullSpec, source_report: reportCode || null, talent_key, trinkets, enchants, gem_count };
+  }
+
+  /** Fetch permanent enchants from a fight's CombatantInfo events.
+   *  encounterRankings gear omits permanentEnchant - CombatantInfo events include it. */
+  private async _fetchCombatantEnchants(playerName: string, reportCode: string, fightID: number): Promise<NonNullable<CharacterGear['enchants']>> {
+    const d = await this.query<{ reportData: { report: {
+      masterData: { actors: Array<{ id: number; name: string }> };
+      events: { data: WclCombatantInfoEvent[] };
+    } } }>(COMBATANT_INFO_Q, { code: reportCode, fightID });
+    const actors = d?.reportData?.report?.masterData?.actors ?? [];
+    const actor = actors.find(a => a.name.toLowerCase() === playerName.toLowerCase());
+    if (!actor) return [];
+    const events = d?.reportData?.report?.events?.data ?? [];
+    const ciEvent = events.find(e => e.type === 'combatantinfo' && e.sourceID === actor.id);
+    if (!ciEvent?.gear) return [];
+    const enchants: NonNullable<CharacterGear['enchants']> = [];
+    ciEvent.gear.forEach((item, idx) => {
+      if (!item) return;
+      const enc = item.permanentEnchant;
+      if (enc) {
+        const eid = typeof enc === 'string' ? parseInt(enc, 10) : enc;
+        enchants.push({ slot: idx, id: eid, name: item.permanentEnchantName || '' });
+      }
+    });
+    return enchants;
   }
 
   /** Trinkets (slots 12/13), permanent enchants and filled-socket count from a ranking's combatant info. */
