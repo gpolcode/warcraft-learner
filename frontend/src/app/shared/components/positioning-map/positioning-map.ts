@@ -223,20 +223,18 @@ export class PositioningMapComponent {
       ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.stroke();
     }
 
-    // Live player trail + current dot with facing.
+    // Live player trail across the window.
     if (liveTrail.length) {
       ctx.strokeStyle = gold; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
       ctx.beginPath();
       liveTrail.forEach((q, i) => { const [x, y] = toScreen(q); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
       ctx.stroke(); ctx.globalAlpha = 1;
     }
+    // Live player current position at the scrubbed moment.
+    // (No facing arrow: in combat the player auto-faces the target on every
+    // ability, and we only sample facing at casts, so it is uninformative.)
     if (read?.player) {
       const [x, y] = toScreen(read.player);
-      if (read.player.headFwd != null && read.player.headRight != null) {
-        const ex = x + read.player.headRight * 16, ey = y - read.player.headFwd * 16;
-        ctx.strokeStyle = gold; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey); ctx.stroke();
-      }
       ctx.fillStyle = gold;
       ctx.beginPath(); ctx.arc(x, y, 5, 0, 2 * Math.PI); ctx.fill();
       ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
