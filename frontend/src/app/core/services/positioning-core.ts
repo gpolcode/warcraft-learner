@@ -1,11 +1,13 @@
 /**
- * Pure, framework-free positioning computation (proof of concept).
+ * Pure, framework-free positioning computation.
  *
- * Reconstructs per-actor position timelines from raw WCL events, transforms
- * player positions into a reference actor's local frame (so "behind the boss"
- * is meaningful regardless of how the boss is turned), and ranks abilities by
- * how positioning-relevant they are so the user can jump straight to the
- * moments that matter.
+ * Builds per-actor position timelines (from live WCL events fetched with
+ * includeResources, or from ingested top-parse rows) and transforms player
+ * positions into a reference actor's local frame, so "behind the boss" is
+ * meaningful regardless of how the reference is turned. Also aggregates each
+ * top parse's player position/trail relative to a chosen reference (boss or
+ * add) for the positioning map's benchmark, and filters by mapID so phases
+ * that swap maps never mix coordinate spaces.
  *
  * No Angular dependencies - kept pure so it stays easy to test and could move
  * into a Web Worker later, mirroring `analysis-core.ts`.
