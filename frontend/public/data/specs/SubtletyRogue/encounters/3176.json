@@ -3,25 +3,25 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 252.2,
-  "last_ingested": "2026-06-14 18:23:54",
-  "downtime_threshold_ms": 1513,
-  "top_avg_efficiency": 75.7,
+  "avg_duration_s": 235,
+  "last_ingested": "2026-06-15 06:02:35",
+  "downtime_threshold_ms": 1469,
+  "top_avg_efficiency": 75.9,
   "top_efficiency_stddev": 4,
   "per_cd_benchmarks": {
     "Shadow Blades": {
       "sample_count": 10,
       "avg_first_cast_s": 2,
       "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 108,
-      "stddev_gap_s": 20.3,
+      "avg_gap_s": 109.6,
+      "stddev_gap_s": 20.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
-          "target_s": 142.5,
-          "stddev_s": 14.2,
-          "count": 5,
+          "target_s": 142.2,
+          "stddev_s": 12.9,
+          "count": 6,
           "total_samples": 10
         },
         "3": {
@@ -32,61 +32,61 @@
         }
       },
       "uses_per_min": {
-        "avg": 0.758,
-        "stddev": 0.117,
+        "avg": 0.756,
+        "stddev": 0.119,
         "min": 0.643,
         "max": 0.934
       },
-      "avg_uses": 3.1,
+      "avg_uses": 2.9,
       "avg_uses_per_min": 0.76,
       "bl_pct": 0,
       "majority_hold": true
     },
     "Shadow Dance": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.1,
+      "avg_first_cast_s": 2,
       "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 19,
-      "stddev_gap_s": 7.2,
+      "avg_gap_s": 18.9,
+      "stddev_gap_s": 7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 3.302,
-        "stddev": 0.101,
+        "avg": 3.339,
+        "stddev": 0.126,
         "min": 3.19,
-        "max": 3.48
+        "max": 3.579
       },
-      "avg_uses": 13.8,
-      "avg_uses_per_min": 3.3,
+      "avg_uses": 13,
+      "avg_uses_per_min": 3.34,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Secret Technique": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.2,
+      "avg_first_cast_s": 2.1,
       "stddev_first_cast_s": 0.6,
       "avg_gap_s": 19.7,
-      "stddev_gap_s": 5.7,
+      "stddev_gap_s": 5.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 3.181,
-        "stddev": 0.23,
+        "avg": 3.203,
+        "stddev": 0.225,
         "min": 3.001,
         "max": 3.674
       },
-      "avg_uses": 13.2,
-      "avg_uses_per_min": 3.18,
+      "avg_uses": 12.4,
+      "avg_uses_per_min": 3.2,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 35,
+      "avg_first_cast_s": 31,
       "stddev_first_cast_s": 39.9,
-      "avg_gap_s": 128.5,
+      "avg_gap_s": 129,
       "stddev_gap_s": 6.9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
@@ -99,71 +99,72 @@
         }
       },
       "uses_per_min": {
-        "avg": 0.562,
-        "stddev": 0.095,
+        "avg": 0.577,
+        "stddev": 0.097,
         "min": 0.431,
         "max": 0.735
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.56,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.58,
       "bl_pct": 0,
       "majority_hold": true
     }
   },
   "burst_windows": [
     {
-      "time_s": 2.2,
+      "time_s": 1.9,
       "stddev_s": 0.7,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 6644452,
-      "dmg_stddev": 784976,
+      "dmg_avg": 6534883,
+      "dmg_stddev": 827848,
       "dmg_min": 4618425,
       "dmg_max": 7255143,
       "ability_breakdown": [
         {
           "spell_id": 279043,
-          "avg_damage": 1562380,
+          "avg_damage": 1532626,
           "min_damage": 1131839,
           "max_damage": 1732803,
           "count": 10
         },
         {
           "spell_id": 282449,
-          "avg_damage": 945519,
+          "avg_damage": 967305,
           "min_damage": 625226,
           "max_damage": 1132141,
           "count": 10
         },
         {
           "spell_id": 196819,
-          "avg_damage": 820771,
+          "avg_damage": 769474,
           "min_damage": 463489,
           "max_damage": 1264290,
           "count": 10
         },
         {
           "spell_id": 1269205,
-          "avg_damage": 747948,
-          "min_damage": 546623,
+          "avg_damage": 726898,
+          "min_damage": 484356,
           "max_damage": 1040545,
           "count": 10
         },
         {
           "spell_id": 185438,
-          "avg_damage": 502762,
-          "min_damage": 372640,
+          "avg_damage": 496913,
+          "min_damage": 368710,
           "max_damage": 696270,
           "count": 9
         },
         {
           "spell_id": 328082,
-          "avg_damage": 437141,
+          "avg_damage": 411714,
           "min_damage": 245654,
           "max_damage": 584993,
           "count": 8
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Blades",
         "Shadow Dance",
@@ -173,58 +174,59 @@
       "window_length_s": 20.5
     },
     {
-      "time_s": 29.5,
-      "stddev_s": 5.5,
-      "count": 11,
+      "time_s": 30.8,
+      "stddev_s": 6.2,
+      "count": 12,
       "total_samples": 10,
-      "dmg_avg": 1686958,
-      "dmg_stddev": 176631,
+      "dmg_avg": 1733535,
+      "dmg_stddev": 217704,
       "dmg_min": 1414953,
-      "dmg_max": 1943716,
+      "dmg_max": 2117415,
       "ability_breakdown": [
         {
           "spell_id": 282449,
-          "avg_damage": 364038,
+          "avg_damage": 374736,
           "min_damage": 235840,
-          "max_damage": 481528,
-          "count": 11
-        },
-        {
-          "spell_id": 196819,
-          "avg_damage": 223579,
-          "min_damage": 122719,
-          "max_damage": 399924,
-          "count": 11
+          "max_damage": 520053,
+          "count": 12
         },
         {
           "spell_id": 1269205,
-          "avg_damage": 220175,
+          "avg_damage": 218898,
           "min_damage": 102672,
           "max_damage": 328438,
-          "count": 9
+          "count": 10
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 214883,
+          "min_damage": 122719,
+          "max_damage": 399924,
+          "count": 12
         },
         {
           "spell_id": 185438,
-          "avg_damage": 175196,
+          "avg_damage": 173365,
           "min_damage": 97948,
           "max_damage": 255261,
-          "count": 9
-        },
-        {
-          "spell_id": 280720,
-          "avg_damage": 138460,
-          "min_damage": 114466,
-          "max_damage": 155191,
-          "count": 6
+          "count": 10
         },
         {
           "spell_id": 1264397,
-          "avg_damage": 138158,
-          "min_damage": 118923,
-          "max_damage": 162294,
-          "count": 7
+          "avg_damage": 152439,
+          "min_damage": 119723,
+          "max_damage": 207133,
+          "count": 8
+        },
+        {
+          "spell_id": 328082,
+          "avg_damage": 130073,
+          "min_damage": 104424,
+          "max_damage": 156766,
+          "count": 6
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance"
       ],
@@ -232,58 +234,59 @@
       "window_length_s": 8.3
     },
     {
-      "time_s": 63.3,
-      "stddev_s": 1.3,
+      "time_s": 63.1,
+      "stddev_s": 1.2,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 3641013,
-      "dmg_stddev": 950804,
-      "dmg_min": 1914703,
+      "dmg_avg": 3776808,
+      "dmg_stddev": 753318,
+      "dmg_min": 2558671,
       "dmg_max": 4992481,
       "ability_breakdown": [
         {
           "spell_id": 282449,
-          "avg_damage": 1075526,
-          "min_damage": 459051,
+          "avg_damage": 1068080,
+          "min_damage": 384589,
           "max_damage": 1583654,
           "count": 10
         },
         {
           "spell_id": 459497,
-          "avg_damage": 793906,
-          "min_damage": 108633,
+          "avg_damage": 900110,
+          "min_damage": 463687,
           "max_damage": 1608438,
           "count": 10
         },
         {
           "spell_id": 319175,
-          "avg_damage": 430316,
+          "avg_damage": 425320,
           "min_damage": 160208,
           "max_damage": 783031,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1269205,
-          "avg_damage": 266020,
+          "avg_damage": 266687,
           "min_damage": 208083,
           "max_damage": 375592,
           "count": 5
         },
         {
           "spell_id": 280720,
-          "avg_damage": 206764,
+          "avg_damage": 198442,
           "min_damage": 148757,
-          "max_damage": 273343,
-          "count": 9
+          "max_damage": 261247,
+          "count": 8
         },
         {
-          "spell_id": 1264397,
-          "avg_damage": 188773,
-          "min_damage": 121800,
-          "max_damage": 235753,
-          "count": 7
+          "spell_id": 197835,
+          "avg_damage": 188726,
+          "min_damage": 144068,
+          "max_damage": 255069,
+          "count": 5
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance"
       ],
@@ -291,107 +294,161 @@
       "window_length_s": 8
     },
     {
-      "time_s": 93.2,
-      "stddev_s": 7.9,
-      "count": 13,
+      "time_s": 84.7,
+      "stddev_s": 6,
+      "count": 9,
       "total_samples": 10,
-      "dmg_avg": 2985110,
-      "dmg_stddev": 1684542,
-      "dmg_min": 1519580,
-      "dmg_max": 5655332,
+      "dmg_avg": 3139841,
+      "dmg_stddev": 1629272,
+      "dmg_min": 1620672,
+      "dmg_max": 5603202,
       "ability_breakdown": [
         {
           "spell_id": 282449,
-          "avg_damage": 476543,
-          "min_damage": 196180,
+          "avg_damage": 497260,
+          "min_damage": 223348,
           "max_damage": 718241,
-          "count": 13
-        },
-        {
-          "spell_id": 196819,
-          "avg_damage": 398820,
-          "min_damage": 138787,
-          "max_damage": 970563,
-          "count": 13
-        },
-        {
-          "spell_id": 1269205,
-          "avg_damage": 346231,
-          "min_damage": 129759,
-          "max_damage": 791394,
-          "count": 13
-        },
-        {
-          "spell_id": 185438,
-          "avg_damage": 259979,
-          "min_damage": 84362,
-          "max_damage": 561135,
-          "count": 13
-        },
-        {
-          "spell_id": 328082,
-          "avg_damage": 217569,
-          "min_damage": 90683,
-          "max_damage": 418815,
           "count": 9
         },
         {
+          "spell_id": 196819,
+          "avg_damage": 393746,
+          "min_damage": 138787,
+          "max_damage": 786567,
+          "count": 9
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 358616,
+          "min_damage": 129759,
+          "max_damage": 791394,
+          "count": 9
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 268717,
+          "min_damage": 84362,
+          "max_damage": 561135,
+          "count": 9
+        },
+        {
+          "spell_id": 328082,
+          "avg_damage": 229779,
+          "min_damage": 90683,
+          "max_damage": 418815,
+          "count": 6
+        },
+        {
           "spell_id": 1264397,
-          "avg_damage": 164671,
-          "min_damage": 107992,
-          "max_damage": 199695,
-          "count": 8
+          "avg_damage": 198273,
+          "min_damage": 192887,
+          "max_damage": 209965,
+          "count": 5
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance"
       ],
       "avg_targets": 1,
-      "window_length_s": 12.7
+      "window_length_s": 13.5
     },
     {
-      "time_s": 122.6,
-      "stddev_s": 7.1,
-      "count": 5,
+      "time_s": 101.4,
+      "stddev_s": 4.1,
+      "count": 6,
       "total_samples": 10,
-      "dmg_avg": 2350775,
-      "dmg_stddev": 1449065,
-      "dmg_min": 1378562,
+      "dmg_avg": 2252361,
+      "dmg_stddev": 1269295,
+      "dmg_min": 1519580,
       "dmg_max": 4832281,
       "ability_breakdown": [
         {
           "spell_id": 282449,
-          "avg_damage": 398311,
-          "min_damage": 221020,
+          "avg_damage": 452296,
+          "min_damage": 196180,
           "max_damage": 771601,
+          "count": 6
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 279597,
+          "min_damage": 160581,
+          "max_damage": 542885,
+          "count": 6
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 246401,
+          "min_damage": 124774,
+          "max_damage": 414486,
+          "count": 6
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 176783,
+          "min_damage": 97490,
+          "max_damage": 302385,
+          "count": 6
+        },
+        {
+          "spell_id": 1264397,
+          "avg_damage": 148398,
+          "min_damage": 107992,
+          "max_damage": 244386,
+          "count": 6
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Shadow Dance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 122.6,
+      "stddev_s": 4.4,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 1679132,
+      "dmg_stddev": 434275,
+      "dmg_min": 1378562,
+      "dmg_max": 2439161,
+      "ability_breakdown": [
+        {
+          "spell_id": 282449,
+          "avg_damage": 312473,
+          "min_damage": 221020,
+          "max_damage": 429475,
           "count": 5
         },
         {
           "spell_id": 1269205,
-          "avg_damage": 296047,
+          "avg_damage": 239577,
           "min_damage": 119061,
-          "max_damage": 414486,
+          "max_damage": 389147,
           "count": 5
         },
         {
           "spell_id": 196819,
-          "avg_damage": 274379,
+          "avg_damage": 200657,
           "min_damage": 131274,
-          "max_damage": 542885,
+          "max_damage": 319124,
           "count": 5
         },
         {
           "spell_id": 185438,
-          "avg_damage": 217576,
+          "avg_damage": 181188,
           "min_damage": 144120,
-          "max_damage": 302385,
+          "max_damage": 206224,
           "count": 3
         },
         {
           "spell_id": 1264397,
-          "avg_damage": 167326,
-          "min_damage": 111573,
-          "max_damage": 244386,
+          "avg_damage": 132683,
+          "min_damage": 105812,
+          "max_damage": 191414,
           "count": 4
         },
         {
@@ -402,197 +459,255 @@
           "count": 4
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance"
       ],
       "avg_targets": 1,
-      "window_length_s": 11.5
+      "window_length_s": 9.1
     },
     {
-      "time_s": 142.6,
-      "stddev_s": 3,
+      "time_s": 142.2,
+      "stddev_s": 2.8,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 5439239,
-      "dmg_stddev": 1988368,
-      "dmg_min": 2690755,
-      "dmg_max": 8140162,
+      "dmg_avg": 6336183,
+      "dmg_stddev": 2553506,
+      "dmg_min": 3799377,
+      "dmg_max": 11660199,
       "ability_breakdown": [
         {
+          "spell_id": 279043,
+          "avg_damage": 1592574,
+          "min_damage": 1375994,
+          "max_damage": 1908321,
+          "count": 5
+        },
+        {
           "spell_id": 282449,
-          "avg_damage": 1248681,
+          "avg_damage": 1346835,
           "min_damage": 816733,
-          "max_damage": 1713160,
+          "max_damage": 1904629,
           "count": 10
         },
         {
           "spell_id": 459497,
-          "avg_damage": 981403,
+          "avg_damage": 1038405,
           "min_damage": 260745,
           "max_damage": 1632004,
-          "count": 9
+          "count": 10
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 616069,
+          "min_damage": 484920,
+          "max_damage": 958893,
+          "count": 5
         },
         {
           "spell_id": 319175,
-          "avg_damage": 565395,
-          "min_damage": 331025,
+          "avg_damage": 604456,
+          "min_damage": 401944,
           "max_damage": 798142,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1269205,
-          "avg_damage": 415599,
+          "avg_damage": 513946,
           "min_damage": 212545,
-          "max_damage": 646753,
-          "count": 5
-        },
-        {
-          "spell_id": 280720,
-          "avg_damage": 268565,
-          "min_damage": 229760,
-          "max_damage": 328804,
-          "count": 6
-        },
-        {
-          "spell_id": 319190,
-          "avg_damage": 250020,
-          "min_damage": 176953,
-          "max_damage": 340975,
-          "count": 5
-        }
-      ],
-      "common_cds": [
-        "Shadow Dance"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 14.6
-    },
-    {
-      "time_s": 167,
-      "stddev_s": 8.7,
-      "count": 9,
-      "total_samples": 10,
-      "dmg_avg": 2039833,
-      "dmg_stddev": 513993,
-      "dmg_min": 1688682,
-      "dmg_max": 3368377,
-      "ability_breakdown": [
-        {
-          "spell_id": 282449,
-          "avg_damage": 405339,
-          "min_damage": 241401,
-          "max_damage": 582565,
-          "count": 9
-        },
-        {
-          "spell_id": 196819,
-          "avg_damage": 318093,
-          "min_damage": 117957,
-          "max_damage": 793941,
-          "count": 9
-        },
-        {
-          "spell_id": 1269205,
-          "avg_damage": 247782,
-          "min_damage": 135386,
-          "max_damage": 442889,
-          "count": 9
-        },
-        {
-          "spell_id": 185438,
-          "avg_damage": 194526,
-          "min_damage": 102116,
-          "max_damage": 318370,
-          "count": 9
-        },
-        {
-          "spell_id": 328082,
-          "avg_damage": 157399,
-          "min_damage": 102933,
-          "max_damage": 254390,
-          "count": 5
-        },
-        {
-          "spell_id": 1264397,
-          "avg_damage": 141852,
-          "min_damage": 103365,
-          "max_damage": 180159,
-          "count": 7
-        }
-      ],
-      "common_cds": [
-        "Shadow Dance"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 10.5
-    },
-    {
-      "time_s": 186.9,
-      "stddev_s": 6.8,
-      "count": 7,
-      "total_samples": 10,
-      "dmg_avg": 3360035,
-      "dmg_stddev": 1879328,
-      "dmg_min": 1556474,
-      "dmg_max": 6920325,
-      "ability_breakdown": [
-        {
-          "spell_id": 279043,
-          "avg_damage": 985551,
-          "min_damage": 794672,
-          "max_damage": 1371215,
-          "count": 4
-        },
-        {
-          "spell_id": 282449,
-          "avg_damage": 486038,
-          "min_damage": 240000,
-          "max_damage": 753107,
-          "count": 7
-        },
-        {
-          "spell_id": 1269205,
-          "avg_damage": 424806,
-          "min_damage": 201754,
-          "max_damage": 1088714,
-          "count": 7
-        },
-        {
-          "spell_id": 196819,
-          "avg_damage": 400464,
-          "min_damage": 125942,
-          "max_damage": 865115,
-          "count": 7
-        },
-        {
-          "spell_id": 185438,
-          "avg_damage": 322493,
-          "min_damage": 147948,
-          "max_damage": 784318,
-          "count": 5
-        },
-        {
-          "spell_id": 1264397,
-          "avg_damage": 218822,
-          "min_damage": 108285,
-          "max_damage": 438330,
+          "max_damage": 1005681,
           "count": 6
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance",
         "Shadow Blades"
       ],
       "avg_targets": 1,
-      "window_length_s": 17.4
+      "window_length_s": 16.8
+    },
+    {
+      "time_s": 164,
+      "stddev_s": 3.2,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1813107,
+      "dmg_stddev": 102437,
+      "dmg_min": 1688682,
+      "dmg_max": 1933395,
+      "ability_breakdown": [
+        {
+          "spell_id": 282449,
+          "avg_damage": 446128,
+          "min_damage": 333011,
+          "max_damage": 582565,
+          "count": 4
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 264961,
+          "min_damage": 193604,
+          "max_damage": 377045,
+          "count": 4
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 232581,
+          "min_damage": 117957,
+          "max_damage": 337235,
+          "count": 4
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 144966,
+          "min_damage": 102116,
+          "max_damage": 198063,
+          "count": 4
+        },
+        {
+          "spell_id": 1264397,
+          "avg_damage": 129617,
+          "min_damage": 103365,
+          "max_damage": 156239,
+          "count": 4
+        },
+        {
+          "spell_id": 328082,
+          "avg_damage": 126088,
+          "min_damage": 102933,
+          "max_damage": 149243,
+          "count": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Shadow Dance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 8
+    },
+    {
+      "time_s": 180.9,
+      "stddev_s": 3,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 3283079,
+      "dmg_stddev": 1793176,
+      "dmg_min": 1751079,
+      "dmg_max": 6920325,
+      "ability_breakdown": [
+        {
+          "spell_id": 279043,
+          "avg_damage": 867555,
+          "min_damage": 446097,
+          "max_damage": 1371215,
+          "count": 4
+        },
+        {
+          "spell_id": 282449,
+          "avg_damage": 486205,
+          "min_damage": 328873,
+          "max_damage": 753107,
+          "count": 7
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 477204,
+          "min_damage": 208591,
+          "max_damage": 865115,
+          "count": 7
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 413859,
+          "min_damage": 144933,
+          "max_damage": 1088714,
+          "count": 7
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 327364,
+          "min_damage": 159534,
+          "max_damage": 784318,
+          "count": 5
+        },
+        {
+          "spell_id": 1264397,
+          "avg_damage": 231658,
+          "min_damage": 115314,
+          "max_damage": 438330,
+          "count": 4
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Shadow Dance",
+        "Shadow Blades"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17.6
+    },
+    {
+      "time_s": 198.7,
+      "stddev_s": 6.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 2558143,
+      "dmg_stddev": 1566972,
+      "dmg_min": 1556474,
+      "dmg_max": 4896251,
+      "ability_breakdown": [
+        {
+          "spell_id": 282449,
+          "avg_damage": 416303,
+          "min_damage": 240000,
+          "max_damage": 523333,
+          "count": 4
+        },
+        {
+          "spell_id": 1269205,
+          "avg_damage": 303366,
+          "min_damage": 201754,
+          "max_damage": 576529,
+          "count": 4
+        },
+        {
+          "spell_id": 196819,
+          "avg_damage": 252409,
+          "min_damage": 125942,
+          "max_damage": 613760,
+          "count": 4
+        },
+        {
+          "spell_id": 185438,
+          "avg_damage": 227222,
+          "min_damage": 147948,
+          "max_damage": 309369,
+          "count": 4
+        },
+        {
+          "spell_id": 1264397,
+          "avg_damage": 147184,
+          "min_damage": 108285,
+          "max_damage": 183978,
+          "count": 3
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Shadow Dance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 11
     },
     {
       "time_s": 248.7,
       "stddev_s": 0.4,
-      "count": 5,
+      "count": 4,
       "total_samples": 10,
-      "dmg_avg": 8719977,
-      "dmg_stddev": 4717865,
+      "dmg_avg": 9939205,
+      "dmg_stddev": 4446072,
       "dmg_min": 3738198,
       "dmg_max": 13334128,
       "ability_breakdown": [
@@ -605,46 +720,47 @@
         },
         {
           "spell_id": 459497,
-          "avg_damage": 1637856,
-          "min_damage": 756504,
+          "avg_damage": 1858194,
+          "min_damage": 844182,
           "max_damage": 3668345,
-          "count": 5
-        },
-        {
-          "spell_id": 282449,
-          "avg_damage": 1353298,
-          "min_damage": 805329,
-          "max_damage": 1943281,
-          "count": 5
-        },
-        {
-          "spell_id": 319175,
-          "avg_damage": 1234123,
-          "min_damage": 500670,
-          "max_damage": 2396165,
-          "count": 5
-        },
-        {
-          "spell_id": 1269565,
-          "avg_damage": 633381,
-          "min_damage": 156329,
-          "max_damage": 1243033,
           "count": 4
         },
         {
+          "spell_id": 282449,
+          "avg_damage": 1462089,
+          "min_damage": 805329,
+          "max_damage": 1943281,
+          "count": 4
+        },
+        {
+          "spell_id": 319175,
+          "avg_damage": 1404403,
+          "min_damage": 500670,
+          "max_damage": 2396165,
+          "count": 4
+        },
+        {
+          "spell_id": 1269565,
+          "avg_damage": 751439,
+          "min_damage": 156329,
+          "max_damage": 1243033,
+          "count": 3
+        },
+        {
           "spell_id": 319190,
-          "avg_damage": 592333,
+          "avg_damage": 676503,
           "min_damage": 207718,
           "max_damage": 1123293,
-          "count": 5
+          "count": 4
         }
       ],
+      "ref_game_id": null,
       "common_cds": [
         "Shadow Dance",
         "Shadow Blades"
       ],
       "avg_targets": 1,
-      "window_length_s": 19.6
+      "window_length_s": 22.6
     }
   ],
   "gear": {
@@ -664,28 +780,28 @@
         {
           "id": 249344,
           "name": "Light Company Guidon",
-          "count": 7,
-          "pct": 70
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
         }
       ],
       "13": [
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 7,
-          "pct": 70
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 249344,
           "name": "Light Company Guidon",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
         }
       ]
     },
@@ -750,17 +866,19 @@
         {
           "id": 7963,
           "name": "",
-          "count": 7,
-          "pct": 70
+          "count": 8,
+          "pct": 80
         },
         {
           "id": 7993,
           "name": "",
           "count": 2,
           "pct": 20
-        },
+        }
+      ],
+      "9": [
         {
-          "id": 8019,
+          "id": 2841,
           "name": "",
           "count": 1,
           "pct": 10
@@ -786,14 +904,14 @@
         {
           "id": 8039,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 9,
+          "pct": 90
         },
         {
           "id": 8041,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         }
       ],
       "16": [
@@ -812,7 +930,7 @@
       ]
     },
     "gems": {
-      "avg_count": 5.3,
+      "avg_count": 5.6,
       "max_count": 8,
       "sample_count": 10
     }
@@ -821,7 +939,7 @@
     {
       "name": "Cloak of Shadows",
       "spell_id": 31224,
-      "avg_uses": 1.4,
+      "avg_uses": 1.3,
       "min_uses": 1,
       "max_uses": 3,
       "sample_count": 7
@@ -846,12 +964,12 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 7,
-      "avg_first_cast_s": 186.1,
-      "stddev_first_cast_s": 99.9,
-      "avg_gap_s": 141.9,
-      "stddev_gap_s": 21.7,
+      "avg_first_cast_s": 172.1,
+      "stddev_first_cast_s": 106.4,
+      "avg_gap_s": 129.6,
+      "stddev_gap_s": 5,
       "hold_targets": {},
-      "avg_uses": 1.4,
+      "avg_uses": 1.3,
       "avg_uses_per_min": 0.31,
       "majority_hold": false
     },
@@ -896,6 +1014,7 @@
       "dmg_min": 0,
       "dmg_max": 0,
       "ability_breakdown": [],
+      "ref_game_id": null,
       "window_length_s": 5,
       "defensive_name": "Cloak of Shadows",
       "spell_id": 31224,
@@ -910,43 +1029,43 @@
   "top_dtk_comparison": [
     {
       "spell_id": 1259903,
-      "avg_pct": 0.8001,
+      "avg_pct": 0.8008,
       "min_pct": 0.723,
       "max_pct": 0.87,
-      "stddev_pct": 0.0584,
+      "stddev_pct": 0.0582,
       "sample_count": 10
     },
     {
       "spell_id": 1280075,
-      "avg_pct": 0.099,
+      "avg_pct": 0.1028,
       "min_pct": 0.046,
       "max_pct": 0.159,
-      "stddev_pct": 0.0531,
-      "sample_count": 5
+      "stddev_pct": 0.0605,
+      "sample_count": 4
     },
     {
       "spell_id": 1249251,
-      "avg_pct": 0.0722,
-      "min_pct": 0.054,
+      "avg_pct": 0.071,
+      "min_pct": 0.042,
       "max_pct": 0.083,
-      "stddev_pct": 0.0099,
+      "stddev_pct": 0.0127,
       "sample_count": 10
     },
     {
       "spell_id": 1249262,
-      "avg_pct": 0.0624,
+      "avg_pct": 0.0598,
       "min_pct": 0.037,
       "max_pct": 0.092,
-      "stddev_pct": 0.0176,
+      "stddev_pct": 0.0181,
       "sample_count": 10
     },
     {
       "spell_id": 1274846,
-      "avg_pct": 0.0122,
+      "avg_pct": 0.0128,
       "min_pct": 0.006,
       "max_pct": 0.026,
-      "stddev_pct": 0.0075,
-      "sample_count": 6
+      "stddev_pct": 0.0082,
+      "sample_count": 5
     }
   ]
 }
