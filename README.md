@@ -17,9 +17,8 @@ A web-based diagnostic tool for Mythic WoW raiders. It fetches combat data from 
 
 ```bash
 cd frontend
-cp ../.env.example ../.env   # fill in WCL credentials (optional - see "Ingesting from a branch" below)
 npm install
-npm start                    # Angular dev server on http://localhost:4200
+npm start   # Angular dev server on http://localhost:4200
 ```
 
 The Angular app is fully static and communicates directly with the WCL API via OAuth2 PKCE.
@@ -69,7 +68,7 @@ The ingest workflow can run on any branch via manual trigger - the preferred app
 
 The workflow commits updated `frontend/public/data/specs/**` files directly to your branch. Pull them down with `git pull` when done.
 
-For Claude: trigger via the `mcp__github__actions_run_trigger` tool on the current feature branch, wait for the run to complete, then `git pull` to get the committed data files. No `.env` file needed.
+For Claude: trigger via the `mcp__github__actions_run_trigger` tool on the current feature branch, wait for the run to complete, then `git pull` to get the committed data files.
 
 ## Credentials needed
 

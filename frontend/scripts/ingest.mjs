@@ -10,7 +10,8 @@
  * Usage:
  *   npm run ingest
  *
- * Requires: WCL_CLIENT_ID and WCL_CLIENT_SECRET in .env at the repo root.
+ * Requires: WCL_CLIENT_ID and WCL_CLIENT_SECRET environment variables.
+ * Use the GitHub Actions workflow to run this - it reads from repository secrets.
  */
 
 import crypto from 'crypto';
@@ -35,23 +36,6 @@ const INGEST_HASH = crypto.createHash('sha256')
   .slice(0, 12);
 
 // ── Env loading ───────────────────────────────────────────────────────────────
-
-function loadEnv() {
-  const envPath = path.join(FRONTEND_ROOT, '..', '.env');
-  if (!fs.existsSync(envPath)) return;
-  const lines = fs.readFileSync(envPath, 'utf8').split('\n');
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    const val = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
-    if (!process.env[key]) process.env[key] = val;
-  }
-}
-
-loadEnv();
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -129,7 +113,7 @@ class WCLClient {
     this.clientId = process.env.WCL_CLIENT_ID || '';
     this.clientSecret = process.env.WCL_CLIENT_SECRET || '';
     if (!this.clientId || !this.clientSecret) {
-      throw new Error('WCL_CLIENT_ID and WCL_CLIENT_SECRET must be set in .env');
+      throw new Error('WCL_CLIENT_ID and WCL_CLIENT_SECRET environment variables must be set');
     }
     this._token = null;
     this._tokenExpiry = 0;
