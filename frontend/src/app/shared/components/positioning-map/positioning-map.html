@@ -22,14 +22,19 @@
     <canvas #canvas class="block h-[420px] w-full"></canvas>
   </div>
 
-  <div class="mt-2">
-    <mat-slider class="w-full" [min]="windowStart()" [max]="windowEnd()" step="0.25" discrete>
-      <input matSliderThumb [value]="scrubT()" (valueChange)="onScrub($event)" />
-    </mat-slider>
-    <div class="flex justify-between text-[10px] text-[var(--muted)]">
-      <span>{{ windowStart() | formatDuration }}</span>
-      <span>anchor {{ anchorTime() | formatDuration }}</span>
-      <span>{{ windowEnd() | formatDuration }}</span>
+  <div class="mt-2 flex items-center gap-1">
+    <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
+      <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
+    </button>
+    <div class="min-w-0 flex-1">
+      <mat-slider class="w-full" [min]="windowStart()" [max]="windowEnd()" step="0.25" discrete>
+        <input matSliderThumb [value]="scrubT()" (valueChange)="onScrub($event)" />
+      </mat-slider>
+      <div class="flex justify-between text-[10px] text-[var(--muted)]">
+        <span>{{ windowStart() | formatDuration }}</span>
+        <span>anchor {{ anchorTime() | formatDuration }}</span>
+        <span>{{ windowEnd() | formatDuration }}</span>
+      </div>
     </div>
   </div>
 

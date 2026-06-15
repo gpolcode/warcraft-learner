@@ -1,8 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, computed, effect,
-  input, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect,
+  inject, input, signal, viewChild,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
@@ -14,6 +16,9 @@ import {
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 
 const STEP_S = 0.5;
+/** Playback timer cadence and how much window-time advances per tick (roughly real time). */
+const PLAY_TICK_MS = 60;
+const PLAY_DT_S = 0.06;
 
 /** Live player overlay: live-pull timelines plus how to resolve the reference actor per selector. */
 export interface LiveOverlay {
@@ -34,7 +39,7 @@ export interface LiveOverlay {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-positioning-map',
-  imports: [MatFormFieldModule, MatSelectModule, MatSliderModule, DecimalPipe, FormatDurationPipe],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatSliderModule, DecimalPipe, FormatDurationPipe],
   templateUrl: './positioning-map.html',
 })
 export class PositioningMapComponent {
@@ -49,6 +54,8 @@ export class PositioningMapComponent {
 
   protected readonly selector = signal<ReferenceSelector>({ kind: 'boss' });
   protected readonly scrubT = signal(0);
+  protected readonly playing = signal(false);
+  private _timer: ReturnType<typeof setInterval> | null = null;
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
   protected readonly refEnemies = computed(() => {
@@ -104,8 +111,10 @@ export class PositioningMapComponent {
   });
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => this._stop());
     effect(() => { this.selector.set(this.defaultReference()); });
-    effect(() => { this.anchorTime(); this.scrubT.set(this.anchorTime()); });
+    // New context (anchor moved): jump to the anchor and stop playback.
+    effect(() => { this.anchorTime(); this.pause(); this.scrubT.set(this.anchorTime()); });
     effect(() => {
       const el = this.canvas()?.nativeElement;
       this.benchTrails(); this.liveTrail(); this.scrubT(); this.readout();
@@ -117,7 +126,31 @@ export class PositioningMapComponent {
     this.selector.set(value === 'boss' ? { kind: 'boss' } : { kind: 'enemy', gameId: value });
   }
 
-  protected onScrub(v: number): void { this.scrubT.set(v); }
+  protected onScrub(v: number): void { this.pause(); this.scrubT.set(v); }
+
+  protected togglePlay(): void {
+    this.playing() ? this.pause() : this.play();
+  }
+
+  private play(): void {
+    // Restart from the window start if we're at (or past) the end.
+    if (this.scrubT() >= this.windowEnd() - 1e-6) this.scrubT.set(this.windowStart());
+    this.playing.set(true);
+    this._stop();
+    this._timer = setInterval(() => {
+      const next = this.scrubT() + PLAY_DT_S;
+      this.scrubT.set(next >= this.windowEnd() ? this.windowStart() : next);
+    }, PLAY_TICK_MS);
+  }
+
+  protected pause(): void {
+    this.playing.set(false);
+    this._stop();
+  }
+
+  private _stop(): void {
+    if (this._timer != null) { clearInterval(this._timer); this._timer = null; }
+  }
 
   private _livePlayerAt(t: number): RelPos | null {
     const l = this.live();
