@@ -359,7 +359,7 @@ export class PreFightComponent implements OnInit {
     this.loadingBrief.set(true);
     try {
       const [gearData, benchData, rulebookData, positions] = await Promise.all([
-        info.name ? this.wclApi.getCharGear(info.name, info.server, info.region, this.selectedEncId()) : Promise.resolve({ found: false }),
+        info.name ? this.wclApi.getCharGear(info.name, info.server, info.region, this.selectedEncId(), info.spec ?? '') : Promise.resolve({ found: false }),
         this.encounterSvc.getBench(info.spec, this.selectedEncId()),
         this.encounterSvc.getRulebook(info.spec),
         this.encounterSvc.getPositions(info.spec, this.selectedEncId()),
