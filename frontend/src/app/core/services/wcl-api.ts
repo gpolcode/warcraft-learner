@@ -72,12 +72,13 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
   }}
 }`;
 
-// Same query path as ingest.mjs fetchTopRankings - characterRankings reliably
-// includes permanentEnchant. No character filter exists on this field; match by name client-side.
-const CHAR_WORLD_RANK_Q = `
-query($encID:Int!,$className:String!,$specName:String!){
-  worldData{encounter(id:$encID){
-    characterRankings(className:$className,specName:$specName,includeCombatantInfo:true,metric:dps)
+// Fetch actors + CombatantInfo events in one call. CombatantInfo events carry the
+// full gear array (including permanentEnchant) as recorded in the combat log.
+const REPORT_CI_Q = `
+query($code:String!,$fightIDs:[Int]!){
+  reportData{report(code:$code){
+    masterData{actors(type:"Player"){id name}}
+    events(fightIDs:$fightIDs,dataType:CombatantInfo,limit:100){data}
   }}
 }`;
 
@@ -207,48 +208,47 @@ export class WclApiService {
   }
 
   async getCharGear(name: string, server: string, region: string, encounterId: number, spec = ''): Promise<CharacterGear> {
-    // Fetch talent key from encounterRankings and gear from worldData in parallel.
-    // worldData.encounter.characterRankings is the same path ingest uses and reliably
-    // includes permanentEnchant; encounterRankings gear omits it.
-    const sortedClasses = Object.values(CLASS_NAMES).sort((a, b) => b.length - a.length);
-    const wclClassName = sortedClasses.find(c => spec.endsWith(c)) || '';
-    const wclSpecName = wclClassName ? spec.slice(0, -wclClassName.length) : '';
-
-    const [encD, wdD] = await Promise.all([
-      this.query<{ characterData: { character: { encounterRankings: string | { ranks?: WclRankEntry[] } } } }>(
-        CHAR_ENC_Q, { name, serverSlug: server, serverRegion: region, encID: encounterId }
-      ),
-      wclClassName && wclSpecName
-        ? this.query<{ worldData: { encounter: { characterRankings: string | { rankings?: WclRankEntry[] } } } }>(
-            CHAR_WORLD_RANK_Q, { encID: encounterId, className: wclClassName, specName: wclSpecName }
-          )
-        : Promise.resolve(null),
-    ]);
+    // Step 1: encounterRankings for talent key + report reference (code + fightID)
+    const encD = await this.query<{ characterData: { character: { encounterRankings: string | { ranks?: WclRankEntry[] } } } }>(
+      CHAR_ENC_Q, { name, serverSlug: server, serverRegion: region, encID: encounterId }
+    );
 
     const char = encD?.characterData?.character;
     if (char == null) throw new Error(`Character not found: ${name}-${server} (${region})`);
 
-    // Talent key from encounterRankings (character-specific Midnight talent format)
     const raw = char.encounterRankings;
     const rankData = typeof raw === 'string' ? JSON.parse(raw) as { ranks?: WclRankEntry[] } : (raw ?? {});
     const ranks = rankData?.ranks || [];
-    const mostRecent = ranks.length ? ranks.reduce((best, r) => (r.startTime || 0) > (best.startTime || 0) ? r : best) : null;
-    const talent_key = mostRecent ? this._talentKeyV2(mostRecent.talents) : '';
-    const specPart = mostRecent?.spec || '';
-    const className = CLASS_NAMES[mostRecent?.class ?? -1] || '';
+    if (!ranks.length) return { found: false, message: 'No ranked kills found for this encounter.' };
+
+    const mostRecent = ranks.reduce((best, r) => (r.startTime || 0) > (best.startTime || 0) ? r : best);
+    const talent_key = this._talentKeyV2(mostRecent.talents);
+    const specPart = mostRecent.spec || '';
+    const className = CLASS_NAMES[mostRecent.class ?? -1] || '';
     const fullSpec = specPart && className ? specPart + className : spec;
 
-    // Gear (with permanentEnchant) from worldData characterRankings - find this player by name
-    const wdRaw = wdD?.worldData?.encounter?.characterRankings;
-    const wdData = typeof wdRaw === 'string' ? JSON.parse(wdRaw) as { rankings?: WclRankEntry[] } : (wdRaw ?? {});
-    const wdRanks = (wdData as { rankings?: WclRankEntry[] })?.rankings || [];
-    if (!wdRanks.length) return { found: false, message: 'No ranked kills found for this encounter.' };
+    // Step 2: fetch actors + CombatantInfo events from the kill's report.
+    // CombatantInfo events carry the full gear array (with permanentEnchant) from the combat log.
+    const reportCode = mostRecent.report?.code;
+    const fightID = mostRecent.report?.fightID;
+    if (!reportCode || fightID == null) return { found: false, message: 'No report reference on ranked kill.' };
 
-    const nameLower = name.toLowerCase();
-    const playerRanks = wdRanks.filter(r => r.name?.toLowerCase() === nameLower);
-    if (!playerRanks.length) return { found: false, message: 'Character not found in top rankings for this encounter.' };
-    const wdMostRecent = playerRanks.reduce((best, r) => (r.startTime || 0) > (best.startTime || 0) ? r : best);
-    const { trinkets, enchants, gem_count } = this._extractGear(wdMostRecent);
+    const ciD = await this.query<{
+      reportData: { report: {
+        masterData: { actors: Array<{ id: number; name: string }> };
+        events: { data: Array<Record<string, unknown>> };
+      }};
+    }>(REPORT_CI_Q, { code: reportCode, fightIDs: [fightID] });
+
+    const actors = ciD?.reportData?.report?.masterData?.actors || [];
+    const actor = actors.find(a => a.name.toLowerCase() === name.toLowerCase());
+    if (!actor) return { found: false, message: 'Player not found in report actors.' };
+
+    const ciEvents = ciD?.reportData?.report?.events?.data || [];
+    const ciEvent = ciEvents.find(e => e['sourceID'] === actor.id);
+    if (!ciEvent) return { found: false, message: 'CombatantInfo event not found for player.' };
+
+    const { trinkets, enchants, gem_count } = this._extractGear(ciEvent as unknown as WclRankEntry);
 
     const enchantIds = [...new Set(enchants.filter(e => e.id).map(e => e.id))];
     if (enchantIds.length) {
@@ -263,7 +263,7 @@ export class WclApiService {
       }
     }
 
-    return { found: true, spec: fullSpec, source_report: wdMostRecent.report?.code || null, talent_key, trinkets, enchants, gem_count };
+    return { found: true, spec: fullSpec, source_report: reportCode, talent_key, trinkets, enchants, gem_count };
   }
 
   /** Trinkets (slots 12/13), permanent enchants and filled-socket count from a ranking's combatant info. */
