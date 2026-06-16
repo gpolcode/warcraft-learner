@@ -11,6 +11,7 @@ interface WclGearItem { id?: number | string; name?: string; icon?: string; perm
 interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
 interface WclTalentTree { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]>; }
 interface WclRankEntry {
+  name?: string;
   startTime?: number;
   spec?: string;
   class?: number;
@@ -72,11 +73,11 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
 }`;
 
 // Same query path as ingest.mjs fetchTopRankings - characterRankings reliably
-// includes permanentEnchant. characterName/serverSlug/serverRegion narrows to this player.
+// includes permanentEnchant. No character filter exists on this field; match by name client-side.
 const CHAR_WORLD_RANK_Q = `
-query($encID:Int!,$className:String!,$specName:String!,$name:String!,$server:String!,$region:String!){
+query($encID:Int!,$className:String!,$specName:String!){
   worldData{encounter(id:$encID){
-    characterRankings(className:$className,specName:$specName,characterName:$name,serverSlug:$server,serverRegion:$region,includeCombatantInfo:true,metric:dps)
+    characterRankings(className:$className,specName:$specName,includeCombatantInfo:true,metric:dps)
   }}
 }`;
 
@@ -219,7 +220,7 @@ export class WclApiService {
       ),
       wclClassName && wclSpecName
         ? this.query<{ worldData: { encounter: { characterRankings: string | { rankings?: WclRankEntry[] } } } }>(
-            CHAR_WORLD_RANK_Q, { encID: encounterId, className: wclClassName, specName: wclSpecName, name, server, region }
+            CHAR_WORLD_RANK_Q, { encID: encounterId, className: wclClassName, specName: wclSpecName }
           )
         : Promise.resolve(null),
     ]);
@@ -237,13 +238,16 @@ export class WclApiService {
     const className = CLASS_NAMES[mostRecent?.class ?? -1] || '';
     const fullSpec = specPart && className ? specPart + className : spec;
 
-    // Gear (with permanentEnchant) from worldData characterRankings
+    // Gear (with permanentEnchant) from worldData characterRankings - find this player by name
     const wdRaw = wdD?.worldData?.encounter?.characterRankings;
     const wdData = typeof wdRaw === 'string' ? JSON.parse(wdRaw) as { rankings?: WclRankEntry[] } : (wdRaw ?? {});
     const wdRanks = (wdData as { rankings?: WclRankEntry[] })?.rankings || [];
     if (!wdRanks.length) return { found: false, message: 'No ranked kills found for this encounter.' };
 
-    const wdMostRecent = wdRanks.reduce((best, r) => (r.startTime || 0) > (best.startTime || 0) ? r : best);
+    const nameLower = name.toLowerCase();
+    const playerRanks = wdRanks.filter(r => r.name?.toLowerCase() === nameLower);
+    if (!playerRanks.length) return { found: false, message: 'Character not found in top rankings for this encounter.' };
+    const wdMostRecent = playerRanks.reduce((best, r) => (r.startTime || 0) > (best.startTime || 0) ? r : best);
     const { trinkets, enchants, gem_count } = this._extractGear(wdMostRecent);
 
     const enchantIds = [...new Set(enchants.filter(e => e.id).map(e => e.id))];
