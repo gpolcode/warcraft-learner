@@ -3,85 +3,60 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 415.9,
-  "downtime_threshold_ms": 1606,
-  "top_avg_efficiency": 66.1,
-  "top_efficiency_stddev": 3.1,
+  "avg_duration_s": 323.7,
+  "downtime_threshold_ms": 1452,
+  "top_avg_efficiency": 67.3,
+  "top_efficiency_stddev": 4.7,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.6,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 128.1,
-      "stddev_gap_s": 48.2,
+      "avg_first_cast_s": 5.9,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 63.7,
+      "stddev_gap_s": 74,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "hold_targets": {
-        "2": {
-          "target_s": 170.1,
-          "stddev_s": 1.3,
-          "count": 9,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 306.3,
-          "stddev_s": 6,
-          "count": 9,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 430.6,
-          "stddev_s": 7.6,
-          "count": 5,
-          "total_samples": 10
-        }
-      },
+      "hold_targets": {},
       "uses_per_min": {
-        "avg": 0.551,
-        "stddev": 0.151,
-        "min": 0.426,
-        "max": 0.961
+        "avg": 0.956,
+        "stddev": 0.296,
+        "min": 0.424,
+        "max": 1.236
       },
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.96,
       "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": false
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 6,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 143.6,
-      "stddev_gap_s": 17.4,
+      "avg_first_cast_s": 5.7,
+      "stddev_first_cast_s": 0.5,
+      "avg_gap_s": 146.5,
+      "stddev_gap_s": 18.7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
-          "target_s": 169.1,
-          "stddev_s": 1.2,
+          "target_s": 168.8,
+          "stddev_s": 11.2,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 305.6,
-          "stddev_s": 6.3,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 429.9,
-          "stddev_s": 8.4,
-          "count": 5,
+          "target_s": 294.1,
+          "stddev_s": 16.3,
+          "count": 7,
           "total_samples": 10
         }
       },
       "uses_per_min": {
         "avg": 0.503,
-        "stddev": 0.047,
-        "min": 0.426,
-        "max": 0.559
+        "stddev": 0.075,
+        "min": 0.412,
+        "max": 0.616
       },
-      "avg_uses": 3.5,
+      "avg_uses": 2.7,
       "avg_uses_per_min": 0.5,
       "bl_pct": 0,
       "majority_hold": true
@@ -119,320 +94,198 @@
   },
   "burst_windows": [
     {
-      "time_s": 5.4,
-      "stddev_s": 2.2,
+      "time_s": 5.7,
+      "stddev_s": 0.5,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 7456313,
-      "dmg_stddev": 1026485,
-      "dmg_min": 6215594,
-      "dmg_max": 9054777,
+      "dmg_avg": 8845386,
+      "dmg_stddev": 695740,
+      "dmg_min": 8111067,
+      "dmg_max": 10434167,
       "ability_breakdown": [
         {
           "spell_id": 335467,
-          "avg_damage": 1136090,
-          "min_damage": 920666,
-          "max_damage": 1379238,
+          "avg_damage": 1254810,
+          "min_damage": 1024950,
+          "max_damage": 1422335,
           "count": 10
         },
         {
           "spell_id": 8092,
-          "avg_damage": 890464,
-          "min_damage": 677527,
-          "max_damage": 1231114,
+          "avg_damage": 1017374,
+          "min_damage": 852057,
+          "max_damage": 1210692,
           "count": 10
         },
         {
           "spell_id": 199486,
-          "avg_damage": 794995,
-          "min_damage": 625186,
-          "max_damage": 921974,
-          "count": 10
-        },
-        {
-          "spell_id": 413231,
-          "avg_damage": 772882,
-          "min_damage": 554098,
-          "max_damage": 1043420,
-          "count": 5
-        },
-        {
-          "spell_id": 1242189,
-          "avg_damage": 723515,
-          "min_damage": 602124,
-          "max_damage": 892482,
+          "avg_damage": 911614,
+          "min_damage": 859767,
+          "max_damage": 986401,
           "count": 10
         },
         {
           "spell_id": 391403,
-          "avg_damage": 667134,
-          "min_damage": 577720,
-          "max_damage": 728859,
-          "count": 7
+          "avg_damage": 847699,
+          "min_damage": 695653,
+          "max_damage": 1001286,
+          "count": 10
+        },
+        {
+          "spell_id": 1242189,
+          "avg_damage": 836275,
+          "min_damage": 706147,
+          "max_damage": 986178,
+          "count": 9
+        },
+        {
+          "spell_id": 413231,
+          "avg_damage": 808295,
+          "min_damage": 713780,
+          "max_damage": 983247,
+          "count": 5
         }
       ],
       "ref_game_id": null,
       "common_cds": [
-        "Power Infusion",
-        "Void Eruption"
+        "Void Eruption",
+        "Power Infusion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20.2
+    },
+    {
+      "time_s": 168.9,
+      "stddev_s": 2.9,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 8641394,
+      "dmg_stddev": 1082963,
+      "dmg_min": 6976795,
+      "dmg_max": 10385596,
+      "ability_breakdown": [
+        {
+          "spell_id": 390964,
+          "avg_damage": 2046652,
+          "min_damage": 1301741,
+          "max_damage": 2627282,
+          "count": 9
+        },
+        {
+          "spell_id": 199486,
+          "avg_damage": 1018771,
+          "min_damage": 550665,
+          "max_damage": 1562729,
+          "count": 9
+        },
+        {
+          "spell_id": 413231,
+          "avg_damage": 871687,
+          "min_damage": 573663,
+          "max_damage": 1149336,
+          "count": 9
+        },
+        {
+          "spell_id": 335467,
+          "avg_damage": 781767,
+          "min_damage": 594030,
+          "max_damage": 1013548,
+          "count": 9
+        },
+        {
+          "spell_id": 391403,
+          "avg_damage": 583561,
+          "min_damage": 455195,
+          "max_damage": 708342,
+          "count": 5
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Void Eruption",
+        "Power Infusion"
       ],
       "avg_targets": 1,
       "window_length_s": 20.6
-    },
-    {
-      "time_s": 169.1,
-      "stddev_s": 1.2,
-      "count": 10,
-      "total_samples": 10,
-      "dmg_avg": 12778257,
-      "dmg_stddev": 2131501,
-      "dmg_min": 8045761,
-      "dmg_max": 15124437,
-      "ability_breakdown": [
-        {
-          "spell_id": 390964,
-          "avg_damage": 3391378,
-          "min_damage": 1684183,
-          "max_damage": 4744648,
-          "count": 10
-        },
-        {
-          "spell_id": 199486,
-          "avg_damage": 2374603,
-          "min_damage": 1181469,
-          "max_damage": 3347189,
-          "count": 10
-        },
-        {
-          "spell_id": 413231,
-          "avg_damage": 1467886,
-          "min_damage": 617319,
-          "max_damage": 1950173,
-          "count": 10
-        },
-        {
-          "spell_id": 1264176,
-          "avg_damage": 988414,
-          "min_damage": 650319,
-          "max_damage": 1537858,
-          "count": 10
-        },
-        {
-          "spell_id": 335467,
-          "avg_damage": 766621,
-          "min_damage": 669558,
-          "max_damage": 965804,
-          "count": 9
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Void Eruption",
-        "Power Infusion"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 21.1
-    },
-    {
-      "time_s": 305.7,
-      "stddev_s": 6.3,
-      "count": 10,
-      "total_samples": 10,
-      "dmg_avg": 11297100,
-      "dmg_stddev": 2310070,
-      "dmg_min": 8644773,
-      "dmg_max": 14872103,
-      "ability_breakdown": [
-        {
-          "spell_id": 390964,
-          "avg_damage": 3529362,
-          "min_damage": 2757258,
-          "max_damage": 4678714,
-          "count": 10
-        },
-        {
-          "spell_id": 199486,
-          "avg_damage": 1671592,
-          "min_damage": 622061,
-          "max_damage": 2943595,
-          "count": 10
-        },
-        {
-          "spell_id": 413231,
-          "avg_damage": 1096673,
-          "min_damage": 498025,
-          "max_damage": 1956656,
-          "count": 10
-        },
-        {
-          "spell_id": 1264176,
-          "avg_damage": 803387,
-          "min_damage": 513941,
-          "max_damage": 1147840,
-          "count": 7
-        },
-        {
-          "spell_id": 335467,
-          "avg_damage": 780030,
-          "min_damage": 602258,
-          "max_damage": 1001933,
-          "count": 9
-        },
-        {
-          "spell_id": 1242189,
-          "avg_damage": 644412,
-          "min_damage": 495243,
-          "max_damage": 742799,
-          "count": 5
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Void Eruption",
-        "Power Infusion"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 20.9
-    },
-    {
-      "time_s": 430,
-      "stddev_s": 7.4,
-      "count": 5,
-      "total_samples": 10,
-      "dmg_avg": 7554420,
-      "dmg_stddev": 4463455,
-      "dmg_min": 3663478,
-      "dmg_max": 13302614,
-      "ability_breakdown": [
-        {
-          "spell_id": 390964,
-          "avg_damage": 1574412,
-          "min_damage": 408838,
-          "max_damage": 3378449,
-          "count": 5
-        },
-        {
-          "spell_id": 199486,
-          "avg_damage": 1304656,
-          "min_damage": 415013,
-          "max_damage": 2538741,
-          "count": 5
-        },
-        {
-          "spell_id": 413231,
-          "avg_damage": 1041865,
-          "min_damage": 324936,
-          "max_damage": 2231148,
-          "count": 5
-        },
-        {
-          "spell_id": 1264176,
-          "avg_damage": 716886,
-          "min_damage": 284890,
-          "max_damage": 1285993,
-          "count": 5
-        },
-        {
-          "spell_id": 335467,
-          "avg_damage": 629235,
-          "min_damage": 442445,
-          "max_damage": 768135,
-          "count": 3
-        },
-        {
-          "spell_id": 391403,
-          "avg_damage": 473503,
-          "min_damage": 383988,
-          "max_damage": 575571,
-          "count": 3
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Void Eruption",
-        "Power Infusion"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 22
     }
   ],
   "gear": {
     "sample_count": 10,
     "talent_builds": [
       {
+        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82647,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
+        "count": 4,
+        "pct": 40,
+        "report_code": "Fv7zp8nB4RCYVQWj",
+        "fight_id": 57,
+        "player_name": "Loyalxdice"
+      },
+      {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
-        "count": 2,
-        "pct": 20,
-        "report_code": "qna6Qh7tHg4yBMXp",
-        "fight_id": 21,
-        "player_name": "Clarransp"
+        "count": 3,
+        "pct": 30,
+        "report_code": "xZdzgtV264JKNbvT",
+        "fight_id": 60,
+        "player_name": "Salmer"
       },
       {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82675,82676,82679,82680,82684,82685,82686,82711,93170",
         "count": 1,
         "pct": 10,
-        "report_code": "qKmD4ZxajQfNrW9V",
-        "fight_id": 18,
-        "player_name": "Oblivionis"
+        "report_code": "hBfR4YmgD3czqQkG",
+        "fight_id": 51,
+        "player_name": "Snowgigarat"
       },
       {
-        "key": "v2:109010,109011,109012,109014,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82676,82677,82684,82685,82686,82711,93170",
+        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82674,82676,82677,82680,82684,82685,82686,82711,93170",
         "count": 1,
         "pct": 10,
-        "report_code": "DfBAgVHd6b8nP9Tt",
-        "fight_id": 1,
-        "player_name": "风雅颂灬"
+        "report_code": "vKdztfLWjRPHkNFC",
+        "fight_id": 27,
+        "player_name": "Vil"
       },
       {
-        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82647,82649,82654,82667,82674,82675,82676,82679,82680,82684,82685,82686,82711,93170",
+        "key": "v2:108152,109010,109011,109012,109015,110408,110408,110408,82552,82555,82560,82563,82643,82647,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
         "count": 1,
         "pct": 10,
-        "report_code": "rhG13Cn97b2TNgHJ",
-        "fight_id": 36,
-        "player_name": "水果蛋挞"
-      },
-      {
-        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82647,82649,82654,82667,82673,82675,82676,82679,82680,82684,82685,82686,82711,93170",
-        "count": 1,
-        "pct": 10,
-        "report_code": "cw92QYXCKRAbdV7k",
-        "fight_id": 30,
-        "player_name": "上古的低语"
+        "report_code": "FwQcJ4K9jDprf2VC",
+        "fight_id": 21,
+        "player_name": "Dohter"
       }
     ],
     "trinkets": {
       "12": [
         {
-          "id": 249346,
-          "name": "Vaelgor's Final Stare",
-          "count": 6,
-          "pct": 60
-        },
-        {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 3,
-          "pct": 30
+          "count": 5,
+          "pct": 50
         },
         {
-          "id": 250144,
-          "name": "Emberwing Feather",
-          "count": 1,
-          "pct": 10
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 5,
+          "pct": 50
         }
       ],
       "13": [
         {
           "id": 249343,
           "name": "Gaze of the Alnseer",
-          "count": 7,
-          "pct": 70
+          "count": 5,
+          "pct": 50
         },
         {
           "id": 249346,
           "name": "Vaelgor's Final Stare",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 1,
+          "pct": 10
         }
       ]
     },
@@ -441,25 +294,31 @@
         {
           "id": 8017,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 7,
+          "pct": 70
         },
         {
-          "id": 8015,
+          "id": 7991,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 3,
+          "pct": 30
         }
       ],
       "2": [
         {
-          "id": 8001,
+          "id": 7973,
           "name": "",
           "count": 5,
           "pct": 50
         },
         {
-          "id": 8031,
+          "id": 8001,
+          "name": "",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7999,
           "name": "",
           "count": 1,
           "pct": 10
@@ -477,25 +336,27 @@
         {
           "id": 7935,
           "name": "",
-          "count": 9,
-          "pct": 90
+          "count": 10,
+          "pct": 100
         }
       ],
       "7": [
         {
           "id": 7963,
           "name": "",
-          "count": 4,
-          "pct": 40
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 8019,
           "name": "",
-          "count": 1,
-          "pct": 10
-        },
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "9": [
         {
-          "id": 7993,
+          "id": 2841,
           "name": "",
           "count": 1,
           "pct": 10
@@ -503,36 +364,24 @@
       ],
       "10": [
         {
-          "id": 7969,
-          "name": "",
-          "count": 4,
-          "pct": 40
-        },
-        {
           "id": 7967,
           "name": "",
-          "count": 3,
-          "pct": 30
+          "count": 9,
+          "pct": 90
         },
         {
-          "id": 8025,
+          "id": 7969,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         }
       ],
       "11": [
         {
-          "id": 7969,
-          "name": "",
-          "count": 5,
-          "pct": 50
-        },
-        {
           "id": 7967,
           "name": "",
-          "count": 4,
-          "pct": 40
+          "count": 9,
+          "pct": 90
         },
         {
           "id": 8025,
@@ -545,20 +394,26 @@
         {
           "id": 8039,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7981,
+          "name": "",
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 8041,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 3,
+          "pct": 30
         }
       ]
     },
     "gems": {
-      "avg_count": 4.2,
-      "max_count": 6,
+      "avg_count": 5.9,
+      "max_count": 7,
       "sample_count": 10
     }
   },
@@ -566,86 +421,93 @@
     {
       "name": "Dispersion",
       "spell_id": 47585,
-      "avg_uses": 1,
+      "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 1,
-      "sample_count": 5
+      "max_uses": 2,
+      "sample_count": 4
     },
     {
       "name": "Desperate Prayer",
       "spell_id": 19236,
-      "avg_uses": 1.3,
+      "avg_uses": 2.4,
       "min_uses": 1,
-      "max_uses": 2,
+      "max_uses": 3,
       "sample_count": 10
     },
     {
       "name": "Vampiric Embrace",
       "spell_id": 15286,
-      "avg_uses": 3.4,
-      "min_uses": 2,
-      "max_uses": 4,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 3,
       "sample_count": 10
     }
   ],
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 322.1,
-      "stddev_first_cast_s": 78.6,
-      "avg_gap_s": 92.3,
-      "stddev_gap_s": 31.8,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.19,
-      "majority_hold": false
-    },
-    "Vampiric Embrace": {
-      "sample_count": 10,
-      "avg_first_cast_s": 23.3,
-      "stddev_first_cast_s": 51.9,
-      "avg_gap_s": 142.4,
-      "stddev_gap_s": 17.6,
+      "avg_first_cast_s": 88.2,
+      "stddev_first_cast_s": 47.2,
+      "avg_gap_s": 123.1,
+      "stddev_gap_s": 29.9,
       "hold_targets": {
         "1": {
-          "target_s": 170.3,
-          "stddev_s": 41.7,
-          "count": 10,
+          "target_s": 244.2,
+          "stddev_s": 57.1,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 308.2,
-          "stddev_s": 2.1,
-          "count": 6,
+          "target_s": 298,
+          "stddev_s": 35.1,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.4,
-      "avg_uses_per_min": 0.49,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.44,
+      "majority_hold": true
+    },
+    "Vampiric Embrace": {
+      "sample_count": 10,
+      "avg_first_cast_s": 29.2,
+      "stddev_first_cast_s": 52.7,
+      "avg_gap_s": 144.4,
+      "stddev_gap_s": 19.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 169.4,
+          "stddev_s": 12.4,
+          "count": 8,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.47,
       "majority_hold": true
     },
     "Dispersion": {
-      "sample_count": 5,
-      "avg_first_cast_s": 198.5,
-      "stddev_first_cast_s": 77.6,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+      "sample_count": 4,
+      "avg_first_cast_s": 142.8,
+      "stddev_first_cast_s": 49.1,
+      "avg_gap_s": 284.5,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.14,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.22,
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 6.2,
-      "stddev_s": 2.2,
-      "count": 9,
+      "time_s": 6.1,
+      "stddev_s": 0.9,
+      "count": 8,
       "total_samples": 10,
-      "dmg_avg": 38362,
-      "dmg_stddev": 57983,
+      "dmg_avg": 76714,
+      "dmg_stddev": 104439,
       "dmg_min": 0,
-      "dmg_max": 123935,
+      "dmg_max": 301590,
       "ability_breakdown": [],
       "ref_game_id": 256679,
       "window_length_s": 12,
@@ -659,74 +521,45 @@
       ]
     },
     {
-      "time_s": 170.3,
-      "stddev_s": 1.2,
-      "count": 10,
+      "time_s": 77.1,
+      "stddev_s": 8.9,
+      "count": 4,
       "total_samples": 10,
-      "dmg_avg": 314041,
-      "dmg_stddev": 234169,
-      "dmg_min": 0,
-      "dmg_max": 719268,
+      "dmg_avg": 554560,
+      "dmg_stddev": 221293,
+      "dmg_min": 289652,
+      "dmg_max": 826824,
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 218103,
-          "min_damage": 176620,
-          "max_damage": 387177,
-          "count": 7
+          "avg_damage": 246794,
+          "min_damage": 189826,
+          "max_damage": 303762,
+          "count": 2
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 102090,
-          "min_damage": 60980,
-          "max_damage": 157126,
-          "count": 5
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 12,
-      "defensive_name": "Vampiric Embrace",
-      "spell_id": 15286,
-      "common_defensives": [
-        "Vampiric Embrace"
-      ],
-      "common_cds": [
-        "Vampiric Embrace"
-      ]
-    },
-    {
-      "time_s": 246.6,
-      "stddev_s": 4.1,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 771793,
-      "dmg_stddev": 212519,
-      "dmg_min": 549420,
-      "dmg_max": 1050277,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245175,
-          "avg_damage": 342384,
-          "min_damage": 142294,
-          "max_damage": 547371,
-          "count": 4
-        },
-        {
-          "spell_id": 1285954,
-          "avg_damage": 255796,
-          "min_damage": 164242,
-          "max_damage": 305205,
-          "count": 3
+          "avg_damage": 214142,
+          "min_damage": 78341,
+          "max_damage": 349943,
+          "count": 2
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 193932,
-          "min_damage": 187782,
-          "max_damage": 202125,
+          "avg_damage": 111805,
+          "min_damage": 69237,
+          "max_damage": 194539,
           "count": 4
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 96597,
+          "min_damage": 49237,
+          "max_damage": 143957,
+          "count": 2
         }
       ],
-      "ref_game_id": 248143,
+      "ref_game_id": 244552,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -738,81 +571,31 @@
       ]
     },
     {
-      "time_s": 306.3,
-      "stddev_s": 6.4,
-      "count": 10,
+      "time_s": 144.3,
+      "stddev_s": 9.4,
+      "count": 5,
       "total_samples": 10,
-      "dmg_avg": 1076583,
-      "dmg_stddev": 165477,
-      "dmg_min": 750537,
-      "dmg_max": 1232747,
+      "dmg_avg": 750175,
+      "dmg_stddev": 369973,
+      "dmg_min": 186847,
+      "dmg_max": 1123372,
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 531047,
-          "min_damage": 155722,
-          "max_damage": 750537,
-          "count": 10
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 223558,
-          "min_damage": 59639,
-          "max_damage": 556352,
-          "count": 8
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 12,
-      "defensive_name": "Vampiric Embrace",
-      "spell_id": 15286,
-      "common_defensives": [
-        "Vampiric Embrace"
-      ],
-      "common_cds": [
-        "Vampiric Embrace"
-      ]
-    },
-    {
-      "time_s": 326.1,
-      "stddev_s": 5.2,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 607876,
-      "dmg_stddev": 404220,
-      "dmg_min": 196808,
-      "dmg_max": 1159731,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250071,
-          "avg_damage": 477120,
-          "min_damage": 399469,
-          "max_damage": 554771,
-          "count": 2
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 239761,
-          "min_damage": 21517,
-          "max_damage": 512948,
-          "count": 3
-        },
-        {
-          "spell_id": 1245500,
-          "avg_damage": 172718,
-          "min_damage": 170843,
-          "max_damage": 174592,
-          "count": 2
+          "avg_damage": 528739,
+          "min_damage": 309650,
+          "max_damage": 630990,
+          "count": 4
         },
         {
           "spell_id": 1270513,
-          "avg_damage": 137548,
-          "min_damage": 92012,
-          "max_damage": 183084,
-          "count": 2
+          "avg_damage": 89025,
+          "min_damage": 29973,
+          "max_damage": 123778,
+          "count": 3
         }
       ],
-      "ref_game_id": 244552,
+      "ref_game_id": 242056,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -824,31 +607,103 @@
       ]
     },
     {
-      "time_s": 430.6,
-      "stddev_s": 7.1,
-      "count": 5,
+      "time_s": 169.4,
+      "stddev_s": 2.5,
+      "count": 8,
       "total_samples": 10,
-      "dmg_avg": 812462,
-      "dmg_stddev": 598998,
-      "dmg_min": 157755,
-      "dmg_max": 1622018,
+      "dmg_avg": 325227,
+      "dmg_stddev": 128385,
+      "dmg_min": 171331,
+      "dmg_max": 545995,
       "ability_breakdown": [
         {
-          "spell_id": 1259275,
-          "avg_damage": 231396,
-          "min_damage": 146803,
-          "max_damage": 322871,
-          "count": 5
+          "spell_id": 1245302,
+          "avg_damage": 242036,
+          "min_damage": 171331,
+          "max_damage": 375532,
+          "count": 6
         },
         {
-          "spell_id": 32409,
-          "avg_damage": 14326,
-          "min_damage": 10952,
-          "max_damage": 26065,
-          "count": 5
+          "spell_id": 1245175,
+          "avg_damage": 125976,
+          "min_damage": 89800,
+          "max_damage": 177947,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ]
+    },
+    {
+      "time_s": 291,
+      "stddev_s": 10.4,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 517752,
+      "dmg_stddev": 292621,
+      "dmg_min": 82768,
+      "dmg_max": 846095,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 158479,
+          "min_damage": 150121,
+          "max_damage": 168559,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 118291,
+          "min_damage": 82212,
+          "max_damage": 189892,
+          "count": 3
         }
       ],
       "ref_game_id": 256679,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ]
+    },
+    {
+      "time_s": 293.3,
+      "stddev_s": 8.4,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 657147,
+      "dmg_stddev": 572221,
+      "dmg_min": 12249,
+      "dmg_max": 1175776,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 486412,
+          "min_damage": 136449,
+          "max_damage": 678818,
+          "count": 3
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 225902,
+          "min_damage": 142986,
+          "max_damage": 337492,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 242056,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
@@ -863,75 +718,75 @@
   "top_dtk_comparison": [
     {
       "spell_id": 1259275,
-      "avg_pct": 0.2416,
-      "min_pct": 0.21,
-      "max_pct": 0.268,
-      "stddev_pct": 0.0219,
+      "avg_pct": 0.2166,
+      "min_pct": 0.181,
+      "max_pct": 0.275,
+      "stddev_pct": 0.0312,
       "sample_count": 10
     },
     {
       "spell_id": 1250071,
-      "avg_pct": 0.1547,
-      "min_pct": 0.136,
-      "max_pct": 0.173,
-      "stddev_pct": 0.0125,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1245175,
-      "avg_pct": 0.1319,
-      "min_pct": 0.069,
-      "max_pct": 0.214,
-      "stddev_pct": 0.0453,
+      "avg_pct": 0.1446,
+      "min_pct": 0.092,
+      "max_pct": 0.192,
+      "stddev_pct": 0.0322,
       "sample_count": 10
     },
     {
       "spell_id": 1285954,
-      "avg_pct": 0.1235,
-      "min_pct": 0.112,
-      "max_pct": 0.141,
-      "stddev_pct": 0.0087,
+      "avg_pct": 0.1425,
+      "min_pct": 0.11,
+      "max_pct": 0.171,
+      "stddev_pct": 0.0202,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1245175,
+      "avg_pct": 0.1051,
+      "min_pct": 0.032,
+      "max_pct": 0.149,
+      "stddev_pct": 0.035,
       "sample_count": 10
     },
     {
       "spell_id": 1245302,
-      "avg_pct": 0.0857,
-      "min_pct": 0.071,
-      "max_pct": 0.12,
-      "stddev_pct": 0.014,
+      "avg_pct": 0.087,
+      "min_pct": 0.067,
+      "max_pct": 0.103,
+      "stddev_pct": 0.0114,
       "sample_count": 10
     },
     {
       "spell_id": 1245500,
-      "avg_pct": 0.0713,
-      "min_pct": 0.058,
+      "avg_pct": 0.0723,
+      "min_pct": 0.061,
       "max_pct": 0.088,
-      "stddev_pct": 0.0097,
+      "stddev_pct": 0.0073,
       "sample_count": 10
     },
     {
       "spell_id": 1244413,
-      "avg_pct": 0.0495,
-      "min_pct": 0.045,
-      "max_pct": 0.055,
-      "stddev_pct": 0.0028,
-      "sample_count": 10
+      "avg_pct": 0.0636,
+      "min_pct": 0.049,
+      "max_pct": 0.08,
+      "stddev_pct": 0.0124,
+      "sample_count": 9
     },
     {
       "spell_id": 1283712,
-      "avg_pct": 0.0378,
-      "min_pct": 0.034,
-      "max_pct": 0.042,
-      "stddev_pct": 0.0033,
+      "avg_pct": 0.0483,
+      "min_pct": 0.038,
+      "max_pct": 0.075,
+      "stddev_pct": 0.0179,
       "sample_count": 4
     },
     {
       "spell_id": 1249748,
-      "avg_pct": 0.0347,
+      "avg_pct": 0.038,
       "min_pct": 0.032,
-      "max_pct": 0.039,
-      "stddev_pct": 0.0027,
-      "sample_count": 6
+      "max_pct": 0.044,
+      "stddev_pct": 0.0046,
+      "sample_count": 5
     }
   ]
 }
