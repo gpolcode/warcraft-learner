@@ -13,9 +13,11 @@
  */
 
 // Bloodlust / Heroism family - must match the real IDs the engine detects.
-export const BLOODLUST = 2825;
-export const HEROISM = 32182;
-export const TIME_WARP = 80353;
+export const BLOODLUST = 2825;          // Shaman Bloodlust
+export const HEROISM = 32182;           // Alliance Heroism
+export const TIME_WARP = 80353;         // Mage Time Warp
+export const ANCIENT_HYSTERIA = 90355;  // Hunter pet (core hound)
+export const PRIMAL_RAGE = 264667;      // Hunter pet (other)
 export const FURY_OF_THE_ASPECTS = 390386;
 
 // Subtlety Rogue cooldowns (labels for rule/cooldown fixtures).
