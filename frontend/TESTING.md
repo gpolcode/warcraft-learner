@@ -8,8 +8,10 @@ milliseconds, and need no ceremony to set up.
 
 We use [Vitest](https://vitest.dev) via Angular's official
 `@angular/build:unit-test` builder (configured in `angular.json`). jsdom is the
-default DOM environment; the app is zoneless, so `src/test-setup.ts` does **not**
-load zone.js.
+default DOM environment, and the builder initializes the `TestBed` environment
+itself. The app is zoneless (no zone.js); component tests opt into zoneless
+change detection per-`TestBed` through the `mountVm` harness, so no global setup
+file is needed.
 
 ```bash
 npm test            # run the whole suite (ng test -> Vitest)
