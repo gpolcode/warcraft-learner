@@ -123,6 +123,32 @@ expect((vm['overviewMax'] as () => number)()).toBe(300);
 `setInput`, and returns the instance. Pass stub providers as the third argument
 for components that inject services doing I/O.
 
+### Injection-heavy pages: extract a `.vm.ts`
+
+`mountVm` fits components whose state is driven by `input()`. The page
+components (`post-raid`, `pre-fight`) instead inject ~8 services in their
+constructor and load state through async WCL fetches, so mounting them just to
+read a `computed()` would mean stubbing the whole service graph. For these, the
+**pure view-model derivations live in a sibling `*.vm.ts`** (e.g.
+`pre-fight.vm.ts`, `post-raid.vm.ts`): plain functions from data models
+(`Rulebook`, `EncounterBench`, `CharacterGear`, ...) to the row shapes the
+template renders. The component's `computed()`s become one-line wrappers:
+
+```ts
+// pre-fight.ts
+protected readonly cdPlan = computed(() => buildCdPlan(this.rulebook(), this.bench()));
+```
+
+```ts
+// pre-fight.vm.spec.ts - no TestBed, no service stubs
+const rb = rulebook({ cooldowns: [{ name: 'Burst', spell_id: SHADOW_BLADES, cooldown: 90, align_with_bloodlust: true }] });
+expect(buildCdPlan(rb, bench({ perCd: { Burst: { bl_pct: 80 } } }))[0].bloodlustPct).toBe(80);
+```
+
+This is the same functional-core/imperative-shell split as the analysis engine:
+the derivation logic is tested as pure data-in/data-out, and the component is
+left as a thin wrapper that wires signals to those functions.
+
 ## Before & after
 
 The σ-thresholds used to be inline expressions repeated across the monolith:
