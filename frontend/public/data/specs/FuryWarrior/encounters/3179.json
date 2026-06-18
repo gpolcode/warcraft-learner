@@ -3,48 +3,48 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 233.3,
-  "downtime_threshold_ms": 1017,
-  "top_avg_efficiency": 85.5,
-  "top_efficiency_stddev": 9.8,
+  "avg_duration_s": 248.6,
+  "downtime_threshold_ms": 1013,
+  "top_avg_efficiency": 86.6,
+  "top_efficiency_stddev": 9.4,
   "per_cd_benchmarks": {
     "Recklessness": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.8,
-      "stddev_first_cast_s": 4.9,
-      "avg_gap_s": 47.8,
-      "stddev_gap_s": 7.5,
+      "avg_first_cast_s": 1.4,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 46.3,
+      "stddev_gap_s": 6.6,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 1.381,
-        "stddev": 0.135,
-        "min": 1.139,
-        "max": 1.588
+        "avg": 1.426,
+        "stddev": 0.127,
+        "min": 1.19,
+        "max": 1.61
       },
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 1.38,
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 1.43,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Avatar": {
       "sample_count": 10,
-      "avg_first_cast_s": 5,
-      "stddev_first_cast_s": 6.5,
-      "avg_gap_s": 47.2,
-      "stddev_gap_s": 7.6,
+      "avg_first_cast_s": 1.6,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 45.8,
+      "stddev_gap_s": 5.8,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 1.37,
-        "stddev": 0.103,
-        "min": 1.228,
-        "max": 1.492
+        "avg": 1.45,
+        "stddev": 0.129,
+        "min": 1.19,
+        "max": 1.61
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.68,
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 1.16,
       "bl_pct": 0,
       "majority_hold": false
     },
@@ -65,288 +65,255 @@
     },
     "Odyn's Fury": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.3,
-      "stddev_first_cast_s": 2,
-      "avg_gap_s": 30.4,
-      "stddev_gap_s": 9.2,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 30.9,
+      "stddev_gap_s": 9.7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 2.159,
-        "stddev": 0.283,
-        "min": 1.628,
-        "max": 2.541
+        "avg": 2.117,
+        "stddev": 0.249,
+        "min": 1.81,
+        "max": 2.44
       },
-      "avg_uses": 8.2,
-      "avg_uses_per_min": 2.16,
+      "avg_uses": 8.6,
+      "avg_uses_per_min": 2.12,
       "bl_pct": 0,
       "majority_hold": false
     }
   },
   "burst_windows": [
     {
-      "time_s": 1,
+      "time_s": 1.4,
       "stddev_s": 1.1,
       "count": 9,
       "total_samples": 10,
-      "dmg_avg": 3133649,
-      "dmg_stddev": 1668445,
-      "dmg_min": 1551664,
-      "dmg_max": 5571740,
+      "dmg_avg": 4604349,
+      "dmg_stddev": 1148793,
+      "dmg_min": 2013328,
+      "dmg_max": 5589041,
       "ability_breakdown": [
         {
           "spell_id": 335096,
-          "avg_damage": 545637,
+          "avg_damage": 786051,
           "min_damage": 298552,
-          "max_damage": 1017460,
-          "count": 8
+          "max_damage": 1298115,
+          "count": 9
         },
         {
-          "spell_id": 201364,
-          "avg_damage": 329649,
-          "min_damage": 135411,
-          "max_damage": 444333,
-          "count": 5
+          "spell_id": 435222,
+          "avg_damage": 526477,
+          "min_damage": 337652,
+          "max_damage": 670004,
+          "count": 7
+        },
+        {
+          "spell_id": 201363,
+          "avg_damage": 398161,
+          "min_damage": 193738,
+          "max_damage": 488968,
+          "count": 9
         },
         {
           "spell_id": 1,
-          "avg_damage": 293494,
-          "min_damage": 126645,
+          "avg_damage": 394168,
+          "min_damage": 147644,
           "max_damage": 536845,
           "count": 9
         },
         {
-          "spell_id": 201363,
-          "avg_damage": 266060,
-          "min_damage": 119822,
-          "max_damage": 444193,
+          "spell_id": 201364,
+          "avg_damage": 383690,
+          "min_damage": 290335,
+          "max_damage": 444333,
           "count": 7
-        },
-        {
-          "spell_id": 50622,
-          "avg_damage": 217042,
-          "min_damage": 177693,
-          "max_damage": 269175,
-          "count": 5
         }
       ],
       "ref_game_id": null,
       "common_cds": [
         "Recklessness",
-        "Odyn's Fury"
+        "Odyn's Fury",
+        "Avatar"
       ],
       "avg_targets": 1,
-      "window_length_s": 16.2
+      "window_length_s": 21.1
     },
     {
-      "time_s": 44.2,
-      "stddev_s": 2.2,
-      "count": 8,
+      "time_s": 42.9,
+      "stddev_s": 1.9,
+      "count": 9,
       "total_samples": 10,
-      "dmg_avg": 2286812,
-      "dmg_stddev": 802698,
-      "dmg_min": 1061368,
+      "dmg_avg": 2923491,
+      "dmg_stddev": 499127,
+      "dmg_min": 1912837,
       "dmg_max": 3629926,
       "ability_breakdown": [
         {
           "spell_id": 335096,
-          "avg_damage": 519663,
-          "min_damage": 142478,
+          "avg_damage": 656309,
+          "min_damage": 388499,
           "max_damage": 957077,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 435222,
-          "avg_damage": 310265,
-          "min_damage": 206774,
+          "avg_damage": 313373,
+          "min_damage": 188486,
           "max_damage": 509699,
-          "count": 4
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 205208,
-          "min_damage": 127411,
-          "max_damage": 306531,
-          "count": 5
-        },
-        {
-          "spell_id": 201363,
-          "avg_damage": 198725,
-          "min_damage": 104164,
-          "max_damage": 292946,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 201364,
-          "avg_damage": 194228,
-          "min_damage": 88272,
+          "avg_damage": 265830,
+          "min_damage": 210646,
           "max_damage": 321737,
-          "count": 5
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Recklessness",
-        "Odyn's Fury",
-        "Avatar"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 15.8
-    },
-    {
-      "time_s": 91.4,
-      "stddev_s": 8.5,
-      "count": 8,
-      "total_samples": 10,
-      "dmg_avg": 2625609,
-      "dmg_stddev": 688654,
-      "dmg_min": 1700842,
-      "dmg_max": 3495424,
-      "ability_breakdown": [
-        {
-          "spell_id": 335096,
-          "avg_damage": 500411,
-          "min_damage": 267241,
-          "max_damage": 723740,
           "count": 8
         },
         {
           "spell_id": 435791,
-          "avg_damage": 264361,
-          "min_damage": 229661,
-          "max_damage": 334830,
-          "count": 4
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 260824,
-          "min_damage": 178889,
-          "max_damage": 318570,
-          "count": 5
-        },
-        {
-          "spell_id": 201363,
-          "avg_damage": 240698,
-          "min_damage": 136193,
-          "max_damage": 333742,
-          "count": 6
-        },
-        {
-          "spell_id": 201364,
-          "avg_damage": 235216,
-          "min_damage": 129773,
-          "max_damage": 293822,
-          "count": 6
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Recklessness",
-        "Odyn's Fury",
-        "Avatar"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 15.6
-    },
-    {
-      "time_s": 138.1,
-      "stddev_s": 5.1,
-      "count": 9,
-      "total_samples": 10,
-      "dmg_avg": 3980507,
-      "dmg_stddev": 1223663,
-      "dmg_min": 1745326,
-      "dmg_max": 5653147,
-      "ability_breakdown": [
-        {
-          "spell_id": 435222,
-          "avg_damage": 728524,
-          "min_damage": 468237,
-          "max_damage": 1126755,
-          "count": 5
-        },
-        {
-          "spell_id": 335096,
-          "avg_damage": 697871,
-          "min_damage": 131654,
-          "max_damage": 1472629,
-          "count": 9
-        },
-        {
-          "spell_id": 385060,
-          "avg_damage": 484204,
-          "min_damage": 309408,
-          "max_damage": 663280,
+          "avg_damage": 262146,
+          "min_damage": 206339,
+          "max_damage": 338235,
           "count": 7
         },
         {
           "spell_id": 201363,
-          "avg_damage": 337109,
-          "min_damage": 173415,
-          "max_damage": 426003,
-          "count": 6
+          "avg_damage": 255208,
+          "min_damage": 138124,
+          "max_damage": 336706,
+          "count": 8
         },
         {
-          "spell_id": 201364,
-          "avg_damage": 298240,
-          "min_damage": 151232,
-          "max_damage": 415701,
-          "count": 5
+          "spell_id": 1,
+          "avg_damage": 223492,
+          "min_damage": 127411,
+          "max_damage": 269484,
+          "count": 8
         }
       ],
       "ref_game_id": null,
       "common_cds": [
         "Recklessness",
-        "Odyn's Fury",
-        "Avatar"
+        "Avatar",
+        "Odyn's Fury"
       ],
       "avg_targets": 1,
-      "window_length_s": 16.6
+      "window_length_s": 19.5
     },
     {
-      "time_s": 184,
-      "stddev_s": 6,
-      "count": 8,
+      "time_s": 87.3,
+      "stddev_s": 2.7,
+      "count": 9,
       "total_samples": 10,
-      "dmg_avg": 4353016,
-      "dmg_stddev": 1582503,
-      "dmg_min": 1341878,
-      "dmg_max": 7005208,
+      "dmg_avg": 3132995,
+      "dmg_stddev": 424357,
+      "dmg_min": 2174924,
+      "dmg_max": 3712169,
       "ability_breakdown": [
         {
-          "spell_id": 435222,
-          "avg_damage": 995021,
-          "min_damage": 559767,
-          "max_damage": 1439169,
-          "count": 5
-        },
-        {
           "spell_id": 335096,
-          "avg_damage": 706602,
-          "min_damage": 333447,
-          "max_damage": 1220871,
-          "count": 6
+          "avg_damage": 657364,
+          "min_damage": 307908,
+          "max_damage": 1036408,
+          "count": 9
         },
         {
-          "spell_id": 385060,
-          "avg_damage": 527241,
-          "min_damage": 192337,
-          "max_damage": 874521,
-          "count": 5
-        },
-        {
-          "spell_id": 201364,
-          "avg_damage": 336125,
-          "min_damage": 122768,
-          "max_damage": 428773,
-          "count": 5
+          "spell_id": 435222,
+          "avg_damage": 380595,
+          "min_damage": 223949,
+          "max_damage": 545350,
+          "count": 8
         },
         {
           "spell_id": 201363,
-          "avg_damage": 334108,
-          "min_damage": 121100,
-          "max_damage": 472415,
+          "avg_damage": 272211,
+          "min_damage": 223896,
+          "max_damage": 345183,
+          "count": 7
+        },
+        {
+          "spell_id": 435791,
+          "avg_damage": 267797,
+          "min_damage": 177351,
+          "max_damage": 382651,
+          "count": 8
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 259727,
+          "min_damage": 219034,
+          "max_damage": 304884,
+          "count": 8
+        },
+        {
+          "spell_id": 201364,
+          "avg_damage": 248796,
+          "min_damage": 129773,
+          "max_damage": 339849,
+          "count": 7
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Recklessness",
+        "Avatar",
+        "Odyn's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18.9
+    },
+    {
+      "time_s": 135.6,
+      "stddev_s": 2.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4621019,
+      "dmg_stddev": 569501,
+      "dmg_min": 3637868,
+      "dmg_max": 5432272,
+      "ability_breakdown": [
+        {
+          "spell_id": 435222,
+          "avg_damage": 923518,
+          "min_damage": 419952,
+          "max_damage": 1366334,
+          "count": 8
+        },
+        {
+          "spell_id": 335096,
+          "avg_damage": 666742,
+          "min_damage": 303255,
+          "max_damage": 1037410,
+          "count": 10
+        },
+        {
+          "spell_id": 385060,
+          "avg_damage": 514069,
+          "min_damage": 383416,
+          "max_damage": 663280,
+          "count": 9
+        },
+        {
+          "spell_id": 201363,
+          "avg_damage": 329409,
+          "min_damage": 175243,
+          "max_damage": 426003,
+          "count": 9
+        },
+        {
+          "spell_id": 201364,
+          "avg_damage": 294306,
+          "min_damage": 248366,
+          "max_damage": 347130,
+          "count": 7
+        },
+        {
+          "spell_id": 184709,
+          "avg_damage": 263668,
+          "min_damage": 177447,
+          "max_damage": 326692,
           "count": 6
         }
       ],
@@ -357,7 +324,62 @@
         "Avatar"
       ],
       "avg_targets": 1,
-      "window_length_s": 16.7
+      "window_length_s": 18
+    },
+    {
+      "time_s": 180.7,
+      "stddev_s": 3.1,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 5789215,
+      "dmg_stddev": 1799784,
+      "dmg_min": 3111170,
+      "dmg_max": 9359602,
+      "ability_breakdown": [
+        {
+          "spell_id": 435222,
+          "avg_damage": 1375423,
+          "min_damage": 921830,
+          "max_damage": 2101842,
+          "count": 8
+        },
+        {
+          "spell_id": 335096,
+          "avg_damage": 927085,
+          "min_damage": 588718,
+          "max_damage": 1220871,
+          "count": 9
+        },
+        {
+          "spell_id": 385060,
+          "avg_damage": 690779,
+          "min_damage": 285783,
+          "max_damage": 1157030,
+          "count": 8
+        },
+        {
+          "spell_id": 201364,
+          "avg_damage": 400641,
+          "min_damage": 211707,
+          "max_damage": 601070,
+          "count": 6
+        },
+        {
+          "spell_id": 201363,
+          "avg_damage": 394039,
+          "min_damage": 159780,
+          "max_damage": 606771,
+          "count": 8
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Recklessness",
+        "Avatar",
+        "Odyn's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 19.6
     }
   ],
   "gear": {
@@ -365,27 +387,19 @@
     "talent_builds": [
       {
         "key": "v2:108543,108544,108686,109963,109968,110118,110203,110412,110412,110412,90347,90360,90366,90368,90373,90381,90382,90388,90401,90402,90406,90412,90415,90421",
-        "count": 5,
-        "pct": 50,
+        "count": 8,
+        "pct": 80,
         "report_code": "knQ7LRD1g42yZT6N",
         "fight_id": 63,
         "player_name": "Whirlwind"
       },
       {
         "key": "v2:108542,108543,108544,108686,109963,109968,110118,110203,110412,110412,110412,90360,90366,90368,90373,90381,90382,90387,90388,90401,90402,90406,90412,90415,90421",
-        "count": 4,
-        "pct": 40,
+        "count": 2,
+        "pct": 20,
         "report_code": "djmTfwJx9yCPqNM7",
         "fight_id": 20,
         "player_name": "Raqette"
-      },
-      {
-        "key": "v2:108543,108544,108685,108686,109963,109968,110203,110412,110412,110412,90347,90360,90366,90368,90373,90381,90382,90388,90401,90402,90406,90412,90415,90421",
-        "count": 1,
-        "pct": 10,
-        "report_code": "YadJMKHzCkpNT8B9",
-        "fight_id": 26,
-        "player_name": "Smashx"
       }
     ],
     "trinkets": {
@@ -399,14 +413,8 @@
         {
           "id": 249342,
           "name": "Heart of Ancient Hunger",
-          "count": 2,
-          "pct": 20
-        },
-        {
-          "id": 249806,
-          "name": "Radiant Plume",
-          "count": 1,
-          "pct": 10
+          "count": 3,
+          "pct": 30
         }
       ],
       "13": [
@@ -429,34 +437,40 @@
         {
           "id": 8017,
           "name": "",
-          "count": 6,
-          "pct": 60
+          "count": 5,
+          "pct": 50
         },
         {
           "id": 7961,
           "name": "",
           "count": 4,
           "pct": 40
+        },
+        {
+          "id": 7991,
+          "name": "",
+          "count": 1,
+          "pct": 10
         }
       ],
       "2": [
         {
-          "id": 8001,
-          "name": "",
-          "count": 5,
-          "pct": 50
-        },
-        {
           "id": 8031,
           "name": "",
-          "count": 3,
-          "pct": 30
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8001,
+          "name": "",
+          "count": 4,
+          "pct": 40
         },
         {
           "id": 7973,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         }
       ],
       "4": [
@@ -471,34 +485,42 @@
         {
           "id": 8163,
           "name": "",
-          "count": 9,
-          "pct": 90
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 8159,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 4,
+          "pct": 40
         }
       ],
       "7": [
         {
           "id": 7963,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 8019,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         },
         {
           "id": 7993,
           "name": "",
           "count": 1,
           "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "",
+          "count": 2,
+          "pct": 20
         }
       ],
       "10": [
@@ -509,7 +531,7 @@
           "pct": 90
         },
         {
-          "id": 7969,
+          "id": 8025,
           "name": "",
           "count": 1,
           "pct": 10
@@ -523,7 +545,7 @@
           "pct": 90
         },
         {
-          "id": 7969,
+          "id": 8025,
           "name": "",
           "count": 1,
           "pct": 10
@@ -531,30 +553,24 @@
       ],
       "15": [
         {
-          "id": 8041,
-          "name": "",
-          "count": 6,
-          "pct": 60
-        },
-        {
           "id": 7983,
           "name": "",
-          "count": 3,
-          "pct": 30
+          "count": 8,
+          "pct": 80
         },
         {
-          "id": 8039,
+          "id": 8041,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         }
       ],
       "16": [
         {
           "id": 8041,
           "name": "",
-          "count": 6,
-          "pct": 60
+          "count": 5,
+          "pct": 50
         },
         {
           "id": 7983,
@@ -563,103 +579,84 @@
           "pct": 30
         },
         {
-          "id": 8039,
+          "id": 7981,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         }
       ]
     },
     "gems": {
-      "avg_count": 5.7,
+      "avg_count": 6.4,
       "max_count": 8,
       "sample_count": 10
     }
   },
   "top_defensives_summary": [
     {
-      "name": "Enraged Regeneration",
-      "spell_id": 184364,
+      "name": "Rallying Cry",
+      "spell_id": 97462,
       "avg_uses": 1,
       "min_uses": 1,
       "max_uses": 1,
       "sample_count": 1
     },
     {
-      "name": "Rallying Cry",
-      "spell_id": 97462,
-      "avg_uses": 1,
-      "min_uses": 1,
-      "max_uses": 1,
-      "sample_count": 2
-    },
-    {
       "name": "Spell Reflection",
       "spell_id": 23920,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4,
-      "sample_count": 9
+      "sample_count": 8
     }
   ],
   "per_defensive_benchmarks": {
     "Spell Reflection": {
-      "sample_count": 9,
-      "avg_first_cast_s": 107.7,
-      "stddev_first_cast_s": 46.4,
-      "avg_gap_s": 64.6,
-      "stddev_gap_s": 15,
+      "sample_count": 8,
+      "avg_first_cast_s": 137.2,
+      "stddev_first_cast_s": 77.9,
+      "avg_gap_s": 74.7,
+      "stddev_gap_s": 29.1,
       "hold_targets": {
         "1": {
-          "target_s": 164.1,
-          "stddev_s": 41.9,
+          "target_s": 171.3,
+          "stddev_s": 109.7,
           "count": 5,
-          "total_samples": 9
+          "total_samples": 8
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.49,
       "majority_hold": true
     },
     "Rallying Cry": {
-      "sample_count": 2,
-      "avg_first_cast_s": 70,
-      "stddev_first_cast_s": 41.4,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
-      "majority_hold": false
-    },
-    "Enraged Regeneration": {
       "sample_count": 1,
-      "avg_first_cast_s": 230.5,
+      "avg_first_cast_s": 102.6,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.16,
+      "avg_uses_per_min": 0.17,
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 97.9,
-      "stddev_s": 9.4,
-      "count": 8,
+      "time_s": 94.4,
+      "stddev_s": 8.3,
+      "count": 5,
       "total_samples": 10,
-      "dmg_avg": 135377,
-      "dmg_stddev": 103462,
+      "dmg_avg": 103323,
+      "dmg_stddev": 96673,
       "dmg_min": 0,
       "dmg_max": 247928,
       "ability_breakdown": [
         {
           "spell_id": 1250686,
-          "avg_damage": 46889,
+          "avg_damage": 55183,
           "min_damage": 18026,
-          "max_damage": 85255,
+          "max_damage": 82251,
           "count": 4
         }
       ],
@@ -675,50 +672,21 @@
       ]
     },
     {
-      "time_s": 163,
-      "stddev_s": 6,
-      "count": 4,
+      "time_s": 225,
+      "stddev_s": 10.3,
+      "count": 5,
       "total_samples": 10,
-      "dmg_avg": 99679,
-      "dmg_stddev": 41151,
-      "dmg_min": 70251,
-      "dmg_max": 160632,
+      "dmg_avg": 147336,
+      "dmg_stddev": 85008,
+      "dmg_min": 53457,
+      "dmg_max": 258610,
       "ability_breakdown": [
         {
-          "spell_id": 1250686,
-          "avg_damage": 80473,
-          "min_damage": 70251,
-          "max_damage": 84907,
+          "spell_id": 1254018,
+          "avg_damage": 170805,
+          "min_damage": 75516,
+          "max_damage": 258610,
           "count": 4
-        }
-      ],
-      "ref_game_id": 240432,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ]
-    },
-    {
-      "time_s": 212.5,
-      "stddev_s": 14.5,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 116289,
-      "dmg_stddev": 56508,
-      "dmg_min": 70562,
-      "dmg_max": 197688,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250686,
-          "avg_damage": 81345,
-          "min_damage": 70562,
-          "max_damage": 87813,
-          "count": 3
         }
       ],
       "ref_game_id": 240432,
@@ -736,51 +704,51 @@
   "top_dtk_comparison": [
     {
       "spell_id": 1250686,
-      "avg_pct": 0.4341,
-      "min_pct": 0.351,
+      "avg_pct": 0.4313,
+      "min_pct": 0.342,
       "max_pct": 0.503,
-      "stddev_pct": 0.0443,
+      "stddev_pct": 0.0517,
       "sample_count": 10
     },
     {
       "spell_id": 1285504,
-      "avg_pct": 0.2687,
+      "avg_pct": 0.2669,
       "min_pct": 0.213,
-      "max_pct": 0.315,
-      "stddev_pct": 0.033,
+      "max_pct": 0.344,
+      "stddev_pct": 0.0354,
       "sample_count": 10
     },
     {
       "spell_id": 1254018,
-      "avg_pct": 0.194,
-      "min_pct": 0.152,
-      "max_pct": 0.267,
-      "stddev_pct": 0.0345,
+      "avg_pct": 0.2005,
+      "min_pct": 0.171,
+      "max_pct": 0.263,
+      "stddev_pct": 0.0294,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1260835,
+      "avg_pct": 0.0521,
+      "min_pct": 0.024,
+      "max_pct": 0.095,
+      "stddev_pct": 0.0243,
       "sample_count": 10
     },
     {
       "spell_id": 1245592,
-      "avg_pct": 0.0558,
+      "avg_pct": 0.0352,
       "min_pct": 0.016,
-      "max_pct": 0.084,
-      "stddev_pct": 0.0256,
-      "sample_count": 8
-    },
-    {
-      "spell_id": 1260835,
-      "avg_pct": 0.0387,
-      "min_pct": 0.007,
-      "max_pct": 0.069,
-      "stddev_pct": 0.0208,
-      "sample_count": 10
+      "max_pct": 0.073,
+      "stddev_pct": 0.0202,
+      "sample_count": 9
     },
     {
       "spell_id": 1250828,
-      "avg_pct": 0.0253,
-      "min_pct": 0.008,
-      "max_pct": 0.061,
-      "stddev_pct": 0.0218,
-      "sample_count": 6
+      "avg_pct": 0.0216,
+      "min_pct": 0.005,
+      "max_pct": 0.04,
+      "stddev_pct": 0.0131,
+      "sample_count": 5
     }
   ]
 }
