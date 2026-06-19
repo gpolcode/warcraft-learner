@@ -107,6 +107,14 @@ async function askList(prompt, choices) {
 
 // ── WCL OAuth2 client ─────────────────────────────────────────────────────────
 
+// Thrown when the WCL hourly point budget is (about to be) exhausted. The ingest
+// loops catch this to stop cleanly and commit partial progress; the remaining work
+// is picked up on the next scheduled shard. We do NOT retry: the limit resets on
+// an hourly boundary and an hourly task must not stall waiting for it.
+class BudgetExceededError extends Error {
+  constructor(msg) { super(msg); this.name = 'BudgetExceededError'; }
+}
+
 class WCLClient {
   constructor() {
     this.clientId = process.env.WCL_CLIENT_ID || '';
@@ -117,6 +125,9 @@ class WCLClient {
     this._token = null;
     this._tokenExpiry = 0;
     this._serverSlugCache = new Map();
+    // Live rate-limit state, refreshed lazily via assertBudget().
+    this._limitPerHour = null;
+    this._pointsSpentThisHour = 0;
   }
 
   async _getToken() {
@@ -155,13 +166,41 @@ class WCLClient {
     });
     if (!res.ok) {
       const text = await res.text();
+      if (res.status === 429) throw new BudgetExceededError(`WCL rate limit hit (429): ${text.slice(0, 200)}`);
       throw new Error(`WCL API error ${res.status}: ${text.slice(0, 300)}`);
     }
     const body = await res.json();
     if (body.errors) {
-      throw new Error(`GraphQL error: ${JSON.stringify(body.errors)}`);
+      const msg = JSON.stringify(body.errors);
+      if (/rate.?limit|too many requests|exhausted/i.test(msg)) {
+        throw new BudgetExceededError(`WCL rate limit (GraphQL): ${msg.slice(0, 200)}`);
+      }
+      throw new Error(`GraphQL error: ${msg}`);
     }
     return body.data;
+  }
+
+  // Reads the live hourly point budget and caches it on the instance.
+  async getRateLimit() {
+    const data = await this.query(
+      'query { rateLimitData { limitPerHour pointsSpentThisHour pointsResetIn } }',
+    );
+    const rl = (data || {}).rateLimitData || {};
+    if (rl.limitPerHour != null) this._limitPerHour = rl.limitPerHour;
+    if (rl.pointsSpentThisHour != null) this._pointsSpentThisHour = rl.pointsSpentThisHour;
+    return { limitPerHour: this._limitPerHour, pointsSpentThisHour: this._pointsSpentThisHour, pointsResetIn: rl.pointsResetIn ?? null };
+  }
+
+  // Fetches live budget then throws BudgetExceededError if remaining points < margin.
+  async assertBudget(margin) {
+    const { limitPerHour, pointsSpentThisHour } = await this.getRateLimit();
+    if (limitPerHour == null) return; // unknown - don't block
+    const remaining = limitPerHour - pointsSpentThisHour;
+    if (remaining < margin) {
+      throw new BudgetExceededError(
+        `WCL budget low: ${remaining} of ${limitPerHour} remaining (need ${margin})`,
+      );
+    }
   }
 
   async getAllEvents(code, fightId, dataType, startTime, endTime, options = {}) {
@@ -384,61 +423,52 @@ async function fetchV2Talent(wcl, name, serverSlug, serverRegion, encounterId) {
 
 // ── Rankings fetching ─────────────────────────────────────────────────────────
 
-async function fetchTopRankings(wcl, spec, encounterId, count = 10, partitionIds = []) {
+// Cheap rankings fetch: 1 API query. Returns raw ranking objects with an
+// additional `_raw` field so the caller can extract gear/v1-talent later.
+// Server slug + v2 talent are NOT fetched here - defer to enrichRanking().
+async function fetchRankingsLite(wcl, spec, encounterId, count = 10, partitionIds = []) {
   const mapping = SPEC_TO_WCL[spec];
   if (!mapping) throw new Error(`Unknown spec: ${spec}`);
   const [className, specName] = mapping;
 
-  // Try partitions newest-first; if the zone has no partition list fall back to
-  // the API default (null = current partition). This handles the common case
-  // where a patch just dropped and the newest partition is still empty.
+  // Try partitions newest-first; fall back to null (current) when zone has none.
   const attempts = partitionIds.length > 0 ? partitionIds : [null];
-  let rankings = [];
+  let rawRankings = [];
   for (const partition of attempts) {
     const data = await wcl.query(RANKINGS_QUERY, { encounterID: encounterId, className, specName, partition });
     const enc = data.worldData.encounter;
-    let raw = enc.characterRankings;
+    const raw = enc.characterRankings;
     const rankingsData = typeof raw === 'string' ? JSON.parse(raw) : raw;
-    rankings = (rankingsData.rankings || []).slice(0, count);
-    if (rankings.length > 0) break;
+    rawRankings = (rankingsData.rankings || []).slice(0, count);
+    if (rawRankings.length > 0) break;
   }
 
-  // Resolve server slugs for all unique server IDs
-  const uniqueSids = [...new Set(rankings.map(r => (r.server || {}).id).filter(Boolean))];
-  const slugPairs = await Promise.all(uniqueSids.map(sid => wcl.resolveServerSlug(sid)));
-  const sidToSlugs = new Map(uniqueSids.map((sid, i) => [sid, slugPairs[i]]));
+  return rawRankings.map((r, i) => ({
+    rank: i + 1,
+    player: r.name,
+    amount: Math.round(r.amount || 0),
+    duration_s: Math.round((r.duration || 0) / 100) / 10,
+    report_code: (r.report || {}).code,
+    fight_id: (r.report || {}).fightID,
+    server: (r.server || {}).name,
+    _raw: r, // kept for enrichRanking(); not persisted
+  }));
+}
 
-  function slugsFor(r) {
-    const sid = (r.server || {}).id;
-    return sidToSlugs.get(sid) || ['', ''];
-  }
-
-  // Fetch v2 talent keys in parallel
-  const talentKeys = await Promise.all(
-    rankings.map(r => {
-      const [serverSlug, serverRegion] = slugsFor(r);
-      return fetchV2Talent(wcl, r.name || '', serverSlug, serverRegion, encounterId);
-    })
-  );
-
-  return rankings.map((r, i) => {
-    const [serverSlug, serverRegion] = slugsFor(r);
-    // Prefer the Midnight `v2:` key from encounterRankings; fall back to the
-    // characterRankings `v1:` key only if the per-player v2 query came up empty.
-    const talent_key = talentKeys[i] || talentKeyV1(r.talents);
-    return {
-      rank: i + 1,
-      player: r.name,
-      amount: Math.round(r.amount || 0),
-      duration_s: Math.round((r.duration || 0) / 100) / 10,
-      report_code: (r.report || {}).code,
-      fight_id: (r.report || {}).fightID,
-      server: (r.server || {}).name,
-      server_slug: serverSlug,
-      server_region: serverRegion,
-      combatant_info: { talent_key, ...extractGear(r) },
-    };
-  });
+// Expensive per-player enrichment: resolves server slug (1 query, in-memory
+// cached per server) + fetches v2 talent key (1 query). Only called for
+// uncached parses - cached parses reuse combatant_info already on disk.
+async function enrichRanking(wcl, ranking, encounterId) {
+  const r = ranking._raw;
+  const sid = (r.server || {}).id;
+  const [serverSlug, serverRegion] = sid ? await wcl.resolveServerSlug(sid) : ['', ''];
+  const v2Key = await fetchV2Talent(wcl, r.name || '', serverSlug, serverRegion, encounterId);
+  const talent_key = v2Key || talentKeyV1(r.talents);
+  return {
+    server_slug: serverSlug,
+    server_region: serverRegion,
+    combatant_info: { talent_key, ...extractGear(r) },
+  };
 }
 
 // ── Burst window analysis ─────────────────────────────────────────────────────
@@ -1565,6 +1595,19 @@ function syncEncountersIndex(spec) {
 
 // ── Spec selection ────────────────────────────────────────────────────────────
 
+// Canonical ordering of all specs (index stable as new specs are added to
+// SPEC_TO_WCL). Used to assign each spec a deterministic UTC shard hour:
+//   shard_hour = SPEC_ORDER.indexOf(spec) % 24
+// With 39 specs: hours 0-14 own 2 specs, 15-23 own 1. Total: <=2 specs/hour.
+const SPEC_ORDER = Object.keys(SPEC_TO_WCL);
+
+// Returns the subset of known specs (those with a rulebook.json) whose shard
+// hour matches H. Unknown specs (no rulebook yet) are excluded from scheduling.
+function specsForHour(h) {
+  const known = getKnownSpecs();
+  return known.filter(s => SPEC_ORDER.indexOf(s) % 24 === h);
+}
+
 function getKnownSpecs() {
   if (!fs.existsSync(DATA_DIR)) return [];
   return fs.readdirSync(DATA_DIR).filter(d => {
@@ -1628,10 +1671,10 @@ async function ingestSpec(wcl, spec, encounters) {
   }
 
   for (const enc of selectedEncs) {
-    process.stdout.write(`\n[${enc.name}] Fetching top 10 rankings...`);
+    process.stdout.write(`\n[${enc.name}] Fetching top ${TOP_N} rankings...`);
     let rankings;
     try {
-      rankings = await fetchTopRankings(wcl, spec, enc.id, 10, enc.partitionIds || []);
+      rankings = await fetchRankingsLite(wcl, spec, enc.id, TOP_N, enc.partitionIds || []);
     } catch (err) {
       console.log(` FAILED: ${err.message}`);
       continue;
@@ -1641,15 +1684,15 @@ async function ingestSpec(wcl, spec, encounters) {
     const samplesPath = getSamplesPath(spec, enc.id);
     const currentTopKeys = new Set(rankings.map(r => parseKey(r.report_code, r.fight_id)));
 
-    // Keep cached samples still in the current top 10 AND produced by this script version
-    const existingSamples = readJson(samplesPath) || [];
-    const keptSamples = existingSamples.filter(s =>
+    // Keep cached samples still in the current top N AND produced by this script version.
+    const existingSamplesForEnc = readJson(samplesPath) || [];
+    const keptSamples = existingSamplesForEnc.filter(s =>
       currentTopKeys.has(parseKey(s.report_code, s.fight_id, s.ingest_hash))
     );
     const cachedKeys = new Set(keptSamples.map(s => parseKey(s.report_code, s.fight_id)));
     writeJson(samplesPath, keptSamples);
 
-    // Keep positions only for samples that are still valid (same top-N + same script version)
+    // Keep positions only for samples that are still valid (same top-N + same script version).
     const posFile = getPositionsPath(spec, enc.id);
     const existingPosData = readJson(posFile) || {};
     const existingPosParses = Array.isArray(existingPosData.parses) ? existingPosData.parses : [];
@@ -1670,24 +1713,19 @@ async function ingestSpec(wcl, spec, encounters) {
       }
       process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
       try {
-        const res = await analyzeParse(
-          wcl, spec,
-          ranking.report_code, ranking.fight_id,
-          ranking.player, ranking.combatant_info,
-        );
+        const enriched = await enrichRanking(wcl, ranking, enc.id);
+        const res = await analyzeParse(wcl, spec, ranking.report_code, ranking.fight_id, ranking.player, enriched.combatant_info);
         if (res?.cooldown_data) {
           saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, res.cooldown_data);
           savePositions(spec, enc.id, enc.name, res.positions);
         }
       } catch (err) {
-        // Log but continue
         process.stdout.write(` (skip: ${err.message.slice(0, 40)})`);
       }
       done++;
     }
     process.stdout.write(`\r  [${enc.name}] ${rankings.length - cached} analyzed, ${cached} cached.          \n`);
 
-    // Compute bench data
     process.stdout.write(`  [${enc.name}] Computing bench data...`);
     syncEncounterFile(spec, enc.id);
     console.log(' done');
@@ -1700,11 +1738,22 @@ async function ingestSpec(wcl, spec, encounters) {
 async function main() {
   console.log('warcraft-learner - Parse Ingestion CLI');
 
-  // ── CLI mode (non-interactive) ──────────────────────────────────────────────
+  // ── CLI flags ───────────────────────────────────────────────────────────────
+  // --spec SpecName        ingest one spec (non-interactive)
+  // --all                  ingest all known specs (non-interactive)
+  // --shard-hour H         ingest specs assigned to UTC hour H (default: current)
+  //                        default mode when no --spec/--all/--shard-hour given
+  // --limit-enc N          cap to first N encounters (testing/backfill)
+  // --fresh-hours H        skip encounters refreshed within H hours (default 23)
+  // --points-margin N      stop before fewer than N WCL points remain (default 500)
   const argv = process.argv.slice(2);
-  const cliSpec = argv.find((_, i) => argv[i - 1] === '--spec');
+  const flag = (name) => argv.find((_, i) => argv[i - 1] === name);
+  const cliSpec = flag('--spec');
   const cliAll = argv.includes('--all');
-  const cliLimitEnc = parseInt(argv.find((_, i) => argv[i - 1] === '--limit-enc') || '0', 10) || 0;
+  const cliLimitEnc = parseInt(flag('--limit-enc') || '0', 10) || 0;
+  const cliShardHour = flag('--shard-hour');
+  const cliFreshHours = parseFloat(flag('--fresh-hours') || '23');
+  const cliPointsMargin = parseInt(flag('--points-margin') || '500', 10);
 
   let wcl;
   try {
@@ -1724,96 +1773,150 @@ async function main() {
     process.exit(1);
   }
 
+  const opts = { freshHours: cliFreshHours, pointsMargin: cliPointsMargin };
+  const encs = cliLimitEnc > 0 ? encounters.slice(0, cliLimitEnc) : encounters;
+
   if (cliSpec || cliAll) {
+    // Explicit spec or full backfill - no freshness short-circuit by default
+    // (caller passes --fresh-hours 0 to disable, or relies on the default 23h).
     const specs = cliAll ? getKnownSpecs() : [cliSpec];
     if (!specs.length) {
       console.error('No specs found in data directory. Run with --spec SpecName to specify one.');
       process.exit(1);
     }
-    const encs = cliLimitEnc > 0 ? encounters.slice(0, cliLimitEnc) : encounters;
     for (const spec of specs) {
-      await ingestSpecNonInteractive(wcl, spec, encs);
+      await ingestSpecNonInteractive(wcl, spec, encs, opts);
     }
     rl.close();
     return;
   }
 
-  // ── Interactive mode ────────────────────────────────────────────────────────
-  while (true) {
-    const spec = await pickSpec();
-    if (!spec) break;
-
-    await ingestSpec(wcl, spec, encounters);
-
-    const again = await ask('\nIngest another spec? [y/N] ');
-    if (again.trim().toLowerCase() !== 'y') break;
+  // ── Interactive mode (local dev only) ──────────────────────────────────────
+  if (argv.includes('--interactive')) {
+    while (true) {
+      const spec = await pickSpec();
+      if (!spec) break;
+      await ingestSpec(wcl, spec, encounters);
+      const again = await ask('\nIngest another spec? [y/N] ');
+      if (again.trim().toLowerCase() !== 'y') break;
+    }
+    rl.close();
+    return;
   }
 
+  // ── Shard-hour mode (default when --spec/--all not given) ──────────────────
+  // Run specs assigned to the given (or current UTC) hour. The GHA cron calls:
+  //   ingest.mjs --shard-hour $(date -u +%-H)
+  const hour = cliShardHour !== undefined
+    ? parseInt(cliShardHour, 10)
+    : new Date().getUTCHours();
+  const specs = specsForHour(hour);
+  if (!specs.length) {
+    console.log(`No known specs assigned to UTC hour ${hour}. Nothing to do.`);
+    rl.close();
+    return;
+  }
+  console.log(`Shard hour ${hour}: ${specs.join(', ')}`);
+  for (const spec of specs) {
+    await ingestSpecNonInteractive(wcl, spec, encs, opts);
+  }
   rl.close();
 }
 
-async function ingestSpecNonInteractive(wcl, spec, encounters) {
-  console.log(`\nIngesting ${spec} - all ${encounters.length} encounters (top ${TOP_N})`);
-  for (const enc of encounters) {
-    process.stdout.write(`\n[${enc.name}] Fetching top ${TOP_N} rankings...`);
-    let rankings;
-    try {
-      rankings = await fetchTopRankings(wcl, spec, enc.id, TOP_N, enc.partitionIds || []);
-    } catch (err) {
-      console.log(` FAILED: ${err.message}`);
-      continue;
-    }
-    console.log(` ${rankings.length} rankings found`);
+async function ingestSpecNonInteractive(wcl, spec, encounters, opts = {}) {
+  const { freshHours = 23, pointsMargin = 500 } = opts;
+  console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N}, fresh-hours ${freshHours})`);
+  try {
+    for (const enc of encounters) {
+      // Freshness short-circuit: skip this encounter entirely (0 queries) when all
+      // existing samples are current-hash and were collected within freshHours.
+      const samplesPath = getSamplesPath(spec, enc.id);
+      const existingSamples = readJson(samplesPath) || [];
+      if (freshHours > 0 && existingSamples.length >= TOP_N) {
+        const allFresh = existingSamples.every(s => s.ingest_hash === INGEST_HASH);
+        if (allFresh) {
+          const newestMs = Math.max(...existingSamples.map(s => new Date(s.sampled_at || 0).getTime()));
+          const ageH = (Date.now() - newestMs) / 3_600_000;
+          if (ageH < freshHours) {
+            console.log(`\n[${enc.name}] Skipped (all ${TOP_N} samples fresh, ${Math.round(ageH * 10) / 10}h old)`);
+            continue;
+          }
+        }
+      }
 
-    const samplesPath = getSamplesPath(spec, enc.id);
-    const currentTopKeys = new Set(rankings.map(r => parseKey(r.report_code, r.fight_id)));
+      // Check budget before spending a query on rankings.
+      await wcl.assertBudget(pointsMargin);
 
-    // Keep cached samples still in the current top N AND produced by this script version
-    const existingSamples = readJson(samplesPath) || [];
-    const keptSamples = existingSamples.filter(s =>
-      currentTopKeys.has(parseKey(s.report_code, s.fight_id, s.ingest_hash))
-    );
-    const cachedKeys = new Set(keptSamples.map(s => parseKey(s.report_code, s.fight_id)));
-    writeJson(samplesPath, keptSamples);
-
-    // Keep positions only for samples that are still valid (same top-N + same script version)
-    const posFile = getPositionsPath(spec, enc.id);
-    const existingPosData = readJson(posFile) || {};
-    const existingPosParses = Array.isArray(existingPosData.parses) ? existingPosData.parses : [];
-    const keptPositions = existingPosParses.filter(p => cachedKeys.has(parseKey(p.report_code, p.fight_id)));
-    if (keptPositions.length > 0) {
-      writeJson(posFile, { ...existingPosData, parses: keptPositions, sample_count: keptPositions.length }, true);
-    } else if (fs.existsSync(posFile)) {
-      fs.unlinkSync(posFile);
-    }
-
-    let done = 0, cached = 0;
-    for (const ranking of rankings) {
-      const key = parseKey(ranking.report_code, ranking.fight_id);
-      if (cachedKeys.has(key)) {
-        cached++;
-        done++;
+      process.stdout.write(`\n[${enc.name}] Fetching top ${TOP_N} rankings...`);
+      let rankings;
+      try {
+        rankings = await fetchRankingsLite(wcl, spec, enc.id, TOP_N, enc.partitionIds || []);
+      } catch (err) {
+        if (err instanceof BudgetExceededError) throw err;
+        console.log(` FAILED: ${err.message}`);
         continue;
       }
-      process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
-      try {
-        const res = await analyzeParse(
-          wcl, spec, ranking.report_code, ranking.fight_id, ranking.player, ranking.combatant_info,
-        );
-        if (res?.cooldown_data) {
-          saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, res.cooldown_data);
-          savePositions(spec, enc.id, enc.name, res.positions);
-        }
-      } catch (err) {
-        process.stdout.write(` (skip: ${err.message.slice(0, 40)})`);
-      }
-      done++;
-    }
-    process.stdout.write(`\r  [${enc.name}] ${rankings.length - cached} analyzed, ${cached} cached.          \n`);
+      console.log(` ${rankings.length} rankings found`);
 
-    process.stdout.write(`  [${enc.name}] Computing bench data...`);
-    syncEncounterFile(spec, enc.id);
-    console.log(' done');
+      const currentTopKeys = new Set(rankings.map(r => parseKey(r.report_code, r.fight_id)));
+
+      // Keep cached samples still in the current top N AND produced by this script version.
+      const keptSamples = existingSamples.filter(s =>
+        currentTopKeys.has(parseKey(s.report_code, s.fight_id, s.ingest_hash))
+      );
+      const cachedKeys = new Set(keptSamples.map(s => parseKey(s.report_code, s.fight_id)));
+      writeJson(samplesPath, keptSamples);
+
+      // Keep positions only for samples that are still valid.
+      const posFile = getPositionsPath(spec, enc.id);
+      const existingPosData = readJson(posFile) || {};
+      const existingPosParses = Array.isArray(existingPosData.parses) ? existingPosData.parses : [];
+      const keptPositions = existingPosParses.filter(p => cachedKeys.has(parseKey(p.report_code, p.fight_id)));
+      if (keptPositions.length > 0) {
+        writeJson(posFile, { ...existingPosData, parses: keptPositions, sample_count: keptPositions.length }, true);
+      } else if (fs.existsSync(posFile)) {
+        fs.unlinkSync(posFile);
+      }
+
+      let done = 0, cached = 0;
+      for (const ranking of rankings) {
+        const key = parseKey(ranking.report_code, ranking.fight_id);
+        if (cachedKeys.has(key)) {
+          cached++;
+          done++;
+          continue;
+        }
+
+        // Uncached parse: enrich (server slug + v2 talent) then analyze.
+        await wcl.assertBudget(pointsMargin);
+        process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
+        try {
+          const enriched = await enrichRanking(wcl, ranking, enc.id);
+          const combatant_info = enriched.combatant_info;
+          const res = await analyzeParse(wcl, spec, ranking.report_code, ranking.fight_id, ranking.player, combatant_info);
+          if (res?.cooldown_data) {
+            saveParseSample(spec, enc.id, enc.name, ranking.report_code, ranking.fight_id, ranking.player, res.cooldown_data);
+            savePositions(spec, enc.id, enc.name, res.positions);
+          }
+        } catch (err) {
+          if (err instanceof BudgetExceededError) throw err;
+          process.stdout.write(` (skip: ${err.message.slice(0, 40)})`);
+        }
+        done++;
+      }
+      process.stdout.write(`\r  [${enc.name}] ${rankings.length - cached} analyzed, ${cached} cached.          \n`);
+
+      process.stdout.write(`  [${enc.name}] Computing bench data...`);
+      syncEncounterFile(spec, enc.id);
+      console.log(' done');
+    }
+  } catch (err) {
+    if (err instanceof BudgetExceededError) {
+      console.log(`\n[budget] Stopping cleanly: ${err.message}`);
+      console.log('[budget] Partial progress committed; remaining encounters picked up next shard.');
+      return;
+    }
+    throw err;
   }
   console.log(`\nIngestion complete for ${spec}.`);
 }
