@@ -3,62 +3,62 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 201.6,
-  "downtime_threshold_ms": 1454,
+  "avg_duration_s": 207.5,
+  "downtime_threshold_ms": 1446,
   "top_avg_efficiency": 65.9,
-  "top_efficiency_stddev": 4.1,
+  "top_efficiency_stddev": 5.4,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 4,
-      "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 52.4,
-      "stddev_gap_s": 64.4,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 49.4,
+      "stddev_gap_s": 63.3,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 1.143,
-        "stddev": 0.309,
+        "avg": 1.227,
+        "stddev": 0.249,
         "min": 0.599,
-        "max": 1.427
+        "max": 1.431
       },
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 1.14,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 1.23,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.7,
-      "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 128.5,
-      "stddev_gap_s": 4.6,
+      "avg_first_cast_s": 4.1,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 127.8,
+      "stddev_gap_s": 5.2,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
-          "target_s": 132.8,
-          "stddev_s": 4.3,
+          "target_s": 134.6,
+          "stddev_s": 4.9,
           "count": 10,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.632,
-        "stddev": 0.06,
+        "avg": 0.644,
+        "stddev": 0.059,
         "min": 0.52,
-        "max": 0.713
+        "max": 0.716
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.63,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.64,
       "bl_pct": 0,
       "majority_hold": true
     },
     "Halo": {
       "sample_count": 10,
-      "avg_first_cast_s": null,
-      "stddev_first_cast_s": null,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "avg_bl_offset_s": null,
@@ -72,8 +72,8 @@
     },
     "Void Torrent": {
       "sample_count": 10,
-      "avg_first_cast_s": null,
-      "stddev_first_cast_s": null,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "avg_bl_offset_s": null,
@@ -89,54 +89,54 @@
   "burst_windows": [
     {
       "time_s": 3.8,
-      "stddev_s": 0.5,
+      "stddev_s": 1,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 6270550,
-      "dmg_stddev": 532357,
-      "dmg_min": 5569179,
-      "dmg_max": 7245703,
+      "dmg_avg": 6355125,
+      "dmg_stddev": 629899,
+      "dmg_min": 5562431,
+      "dmg_max": 7399031,
       "ability_breakdown": [
         {
           "spell_id": 335467,
-          "avg_damage": 1231576,
+          "avg_damage": 1289957,
           "min_damage": 1065486,
           "max_damage": 1580612,
           "count": 10
         },
         {
           "spell_id": 8092,
-          "avg_damage": 1000197,
-          "min_damage": 757829,
+          "avg_damage": 967513,
+          "min_damage": 740851,
           "max_damage": 1406755,
           "count": 10
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 799176,
-          "min_damage": 714816,
-          "max_damage": 867987,
+          "avg_damage": 803937,
+          "min_damage": 717786,
+          "max_damage": 932254,
           "count": 10
         },
         {
           "spell_id": 391403,
-          "avg_damage": 797973,
-          "min_damage": 686754,
-          "max_damage": 931943,
+          "avg_damage": 797172,
+          "min_damage": 654794,
+          "max_damage": 1028891,
           "count": 10
         },
         {
           "spell_id": 413231,
-          "avg_damage": 534914,
+          "avg_damage": 573075,
           "min_damage": 369440,
-          "max_damage": 697115,
+          "max_damage": 770283,
           "count": 10
         },
         {
-          "spell_id": 589,
-          "avg_damage": 349145,
-          "min_damage": 299035,
-          "max_damage": 401104,
+          "spell_id": 1264176,
+          "avg_damage": 443806,
+          "min_damage": 311093,
+          "max_damage": 567681,
           "count": 5
         }
       ],
@@ -146,59 +146,59 @@
         "Power Infusion"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.2
+      "window_length_s": 20.3
     },
     {
-      "time_s": 132.8,
-      "stddev_s": 4.3,
+      "time_s": 134.6,
+      "stddev_s": 4.9,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 7599411,
-      "dmg_stddev": 1420884,
+      "dmg_avg": 7582516,
+      "dmg_stddev": 1503254,
       "dmg_min": 4481102,
       "dmg_max": 9762493,
       "ability_breakdown": [
         {
           "spell_id": 390964,
-          "avg_damage": 1327961,
+          "avg_damage": 1408121,
           "min_damage": 662028,
           "max_damage": 2027641,
           "count": 10
         },
         {
           "spell_id": 199486,
-          "avg_damage": 965746,
-          "min_damage": 567733,
+          "avg_damage": 1007570,
+          "min_damage": 601413,
           "max_damage": 1643738,
-          "count": 9
+          "count": 10
         },
         {
           "spell_id": 413231,
-          "avg_damage": 784697,
-          "min_damage": 477398,
+          "avg_damage": 843183,
+          "min_damage": 576777,
           "max_damage": 1449004,
           "count": 9
         },
         {
           "spell_id": 335467,
-          "avg_damage": 780191,
-          "min_damage": 615718,
-          "max_damage": 879555,
+          "avg_damage": 726255,
+          "min_damage": 589799,
+          "max_damage": 910828,
           "count": 10
         },
         {
-          "spell_id": 391403,
-          "avg_damage": 698423,
-          "min_damage": 385393,
-          "max_damage": 825181,
-          "count": 6
+          "spell_id": 1264176,
+          "avg_damage": 670122,
+          "min_damage": 593948,
+          "max_damage": 784506,
+          "count": 5
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 690184,
-          "min_damage": 583979,
-          "max_damage": 870426,
-          "count": 6
+          "avg_damage": 605917,
+          "min_damage": 557733,
+          "max_damage": 649889,
+          "count": 5
         }
       ],
       "ref_game_id": null,
@@ -207,27 +207,27 @@
         "Power Infusion"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.2
+      "window_length_s": 20.3
     }
   ],
   "gear": {
     "sample_count": 10,
     "talent_builds": [
       {
-        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
-        "count": 5,
-        "pct": 50,
-        "report_code": "gkjzmQrXMGdT1h8K",
-        "fight_id": 24,
-        "player_name": "Snadepræst"
-      },
-      {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82674,82676,82677,82680,82684,82685,82686,82711,93170",
-        "count": 2,
-        "pct": 20,
+        "count": 3,
+        "pct": 30,
         "report_code": "qzQak4fCH2hnvVwB",
         "fight_id": 7,
         "player_name": "小拉芙"
+      },
+      {
+        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
+        "count": 2,
+        "pct": 20,
+        "report_code": "gkjzmQrXMGdT1h8K",
+        "fight_id": 24,
+        "player_name": "Snadepræst"
       },
       {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82647,82649,82654,82667,82673,82674,82676,82677,82680,82684,82685,82686,82711,93170",
@@ -236,6 +236,14 @@
         "report_code": "MDcn4kRj7GZyFgJa",
         "fight_id": 10,
         "player_name": "Clarity"
+      },
+      {
+        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82675,82676,82679,82680,82684,82685,82686,82711,93170",
+        "count": 1,
+        "pct": 10,
+        "report_code": "jXT4yWm1qArB8cVC",
+        "fight_id": 5,
+        "player_name": "Emipriest"
       },
       {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82647,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
@@ -269,10 +277,16 @@
           "pct": 50
         },
         {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 2,
+          "pct": 20
+        },
+        {
           "id": 249346,
           "name": "Vaelgor's Final Stare",
-          "count": 4,
-          "pct": 40
+          "count": 2,
+          "pct": 20
         },
         {
           "id": 250256,
@@ -287,14 +301,14 @@
         {
           "id": 8017,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 7991,
           "name": "",
-          "count": 4,
-          "pct": 40
+          "count": 2,
+          "pct": 20
         },
         {
           "id": 7961,
@@ -305,10 +319,10 @@
       ],
       "2": [
         {
-          "id": 7973,
+          "id": 7999,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 8001,
@@ -317,10 +331,10 @@
           "pct": 30
         },
         {
-          "id": 7999,
+          "id": 7973,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 3,
+          "pct": 30
         }
       ],
       "4": [
@@ -349,25 +363,17 @@
         {
           "id": 7963,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 6,
+          "pct": 60
         },
         {
           "id": 8019,
           "name": "",
-          "count": 4,
-          "pct": 40
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 7993,
-          "name": "",
-          "count": 1,
-          "pct": 10
-        }
-      ],
-      "9": [
-        {
-          "id": 2841,
           "name": "",
           "count": 1,
           "pct": 10
@@ -377,14 +383,14 @@
         {
           "id": 7967,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 7969,
           "name": "",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         },
         {
           "id": 8025,
@@ -397,17 +403,17 @@
         {
           "id": 7967,
           "name": "",
-          "count": 8,
-          "pct": 80
+          "count": 7,
+          "pct": 70
         },
         {
-          "id": 8025,
+          "id": 7997,
           "name": "",
           "count": 1,
           "pct": 10
         },
         {
-          "id": 7997,
+          "id": 8025,
           "name": "",
           "count": 1,
           "pct": 10
@@ -415,13 +421,13 @@
       ],
       "15": [
         {
-          "id": 8041,
+          "id": 8039,
           "name": "",
-          "count": 5,
-          "pct": 50
+          "count": 6,
+          "pct": 60
         },
         {
-          "id": 8039,
+          "id": 8041,
           "name": "",
           "count": 3,
           "pct": 30
@@ -429,14 +435,14 @@
         {
           "id": 7983,
           "name": "",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         }
       ]
     },
     "gems": {
-      "avg_count": 5.6,
-      "max_count": 7,
+      "avg_count": 5.7,
+      "max_count": 8,
       "sample_count": 10
     }
   },
@@ -447,71 +453,83 @@
       "avg_uses": 1,
       "min_uses": 1,
       "max_uses": 1,
-      "sample_count": 3
+      "sample_count": 4
     },
     {
       "name": "Vampiric Embrace",
       "spell_id": 15286,
-      "avg_uses": 1.5,
+      "avg_uses": 1.9,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 10
+      "max_uses": 3,
+      "sample_count": 9
     }
   ],
   "per_defensive_benchmarks": {
     "Vampiric Embrace": {
-      "sample_count": 10,
-      "avg_first_cast_s": 68.6,
-      "stddev_first_cast_s": 90.6,
-      "avg_gap_s": 131,
-      "stddev_gap_s": 4.4,
+      "sample_count": 9,
+      "avg_first_cast_s": 47.5,
+      "stddev_first_cast_s": 90.7,
+      "avg_gap_s": 128.8,
+      "stddev_gap_s": 5.4,
       "hold_targets": {
         "1": {
-          "target_s": 136.4,
-          "stddev_s": 2,
-          "count": 4,
-          "total_samples": 10
+          "target_s": 136,
+          "stddev_s": 1.8,
+          "count": 5,
+          "total_samples": 9
         }
       },
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.47,
-      "majority_hold": false
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.574,
+        "stddev": 0.198,
+        "min": 0.2,
+        "max": 0.716
+      },
+      "majority_hold": true
     },
     "Desperate Prayer": {
-      "sample_count": 3,
-      "avg_first_cast_s": 114,
-      "stddev_first_cast_s": 109.5,
+      "sample_count": 4,
+      "avg_first_cast_s": 96.4,
+      "stddev_first_cast_s": 95.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.29,
+        "stddev": 0.066,
+        "min": 0.212,
+        "max": 0.357
+      },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 4,
-      "stddev_s": 0.9,
-      "count": 6,
+      "time_s": 4.1,
+      "stddev_s": 1,
+      "count": 7,
       "total_samples": 10,
-      "dmg_avg": 358127,
-      "dmg_stddev": 35876,
-      "dmg_min": 315810,
-      "dmg_max": 422046,
+      "dmg_avg": 344654,
+      "dmg_stddev": 30886,
+      "dmg_min": 302429,
+      "dmg_max": 393834,
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 235949,
+          "avg_damage": 240277,
           "min_damage": 198254,
-          "max_damage": 294881,
-          "count": 6
+          "max_damage": 302429,
+          "count": 7
         },
         {
           "spell_id": 1249251,
-          "avg_damage": 122178,
+          "avg_damage": 121773,
           "min_damage": 117556,
-          "max_damage": 127165,
+          "max_damage": 127811,
           "count": 6
         }
       ],
@@ -527,20 +545,20 @@
       ]
     },
     {
-      "time_s": 134.9,
+      "time_s": 135.9,
       "stddev_s": 4,
       "count": 8,
       "total_samples": 10,
-      "dmg_avg": 364702,
-      "dmg_stddev": 126399,
+      "dmg_avg": 313272,
+      "dmg_stddev": 29180,
       "dmg_min": 292054,
-      "dmg_max": 667766,
+      "dmg_max": 382910,
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 311476,
+          "avg_damage": 306946,
           "min_damage": 292054,
-          "max_damage": 353727,
+          "max_damage": 332306,
           "count": 8
         }
       ],
@@ -559,50 +577,50 @@
   "top_dtk_comparison": [
     {
       "spell_id": 1259903,
-      "avg_pct": 0.8215,
-      "min_pct": 0.785,
-      "max_pct": 0.878,
-      "stddev_pct": 0.0326,
+      "avg_pct": 0.8034,
+      "min_pct": 0.757,
+      "max_pct": 0.861,
+      "stddev_pct": 0.0277,
       "sample_count": 10
     },
     {
       "spell_id": 1280075,
-      "avg_pct": 0.073,
+      "avg_pct": 0.076,
       "min_pct": 0.048,
-      "max_pct": 0.087,
-      "stddev_pct": 0.0164,
-      "sample_count": 5
+      "max_pct": 0.092,
+      "stddev_pct": 0.0154,
+      "sample_count": 6
     },
     {
       "spell_id": 1249251,
-      "avg_pct": 0.0716,
-      "min_pct": 0.064,
-      "max_pct": 0.086,
-      "stddev_pct": 0.0061,
+      "avg_pct": 0.0712,
+      "min_pct": 0.062,
+      "max_pct": 0.084,
+      "stddev_pct": 0.0064,
       "sample_count": 10
     },
     {
       "spell_id": 1249262,
-      "avg_pct": 0.0416,
-      "min_pct": 0.027,
-      "max_pct": 0.073,
-      "stddev_pct": 0.0125,
+      "avg_pct": 0.0513,
+      "min_pct": 0.03,
+      "max_pct": 0.084,
+      "stddev_pct": 0.0178,
       "sample_count": 10
     },
     {
       "spell_id": 1274846,
-      "avg_pct": 0.0098,
+      "avg_pct": 0.009,
       "min_pct": 0.005,
       "max_pct": 0.016,
       "stddev_pct": 0.004,
-      "sample_count": 5
+      "sample_count": 6
     },
     {
       "spell_id": 32409,
-      "avg_pct": 0.008,
+      "avg_pct": 0.0079,
       "min_pct": 0.004,
       "max_pct": 0.013,
-      "stddev_pct": 0.0026,
+      "stddev_pct": 0.0028,
       "sample_count": 9
     }
   ]
