@@ -38,12 +38,14 @@ describe('analyzeDefensives', () => {
 });
 
 describe('analyzeDefensiveFindings', () => {
-  it('does not flag a defensive that was never used when there is no bench data', () => {
+  it('flags a defensive that was never used when bench expects at least one use', () => {
+    const bk = perDefensive({ uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 });
     const players = analyzeDefensives([feint], [], [], [], FIGHT_START, FIVE_MIN);
 
-    const findings = analyzeDefensiveFindings(players, {}, 300);
+    const findings = analyzeDefensiveFindings(players, { Feint: bk }, 300);
 
-    expect(findings.find((f) => f.category === 'lost_cooldown')).toBeUndefined();
+    expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
+    expect(findings[0].message).toContain('Top parsers average');
   });
 
   it('warns when the first use is later than the top-parse mean + 2 sigma', () => {
@@ -52,7 +54,9 @@ describe('analyzeDefensiveFindings', () => {
     const buffs = Events.start().buffWindow(EVASION, '1:00', '1:10').build();
     const players = analyzeDefensives([evasion], [], buffs, [], FIGHT_START, FIVE_MIN);
 
-    const findings = analyzeDefensiveFindings(players, { Evasion: perDefensive({ avg_first_cast_s: 20, stddev_first_cast_s: 2 }) }, 300);
+    const findings = analyzeDefensiveFindings(players, { Evasion: perDefensive({
+      uses_per_min: { avg: 0.2, stddev: 0, min: 0.2, max: 0.2 }, avg_uses_per_min: 0.2,
+      avg_first_cast_s: 20, stddev_first_cast_s: 2 }) }, 300);
 
     expect(findings.some((f) => f.category === 'cooldown_delay')).toBe(true);
   });

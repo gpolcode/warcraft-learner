@@ -10,20 +10,13 @@ import { SHADOW_BLADES, BLOODLUST } from '../../../testing/spell-ids';
 const FIVE_MIN = parseClock('5:00');
 const find = (fs: AnalysisFinding[], category: string) => fs.find((f) => f.category === category);
 
-describe('analyzeCooldowns / lost casts (no bench - silent)', () => {
-  it('does not flag when there is no bench data (encounter not yet ingested)', () => {
-    const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] }).major_cooldowns!;
-
-    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, [], [], cds, [], null);
-
-    expect(find(result.findings, 'lost_cooldown')).toBeUndefined();
-  });
-
+describe('analyzeCooldowns / lost casts', () => {
   it('emits a success finding when the CD was used and no issues detected', () => {
     const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] }).major_cooldowns!;
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 } } });
     const casts = Events.cast(SHADOW_BLADES, '0:05').cast(SHADOW_BLADES, '3:05').build();
 
-    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], null);
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
 
     expect(find(result.findings, 'cooldown_usage')?.severity).toBe('success');
   });
@@ -91,10 +84,12 @@ describe('analyzeCooldowns / lost casts (bench-driven)', () => {
 
 describe('analyzeCooldowns / opener delay (first cast > mean + 2 sigma)', () => {
   const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] }).major_cooldowns!;
+  // 0.4/min * 5min = 2 expected; matches the 2 casts used in each test.
+  const upm = { uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 };
 
   it('warns when the opener is later than the top-parse mean + 2 sigma', () => {
     // bench: opener mean 3s +/- 1s -> threshold 5s. Player opens at 0:10.
-    const bk = bench({ perCd: { 'Shadow Blades': { avg_first_cast_s: 3, stddev_first_cast_s: 1 } } });
+    const bk = bench({ perCd: { 'Shadow Blades': { ...upm, avg_first_cast_s: 3, stddev_first_cast_s: 1 } } });
     const casts = Events.cast(SHADOW_BLADES, '0:10').cast(SHADOW_BLADES, '3:10').build();
 
     const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
@@ -103,7 +98,7 @@ describe('analyzeCooldowns / opener delay (first cast > mean + 2 sigma)', () => 
   });
 
   it('stays quiet for an on-time opener', () => {
-    const bk = bench({ perCd: { 'Shadow Blades': { avg_first_cast_s: 3, stddev_first_cast_s: 1 } } });
+    const bk = bench({ perCd: { 'Shadow Blades': { ...upm, avg_first_cast_s: 3, stddev_first_cast_s: 1 } } });
     const casts = Events.cast(SHADOW_BLADES, '0:04').cast(SHADOW_BLADES, '3:04').build();
 
     const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
@@ -113,13 +108,16 @@ describe('analyzeCooldowns / opener delay (first cast > mean + 2 sigma)', () => 
 });
 
 describe('analyzeCooldowns / Bloodlust alignment', () => {
+  // 0.2/min * 5min = 1 expected; matches the single cast in each test.
+  const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.2, stddev: 0, min: 0.2, max: 0.2 }, avg_uses_per_min: 0.2 } } });
+
   it('marks a BL-wanting cooldown that missed the Bloodlust window as critical', () => {
     const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180, align_with_bloodlust: true }] }).major_cooldowns!;
     // BL pulses at 0:05; the only Shadow Blades is at 4:00, far outside the window.
     const casts = Events.cast(SHADOW_BLADES, '4:00').build();
     const buffs = Events.start().applyBuff(BLOODLUST, '0:05').build();
 
-    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, buffs, cds, [], null);
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, buffs, cds, [], bk);
 
     const align = find(result.findings, 'cooldown_alignment');
     expect(align?.severity).toBe('critical');
@@ -131,7 +129,7 @@ describe('analyzeCooldowns / Bloodlust alignment', () => {
     const casts = Events.cast(SHADOW_BLADES, '4:00').build();
     const buffs = Events.start().applyBuff(BLOODLUST, '0:05').build();
 
-    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, buffs, cds, [], null);
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, buffs, cds, [], bk);
 
     expect(find(result.findings, 'cooldown_alignment')).toBeUndefined();
   });
@@ -141,7 +139,9 @@ describe('analyzeCooldowns / hold suggestion', () => {
   it('suggests holding when the player casts well before the top-parse hold target', () => {
     const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] }).major_cooldowns!;
     // Hold target for cast #2 is ~200s +/- 10s; player fires #2 at 0:50 (way early).
-    const bk = bench({ perCd: { 'Shadow Blades': { hold_targets: { '2': { target_s: 200, stddev_s: 10, count: 8, total_samples: 10 } } } } });
+    // 0.4/min * 5min = 2 expected; matches the 2 casts.
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4,
+      hold_targets: { '2': { target_s: 200, stddev_s: 10, count: 8, total_samples: 10 } } } } });
     const casts = Events.cast(SHADOW_BLADES, '0:05').cast(SHADOW_BLADES, '0:50').build();
 
     const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);

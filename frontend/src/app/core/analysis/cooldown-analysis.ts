@@ -55,25 +55,18 @@ export function analyzeCooldowns(
       const cdIssues: AnalysisFinding[] = [];
       const cdSugg: AnalysisFinding[] = [];
 
-      // Hoist bench lookup so the lost-cast block can use it too.
       const b = perCdBench[cdName];
 
       if (cd.talent_gated && actual === 0) continue;
 
-      // Derive expected cast count from the top-parse usage rate for this encounter+spec.
-      // Handles intentionally held CDs (avg_gap_s wider than tooltip) and CDR specs.
-      // Silently skips the lost-cast check when no bench data exists yet.
-      const benchResult = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null);
-      const expected = benchResult?.expected ?? 0;
+      const { expected, floor } = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null)!;
 
-      if (benchResult != null) {
-        if (actual === 0 && benchResult.expected >= 1) {
-          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
-            message: `${cdName} was never used. Top parsers average ~${benchResult.expected} cast(s) on a ${fmtClock(fightDurS)} fight.` });
-        } else if (actual > 0 && actual < benchResult.floor) {
-          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
-            message: `${cdName} - ${actual} casts; top parsers average ~${benchResult.expected} on a fight this length. Lost ${benchResult.floor - actual} use(s).` });
-        }
+      if (actual === 0 && expected >= 1) {
+        cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+          message: `${cdName} was never used. Top parsers average ~${expected} cast(s) on a ${fmtClock(fightDurS)} fight.` });
+      } else if (actual > 0 && actual < floor) {
+        cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+          message: `${cdName} - ${actual} casts; top parsers average ~${expected} on a fight this length. Lost ${floor - actual} use(s).` });
       }
       if (cdCasts.length) {
         const firstS = rel(cdCasts[0].timestamp) / 1000;

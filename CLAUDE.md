@@ -16,7 +16,7 @@ The app is a **fully static Angular SPA** deployed on GitHub Pages. There is no 
 
 ## Analysis design principles
 
-- **No fallbacks to static values when bench data is absent.** Every analysis finding must be derived from the top-parse bench data for the specific encounter+spec. If the bench data for a finding is missing (encounter not yet ingested, new field added before next ingest run), the finding is silently skipped - not estimated from rulebook constants. A wrong critical is worse than a missing one. This applies to lost-cast detection, held-past-reset, opener delay, and any future findings.
+- **All findings are bench-driven; always assume complete ingested data.** Every analysis finding derives from the top-parse bench data for the specific encounter+spec. Do not add fallbacks, null guards, or special-case code for missing bench data - if data is absent that is an ingestion problem, not an analysis problem. This applies to lost-cast detection, held-past-reset, opener delay, and any future findings.
 
 ## Writing style
 

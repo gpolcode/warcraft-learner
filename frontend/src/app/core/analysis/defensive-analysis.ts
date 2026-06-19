@@ -78,17 +78,14 @@ export function analyzeDefensiveFindings(
 
     if (def.talent_gated && uses === 0) continue;
 
-    const benchResult = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null);
-    const expected = benchResult?.expected ?? 0;
+    const { expected, floor } = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null)!;
 
-    if (benchResult != null) {
-      if (uses === 0 && benchResult.expected >= 1) {
-        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
-          message: `${name} was never used. Top parsers average ~${benchResult.expected} use(s) on a ${fmtClock(fightDurS)} fight.` });
-      } else if (uses > 0 && uses < benchResult.floor) {
-        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
-          message: `${name} - ${uses} uses; top parsers average ~${benchResult.expected} on a fight this length. Lost ${benchResult.floor - uses} use(s).` });
-      }
+    if (uses === 0 && expected >= 1) {
+      issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+        message: `${name} was never used. Top parsers average ~${expected} use(s) on a ${fmtClock(fightDurS)} fight.` });
+    } else if (uses > 0 && uses < floor) {
+      issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+        message: `${name} - ${uses} uses; top parsers average ~${expected} on a fight this length. Lost ${floor - uses} use(s).` });
     }
 
     if (cast_times_s?.length) {
