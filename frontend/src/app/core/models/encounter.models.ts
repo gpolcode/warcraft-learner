@@ -85,6 +85,7 @@ export interface PerDefensiveBenchmark {
   hold_targets: Record<string, { target_s: number; stddev_s: number; count: number; total_samples: number }>;
   avg_uses: number;
   avg_uses_per_min: number | null;
+  uses_per_min?: UsesPerMin;
   majority_hold: boolean;
 }
 

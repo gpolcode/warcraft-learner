@@ -10,7 +10,7 @@ import { RulebookDefensive } from '../models/rulebook.models';
 import { WclEvent } from '../models/wcl.models';
 import { sortBySeverity } from './findings';
 import { fmtClock } from './format';
-import { isOutlierAbove, expectedUses } from './bench-stats';
+import { isOutlierAbove, expectedUses, benchExpectedUses } from './bench-stats';
 
 /** Build per-defensive usage windows (buff-window-centric, cast+duration fallback). */
 export function analyzeDefensives(
@@ -72,19 +72,32 @@ export function analyzeDefensiveFindings(
 
   for (const def of playerDefensives) {
     const { name, cooldown: cooldownS, uses, cast_times_s } = def;
-    const expected = expectedUses(fightDurS, cooldownS);
     const b = perDefBench[name];
     const issues: AnalysisFinding[] = [];
     const suggestions: AnalysisFinding[] = [];
 
     if (def.talent_gated && uses === 0) continue;
 
-    if (uses === 0) {
-      issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
-        message: `${name} was never used. Expected ~${expected} use(s) in a ${fmtClock(fightDurS)} fight.` });
-    } else if (uses < expected) {
-      issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
-        message: `${name} - ${uses} of ${expected} expected uses. Lost ${expected - uses} use(s).` });
+    const benchResult = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null);
+    const expected = benchResult != null ? benchResult.expected : expectedUses(fightDurS, cooldownS);
+
+    if (benchResult != null) {
+      if (uses === 0 && benchResult.expected >= 1) {
+        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+          message: `${name} was never used. Top parsers average ~${benchResult.expected} use(s) on a ${fmtClock(fightDurS)} fight.` });
+      } else if (uses > 0 && uses < benchResult.floor) {
+        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+          message: `${name} - ${uses} uses; top parsers average ~${benchResult.expected} on a fight this length. Lost ${benchResult.floor - uses} use(s).` });
+      }
+    } else {
+      // No usage-rate bench data - fall back to static formula.
+      if (uses === 0) {
+        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+          message: `${name} was never used. Expected ~${expected} use(s) in a ${fmtClock(fightDurS)} fight.` });
+      } else if (uses < expected) {
+        issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
+          message: `${name} - ${uses} of ${expected} expected uses. Lost ${expected - uses} use(s).` });
+      }
     }
 
     if (cast_times_s?.length) {
