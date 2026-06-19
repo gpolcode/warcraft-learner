@@ -7,11 +7,6 @@ on:
     # staying well within the WCL free-tier 3,600 points/hour budget.
     - cron: '0 * * * *'
   workflow_dispatch:
-    inputs:
-      spec:
-        description: 'Spec to ingest (leave empty to run the current hour shard)'
-        required: false
-        default: ''
 
 jobs:
   ingest:
@@ -40,16 +35,7 @@ jobs:
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
-          # Bind the dispatch input to an env var rather than interpolating it
-          # directly into the script - prevents shell injection via the input.
-          SPEC: ${{ github.event.inputs.spec }}
-        run: |
-          if [ -n "$SPEC" ]; then
-            node frontend/scripts/ingest.mjs --spec "$SPEC"
-          else
-            # %-H strips the leading zero so bash passes 8 not 08 (avoids octal).
-            node frontend/scripts/ingest.mjs --shard-hour "$(date -u +%-H)"
-          fi
+        run: node frontend/scripts/ingest.mjs
 
       - name: Pull latest before committing
         env:
