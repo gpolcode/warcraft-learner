@@ -70,6 +70,8 @@ export interface CharacterGear {
   enchants?: Array<{ slot: number; id: number; name: string }>;
   missing_enchant_slots?: number[];
   gem_count?: number;
+  /** Embellishments detected on the player's gear (up to 2 per character). */
+  embellishments?: Array<{ slot: number; item_id: number; item_name: string; item_icon?: string; id: number; name: string }>;
   message?: string;
 }
 

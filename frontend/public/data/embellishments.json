@@ -1,0 +1,39 @@
+{
+  "_comment": "Curated reference for Midnight (WoW 12.x) embellishments. Two detection paths: item_ids covers pre-embellished gear (fixed item ID = the embellished item itself); bonus_ids covers optional-reagent embellishments (crafted base item + a bonus ID added by the reagent). bonus_ids must be populated from in-game data / Wowhead once confirmed - WCL surfaces bonus IDs via COMBATANT_INFO bonus list. Needs per-patch maintenance. NOT part of the rulebook - do not add to prompts/.",
+  "expansion": "Midnight",
+  "item_ids": {
+    "244463": "Murder Row Fleet Feet",
+    "244609": "World Tender's Trunkplate",
+    "244610": "World Tender's Rootslippers",
+    "244611": "World Tender's Barkclasp",
+    "244602": "Ranger-General's Grips",
+    "244605": "Axe-Flingin' Bands",
+    "244601": "World Tree Rootwraps",
+    "244614": "Row Walker's Swiftgrips",
+    "244613": "Row Walker's Insurance",
+    "244612": "Row Walker's Deflectors",
+    "244606": "Hexwoven Strand",
+    "239659": "Sunfire Treads",
+    "258125": "Sunfire Sash",
+    "239657": "Sunfire Bracers",
+    "239658": "Sunfire Cloak",
+    "239662": "Arcanoweave Treads",
+    "239664": "Arcanoweave Cord",
+    "239660": "Arcanoweave Bracers",
+    "239661": "Arcanoweave Cloak",
+    "251073": "Voidstone Shielding Array",
+    "241139": "Thalassian Phoenix Torque",
+    "241140": "Signet of Azerothian Blessings",
+    "241340": "Magister's Alchemist Stone",
+    "251513": "Loa Worshiper's Band",
+    "244472": "Knight-Commander's Palisade",
+    "246304": "Darkmoon Dominion: Hunt",
+    "246305": "Darkmoon Dominion: Blood",
+    "246306": "Darkmoon Dominion: Rot",
+    "246307": "Darkmoon Dominion: Void",
+    "244679": "Murder Row Fishhook"
+  },
+  "bonus_ids": {
+    "_comment": "Bonus IDs that optional-reagent embellishments add to crafted items. Populate from WCL raw gear payload inspection or Wowhead item bonus data once confirmed. Example: { '12345': 'Darkmoon Sigil: Hunt' }. Known reagent item IDs (not bonus IDs) for reference: Arcanoweave Lining=240167, Darkmoon Sigil: Hunt=245876, Darkmoon Sigil: Blood=245871, Darkmoon Sigil: Rot=245877, Darkmoon Sigil: Void=245873, Blessed Pango Charm=244603, Primal Spore Binding=244607, Devouring Banding=244674."
+  }
+}

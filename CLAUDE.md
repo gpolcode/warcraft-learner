@@ -129,6 +129,8 @@ Runs `frontend/scripts/ingest.mjs`. Also runs as `ingest-parses.yml` GHA daily +
 GHA commits `frontend/public/data/specs/**`, which triggers `deploy-pages.yml` to rebuild and redeploy.
 
 > **Keep data shapes in sync.** The bench/sample shape that `ingest.mjs` writes is mirrored in the frontend consumers - `core/models/analysis.models.ts`, `core/models/encounter.models.ts`, `core/services/analysis-core.ts` - and documented in the **Data models** section below. **Whenever you change what ingestion emits (add/remove/rename a field), check and update all of these together, plus the rulebook skill + schema** (`prompts/rulebook_skill.md`, `prompts/rulebook.schema.json`) since ingestion consumes the rulebook (`duration`, `spell_id`s). Dropping a feature end-to-end means removing it from ingestion **and** every consumer above. Already-committed JSON under `data/specs/**` keeps stale fields until the next re-ingest - harmless, since consumers ignore unknown fields.
+>
+> **Embellishment reference file** - `frontend/public/data/embellishments.json` maps item IDs and bonus IDs to embellishment display names. This file is read by both `ingest.mjs` (at startup) and the frontend `EmbellishmentRefService` (lazy HTTP load). It requires **per-patch maintenance** when new embellishments are added in a major patch or expansion. Two detection paths: `item_ids` for pre-embellished items (fixed item ID = the embellished gear itself), `bonus_ids` for optional-reagent embellishments (a bonus ID the reagent adds to crafted gear). Embellishments are NOT part of the rulebook - do not add to `prompts/`.
 
 ### Rulebook management (`npm run admin` / `npm run scrape`)
 No web UI for admin. Everything is CLI.
@@ -142,11 +144,12 @@ Entirely client-side. No backend calls.
 
 1. User enters a character name/server/region (or WCL character URL).
 2. `wcl-api.ts` queries `characterData.character.encounterRankings(includeCombatantInfo: true)` directly on WCL for the selected encounter - extracts gear, talents from the player's most recent ranked kill.
-3. Bench data (talent distributions, trinket usage, enchant usage) loaded from static `/data/specs/{spec}/encounters/{enc_id}.json`.
-4. Three cards rendered client-side:
+3. Bench data (talent distributions, trinket usage, enchant usage, embellishment usage) loaded from static `/data/specs/{spec}/encounters/{enc_id}.json`.
+4. Four cards rendered client-side:
    - **Talents** - compares player's `v2:` talent fingerprint against top-parse distribution.
    - **Trinkets** - per-slot (12 = Trinket 1, 13 = Trinket 2) comparison.
-   - **Enchants** - per-slot; missing enchants on high-consensus slots (≥70% of top parsers) flagged as warnings.
+   - **Enchants** - per-slot; missing enchants on high-consensus slots (>=70% of top parsers) flagged as warnings.
+   - **Embellishments** - detects the player's embellishments via item ID (pre-embellished items) or bonus ID (optional-reagent embellishments); compares against `gear.embellishments` from the bench. Curated reference in `frontend/public/data/embellishments.json` (requires per-patch maintenance). Rendered Trinket-style: item icon + Wowhead link via `wl-game-icon`, effect name and comparison note beneath.
 
 ### Encounter selection
 Encounters loaded from `/data/specs/{spec}/encounters.json` (static file). Filtered client-side to:
@@ -190,6 +193,7 @@ List of raw parse samples. Source of truth for bench files.
 | `trinkets` | top-level | `{slot, id, name}` for slots 12 and 13 |
 | `enchants` | top-level | `{slot, id, name}` for all enchanted slots |
 | `gems` | top-level | `{slot, id}` per socketed gem. Only the count is used (filled-socket check on `/pre`); gem choice is a sim question, so ids are not aggregated. Bench `gear.gems` = `{avg_count, max_count, sample_count}` |
+| `embellishments` | top-level | `{slot, item_id, item_name, id, name}` for each embellished slot detected. `id` is the detecting key (item_id for pre-embellished items, bonus_id for optional-reagent embellishments). Bench `gear.embellishments` = `[{id, name, count, pct}]` flat ranked list (up to 10) |
 
 ### Rulebook JSON schema
 

@@ -27,6 +27,34 @@ const FRONTEND_ROOT = path.resolve(__dirname, '..');
 // WL_DATA_DIR lets a test/dry run write elsewhere instead of the committed data dir.
 const DATA_DIR = process.env.WL_DATA_DIR || path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
 
+// ── Embellishment reference (loaded once at startup) ──────────────────────────
+// Maps item IDs and bonus IDs -> embellishment display name.
+// See frontend/public/data/embellishments.json for the curation notes.
+const EMBELLISHMENT_REF_PATH = path.join(FRONTEND_ROOT, 'public', 'data', 'embellishments.json');
+let _embellishmentRef = null;
+function getEmbellishmentRef() {
+  if (_embellishmentRef) return _embellishmentRef;
+  try {
+    const raw = JSON.parse(fs.readFileSync(EMBELLISHMENT_REF_PATH, 'utf8'));
+    // Convert keys to numbers for fast lookup; skip comment keys.
+    const itemIds = new Map(
+      Object.entries(raw.item_ids || {})
+        .filter(([k]) => !k.startsWith('_'))
+        .map(([k, v]) => [parseInt(k, 10), v]),
+    );
+    const bonusIds = new Map(
+      Object.entries(raw.bonus_ids || {})
+        .filter(([k]) => !k.startsWith('_'))
+        .map(([k, v]) => [parseInt(k, 10), v]),
+    );
+    _embellishmentRef = { itemIds, bonusIds };
+  } catch (e) {
+    console.warn('[ingest] Could not load embellishments.json:', e.message);
+    _embellishmentRef = { itemIds: new Map(), bonusIds: new Map() };
+  }
+  return _embellishmentRef;
+}
+
 // Hash of this script file - used as a cache key so any change to ingestion logic
 // automatically invalidates existing parse samples and forces re-analysis.
 const INGEST_HASH = crypto.createHash('sha256')
@@ -326,13 +354,22 @@ async function getEncounters(wcl) {
 
 const TRINKET_INDICES = new Set([12, 13]);
 
-// Trinkets (gear slots 12/13) and permanent enchants. Gear shape is identical
-// across both ranking APIs, so this is shared.
+// Trinkets (gear slots 12/13), permanent enchants, filled-socket count, and
+// embellishments. Gear shape is identical across both ranking APIs, so this is
+// shared.
+//
+// Embellishment detection uses two paths from the curated reference file:
+//   1. item_ids  - pre-embellished items with a fixed item ID.
+//   2. bonus_ids - optional-reagent embellishments added to crafted gear,
+//      identified by a bonus ID in item.bonusIDs (if WCL surfaces it).
 function extractGear(rankingEntry) {
   const gear = rankingEntry.gear || [];
   const trinkets = [];
   const enchants = [];
   const gems = [];
+  const embellishments = [];
+  const ref = getEmbellishmentRef();
+
   for (let idx = 0; idx < gear.length; idx++) {
     const item = gear[idx];
     if (!item || !item.id) continue;
@@ -356,8 +393,23 @@ function extractGear(rankingEntry) {
       const gid = parseInt(g && g.id) || (g && g.id);
       if (gid) gems.push({ slot: idx, id: gid });
     }
+
+    // Embellishment detection: check item ID first (pre-embellished items),
+    // then each bonus ID in item.bonusIDs (optional-reagent embellishments).
+    // WCL surfaces bonus IDs from COMBATANT_INFO bonus-list data when available.
+    let embName = ref.itemIds.get(itemId) || null;
+    let embId = embName ? itemId : null;
+    if (!embName && Array.isArray(item.bonusIDs)) {
+      for (const bid of item.bonusIDs) {
+        const n = ref.bonusIds.get(parseInt(bid, 10) || bid);
+        if (n) { embName = n; embId = parseInt(bid, 10) || bid; break; }
+      }
+    }
+    if (embName) {
+      embellishments.push({ slot: idx, item_id: itemId, item_name: name, id: embId, name: embName });
+    }
   }
-  return { trinkets, enchants, gems };
+  return { trinkets, enchants, gems, embellishments };
 }
 
 // `characterRankings` talents - old WCL format: [{talentID: N, points: P}].
@@ -1028,6 +1080,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
     trinkets: gearData.trinkets || [],
     enchants: gearData.enchants || [],
     gems: gearData.gems || [],
+    embellishments: gearData.embellishments || [],
   };
 
   let positions = null;
@@ -1162,6 +1215,10 @@ function aggregateGear(samples) {
   const enchantCounters = new Map();
   const enchantNames = new Map();
   const gemCounts = [];
+  // Embellishments are character-wide (up to 2), not slot-bound for ranking
+  // purposes. Keyed by resolved name (stable identity across items/patches).
+  // Stores { count, example_id } where example_id is an item_id or bonus_id.
+  const embellishmentCounter = new Map();
 
   for (const s of samples) {
     const cdData = s.cooldown_data || {};
@@ -1197,6 +1254,17 @@ function aggregateGear(samples) {
     }
 
     if (Array.isArray(cdData.gems)) gemCounts.push(cdData.gems.length);
+
+    for (const emb of (cdData.embellishments || [])) {
+      const embName = emb.name;
+      if (!embName) continue;
+      const existing = embellishmentCounter.get(embName);
+      if (existing) {
+        existing.count++;
+      } else {
+        embellishmentCounter.set(embName, { count: 1, example_id: emb.item_id || emb.id || null });
+      }
+    }
   }
 
   const talentBuilds = [...talentCounter.entries()]
@@ -1231,7 +1299,19 @@ function aggregateGear(samples) {
     ? { avg_count: round(mean(gemCounts), 1), max_count: Math.max(...gemCounts), sample_count: gemCounts.length }
     : null;
 
-  return { sample_count: total, talent_builds: talentBuilds, trinkets, enchants, gems };
+  // Embellishment usage: flat ranked list, top 10 (embellishments are per-character,
+  // not per-slot, so we aggregate by name across all slots).
+  const embellishments = [...embellishmentCounter.entries()]
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 10)
+    .map(([name, { count, example_id }]) => ({
+      id: example_id,
+      name,
+      count,
+      pct: total ? Math.round(count / total * 100) : 0,
+    }));
+
+  return { sample_count: total, talent_builds: talentBuilds, trinkets, enchants, gems, embellishments };
 }
 
 // ── File I/O ──────────────────────────────────────────────────────────────────

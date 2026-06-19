@@ -30,6 +30,7 @@ import {
   slotName, statusIcon, statusClass,
   buildCdPlan, buildDefensivePlan, buildEnchantRows, enchantStatusOf,
   buildTalentBuilds, buildGemCheck, buildBurstWindows, talentStatusOf,
+  buildEmbellishmentRows, embellishmentStatusOf,
 } from './pre-fight.vm';
 
 @Component({
@@ -75,6 +76,8 @@ export class PreFightComponent implements OnInit {
   protected readonly talentBuilds = computed(() => buildTalentBuilds(this.gearStats(), this.charGear()?.talent_key ?? ''));
   protected readonly gemCheck = computed(() => buildGemCheck(this.gearStats(), this.charGear()?.gem_count));
   protected readonly burstWindows = computed(() => buildBurstWindows(this.rulebook(), this.bench()));
+  protected readonly embellishmentRows = computed(() => buildEmbellishmentRows(this.charGear(), this.gearStats()));
+  protected readonly embellishmentStatus = computed<GearStatus>(() => embellishmentStatusOf(this.embellishmentRows()));
 
   protected readonly showMap = computed(() => !!this.panel.positions());
 

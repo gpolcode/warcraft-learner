@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   buildCdPlan, buildDefensivePlan, buildEnchantRows, enchantStatusOf,
   buildTalentBuilds, buildGemCheck, buildBurstWindows, talentStatusOf,
+  buildEmbellishmentRows, embellishmentStatusOf,
 } from './pre-fight.vm';
 import { CharacterGear } from '../../core/models/wcl.models';
 import { EncounterGearStats } from '../../core/models/encounter.models';
@@ -204,5 +205,73 @@ describe('talentStatusOf', () => {
   it('warns when the player runs a comparable but off-meta build', () => {
     const status = talentStatusOf(stats([{ key: 'v2:a', pct: 70 }]), 'v2:offmeta');
     expect(status.status).toBe('warn');
+  });
+});
+
+// ── buildEmbellishmentRows / embellishmentStatusOf ────────────────────────────
+
+describe('buildEmbellishmentRows / embellishmentStatusOf', () => {
+  const statsWithEmbs = (embellishments: EncounterGearStats['embellishments']): EncounterGearStats =>
+    ({ talent_builds: [], trinkets: {}, enchants: {}, embellishments });
+
+  const gearWithEmbs = (embellishments: NonNullable<CharacterGear['embellishments']>): CharacterGear =>
+    ({ found: true, embellishments });
+
+  it('is empty when neither side has embellishment data', () => {
+    expect(buildEmbellishmentRows(null, null)).toEqual([]);
+    expect(buildEmbellishmentRows(gearWithEmbs([]), statsWithEmbs([]))).toEqual([]);
+  });
+
+  it('marks a matching embellishment ok with run-by note', () => {
+    const topEmbs = [{ id: 244601, name: 'World Tree Rootwraps', pct: 80 }];
+    const gear = gearWithEmbs([
+      { slot: 7, item_id: 244601, item_name: 'World Tree Rootwraps', item_icon: 'icon.jpg', id: 244601, name: 'World Tree Rootwraps' },
+    ]);
+    const rows = buildEmbellishmentRows(gear, statsWithEmbs(topEmbs));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'World Tree Rootwraps', note: 'Run by 80% of top parsers' });
+  });
+
+  it('marks an off-meta embellishment info with a top-parsers-prefer note', () => {
+    const topEmbs = [{ id: 244601, name: 'World Tree Rootwraps', pct: 80 }];
+    const gear = gearWithEmbs([
+      { slot: 9, item_id: 244614, item_name: "Row Walker's Swiftgrips", item_icon: '', id: 244614, name: "Row Walker's Swiftgrips" },
+    ]);
+    const rows = buildEmbellishmentRows(gear, statsWithEmbs(topEmbs));
+    expect(rows[0]).toMatchObject({ status: 'info', name: "Row Walker's Swiftgrips" });
+    expect(rows[0].note).toContain('World Tree Rootwraps');
+  });
+
+  it('warns when a high-consensus embellishment (>= 70%) is absent from the player', () => {
+    const topEmbs = [{ id: 244601, name: 'World Tree Rootwraps', pct: 80 }];
+    const rows = buildEmbellishmentRows(gearWithEmbs([]), statsWithEmbs(topEmbs));
+    expect(rows[0]).toMatchObject({ status: 'warn', name: 'World Tree Rootwraps' });
+    expect(embellishmentStatusOf(rows)).toBe('warn');
+  });
+
+  it('does not warn on low-consensus top embellishments (< 70%)', () => {
+    const topEmbs = [{ id: 244601, name: 'World Tree Rootwraps', pct: 60 }];
+    const rows = buildEmbellishmentRows(gearWithEmbs([]), statsWithEmbs(topEmbs));
+    expect(rows).toHaveLength(0);
+  });
+
+  it('shows a player embellishment even without bench data', () => {
+    const gear = gearWithEmbs([
+      { slot: 7, item_id: 244601, item_name: 'World Tree Rootwraps', item_icon: '', id: 244601, name: 'World Tree Rootwraps' },
+    ]);
+    const rows = buildEmbellishmentRows(gear, statsWithEmbs([]));
+    expect(rows[0]).toMatchObject({ status: 'ok', note: null });
+  });
+
+  it('is unknown status when no rows', () => {
+    expect(embellishmentStatusOf([])).toBe('unknown');
+  });
+
+  it('is ok when all rows are ok or info', () => {
+    const rows = buildEmbellishmentRows(
+      gearWithEmbs([{ slot: 7, item_id: 244601, item_name: 'World Tree Rootwraps', item_icon: '', id: 244601, name: 'World Tree Rootwraps' }]),
+      statsWithEmbs([{ id: 244601, name: 'World Tree Rootwraps', pct: 80 }]),
+    );
+    expect(embellishmentStatusOf(rows)).toBe('ok');
   });
 });

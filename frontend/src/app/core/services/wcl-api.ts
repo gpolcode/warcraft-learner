@@ -3,11 +3,21 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { WclAuthService } from './wcl-auth';
 import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclUserCharacter, WclEvent } from '../models/wcl.models';
+import { EmbellishmentRefService } from './embellishment-ref';
 
 interface PlayerDetailEntry { id: number; type: string; name: string; specs?: Array<{ spec: string }>; }
 type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
-interface WclGearItem { id?: number | string; name?: string; icon?: string; permanentEnchant?: number | string; permanentEnchantName?: string; gems?: Array<{ id?: number | string }>; }
+interface WclGearItem {
+  id?: number | string;
+  name?: string;
+  icon?: string;
+  permanentEnchant?: number | string;
+  permanentEnchantName?: string;
+  gems?: Array<{ id?: number | string }>;
+  /** Bonus list IDs from COMBATANT_INFO - present when WCL surfaces them. Used for optional-reagent embellishment detection. */
+  bonusIDs?: Array<number | string>;
+}
 interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
 interface WclTalentTree { class?: Record<string, WclTalentNode[]>; spec?: Record<string, WclTalentNode[]>; }
 interface WclRankEntry {
@@ -75,6 +85,7 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
 export class WclApiService {
   private readonly auth = inject(WclAuthService);
   private readonly http = inject(HttpClient);
+  private readonly embellishmentRef = inject(EmbellishmentRefService);
 
   async query<T = unknown>(gql: string, variables: Record<string, unknown> = {}): Promise<T> {
     const token = this.auth.getToken();
@@ -210,7 +221,10 @@ export class WclApiService {
       (r.startTime || 0) > (best.startTime || 0) ? r : best
     );
 
-    const { trinkets, enchants, gem_count } = this._extractGear(mostRecent);
+    // Load embellishment reference before extracting gear (lazy, cached after first call).
+    await this.embellishmentRef.load();
+
+    const { trinkets, enchants, embellishments, gem_count } = this._extractGear(mostRecent);
     const talent_key = this._talentKeyV2(mostRecent.talents);
     const specPart = mostRecent.spec || '';
     const className = CLASS_NAMES[mostRecent.class ?? -1] || '';
@@ -229,13 +243,22 @@ export class WclApiService {
       }
     }
 
-    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants, gem_count };
+    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code || null, talent_key, trinkets, enchants, embellishments, gem_count };
   }
 
-  /** Trinkets (slots 12/13), permanent enchants and filled-socket count from a ranking's combatant info. */
-  private _extractGear(entry: WclRankEntry): { trinkets: NonNullable<CharacterGear['trinkets']>; enchants: NonNullable<CharacterGear['enchants']>; gem_count: number } {
+  /**
+   * Trinkets (slots 12/13), permanent enchants, filled-socket count, and
+   * embellishments from a ranking's combatant info.
+   */
+  private _extractGear(entry: WclRankEntry): {
+    trinkets: NonNullable<CharacterGear['trinkets']>;
+    enchants: NonNullable<CharacterGear['enchants']>;
+    embellishments: NonNullable<CharacterGear['embellishments']>;
+    gem_count: number;
+  } {
     const trinkets: NonNullable<CharacterGear['trinkets']> = [];
     const enchants: NonNullable<CharacterGear['enchants']> = [];
+    const embellishments: NonNullable<CharacterGear['embellishments']> = [];
     let gem_count = 0;
     (entry.gear || []).forEach((item, idx) => {
       if (item?.id == null) return;
@@ -251,8 +274,19 @@ export class WclApiService {
       for (const g of (item.gems || [])) {
         if (g?.id != null) gem_count++;
       }
+      const match = this.embellishmentRef.resolve(id, item.bonusIDs);
+      if (match) {
+        embellishments.push({
+          slot: idx,
+          item_id: id,
+          item_name: item.name || '',
+          item_icon: this._iconFile(item.icon),
+          id: match.id,
+          name: match.name,
+        });
+      }
     });
-    return { trinkets, enchants, gem_count };
+    return { trinkets, enchants, embellishments, gem_count };
   }
 
   /** Midnight talent tree (from `encounterRankings`) → sorted `v2:` node-id key. */

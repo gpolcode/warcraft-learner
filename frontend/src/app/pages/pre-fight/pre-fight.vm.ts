@@ -60,6 +60,21 @@ export interface EnchantRow {
   note: string | null;
 }
 
+export interface EmbellishmentRow {
+  slotName: string;
+  status: GearStatus;
+  /** Embellishment effect name (from the curated reference). */
+  name: string;
+  /** Host item ID - used for wl-game-icon. */
+  itemId: number;
+  /** Host item name - used for wl-game-icon. */
+  itemName: string;
+  /** Host item icon filename (may be empty string). */
+  itemIcon: string;
+  /** Comparison note shown below the item link. */
+  note: string | null;
+}
+
 export interface TalentBuildRow {
   pct: number;
   isPlayer: boolean;
@@ -178,6 +193,85 @@ export function buildEnchantRows(gear: CharacterGear | null, stats: EncounterGea
 }
 
 export function enchantStatusOf(rows: EnchantRow[]): GearStatus {
+  return rows.some(r => r.status === 'warn') ? 'warn' : 'ok';
+}
+
+/**
+ * Embellishments: compare the player's detected embellishments against what
+ * top parsers run, flagging off-meta or missing high-consensus embellishments.
+ *
+ * Mirrors buildEnchantRows but uses a flat list (embellishments are character-wide,
+ * not slot-keyed) and renders Trinket-style (item icon + effect name note).
+ */
+export function buildEmbellishmentRows(gear: CharacterGear | null, stats: EncounterGearStats | null): EmbellishmentRow[] {
+  const topList = stats?.embellishments ?? [];
+  const playerEmbs = gear?.embellishments ?? [];
+
+  if (!topList.length && !playerEmbs.length) return [];
+
+  const rows: EmbellishmentRow[] = [];
+  const topNames = new Set(topList.map(e => e.name));
+
+  // Player rows: one row per detected embellishment on the player's gear.
+  for (const emb of playerEmbs) {
+    const top = topList.find(t => t.name === emb.name);
+    if (top) {
+      rows.push({
+        slotName: slotName(emb.slot),
+        status: 'ok',
+        name: emb.name,
+        itemId: emb.item_id,
+        itemName: emb.item_name,
+        itemIcon: emb.item_icon ?? '',
+        note: `Run by ${top.pct}% of top parsers`,
+      });
+    } else if (topList.length > 0) {
+      // Off-meta: player has an embellishment not in the top-parse list.
+      const bestTop = topList[0];
+      rows.push({
+        slotName: slotName(emb.slot),
+        status: 'info',
+        name: emb.name,
+        itemId: emb.item_id,
+        itemName: emb.item_name,
+        itemIcon: emb.item_icon ?? '',
+        note: `Top parsers prefer ${bestTop.name} (${bestTop.pct}%)`,
+      });
+    } else {
+      // No bench data - just show the player's embellishment positively.
+      rows.push({
+        slotName: slotName(emb.slot),
+        status: 'ok',
+        name: emb.name,
+        itemId: emb.item_id,
+        itemName: emb.item_name,
+        itemIcon: emb.item_icon ?? '',
+        note: null,
+      });
+    }
+  }
+
+  // Missing high-consensus embellishments: warn when a top embellishment with
+  // pct >= 70 is not on the player at all (same threshold as enchants).
+  for (const top of topList) {
+    if (top.pct >= 70 && !playerEmbs.some(e => e.name === top.name)) {
+      rows.push({
+        slotName: '',
+        status: 'warn',
+        name: top.name,
+        itemId: top.id ?? 0,
+        itemName: top.name,
+        itemIcon: '',
+        note: `${top.pct}% of top parsers run this`,
+      });
+    }
+  }
+
+  return rows;
+}
+
+export function embellishmentStatusOf(rows: EmbellishmentRow[]): GearStatus {
+  if (!rows.length) return 'unknown';
   return rows.some(r => r.status === 'warn') ? 'warn' : 'ok';
 }
 

@@ -139,6 +139,40 @@
                 }
               </mat-card>
             }
+
+            <!-- Embellishments -->
+            @if (gearStats() || charGear()) {
+              <mat-card class="p-4">
+                <div class="mb-2 flex items-center gap-2">
+                  <mat-icon [class]="statusClass(embellishmentStatus())">{{ statusIcon(embellishmentStatus()) }}</mat-icon>
+                  <span class="font-medium">Embellishments</span>
+                </div>
+                @if (embellishmentRows().length) {
+                  @for (row of embellishmentRows(); track row.itemId + '-' + row.name) {
+                    <div class="flex items-start gap-3 py-1">
+                      @if (row.slotName) {
+                        <span class="w-16 shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotName }}</span>
+                      } @else {
+                        <span class="w-16 shrink-0"></span>
+                      }
+                      <div class="min-w-0 text-[13px]">
+                        @if (row.itemId) {
+                          <wl-game-icon kind="item" [id]="row.itemId" [name]="row.itemName" [icon]="row.itemIcon"></wl-game-icon>
+                        } @else {
+                          <span [class]="statusClass(row.status)">{{ row.itemName || row.name }}</span>
+                        }
+                        <div [class]="statusClass(row.status) + ' text-[12px]'">{{ row.name }}</div>
+                        @if (row.note) {
+                          <div class="text-[12px] text-[var(--muted)]">{{ row.note }}</div>
+                        }
+                      </div>
+                    </div>
+                  }
+                } @else {
+                  <p class="text-[13px] text-[var(--muted)]">No embellishment data yet.</p>
+                }
+              </mat-card>
+            }
           </div>
 
           <!-- Enchants -->
