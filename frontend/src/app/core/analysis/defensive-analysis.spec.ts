@@ -38,13 +38,12 @@ describe('analyzeDefensives', () => {
 });
 
 describe('analyzeDefensiveFindings', () => {
-  it('flags a defensive that was never used', () => {
+  it('does not flag a defensive that was never used when there is no bench data', () => {
     const players = analyzeDefensives([feint], [], [], [], FIGHT_START, FIVE_MIN);
 
     const findings = analyzeDefensiveFindings(players, {}, 300);
 
-    expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
-    expect(findings[0].message).toContain('was never used');
+    expect(findings.find((f) => f.category === 'lost_cooldown')).toBeUndefined();
   });
 
   it('warns when the first use is later than the top-parse mean + 2 sigma', () => {
@@ -60,17 +59,19 @@ describe('analyzeDefensiveFindings', () => {
 
   it('does not flag a talent-gated defensive with zero uses as lost', () => {
     const gated = { name: 'Feint', spell_id: FEINT, cooldown: 30, talent_gated: true };
+    const bk = perDefensive({ uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 });
     const players = analyzeDefensives([gated], [], [], [], FIGHT_START, FIVE_MIN);
 
-    const findings = analyzeDefensiveFindings(players, {}, 300);
+    const findings = analyzeDefensiveFindings(players, { Feint: bk }, 300);
 
     expect(findings.find((f) => f.category === 'lost_cooldown')).toBeUndefined();
   });
 
   it('still flags a non-talent-gated defensive with zero uses as lost', () => {
+    const bk = perDefensive({ uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 });
     const players = analyzeDefensives([feint], [], [], [], FIGHT_START, FIVE_MIN);
 
-    const findings = analyzeDefensiveFindings(players, {}, 300);
+    const findings = analyzeDefensiveFindings(players, { Feint: bk }, 300);
 
     expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
   });
