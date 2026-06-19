@@ -11,7 +11,7 @@ import { RulebookCooldown, RulebookRule } from '../models/rulebook.models';
 import { WclEvent } from '../models/wcl.models';
 import { Severity, sortBySeverity } from './findings';
 import { BLOODLUST_IDS, BLOODLUST_DURATION_S, fmtClock } from './format';
-import { isOutlierAbove, isOutlierBeyond, isCriticallyBelow, expectedUses, castEfficiencyPct, closestToZero } from './bench-stats';
+import { isOutlierAbove, isOutlierBeyond, isCriticallyBelow, expectedUses, benchExpectedUses, castEfficiencyPct, closestToZero } from './bench-stats';
 import { evaluateRules } from './rule-engine';
 
 export function analyzeCooldowns(
@@ -52,21 +52,39 @@ export function analyzeCooldowns(
       const wantsBL = cd.align_with_bloodlust !== false;
       const cdCasts = casts.filter((c) => c.abilityGameID === sid);
       const actual = cdCasts.length;
-      const expected = expectedUses(fightDurS, cooldownS);
       const cdIssues: AnalysisFinding[] = [];
       const cdSugg: AnalysisFinding[] = [];
 
+      // Hoist bench lookup so the lost-cast block can use it too.
+      const b = perCdBench[cdName];
+
       if (cd.talent_gated && actual === 0) continue;
 
-      if (actual === 0) {
-        cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
-          message: `${cdName} was never used. In a ${fmtClock(fightDurS)} fight with a ${cooldownS}s cooldown you should have ~${expected} cast(s).` });
-      } else if (actual < expected) {
-        cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
-          message: `${cdName} - ${actual} of ${expected} expected casts. Lost ${expected - actual} use(s) in a ${fmtClock(fightDurS)} fight.` });
-      }
+      // Derive expected cast count. Prefer the data-driven cohort rate for this
+      // encounter+spec - this handles intentionally held CDs (where avg_gap_s is
+      // wider than the tooltip cooldown) and CDR specs (where the real cadence is
+      // faster). Fall back to the static formula only when no bench is available.
+      const benchResult = benchExpectedUses(fightDurS, b?.uses_per_min, b?.avg_uses_per_min ?? null);
+      const expected = benchResult != null ? benchResult.expected : expectedUses(fightDurS, cooldownS);
 
-      const b = perCdBench[cdName];
+      if (benchResult != null) {
+        if (actual === 0 && benchResult.expected >= 1) {
+          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+            message: `${cdName} was never used. Top parsers average ~${benchResult.expected} cast(s) on a ${fmtClock(fightDurS)} fight.` });
+        } else if (actual > 0 && actual < benchResult.floor) {
+          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+            message: `${cdName} - ${actual} casts; top parsers average ~${benchResult.expected} on a fight this length. Lost ${benchResult.floor - actual} use(s).` });
+        }
+      } else {
+        // No usage-rate bench data - fall back to static formula.
+        if (actual === 0) {
+          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+            message: `${cdName} was never used. In a ${fmtClock(fightDurS)} fight with a ${cooldownS}s cooldown you should have ~${expected} cast(s).` });
+        } else if (actual < expected) {
+          cdIssues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: cdName, timestamp_ms: undefined,
+            message: `${cdName} - ${actual} of ${expected} expected casts. Lost ${expected - actual} use(s) in a ${fmtClock(fightDurS)} fight.` });
+        }
+      }
       if (cdCasts.length) {
         const firstS = rel(cdCasts[0].timestamp) / 1000;
         if (b?.avg_first_cast_s != null && b.stddev_first_cast_s != null) {

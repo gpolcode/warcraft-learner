@@ -10,7 +10,7 @@ import { SHADOW_BLADES, BLOODLUST } from '../../../testing/spell-ids';
 const FIVE_MIN = parseClock('5:00');
 const find = (fs: AnalysisFinding[], category: string) => fs.find((f) => f.category === category);
 
-describe('analyzeCooldowns / lost casts', () => {
+describe('analyzeCooldowns / lost casts (no bench - static fallback)', () => {
   it('marks a cooldown that was never used as critical', () => {
     const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] }).major_cooldowns!;
 
@@ -38,6 +38,66 @@ describe('analyzeCooldowns / lost casts', () => {
     const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], null);
 
     expect(find(result.findings, 'cooldown_usage')?.severity).toBe('success');
+  });
+});
+
+describe('analyzeCooldowns / lost casts (bench-driven)', () => {
+  const cds = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 120 }] }).major_cooldowns!;
+
+  it('does not flag when player matches cohort usage rate (hold scenario)', () => {
+    // Top parsers average ~0.4 uses/min (2 casts in 5 min) with stddev 0.
+    // Player casts twice - no flag.
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 } } });
+    const casts = Events.cast(SHADOW_BLADES, '0:05').cast(SHADOW_BLADES, '2:30').build();
+
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
+
+    expect(find(result.findings, 'lost_cooldown')).toBeUndefined();
+  });
+
+  it('does not flag when player is within the cohort - 1 sigma band', () => {
+    // rate=0.5/min, stddev=0.2/min, fight=5min -> expected=3, floor=2
+    // Player has 2 casts (= floor) -> no flag (must be below floor to fire).
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.5, stddev: 0.2, min: 0.3, max: 0.7 }, avg_uses_per_min: 0.5 } } });
+    const casts = Events.cast(SHADOW_BLADES, '0:05').cast(SHADOW_BLADES, '2:30').build();
+
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
+
+    expect(find(result.findings, 'lost_cooldown')).toBeUndefined();
+  });
+
+  it('flags when player is genuinely below the cohort floor (lost uses)', () => {
+    // rate=0.5/min, stddev=0.2/min, fight=5min -> expected=3, floor=2
+    // Player has only 1 cast (below floor) -> critical.
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.5, stddev: 0.2, min: 0.3, max: 0.7 }, avg_uses_per_min: 0.5 } } });
+    const casts = Events.cast(SHADOW_BLADES, '0:05').build();
+
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, casts, [], cds, [], bk);
+
+    const lost = find(result.findings, 'lost_cooldown');
+    expect(lost?.severity).toBe('critical');
+    expect(lost?.message).toContain('top parsers average');
+  });
+
+  it('flags zero casts as critical when cohort expects at least 1', () => {
+    // expected=2, floor=2 -> zero casts -> critical
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.4, stddev: 0, min: 0.4, max: 0.4 }, avg_uses_per_min: 0.4 } } });
+
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, FIVE_MIN, [], [], cds, [], bk);
+
+    const lost = find(result.findings, 'lost_cooldown');
+    expect(lost?.severity).toBe('critical');
+    expect(lost?.message).toContain('Top parsers average');
+  });
+
+  it('suppresses zero-cast critical on a short fight where expected rounds to 0', () => {
+    // 0.15 uses/min * 1 min = 0.15 -> rounds to 0 -> no flag even though never used
+    const ONE_MIN = FIGHT_START + 60_000;
+    const bk = bench({ perCd: { 'Shadow Blades': { uses_per_min: { avg: 0.15, stddev: 0, min: 0.15, max: 0.15 }, avg_uses_per_min: 0.15 } } });
+
+    const result = analyzeCooldowns('Rogue', 'Sub', FIGHT_START, ONE_MIN, [], [], cds, [], bk);
+
+    expect(find(result.findings, 'lost_cooldown')).toBeUndefined();
   });
 });
 
