@@ -10,6 +10,8 @@ import {
   buildEnchantRows, enchantStatusOf, EnchantRow,
   buildTalentBuilds, talentStatusOf, TalentBuildRow,
   buildGemCheck, GemCheck,
+  buildBenchEnchantRows, BenchEnchantRow,
+  buildBenchTrinketRows, BenchTrinketRow,
 } from '../../../shared/gear/gear-comparison';
 
 @Component({
@@ -32,6 +34,12 @@ export class GearSectionComponent {
     talentStatusOf(this.topGear(), this.playerGear()?.talent_key ?? ''));
   protected readonly gemCheck = computed<GemCheck | null>(() =>
     buildGemCheck(this.topGear(), this.playerGear()?.gem_count));
+
+  // Bench-only display used when playerGear has not yet loaded.
+  protected readonly benchEnchantRows = computed<BenchEnchantRow[]>(() =>
+    buildBenchEnchantRows(this.topGear()));
+  protected readonly benchTrinketRows = computed<BenchTrinketRow[]>(() =>
+    buildBenchTrinketRows(this.topGear()));
 
   protected readonly slotName = slotName;
   protected readonly statusIcon = statusIcon;

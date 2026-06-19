@@ -1238,6 +1238,55 @@ function aggregateGear(samples) {
   return { sample_count: total, talent_builds: talentBuilds, trinkets, enchants, gems };
 }
 
+// ── Enchant name resolution ───────────────────────────────────────────────────
+
+/**
+ * Patches missing enchant names in an already-written encounter bench file by
+ * batch-querying WCL `gameData.enchant(id)` for each unique ID whose name is
+ * empty. Uses GraphQL field aliases so all IDs are resolved in one round-trip.
+ * Silently skips if the API does not support the query or returns no names.
+ */
+async function resolveEnchantNames(wcl, spec, encounterId) {
+  const encPath = getEncounterPath(spec, encounterId);
+  const data = readJson(encPath);
+  if (!data || !data.gear || !data.gear.enchants) return;
+
+  const enchantsMap = data.gear.enchants;
+  const toResolve = new Map(); // id -> [{slot, idx}]
+  for (const [slot, items] of Object.entries(enchantsMap)) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.id && !item.name) {
+        if (!toResolve.has(item.id)) toResolve.set(item.id, []);
+        toResolve.get(item.id).push({ slot, idx: i });
+      }
+    }
+  }
+  if (!toResolve.size) return;
+
+  const aliases = [...toResolve.keys()]
+    .map(id => `e${id}: enchant(id: ${id}) { id name }`)
+    .join('\n    ');
+  const query = `query { gameData { ${aliases} } }`;
+
+  try {
+    const result = await wcl.query(query);
+    const gameData = result?.gameData ?? {};
+    let patched = false;
+    for (const [id, locations] of toResolve.entries()) {
+      const name = (gameData[`e${id}`]?.name || '').trim();
+      if (!name) continue;
+      for (const { slot, idx } of locations) {
+        enchantsMap[slot][idx].name = name;
+        patched = true;
+      }
+    }
+    if (patched) writeJson(encPath, data);
+  } catch {
+    // gameData.enchant may not be available for all enchant IDs; keep empty names.
+  }
+}
+
 // ── File I/O ──────────────────────────────────────────────────────────────────
 
 function nowUtc() {
@@ -1774,6 +1823,7 @@ async function ingestSpecNonInteractive(wcl, spec, encounters) {
 
       process.stdout.write(`  [${enc.name}] Computing bench data...`);
       syncEncounterFile(spec, enc.id);
+      await resolveEnchantNames(wcl, spec, enc.id);
       console.log(' done');
     }
   } catch (err) {
