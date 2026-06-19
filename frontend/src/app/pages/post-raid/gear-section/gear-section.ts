@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +15,7 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear-section',
-  imports: [MatCardModule, MatChipsModule, MatIconModule, DecimalPipe, GameIconComponent],
+  imports: [MatCardModule, MatChipsModule, MatIconModule, GameIconComponent],
   templateUrl: './gear-section.html',
 })
 export class GearSectionComponent {
