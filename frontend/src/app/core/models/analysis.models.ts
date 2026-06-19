@@ -1,4 +1,3 @@
-import { EncounterGearStats } from './encounter.models';
 import { CharacterGear } from './wcl.models';
 
 export interface AnalysisFinding {
@@ -103,8 +102,6 @@ export interface AnalysisResult {
   player_total_dmg_taken?: number;
   top_dtk_comparison?: TopDtkComparison[];
   comparison_table?: ComparisonEntry[];
-  /** Top-parse gear stats for the encounter (from bench data). */
-  top_gear?: EncounterGearStats;
   /** Player's own gear from their most recent ranked kill of this encounter. */
   player_gear?: CharacterGear;
 }

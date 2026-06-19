@@ -14,10 +14,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WclAuthService } from '../../core/services/wcl-auth';
 import { WclApiService } from '../../core/services/wcl-api';
 import { AnalysisService } from '../../core/services/analysis';
+import { EncounterService } from '../../core/services/encounter';
 import { IconCacheService } from '../../core/services/icon-cache';
 import { PositioningPanelService } from '../../core/services/positioning-panel';
 import { MapContextService } from '../../core/services/map-context';
 import { WclFight, WclPlayer, WclUserCharacter } from '../../core/models/wcl.models';
+import { EncounterGearStats } from '../../core/models/encounter.models';
 import { AnalysisResult } from '../../core/models/analysis.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { AnalysisResultComponent } from './analysis-result/analysis-result';
@@ -42,6 +44,7 @@ export class PostRaidComponent implements OnInit {
   private readonly auth = inject(WclAuthService);
   private readonly wclApi = inject(WclApiService);
   private readonly analysisSvc = inject(AnalysisService);
+  private readonly encounterSvc = inject(EncounterService);
   private readonly icons = inject(IconCacheService);
   private readonly panel = inject(PositioningPanelService);
   private readonly mapCtx = inject(MapContextService);
@@ -67,6 +70,7 @@ export class PostRaidComponent implements OnInit {
   protected readonly selectedPlayerId = toSignal(this.playerControl.valueChanges, { initialValue: this.playerControl.value });
   protected readonly liveSync = toSignal(this.liveControl.valueChanges, { initialValue: this.liveControl.value });
   protected readonly result = signal<AnalysisResult | null>(null);
+  protected readonly topGear = signal<EncounterGearStats | null>(null);
 
   private _reportCode = '';
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
@@ -235,6 +239,7 @@ export class PostRaidComponent implements OnInit {
     const nonce = ++this._gearFetchNonce;
     this.loadingAnalysis.set(true);
     this.result.set(null);
+    this.topGear.set(null);
     this.panel.clear();
     this.loadingMsg.set('Fetching events…');
     try {
@@ -243,10 +248,14 @@ export class PostRaidComponent implements OnInit {
       const fight = this.fights().find(f => f.id === fightId);
       if (fight) void this.mapCtx.prepare(this._reportCode, fight, playerId, data.spec, this._enemies);
 
-      // Fetch player gear in background to populate the gear-comparison section.
-      // Uses the user's linked WCL character matched by name+server; no-op if the
-      // analyzed player is not among the logged-in account's characters.
       if (fight?.encounterID) {
+        // Bench gear is static JSON already fetched by the analysis pipeline,
+        // so this getBench call hits the browser cache.
+        this.encounterSvc.getBench(data.spec, fight.encounterID).then(bench => {
+          if (nonce === this._gearFetchNonce && bench) this.topGear.set(bench.gear);
+        });
+
+        // Fetch player gear in background; matches the logged-in account's characters.
         const player = this.players().find(p => p.id === playerId);
         const userChar = this._userChars.find(c =>
           c.name.toLowerCase() === (player?.name ?? '').toLowerCase() &&

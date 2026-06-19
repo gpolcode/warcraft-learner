@@ -58,10 +58,10 @@
   </wl-damage-taken>
 }
 
-<!-- Gear comparison (shown when top-parse bench data is available) -->
-@if (data().top_gear) {
+<!-- Gear comparison (shown once bench gear for this encounter has loaded) -->
+@if (topGear()) {
   <wl-gear-section
     [playerGear]="data().player_gear ?? null"
-    [topGear]="data().top_gear!">
+    [topGear]="topGear()!">
   </wl-gear-section>
 }

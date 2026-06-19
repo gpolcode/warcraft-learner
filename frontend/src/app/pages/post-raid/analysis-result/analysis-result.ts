@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, OnChanges 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { AnalysisResult as IAnalysisResult, AnalysisFinding } from '../../../core/models/analysis.models';
+import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { IconCacheService } from '../../../core/services/icon-cache';
 import { FindingEntry, FindingListComponent } from '../../../shared/components/finding-list/finding-list';
 import { CalloutComponent } from '../../../shared/components/callout/callout';
@@ -33,6 +34,7 @@ export class AnalysisResultComponent implements OnChanges {
   private readonly icons = inject(IconCacheService);
 
   readonly data = input.required<IAnalysisResult>();
+  readonly topGear = input<EncounterGearStats | null>(null);
 
   protected readonly cdBuckets = computed(() => {
     const byCD: Record<string, CdBucket> = {};

@@ -58,7 +58,6 @@ export function computeAnalysis(input: AnalysisInput): AnalysisResult {
   result.ability_icons = ability_icons;
 
   if (bench) {
-    if (bench.gear) result.top_gear = bench.gear;
     if (bench.burst_windows.length) result.burst_windows = bench.burst_windows;
     if (bench.top_defensives_summary.length) result.top_defensives_summary = bench.top_defensives_summary;
     if (bench.top_dtk_comparison.length) result.top_dtk_comparison = bench.top_dtk_comparison;
