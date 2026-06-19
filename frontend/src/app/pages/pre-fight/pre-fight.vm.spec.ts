@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { buildCdPlan, buildDefensivePlan, buildBurstWindows } from './pre-fight.vm';
 import {
-  buildCdPlan, buildDefensivePlan, buildEnchantRows, enchantStatusOf,
-  buildTalentBuilds, buildGemCheck, buildBurstWindows, talentStatusOf,
-} from './pre-fight.vm';
+  buildEnchantRows, enchantStatusOf, buildTalentBuilds, buildGemCheck, talentStatusOf,
+} from '../../shared/gear/gear-comparison';
 import { CharacterGear } from '../../core/models/wcl.models';
 import { EncounterGearStats } from '../../core/models/encounter.models';
 import { bench } from '../../../testing/builders/bench';

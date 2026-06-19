@@ -73,6 +73,8 @@ export class PostRaidComponent implements OnInit {
   private _enemies: { id: number; name: string; gameID: number }[] = [];
   private _userChars: WclUserCharacter[] = [];
   private _pollSub: Subscription | null = null;
+  /** Incremented on each analyzePlayer() call to cancel stale gear fetches. */
+  private _gearFetchNonce = 0;
 
   protected readonly visiblePlayers = computed(() =>
     visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
@@ -230,6 +232,7 @@ export class PostRaidComponent implements OnInit {
     const playerId = this.selectedPlayerId();
     if (!fightId || !playerId) return;
 
+    const nonce = ++this._gearFetchNonce;
     this.loadingAnalysis.set(true);
     this.result.set(null);
     this.panel.clear();
@@ -239,6 +242,26 @@ export class PostRaidComponent implements OnInit {
       this.result.set(data);
       const fight = this.fights().find(f => f.id === fightId);
       if (fight) void this.mapCtx.prepare(this._reportCode, fight, playerId, data.spec, this._enemies);
+
+      // Fetch player gear in background to populate the gear-comparison section.
+      // Uses the user's linked WCL character matched by name+server; no-op if the
+      // analyzed player is not among the logged-in account's characters.
+      if (fight?.encounterID) {
+        const player = this.players().find(p => p.id === playerId);
+        const userChar = this._userChars.find(c =>
+          c.name.toLowerCase() === (player?.name ?? '').toLowerCase() &&
+          c.serverSlug.toLowerCase() === (player?.server ?? '').toLowerCase()
+        );
+        if (userChar) {
+          this.wclApi.getCharGear(userChar.name, userChar.serverSlug, userChar.serverRegion, fight.encounterID)
+            .then(gearData => {
+              if (nonce === this._gearFetchNonce && gearData.found) {
+                this.result.update(r => r ? { ...r, player_gear: gearData } : r);
+              }
+            })
+            .catch(() => { /* gear is best-effort */ });
+        }
+      }
     } catch (err) {
       this.error.set(err instanceof Error ? err.message : 'Analysis failed.');
     } finally {

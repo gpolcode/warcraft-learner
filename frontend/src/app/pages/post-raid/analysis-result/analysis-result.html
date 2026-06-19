@@ -57,3 +57,11 @@
     [topComparison]="data().top_dtk_comparison || []">
   </wl-damage-taken>
 }
+
+<!-- Gear comparison (shown when top-parse bench data is available) -->
+@if (data().top_gear) {
+  <wl-gear-section
+    [playerGear]="data().player_gear ?? null"
+    [topGear]="data().top_gear!">
+  </wl-gear-section>
+}

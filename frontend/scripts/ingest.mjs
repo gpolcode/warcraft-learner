@@ -1584,6 +1584,22 @@ function syncEncountersIndex(spec) {
   writeJson(path.join(DATA_DIR, spec, 'encounters.json'), entries);
 }
 
+/** Rebuild data/specs/index.json by scanning all spec folders on disk. */
+function writeSpecIndex() {
+  if (!fs.existsSync(DATA_DIR)) return;
+  const entries = [];
+  for (const spec of fs.readdirSync(DATA_DIR).sort()) {
+    const encFile = path.join(DATA_DIR, spec, 'encounters.json');
+    if (!fs.existsSync(encFile)) continue;
+    try {
+      const enc = readJson(encFile) || [];
+      const count = enc.filter(e => e.sample_count > 0).length;
+      if (count > 0) entries.push({ spec, encounter_count: count });
+    } catch {}
+  }
+  writeJson(path.join(DATA_DIR, 'index.json'), entries);
+}
+
 // ── Spec selection ────────────────────────────────────────────────────────────
 
 // Returns known specs (those with a rulebook.json) sorted most-stale-first.
@@ -1764,10 +1780,12 @@ async function ingestSpecNonInteractive(wcl, spec, encounters) {
     if (err instanceof BudgetExceededError) {
       console.log(`\n[budget] Stopping cleanly: ${err.message}`);
       console.log('[budget] Partial progress committed; remaining work picked up next run.');
+      writeSpecIndex();
       return true;
     }
     throw err;
   }
+  writeSpecIndex();
   console.log(`\nIngestion complete for ${spec}.`);
   return false;
 }
