@@ -135,6 +135,7 @@ export function buildGemCheck(stats: EncounterGearStats | null, count: number | 
 
 export interface BenchEnchantRow {
   slotName: string;
+  id: number;
   name: string;
   pct: number;
 }
@@ -158,7 +159,7 @@ export function buildBenchEnchantRows(stats: EncounterGearStats | null): BenchEn
     .reduce<BenchEnchantRow[]>((acc, slot) => {
       const top = topEnch[slot]?.[0];
       if (top && top.pct >= 40) {
-        acc.push({ slotName: slotName(slot), name: top.name || `Enchant #${top.id}`, pct: top.pct });
+        acc.push({ slotName: slotName(slot), id: top.id, name: top.name || `Enchant #${top.id}`, pct: top.pct });
       }
       return acc;
     }, []);

@@ -3,37 +3,43 @@ import { IconInfo } from './icon-cache';
 /** Spell and item are the two Wowhead entity kinds we resolve. */
 export type WowheadKind = 'spell' | 'item';
 
-const ALLORIGINS_BASE = 'https://api.allorigins.win/raw?url=';
+// allorigins exposes two endpoints. `/raw` proxies the body verbatim but is
+// unreliable (frequent 5xx / missing CORS headers - the failure seen in the
+// browser console). `/get` is the documented, dependable endpoint: it always
+// returns JSON `{ contents, status }` with proper CORS headers.
+// See https://github.com/gnuns/allorigins.
+const PROXY_BASE = 'https://api.allorigins.win/get?url=';
 
 /**
- * Build the CORS-proxy URL that returns Wowhead's XML for a spell or item.
+ * Build the CORS-proxy URL for a spell or item.
  *
- * Wowhead has no public API and its pages cannot be fetched directly from the
- * browser (CORS), so the request is routed through allorigins. The inner
- * Wowhead URL is encoded so its `?xml` query survives the outer `url=` param.
+ * We hit Wowhead's tooltip endpoint, which already returns JSON (`name`,
+ * `icon`, ...), so there is no XML to hand-parse - Angular's HttpClient decodes
+ * it natively. The Wowhead URL is encoded so it survives the outer `url=` param.
  */
 export function wowheadProxyUrl(kind: WowheadKind, id: number): string {
-  const target = `https://www.wowhead.com/${kind}=${id}?xml`;
-  return `${ALLORIGINS_BASE}${encodeURIComponent(target)}`;
+  const target = `https://nether.wowhead.com/tooltip/${kind}/${id}`;
+  return `${PROXY_BASE}${encodeURIComponent(target)}`;
+}
+
+/** The allorigins `/get` envelope - `contents` is the upstream body as a string. */
+export interface AllOriginsResponse {
+  contents: string;
+}
+
+/** The fields we need from a Wowhead tooltip JSON payload. */
+export interface WowheadTooltip {
+  name?: string;
+  icon?: string;
 }
 
 /**
- * Parse Wowhead XML into an icon filename + display name.
- *
- * Pure - no Angular/HTTP deps so it is unit-testable in isolation. Returns null
- * when the entity is missing (Wowhead emits an `<error>` element / no name), or
- * when the body cannot be parsed.
+ * Map a Wowhead tooltip payload to an icon/name. Returns null when the entity
+ * is missing (no name), so the caller can degrade to a plain Wowhead link.
  */
-export function parseWowheadXml(xml: string, kind: WowheadKind): IconInfo | null {
-  const doc = new DOMParser().parseFromString(xml, 'text/xml');
-  if (doc.querySelector('parsererror') || doc.querySelector('error')) return null;
-
-  const entity = doc.querySelector(kind);
-  if (!entity) return null;
-
-  const name = entity.querySelector('name')?.textContent?.trim();
-  if (!name) return null;
-
-  const icon = (entity.querySelector('icon')?.textContent ?? '').trim().replace(/\.jpg$/i, '');
+export function tooltipToIcon(tooltip: WowheadTooltip | null): IconInfo | null {
+  const name = tooltip?.name?.trim();
+  if (!tooltip || !name) return null;
+  const icon = (tooltip.icon ?? '').trim().replace(/\.jpg$/i, '');
   return { icon, name };
 }
