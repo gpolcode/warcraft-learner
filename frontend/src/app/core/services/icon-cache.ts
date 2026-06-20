@@ -1,5 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { WclAbility } from '../models/wcl.models';
+import { WowheadApiService } from './wowhead-api';
+import { WowheadKind } from './wowhead-mappers';
 
 export interface IconInfo {
   icon: string;
@@ -8,7 +10,11 @@ export interface IconInfo {
 
 @Injectable({ providedIn: 'root' })
 export class IconCacheService {
+  private readonly wowhead = inject(WowheadApiService);
+
   private readonly _cache = signal<Record<string, IconInfo>>({});
+  /** Keys already requested from Wowhead (in-flight + resolved + missing) to dedupe. */
+  private readonly _attempted = new Set<string>();
 
   seed(abilities: WclAbility[]): void {
     const updated = { ...this._cache() };
@@ -26,8 +32,14 @@ export class IconCacheService {
     this._cache.set(updated);
   }
 
-  get(spellId: number | string): IconInfo | null {
-    return this._cache()[String(spellId)] ?? null;
+  /**
+   * Look up an icon/name. Spells seeded from `masterData.abilities` live under
+   * the bare id; Wowhead-resolved entries are kind-namespaced to avoid the
+   * spell/item id-space overlap. Bare id is tried first for back-compat.
+   */
+  get(id: number | string, kind: WowheadKind = 'spell'): IconInfo | null {
+    const cache = this._cache();
+    return cache[String(id)] ?? cache[`${kind}:${id}`] ?? null;
   }
 
   iconUrl(spellId: number | string): string | null {
@@ -36,8 +48,20 @@ export class IconCacheService {
     return `https://wow.zamimg.com/images/wow/icons/small/${info.icon}.jpg`;
   }
 
-  fetchMissing(_spellIds: number[]): void {
-    // Icons are sourced from masterData.abilities seeded during report load.
-    // Unknown spell IDs will render without icons; Wowhead tooltips still work via the link.
+  /**
+   * Best-effort resolve of an unknown spell/item via the Wowhead CORS proxy.
+   * Fire-and-forget: on success the cache signal updates and any rendering
+   * `wl-game-icon` recomputes. Each `${kind}:${id}` is attempted at most once
+   * (including misses) so repeated renders never re-hit the proxy.
+   */
+  resolve(kind: WowheadKind, id: number): void {
+    if (!id) return;
+    const key = `${kind}:${id}`;
+    if (this.get(id, kind) || this._attempted.has(key)) return;
+    this._attempted.add(key);
+
+    void this.wowhead.getGameData(kind, id).then((info) => {
+      if (info) this._cache.set({ ...this._cache(), [key]: info });
+    });
   }
 }

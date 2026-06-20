@@ -84,14 +84,7 @@ export class AnalysisResultComponent implements OnChanges {
   ngOnChanges(): void {
     const d = this.data();
     if (d.ability_icons) this.icons.seedFromMap(d.ability_icons);
-    const allIds = [
-      ...Object.values(d.cd_spell_ids || {}),
-      ...(d.burst_windows || []).flatMap(bw => bw.ability_breakdown.map(a => a.spell_id)),
-      ...(d.player_defensives || []).map(def => def.spell_id),
-      ...(d.player_dmg_taken_by_ability || []).map(a => a.spell_id),
-      ...(d.top_dtk_comparison || []).map(t => t.spell_id),
-    ];
-    const missing = allIds.filter(id => !this.icons.get(id));
-    if (missing.length) this.icons.fetchMissing(missing);
+    // Any spell ids not covered by the report's masterData are resolved on
+    // demand by each `wl-game-icon` via the Wowhead CORS proxy.
   }
 }

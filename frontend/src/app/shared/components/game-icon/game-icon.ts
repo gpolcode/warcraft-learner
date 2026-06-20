@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IconCacheService } from '../../../core/services/icon-cache';
+import { WowheadKind } from '../../../core/services/wowhead-mappers';
 
-export type GameIconKind = 'spell' | 'item';
+export type GameIconKind = WowheadKind;
 
 /**
  * Renders a WoW spell or item as an icon + name that links to Wowhead.
  *
- * Spell icon art comes from the `IconCacheService` (seeded from a report's
- * `masterData.abilities`). Items are not in that cache, so callers pass the
- * icon filename and name explicitly (e.g. from WCL combatant-info gear). When
- * no icon is available the name still renders as a plain Wowhead link.
+ * Icon art and names come from the `IconCacheService` (seeded from a report's
+ * `masterData.abilities`) or from explicit `icon`/`name` inputs. When neither
+ * resolves the id, the cache fetches it from Wowhead via a CORS proxy and the
+ * icon swaps in reactively; until then the name renders as a plain Wowhead link.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,13 +42,24 @@ export class GameIconComponent {
   /** Explicit icon filename for items, which are not in the spell icon cache. */
   readonly icon = input<string>('');
 
+  private readonly cached = computed(() => this.iconCache.get(this.id(), this.kind()));
+
   protected readonly iconUrl = computed(() => {
-    const file = this.icon() || this.iconCache.get(this.id())?.icon || '';
+    const file = this.icon() || this.cached()?.icon || '';
     return file ? `https://wow.zamimg.com/images/wow/icons/small/${file}.jpg` : null;
   });
 
   protected readonly displayName = computed(() =>
-    this.name() || this.iconCache.get(this.id())?.name || `${this.kind() === 'item' ? 'Item' : 'Spell'} ${this.id()}`);
+    this.name() || this.cached()?.name || `${this.kind() === 'item' ? 'Item' : 'Spell'} ${this.id()}`);
 
   protected readonly wowheadUrl = computed(() => `https://www.wowhead.com/${this.kind()}=${this.id()}`);
+
+  constructor() {
+    // When nothing supplies an icon for this id, ask the cache to resolve it
+    // from Wowhead. The lookup is deduped/cached, so this is safe to run on
+    // every render. A successful resolve updates `cached()` and re-renders.
+    effect(() => {
+      if (!this.icon() && !this.cached()?.icon) this.iconCache.resolve(this.kind(), this.id());
+    });
+  }
 }
