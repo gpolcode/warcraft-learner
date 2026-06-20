@@ -1,8 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
   inject, signal, computed,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -54,7 +53,6 @@ export class PostRaidComponent implements OnInit {
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly reportControl = new FormControl('', { nonNullable: true });
   protected readonly fightControl = new FormControl<number | null>(null);
@@ -87,26 +85,30 @@ export class PostRaidComponent implements OnInit {
   protected readonly visiblePlayers = computed(() =>
     visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
 
-  ngOnInit(): void {
-    // Declarative polling pipeline: reacts to liveControl and reportCode signals.
-    // switchMap tears down the previous poll stream whenever either changes.
-    // exhaustMap drops concurrent poll attempts while one is in flight.
-    combineLatest([toObservable(this.liveSyncEnabled), toObservable(this.reportCode)]).pipe(
-      tap(([live, code]) => {
-        if (live && !code) this.status.set('Load a report to start live sync.');
-        else if (!live) this.status.set('');
-      }),
-      map(([live, code]) => live && !!code),
-      distinctUntilChanged(),
-      switchMap(active =>
-        active
-          ? merge(of(undefined as void), this.liveSync.pollTriggers())
-          : EMPTY,
-      ),
-      exhaustMap(() => from(this._pollOnce())),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+  // Declarative polling pipeline. Must live in a field initializer so that
+  // toObservable() and takeUntilDestroyed() run inside the injection context.
+  // switchMap tears down the previous poll stream whenever live/reportCode changes.
+  // exhaustMap drops concurrent poll attempts while one is in flight.
+  private readonly _pollingSub = combineLatest([
+    toObservable(this.liveSyncEnabled),
+    toObservable(this.reportCode),
+  ]).pipe(
+    tap(([live, code]) => {
+      if (live && !code) this.status.set('Load a report to start live sync.');
+      else if (!live) this.status.set('');
+    }),
+    map(([live, code]) => live && !!code),
+    distinctUntilChanged(),
+    switchMap(active =>
+      active
+        ? merge(of(undefined as void), this.liveSync.pollTriggers())
+        : EMPTY,
+    ),
+    exhaustMap(() => from(this._pollOnce())),
+    takeUntilDestroyed(),
+  ).subscribe();
 
+  ngOnInit(): void {
     const params = this.route.snapshot.queryParamMap;
     if (params.get('live') === '1') this.liveControl.setValue(true);
     const reportParam = params.get('report');
