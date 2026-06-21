@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -53,13 +53,13 @@ export class WindowComparisonComponent {
   private static readonly HALF_BUTTON_PX = 18;
   private static readonly MIN_GAP_PX = 38;
 
-  private readonly trackEl = viewChild<ElementRef<HTMLElement>>('track');
+  private readonly trackEl = viewChild<HTMLElement>('track');
   private readonly trackWidth = signal(0);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
-      const el = this.trackEl()?.nativeElement;
+      const el = this.trackEl();
       if (!el) return;
       const observer = new ResizeObserver(entries => {
         this.trackWidth.set(entries[0].contentRect.width);
