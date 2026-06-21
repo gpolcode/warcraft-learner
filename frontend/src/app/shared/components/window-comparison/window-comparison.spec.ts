@@ -91,20 +91,22 @@ describe('WindowComparisonComponent selection', () => {
 });
 
 describe('WindowComparisonComponent timeTicks', () => {
-  const ticksFor = (fightDuration: number): number[] => {
-    const { vm } = mountVm(WindowComparisonComponent, { windows: [win({})], fightDuration });
+  const ticksForEnd = (timeEndS: number): number[] => {
+    const w = { ...win({}), timeEndS };
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [w] });
     return (vm['timeTicks'] as () => number[])();
   };
 
-  it('returns no ticks for a zero-length fight', () => {
-    expect(ticksFor(0)).toEqual([]);
-  });
-
-  it('returns 6 evenly spaced ticks from 0 to fightDuration', () => {
-    expect(ticksFor(300)).toEqual([0, 60, 120, 180, 240, 300]);
+  it('returns 6 evenly spaced ticks from 0 to the max window end', () => {
+    expect(ticksForEnd(300)).toEqual([0, 60, 120, 180, 240, 300]);
   });
 
   it('handles short fights', () => {
-    expect(ticksFor(10)).toEqual([0, 2, 4, 6, 8, 10]);
+    expect(ticksForEnd(10)).toEqual([0, 2, 4, 6, 8, 10]);
+  });
+
+  it('falls back to fightDuration when no windows are present', () => {
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [], fightDuration: 300 });
+    expect((vm['timeTicks'] as () => number[])()).toEqual([0, 60, 120, 180, 240, 300]);
   });
 });

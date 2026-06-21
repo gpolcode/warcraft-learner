@@ -54,7 +54,9 @@ export class WindowComparisonComponent {
   private static readonly MIN_GAP_PX = 38;
 
   private readonly trackEl = viewChild<HTMLElement>('track');
-  private readonly trackWidth = signal(0);
+  // Default to 1000px so collision detection runs on the first render;
+  // ResizeObserver corrects it after the initial paint.
+  protected readonly trackWidth = signal(1000);
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -154,16 +156,11 @@ export class WindowComparisonComponent {
 
   // Resolved `left` CSS value per segment. Buttons whose ideal time positions
   // sit closer than one button width are nudged apart so they never overlap -
-  // works for clusters of 2, 3, or more. Falls back to a clamped percentage
-  // until the track width has been measured.
+  // works for clusters of 2, 3, or more.
   protected readonly segmentLefts = computed<string[]>(() => {
     const windows = this.windows();
     const width = this.trackWidth();
     const half = WindowComparisonComponent.HALF_BUTTON_PX;
-    if (width <= 0) {
-      return windows.map(
-        w => `clamp(${half}px, ${this.leftPct(w.timeStartS)}%, calc(100% - ${half}px))`);
-    }
     const minGap = WindowComparisonComponent.MIN_GAP_PX;
     const minCenter = half;
     const maxCenter = Math.max(half, width - half);
