@@ -59,6 +59,12 @@ export function analyzeCooldowns(
 
       if (cd.talent_gated && actual === 0) continue;
 
+      if (!b) {
+        if (actual > 0) findings.push({ severity: 'success', category: 'cooldown_usage', cd_name: cdName,
+          message: `${cdName} - ${actual} cast(s) (no bench data for this encounter).` });
+        continue;
+      }
+
       const { expected, floor } = benchExpectedUses(fightDurS, b.uses_per_min);
 
       if (actual === 0 && expected >= 1) {

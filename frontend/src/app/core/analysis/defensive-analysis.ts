@@ -78,6 +78,12 @@ export function analyzeDefensiveFindings(
 
     if (def.talent_gated && uses === 0) continue;
 
+    if (!b) {
+      if (uses > 0) findings.push({ severity: 'success', category: 'cooldown_usage', cd_name: name,
+        message: `${name} - ${uses} use(s) (no bench data for this encounter).` });
+      continue;
+    }
+
     const { expected, floor } = benchExpectedUses(fightDurS, b.uses_per_min);
 
     if (uses === 0 && expected >= 1) {
