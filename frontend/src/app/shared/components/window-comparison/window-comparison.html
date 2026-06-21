@@ -6,8 +6,8 @@
     role="listbox"
     aria-label="Burst windows"
     (keydown)="onKeydown($event)">
-    <!-- Horizontal guide line -->
-    <div class="absolute left-0 right-0 top-[18px] h-px bg-[var(--border)]" aria-hidden="true"></div>
+    <!-- Track: rounded rail the segments sit on. -->
+    <div class="absolute left-0 right-0 top-0 h-9 rounded-lg bg-[var(--surface)] border border-[var(--border)]" aria-hidden="true"></div>
 
     @for (w of windows(); track $index; let i = $index) {
       <div

@@ -29,9 +29,9 @@ const STATUS_COLORS: Record<WindowStatus, string> = {
 };
 
 const SEG_BG: Record<WindowStatus, string> = {
-  good: 'rgba(63,185,80,0.18)',
-  warn: 'rgba(210,153,34,0.18)',
-  bad: 'rgba(248,81,73,0.18)',
+  good: 'rgba(63,185,80,0.55)',
+  warn: 'rgba(210,153,34,0.55)',
+  bad: 'rgba(248,81,73,0.55)',
   muted: 'transparent',
 };
 
