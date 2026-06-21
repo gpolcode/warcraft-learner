@@ -4,42 +4,35 @@ import { FormatDamagePipe } from '../../pipes/format-damage-pipe';
 import { RangeRow } from '../range-chart/range-chart';
 import { WindowStatus } from '../window-comparison/window-comparison';
 
-// Bar layer colours, kept in step with wl-range-chart so the two read the same.
 const COLOR_RANGE = '#4a9eff';
 const COLOR_RANGE_FILL = 'rgba(74, 158, 255, 0.28)';
 const COLOR_AVG = '#60cfff';
-const COLOR_YOU = '#ffd700';
 const STATUS_FILL: Record<WindowStatus, string> = {
   good: '#3fb950',
   warn: '#d29922',
   bad: '#f85149',
-  muted: COLOR_YOU,
+  muted: '#ffd700',
 };
 
-/**
- * One compact comparison row: icon -> label -> your value -> candle bar -> delta%.
- *
- * Used inside the burst/defensive detail panel in place of wl-range-chart for
- * single-row rendering. Values are absolute damage; the bar is decorative
- * (aria-hidden) and the numeric columns carry the meaning for screen readers.
- */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-compact-ability-row',
   imports: [GameIconComponent, FormatDamagePipe],
+  // Grid columns must match the column headers rendered in window-comparison.html.
   template: `
-    <div class="flex items-center gap-2 py-1">
-      @if (row().spellId) {
-        <wl-game-icon class="shrink-0" [id]="row().spellId!"></wl-game-icon>
-      } @else {
-        <div class="w-[18px] shrink-0"></div>
-      }
-      <span class="flex-1 truncate text-sm">{{ row().label }}</span>
-      <span class="tabular-nums text-xs w-16 text-right">
+    <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 py-1 items-center min-w-0">
+      <div class="flex items-center gap-1.5 min-w-0 overflow-hidden">
+        @if (row().spellId) {
+          <wl-game-icon class="min-w-0 shrink-0" [id]="row().spellId!"></wl-game-icon>
+        } @else {
+          <span class="truncate text-sm text-[var(--muted)]">{{ row().label }}</span>
+        }
+      </div>
+      <span class="tabular-nums text-xs text-right" [style.color]="valueColor()">
         {{ row().playerPct | formatDamage }}
       </span>
-      <!-- Candle bar: top-parse range band, average tick, and your marker. -->
-      <div class="relative h-2 w-24 shrink-0 rounded bg-[var(--surface)]" aria-hidden="true">
+      <!-- Candle bar: decorative, numeric columns carry the meaning for screen readers. -->
+      <div class="relative h-2 rounded bg-[var(--surface)]" aria-hidden="true">
         @if (rangeStyle(); as rs) {
           <div class="absolute inset-y-0 rounded" [style]="rs"></div>
         }
@@ -50,7 +43,7 @@ const STATUS_FILL: Record<WindowStatus, string> = {
           <div class="absolute inset-y-0 w-[3px] rounded" [style]="ps"></div>
         }
       </div>
-      <span class="tabular-nums text-xs w-12 text-right" [class]="deltaClass()">
+      <span class="tabular-nums text-xs text-right" [style.color]="deltaColor()">
         {{ formattedDelta() }}
       </span>
     </div>
@@ -59,8 +52,8 @@ const STATUS_FILL: Record<WindowStatus, string> = {
 export class CompactAbilityRowComponent {
   readonly row = input.required<RangeRow>();
   readonly max = input.required<number>();
-  /** Optional fill colour override (timeline status colour) for the player marker. */
   readonly status = input<WindowStatus | null>(null);
+  readonly higherIsBetter = input<boolean>(true);
 
   private pct(value: number): number {
     const max = this.max();
@@ -89,7 +82,6 @@ export class CompactAbilityRowComponent {
     return `left:${this.pct(playerPct)}%;background:${fill};`;
   });
 
-  /** Player vs top-average delta as a percentage; null when either is missing. */
   private readonly delta = computed<number | null>(() => {
     const { playerPct, topAvg } = this.row();
     if (playerPct == null || topAvg == null || topAvg === 0) return null;
@@ -103,9 +95,17 @@ export class CompactAbilityRowComponent {
     return `${sign}${delta.toFixed(0)}%`;
   });
 
-  protected readonly deltaClass = computed(() => {
+  protected readonly valueColor = computed(() => {
+    const { playerPct, topAvg } = this.row();
+    if (playerPct == null || topAvg == null) return 'var(--muted)';
+    const isBetter = this.higherIsBetter() ? playerPct >= topAvg : playerPct <= topAvg;
+    return isBetter ? '#3fb950' : '#f85149';
+  });
+
+  protected readonly deltaColor = computed(() => {
     const delta = this.delta();
-    if (delta == null) return 'text-[var(--muted)]';
-    return delta >= 0 ? 'text-[#3fb950]' : 'text-[#f85149]';
+    if (delta == null) return 'var(--muted)';
+    const isBetter = this.higherIsBetter() ? delta >= 0 : delta <= 0;
+    return isBetter ? '#3fb950' : '#f85149';
   });
 }

@@ -48,17 +48,26 @@ describe('CompactAbilityRowComponent delta', () => {
   it('formats a positive delta when player beats the top average', () => {
     const vm = mount(row({ playerPct: 150, topAvg: 100 }), 200);
     expect((vm['formattedDelta'] as () => string)()).toBe('+50%');
-    expect((vm['deltaClass'] as () => string)()).toBe('text-[#3fb950]');
+    expect((vm['deltaColor'] as () => string)()).toBe('#3fb950');
   });
 
   it('formats a negative delta when player falls short', () => {
     const vm = mount(row({ playerPct: 60, topAvg: 100 }), 200);
     expect((vm['formattedDelta'] as () => string)()).toBe('-40%');
-    expect((vm['deltaClass'] as () => string)()).toBe('text-[#f85149]');
+    expect((vm['deltaColor'] as () => string)()).toBe('#f85149');
   });
 
   it('renders no delta when player or top average is missing', () => {
     const vm = mount(row({ playerPct: null, topAvg: 100 }), 200);
     expect((vm['formattedDelta'] as () => string)()).toBe('');
+  });
+
+  it('inverts delta colour for lower-is-better (defensives)', () => {
+    const vm = mountVm(CompactAbilityRowComponent, {
+      row: row({ playerPct: 60, topAvg: 100 }),
+      max: 200,
+      higherIsBetter: false,
+    }).vm;
+    expect((vm['deltaColor'] as () => string)()).toBe('#3fb950');
   });
 });
