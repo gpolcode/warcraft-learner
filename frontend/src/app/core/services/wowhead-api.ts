@@ -16,23 +16,35 @@ import {
  * hands the decoded payload to a pure mapper. Best-effort - a failed lookup
  * returns null so the UI degrades to a plain Wowhead link.
  *
- * allorigins `/get` wraps the Wowhead XML response as `{ contents: "<xml>" }`.
- * HttpClient decodes the JSON envelope natively; the XML string inside is
- * parsed with DOMParser.
+ * Failures are logged with their *reason* (transport error, proxy http_code,
+ * HTML challenge page, missing element, ...) plus a body snippet. The previous
+ * implementation swallowed these, which is exactly why the breakage was
+ * undiagnosable; see `parseWowheadXml` for the discriminated result it returns.
  */
 @Injectable({ providedIn: 'root' })
 export class WowheadApiService {
   private readonly http = inject(HttpClient);
 
   async getGameData(kind: WowheadKind, id: number): Promise<IconInfo | null> {
+    let envelope: AllOriginsResponse | null = null;
     try {
-      const envelope = await firstValueFrom(
+      envelope = await firstValueFrom(
         this.http.get<AllOriginsResponse>(wowheadProxyUrl(kind, id)),
       );
-      return parseWowheadXml(envelope?.contents ?? '', kind);
     } catch (err) {
-      logWarn('wowhead-api.getGameData', err);
+      logWarn(`wowhead-api.getGameData ${kind}=${id} transport failed`, err);
       return null;
     }
+
+    const result = parseWowheadXml(envelope, kind);
+    if (!result.ok) {
+      const snippet = (envelope?.contents ?? '').slice(0, 200);
+      logWarn(
+        `wowhead-api.getGameData ${kind}=${id} unresolved: ${result.reason}`,
+        new Error(`body[0..200]=${JSON.stringify(snippet)}`),
+      );
+      return null;
+    }
+    return result.info;
   }
 }
