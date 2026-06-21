@@ -4,21 +4,20 @@ import { IconInfo } from './icon-cache';
 export type WowheadKind = 'spell' | 'item';
 
 // allorigins exposes two endpoints. `/raw` proxies the body verbatim but is
-// unreliable (frequent 5xx / missing CORS headers - the failure seen in the
-// browser console). `/get` is the documented, dependable endpoint: it always
-// returns JSON `{ contents, status }` with proper CORS headers.
-// See https://github.com/gnuns/allorigins.
+// unreliable (frequent 5xx / missing CORS headers). `/get` is the documented,
+// dependable endpoint: it always returns JSON `{ contents, status }` with
+// proper CORS headers. See https://github.com/gnuns/allorigins.
 const PROXY_BASE = 'https://api.allorigins.win/get?url=';
 
 /**
  * Build the CORS-proxy URL for a spell or item.
  *
- * We hit Wowhead's tooltip endpoint, which already returns JSON (`name`,
- * `icon`, ...), so there is no XML to hand-parse - Angular's HttpClient decodes
- * it natively. The Wowhead URL is encoded so it survives the outer `url=` param.
+ * We target Wowhead's XML endpoint (`?xml`), which returns well-structured XML
+ * with `<name>` and `<icon>` elements. The allorigins `/get` wrapper delivers
+ * it as `{ contents: "<xml...>" }` JSON with reliable CORS headers.
  */
 export function wowheadProxyUrl(kind: WowheadKind, id: number): string {
-  const target = `https://nether.wowhead.com/tooltip/${kind}/${id}`;
+  const target = `https://www.wowhead.com/${kind}=${id}?xml`;
   return `${PROXY_BASE}${encodeURIComponent(target)}`;
 }
 
@@ -27,19 +26,20 @@ export interface AllOriginsResponse {
   contents: string;
 }
 
-/** The fields we need from a Wowhead tooltip JSON payload. */
-export interface WowheadTooltip {
-  name?: string;
-  icon?: string;
-}
-
 /**
- * Map a Wowhead tooltip payload to an icon/name. Returns null when the entity
- * is missing (no name), so the caller can degrade to a plain Wowhead link.
+ * Parse Wowhead XML and extract icon/name. Returns null when the entity is
+ * missing or the XML is malformed, so the caller can degrade gracefully.
+ *
+ * Wowhead XML looks like:
+ * `<wowhead><item><name>...</name><icon>...</icon>...</item></wowhead>`
+ * The element tag is `<item>` for items and `<spell>` for spells.
  */
-export function tooltipToIcon(tooltip: WowheadTooltip | null): IconInfo | null {
-  const name = tooltip?.name?.trim();
-  if (!tooltip || !name) return null;
-  const icon = (tooltip.icon ?? '').trim().replace(/\.jpg$/i, '');
+export function parseWowheadXml(xml: string, kind: WowheadKind): IconInfo | null {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  const entity = doc.querySelector(kind);
+  if (!entity) return null;
+  const name = entity.querySelector('name')?.textContent?.trim() ?? '';
+  const icon = (entity.querySelector('icon')?.textContent?.trim() ?? '').replace(/\.jpg$/i, '');
+  if (!name) return null;
   return { icon, name };
 }
