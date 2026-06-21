@@ -6,6 +6,7 @@ import {
   HTML_ERROR_BODY,
   ITEM_XML,
   MALFORMED_XML,
+  REAL_STATUS,
   SPELL_XML,
 } from './__fixtures__/wowhead-fixtures';
 
@@ -14,21 +15,38 @@ function envelope(contents: string, http_code = 200): AllOriginsResponse {
   return { contents, status: { http_code } };
 }
 
-describe('parseWowheadXml', () => {
-  it('extracts name (CDATA) and icon from item XML', () => {
-    expect(parseWowheadXml(envelope(ITEM_XML), 'item')).toEqual({
+describe('parseWowheadXml - real captured shape', () => {
+  it('extracts item name (CDATA) and icon slug from the confirmed live XML shape', () => {
+    // This fixture matches the real response captured from the browser; if it
+    // fails here it means the live Wowhead XML format changed.
+    const env: AllOriginsResponse = { contents: ITEM_XML, status: REAL_STATUS };
+    expect(parseWowheadXml(env, 'item')).toEqual({
       ok: true,
-      info: { name: 'Gaze of the Alnseer', icon: 'inv_misc_eye_01' },
+      info: { name: "Defiant Defender's Drape", icon: 'inv_cape_plate_dungeonharronir_c_01' },
     });
   });
 
-  it('extracts name and strips a trailing .jpg from the icon slug', () => {
+  it('ignores htmlTooltip CDATA content and picks only top-level <name>/<icon>', () => {
+    // The <htmlTooltip> CDATA block contains HTML with the item name in a <b> tag.
+    // DOMParser treats CDATA as text, not child elements, so querySelector must
+    // not return anything from inside it.
+    const result = parseWowheadXml(envelope(ITEM_XML), 'item');
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.info.name).toBe("Defiant Defender's Drape");
+      expect(result.info.icon).toBe('inv_cape_plate_dungeonharronir_c_01');
+    }
+  });
+
+  it('extracts spell name and strips a trailing .jpg from the icon slug', () => {
     expect(parseWowheadXml(envelope(SPELL_XML), 'spell')).toEqual({
       ok: true,
       info: { name: 'Shadow Blades', icon: 'ability_rogue_shadowblades' },
     });
   });
+});
 
+describe('parseWowheadXml - failure paths', () => {
   it('fails with a reason when the proxy http_code is not 200', () => {
     const result = parseWowheadXml(envelope(ITEM_XML, 503), 'item');
     expect(result.ok).toBe(false);
@@ -42,8 +60,10 @@ describe('parseWowheadXml', () => {
   });
 
   it('fails when the requested entity element is absent', () => {
-    const result = parseWowheadXml(envelope(EMPTY_WOWHEAD_XML), 'item');
-    expect(result).toEqual({ ok: false, reason: 'no <item> element in response' });
+    expect(parseWowheadXml(envelope(EMPTY_WOWHEAD_XML), 'item')).toEqual({
+      ok: false,
+      reason: 'no <item> element in response',
+    });
   });
 
   it('fails on malformed XML rather than throwing', () => {
