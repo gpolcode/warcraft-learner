@@ -75,26 +75,17 @@ export class WindowComparisonComponent {
   protected readonly activeWindow = computed(() =>
     this.windows()[this.activeIndex()] ?? null);
 
-  protected readonly timeTicks = computed<number[]>(() => {
-    const duration = this.fightDuration();
-    if (duration <= 0) return [];
-    const steps = 5;
-    return Array.from({ length: steps + 1 }, (_, i) => (duration / steps) * i);
+  protected readonly timelineEnd = computed(() => {
+    const windows = this.windows();
+    if (!windows.length) return Math.max(this.fightDuration(), 1);
+    return Math.max(...windows.map(w => w.timeEndS), 1);
   });
 
-  protected readonly mutedWindows = computed(() =>
-    this.windows()
-      .map((w, i) => ({ w, i }))
-      .filter(({ w }) => w.status === 'muted')
-      .map(({ w, i }) => ({
-        index: i,
-        timeS: w.timeStartS,
-        statusIcon: w.statusIcon,
-        reason: w.statusIcon === 'schedule'
-          ? 'fight ended before this window could fire'
-          : 'data gap (player died or log missing)',
-      }))
-  );
+  protected readonly timeTicks = computed<number[]>(() => {
+    const end = this.timelineEnd();
+    const steps = 5;
+    return Array.from({ length: steps + 1 }, (_, i) => (end / steps) * i);
+  });
 
   protected readonly segmentStyles = computed(() => {
     const activeIdx = this.activeIndex();
@@ -136,9 +127,8 @@ export class WindowComparisonComponent {
   }
 
   protected leftPct(timeS: number): number {
-    const duration = this.fightDuration();
-    if (duration <= 0) return 0;
-    return Math.min(100, Math.max(0, (timeS / duration) * 100));
+    const end = this.timelineEnd();
+    return Math.min(100, Math.max(0, (timeS / end) * 100));
   }
 
   protected readonly overviewMax = computed(() => {
