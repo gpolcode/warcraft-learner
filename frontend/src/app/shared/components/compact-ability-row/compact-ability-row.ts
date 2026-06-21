@@ -18,35 +18,56 @@ const STATUS_FILL: Record<WindowStatus, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-compact-ability-row',
   imports: [GameIconComponent, FormatDamagePipe],
-  // Grid columns must match the column headers rendered in window-comparison.html.
+  // Grid columns match the column headers in window-comparison.html.
+  // When hidePlayer is true the grid collapses to 2 columns (ability + candle only).
   template: `
-    <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 py-1 items-center min-w-0">
-      <div class="flex items-center gap-1.5 min-w-0 overflow-hidden">
-        @if (row().spellId) {
-          <wl-game-icon class="min-w-0 shrink-0" [id]="row().spellId!"></wl-game-icon>
-        } @else {
-          <span class="truncate text-sm text-[var(--muted)]">{{ row().label }}</span>
-        }
+    @if (hidePlayer()) {
+      <div class="grid grid-cols-[1fr_9rem] gap-x-3 px-4 py-1 items-center min-w-0">
+        <div class="flex items-center gap-1.5 min-w-0 overflow-hidden">
+          @if (row().spellId) {
+            <wl-game-icon class="min-w-0 shrink-0" [id]="row().spellId!"></wl-game-icon>
+          } @else {
+            <span class="truncate text-sm text-[var(--muted)]">{{ row().label }}</span>
+          }
+        </div>
+        <div class="relative h-2 rounded bg-[var(--surface)]" aria-hidden="true">
+          @if (rangeStyle(); as rs) {
+            <div class="absolute inset-y-0 rounded" [style]="rs"></div>
+          }
+          @if (avgStyle(); as avg) {
+            <div class="absolute inset-y-0 w-[2px]" [style]="avg"></div>
+          }
+        </div>
       </div>
-      <span class="tabular-nums text-xs text-right" [style.color]="valueColor()">
-        {{ row().playerPct | formatDamage }}
-      </span>
-      <!-- Candle bar: decorative, numeric columns carry the meaning for screen readers. -->
-      <div class="relative h-2 rounded bg-[var(--surface)]" aria-hidden="true">
-        @if (rangeStyle(); as rs) {
-          <div class="absolute inset-y-0 rounded" [style]="rs"></div>
-        }
-        @if (avgStyle(); as avg) {
-          <div class="absolute inset-y-0 w-[2px]" [style]="avg"></div>
-        }
-        @if (playerStyle(); as ps) {
-          <div class="absolute inset-y-0 w-[3px] rounded" [style]="ps"></div>
-        }
+    } @else {
+      <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 py-1 items-center min-w-0">
+        <div class="flex items-center gap-1.5 min-w-0 overflow-hidden">
+          @if (row().spellId) {
+            <wl-game-icon class="min-w-0 shrink-0" [id]="row().spellId!"></wl-game-icon>
+          } @else {
+            <span class="truncate text-sm text-[var(--muted)]">{{ row().label }}</span>
+          }
+        </div>
+        <span class="tabular-nums text-xs text-right" [style.color]="valueColor()">
+          {{ row().playerPct | formatDamage }}
+        </span>
+        <!-- Candle bar: decorative, numeric columns carry the meaning for screen readers. -->
+        <div class="relative h-2 rounded bg-[var(--surface)]" aria-hidden="true">
+          @if (rangeStyle(); as rs) {
+            <div class="absolute inset-y-0 rounded" [style]="rs"></div>
+          }
+          @if (avgStyle(); as avg) {
+            <div class="absolute inset-y-0 w-[2px]" [style]="avg"></div>
+          }
+          @if (playerStyle(); as ps) {
+            <div class="absolute inset-y-0 w-[3px] rounded" [style]="ps"></div>
+          }
+        </div>
+        <span class="tabular-nums text-xs text-right" [style.color]="deltaColor()">
+          {{ formattedDelta() }}
+        </span>
       </div>
-      <span class="tabular-nums text-xs text-right" [style.color]="deltaColor()">
-        {{ formattedDelta() }}
-      </span>
-    </div>
+    }
   `,
 })
 export class CompactAbilityRowComponent {
@@ -54,6 +75,7 @@ export class CompactAbilityRowComponent {
   readonly max = input.required<number>();
   readonly status = input<WindowStatus | null>(null);
   readonly higherIsBetter = input<boolean>(true);
+  readonly hidePlayer = input<boolean>(false);
 
   private pct(value: number): number {
     const max = this.max();

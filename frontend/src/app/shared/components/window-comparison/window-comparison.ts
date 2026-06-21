@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -48,28 +48,10 @@ export class WindowComparisonComponent {
   readonly showMap = input<boolean>(false);
   readonly openMap = output<number>();
 
-  // Half the segment button width (w-9 = 36px) and the minimum center-to-center
-  // spacing that keeps two adjacent buttons from overlapping (button width + 2px).
-  private static readonly HALF_BUTTON_PX = 18;
-  private static readonly MIN_GAP_PX = 38;
-
-  private readonly trackEl = viewChild<HTMLElement>('track');
-  // Default to 1000px so collision detection runs on the first render;
-  // ResizeObserver corrects it after the initial paint.
-  protected readonly trackWidth = signal(1000);
-
-  constructor() {
-    const destroyRef = inject(DestroyRef);
-    afterNextRender(() => {
-      const el = this.trackEl();
-      if (!el) return;
-      const observer = new ResizeObserver(entries => {
-        this.trackWidth.set(entries[0].contentRect.width);
-      });
-      observer.observe(el);
-      destroyRef.onDestroy(() => observer.disconnect());
-    });
-  }
+  // Minimum center-to-center gap between adjacent segments, expressed as a
+  // percentage of the track width. 5% corresponds to ~36px on a 720px track
+  // (the narrowest likely layout) and scales up proportionally on wider screens.
+  private static readonly MIN_GAP_PCT = 5;
 
   protected readonly selectedIndex = computed(() => {
     const windows = this.windows();
@@ -130,7 +112,6 @@ export class WindowComparisonComponent {
   }
 
   protected select(i: number): void {
-    if (this.windows()[i]?.status === 'muted') return;
     this._manualIndex.set(i);
   }
 
@@ -138,42 +119,36 @@ export class WindowComparisonComponent {
     const delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
     if (!delta) return;
     event.preventDefault();
-    const windows = this.windows();
-    let i = this.activeIndex() + delta;
-    while (i >= 0 && i < windows.length) {
-      if (windows[i].status !== 'muted') {
-        this.select(i);
-        return;
-      }
-      i += delta;
-    }
+    const next = this.activeIndex() + delta;
+    if (next >= 0 && next < this.windows().length) this.select(next);
   }
+
+  protected readonly activeIsMuted = computed(() =>
+    this.activeWindow()?.status === 'muted');
 
   protected leftPct(timeS: number): number {
     const end = this.timelineEnd();
     return Math.min(100, Math.max(0, (timeS / end) * 100));
   }
 
-  // Resolved `left` CSS value per segment. Buttons whose ideal time positions
-  // sit closer than one button width are nudged apart so they never overlap -
-  // works for clusters of 2, 3, or more.
+  // Resolved `left` CSS value per segment, in percentage space so no DOM
+  // measurement is needed and buttons can never overflow the track.
+  // A two-pass collision algorithm nudges overlapping buttons apart.
   protected readonly segmentLefts = computed<string[]>(() => {
     const windows = this.windows();
-    const width = this.trackWidth();
-    const half = WindowComparisonComponent.HALF_BUTTON_PX;
-    const minGap = WindowComparisonComponent.MIN_GAP_PX;
-    const minCenter = half;
-    const maxCenter = Math.max(half, width - half);
-    const centers = windows.map(w => (this.leftPct(w.timeStartS) / 100) * width);
-    // Forward pass: push later buttons right to keep the minimum spacing.
+    const minGap = WindowComparisonComponent.MIN_GAP_PCT;
+    const centers = windows.map(w => this.leftPct(w.timeStartS));
+    // Forward pass: push later buttons right.
     for (let i = 1; i < centers.length; i++) {
       if (centers[i] < centers[i - 1] + minGap) centers[i] = centers[i - 1] + minGap;
     }
-    // Backward pass: pull buttons left so the cluster respects the right edge.
+    // Clamp rightmost to 100%, then backward pass to pull earlier buttons left.
+    centers[centers.length - 1] = Math.min(centers[centers.length - 1], 100);
     for (let i = centers.length - 2; i >= 0; i--) {
-      if (centers[i] > centers[i + 1] - minGap) centers[i] = centers[i + 1] - minGap;
+      centers[i] = Math.min(centers[i], centers[i + 1] - minGap);
     }
-    return centers.map(center => `${Math.min(maxCenter, Math.max(minCenter, center))}px`);
+    return centers.map(c =>
+      `clamp(1.125rem, ${Math.max(0, c)}%, calc(100% - 1.125rem))`);
   });
 
   protected readonly overviewMax = computed(() => {

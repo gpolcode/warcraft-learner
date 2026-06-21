@@ -1,7 +1,6 @@
 <!-- Timeline track: segments float on a guide line, positioned proportionally along the fight. -->
 <mat-card class="px-4 pt-3 pb-3">
   <div
-    #track
     class="relative mx-2"
     style="height:2.25rem"
     role="listbox"
@@ -21,9 +20,7 @@
           class="flex items-center justify-center w-9 h-9 rounded"
           [style]="segmentStyles()[i]"
           [attr.aria-selected]="activeIndex() === i"
-          [attr.aria-disabled]="w.status === 'muted'"
           [attr.aria-label]="(w.timeStartS | formatDuration)"
-          [disabled]="w.status === 'muted'"
           (click)="select(i)">
           <mat-icon [style]="'font-size:18px;height:18px;width:18px;line-height:1'">{{ w.statusIcon }}</mat-icon>
         </button>
@@ -66,13 +63,17 @@
           <mat-icon>my_location</mat-icon>
         </button>
       }
-      <span class="tabular-nums text-xs ml-auto flex items-baseline gap-1">
-        <span class="text-[var(--muted)]">{{ w.overview.playerPct | formatDamage }}</span>
-        @if (overviewDeltaText()) {
-          <span class="text-[var(--muted)]">·</span>
-          <span [style.color]="overviewDeltaColor()">{{ overviewDeltaText() }}</span>
-        }
-      </span>
+      @if (!activeIsMuted()) {
+        <span class="tabular-nums text-xs ml-auto flex items-baseline gap-1">
+          <span class="text-[var(--muted)]">{{ w.overview.playerPct | formatDamage }}</span>
+          @if (overviewDeltaText()) {
+            <span class="text-[var(--muted)]">·</span>
+            <span [style.color]="overviewDeltaColor()">{{ overviewDeltaText() }}</span>
+          }
+        </span>
+      } @else {
+        <span class="text-xs text-[var(--muted)] ml-auto italic">not reached</span>
+      }
     </div>
 
     <!-- Full-width overview bar: player fill + range band + avg tick. -->
@@ -94,17 +95,25 @@
     @if (w.detailRows.length) {
       <div class="border-t border-[var(--border)] pt-2 pb-2">
         <!-- Column headers — must match the grid in compact-ability-row. -->
-        <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 pb-1">
-          <span class="text-[10px] text-[var(--muted)]">ability</span>
-          <span class="text-[10px] text-[var(--muted)] text-right">yours</span>
-          <span class="text-[10px] text-[var(--muted)] text-center">vs top</span>
-          <span class="text-[10px] text-[var(--muted)] text-right">delta</span>
-        </div>
+        @if (activeIsMuted()) {
+          <div class="grid grid-cols-[1fr_9rem] gap-x-3 px-4 pb-1">
+            <span class="text-[10px] text-[var(--muted)]">ability</span>
+            <span class="text-[10px] text-[var(--muted)] text-center">top parse range</span>
+          </div>
+        } @else {
+          <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 pb-1">
+            <span class="text-[10px] text-[var(--muted)]">ability</span>
+            <span class="text-[10px] text-[var(--muted)] text-right">yours</span>
+            <span class="text-[10px] text-[var(--muted)] text-center">vs top</span>
+            <span class="text-[10px] text-[var(--muted)] text-right">delta</span>
+          </div>
+        }
         @for (row of w.detailRows; track row.spellId) {
           <wl-compact-ability-row
             [row]="row"
             [max]="detailMax(activeIndex())"
-            [higherIsBetter]="higherIsBetter()">
+            [higherIsBetter]="higherIsBetter()"
+            [hidePlayer]="activeIsMuted()">
           </wl-compact-ability-row>
         }
       </div>

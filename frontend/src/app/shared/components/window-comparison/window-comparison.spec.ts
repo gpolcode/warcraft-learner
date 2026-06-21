@@ -74,11 +74,11 @@ describe('WindowComparisonComponent selectedIndex', () => {
 });
 
 describe('WindowComparisonComponent selection', () => {
-  it('does not activate a muted window on select', () => {
+  it('activates a muted window on select so its top-parse breakdown is visible', () => {
     const windows = [win({ playerPct: 80, topAvg: 100 }), win({}, 'muted')];
     const { vm } = mountVm(WindowComparisonComponent, { windows });
     (vm['select'] as (i: number) => void)(1);
-    expect((vm['activeIndex'] as () => number)()).toBe(0);
+    expect((vm['activeIndex'] as () => number)()).toBe(1);
   });
 
   it('activates a non-muted window on select, overriding the default', () => {
