@@ -57,11 +57,12 @@ export class GameIconComponent {
   protected readonly wowheadUrl = computed(() => `https://www.wowhead.com/${this.kind()}=${this.id()}`);
 
   constructor() {
-    // When no name is supplied from any source, ask the cache to resolve it
-    // from Wowhead. The lookup is deduped/cached, so this is safe to run on
-    // every render. A successful resolve updates `cached()` and re-renders.
+    // Resolve from Wowhead whenever no icon is available from any source - an
+    // explicit `icon` (player gear) or a cache hit (WCL seed / prior resolve).
+    // An explicit `name` is irrelevant: the name can be supplied while the icon
+    // still needs fetching (e.g. bench trinkets, enchants).
     effect(() => {
-      if (!this.name() && !this.cached()) this.iconCache.resolve(this.kind(), this.id());
+      if (!this.icon() && !this.cached()) this.iconCache.resolve(this.kind(), this.id());
     });
   }
 }
