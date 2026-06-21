@@ -7,12 +7,12 @@
     aria-label="Burst windows"
     (keydown)="onKeydown($event)">
     <!-- Track: rounded rail the segments sit on. -->
-    <div class="absolute left-0 right-0 top-0 h-9 rounded-lg bg-[var(--surface)] border border-[var(--border)]" aria-hidden="true"></div>
+    <div class="absolute left-0 right-0 top-0 h-9 rounded-lg bg-[#0d1117] border border-[var(--border)]" aria-hidden="true"></div>
 
     @for (w of windows(); track $index; let i = $index) {
       <div
         class="absolute top-0 flex flex-col items-center"
-        [style.left.%]="leftPct(w.timeStartS)"
+        [style.left]="'clamp(1.125rem,' + leftPct(w.timeStartS) + '%,calc(100% - 1.125rem))'"
         style="transform:translateX(-50%)">
         <button
           type="button"
