@@ -1,74 +1,81 @@
-@for (w of windows(); track $index; let i = $index) {
+<!-- Timeline track: one segment per window, positioned along the fight. -->
+<mat-card class="px-4 pt-3 pb-4">
+  <div
+    class="relative h-7 rounded bg-[var(--surface)]"
+    role="listbox"
+    aria-label="Windows"
+    (keydown)="onKeydown($event)">
+    @for (w of windows(); track $index; let i = $index) {
+      <button
+        type="button"
+        role="option"
+        class="absolute top-0 -translate-x-1/2 flex h-7 w-7 items-center justify-center rounded"
+        [class.badge-success]="w.status === 'good'"
+        [class.badge-warning]="w.status === 'warn'"
+        [class.badge-critical]="w.status === 'bad'"
+        [style.color]="w.status === 'muted' ? 'var(--muted)' : null"
+        [style.outline]="activeIndex() === i ? '2px solid var(--gold)' : null"
+        [style.left.%]="leftPct(w.timeStartS)"
+        [attr.aria-selected]="activeIndex() === i"
+        [attr.aria-disabled]="w.status === 'muted'"
+        [attr.aria-label]="(w.timeStartS | formatDuration)"
+        [disabled]="w.status === 'muted'"
+        (click)="select(i)">
+        <mat-icon>{{ w.statusIcon }}</mat-icon>
+      </button>
+    }
+  </div>
 
-  <mat-card class="mt-2">
-    <!-- Header: status glyph, time range, spell icons, detail toggle -->
-    <mat-card-header class="items-center">
+  <!-- Time axis labels. -->
+  @if (timeTicks().length) {
+    <div class="flex justify-between tabular-nums text-[10px] text-[var(--muted)] mt-2 px-0.5">
+      @for (tick of timeTicks(); track $index) {
+        <span>{{ tick | formatDuration }}</span>
+      }
+    </div>
+  }
+</mat-card>
+
+<!-- Detail panel: driven by the active segment. -->
+@if (activeWindow(); as w) {
+  <mat-card class="mt-2 p-4">
+    <div class="flex items-center gap-2 mb-3">
       <mat-icon
         [class.badge-success]="w.status === 'good'"
         [class.badge-warning]="w.status === 'warn'"
         [class.badge-critical]="w.status === 'bad'">
         {{ w.statusIcon }}
       </mat-icon>
-      <span class="mr-auto tabular-nums">{{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}</span>
+      <span class="tabular-nums">{{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}</span>
       @for (sid of w.spellIds; track sid) {
-        <wl-game-icon class="mr-2" [id]="sid"></wl-game-icon>
+        <wl-game-icon [id]="sid"></wl-game-icon>
       }
       @for (lbl of w.labels; track lbl) {
-        <span class="mr-2 text-[var(--muted)]">{{ lbl }}</span>
+        <span class="text-[var(--muted)]">{{ lbl }}</span>
       }
       @if (showMap()) {
-        <button class="mr-1" mat-icon-button aria-label="Open positioning map" (click)="openMap.emit(i)">
+        <button class="ml-auto" mat-icon-button aria-label="Open positioning map" (click)="openMap.emit(activeIndex())">
           <mat-icon>my_location</mat-icon>
         </button>
       }
-      @if (w.detailRows.length) {
-        <button class="mr-2" mat-icon-button (click)="toggle(i)">
-          <mat-icon>{{ isOpen(i) ? 'expand_less' : 'expand_more' }}</mat-icon>
-        </button>
-      }
-    </mat-card-header>
+    </div>
 
-    <mat-card-content>
-      <!-- Overview range chart: always visible -->
-      <div>
-        <wl-range-chart
-          [rows]="[w.overview]"
-          unit="raw"
-          [higherIsBetter]="higherIsBetter()"
-          [maxVal]="overviewMax()"
-          [showLegend]="true"
-          [showLabels]="false"
-          [rowHeight]="34">
-        </wl-range-chart>
-      </div>
+    <!-- Overview row. -->
+    <wl-compact-ability-row
+      [row]="w.overview"
+      [max]="overviewMax()"
+      [status]="w.status">
+    </wl-compact-ability-row>
 
-      <!-- Detail: spell icon column beside the per-ability chart -->
-      @if (isOpen(i) && w.detailRows.length) {
-        <mat-divider></mat-divider>
-        <div class="flex items-start">
-          <div class="flex flex-col shrink-0">
-            @for (row of w.detailRows; track row.spellId) {
-              <div class="h-[52px] flex items-center">
-                @if (row.spellId) {
-                  <wl-game-icon [id]="row.spellId"></wl-game-icon>
-                }
-              </div>
-            }
-            <div class="h-7"></div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <wl-range-chart
-              [rows]="w.detailRows"
-              unit="raw"
-              [higherIsBetter]="higherIsBetter()"
-              [maxVal]="detailMax(i)"
-              [showLabels]="false"
-              [showLegend]="false">
-            </wl-range-chart>
-          </div>
-        </div>
+    <!-- Per-ability breakdown. -->
+    @if (w.detailRows.length) {
+      <mat-divider class="my-3"></mat-divider>
+      @for (row of w.detailRows; track row.spellId) {
+        <wl-compact-ability-row
+          [row]="row"
+          [max]="detailMax(activeIndex())">
+        </wl-compact-ability-row>
       }
-    </mat-card-content>
+    }
   </mat-card>
-
 }
