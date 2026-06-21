@@ -13,6 +13,7 @@
       <div
         class="absolute top-0 flex flex-col items-center"
         [style.left]="segmentLefts()[i]"
+        [style.z-index]="activeIndex() === i ? 2 : 1"
         style="transform:translateX(-50%)">
         <button
           type="button"
@@ -39,9 +40,7 @@
 
 <!-- Detail panel: driven by activeIndex(). -->
 @if (activeWindow(); as w) {
-  <div
-    class="mt-2 rounded border border-[var(--border)] border-l-4"
-    [style.border-left-color]="statusColor(w.status)">
+  <div class="mt-2 rounded border border-[var(--border)]">
 
     <!-- Header: status dot · window title · spell icons · value · delta -->
     <div class="flex items-center gap-2 px-4 py-2.5 bg-[var(--surface)]">
@@ -49,7 +48,7 @@
         class="w-2.5 h-2.5 rounded-full shrink-0"
         [style.background]="statusColor(w.status)">
       </span>
-      <span class="flex-1 italic text-sm font-medium">
+      <span class="flex-1 text-sm font-medium">
         Window {{ activeIndex() + 1 }} - {{ w.timeStartS | formatDuration }} to {{ w.timeEndS | formatDuration }}
       </span>
       @for (sid of w.spellIds; track sid) {
