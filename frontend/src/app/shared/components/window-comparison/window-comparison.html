@@ -1,6 +1,7 @@
 <!-- Timeline track: segments float on a guide line, positioned proportionally along the fight. -->
 <mat-card class="px-4 pt-3 pb-3">
   <div
+    #track
     class="relative mx-2"
     style="height:2.25rem"
     role="listbox"
@@ -12,7 +13,7 @@
     @for (w of windows(); track $index; let i = $index) {
       <div
         class="absolute top-0 flex flex-col items-center"
-        [style.left]="'clamp(1.125rem,' + leftPct(w.timeStartS) + '%,calc(100% - 1.125rem))'"
+        [style.left]="segmentLefts()[i]"
         style="transform:translateX(-50%)">
         <button
           type="button"
