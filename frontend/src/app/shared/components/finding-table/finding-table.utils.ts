@@ -37,36 +37,19 @@ export interface FindingEntry {
   findings: AnalysisFinding[];
 }
 
-/**
- * Split a backend-templated finding message ("Label: measurement.") into its
- * label and a measured value. Fallback used when a finding has no structured
- * `measured` field; the analysis engine normally populates `measured` directly.
- */
-export function splitMessage(message: string): { label: string; measured: FindingMeasure } {
-  const idx = message.indexOf(':');
-  if (idx === -1) {
-    const text = message.trim().replace(/\.$/, '');
-    return { label: text, measured: { value: text } };
-  }
-  const label = message.slice(0, idx).trim();
-  const value = message.slice(idx + 1).trim().replace(/\.$/, '');
-  return { label, measured: { value } };
-}
-
 /** Flatten cooldown entries with issues into one table row per finding. */
 export function rowsFromEntries(entries: FindingEntry[], catLabel: Record<string, string>): FindingRow[] {
   const rows: FindingRow[] = [];
   for (const entry of entries) {
     if (!entry.hasIssue) continue;
     for (const f of entry.findings) {
-      const split = splitMessage(f.message);
       rows.push({
         severity: f.severity === 'critical' ? 'critical' : 'warning',
         name: entry.name,
         spellId: entry.spellId,
         timestampMs: f.timestamp_ms ?? null,
         chip: catLabel[f.category],
-        measured: f.measured ?? split.measured,
+        measured: f.measured!,
         fix: f.details?.remedy,
       });
     }

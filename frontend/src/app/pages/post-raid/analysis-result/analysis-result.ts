@@ -8,7 +8,6 @@ import {
   FindingTableComponent,
   onPlanFromEntries,
   rowsFromEntries,
-  splitMessage,
 } from '../../../shared/components/finding-table/finding-table';
 import { BurstWindowsComponent } from '../burst-windows/burst-windows';
 import { DefensivesSectionComponent } from '../defensives-section/defensives-section';
@@ -85,17 +84,14 @@ export class AnalysisResultComponent implements OnChanges {
     })
   );
 
-  /** Rotation-rule findings as flat table rows (What = label before the colon). */
+  /** Rotation-rule findings as flat table rows. */
   protected readonly ruleRows = computed<FindingRow[]>(() =>
-    this.cdBuckets().ruleFindings.map(f => {
-      const split = splitMessage(f.message);
-      return {
-        severity: f.severity === 'critical' ? 'critical' : 'warning',
-        what: split.label,
-        measured: f.measured ?? split.measured,
-        fix: f.details?.remedy,
-      };
-    })
+    this.cdBuckets().ruleFindings.map(f => ({
+      severity: f.severity === 'critical' ? 'critical' : 'warning',
+      what: f.label,
+      measured: f.measured!,
+      fix: f.details?.remedy,
+    }))
   );
 
   /** Offensive cooldowns with issues, one row per finding. */

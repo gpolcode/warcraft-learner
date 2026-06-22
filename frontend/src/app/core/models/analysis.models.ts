@@ -12,6 +12,8 @@ export interface AnalysisFinding {
    * the templated `message`. Findings without a meaningful metric omit it.
    */
   measured?: { value: string; unit?: string };
+  /** Short display label for the "What" column (rule violations only). */
+  label?: string;
   timestamp_ms?: number;
   details?: {
     cd_name?: string;
