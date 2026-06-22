@@ -15,77 +15,65 @@ describe('CompactAbilityRowComponent gap', () => {
     const vm = mount(row({ playerPct: 150, topAvg: 100 }));
     expect((vm['gapSign'] as () => string)()).toBe('+');
     expect((vm['gapMagnitude'] as () => number)()).toBe(50);
-    expect((vm['gapColor'] as () => string)()).toBe('#3fb950');
+    expect((vm['gapClass'] as () => string)()).toBe('badge-success');
   });
 
   it('shows negative gap with - sign when player falls short', () => {
     const vm = mount(row({ playerPct: 60, topAvg: 100 }));
     expect((vm['gapSign'] as () => string)()).toBe('-');
     expect((vm['gapMagnitude'] as () => number)()).toBe(40);
-    expect((vm['gapColor'] as () => string)()).toBe('#f85149');
+    expect((vm['gapClass'] as () => string)()).toBe('badge-critical');
   });
 
-  it('shows warn color when gap is within 10% of topAvg', () => {
+  it('uses the warning token when gap is within 10% of topAvg', () => {
     const vm = mount(row({ playerPct: 92, topAvg: 100 }));
-    expect((vm['gapColor'] as () => string)()).toBe('#d29922');
+    expect((vm['gapClass'] as () => string)()).toBe('badge-warning');
   });
 
-  it('shows good color for defensives when player took less damage (gap < 0)', () => {
+  it('treats less damage taken as good for defensives (lower is better)', () => {
     const vm = mount(row({ playerPct: 60, topAvg: 100 }), { higherIsBetter: false });
-    expect((vm['gapColor'] as () => string)()).toBe('#3fb950');
+    expect((vm['gapClass'] as () => string)()).toBe('badge-success');
   });
 
-  it('shows bad color for defensives when player took more damage', () => {
+  it('treats more damage taken as critical for defensives', () => {
     const vm = mount(row({ playerPct: 150, topAvg: 100 }), { higherIsBetter: false });
-    expect((vm['gapColor'] as () => string)()).toBe('#f85149');
+    expect((vm['gapClass'] as () => string)()).toBe('badge-critical');
   });
 
-  it('returns muted color when topAvg is null', () => {
+  it('marks a missed ability (null player) as critical', () => {
+    const vm = mount(row({ playerPct: null, topAvg: 100 }));
+    expect((vm['gapClass'] as () => string)()).toBe('badge-critical');
+  });
+
+  it('falls back to muted when topAvg is unknown', () => {
     const vm = mount(row({ playerPct: 100, topAvg: null }));
-    expect((vm['gapColor'] as () => string)()).toBe('var(--muted)');
+    expect((vm['gapClass'] as () => string)()).toBe('text-[var(--muted)]');
   });
 });
 
 describe('CompactAbilityRowComponent casts badge', () => {
-  it('shows good color when player casts meet top casts', () => {
+  it('uses the success token when player casts meet top', () => {
     const vm = mount(row({ playerCasts: 3, topCasts: 3 }));
-    expect((vm['castsColor'] as () => string)()).toBe('#3fb950');
+    expect((vm['castsClass'] as () => string)()).toBe('badge-success');
   });
 
-  it('shows good color when player casts exceed top casts', () => {
+  it('uses the success token when player casts exceed top', () => {
     const vm = mount(row({ playerCasts: 4, topCasts: 3 }));
-    expect((vm['castsColor'] as () => string)()).toBe('#3fb950');
+    expect((vm['castsClass'] as () => string)()).toBe('badge-success');
   });
 
-  it('shows warn color when player is within 1 cast of top', () => {
+  it('uses the warning token when player is within 1 cast of top', () => {
     const vm = mount(row({ playerCasts: 2, topCasts: 3 }));
-    expect((vm['castsColor'] as () => string)()).toBe('#d29922');
+    expect((vm['castsClass'] as () => string)()).toBe('badge-warning');
   });
 
-  it('shows bad color when player is 2+ casts below top', () => {
+  it('uses the critical token when player is 2+ casts below top', () => {
     const vm = mount(row({ playerCasts: 1, topCasts: 3 }));
-    expect((vm['castsColor'] as () => string)()).toBe('#f85149');
+    expect((vm['castsClass'] as () => string)()).toBe('badge-critical');
   });
 
-  it('shows muted color when topCasts is null', () => {
+  it('falls back to muted when top casts are unknown', () => {
     const vm = mount(row({ playerCasts: 2, topCasts: null }));
-    expect((vm['castsColor'] as () => string)()).toBe('var(--muted)');
-  });
-});
-
-describe('CompactAbilityRowComponent grid layout', () => {
-  it('uses 3-column layout by default (no casts, with gap)', () => {
-    const vm = mount(row({}), { showCasts: false });
-    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_6rem_6rem]');
-  });
-
-  it('uses 4-column layout when showCasts is true', () => {
-    const vm = mount(row({}), { showCasts: true });
-    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_5rem_6rem_6rem]');
-  });
-
-  it('uses 2-column layout when hidePlayer is true', () => {
-    const vm = mount(row({}), { hidePlayer: true });
-    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_6rem]');
+    expect((vm['castsClass'] as () => string)()).toBe('text-[var(--muted)]');
   });
 });

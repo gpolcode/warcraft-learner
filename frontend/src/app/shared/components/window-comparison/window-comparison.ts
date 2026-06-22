@@ -21,18 +21,20 @@ export interface ComparisonWindow {
   detailRows: RangeRow[];
 }
 
-const STATUS_COLORS: Record<WindowStatus, string> = {
-  good: '#3fb950',
-  warn: '#d29922',
-  bad: '#f85149',
-  muted: 'var(--muted)',
+// Status -> Tailwind class maps. Colors reference the global design tokens
+// (--success / --warning / --critical / --muted) instead of hardcoded hex.
+const SEGMENT_CLASS: Record<WindowStatus, string> = {
+  good: 'bg-[var(--success)]/55 border border-[var(--success)] text-[var(--success)]',
+  warn: 'bg-[var(--warning)]/55 border border-[var(--warning)] text-[var(--warning)]',
+  bad: 'bg-[var(--critical)]/55 border border-[var(--critical)] text-[var(--critical)]',
+  muted: '',
 };
 
-const SEG_BG: Record<WindowStatus, string> = {
-  good: 'rgba(63,185,80,0.55)',
-  warn: 'rgba(210,153,34,0.55)',
-  bad: 'rgba(248,81,73,0.55)',
-  muted: 'transparent',
+const DOT_CLASS: Record<WindowStatus, string> = {
+  good: 'bg-[var(--success)]',
+  warn: 'bg-[var(--warning)]',
+  bad: 'bg-[var(--critical)]',
+  muted: 'bg-[var(--muted)]',
 };
 
 @Component({
@@ -50,9 +52,8 @@ export class WindowComparisonComponent {
   readonly showCasts = input<boolean>(true);
   readonly openMap = output<number>();
 
-  // Minimum center-to-center gap between adjacent segments, expressed as a
-  // percentage of the track width. 5% corresponds to ~36px on a 720px track
-  // (the narrowest likely layout) and scales up proportionally on wider screens.
+  // Minimum center-to-center gap between adjacent segments, as a percentage of
+  // the track width, so buttons never visually collide on a crowded timeline.
   private static readonly MIN_GAP_PCT = 5;
 
   protected readonly selectedIndex = computed(() => {
@@ -94,23 +95,24 @@ export class WindowComparisonComponent {
     return Array.from({ length: steps + 1 }, (_, i) => (end / steps) * i);
   });
 
-  protected readonly segmentStyles = computed(() => {
+  // Per-segment Tailwind classes (color + active outline). Muted windows split
+  // into "scheduled" (dashed neutral) vs "missing" (dashed critical tint).
+  protected readonly segmentClasses = computed(() => {
     const activeIdx = this.activeIndex();
     return this.windows().map((w, i) => {
-      const ring = activeIdx === i ? ';outline:2px solid var(--gold);outline-offset:2px' : '';
+      const outline = activeIdx === i ? ' outline outline-2 outline-offset-2 outline-[var(--gold)]' : '';
       if (w.status === 'muted') {
-        const bc = w.statusIcon === 'schedule' ? '#555' : 'rgba(248,81,73,0.4)';
-        const bg = w.statusIcon === 'schedule' ? 'transparent' : 'rgba(248,81,73,0.07)';
-        return `background:${bg};border:1.5px dashed ${bc};color:var(--muted)${ring}`;
+        const muted = w.statusIcon === 'schedule'
+          ? 'border border-dashed border-[var(--border)] text-[var(--muted)]'
+          : 'bg-[var(--critical)]/10 border border-dashed border-[var(--critical)]/40 text-[var(--muted)]';
+        return muted + outline;
       }
-      const color = STATUS_COLORS[w.status];
-      const bg = SEG_BG[w.status];
-      return `background:${bg};border:1px solid ${color};color:${color}${ring}`;
+      return SEGMENT_CLASS[w.status] + outline;
     });
   });
 
-  protected statusColor(status: WindowStatus): string {
-    return STATUS_COLORS[status];
+  protected dotClass(status: WindowStatus): string {
+    return DOT_CLASS[status];
   }
 
   protected select(i: number): void {
@@ -140,13 +142,6 @@ export class WindowComparisonComponent {
       return higherIsBetter ? gap : -gap; // negative = worse
     };
     return [...rows].sort((a, b) => loss(a) - loss(b));
-  });
-
-  // Header grid must mirror gridCols() in CompactAbilityRowComponent.
-  protected readonly headerGridCols = computed(() => {
-    if (this.activeIsMuted()) return 'grid-cols-[1fr_6rem]';
-    if (this.showCasts()) return 'grid-cols-[1fr_5rem_6rem_6rem]';
-    return 'grid-cols-[1fr_6rem_6rem]';
   });
 
   protected leftPct(timeS: number): number {
@@ -200,39 +195,42 @@ export class WindowComparisonComponent {
     return `${sign}${delta.toFixed(0)}%`;
   });
 
-  protected readonly overviewDeltaColor = computed(() => {
+  protected readonly overviewDeltaClass = computed(() => {
     const delta = this.overviewDelta();
-    if (delta == null) return 'var(--muted)';
+    if (delta == null) return 'text-[var(--muted)]';
     const isBetter = this.higherIsBetter() ? delta >= 0 : delta <= 0;
-    return isBetter ? '#3fb950' : '#f85149';
+    return isBetter ? 'badge-success' : 'badge-critical';
   });
 
-  protected readonly overviewRangeStyle = computed<string | null>(() => {
+  // Overview bar geometry as plain percentages, bound via [style.left.%] /
+  // [style.width.%] in the template; colors come from token classes there.
+  protected readonly overviewPlayerWidthPct = computed<number | null>(() => {
     const w = this.activeWindow();
-    if (!w) return null;
-    const { topMin, topMax } = w.overview;
-    if (topMin == null || topMax == null) return null;
+    if (!w || w.overview.playerPct == null) return null;
+    return this.barPct(w.overview.playerPct, this.overviewMax());
+  });
+
+  protected readonly overviewPlayerFillClass = computed(() => {
+    const w = this.activeWindow();
+    return w ? DOT_CLASS[w.status] : '';
+  });
+
+  protected readonly overviewRangeLeftPct = computed<number | null>(() => {
+    const w = this.activeWindow();
+    if (!w || w.overview.topMin == null || w.overview.topMax == null) return null;
+    return this.barPct(w.overview.topMin, this.overviewMax());
+  });
+
+  protected readonly overviewRangeWidthPct = computed<number | null>(() => {
+    const w = this.activeWindow();
+    if (!w || w.overview.topMin == null || w.overview.topMax == null) return null;
     const max = this.overviewMax();
-    const left = this.barPct(topMin, max);
-    const width = Math.max(0, this.barPct(topMax, max) - left);
-    return `left:${left}%;width:${width}%;background:rgba(74,158,255,0.28);border:1px solid #4a9eff;`;
+    return Math.max(0, this.barPct(w.overview.topMax, max) - this.barPct(w.overview.topMin, max));
   });
 
-  protected readonly overviewAvgStyle = computed<string | null>(() => {
+  protected readonly overviewAvgLeftPct = computed<number | null>(() => {
     const w = this.activeWindow();
-    if (!w) return null;
-    const { topAvg } = w.overview;
-    if (topAvg == null) return null;
-    return `left:${this.barPct(topAvg, this.overviewMax())}%;background:#60cfff;`;
-  });
-
-  protected readonly overviewPlayerStyle = computed<string | null>(() => {
-    const w = this.activeWindow();
-    if (!w) return null;
-    const { playerPct } = w.overview;
-    if (playerPct == null) return null;
-    const color = STATUS_COLORS[w.status];
-    const width = this.barPct(playerPct, this.overviewMax());
-    return `left:0;width:${width}%;background:${color};opacity:0.65;`;
+    if (!w || w.overview.topAvg == null) return null;
+    return this.barPct(w.overview.topAvg, this.overviewMax());
   });
 }
