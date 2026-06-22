@@ -63,6 +63,7 @@ export function evaluateCastWithoutPrior(
     category: 'rule_violation',
     timestamp_ms: Math.round(violations[0] * 1000),
     message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s).`,
+    measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
   };
 }
@@ -121,6 +122,7 @@ export function evaluateHoldForAnchor(
     category: 'rule_violation',
     timestamp_ms: Math.round(firstCastS * 1000),
     message: `${spellNames} used in the ${holdWindowS}s hold window before ${cond.anchor_spell_name}: ${violations.length} charge(s).`,
+    measured: { value: `${violations.length}`, unit: 'charge(s)' },
     details: remedy ? { remedy } : undefined,
   };
 }
