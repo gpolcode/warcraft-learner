@@ -3,67 +3,67 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 466.3,
-  "downtime_threshold_ms": 1535,
-  "top_avg_efficiency": 67.2,
-  "top_efficiency_stddev": 3.4,
+  "avg_duration_s": 486.4,
+  "downtime_threshold_ms": 1583,
+  "top_avg_efficiency": 66.4,
+  "top_efficiency_stddev": 2,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.2,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 68,
-      "stddev_gap_s": 64.3,
+      "avg_first_cast_s": 2.1,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 59.8,
+      "stddev_gap_s": 64.9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {},
       "uses_per_min": {
-        "avg": 0.889,
-        "stddev": 0.243,
+        "avg": 0.972,
+        "stddev": 0.186,
         "min": 0.503,
         "max": 1.159
       },
-      "avg_uses": 7,
-      "avg_uses_per_min": 0.89,
+      "avg_uses": 7.9,
+      "avg_uses_per_min": 0.97,
       "bl_pct": 0,
       "majority_hold": false
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.1,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 127.5,
-      "stddev_gap_s": 5.6,
+      "avg_first_cast_s": 1.9,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 128.7,
+      "stddev_gap_s": 5.7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
-          "target_s": 125.5,
-          "stddev_s": 1.3,
+          "target_s": 124.9,
+          "stddev_s": 1,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 253.8,
-          "stddev_s": 2.3,
+          "target_s": 254.3,
+          "stddev_s": 1.8,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 388,
-          "stddev_s": 6.9,
+          "target_s": 389.9,
+          "stddev_s": 2,
           "count": 10,
           "total_samples": 10
         }
       },
       "uses_per_min": {
-        "avg": 0.542,
-        "stddev": 0.044,
-        "min": 0.485,
-        "max": 0.598
+        "avg": 0.518,
+        "stddev": 0.036,
+        "min": 0.475,
+        "max": 0.58
       },
       "avg_uses": 4.2,
-      "avg_uses_per_min": 0.54,
+      "avg_uses_per_min": 0.52,
       "bl_pct": 0,
       "majority_hold": true
     },
@@ -101,55 +101,55 @@
   "burst_windows": [
     {
       "time_s": 2,
-      "stddev_s": 0.8,
+      "stddev_s": 0.6,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 5060482,
-      "dmg_stddev": 308715,
-      "dmg_min": 4520895,
-      "dmg_max": 5495956,
+      "dmg_avg": 5351778,
+      "dmg_stddev": 780993,
+      "dmg_min": 4389985,
+      "dmg_max": 7019090,
       "ability_breakdown": [
         {
           "spell_id": 335467,
-          "avg_damage": 1000529,
+          "avg_damage": 1038396,
           "min_damage": 720989,
-          "max_damage": 1158595,
+          "max_damage": 1397501,
           "count": 10
         },
         {
           "spell_id": 8092,
-          "avg_damage": 822894,
-          "min_damage": 641171,
-          "max_damage": 1049135,
+          "avg_damage": 809794,
+          "min_damage": 460731,
+          "max_damage": 1258389,
           "count": 10
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 767595,
+          "avg_damage": 785344,
           "min_damage": 663044,
-          "max_damage": 853644,
+          "max_damage": 877935,
           "count": 10
         },
         {
           "spell_id": 391403,
-          "avg_damage": 669632,
-          "min_damage": 531036,
-          "max_damage": 806283,
+          "avg_damage": 715578,
+          "min_damage": 566644,
+          "max_damage": 869453,
           "count": 10
         },
         {
           "spell_id": 413231,
-          "avg_damage": 428669,
-          "min_damage": 264580,
-          "max_damage": 604352,
-          "count": 9
+          "avg_damage": 483423,
+          "min_damage": 296765,
+          "max_damage": 724541,
+          "count": 8
         },
         {
           "spell_id": 1264176,
-          "avg_damage": 328782,
-          "min_damage": 263390,
-          "max_damage": 389692,
-          "count": 5
+          "avg_damage": 389200,
+          "min_damage": 269522,
+          "max_damage": 676468,
+          "count": 7
         }
       ],
       "ref_game_id": null,
@@ -161,55 +161,55 @@
       "window_length_s": 20.2
     },
     {
-      "time_s": 125.5,
-      "stddev_s": 1.3,
+      "time_s": 124.8,
+      "stddev_s": 1,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 8190051,
-      "dmg_stddev": 1529418,
-      "dmg_min": 5578920,
+      "dmg_avg": 8416825,
+      "dmg_stddev": 1290984,
+      "dmg_min": 6367697,
       "dmg_max": 10394221,
       "ability_breakdown": [
         {
           "spell_id": 199486,
-          "avg_damage": 1464302,
-          "min_damage": 763747,
+          "avg_damage": 1467058,
+          "min_damage": 758456,
           "max_damage": 2390752,
           "count": 10
         },
         {
-          "spell_id": 390964,
-          "avg_damage": 1034162,
-          "min_damage": 791152,
-          "max_damage": 1306981,
-          "count": 8
-        },
-        {
           "spell_id": 413231,
-          "avg_damage": 995075,
+          "avg_damage": 1077347,
           "min_damage": 699124,
-          "max_damage": 1446683,
-          "count": 9
+          "max_damage": 1522485,
+          "count": 10
         },
         {
-          "spell_id": 335467,
-          "avg_damage": 736179,
-          "min_damage": 570272,
-          "max_damage": 930842,
-          "count": 9
+          "spell_id": 390964,
+          "avg_damage": 1068835,
+          "min_damage": 587137,
+          "max_damage": 1551462,
+          "count": 10
         },
         {
           "spell_id": 1264176,
-          "avg_damage": 710273,
+          "avg_damage": 765665,
           "min_damage": 493628,
-          "max_damage": 978968,
-          "count": 6
+          "max_damage": 1068625,
+          "count": 7
+        },
+        {
+          "spell_id": 335467,
+          "avg_damage": 717152,
+          "min_damage": 570272,
+          "max_damage": 844930,
+          "count": 8
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 688145,
-          "min_damage": 484594,
-          "max_damage": 797638,
+          "avg_damage": 700063,
+          "min_damage": 591528,
+          "max_damage": 798805,
           "count": 7
         }
       ],
@@ -219,56 +219,56 @@
         "Power Infusion"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.1
+      "window_length_s": 20.2
     },
     {
-      "time_s": 253.8,
-      "stddev_s": 2.3,
+      "time_s": 254.3,
+      "stddev_s": 1.8,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 10528503,
-      "dmg_stddev": 1749539,
-      "dmg_min": 7655750,
-      "dmg_max": 13122199,
+      "dmg_avg": 11390526,
+      "dmg_stddev": 1366230,
+      "dmg_min": 8999834,
+      "dmg_max": 13410052,
       "ability_breakdown": [
         {
           "spell_id": 199486,
-          "avg_damage": 2435398,
-          "min_damage": 1264790,
+          "avg_damage": 2536509,
+          "min_damage": 1997378,
           "max_damage": 3686667,
           "count": 10
         },
         {
           "spell_id": 390964,
-          "avg_damage": 1528735,
-          "min_damage": 865704,
-          "max_damage": 2376857,
+          "avg_damage": 1606922,
+          "min_damage": 940305,
+          "max_damage": 2071262,
           "count": 10
         },
         {
           "spell_id": 413231,
-          "avg_damage": 1333185,
-          "min_damage": 974232,
+          "avg_damage": 1454509,
+          "min_damage": 985589,
           "max_damage": 2170169,
           "count": 10
         },
         {
           "spell_id": 1264176,
-          "avg_damage": 788124,
-          "min_damage": 495178,
-          "max_damage": 1106755,
+          "avg_damage": 982213,
+          "min_damage": 616774,
+          "max_damage": 1543151,
           "count": 10
         },
         {
           "spell_id": 335467,
-          "avg_damage": 746892,
-          "min_damage": 654774,
-          "max_damage": 870403,
+          "avg_damage": 746443,
+          "min_damage": 602539,
+          "max_damage": 816313,
           "count": 7
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 672959,
+          "avg_damage": 692085,
           "min_damage": 577061,
           "max_damage": 750305,
           "count": 5
@@ -280,59 +280,59 @@
         "Power Infusion"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.1
+      "window_length_s": 20.5
     },
     {
-      "time_s": 388,
-      "stddev_s": 6.9,
+      "time_s": 389.9,
+      "stddev_s": 2,
       "count": 10,
       "total_samples": 10,
-      "dmg_avg": 10062065,
-      "dmg_stddev": 2927382,
-      "dmg_min": 5054550,
-      "dmg_max": 13860924,
+      "dmg_avg": 12836283,
+      "dmg_stddev": 1845114,
+      "dmg_min": 9571832,
+      "dmg_max": 16315169,
       "ability_breakdown": [
         {
           "spell_id": 199486,
-          "avg_damage": 2409801,
-          "min_damage": 1329858,
-          "max_damage": 3093669,
-          "count": 8
+          "avg_damage": 2856011,
+          "min_damage": 2089773,
+          "max_damage": 3900805,
+          "count": 10
         },
         {
           "spell_id": 390964,
-          "avg_damage": 1704315,
-          "min_damage": 539315,
-          "max_damage": 2762722,
+          "avg_damage": 2285146,
+          "min_damage": 1785808,
+          "max_damage": 3070107,
           "count": 10
         },
         {
           "spell_id": 413231,
-          "avg_damage": 1093404,
-          "min_damage": 438764,
-          "max_damage": 1563610,
-          "count": 8
+          "avg_damage": 1419731,
+          "min_damage": 954591,
+          "max_damage": 2184438,
+          "count": 9
         },
         {
           "spell_id": 335467,
-          "avg_damage": 855500,
-          "min_damage": 697390,
+          "avg_damage": 922773,
+          "min_damage": 729358,
           "max_damage": 1110157,
           "count": 10
         },
         {
-          "spell_id": 1242189,
-          "avg_damage": 712101,
-          "min_damage": 533937,
-          "max_damage": 890429,
-          "count": 8
+          "spell_id": 391403,
+          "avg_damage": 815716,
+          "min_damage": 661304,
+          "max_damage": 918676,
+          "count": 5
         },
         {
-          "spell_id": 8092,
-          "avg_damage": 693210,
-          "min_damage": 586996,
-          "max_damage": 815580,
-          "count": 6
+          "spell_id": 1242189,
+          "avg_damage": 777358,
+          "min_damage": 533937,
+          "max_damage": 890429,
+          "count": 7
         }
       ],
       "ref_game_id": null,
@@ -341,7 +341,7 @@
         "Power Infusion"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.3
+      "window_length_s": 21
     }
   ],
   "gear": {
@@ -349,11 +349,19 @@
     "talent_builds": [
       {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82674,82676,82679,82680,82684,82685,82686,82711,93170",
-        "count": 9,
-        "pct": 90,
+        "count": 7,
+        "pct": 70,
         "report_code": "V7MTygtaZq2p8dwX",
         "fight_id": 1,
         "player_name": "Dlpsibm"
+      },
+      {
+        "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82675,82676,82679,82680,82684,82685,82686,82711,93170",
+        "count": 2,
+        "pct": 20,
+        "report_code": "8hKnNBHMgrpFJ7zL",
+        "fight_id": 1,
+        "player_name": "Malaghe"
       },
       {
         "key": "v2:109010,109011,109012,109015,110408,110408,110408,82552,82555,82559,82560,82563,82643,82645,82649,82654,82667,82673,82676,82677,82679,82680,82684,82685,82686,82711,93170",
@@ -367,16 +375,16 @@
     "trinkets": {
       "12": [
         {
-          "id": 249343,
-          "name": "Gaze of the Alnseer",
-          "count": 7,
-          "pct": 70
-        },
-        {
           "id": 249346,
           "name": "Vaelgor's Final Stare",
-          "count": 2,
-          "pct": 20
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 250256,
@@ -387,14 +395,14 @@
       ],
       "13": [
         {
-          "id": 249346,
-          "name": "Vaelgor's Final Stare",
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
           "count": 7,
           "pct": 70
         },
         {
-          "id": 249343,
-          "name": "Gaze of the Alnseer",
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
           "count": 3,
           "pct": 30
         }
@@ -403,22 +411,22 @@
     "enchants": {
       "0": [
         {
-          "id": 8017,
-          "name": "Enchant Helm - Empowered Rune of Avoidance",
-          "count": 5,
-          "pct": 50
-        },
-        {
           "id": 7991,
           "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
           "count": 3,
           "pct": 30
         },
         {
           "id": 7961,
           "name": "Enchant Helm - Empowered Hex of Leeching",
-          "count": 2,
-          "pct": 20
+          "count": 3,
+          "pct": 30
         }
       ],
       "2": [
@@ -431,14 +439,14 @@
         {
           "id": 7973,
           "name": "Enchant Shoulders - Akil'zon's Swiftness",
-          "count": 3,
-          "pct": 30
+          "count": 2,
+          "pct": 20
         },
         {
           "id": 8031,
           "name": "Enchant Shoulders - Silvermoon's Mending",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         }
       ],
       "4": [
@@ -453,8 +461,14 @@
         {
           "id": 7935,
           "name": "+41 Intellect & +115 Stamina",
-          "count": 10,
-          "pct": 100
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7937,
+          "name": "+41 Intellect & +4% Mana",
+          "count": 1,
+          "pct": 10
         }
       ],
       "7": [
@@ -467,28 +481,28 @@
         {
           "id": 8019,
           "name": "Enchant Boots - Farstrider's Hunt",
-          "count": 4,
-          "pct": 40
+          "count": 3,
+          "pct": 30
         },
         {
           "id": 7993,
           "name": "Enchant Boots - Shaladrassil's Roots",
-          "count": 1,
-          "pct": 10
+          "count": 2,
+          "pct": 20
         }
       ],
       "10": [
         {
           "id": 7967,
           "name": "Enchant Ring - Eyes of the Eagle",
-          "count": 6,
-          "pct": 60
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 8025,
           "name": "Enchant Ring - Silvermoon's Alacrity",
-          "count": 2,
-          "pct": 20
+          "count": 1,
+          "pct": 10
         },
         {
           "id": 7969,
@@ -501,34 +515,34 @@
         {
           "id": 7967,
           "name": "Enchant Ring - Eyes of the Eagle",
-          "count": 6,
-          "pct": 60
-        },
-        {
-          "id": 8025,
-          "name": "Enchant Ring - Silvermoon's Alacrity",
-          "count": 2,
-          "pct": 20
+          "count": 7,
+          "pct": 70
         },
         {
           "id": 7969,
           "name": "Enchant Ring - Zul'jin's Mastery",
           "count": 2,
           "pct": 20
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
         }
       ],
       "15": [
+        {
+          "id": 8041,
+          "name": "Enchant Weapon - Arcane Mastery",
+          "count": 4,
+          "pct": 40
+        },
         {
           "id": 7981,
           "name": "Enchant Weapon - Jan'alai's Precision",
           "count": 4,
           "pct": 40
-        },
-        {
-          "id": 8041,
-          "name": "Enchant Weapon - Arcane Mastery",
-          "count": 3,
-          "pct": 30
         },
         {
           "id": 8039,
@@ -539,7 +553,7 @@
       ]
     },
     "gems": {
-      "avg_count": 5.5,
+      "avg_count": 5.3,
       "max_count": 6,
       "sample_count": 10
     }
@@ -548,15 +562,15 @@
     {
       "name": "Dispersion",
       "spell_id": 47585,
-      "avg_uses": 1.5,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2,
+      "max_uses": 1,
       "sample_count": 2
     },
     {
       "name": "Desperate Prayer",
       "spell_id": 19236,
-      "avg_uses": 2.6,
+      "avg_uses": 2.8,
       "min_uses": 2,
       "max_uses": 4,
       "sample_count": 10
@@ -564,109 +578,115 @@
     {
       "name": "Vampiric Embrace",
       "spell_id": 15286,
-      "avg_uses": 3.8,
-      "min_uses": 2,
+      "avg_uses": 4.1,
+      "min_uses": 4,
       "max_uses": 5,
-      "sample_count": 9
+      "sample_count": 10
     }
   ],
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 150.4,
-      "stddev_first_cast_s": 38.2,
-      "avg_gap_s": 132.2,
-      "stddev_gap_s": 40.1,
+      "avg_first_cast_s": 161.2,
+      "stddev_first_cast_s": 69.3,
+      "avg_gap_s": 130.9,
+      "stddev_gap_s": 40.2,
       "hold_targets": {
         "1": {
-          "target_s": 270.1,
-          "stddev_s": 57.8,
-          "count": 10,
+          "target_s": 269.6,
+          "stddev_s": 59.2,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 404.6,
+          "stddev_s": 2.6,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.33,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.333,
-        "stddev": 0.075,
+        "avg": 0.344,
+        "stddev": 0.088,
         "min": 0.251,
-        "max": 0.464
+        "max": 0.477
       },
       "majority_hold": true
     },
     "Vampiric Embrace": {
-      "sample_count": 9,
-      "avg_first_cast_s": 30,
-      "stddev_first_cast_s": 83,
-      "avg_gap_s": 133.9,
-      "stddev_gap_s": 25.6,
+      "sample_count": 10,
+      "avg_first_cast_s": 3.6,
+      "stddev_first_cast_s": 4.3,
+      "avg_gap_s": 129.2,
+      "stddev_gap_s": 6.1,
       "hold_targets": {
         "2": {
-          "target_s": 255,
-          "stddev_s": 0.5,
-          "count": 4,
-          "total_samples": 9
+          "target_s": 255.3,
+          "stddev_s": 6.8,
+          "count": 8,
+          "total_samples": 10
         },
         "3": {
-          "target_s": 390.4,
-          "stddev_s": 2.1,
-          "count": 7,
-          "total_samples": 9
+          "target_s": 391,
+          "stddev_s": 5,
+          "count": 10,
+          "total_samples": 10
         }
       },
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.473,
-        "stddev": 0.105,
-        "min": 0.294,
+        "avg": 0.506,
+        "stddev": 0.036,
+        "min": 0.456,
         "max": 0.58
       },
       "majority_hold": true
     },
     "Dispersion": {
       "sample_count": 2,
-      "avg_first_cast_s": 297,
-      "stddev_first_cast_s": 227.2,
-      "avg_gap_s": 135.3,
-      "stddev_gap_s": 0,
+      "avg_first_cast_s": 346.8,
+      "stddev_first_cast_s": 156.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.211,
-        "stddev": 0.117,
+        "avg": 0.132,
+        "stddev": 0.006,
         "min": 0.128,
-        "max": 0.294
+        "max": 0.136
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 2.4,
-      "stddev_s": 0.9,
-      "count": 8,
+      "time_s": 2.3,
+      "stddev_s": 4.3,
+      "count": 10,
       "total_samples": 10,
-      "dmg_avg": 288722,
-      "dmg_stddev": 16796,
-      "dmg_min": 254841,
-      "dmg_max": 303400,
+      "dmg_avg": 270189,
+      "dmg_stddev": 75216,
+      "dmg_min": 61791,
+      "dmg_max": 319788,
       "ability_breakdown": [
         {
           "spell_id": 1222278,
-          "avg_damage": 269885,
+          "avg_damage": 275636,
           "min_damage": 237736,
-          "max_damage": 287499,
-          "count": 8
+          "max_damage": 299684,
+          "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 18838,
+          "avg_damage": 22117,
           "min_damage": 14050,
-          "max_damage": 29293,
-          "count": 8
+          "max_damage": 61791,
+          "count": 10
         }
       ],
       "ref_game_id": 238693,
@@ -681,28 +701,28 @@
       ]
     },
     {
-      "time_s": 125.9,
-      "stddev_s": 1.6,
-      "count": 7,
+      "time_s": 125.5,
+      "stddev_s": 3.8,
+      "count": 10,
       "total_samples": 10,
-      "dmg_avg": 916245,
-      "dmg_stddev": 133705,
-      "dmg_min": 767904,
-      "dmg_max": 1099423,
+      "dmg_avg": 874379,
+      "dmg_stddev": 194521,
+      "dmg_min": 449016,
+      "dmg_max": 1099615,
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 619163,
-          "min_damage": 542370,
+          "avg_damage": 628335,
+          "min_damage": 583291,
           "max_damage": 682999,
-          "count": 7
+          "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 172652,
+          "avg_damage": 171270,
           "min_damage": 156501,
           "max_damage": 186749,
-          "count": 7
+          "count": 10
         }
       ],
       "ref_game_id": 238693,
@@ -717,35 +737,35 @@
       ]
     },
     {
-      "time_s": 135.3,
-      "stddev_s": 2.9,
+      "time_s": 135.6,
+      "stddev_s": 2.8,
       "count": 8,
       "total_samples": 10,
-      "dmg_avg": 501347,
-      "dmg_stddev": 169817,
+      "dmg_avg": 425287,
+      "dmg_stddev": 163419,
       "dmg_min": 221217,
       "dmg_max": 760056,
       "ability_breakdown": [
         {
           "spell_id": 1221965,
-          "avg_damage": 279494,
-          "min_damage": 250599,
-          "max_damage": 340634,
-          "count": 6
-        },
-        {
-          "spell_id": 1221637,
-          "avg_damage": 155752,
-          "min_damage": 48498,
-          "max_damage": 387719,
-          "count": 6
+          "avg_damage": 257350,
+          "min_damage": 225360,
+          "max_damage": 285780,
+          "count": 5
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 139527,
-          "min_damage": 121738,
-          "max_damage": 162507,
+          "avg_damage": 133487,
+          "min_damage": 114794,
+          "max_damage": 151590,
           "count": 8
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 124574,
+          "min_damage": 46398,
+          "max_damage": 387719,
+          "count": 5
         }
       ],
       "ref_game_id": 238693,
@@ -760,28 +780,28 @@
       ]
     },
     {
-      "time_s": 254.5,
-      "stddev_s": 2.3,
-      "count": 9,
+      "time_s": 255,
+      "stddev_s": 6.6,
+      "count": 10,
       "total_samples": 10,
-      "dmg_avg": 1140792,
-      "dmg_stddev": 139245,
-      "dmg_min": 964760,
+      "dmg_avg": 1094687,
+      "dmg_stddev": 217725,
+      "dmg_min": 595990,
       "dmg_max": 1330113,
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 791447,
-          "min_damage": 624442,
+          "avg_damage": 798898,
+          "min_damage": 657185,
           "max_damage": 964383,
           "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 349345,
+          "avg_damage": 350175,
           "min_damage": 289699,
-          "max_damage": 387097,
-          "count": 9
+          "max_damage": 378658,
+          "count": 10
         }
       ],
       "ref_game_id": 238693,
@@ -797,34 +817,34 @@
     },
     {
       "time_s": 269.6,
-      "stddev_s": 6.3,
-      "count": 9,
+      "stddev_s": 2.7,
+      "count": 7,
       "total_samples": 10,
-      "dmg_avg": 704569,
-      "dmg_stddev": 142079,
-      "dmg_min": 560965,
+      "dmg_avg": 681348,
+      "dmg_stddev": 147695,
+      "dmg_min": 524244,
       "dmg_max": 928089,
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 266904,
-          "min_damage": 238792,
+          "avg_damage": 256496,
+          "min_damage": 237308,
           "max_damage": 303452,
-          "count": 9
+          "count": 7
         },
         {
           "spell_id": 1221965,
-          "avg_damage": 266443,
-          "min_damage": 231800,
+          "avg_damage": 256155,
+          "min_damage": 228339,
           "max_damage": 331254,
-          "count": 8
+          "count": 6
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 200827,
-          "min_damage": 48120,
-          "max_damage": 580935,
-          "count": 9
+          "avg_damage": 197000,
+          "min_damage": 97859,
+          "max_damage": 350033,
+          "count": 6
         }
       ],
       "ref_game_id": 238693,
@@ -839,35 +859,35 @@
       ]
     },
     {
-      "time_s": 390.2,
-      "stddev_s": 1.9,
-      "count": 8,
+      "time_s": 391,
+      "stddev_s": 5,
+      "count": 10,
       "total_samples": 10,
-      "dmg_avg": 1315717,
-      "dmg_stddev": 158611,
-      "dmg_min": 1024832,
+      "dmg_avg": 1285559,
+      "dmg_stddev": 194730,
+      "dmg_min": 852944,
       "dmg_max": 1490475,
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 793648,
-          "min_damage": 551677,
+          "avg_damage": 738924,
+          "min_damage": 151304,
           "max_damage": 945429,
-          "count": 8
+          "count": 10
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 515324,
-          "min_damage": 473155,
+          "avg_damage": 515333,
+          "min_damage": 442255,
           "max_damage": 551730,
-          "count": 8
+          "count": 10
         },
         {
           "spell_id": 32409,
-          "avg_damage": 10792,
-          "min_damage": 10281,
+          "avg_damage": 10736,
+          "min_damage": 10087,
           "max_damage": 11954,
-          "count": 5
+          "count": 6
         }
       ],
       "ref_game_id": 238693,
@@ -880,79 +900,129 @@
       "common_cds": [
         "Vampiric Embrace"
       ]
+    },
+    {
+      "time_s": 404.6,
+      "stddev_s": 2.6,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 724278,
+      "dmg_stddev": 166517,
+      "dmg_min": 472682,
+      "dmg_max": 893549,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 352662,
+          "min_damage": 329147,
+          "max_damage": 391827,
+          "count": 5
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 232671,
+          "min_damage": 209961,
+          "max_damage": 248306,
+          "count": 3
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 210168,
+          "min_damage": 124252,
+          "max_damage": 282945,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11530,
+          "min_damage": 10778,
+          "max_damage": 12186,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ]
     }
   ],
   "top_dtk_comparison": [
     {
       "spell_id": 1222284,
-      "avg_pct": 0.5735,
-      "min_pct": 0.521,
-      "max_pct": 0.637,
-      "stddev_pct": 0.0357,
+      "avg_pct": 0.5728,
+      "min_pct": 0.536,
+      "max_pct": 0.624,
+      "stddev_pct": 0.0263,
       "sample_count": 10
     },
     {
       "spell_id": 1221637,
-      "avg_pct": 0.157,
+      "avg_pct": 0.1487,
       "min_pct": 0.127,
-      "max_pct": 0.204,
-      "stddev_pct": 0.0255,
+      "max_pct": 0.18,
+      "stddev_pct": 0.0147,
       "sample_count": 10
     },
     {
       "spell_id": 1222278,
-      "avg_pct": 0.1266,
+      "avg_pct": 0.1247,
       "min_pct": 0.108,
-      "max_pct": 0.153,
-      "stddev_pct": 0.0124,
+      "max_pct": 0.142,
+      "stddev_pct": 0.0092,
       "sample_count": 10
     },
     {
       "spell_id": 1,
-      "avg_pct": 0.0953,
-      "min_pct": 0.007,
-      "max_pct": 0.15,
-      "stddev_pct": 0.05,
-      "sample_count": 7
-    },
-    {
-      "spell_id": 1222088,
-      "avg_pct": 0.0318,
-      "min_pct": 0.02,
-      "max_pct": 0.048,
-      "stddev_pct": 0.0113,
-      "sample_count": 8
+      "avg_pct": 0.0818,
+      "min_pct": 0.039,
+      "max_pct": 0.141,
+      "stddev_pct": 0.0349,
+      "sample_count": 10
     },
     {
       "spell_id": 1221965,
-      "avg_pct": 0.029,
-      "min_pct": 0.008,
-      "max_pct": 0.045,
-      "stddev_pct": 0.01,
+      "avg_pct": 0.0294,
+      "min_pct": 0.024,
+      "max_pct": 0.036,
+      "stddev_pct": 0.0039,
+      "sample_count": 9
+    },
+    {
+      "spell_id": 1222088,
+      "avg_pct": 0.0267,
+      "min_pct": 0.017,
+      "max_pct": 0.047,
+      "stddev_pct": 0.0096,
       "sample_count": 9
     },
     {
       "spell_id": 1221717,
-      "avg_pct": 0.0109,
+      "avg_pct": 0.0106,
       "min_pct": 0.003,
-      "max_pct": 0.016,
-      "stddev_pct": 0.0046,
+      "max_pct": 0.017,
+      "stddev_pct": 0.006,
       "sample_count": 7
     },
     {
       "spell_id": 1222122,
-      "avg_pct": 0.0078,
+      "avg_pct": 0.007,
       "min_pct": 0.005,
       "max_pct": 0.011,
-      "stddev_pct": 0.0027,
-      "sample_count": 6
+      "stddev_pct": 0.0028,
+      "sample_count": 4
     },
     {
       "spell_id": 32409,
-      "avg_pct": 0.0059,
-      "min_pct": 0.004,
+      "avg_pct": 0.0058,
+      "min_pct": 0.005,
       "max_pct": 0.007,
-      "stddev_pct": 0.0011,
+      "stddev_pct": 0.0009,
       "sample_count": 8
     }
   ]
