@@ -46,6 +46,8 @@ export class WindowComparisonComponent {
   readonly higherIsBetter = input<boolean>(true);
   readonly fightDuration = input<number>(0);
   readonly showMap = input<boolean>(false);
+  // Casts column is meaningful for burst (offensive) windows only; hidden for defensives.
+  readonly showCasts = input<boolean>(true);
   readonly openMap = output<number>();
 
   // Minimum center-to-center gap between adjacent segments, expressed as a
@@ -126,6 +128,27 @@ export class WindowComparisonComponent {
   protected readonly activeIsMuted = computed(() =>
     this.activeWindow()?.status === 'muted');
 
+  // Active window's ability rows, sorted by absolute gap (biggest damage loss
+  // first) so the most actionable abilities surface at the top of the table.
+  // Direction-aware: burst wants player >= top (loss = negative gap); defensives
+  // want player <= top (loss = positive gap, i.e. more damage taken).
+  protected readonly activeDetailRows = computed<RangeRow[]>(() => {
+    const rows = this.activeWindow()?.detailRows ?? [];
+    const higherIsBetter = this.higherIsBetter();
+    const loss = (row: RangeRow): number => {
+      const gap = (row.playerPct ?? 0) - (row.topAvg ?? 0);
+      return higherIsBetter ? gap : -gap; // negative = worse
+    };
+    return [...rows].sort((a, b) => loss(a) - loss(b));
+  });
+
+  // Header grid must mirror gridCols() in CompactAbilityRowComponent.
+  protected readonly headerGridCols = computed(() => {
+    if (this.activeIsMuted()) return 'grid-cols-[1fr_6rem]';
+    if (this.showCasts()) return 'grid-cols-[1fr_5rem_6rem_6rem]';
+    return 'grid-cols-[1fr_6rem_6rem]';
+  });
+
   protected leftPct(timeS: number): number {
     const end = this.timelineEnd();
     return Math.min(100, Math.max(0, (timeS / end) * 100));
@@ -157,12 +180,6 @@ export class WindowComparisonComponent {
         .filter((v): v is number => v != null));
     return Math.max(...vals, 0.01);
   });
-
-  protected detailMax(i: number): number {
-    const rows = this.windows()[i]?.detailRows ?? [];
-    const vals = rows.flatMap(r => [r.topMax, r.playerPct].filter((v): v is number => v != null));
-    return Math.max(...vals, 0.001);
-  }
 
   private barPct(value: number, max: number): number {
     return Math.min(100, Math.max(0, (value / max) * 100));

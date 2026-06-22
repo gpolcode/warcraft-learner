@@ -13,5 +13,5 @@
   <p class="mt-6 text-xl font-medium">Defensive Windows</p>
   <p class="text-sm text-[var(--muted)]">Each bar is the damage taken while the defensive was active, as a share of your total damage taken this fight - lower is better.</p>
   <wl-window-comparison [windows]="defWindows()" [higherIsBetter]="false" [fightDuration]="fightDuration()"
-    [showMap]="showMap()" (openMap)="onOpenMap($event)"></wl-window-comparison>
+    [showCasts]="false" [showMap]="showMap()" (openMap)="onOpenMap($event)"></wl-window-comparison>
 }

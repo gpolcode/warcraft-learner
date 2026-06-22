@@ -90,6 +90,48 @@ describe('WindowComparisonComponent selection', () => {
   });
 });
 
+describe('WindowComparisonComponent activeDetailRows', () => {
+  function winWithRows(rows: RangeRow[]): ComparisonWindow {
+    return { ...win({}), detailRows: rows };
+  }
+
+  it('sorts rows by gap ascending (biggest loss first) when higherIsBetter', () => {
+    const rows: RangeRow[] = [
+      { label: 'A', playerPct: 90, topAvg: 100, topMin: null, topMax: null },
+      { label: 'B', playerPct: 50, topAvg: 100, topMin: null, topMax: null },
+      { label: 'C', playerPct: 120, topAvg: 100, topMin: null, topMax: null },
+    ];
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [winWithRows(rows)], higherIsBetter: true });
+    (vm['select'] as (i: number) => void)(0);
+    const sorted = (vm['activeDetailRows'] as () => RangeRow[])();
+    expect(sorted.map(r => r.label)).toEqual(['B', 'A', 'C']);
+  });
+
+  it('sorts rows so most damage taken (worst) is first when lower is better', () => {
+    const rows: RangeRow[] = [
+      { label: 'A', playerPct: 90, topAvg: 100, topMin: null, topMax: null },  // loss = 10
+      { label: 'B', playerPct: 150, topAvg: 100, topMin: null, topMax: null }, // loss = -50 (worst)
+      { label: 'C', playerPct: 80, topAvg: 100, topMin: null, topMax: null },  // loss = 20 (best)
+    ];
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [winWithRows(rows)], higherIsBetter: false });
+    (vm['select'] as (i: number) => void)(0);
+    const sorted = (vm['activeDetailRows'] as () => RangeRow[])();
+    expect(sorted.map(r => r.label)).toEqual(['B', 'A', 'C']);
+  });
+});
+
+describe('WindowComparisonComponent showCasts', () => {
+  it('exposes the showCasts input value', () => {
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [], showCasts: false });
+    expect((vm['showCasts'] as () => boolean)()).toBe(false);
+  });
+
+  it('defaults showCasts to true', () => {
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [] });
+    expect((vm['showCasts'] as () => boolean)()).toBe(true);
+  });
+});
+
 describe('WindowComparisonComponent timeTicks', () => {
   const ticksForEnd = (timeEndS: number): number[] => {
     const w = { ...win({}), timeEndS };

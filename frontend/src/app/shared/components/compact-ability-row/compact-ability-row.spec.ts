@@ -7,67 +7,85 @@ function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
 }
 
-const mount = (r: RangeRow, max: number) =>
-  mountVm(CompactAbilityRowComponent, { row: r, max }).vm;
+const mount = (r: RangeRow, extra: Record<string, unknown> = {}) =>
+  mountVm(CompactAbilityRowComponent, { row: r, ...extra }).vm;
 
-describe('CompactAbilityRowComponent bar layers', () => {
-  it('positions the range band from topMin to topMax over max', () => {
-    const vm = mount(row({ topMin: 100, topMax: 300 }), 400);
-    const style = (vm['rangeStyle'] as () => string | null)();
-    expect(style).toContain('left:25%');
-    expect(style).toContain('width:50%');
+describe('CompactAbilityRowComponent gap', () => {
+  it('shows positive gap with + sign when player exceeds top avg', () => {
+    const vm = mount(row({ playerPct: 150, topAvg: 100 }));
+    expect((vm['gapSign'] as () => string)()).toBe('+');
+    expect((vm['gapMagnitude'] as () => number)()).toBe(50);
+    expect((vm['gapColor'] as () => string)()).toBe('#3fb950');
   });
 
-  it('positions the average tick at topAvg over max', () => {
-    const vm = mount(row({ topAvg: 200 }), 400);
-    expect((vm['avgStyle'] as () => string | null)()).toContain('left:50%');
+  it('shows negative gap with - sign when player falls short', () => {
+    const vm = mount(row({ playerPct: 60, topAvg: 100 }));
+    expect((vm['gapSign'] as () => string)()).toBe('-');
+    expect((vm['gapMagnitude'] as () => number)()).toBe(40);
+    expect((vm['gapColor'] as () => string)()).toBe('#f85149');
   });
 
-  it('positions the player marker at playerPct over max', () => {
-    const vm = mount(row({ playerPct: 100 }), 400);
-    expect((vm['playerStyle'] as () => string | null)()).toContain('left:25%');
+  it('shows warn color when gap is within 10% of topAvg', () => {
+    const vm = mount(row({ playerPct: 92, topAvg: 100 }));
+    expect((vm['gapColor'] as () => string)()).toBe('#d29922');
   });
 
-  it('renders no player marker when playerPct is null', () => {
-    const vm = mount(row({ playerPct: null, topAvg: 200 }), 400);
-    expect((vm['playerStyle'] as () => string | null)()).toBeNull();
+  it('shows good color for defensives when player took less damage (gap < 0)', () => {
+    const vm = mount(row({ playerPct: 60, topAvg: 100 }), { higherIsBetter: false });
+    expect((vm['gapColor'] as () => string)()).toBe('#3fb950');
   });
 
-  it('renders no range band when topMin/topMax are missing', () => {
-    const vm = mount(row({ topMin: null, topMax: null }), 400);
-    expect((vm['rangeStyle'] as () => string | null)()).toBeNull();
+  it('shows bad color for defensives when player took more damage', () => {
+    const vm = mount(row({ playerPct: 150, topAvg: 100 }), { higherIsBetter: false });
+    expect((vm['gapColor'] as () => string)()).toBe('#f85149');
   });
 
-  it('clamps player above the range to 100%', () => {
-    const vm = mount(row({ playerPct: 800 }), 400);
-    expect((vm['playerStyle'] as () => string | null)()).toContain('left:100%');
+  it('returns muted color when topAvg is null', () => {
+    const vm = mount(row({ playerPct: 100, topAvg: null }));
+    expect((vm['gapColor'] as () => string)()).toBe('var(--muted)');
   });
 });
 
-describe('CompactAbilityRowComponent delta', () => {
-  it('formats a positive delta when player beats the top average', () => {
-    const vm = mount(row({ playerPct: 150, topAvg: 100 }), 200);
-    expect((vm['formattedDelta'] as () => string)()).toBe('+50%');
-    expect((vm['deltaColor'] as () => string)()).toBe('#3fb950');
+describe('CompactAbilityRowComponent casts badge', () => {
+  it('shows good color when player casts meet top casts', () => {
+    const vm = mount(row({ playerCasts: 3, topCasts: 3 }));
+    expect((vm['castsColor'] as () => string)()).toBe('#3fb950');
   });
 
-  it('formats a negative delta when player falls short', () => {
-    const vm = mount(row({ playerPct: 60, topAvg: 100 }), 200);
-    expect((vm['formattedDelta'] as () => string)()).toBe('-40%');
-    expect((vm['deltaColor'] as () => string)()).toBe('#f85149');
+  it('shows good color when player casts exceed top casts', () => {
+    const vm = mount(row({ playerCasts: 4, topCasts: 3 }));
+    expect((vm['castsColor'] as () => string)()).toBe('#3fb950');
   });
 
-  it('renders no delta when player or top average is missing', () => {
-    const vm = mount(row({ playerPct: null, topAvg: 100 }), 200);
-    expect((vm['formattedDelta'] as () => string)()).toBe('');
+  it('shows warn color when player is within 1 cast of top', () => {
+    const vm = mount(row({ playerCasts: 2, topCasts: 3 }));
+    expect((vm['castsColor'] as () => string)()).toBe('#d29922');
   });
 
-  it('inverts delta colour for lower-is-better (defensives)', () => {
-    const vm = mountVm(CompactAbilityRowComponent, {
-      row: row({ playerPct: 60, topAvg: 100 }),
-      max: 200,
-      higherIsBetter: false,
-    }).vm;
-    expect((vm['deltaColor'] as () => string)()).toBe('#3fb950');
+  it('shows bad color when player is 2+ casts below top', () => {
+    const vm = mount(row({ playerCasts: 1, topCasts: 3 }));
+    expect((vm['castsColor'] as () => string)()).toBe('#f85149');
+  });
+
+  it('shows muted color when topCasts is null', () => {
+    const vm = mount(row({ playerCasts: 2, topCasts: null }));
+    expect((vm['castsColor'] as () => string)()).toBe('var(--muted)');
+  });
+});
+
+describe('CompactAbilityRowComponent grid layout', () => {
+  it('uses 3-column layout by default (no casts, with gap)', () => {
+    const vm = mount(row({}), { showCasts: false });
+    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_6rem_6rem]');
+  });
+
+  it('uses 4-column layout when showCasts is true', () => {
+    const vm = mount(row({}), { showCasts: true });
+    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_5rem_6rem_6rem]');
+  });
+
+  it('uses 2-column layout when hidePlayer is true', () => {
+    const vm = mount(row({}), { hidePlayer: true });
+    expect((vm['gridCols'] as () => string)()).toBe('grid-cols-[1fr_6rem]');
   });
 });

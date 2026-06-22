@@ -90,28 +90,25 @@
       </div>
     </div>
 
-    <!-- Per-ability breakdown. -->
+    <!-- Per-ability breakdown: sorted-impact table (biggest gap first). -->
     @if (w.detailRows.length) {
       <div class="border-t border-[var(--border)] pt-2 pb-2">
-        <!-- Column headers — must match the grid in compact-ability-row. -->
-        @if (activeIsMuted()) {
-          <div class="grid grid-cols-[1fr_9rem] gap-x-3 px-4 pb-1">
-            <span class="text-[10px] text-[var(--muted)]">ability</span>
-            <span class="text-[10px] text-[var(--muted)] text-center">top parse range</span>
-          </div>
-        } @else {
-          <div class="grid grid-cols-[1fr_5rem_6rem_3rem] gap-x-3 px-4 pb-1">
-            <span class="text-[10px] text-[var(--muted)]">ability</span>
-            <span class="text-[10px] text-[var(--muted)] text-right">yours</span>
-            <span class="text-[10px] text-[var(--muted)] text-center">vs top</span>
-            <span class="text-[10px] text-[var(--muted)] text-right">delta</span>
-          </div>
-        }
-        @for (row of w.detailRows; track row.spellId) {
+        <!-- Column headers — must match gridCols() in compact-ability-row. -->
+        <div class="grid {{ headerGridCols() }} gap-x-3 px-4 pb-1">
+          <span class="text-[10px] text-[var(--muted)]">ability</span>
+          @if (showCasts() && !activeIsMuted()) {
+            <span class="text-[10px] text-[var(--muted)] text-center">casts</span>
+          }
+          <span class="text-[10px] text-[var(--muted)] text-right">top avg</span>
+          @if (!activeIsMuted()) {
+            <span class="text-[10px] text-[var(--muted)] text-right">gap</span>
+          }
+        </div>
+        @for (row of activeDetailRows(); track row.spellId) {
           <wl-compact-ability-row
             [row]="row"
-            [max]="detailMax(activeIndex())"
             [higherIsBetter]="higherIsBetter()"
+            [showCasts]="showCasts()"
             [hidePlayer]="activeIsMuted()">
           </wl-compact-ability-row>
         }
