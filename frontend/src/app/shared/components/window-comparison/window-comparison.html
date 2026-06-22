@@ -86,17 +86,17 @@
     </div>
 
     <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
-         Column widths (flex-1 / w-20 / w-24 / w-24) mirror compact-ability-row.html. -->
+         Column widths (flex-1 / w-[7.5rem] / w-[9rem] / w-[9rem]) mirror compact-ability-row.html. -->
     @if (w.detailRows.length) {
       <div class="border-t border-[var(--border)] pt-2 pb-2">
         <div class="flex items-center gap-3 px-4 pb-1">
           <span class="flex-1 text-[10px] text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="w-20 text-center text-[10px] text-[var(--muted)]">casts</span>
+            <span class="w-[7.5rem] text-center text-[10px] text-[var(--muted)]">casts</span>
           }
-          <span class="w-24 text-right text-[10px] text-[var(--muted)]">top avg</span>
+          <span class="w-[9rem] text-right text-[10px] text-[var(--muted)]">top avg</span>
           @if (!activeIsMuted()) {
-            <span class="w-24 text-right text-[10px] text-[var(--muted)]">gap</span>
+            <span class="w-[9rem] text-right text-[10px] text-[var(--muted)]">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {
