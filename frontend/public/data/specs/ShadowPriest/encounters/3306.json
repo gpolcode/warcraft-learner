@@ -14,19 +14,19 @@
       "stddev_first_cast_s": 1.2,
       "avg_gap_s": 56.2,
       "stddev_gap_s": 63,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 1.33,
       "uses_per_min": {
         "avg": 1.328,
         "stddev": 0.439,
         "min": 0.81,
         "max": 1.775
       },
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 1.33,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Eruption": {
       "sample_count": 10,
@@ -34,8 +34,6 @@
       "stddev_first_cast_s": 1.3,
       "avg_gap_s": 124,
       "stddev_gap_s": 1.2,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
           "target_s": 127.9,
@@ -44,16 +42,18 @@
           "total_samples": 10
         }
       },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
         "avg": 0.828,
         "stddev": 0.024,
         "min": 0.81,
         "max": 0.888
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.83,
-      "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Halo": {
       "sample_count": 10,
@@ -61,14 +61,14 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
-      "uses_per_min": {},
       "avg_uses": 0,
       "avg_uses_per_min": 0,
-      "bl_pct": 0,
-      "majority_hold": false
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Torrent": {
       "sample_count": 10,
@@ -76,14 +76,14 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
-      "uses_per_min": {},
       "avg_uses": 0,
       "avg_uses_per_min": 0,
-      "bl_pct": 0,
-      "majority_hold": false
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     }
   },
   "burst_windows": [
@@ -614,56 +614,6 @@
       "common_cds": [
         "Desperate Prayer"
       ]
-    }
-  ],
-  "top_dtk_comparison": [
-    {
-      "spell_id": 1246653,
-      "avg_pct": 0.5655,
-      "min_pct": 0.485,
-      "max_pct": 0.619,
-      "stddev_pct": 0.0401,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1273112,
-      "avg_pct": 0.2553,
-      "min_pct": 0.189,
-      "max_pct": 0.329,
-      "stddev_pct": 0.046,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1258192,
-      "avg_pct": 0.1053,
-      "min_pct": 0.083,
-      "max_pct": 0.167,
-      "stddev_pct": 0.0412,
-      "sample_count": 4
-    },
-    {
-      "spell_id": 1258610,
-      "avg_pct": 0.092,
-      "min_pct": 0.082,
-      "max_pct": 0.102,
-      "stddev_pct": 0.0066,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1257087,
-      "avg_pct": 0.0233,
-      "min_pct": 0.017,
-      "max_pct": 0.03,
-      "stddev_pct": 0.0067,
-      "sample_count": 4
-    },
-    {
-      "spell_id": 32409,
-      "avg_pct": 0.01,
-      "min_pct": 0.006,
-      "max_pct": 0.016,
-      "stddev_pct": 0.0038,
-      "sample_count": 10
     }
   ]
 }

@@ -14,19 +14,19 @@
       "stddev_first_cast_s": 0.6,
       "avg_gap_s": 60.7,
       "stddev_gap_s": 65,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 7.8,
+      "avg_uses_per_min": 0.96,
       "uses_per_min": {
         "avg": 0.96,
         "stddev": 0.192,
         "min": 0.503,
         "max": 1.159
       },
-      "avg_uses": 7.8,
-      "avg_uses_per_min": 0.96,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Eruption": {
       "sample_count": 10,
@@ -34,8 +34,6 @@
       "stddev_first_cast_s": 0.6,
       "avg_gap_s": 128.7,
       "stddev_gap_s": 5.6,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
           "target_s": 125.1,
@@ -56,16 +54,18 @@
           "total_samples": 10
         }
       },
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
         "avg": 0.517,
         "stddev": 0.037,
         "min": 0.469,
         "max": 0.58
       },
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.52,
-      "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Halo": {
       "sample_count": 10,
@@ -73,14 +73,14 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
-      "uses_per_min": {},
       "avg_uses": 0,
       "avg_uses_per_min": 0,
-      "bl_pct": 0,
-      "majority_hold": false
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Torrent": {
       "sample_count": 10,
@@ -88,14 +88,14 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
-      "uses_per_min": {},
       "avg_uses": 0,
       "avg_uses_per_min": 0,
-      "bl_pct": 0,
-      "majority_hold": false
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     }
   },
   "burst_windows": [
@@ -974,80 +974,6 @@
       "common_cds": [
         "Desperate Prayer"
       ]
-    }
-  ],
-  "top_dtk_comparison": [
-    {
-      "spell_id": 1222284,
-      "avg_pct": 0.5756,
-      "min_pct": 0.536,
-      "max_pct": 0.624,
-      "stddev_pct": 0.0282,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1221637,
-      "avg_pct": 0.1493,
-      "min_pct": 0.127,
-      "max_pct": 0.18,
-      "stddev_pct": 0.0144,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1222278,
-      "avg_pct": 0.1253,
-      "min_pct": 0.108,
-      "max_pct": 0.142,
-      "stddev_pct": 0.0093,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1,
-      "avg_pct": 0.0773,
-      "min_pct": 0.039,
-      "max_pct": 0.141,
-      "stddev_pct": 0.0345,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1221965,
-      "avg_pct": 0.0293,
-      "min_pct": 0.024,
-      "max_pct": 0.036,
-      "stddev_pct": 0.0039,
-      "sample_count": 9
-    },
-    {
-      "spell_id": 1222088,
-      "avg_pct": 0.0272,
-      "min_pct": 0.02,
-      "max_pct": 0.047,
-      "stddev_pct": 0.0091,
-      "sample_count": 9
-    },
-    {
-      "spell_id": 1221717,
-      "avg_pct": 0.0115,
-      "min_pct": 0.003,
-      "max_pct": 0.017,
-      "stddev_pct": 0.006,
-      "sample_count": 6
-    },
-    {
-      "spell_id": 1222122,
-      "avg_pct": 0.0066,
-      "min_pct": 0.005,
-      "max_pct": 0.011,
-      "stddev_pct": 0.0026,
-      "sample_count": 5
-    },
-    {
-      "spell_id": 32409,
-      "avg_pct": 0.006,
-      "min_pct": 0.005,
-      "max_pct": 0.007,
-      "stddev_pct": 0.0009,
-      "sample_count": 8
     }
   ]
 }

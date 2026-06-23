@@ -14,8 +14,6 @@
       "stddev_first_cast_s": 8.1,
       "avg_gap_s": 124,
       "stddev_gap_s": 16.3,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
           "target_s": 120.8,
@@ -36,16 +34,18 @@
           "total_samples": 10
         }
       },
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
         "avg": 0.559,
         "stddev": 0.034,
         "min": 0.52,
         "max": 0.627
       },
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.56,
-      "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Shadow Dance": {
       "sample_count": 10,
@@ -53,19 +53,19 @@
       "stddev_first_cast_s": 0.8,
       "avg_gap_s": 19.7,
       "stddev_gap_s": 8.3,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 23.2,
+      "avg_uses_per_min": 3.09,
       "uses_per_min": {
         "avg": 3.092,
         "stddev": 0.07,
         "min": 2.931,
         "max": 3.167
       },
-      "avg_uses": 23.2,
-      "avg_uses_per_min": 3.09,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Secret Technique": {
       "sample_count": 10,
@@ -73,19 +73,19 @@
       "stddev_first_cast_s": 0.8,
       "avg_gap_s": 23.3,
       "stddev_gap_s": 6.7,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 19.6,
+      "avg_uses_per_min": 2.62,
       "uses_per_min": {
         "avg": 2.618,
         "stddev": 0.259,
         "min": 2.223,
         "max": 2.953
       },
-      "avg_uses": 19.6,
-      "avg_uses_per_min": 2.62,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Vanish": {
       "sample_count": 10,
@@ -93,8 +93,6 @@
       "stddev_first_cast_s": 148.9,
       "avg_gap_s": 168.7,
       "stddev_gap_s": 39.6,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
           "target_s": 201.9,
@@ -109,16 +107,18 @@
           "total_samples": 10
         }
       },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
         "avg": 0.326,
         "stddev": 0.136,
         "min": 0.118,
         "max": 0.533
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.29,
-      "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     }
   },
   "burst_windows": [
@@ -1461,64 +1461,6 @@
       "common_cds": [
         "Feint"
       ]
-    }
-  ],
-  "top_dtk_comparison": [
-    {
-      "spell_id": 1222284,
-      "avg_pct": 0.6722,
-      "min_pct": 0.607,
-      "max_pct": 0.719,
-      "stddev_pct": 0.0441,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1222278,
-      "avg_pct": 0.1592,
-      "min_pct": 0.144,
-      "max_pct": 0.183,
-      "stddev_pct": 0.0125,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1221637,
-      "avg_pct": 0.1292,
-      "min_pct": 0.023,
-      "max_pct": 0.189,
-      "stddev_pct": 0.0641,
-      "sample_count": 6
-    },
-    {
-      "spell_id": 1,
-      "avg_pct": 0.0507,
-      "min_pct": 0.018,
-      "max_pct": 0.085,
-      "stddev_pct": 0.0249,
-      "sample_count": 9
-    },
-    {
-      "spell_id": 1221965,
-      "avg_pct": 0.0346,
-      "min_pct": 0.014,
-      "max_pct": 0.051,
-      "stddev_pct": 0.0103,
-      "sample_count": 9
-    },
-    {
-      "spell_id": 1222088,
-      "avg_pct": 0.0242,
-      "min_pct": 0.019,
-      "max_pct": 0.029,
-      "stddev_pct": 0.005,
-      "sample_count": 5
-    },
-    {
-      "spell_id": 1222122,
-      "avg_pct": 0.0052,
-      "min_pct": 0.005,
-      "max_pct": 0.006,
-      "stddev_pct": 0.0004,
-      "sample_count": 5
     }
   ]
 }

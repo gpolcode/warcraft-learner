@@ -14,19 +14,19 @@
       "stddev_first_cast_s": 0.8,
       "avg_gap_s": 45.3,
       "stddev_gap_s": 64.6,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 1.11,
       "uses_per_min": {
         "avg": 1.113,
         "stddev": 0.119,
         "min": 0.881,
         "max": 1.346
       },
-      "avg_uses": 3.9,
-      "avg_uses_per_min": 1.11,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Eruption": {
       "sample_count": 10,
@@ -34,8 +34,6 @@
       "stddev_first_cast_s": 0.7,
       "avg_gap_s": 130.9,
       "stddev_gap_s": 19.4,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {
         "2": {
           "target_s": 128.9,
@@ -44,16 +42,18 @@
           "total_samples": 10
         }
       },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
         "avg": 0.571,
         "stddev": 0.044,
         "min": 0.52,
         "max": 0.673
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.57,
-      "bl_pct": 0,
-      "majority_hold": true
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Halo": {
       "sample_count": 10,
@@ -61,14 +61,14 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
-      "uses_per_min": {},
       "avg_uses": 0,
       "avg_uses_per_min": 0,
-      "bl_pct": 0,
-      "majority_hold": false
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     },
     "Void Torrent": {
       "sample_count": 10,
@@ -76,19 +76,19 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": 32.4,
       "stddev_gap_s": 4.4,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
       "hold_targets": {},
+      "avg_uses": 0.7,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
         "avg": 2.007,
         "stddev": 0,
         "min": 2.007,
         "max": 2.007
       },
-      "avg_uses": 0.7,
-      "avg_uses_per_min": 0.2,
-      "bl_pct": 0,
-      "majority_hold": false
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
     }
   },
   "burst_windows": [
@@ -810,64 +810,6 @@
       "common_cds": [
         "Desperate Prayer"
       ]
-    }
-  ],
-  "top_dtk_comparison": [
-    {
-      "spell_id": 1272950,
-      "avg_pct": 0.2468,
-      "min_pct": 0.185,
-      "max_pct": 0.283,
-      "stddev_pct": 0.0306,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1275558,
-      "avg_pct": 0.1209,
-      "min_pct": 0.107,
-      "max_pct": 0.134,
-      "stddev_pct": 0.0111,
-      "sample_count": 9
-    },
-    {
-      "spell_id": 1241808,
-      "avg_pct": 0.1181,
-      "min_pct": 0.098,
-      "max_pct": 0.136,
-      "stddev_pct": 0.0117,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1280101,
-      "avg_pct": 0.1144,
-      "min_pct": 0.091,
-      "max_pct": 0.136,
-      "stddev_pct": 0.0139,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1272328,
-      "avg_pct": 0.1079,
-      "min_pct": 0.081,
-      "max_pct": 0.136,
-      "stddev_pct": 0.0159,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1259186,
-      "avg_pct": 0.1021,
-      "min_pct": 0.066,
-      "max_pct": 0.162,
-      "stddev_pct": 0.0331,
-      "sample_count": 10
-    },
-    {
-      "spell_id": 1260052,
-      "avg_pct": 0.0722,
-      "min_pct": 0.062,
-      "max_pct": 0.082,
-      "stddev_pct": 0.0069,
-      "sample_count": 9
     }
   ]
 }
