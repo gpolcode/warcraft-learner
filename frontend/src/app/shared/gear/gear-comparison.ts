@@ -43,10 +43,17 @@ export interface TalentBuildRow {
   label: string;
 }
 
-export interface GemCheck {
-  count: number;
-  expected: number;
+export interface TrinketRow {
+  slotLabel: string;
   status: GearStatus;
+  /** Item id of what to display (the player's trinket, or the top trinket when missing). */
+  id: number;
+  name: string;
+  icon: string;
+  /** Top-parse usage % of the displayed item, when known. */
+  pct: number | null;
+  /** Prescriptive fix shown in the remedy column; null when on plan. */
+  remedy: string | null;
 }
 
 // ── Player-vs-bench comparison (analyze page) ───────────────────────────────
@@ -123,12 +130,37 @@ export function talentStatusOf(topStats: EncounterGearStats | null, playerKey: s
   return { status: 'warn', note: `Your build differs - most common used by ${topPct}% of top parsers` };
 }
 
-/** Filled-socket check: compare the player's gem count to the top-parse total. */
-export function buildGemCheck(stats: EncounterGearStats | null, count: number | null | undefined): GemCheck | null {
-  const gems = stats?.gems;
-  if (!gems || count == null) return null;
-  const expected = gems.max_count;
-  return { count, expected, status: count >= expected ? 'ok' : 'warn' };
+/**
+ * Trinkets: per slot (12, 13) compare the player's equipped trinket to the
+ * top-parse consensus. Matching the top trinket is `ok`; differing or missing
+ * one while a consensus exists is `info` with a prescriptive switch remedy.
+ */
+export function buildTrinketRows(gear: CharacterGear | null, stats: EncounterGearStats | null): TrinketRow[] {
+  const topTrinkets = stats?.trinkets ?? {};
+  const playerTrinkets = gear?.trinkets ?? [];
+  return [12, 13].reduce<TrinketRow[]>((acc, slot) => {
+    const slotLabel = slotName(slot);
+    const top = topTrinkets[slot]?.[0];
+    const player = playerTrinkets.find(t => t.slot === slot);
+    if (player) {
+      const match = (topTrinkets[slot] ?? []).find(t => t.id === player.id);
+      if (match) {
+        acc.push({ slotLabel, status: 'ok', id: player.id, name: player.name,
+          icon: player.icon || '', pct: match.pct, remedy: null });
+      } else if (top) {
+        acc.push({ slotLabel, status: 'info', id: player.id, name: player.name,
+          icon: player.icon || '', pct: null,
+          remedy: `Switch to ${top.name} - used by ${top.pct}%.` });
+      } else {
+        acc.push({ slotLabel, status: 'ok', id: player.id, name: player.name,
+          icon: player.icon || '', pct: null, remedy: null });
+      }
+    } else if (top) {
+      acc.push({ slotLabel, status: 'info', id: top.id, name: top.name, icon: '',
+        pct: top.pct, remedy: `Equip ${top.name} - used by ${top.pct}%.` });
+    }
+    return acc;
+  }, []);
 }
 
 // ── Bench-only display (/pre boss-study page) ───────────────────────────────

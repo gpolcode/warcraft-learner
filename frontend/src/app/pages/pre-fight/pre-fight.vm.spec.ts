@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildCdPlan, buildDefensivePlan, buildBurstWindows } from './pre-fight.vm';
 import {
-  buildEnchantRows, enchantStatusOf, buildTalentBuilds, buildGemCheck, talentStatusOf,
+  buildEnchantRows, enchantStatusOf, buildTalentBuilds, buildTrinketRows, talentStatusOf,
 } from '../../shared/gear/gear-comparison';
 import { CharacterGear } from '../../core/models/wcl.models';
 import { EncounterGearStats } from '../../core/models/encounter.models';
@@ -156,18 +156,36 @@ describe('buildTalentBuilds', () => {
   });
 });
 
-describe('buildGemCheck', () => {
-  const stats = (max: number): EncounterGearStats =>
-    ({ talent_builds: [], trinkets: {}, enchants: {}, gems: { avg_count: max, max_count: max, sample_count: 10 } });
+describe('buildTrinketRows', () => {
+  const stats = (trinkets: EncounterGearStats['trinkets']): EncounterGearStats =>
+    ({ talent_builds: [], trinkets, enchants: {} });
+  const gear = (trinkets: NonNullable<CharacterGear['trinkets']>): CharacterGear =>
+    ({ found: true, trinkets });
 
-  it('is ok when the player meets the top-parse socket count and warns below it', () => {
-    expect(buildGemCheck(stats(3), 3)?.status).toBe('ok');
-    expect(buildGemCheck(stats(3), 2)?.status).toBe('warn');
+  it('marks a trinket ok with its usage % when the player matches a top trinket', () => {
+    const rows = buildTrinketRows(
+      gear([{ slot: 12, id: 100, name: 'Box', icon: 'box' }]),
+      stats({ 12: [{ id: 100, name: 'Box', pct: 60 }] }));
+    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', status: 'ok', id: 100, pct: 60, remedy: null });
   });
 
-  it('is null when gem data is missing on either side', () => {
-    expect(buildGemCheck({ talent_builds: [], trinkets: {}, enchants: {} }, 3)).toBeNull();
-    expect(buildGemCheck(stats(3), null)).toBeNull();
+  it('suggests a switch when the player runs a different trinket than the consensus', () => {
+    const rows = buildTrinketRows(
+      gear([{ slot: 12, id: 200, name: 'Other', icon: 'other' }]),
+      stats({ 12: [{ id: 100, name: 'Box', pct: 60 }] }));
+    expect(rows[0]).toMatchObject({ status: 'info', id: 200, name: 'Other', pct: null });
+    expect(rows[0].remedy).toBe('Switch to Box - used by 60%.');
+  });
+
+  it('suggests equipping the top trinket when the slot is empty', () => {
+    const rows = buildTrinketRows(gear([]), stats({ 13: [{ id: 100, name: 'Box', pct: 80 }] }));
+    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 2', status: 'info', id: 100, pct: 80 });
+    expect(rows[0].remedy).toBe('Equip Box - used by 80%.');
+  });
+
+  it('accepts a player trinket on a slot with no top-parse data', () => {
+    const rows = buildTrinketRows(gear([{ slot: 12, id: 5, name: 'Mystery' }]), stats({}));
+    expect(rows[0]).toMatchObject({ status: 'ok', id: 5, name: 'Mystery', pct: null, remedy: null });
   });
 });
 
