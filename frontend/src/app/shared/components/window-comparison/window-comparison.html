@@ -1,5 +1,13 @@
 <!-- Timeline track: segments float on a guide line, positioned proportionally along the fight. -->
-<mat-card class="px-4 pt-3 pb-3">
+<mat-card class="px-4 pt-3 pb-3" [class.mt-6]="title()">
+  @if (title()) {
+    <div class="mb-3">
+      <p class="text-xl font-medium">{{ title() }}</p>
+      @if (subtitle()) {
+        <p class="mt-1 text-sm text-[var(--muted)]">{{ subtitle() }}</p>
+      }
+    </div>
+  }
   <div
     class="relative mx-2 h-9"
     role="listbox"
