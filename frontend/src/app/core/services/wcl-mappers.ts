@@ -96,8 +96,8 @@ export function mapRankedCharacters(
   const results: RankedChar[] = [];
   for (const entry of raw ?? []) {
     const name = entry?.name ?? '';
-    const serverSlug = entry?.server?.slug ?? '';
-    const serverRegion = entry?.server?.region?.slug ?? '';
+    const serverSlug = (entry?.server?.slug ?? '').toLowerCase();
+    const serverRegion = (entry?.server?.region?.slug ?? '').toLowerCase();
     if (name && serverSlug && serverRegion) {
       results.push({ name, serverSlug, serverRegion });
     }

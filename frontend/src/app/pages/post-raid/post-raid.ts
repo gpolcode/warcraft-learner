@@ -269,22 +269,17 @@ export class PostRaidComponent implements OnInit {
         // Fetch player gear using the canonical slug+region from rankedCharacters.
         // masterData.actors[].server is a display name ("Tarren Mill"), not a slug;
         // only rankedCharacters carries the real serverSlug the character API needs.
+        // Players without a ranked kill for this encounter return found:false -> bench-only.
         const player = this.players().find(p => p.id === playerId);
         const ranked = player ? this._rankedChars.get(player.name.toLowerCase()) : undefined;
-        // [gear-debug] - temporary; remove once comparison card is confirmed rendering.
-        console.info('[gear-debug] player:', { name: player?.name, displayServer: player?.server, region: this._reportRegion, rankedSlug: ranked?.serverSlug, rankedRegion: ranked?.serverRegion });
         if (player?.name && ranked) {
-          console.info('[gear-debug] fetching gear for', player.name, ranked.serverSlug, ranked.serverRegion, 'enc:', fight.encounterID);
           this.wclApi.getCharGear(player.name, ranked.serverSlug, ranked.serverRegion, fight.encounterID)
             .then(gearData => {
-              console.info('[gear-debug] result:', { found: gearData.found, message: gearData.message });
               if (nonce === this._gearFetchNonce && gearData.found) {
                 this.result.update(r => r ? { ...r, player_gear: gearData } : r);
               }
             })
             .catch(err => logWarn('analyzePlayer: fetch player gear', err));
-        } else {
-          console.info('[gear-debug] skipping - player not in rankedChars map. name:', player?.name, 'mapSize:', this._rankedChars.size);
         }
       }
     } catch (err) {
