@@ -1,29 +1,35 @@
-<!-- Gear: plain-div card matching wl-finding-table visual style (same grid / chips). -->
+<!-- Gear: three-section card matching wl-finding-table structure exactly.
+     Each section: header row (17px title + col labels) identical to finding-table,
+     then issue rows, then on-plan chips — same classes throughout. -->
 
 <div class="mt-6 bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
 
-  <!-- TALENTS ─────────────────────────────────────────────────────── -->
+  <!-- ── TALENTS ─────────────────────────────────────────────────────── -->
   <div>
+    <!-- header: same grid/classes as wl-finding-table header -->
+    <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
+      <div></div>
+      <div>
+        <div class="text-[17px] font-semibold text-[var(--text)]">Talents</div>
+      </div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] tabular-nums text-right">Top %</div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
+    </div>
+
     @if (comparison()) {
       @if (talentStatus().status === 'warn') {
-        <!-- sub-header; grid must match the issue row below -->
-        <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-          <div></div>
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Talents</div>
-          <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Top %</div>
-          <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
-        </div>
+        <!-- issue row -->
         <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
           <div class="flex items-center justify-center">
             <mat-icon class="!text-[18px] !w-[18px] !h-[18px] !leading-[18px] badge-warning">warning_amber</mat-icon>
           </div>
           <div class="min-w-0">
-            <div class="text-[14px] text-[var(--text)]">Not using most common build</div>
+            <span class="text-sm text-[var(--text)]">Not using most common build</span>
           </div>
           <div class="text-right leading-[1.1] badge-warning">
             @if (talentTopPct() !== null) {
               <div class="text-[15px] font-bold tabular-nums">{{ talentTopPct() }}%</div>
-              <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+              <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
             }
           </div>
           <div class="text-[13px] text-[var(--muted)] leading-[1.45] border-l border-[var(--border)] pl-[14px]">
@@ -36,62 +42,63 @@
             </div>
           </div>
         </div>
+      } @else if (talentStatus().status === 'ok') {
+        <!-- on plan chips -->
+        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
+          <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
+          <span class="inline-flex items-center gap-[6px] bg-[rgba(63,185,80,0.06)] border border-[rgba(63,185,80,0.25)] rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
+            <span class="text-[13px] text-[var(--muted)]">Most common build</span>
+            <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
+          </span>
+        </div>
       } @else {
-        <!-- all-clear -->
-        <div class="px-4 py-3">
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)] mb-2">Talents</div>
-          <div class="flex items-center gap-[6px] flex-wrap">
-            <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
-            <span class="inline-flex items-center gap-[6px] bg-[var(--success)]/[6] border border-[var(--success)]/25 rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
-              <span class="text-[13px] text-[var(--muted)]">Most common build</span>
-              <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
-            </span>
-          </div>
+        <!-- unknown: no bench talent data -->
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No talent data yet.
         </div>
       }
     } @else {
-      <!-- bench-only: talent builds with % in measured column -->
-      <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-        <div></div>
-        <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Talents</div>
-        <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Parsers</div>
-        <div></div>
-      </div>
+      <!-- bench-only: talent rows with % in measured column -->
       @if (talentBuilds().length) {
         @for (b of talentBuilds(); track b.label) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
             <div></div>
-            <div class="min-w-0 text-[14px] text-[var(--text)]">{{ b.label }}</div>
+            <div class="min-w-0 text-sm text-[var(--text)]">{{ b.label }}</div>
             <div class="text-right leading-[1.1] text-[var(--muted)]">
               <div class="text-[15px] font-bold tabular-nums">{{ b.pct }}%</div>
-              <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+              <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
             </div>
-            <div class="border-l border-[var(--border)] pl-[14px]">
+            <div class="text-[13px] text-[var(--muted)] leading-[1.45] border-l border-[var(--border)] pl-[14px]">
               @if (b.link) {
-                <a class="text-[13px] text-[var(--gold)] no-underline hover:brightness-125"
+                <a class="text-[var(--gold)] no-underline hover:brightness-125"
                    [href]="b.link" target="_blank" rel="noopener">View parse &#8599;</a>
               }
             </div>
           </div>
         }
       } @else {
-        <p class="px-4 pt-3 pb-3 text-[13px] text-[var(--muted)] border-t border-[var(--border)]">No talent data yet.</p>
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No talent data yet.
+        </div>
       }
     }
   </div>
 
-  <!-- TRINKETS ─────────────────────────────────────────────────────── -->
+  <!-- ── TRINKETS ────────────────────────────────────────────────────── -->
   <div class="border-t border-[var(--border)]">
+    <!-- header -->
+    <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
+      <div></div>
+      <div>
+        <div class="text-[17px] font-semibold text-[var(--text)]">Trinkets</div>
+      </div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] tabular-nums text-right">Top %</div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
+    </div>
+
     @if (comparison()) {
       @if (trinketIssues().length) {
-        <!-- sub-header; grid must match trinket rows below -->
-        <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-          <div></div>
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Trinkets</div>
-          <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Top %</div>
-          <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
-        </div>
-        <!-- all slots shown: non-ok as issue rows, ok as compact rows -->
+        <!-- any issue: all slots as rows (non-ok=issue, ok=compact); no chips in this state -->
         @for (row of trinketRows(); track row.slotLabel) {
           @if (row.status !== 'ok') {
             <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
@@ -111,58 +118,49 @@
                 [class.badge-info]="row.status === 'info'">
                 @if (row.topPct !== null) {
                   <div class="text-[15px] font-bold tabular-nums">{{ row.topPct }}%</div>
-                  <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+                  <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
                 }
               </div>
               <div class="text-[13px] text-[var(--muted)] leading-[1.45] border-l border-[var(--border)] pl-[14px]">{{ row.note }}</div>
             </div>
           } @else {
-            <!-- compact ok row: green dot, dimmed -->
-            <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-2 items-center border-t border-[var(--border)]/30">
+            <!-- compact ok trinket row alongside issues -->
+            <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[7px] items-center border-t border-[var(--border)]/30 opacity-55">
               <div class="flex items-center justify-center">
-                <span class="block h-[7px] w-[7px] shrink-0 rounded-full bg-[var(--success)]/40"></span>
+                <span class="block h-[7px] w-[7px] shrink-0 rounded-full bg-[var(--success)]/60"></span>
               </div>
-              <div class="min-w-0 opacity-55">
+              <div class="min-w-0">
                 <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
                 <div class="text-[11px] text-[var(--muted)] mt-0.5">{{ row.slotLabel }}</div>
               </div>
-              <div class="text-right leading-[1.1] text-[var(--success)]/50">
+              <div class="text-right leading-[1.1] text-[var(--success)]">
                 @if (row.topPct !== null) {
                   <div class="text-[14px] font-bold tabular-nums">{{ row.topPct }}%</div>
-                  <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+                  <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
                 }
               </div>
               <div></div>
             </div>
           }
         }
-      } @else {
-        <!-- all-clear -->
-        <div class="px-4 py-3">
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)] mb-2">Trinkets</div>
-          @if (trinketRows().length) {
-            <div class="flex items-center gap-[6px] flex-wrap">
-              <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
-              @for (row of trinketRows(); track row.slotLabel) {
-                <span class="inline-flex items-center gap-[6px] bg-[var(--success)]/[6] border border-[var(--success)]/25 rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
-                  <span class="text-[13px] text-[var(--muted)]">{{ row.name }}</span>
-                  <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
-                </span>
-              }
-            </div>
-          } @else {
-            <p class="text-[13px] text-[var(--muted)]">No trinket data yet.</p>
+      } @else if (trinketRows().length) {
+        <!-- all ok: chips only, no rows -->
+        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
+          <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
+          @for (row of trinketRows(); track row.slotLabel) {
+            <span class="inline-flex items-center gap-[6px] bg-[rgba(63,185,80,0.06)] border border-[rgba(63,185,80,0.25)] rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
+              <span class="text-[13px] text-[var(--muted)]">{{ row.name }}</span>
+              <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
+            </span>
           }
+        </div>
+      } @else {
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No trinket data yet.
         </div>
       }
     } @else {
-      <!-- bench-only: trinkets with % in measured column -->
-      <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-        <div></div>
-        <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Trinkets</div>
-        <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Parsers</div>
-        <div></div>
-      </div>
+      <!-- bench-only trinkets -->
       @if (benchTrinketRows().length) {
         @for (row of benchTrinketRows(); track row.slotLabel) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
@@ -173,28 +171,34 @@
             </div>
             <div class="text-right leading-[1.1] text-[var(--muted)]">
               <div class="text-[15px] font-bold tabular-nums">{{ row.pct }}%</div>
-              <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+              <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
             </div>
             <div></div>
           </div>
         }
       } @else {
-        <p class="px-4 pt-3 pb-3 text-[13px] text-[var(--muted)] border-t border-[var(--border)]">No trinket data yet.</p>
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No trinket data yet.
+        </div>
       }
     }
   </div>
 
-  <!-- ENCHANTS ─────────────────────────────────────────────────────── -->
+  <!-- ── ENCHANTS ───────────────────────────────────────────────────── -->
   <div class="border-t border-[var(--border)]">
+    <!-- header -->
+    <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
+      <div></div>
+      <div>
+        <div class="text-[17px] font-semibold text-[var(--text)]">Enchants</div>
+      </div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] tabular-nums text-right">Top %</div>
+      <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
+    </div>
+
     @if (comparison()) {
       @if (enchantIssues().length) {
-        <!-- sub-header; grid must match enchant issue rows below -->
-        <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-          <div></div>
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Enchants</div>
-          <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Top %</div>
-          <div class="text-[10px] uppercase tracking-widest text-[var(--border)] pl-[14px]">Fix</div>
-        </div>
+        <!-- issue rows -->
         @for (row of enchantIssues(); track row.slotName) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
             <div class="flex items-center justify-center">
@@ -206,73 +210,65 @@
             </div>
             <!-- slot label inline-left of enchant name, per design -->
             <div class="min-w-0 flex items-baseline gap-2">
-              <span class="text-[10px] uppercase tracking-widest text-[var(--border)] shrink-0 w-14">{{ row.slotName }}</span>
-              <span class="text-[14px] text-[var(--text)] truncate">{{ row.name }}</span>
+              <span class="shrink-0 w-14 text-[10px] uppercase tracking-widest text-[var(--border)]">{{ row.slotName }}</span>
+              <span class="text-sm text-[var(--text)] truncate">{{ row.name }}</span>
             </div>
             <div class="text-right leading-[1.1]"
               [class.badge-warning]="row.status === 'warn'"
               [class.badge-info]="row.status === 'info'">
               @if (row.topPct !== null) {
                 <div class="text-[15px] font-bold tabular-nums">{{ row.topPct }}%</div>
-                <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+                <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
               }
             </div>
             <div class="text-[13px] text-[var(--muted)] leading-[1.45] border-l border-[var(--border)] pl-[14px]">{{ row.note }}</div>
           </div>
         }
-        <!-- passing enchants collapsed to a single count chip -->
+        <!-- passing enchants collapsed to one count chip; only rendered when any pass -->
         @if (enchantOnPlan().length) {
-          <div class="flex items-center gap-[6px] flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
+          <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
             <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
-            <span class="inline-flex items-center gap-[6px] bg-[var(--success)]/[6] border border-[var(--success)]/25 rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
+            <span class="inline-flex items-center gap-[6px] bg-[rgba(63,185,80,0.06)] border border-[rgba(63,185,80,0.25)] rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
               <span class="text-[13px] text-[var(--muted)]">{{ enchantOnPlan().length }} enchants</span>
               <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
             </span>
           </div>
         }
+      } @else if (enchantRows().length) {
+        <!-- all clear: all enchants chip -->
+        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
+          <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
+          <span class="inline-flex items-center gap-[6px] bg-[rgba(63,185,80,0.06)] border border-[rgba(63,185,80,0.25)] rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
+            <span class="text-[13px] text-[var(--muted)]">All enchants</span>
+            <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
+          </span>
+        </div>
       } @else {
-        <!-- all-clear -->
-        <div class="px-4 py-3">
-          <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)] mb-2">Enchants</div>
-          @if (enchantRows().length) {
-            <div class="flex items-center gap-[6px] flex-wrap">
-              <span class="text-[10px] uppercase tracking-widest text-[var(--success)] mr-0.5">On plan</span>
-              <span class="inline-flex items-center gap-[6px] bg-[var(--success)]/[6] border border-[var(--success)]/25 rounded-[20px] py-[3px] pr-[11px] pl-[7px]">
-                <span class="text-[13px] text-[var(--muted)]">All enchants</span>
-                <mat-icon class="!text-[14px] !w-[14px] !h-[14px] !leading-[14px] badge-success">check_circle</mat-icon>
-              </span>
-            </div>
-          } @else {
-            <p class="text-[13px] text-[var(--muted)]">No enchant data yet.</p>
-          }
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No enchant data yet.
         </div>
       }
     } @else {
-      <!-- bench-only: enchants with % in measured column -->
-      <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 pt-3 pb-2 items-baseline">
-        <div></div>
-        <div class="text-[11px] uppercase tracking-widest font-semibold text-[var(--muted)]">Enchants</div>
-        <div class="text-right text-[10px] uppercase tracking-widest text-[var(--border)]">Parsers</div>
-        <div></div>
-      </div>
+      <!-- bench-only enchants -->
       @if (benchEnchantRows().length) {
         @for (row of benchEnchantRows(); track row.slotName) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-[14px] px-4 py-[10px] items-center border-t border-[var(--border)]">
             <div></div>
-            <!-- slot label inline-left of enchant name -->
             <div class="min-w-0 flex items-baseline gap-2">
-              <span class="text-[10px] uppercase tracking-widest text-[var(--border)] shrink-0 w-14">{{ row.slotName }}</span>
-              <span class="text-[14px] text-[var(--text)]">{{ row.name }}</span>
+              <span class="shrink-0 w-14 text-[10px] uppercase tracking-widest text-[var(--border)]">{{ row.slotName }}</span>
+              <span class="text-sm text-[var(--text)]">{{ row.name }}</span>
             </div>
             <div class="text-right leading-[1.1] text-[var(--muted)]">
               <div class="text-[15px] font-bold tabular-nums">{{ row.pct }}%</div>
-              <div class="text-[10px] opacity-60 mt-px">of top parsers</div>
+              <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
             </div>
             <div></div>
           </div>
         }
       } @else {
-        <p class="px-4 pt-3 pb-3 text-[13px] text-[var(--muted)] border-t border-[var(--border)]">No enchant data yet.</p>
+        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+          No enchant data yet.
+        </div>
       }
     }
   </div>
