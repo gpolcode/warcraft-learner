@@ -25,8 +25,7 @@ export interface EventsQueryVars {
   hostilityType?: 'Friendlies' | 'Enemies';
 }
 export interface CharQueryVars { name: string; serverSlug: string; serverRegion: string }
-export interface CharEncQueryVars { name: string; serverSlug: string; serverRegion: string; encID: number }
-export interface RankedCharsQueryVars { code: string }
+export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
 
 // ---------------------------------------------------------------------------
 // Query strings
@@ -35,7 +34,6 @@ export interface RankedCharsQueryVars { code: string }
 export const REPORT_Q = `
 query($code:String!){reportData{report(code:$code){
   title
-  region{slug}
   fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers}
   masterData{
     actors(type:"Player"){id name subType server}
@@ -73,30 +71,24 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!){
   }}
 }`;
 
-export const CHAR_ENC_Q = `
-query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
-  characterData{character(name:$name,serverSlug:$serverSlug,serverRegion:$serverRegion){
-    encounterRankings(encounterID:$encID,includeCombatantInfo:true)
+/** Fetch CombatantInfo for a single player actor in a specific fight. */
+export const COMBATANT_INFO_Q = `
+query($code:String!,$fightIDs:[Int]!,$sourceID:Int){
+  reportData{report(code:$code){
+    events(fightIDs:$fightIDs,dataType:CombatantInfo,sourceID:$sourceID){data}
   }}
 }`;
 
 /**
- * Lightweight query to resolve canonical server slugs + regions for every player
- * in a report who has a WCL ranking. Used to build the name -> serverSlug/region
- * lookup for the gear-comparison fetch; fetched best-effort alongside the main
- * report load so a schema change here cannot break report loading.
+ * Build a batched `gameData { ... }` query that resolves trinket item names and
+ * enchant names by ID in a single round-trip. Item aliases are prefixed `i`,
+ * enchant aliases `e` (bare numeric identifiers are not valid GraphQL field names).
+ * Enchant names may contain HTML entities - callers must decode them.
  */
-export const RANKED_CHARS_Q = `
-query($code:String!){reportData{report(code:$code){
-  rankedCharacters{ name server{ slug region{ slug } } }
-}}}`;
-
-/**
- * Build a batched `gameData { ... }` query that resolves enchant names by ID.
- * Each alias is prefixed with `e` to produce valid GraphQL field names
- * (numeric-only identifiers are not valid).
- */
-export function buildEnchantNamesQuery(enchantIds: number[]): string {
-  const fields = enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`).join(' ');
+export function buildGearNamesQuery(itemIds: number[], enchantIds: number[]): string {
+  const fields = [
+    ...itemIds.map(id => `i${id}: item(id:${id}){id name}`),
+    ...enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`),
+  ].join(' ');
   return `query{gameData{${fields}}}`;
 }

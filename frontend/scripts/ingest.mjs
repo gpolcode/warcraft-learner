@@ -371,47 +371,20 @@ function talentKeyV1(talents) {
   return ids.length ? 'v1:' + ids.join(',') : '';
 }
 
-// `encounterRankings` talents - Midnight format: {class:{row:[{node:{nodeId}}]}, spec:{...}}.
-function talentKeyV2(talents) {
-  if (!talents || typeof talents !== 'object') return '';
-  const nodeIds = [];
-  for (const sectionKey of ['class', 'spec']) {
-    const section = talents[sectionKey] || {};
-    if (typeof section !== 'object') continue;
-    for (const rowNodes of Object.values(section)) {
-      if (!Array.isArray(rowNodes)) continue;
-      for (const entry of rowNodes) {
-        const nid = (entry.node || {}).nodeId;
-        if (nid) nodeIds.push(String(nid));
-      }
-    }
-  }
-  return nodeIds.length ? 'v2:' + nodeIds.sort().join(',') : '';
-}
-
-async function fetchV2Talent(wcl, name, serverSlug, serverRegion, encounterId) {
-  if (!name || !serverSlug || !serverRegion) return '';
-  try {
-    const data = await wcl.query(CHAR_ENC_RANKINGS_QUERY, {
-      name, serverSlug, serverRegion, encID: encounterId,
-    });
-    let raw = ((data.characterData || {}).character || {}).encounterRankings;
-    if (raw == null) return '';
-    const rankingsData = typeof raw === 'string' ? JSON.parse(raw) : raw;
-    const ranks = (rankingsData.ranks || []);
-    if (!ranks.length) return '';
-    const mostRecent = ranks.reduce((a, b) => (a.startTime || 0) > (b.startTime || 0) ? a : b);
-    return talentKeyV2(mostRecent.talents);
-  } catch {
-    return '';
-  }
+// Build a v2: talent key from a CombatantInfo talentTree flat list [{id, rank, nodeID}].
+// String sort, no dedup - matches the frontend talentKeyFromTree exactly.
+function talentKeyFromTree(talentTree) {
+  if (!Array.isArray(talentTree) || !talentTree.length) return '';
+  const ids = talentTree.filter(n => n.nodeID != null).map(n => String(n.nodeID));
+  if (!ids.length) return '';
+  return 'v2:' + ids.sort().join(',');
 }
 
 // ── Rankings fetching ─────────────────────────────────────────────────────────
 
 // Cheap rankings fetch: 1 API query. Returns raw ranking objects with an
-// additional `_raw` field so the caller can extract gear/v1-talent later.
-// Server slug + v2 talent are NOT fetched here - defer to enrichRanking().
+// additional `_raw` field so the caller can extract gear later.
+// Server slug resolution deferred to enrichRanking(); talent key from analyzeParse().
 async function fetchRankingsLite(wcl, spec, encounterId, count = 10, partitionIds = []) {
   const mapping = SPEC_TO_WCL[spec];
   if (!mapping) throw new Error(`Unknown spec: ${spec}`);
@@ -445,19 +418,16 @@ async function fetchRankingsLite(wcl, spec, encounterId, count = 10, partitionId
   }));
 }
 
-// Expensive per-player enrichment: resolves server slug (1 query, in-memory
-// cached per server) + fetches v2 talent key (1 query). Only called for
-// uncached parses - cached parses reuse combatant_info already on disk.
-async function enrichRanking(wcl, ranking, encounterId) {
+// Per-player enrichment: resolves server slug (1 query, in-memory cached per server).
+// talent_key is now derived from CombatantInfo inside analyzeParse and written there.
+async function enrichRanking(wcl, ranking) {
   const r = ranking._raw;
   const sid = (r.server || {}).id;
   const [serverSlug, serverRegion] = sid ? await wcl.resolveServerSlug(sid) : ['', ''];
-  const v2Key = await fetchV2Talent(wcl, r.name || '', serverSlug, serverRegion, encounterId);
-  const talent_key = v2Key || talentKeyV1(r.talents);
   return {
     server_slug: serverSlug,
     server_region: serverRegion,
-    combatant_info: { talent_key, ...extractGear(r) },
+    combatant_info: { talent_key: '', ...extractGear(r) },
   };
 }
 
@@ -804,14 +774,15 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   // Casts streams via includeResources, keeping the dense damage streams plain.
   // The boss reference gets one targeted DamageDone stream below (single actor),
   // which is far cheaper than fetching every enemy's damage with resources.
-  let castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents;
+  let castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents, combatantEvents;
   try {
-    [castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents] = await Promise.all([
-      wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { sourceId: player.id, includeResources: true }),
-      wcl.getAllEvents(reportCode, fightId, 'Buffs',       start, end, { targetId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageDone',  start, end, { sourceId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'DamageTaken', start, end, { sourceId: player.id }),
-      wcl.getAllEvents(reportCode, fightId, 'Casts',       start, end, { includeResources: true, hostilityType: 'Enemies' }).catch(() => []),
+    [castEvents, buffEvents, damageEvents, damageTakenEvents, enemyCastEvents, combatantEvents] = await Promise.all([
+      wcl.getAllEvents(reportCode, fightId, 'Casts',         start, end, { sourceId: player.id, includeResources: true }),
+      wcl.getAllEvents(reportCode, fightId, 'Buffs',         start, end, { targetId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageDone',    start, end, { sourceId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'DamageTaken',   start, end, { sourceId: player.id }),
+      wcl.getAllEvents(reportCode, fightId, 'Casts',         start, end, { includeResources: true, hostilityType: 'Enemies' }).catch(() => []),
+      wcl.getAllEvents(reportCode, fightId, 'CombatantInfo', start, end, { sourceId: player.id }).catch(() => []),
     ]);
   } catch {
     return null;
@@ -910,9 +881,11 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   // Burst windows - sized by CD durations, active_cds set inside
   const burstWindows = findBurstWindows(damageEvents, start, cdSummary, specCds, 0.03, castEvents);
 
-  // Gear data from combatant info
-  // combatant_info already carries parsed { talent_key, trinkets, enchants } from fetchTopRankings.
+  // Gear data from combatant info (trinkets/enchants from rankings; talent key from this fight's
+  // CombatantInfo talentTree, which uses the same full-tree representation as the frontend).
   const gearData = combatantInfo || {};
+  const ciEvent = (combatantEvents || []).find(e => e.sourceID === player.id) || combatantEvents?.[0];
+  const talentKey = talentKeyFromTree(ciEvent?.talentTree) || gearData.talent_key || '';
 
   // Defensive tracking
   // Build buff window lookup: Map<spell_id, [[start_s, end_s|null], ...]>
@@ -1014,7 +987,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
     burst_windows: burstWindows,
     defensives: defensiveSummary,
     defensive_windows: defensiveWindows,
-    talent_key: gearData.talent_key || '',
+    talent_key: talentKey,
     trinkets: gearData.trinkets || [],
     enchants: gearData.enchants || [],
   };
@@ -1714,11 +1687,11 @@ async function ingestSpecNonInteractive(wcl, spec, encounters) {
           continue;
         }
 
-        // Uncached parse: enrich (server slug + v2 talent) then analyze.
+        // Uncached parse: enrich (server slug) then analyze.
         await wcl.assertBudget(POINTS_MARGIN);
         process.stdout.write(`\r  [${enc.name}] Analyzing ${done + 1}/${rankings.length}: ${ranking.player}...    `);
         try {
-          const enriched = await enrichRanking(wcl, ranking, enc.id);
+          const enriched = await enrichRanking(wcl, ranking);
           const combatant_info = enriched.combatant_info;
           const res = await analyzeParse(wcl, spec, ranking.report_code, ranking.fight_id, ranking.player, combatant_info);
           if (res?.cooldown_data) {

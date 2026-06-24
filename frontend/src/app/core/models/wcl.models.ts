@@ -45,7 +45,6 @@ export interface WclEvent {
 
 export interface WclReport {
   title: string;
-  region?: { slug: string };
   fights: WclFight[];
   masterData: {
     actors: Array<{ id: number; name: string; subType: string; server: string }>;

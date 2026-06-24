@@ -19,19 +19,12 @@ export interface WclGearItem {
   permanentEnchantName?: string;
 }
 
-export interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
-export interface WclTalentTree {
-  class?: Record<string, WclTalentNode[]>;
-  spec?: Record<string, WclTalentNode[]>;
-}
-
 export interface WclRankEntry {
   startTime?: number;
   spec?: string;
   class?: number;
   report?: { code?: string };
   gear?: WclGearItem[];
-  talents?: WclTalentTree;
 }
 
 export interface PlayerDetailEntry {
@@ -79,32 +72,6 @@ export function buildSpecMap(groups: PlayerDetailGroups): Record<number | string
   return map;
 }
 
-/** Canonical server slug + region for a ranked character in a report. */
-export interface RankedChar {
-  name: string;
-  serverSlug: string;
-  serverRegion: string;
-}
-
-/**
- * Map the raw `rankedCharacters` list from a WCL report to `RankedChar` entries.
- * Missing or malformed server objects are skipped so a partial response never throws.
- */
-export function mapRankedCharacters(
-  raw: Array<{ name?: string; server?: { slug?: string; region?: { slug?: string } } }>,
-): RankedChar[] {
-  const results: RankedChar[] = [];
-  for (const entry of raw ?? []) {
-    const name = entry?.name ?? '';
-    const serverSlug = (entry?.server?.slug ?? '').toLowerCase();
-    const serverRegion = (entry?.server?.region?.slug ?? '').toLowerCase();
-    if (name && serverSlug && serverRegion) {
-      results.push({ name, serverSlug, serverRegion });
-    }
-  }
-  return results;
-}
-
 /** Map raw WCL character list entries to the application `WclUserCharacter` model. */
 export function mapUserCharacters(
   raw: Array<{ id: number; name: string; server: { slug: string; region: { slug: string } } }>,
@@ -144,20 +111,23 @@ export function extractGear(entry: WclRankEntry): {
 }
 
 /**
- * Convert a Midnight-format talent tree (from `encounterRankings`) to the
- * sorted `v2:`-prefixed node-ID key used throughout the application.
+ * Build a `v2:`-prefixed talent key from a CombatantInfo `talentTree` array.
+ * The key is the sorted (string order, no dedup) nodeIDs, matching the
+ * representation that ingestion builds from the same source.
  */
-export function talentKeyV2(talents: WclTalentTree | undefined): string {
-  if (!talents) return '';
-  const ids: number[] = [];
-  for (const section of [talents.class, talents.spec]) {
-    if (!section) continue;
-    for (const rowArr of Object.values(section)) {
-      for (const entry of (rowArr ?? [])) {
-        const nodeId = entry?.node?.nodeId ?? entry?.nodeId;
-        if (nodeId != null) ids.push(nodeId);
-      }
-    }
-  }
-  return ids.length ? 'v2:' + [...new Set(ids)].sort((a, b) => a - b).join(',') : '';
+export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined): string {
+  if (!tree?.length) return '';
+  const ids = tree.filter(n => n.nodeID != null).map(n => String(n.nodeID));
+  if (!ids.length) return '';
+  return 'v2:' + ids.sort().join(',');
+}
+
+/** Decode HTML entities in a string returned by WCL's gameData queries. */
+export function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }

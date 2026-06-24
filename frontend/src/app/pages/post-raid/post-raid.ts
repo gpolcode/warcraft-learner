@@ -79,14 +79,6 @@ export class PostRaidComponent implements OnInit {
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
   private _enemies: { id: number; name: string; gameID: number }[] = [];
   private _userChars: WclUserCharacter[] = [];
-  /** Region slug shared by all players in the loaded report (e.g. "eu", "us"). */
-  private _reportRegion = '';
-  /**
-   * Canonical server slug + region for ranked players in the loaded report, keyed
-   * by lowercased character name. Populated once per loadReport(); stable across
-   * polls since ranked characters don't change within a session.
-   */
-  private _rankedChars = new Map<string, { serverSlug: string; serverRegion: string }>();
   /** Incremented on each analyzePlayer() call to cancel stale gear fetches. */
   private _gearFetchNonce = 0;
 
@@ -152,19 +144,14 @@ export class PostRaidComponent implements OnInit {
       }
       this.loadingMsg.set('Fetching report from WCL…');
       const code = extractCode(url);
-      const [report, userChars, rankedChars] = await Promise.all([
+      const [report, userChars] = await Promise.all([
         this.wclApi.getReport(code),
         this.wclApi.getUserCharacters().catch(err => {
           logWarn('loadReport: fetch user characters', err);
           return [] as WclUserCharacter[];
         }),
-        this.wclApi.getRankedCharacters(code).catch(err => {
-          logWarn('loadReport: fetch ranked characters', err);
-          return [];
-        }),
       ]);
       this._userChars = userChars;
-      this._rankedChars = new Map(rankedChars.map(rc => [rc.name.toLowerCase(), { serverSlug: rc.serverSlug, serverRegion: rc.serverRegion }]));
       this._applyReport(report);
 
       const lastFight = this.fights()[this.fights().length - 1];
@@ -187,7 +174,6 @@ export class PostRaidComponent implements OnInit {
     this.players.set(buildPlayers(report.masterData?.actors));
     this._masterAbilities = report.masterData?.abilities ?? [];
     this._enemies = report.masterData?.enemies ?? [];
-    this._reportRegion = report.region?.slug ?? '';
     if (report.masterData?.abilities) this.icons.seed(report.masterData.abilities);
   }
 
@@ -266,20 +252,17 @@ export class PostRaidComponent implements OnInit {
           if (nonce === this._gearFetchNonce && bench) this.topGear.set(bench.gear);
         });
 
-        // Fetch player gear using the canonical slug+region from rankedCharacters.
-        // masterData.actors[].server is a display name ("Tarren Mill"), not a slug;
-        // only rankedCharacters carries the real serverSlug the character API needs.
-        // Players without a ranked kill for this encounter return found:false -> bench-only.
+        // Read the player's gear, trinkets, enchants, and talents from the current
+        // log's CombatantInfo - always available regardless of ranked-kill status.
         const player = this.players().find(p => p.id === playerId);
-        const ranked = player ? this._rankedChars.get(player.name.toLowerCase()) : undefined;
-        if (player?.name && ranked) {
-          this.wclApi.getCharGear(player.name, ranked.serverSlug, ranked.serverRegion, fight.encounterID)
+        if (player) {
+          this.wclApi.getCombatantGear(this.reportCode(), fightId, playerId, data.spec)
             .then(gearData => {
               if (nonce === this._gearFetchNonce && gearData.found) {
                 this.result.update(r => r ? { ...r, player_gear: gearData } : r);
               }
             })
-            .catch(err => logWarn('analyzePlayer: fetch player gear', err));
+            .catch(err => logWarn('analyzePlayer: fetch combatant gear', err));
         }
       }
     } catch (err) {
