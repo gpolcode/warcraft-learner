@@ -1,150 +1,78 @@
-<!-- Gear: a single card with Talents / Trinkets / Enchants sections. In comparison
-     mode (playerGear set) flagged items show as tinted rows with a "Fix" remedy and
-     matching items collapse into "On plan" chips; in bench-only mode (playerGear null,
-     used by /pre) each section lists the top-parse consensus. The grid column template
-     `[1.5rem_1fr_auto_minmax(0,11rem)]` (glyph / name / top% / remedy) is repeated per
-     row - keep the literal widths identical across rows in this file. -->
-<p class="mt-6 text-xl font-medium">Gear</p>
-<p class="text-sm text-[var(--muted)]">Your gear for this encounter compared to top-parse players.</p>
+<!-- Unified gear card: one finding-table-styled block per category (Talents,
+     Trinkets, Enchants). Issue rows up top with the fix in the right column;
+     a single "On plan" success chip when the section is clean. Bench mode
+     (/pre, no player gear) lists the top-parse consensus with usage %. The grid
+     `[20px_minmax(0,1fr)_minmax(0,200px)]` (status / name / fix) repeats in the
+     header and every row - keep the literal widths identical. -->
+<div class="mt-6 flex flex-col gap-3">
+  @for (cat of categories(); track cat.key) {
+    <div class="overflow-hidden rounded-[10px] border border-[var(--border)] bg-[var(--surface)]">
 
-<mat-card class="mt-3 p-4">
-  @let player = playerGear();
+      <!-- Header: title + sub-heading, with the right column labelled per mode -->
+      <div class="grid grid-cols-[20px_minmax(0,1fr)_minmax(0,200px)] items-baseline gap-[14px] px-4 pt-3 pb-2">
+        <div></div>
+        <div>
+          <div class="text-[15px] font-semibold text-[var(--text)]">{{ cat.title }}</div>
+          @if (cat.subtitle) {
+            <div class="mt-0.5 text-xs text-[var(--muted)]">{{ cat.subtitle }}</div>
+          }
+        </div>
+        <div class="pl-[14px] text-[10px] uppercase tracking-widest text-[var(--border)]">
+          {{ cat.benchMode ? 'Top' : 'Fix' }}
+        </div>
+      </div>
 
-  <!-- ===================== Talents ===================== -->
-  <section>
-    <div class="mb-1 text-[11px] uppercase tracking-wider text-[var(--muted)]">Talents</div>
-    @if (player) {
-      @let ts = talentStatus();
-      @let top = topBuild();
-      @if (talentIssue()) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 rounded bg-[var(--warning)]/10 py-1.5">
-          <mat-icon [class]="statusClass('warn')">{{ statusIcon('warn') }}</mat-icon>
-          <span class="min-w-0 truncate text-[13px]">Build differs from the consensus</span>
-          <span class="justify-self-end text-[12px] tabular-nums" [class]="statusClass('warn')">{{ top?.pct ?? 0 }}%</span>
-          <div class="border-l border-[var(--border)] pl-3 text-[12px] text-[var(--muted)]">
-            {{ ts.note }}
-            @if (top?.link) {
-              <a class="ml-1 text-[var(--accent)] no-underline hover:brightness-125" [href]="top!.link" target="_blank" rel="noopener">View parse</a>
+      @for (row of cat.rows; track $index) {
+        <div class="grid grid-cols-[20px_minmax(0,1fr)_minmax(0,200px)] items-center gap-[14px] border-t border-[var(--border)] px-4 py-2">
+          <!-- Status glyph (analyze mode only; bench rows are informational) -->
+          <div class="flex items-center justify-center">
+            @if (!cat.benchMode) {
+              <mat-icon class="!h-[18px] !w-[18px] !text-[18px] !leading-[18px]" [class]="statusClass(row.status)">{{ statusIcon(row.status) }}</mat-icon>
+            }
+          </div>
+
+          <!-- Slot label + item icon (trinkets) or plain name (enchants/talents) -->
+          <div class="flex min-w-0 items-center gap-2 text-[13px]">
+            @if (row.slotLabel) {
+              <span class="shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotLabel }}</span>
+            }
+            @if (row.itemId != null) {
+              <wl-game-icon kind="item" [id]="row.itemId" [name]="row.name" [icon]="row.itemIcon"></wl-game-icon>
+            } @else {
+              <span class="truncate" [class]="!cat.benchMode && row.status !== 'ok' ? statusClass(row.status) : 'text-[var(--text)]'">{{ row.name }}</span>
+            }
+          </div>
+
+          <!-- Fix cell: remedy text, a link button (talents), or the bench % -->
+          <div class="border-l border-[var(--border)] pl-[14px] text-[13px] leading-[1.45] text-[var(--muted)]">
+            @if (cat.benchMode) {
+              @if (row.pct != null) { <span class="tabular-nums">{{ row.pct }}%</span> }
+              @if (row.link) {
+                <a class="ml-2 text-[var(--accent)] no-underline hover:brightness-125" [href]="row.link" target="_blank" rel="noopener">View parse</a>
+              }
+            } @else if (row.link) {
+              <a class="text-[var(--accent)] no-underline hover:brightness-125" [href]="row.link" target="_blank" rel="noopener">View optimal build</a>
+            } @else if (row.fix) {
+              {{ row.fix }}
             }
           </div>
         </div>
-      } @else if (top) {
-        <div class="flex items-center gap-2">
-          <span class="text-[12px] text-[var(--muted)]">On plan</span>
-          <mat-chip-set>
-            <mat-chip>{{ ts.note }}<mat-icon class="badge-success ml-1 text-[16px]">check</mat-icon></mat-chip>
-          </mat-chip-set>
-          @if (top.link) {
-            <a class="text-[12px] text-[var(--accent)] no-underline hover:brightness-125" [href]="top.link" target="_blank" rel="noopener">View parse</a>
-          }
-        </div>
-      } @else {
-        <p class="text-[13px] text-[var(--muted)]">{{ ts.note }}</p>
       }
-    } @else {
-      @for (build of talentBuilds(); track build.label) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 py-1">
-          <span></span>
-          <span class="min-w-0 truncate text-[13px]">{{ build.label }}</span>
-          <span class="justify-self-end text-[12px] tabular-nums text-[var(--muted)]">{{ build.pct }}%</span>
-          <div class="pl-3 text-[12px]">
-            @if (build.link) {
-              <a class="text-[var(--accent)] no-underline hover:brightness-125" [href]="build.link" target="_blank" rel="noopener">View parse</a>
-            }
-          </div>
-        </div>
-      } @empty {
-        <p class="text-[13px] text-[var(--muted)]">No talent data yet.</p>
-      }
-    }
-  </section>
 
-  <mat-divider class="my-3"></mat-divider>
+      @if (cat.emptyHint && !cat.rows.length && !cat.onPlan) {
+        <div class="border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">{{ cat.emptyHint }}</div>
+      }
 
-  <!-- ===================== Trinkets ===================== -->
-  <section>
-    <div class="mb-1 text-[11px] uppercase tracking-wider text-[var(--muted)]">Trinkets</div>
-    @if (player) {
-      @for (row of trinketRows(); track row.slotLabel) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 rounded py-1.5"
-             [class]="row.status === 'ok' ? '' : 'bg-[var(--info)]/10'">
-          <mat-icon [class]="statusClass(row.status)">{{ statusIcon(row.status) }}</mat-icon>
-          <span class="flex min-w-0 items-center gap-2 text-[13px]">
-            <span class="shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotLabel }}</span>
-            <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
+      @if (cat.onPlan) {
+        <div class="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2">
+          <span class="mr-0.5 text-[10px] uppercase tracking-widest text-[var(--success)]">On plan</span>
+          <span class="inline-flex items-center gap-[6px] rounded-[20px] border border-[var(--success)]/30 bg-[var(--success)]/10 py-[3px] pr-[11px] pl-[9px]">
+            <span class="text-[13px] text-[var(--muted)]">{{ cat.onPlan }}</span>
+            <mat-icon class="badge-success !h-[14px] !w-[14px] !text-[14px] !leading-[14px]">check_circle</mat-icon>
           </span>
-          @if (row.pct != null) {
-            <span class="justify-self-end text-[12px] tabular-nums" [class]="statusClass(row.status)">{{ row.pct }}%</span>
-          } @else {
-            <span class="justify-self-end"></span>
-          }
-          <div class="border-l border-[var(--border)] pl-3 text-[12px] text-[var(--muted)]">
-            @if (row.remedy) { {{ row.remedy }} }
-          </div>
         </div>
-      } @empty {
-        <p class="text-[13px] text-[var(--muted)]">No trinket data yet.</p>
       }
-    } @else {
-      @for (row of benchTrinketRows(); track row.slotLabel) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 py-1">
-          <span></span>
-          <span class="flex min-w-0 items-center gap-2 text-[13px]">
-            <span class="shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotLabel }}</span>
-            <wl-game-icon kind="item" [id]="row.id" [name]="row.name" icon=""></wl-game-icon>
-          </span>
-          <span class="justify-self-end text-[12px] tabular-nums text-[var(--muted)]">{{ row.pct }}%</span>
-          <span></span>
-        </div>
-      } @empty {
-        <p class="text-[13px] text-[var(--muted)]">No trinket data yet.</p>
-      }
-    }
-  </section>
 
-  <mat-divider class="my-3"></mat-divider>
-
-  <!-- ===================== Enchants ===================== -->
-  <section>
-    <div class="mb-1 text-[11px] uppercase tracking-wider text-[var(--muted)]">Enchants</div>
-    @if (player) {
-      @for (row of enchantIssues(); track row.slotName) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 rounded py-1.5"
-             [class]="row.status === 'warn' ? 'bg-[var(--warning)]/10' : 'bg-[var(--info)]/10'">
-          <mat-icon [class]="statusClass(row.status)">{{ statusIcon(row.status) }}</mat-icon>
-          <span class="flex min-w-0 items-center gap-2 text-[13px]">
-            <span class="shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotName }}</span>
-            <span class="truncate" [class]="statusClass(row.status)">{{ row.name }}</span>
-          </span>
-          <span class="justify-self-end"></span>
-          <div class="border-l border-[var(--border)] pl-3 text-[12px] text-[var(--muted)]">{{ row.note }}</div>
-        </div>
-      }
-      @if (enchantOnPlanCount()) {
-        <div class="mt-1 flex items-center gap-2">
-          <span class="text-[12px] text-[var(--muted)]">On plan</span>
-          <mat-chip-set>
-            <mat-chip>{{ enchantOnPlanCount() }} enchants<mat-icon class="badge-success ml-1 text-[16px]">check</mat-icon></mat-chip>
-          </mat-chip-set>
-        </div>
-      }
-      @if (!enchantRows().length) {
-        <p class="text-[13px] text-[var(--muted)]">No enchant data yet.</p>
-      }
-    } @else {
-      @for (row of benchEnchantRows(); track row.slotName) {
-        <div class="grid grid-cols-[1.5rem_1fr_auto_minmax(0,11rem)] items-center gap-x-3 py-1">
-          <span></span>
-          <span class="flex min-w-0 items-center gap-2 text-[13px]">
-            <span class="shrink-0 text-[12px] text-[var(--muted)]">{{ row.slotName }}</span>
-            <span class="truncate">{{ row.name }}</span>
-          </span>
-          <span class="justify-self-end text-[12px] tabular-nums text-[var(--muted)]">{{ row.pct }}%</span>
-          <span></span>
-        </div>
-      } @empty {
-        <p class="text-[13px] text-[var(--muted)]">No enchant data yet.</p>
-      }
-    }
-  </section>
-</mat-card>
+    </div>
+  }
+</div>

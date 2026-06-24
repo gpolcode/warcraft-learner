@@ -174,13 +174,13 @@ describe('buildTrinketRows', () => {
       gear([{ slot: 12, id: 200, name: 'Other', icon: 'other' }]),
       stats({ 12: [{ id: 100, name: 'Box', pct: 60 }] }));
     expect(rows[0]).toMatchObject({ status: 'info', id: 200, name: 'Other', pct: null });
-    expect(rows[0].remedy).toBe('Switch to Box - used by 60%.');
+    expect(rows[0].remedy).toBe('Switch to Box');
   });
 
   it('suggests equipping the top trinket when the slot is empty', () => {
     const rows = buildTrinketRows(gear([]), stats({ 13: [{ id: 100, name: 'Box', pct: 80 }] }));
     expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 2', status: 'info', id: 100, pct: 80 });
-    expect(rows[0].remedy).toBe('Equip Box - used by 80%.');
+    expect(rows[0].remedy).toBe('Equip Box');
   });
 
   it('accepts a player trinket on a slot with no top-parse data', () => {

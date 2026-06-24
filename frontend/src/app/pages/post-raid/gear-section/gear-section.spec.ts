@@ -3,7 +3,7 @@ import { mountVm } from '../../../../testing/component-harness';
 import { GearSectionComponent } from './gear-section';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { CharacterGear } from '../../../core/models/wcl.models';
-import { BenchEnchantRow, BenchTrinketRow, EnchantRow } from '../../../shared/gear/gear-comparison';
+import { GearCategory } from '../../../shared/gear/gear-comparison';
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {
   return { talent_builds: [], trinkets: {}, enchants: {}, ...partial };
@@ -13,25 +13,29 @@ function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
   return { found: true, ...partial };
 }
 
-describe('GearSectionComponent - playerGear null (loading state)', () => {
-  it('benchEnchantRows shows bench data, not Not enchanted, when playerGear is null', () => {
+function categories(vm: Record<string, unknown>): GearCategory[] {
+  return (vm['categories'] as () => GearCategory[])();
+}
+
+function byKey(vm: Record<string, unknown>, key: GearCategory['key']): GearCategory {
+  return categories(vm).find(c => c.key === key)!;
+}
+
+describe('GearSectionComponent - bench-only mode (playerGear null)', () => {
+  it('lists consensus enchants as informational rows with usage %', () => {
     const { vm } = mountVm(GearSectionComponent, {
       topGear: stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
       playerGear: null,
     });
 
-    const bench = (vm['benchEnchantRows'] as () => BenchEnchantRow[])();
-    expect(bench).toHaveLength(1);
-    expect(bench[0].name).toBe('Sophic Devotion');
-    expect(bench[0].pct).toBe(90);
-
-    // enchantRows with null playerGear would show "Not enchanted" - the component
-    // template uses benchEnchantRows instead to avoid this in the loading state.
-    const comparison = (vm['enchantRows'] as () => EnchantRow[])();
-    expect(comparison[0].name).toBe('Not enchanted');
+    const enchants = byKey(vm, 'enchants');
+    expect(enchants.benchMode).toBe(true);
+    expect(enchants.rows).toHaveLength(1);
+    expect(enchants.rows[0]).toMatchObject({ name: 'Sophic Devotion', pct: 90 });
+    expect(enchants.onPlan).toBeNull();
   });
 
-  it('benchTrinketRows shows bench trinkets, not No data, when playerGear is null', () => {
+  it('lists consensus trinkets per slot', () => {
     const { vm } = mountVm(GearSectionComponent, {
       topGear: stats({
         trinkets: {
@@ -42,60 +46,93 @@ describe('GearSectionComponent - playerGear null (loading state)', () => {
       playerGear: null,
     });
 
-    const rows = (vm['benchTrinketRows'] as () => BenchTrinketRow[])();
-    expect(rows).toHaveLength(2);
-    expect(rows[0].name).toBe("Algeth'ar Puzzle Box");
-    expect(rows[1].name).toBe('Gaze of the Alnseer');
+    const trinkets = byKey(vm, 'trinkets');
+    expect(trinkets.rows.map(r => r.name)).toEqual(["Algeth'ar Puzzle Box", 'Gaze of the Alnseer']);
   });
 
-  it('uses empty bench rows gracefully when topGear has no enchant data', () => {
-    const { vm } = mountVm(GearSectionComponent, {
-      topGear: stats({ enchants: {} }),
-      playerGear: null,
-    });
-
-    expect((vm['benchEnchantRows'] as () => BenchEnchantRow[])()).toEqual([]);
-    expect((vm['benchTrinketRows'] as () => BenchTrinketRow[])()).toEqual([]);
+  it('falls back to an empty hint when a section has no data', () => {
+    const { vm } = mountVm(GearSectionComponent, { topGear: stats(), playerGear: null });
+    expect(byKey(vm, 'enchants').emptyHint).toBe('No enchant data yet.');
+    expect(byKey(vm, 'trinkets').rows).toEqual([]);
   });
 });
 
-describe('GearSectionComponent - playerGear loaded (comparison state)', () => {
-  it('enchantRows shows ok when player matches bench enchant', () => {
+describe('GearSectionComponent - comparison mode (playerGear loaded)', () => {
+  it('collapses a matching enchant into the "On plan" chip', () => {
     const { vm } = mountVm(GearSectionComponent, {
       topGear: stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
       playerGear: gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
     });
 
-    const rows = (vm['enchantRows'] as () => EnchantRow[])();
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion' });
+    const enchants = byKey(vm, 'enchants');
+    expect(enchants.rows).toEqual([]);
+    expect(enchants.onPlan).toBe('All optimal');
   });
 
-  it('enchantRows warns when player is missing a high-consensus enchant', () => {
+  it('shows a missing high-consensus enchant as a row naming the correct enchant', () => {
     const { vm } = mountVm(GearSectionComponent, {
       topGear: stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
       playerGear: gear({ enchants: [] }),
     });
 
-    const rows = (vm['enchantRows'] as () => EnchantRow[])();
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ status: 'warn', name: 'Not enchanted' });
+    const enchants = byKey(vm, 'enchants');
+    expect(enchants.rows).toHaveLength(1);
+    expect(enchants.rows[0]).toMatchObject({ status: 'warn', name: 'Not enchanted', fix: 'Apply Sophic Devotion' });
+    expect(enchants.onPlan).toBeNull();
   });
 
-  it('switches to bench mode when playerGear is later cleared to null', () => {
-    const { vm, setInput } = mountVm(GearSectionComponent, {
-      topGear: stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
-      playerGear: gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
+  it('summarises the passing enchants as an "N optimal" chip alongside the issue rows', () => {
+    const { vm } = mountVm(GearSectionComponent, {
+      topGear: stats({ enchants: {
+        9: [{ id: 1, name: 'Hands Rune', pct: 90 }],
+        15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }],
+      } }),
+      playerGear: gear({ enchants: [{ slot: 9, id: 1, name: 'Hands Rune' }] }),
     });
 
-    const beforeRows = (vm['enchantRows'] as () => EnchantRow[])();
-    expect(beforeRows[0].status).toBe('ok');
+    const enchants = byKey(vm, 'enchants');
+    expect(enchants.rows).toHaveLength(1);
+    expect(enchants.rows[0].slotLabel).toBe('Main Hand');
+    expect(enchants.onPlan).toBe('1 optimal');
+  });
 
-    setInput('playerGear', null);
-    const benchRows = (vm['benchEnchantRows'] as () => BenchEnchantRow[])();
-    expect(benchRows[0].name).toBe('Sophic Devotion');
-    // enchantRows now shows "Not enchanted" - template uses benchEnchantRows when null
-    const afterRows = (vm['enchantRows'] as () => EnchantRow[])();
-    expect(afterRows[0].name).toBe('Not enchanted');
+  it('collapses both trinkets into the "On plan" chip when they match', () => {
+    const { vm } = mountVm(GearSectionComponent, {
+      topGear: stats({ trinkets: { 12: [{ id: 1, name: 'A', pct: 60 }], 13: [{ id: 2, name: 'B', pct: 60 }] } }),
+      playerGear: gear({ trinkets: [{ slot: 12, id: 1, name: 'A' }, { slot: 13, id: 2, name: 'B' }] }),
+    });
+    expect(byKey(vm, 'trinkets').onPlan).toBe('Both optimal');
+    expect(byKey(vm, 'trinkets').rows).toEqual([]);
+  });
+
+  it('shows slot rows with a switch fix when a trinket is off-meta', () => {
+    const { vm } = mountVm(GearSectionComponent, {
+      topGear: stats({ trinkets: { 12: [{ id: 1, name: 'A', pct: 60 }], 13: [{ id: 2, name: 'B', pct: 60 }] } }),
+      playerGear: gear({ trinkets: [{ slot: 12, id: 1, name: 'A' }, { slot: 13, id: 9, name: 'Wrong' }] }),
+    });
+    const trinkets = byKey(vm, 'trinkets');
+    expect(trinkets.onPlan).toBeNull();
+    expect(trinkets.rows).toHaveLength(2);
+    expect(trinkets.rows[1]).toMatchObject({ status: 'info', name: 'Wrong', fix: 'Switch to B' });
+  });
+
+  it('shows the talent success chip when on a top build', () => {
+    const { vm } = mountVm(GearSectionComponent, {
+      topGear: stats({ talent_builds: [{ key: 'v2:a', pct: 70 }] }),
+      playerGear: gear({ talent_key: 'v2:a' }),
+    });
+    expect(byKey(vm, 'talents').onPlan).toBe('Optimal build');
+  });
+
+  it('shows a link-fix row when the talent build is off-meta, without build specifics', () => {
+    const { vm } = mountVm(GearSectionComponent, {
+      topGear: stats({ talent_builds: [{ key: 'v2:a', pct: 70, report_code: 'ABC', fight_id: 2 }] }),
+      playerGear: gear({ talent_key: 'v2:offmeta' }),
+    });
+    const talents = byKey(vm, 'talents');
+    expect(talents.onPlan).toBeNull();
+    expect(talents.rows).toHaveLength(1);
+    expect(talents.rows[0].name).toBe('Build differs from top parses');
+    expect(talents.rows[0].link).toBe('https://www.warcraftlogs.com/reports/ABC#fight=2');
   });
 });

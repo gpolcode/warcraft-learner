@@ -78,11 +78,9 @@ export function buildEnchantRows(gear: CharacterGear | null, stats: EncounterGea
     const player = playerEnch.find(e => e.slot === slot);
     if (!player) {
       if (top && top.pct >= 70) {
-        rows.push({ slotName: name, status: 'warn', name: 'Not enchanted',
-          note: `${top.pct}% of top parsers enchant this slot` });
+        rows.push({ slotName: name, status: 'warn', name: 'Not enchanted', note: `Apply ${topName}` });
       } else if (top && top.pct >= 40) {
-        rows.push({ slotName: name, status: 'info', name: 'Not enchanted',
-          note: `${top.pct}% of top parsers enchant this slot` });
+        rows.push({ slotName: name, status: 'info', name: 'Not enchanted', note: `Apply ${topName}` });
       }
       continue;
     }
@@ -90,7 +88,7 @@ export function buildEnchantRows(gear: CharacterGear | null, stats: EncounterGea
     if (top && player.id === top.id) {
       rows.push({ slotName: name, status: 'ok', name: playerName, note: `Matches top parsers (${top.pct}%)` });
     } else if (top) {
-      rows.push({ slotName: name, status: 'info', name: playerName, note: `Top parsers use ${topName} (${top.pct}%)` });
+      rows.push({ slotName: name, status: 'info', name: playerName, note: `Switch to ${topName}` });
     } else {
       rows.push({ slotName: name, status: 'ok', name: playerName, note: null });
     }
@@ -149,15 +147,14 @@ export function buildTrinketRows(gear: CharacterGear | null, stats: EncounterGea
           icon: player.icon || '', pct: match.pct, remedy: null });
       } else if (top) {
         acc.push({ slotLabel, status: 'info', id: player.id, name: player.name,
-          icon: player.icon || '', pct: null,
-          remedy: `Switch to ${top.name} - used by ${top.pct}%.` });
+          icon: player.icon || '', pct: null, remedy: `Switch to ${top.name}` });
       } else {
         acc.push({ slotLabel, status: 'ok', id: player.id, name: player.name,
           icon: player.icon || '', pct: null, remedy: null });
       }
     } else if (top) {
       acc.push({ slotLabel, status: 'info', id: top.id, name: top.name, icon: '',
-        pct: top.pct, remedy: `Equip ${top.name} - used by ${top.pct}%.` });
+        pct: top.pct, remedy: `Equip ${top.name}` });
     }
     return acc;
   }, []);
@@ -206,4 +203,127 @@ export function buildBenchTrinketRows(stats: EncounterGearStats | null): BenchTr
     if (top) acc.push({ slotLabel: slotName(slot), id: top.id, name: top.name, pct: top.pct });
     return acc;
   }, []);
+}
+
+// ── Unified gear card (Talents / Trinkets / Enchants sections) ──────────────
+//
+// Each section renders like a `wl-finding-table`: a title + sub-heading, compact
+// rows for items needing attention (with the fix in the remedy column), and a
+// single "On plan" success chip when the section is clean. In bench-only mode
+// (the /pre study page, no player gear) the rows instead list the top-parse
+// consensus with usage %.
+
+/** One row in a gear section: an item needing a fix, or a consensus pick (bench mode). */
+export interface GearRow {
+  status: GearStatus;
+  /** Slot label shown before the name, e.g. "Trinket 1", "Head". Empty for talents. */
+  slotLabel: string;
+  /** Item id for `wl-game-icon` (trinkets); null for text-only rows (enchants/talents). */
+  itemId: number | null;
+  itemIcon: string;
+  name: string;
+  /** Prescriptive fix text (analyze mode); null when the fix is a link or n/a. */
+  fix: string | null;
+  /** Link to an example top parse (talent fix, or bench-mode "View parse"). */
+  link: string | null;
+  /** Top-parse usage %, shown only in bench mode. */
+  pct: number | null;
+}
+
+/** A Talents / Trinkets / Enchants section of the unified gear card. */
+export interface GearCategory {
+  key: 'talents' | 'trinkets' | 'enchants';
+  title: string;
+  subtitle: string;
+  benchMode: boolean;
+  rows: GearRow[];
+  /** Simple text for the single "On plan" success chip; null when issues exist. */
+  onPlan: string | null;
+  /** Shown when there is no data at all for the section. */
+  emptyHint: string | null;
+}
+
+/**
+ * Talents: a success chip when the player is on a top-parse build, otherwise a
+ * single row whose fix is a link to the consensus build (no build specifics are
+ * surfaced). Bench mode lists the most-used builds with a "View parse" link.
+ */
+export function buildTalentCategory(gear: CharacterGear | null, stats: EncounterGearStats | null): GearCategory {
+  const builds = buildTalentBuilds(stats, gear?.talent_key ?? '');
+  if (!gear) {
+    const rows: GearRow[] = builds.map(build => ({
+      status: 'unknown', slotLabel: '', itemId: null, itemIcon: '', name: build.label,
+      fix: null, link: build.link, pct: build.pct,
+    }));
+    return { key: 'talents', title: 'Talents', subtitle: 'Most-used builds among top parsers.',
+      benchMode: true, rows, onPlan: null, emptyHint: rows.length ? null : 'No talent data yet.' };
+  }
+  const status = talentStatusOf(stats, gear.talent_key ?? '');
+  const base = { key: 'talents' as const, title: 'Talents',
+    subtitle: 'Your build vs the top-parse consensus.', benchMode: false };
+  if (status.status === 'unknown') {
+    return { ...base, rows: [], onPlan: null, emptyHint: 'No talent data yet.' };
+  }
+  if (status.status === 'warn') {
+    return { ...base, emptyHint: null, onPlan: null, rows: [{
+      status: 'warn', slotLabel: '', itemId: null, itemIcon: '',
+      name: 'Build differs from top parses', fix: null, link: builds[0]?.link ?? null, pct: null,
+    }] };
+  }
+  return { ...base, rows: [], onPlan: 'Optimal build', emptyHint: null };
+}
+
+/**
+ * Trinkets: a success chip when both slots match a top pick, otherwise a row per
+ * slot (the matching one compact, the off-meta one carrying a switch/equip fix).
+ */
+export function buildTrinketCategory(gear: CharacterGear | null, stats: EncounterGearStats | null): GearCategory {
+  if (!gear) {
+    const rows: GearRow[] = buildBenchTrinketRows(stats).map(row => ({
+      status: 'unknown', slotLabel: row.slotLabel, itemId: row.id, itemIcon: '', name: row.name,
+      fix: null, link: null, pct: row.pct,
+    }));
+    return { key: 'trinkets', title: 'Trinkets', subtitle: 'Most-used trinkets among top parsers.',
+      benchMode: true, rows, onPlan: null, emptyHint: rows.length ? null : 'No trinket data yet.' };
+  }
+  const trinketRows = buildTrinketRows(gear, stats);
+  const base = { key: 'trinkets' as const, title: 'Trinkets',
+    subtitle: 'Your trinkets vs the top-parse picks.', benchMode: false };
+  if (!trinketRows.length) return { ...base, rows: [], onPlan: null, emptyHint: 'No trinket data yet.' };
+  if (trinketRows.every(row => row.status === 'ok')) {
+    return { ...base, rows: [], onPlan: 'Both optimal', emptyHint: null };
+  }
+  const rows: GearRow[] = trinketRows.map(row => ({
+    status: row.status, slotLabel: row.slotLabel, itemId: row.id, itemIcon: row.icon,
+    name: row.name, fix: row.remedy, link: null, pct: null,
+  }));
+  return { ...base, rows, onPlan: null, emptyHint: null };
+}
+
+/**
+ * Enchants: a success chip when every slot is on plan, otherwise a row per
+ * missing/off-meta slot (naming the correct enchant in the fix) plus an
+ * "N optimal" chip summarising the slots that are already correct.
+ */
+export function buildEnchantCategory(gear: CharacterGear | null, stats: EncounterGearStats | null): GearCategory {
+  if (!gear) {
+    const rows: GearRow[] = buildBenchEnchantRows(stats).map(row => ({
+      status: 'unknown', slotLabel: row.slotName, itemId: null, itemIcon: '', name: row.name,
+      fix: null, link: null, pct: row.pct,
+    }));
+    return { key: 'enchants', title: 'Enchants', subtitle: 'Most-used enchants among top parsers.',
+      benchMode: true, rows, onPlan: null, emptyHint: rows.length ? null : 'No enchant data yet.' };
+  }
+  const enchantRows = buildEnchantRows(gear, stats);
+  const base = { key: 'enchants' as const, title: 'Enchants',
+    subtitle: 'Your enchants vs the top-parse picks.', benchMode: false };
+  if (!enchantRows.length) return { ...base, rows: [], onPlan: null, emptyHint: 'No enchant data yet.' };
+  const issues = enchantRows.filter(row => row.status !== 'ok');
+  const okCount = enchantRows.length - issues.length;
+  if (!issues.length) return { ...base, rows: [], onPlan: 'All optimal', emptyHint: null };
+  const rows: GearRow[] = issues.map(row => ({
+    status: row.status, slotLabel: row.slotName, itemId: null, itemIcon: '', name: row.name,
+    fix: row.note, link: null, pct: null,
+  }));
+  return { ...base, rows, onPlan: okCount ? `${okCount} optimal` : null, emptyHint: null };
 }
