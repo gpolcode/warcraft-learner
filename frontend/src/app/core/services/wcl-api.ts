@@ -156,7 +156,7 @@ export class WclApiService {
       (rank.startTime ?? 0) > (best.startTime ?? 0) ? rank : best,
     );
 
-    const { trinkets, enchants, gem_count } = extractGear(mostRecent);
+    const { trinkets, enchants } = extractGear(mostRecent);
     const talent_key = talentKeyV2(mostRecent.talents);
     const specPart = mostRecent.spec ?? '';
     const className = CLASS_NAMES[mostRecent.class ?? -1] ?? '';
@@ -179,6 +179,6 @@ export class WclApiService {
       }
     }
 
-    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code ?? null, talent_key, trinkets, enchants, gem_count };
+    return { found: true, spec: fullSpec, source_report: mostRecent.report?.code ?? null, talent_key, trinkets, enchants };
   }
 }

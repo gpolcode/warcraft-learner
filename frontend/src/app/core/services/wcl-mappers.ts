@@ -17,7 +17,6 @@ export interface WclGearItem {
   icon?: string;
   permanentEnchant?: number | string;
   permanentEnchantName?: string;
-  gems?: Array<{ id?: number | string }>;
 }
 
 export interface WclTalentNode { node?: { nodeId?: number }; nodeId?: number; }
@@ -92,15 +91,13 @@ export function mapUserCharacters(
   }));
 }
 
-/** Extract trinkets, enchants, and filled-socket count from a ranking's combatant info. */
+/** Extract trinkets and enchants from a ranking's combatant info. */
 export function extractGear(entry: WclRankEntry): {
   trinkets: NonNullable<CharacterGear['trinkets']>;
   enchants: NonNullable<CharacterGear['enchants']>;
-  gem_count: number;
 } {
   const trinkets: NonNullable<CharacterGear['trinkets']> = [];
   const enchants: NonNullable<CharacterGear['enchants']> = [];
-  let gem_count = 0;
 
   (entry.gear ?? []).forEach((item, slotIndex) => {
     if (item?.id == null) return;
@@ -115,13 +112,9 @@ export function extractGear(entry: WclRankEntry): {
       const enchantId = typeof enchant === 'string' ? parseInt(enchant, 10) : enchant;
       enchants.push({ slot: slotIndex, id: enchantId, name: item.permanentEnchantName ?? '' });
     }
-
-    for (const gem of (item.gems ?? [])) {
-      if (gem?.id != null) gem_count++;
-    }
   });
 
-  return { trinkets, enchants, gem_count };
+  return { trinkets, enchants };
 }
 
 /**

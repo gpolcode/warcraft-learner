@@ -182,10 +182,10 @@ Entirely client-side. No backend calls.
 1. User enters a character name/server/region (or WCL character URL).
 2. `wcl-api.ts` queries `characterData.character.encounterRankings(includeCombatantInfo: true)` directly on WCL for the selected encounter - extracts gear, talents from the player's most recent ranked kill.
 3. Bench data (talent distributions, trinket usage, enchant usage) loaded from static `/data/specs/{spec}/encounters/{enc_id}.json`.
-4. Three cards rendered client-side:
+4. A unified gear card rendered client-side (shared `wl-gear-section` in bench-only mode):
    - **Talents** - compares player's `v2:` talent fingerprint against top-parse distribution.
    - **Trinkets** - per-slot (12 = Trinket 1, 13 = Trinket 2) comparison.
-   - **Enchants** - per-slot; missing enchants on high-consensus slots (≥70% of top parsers) flagged as warnings.
+   - **Enchants** - per-slot; missing enchants on high-consensus slots (>=70% of top parsers) flagged as warnings.
 
 ### Encounter selection
 Encounters loaded from `/data/specs/{spec}/encounters.json` (static file). Filtered client-side to:
@@ -236,7 +236,6 @@ List of raw parse samples. Source of truth for bench files.
 | `talent_key` | top-level | `v2:`-prefixed sorted talent node IDs (Midnight format) |
 | `trinkets` | top-level | `{slot, id, name}` for slots 12 and 13 |
 | `enchants` | top-level | `{slot, id, name}` for all enchanted slots |
-| `gems` | top-level | `{slot, id}` per socketed gem. Only the count is used (filled-socket check on `/pre`); gem choice is a sim question, so ids are not aggregated. Bench `gear.gems` = `{avg_count, max_count, sample_count}` |
 
 ### Rulebook JSON schema
 
