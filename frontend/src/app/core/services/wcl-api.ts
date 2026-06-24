@@ -12,7 +12,7 @@ import {
 } from './wcl-queries';
 import {
   buildSpecMap, mapUserCharacters, extractGear, talentKeyFromTree, decodeHtmlEntities,
-  CLASS_NAMES, WclRankEntry, PlayerDetailGroups,
+  WclRankEntry, PlayerDetailGroups,
 } from './wcl-mappers';
 
 const API_URL = 'https://www.warcraftlogs.com/api/v2/user';

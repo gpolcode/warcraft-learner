@@ -280,15 +280,6 @@ query($code: String!) {
   }}
 }`;
 
-const CHAR_ENC_RANKINGS_QUERY = `
-query($name: String!, $serverSlug: String!, $serverRegion: String!, $encID: Int!) {
-  characterData {
-    character(name: $name, serverSlug: $serverSlug, serverRegion: $serverRegion) {
-      encounterRankings(encounterID: $encID, includeCombatantInfo: true)
-    }
-  }
-}`;
-
 // ── Encounter fetching ────────────────────────────────────────────────────────
 
 async function getEncounters(wcl) {
@@ -358,17 +349,6 @@ function extractGear(rankingEntry) {
     }
   }
   return { trinkets, enchants };
-}
-
-// `characterRankings` talents - old WCL format: [{talentID: N, points: P}].
-function talentKeyV1(talents) {
-  if (!Array.isArray(talents) || !talents.length) return '';
-  const ids = talents
-    .filter(t => t)
-    .map(t => String(t.talentID || t.id || ''))
-    .filter(x => x)
-    .sort();
-  return ids.length ? 'v1:' + ids.join(',') : '';
 }
 
 // Build a v2: talent key from a CombatantInfo talentTree flat list [{id, rank, nodeID}].
