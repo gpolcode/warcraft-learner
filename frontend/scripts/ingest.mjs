@@ -885,7 +885,7 @@ async function analyzeParse(wcl, spec, reportCode, fightId, playerName, combatan
   // CombatantInfo talentTree, which uses the same full-tree representation as the frontend).
   const gearData = combatantInfo || {};
   const ciEvent = (combatantEvents || []).find(e => e.sourceID === player.id) || combatantEvents?.[0];
-  const talentKey = talentKeyFromTree(ciEvent?.talentTree) || gearData.talent_key || '';
+  const talentKey = talentKeyFromTree(ciEvent?.talentTree);
 
   // Defensive tracking
   // Build buff window lookup: Map<spell_id, [[start_s, end_s|null], ...]>
