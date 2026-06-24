@@ -105,6 +105,13 @@ describe('bucketFindings', () => {
     expect(entries).toHaveLength(0);
     expect(ruleFindings).toHaveLength(0);
   });
+
+  it('silently skips a finding with no cd_name when collectRules is false (no ghost "undefined" entry)', () => {
+    const finding = f('warning', 'cast_efficiency'); // no cd_name
+    const { entries, ruleFindings } = bucketFindings([finding], { spellId, collectRules: false });
+    expect(entries).toHaveLength(0);
+    expect(ruleFindings).toHaveLength(0);
+  });
 });
 
 describe('rowsFromEntries', () => {
@@ -138,6 +145,15 @@ describe('rowsFromEntries', () => {
 
   it('skips entries with hasIssue=false', () => {
     expect(rowsFromEntries([onPlanEntry], CAT_LABEL)).toHaveLength(0);
+  });
+
+  it('uses a dash placeholder when finding.measured is absent', () => {
+    const entry: FindingEntry = {
+      name: 'Shadow Blades', spellId: null, hasIssue: true, hasCritical: false,
+      metaItems: [], findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad' }],
+    };
+    const rows = rowsFromEntries([entry], CAT_LABEL);
+    expect(rows[0].measured).toEqual({ value: '-' });
   });
 
   it('maps critical severity to "critical", anything else to "warning"', () => {
