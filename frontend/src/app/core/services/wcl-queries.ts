@@ -34,6 +34,7 @@ export interface CharEncQueryVars { name: string; serverSlug: string; serverRegi
 export const REPORT_Q = `
 query($code:String!){reportData{report(code:$code){
   title
+  region{slug}
   fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers}
   masterData{
     actors(type:"Player"){id name subType server}

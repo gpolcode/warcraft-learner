@@ -79,6 +79,8 @@ export class PostRaidComponent implements OnInit {
   private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
   private _enemies: { id: number; name: string; gameID: number }[] = [];
   private _userChars: WclUserCharacter[] = [];
+  /** Region slug shared by all players in the loaded report (e.g. "eu", "us"). */
+  private _reportRegion = '';
   /** Incremented on each analyzePlayer() call to cancel stale gear fetches. */
   private _gearFetchNonce = 0;
 
@@ -173,6 +175,7 @@ export class PostRaidComponent implements OnInit {
     this.players.set(buildPlayers(report.masterData?.actors));
     this._masterAbilities = report.masterData?.abilities ?? [];
     this._enemies = report.masterData?.enemies ?? [];
+    this._reportRegion = report.region?.slug ?? '';
     if (report.masterData?.abilities) this.icons.seed(report.masterData.abilities);
   }
 
@@ -251,14 +254,10 @@ export class PostRaidComponent implements OnInit {
           if (nonce === this._gearFetchNonce && bench) this.topGear.set(bench.gear);
         });
 
-        // Fetch player gear in background; matches the logged-in account's characters.
+        // Fetch player gear in background for the selected player via the report region.
         const player = this.players().find(p => p.id === playerId);
-        const userChar = this._userChars.find(character =>
-          character.name.toLowerCase() === (player?.name ?? '').toLowerCase() &&
-          character.serverSlug.toLowerCase() === (player?.server ?? '').toLowerCase(),
-        );
-        if (userChar) {
-          this.wclApi.getCharGear(userChar.name, userChar.serverSlug, userChar.serverRegion, fight.encounterID)
+        if (player?.name && player?.server && this._reportRegion) {
+          this.wclApi.getCharGear(player.name, player.server, this._reportRegion, fight.encounterID)
             .then(gearData => {
               if (nonce === this._gearFetchNonce && gearData.found) {
                 this.result.update(r => r ? { ...r, player_gear: gearData } : r);

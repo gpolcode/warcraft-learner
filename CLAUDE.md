@@ -152,6 +152,7 @@ WCL event fetching runs on the **main thread** through the `AnalysisDataSource` 
 8. Response sections: **Needs Improvement** (critical/warning), **Timing Suggestions** (info/hold_suggestion), **Doing Well** (success).
 9. **Burst Windows** card shows top recurring damage windows from top parses (CD-cast-centric, variable length). **Defensive Windows** shows when top parsers used each defensive and how much damage they mitigated.
 10. Ability icons come from `masterData.abilities` in the WCL report response - the only reliable source since WCL removed `gameData.spell()`.
+11. **Gear comparison** - after analysis completes, `post-raid.ts` fetches the selected player's gear via `getCharGear(player.name, player.server, reportRegion, encounterID)`. The report region (added to `REPORT_Q` as `region{slug}`) is shared by all players in the log, so gear lookup works for any raider - not just the logged-in account's own characters. Falls back gracefully (bench-only view) when the character has no ranked kills for the encounter.
 
 ### Ingestion (`npm run ingest`)
 Runs `frontend/scripts/ingest.mjs`. Also runs as `ingest-parses.yml` GHA daily + manually.
