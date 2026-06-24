@@ -81,6 +81,12 @@ export class PostRaidComponent implements OnInit {
   private _userChars: WclUserCharacter[] = [];
   /** Region slug shared by all players in the loaded report (e.g. "eu", "us"). */
   private _reportRegion = '';
+  /**
+   * Canonical server slug + region for ranked players in the loaded report, keyed
+   * by lowercased character name. Populated once per loadReport(); stable across
+   * polls since ranked characters don't change within a session.
+   */
+  private _rankedChars = new Map<string, { serverSlug: string; serverRegion: string }>();
   /** Incremented on each analyzePlayer() call to cancel stale gear fetches. */
   private _gearFetchNonce = 0;
 
@@ -145,21 +151,27 @@ export class PostRaidComponent implements OnInit {
         throw new Error('Sign in with WCL to load reports.');
       }
       this.loadingMsg.set('Fetching report from WCL…');
-      const [report, userChars] = await Promise.all([
-        this.wclApi.getReport(extractCode(url)),
+      const code = extractCode(url);
+      const [report, userChars, rankedChars] = await Promise.all([
+        this.wclApi.getReport(code),
         this.wclApi.getUserCharacters().catch(err => {
           logWarn('loadReport: fetch user characters', err);
           return [] as WclUserCharacter[];
         }),
+        this.wclApi.getRankedCharacters(code).catch(err => {
+          logWarn('loadReport: fetch ranked characters', err);
+          return [];
+        }),
       ]);
       this._userChars = userChars;
+      this._rankedChars = new Map(rankedChars.map(rc => [rc.name.toLowerCase(), { serverSlug: rc.serverSlug, serverRegion: rc.serverRegion }]));
       this._applyReport(report);
 
       const lastFight = this.fights()[this.fights().length - 1];
       this.fightControl.setValue(autoFight ?? lastFight?.id ?? null);
       this._applyAutoPlayer(autoPlayer);
       // Set reportCode last - this activates the polling pipeline if liveSync is on.
-      this.reportCode.set(extractCode(url));
+      this.reportCode.set(code);
       this._syncUrl();
       await this.analyzePlayer();
     } catch (err) {
@@ -254,16 +266,25 @@ export class PostRaidComponent implements OnInit {
           if (nonce === this._gearFetchNonce && bench) this.topGear.set(bench.gear);
         });
 
-        // Fetch player gear in background for the selected player via the report region.
+        // Fetch player gear using the canonical slug+region from rankedCharacters.
+        // masterData.actors[].server is a display name ("Tarren Mill"), not a slug;
+        // only rankedCharacters carries the real serverSlug the character API needs.
         const player = this.players().find(p => p.id === playerId);
-        if (player?.name && player?.server && this._reportRegion) {
-          this.wclApi.getCharGear(player.name, player.server, this._reportRegion, fight.encounterID)
+        const ranked = player ? this._rankedChars.get(player.name.toLowerCase()) : undefined;
+        // [gear-debug] - temporary; remove once comparison card is confirmed rendering.
+        console.info('[gear-debug] player:', { name: player?.name, displayServer: player?.server, region: this._reportRegion, rankedSlug: ranked?.serverSlug, rankedRegion: ranked?.serverRegion });
+        if (player?.name && ranked) {
+          console.info('[gear-debug] fetching gear for', player.name, ranked.serverSlug, ranked.serverRegion, 'enc:', fight.encounterID);
+          this.wclApi.getCharGear(player.name, ranked.serverSlug, ranked.serverRegion, fight.encounterID)
             .then(gearData => {
+              console.info('[gear-debug] result:', { found: gearData.found, message: gearData.message });
               if (nonce === this._gearFetchNonce && gearData.found) {
                 this.result.update(r => r ? { ...r, player_gear: gearData } : r);
               }
             })
             .catch(err => logWarn('analyzePlayer: fetch player gear', err));
+        } else {
+          console.info('[gear-debug] skipping - player not in rankedChars map. name:', player?.name, 'mapSize:', this._rankedChars.size);
         }
       }
     } catch (err) {

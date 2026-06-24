@@ -79,6 +79,32 @@ export function buildSpecMap(groups: PlayerDetailGroups): Record<number | string
   return map;
 }
 
+/** Canonical server slug + region for a ranked character in a report. */
+export interface RankedChar {
+  name: string;
+  serverSlug: string;
+  serverRegion: string;
+}
+
+/**
+ * Map the raw `rankedCharacters` list from a WCL report to `RankedChar` entries.
+ * Missing or malformed server objects are skipped so a partial response never throws.
+ */
+export function mapRankedCharacters(
+  raw: Array<{ name?: string; server?: { slug?: string; region?: { slug?: string } } }>,
+): RankedChar[] {
+  const results: RankedChar[] = [];
+  for (const entry of raw ?? []) {
+    const name = entry?.name ?? '';
+    const serverSlug = entry?.server?.slug ?? '';
+    const serverRegion = entry?.server?.region?.slug ?? '';
+    if (name && serverSlug && serverRegion) {
+      results.push({ name, serverSlug, serverRegion });
+    }
+  }
+  return results;
+}
+
 /** Map raw WCL character list entries to the application `WclUserCharacter` model. */
 export function mapUserCharacters(
   raw: Array<{ id: number; name: string; server: { slug: string; region: { slug: string } } }>,

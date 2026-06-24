@@ -6,13 +6,13 @@ import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclUserCharacter, 
 import { logWarn } from '../log';
 import {
   REPORT_Q, REPORT_ABILITIES_Q, PLAYER_DETAILS_Q, FIGHTS_Q, EVENTS_Q,
-  USER_CHARS_Q, CHAR_Q, CHAR_ENC_Q, buildEnchantNamesQuery,
+  USER_CHARS_Q, CHAR_Q, CHAR_ENC_Q, RANKED_CHARS_Q, buildEnchantNamesQuery,
   ReportQueryVars, ReportAbilitiesQueryVars, PlayerDetailsQueryVars,
-  FightsQueryVars, EventsQueryVars, CharQueryVars, CharEncQueryVars,
+  FightsQueryVars, EventsQueryVars, CharQueryVars, CharEncQueryVars, RankedCharsQueryVars,
 } from './wcl-queries';
 import {
-  buildSpecMap, mapUserCharacters, extractGear, talentKeyV2,
-  CLASS_NAMES, WclRankEntry, PlayerDetailGroups,
+  buildSpecMap, mapUserCharacters, mapRankedCharacters, extractGear, talentKeyV2,
+  CLASS_NAMES, WclRankEntry, PlayerDetailGroups, RankedChar,
 } from './wcl-mappers';
 
 const API_URL = 'https://www.warcraftlogs.com/api/v2/user';
@@ -93,6 +93,20 @@ export class WclApiService {
       currentStart = page.nextPageTimestamp;
     }
     return events;
+  }
+
+  /**
+   * Fetch the canonical server slug + region for every player in a report who
+   * has a WCL ranking. Used to build the name->serverSlug lookup for gear
+   * comparison; returns an empty array on any error so callers can treat it as
+   * best-effort.
+   */
+  async getRankedCharacters(code: string): Promise<RankedChar[]> {
+    const vars: RankedCharsQueryVars = { code };
+    const result = await this.query<{ reportData: { report: { rankedCharacters: Array<{ name?: string; server?: { slug?: string; region?: { slug?: string } } }> } } }>(
+      RANKED_CHARS_Q, vars,
+    );
+    return mapRankedCharacters(result?.reportData?.report?.rankedCharacters ?? []);
   }
 
   async getUserCharacters(): Promise<WclUserCharacter[]> {

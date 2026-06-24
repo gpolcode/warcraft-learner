@@ -26,6 +26,7 @@ export interface EventsQueryVars {
 }
 export interface CharQueryVars { name: string; serverSlug: string; serverRegion: string }
 export interface CharEncQueryVars { name: string; serverSlug: string; serverRegion: string; encID: number }
+export interface RankedCharsQueryVars { code: string }
 
 // ---------------------------------------------------------------------------
 // Query strings
@@ -78,6 +79,17 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!,$encID:Int!){
     encounterRankings(encounterID:$encID,includeCombatantInfo:true)
   }}
 }`;
+
+/**
+ * Lightweight query to resolve canonical server slugs + regions for every player
+ * in a report who has a WCL ranking. Used to build the name -> serverSlug/region
+ * lookup for the gear-comparison fetch; fetched best-effort alongside the main
+ * report load so a schema change here cannot break report loading.
+ */
+export const RANKED_CHARS_Q = `
+query($code:String!){reportData{report(code:$code){
+  rankedCharacters{ name server{ slug region{ slug } } }
+}}}`;
 
 /**
  * Build a batched `gameData { ... }` query that resolves enchant names by ID.
