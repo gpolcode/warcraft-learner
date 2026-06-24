@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CharacterGear } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
@@ -16,14 +15,13 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear-section',
-  imports: [MatCardModule, MatIconModule, GameIconComponent],
+  imports: [MatIconModule, GameIconComponent],
   templateUrl: './gear-section.html',
 })
 export class GearSectionComponent {
   readonly playerGear = input<CharacterGear | null>(null);
   readonly topGear = input<EncounterGearStats | null>(null);
 
-  /** True when player gear is available: enables player-vs-bench comparison mode. */
   protected readonly comparison = computed(() => !!this.playerGear());
 
   // --- Enchants ---
@@ -53,9 +51,7 @@ export class GearSectionComponent {
     buildTalentBuilds(this.topGear(), this.playerGear()?.talent_key ?? ''));
   protected readonly talentStatus = computed(() =>
     talentStatusOf(this.topGear(), this.playerGear()?.talent_key ?? ''));
-  /** Usage % of the most common talent build (shown in the talent issue row). */
   protected readonly talentTopPct = computed(() => this.talentBuilds()[0]?.pct ?? null);
-  /** Example parse link for the most common talent build. */
   protected readonly talentTopLink = computed(() => this.talentBuilds()[0]?.link ?? null);
 
   protected readonly slotName = slotName;

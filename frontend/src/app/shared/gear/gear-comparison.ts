@@ -79,11 +79,11 @@ export function buildEnchantRows(gear: CharacterGear | null, stats: EncounterGea
     const player = playerEnch.find(e => e.slot === slot);
     if (!player) {
       if (top && top.pct >= 70) {
-        rows.push({ slotName: name, status: 'warn', name: 'Not enchanted', topPct: null,
-          note: `${top.pct}% of top parsers enchant this slot` });
+        rows.push({ slotName: name, status: 'warn', name: 'Not enchanted', topPct: top.pct,
+          note: `Apply ${topName}` });
       } else if (top && top.pct >= 40) {
-        rows.push({ slotName: name, status: 'info', name: 'Not enchanted', topPct: null,
-          note: `${top.pct}% of top parsers enchant this slot` });
+        rows.push({ slotName: name, status: 'info', name: 'Not enchanted', topPct: top.pct,
+          note: `${top.pct}% of top parsers use ${topName}` });
       }
       continue;
     }
