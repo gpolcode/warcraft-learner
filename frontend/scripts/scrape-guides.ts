@@ -20,7 +20,6 @@ import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
-import { BG, type BgConfig } from 'bgutils-js';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -121,63 +120,19 @@ async function scrapeSimC(url: string): Promise<string> {
   return text.slice(0, MAX_CONTENT_CHARS);
 }
 
-// YouTube serves caption data to datacenter IPs (which is what GitHub Actions runs on) only
-// when the request carries a proof-of-origin (poToken): without it the player response has
-// no captions object, for every InnerTube client. We mint a token with bgutils-js (the
-// BotGuard challenge runs in a jsdom global) and build an attested Innertube session. Minting
-// is expensive and the token is reused for every video in a run, so it is memoized.
-interface YoutubeSession {
-  youtube: Innertube;
-  // Mint a poToken bound to a given identifier. Player/caption requests need a token bound to
-  // the video id (content binding); the session itself uses one bound to visitor data.
-  mintPoToken: (identifier: string) => Promise<string>;
-}
-let youtubeSessionPromise: Promise<YoutubeSession> | null = null;
-
-// YouTube's web BotGuard request key - a public constant, the same one youtubei.js documents.
-const BOTGUARD_REQUEST_KEY = 'O43z0dpjhgX20SCx4KAo';
-
-async function getYoutubeSession(): Promise<YoutubeSession> {
-  youtubeSessionPromise ??= (async () => {
-    // A throwaway session just to obtain visitor data, which the session poToken is bound to.
-    const bootstrap = await Innertube.create({ retrieve_player: false });
-    const visitorData = bootstrap.session.context.client.visitorData;
-    if (!visitorData) throw new Error('Could not obtain visitor data for poToken minting');
-
-    // BotGuard expects a browser-like global; jsdom supplies window/document.
-    const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', { url: 'https://www.youtube.com/' });
-    Object.assign(globalThis, { window: dom.window, document: dom.window.document });
-
-    // Load the BotGuard VM once; mintPoToken then issues tokens for any identifier. Routing the
-    // integrity-token request through YouTube (useYouTubeAPI) is more reliable from servers than
-    // hitting jnn-pa.googleapis.com directly.
-    const baseBgConfig: Omit<BgConfig, 'identifier'> = {
-      fetch: (input, init) => fetch(input, init),
-      globalObj: globalThis,
-      requestKey: BOTGUARD_REQUEST_KEY,
-      useYouTubeAPI: true,
-    };
-
-    const challenge = await BG.Challenge.create({ ...baseBgConfig, identifier: visitorData });
-    if (!challenge) throw new Error('Could not create BotGuard challenge');
-
-    const interpreterJavascript = challenge.interpreterJavascript.privateDoNotAccessOrElseSafeScriptWrappedValue;
-    if (!interpreterJavascript) throw new Error('Could not load BotGuard interpreter');
-    new Function(interpreterJavascript)();
-
-    const mintPoToken = async (identifier: string): Promise<string> => {
-      const { poToken } = await BG.PoToken.generate({
-        program: challenge.program,
-        globalName: challenge.globalName,
-        bgConfig: { ...baseBgConfig, identifier },
-      });
-      return poToken;
-    };
-
-    const sessionPoToken = await mintPoToken(visitorData);
-    const youtube = await Innertube.create({ po_token: sessionPoToken, visitor_data: visitorData });
-    return { youtube, mintPoToken };
-  })();
+// Scraping the watch-page HTML for "captionTracks" stopped working: YouTube serves a stripped
+// page (consent wall / bot detection) to non-browser clients, so the marker is absent. We use
+// youtubei.js, which talks to the same InnerTube API the official apps use and tracks
+// YouTube's changes. The session is created once and reused for every video in a run.
+//
+// Caveat: YouTube only serves caption/transcript data to clients it considers "trusted" and
+// currently refuses it to datacenter IPs (e.g. GitHub Actions / cloud runners) regardless of
+// client or proof-of-origin token. So on the hosted ingest workflow these requests can fail
+// and are recorded as a per-guide error (non-fatal); running `npm run scrape` from a normal
+// residential connection succeeds.
+let youtubeSessionPromise: Promise<Innertube> | null = null;
+function getYoutubeSession(): Promise<Innertube> {
+  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false });
   return youtubeSessionPromise;
 }
 
@@ -202,29 +157,36 @@ interface Json3Captions {
   events?: Array<{ segs?: Array<{ utf8?: string }> }>;
 }
 
-// Scraping the watch-page HTML for "captionTracks" stopped working: YouTube serves a stripped
-// page (consent wall / bot detection) to non-browser clients. youtubei.js talks to the same
-// InnerTube API the official apps use; with the attested session above, getTranscript()
-// returns the transcript engagement panel. If that panel is absent we fall back to the player
-// response's caption tracks fetched as json3 (with the poToken on the timedtext URL).
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  const { youtube, mintPoToken } = await getYoutubeSession();
-  // The player request needs a poToken bound to the video id (content binding) for YouTube to
-  // include the caption tracks - a session-bound token leaves info.captions empty.
-  const contentPoToken = await mintPoToken(videoId);
-  const info = await youtube.getInfo(videoId, { po_token: contentPoToken });
+  const youtube = await getYoutubeSession();
+  const info = await youtube.getInfo(videoId);
   const attempts: string[] = [];
 
-  // Preferred: caption tracks from the player response, fetched as json3 with the content token.
+  // Preferred: the transcript engagement panel.
+  try {
+    const transcript = await info.getTranscript();
+    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+    const text = segments
+      .map(segment => segment.snippet.text ?? '')
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (text) return text.slice(0, MAX_CONTENT_CHARS);
+    attempts.push('transcript panel empty');
+  } catch (err) {
+    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
+  }
+
+  // Fallback: caption tracks from the player response, fetched as json3.
   const tracks = info.captions?.caption_tracks ?? [];
   if (tracks.length) {
     const baseUrl = pickCaptionTrack(tracks).base_url;
-    const transcriptUrl = `${baseUrl}&fmt=json3&c=WEB&pot=${encodeURIComponent(contentPoToken)}`;
-    const res = await fetch(transcriptUrl);
+    const res = await fetch(`${baseUrl}&fmt=json3`);
     const body = await res.text();
     if (res.ok && body.trim()) {
       const captions = JSON.parse(body) as Json3Captions;
@@ -239,22 +201,6 @@ async function scrapeYouTube(url: string): Promise<string> {
     attempts.push(`caption tracks: HTTP ${res.status}, ${body.length} bytes`);
   } else {
     attempts.push(`no caption tracks (captions object ${info.captions ? 'present' : 'absent'})`);
-  }
-
-  // Fallback: the transcript engagement panel.
-  try {
-    const transcript = await info.getTranscript();
-    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
-    const text = segments
-      .map(segment => segment.snippet.text ?? '')
-      .filter(Boolean)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (text) return text.slice(0, MAX_CONTENT_CHARS);
-    attempts.push('transcript panel empty');
-  } catch (err) {
-    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
   }
 
   throw new Error(`No transcript available [${attempts.join('; ')}]. Auto-captions may be disabled.`);
