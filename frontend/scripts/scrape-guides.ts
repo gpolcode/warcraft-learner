@@ -33,10 +33,11 @@ const program = new Command()
   .option('--spec <spec>', 'spec name for non-interactive add-and-scrape mode')
   .option('--url <url>', 'guide URL to add (requires --spec)')
   .option('--type <type>', 'guide type: web | youtube | simc (default: web)', 'web')
-  .addHelpText('after', '\nExamples:\n  npm run scrape\n  npm run scrape -- --spec SubtletyRogue --url https://example.com --type web')
+  .option('--refresh', 're-scrape every existing guide across all specs (non-interactive)')
+  .addHelpText('after', '\nExamples:\n  npm run scrape\n  npm run scrape -- --spec SubtletyRogue --url https://example.com --type web\n  npm run scrape -- --refresh')
   .parse(process.argv);
 
-const opts = program.opts<{ spec?: string; url?: string; type: string }>();
+const opts = program.opts<{ spec?: string; url?: string; type: string; refresh?: boolean }>();
 
 if (opts.url && !opts.spec) {
   program.error('--url requires --spec');
@@ -277,6 +278,21 @@ async function pickSpec(): Promise<string> {
   return raw.trim();
 }
 
+// ── Bulk refresh ──────────────────────────────────────────────────────────────
+
+// Re-scrape every existing guide across all known specs. Used by the hourly ingest
+// workflow to keep guide content fresh. Reuses scrapeGuideById, which records per-guide
+// errors as status 'error' rather than throwing, so one dead URL never fails the run.
+async function refreshAllGuides(): Promise<void> {
+  const specs = getKnownSpecs();
+  for (const spec of specs) {
+    const guides = await loadGuides(spec);
+    if (!guides.length) continue;
+    console.log(`\n-- Refreshing ${spec} (${guides.length} guides) --`);
+    for (const guide of guides) await scrapeGuideById(spec, guide.id);
+  }
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -285,6 +301,13 @@ async function main(): Promise<void> {
   const cliSpec = opts.spec;
   const cliUrl = opts.url;
   const cliType = opts.type as 'web' | 'youtube' | 'simc';
+
+  // ── Refresh mode (non-interactive) ──────────────────────────────────────────
+  if (opts.refresh) {
+    await refreshAllGuides();
+    rl.close();
+    return;
+  }
 
   // ── CLI mode (non-interactive) ──────────────────────────────────────────────
   if (cliSpec && cliUrl) {

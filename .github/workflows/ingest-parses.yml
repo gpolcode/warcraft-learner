@@ -49,6 +49,12 @@ jobs:
         working-directory: frontend
         run: npm run ingest
 
+      # Re-scrape every existing guide so guides.json stays fresh on the same cadence.
+      # Needs no secrets (outbound HTTP only); per-guide errors are recorded, not fatal.
+      - name: Refresh guide content
+        working-directory: frontend
+        run: npm run scrape -- --refresh
+
       - name: Pull latest before committing
         env:
           BRANCH: ${{ github.ref_name }}
