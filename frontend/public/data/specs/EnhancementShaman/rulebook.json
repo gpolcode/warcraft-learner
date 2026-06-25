@@ -1,0 +1,162 @@
+{
+  "spec": "EnhancementShaman",
+  "major_cooldowns": [
+    {
+      "name": "Doom Winds",
+      "spell_id": 384352,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown as the Totemic build's primary burst window; while active it doubles Windfury Weapon proc chance and boosts Windfury damage, so weave Lava Lash and main-hand strikes (Crash Lightning, Stormstrike) every GCD and overlap it with Surging Totem and Primordial Storm."
+    },
+    {
+      "name": "Ascendance",
+      "spell_id": 114051,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown as the Stormbringer build's primary burst window (it replaces Doom Winds via the Deeply Rooted Elements choice node), converting Stormstrike into Windstrike and racing to cast Windstrike and Crash Lightning every GCD to feed Thorim's Invocation."
+    },
+    {
+      "name": "Sundering",
+      "spell_id": 197214,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown roughly every 30 seconds as your mid burst tool; layer it over Doom Winds or Surging Totem for the Surging Elements haste buff, and keep it from drifting off the 1-minute cooldown timers."
+    },
+    {
+      "name": "Surging Totem",
+      "spell_id": 444995,
+      "cooldown": 60,
+      "duration": 25,
+      "align_with_bloodlust": true,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "Totemic-only burst cooldown: cast on cooldown and pair every cast with Doom Winds, using the Whirling Elements buffs to set up a long Hot Hand window for repeated Lava Lash casts."
+    },
+    {
+      "name": "Feral Spirit",
+      "spell_id": 51533,
+      "cooldown": 90,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "When talented, summon on cooldown and align with your main burst window for extra Maelstrom Weapon generation; note this guide's recommended Mythic+ build may not take it, so a missing cast can be a valid talent choice."
+    },
+    {
+      "name": "Stormkeeper",
+      "spell_id": 320137,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "When talented, cast on cooldown to empower your next spender casts; hold briefly only if it can be synced into an imminent Ascendance window, otherwise do not delay it. Uncertain if all Enhancement builds take this talent, so a missing cast may be normal."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds."
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a major hit or off-tank an add; it also grants you a sizeable health buffer and can be used defensively on a long cooldown."
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "talent_gated": true,
+      "usage_rule": "When talented, drop before incoming damage to gain a recurring physical and magical absorb shield; use it on cooldown during damage-heavy phases."
+    },
+    {
+      "name": "Spirit Walk",
+      "spell_id": 58875,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use to remove movement-impairing effects and gain a burst of speed to reach mechanics or close back into melee range quickly."
+    },
+    {
+      "name": "Healing Surge",
+      "spell_id": 8004,
+      "cooldown": 15,
+      "usage_rule": "Spend 5 or more Maelstrom Weapon stacks to cast an instant self-heal when you drop low; the cooldown listed is a soft pacing value since this is gated by Maelstrom rather than a real cooldown."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open into your burst cooldown immediately",
+      "condition": null,
+      "action": "Cast Voltaic Blaze on the way into melee, then open Stormbringer with Crash Lightning into Ascendance, or open Totemic with Surging Totem, Sundering, Lava Lash, then Doom Winds; get into your primary cooldown as fast as possible rather than building up first."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Pair Surging Totem with Doom Winds",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 444995,
+        "spell_name": "Surging Totem",
+        "required_spell_id": 384352,
+        "required_spell_name": "Doom Winds",
+        "window_s": 10
+      },
+      "action": "On the Totemic build, sync every other Surging Totem with Doom Winds so the Whirling Elements buffs and Static Accumulation generation overlap your highest-value Windfury window."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Do not manually spend during Ascendance or Doom Winds",
+      "condition": null,
+      "action": "Stop manually casting Tempest, Lightning Bolt, or Chain Lightning while Ascendance or Doom Winds is active; let Thorim's Invocation spend your Maelstrom Weapon through Windstrike, Stormstrike, and Crash Lightning instead so you do not waste GCDs."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Maelstrom Weapon at 9+ stacks",
+      "condition": null,
+      "action": "Never let Maelstrom Weapon overcap: spend at 9 or more stacks with Lightning Bolt or Tempest in single target and Chain Lightning in AoE, prioritizing Tempest whenever it is available."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep your primary strike on cooldown",
+      "condition": null,
+      "action": "Keep your build's main strike on cooldown at all times: Lava Lash for Totemic (during Hot Hand or Whirling Fire) and Stormstrike for Stormbringer, since these drive your filler damage and proc generation."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Cast Sundering on cooldown",
+      "condition": null,
+      "action": "Use Sundering every 30 seconds without drifting it off your 1-minute cooldown timers; ideally fit it inside Doom Winds, and on Primordial Storm builds activate it to fire the 4-step elemental burst."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Crash Lightning and Chain Lightning at 3+ targets",
+      "condition": null,
+      "action": "At 3 or more targets, switch your spender to Chain Lightning and keep Crash Lightning on cooldown as a priority; during Doom Winds each Crash Lightning hit grants AoE Windfury procs, making it your highest-priority button."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Maintain melee range and weapon imbues",
+      "condition": null,
+      "action": "Stay in melee range to keep your strikes flowing and verify your weapon imbues and Lightning Shield are active before the pull; losing imbues is a significant damage loss."
+    }
+  ],
+  "source_summary": "Enhancement Shaman in Midnight is built around a single primary burst cooldown - Ascendance for Stormbringer or Doom Winds for Totemic - both of which trigger Thorim's Invocation so that strikes spend your banked Maelstrom Weapon for you. The strategy is to enter these windows on cooldown, stop manually spending while they are active, and overlap secondary cooldowns (Sundering every 30 seconds, Surging Totem on the Totemic build) to chain burst together. Between windows, keep your main strike on cooldown and spend Maelstrom Weapon at 9 or more stacks so you never overcap.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:05:24"
+}
