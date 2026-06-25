@@ -11,7 +11,7 @@
  *
  * Supported guide types:
  *   web      - HTML page scraped with fetch + text extraction
- *   youtube  - YouTube transcript via the InnerTube player API
+ *   youtube  - YouTube transcript via the Supadata API (needs SUPADATA_API_KEY)
  *   simc     - Raw text file (GitHub raw URLs auto-converted)
  */
 
@@ -19,7 +19,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
-import { Innertube } from 'youtubei.js';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -120,38 +119,39 @@ async function scrapeSimC(url: string): Promise<string> {
   return text.slice(0, MAX_CONTENT_CHARS);
 }
 
-// Scraping the watch-page HTML for "captionTracks" stopped working: YouTube serves a stripped
-// page (consent wall / bot detection) to non-browser clients, so the marker is absent. We use
-// youtubei.js, which talks to the same InnerTube API the official apps use and tracks
-// YouTube's changes. The session is created once and reused for every video in a run.
-//
-// YouTube only serves caption/transcript data to clients it considers "trusted" and refuses
-// it to datacenter IPs (e.g. GitHub Actions / cloud runners). So these requests can fail on
-// the hosted ingest (recorded as a non-fatal per-guide error) while succeeding when run from
-// a normal residential connection (local `npm run scrape`).
-let youtubeSessionPromise: Promise<Innertube> | null = null;
-function getYoutubeSession(): Promise<Innertube> {
-  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false });
-  return youtubeSessionPromise;
+// Anonymous YouTube transcript fetching no longer works: YouTube gates caption/transcript data
+// behind an authenticated, bot-checked session, so direct InnerTube calls (youtubei.js) and
+// yt-dlp both get refused ("Sign in to confirm you're not a bot") from any IP. We delegate to
+// the Supadata transcript API, which handles that on its side and returns plain text. Set the
+// SUPADATA_API_KEY env var (a GHA secret for the hosted ingest); without it YouTube guides
+// record a non-fatal per-guide error and the run continues.
+const SUPADATA_API_KEY = process.env.SUPADATA_API_KEY?.trim();
+const SUPADATA_TRANSCRIPT_URL = 'https://api.supadata.ai/v1/youtube/transcript';
+
+// Supadata returns the transcript either as a plain string (text=true) or as timed segments.
+interface SupadataTranscript {
+  content?: string | Array<{ text?: string }>;
 }
 
 async function scrapeYouTube(url: string): Promise<string> {
-  const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
-  if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
-  const videoId = match[1];
+  if (!SUPADATA_API_KEY) {
+    throw new Error('SUPADATA_API_KEY is not set; cannot fetch YouTube transcript.');
+  }
 
-  const youtube = await getYoutubeSession();
-  const info = await youtube.getInfo(videoId);
-  const transcript = await info.getTranscript();
+  const query = new URLSearchParams({ url, text: 'true' });
+  const res = await fetch(`${SUPADATA_TRANSCRIPT_URL}?${query}`, {
+    headers: { 'x-api-key': SUPADATA_API_KEY },
+  });
+  if (!res.ok) {
+    throw new Error(`Supadata HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  }
 
-  const segments = transcript.transcript.content?.body?.initial_segments ?? [];
-  const text = segments
-    .map(segment => segment.snippet.text ?? '')
-    .filter(Boolean)
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (!text) throw new Error('No transcript available for this video. Auto-captions may be disabled.');
+  const data = (await res.json()) as SupadataTranscript;
+  const content = typeof data.content === 'string'
+    ? data.content
+    : (data.content ?? []).map(segment => segment.text ?? '').join(' ');
+  const text = content.replace(/\s+/g, ' ').trim();
+  if (!text) throw new Error('Supadata returned an empty transcript. Auto-captions may be disabled.');
 
   return text.slice(0, MAX_CONTENT_CHARS);
 }
@@ -201,7 +201,15 @@ async function refreshAllGuides(): Promise<void> {
     const guides = await loadGuides(spec);
     if (!guides.length) continue;
     console.log(`\n-- Refreshing ${spec} (${guides.length} guides) --`);
-    for (const guide of guides) await scrapeGuideById(spec, guide.id);
+    for (const guide of guides) {
+      // A YouTube transcript never changes, and the Supadata API is metered, so don't re-fetch
+      // one we already have. Errored/empty YouTube guides still retry, and web/SimC always refresh.
+      if (guide.guide_type === 'youtube' && guide.status === 'scraped' && guide.content) {
+        console.log(`  Skipping [youtube] ${guide.url.slice(0, 70)}... (already scraped)`);
+        continue;
+      }
+      await scrapeGuideById(spec, guide.id);
+    }
   }
 }
 
