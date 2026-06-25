@@ -148,8 +148,7 @@ interface Json3Captions {
 // youtubei.js talks to the same InnerTube API the official apps use and tracks YouTube's
 // frequent changes. We read the caption track list off the player response (info.captions)
 // and fetch the track ourselves as json3 - the engagement-panel get_transcript endpoint
-// that info.getTranscript() drives currently 400s. The ANDROID client yields caption
-// baseUrls that work without a proof-of-origin token; retrieve_player: false skips the
+// that info.getTranscript() drives currently 400s. retrieve_player: false skips the
 // player-JS fetch we do not need for captions.
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
@@ -157,11 +156,12 @@ async function scrapeYouTube(url: string): Promise<string> {
   const videoId = match[1];
 
   const youtube = await Innertube.create({ retrieve_player: false });
-  const info = await youtube.getInfo(videoId, { client: 'ANDROID' });
+  const info = await youtube.getInfo(videoId);
 
   const tracks = info.captions?.caption_tracks ?? [];
   if (!tracks.length) {
-    throw new Error('No caption tracks found for this video. Auto-captions may be disabled.');
+    const detail = info.captions ? 'player response had captions but an empty track list' : 'no captions object in player response';
+    throw new Error(`No caption tracks found for this video (${detail}). Auto-captions may be disabled.`);
   }
 
   const baseUrl = pickCaptionTrack(tracks).base_url;
