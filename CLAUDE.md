@@ -203,7 +203,7 @@ For Claude: trigger via the `mcp__github__actions_run_trigger` tool on the curre
 No web UI for rulebook management. Everything is CLI.
 
 1. **Add + scrape guides** - `npm run scrape` re-scrapes every existing guide across all specs (web/YouTube/SimC APL), refreshing `guides.json`; this is what the hourly ingest workflow runs. To add a new guide, `npm run scrape -- --spec Name --url URL [--type web|youtube|simc]` appends and scrapes it.
-   - **YouTube transcripts (`youtubei.js`) need a non-datacenter egress.** YouTube refuses caption/transcript data to datacenter IPs (GitHub Actions), so YouTube guides fail on the hosted ingest unless `SCRAPE_PROXY` is set to a residential/non-datacenter HTTP(S) proxy URL - it routes only the YouTube requests through that proxy (web/SimC go direct). Set it as the `SCRAPE_PROXY` GHA secret for the hourly run; locally it is unnecessary (a normal residential connection works directly). Per-guide scrape errors are non-fatal.
+   - **YouTube transcripts (`youtubei.js`) need a non-datacenter egress.** YouTube refuses caption/transcript data to datacenter IPs (GitHub Actions), so YouTube guides may fail on the hosted ingest but succeed when run from a normal residential connection (local `npm run scrape`). Per-guide scrape errors are non-fatal.
 2. **Build AI prompt** - `npm run rulebook` → "Copy prompt": assembles `prompts/rulebook_skill.md` + all scraped guide content into a clipboard-ready prompt.
 3. **Save rulebook** - paste AI output → `npm run rulebook` → "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates schema directly.
 

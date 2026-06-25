@@ -20,7 +20,6 @@ import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
-import { ProxyAgent } from 'undici';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -127,21 +126,12 @@ async function scrapeSimC(url: string): Promise<string> {
 // YouTube's changes. The session is created once and reused for every video in a run.
 //
 // YouTube only serves caption/transcript data to clients it considers "trusted" and refuses
-// it to datacenter IPs (e.g. GitHub Actions / cloud runners) regardless of client or
-// proof-of-origin token. To make the hosted ingest work, point SCRAPE_PROXY at a
-// residential/non-datacenter HTTP(S) proxy and YouTube requests are routed through it. When
-// SCRAPE_PROXY is unset (e.g. a local residential run) requests go out directly.
-const SCRAPE_PROXY = process.env.SCRAPE_PROXY?.trim();
-const proxyDispatcher = SCRAPE_PROXY ? new ProxyAgent(SCRAPE_PROXY) : undefined;
-// Node's global fetch honours an undici `dispatcher` on the init object; the cast keeps it off
-// the standard RequestInit type while preserving it at runtime.
-const youtubeFetch: typeof fetch = proxyDispatcher
-  ? (input, init) => fetch(input, { ...init, dispatcher: proxyDispatcher } as RequestInit)
-  : fetch;
-
+// it to datacenter IPs (e.g. GitHub Actions / cloud runners). So these requests can fail on
+// the hosted ingest (recorded as a non-fatal per-guide error) while succeeding when run from
+// a normal residential connection (local `npm run scrape`).
 let youtubeSessionPromise: Promise<Innertube> | null = null;
 function getYoutubeSession(): Promise<Innertube> {
-  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false, fetch: youtubeFetch });
+  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false });
   return youtubeSessionPromise;
 }
 
