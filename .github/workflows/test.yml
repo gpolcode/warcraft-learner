@@ -30,3 +30,11 @@ jobs:
       - name: Run unit tests
         run: npm test
         working-directory: frontend
+
+      - name: Type-check ingestion scripts
+        run: npm run typecheck:scripts
+        working-directory: frontend
+
+      - name: Run ingestion script tests
+        run: npm run test:scripts
+        working-directory: frontend

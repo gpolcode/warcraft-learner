@@ -2,26 +2,26 @@
 /**
  * warcraft-learner - Parse Ingestion CLI (workflow orchestrator).
  *
- * The ETL stages live in sibling modules: wcl-client.ts (Extract / WCL network),
- * analyzer.ts (Transform / pure analysis), storage.ts (Load / data/specs I/O).
- * Run with `npm run ingest`; requires WCL_CLIENT_ID + WCL_CLIENT_SECRET env vars
- * (supplied by the GitHub Actions workflow from repository secrets).
+ * The ETL stages live under ./ingest/: wcl-client + wcl-queries + wcl-mappers +
+ * wcl-fetchers (Extract / WCL network), analysis/** (Transform / pure analysis),
+ * and storage.ts (Load / data/specs IO). Run with `npm run ingest`; requires
+ * WCL_CLIENT_ID + WCL_CLIENT_SECRET env vars (supplied by GitHub Actions from
+ * repository secrets).
  */
 
 import { Command } from 'commander';
 import pLimit from 'p-limit';
 import { validateRulebook } from './lib.ts';
+import { WCLClient, BudgetExceededError } from './ingest/wcl-client.ts';
+import { getEncounters, getRankingsLite, enrichRanking, getParseEvents } from './ingest/wcl-fetchers.ts';
+import { SPEC_TO_WCL, SPEC_TO_WCL_FORWARD } from './ingest/wcl-mappers.ts';
+import { analyzeParse } from './ingest/analysis/parse-analysis.ts';
 import {
-  WCLClient, BudgetExceededError, getEncounters, fetchRankingsLite, enrichRanking,
-  fetchParseEvents, SPEC_TO_WCL, SPEC_TO_WCL_FORWARD,
-  type IngestEncounter, type ParseRanking,
-} from './wcl-client.ts';
-import { analyzeParse } from './analyzer.ts';
-import {
-  INGEST_HASH, getSamplesPath, parseKey, readSamples, getSpecCooldowns, getSpecDefensives,
+  INGEST_HASH, parseKey, readSamples, getSpecCooldowns, getSpecDefensives,
   loadRulebook, saveParseSample, savePositions, syncEncounterFile, resolveEnchantNames,
   writeSpecIndex, specsByStaleness,
-} from './storage.ts';
+} from './ingest/storage.ts';
+import type { IngestEncounter, ParseRanking } from './ingest/models/wcl.models.ts';
 
 const TOP_N = 10;
 const FRESH_HOURS = 23;     // skip encounters whose samples were all refreshed within this window
@@ -60,9 +60,9 @@ async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters
       // (not >= TOP_N) handles anonymous parses and low-population bosses.
       const existingSamples = await readSamples(spec, enc.id);
       if (existingSamples.length > 0) {
-        const allFresh = existingSamples.every(s => s.ingest_hash === INGEST_HASH);
+        const allFresh = existingSamples.every(sample => sample.ingest_hash === INGEST_HASH);
         if (allFresh) {
-          const newestMs = Math.max(...existingSamples.map(s => new Date(s.sampled_at ?? 0).getTime()));
+          const newestMs = Math.max(...existingSamples.map(sample => new Date(sample.sampled_at ?? 0).getTime()));
           const ageH = (Date.now() - newestMs) / 3_600_000;
           if (ageH < FRESH_HOURS) {
             console.log(`\n[${enc.name}] Skipped (${existingSamples.length} samples fresh, ${Math.round(ageH * 10) / 10}h old)`);
@@ -77,7 +77,7 @@ async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters
       process.stdout.write(`\n[${enc.name}] Fetching top ${TOP_N} rankings...`);
       let rankings: ParseRanking[];
       try {
-        rankings = await fetchRankingsLite(wcl, spec, enc.id, TOP_N, enc.partitionIds ?? []);
+        rankings = await getRankingsLite(wcl, spec, enc.id, TOP_N, enc.partitionIds ?? []);
       } catch (err) {
         if (err instanceof BudgetExceededError) throw err;
         console.log(` FAILED: ${err instanceof Error ? err.message : String(err)}`);
@@ -86,7 +86,7 @@ async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters
       console.log(` ${rankings.length} rankings found`);
 
       // Build set of cached parse keys
-      const cachedKeys = new Set<string>((await readSamples(spec, enc.id)).map(s => parseKey(s.report_code, s.fight_id)));
+      const cachedKeys = new Set<string>((await readSamples(spec, enc.id)).map(sample => parseKey(sample.report_code, sample.fight_id)));
       const uncached = rankings.filter(ranking => !cachedKeys.has(parseKey(ranking.report_code, ranking.fight_id)));
       const cached = rankings.length - uncached.length;
 
@@ -98,7 +98,7 @@ async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters
         // Budget gate before each parse's network work; stops the run cleanly when low.
         await wcl.assertBudget(POINTS_MARGIN);
         const enriched = await enrichRanking(wcl, ranking);
-        const bundle = await fetchParseEvents(wcl, ranking.report_code, ranking.fight_id, ranking.player);
+        const bundle = await getParseEvents(wcl, ranking.report_code, ranking.fight_id, ranking.player);
         const res = bundle ? analyzeParse(bundle, spec, specCds, specDefensives, enriched.combatant_info) : null;
         completed++;
         process.stdout.write(`\r  [${enc.name}] Analyzed ${completed}/${uncached.length}...    `);

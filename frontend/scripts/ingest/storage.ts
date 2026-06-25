@@ -1,39 +1,57 @@
 /**
- * warcraft-learner - Load layer (filesystem storage)
+ * Load layer - all filesystem IO under data/specs/**.
  *
- * All reads from and writes to data/specs/** live here: parse samples, position
- * timelines, the aggregated encounter bench files, the per-spec encounter index,
- * and the top-level spec index. Rulebook reads (which drive analysis) also live
- * here. The Transform layer (analyzer.ts) is invoked from syncEncounterFile to
- * compute the bench payload; this layer only persists the result.
+ * Reads/writes parse samples, position timelines, encounter bench files, the
+ * per-spec encounter index, and the top-level spec index; also reads rulebooks
+ * (which drive analysis). The Transform layer (analysis/**) computes the bench
+ * payload - this layer only persists it. The only WCL access is delegated to
+ * getEnchantNames for enchant-name backfill.
  */
 
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
-import { buildEncounterBench, POSITIONS_INTERVAL_S } from './analyzer.ts';
-import { batchResolveEnchants, type WCLClient, type IngestEncounter } from './wcl-client.ts';
-import type { Rulebook, RulebookCooldown, RulebookDefensive } from '../src/app/core/models/rulebook.models.ts';
-import type { ParsePositions, EncounterPositions } from '../src/app/core/models/positioning.models.ts';
-import type { ParseCooldownData, ParseSample } from './parse-sample.models.ts';
+import { readJson, writeJson, getKnownSpecs as listSpecs } from '../lib.ts';
+import { logWarn } from '../../src/app/core/log.ts';
+import { buildEncounterBench } from './analysis/bench.ts';
+import { POSITIONS_INTERVAL_S } from './analysis/positions.ts';
+import { getEnchantNames } from './wcl-fetchers.ts';
+import type { WclQueryClient } from './wcl-client.ts';
+import type { Rulebook, RulebookCooldown, RulebookDefensive } from '../../src/app/core/models/rulebook.models.ts';
+import type { ParsePositions, EncounterPositions } from '../../src/app/core/models/positioning.models.ts';
+import type { ParseCooldownData, ParseSample } from './models/parse-sample.models.ts';
+import type { IngestEncounter } from './models/wcl.models.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const FRONTEND_ROOT = path.resolve(__dirname, '..');
+const FRONTEND_ROOT = path.resolve(__dirname, '..', '..');
 // WL_DATA_DIR lets a test/dry run write elsewhere instead of the committed data dir.
 export const DATA_DIR = process.env['WL_DATA_DIR'] ?? path.join(FRONTEND_ROOT, 'public', 'data', 'specs');
 // Ingest only manages specs that already have a rulebook to drive analysis.
 export const getKnownSpecs = (): string[] => listSpecs(DATA_DIR, { requireRulebook: true });
 
-// Hash of the ingestion source - used as a cache key so any change to the ETL
-// logic automatically invalidates existing parse samples and forces re-analysis.
-// Covers every module that affects sample output (not just ingest.ts), so editing
-// the analyzer or client still busts the cache.
-const ETL_FILES = ['ingest.ts', 'wcl-client.ts', 'analyzer.ts', 'storage.ts', 'parse-sample.models.ts'];
+// Every ingestion source file (excluding tests + the test toolkit), so any change
+// to ETL logic - in any module, not just this one - invalidates cached samples and
+// forces re-analysis on the next run.
+function collectEtlSources(): string[] {
+  const files = [path.join(FRONTEND_ROOT, 'scripts', 'ingest.ts')];
+  const walk = (dir: string): void => {
+    for (const name of fs.readdirSync(dir).sort()) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) {
+        if (name !== 'testing') walk(full);
+      } else if (name.endsWith('.ts') && !name.endsWith('.spec.ts')) {
+        files.push(full);
+      }
+    }
+  };
+  walk(__dirname);
+  return files.sort();
+}
+
 export const INGEST_HASH = crypto.createHash('sha256')
-  .update(ETL_FILES.map(f => fs.readFileSync(path.join(__dirname, f), 'utf8')).join('\n'))
+  .update(collectEtlSources().map(file => fs.readFileSync(file, 'utf8')).join('\n'))
   .digest('hex')
   .slice(0, 12);
 
@@ -62,20 +80,17 @@ function getPositionsPath(spec: string, encounterId: number): string {
 // ── Rulebook reads ────────────────────────────────────────────────────────────
 
 export async function loadRulebook(spec: string): Promise<Rulebook | null> {
-  const rbPath = path.join(DATA_DIR, spec, 'rulebook.json');
-  return readJson<Rulebook>(rbPath);
+  return readJson<Rulebook>(path.join(DATA_DIR, spec, 'rulebook.json'));
 }
 
 export async function getSpecCooldowns(spec: string): Promise<RulebookCooldown[] | null> {
-  const rb = await loadRulebook(spec);
-  if (rb?.major_cooldowns?.length) return rb.major_cooldowns;
-  return null;
+  const rulebook = await loadRulebook(spec);
+  return rulebook?.major_cooldowns?.length ? rulebook.major_cooldowns : null;
 }
 
 export async function getSpecDefensives(spec: string): Promise<RulebookDefensive[]> {
-  const rb = await loadRulebook(spec);
-  if (rb?.defensives?.length) return rb.defensives;
-  return [];
+  const rulebook = await loadRulebook(spec);
+  return rulebook?.defensives?.length ? rulebook.defensives : [];
 }
 
 // ── Sample / position reads + writes ─────────────────────────────────────────
@@ -91,7 +106,7 @@ export async function savePositions(spec: string, encounterId: number, encounter
   const file = getPositionsPath(spec, encounterId);
   const existing = await readJson<EncounterPositions>(file) ?? {};
   let parses = Array.isArray((existing as EncounterPositions).parses) ? (existing as EncounterPositions).parses : [];
-  parses = parses.filter(p => !(p.report_code === positions.report_code && p.fight_id === positions.fight_id));
+  parses = parses.filter(parse => !(parse.report_code === positions.report_code && parse.fight_id === positions.fight_id));
   parses.push(positions);
   await writeJson(file, {
     spec, encounter_id: encounterId, encounter_name: encounterName,
@@ -99,11 +114,13 @@ export async function savePositions(spec: string, encounterId: number, encounter
   }, true);
 }
 
-export async function saveParseSample(spec: string, encounterId: number, encounterName: string, reportCode: string, fightId: number, playerName: string, cooldownData: ParseCooldownData): Promise<void> {
+export async function saveParseSample(
+  spec: string, encounterId: number, encounterName: string,
+  reportCode: string, fightId: number, playerName: string, cooldownData: ParseCooldownData,
+): Promise<void> {
   const samplesPath = getSamplesPath(spec, encounterId);
   let samples = await readJson<ParseSample[]>(samplesPath) ?? [];
-  // Remove duplicate
-  samples = samples.filter(s => !(s.report_code === reportCode && s.fight_id === fightId));
+  samples = samples.filter(sample => !(sample.report_code === reportCode && sample.fight_id === fightId));
   samples.push({
     spec, encounter_id: encounterId, encounter_name: encounterName,
     report_code: reportCode, fight_id: fightId, player_name: playerName,
@@ -114,16 +131,16 @@ export async function saveParseSample(spec: string, encounterId: number, encount
 
 // ── Encounter bench / index aggregation ──────────────────────────────────────
 
-// Read samples -> compute bench (pure, in analyzer) -> write the encounter file
-// and refresh the per-spec encounter index.
+// Read samples -> compute bench (pure, in analysis/bench) -> write the encounter
+// file and refresh the per-spec encounter index.
 export async function syncEncounterFile(spec: string, encounterId: number): Promise<void> {
   const samples = await readSamples(spec, encounterId);
   if (!samples.length) return;
 
   const specDefensives = await getSpecDefensives(spec);
-  const out = buildEncounterBench(samples, specDefensives, spec, encounterId);
+  const bench = buildEncounterBench(samples, specDefensives, spec, encounterId);
 
-  await writeJson(getEncounterPath(spec, encounterId), out);
+  await writeJson(getEncounterPath(spec, encounterId), bench);
   await syncEncountersIndex(spec);
 }
 
@@ -131,16 +148,18 @@ async function syncEncountersIndex(spec: string): Promise<void> {
   const encDir = path.join(DATA_DIR, spec, 'encounters');
   if (!fs.existsSync(encDir)) return;
   const entries: Array<{ id: number; name: string; sample_count: number }> = [];
-  for (const f of fs.readdirSync(encDir).sort()) {
-    if (!f.endsWith('.json')) continue;
+  for (const file of fs.readdirSync(encDir).sort()) {
+    if (!file.endsWith('.json')) continue;
     try {
-      const d = await readJson<{ encounter_id?: number; encounter_name?: string; sample_count?: number }>(path.join(encDir, f)) ?? {};
+      const data = await readJson<{ encounter_id?: number; encounter_name?: string; sample_count?: number }>(path.join(encDir, file)) ?? {};
       entries.push({
-        id: d.encounter_id ?? parseInt(f),
-        name: d.encounter_name ?? f,
-        sample_count: d.sample_count ?? 0,
+        id: data.encounter_id ?? parseInt(file),
+        name: data.encounter_name ?? file,
+        sample_count: data.sample_count ?? 0,
       });
-    } catch {}
+    } catch (err) {
+      logWarn(`syncEncountersIndex ${spec}/${file}`, err);
+    }
   }
   await writeJson(path.join(DATA_DIR, spec, 'encounters.json'), entries);
 }
@@ -153,21 +172,22 @@ export async function writeSpecIndex(): Promise<void> {
     const encFile = path.join(DATA_DIR, spec, 'encounters.json');
     if (!fs.existsSync(encFile)) continue;
     try {
-      const enc = await readJson<Array<{ sample_count?: number }>>(encFile) ?? [];
-      const count = enc.filter(e => e.sample_count && e.sample_count > 0).length;
+      const encounters = await readJson<Array<{ sample_count?: number }>>(encFile) ?? [];
+      const count = encounters.filter(encounter => encounter.sample_count && encounter.sample_count > 0).length;
       if (count > 0) entries.push({ spec, encounter_count: count });
-    } catch {}
+    } catch (err) {
+      logWarn(`writeSpecIndex ${spec}`, err);
+    }
   }
   await writeJson(path.join(DATA_DIR, 'index.json'), entries);
 }
 
 // ── Enchant name resolution ───────────────────────────────────────────────────
 
-// Patches missing enchant names in an already-written encounter bench file by
-// batch-querying WCL for each unique ID whose name is empty. The network lookup
-// lives in wcl-client (batchResolveEnchants); this only reads/patches/writes the
-// file. Silently no-ops if nothing resolved.
-export async function resolveEnchantNames(wcl: WCLClient, spec: string, encounterId: number): Promise<void> {
+// Patches missing enchant names in an already-written encounter bench file: find
+// the empty-name enchant IDs, resolve them via WCL (getEnchantNames), patch, and
+// rewrite. No-ops when nothing is missing or nothing resolved.
+export async function resolveEnchantNames(client: WclQueryClient, spec: string, encounterId: number): Promise<void> {
   const encPath = getEncounterPath(spec, encounterId);
   type EncFile = { gear: { enchants: Record<string, Array<{ id: number | string; name: string }>> } };
   const data = await readJson<EncFile>(encPath);
@@ -186,7 +206,7 @@ export async function resolveEnchantNames(wcl: WCLClient, spec: string, encounte
   }
   if (!toResolve.size) return;
 
-  const names = await batchResolveEnchants(wcl, [...toResolve.keys()]);
+  const names = await getEnchantNames(client, [...toResolve.keys()]);
   let patched = false;
   for (const [id, locations] of toResolve.entries()) {
     const name = names.get(id);
@@ -205,7 +225,7 @@ export async function resolveEnchantNames(wcl: WCLClient, spec: string, encounte
 export async function specsByStaleness(encounters: IngestEncounter[]): Promise<string[]> {
   const now = Date.now();
   const known = getKnownSpecs();
-  // Precompute staleness per spec (async I/O) before the synchronous sort.
+  // Precompute staleness per spec (async IO) before the synchronous sort.
   const scores = new Map<string, number>(
     await Promise.all(known.map(async spec => [spec, await staleness(spec, encounters, now)] as const)),
   );
@@ -214,10 +234,10 @@ export async function specsByStaleness(encounters: IngestEncounter[]): Promise<s
 
 async function staleness(spec: string, encounters: IngestEncounter[], now: number): Promise<number> {
   let worst = 0;
-  for (const enc of encounters) {
-    const samples = await readSamples(spec, enc.id);
+  for (const encounter of encounters) {
+    const samples = await readSamples(spec, encounter.id);
     if (!samples.length) return Infinity; // never ingested
-    const newestMs = Math.max(...samples.map(s => new Date(s.sampled_at ?? 0).getTime()));
+    const newestMs = Math.max(...samples.map(sample => new Date(sample.sampled_at ?? 0).getTime()));
     const ageMs = now - newestMs;
     if (ageMs > worst) worst = ageMs;
   }
