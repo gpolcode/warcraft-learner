@@ -20,6 +20,7 @@ import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
+import { ProxyAgent } from 'undici';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -125,14 +126,22 @@ async function scrapeSimC(url: string): Promise<string> {
 // youtubei.js, which talks to the same InnerTube API the official apps use and tracks
 // YouTube's changes. The session is created once and reused for every video in a run.
 //
-// Caveat: YouTube only serves caption/transcript data to clients it considers "trusted" and
-// currently refuses it to datacenter IPs (e.g. GitHub Actions / cloud runners) regardless of
-// client or proof-of-origin token. So on the hosted ingest workflow these requests can fail
-// and are recorded as a per-guide error (non-fatal); running `npm run scrape` from a normal
-// residential connection succeeds.
+// YouTube only serves caption/transcript data to clients it considers "trusted" and refuses
+// it to datacenter IPs (e.g. GitHub Actions / cloud runners) regardless of client or
+// proof-of-origin token. To make the hosted ingest work, point SCRAPE_PROXY at a
+// residential/non-datacenter HTTP(S) proxy and YouTube requests are routed through it. When
+// SCRAPE_PROXY is unset (e.g. a local residential run) requests go out directly.
+const SCRAPE_PROXY = process.env.SCRAPE_PROXY?.trim();
+const proxyDispatcher = SCRAPE_PROXY ? new ProxyAgent(SCRAPE_PROXY) : undefined;
+// Node's global fetch honours an undici `dispatcher` on the init object; the cast keeps it off
+// the standard RequestInit type while preserving it at runtime.
+const youtubeFetch: typeof fetch = proxyDispatcher
+  ? (input, init) => fetch(input, { ...init, dispatcher: proxyDispatcher } as RequestInit)
+  : fetch;
+
 let youtubeSessionPromise: Promise<Innertube> | null = null;
 function getYoutubeSession(): Promise<Innertube> {
-  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false });
+  youtubeSessionPromise ??= Innertube.create({ retrieve_player: false, fetch: youtubeFetch });
   return youtubeSessionPromise;
 }
 
@@ -186,7 +195,7 @@ async function scrapeYouTube(url: string): Promise<string> {
   const tracks = info.captions?.caption_tracks ?? [];
   if (tracks.length) {
     const baseUrl = pickCaptionTrack(tracks).base_url;
-    const res = await fetch(`${baseUrl}&fmt=json3`);
+    const res = await youtubeFetch(`${baseUrl}&fmt=json3`);
     const body = await res.text();
     if (res.ok && body.trim()) {
       const captions = JSON.parse(body) as Json3Captions;
