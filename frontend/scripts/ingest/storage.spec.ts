@@ -141,15 +141,6 @@ describe('pruneStaleEncounters', () => {
     for (const file of filesFor('SpecP', 999)) expect(fs.existsSync(file)).toBe(true);
   });
 
-  it('reports but does not delete under dryRun', async () => {
-    writeRulebook('SpecP');
-    await seedEncounter('SpecP', 999, 'Stale');
-
-    const { removed } = await pruneStaleEncounters(new Set([100]), { dryRun: true });
-    expect(removed).toEqual([999]);
-    for (const file of filesFor('SpecP', 999)) expect(fs.existsSync(file)).toBe(true);
-  });
-
   it('is a no-op for an already-missing sibling file', async () => {
     const encDir = path.join(DATA_DIR, 'SpecP', 'encounters');
     fs.mkdirSync(encDir, { recursive: true });

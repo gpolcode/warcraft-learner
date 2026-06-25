@@ -192,10 +192,7 @@ export async function writeSpecIndex(): Promise<void> {
 // protected set is every non-frozen current-expansion id (wider than the ingested set),
 // a live raid that briefly fails its liveness probe is never wiped; an encounter only
 // becomes prunable once WCL freezes its zone or it leaves the current expansion.
-export async function pruneStaleEncounters(
-  protectedIds: Set<number>,
-  options: { dryRun?: boolean } = {},
-): Promise<{ removed: number[] }> {
+export async function pruneStaleEncounters(protectedIds: Set<number>): Promise<{ removed: number[] }> {
   const removed = new Set<number>();
   if (!fs.existsSync(DATA_DIR)) return { removed: [] };
   if (protectedIds.size === 0) {
@@ -212,7 +209,6 @@ export async function pruneStaleEncounters(
       const encounterId = parseInt(file);
       if (!Number.isFinite(encounterId) || protectedIds.has(encounterId)) continue;
       removed.add(encounterId);
-      if (options.dryRun) continue;
       touchedSpecs.add(spec);
       for (const stalePath of [getEncounterPath(spec, encounterId), getSamplesPath(spec, encounterId), getPositionsPath(spec, encounterId)]) {
         try {

@@ -32,12 +32,10 @@ const program = new Command()
   .name('ingest')
   .description('Fetch top WCL parses for all known specs (stalest-first) and write bench data.')
   .option('--spec <spec>', 'target a single spec instead of all (e.g. SubtletyRogue)')
-  .option('--no-prune', 'do not delete on-disk data for encounters that are no longer current')
-  .option('--dry-run-prune', 'log which encounters would be pruned without deleting anything')
   .addHelpText('after', `\nKnown specs: ${Object.keys(SPEC_TO_WCL_FORWARD).join(', ')}`);
 
 program.parse(process.argv);
-const opts = program.opts<{ spec?: string; prune: boolean; dryRunPrune?: boolean }>();
+const opts = program.opts<{ spec?: string }>();
 
 async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters: IngestEncounter[]): Promise<boolean> {
   console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
@@ -174,12 +172,9 @@ async function main(): Promise<void> {
   // Prune superseded content before the spec loop (filesystem only, no WCL points).
   // Guarded inside pruneStaleEncounters against an empty protected set; reaching here
   // already means getEncounters succeeded, so a failed fetch never triggers deletion.
-  if (opts.prune) {
-    const { removed } = await pruneStaleEncounters(protectedIds, { dryRun: opts.dryRunPrune });
-    if (removed.length) {
-      const verb = opts.dryRunPrune ? 'Would prune' : 'Pruned';
-      console.log(`${verb} ${removed.length} stale encounter(s): ${removed.join(', ')}`);
-    }
+  const { removed } = await pruneStaleEncounters(protectedIds);
+  if (removed.length) {
+    console.log(`Pruned ${removed.length} stale encounter(s): ${removed.join(', ')}`);
   }
 
   const specArg = opts.spec ?? null;
