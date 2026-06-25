@@ -19,7 +19,7 @@ import { analyzeParse } from './ingest/analysis/parse-analysis.ts';
 import {
   INGEST_HASH, parseKey, readSamples, getSpecCooldowns, getSpecDefensives,
   loadRulebook, saveParseSample, savePositions, syncEncounterFile, resolveEnchantNames,
-  writeSpecIndex, specsByStaleness,
+  writeSpecIndex, specsByStaleness, pruneStaleEncounters,
 } from './ingest/storage.ts';
 import type { IngestEncounter, ParseRanking } from './ingest/models/wcl.models.ts';
 
@@ -32,10 +32,12 @@ const program = new Command()
   .name('ingest')
   .description('Fetch top WCL parses for all known specs (stalest-first) and write bench data.')
   .option('--spec <spec>', 'target a single spec instead of all (e.g. SubtletyRogue)')
+  .option('--no-prune', 'do not delete on-disk data for encounters that are no longer current')
+  .option('--dry-run-prune', 'log which encounters would be pruned without deleting anything')
   .addHelpText('after', `\nKnown specs: ${Object.keys(SPEC_TO_WCL_FORWARD).join(', ')}`);
 
 program.parse(process.argv);
-const opts = program.opts<{ spec?: string }>();
+const opts = program.opts<{ spec?: string; prune: boolean; dryRunPrune?: boolean }>();
 
 async function ingestSpecNonInteractive(wcl: WCLClient, spec: string, encounters: IngestEncounter[]): Promise<boolean> {
   console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
@@ -158,14 +160,26 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  process.stdout.write('Fetching WCL encounters...');
+  process.stdout.write('Resolving current raids...');
   let encounters: IngestEncounter[];
+  let protectedIds: Set<number>;
   try {
-    encounters = await getEncounters(wcl);
-    console.log(` ${encounters.length} encounters in current expansion`);
+    ({ encounters, protectedIds } = await getEncounters(wcl));
+    console.log(` ${encounters.length} live encounters`);
   } catch (err) {
-    console.error(`\nFailed to fetch encounters: ${err instanceof Error ? err.message : String(err)}`);
+    console.error(`\nFailed to resolve current raids: ${err instanceof Error ? err.message : String(err)}`);
     process.exit(1);
+  }
+
+  // Prune superseded content before the spec loop (filesystem only, no WCL points).
+  // Guarded inside pruneStaleEncounters against an empty protected set; reaching here
+  // already means getEncounters succeeded, so a failed fetch never triggers deletion.
+  if (opts.prune) {
+    const { removed } = await pruneStaleEncounters(protectedIds, { dryRun: opts.dryRunPrune });
+    if (removed.length) {
+      const verb = opts.dryRunPrune ? 'Would prune' : 'Pruned';
+      console.log(`${verb} ${removed.length} stale encounter(s): ${removed.join(', ')}`);
+    }
   }
 
   const specArg = opts.spec ?? null;
