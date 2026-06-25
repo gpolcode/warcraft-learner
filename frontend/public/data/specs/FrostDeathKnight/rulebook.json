@@ -1,0 +1,160 @@
+{
+  "spec": "FrostDeathKnight",
+  "major_cooldowns": [
+    {
+      "name": "Pillar of Frost",
+      "spell_id": 51271,
+      "cooldown": 45,
+      "duration": 12,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Use on cooldown and never hold it to avoid losing casts; it is the anchor for every other cooldown, so all burst (Frostwyrm's Fury, Reaper's Mark, Breath, trinkets) should overlap its Strength buff window."
+    },
+    {
+      "name": "Frostwyrm's Fury",
+      "spell_id": 279302,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "opener_priority": 5,
+      "usage_rule": "Never cast without Pillar of Frost active or you waste Chosen of Frostbrood; fire it shortly after Pillar of Frost and use the recall cast when you have the best buff overlap (Unholy Strength plus Bonegrinder) or can hit the most targets."
+    },
+    {
+      "name": "Reaper's Mark",
+      "spell_id": 439843,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "Deathbringer only - cast on cooldown on the same GCD as Pillar of Frost when available, and never reapply it to a target that already has the mark or you prematurely end the existing one (best-guess spell_id 439843, verify on Wowhead)."
+    },
+    {
+      "name": "Breath of Sindragosa",
+      "spell_id": 152279,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "opener_priority": 4,
+      "talent_gated": true,
+      "usage_rule": "Talent-gated burst window - activate it during Pillar of Frost with at least 60 Runic Power pooled, then sustain it by keeping Runic Power above zero for the whole channel."
+    },
+    {
+      "name": "Empower Rune Weapon",
+      "spell_id": 47568,
+      "cooldown": 105,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Open with it when you hold 2 charges and refresh it during the cooldown window to generate Runes and Killing Machine; spend a charge whenever you are low on Runes and lack a Killing Machine proc."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press before incoming magic damage to absorb it and generate Runic Power; use it proactively on telegraphed magic hits since the shield only lasts 5 seconds."
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use for heavy physical hits or tankbusters to reduce all damage taken and gain stun immunity for the duration."
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate to become immune to Charm, Fear, and Sleep effects, and to enable Death Coil self-healing during dangerous windows."
+    },
+    {
+      "name": "Death Strike",
+      "spell_id": 49998,
+      "cooldown": 15,
+      "usage_rule": "Spend Runic Power on it as an on-demand self-heal when you dip low; its heal scales with recent damage taken so press it after a hit rather than before."
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop it for the group ahead of a raid-wide magic burst to reduce magic damage taken for everyone standing inside (talent choice in some builds)."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "critical",
+      "description": "Open ERW into Pillar then dump cooldowns",
+      "condition": null,
+      "action": "Open with Empower Rune Weapon, then (as Deathbringer) Reaper's Mark, then Pillar of Frost, Breath of Sindragosa, and Frostwyrm's Fury before settling into the normal priority; sequence Reaper's Mark before Pillar to free an extra GCD inside the window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Never cast Frostwyrm's Fury outside Pillar",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 279302,
+        "spell_name": "Frostwyrm's Fury",
+        "required_spell_id": 51271,
+        "required_spell_name": "Pillar of Frost",
+        "window_s": 12
+      },
+      "action": "Always cast Frostwyrm's Fury while Pillar of Frost is active; casting it without Pillar wastes the Chosen of Frostbrood extension and is a major DPS loss."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Pair Reaper's Mark with Pillar of Frost",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 439843,
+        "spell_name": "Reaper's Mark",
+        "required_spell_id": 51271,
+        "required_spell_name": "Pillar of Frost",
+        "window_s": 6
+      },
+      "action": "As Deathbringer, cast Reaper's Mark on the same GCD as Pillar of Frost so the Strength buff overlaps the Wave of Souls hits, especially in AoE."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Always spend Killing Machine procs",
+      "condition": null,
+      "action": "Treat Killing Machine as your top priority and consume it with Obliterate (or Frostscythe in AoE) on the next GCD; do not intentionally bank two stacks, since two single-proc casts out-damage one double-consumed cast."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Rime with Howling Blast",
+      "condition": null,
+      "action": "Cast Howling Blast whenever you have a Rime proc to keep Frostbound Will recovering Empower Rune Weapon faster; only hold a Rime proc to avoid Runic Power capping issues, never let it fall off."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Use Pillar of Frost on cooldown",
+      "condition": null,
+      "action": "Press Pillar of Frost as soon as it is available rather than holding it for mechanics; its short cooldown means held casts directly lose Killing Machine generation and total cooldown uptime."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Swap to Frostscythe and Glacial Advance in AoE",
+      "condition": null,
+      "action": "At 3 or more targets replace Obliterate with Frostscythe and Frost Strike with Glacial Advance; the priority logic is otherwise identical to single target."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stay in melee for Remorseless Winter and cleave",
+      "condition": null,
+      "action": "Remain stacked in melee range so Remorseless Winter, Frostscythe, and Glacial Advance all reach the pack; stepping out drops your passive AoE and Killing Machine generation from Remorseless Winter."
+    }
+  ],
+  "source_summary": "Frost Death Knight stacks all of its burst into the Pillar of Frost window: every other cooldown (Frostwyrm's Fury, Breath of Sindragosa, Reaper's Mark, Empower Rune Weapon, trinkets, and Bloodlust) is timed to overlap Pillar's Strength buff and is never used alone. Pillar itself is pressed on cooldown to maximize windows, while the moment-to-moment rotation is a proc-spending priority that prioritizes Killing Machine and Rime above filler. Between windows you pool Runes and Runic Power so each Pillar of Frost begins with every cooldown loaded and ready to chain.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:06:41"
+}
