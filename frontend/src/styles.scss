@@ -1,8 +1,19 @@
-@import "tailwindcss";
+@use '@angular/material' as mat;
+@use "tailwindcss";
 
 html {
   height: 100%;
   color-scheme: dark;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+      theme-type: dark,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
 
   /* App-level design tokens - the single source of color truth */
   --bg: #0e1117;
@@ -62,9 +73,9 @@ body {
 
 .mat-mdc-card-content {
   padding: 0 14px 12px !important;
-}
 
-.mat-mdc-card-content:last-child { padding-bottom: 12px !important; }
+  &:last-child { padding-bottom: 12px !important; }
+}
 
 .mat-mdc-form-field-subscript-wrapper { display: none; }
 
