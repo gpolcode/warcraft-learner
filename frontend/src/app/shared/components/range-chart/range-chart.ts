@@ -31,6 +31,27 @@ interface OverlayPoint {
   player: number | null;
 }
 
+// The canvas/Chart.js draw imperatively and cannot consume `var(--token)`, so the
+// shared design tokens (the same ones the SVG legend uses) are resolved to concrete
+// values once per render and the values are passed in. This is the only bridge
+// between the CSS token source of truth and the chart.
+interface ChartColors {
+  range: string;
+  rangeFill: string;
+  grid: string;
+  tick: string;
+  avg: string;
+  you: string;
+  dotOutline: string;
+}
+
+// Stashed on the Chart instance so the overlay plugin reads geometry + pre-resolved
+// colors instead of touching the DOM on every frame.
+interface OverlayState {
+  points: OverlayPoint[];
+  colors: Pick<ChartColors, 'avg' | 'you' | 'dotOutline'>;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-range-chart',
@@ -57,11 +78,20 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
   private readonly icons = inject(IconCacheService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
-  // Resolve a design token (defined on `html` in styles.css) to its CSS value.
-  // Both the SVG legend swatches and this canvas read the same tokens so they
-  // stay in sync. Custom properties inherit, so any element resolves them.
-  private static cssVar(el: Element, name: string): string {
-    return getComputedStyle(el).getPropertyValue(name).trim();
+  // Resolve the design tokens (defined on `html` in styles.scss) the canvas needs.
+  // Done once per render; custom properties inherit, so the host element sees them.
+  private resolveColors(): ChartColors {
+    const css = getComputedStyle(this.host.nativeElement);
+    const token = (name: string): string => css.getPropertyValue(name).trim();
+    return {
+      range: token('--chart-range'),
+      rangeFill: token('--chart-range-fill'),
+      grid: token('--border'),
+      tick: token('--muted'),
+      avg: token('--chart-avg'),
+      you: token('--chart-you'),
+      dotOutline: token('--chart-dot-outline'),
+    };
   }
 
   readonly rows = input.required<RangeRow[]>();
@@ -108,12 +138,10 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
   private readonly overlayPlugin: Plugin<'bar'> = {
     id: 'rangeOverlay',
     afterDatasetsDraw: (chart) => {
-      const points = (chart as unknown as { _overlay?: OverlayPoint[] })._overlay;
-      if (!points) return;
+      const overlay = (chart as unknown as { _overlay?: OverlayState })._overlay;
+      if (!overlay) return;
+      const { points, colors } = overlay;
       const { ctx } = chart;
-      const colorAvg = RangeChartComponent.cssVar(chart.canvas, '--chart-avg');
-      const colorYou = RangeChartComponent.cssVar(chart.canvas, '--chart-you');
-      const colorDotOutline = RangeChartComponent.cssVar(chart.canvas, '--chart-dot-outline');
       const xScale = chart.scales['x'];
       const yScale = chart.scales['y'];
       const band = points.length > 0 ? (yScale.bottom - yScale.top) / points.length : 0;
@@ -127,7 +155,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
         // Average tick
         if (p.avg != null) {
           const ax = xScale.getPixelForValue(p.avg);
-          ctx.strokeStyle = colorAvg;
+          ctx.strokeStyle = colors.avg;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(ax, y - thickness / 2);
@@ -140,10 +168,10 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           const px = xScale.getPixelForValue(p.player);
           ctx.beginPath();
           ctx.arc(px, y, Math.min(thickness / 2, 6), 0, Math.PI * 2);
-          ctx.fillStyle = colorYou;
+          ctx.fillStyle = colors.you;
           ctx.fill();
           ctx.lineWidth = 1.5;
-          ctx.strokeStyle = colorDotOutline;
+          ctx.strokeStyle = colors.dotOutline;
           ctx.stroke();
         }
         ctx.restore();
@@ -171,11 +199,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
     const rows = this.rows();
     const cats = rows.map(r => this.label(r));
 
-    const host = this.host.nativeElement;
-    const colorRange = RangeChartComponent.cssVar(host, '--chart-range');
-    const colorRangeFill = RangeChartComponent.cssVar(host, '--chart-range-fill');
-    const colorGrid = RangeChartComponent.cssVar(host, '--border');
-    const colorTick = RangeChartComponent.cssVar(host, '--muted');
+    const colors = this.resolveColors();
 
     this.chart?.destroy();
 
@@ -194,8 +218,8 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           label: 'Top range',
           data: rows.map(r =>
             (r.topMin != null && r.topMax != null) ? [r.topMin, r.topMax] as [number, number] : null),
-          backgroundColor: colorRangeFill,
-          borderColor: colorRange,
+          backgroundColor: colors.rangeFill,
+          borderColor: colors.range,
           borderWidth: 1,
           borderSkipped: false,
           borderRadius: 2,
@@ -213,9 +237,9 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           x: {
             min: 0,
             max: axisMax,
-            grid: { color: colorGrid },
+            grid: { color: colors.grid },
             ticks: {
-              color: colorTick,
+              color: colors.tick,
               font: { size: 11 },
               callback: (val) => this.unit() === 'pct'
                 ? (Number(val) * 100).toFixed(0) + '%'
@@ -226,7 +250,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
             grid: { display: false },
             ticks: {
               display: this.showLabels(),
-              color: colorTick,
+              color: colors.tick,
               font: { size: 11 },
             },
           },
@@ -254,8 +278,10 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
     };
 
     this.chart = new Chart(canvas, config);
-    (this.chart as unknown as { _overlay: OverlayPoint[] })._overlay =
-      rows.map(r => ({ avg: r.topAvg, player: r.playerPct }));
+    (this.chart as unknown as { _overlay: OverlayState })._overlay = {
+      points: rows.map(r => ({ avg: r.topAvg, player: r.playerPct })),
+      colors: { avg: colors.avg, you: colors.you, dotOutline: colors.dotOutline },
+    };
     this.chart.update();
   }
 }
