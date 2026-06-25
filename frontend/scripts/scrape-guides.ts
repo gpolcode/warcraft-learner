@@ -142,6 +142,14 @@ interface Json3Captions {
   events?: Array<{ segs?: Array<{ utf8?: string }> }>;
 }
 
+// InnerTube clients we ask for the player response, in order of preference. YouTube serves
+// degraded player responses (no caption tracks) to datacenter IPs - which is what GitHub
+// Actions runs on - for the WEB/ANDROID clients unless a proof-of-origin token is attached.
+// The IOS client still returns a full player response (caption tracks + working timedtext
+// baseUrls) without attestation, so it leads; the others are fallbacks for when YouTube
+// shifts which client is privileged.
+const CAPTION_CLIENTS = ['IOS', 'TV_EMBEDDED', 'WEB'] as const;
+
 // Scraping the watch-page HTML for "captionTracks" stopped working reliably: YouTube now
 // serves a stripped page (consent wall / bot detection) to unauthenticated non-browser
 // clients, so the marker is simply absent and every video looks like it has no captions.
@@ -156,12 +164,23 @@ async function scrapeYouTube(url: string): Promise<string> {
   const videoId = match[1];
 
   const youtube = await Innertube.create({ retrieve_player: false });
-  const info = await youtube.getInfo(videoId);
 
-  const tracks = info.captions?.caption_tracks ?? [];
+  // Try each client until one returns a non-empty caption track list. Record why each one
+  // came up empty so a failure is diagnosable from the scrape log (no silent swallowing).
+  let tracks: CaptionTrack[] = [];
+  const attempts: string[] = [];
+  for (const client of CAPTION_CLIENTS) {
+    try {
+      const info = await youtube.getInfo(videoId, { client });
+      const candidate = info.captions?.caption_tracks ?? [];
+      if (candidate.length) { tracks = candidate; break; }
+      attempts.push(`${client}: ${info.captions ? 'empty track list' : 'no captions object'}`);
+    } catch (err) {
+      attempts.push(`${client}: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
   if (!tracks.length) {
-    const detail = info.captions ? 'player response had captions but an empty track list' : 'no captions object in player response';
-    throw new Error(`No caption tracks found for this video (${detail}). Auto-captions may be disabled.`);
+    throw new Error(`No caption tracks found for this video [${attempts.join('; ')}]. Auto-captions may be disabled.`);
   }
 
   const baseUrl = pickCaptionTrack(tracks).base_url;
