@@ -1184,18 +1184,32 @@ function round(v: number, decimals = 1): number {
 
 // ── Shared clustering primitives ─────────────────────────────────────────────
 
-// Greedy: group windows by proximity in time (within mergeS seconds of running cluster median).
+// Median of an already-ascending-sorted array (O(1)); matches median() exactly.
+function medianOfSorted(sortedTimes: number[]): number {
+  const mid = sortedTimes.length >> 1;
+  return sortedTimes.length % 2
+    ? sortedTimes[mid]
+    : (sortedTimes[mid - 1] + sortedTimes[mid]) / 2;
+}
+
+// Group windows by proximity in time (within mergeS seconds of the running cluster
+// median). Single O(N) pass: windows are processed in ascending time order, so the
+// moment a new cluster is created every earlier cluster's median is already below
+// w - mergeS and (since later windows only increase) can never match again. Hence
+// only the most-recently-created cluster is ever a candidate - the previous greedy
+// scan over all clusters was redundant. Output is identical to that greedy version.
 function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: number): T[][] {
   const sorted = [...windows].sort((a, b) => a.time_s - b.time_s);
   const clusters: T[][] = [];
+  let openTimes: number[] = []; // ascending times of the last (only open) cluster
   for (const w of sorted) {
-    let placed = false;
-    for (const cl of clusters) {
-      if (Math.abs(w.time_s - median(cl.map(c => c.time_s))) <= mergeS) {
-        cl.push(w); placed = true; break;
-      }
+    if (clusters.length && Math.abs(w.time_s - medianOfSorted(openTimes)) <= mergeS) {
+      clusters[clusters.length - 1].push(w);
+      openTimes.push(w.time_s); // w.time_s >= every prior time, so still sorted
+    } else {
+      clusters.push([w]);
+      openTimes = [w.time_s];
     }
-    if (!placed) clusters.push([w]);
   }
   return clusters;
 }
