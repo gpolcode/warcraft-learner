@@ -1,18 +1,12 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders. It fetches combat data from Warcraft Logs, evaluates it against spec-specific rulebooks (AI-generated from guides), and delivers prescriptive, coaching-style feedback with comparison against top-parse players.
-
-The app is a **fully static Angular SPA** deployed on GitHub Pages. There is no backend server. All analysis runs client-side. WCL is queried directly from the browser via PKCE OAuth2.
+A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against AI-generated, spec-specific rulebooks and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser via PKCE OAuth2.
 
 ## Branding & naming
 
 - **The product name is always `warcraft-learner`** - lowercase, hyphenated, exactly that casing. Never "Warcraft Learner", "WarcraftLearner", or any other variant. This applies to the page `<title>`, nav wordmark, CLI banners, READMEs, and any new user-facing copy.
 - **Do not confuse it with "Warcraft Logs"** (a.k.a. WCL) - that is the external data provider, a separate product. Leave "Warcraft Logs" / "WCL" strings as-is; only our own app name is normalized to `warcraft-learner`.
-- **Logo / favicon** - a gold shield with an ascending bar chart (martial "Warcraft" + the analytics/"learner" angle). Single source of truth: `frontend/public/favicon.svg`. It also drives the `.ico` and the nav-bar mark.
-  - `favicon.ico` is **regenerated from** `favicon.svg` (16/32/48px) - do not hand-edit the binary. Regen with `sharp` + `png-to-ico` (rasterize the SVG at high density, resize to each size, pack into one `.ico`).
-  - `index.html` references the SVG favicon first (`type="image/svg+xml"`) with the `.ico` as legacy fallback.
-  - The nav-bar logo (`shared/components/page-nav`) is the **same artwork inlined as SVG** in the template, so it themes with CSS vars. Set its fills via Tailwind utility classes (`fill-[var(--gold)]` / `fill-[var(--surface)]`) - **not** `fill="var(--…)"` presentation attributes, which browsers don't reliably honor.
-  - Brand gold is `--gold` (`#e5cc80`) - the Warcraft Logs 100-parse ("Astounding") gold, chosen deliberately since the tool benchmarks against top parses. The favicon's literal hex colors must track the design tokens in `styles.scss`.
+- **Logo / favicon** - gold shield with an ascending bar chart. Single source of truth: `frontend/public/favicon.svg`, which drives the `.ico` (regenerated at 16/32/48px via `sharp` + `png-to-ico`, never hand-edited) and the nav-bar mark. `index.html` references the SVG first (`type="image/svg+xml"`) with the `.ico` as legacy fallback. The nav-bar logo (`shared/components/page-nav`) is the same artwork inlined as SVG so it themes with CSS vars - set its fills via Tailwind classes (`fill-[var(--gold)]` / `fill-[var(--surface)]`), **not** `fill="var(--…)"` attributes (browsers don't reliably honor them). Brand gold `--gold` (`#e5cc80`) is the WCL 100-parse "Astounding" gold; the favicon's literal hex must track the `styles.scss` tokens.
 
 ## Analysis design principles
 
@@ -420,20 +414,3 @@ Both cluster functions share `groupByTime()` and `clusterBaseStats()` helpers.
 | Value | Location | Notes |
 |---|---|---|
 | `bl_time - 30` to `bl_time + 55` BL window | `ingest.ts` | BL duration (40s) + 15s grace. Defines what we measure - not worth deriving from data. |
-
-### Built
-
-| Feature | Notes |
-|---|---|
-| Guide ingestion → LLM → rulebook | `scrape.ts` + `admin.ts`; copy-prompt / paste-back workflow |
-| Deterministic rules engine | `cast_without_prior`, `hold_cooldown_for_anchor` |
-| Cooldown analysis | Lost casts, BL alignment, opener delay, held CDs, hold suggestions, cast efficiency |
-| Top-parse comparison | Uses/min normalization; per-CD first cast comparison |
-| Burst window analysis | CD-cast-centric, variable count + length, candle diagrams |
-| Defensive analysis | Per-defensive lost/held/suggestions; buff-window-centric defensive windows |
-| Pre-fight gear check | Talents, trinkets, enchants vs top-parse aggregates (all client-side WCL queries) |
-| Hold pattern detection | Per-cast-index hold targets; "Timing Suggestions" section |
-| Fight dropdown with attempt numbering | Wipes `✗ #N`, kills `✓` |
-| GHA ingestion pipeline | Hourly + manual; commits `frontend/public/data/specs/**` |
-| GitHub Pages deployment | `deploy-pages.yml`; builds with `--base-href /warcraft-learner/` |
-| Angular 22 SPA | Replaced old vanilla JS; fully client-side; no backend |
