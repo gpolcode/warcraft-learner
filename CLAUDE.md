@@ -116,12 +116,12 @@ warcraft-learner/
 │       │   ├── models/              # *.models.ts: wcl, bench, parse-sample type shapes
 │       │   └── testing/             # scripts-local test toolkit (events/spell-ids/clock/samples)
 │       ├── build-rulebook.ts   # Rulebook management (build prompt, save AI output)
-│       └── scrape-guides.ts    # Add + scrape guide URLs (--refresh re-scrapes all)
+│       └── scrape-guides.ts    # Re-scrape all guides (default); add one via --spec/--url
 ├── prompts/
 │   └── rulebook_skill.md       # LLM prompt template for rulebook generation
 ├── .github/workflows/
 │   ├── deploy-pages.yml         # Build Angular --base-href /warcraft-learner/ → GitHub Pages (push to main)
-│   ├── ingest-parses.yml        # Hourly (cron 23 * * * *) + manual: runs `npm run ingest` + `npm run scrape -- --refresh`, commits data/specs/**
+│   ├── ingest-parses.yml        # Hourly (cron 23 * * * *) + manual: runs `npm run scrape` then `npm run ingest`, commits data/specs/**
 │   ├── pr-preview.yml           # Per-PR preview deploy
 │   ├── pr-preview-cleanup.yml   # Tear down preview when PR closes
 │   └── test.yml                 # CI: lint + tests
@@ -138,7 +138,7 @@ warcraft-learner/
 | `npm start` | Angular dev server on http://localhost:4200 |
 | `npm run build` | Production build to `../static/angular/` |
 | `npm run ingest` | Ingest top WCL parses (interactive, or `--spec Name --all`); needs `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` |
-| `npm run scrape` | Add and scrape guide URLs (interactive, `--spec Name --url URL` to add one, or `--refresh` to re-scrape all existing guides) |
+| `npm run scrape` | Re-scrape all existing guides (default); `--spec Name --url URL` to add and scrape one |
 | `npm run rulebook` | Manage rulebooks (build AI prompt, save AI JSON output) |
 
 The CLI scripts are TypeScript run via `tsx` (e.g. `tsx --tsconfig tsconfig.scripts.json scripts/ingest-parses.ts`), not `.mjs`/`node`. `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` come from the [Warcraft Logs API clients](https://www.warcraftlogs.com/api/clients/) page and are only used server-side (GHA secrets), never in the browser. No Anthropic API key is needed - rulebook generation is a copy-prompt / paste-back flow that works with any LLM.
@@ -175,7 +175,7 @@ WCL event fetching runs on the **main thread** through the `AnalysisDataSource` 
 11. **Gear comparison** - after analysis completes, `post-raid.ts` fetches the selected player's gear via `getCharGear(player.name, player.server, reportRegion, encounterID)`. The report region (added to `REPORT_Q` as `region{slug}`) is shared by all players in the log, so gear lookup works for any raider - not just the logged-in account's own characters. Falls back gracefully (bench-only view) when the character has no ranked kills for the encounter.
 
 ### Ingestion (`npm run ingest`)
-Runs `frontend/scripts/ingest-parses.ts` (orchestrator; ETL modules under `scripts/ingest/`). Also runs as the `ingest-parses.yml` GHA hourly (cron `23 * * * *`) and on manual `workflow_dispatch`. The same hourly workflow also runs `npm run scrape -- --refresh` to keep guide content fresh.
+Runs `frontend/scripts/ingest-parses.ts` (orchestrator; ETL modules under `scripts/ingest/`). Also runs as the `ingest-parses.yml` GHA hourly (cron `23 * * * *`) and on manual `workflow_dispatch`. The same hourly workflow runs `npm run scrape` first to keep guide content fresh, then ingestion.
 
 1. Authenticates to WCL with client credentials (from `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` environment variables - server-side secret, only used in GHA, never in the browser).
 2. Queries `characterRankings` for each boss to find top 10 parses.
@@ -202,7 +202,7 @@ For Claude: trigger via the `mcp__github__actions_run_trigger` tool on the curre
 ### Rulebook management (`npm run rulebook` / `npm run scrape`)
 No web UI for rulebook management. Everything is CLI.
 
-1. **Add + scrape guides** - `npm run scrape`: add guide URLs, scrape content (web/YouTube/SimC APL), store in `guides.json`. `npm run scrape -- --refresh` re-scrapes every existing guide across all specs (used by the hourly ingest workflow).
+1. **Add + scrape guides** - `npm run scrape` re-scrapes every existing guide across all specs (web/YouTube/SimC APL), refreshing `guides.json`; this is what the hourly ingest workflow runs. To add a new guide, `npm run scrape -- --spec Name --url URL [--type web|youtube|simc]` appends and scrapes it.
 2. **Build AI prompt** - `npm run rulebook` → "Copy prompt": assembles `prompts/rulebook_skill.md` + all scraped guide content into a clipboard-ready prompt.
 3. **Save rulebook** - paste AI output → `npm run rulebook` → "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates schema directly.
 
