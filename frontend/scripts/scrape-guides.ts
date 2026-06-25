@@ -128,7 +128,9 @@ async function scrapeSimC(url: string): Promise<string> {
 // is expensive and the token is reused for every video in a run, so it is memoized.
 interface YoutubeSession {
   youtube: Innertube;
-  poToken: string;
+  // Mint a poToken bound to a given identifier. Player/caption requests need a token bound to
+  // the video id (content binding); the session itself uses one bound to visitor data.
+  mintPoToken: (identifier: string) => Promise<string>;
 }
 let youtubeSessionPromise: Promise<YoutubeSession> | null = null;
 
@@ -137,7 +139,7 @@ const BOTGUARD_REQUEST_KEY = 'O43z0dpjhgX20SCx4KAo';
 
 async function getYoutubeSession(): Promise<YoutubeSession> {
   youtubeSessionPromise ??= (async () => {
-    // A throwaway session just to obtain visitor data, which the poToken is bound to.
+    // A throwaway session just to obtain visitor data, which the session poToken is bound to.
     const bootstrap = await Innertube.create({ retrieve_player: false });
     const visitorData = bootstrap.session.context.client.visitorData;
     if (!visitorData) throw new Error('Could not obtain visitor data for poToken minting');
@@ -146,33 +148,35 @@ async function getYoutubeSession(): Promise<YoutubeSession> {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', { url: 'https://www.youtube.com/' });
     Object.assign(globalThis, { window: dom.window, document: dom.window.document });
 
-    const bgConfig: BgConfig = {
+    // Load the BotGuard VM once; mintPoToken then issues tokens for any identifier. Routing the
+    // integrity-token request through YouTube (useYouTubeAPI) is more reliable from servers than
+    // hitting jnn-pa.googleapis.com directly.
+    const baseBgConfig: Omit<BgConfig, 'identifier'> = {
       fetch: (input, init) => fetch(input, init),
       globalObj: globalThis,
-      identifier: visitorData,
       requestKey: BOTGUARD_REQUEST_KEY,
-      // Route the integrity-token request through YouTube rather than jnn-pa.googleapis.com
-      // directly - the direct path is unreliable from servers, yielding a token YouTube
-      // rejects (the session then looks unattested: no captions, transcript precondition fail).
       useYouTubeAPI: true,
     };
 
-    const challenge = await BG.Challenge.create(bgConfig);
+    const challenge = await BG.Challenge.create({ ...baseBgConfig, identifier: visitorData });
     if (!challenge) throw new Error('Could not create BotGuard challenge');
 
     const interpreterJavascript = challenge.interpreterJavascript.privateDoNotAccessOrElseSafeScriptWrappedValue;
     if (!interpreterJavascript) throw new Error('Could not load BotGuard interpreter');
     new Function(interpreterJavascript)();
 
-    const { poToken, integrityTokenData } = await BG.PoToken.generate({
-      program: challenge.program,
-      globalName: challenge.globalName,
-      bgConfig,
-    });
-    console.warn(`[youtube] poToken len=${poToken?.length ?? 0}, integrityToken=${!!integrityTokenData?.integrityToken}, visitorData len=${visitorData.length}`);
+    const mintPoToken = async (identifier: string): Promise<string> => {
+      const { poToken } = await BG.PoToken.generate({
+        program: challenge.program,
+        globalName: challenge.globalName,
+        bgConfig: { ...baseBgConfig, identifier },
+      });
+      return poToken;
+    };
 
-    const youtube = await Innertube.create({ po_token: poToken, visitor_data: visitorData });
-    return { youtube, poToken };
+    const sessionPoToken = await mintPoToken(visitorData);
+    const youtube = await Innertube.create({ po_token: sessionPoToken, visitor_data: visitorData });
+    return { youtube, mintPoToken };
   })();
   return youtubeSessionPromise;
 }
@@ -208,31 +212,18 @@ async function scrapeYouTube(url: string): Promise<string> {
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  const { youtube, poToken } = await getYoutubeSession();
-  const info = await youtube.getInfo(videoId);
+  const { youtube, mintPoToken } = await getYoutubeSession();
+  // The player request needs a poToken bound to the video id (content binding) for YouTube to
+  // include the caption tracks - a session-bound token leaves info.captions empty.
+  const contentPoToken = await mintPoToken(videoId);
+  const info = await youtube.getInfo(videoId, { po_token: contentPoToken });
   const attempts: string[] = [];
 
-  // Preferred: the transcript engagement panel.
-  try {
-    const transcript = await info.getTranscript();
-    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
-    const text = segments
-      .map(segment => segment.snippet.text ?? '')
-      .filter(Boolean)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (text) return text.slice(0, MAX_CONTENT_CHARS);
-    attempts.push('transcript panel empty');
-  } catch (err) {
-    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
-  }
-
-  // Fallback: caption tracks from the player response, fetched as json3.
+  // Preferred: caption tracks from the player response, fetched as json3 with the content token.
   const tracks = info.captions?.caption_tracks ?? [];
   if (tracks.length) {
     const baseUrl = pickCaptionTrack(tracks).base_url;
-    const transcriptUrl = `${baseUrl}&fmt=json3&c=WEB&pot=${encodeURIComponent(poToken)}`;
+    const transcriptUrl = `${baseUrl}&fmt=json3&c=WEB&pot=${encodeURIComponent(contentPoToken)}`;
     const res = await fetch(transcriptUrl);
     const body = await res.text();
     if (res.ok && body.trim()) {
@@ -247,7 +238,23 @@ async function scrapeYouTube(url: string): Promise<string> {
     }
     attempts.push(`caption tracks: HTTP ${res.status}, ${body.length} bytes`);
   } else {
-    attempts.push('no caption tracks');
+    attempts.push(`no caption tracks (captions object ${info.captions ? 'present' : 'absent'})`);
+  }
+
+  // Fallback: the transcript engagement panel.
+  try {
+    const transcript = await info.getTranscript();
+    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+    const text = segments
+      .map(segment => segment.snippet.text ?? '')
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (text) return text.slice(0, MAX_CONTENT_CHARS);
+    attempts.push('transcript panel empty');
+  } catch (err) {
+    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
   }
 
   throw new Error(`No transcript available [${attempts.join('; ')}]. Auto-captions may be disabled.`);
