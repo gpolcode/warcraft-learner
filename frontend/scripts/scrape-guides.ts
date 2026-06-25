@@ -145,27 +145,6 @@ function getYoutubeSession(): Promise<Innertube> {
   return youtubeSessionPromise;
 }
 
-// Structural subset of youtubei.js's CaptionTrackData (not re-exported from the package root).
-interface CaptionTrack {
-  base_url: string;
-  language_code?: string;
-  kind?: string; // 'asr' for auto-generated
-}
-
-// Pick an English caption track, preferring a manually-authored one over auto-generated
-// ('asr'); fall back to whatever the video offers.
-function pickCaptionTrack(tracks: CaptionTrack[]): CaptionTrack {
-  const englishTracks = tracks.filter(track => (track.language_code ?? '').startsWith('en'));
-  const pool = englishTracks.length ? englishTracks : tracks;
-  return pool.find(track => track.kind !== 'asr') ?? pool[0];
-}
-
-// A json3 caption track is `{ events: [{ segs: [{ utf8 }] }] }`; its strings are already
-// decoded, avoiding the double-encoded-entity hack the old watch-page XML path needed.
-interface Json3Captions {
-  events?: Array<{ segs?: Array<{ utf8?: string }> }>;
-}
-
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
@@ -173,46 +152,18 @@ async function scrapeYouTube(url: string): Promise<string> {
 
   const youtube = await getYoutubeSession();
   const info = await youtube.getInfo(videoId);
-  const attempts: string[] = [];
+  const transcript = await info.getTranscript();
 
-  // Preferred: the transcript engagement panel.
-  try {
-    const transcript = await info.getTranscript();
-    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
-    const text = segments
-      .map(segment => segment.snippet.text ?? '')
-      .filter(Boolean)
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (text) return text.slice(0, MAX_CONTENT_CHARS);
-    attempts.push('transcript panel empty');
-  } catch (err) {
-    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
-  }
+  const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+  const text = segments
+    .map(segment => segment.snippet.text ?? '')
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!text) throw new Error('No transcript available for this video. Auto-captions may be disabled.');
 
-  // Fallback: caption tracks from the player response, fetched as json3.
-  const tracks = info.captions?.caption_tracks ?? [];
-  if (tracks.length) {
-    const baseUrl = pickCaptionTrack(tracks).base_url;
-    const res = await youtubeFetch(`${baseUrl}&fmt=json3`);
-    const body = await res.text();
-    if (res.ok && body.trim()) {
-      const captions = JSON.parse(body) as Json3Captions;
-      const text = (captions.events ?? [])
-        .flatMap(event => event.segs ?? [])
-        .map(seg => seg.utf8 ?? '')
-        .join('')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (text) return text.slice(0, MAX_CONTENT_CHARS);
-    }
-    attempts.push(`caption tracks: HTTP ${res.status}, ${body.length} bytes`);
-  } else {
-    attempts.push(`no caption tracks (captions object ${info.captions ? 'present' : 'absent'})`);
-  }
-
-  throw new Error(`No transcript available [${attempts.join('; ')}]. Auto-captions may be disabled.`);
+  return text.slice(0, MAX_CONTENT_CHARS);
 }
 
 async function scrapeGuide(guide: Guide): Promise<string> {
