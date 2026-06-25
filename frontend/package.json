@@ -6,11 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test && vitest run --config vitest.scripts.config.ts && tsc -p tsconfig.scripts.json --noEmit",
     "test:watch": "ng test --watch",
-    "test:scripts": "vitest run --config vitest.scripts.config.ts",
-    "test:scripts:watch": "vitest --config vitest.scripts.config.ts",
-    "typecheck:scripts": "tsc -p tsconfig.scripts.json --noEmit",
     "admin": "tsx --tsconfig tsconfig.scripts.json scripts/admin.ts",
     "ingest": "tsx --tsconfig tsconfig.scripts.json scripts/ingest.ts",
     "scrape": "tsx --tsconfig tsconfig.scripts.json scripts/scrape.ts"
