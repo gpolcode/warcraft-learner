@@ -23,6 +23,12 @@ import { BLOODLUST_IDS } from '../src/app/core/analysis/format.ts';
 import { talentKeyFromTree, type WclGearItem } from '../src/app/core/services/wcl-mappers.ts';
 import type { Rulebook, RulebookCooldown, RulebookDefensive } from '../src/app/core/models/rulebook.models.ts';
 import type { ParsePositions, EncounterPositions } from '../src/app/core/models/positioning.models.ts';
+import type {
+  HoldWindow, CdCastSummary, DefensiveCastSummary,
+  RawBurstWindowAbility, RawBurstWindow,
+  RawDefensiveWindowAbility, RawDefensiveWindow,
+  ParseCooldownData, ParseSample,
+} from './parse-sample.models.ts';
 import { readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
@@ -168,88 +174,7 @@ interface WclCombatantInfoEvent {
   talentTree?: Array<{ id?: number; rank?: number; nodeID?: number }>;
 }
 
-// ── Ingest-local parse data types ─────────────────────────────────────────────
-
-interface HoldWindow { cast_index: number; expected_s: number; actual_s: number; hold_amount_s: number; }
-
-interface CdCastSummary {
-  name: string;
-  spell_id: number;
-  total_uses: number;
-  first_cast_s: number | null;
-  bl_aligned: boolean;
-  bl_offset_s: number | null;
-  cast_times_s: number[];
-  hold_windows: HoldWindow[];
-  cast_pattern: 'hold' | 'on_cooldown';
-}
-
-interface DefensiveCastSummary {
-  name: string;
-  spell_id: number;
-  cooldown: number;
-  uses: number;
-  cast_times_s: number[];
-  first_cast_s: number;
-  hold_windows: HoldWindow[];
-  cast_pattern: 'hold' | 'on_cooldown';
-  windows: Array<{ start_s: number; end_s: number; dmg_during: number }>;
-  fight_duration_s?: number;
-}
-
-interface RawBurstWindowAbility { spell_id: number; damage: number; pct: number; casts: number; }
-interface RawBurstWindow {
-  time_s: number;
-  window_length_s: number;
-  pct_of_total: number;
-  window_damage: number;
-  total_damage: number;
-  ability_breakdown: RawBurstWindowAbility[];
-  active_cds: string[];
-  target_count: number;
-}
-
-interface RawDefensiveWindowAbility { spell_id: number; damage: number; pct: number; }
-interface RawDefensiveWindow {
-  time_s: number;
-  window_length_s: number;
-  pct_of_total: number;
-  window_damage: number;
-  total_damage: number;
-  ability_breakdown: RawDefensiveWindowAbility[];
-  active_cds: string[];
-  defensive_name: string;
-  spell_id: number;
-  ref_game_id: number | null;
-}
-
-interface ParseCooldownData {
-  player: string;
-  spec: string;
-  fight_duration_s: number;
-  bloodlust_s: number | null;
-  cast_efficiency_pct: number | null;
-  cast_gap_list_ms: number[];
-  cooldowns: CdCastSummary[];
-  burst_windows: RawBurstWindow[];
-  defensives: DefensiveCastSummary[];
-  defensive_windows: RawDefensiveWindow[];
-  talent_key: string;
-  trinkets: Array<{ slot: number; id: number | string; name: string }>;
-  enchants: Array<{ slot: number; id: number | string; name: string }>;
-}
-
-interface ParseSample {
-  spec: string;
-  encounter_id: number;
-  encounter_name: string;
-  report_code: string;
-  fight_id: number;
-  player_name: string;
-  sampled_at: string;
-  ingest_hash: string;
-  cooldown_data: ParseCooldownData;
-}
+// ── Ingest-local aggregation types ───────────────────────────────────────────
 
 interface ParseRanking {
   rank: number;
