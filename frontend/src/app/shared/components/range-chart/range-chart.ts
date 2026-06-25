@@ -26,12 +26,6 @@ export interface RangeRow {
   topCasts?: number | null;
 }
 
-// Colors (kept from the previous ApexCharts implementation)
-const COLOR_RANGE = '#4a9eff';
-const COLOR_RANGE_FILL = 'rgba(74, 158, 255, 0.28)';
-const COLOR_AVG = '#60cfff';
-const COLOR_YOU = '#ffd700'; // "You" value rendered as a yellow dot
-
 interface OverlayPoint {
   avg: number | null;
   player: number | null;
@@ -42,34 +36,33 @@ interface OverlayPoint {
   selector: 'wl-range-chart',
   template: `
     @if (showLegend()) {
-      <div class="rc-legend">
-        <span class="rc-li"><span class="rc-sw range"></span>Top range</span>
-        <span class="rc-li"><span class="rc-sw avg"></span>Top average</span>
-        <span class="rc-li"><span class="rc-sw you"></span>You</span>
+      <div class="flex gap-4 text-[11px] text-[var(--muted)] mb-1.5">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block w-3 h-3 rounded-[2px] bg-[var(--chart-range-fill)] border border-[var(--chart-range)]"></span>Top range
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block w-[3px] h-3 bg-[var(--chart-avg)]"></span>Top average
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="inline-block w-3 h-3 rounded-full bg-[var(--chart-you)]"></span>You
+        </span>
       </div>
     }
-    <div class="rc-wrap" [style.height.px]="height()">
+    <div class="relative w-full" [style.height.px]="height()">
       <canvas #canvas></canvas>
     </div>
   `,
-  styles: [`
-    .rc-legend {
-      display: flex;
-      gap: 16px;
-      font-size: 11px;
-      color: #aaa;
-      margin-bottom: 6px;
-    }
-    .rc-li { display: inline-flex; align-items: center; gap: 6px; }
-    .rc-sw { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
-    .rc-sw.range { background: ${COLOR_RANGE_FILL}; border: 1px solid ${COLOR_RANGE}; }
-    .rc-sw.avg { width: 3px; height: 12px; border-radius: 0; background: ${COLOR_AVG}; }
-    .rc-sw.you { border-radius: 50%; background: ${COLOR_YOU}; }
-    .rc-wrap { position: relative; width: 100%; }
-  `],
 })
 export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   private readonly icons = inject(IconCacheService);
+  private readonly host = inject(ElementRef<HTMLElement>);
+
+  // Resolve a design token (defined on `html` in styles.css) to its CSS value.
+  // Both the SVG legend swatches and this canvas read the same tokens so they
+  // stay in sync. Custom properties inherit, so any element resolves them.
+  private static cssVar(el: Element, name: string): string {
+    return getComputedStyle(el).getPropertyValue(name).trim();
+  }
 
   readonly rows = input.required<RangeRow[]>();
   readonly unit = input<'pct' | 'raw'>('pct');
@@ -118,6 +111,9 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
       const points = (chart as unknown as { _overlay?: OverlayPoint[] })._overlay;
       if (!points) return;
       const { ctx } = chart;
+      const colorAvg = RangeChartComponent.cssVar(chart.canvas, '--chart-avg');
+      const colorYou = RangeChartComponent.cssVar(chart.canvas, '--chart-you');
+      const colorDotOutline = RangeChartComponent.cssVar(chart.canvas, '--chart-dot-outline');
       const xScale = chart.scales['x'];
       const yScale = chart.scales['y'];
       const band = points.length > 0 ? (yScale.bottom - yScale.top) / points.length : 0;
@@ -131,7 +127,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
         // Average tick
         if (p.avg != null) {
           const ax = xScale.getPixelForValue(p.avg);
-          ctx.strokeStyle = COLOR_AVG;
+          ctx.strokeStyle = colorAvg;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(ax, y - thickness / 2);
@@ -144,10 +140,10 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           const px = xScale.getPixelForValue(p.player);
           ctx.beginPath();
           ctx.arc(px, y, Math.min(thickness / 2, 6), 0, Math.PI * 2);
-          ctx.fillStyle = COLOR_YOU;
+          ctx.fillStyle = colorYou;
           ctx.fill();
           ctx.lineWidth = 1.5;
-          ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
+          ctx.strokeStyle = colorDotOutline;
           ctx.stroke();
         }
         ctx.restore();
@@ -175,6 +171,12 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
     const rows = this.rows();
     const cats = rows.map(r => this.label(r));
 
+    const host = this.host.nativeElement;
+    const colorRange = RangeChartComponent.cssVar(host, '--chart-range');
+    const colorRangeFill = RangeChartComponent.cssVar(host, '--chart-range-fill');
+    const colorGrid = RangeChartComponent.cssVar(host, '--border');
+    const colorTick = RangeChartComponent.cssVar(host, '--muted');
+
     this.chart?.destroy();
 
     // Explicit axis max keeps independent charts comparable and ensures player
@@ -192,8 +194,8 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           label: 'Top range',
           data: rows.map(r =>
             (r.topMin != null && r.topMax != null) ? [r.topMin, r.topMax] as [number, number] : null),
-          backgroundColor: COLOR_RANGE_FILL,
-          borderColor: COLOR_RANGE,
+          backgroundColor: colorRangeFill,
+          borderColor: colorRange,
           borderWidth: 1,
           borderSkipped: false,
           borderRadius: 2,
@@ -211,9 +213,9 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           x: {
             min: 0,
             max: axisMax,
-            grid: { color: '#333' },
+            grid: { color: colorGrid },
             ticks: {
-              color: '#aaa',
+              color: colorTick,
               font: { size: 11 },
               callback: (val) => this.unit() === 'pct'
                 ? (Number(val) * 100).toFixed(0) + '%'
@@ -224,7 +226,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
             grid: { display: false },
             ticks: {
               display: this.showLabels(),
-              color: '#aaa',
+              color: colorTick,
               font: { size: 11 },
             },
           },
