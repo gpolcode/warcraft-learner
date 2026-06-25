@@ -151,6 +151,10 @@ async function getYoutubeSession(): Promise<YoutubeSession> {
       globalObj: globalThis,
       identifier: visitorData,
       requestKey: BOTGUARD_REQUEST_KEY,
+      // Route the integrity-token request through YouTube rather than jnn-pa.googleapis.com
+      // directly - the direct path is unreliable from servers, yielding a token YouTube
+      // rejects (the session then looks unattested: no captions, transcript precondition fail).
+      useYouTubeAPI: true,
     };
 
     const challenge = await BG.Challenge.create(bgConfig);
@@ -160,11 +164,12 @@ async function getYoutubeSession(): Promise<YoutubeSession> {
     if (!interpreterJavascript) throw new Error('Could not load BotGuard interpreter');
     new Function(interpreterJavascript)();
 
-    const { poToken } = await BG.PoToken.generate({
+    const { poToken, integrityTokenData } = await BG.PoToken.generate({
       program: challenge.program,
       globalName: challenge.globalName,
       bgConfig,
     });
+    console.warn(`[youtube] poToken len=${poToken?.length ?? 0}, integrityToken=${!!integrityTokenData?.integrityToken}, visitorData len=${visitorData.length}`);
 
     const youtube = await Innertube.create({ po_token: poToken, visitor_data: visitorData });
     return { youtube, poToken };
@@ -195,35 +200,57 @@ interface Json3Captions {
 
 // Scraping the watch-page HTML for "captionTracks" stopped working: YouTube serves a stripped
 // page (consent wall / bot detection) to non-browser clients. youtubei.js talks to the same
-// InnerTube API the official apps use; with the attested session above, the player response
-// carries the caption track list. We fetch the chosen track's timedtext URL as json3 directly
-// (the engagement-panel get_transcript endpoint youtubei.js drives still 400s). The WEB
-// timedtext URL needs the poToken appended to be served, so we try that first and fall back
-// to the bare URL, recording each attempt's outcome so failures stay diagnosable.
+// InnerTube API the official apps use; with the attested session above, getTranscript()
+// returns the transcript engagement panel. If that panel is absent we fall back to the player
+// response's caption tracks fetched as json3 (with the poToken on the timedtext URL).
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  const { youtube } = await getYoutubeSession();
+  const { youtube, poToken } = await getYoutubeSession();
   const info = await youtube.getInfo(videoId);
+  const attempts: string[] = [];
 
-  // DIAGNOSTIC: report what each data source exposes for this video so we can pick the path.
-  const diag: Record<string, unknown> = {};
-  const tracks = info.captions?.caption_tracks ?? [];
-  diag.captions = info.captions
-    ? `${tracks.length} tracks [${tracks.map(track => `${track.language_code}${track.kind ? '/' + track.kind : ''}`).join(',')}]`
-    : 'no captions object';
+  // Preferred: the transcript engagement panel.
   try {
     const transcript = await info.getTranscript();
-    diag.transcript = `${transcript.transcript.content?.body?.initial_segments?.length ?? 0} segments`;
+    const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+    const text = segments
+      .map(segment => segment.snippet.text ?? '')
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (text) return text.slice(0, MAX_CONTENT_CHARS);
+    attempts.push('transcript panel empty');
   } catch (err) {
-    diag.transcript = `ERR ${err instanceof Error ? err.message : String(err)}`;
-    if (err && typeof err === 'object' && 'info' in err) {
-      diag.transcriptInfo = JSON.stringify((err as { info: unknown }).info).slice(0, 400);
-    }
+    attempts.push(`transcript panel: ${err instanceof Error ? err.message : String(err)}`);
   }
-  throw new Error(`DIAG ${JSON.stringify(diag)}`);
+
+  // Fallback: caption tracks from the player response, fetched as json3.
+  const tracks = info.captions?.caption_tracks ?? [];
+  if (tracks.length) {
+    const baseUrl = pickCaptionTrack(tracks).base_url;
+    const transcriptUrl = `${baseUrl}&fmt=json3&c=WEB&pot=${encodeURIComponent(poToken)}`;
+    const res = await fetch(transcriptUrl);
+    const body = await res.text();
+    if (res.ok && body.trim()) {
+      const captions = JSON.parse(body) as Json3Captions;
+      const text = (captions.events ?? [])
+        .flatMap(event => event.segs ?? [])
+        .map(seg => seg.utf8 ?? '')
+        .join('')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (text) return text.slice(0, MAX_CONTENT_CHARS);
+    }
+    attempts.push(`caption tracks: HTTP ${res.status}, ${body.length} bytes`);
+  } else {
+    attempts.push('no caption tracks');
+  }
+
+  throw new Error(`No transcript available [${attempts.join('; ')}]. Auto-captions may be disabled.`);
 }
 
 async function scrapeGuide(guide: Guide): Promise<string> {
