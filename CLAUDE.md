@@ -408,9 +408,3 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 4. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), ability breakdown of damage sources (absolute `avg_damage`), and `ref_game_id` (the gameID of the enemy dealing the window's main damage - the positioning map's default reference for defensive windows). `ref_game_id` is null for burst clusters.
 
 Both cluster functions share `groupByTime()` and `clusterBaseStats()` helpers.
-
-### Remaining static values
-
-| Value | Location | Notes |
-|---|---|---|
-| `bl_time - 30` to `bl_time + 55` BL window | `ingest.ts` | BL duration (40s) + 15s grace. Defines what we measure - not worth deriving from data. |
