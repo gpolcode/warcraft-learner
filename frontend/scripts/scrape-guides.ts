@@ -11,7 +11,7 @@
  *
  * Supported guide types:
  *   web      - HTML page scraped with fetch + text extraction
- *   youtube  - YouTube transcript via timedtext API
+ *   youtube  - YouTube transcript via the InnerTube player API
  *   simc     - Raw text file (GitHub raw URLs auto-converted)
  */
 
@@ -19,6 +19,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
+import { Innertube } from 'youtubei.js';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,14 +82,6 @@ async function saveGuides(spec: string, guides: Guide[]): Promise<void> {
 // so adjacent blocks don't run their words together once tags are gone.
 const BLOCK_SELECTOR = 'br, p, div, h1, h2, h3, h4, h5, h6, li, tr, section, article';
 
-// A detached <textarea> whose `.innerHTML`/`.value` pair decodes HTML entities via the
-// DOM (no regex). Reused across calls to avoid spinning up a JSDOM per string.
-const entityDecoder = new JSDOM('').window.document.createElement('textarea');
-function decodeHtmlEntities(text: string): string {
-  entityDecoder.innerHTML = text;
-  return entityDecoder.value;
-}
-
 function htmlToText(html: string): string {
   const doc = new JSDOM(html).window.document;
 
@@ -127,42 +120,35 @@ async function scrapeSimC(url: string): Promise<string> {
   return text.slice(0, MAX_CONTENT_CHARS);
 }
 
+// Scraping the watch-page HTML for "captionTracks" stopped working reliably: YouTube now
+// serves a stripped page (consent wall / bot detection) to unauthenticated non-browser
+// clients, so the marker is simply absent and every video looks like it has no captions.
+// youtubei.js talks to the same InnerTube API the official apps use and tracks YouTube's
+// frequent changes, so transcript retrieval keeps working without us maintaining the
+// request/parse plumbing. `retrieve_player: false` skips the player-JS fetch we do not
+// need for transcripts (and which is the most fragile part of the handshake).
 async function scrapeYouTube(url: string): Promise<string> {
-  // Extract video ID from URL
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  // Fetch timedtext (auto-generated captions)
-  const captionsUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  const res = await fetch(captionsUrl, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; warcraft-learner/1.0)' },
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status} fetching YouTube page`);
-  const html = await res.text();
+  const youtube = await Innertube.create({ retrieve_player: false });
+  const info = await youtube.getInfo(videoId);
+  const transcript = await info.getTranscript();
 
-  // Extract timedtext URL from page
-  const ttMatch = html.match(/"captionTracks":\s*\[.*?"baseUrl":"(https:\/\/www\.youtube\.com\/api\/timedtext[^"]+)"/);
-  if (!ttMatch) {
+  const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+  if (!segments.length) {
     throw new Error('No caption tracks found for this video. Auto-captions may be disabled.');
   }
-  const ttUrl = ttMatch[1].replace(/\\u0026/g, '&');
 
-  const ttRes = await fetch(ttUrl, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; warcraft-learner/1.0)' },
-  });
-  if (!ttRes.ok) throw new Error(`HTTP ${ttRes.status} fetching timedtext`);
-  const xml = await ttRes.text();
+  const text = segments
+    .map(segment => segment.snippet.text ?? '')
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  // Parse <text> elements from the caption XML via the DOM. textContent decodes the XML
-  // entity layer; YouTube captions encode entities twice, so decodeHtmlEntities peels the
-  // inner layer (e.g. "&amp;#39;" -> "&#39;" -> "'").
-  const xmlDoc = new JSDOM(xml, { contentType: 'text/xml' }).window.document;
-  const segments = [...xmlDoc.querySelectorAll('text')]
-    .map(node => decodeHtmlEntities(node.textContent ?? '').trim())
-    .filter(Boolean);
-
-  return segments.join(' ').slice(0, MAX_CONTENT_CHARS);
+  return text.slice(0, MAX_CONTENT_CHARS);
 }
 
 async function scrapeGuide(guide: Guide): Promise<string> {
