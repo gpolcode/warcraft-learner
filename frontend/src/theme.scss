@@ -1,0 +1,19 @@
+// Angular Material M3 theme - azure primary, blue tertiary, forced dark.
+// The only Sass file in the project: mat.theme() has no plain-CSS equivalent and
+// every prebuilt Material theme ships light-only. Angular compiles this through
+// its built-in Sass support; all other styling is pure Tailwind / plain CSS.
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: dark;
+
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
