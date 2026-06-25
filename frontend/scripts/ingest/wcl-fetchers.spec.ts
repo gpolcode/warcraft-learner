@@ -77,6 +77,22 @@ describe('getEncounters', () => {
     await expect(getEncounters(client)).rejects.toThrow(BudgetExceededError);
   });
 
+  it('drops a zone whose only parses are privacy-anonymized (the "Dummy Dome" case)', async () => {
+    const anonymized: WclRawRanking[] = Array.from({ length: 8 }, (_unused, index) => ({
+      name: `Character 13600${index}-1163300${index}`, report: { code: `r${index}`, fightID: index },
+    }));
+    const client = fakeClient({
+      query: (gql) => {
+        if (gql.includes('expansions')) {
+          return { worldData: { expansions: [{ id: 7, name: 'Midnight', zones: [{ id: 52, name: 'Dummy Dome', frozen: false, encounters: [{ id: 3591, name: 'Sinister Single' }] }] }] } };
+        }
+        return { worldData: { encounter: { name: 'Sinister Single', characterRankings: { rankings: anonymized } } } };
+      },
+    });
+    const { encounters } = await getEncounters(client);
+    expect(encounters).toHaveLength(0);
+  });
+
   it('drops a zone whose probe stays below the liveness threshold', async () => {
     const client = fakeClient({
       query: (gql, vars) => {

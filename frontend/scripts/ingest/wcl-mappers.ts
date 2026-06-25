@@ -89,13 +89,22 @@ export function extractGear(rankingEntry: WclRawRanking): {
   return { trinkets, enchants };
 }
 
-// Filter raw rankings to public (fetchable) parses and map the top `count` into
-// ParseRanking rows. Anonymous parses (report: null) are dropped before slicing so
-// we always keep `count` rows we can actually fetch. The raw entry is preserved on
-// `_raw` for later gear extraction.
+// WCL replaces a privacy-anonymized parse's player name with "Character <id>-<id>".
+// Such a name can never match a report actor (real WoW names are letters only), so the
+// parse is unfetchable - getParseEvents would throw "Player not found". We treat these
+// as non-real: they neither count toward a zone's liveness nor get fetched.
+const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+export function isAnonymizedPlayerName(name: string): boolean {
+  return ANONYMIZED_NAME.test(name);
+}
+
+// Filter raw rankings to public, fetchable, non-anonymized parses and map the top
+// `count` into ParseRanking rows. Parses with no report (report: null) and
+// privacy-anonymized parses are dropped before slicing so we always keep `count` rows
+// we can actually fetch. The raw entry is preserved on `_raw` for later gear extraction.
 export function mapRankings(rawRankings: WclRawRanking[], count: number): ParseRanking[] {
   return rawRankings
-    .filter(rawRanking => rawRanking.report?.code)
+    .filter(rawRanking => rawRanking.report?.code && !isAnonymizedPlayerName(rawRanking.name ?? ''))
     .slice(0, count)
     .map((rawRanking, index) => ({
       rank: index + 1,

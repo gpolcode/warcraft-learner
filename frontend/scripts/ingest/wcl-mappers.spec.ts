@@ -40,6 +40,15 @@ describe('mapRankings', () => {
   it('slices to the requested count after filtering', () => {
     expect(mapRankings(raw, 1)).toHaveLength(1);
   });
+
+  it('drops privacy-anonymized parses (Character <id>-<id>) even when they have a report', () => {
+    const withAnon: WclRawRanking[] = [
+      { name: 'Real', report: { code: 'r1', fightID: 1 } },
+      { name: 'Character 136008374-11633002', report: { code: 'r2', fightID: 2 } }, // anonymized -> dropped
+    ];
+    const mapped = mapRankings(withAnon, 10);
+    expect(mapped.map(ranking => ranking.player)).toEqual(['Real']);
+  });
 });
 
 describe('filterEncounters', () => {
