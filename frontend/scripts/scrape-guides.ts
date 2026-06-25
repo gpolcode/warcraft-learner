@@ -20,6 +20,7 @@ import { fileURLToPath } from 'url';
 import { Command } from 'commander';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
+import { BG, type BgConfig } from 'bgutils-js';
 import { MAX_GUIDE_CHARS as MAX_CONTENT_CHARS, readJson, writeJson, getKnownSpecs as listSpecs } from './lib.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -120,79 +121,75 @@ async function scrapeSimC(url: string): Promise<string> {
   return text.slice(0, MAX_CONTENT_CHARS);
 }
 
-// Structural subset of youtubei.js's CaptionTrackData (not re-exported from the package
-// root) - just the fields we read off info.captions.caption_tracks.
-interface CaptionTrack {
-  base_url: string;
-  language_code?: string;
-  kind?: string; // 'asr' for auto-generated
+// YouTube serves caption data to datacenter IPs (which is what GitHub Actions runs on) only
+// when the request carries a proof-of-origin (poToken): without it the player response has
+// no captions object and the transcript endpoint 400s, for every InnerTube client. We mint a
+// token with bgutils-js (the BotGuard challenge runs in a jsdom global) and build an attested
+// Innertube session. Minting is expensive and the token is reused for every video in a run,
+// so the session is created once and memoized.
+let youtubeSessionPromise: Promise<Innertube> | null = null;
+
+// YouTube's web BotGuard request key - a public constant, the same one youtubei.js documents.
+const BOTGUARD_REQUEST_KEY = 'O43z0dpjhgX20SCx4KAo';
+
+async function getYoutubeSession(): Promise<Innertube> {
+  youtubeSessionPromise ??= (async () => {
+    // A throwaway session just to obtain visitor data, which the poToken is bound to.
+    const bootstrap = await Innertube.create({ retrieve_player: false });
+    const visitorData = bootstrap.session.context.client.visitorData;
+    if (!visitorData) throw new Error('Could not obtain visitor data for poToken minting');
+
+    // BotGuard expects a browser-like global; jsdom supplies window/document.
+    const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', { url: 'https://www.youtube.com/' });
+    Object.assign(globalThis, { window: dom.window, document: dom.window.document });
+
+    const bgConfig: BgConfig = {
+      fetch: (input, init) => fetch(input, init),
+      globalObj: globalThis,
+      identifier: visitorData,
+      requestKey: BOTGUARD_REQUEST_KEY,
+    };
+
+    const challenge = await BG.Challenge.create(bgConfig);
+    if (!challenge) throw new Error('Could not create BotGuard challenge');
+
+    const interpreterJavascript = challenge.interpreterJavascript.privateDoNotAccessOrElseSafeScriptWrappedValue;
+    if (!interpreterJavascript) throw new Error('Could not load BotGuard interpreter');
+    new Function(interpreterJavascript)();
+
+    const { poToken } = await BG.PoToken.generate({
+      program: challenge.program,
+      globalName: challenge.globalName,
+      bgConfig,
+    });
+
+    return Innertube.create({ po_token: poToken, visitor_data: visitorData });
+  })();
+  return youtubeSessionPromise;
 }
 
-// Pick an English caption track, preferring a manually-authored one over auto-generated
-// ('asr'); fall back to whatever the video offers.
-function pickCaptionTrack(tracks: CaptionTrack[]): CaptionTrack {
-  const englishTracks = tracks.filter(track => (track.language_code ?? '').startsWith('en'));
-  const pool = englishTracks.length ? englishTracks : tracks;
-  return pool.find(track => track.kind !== 'asr') ?? pool[0];
-}
-
-// A json3 caption track is `{ events: [{ segs: [{ utf8 }] }] }`; its strings are already
-// decoded, avoiding the double-encoded-entity hack the old watch-page XML path needed.
-interface Json3Captions {
-  events?: Array<{ segs?: Array<{ utf8?: string }> }>;
-}
-
-// InnerTube clients we ask for the player response, in order of preference. YouTube serves
-// degraded player responses (no caption tracks) to datacenter IPs - which is what GitHub
-// Actions runs on - for the WEB/ANDROID clients unless a proof-of-origin token is attached.
-// The IOS client still returns a full player response (caption tracks + working timedtext
-// baseUrls) without attestation, so it leads; the others are fallbacks for when YouTube
-// shifts which client is privileged.
-const CAPTION_CLIENTS = ['IOS', 'TV_EMBEDDED', 'WEB'] as const;
-
-// Scraping the watch-page HTML for "captionTracks" stopped working reliably: YouTube now
-// serves a stripped page (consent wall / bot detection) to unauthenticated non-browser
-// clients, so the marker is simply absent and every video looks like it has no captions.
-// youtubei.js talks to the same InnerTube API the official apps use and tracks YouTube's
-// frequent changes. We read the caption track list off the player response (info.captions)
-// and fetch the track ourselves as json3 - the engagement-panel get_transcript endpoint
-// that info.getTranscript() drives currently 400s. retrieve_player: false skips the
-// player-JS fetch we do not need for captions.
+// Scraping the watch-page HTML for "captionTracks" stopped working: YouTube serves a stripped
+// page (consent wall / bot detection) to non-browser clients. youtubei.js talks to the same
+// InnerTube API the official apps use; with the attested session above its getTranscript()
+// returns the transcript engagement panel, whose segments we flatten to plain text.
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  const youtube = await Innertube.create({ retrieve_player: false });
+  const youtube = await getYoutubeSession();
+  const info = await youtube.getInfo(videoId);
+  const transcript = await info.getTranscript();
 
-  // Try each client until one returns a non-empty caption track list. Record why each one
-  // came up empty so a failure is diagnosable from the scrape log (no silent swallowing).
-  let tracks: CaptionTrack[] = [];
-  const attempts: string[] = [];
-  for (const client of CAPTION_CLIENTS) {
-    try {
-      const info = await youtube.getInfo(videoId, { client });
-      const candidate = info.captions?.caption_tracks ?? [];
-      if (candidate.length) { tracks = candidate; break; }
-      attempts.push(`${client}: ${info.captions ? 'empty track list' : 'no captions object'}`);
-    } catch (err) {
-      attempts.push(`${client}: ${err instanceof Error ? err.message : String(err)}`);
-    }
-  }
-  if (!tracks.length) {
-    throw new Error(`No caption tracks found for this video [${attempts.join('; ')}]. Auto-captions may be disabled.`);
+  const segments = transcript.transcript.content?.body?.initial_segments ?? [];
+  if (!segments.length) {
+    throw new Error('No transcript segments returned for this video. Auto-captions may be disabled.');
   }
 
-  const baseUrl = pickCaptionTrack(tracks).base_url;
-  const transcriptUrl = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}fmt=json3`;
-  const res = await fetch(transcriptUrl);
-  if (!res.ok) throw new Error(`HTTP ${res.status} fetching transcript`);
-  const captions = (await res.json()) as Json3Captions;
-
-  const text = (captions.events ?? [])
-    .flatMap(event => event.segs ?? [])
-    .map(seg => seg.utf8 ?? '')
-    .join('')
+  const text = segments
+    .map(segment => segment.snippet.text ?? '')
+    .filter(Boolean)
+    .join(' ')
     .replace(/\s+/g, ' ')
     .trim();
 
