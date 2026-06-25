@@ -205,40 +205,25 @@ async function scrapeYouTube(url: string): Promise<string> {
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
-  const { youtube, poToken } = await getYoutubeSession();
+  const { youtube } = await getYoutubeSession();
   const info = await youtube.getInfo(videoId);
 
+  // DIAGNOSTIC: report what each data source exposes for this video so we can pick the path.
+  const diag: Record<string, unknown> = {};
   const tracks = info.captions?.caption_tracks ?? [];
-  if (!tracks.length) {
-    throw new Error('No caption tracks found for this video. Auto-captions may be disabled.');
-  }
-
-  const baseUrl = pickCaptionTrack(tracks).base_url;
-  const candidateUrls = [
-    `${baseUrl}&fmt=json3&c=WEB&pot=${encodeURIComponent(poToken)}`,
-    `${baseUrl}&fmt=json3`,
-  ];
-
-  const attempts: string[] = [];
-  for (const transcriptUrl of candidateUrls) {
-    const res = await fetch(transcriptUrl);
-    const body = await res.text();
-    if (res.ok && body.trim()) {
-      const captions = JSON.parse(body) as Json3Captions;
-      const text = (captions.events ?? [])
-        .flatMap(event => event.segs ?? [])
-        .map(seg => seg.utf8 ?? '')
-        .join('')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (text) return text.slice(0, MAX_CONTENT_CHARS);
-      attempts.push(`pot=${transcriptUrl.includes('pot=')}: empty transcript`);
-    } else {
-      attempts.push(`pot=${transcriptUrl.includes('pot=')}: HTTP ${res.status}, ${body.length} bytes`);
+  diag.captions = info.captions
+    ? `${tracks.length} tracks [${tracks.map(track => `${track.language_code}${track.kind ? '/' + track.kind : ''}`).join(',')}]`
+    : 'no captions object';
+  try {
+    const transcript = await info.getTranscript();
+    diag.transcript = `${transcript.transcript.content?.body?.initial_segments?.length ?? 0} segments`;
+  } catch (err) {
+    diag.transcript = `ERR ${err instanceof Error ? err.message : String(err)}`;
+    if (err && typeof err === 'object' && 'info' in err) {
+      diag.transcriptInfo = JSON.stringify((err as { info: unknown }).info).slice(0, 400);
     }
   }
-
-  throw new Error(`Could not fetch transcript [${attempts.join('; ')}]. Auto-captions may be disabled.`);
+  throw new Error(`DIAG ${JSON.stringify(diag)}`);
 }
 
 async function scrapeGuide(guide: Guide): Promise<string> {
