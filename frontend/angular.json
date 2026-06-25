@@ -11,7 +11,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss",
+          "style": "css",
           "skipTests": true
         },
         "@schematics/angular:class": {
@@ -46,7 +46,7 @@
             "outputPath": "../static/angular",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
+            "inlineStyleLanguage": "css",
             "assets": [
               {
                 "glob": "**/*",
@@ -58,7 +58,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/material-theme.css",
+              "src/styles.css"
             ]
           },
           "configurations": {
