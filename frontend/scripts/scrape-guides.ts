@@ -120,31 +120,60 @@ async function scrapeSimC(url: string): Promise<string> {
   return text.slice(0, MAX_CONTENT_CHARS);
 }
 
+// Structural subset of youtubei.js's CaptionTrackData (not re-exported from the package
+// root) - just the fields we read off info.captions.caption_tracks.
+interface CaptionTrack {
+  base_url: string;
+  language_code?: string;
+  kind?: string; // 'asr' for auto-generated
+}
+
+// Pick an English caption track, preferring a manually-authored one over auto-generated
+// ('asr'); fall back to whatever the video offers.
+function pickCaptionTrack(tracks: CaptionTrack[]): CaptionTrack {
+  const englishTracks = tracks.filter(track => (track.language_code ?? '').startsWith('en'));
+  const pool = englishTracks.length ? englishTracks : tracks;
+  return pool.find(track => track.kind !== 'asr') ?? pool[0];
+}
+
+// A json3 caption track is `{ events: [{ segs: [{ utf8 }] }] }`; its strings are already
+// decoded, avoiding the double-encoded-entity hack the old watch-page XML path needed.
+interface Json3Captions {
+  events?: Array<{ segs?: Array<{ utf8?: string }> }>;
+}
+
 // Scraping the watch-page HTML for "captionTracks" stopped working reliably: YouTube now
 // serves a stripped page (consent wall / bot detection) to unauthenticated non-browser
 // clients, so the marker is simply absent and every video looks like it has no captions.
 // youtubei.js talks to the same InnerTube API the official apps use and tracks YouTube's
-// frequent changes, so transcript retrieval keeps working without us maintaining the
-// request/parse plumbing. `retrieve_player: false` skips the player-JS fetch we do not
-// need for transcripts (and which is the most fragile part of the handshake).
+// frequent changes. We read the caption track list off the player response (info.captions)
+// and fetch the track ourselves as json3 - the engagement-panel get_transcript endpoint
+// that info.getTranscript() drives currently 400s. The ANDROID client yields caption
+// baseUrls that work without a proof-of-origin token; retrieve_player: false skips the
+// player-JS fetch we do not need for captions.
 async function scrapeYouTube(url: string): Promise<string> {
   const match = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
   if (!match) throw new Error(`Could not extract YouTube video ID from: ${url}`);
   const videoId = match[1];
 
   const youtube = await Innertube.create({ retrieve_player: false });
-  const info = await youtube.getInfo(videoId);
-  const transcript = await info.getTranscript();
+  const info = await youtube.getInfo(videoId, { client: 'ANDROID' });
 
-  const segments = transcript.transcript.content?.body?.initial_segments ?? [];
-  if (!segments.length) {
+  const tracks = info.captions?.caption_tracks ?? [];
+  if (!tracks.length) {
     throw new Error('No caption tracks found for this video. Auto-captions may be disabled.');
   }
 
-  const text = segments
-    .map(segment => segment.snippet.text ?? '')
-    .filter(Boolean)
-    .join(' ')
+  const baseUrl = pickCaptionTrack(tracks).base_url;
+  const transcriptUrl = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}fmt=json3`;
+  const res = await fetch(transcriptUrl);
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching transcript`);
+  const captions = (await res.json()) as Json3Captions;
+
+  const text = (captions.events ?? [])
+    .flatMap(event => event.segs ?? [])
+    .map(seg => seg.utf8 ?? '')
+    .join('')
     .replace(/\s+/g, ' ')
     .trim();
 
