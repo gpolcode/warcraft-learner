@@ -17,7 +17,7 @@ import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow, TopDefensiveSummary } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
-import { mean, median, sampleStdev, round } from '../../../core/stats';
+import { mean, median, deviation } from 'd3-array';
 import { DefensiveBench, DefensiveDataSource, DefensivePlanMeta, BakedAbility } from './defensive-data-source';
 
 /** How many top parses to sample (matches the ingest bench). */
@@ -54,6 +54,11 @@ export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanki
     }));
 }
 
+
+/** Round to `decimals` places (default 1). d3-array has no rounding helper. */
+function round(value: number, decimals = 1): number {
+  return Math.round(value * 10 ** decimals) / 10 ** decimals;
+}
 
 /** Defensive name -> spell id, for the defensive window header icons. */
 export function defensiveSpellIds(defensives: RulebookDefensive[]): Record<string, number> {
@@ -228,7 +233,7 @@ function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: number)
   const clusters: T[][] = [];
   let openTimes: number[] = [];
   for (const window of sorted) {
-    if (clusters.length && Math.abs(window.time_s - median(openTimes)) <= mergeS) {
+    if (clusters.length && Math.abs(window.time_s - (median(openTimes) ?? 0)) <= mergeS) {
       clusters[clusters.length - 1].push(window);
       openTimes.push(window.time_s);
     } else {
@@ -265,7 +270,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
         .filter(([, list]) => list.length >= cluster.length * MEMBER_MAJORITY_FRAC)
         .map(([spell_id, list]) => ({
           spell_id,
-          avg_damage: Math.round(mean(list)),
+          avg_damage: Math.round((mean(list) ?? 0)),
           min_damage: Math.round(Math.min(...list)),
           max_damage: Math.round(Math.max(...list)),
           count: list.length,
@@ -280,12 +285,12 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
       const ref_game_id = [...refCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
 
       result.push({
-        time_s: round(median(cluster.map(member => member.time_s))),
-        dmg_avg: Math.round(mean(damages)),
-        dmg_stddev: Math.round(sampleStdev(damages)),
+        time_s: round(median(cluster.map(member => member.time_s)) ?? 0),
+        dmg_avg: Math.round((mean(damages) ?? 0)),
+        dmg_stddev: Math.round((deviation(damages) ?? 0)),
         dmg_min: Math.round(Math.min(...damages)),
         dmg_max: Math.round(Math.max(...damages)),
-        window_length_s: round(mean(cluster.map(member => member.window_length_s))),
+        window_length_s: round(mean(cluster.map(member => member.window_length_s)) ?? 0),
         defensive_name: defensiveName,
         spell_id: cluster[0].spell_id,
         common_defensives: [defensiveName],
@@ -311,8 +316,8 @@ export function buildHoldTargets(summaries: ParseDefensiveSummary[]): PerDefensi
   for (const [castIndex, times] of holdByCastIdx.entries()) {
     if (times.length >= Math.max(2, summaries.length * HOLD_TRIGGER_FRAC)) {
       holdTargets[String(castIndex)] = {
-        target_s: round(median(times)),
-        stddev_s: round(sampleStdev(times)),
+        target_s: round((median(times) ?? 0)),
+        stddev_s: round((deviation(times) ?? 0)),
         count: times.length,
         total_samples: summaries.length,
       };
@@ -338,17 +343,17 @@ export function buildDefensiveBenchmark(summaries: ParseDefensiveSummary[]): Per
 
   return {
     sample_count: summaries.length,
-    avg_first_cast_s: firstCasts.length ? round(mean(firstCasts)) : 0,
-    stddev_first_cast_s: firstCasts.length ? round(sampleStdev(firstCasts)) : 0,
-    avg_gap_s: gaps.length ? round(mean(gaps)) : null,
-    stddev_gap_s: gaps.length ? round(sampleStdev(gaps)) : null,
+    avg_first_cast_s: firstCasts.length ? round((mean(firstCasts) ?? 0)) : 0,
+    stddev_first_cast_s: firstCasts.length ? round((deviation(firstCasts) ?? 0)) : 0,
+    avg_gap_s: gaps.length ? round((mean(gaps) ?? 0)) : null,
+    stddev_gap_s: gaps.length ? round((deviation(gaps) ?? 0)) : null,
     hold_targets: buildHoldTargets(summaries),
-    avg_uses: summaries.length ? round(mean(summaries.map(summary => summary.uses))) : 0,
-    avg_uses_per_min: usesPerMinList.length ? Math.round(mean(usesPerMinList) * 100) / 100 : 0,
+    avg_uses: summaries.length ? round(mean(summaries.map(summary => summary.uses)) ?? 0) : 0,
+    avg_uses_per_min: usesPerMinList.length ? Math.round((mean(usesPerMinList) ?? 0) * 100) / 100 : 0,
     uses_per_min: benchUsesPerMin.length
       ? {
-          avg: Math.round(mean(benchUsesPerMin) * 1000) / 1000,
-          stddev: Math.round(sampleStdev(benchUsesPerMin) * 1000) / 1000,
+          avg: Math.round((mean(benchUsesPerMin) ?? 0) * 1000) / 1000,
+          stddev: Math.round((deviation(benchUsesPerMin) ?? 0) * 1000) / 1000,
           min: Math.min(...benchUsesPerMin),
           max: Math.max(...benchUsesPerMin),
         }
@@ -380,7 +385,7 @@ export function aggregateDefensiveBenchmarks(
     const uses = summaries.map(summary => summary.uses);
     topDefensivesSummary.push({
       spell_id: defensive.spell_id,
-      avg_uses: round(mean(uses)),
+      avg_uses: round((mean(uses) ?? 0)),
       min_uses: Math.min(...uses),
       max_uses: Math.max(...uses),
     });

@@ -16,7 +16,7 @@ import { WclEvent, ParseRanking, WclRawRanking } from '../../../core/models/wcl.
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
-import { mean, sampleStdev, median, percentile, round } from '../../../core/stats';
+import { mean, median, deviation, quantile } from 'd3-array';
 import { RotationBench, RotationDataSource } from './rotation-data-source';
 
 /** How many top parses to sample (matches the ingest bench). */
@@ -51,6 +51,11 @@ export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanki
       report_code: ranking.report?.code ?? '',
       fight_id: ranking.report?.fightID ?? 0,
     }));
+}
+
+/** Round to `decimals` places (default 1). d3-array has no rounding helper. */
+function round(value: number, decimals = 1): number {
+  return Math.round(value * 10 ** decimals) / 10 ** decimals;
 }
 
 /** Cooldown name -> spell id, for the row / header icons. */
@@ -152,8 +157,8 @@ function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
   }
   if (!usesPerMin.length) return { avg: 0, stddev: 0, min: 0, max: 0 };
   return {
-    avg: round(mean(usesPerMin), 3),
-    stddev: round(sampleStdev(usesPerMin), 3),
+    avg: round((mean(usesPerMin) ?? 0), 3),
+    stddev: round((deviation(usesPerMin) ?? 0), 3),
     min: Math.min(...usesPerMin),
     max: Math.max(...usesPerMin),
   };
@@ -172,8 +177,8 @@ function buildHoldTargets(entries: CdSummary[]): PerCdBenchmark['hold_targets'] 
   for (const [castIndex, times] of byIdx.entries()) {
     if (times.length >= Math.max(2, entries.length * HOLD_TRIGGER_FRAC)) {
       targets[String(castIndex)] = {
-        target_s: round(median(times)),
-        stddev_s: round(sampleStdev(times)),
+        target_s: round((median(times) ?? 0)),
+        stddev_s: round((deviation(times) ?? 0)),
         count: times.length,
         total_samples: entries.length,
       };
@@ -199,14 +204,14 @@ export function buildCdBenchmark(entries: CdSummary[]): PerCdBenchmark {
 
   return {
     sample_count: entries.length,
-    avg_first_cast_s: firstCasts.length ? round(mean(firstCasts)) : 0,
-    stddev_first_cast_s: firstCasts.length ? round(sampleStdev(firstCasts)) : 0,
-    avg_gap_s: gaps.length ? round(mean(gaps)) : null,
-    stddev_gap_s: gaps.length ? round(sampleStdev(gaps)) : null,
-    avg_bl_offset_s: blOffsets.length ? round(mean(blOffsets)) : null,
-    stddev_bl_offset_s: blOffsets.length ? round(sampleStdev(blOffsets)) : null,
-    avg_uses: entries.length ? round(mean(entries.map(entry => entry.total_uses))) : 0,
-    avg_uses_per_min: upmList.length ? round(mean(upmList), 2) : 0,
+    avg_first_cast_s: firstCasts.length ? round((mean(firstCasts) ?? 0)) : 0,
+    stddev_first_cast_s: firstCasts.length ? round((deviation(firstCasts) ?? 0)) : 0,
+    avg_gap_s: gaps.length ? round((mean(gaps) ?? 0)) : null,
+    stddev_gap_s: gaps.length ? round((deviation(gaps) ?? 0)) : null,
+    avg_bl_offset_s: blOffsets.length ? round((mean(blOffsets) ?? 0)) : null,
+    stddev_bl_offset_s: blOffsets.length ? round((deviation(blOffsets) ?? 0)) : null,
+    avg_uses: entries.length ? round(mean(entries.map(entry => entry.total_uses)) ?? 0) : 0,
+    avg_uses_per_min: upmList.length ? round((mean(upmList) ?? 0), 2) : 0,
     uses_per_min: usesPerMin,
     bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
     majority_hold: entries.filter(entry => entry.cast_pattern === 'hold').length > entries.length * 0.5,
@@ -218,10 +223,10 @@ export function buildCdBenchmark(entries: CdSummary[]): PerCdBenchmark {
 export function computeEfficiencyThresholds(
   gapLists: number[][], durations: number[],
 ): { downtimeThresholdMs: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
-  const allGaps = gapLists.flat();
+  const allGaps = gapLists.flat().sort((a, b) => a - b);
   let downtimeThresholdMs = DEFAULT_DOWNTIME_THRESHOLD_MS;
   if (allGaps.length) {
-    downtimeThresholdMs = percentile(allGaps, DOWNTIME_PERCENTILE);
+    downtimeThresholdMs = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_MS;
   }
   const efficiencies: number[] = [];
   for (let i = 0; i < gapLists.length; i++) {
@@ -234,8 +239,8 @@ export function computeEfficiencyThresholds(
   }
   return {
     downtimeThresholdMs: Math.round(downtimeThresholdMs),
-    topAvgEfficiency: efficiencies.length ? round(mean(efficiencies)) : 0,
-    topEfficiencyStddev: efficiencies.length ? round(sampleStdev(efficiencies)) : 0,
+    topAvgEfficiency: efficiencies.length ? round((mean(efficiencies) ?? 0)) : 0,
+    topEfficiencyStddev: efficiencies.length ? round((deviation(efficiencies) ?? 0)) : 0,
   };
 }
 
@@ -301,7 +306,7 @@ export class RotationTransformService implements RotationDataSource {
       encounter_id: encounterId,
       encounter_name: encounterName,
       sample_count: perParse.length,
-      avg_duration_s: durations.length ? round(mean(durations)) : 0,
+      avg_duration_s: durations.length ? round((mean(durations) ?? 0)) : 0,
       downtime_threshold_ms: downtimeThresholdMs,
       top_avg_efficiency: topAvgEfficiency,
       top_efficiency_stddev: topEfficiencyStddev,

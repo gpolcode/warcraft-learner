@@ -15,7 +15,7 @@ import { WclEvent, ParseRanking, WclRawRanking } from '../../../core/models/wcl.
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
-import { mean, median, sampleStdev, round } from '../../../core/stats';
+import { mean, median, deviation } from 'd3-array';
 import { BurstBench, BurstDataSource } from './burst-data-source';
 
 /** How many top parses to sample (matches the ingest bench). */
@@ -49,13 +49,18 @@ export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanki
 }
 
 
+/** Round to `decimals` places (default 1). d3-array has no rounding helper. */
+function round(value: number, decimals = 1): number {
+  return Math.round(value * 10 ** decimals) / 10 ** decimals;
+}
+
 /** Group windows whose time is within `mergeS` of the running cluster median. */
 function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: number): T[][] {
   const sorted = [...windows].sort((a, b) => a.time_s - b.time_s);
   const clusters: T[][] = [];
   let openTimes: number[] = [];
   for (const window of sorted) {
-    if (clusters.length && Math.abs(window.time_s - median(openTimes)) <= mergeS) {
+    if (clusters.length && Math.abs(window.time_s - (median(openTimes) ?? 0)) <= mergeS) {
       clusters[clusters.length - 1].push(window);
       openTimes.push(window.time_s);
     } else {
@@ -193,11 +198,11 @@ export function clusterParseWindows(windows: ParseWindow[], sampleCount: number,
       .filter(([, list]) => list.length >= cluster.length * MEMBER_MAJORITY_FRAC)
       .map(([spell_id, list]) => ({
         spell_id,
-        avg_damage: Math.round(mean(list)),
+        avg_damage: Math.round((mean(list) ?? 0)),
         min_damage: Math.round(Math.min(...list)),
         max_damage: Math.round(Math.max(...list)),
         count: list.length,
-        avg_casts: Math.round(mean(abilityCasts.get(spell_id) ?? [])),
+        avg_casts: Math.round(mean(abilityCasts.get(spell_id) ?? []) ?? 0),
       }))
       .sort((a, b) => b.avg_damage - a.avg_damage)
       .slice(0, 6);
@@ -210,14 +215,14 @@ export function clusterParseWindows(windows: ParseWindow[], sampleCount: number,
       .map(([name]) => name);
 
     result.push({
-      time_s: round(median(cluster.map(member => member.time_s))),
-      dmg_avg: Math.round(mean(damages)),
-      dmg_stddev: Math.round(sampleStdev(damages)),
+      time_s: round(median(cluster.map(member => member.time_s)) ?? 0),
+      dmg_avg: Math.round((mean(damages) ?? 0)),
+      dmg_stddev: Math.round((deviation(damages) ?? 0)),
       dmg_min: Math.round(Math.min(...damages)),
       dmg_max: Math.round(Math.max(...damages)),
       common_cds,
       avg_targets: 1,
-      window_length_s: round(mean(cluster.map(member => member.window_length_s))),
+      window_length_s: round(mean(cluster.map(member => member.window_length_s)) ?? 0),
       ability_breakdown,
     });
   }
