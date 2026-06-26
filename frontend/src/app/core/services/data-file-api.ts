@@ -1,89 +1,89 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-import { logWarn } from '../log';
 import { Rulebook } from '../models/rulebook.models';
 import { EncounterEntry, EncounterBench, SpecEntry } from '../models/encounter.models';
 import { EncounterPositions } from '../models/positioning.models';
-
-const DATA_BASE = new URL('data/specs/', document.baseURI).href;
+import { DATA_FILE_TRANSPORT } from './data-file-transport';
 
 /**
- * Pass-through reader for the ingested static data files. It does NO transform:
- * it fetches `data/specs/**` JSON and returns it as-is. Per-use-case slices read
- * their own tailored file via `getSlice` (the production half of a `*DataSource`).
+ * Data API over the ingested static files. Reads are pass-through (no transform):
+ * it returns the `data/specs/**` JSON as-is, and per-use-case slices read their own
+ * tailored file via `getSlice` (the production half of a `*DataSource`).
  *
- * This is one of the two runtime data-source services (the other is
- * `WclApiService`). It is intentionally generic so every slice reuses it; the
- * slice-specific shape is the `<T>` the caller asks for.
+ * It delegates IO to an injected {@link DataFileTransport}: the browser binds an
+ * HTTP read-only transport; the Node ingestion binds a filesystem read+write one and
+ * uses the `write*`/`list*`/`remove*` helpers to persist the transforms' output -
+ * so the same data API serves both the runtime and ingestion.
  */
 @Injectable({ providedIn: 'root' })
 export class DataFileApiService {
-  private readonly http = inject(HttpClient);
+  private readonly io = inject(DATA_FILE_TRANSPORT);
 
-  /**
-   * Raw read of a per-use-case tailored slice file:
-   * `data/specs/{spec}/{slice}/{encounterId}.json`. Returns null when the file is
-   * absent (not yet ingested) - the slice's live `*TransformService` covers that
-   * case under the dev flag.
-   */
-  async getSlice<T>(spec: string, encounterId: number, slice: string): Promise<T | null> {
-    const url = `${DATA_BASE}${spec}/${slice}/${encounterId}.json`;
-    try {
-      return await firstValueFrom(this.http.get<T>(url));
-    } catch (err) {
-      logWarn(`DataFileApiService.getSlice ${spec}/${slice}/${encounterId}`, err);
-      return null;
-    }
+  // ── Reads (browser + Node) ──────────────────────────────────────────────────
+
+  /** Raw read of a per-use-case tailored slice file (`{spec}/{slice}/{enc}.json`). */
+  getSlice<T>(spec: string, encounterId: number, slice: string): Promise<T | null> {
+    return this.io.readJson<T>(`${spec}/${slice}/${encounterId}.json`);
   }
 
-  /** Raw read of a spec's rulebook (`data/specs/{spec}/rulebook.json`). */
-  async getRulebook(spec: string): Promise<Rulebook | null> {
-    try {
-      return await firstValueFrom(this.http.get<Rulebook>(`${DATA_BASE}${spec}/rulebook.json`));
-    } catch (err) {
-      logWarn(`DataFileApiService.getRulebook ${spec}`, err);
-      return null;
-    }
+  /** Raw read of a spec's rulebook (`{spec}/rulebook.json`). */
+  getRulebook(spec: string): Promise<Rulebook | null> {
+    return this.io.readJson<Rulebook>(`${spec}/rulebook.json`);
   }
 
-  /** Raw read of the spec manifest (`data/specs/index.json`). Empty when not yet generated. */
+  /** Raw read of the spec manifest (`index.json`). Empty when not yet generated. */
   async getSpecs(): Promise<SpecEntry[]> {
-    try {
-      return await firstValueFrom(this.http.get<SpecEntry[]>(`${DATA_BASE}index.json`)) ?? [];
-    } catch (err) {
-      logWarn('DataFileApiService.getSpecs', err);
-      return [];
-    }
+    return (await this.io.readJson<SpecEntry[]>('index.json')) ?? [];
   }
 
-  /** Raw read of a spec's encounter index (`data/specs/{spec}/encounters.json`). */
+  /** Raw read of a spec's encounter index (`{spec}/encounters.json`). */
   async getEncounters(spec: string): Promise<EncounterEntry[]> {
-    try {
-      return await firstValueFrom(this.http.get<EncounterEntry[]>(`${DATA_BASE}${spec}/encounters.json`)) ?? [];
-    } catch (err) {
-      logWarn(`DataFileApiService.getEncounters ${spec}`, err);
-      return [];
-    }
+    return (await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`)) ?? [];
   }
 
-  /** Raw read of the generic encounter bench (`data/specs/{spec}/encounters/{enc}.json`). */
-  async getBench(spec: string, encounterId: number): Promise<EncounterBench | null> {
-    try {
-      return await firstValueFrom(this.http.get<EncounterBench>(`${DATA_BASE}${spec}/encounters/${encounterId}.json`));
-    } catch (err) {
-      logWarn(`DataFileApiService.getBench ${spec}/${encounterId}`, err);
-      return null;
-    }
+  /** Raw read of the generic encounter bench (`{spec}/encounters/{enc}.json`). */
+  getBench(spec: string, encounterId: number): Promise<EncounterBench | null> {
+    return this.io.readJson<EncounterBench>(`${spec}/encounters/${encounterId}.json`);
   }
 
-  /** Raw read of ingested top-parse position timelines (`data/specs/{spec}/positions/{enc}.json`). */
-  async getPositions(spec: string, encounterId: number): Promise<EncounterPositions | null> {
-    try {
-      return await firstValueFrom(this.http.get<EncounterPositions>(`${DATA_BASE}${spec}/positions/${encounterId}.json`));
-    } catch (err) {
-      logWarn(`DataFileApiService.getPositions ${spec}/${encounterId}`, err);
-      return null;
-    }
+  /** Raw read of ingested top-parse position timelines (`{spec}/positions/{enc}.json`). */
+  getPositions(spec: string, encounterId: number): Promise<EncounterPositions | null> {
+    return this.io.readJson<EncounterPositions>(`${spec}/positions/${encounterId}.json`);
+  }
+
+  // ── Writes / listing (Node ingestion only) ──────────────────────────────────
+
+  /** Write a per-use-case tailored slice file. */
+  writeSlice(spec: string, encounterId: number, slice: string, data: unknown): Promise<void> {
+    return this.io.writeJson(`${spec}/${slice}/${encounterId}.json`, data);
+  }
+
+  /** Write the top-parse position timelines for an encounter. */
+  writePositions(spec: string, encounterId: number, data: EncounterPositions): Promise<void> {
+    return this.io.writeJson(`${spec}/positions/${encounterId}.json`, data);
+  }
+
+  /** Write a spec's encounter index. */
+  writeEncounters(spec: string, entries: EncounterEntry[]): Promise<void> {
+    return this.io.writeJson(`${spec}/encounters.json`, entries);
+  }
+
+  /** Write the top-level spec manifest. */
+  writeSpecs(entries: SpecEntry[]): Promise<void> {
+    return this.io.writeJson('index.json', entries);
+  }
+
+  /** List spec folder names (Node only). */
+  listSpecs(): Promise<string[]> {
+    return this.io.list('');
+  }
+
+  /** List the JSON file names under `{spec}/{slice}/` (Node only). */
+  listSliceFiles(spec: string, slice: string): Promise<string[]> {
+    return this.io.list(`${spec}/${slice}`);
+  }
+
+  /** Remove a tailored slice / positions file (pruning; Node only). */
+  removeSlice(spec: string, encounterId: number, slice: string): Promise<void> {
+    return this.io.remove(`${spec}/${slice}/${encounterId}.json`);
   }
 }
