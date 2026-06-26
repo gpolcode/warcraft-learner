@@ -393,22 +393,27 @@ export function aggregateDefensiveBenchmarks(
   return { perDefensiveBenchmarks, topDefensivesSummary };
 }
 
-/** Bake icon/name for every defensive spell + window ability referenced by the slice. */
+/**
+ * Bake icon/name for every defensive spell + window ability referenced by the
+ * slice, complete (no skips) so the runtime needs no fallback. A spell in the
+ * parses' master data uses its real name + icon (`.jpg` stripped); a rulebook
+ * defensive that WCL omits (a passive) gets the rulebook name + an empty icon.
+ */
 export function bakeAbilityIcons(
   defensives: RulebookDefensive[],
   windows: BurstWindow[],
   abilityMeta: Map<number, { name: string; icon: string }>,
 ): Record<number, BakedAbility> {
-  const wanted = new Set<number>();
-  for (const defensive of defensives) if (defensive.spell_id) wanted.add(defensive.spell_id);
-  for (const window of windows) for (const ability of window.ability_breakdown) wanted.add(ability.spell_id);
-
   const icons: Record<number, BakedAbility> = {};
-  for (const spellId of wanted) {
+  const add = (spellId: number, rulebookName: string): void => {
+    if (icons[spellId]) return;
     const meta = abilityMeta.get(spellId);
-    if (!meta) continue;
-    icons[spellId] = { icon: (meta.icon || '').replace(/\.jpg$/i, ''), name: meta.name || '' };
-  }
+    icons[spellId] = meta
+      ? { icon: (meta.icon || '').replace(/\.jpg$/i, ''), name: meta.name || rulebookName }
+      : { icon: '', name: rulebookName };
+  };
+  for (const defensive of defensives) if (defensive.spell_id) add(defensive.spell_id, defensive.name);
+  for (const window of windows) for (const ability of window.ability_breakdown) add(ability.spell_id, '');
   return icons;
 }
 

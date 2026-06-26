@@ -258,6 +258,30 @@ export function aggregateCdBenchmarks(perParse: CdSummary[][]): Record<string, P
   return result;
 }
 
+/**
+ * Bake icon/name for every cooldown + defensive the rotation card renders, complete
+ * (no skips) so the runtime needs no fallback. A spell in the parses' master data
+ * uses its real name + icon (`.jpg` stripped); a rulebook spell WCL omits (a
+ * passive) gets the rulebook name + an empty icon.
+ */
+export function bakeRotationIcons(
+  cooldowns: RulebookCooldown[],
+  defensives: RulebookDefensive[],
+  abilityMeta: Map<number, { name: string; icon: string }>,
+): Record<number, { icon: string; name: string }> {
+  const icons: Record<number, { icon: string; name: string }> = {};
+  const add = (spellId: number, rulebookName: string): void => {
+    if (icons[spellId]) return;
+    const meta = abilityMeta.get(spellId);
+    icons[spellId] = meta
+      ? { icon: (meta.icon || '').replace(/\.jpg$/i, ''), name: meta.name || rulebookName }
+      : { icon: '', name: rulebookName };
+  };
+  for (const cooldown of cooldowns) if (cooldown.spell_id) add(cooldown.spell_id, cooldown.name);
+  for (const defensive of defensives) if (defensive.spell_id) add(defensive.spell_id, defensive.name);
+  return icons;
+}
+
 /* ----------------------------- service shell ----------------------------- */
 
 interface ParseRotation {
@@ -265,7 +289,7 @@ interface ParseRotation {
   gapListMs: number[];
   durationS: number;
   encounterName: string;
-  abilityIcons: Record<number, { icon: string; name: string }>;
+  abilityMeta: Map<number, { name: string; icon: string }>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -286,7 +310,7 @@ export class RotationTransformService implements RotationDataSource {
     const perParse: CdSummary[][] = [];
     const gapLists: number[][] = [];
     const durations: number[] = [];
-    const abilityIcons: Record<number, { icon: string; name: string }> = {};
+    const abilityMeta = new Map<number, { name: string; icon: string }>();
     let encounterName = '';
     for (const ranking of rankings) {
       const parse = await this.computeParse(ranking, cooldowns);
@@ -295,7 +319,7 @@ export class RotationTransformService implements RotationDataSource {
       gapLists.push(parse.gapListMs);
       durations.push(parse.durationS);
       encounterName ||= parse.encounterName;
-      Object.assign(abilityIcons, parse.abilityIcons);
+      for (const [id, meta] of parse.abilityMeta) if (!abilityMeta.has(id)) abilityMeta.set(id, meta);
     }
     if (!perParse.length) return null;
 
@@ -314,7 +338,7 @@ export class RotationTransformService implements RotationDataSource {
       major_cooldowns: cooldowns,
       rules,
       cd_spell_ids: rotationCdSpellIds(cooldowns, defensives),
-      ability_icons: abilityIcons,
+      ability_icons: bakeRotationIcons(cooldowns, defensives, abilityMeta),
     };
   }
 
@@ -328,10 +352,9 @@ export class RotationTransformService implements RotationDataSource {
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
-      const abilityIcons: Record<number, { icon: string; name: string }> = {};
-      for (const ability of report.masterData?.abilities ?? []) {
-        abilityIcons[ability.gameID] = { icon: ability.icon, name: ability.name };
-      }
+      const abilityMeta = new Map<number, { name: string; icon: string }>(
+        (report.masterData?.abilities ?? []).map(ability => [ability.gameID, { name: ability.name, icon: ability.icon }]),
+      );
 
       const [casts, buffs] = await Promise.all([
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
@@ -345,7 +368,7 @@ export class RotationTransformService implements RotationDataSource {
         gapListMs: castGapListMs(casts),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
-        abilityIcons,
+        abilityMeta,
       };
     } catch (err) {
       logWarn(`RotationTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
