@@ -1,0 +1,877 @@
+{
+  "spec": "DisciplinePriest",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "avg_duration_s": 503,
+  "downtime_threshold_ms": 2285,
+  "top_avg_efficiency": 75,
+  "top_efficiency_stddev": 8.4,
+  "per_cd_benchmarks": {
+    "Evangelism": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Power Infusion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.8,
+      "stddev_first_cast_s": 6.7,
+      "avg_gap_s": 68.5,
+      "stddev_gap_s": 78.9,
+      "hold_targets": {},
+      "avg_uses": 7.7,
+      "avg_uses_per_min": 0.92,
+      "uses_per_min": {
+        "avg": 0.919,
+        "stddev": 0.087,
+        "min": 0.707,
+        "max": 0.991
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Ultimate Penitence": {
+      "sample_count": 10,
+      "avg_first_cast_s": 48.7,
+      "stddev_first_cast_s": 26.9,
+      "avg_gap_s": 321,
+      "stddev_gap_s": 67.8,
+      "hold_targets": {
+        "2": {
+          "target_s": 357.3,
+          "stddev_s": 91.8,
+          "count": 10,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.239,
+        "stddev": 0.006,
+        "min": 0.229,
+        "max": 0.248
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Power Word: Radiance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 15.5,
+      "stddev_gap_s": 13,
+      "hold_targets": {},
+      "avg_uses": 32.7,
+      "avg_uses_per_min": 3.9,
+      "uses_per_min": {
+        "avg": 3.903,
+        "stddev": 0.125,
+        "min": 3.659,
+        "max": 4.147
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Shadowfiend": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Mindbender": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 2.2,
+      "stddev_s": 3.3,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 2227900,
+      "dmg_stddev": 644975,
+      "dmg_min": 1563938,
+      "dmg_max": 3148734,
+      "ability_breakdown": [
+        {
+          "spell_id": 373442,
+          "avg_damage": 634119,
+          "min_damage": 331564,
+          "max_damage": 886783,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 47666,
+          "avg_damage": 349503,
+          "min_damage": 113155,
+          "max_damage": 580094,
+          "count": 9,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 1253828,
+          "avg_damage": 246505,
+          "min_damage": 111899,
+          "max_damage": 458495,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 589,
+          "avg_damage": 231479,
+          "min_damage": 104453,
+          "max_damage": 358567,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": -32,
+          "avg_damage": 149943,
+          "min_damage": 101216,
+          "max_damage": 219467,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Power Infusion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 23.2
+    },
+    {
+      "time_s": 65.2,
+      "stddev_s": 1.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1905297,
+      "dmg_stddev": 439918,
+      "dmg_min": 1528311,
+      "dmg_max": 2430706,
+      "ability_breakdown": [
+        {
+          "spell_id": 421543,
+          "avg_damage": 1333170,
+          "min_damage": 997203,
+          "max_damage": 1923253,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 47666,
+          "avg_damage": 374644,
+          "min_damage": 166613,
+          "max_damage": 573177,
+          "count": 3,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 589,
+          "avg_damage": 109022,
+          "min_damage": 103093,
+          "max_damage": 118381,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1253828,
+          "avg_damage": 29767,
+          "min_damage": 15392,
+          "max_damage": 44142,
+          "count": 2,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1286970,
+          "avg_damage": 11661,
+          "min_damage": 3105,
+          "max_damage": 20217,
+          "count": 2,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ultimate Penitence"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 8
+    },
+    {
+      "time_s": 176.9,
+      "stddev_s": 3.2,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 1456070,
+      "dmg_stddev": 557997,
+      "dmg_min": 847018,
+      "dmg_max": 2579627,
+      "ability_breakdown": [
+        {
+          "spell_id": 373442,
+          "avg_damage": 433078,
+          "min_damage": 97941,
+          "max_damage": 770317,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 47666,
+          "avg_damage": 251331,
+          "min_damage": 74067,
+          "max_damage": 389579,
+          "count": 8,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1253828,
+          "avg_damage": 221087,
+          "min_damage": 99696,
+          "max_damage": 420904,
+          "count": 8,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 32379,
+          "avg_damage": 159372,
+          "min_damage": 119072,
+          "max_damage": 267612,
+          "count": 5,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 589,
+          "avg_damage": 157939,
+          "min_damage": 83555,
+          "max_damage": 205401,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": -32,
+          "avg_damage": 124093,
+          "min_damage": 31537,
+          "max_damage": 174894,
+          "count": 7,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Power Infusion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 462.1,
+      "stddev_s": 6.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1341758,
+      "dmg_stddev": 625477,
+      "dmg_min": 741387,
+      "dmg_max": 2220843,
+      "ability_breakdown": [
+        {
+          "spell_id": 421543,
+          "avg_damage": 693629,
+          "min_damage": 635343,
+          "max_damage": 772391,
+          "count": 3,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 373442,
+          "avg_damage": 434264,
+          "min_damage": 107521,
+          "max_damage": 1064467,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 47666,
+          "avg_damage": 128040,
+          "min_damage": 29456,
+          "max_damage": 301079,
+          "count": 3,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 32379,
+          "avg_damage": 116374,
+          "min_damage": 75552,
+          "max_damage": 163121,
+          "count": 3,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1253828,
+          "avg_damage": 99580,
+          "min_damage": 16619,
+          "max_damage": 182541,
+          "count": 2,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": -32,
+          "avg_damage": 97830,
+          "min_damage": 16482,
+          "max_damage": 230997,
+          "count": 3,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ultimate Penitence",
+        "Power Infusion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:108731,109006,109009,109010,109011,109012,109015,109019,109020,109021,109781,109782,109783,109890,109917,110277,110278,110410,110410,110410,82556,82564,82566,82570,82571,82572,82573,82575,82577,82578,82579,82581,82582,82583,82589,82590,82591,82592,82593,82594,82595,82596,82597,82601,82602,82672,82673,82676,82677,82678,82684,82685,82686,82687,82690,82697,82699,82702,82703,82712,82713,82715,82716,82717,86730,94673,94674,94675,94679,94683,94687,94689,94690,94691,94698,94700,99801",
+        "count": 4,
+        "pct": 40,
+        "report_code": "Tv3yz2WNfBrVkC7L",
+        "fight_id": 32,
+        "player_name": "丨安娜丨"
+      },
+      {
+        "key": "v2:100212,108731,109006,109010,109011,109012,109015,109020,109021,109778,109779,109780,109890,109917,110008,110277,110278,110410,110410,110410,82556,82564,82569,82570,82571,82575,82576,82577,82578,82579,82581,82582,82583,82585,82587,82591,82592,82593,82594,82595,82596,82597,82598,82599,82600,82672,82673,82676,82677,82678,82684,82685,82686,82687,82690,82697,82702,82703,82711,82712,82713,82715,82716,82717,82718,82719,94668,94669,94670,94692,94693,94694,94695,94696,94703,99801",
+        "count": 1,
+        "pct": 10,
+        "report_code": "j6VavRAYTcz2Gr47",
+        "fight_id": 33,
+        "player_name": "Glàn"
+      },
+      {
+        "key": "v2:108731,109006,109009,109010,109011,109012,109015,109019,109020,109021,109781,109782,109783,109890,110277,110278,110410,110410,110410,82556,82564,82566,82568,82570,82571,82575,82577,82579,82581,82582,82583,82586,82589,82590,82591,82592,82593,82594,82595,82596,82597,82600,82601,82602,82672,82673,82676,82677,82678,82684,82685,82686,82687,82690,82697,82702,82703,82712,82713,82715,82716,82717,82718,82719,86730,94673,94674,94675,94679,94683,94687,94689,94690,94691,94698,94700,99801",
+        "count": 1,
+        "pct": 10,
+        "report_code": "b2r1TkzARPHcvnwG",
+        "fight_id": 33,
+        "player_name": "烈火咏叹"
+      },
+      {
+        "key": "v2:108731,109006,109010,109011,109012,109015,109020,109021,109781,109782,109783,109917,110277,110278,110410,110410,110410,82556,82564,82566,82570,82571,82572,82573,82575,82577,82578,82581,82582,82583,82589,82590,82591,82592,82593,82594,82595,82596,82597,82600,82601,82602,82672,82673,82676,82677,82678,82684,82685,82686,82687,82690,82697,82699,82702,82703,82711,82712,82713,82715,82716,82717,82718,82719,86730,94673,94674,94675,94679,94683,94687,94689,94690,94691,94698,94700,99801",
+        "count": 1,
+        "pct": 10,
+        "report_code": "CwGNyHncfATdZt1q",
+        "fight_id": 38,
+        "player_name": "孔雀河西岸"
+      },
+      {
+        "key": "v2:108731,109006,109010,109011,109012,109015,109020,109021,109781,109782,109783,109890,109917,110277,110278,110410,110410,110410,82556,82564,82566,82570,82571,82572,82573,82575,82576,82577,82581,82582,82583,82587,82589,82590,82591,82592,82593,82594,82595,82596,82597,82598,82601,82602,82672,82673,82676,82677,82678,82684,82685,82686,82687,82690,82697,82699,82702,82703,82711,82712,82713,82715,82716,82717,82718,86730,94673,94674,94675,94679,94683,94687,94689,94690,94691,94698,94700,99801",
+        "count": 1,
+        "pct": 10,
+        "report_code": "KkXj7WzC4N96crpH",
+        "fight_id": 85,
+        "player_name": "荣耀牧六"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249808,
+          "name": "Litany of Lightblind Wrath",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 268292,
+          "name": "Sporelord's Mycelial Insignia",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249341,
+          "name": "Volatile Void Suffuser",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249808,
+          "name": "Litany of Lightblind Wrath",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "2": [
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "4": [
+        {
+          "id": 8013,
+          "name": "Enchant Chest - Mark of the Magister",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "6": [
+        {
+          "id": 7937,
+          "name": "+41 Intellect & +4% Mana",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "7": [
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 9
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "avg_uses": 4.2,
+      "min_uses": 1,
+      "max_uses": 8,
+      "sample_count": 9
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 9,
+      "avg_first_cast_s": 186,
+      "stddev_first_cast_s": 148.7,
+      "avg_gap_s": 164.9,
+      "stddev_gap_s": 78.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 410.5,
+          "stddev_s": 117.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 387.5,
+          "stddev_s": 98.2,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.29,
+        "stddev": 0.101,
+        "min": 0.121,
+        "max": 0.467
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 9,
+      "avg_first_cast_s": 108.7,
+      "stddev_first_cast_s": 102.1,
+      "avg_gap_s": 90.9,
+      "stddev_gap_s": 88.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 186.2,
+          "stddev_s": 149.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 355.4,
+          "stddev_s": 106.9,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.5,
+      "uses_per_min": {
+        "avg": 0.502,
+        "stddev": 0.3,
+        "min": 0.117,
+        "max": 0.966
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 77.7,
+      "stddev_s": 10.7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 421686,
+      "dmg_stddev": 192602,
+      "dmg_min": 208117,
+      "dmg_max": 611409,
+      "ability_breakdown": [
+        {
+          "spell_id": 1233649,
+          "avg_damage": 249157,
+          "min_damage": 236295,
+          "max_damage": 262019,
+          "count": 2
+        },
+        {
+          "spell_id": 1281707,
+          "avg_damage": 240947,
+          "min_damage": 197600,
+          "max_damage": 285603,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 19495,
+          "min_damage": 10517,
+          "max_damage": 26772,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 243811,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ]
+    },
+    {
+      "time_s": 270.3,
+      "stddev_s": 12.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 565086,
+      "dmg_stddev": 189952,
+      "dmg_min": 442308,
+      "dmg_max": 844204,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260019,
+          "avg_damage": 234187,
+          "min_damage": 106891,
+          "max_damage": 423701,
+          "count": 4
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 184028,
+          "min_damage": 134764,
+          "max_damage": 224916,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 94763,
+          "min_damage": 24211,
+          "max_damage": 168172,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 26453,
+          "min_damage": 15724,
+          "max_damage": 37182,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ]
+    },
+    {
+      "time_s": 414.4,
+      "stddev_s": 9.8,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 780593,
+      "dmg_stddev": 303696,
+      "dmg_min": 466996,
+      "dmg_max": 1383497,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 367619,
+          "min_damage": 275760,
+          "max_damage": 474345,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 225183,
+          "min_damage": 83200,
+          "max_damage": 495879,
+          "count": 7
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 199133,
+          "min_damage": 165885,
+          "max_damage": 225906,
+          "count": 5
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 22346,
+          "min_damage": 14425,
+          "max_damage": 30118,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ]
+    },
+    {
+      "time_s": 414.4,
+      "stddev_s": 12.1,
+      "count": 11,
+      "total_samples": 10,
+      "dmg_avg": 643834,
+      "dmg_stddev": 132016,
+      "dmg_min": 388139,
+      "dmg_max": 827824,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 328952,
+          "min_damage": 229571,
+          "max_damage": 427777,
+          "count": 8
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 208618,
+          "min_damage": 83200,
+          "max_damage": 454693,
+          "count": 11
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 188726,
+          "min_damage": 165885,
+          "max_damage": 225906,
+          "count": 8
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 16759,
+          "min_damage": 11137,
+          "max_damage": 25805,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ]
+    }
+  ]
+}

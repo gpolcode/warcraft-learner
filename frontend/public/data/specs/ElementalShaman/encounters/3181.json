@@ -1,0 +1,937 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "avg_duration_s": 487.2,
+  "downtime_threshold_ms": 2642,
+  "top_avg_efficiency": 71.3,
+  "top_efficiency_stddev": 5.2,
+  "per_cd_benchmarks": {
+    "Ascendance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 36.6,
+      "stddev_first_cast_s": 46.3,
+      "avg_gap_s": 151.6,
+      "stddev_gap_s": 25.4,
+      "hold_targets": {},
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.453,
+        "stddev": 0.067,
+        "min": 0.283,
+        "max": 0.497
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Stormkeeper": {
+      "sample_count": 10,
+      "avg_first_cast_s": 21.1,
+      "stddev_first_cast_s": 4.8,
+      "avg_gap_s": 55.8,
+      "stddev_gap_s": 13.2,
+      "hold_targets": {},
+      "avg_uses": 9,
+      "avg_uses_per_min": 1.11,
+      "uses_per_min": {
+        "avg": 1.112,
+        "stddev": 0.125,
+        "min": 0.95,
+        "max": 1.287
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Ancestral Swiftness": {
+      "sample_count": 10,
+      "avg_first_cast_s": 22.3,
+      "stddev_first_cast_s": 3.2,
+      "avg_gap_s": 40.4,
+      "stddev_gap_s": 16.1,
+      "hold_targets": {},
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 1.495,
+        "stddev": 0.071,
+        "min": 1.445,
+        "max": 1.545
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Storm Elemental": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Fire Elemental": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 20.3,
+      "stddev_s": 4.8,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 19131950,
+      "dmg_stddev": 5684398,
+      "dmg_min": 6447953,
+      "dmg_max": 29722989,
+      "ability_breakdown": [
+        {
+          "spell_id": 45284,
+          "avg_damage": 3785238,
+          "min_damage": 892708,
+          "max_damage": 5638261,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 463351,
+          "avg_damage": 3443983,
+          "min_damage": 2120751,
+          "max_damage": 5671428,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 2319746,
+          "min_damage": 1737105,
+          "max_damage": 3434884,
+          "count": 9,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 1701362,
+          "min_damage": 677099,
+          "max_damage": 2471827,
+          "count": 7,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 120588,
+          "avg_damage": 1651260,
+          "min_damage": 1072930,
+          "max_damage": 2589390,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 57984,
+          "avg_damage": 1569961,
+          "min_damage": 1059545,
+          "max_damage": 1783797,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper",
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.4
+    },
+    {
+      "time_s": 64.9,
+      "stddev_s": 5.1,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 9444894,
+      "dmg_stddev": 2087688,
+      "dmg_min": 7068620,
+      "dmg_max": 13815815,
+      "ability_breakdown": [
+        {
+          "spell_id": 188196,
+          "avg_damage": 2032453,
+          "min_damage": 540285,
+          "max_damage": 3303688,
+          "count": 8,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 1493579,
+          "min_damage": 734878,
+          "max_damage": 2243833,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 117014,
+          "avg_damage": 1147570,
+          "min_damage": 204470,
+          "max_damage": 2628292,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 1145049,
+          "min_damage": 456212,
+          "max_damage": 1630039,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 954613,
+          "min_damage": 551376,
+          "max_damage": 1728399,
+          "count": 5,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 269005,
+          "avg_damage": 916379,
+          "min_damage": 803268,
+          "max_damage": 1028435,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 16.4
+    },
+    {
+      "time_s": 111.2,
+      "stddev_s": 5,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 7567081,
+      "dmg_stddev": 4178972,
+      "dmg_min": 3078066,
+      "dmg_max": 13715881,
+      "ability_breakdown": [
+        {
+          "spell_id": 188196,
+          "avg_damage": 2203650,
+          "min_damage": 731322,
+          "max_damage": 3710561,
+          "count": 6,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 1635703,
+          "min_damage": 734928,
+          "max_damage": 2363753,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 117014,
+          "avg_damage": 1315511,
+          "min_damage": 483598,
+          "max_damage": 2656535,
+          "count": 4,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 269005,
+          "avg_damage": 902605,
+          "min_damage": 135523,
+          "max_damage": 1432375,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 157348,
+          "avg_damage": 192850,
+          "min_damage": 130318,
+          "max_damage": 349240,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 177.6,
+      "stddev_s": 5.1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 7896071,
+      "dmg_stddev": 1530403,
+      "dmg_min": 5353782,
+      "dmg_max": 10065781,
+      "ability_breakdown": [
+        {
+          "spell_id": 463351,
+          "avg_damage": 1258855,
+          "min_damage": 526469,
+          "max_damage": 2086046,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 1154426,
+          "min_damage": 414057,
+          "max_damage": 1594133,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 285466,
+          "avg_damage": 808951,
+          "min_damage": 553123,
+          "max_damage": 1211061,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 756852,
+          "min_damage": 456716,
+          "max_damage": 1112748,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 699423,
+          "min_damage": 570125,
+          "max_damage": 897392,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 117014,
+          "avg_damage": 677916,
+          "min_damage": 309887,
+          "max_damage": 869219,
+          "count": 6,
+          "avg_casts": 3
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper",
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.7
+    },
+    {
+      "time_s": 234.6,
+      "stddev_s": 1.9,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 3228537,
+      "dmg_stddev": 263333,
+      "dmg_min": 2968172,
+      "dmg_max": 3587429,
+      "ability_breakdown": [
+        {
+          "spell_id": 269005,
+          "avg_damage": 565578,
+          "min_damage": 506468,
+          "max_damage": 666884,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 402921,
+          "min_damage": 300263,
+          "max_damage": 482361,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 117014,
+          "avg_damage": 401994,
+          "min_damage": 251374,
+          "max_damage": 536702,
+          "count": 4,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 327615,
+          "min_damage": 287496,
+          "max_damage": 363491,
+          "count": 3,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 197568,
+          "avg_damage": 311393,
+          "min_damage": 250454,
+          "max_damage": 417711,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 251408,
+          "min_damage": 244755,
+          "max_damage": 258060,
+          "count": 2,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 292.6,
+      "stddev_s": 6.6,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 5100301,
+      "dmg_stddev": 2035063,
+      "dmg_min": 3170781,
+      "dmg_max": 6873129,
+      "ability_breakdown": [
+        {
+          "spell_id": 463351,
+          "avg_damage": 925720,
+          "min_damage": 336238,
+          "max_damage": 1273329,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 698153,
+          "min_damage": 180168,
+          "max_damage": 1057631,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 269005,
+          "avg_damage": 597210,
+          "min_damage": 514126,
+          "max_damage": 680293,
+          "count": 2,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 590984,
+          "min_damage": 280077,
+          "max_damage": 901890,
+          "count": 2,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 557199,
+          "min_damage": 483056,
+          "max_damage": 649039,
+          "count": 3,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 197568,
+          "avg_damage": 449857,
+          "min_damage": 299738,
+          "max_damage": 530663,
+          "count": 3,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper",
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.1
+    },
+    {
+      "time_s": 357.4,
+      "stddev_s": 5.3,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 8328720,
+      "dmg_stddev": 1436060,
+      "dmg_min": 5905220,
+      "dmg_max": 9747228,
+      "ability_breakdown": [
+        {
+          "spell_id": 463351,
+          "avg_damage": 1302242,
+          "min_damage": 826037,
+          "max_damage": 1617660,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 1140064,
+          "min_damage": 722173,
+          "max_damage": 1991985,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 197568,
+          "avg_damage": 1088206,
+          "min_damage": 405540,
+          "max_damage": 1506799,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 285466,
+          "avg_damage": 941101,
+          "min_damage": 467683,
+          "max_damage": 1826117,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 712864,
+          "min_damage": 531596,
+          "max_damage": 923916,
+          "count": 7,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 660633,
+          "min_damage": 447358,
+          "max_damage": 952725,
+          "count": 4,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Stormkeeper",
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.8
+    },
+    {
+      "time_s": 476.2,
+      "stddev_s": 7,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 6246505,
+      "dmg_stddev": 2978875,
+      "dmg_min": 2894371,
+      "dmg_max": 10784272,
+      "ability_breakdown": [
+        {
+          "spell_id": 463351,
+          "avg_damage": 1686586,
+          "min_damage": 931331,
+          "max_damage": 2588558,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 682774,
+          "min_damage": 274146,
+          "max_damage": 1083296,
+          "count": 4,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 197568,
+          "avg_damage": 640153,
+          "min_damage": 165597,
+          "max_damage": 1301320,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 45284,
+          "avg_damage": 638413,
+          "min_damage": 402177,
+          "max_damage": 907384,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 627189,
+          "min_damage": 489145,
+          "max_damage": 798412,
+          "count": 4,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 285466,
+          "avg_damage": 594072,
+          "min_damage": 377002,
+          "max_damage": 1022079,
+          "count": 3,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ascendance",
+        "Stormkeeper"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17.2
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:103579,103581,103582,103583,103584,103585,103586,103588,103591,103593,103596,103598,103602,103605,103606,103607,103608,103611,103612,103613,103614,103615,103616,103617,103620,103624,103625,103626,103627,103631,103633,103634,103635,103638,103639,103640,109387,109492,109727,109728,109729,110066,110085,110402,110402,110402,80978,80981,80983,80984,80985,80988,80989,80990,80991,80992,80993,80995,80996,80997,80998,80999,81000,81002,81008,81012,81015,81016,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99845",
+        "count": 1,
+        "pct": 10,
+        "report_code": "PHRqxpb2QZWvn4Nf",
+        "fight_id": 32,
+        "player_name": "今晚吃什么呢"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103584,103585,103586,103588,103590,103591,103593,103596,103598,103602,103605,103607,103608,103611,103612,103613,103614,103615,103616,103617,103620,103624,103626,103627,103631,103633,103634,103635,103636,103638,103639,103640,109386,109387,109492,109727,109728,109729,110066,110085,110402,110402,110402,80978,80981,80983,80984,80985,80988,80989,80990,80992,80993,80995,80996,80997,80998,80999,81000,81002,81008,81012,81015,81016,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99845",
+        "count": 1,
+        "pct": 10,
+        "report_code": "9GtVZRzraXnhj324",
+        "fight_id": 2,
+        "player_name": "Марвелок"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103584,103585,103586,103588,103591,103593,103594,103596,103598,103602,103605,103606,103607,103610,103611,103613,103614,103615,103616,103617,103618,103620,103622,103624,103626,103627,103631,103633,103634,103635,103638,103639,103640,109387,109727,109728,109729,110066,110085,110402,110402,110402,80978,80981,80983,80984,80985,80988,80989,80990,80991,80992,80993,80995,80996,80997,80998,80999,81000,81002,81008,81012,81015,81016,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99845",
+        "count": 1,
+        "pct": 10,
+        "report_code": "N2AVJT8HDPtbzvxC",
+        "fight_id": 2,
+        "player_name": "Azaghal"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103584,103585,103586,103588,103591,103593,103596,103598,103599,103602,103605,103606,103607,103608,103611,103612,103613,103614,103615,103616,103617,103620,103624,103625,103626,103627,103631,103633,103634,103635,103638,103639,103640,109387,109727,109728,109729,110066,110085,110402,110402,110402,80978,80981,80983,80984,80985,80988,80989,80990,80991,80992,80993,80995,80996,80997,80998,80999,81000,81002,81008,81012,81015,81016,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99845",
+        "count": 1,
+        "pct": 10,
+        "report_code": "R2bhPxJrzXdfBq7A",
+        "fight_id": 43,
+        "player_name": "펩시충"
+      },
+      {
+        "key": "v2:103581,103582,103583,103584,103585,103586,103588,103590,103591,103593,103594,103596,103598,103601,103602,103605,103606,103607,103611,103612,103613,103614,103616,103617,103620,103625,103626,103627,103631,103633,103634,103635,103638,103639,103640,109386,109387,109388,109727,109728,109729,110066,110085,110402,110402,110402,80978,80981,80983,80984,80985,80988,80989,80990,80991,80992,80993,80995,80996,80997,80998,80999,81000,81002,81008,81012,81015,81016,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99845",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Hga1kyqM8nfmK2B9",
+        "fight_id": 23,
+        "player_name": "느긋한쿠키"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 7961,
+          "name": "",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 8017,
+          "name": "",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8015,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8031,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8159,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7993,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 7981,
+          "name": "",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8039,
+          "name": "",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8041,
+          "name": "",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 5
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 8,
+      "avg_first_cast_s": 284.8,
+      "stddev_first_cast_s": 173.5,
+      "avg_gap_s": 264.8,
+      "stddev_gap_s": 110.7,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.183,
+        "stddev": 0.089,
+        "min": 0.119,
+        "max": 0.361
+      },
+      "majority_hold": false
+    },
+    "Earth Elemental": {
+      "sample_count": 5,
+      "avg_first_cast_s": 424.5,
+      "stddev_first_cast_s": 56.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.12,
+        "stddev": 0.002,
+        "min": 0.118,
+        "max": 0.123
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 410,
+      "stddev_s": 12.5,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 662633,
+      "dmg_stddev": 263176,
+      "dmg_min": 411626,
+      "dmg_max": 1149421,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 227771,
+          "min_damage": 157415,
+          "max_damage": 310300,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 154007,
+          "min_damage": 85483,
+          "max_damage": 223672,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 144499,
+          "min_damage": 41575,
+          "max_damage": 179061,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ]
+    }
+  ]
+}
