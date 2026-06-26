@@ -157,7 +157,7 @@ The CLI scripts are TypeScript run via `tsx` (e.g. `tsx --tsconfig tsconfig.scri
 
 ## Architecture: layers & rules (vertical-slice target)
 
-The app is being migrated to **per-use-case vertical slices** (map / burst / rotation / defensive / gear). Each slice is independent and follows the same shape; the **Burst** slice (`pages/post-raid/burst-windows/`) is the reference implementation. New work must follow these layer rules; legacy code that predates the migration is converted slice by slice. The companion guide `frontend/docs/testable-transformations.md` shows how to write the per-field calculations as small, pure, individually testable functions.
+The app is built as **per-use-case vertical slices** (map / burst / rotation / defensive / gear). Each slice is independent and follows the same shape; the **Burst** slice (`pages/post-raid/burst-windows/`) is the reference implementation. All new work must follow these layer rules.
 
 The data path is two symmetric pipelines that meet at the static data files:
 
@@ -169,6 +169,46 @@ WclApi (read, pass-through)                          WclApiService (read, pass-t
                                                          -> *FeatureService (runtime shell)
                                                          -> *Component -> page shell -> leaves
 ```
+
+```mermaid
+flowchart LR
+  subgraph Ingest["INGEST (Node, scripts/ingest)"]
+    direction TB
+    IW["WclApi (read)"] --> IT["*TransformService (reshape + cluster)"]
+    IT --> ID["DataFileApi (write)"]
+  end
+
+  ID --> DATA[("data/specs/**<br/>tailored slice files +<br/>encounters / positions / rulebook")]
+
+  subgraph Runtime["RUNTIME (browser, Angular)"]
+    direction TB
+    WCL["WclApiService<br/>(raw WCL, cached)"]
+    DFA["DataFileApiService<br/>(raw file reads)"]
+
+    subgraph Slice["each slice (rotation / burst / defensive / gear / map)"]
+      direction TB
+      TOK{{"*_DATA_SOURCE token<br/>(dev-flag swap)"}}
+      DFS["*DataFileService<br/>(prod: reads tailored file)"]
+      TRS["*TransformService<br/>(dev: computes live)"]
+      FS["*FeatureService<br/>(shell + colocated pure fns)"]
+      CMP["*Component"]
+      DFS -. "useLiveTransform=false" .-> TOK
+      TRS -. "useLiveTransform=true" .-> TOK
+      TOK --> FS
+      FS --> CMP
+    end
+
+    DFA --> DFS
+    WCL --> TRS
+    WCL --> FS
+    CMP --> PAGE["page shell<br/>(post-raid / pre-fight)"]
+    PAGE --> LEAF["input/output leaves<br/>(game-icon, window-comparison, ...)"]
+  end
+
+  DATA --> DFA
+```
+
+Reading the runtime graph: in production each slice's `*_DATA_SOURCE` resolves to its `*DataFileService` (reads the ingest-baked tailored file); under the `useLiveTransform` dev flag it resolves to the `*TransformService`, which recomputes the same bench live from WCL (no ingestion). Either way the `*FeatureService` reads that bench plus the player's own log (cached `WclApiService`) and produces the view-model; the page shell only resolves selection and composes cards.
 
 **Layer rules (hard):**
 
