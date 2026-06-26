@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { logWarn } from '../log';
 import { Rulebook } from '../models/rulebook.models';
+import { EncounterEntry, EncounterBench, SpecEntry } from '../models/encounter.models';
+import { EncounterPositions } from '../models/positioning.models';
 
 const DATA_BASE = new URL('data/specs/', document.baseURI).href;
 
@@ -41,6 +43,46 @@ export class DataFileApiService {
       return await firstValueFrom(this.http.get<Rulebook>(`${DATA_BASE}${spec}/rulebook.json`));
     } catch (err) {
       logWarn(`DataFileApiService.getRulebook ${spec}`, err);
+      return null;
+    }
+  }
+
+  /** Raw read of the spec manifest (`data/specs/index.json`). Empty when not yet generated. */
+  async getSpecs(): Promise<SpecEntry[]> {
+    try {
+      return await firstValueFrom(this.http.get<SpecEntry[]>(`${DATA_BASE}index.json`)) ?? [];
+    } catch (err) {
+      logWarn('DataFileApiService.getSpecs', err);
+      return [];
+    }
+  }
+
+  /** Raw read of a spec's encounter index (`data/specs/{spec}/encounters.json`). */
+  async getEncounters(spec: string): Promise<EncounterEntry[]> {
+    try {
+      return await firstValueFrom(this.http.get<EncounterEntry[]>(`${DATA_BASE}${spec}/encounters.json`)) ?? [];
+    } catch (err) {
+      logWarn(`DataFileApiService.getEncounters ${spec}`, err);
+      return [];
+    }
+  }
+
+  /** Raw read of the generic encounter bench (`data/specs/{spec}/encounters/{enc}.json`). */
+  async getBench(spec: string, encounterId: number): Promise<EncounterBench | null> {
+    try {
+      return await firstValueFrom(this.http.get<EncounterBench>(`${DATA_BASE}${spec}/encounters/${encounterId}.json`));
+    } catch (err) {
+      logWarn(`DataFileApiService.getBench ${spec}/${encounterId}`, err);
+      return null;
+    }
+  }
+
+  /** Raw read of ingested top-parse position timelines (`data/specs/{spec}/positions/{enc}.json`). */
+  async getPositions(spec: string, encounterId: number): Promise<EncounterPositions | null> {
+    try {
+      return await firstValueFrom(this.http.get<EncounterPositions>(`${DATA_BASE}${spec}/positions/${encounterId}.json`));
+    } catch (err) {
+      logWarn(`DataFileApiService.getPositions ${spec}/${encounterId}`, err);
       return null;
     }
   }
