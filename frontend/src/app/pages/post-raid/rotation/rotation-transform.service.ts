@@ -16,6 +16,7 @@ import { WclEvent, ParseRanking, WclRawRanking } from '../../../core/models/wcl.
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
+import { mean, sampleStdev, median, percentile, round } from '../../../core/stats';
 import { RotationBench, RotationDataSource } from './rotation-data-source';
 
 /** How many top parses to sample (matches the ingest bench). */
@@ -27,8 +28,6 @@ const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
 /** A gap beyond this past the expected on-cooldown time counts as a deliberate hold. */
 const HOLD_THRESHOLD_S = 8.0;
-/** Casts separated by more than this (ms) count as downtime in cast efficiency. */
-const DOWNTIME_GAP_MS = 1500;
 /** p90 of pooled cast gaps is the downtime floor. */
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
@@ -52,24 +51,6 @@ export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanki
       report_code: ranking.report?.code ?? '',
       fight_id: ranking.report?.fightID ?? 0,
     }));
-}
-
-export function mean(values: number[]): number {
-  return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
-}
-export function median(values: number[]): number {
-  if (!values.length) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  const mid = sorted.length >> 1;
-  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-}
-export function sampleStdev(values: number[]): number {
-  if (values.length < 2) return 0;
-  const avg = mean(values);
-  return Math.sqrt(values.reduce((sum, value) => sum + (value - avg) ** 2, 0) / (values.length - 1));
-}
-export function round(value: number, decimals = 1): number {
-  return Math.round(value * 10 ** decimals) / 10 ** decimals;
 }
 
 /** Cooldown name -> spell id, for the row / header icons. */
@@ -98,7 +79,7 @@ export interface CdSummary {
   bl_aligned: boolean;
   bl_offset_s: number | null;
   cast_times_s: number[];
-  hold_windows: Array<{ cast_index: number; actual_s: number }>;
+  hold_windows: { cast_index: number; actual_s: number }[];
   cast_pattern: 'hold' | 'on_cooldown';
   fight_duration_s: number;
 }
@@ -126,7 +107,7 @@ export function summarizeCooldownCasts(
       }
     }
 
-    const holdWindows: Array<{ cast_index: number; actual_s: number }> = [];
+    const holdWindows: { cast_index: number; actual_s: number }[] = [];
     if (castTimesS.length > 1) {
       const cdSeconds = cooldown.cooldown ?? 90;
       let expectedT = castTimesS[0];
@@ -237,11 +218,10 @@ export function buildCdBenchmark(entries: CdSummary[]): PerCdBenchmark {
 export function computeEfficiencyThresholds(
   gapLists: number[][], durations: number[],
 ): { downtimeThresholdMs: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
-  const allGaps = gapLists.flat().sort((a, b) => a - b);
+  const allGaps = gapLists.flat();
   let downtimeThresholdMs = DEFAULT_DOWNTIME_THRESHOLD_MS;
   if (allGaps.length) {
-    const p90Index = Math.max(0, Math.floor(DOWNTIME_PERCENTILE * allGaps.length) - 1);
-    downtimeThresholdMs = allGaps[p90Index];
+    downtimeThresholdMs = percentile(allGaps, DOWNTIME_PERCENTILE);
   }
   const efficiencies: number[] = [];
   for (let i = 0; i < gapLists.length; i++) {
