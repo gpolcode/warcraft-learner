@@ -7,13 +7,13 @@ import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclEvent } from '.
 import { logWarn } from '../log';
 import {
   REPORT_Q, REPORT_ABILITIES_Q, PLAYER_DETAILS_Q, FIGHTS_Q, EVENTS_Q,
-  CHAR_Q, COMBATANT_INFO_Q, buildGearNamesQuery,
+  CHAR_Q, COMBATANT_INFO_Q, RANKINGS_Q, buildGearNamesQuery,
   ReportQueryVars, ReportAbilitiesQueryVars, PlayerDetailsQueryVars,
-  FightsQueryVars, EventsQueryVars, CharQueryVars, CombatantInfoQueryVars,
+  FightsQueryVars, EventsQueryVars, CharQueryVars, CombatantInfoQueryVars, RankingsQueryVars,
 } from './wcl-queries';
 import {
-  buildSpecMap, extractGear, talentKeyFromTree, decodeHtmlEntities,
-  WclRankEntry, PlayerDetailGroups,
+  buildSpecMap, extractGear, talentKeyFromTree, decodeHtmlEntities, mapRankings, SPEC_TO_WCL,
+  WclRankEntry, PlayerDetailGroups, WclRawRanking, ParseRanking,
 } from './wcl-mappers';
 
 /** A CombatantInfo event carries gear + talentTree, keyed by sourceID. */
@@ -163,6 +163,25 @@ export class WclApiService {
     }
 
     return { found: true, spec, source_report: code, talent_key, trinkets, enchants };
+  }
+
+  /**
+   * Top DPS parses for an encounter + spec (report code + fight + player). Used by
+   * the burst transform to recompute the bench live. `characterRankings` comes back
+   * as a JSON blob (string or object) - both forms are handled.
+   */
+  async getRankings(spec: string, encounterId: number, count = 10): Promise<ParseRanking[]> {
+    const mapping = SPEC_TO_WCL[spec];
+    if (!mapping) return [];
+    const [className, specName] = mapping;
+    const vars: RankingsQueryVars = { encounterID: encounterId, className, specName };
+    const result = await this.query<{ worldData: { encounter: { characterRankings: string | { rankings: WclRawRanking[] } } } }>(
+      RANKINGS_Q, vars,
+    );
+    const raw = result?.worldData?.encounter?.characterRankings;
+    if (!raw) return [];
+    const parsed = typeof raw === 'string' ? JSON.parse(raw) as { rankings?: WclRawRanking[] } : raw;
+    return mapRankings(parsed.rankings ?? [], count);
   }
 
   async getCharacter(name: string, serverSlug: string, serverRegion: string): Promise<CharacterInfo> {

@@ -1,16 +1,12 @@
 /**
  * Development environment (swapped in by the `development` build configuration).
  *
- * `useLiveTransform: true` would bind every `*_DATA_SOURCE` token to its
- * `*TransformService`, computing each slice's prepared data live from WCL in the
- * browser so the app runs with zero ingested files.
- *
- * It is currently `false` (same as prod) because the first slice's live transform
- * (`BurstTransformService`) is not implemented yet - porting the ingest top-parse
- * extract to the browser is a follow-up. Keeping it on the file source means
- * `npm start` works against ingested data. Flip to `true` once the live transforms
- * land. The swap infrastructure (token + provideDataSource) is already in place.
+ * `useLiveTransform: true` binds every implemented `*_DATA_SOURCE` token to its
+ * `*TransformService`, so each slice computes its prepared data live from WCL in the
+ * browser - `npm start` runs with zero ingested files. Slower (a burst render fetches
+ * the top parses + their Casts/DamageDone), dev only. Production stays on the file
+ * source (`environment.ts`).
  */
 export const environment = {
-  useLiveTransform: false,
+  useLiveTransform: true,
 };

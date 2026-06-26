@@ -26,6 +26,7 @@ export interface EventsQueryVars {
 }
 export interface CharQueryVars { name: string; serverSlug: string; serverRegion: string }
 export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
+export interface RankingsQueryVars { encounterID: number; className: string; specName: string }
 
 // ---------------------------------------------------------------------------
 // Query strings
@@ -66,6 +67,18 @@ query($name:String!,$serverSlug:String!,$serverRegion:String!){
   characterData{character(name:$name,serverSlug:$serverSlug,serverRegion:$serverRegion){
     name classID
     recentReports(limit:5){data{code startTime}}
+  }}
+}`;
+
+/**
+ * Top DPS parses for an encounter + spec. `characterRankings` returns a JSON blob
+ * (string or object) carrying each parse's report code + fight id + player name -
+ * enough for the burst transform to refetch and recompute the bench live.
+ */
+export const RANKINGS_Q = `
+query($encounterID:Int!,$className:String!,$specName:String!){
+  worldData{encounter(id:$encounterID){
+    characterRankings(className:$className,specName:$specName,metric:dps)
   }}
 }`;
 

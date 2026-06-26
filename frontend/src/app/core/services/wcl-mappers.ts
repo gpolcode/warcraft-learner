@@ -35,6 +35,19 @@ export interface PlayerDetailEntry {
 }
 export type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
+/** One raw `characterRankings` entry (the fields the burst transform needs). */
+export interface WclRawRanking {
+  name?: string;
+  report?: { code?: string; fightID?: number };
+}
+
+/** A mapped top parse: which report + fight + player to refetch. */
+export interface ParseRanking {
+  player: string;
+  report_code: string;
+  fight_id: number;
+}
+
 // ---------------------------------------------------------------------------
 // WCL class-ID → spec-folder-name map
 // ---------------------------------------------------------------------------
@@ -44,6 +57,23 @@ export const CLASS_NAMES: Record<number, string> = {
   1: 'DeathKnight', 2: 'Druid', 3: 'Hunter', 4: 'Mage', 5: 'Monk',
   6: 'Paladin', 7: 'Priest', 8: 'Rogue', 9: 'Shaman', 10: 'Warlock',
   11: 'Warrior', 12: 'DemonHunter', 13: 'Evoker',
+};
+
+/** WCL spec folder name → [WCL className, WCL specName] for the rankings query. */
+export const SPEC_TO_WCL: Record<string, [string, string]> = {
+  RetributionPaladin: ['Paladin', 'Retribution'], HolyPaladin: ['Paladin', 'Holy'], ProtectionPaladin: ['Paladin', 'Protection'],
+  FireMage: ['Mage', 'Fire'], ArcaneMage: ['Mage', 'Arcane'], FrostMage: ['Mage', 'Frost'],
+  HavocDemonHunter: ['DemonHunter', 'Havoc'], VengeanceDemonHunter: ['DemonHunter', 'Vengeance'],
+  FuryWarrior: ['Warrior', 'Fury'], ArmsWarrior: ['Warrior', 'Arms'], ProtectionWarrior: ['Warrior', 'Protection'],
+  UnholyDeathKnight: ['DeathKnight', 'Unholy'], FrostDeathKnight: ['DeathKnight', 'Frost'], BloodDeathKnight: ['DeathKnight', 'Blood'],
+  BalanceDruid: ['Druid', 'Balance'], FeralDruid: ['Druid', 'Feral'], GuardianDruid: ['Druid', 'Guardian'], RestorationDruid: ['Druid', 'Restoration'],
+  BeastMasteryHunter: ['Hunter', 'BeastMastery'], MarksmanshipHunter: ['Hunter', 'Marksmanship'], SurvivalHunter: ['Hunter', 'Survival'],
+  BrewmasterMonk: ['Monk', 'Brewmaster'], WindwalkerMonk: ['Monk', 'Windwalker'], MistweaverMonk: ['Monk', 'Mistweaver'],
+  DisciplinePriest: ['Priest', 'Discipline'], HolyPriest: ['Priest', 'Holy'], ShadowPriest: ['Priest', 'Shadow'],
+  AssassinationRogue: ['Rogue', 'Assassination'], OutlawRogue: ['Rogue', 'Outlaw'], SubtletyRogue: ['Rogue', 'Subtlety'],
+  ElementalShaman: ['Shaman', 'Elemental'], EnhancementShaman: ['Shaman', 'Enhancement'], RestorationShaman: ['Shaman', 'Restoration'],
+  AfflictionWarlock: ['Warlock', 'Affliction'], DemonologyWarlock: ['Warlock', 'Demonology'], DestructionWarlock: ['Warlock', 'Destruction'],
+  DevastationEvoker: ['Evoker', 'Devastation'], PreservationEvoker: ['Evoker', 'Preservation'], AugmentationEvoker: ['Evoker', 'Augmentation'],
 };
 
 // ---------------------------------------------------------------------------
@@ -108,6 +138,26 @@ export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined):
   const ids = tree.filter(n => n.nodeID != null).map(n => String(n.nodeID));
   if (!ids.length) return '';
   return 'v2:' + ids.sort().join(',');
+}
+
+// WCL replaces a privacy-anonymized parse's player name with "Character <id>-<id>",
+// which can never match a report actor (real names are letters only), so the parse
+// is unfetchable. Drop these before mapping.
+const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+export function isAnonymizedPlayerName(name: string): boolean {
+  return ANONYMIZED_NAME.test(name);
+}
+
+/** Map raw rankings to the top `count` fetchable parses (report + fight + player). */
+export function mapRankings(rawRankings: WclRawRanking[], count: number): ParseRanking[] {
+  return rawRankings
+    .filter(ranking => ranking.report?.code && !isAnonymizedPlayerName(ranking.name ?? ''))
+    .slice(0, count)
+    .map(ranking => ({
+      player: ranking.name ?? '',
+      report_code: ranking.report?.code ?? '',
+      fight_id: ranking.report?.fightID ?? 0,
+    }));
 }
 
 /** Decode HTML entities in a string returned by WCL's gameData queries. */

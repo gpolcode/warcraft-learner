@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { logWarn } from '../log';
+import { Rulebook } from '../models/rulebook.models';
 
 const DATA_BASE = new URL('data/specs/', document.baseURI).href;
 
@@ -30,6 +31,16 @@ export class DataFileApiService {
       return await firstValueFrom(this.http.get<T>(url));
     } catch (err) {
       logWarn(`DataFileApiService.getSlice ${spec}/${slice}/${encounterId}`, err);
+      return null;
+    }
+  }
+
+  /** Raw read of a spec's rulebook (`data/specs/{spec}/rulebook.json`). */
+  async getRulebook(spec: string): Promise<Rulebook | null> {
+    try {
+      return await firstValueFrom(this.http.get<Rulebook>(`${DATA_BASE}${spec}/rulebook.json`));
+    } catch (err) {
+      logWarn(`DataFileApiService.getRulebook ${spec}`, err);
       return null;
     }
   }
