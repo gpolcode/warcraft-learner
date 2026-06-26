@@ -17,7 +17,7 @@
         "avg": 0.323,
         "stddev": 0.108,
         "min": 0.226,
-        "max": 0.535
+        "max": 0.536
       },
       "majority_hold": false
     },
@@ -59,13 +59,20 @@
   "defensive_windows": [
     {
       "time_s": 51.5,
-      "stddev_s": 8.8,
-      "count": 6,
-      "total_samples": 10,
       "dmg_avg": 361977,
       "dmg_stddev": 112616,
       "dmg_min": 225522,
       "dmg_max": 563456,
+      "window_length_s": 16.1,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240432,
       "ability_breakdown": [
         {
           "spell_id": 1250686,
@@ -95,9 +102,15 @@
           "max_damage": 10211,
           "count": 6
         }
-      ],
-      "ref_game_id": 240432,
-      "window_length_s": 16.1,
+      ]
+    },
+    {
+      "time_s": 98.3,
+      "dmg_avg": 344227,
+      "dmg_stddev": 128759,
+      "dmg_min": 187713,
+      "dmg_max": 470063,
+      "window_length_s": 6.3,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -105,17 +118,8 @@
       ],
       "common_cds": [
         "Dark Pact"
-      ]
-    },
-    {
-      "time_s": 98.3,
-      "stddev_s": 8.5,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 344227,
-      "dmg_stddev": 128759,
-      "dmg_min": 187713,
-      "dmg_max": 470063,
+      ],
+      "ref_game_id": 240432,
       "ability_breakdown": [
         {
           "spell_id": 1254018,
@@ -138,9 +142,15 @@
           "max_damage": 5470,
           "count": 6
         }
-      ],
-      "ref_game_id": 240432,
-      "window_length_s": 6.3,
+      ]
+    },
+    {
+      "time_s": 163,
+      "dmg_avg": 394792,
+      "dmg_stddev": 60146,
+      "dmg_min": 315851,
+      "dmg_max": 469821,
+      "window_length_s": 9.7,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -148,17 +158,8 @@
       ],
       "common_cds": [
         "Dark Pact"
-      ]
-    },
-    {
-      "time_s": 163,
-      "stddev_s": 12,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 394792,
-      "dmg_stddev": 60146,
-      "dmg_min": 315851,
-      "dmg_max": 469821,
+      ],
+      "ref_game_id": 240432,
       "ability_breakdown": [
         {
           "spell_id": 1260835,
@@ -188,43 +189,27 @@
           "max_damage": 6121,
           "count": 6
         }
-      ],
-      "ref_game_id": 240432,
-      "window_length_s": 9.7,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Unending Resolve",
       "spell_id": 104773,
       "avg_uses": 1.2,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 6
+      "max_uses": 2
     },
     {
-      "name": "Dark Pact",
       "spell_id": 108416,
       "avg_uses": 2.4,
       "min_uses": 1,
-      "max_uses": 4,
-      "sample_count": 8
+      "max_uses": 4
     },
     {
-      "name": "Mortal Coil",
       "spell_id": 6789,
       "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 3
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -267,5 +252,43 @@
     "Mortal Coil": 6789,
     "Healthstone": 6262
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "53cd22d9cbbf7127"
 }
