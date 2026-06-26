@@ -39,41 +39,36 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # Re-scrape every existing guide first so guides.json stays fresh on the same cadence.
-      # Per-guide errors are recorded, not fatal. YouTube transcripts go through the Supadata
-      # API (SUPADATA_API_KEY secret); already-scraped YouTube guides are skipped, so the
-      # metered API is only hit once per new/errored video. Web/SimC need no secret.
-      - name: Refresh guide content
-        working-directory: frontend
-        env:
-          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
-        run: npm run scrape
-
-      # Ingestion self-selects the current live raids from WCL (current expansion,
-      # non-frozen zones confirmed live by a rankings probe) and self-prunes data for
-      # encounters that are no longer current. No manual per-patch edits needed.
-      - name: Run parse ingestion
+      # TEMPORARY (branch-only, do NOT merge to main): repurposed as a print-only
+      # validator for the v5 orchestrator. Runs ingest:next for one spec against real
+      # WCL and prints the diff vs the committed legacy output - no commit, no scrape.
+      # Revert this file to the scrape+ingest+commit pipeline before merging.
+      - name: Run v5 orchestrator (ingest:next) for SubtletyRogue
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
         working-directory: frontend
-        run: npm run ingest
+        run: npm run ingest:next -- --spec SubtletyRogue
 
-      - name: Pull latest before committing
-        env:
-          BRANCH: ${{ github.ref_name }}
-        # --autostash so the ingest's unstaged spec-file changes don't block the
-        # rebase ("cannot pull with rebase: You have unstaged changes"); they are
-        # stashed, the rebase runs, then they are reapplied for the commit step.
-        run: git pull --rebase --autostash origin "$BRANCH"
-
-      - name: Commit updated spec files
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          # No [skip ci] - data commits should trigger deploy-pages so the live
-          # site reflects fresh parse data. git-auto-commit-action only pushes
-          # when files actually changed, so quiet hours produce no commit.
-          commit_message: 'chore: refresh parse samples'
-          file_pattern: 'frontend/public/data/specs/**'
-          commit_user_name: 'warcraft-learner-ingest[bot]'
-          commit_user_email: 'warcraft-learner-ingest[bot]@users.noreply.github.com'
+      - name: Diff v5 output vs committed legacy output
+        working-directory: frontend
+        run: |
+          SPEC=SubtletyRogue
+          echo "=== git status (changed files) ==="
+          git -c core.pager=cat status --short "public/data/specs/$SPEC" || true
+          echo
+          echo "=== diffstat for $SPEC slices ==="
+          git -c core.pager=cat diff --stat "public/data/specs/$SPEC" || true
+          echo
+          echo "=== per-slice file counts produced ==="
+          for s in burst rotation defensive gear positions; do
+            echo "$s: $(ls public/data/specs/$SPEC/$s/*.json 2>/dev/null | wc -l) files"
+          done
+          echo
+          echo "=== sample: head of a produced burst file (note source_signature) ==="
+          FIRST=$(ls public/data/specs/$SPEC/burst/*.json 2>/dev/null | head -1)
+          echo "file: $FIRST"
+          head -c 1400 "$FIRST" || true
+          echo
+          echo "=== full diff (first 500 lines) ==="
+          git -c core.pager=cat diff "public/data/specs/$SPEC" | head -500 || true
