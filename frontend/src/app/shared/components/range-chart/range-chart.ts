@@ -9,7 +9,6 @@ import {
   Plugin,
   ChartConfiguration,
 } from 'chart.js';
-import { IconCacheService } from '../../../core/services/icon-cache';
 import { RangeRow } from '../../../core/models/window-comparison.models';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
@@ -63,7 +62,6 @@ interface OverlayState {
   `,
 })
 export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy {
-  private readonly icons = inject(IconCacheService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
   // Resolve the design tokens (defined on `html` in styles.scss) the canvas needs.
@@ -117,7 +115,7 @@ export class RangeChartComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private label(row: RangeRow): string {
-    return row.spellId ? (this.icons.get(row.spellId)?.name || row.label) : row.label;
+    return row.label;
   }
 
   // Draws the average tick and the player "You" dot on top of each range bar.

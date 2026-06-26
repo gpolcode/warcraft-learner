@@ -227,7 +227,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
   it('returns an empty view when the bench file is absent', async () => {
     const service = serviceWith(null);
     expect(await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10))
-      .toEqual({ findings: [], spellIdsByName: {}, windows: [], anchors: [] });
+      .toEqual({ findings: [], spellIdsByName: {}, iconByName: {}, windows: [], anchors: [] });
   });
 
   it('computes player findings + windows from the player log', async () => {

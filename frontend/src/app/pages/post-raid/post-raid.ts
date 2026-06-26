@@ -14,7 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WclApiService } from '../../core/services/wcl-api';
-import { IconCacheService } from '../../core/services/icon-cache';
 import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport } from '../../core/models/wcl.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
@@ -51,7 +50,6 @@ import { extractCode, buildFights, buildPlayers, visiblePlayersOf, pickPlayerId,
 })
 export class PostRaidComponent implements OnInit {
   private readonly wclApi = inject(WclApiService);
-  private readonly icons = inject(IconCacheService);
   private readonly mapFeature = inject(MapFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly route = inject(ActivatedRoute);
@@ -80,7 +78,6 @@ export class PostRaidComponent implements OnInit {
   /** Current report code, driven by loadReport(). Used by the polling pipeline. */
   protected readonly reportCode = signal('');
 
-  private _masterAbilities: { gameID: number; name: string; icon: string }[] = [];
   private _enemies: { id: number; name: string; gameID: number }[] = [];
 
   protected readonly visiblePlayers = computed(() =>
@@ -185,13 +182,11 @@ export class PostRaidComponent implements OnInit {
     }
   }
 
-  /** Project a freshly fetched report into fight/player state and seed icon art. */
+  /** Project a freshly fetched report into fight/player state. */
   private _applyReport(report: WclReport): void {
     this.fights.set(buildFights(report.fights));
     this.players.set(buildPlayers(report.masterData?.actors));
-    this._masterAbilities = report.masterData?.abilities ?? [];
     this._enemies = report.masterData?.enemies ?? [];
-    if (report.masterData?.abilities) this.icons.seed(report.masterData.abilities);
   }
 
   protected onLiveToggle(): void {

@@ -36,8 +36,10 @@ export interface DefensiveMapAnchor {
 /** The defensive card view-model: findings + per-window comparison + map anchors. */
 export interface DefensiveView {
   findings: AnalysisFinding[];
-  /** Defensive name -> spell id, so the findings table renders the right icons. */
+  /** Defensive name -> spell id, so the findings table links to the right spell. */
   spellIdsByName: Record<string, number>;
+  /** Defensive name -> icon filename, so the findings table renders art without a cache. */
+  iconByName: Record<string, string>;
   windows: ComparisonWindow[];
   anchors: DefensiveMapAnchor[];
 }
@@ -379,12 +381,12 @@ export class DefensiveFeatureService {
     playerId: number,
   ): Promise<DefensiveView> {
     const bench = await this.source.getDefensiveBench(spec, encounterId);
-    if (!bench) return { findings: [], spellIdsByName: {}, windows: [], anchors: [] };
+    if (!bench) return { findings: [], spellIdsByName: {}, iconByName: {}, windows: [], anchors: [] };
 
     try {
       const report: WclReport = await this.wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
-      if (!fight) return { findings: [], spellIdsByName: bench.cd_spell_ids, windows: [], anchors: [] };
+      if (!fight) return { findings: [], spellIdsByName: bench.cd_spell_ids, iconByName: {}, windows: [], anchors: [] };
       const fStart = fight.startTime;
       const fEnd = fight.endTime;
       const fightDurationS = (fEnd - fStart) / 1000;
@@ -408,11 +410,15 @@ export class DefensiveFeatureService {
       const playerWindows = computePlayerDefensiveWindows(bench.defensive_windows, dtEvents, fStart);
       const nameOf = (spellId: number): string =>
         bench.ability_icons[spellId]?.name || reportAbilities.get(spellId)?.name || `Spell ${spellId}`;
+      const iconByName: Record<string, string> = {};
+      for (const [name, spellId] of Object.entries(bench.cd_spell_ids)) {
+        iconByName[name] = bench.ability_icons[spellId]?.icon || reportAbilities.get(spellId)?.icon || '';
+      }
       const { windows, anchors } = buildDefensiveWindows(bench.defensive_windows, playerWindows, fightDurationS, nameOf);
-      return { findings, spellIdsByName: bench.cd_spell_ids, windows, anchors };
+      return { findings, spellIdsByName: bench.cd_spell_ids, iconByName, windows, anchors };
     } catch (err) {
       logWarn(`DefensiveFeatureService.loadAnalysisView ${reportCode}:${fightId}`, err);
-      return { findings: [], spellIdsByName: bench.cd_spell_ids, windows: [], anchors: [] };
+      return { findings: [], spellIdsByName: bench.cd_spell_ids, iconByName: {}, windows: [], anchors: [] };
     }
   }
 

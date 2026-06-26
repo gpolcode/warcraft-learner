@@ -38,6 +38,7 @@ export class DefensiveComponent {
 
   private readonly _findings = signal<AnalysisFinding[]>([]);
   private readonly _spellIdsByName = signal<Record<string, number>>({});
+  private readonly _iconByName = signal<Record<string, string>>({});
   private readonly _windows = signal<ComparisonWindow[]>([]);
   private readonly _anchors = signal<DefensiveMapAnchor[]>([]);
   protected readonly windows = this._windows.asReadonly();
@@ -57,6 +58,7 @@ export class DefensiveComponent {
         if (token !== this.loadToken) return;
         this._findings.set(view.findings);
         this._spellIdsByName.set(view.spellIdsByName);
+        this._iconByName.set(view.iconByName);
         this._windows.set(view.windows);
         this._anchors.set(view.anchors);
       });
@@ -65,7 +67,11 @@ export class DefensiveComponent {
 
   private readonly entries = computed(() => {
     const spellIds = this._spellIdsByName();
-    return bucketFindings(this._findings(), { spellId: name => spellIds[name] ?? null }).entries;
+    const icons = this._iconByName();
+    return bucketFindings(this._findings(), {
+      spellId: name => spellIds[name] ?? null,
+      icon: name => icons[name] ?? '',
+    }).entries;
   });
 
   protected readonly findingRows = computed<FindingRow[]>(() => rowsFromEntries(this.entries(), CAT_LABEL));
