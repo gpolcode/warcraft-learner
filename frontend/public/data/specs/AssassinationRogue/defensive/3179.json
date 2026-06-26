@@ -1,0 +1,260 @@
+{
+  "spec": "AssassinationRogue",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 13,
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 9,
+      "avg_first_cast_s": 148.9,
+      "stddev_first_cast_s": 57.6,
+      "avg_gap_s": 122.1,
+      "stddev_gap_s": 0.1,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.317,
+        "stddev": 0.113,
+        "min": 0.206,
+        "max": 0.507
+      },
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 5,
+      "avg_first_cast_s": 88.7,
+      "stddev_first_cast_s": 9.3,
+      "avg_gap_s": 143.4,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.313,
+        "stddev": 0.075,
+        "min": 0.253,
+        "max": 0.436
+      },
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 8,
+      "avg_first_cast_s": 86.7,
+      "stddev_first_cast_s": 41.9,
+      "avg_gap_s": 100.1,
+      "stddev_gap_s": 51.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 224.4,
+          "stddev_s": 57.8,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.515,
+        "stddev": 0.177,
+        "min": 0.305,
+        "max": 0.861
+      },
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 3,
+      "avg_first_cast_s": 194.8,
+      "stddev_first_cast_s": 20.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.27,
+        "stddev": 0.03,
+        "min": 0.253,
+        "max": 0.305
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 80.8,
+      "stddev_s": 9.2,
+      "count": 5,
+      "total_samples": 13,
+      "dmg_avg": 318853,
+      "dmg_stddev": 48516,
+      "dmg_min": 259633,
+      "dmg_max": 385271,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245592,
+          "avg_damage": 107014,
+          "min_damage": 101952,
+          "max_damage": 109545,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 98844,
+          "min_damage": 71701,
+          "max_damage": 143304,
+          "count": 5
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 98723,
+          "min_damage": 74146,
+          "max_damage": 161408,
+          "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 67572,
+          "min_damage": 39835,
+          "max_damage": 116329,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 84.6,
+      "stddev_s": 9.3,
+      "count": 5,
+      "total_samples": 13,
+      "dmg_avg": 193716,
+      "dmg_stddev": 100829,
+      "dmg_min": 95626,
+      "dmg_max": 300750,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 71863,
+          "min_damage": 48422,
+          "max_damage": 95626,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 4,
+      "defensive_name": "Crimson Vial",
+      "spell_id": 185311,
+      "common_defensives": [
+        "Crimson Vial"
+      ],
+      "common_cds": [
+        "Crimson Vial"
+      ]
+    },
+    {
+      "time_s": 205.5,
+      "stddev_s": 7.3,
+      "count": 6,
+      "total_samples": 13,
+      "dmg_avg": 144653,
+      "dmg_stddev": 164619,
+      "dmg_min": 0,
+      "dmg_max": 331756,
+      "ability_breakdown": [],
+      "ref_game_id": 240432,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 9
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 3
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to clear magical debuffs and gain immunity to incoming magical damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain a 100% dodge chance against physical melee attacks.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Use proactively when anticipating heavy, unavoidable area-of-effect damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use to restore a significant portion of your health when dropping low.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Feint": 1966,
+    "Crimson Vial": 185311
+  },
+  "ability_icons": {}
+}

@@ -1,0 +1,227 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 8,
+      "avg_first_cast_s": 45.9,
+      "stddev_first_cast_s": 31.8,
+      "avg_gap_s": 61.4,
+      "stddev_gap_s": 2.7,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.66,
+      "uses_per_min": {
+        "avg": 0.661,
+        "stddev": 0.37,
+        "min": 0.403,
+        "max": 1.231
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 7,
+      "avg_first_cast_s": 21,
+      "stddev_first_cast_s": 2.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.409,
+        "stddev": 0.006,
+        "min": 0.401,
+        "max": 0.418
+      },
+      "majority_hold": false
+    },
+    "Prismatic Barrier": {
+      "sample_count": 8,
+      "avg_first_cast_s": 55.7,
+      "stddev_first_cast_s": 38.2,
+      "avg_gap_s": 56,
+      "stddev_gap_s": 15.8,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.611,
+        "stddev": 0.307,
+        "min": 0.401,
+        "max": 1.229
+      },
+      "majority_hold": false
+    },
+    "Greater Invisibility": {
+      "sample_count": 1,
+      "avg_first_cast_s": 25,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.41,
+        "stddev": 0,
+        "min": 0.41,
+        "max": 0.41
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 21,
+      "stddev_s": 2.5,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 246123,
+      "dmg_stddev": 45093,
+      "dmg_min": 194711,
+      "dmg_max": 315402,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 197119,
+          "min_damage": 114795,
+          "max_damage": 276274,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 15,
+      "defensive_name": "Mirror Image",
+      "spell_id": 55342,
+      "common_defensives": [
+        "Mirror Image"
+      ],
+      "common_cds": [
+        "Mirror Image"
+      ]
+    },
+    {
+      "time_s": 61.1,
+      "stddev_s": 10.6,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 270900,
+      "dmg_stddev": 74817,
+      "dmg_min": 199552,
+      "dmg_max": 392472,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 242130,
+          "min_damage": 203290,
+          "max_damage": 302130,
+          "count": 3
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 104365,
+          "min_damage": 20721,
+          "max_damage": 237158,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 9.9,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 1
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 7
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {}
+}

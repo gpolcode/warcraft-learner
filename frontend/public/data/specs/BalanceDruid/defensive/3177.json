@@ -1,0 +1,155 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 109,
+      "stddev_first_cast_s": 66.1,
+      "avg_gap_s": 116.8,
+      "stddev_gap_s": 12.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 184.9,
+          "stddev_s": 22,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.438,
+        "stddev": 0.142,
+        "min": 0.272,
+        "max": 0.59
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 61.3,
+      "stddev_s": 4.7,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 311873,
+      "dmg_stddev": 166512,
+      "dmg_min": 133308,
+      "dmg_max": 560458,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 232058,
+          "min_damage": 53449,
+          "max_damage": 330706,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 57314,
+          "min_damage": 54863,
+          "max_damage": 58785,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240434,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 185.2,
+      "stddev_s": 10.6,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 396313,
+      "dmg_stddev": 96211,
+      "dmg_min": 297012,
+      "dmg_max": 596374,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 215505,
+          "min_damage": 168034,
+          "max_damage": 299292,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 101445,
+          "min_damage": 38099,
+          "max_damage": 116393,
+          "count": 7
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 73165,
+          "min_damage": 67861,
+          "max_damage": 77643,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240434,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 10
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable raid damage or a tankbuster cleave for a 20% damage reduction; its short cooldown allows frequent use, so do not save it for emergencies that may never come.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Use when your health drops below roughly 50% to instantly restore a large chunk of HP without interrupting your casting. Talent-gated to builds that take Renewal.",
+      "talent_gated": true
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Reserve for the heaviest spike damage events for its strong damage reduction; pair it with Barkskin on lethal hits when one defensive is not enough.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Survival Instincts": 61336
+  },
+  "ability_icons": {}
+}
