@@ -16,10 +16,13 @@ import { readJson, writeJson, getKnownSpecs as listSpecs } from '../lib.ts';
 import { logWarn } from '../../src/app/core/log.ts';
 import { buildEncounterBench } from './analysis/bench.ts';
 import { buildBurstSlice } from './analysis/burst-slice.ts';
+import { buildRotationSlice } from './analysis/rotation-slice.ts';
+import { buildDefensiveSlice } from './analysis/defensive-slice.ts';
+import { buildGearSlice } from './analysis/gear-slice.ts';
 import { POSITIONS_INTERVAL_S } from './analysis/positions.ts';
 import { getEnchantNames } from './wcl-fetchers.ts';
 import type { WclQueryClient } from './wcl-client.ts';
-import type { Rulebook, RulebookCooldown, RulebookDefensive } from '../../src/app/core/models/rulebook.models.ts';
+import type { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule } from '../../src/app/core/models/rulebook.models.ts';
 import type { ParsePositions, EncounterPositions } from '../../src/app/core/models/positioning.models.ts';
 import type { ParseCooldownData, ParseSample } from './models/parse-sample.models.ts';
 import type { IngestEncounter } from './models/wcl.models.ts';
@@ -78,9 +81,22 @@ function getPositionsPath(spec: string, encounterId: number): string {
   return path.join(DATA_DIR, spec, 'positions', `${encounterId}.json`);
 }
 
-// Per-use-case tailored slice file (vertical-slice architecture). Burst is the first.
+// Per-use-case tailored slice files (vertical-slice architecture). Each slice's
+// FeatureService reads exactly one of these via its DataSource.
 function getBurstPath(spec: string, encounterId: number): string {
   return path.join(DATA_DIR, spec, 'burst', `${encounterId}.json`);
+}
+
+function getRotationPath(spec: string, encounterId: number): string {
+  return path.join(DATA_DIR, spec, 'rotation', `${encounterId}.json`);
+}
+
+function getDefensivePath(spec: string, encounterId: number): string {
+  return path.join(DATA_DIR, spec, 'defensive', `${encounterId}.json`);
+}
+
+function getGearPath(spec: string, encounterId: number): string {
+  return path.join(DATA_DIR, spec, 'gear', `${encounterId}.json`);
 }
 
 // ── Rulebook reads ────────────────────────────────────────────────────────────
@@ -97,6 +113,11 @@ export async function getSpecCooldowns(spec: string): Promise<RulebookCooldown[]
 export async function getSpecDefensives(spec: string): Promise<RulebookDefensive[]> {
   const rulebook = await loadRulebook(spec);
   return rulebook?.defensives?.length ? rulebook.defensives : [];
+}
+
+export async function getSpecRules(spec: string): Promise<RulebookRule[]> {
+  const rulebook = await loadRulebook(spec);
+  return rulebook?.rules?.length ? rulebook.rules : [];
 }
 
 // ── Sample / position reads + writes ─────────────────────────────────────────
@@ -148,10 +169,16 @@ export async function syncEncounterFile(spec: string, encounterId: number): Prom
 
   await writeJson(getEncounterPath(spec, encounterId), bench);
 
-  // Tailored burst slice file (data/specs/{spec}/burst/{enc}.json): a pure reshape of
-  // the bench + rulebook the burst card reads via its DataSource.
+  // Tailored per-use-case slice files: pure reshapes of the bench + rulebook each
+  // card reads via its DataSource. No report context here (we work from saved
+  // samples), so icon/name baking is empty - post-raid resolves art from the live
+  // report's masterData, and /pre renders names without art (existing behavior).
   const specCooldowns = await getSpecCooldowns(spec) ?? [];
+  const specRules = await getSpecRules(spec);
   await writeJson(getBurstPath(spec, encounterId), buildBurstSlice(bench, specCooldowns, specDefensives));
+  await writeJson(getRotationPath(spec, encounterId), buildRotationSlice(bench, specCooldowns, specRules, specDefensives, {}));
+  await writeJson(getDefensivePath(spec, encounterId), buildDefensiveSlice(bench, specDefensives, []));
+  await writeJson(getGearPath(spec, encounterId), buildGearSlice(bench));
 
   await syncEncountersIndex(spec);
 }
@@ -222,7 +249,7 @@ export async function pruneStaleEncounters(protectedIds: Set<number>): Promise<{
       if (!Number.isFinite(encounterId) || protectedIds.has(encounterId)) continue;
       removed.add(encounterId);
       touchedSpecs.add(spec);
-      for (const stalePath of [getEncounterPath(spec, encounterId), getSamplesPath(spec, encounterId), getPositionsPath(spec, encounterId), getBurstPath(spec, encounterId)]) {
+      for (const stalePath of [getEncounterPath(spec, encounterId), getSamplesPath(spec, encounterId), getPositionsPath(spec, encounterId), getBurstPath(spec, encounterId), getRotationPath(spec, encounterId), getDefensivePath(spec, encounterId), getGearPath(spec, encounterId)]) {
         try {
           fs.rmSync(stalePath, { force: true });
         } catch (err) {

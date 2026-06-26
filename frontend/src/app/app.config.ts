@@ -17,6 +17,18 @@ import { provideDataSource } from './core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from './pages/post-raid/burst-windows/burst-data-source';
 import { BurstDataFileService } from './pages/post-raid/burst-windows/burst-data-file.service';
 import { BurstTransformService } from './pages/post-raid/burst-windows/burst-transform.service';
+import { ROTATION_DATA_SOURCE } from './pages/post-raid/rotation/rotation-data-source';
+import { RotationDataFileService } from './pages/post-raid/rotation/rotation-data-file.service';
+import { RotationTransformService } from './pages/post-raid/rotation/rotation-transform.service';
+import { DEFENSIVE_DATA_SOURCE } from './pages/post-raid/defensive/defensive-data-source';
+import { DefensiveDataFileService } from './pages/post-raid/defensive/defensive-data-file.service';
+import { DefensiveTransformService } from './pages/post-raid/defensive/defensive-transform.service';
+import { GEAR_DATA_SOURCE } from './pages/post-raid/gear/gear-data-source';
+import { GearDataFileService } from './pages/post-raid/gear/gear-data-file.service';
+import { GearTransformService } from './pages/post-raid/gear/gear-transform.service';
+import { MAP_DATA_SOURCE } from './pages/post-raid/map/map-data-source';
+import { MapDataFileService } from './pages/post-raid/map/map-data-file.service';
+import { MapTransformService } from './pages/post-raid/map/map-transform.service';
 
 // Single source of truth for the WCL GraphQL endpoint (also referenced by WclApiService).
 // The browser authenticates with the client-credentials grant, so it targets the
@@ -54,5 +66,9 @@ export const appConfig: ApplicationConfig = {
     }),
     // Vertical-slice data sources: file reader in prod, live transform under the dev flag.
     provideDataSource(BURST_DATA_SOURCE, BurstDataFileService, BurstTransformService),
+    provideDataSource(ROTATION_DATA_SOURCE, RotationDataFileService, RotationTransformService),
+    provideDataSource(DEFENSIVE_DATA_SOURCE, DefensiveDataFileService, DefensiveTransformService),
+    provideDataSource(GEAR_DATA_SOURCE, GearDataFileService, GearTransformService),
+    provideDataSource(MAP_DATA_SOURCE, MapDataFileService, MapTransformService),
   ],
 };
