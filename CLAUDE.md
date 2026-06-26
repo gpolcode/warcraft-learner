@@ -145,7 +145,7 @@ warcraft-learner/
 |---|---|
 | `npm start` | Angular dev server on http://localhost:4200 |
 | `npm run build` | Production build to `../static/angular/` |
-| `npm run ingest` | Run the ingestion orchestrator (`scripts/ingest/orchestrator.ts`), which drives the Angular transform services headlessly (interactive, or `--spec Name --all`); needs `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` |
+| `npm run ingest` | Run the ingestion orchestrator (`scripts/ingest/orchestrator.ts`), which drives the Angular transform services headlessly (all rulebook specs by default, or `--spec Name` for one); needs `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` |
 | `npm run scrape` | Re-scrape all existing guides (default); `--spec Name --url URL` to add and scrape one |
 | `npm run rulebook` | Manage rulebooks (build AI prompt, save AI JSON output) |
 

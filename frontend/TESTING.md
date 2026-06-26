@@ -39,7 +39,7 @@ There is no central analysis module. Each **vertical slice**
 thin imperative shells that fetch and call those pure functions. This is the same
 functional-core / imperative-shell split as before, now per use case and
 self-contained (each slice reimplements what it needs rather than importing shared
-analysis - duplication is accepted).
+analysis; ingestion runs these same slices, so there is no second copy to keep in sync).
 
 So every slice has two kinds of spec, colocated next to the code:
 
@@ -48,8 +48,10 @@ So every slice has two kinds of spec, colocated next to the code:
 | `*-transform.service.spec.ts` | the slice's bench math (clustering / aggregation) as pure fns, **plus** an end-to-end pass through the `*TransformService` with a fake `WclApiService` |
 | `*.service.spec.ts` | the `*FeatureService`'s pure view-model fns (table-driven), **plus** an end-to-end pass with a fake `*_DATA_SOURCE` (and a fake `WclApiService` where the slice fetches the player log) |
 
-The ingestion reshape (`scripts/ingest/analysis/*-slice.ts`) and the broader ETL
-keep their own colocated `*.spec.ts` under `scripts/ingest/**`.
+Ingestion runs these very `*TransformService`s headlessly (it has no separate analysis
+copy), so the only specs under `scripts/ingest/**` cover the discovery helpers it still
+owns: `wcl-fetchers.spec.ts`, `wcl-mappers.spec.ts`, `code-hash.spec.ts`, and
+`signature.spec.ts`.
 
 A pure function gets a focused table-driven test; the service end-to-end test
 asserts the assembled view-model from canned inputs - no network, no `TestBed`
@@ -85,8 +87,8 @@ const bk = bench({ perCd: { 'Shadow Blades': { avg_first_cast_s: 3, stddev_first
 const rb = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 }] });
 ```
 
-The ingestion suite has its own toolkit under `scripts/ingest/testing/`
-(`events.ts`, `samples.ts`, `clock.ts`, `spell-ids.ts`).
+The remaining ingestion specs (discovery helpers) use plain inline fakes and fixtures -
+there is no separate ingest builder toolkit.
 
 ## Conventions: tests as documentation
 
