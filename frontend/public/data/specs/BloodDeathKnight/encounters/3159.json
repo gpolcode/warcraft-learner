@@ -1,0 +1,1205 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 8,
+  "avg_duration_s": 471.4,
+  "downtime_threshold_ms": 1089,
+  "top_avg_efficiency": 81.4,
+  "top_efficiency_stddev": 18.9,
+  "per_cd_benchmarks": {
+    "Dancing Rune Weapon": {
+      "sample_count": 8,
+      "avg_first_cast_s": 15.2,
+      "stddev_first_cast_s": 14.9,
+      "avg_gap_s": 96.9,
+      "stddev_gap_s": 12.8,
+      "hold_targets": {},
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.682,
+        "stddev": 0.066,
+        "min": 0.531,
+        "max": 0.729
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Reaper's Mark": {
+      "sample_count": 8,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Consumption": {
+      "sample_count": 8,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 28.8,
+      "stddev_s": 1.5,
+      "count": 4,
+      "total_samples": 8,
+      "dmg_avg": 5056100,
+      "dmg_stddev": 777198,
+      "dmg_min": 4534037,
+      "dmg_max": 6199998,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2686735,
+          "min_damage": 2366298,
+          "max_damage": 3307055,
+          "count": 4,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 587130,
+          "min_damage": 395643,
+          "max_damage": 834746,
+          "count": 4,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 428476,
+          "min_damage": 280739,
+          "max_damage": 609685,
+          "count": 4,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 407954,
+          "min_damage": 225042,
+          "max_damage": 672536,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 262741,
+          "min_damage": 202068,
+          "max_damage": 409115,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 244278,
+          "min_damage": 190639,
+          "max_damage": 325444,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 119.5,
+      "stddev_s": 1.9,
+      "count": 6,
+      "total_samples": 8,
+      "dmg_avg": 5547204,
+      "dmg_stddev": 860863,
+      "dmg_min": 4657409,
+      "dmg_max": 6658497,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2329740,
+          "min_damage": 1473467,
+          "max_damage": 2958893,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 820088,
+          "min_damage": 287369,
+          "max_damage": 1695117,
+          "count": 6,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 779811,
+          "min_damage": 263897,
+          "max_damage": 1767455,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 420184,
+          "min_damage": 296866,
+          "max_damage": 582767,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 368877,
+          "min_damage": 266733,
+          "max_damage": 523452,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 339223,
+          "min_damage": 275406,
+          "max_damage": 499359,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 209.6,
+      "stddev_s": 2.6,
+      "count": 6,
+      "total_samples": 8,
+      "dmg_avg": 4556430,
+      "dmg_stddev": 915587,
+      "dmg_min": 3464172,
+      "dmg_max": 5710655,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2534833,
+          "min_damage": 1547957,
+          "max_damage": 4029201,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 584063,
+          "min_damage": 430635,
+          "max_damage": 864525,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 367880,
+          "min_damage": 198641,
+          "max_damage": 527728,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 267538,
+          "min_damage": 201189,
+          "max_damage": 367975,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 213365,
+          "min_damage": 192042,
+          "max_damage": 255929,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 194137,
+          "min_damage": 165298,
+          "max_damage": 245941,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 302.8,
+      "stddev_s": 2.1,
+      "count": 6,
+      "total_samples": 8,
+      "dmg_avg": 5223612,
+      "dmg_stddev": 863905,
+      "dmg_min": 4237806,
+      "dmg_max": 6673290,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2687488,
+          "min_damage": 2393094,
+          "max_damage": 3192514,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 558590,
+          "min_damage": 242571,
+          "max_damage": 867356,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 448871,
+          "min_damage": 197285,
+          "max_damage": 700673,
+          "count": 6,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 396667,
+          "min_damage": 197559,
+          "max_damage": 809705,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 349082,
+          "min_damage": 186576,
+          "max_damage": 482471,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 303784,
+          "min_damage": 253508,
+          "max_damage": 375059,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 392.7,
+      "stddev_s": 2.4,
+      "count": 7,
+      "total_samples": 8,
+      "dmg_avg": 7216568,
+      "dmg_stddev": 1863315,
+      "dmg_min": 4070570,
+      "dmg_max": 9538842,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 3658864,
+          "min_damage": 1725838,
+          "max_damage": 4512158,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 1170187,
+          "min_damage": 286795,
+          "max_damage": 2044199,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 764699,
+          "min_damage": 299544,
+          "max_damage": 1565469,
+          "count": 7,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 612969,
+          "min_damage": 508745,
+          "max_damage": 701014,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 430066,
+          "min_damage": 322474,
+          "max_damage": 596443,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 297734,
+          "min_damage": 144665,
+          "max_damage": 474447,
+          "count": 7,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 482.9,
+      "stddev_s": 3.7,
+      "count": 5,
+      "total_samples": 8,
+      "dmg_avg": 3235872,
+      "dmg_stddev": 761008,
+      "dmg_min": 2044613,
+      "dmg_max": 3947956,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 1835167,
+          "min_damage": 917121,
+          "max_damage": 2391975,
+          "count": 5,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 378793,
+          "min_damage": 173560,
+          "max_damage": 575821,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 288783,
+          "min_damage": 234456,
+          "max_damage": 358796,
+          "count": 5,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 178357,
+          "min_damage": 140602,
+          "max_damage": 208917,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 164646,
+          "min_damage": 109866,
+          "max_damage": 226439,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 434144,
+          "avg_damage": 124273,
+          "min_damage": 59266,
+          "max_damage": 171995,
+          "count": 4,
+          "avg_casts": 10
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    }
+  ],
+  "gear": {
+    "sample_count": 8,
+    "talent_builds": [
+      {
+        "key": "v2:102007,102008,102242,102243,109736,109737,109738,110030,110353,110353,110353,76039,76041,76043,76045,76046,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76075,76076,76078,76079,76081,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76133,76135,76137,76138,76141,76142,76144,76145,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 2,
+        "pct": 25,
+        "report_code": "FpD3qgaQGJ7B4jmP",
+        "fight_id": 61,
+        "player_name": "Khaharzadeh"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110029,110030,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76084,76085,76087,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 2,
+        "pct": 25,
+        "report_code": "hq4k2B9fgFJX3nMG",
+        "fight_id": 11,
+        "player_name": "Loafer"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76083,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 13,
+        "report_code": "28TvkLDpZGj9g6QR",
+        "fight_id": 2,
+        "player_name": "如故"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110029,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76080,76081,76084,76085,76087,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 13,
+        "report_code": "6RCfgwkF1KmXGbLP",
+        "fight_id": 24,
+        "player_name": "Имбаблэд"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110029,110030,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76084,76085,76087,76124,76125,76126,76127,76128,76129,76130,76131,76133,76135,76137,76138,76141,76142,76144,76146,76147,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 13,
+        "report_code": "PCJFAKTzk4ZNarY7",
+        "fight_id": 4,
+        "player_name": "Podk"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 50
+        },
+        {
+          "id": 249344,
+          "name": "Light Company Guidon",
+          "count": 3,
+          "pct": 38
+        },
+        {
+          "id": 249806,
+          "name": "Radiant Plume",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "13": [
+        {
+          "id": 249344,
+          "name": "Light Company Guidon",
+          "count": 4,
+          "pct": 50
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 50
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 4,
+          "pct": 50
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 3,
+          "pct": 38
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 4,
+          "pct": 50
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 3,
+          "pct": 38
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 7,
+          "pct": 88
+        },
+        {
+          "id": 7957,
+          "name": "Enchant Chest - Mark of Nalorakk",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 7,
+          "pct": 88
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 4,
+          "pct": 50
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 3,
+          "pct": 38
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 5,
+          "pct": 63
+        },
+        {
+          "id": 7969,
+          "name": "Enchant Ring - Zul'jin's Mastery",
+          "count": 1,
+          "pct": 13
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 6,
+          "pct": 75
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 1,
+          "pct": 13
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 13
+        }
+      ],
+      "15": [
+        {
+          "id": 6241,
+          "name": "Rune of Sanguination",
+          "count": 8,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "avg_uses": 6.4,
+      "min_uses": 1,
+      "max_uses": 14,
+      "sample_count": 7
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 3
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "avg_uses": 3,
+      "min_uses": 2,
+      "max_uses": 4,
+      "sample_count": 3
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2,
+      "sample_count": 1
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 7
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Anti-Magic Shell": {
+      "sample_count": 3,
+      "avg_first_cast_s": 139.2,
+      "stddev_first_cast_s": 121.3,
+      "avg_gap_s": 150.6,
+      "stddev_gap_s": 82.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 302.6,
+          "stddev_s": 119.2,
+          "count": 3,
+          "total_samples": 3
+        },
+        "2": {
+          "target_s": 398.1,
+          "stddev_s": 61.4,
+          "count": 2,
+          "total_samples": 3
+        }
+      },
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.399,
+        "stddev": 0.144,
+        "min": 0.233,
+        "max": 0.485
+      },
+      "majority_hold": true
+    },
+    "Vampiric Blood": {
+      "sample_count": 7,
+      "avg_first_cast_s": 46.4,
+      "stddev_first_cast_s": 35.9,
+      "avg_gap_s": 66.6,
+      "stddev_gap_s": 50.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 192.9,
+          "stddev_s": 130.8,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 6.4,
+      "avg_uses_per_min": 0.78,
+      "uses_per_min": {
+        "avg": 0.782,
+        "stddev": 0.543,
+        "min": 0.133,
+        "max": 1.679
+      },
+      "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 3,
+      "avg_first_cast_s": 312.3,
+      "stddev_first_cast_s": 202.8,
+      "avg_gap_s": 184.8,
+      "stddev_gap_s": 53,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.215,
+        "stddev": 0.09,
+        "min": 0.115,
+        "max": 0.29
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 7,
+      "avg_first_cast_s": 172.7,
+      "stddev_first_cast_s": 107.3,
+      "avg_gap_s": 275.5,
+      "stddev_gap_s": 8.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 406.1,
+          "stddev_s": 14.9,
+          "count": 6,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.232,
+        "stddev": 0.055,
+        "min": 0.116,
+        "max": 0.29
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 1,
+      "avg_first_cast_s": 246.6,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 191,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.24,
+        "stddev": 0,
+        "min": 0.24,
+        "max": 0.24
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 59.9,
+      "stddev_s": 11.4,
+      "count": 5,
+      "total_samples": 8,
+      "dmg_avg": 1156422,
+      "dmg_stddev": 354680,
+      "dmg_min": 695420,
+      "dmg_max": 1681352,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 855736,
+          "min_damage": 604583,
+          "max_damage": 1172447,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 101787,
+          "min_damage": 78161,
+          "max_damage": 126968,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 98.8,
+      "stddev_s": 7.3,
+      "count": 5,
+      "total_samples": 8,
+      "dmg_avg": 1100983,
+      "dmg_stddev": 459223,
+      "dmg_min": 742506,
+      "dmg_max": 1870354,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 721236,
+          "min_damage": 697844,
+          "max_damage": 743659,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 139735,
+          "min_damage": 127058,
+          "max_damage": 152221,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 196.3,
+      "stddev_s": 7.7,
+      "count": 4,
+      "total_samples": 8,
+      "dmg_avg": 1390009,
+      "dmg_stddev": 858461,
+      "dmg_min": 259573,
+      "dmg_max": 2278361,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 920681,
+          "min_damage": 694191,
+          "max_damage": 1069541,
+          "count": 3
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 774673,
+          "min_damage": 554020,
+          "max_damage": 995325,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 238934,
+          "min_damage": 197998,
+          "max_damage": 284671,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 237.7,
+      "stddev_s": 10.4,
+      "count": 4,
+      "total_samples": 8,
+      "dmg_avg": 1770571,
+      "dmg_stddev": 753253,
+      "dmg_min": 1021765,
+      "dmg_max": 2697773,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 1117710,
+          "min_damage": 540170,
+          "max_damage": 1695249,
+          "count": 2
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 849817,
+          "min_damage": 693937,
+          "max_damage": 1225598,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 285918,
+          "min_damage": 275854,
+          "max_damage": 308587,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 301.1,
+      "stddev_s": 5.7,
+      "count": 3,
+      "total_samples": 8,
+      "dmg_avg": 1305317,
+      "dmg_stddev": 444881,
+      "dmg_min": 836166,
+      "dmg_max": 1721116,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 758537,
+          "min_damage": 726544,
+          "max_damage": 790529,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 385946,
+          "min_damage": 341626,
+          "max_damage": 414652,
+          "count": 3
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 269840,
+          "min_damage": 225621,
+          "max_damage": 314059,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 331.9,
+      "stddev_s": 7.8,
+      "count": 4,
+      "total_samples": 8,
+      "dmg_avg": 1703315,
+      "dmg_stddev": 578484,
+      "dmg_min": 1240960,
+      "dmg_max": 2546756,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 896278,
+          "min_damage": 599228,
+          "max_damage": 1150361,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 767596,
+          "min_damage": 496424,
+          "max_damage": 1038768,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 332623,
+          "min_damage": 234651,
+          "max_damage": 387431,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 393.3,
+      "stddev_s": 3.2,
+      "count": 3,
+      "total_samples": 8,
+      "dmg_avg": 1329851,
+      "dmg_stddev": 217037,
+      "dmg_min": 1089737,
+      "dmg_max": 1512070,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 649462,
+          "min_damage": 612883,
+          "max_damage": 668317,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 469467,
+          "min_damage": 425428,
+          "max_damage": 512335,
+          "count": 3
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 313275,
+          "min_damage": 294001,
+          "max_damage": 332548,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 460.8,
+      "stddev_s": 4.7,
+      "count": 3,
+      "total_samples": 8,
+      "dmg_avg": 1068449,
+      "dmg_stddev": 571688,
+      "dmg_min": 454896,
+      "dmg_max": 1586155,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 845642,
+          "min_damage": 570191,
+          "max_damage": 1121092,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 483454,
+          "min_damage": 454896,
+          "max_damage": 530403,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 490.3,
+      "stddev_s": 10.3,
+      "count": 4,
+      "total_samples": 8,
+      "dmg_avg": 1627487,
+      "dmg_stddev": 774006,
+      "dmg_min": 632968,
+      "dmg_max": 2453655,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 821048,
+          "min_damage": 309265,
+          "max_damage": 1332831,
+          "count": 2
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 637286,
+          "min_damage": 584815,
+          "max_damage": 689113,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 565344,
+          "min_damage": 509056,
+          "max_damage": 630381,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    }
+  ]
+}
