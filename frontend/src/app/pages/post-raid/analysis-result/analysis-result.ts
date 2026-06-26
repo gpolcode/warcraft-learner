@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, OnChanges } from '@angular/core';
 import { AnalysisResult as IAnalysisResult } from '../../../core/models/analysis.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { IconCacheService } from '../../../core/services/icon-cache';
@@ -11,6 +11,7 @@ import {
   rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';
 import { BurstWindowsComponent } from '../burst-windows/burst-windows';
+import { BurstMapAnchor } from '../burst-windows/burst.vm';
 import { DefensivesSectionComponent } from '../defensives-section/defensives-section';
 import { GearSectionComponent } from '../gear-section/gear-section';
 
@@ -28,6 +29,13 @@ export class AnalysisResultComponent implements OnChanges {
 
   readonly data = input.required<IAnalysisResult>();
   readonly topGear = input<EncounterGearStats | null>(null);
+  /** Encounter id of the selected fight (not carried on AnalysisResult). */
+  readonly encounterId = input<number>(0);
+  /** True once the page has loaded top-parse positions, so cards can offer the map. */
+  readonly mapReady = input<boolean>(false);
+
+  /** Bubbles a burst window's "open map" request up to the page (which owns the panel). */
+  readonly burstOpenMap = output<BurstMapAnchor>();
 
   private readonly bucketed = computed(() =>
     bucketFindings(this.data().findings, {

@@ -13,6 +13,10 @@ import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client';
 import { routes } from './app.routes';
+import { provideDataSource } from './core/data-source/provide-data-source';
+import { BURST_DATA_SOURCE } from './pages/post-raid/burst-windows/burst-data-source';
+import { BurstDataFileService } from './pages/post-raid/burst-windows/burst-data-file.service';
+import { BurstTransformService } from './pages/post-raid/burst-windows/burst-transform.service';
 
 // Single source of truth for the WCL GraphQL endpoint (also referenced by WclApiService).
 // The browser authenticates with the client-credentials grant, so it targets the
@@ -48,5 +52,7 @@ export const appConfig: ApplicationConfig = {
       iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
       iconRegistry.addSvgIconLiteral('github', sanitizer.bypassSecurityTrustHtml(GITHUB_SVG));
     }),
+    // Vertical-slice data sources: file reader in prod, live transform under the dev flag.
+    provideDataSource(BURST_DATA_SOURCE, BurstDataFileService, BurstTransformService),
   ],
 };

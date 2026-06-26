@@ -25,6 +25,7 @@ import { EncounterGearStats } from '../../core/models/encounter.models';
 import { AnalysisResult } from '../../core/models/analysis.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { AnalysisResultComponent } from './analysis-result/analysis-result';
+import { BurstMapAnchor } from './burst-windows/burst.vm';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { logWarn } from '../../core/log';
@@ -81,6 +82,18 @@ export class PostRaidComponent implements OnInit {
 
   protected readonly visiblePlayers = computed(() =>
     visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
+
+  /** Encounter id of the selected fight, passed to feature cards that need it (burst). */
+  protected readonly selectedEncounterId = computed(() =>
+    this.fights().find(f => f.id === this.selectedFightId())?.encounterID ?? 0);
+
+  /** Map is available once top-parse positions have loaded for this fight. */
+  protected readonly mapReady = computed(() => !!this.panel.positions());
+
+  /** A feature card asked to open the map; the page owns the positioning panel. */
+  protected onBurstOpenMap(anchor: BurstMapAnchor): void {
+    this.panel.openAt(anchor.timeS, { kind: 'boss' }, anchor.label, anchor.spellIds);
+  }
 
   // Declarative polling pipeline. Must live in a field initializer so that
   // toObservable() and takeUntilDestroyed() run inside the injection context.

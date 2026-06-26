@@ -54,6 +54,12 @@
     }
 
     @if (result() && !loadingAnalysis()) {
-      <wl-analysis-result [data]="result()!" [topGear]="topGear()"></wl-analysis-result>
+      <wl-analysis-result
+        [data]="result()!"
+        [topGear]="topGear()"
+        [encounterId]="selectedEncounterId()"
+        [mapReady]="mapReady()"
+        (burstOpenMap)="onBurstOpenMap($event)">
+      </wl-analysis-result>
     }
 </div>

@@ -15,13 +15,16 @@
   [onPlan]="offensiveOnPlan()">
 </wl-finding-table>
 
-<!-- Burst windows -->
+<!-- Burst windows (self-contained slice: reads its own bench via BURST_DATA_SOURCE) -->
 @if (data().burst_windows?.length) {
   <wl-burst-windows
-    [topWindows]="data().burst_windows!"
+    [spec]="data().spec"
+    [encounterId]="encounterId()"
     [playerWindows]="data().player_burst_windows || []"
     [fightDuration]="data().player_fight_duration_s || 0"
-    [cdSpellIds]="data().cd_spell_ids || {}">
+    [abilityIcons]="data().ability_icons || {}"
+    [showMap]="mapReady()"
+    (openMap)="burstOpenMap.emit($event)">
   </wl-burst-windows>
 }
 

@@ -15,6 +15,7 @@ import { fileURLToPath } from 'url';
 import { readJson, writeJson, getKnownSpecs as listSpecs } from '../lib.ts';
 import { logWarn } from '../../src/app/core/log.ts';
 import { buildEncounterBench } from './analysis/bench.ts';
+import { buildBurstSlice } from './analysis/burst-slice.ts';
 import { POSITIONS_INTERVAL_S } from './analysis/positions.ts';
 import { getEnchantNames } from './wcl-fetchers.ts';
 import type { WclQueryClient } from './wcl-client.ts';
@@ -75,6 +76,11 @@ function getEncounterPath(spec: string, encounterId: number): string {
 
 function getPositionsPath(spec: string, encounterId: number): string {
   return path.join(DATA_DIR, spec, 'positions', `${encounterId}.json`);
+}
+
+// Per-use-case tailored slice file (vertical-slice architecture). Burst is the first.
+function getBurstPath(spec: string, encounterId: number): string {
+  return path.join(DATA_DIR, spec, 'burst', `${encounterId}.json`);
 }
 
 // ── Rulebook reads ────────────────────────────────────────────────────────────
@@ -141,6 +147,12 @@ export async function syncEncounterFile(spec: string, encounterId: number): Prom
   const bench = buildEncounterBench(samples, specDefensives, spec, encounterId);
 
   await writeJson(getEncounterPath(spec, encounterId), bench);
+
+  // Tailored burst slice file (data/specs/{spec}/burst/{enc}.json): a pure reshape of
+  // the bench + rulebook the burst card reads via its DataSource.
+  const specCooldowns = await getSpecCooldowns(spec) ?? [];
+  await writeJson(getBurstPath(spec, encounterId), buildBurstSlice(bench, specCooldowns, specDefensives));
+
   await syncEncountersIndex(spec);
 }
 
@@ -210,7 +222,7 @@ export async function pruneStaleEncounters(protectedIds: Set<number>): Promise<{
       if (!Number.isFinite(encounterId) || protectedIds.has(encounterId)) continue;
       removed.add(encounterId);
       touchedSpecs.add(spec);
-      for (const stalePath of [getEncounterPath(spec, encounterId), getSamplesPath(spec, encounterId), getPositionsPath(spec, encounterId)]) {
+      for (const stalePath of [getEncounterPath(spec, encounterId), getSamplesPath(spec, encounterId), getPositionsPath(spec, encounterId), getBurstPath(spec, encounterId)]) {
         try {
           fs.rmSync(stalePath, { force: true });
         } catch (err) {
