@@ -151,6 +151,34 @@ warcraft-learner/
 
 The CLI scripts are TypeScript run via `tsx` (e.g. `tsx --tsconfig tsconfig.scripts.json scripts/ingest-parses.ts`), not `.mjs`/`node`. `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` come from the [Warcraft Logs API clients](https://www.warcraftlogs.com/api/clients/) page and are only used server-side (GHA secrets), never in the browser. No Anthropic API key is needed - rulebook generation is a copy-prompt / paste-back flow that works with any LLM.
 
+## Architecture: layers & rules (vertical-slice target)
+
+The app is being migrated to **per-use-case vertical slices** (map / burst / rotation / defensive / gear). Each slice is independent and follows the same shape; the **Burst** slice (`pages/post-raid/burst-windows/`) is the reference implementation. New work must follow these layer rules; legacy code that predates the migration is converted slice by slice. The companion guide `frontend/docs/testable-transformations.md` shows how to write the per-field calculations as small, pure, individually testable functions.
+
+The data path is two symmetric pipelines that meet at the static data files:
+
+```
+INGEST (Node)                                        RUNTIME (browser)
+WclApi (read, pass-through)                          WclApiService (read, pass-through, cached)
+   -> *TransformService (the only transform)            DataFileApiService (read, pass-through)
+   -> DataFileApi (write)  ->  data/specs/**  ->         -> *DataSource (DI token, dev-flag swap)
+                                                         -> *FeatureService (runtime shell)
+                                                         -> *Component -> page shell -> leaves
+```
+
+**Layer rules (hard):**
+
+- **Pass-through API services - exactly two at runtime.** `WclApiService` (raw WCL events/report) and `DataFileApiService` (raw static-file reads). They do **no** remapping or aggregation: bytes in, typed bytes out. (Today `WclApiService` still calls some mappers; those move out as each slice converts.)
+- **`*.vm.ts` pure core - the only place math lives.** Every calculated field is a named, pure, **total** function (returns `0`/`null`/`[]` for empty input, never throws; optional findings return `T | null`). No Angular, no `inject()`, no IO. The SAME functions run in ingest (Node) and at runtime (browser), so they must stay framework- and Node-agnostic. Tested by a co-located `*.vm.spec.ts` using the `Events`/`parseClock`/`sample` builders in `scripts/ingest/testing/`. Cross-slice derivations live under `shared/` (e.g. `shared/gear/gear-comparison.ts`). This extends the existing `pre-fight.vm.ts` / `post-raid.vm.ts` convention.
+- **`*TransformService` - one per use case, ingest-and-dev.** Wraps the pure core to derive a slice's prepared data from the cached `WclApiService`. Used by ingestion to write that slice's **own tailored file** (denormalized, ready to render, with spell `icon`+`name` baked in), and selectable at runtime under the dev flag. No single overloaded transformer.
+- **`*DataSource` interface + `*_DATA_SOURCE` InjectionToken - the swap point.** Two impls per slice: `*DataFileService` (reads the tailored file - production) and `*TransformService` (computes live - no-ingestion dev). The provider helper `core/data-source/provide-data-source.ts` binds one impl per `environment.useLiveTransform`. This is the ONLY place the data source differs.
+- **`*FeatureService` - the runtime shell, one per feature component.** Injects its `*DataSource` token + the cached `WclApiService` (the player's chosen log), calls the pure `*.vm.ts` functions, and exposes signals. It contains **no arithmetic** and no other domain service.
+- **Feature components - inject exactly one service: their `*FeatureService`.** No reaching sideways into `PositioningPanelService`, `IconCacheService`, etc. Spell/item art is the ingest-baked `icon`+`name` passed as inputs to `wl-game-icon`. Cross-feature actions (e.g. "open map") are an `output()` the page wires.
+- **Page shells - zero domain services.** They read `report`/`fight`/`player` from the route and compose feature components, passing selection as inputs. Framework tokens (`ActivatedRoute`, `Router`) do not count.
+- **Presentational leaves - inputs/outputs only.** `game-icon`, `compact-ability-row`, `window-comparison`, `range-chart`, `callout`, `loading-spinner`. No services beyond framework tokens.
+
+**Migration status:** during conversion both shapes coexist. A slice's tailored file (e.g. `data/specs/{spec}/burst/{enc}.json`) is additive - the legacy `encounters/{enc}.json` bench file stays until every consumer has moved. `IconCacheService`, `EncounterService` (-> `DataFileApiService`), `AnalysisService`/`AnalysisEngineService`/`MapContextService`, and the global `PositioningPanelService` are removed only after the last slice that uses them is converted.
+
 ## Key flows
 
 ### Analysis fetch/compute boundary (intentional design)
