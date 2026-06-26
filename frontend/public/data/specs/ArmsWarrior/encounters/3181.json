@@ -1,0 +1,1369 @@
+{
+  "spec": "ArmsWarrior",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "avg_duration_s": 509.1,
+  "downtime_threshold_ms": 1254,
+  "top_avg_efficiency": 74.3,
+  "top_efficiency_stddev": 3.3,
+  "per_cd_benchmarks": {
+    "Colossus Smash": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5,
+      "stddev_first_cast_s": 5.6,
+      "avg_gap_s": 34.9,
+      "stddev_gap_s": 13,
+      "hold_targets": {},
+      "avg_uses": 15.1,
+      "avg_uses_per_min": 1.78,
+      "uses_per_min": {
+        "avg": 1.778,
+        "stddev": 0.097,
+        "min": 1.61,
+        "max": 1.914
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Warbreaker": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Avatar": {
+      "sample_count": 10,
+      "avg_first_cast_s": 15.1,
+      "stddev_first_cast_s": 9.4,
+      "avg_gap_s": 65.7,
+      "stddev_gap_s": 14.7,
+      "hold_targets": {},
+      "avg_uses": 8.2,
+      "avg_uses_per_min": 0.97,
+      "uses_per_min": {
+        "avg": 0.967,
+        "stddev": 0.035,
+        "min": 0.904,
+        "max": 1.014
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Bladestorm": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Ravager": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Demolish": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Champion's Spear": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Sweeping Strikes": {
+      "sample_count": 10,
+      "avg_first_cast_s": 103.7,
+      "stddev_first_cast_s": 127.3,
+      "avg_gap_s": 64.1,
+      "stddev_gap_s": 26.4,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.438,
+        "stddev": 0.44,
+        "min": 0.11,
+        "max": 0.97
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 2.2,
+      "stddev_s": 0.6,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 7357350,
+      "dmg_stddev": 4107819,
+      "dmg_min": 3979521,
+      "dmg_max": 12774701,
+      "ability_breakdown": [
+        {
+          "spell_id": 12294,
+          "avg_damage": 1476904,
+          "min_damage": 832092,
+          "max_damage": 2300432,
+          "count": 5,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 260798,
+          "avg_damage": 1348762,
+          "min_damage": 359517,
+          "max_damage": 3458978,
+          "count": 5,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 855819,
+          "min_damage": 354304,
+          "max_damage": 1619266,
+          "count": 4,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 698486,
+          "min_damage": 394212,
+          "max_damage": 998405,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 554823,
+          "min_damage": 256237,
+          "max_damage": 963967,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 25.1
+    },
+    {
+      "time_s": 23.1,
+      "stddev_s": 4.9,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 11106446,
+      "dmg_stddev": 4072046,
+      "dmg_min": 4275828,
+      "dmg_max": 14861590,
+      "ability_breakdown": [
+        {
+          "spell_id": 260798,
+          "avg_damage": 3886737,
+          "min_damage": 1302871,
+          "max_damage": 5624248,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 12294,
+          "avg_damage": 1911271,
+          "min_damage": 925621,
+          "max_damage": 3176588,
+          "count": 7,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 1131450,
+          "min_damage": 227395,
+          "max_damage": 1973149,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 789824,
+          "min_damage": 621358,
+          "max_damage": 1011228,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 654041,
+          "min_damage": 325541,
+          "max_damage": 932201,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 648374,
+          "min_damage": 455580,
+          "max_damage": 887787,
+          "count": 4,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Colossus Smash",
+        "Avatar"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17.5
+    },
+    {
+      "time_s": 72.1,
+      "stddev_s": 4.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 9684660,
+      "dmg_stddev": 3114283,
+      "dmg_min": 6704455,
+      "dmg_max": 15434695,
+      "ability_breakdown": [
+        {
+          "spell_id": 260798,
+          "avg_damage": 2602893,
+          "min_damage": 839986,
+          "max_damage": 3711597,
+          "count": 9,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 12294,
+          "avg_damage": 2358079,
+          "min_damage": 1070289,
+          "max_damage": 5039452,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 860036,
+          "min_damage": 428272,
+          "max_damage": 1938823,
+          "count": 5,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 797056,
+          "min_damage": 329042,
+          "max_damage": 1269942,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 689276,
+          "min_damage": 358899,
+          "max_damage": 1431860,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1269383,
+          "avg_damage": 688789,
+          "min_damage": 355601,
+          "max_damage": 991833,
+          "count": 5,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Colossus Smash",
+        "Avatar"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 16.3
+    },
+    {
+      "time_s": 101.5,
+      "stddev_s": 4.8,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8654915,
+      "dmg_stddev": 4592496,
+      "dmg_min": 2446945,
+      "dmg_max": 14490978,
+      "ability_breakdown": [
+        {
+          "spell_id": 260798,
+          "avg_damage": 2200015,
+          "min_damage": 343438,
+          "max_damage": 4355155,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 12294,
+          "avg_damage": 1876719,
+          "min_damage": 481196,
+          "max_damage": 3158138,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 891688,
+          "min_damage": 268382,
+          "max_damage": 1972209,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 883420,
+          "min_damage": 330620,
+          "max_damage": 1296283,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 723490,
+          "min_damage": 321560,
+          "max_damage": 1025568,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 716725,
+          "min_damage": 298636,
+          "max_damage": 1123771,
+          "count": 6,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Colossus Smash",
+        "Avatar"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.4
+    },
+    {
+      "time_s": 174,
+      "stddev_s": 3.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4880375,
+      "dmg_stddev": 844453,
+      "dmg_min": 4185396,
+      "dmg_max": 6972332,
+      "ability_breakdown": [
+        {
+          "spell_id": 12294,
+          "avg_damage": 1085385,
+          "min_damage": 749249,
+          "max_damage": 1564398,
+          "count": 10,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 710085,
+          "min_damage": 419313,
+          "max_damage": 1134011,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 260798,
+          "avg_damage": 519797,
+          "min_damage": 252621,
+          "max_damage": 812417,
+          "count": 9,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 461630,
+          "min_damage": 322992,
+          "max_damage": 648943,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 441871,
+          "min_damage": 237765,
+          "max_damage": 799979,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 436268,
+          "min_damage": 270817,
+          "max_damage": 641146,
+          "count": 6,
+          "avg_casts": 5
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 21.1
+    },
+    {
+      "time_s": 230.9,
+      "stddev_s": 2.1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 3975694,
+      "dmg_stddev": 583958,
+      "dmg_min": 3023071,
+      "dmg_max": 4767546,
+      "ability_breakdown": [
+        {
+          "spell_id": 12294,
+          "avg_damage": 931923,
+          "min_damage": 699327,
+          "max_damage": 1293508,
+          "count": 10,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 908854,
+          "min_damage": 395937,
+          "max_damage": 1233070,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 386020,
+          "min_damage": 191239,
+          "max_damage": 531823,
+          "count": 9,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 260798,
+          "avg_damage": 382028,
+          "min_damage": 190713,
+          "max_damage": 623880,
+          "count": 7,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1269383,
+          "avg_damage": 345986,
+          "min_damage": 297438,
+          "max_damage": 405155,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 302287,
+          "min_damage": 194793,
+          "max_damage": 554194,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20.1
+    },
+    {
+      "time_s": 293,
+      "stddev_s": 4.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4246035,
+      "dmg_stddev": 913927,
+      "dmg_min": 3230320,
+      "dmg_max": 6526809,
+      "ability_breakdown": [
+        {
+          "spell_id": 12294,
+          "avg_damage": 1128429,
+          "min_damage": 832453,
+          "max_damage": 1687386,
+          "count": 10,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 783980,
+          "min_damage": 466342,
+          "max_damage": 1177466,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 260798,
+          "avg_damage": 613770,
+          "min_damage": 330144,
+          "max_damage": 1199746,
+          "count": 6,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 7384,
+          "avg_damage": 336036,
+          "min_damage": 192492,
+          "max_damage": 492831,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 314921,
+          "min_damage": 157232,
+          "max_damage": 462127,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 309691,
+          "min_damage": 185445,
+          "max_damage": 532169,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 22.7
+    },
+    {
+      "time_s": 364.6,
+      "stddev_s": 10.1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 3982697,
+      "dmg_stddev": 750629,
+      "dmg_min": 3039538,
+      "dmg_max": 5543660,
+      "ability_breakdown": [
+        {
+          "spell_id": 12294,
+          "avg_damage": 930577,
+          "min_damage": 740816,
+          "max_damage": 1228709,
+          "count": 10,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 260798,
+          "avg_damage": 914330,
+          "min_damage": 358321,
+          "max_damage": 1283979,
+          "count": 9,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 576833,
+          "min_damage": 369017,
+          "max_damage": 843600,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 296576,
+          "min_damage": 199031,
+          "max_damage": 435093,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 264325,
+          "min_damage": 225637,
+          "max_damage": 332670,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Colossus Smash",
+        "Avatar"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 22.8
+    },
+    {
+      "time_s": 426.4,
+      "stddev_s": 7.1,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 5595160,
+      "dmg_stddev": 792728,
+      "dmg_min": 4461838,
+      "dmg_max": 6800579,
+      "ability_breakdown": [
+        {
+          "spell_id": 260798,
+          "avg_damage": 1522868,
+          "min_damage": 933657,
+          "max_damage": 2262629,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 12294,
+          "avg_damage": 1227494,
+          "min_damage": 722435,
+          "max_damage": 1629132,
+          "count": 9,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 828625,
+          "min_damage": 758706,
+          "max_damage": 955657,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 467597,
+          "min_damage": 268943,
+          "max_damage": 677021,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1269383,
+          "avg_damage": 447724,
+          "min_damage": 328695,
+          "max_damage": 583903,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 371159,
+          "min_damage": 213111,
+          "max_damage": 493385,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20.2
+    },
+    {
+      "time_s": 480.9,
+      "stddev_s": 7.4,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 4990168,
+      "dmg_stddev": 1494242,
+      "dmg_min": 3039351,
+      "dmg_max": 7209541,
+      "ability_breakdown": [
+        {
+          "spell_id": 260798,
+          "avg_damage": 1363722,
+          "min_damage": 375726,
+          "max_damage": 2314393,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 12294,
+          "avg_damage": 1138150,
+          "min_damage": 778786,
+          "max_damage": 1944065,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 50622,
+          "avg_damage": 663589,
+          "min_damage": 480838,
+          "max_damage": 994042,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 262115,
+          "avg_damage": 421616,
+          "min_damage": 214831,
+          "max_damage": 685807,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 446005,
+          "avg_damage": 391169,
+          "min_damage": 233677,
+          "max_damage": 612988,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 445579,
+          "avg_damage": 305018,
+          "min_damage": 141365,
+          "max_damage": 550904,
+          "count": 7,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Avatar",
+        "Colossus Smash"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 21.8
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:108543,108544,108686,109391,109680,109684,109685,109686,109687,109815,109816,109817,110118,110119,110176,110407,110407,110407,90269,90270,90271,90273,90274,90276,90277,90279,90282,90285,90290,90291,90292,90322,90326,90327,90328,90331,90332,90344,90346,90347,90348,90351,90352,90353,90355,90360,90366,90368,90371,90375,90378,90381,90382,90385,90438,90439,90441,90444,90445,90447,92536,92537,92614,94784,94786,94787,94788,94795,94801,94809,94810,94813,94814,94820,95956,99853",
+        "count": 4,
+        "pct": 40,
+        "report_code": "htTmwg6qy8VRGdPa",
+        "fight_id": 97,
+        "player_name": "我听然然的"
+      },
+      {
+        "key": "v2:108543,108544,108686,108705,109391,109680,109684,109685,109686,109687,109815,109816,109817,110118,110119,110176,110407,110407,110407,90269,90270,90271,90273,90274,90276,90277,90279,90282,90285,90290,90291,90292,90322,90326,90327,90328,90331,90332,90344,90346,90347,90348,90351,90352,90353,90355,90360,90366,90368,90371,90378,90381,90382,90385,90438,90439,90441,90444,90445,90447,92536,92537,92614,94784,94786,94787,94788,94795,94801,94809,94810,94813,94814,94820,95956,99853",
+        "count": 2,
+        "pct": 20,
+        "report_code": "htTmwg6qy8VRGdPa",
+        "fight_id": 64,
+        "player_name": "从良的姬"
+      },
+      {
+        "key": "v2:108542,108543,108544,108686,108705,109391,109680,109684,109685,109686,109687,109815,109816,109817,110118,110119,110176,110407,110407,110407,90269,90270,90271,90273,90274,90276,90277,90279,90282,90285,90290,90291,90292,90322,90326,90327,90328,90331,90332,90337,90344,90346,90351,90352,90353,90355,90360,90366,90368,90371,90378,90381,90382,90385,90438,90439,90441,90444,90445,90447,92536,92537,92614,94784,94786,94787,94788,94795,94801,94809,94810,94813,94814,94820,95956,99853",
+        "count": 1,
+        "pct": 10,
+        "report_code": "g8GzmZPNbB6tD2y7",
+        "fight_id": 7,
+        "player_name": "Amouranthe"
+      },
+      {
+        "key": "v2:108543,108544,108686,108705,109391,109680,109684,109685,109686,109687,109815,109816,109817,110118,110119,110176,110407,110407,110407,90269,90270,90271,90273,90274,90276,90277,90279,90282,90285,90290,90291,90292,90322,90326,90327,90328,90331,90332,90337,90344,90346,90347,90351,90352,90353,90355,90360,90366,90368,90371,90378,90381,90382,90385,90438,90439,90441,90444,90445,90447,92536,92537,92614,94784,94786,94787,94788,94795,94801,94809,94810,94813,94814,94820,95956,99853",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Z71B3b2h9crWRqgX",
+        "fight_id": 7,
+        "player_name": "Mesmash"
+      },
+      {
+        "key": "v2:108542,108543,108544,108686,108705,109391,109680,109684,109685,109687,109815,109816,109817,110118,110119,110176,110407,110407,110407,90269,90270,90271,90273,90274,90276,90277,90279,90282,90283,90285,90290,90291,90292,90322,90326,90327,90328,90331,90332,90337,90344,90346,90351,90352,90353,90355,90360,90366,90368,90371,90378,90381,90382,90385,90438,90439,90441,90444,90445,90447,92537,92614,94784,94786,94787,94788,94795,94801,94809,94810,94813,94814,94820,95956,99853",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Am8jN14Zn2Tvh3xY",
+        "fight_id": 125,
+        "player_name": "风不止丷"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249342,
+          "name": "Heart of Ancient Hunger",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "13": [
+        {
+          "id": 249342,
+          "name": "Heart of Ancient Hunger",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 8163,
+          "name": "+41 Agility/Strength & +27 Armor",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7983,
+          "name": "Enchant Weapon - Berserker's Rage",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 10
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 9
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "avg_uses": 5.5,
+      "min_uses": 2,
+      "max_uses": 10,
+      "sample_count": 10
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Die by the Sword": {
+      "sample_count": 10,
+      "avg_first_cast_s": 399,
+      "stddev_first_cast_s": 94.9,
+      "avg_gap_s": 159.1,
+      "stddev_gap_s": 32.2,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.164,
+        "stddev": 0.078,
+        "min": 0.11,
+        "max": 0.338
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 9,
+      "avg_first_cast_s": 471.2,
+      "stddev_first_cast_s": 26.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.118,
+        "stddev": 0.005,
+        "min": 0.11,
+        "max": 0.125
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 123.6,
+      "stddev_first_cast_s": 119.5,
+      "avg_gap_s": 77.3,
+      "stddev_gap_s": 51,
+      "hold_targets": {
+        "1": {
+          "target_s": 218.5,
+          "stddev_s": 128.6,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 295.2,
+          "stddev_s": 116.6,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 345.4,
+          "stddev_s": 97.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 405.8,
+          "stddev_s": 73.6,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 457.6,
+          "stddev_s": 71.4,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.5,
+      "avg_uses_per_min": 0.64,
+      "uses_per_min": {
+        "avg": 0.644,
+        "stddev": 0.263,
+        "min": 0.248,
+        "max": 1.126
+      },
+      "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 2,
+      "avg_first_cast_s": 479.2,
+      "stddev_first_cast_s": 8.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.119,
+        "stddev": 0.004,
+        "min": 0.116,
+        "max": 0.121
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 42.6,
+      "stddev_s": 14.5,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 382944,
+      "dmg_stddev": 70690,
+      "dmg_min": 318380,
+      "dmg_max": 479600,
+      "ability_breakdown": [
+        {
+          "spell_id": 1233649,
+          "avg_damage": 234120,
+          "min_damage": 213014,
+          "max_damage": 290302,
+          "count": 5
+        },
+        {
+          "spell_id": 1281707,
+          "avg_damage": 112363,
+          "min_damage": 84807,
+          "max_damage": 144251,
+          "count": 5
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 60769,
+          "min_damage": 33305,
+          "max_damage": 103955,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 358.4,
+      "stddev_s": 10.7,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 368312,
+      "dmg_stddev": 188388,
+      "dmg_min": 144220,
+      "dmg_max": 728117,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 221829,
+          "min_damage": 128061,
+          "max_damage": 395074,
+          "count": 5
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 156187,
+          "min_damage": 48186,
+          "max_damage": 245910,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 80710,
+          "min_damage": 55865,
+          "max_damage": 102258,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 412.8,
+      "stddev_s": 9.6,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 262009,
+      "dmg_stddev": 105618,
+      "dmg_min": 112575,
+      "dmg_max": 374043,
+      "ability_breakdown": [
+        {
+          "spell_id": 1237040,
+          "avg_damage": 87855,
+          "min_damage": 28996,
+          "max_damage": 116764,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 57530,
+          "min_damage": 38063,
+          "max_damage": 93040,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 414.8,
+      "stddev_s": 8.4,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 488164,
+      "dmg_stddev": 113791,
+      "dmg_min": 388428,
+      "dmg_max": 681818,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 214545,
+          "min_damage": 151657,
+          "max_damage": 250509,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 119315,
+          "min_damage": 78373,
+          "max_damage": 145844,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 106841,
+          "min_damage": 87474,
+          "max_damage": 135208,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 8,
+      "defensive_name": "Die by the Sword",
+      "spell_id": 118038,
+      "common_defensives": [
+        "Die by the Sword"
+      ],
+      "common_cds": [
+        "Die by the Sword"
+      ]
+    },
+    {
+      "time_s": 464.4,
+      "stddev_s": 13,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 343650,
+      "dmg_stddev": 90061,
+      "dmg_min": 172031,
+      "dmg_max": 499819,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 184730,
+          "min_damage": 86194,
+          "max_damage": 261874,
+          "count": 6
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 146623,
+          "min_damage": 89144,
+          "max_damage": 194761,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 101177,
+          "min_damage": 82971,
+          "max_damage": 115778,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 488.6,
+      "stddev_s": 9,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 635639,
+      "dmg_stddev": 156513,
+      "dmg_min": 511978,
+      "dmg_max": 892527,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_damage": 283134,
+          "min_damage": 248821,
+          "max_damage": 329248,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 179066,
+          "min_damage": 101306,
+          "max_damage": 339450,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 128039,
+          "min_damage": 113972,
+          "max_damage": 140376,
+          "count": 5
+        },
+        {
+          "spell_id": 1239095,
+          "avg_damage": 127534,
+          "min_damage": 80081,
+          "max_damage": 215112,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240430,
+      "window_length_s": 8,
+      "defensive_name": "Die by the Sword",
+      "spell_id": 118038,
+      "common_defensives": [
+        "Die by the Sword"
+      ],
+      "common_cds": [
+        "Die by the Sword"
+      ]
+    }
+  ]
+}
