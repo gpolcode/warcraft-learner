@@ -1,0 +1,905 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "avg_duration_s": 214.8,
+  "downtime_threshold_ms": 1544,
+  "top_avg_efficiency": 77.5,
+  "top_efficiency_stddev": 4.3,
+  "per_cd_benchmarks": {
+    "Berserk": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.9,
+      "stddev_first_cast_s": 1.3,
+      "avg_gap_s": 125.6,
+      "stddev_gap_s": 4.5,
+      "hold_targets": {},
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.62,
+      "uses_per_min": {
+        "avg": 0.619,
+        "stddev": 0.074,
+        "min": 0.49,
+        "max": 0.729
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Incarnation: Avatar of Ashamane": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Tiger's Fury": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.8,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 31.3,
+      "stddev_gap_s": 1.8,
+      "hold_targets": {
+        "7": {
+          "target_s": 190,
+          "stddev_s": 5.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.2,
+      "avg_uses_per_min": 2.02,
+      "uses_per_min": {
+        "avg": 2.02,
+        "stddev": 0.09,
+        "min": 1.872,
+        "max": 2.188
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Convoke the Spirits": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5.8,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 126.6,
+      "stddev_gap_s": 4.4,
+      "hold_targets": {},
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.62,
+      "uses_per_min": {
+        "avg": 0.619,
+        "stddev": 0.074,
+        "min": 0.49,
+        "max": 0.729
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Feral Frenzy": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.6,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 31.9,
+      "stddev_gap_s": 2,
+      "hold_targets": {},
+      "avg_uses": 7.1,
+      "avg_uses_per_min": 2,
+      "uses_per_min": {
+        "avg": 1.998,
+        "stddev": 0.119,
+        "min": 1.773,
+        "max": 2.188
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 1.5,
+      "stddev_s": 1.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 5902599,
+      "dmg_stddev": 1000008,
+      "dmg_min": 4640052,
+      "dmg_max": 8050752,
+      "ability_breakdown": [
+        {
+          "spell_id": 22568,
+          "avg_damage": 1186528,
+          "min_damage": 913562,
+          "max_damage": 1496787,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 274838,
+          "avg_damage": 929469,
+          "min_damage": 613964,
+          "max_damage": 1546055,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 732120,
+          "min_damage": 534873,
+          "max_damage": 927330,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 618197,
+          "min_damage": 349120,
+          "max_damage": 1034700,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1271863,
+          "avg_damage": 566583,
+          "min_damage": 388517,
+          "max_damage": 742506,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 5221,
+          "avg_damage": 476079,
+          "min_damage": 387369,
+          "max_damage": 644998,
+          "count": 9,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury",
+        "Berserk",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 16.2
+    },
+    {
+      "time_s": 33.3,
+      "stddev_s": 2.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1959759,
+      "dmg_stddev": 258992,
+      "dmg_min": 1708086,
+      "dmg_max": 2565400,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 451390,
+          "min_damage": 335974,
+          "max_damage": 513486,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 285407,
+          "min_damage": 177261,
+          "max_damage": 425924,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 22568,
+          "avg_damage": 272237,
+          "min_damage": 121215,
+          "max_damage": 449178,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 439531,
+          "avg_damage": 199800,
+          "min_damage": 152728,
+          "max_damage": 244902,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 5221,
+          "avg_damage": 196544,
+          "min_damage": 138709,
+          "max_damage": 291738,
+          "count": 8,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 182092,
+          "min_damage": 125093,
+          "max_damage": 286949,
+          "count": 10,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 63.7,
+      "stddev_s": 3.3,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1632142,
+      "dmg_stddev": 204739,
+      "dmg_min": 1351176,
+      "dmg_max": 1870132,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 319407,
+          "min_damage": 228411,
+          "max_damage": 391349,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 261481,
+          "min_damage": 176001,
+          "max_damage": 407915,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 22568,
+          "avg_damage": 219760,
+          "min_damage": 117240,
+          "max_damage": 297008,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 1271863,
+          "avg_damage": 155971,
+          "min_damage": 93998,
+          "max_damage": 263042,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 5221,
+          "avg_damage": 149728,
+          "min_damage": 111405,
+          "max_damage": 213254,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 439531,
+          "avg_damage": 143774,
+          "min_damage": 119448,
+          "max_damage": 164214,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 93.9,
+      "stddev_s": 3.8,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1820604,
+      "dmg_stddev": 235848,
+      "dmg_min": 1308730,
+      "dmg_max": 2100337,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 350667,
+          "min_damage": 257113,
+          "max_damage": 440231,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 22568,
+          "avg_damage": 280761,
+          "min_damage": 122854,
+          "max_damage": 457502,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 219181,
+          "min_damage": 163527,
+          "max_damage": 254402,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 5221,
+          "avg_damage": 182101,
+          "min_damage": 129680,
+          "max_damage": 269303,
+          "count": 7,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 1271863,
+          "avg_damage": 177131,
+          "min_damage": 136054,
+          "max_damage": 247387,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 158317,
+          "min_damage": 124598,
+          "max_damage": 192274,
+          "count": 7,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 127,
+      "stddev_s": 4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4360223,
+      "dmg_stddev": 523711,
+      "dmg_min": 3687695,
+      "dmg_max": 5460503,
+      "ability_breakdown": [
+        {
+          "spell_id": 22568,
+          "avg_damage": 959717,
+          "min_damage": 588813,
+          "max_damage": 1228875,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 583514,
+          "min_damage": 389646,
+          "max_damage": 912613,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 274838,
+          "avg_damage": 577811,
+          "min_damage": 396517,
+          "max_damage": 1044444,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1271863,
+          "avg_damage": 450577,
+          "min_damage": 306212,
+          "max_damage": 604603,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 357131,
+          "min_damage": 258402,
+          "max_damage": 467114,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 5221,
+          "avg_damage": 349751,
+          "min_damage": 190689,
+          "max_damage": 463788,
+          "count": 6,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Berserk",
+        "Tiger's Fury",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.9
+    },
+    {
+      "time_s": 159,
+      "stddev_s": 4.5,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 1624821,
+      "dmg_stddev": 206268,
+      "dmg_min": 1293723,
+      "dmg_max": 1955837,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 295204,
+          "min_damage": 246544,
+          "max_damage": 347073,
+          "count": 7,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 22568,
+          "avg_damage": 237529,
+          "min_damage": 146678,
+          "max_damage": 380072,
+          "count": 9,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 235906,
+          "min_damage": 161151,
+          "max_damage": 346842,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1271863,
+          "avg_damage": 169801,
+          "min_damage": 127368,
+          "max_damage": 273920,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 147720,
+          "min_damage": 103118,
+          "max_damage": 213469,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 439531,
+          "avg_damage": 143539,
+          "min_damage": 104042,
+          "max_damage": 182882,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 189.5,
+      "stddev_s": 4.8,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 2077148,
+      "dmg_stddev": 371355,
+      "dmg_min": 1599931,
+      "dmg_max": 2613803,
+      "ability_breakdown": [
+        {
+          "spell_id": 1079,
+          "avg_damage": 455427,
+          "min_damage": 233944,
+          "max_damage": 584918,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 274838,
+          "avg_damage": 313686,
+          "min_damage": 210113,
+          "max_damage": 403792,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 22568,
+          "avg_damage": 296160,
+          "min_damage": 233264,
+          "max_damage": 399643,
+          "count": 5,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 440122,
+          "avg_damage": 245461,
+          "min_damage": 172416,
+          "max_damage": 336728,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 439531,
+          "avg_damage": 149786,
+          "min_damage": 127551,
+          "max_damage": 183185,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 135474,
+          "min_damage": 113462,
+          "max_damage": 162594,
+          "count": 3,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Tiger's Fury"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100175,100176,100177,104078,104080,104081,104085,109715,109716,109717,110426,110426,110426,82088,82091,82092,82096,82098,82099,82100,82101,82102,82103,82104,82106,82107,82108,82109,82110,82111,82112,82114,82115,82116,82118,82119,82120,82121,82122,82123,82124,82198,82199,82206,82207,82214,82218,82219,82220,82222,82223,82224,82225,82228,82229,82230,82232,82233,82234,82235,82236,82239,82241,82242,82243,82244,92229,92641,94621,94622,94623,94624,94625,94626,94627,94628,94629,94630,94631,99805",
+        "count": 1,
+        "pct": 10,
+        "report_code": "A2HP1dRNLG4Cbkja",
+        "fight_id": 27,
+        "player_name": "Kellen"
+      },
+      {
+        "key": "v2:100175,100176,100177,104078,104080,104081,104085,109715,109716,109717,110426,110426,110426,82088,82091,82092,82096,82098,82099,82100,82101,82102,82103,82104,82106,82107,82108,82109,82110,82111,82112,82114,82115,82116,82118,82119,82120,82121,82122,82123,82124,82198,82199,82206,82207,82209,82214,82218,82219,82220,82222,82223,82224,82225,82228,82229,82232,82233,82234,82235,82236,82239,82241,82242,82243,82246,92229,92641,94621,94622,94623,94624,94625,94626,94627,94628,94629,94630,94631,99805",
+        "count": 1,
+        "pct": 10,
+        "report_code": "1nrJjhctDX9wZFyT",
+        "fight_id": 18,
+        "player_name": "帅锅枫叶哥哥"
+      },
+      {
+        "key": "v2:100175,100176,100177,104078,104080,104081,104085,109715,109716,109717,110426,110426,110426,82088,82091,82092,82096,82098,82099,82100,82101,82102,82103,82104,82106,82107,82108,82109,82110,82111,82112,82114,82115,82116,82118,82119,82120,82121,82122,82123,82124,82198,82199,82206,82207,82209,82214,82218,82219,82220,82222,82223,82224,82225,82228,82229,82230,82232,82233,82234,82235,82236,82239,82241,82242,82244,92229,92641,94621,94622,94623,94624,94625,94626,94627,94628,94629,94630,94631,99805",
+        "count": 1,
+        "pct": 10,
+        "report_code": "pQk7JAW68XxanFL4",
+        "fight_id": 16,
+        "player_name": "Jackxd"
+      },
+      {
+        "key": "v2:100175,100176,100177,104078,104080,104081,104085,109715,109716,109717,110426,110426,110426,82088,82091,82092,82096,82098,82099,82100,82101,82102,82103,82104,82106,82107,82108,82109,82110,82111,82112,82114,82115,82116,82118,82119,82121,82122,82123,82124,82198,82199,82206,82207,82209,82214,82218,82219,82220,82222,82223,82224,82225,82228,82229,82230,82232,82233,82234,82235,82236,82239,82241,82242,82244,92229,92641,94621,94622,94623,94624,94625,94626,94627,94628,94629,94630,94631,99805",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Fc6CpmKxw8HrNLDa",
+        "fight_id": 42,
+        "player_name": "Catsavage"
+      },
+      {
+        "key": "v2:100175,100176,100177,104078,104080,104081,104085,109715,109716,109717,110426,110426,110426,82088,82091,82092,82096,82098,82099,82100,82101,82102,82103,82104,82106,82107,82108,82109,82110,82111,82112,82114,82115,82116,82118,82119,82121,82122,82123,82124,82198,82199,82206,82207,82209,82214,82218,82219,82220,82222,82223,82224,82225,82228,82229,82232,82233,82234,82235,82236,82239,82241,82242,82243,82244,92229,92641,94621,94622,94623,94624,94625,94626,94627,94628,94629,94630,94631,99805",
+        "count": 1,
+        "pct": 10,
+        "report_code": "vDTkcpQFhb3KCAqw",
+        "fight_id": 30,
+        "player_name": "Demonkingsam"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 3,
+          "pct": 30
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7989,
+          "name": "Enchant Helm - Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 9,
+          "pct": 90
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 6
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 5
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Survival Instincts": {
+      "sample_count": 6,
+      "avg_first_cast_s": 136.4,
+      "stddev_first_cast_s": 47.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.271,
+        "stddev": 0.055,
+        "min": 0.218,
+        "max": 0.365
+      },
+      "majority_hold": false
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 5,
+      "avg_first_cast_s": 113.3,
+      "stddev_first_cast_s": 66.7,
+      "avg_gap_s": 12.8,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.319,
+        "stddev": 0.082,
+        "min": 0.218,
+        "max": 0.443
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 8,
+      "avg_first_cast_s": 92.8,
+      "stddev_first_cast_s": 27,
+      "avg_gap_s": 103.8,
+      "stddev_gap_s": 46.7,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.442,
+        "stddev": 0.148,
+        "min": 0.245,
+        "max": 0.665
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 103.7,
+      "stddev_s": 2.6,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 505534,
+      "dmg_stddev": 60132,
+      "dmg_min": 453246,
+      "dmg_max": 591803,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 455168,
+          "min_damage": 347728,
+          "max_damage": 538003,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 108.1,
+      "stddev_s": 11.1,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 170164,
+      "dmg_stddev": 44726,
+      "dmg_min": 135783,
+      "dmg_max": 235896,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245592,
+          "avg_damage": 116105,
+          "min_damage": 84544,
+          "max_damage": 147666,
+          "count": 2
+        },
+        {
+          "spell_id": 1254018,
+          "avg_damage": 98608,
+          "min_damage": 51239,
+          "max_damage": 156356,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 6,
+      "defensive_name": "Survival Instincts",
+      "spell_id": 61336,
+      "common_defensives": [
+        "Survival Instincts"
+      ],
+      "common_cds": [
+        "Survival Instincts"
+      ]
+    }
+  ]
+}

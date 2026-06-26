@@ -1,0 +1,985 @@
+{
+  "spec": "EnhancementShaman",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "avg_duration_s": 274.5,
+  "downtime_threshold_ms": 1215,
+  "top_avg_efficiency": 75.4,
+  "top_efficiency_stddev": 9.7,
+  "per_cd_benchmarks": {
+    "Doom Winds": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 68.1,
+      "stddev_gap_s": 9.8,
+      "hold_targets": {
+        "2": {
+          "target_s": 90.7,
+          "stddev_s": 3.5,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 154.3,
+          "stddev_s": 4.8,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 227.3,
+          "stddev_s": 7.3,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.69,
+      "uses_per_min": {
+        "avg": 0.992,
+        "stddev": 0.082,
+        "min": 0.914,
+        "max": 1.154
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 3.4,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Ascendance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.5,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 127.4,
+      "stddev_gap_s": 9.8,
+      "hold_targets": {},
+      "avg_uses": 0.9,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.664,
+        "stddev": 0.061,
+        "min": 0.597,
+        "max": 0.717
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Sundering": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.5,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 34.1,
+      "stddev_gap_s": 7.7,
+      "hold_targets": {
+        "3": {
+          "target_s": 89.6,
+          "stddev_s": 3.2,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 120.9,
+          "stddev_s": 4.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 154,
+          "stddev_s": 5.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 187.5,
+          "stddev_s": 5.6,
+          "count": 5,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 226.2,
+          "stddev_s": 6.6,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6,
+      "avg_uses_per_min": 1.3,
+      "uses_per_min": {
+        "avg": 1.855,
+        "stddev": 0.199,
+        "min": 1.6,
+        "max": 2.144
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 2.7,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Surging Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.2,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 68.1,
+      "stddev_gap_s": 9.6,
+      "hold_targets": {
+        "2": {
+          "target_s": 88.8,
+          "stddev_s": 3.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 153,
+          "stddev_s": 5.3,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 225.3,
+          "stddev_s": 7,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.69,
+      "uses_per_min": {
+        "avg": 0.992,
+        "stddev": 0.082,
+        "min": 0.914,
+        "max": 1.154
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 1.9,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Feral Spirit": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Stormkeeper": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 2,
+      "stddev_s": 0.8,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4505167,
+      "dmg_stddev": 948625,
+      "dmg_min": 3101393,
+      "dmg_max": 5790149,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 638964,
+          "min_damage": 435743,
+          "max_damage": 830942,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 458267,
+          "avg_damage": 505742,
+          "min_damage": 386434,
+          "max_damage": 642689,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 60103,
+          "avg_damage": 477005,
+          "min_damage": 369126,
+          "max_damage": 622929,
+          "count": 7,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 411982,
+          "min_damage": 262340,
+          "max_damage": 609427,
+          "count": 10,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 320324,
+          "min_damage": 261733,
+          "max_damage": 391661,
+          "count": 5,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 211094,
+          "avg_damage": 299419,
+          "min_damage": 230145,
+          "max_damage": 414487,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Surging Totem",
+        "Doom Winds"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 22
+    },
+    {
+      "time_s": 88.8,
+      "stddev_s": 3.1,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 10309846,
+      "dmg_stddev": 1778948,
+      "dmg_min": 7816062,
+      "dmg_max": 11699319,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 1402849,
+          "min_damage": 1087607,
+          "max_damage": 1566075,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 60103,
+          "avg_damage": 851504,
+          "min_damage": 806347,
+          "max_damage": 914552,
+          "count": 4,
+          "avg_casts": 12
+        },
+        {
+          "spell_id": 458267,
+          "avg_damage": 803389,
+          "min_damage": 723460,
+          "max_damage": 851783,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 795547,
+          "min_damage": 462021,
+          "max_damage": 991718,
+          "count": 4,
+          "avg_casts": 15
+        },
+        {
+          "spell_id": 469270,
+          "avg_damage": 676237,
+          "min_damage": 611390,
+          "max_damage": 741083,
+          "count": 2,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 195592,
+          "avg_damage": 675515,
+          "min_damage": 508969,
+          "max_damage": 850076,
+          "count": 4,
+          "avg_casts": 4
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Surging Totem",
+        "Doom Winds"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 25
+    },
+    {
+      "time_s": 125.6,
+      "stddev_s": 3,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 7270468,
+      "dmg_stddev": 2655578,
+      "dmg_min": 4056000,
+      "dmg_max": 10259280,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 1017052,
+          "min_damage": 687600,
+          "max_damage": 1376818,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 60103,
+          "avg_damage": 1013500,
+          "min_damage": 895562,
+          "max_damage": 1130226,
+          "count": 3,
+          "avg_casts": 12
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 998114,
+          "min_damage": 569026,
+          "max_damage": 1758049,
+          "count": 3,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 195592,
+          "avg_damage": 848669,
+          "min_damage": 635161,
+          "max_damage": 1093183,
+          "count": 5,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 458267,
+          "avg_damage": 839056,
+          "min_damage": 657875,
+          "max_damage": 1109620,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 679625,
+          "min_damage": 477074,
+          "max_damage": 915209,
+          "count": 6,
+          "avg_casts": 8
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Surging Totem",
+        "Doom Winds",
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 153,
+      "stddev_s": 5.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 6630621,
+      "dmg_stddev": 194042,
+      "dmg_min": 6369248,
+      "dmg_max": 6838449,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 956696,
+          "min_damage": 889412,
+          "max_damage": 1059379,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 545446,
+          "min_damage": 481688,
+          "max_damage": 597975,
+          "count": 3,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 537826,
+          "min_damage": 375558,
+          "max_damage": 675219,
+          "count": 4,
+          "avg_casts": 10
+        },
+        {
+          "spell_id": 458267,
+          "avg_damage": 477516,
+          "min_damage": 465175,
+          "max_damage": 493087,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 458147,
+          "avg_damage": 438797,
+          "min_damage": 434068,
+          "max_damage": 443526,
+          "count": 2,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 469270,
+          "avg_damage": 426304,
+          "min_damage": 369177,
+          "max_damage": 471198,
+          "count": 4,
+          "avg_casts": 11
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Surging Totem",
+        "Doom Winds"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 25
+    },
+    {
+      "time_s": 225.3,
+      "stddev_s": 7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 6593845,
+      "dmg_stddev": 1323503,
+      "dmg_min": 4866107,
+      "dmg_max": 7925650,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 826906,
+          "min_damage": 628377,
+          "max_damage": 1072037,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 458267,
+          "avg_damage": 659170,
+          "min_damage": 492987,
+          "max_damage": 744838,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 60103,
+          "avg_damage": 554421,
+          "min_damage": 439595,
+          "max_damage": 650316,
+          "count": 4,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 458147,
+          "avg_damage": 517018,
+          "min_damage": 499755,
+          "max_damage": 534280,
+          "count": 2,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 469270,
+          "avg_damage": 483824,
+          "min_damage": 448189,
+          "max_damage": 510877,
+          "count": 3,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 466256,
+          "min_damage": 377076,
+          "max_damage": 538674,
+          "count": 3,
+          "avg_casts": 10
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Surging Totem",
+        "Doom Winds"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 25
+    },
+    {
+      "time_s": 247.8,
+      "stddev_s": 3.2,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 4150477,
+      "dmg_stddev": 2381275,
+      "dmg_min": 1429319,
+      "dmg_max": 6381784,
+      "ability_breakdown": [
+        {
+          "spell_id": 455622,
+          "avg_damage": 825981,
+          "min_damage": 745409,
+          "max_damage": 906552,
+          "count": 2,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 469247,
+          "min_damage": 448135,
+          "max_damage": 490359,
+          "count": 2,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 454209,
+          "min_damage": 421068,
+          "max_damage": 487349,
+          "count": 2,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 445923,
+          "min_damage": 412056,
+          "max_damage": 479789,
+          "count": 2,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 458147,
+          "avg_damage": 432367,
+          "min_damage": 370475,
+          "max_damage": 494258,
+          "count": 2,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 469270,
+          "avg_damage": 383139,
+          "min_damage": 132611,
+          "max_damage": 566530,
+          "count": 4,
+          "avg_casts": 9
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ascendance",
+        "Surging Totem",
+        "Doom Winds"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:103579,103581,103582,103583,103585,103586,103588,103591,103593,103596,103602,103605,103606,103607,103608,103611,103612,103613,103614,103615,103616,103617,103618,103624,103625,103627,103628,103642,103871,109190,109192,109193,109194,109387,109388,109389,109727,109728,109729,109909,110085,110401,110401,110401,80938,80939,80941,80942,80943,80944,80949,80950,80951,80953,80954,80958,80959,80960,80961,80962,80967,80968,80969,80973,80974,92219,94863,94867,94868,94870,94873,94880,94885,94886,94889,94892,94893,99847",
+        "count": 2,
+        "pct": 20,
+        "report_code": "Nnyh6q4Mb1rYtXFC",
+        "fight_id": 21,
+        "player_name": "Obadingo"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103585,103586,103587,103588,103591,103593,103594,103596,103599,103602,103605,103606,103611,103612,103613,103614,103615,103616,103617,103622,103625,103627,103628,103642,103871,109194,109386,109387,109388,109389,109724,109725,109726,110085,110401,110401,110401,80938,80939,80941,80942,80943,80945,80947,80948,80949,80950,80951,80953,80954,80958,80959,80960,80961,80962,80963,80964,80967,80968,80969,80974,80975,94859,94866,94871,94872,94874,94877,94879,94881,94882,94890,94891,99847",
+        "count": 1,
+        "pct": 10,
+        "report_code": "CakALQpJgRZ4tG38",
+        "fight_id": 7,
+        "player_name": "Ratsnake"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103585,103586,103588,103591,103593,103596,103599,103602,103605,103606,103607,103608,103611,103612,103613,103614,103615,103616,103617,103624,103625,103627,103628,103642,103871,109194,109386,109387,109388,109389,109724,109725,109726,110085,110401,110401,110401,80938,80939,80941,80942,80943,80945,80947,80948,80949,80950,80951,80953,80954,80958,80959,80960,80961,80962,80963,80964,80967,80968,80969,80974,80975,94859,94866,94871,94872,94874,94877,94879,94881,94882,94890,94891,99847",
+        "count": 1,
+        "pct": 10,
+        "report_code": "FyfhnjJvmC1Xt6HY",
+        "fight_id": 11,
+        "player_name": "Màndow"
+      },
+      {
+        "key": "v2:103581,103582,103583,103584,103585,103586,103587,103588,103591,103593,103594,103596,103602,103605,103606,103607,103611,103612,103613,103614,103615,103616,103617,103622,103625,103626,103627,103628,103642,103871,109194,109386,109387,109389,109724,109725,109726,110085,110401,110401,110401,80938,80939,80941,80942,80943,80945,80947,80948,80949,80950,80951,80953,80954,80958,80959,80960,80961,80962,80963,80964,80967,80968,80969,80974,80975,94859,94866,94871,94872,94874,94877,94879,94881,94882,94890,94891,99847",
+        "count": 1,
+        "pct": 10,
+        "report_code": "z1mNd9aLTVXqM8Ft",
+        "fight_id": 10,
+        "player_name": "羊宫妃那丶"
+      },
+      {
+        "key": "v2:103579,103581,103582,103583,103585,103586,103587,103588,103591,103593,103594,103596,103599,103602,103605,103606,103607,103611,103612,103613,103614,103615,103616,103617,103622,103625,103627,103628,103642,103871,109194,109386,109387,109389,109724,109725,109726,110085,110401,110401,110401,80938,80939,80941,80942,80943,80945,80947,80948,80949,80950,80951,80953,80954,80958,80959,80960,80961,80962,80963,80964,80967,80968,80969,80974,80975,94859,94866,94871,94872,94874,94877,94879,94881,94882,94890,94891,99847",
+        "count": 1,
+        "pct": 10,
+        "report_code": "thjp9gmxykrD1RnT",
+        "fight_id": 13,
+        "player_name": "Werdup"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 5,
+          "pct": 50
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 5,
+          "pct": 50
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7969,
+          "name": "Enchant Ring - Zul'jin's Mastery",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8024,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "16": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 8
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 6
+    },
+    {
+      "name": "Spirit Walk",
+      "spell_id": 58875,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 5,
+      "sample_count": 7
+    },
+    {
+      "name": "Healing Surge",
+      "spell_id": 8004,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 1
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 8,
+      "avg_first_cast_s": 148.5,
+      "stddev_first_cast_s": 86.1,
+      "avg_gap_s": 119.6,
+      "stddev_gap_s": 46.3,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.384,
+        "stddev": 0.115,
+        "min": 0.195,
+        "max": 0.493
+      },
+      "majority_hold": false
+    },
+    "Earth Elemental": {
+      "sample_count": 6,
+      "avg_first_cast_s": 167.9,
+      "stddev_first_cast_s": 60.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.226,
+        "stddev": 0.021,
+        "min": 0.195,
+        "max": 0.246
+      },
+      "majority_hold": false
+    },
+    "Spirit Walk": {
+      "sample_count": 7,
+      "avg_first_cast_s": 102,
+      "stddev_first_cast_s": 94.7,
+      "avg_gap_s": 59.1,
+      "stddev_gap_s": 32.5,
+      "hold_targets": {},
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.488,
+        "stddev": 0.419,
+        "min": 0.192,
+        "max": 1.212
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 1,
+      "avg_first_cast_s": 163.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.239,
+        "stddev": 0,
+        "min": 0.239,
+        "max": 0.239
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 224.3,
+      "stddev_s": 14.7,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 216655,
+      "dmg_stddev": 213426,
+      "dmg_min": 30058,
+      "dmg_max": 515102,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 269880,
+          "min_damage": 182972,
+          "max_damage": 425864,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 66816,
+          "min_damage": 30058,
+          "max_damage": 92668,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240387,
+      "window_length_s": 6.5,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ]
+    },
+    {
+      "time_s": 266.4,
+      "stddev_s": 11.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 463822,
+      "dmg_stddev": 255313,
+      "dmg_min": 149683,
+      "dmg_max": 768505,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242815,
+          "avg_damage": 535481,
+          "min_damage": 442486,
+          "max_damage": 628475,
+          "count": 2
+        },
+        {
+          "spell_id": 1242803,
+          "avg_damage": 219845,
+          "min_damage": 91258,
+          "max_damage": 348432,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 61508,
+          "min_damage": 48772,
+          "max_damage": 75426,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240387,
+      "window_length_s": 11,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ]
+    }
+  ]
+}
