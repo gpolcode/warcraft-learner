@@ -72,9 +72,14 @@ export class DataFileApiService {
     return this.io.writeJson('index.json', entries);
   }
 
-  /** List spec folder names (Node only). */
-  listSpecs(): Promise<string[]> {
-    return this.io.list('');
+  /**
+   * List spec folder names (Node only). The specs root also holds the `index.json`
+   * manifest (and possibly stray dotfiles); a spec folder is a WCL spec name and never
+   * contains a dot, so filter those out - otherwise the index rebuild would treat
+   * `index.json` as a spec and read `index.json/encounters.json` (ENOTDIR).
+   */
+  async listSpecs(): Promise<string[]> {
+    return (await this.io.list('')).filter(name => !name.includes('.'));
   }
 
   /** List the JSON file names under `{spec}/{slice}/` (Node only). */
