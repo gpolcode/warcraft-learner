@@ -75,4 +75,15 @@ export class DefensiveComponent {
     const anchor = this._anchors()[index];
     if (anchor) this.openMap.emit(anchor);
   }
+
+  /** A timed finding's map button: open the map at that cast time (boss reference). */
+  protected onFindingMap(row: FindingRow): void {
+    if (row.timestampMs == null) return;
+    this.openMap.emit({
+      timeS: row.timestampMs / 1000,
+      label: row.name ?? 'Defensive',
+      spellIds: row.spellId ? [row.spellId] : [],
+      refGameId: null,
+    });
+  }
 }

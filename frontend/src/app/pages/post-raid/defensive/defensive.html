@@ -4,7 +4,9 @@
     title="Defensives"
     subtitle="How your defensive cooldowns compare to top parses."
     [rows]="findingRows()"
-    [onPlan]="onPlan()">
+    [onPlan]="onPlan()"
+    [showMap]="showMap()"
+    (openMap)="onFindingMap($event)">
   </wl-finding-table>
 }
 

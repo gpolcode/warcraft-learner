@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { analyzeParse } from './parse-analysis.ts';
 import { Events, PLAYER, BOSS } from '../testing/events.ts';
 import { SHADOW_BLADES, EVISCERATE } from '../testing/spell-ids.ts';
-import { BLOODLUST_IDS } from '../../../src/app/core/analysis/format.ts';
+import { BLOODLUST_IDS } from './bloodlust.ts';
 import type { ParseEventBundle, WclActorEntry, EnrichedRanking } from '../models/wcl.models.ts';
 import type { RulebookCooldown } from '../../../src/app/core/models/rulebook.models.ts';
 

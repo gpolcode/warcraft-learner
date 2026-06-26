@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
+import { WclApiService } from '../../../core/services/wcl-api';
+import { WclEvent } from '../../../core/models/wcl.models';
 import { BURST_DATA_SOURCE, BurstBench, BurstDataSource } from './burst-data-source';
 import {
   BurstFeatureService,
-  burstWindowStatus, splitCommonCds, burstMapAnchor, buildBurstView,
+  burstWindowStatus, splitCommonCds, burstMapAnchor, buildBurstView, findPlayerBurstWindows,
 } from './burst.service';
 
 /* ----------------------------- pure functions ----------------------------- */
@@ -77,38 +79,83 @@ describe('buildBurstView', () => {
 
 /* ----------------------------- feature service ---------------------------- */
 
+describe('findPlayerBurstWindows', () => {
+  const cast = (spellId: number, atS: number): WclEvent => ({ type: 'cast', timestamp: atS * 1000, abilityGameID: spellId });
+  const damage = (spellId: number, atS: number, amount: number): WclEvent =>
+    ({ type: 'damage', timestamp: atS * 1000, abilityGameID: spellId, amount });
+  const window: BurstWindow = {
+    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, ability_breakdown: [],
+  };
+
+  it('sums player damage inside the window and counts casts by ability name', () => {
+    const out = findPlayerBurstWindows(
+      [window],
+      [damage(279043, 12, 600), damage(279043, 15, 400), damage(1, 999, 5000)],
+      [cast(121471, 11), cast(121471, 13)],
+      0,
+      new Map([[279043, 'Eviscerate'], [121471, 'Shadow Blades']]),
+    );
+    expect(out[0].window_damage).toBe(1000);
+    expect(out[0].ability_breakdown![0]).toMatchObject({ spell_id: 279043, damage: 1000 });
+  });
+
+  it('excludes an event at exactly the window end (half-open)', () => {
+    const out = findPlayerBurstWindows([window], [damage(279043, 30, 800)], [], 0, new Map());
+    expect(out[0].window_damage).toBe(0);
+  });
+});
+
+const wclFake = {
+  getReport: async () => ({
+    title: 't',
+    fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 300_000, kill: true, encounterID: 1, friendlyPlayers: [] }],
+    masterData: { actors: [], abilities: [{ gameID: 279043, name: 'Eviscerate', icon: 'inv' }] },
+  }),
+  getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
+    dataType === 'Casts'
+      ? [{ type: 'cast', timestamp: 11_000, abilityGameID: 121471 } as WclEvent]
+      : [{ type: 'damage', timestamp: 12_000, abilityGameID: 279043, amount: 950 } as WclEvent],
+};
+
 function withBench(bench: BurstBench | null): BurstFeatureService {
   const source: BurstDataSource = { getBurstBench: () => Promise.resolve(bench) };
-  TestBed.configureTestingModule({ providers: [{ provide: BURST_DATA_SOURCE, useValue: source }] });
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: BURST_DATA_SOURCE, useValue: source },
+      { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
+    ],
+  });
   return TestBed.inject(BurstFeatureService);
 }
 
+const benchFixture: BurstBench = {
+  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', sample_count: 5,
+  cd_spell_ids: { 'Shadow Blades': 121471 },
+  windows: [{
+    time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
+    common_cds: ['Shadow Blades'],
+    ability_breakdown: [{ spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }],
+  }],
+};
+
 describe('BurstFeatureService', () => {
   it('returns an empty view when the bench file is absent', async () => {
-    const service = withBench(null);
-    const view = await service.loadView('SubtletyRogue', 1, 300, [], {});
+    const view = await withBench(null).loadBenchView('SubtletyRogue', 1);
     expect(view).toEqual({ windows: [], anchors: [] });
   });
 
-  it('assembles the view-model from the bench, merging player damage and baked names', async () => {
-    const bench: BurstBench = {
-      spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', sample_count: 5,
-      cd_spell_ids: { 'Shadow Blades': 121471 },
-      windows: [{
-        time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-        common_cds: ['Shadow Blades'],
-        ability_breakdown: [{ spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }],
-      }],
-    };
-    const service = withBench(bench);
-    const view = await service.loadView(
-      'SubtletyRogue', 1, 300,
-      [{ time_s: 10, window_damage: 950, ability_breakdown: [{ spell_id: 279043, damage: 550, casts: 2 }] }],
-      { 279043: { icon: 'ability_rogue_shadowblades', name: 'Shadow Blades' } },
-    );
+  it('bench-only: shows the top windows with no player overlay', async () => {
+    const view = await withBench(benchFixture).loadBenchView('SubtletyRogue', 1);
+    expect(view.windows).toHaveLength(1);
+    expect(view.windows[0].overview.playerPct).toBeNull();
+    expect(view.anchors[0]).toEqual({ timeS: 10, label: 'Shadow Blades', spellIds: [121471] });
+  });
+
+  it('player view: fetches the log and compares the player damage against the bench', async () => {
+    const view = await withBench(benchFixture).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
     expect(view.windows).toHaveLength(1);
     expect(view.windows[0].overview.playerPct).toBe(950);
-    expect(view.windows[0].detailRows[0].label).toBe('Shadow Blades');
+    expect(view.windows[0].detailRows[0].label).toBe('Eviscerate');
     expect(view.anchors[0]).toEqual({ timeS: 10, label: 'Shadow Blades', spellIds: [121471] });
   });
 });

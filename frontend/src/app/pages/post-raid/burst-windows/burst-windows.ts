@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
-import { PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
-import { BurstFeatureService, AbilityIcons, BurstMapAnchor } from './burst.service';
+import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 
 /**
  * Burst card. A feature component: it injects exactly one service
  * (`BurstFeatureService`) and renders. Its bench windows come from the swappable
- * `BURST_DATA_SOURCE` (file in prod, live transform under the dev flag); ability
- * names arrive baked via `abilityIcons`; opening the map is an output the page wires.
+ * `BURST_DATA_SOURCE` (file in prod, live transform under the dev flag); the
+ * player's window damage is computed by the service from the player's own log.
+ *
+ * Dual-mode: with a `report`/`fight`/`player` selection (post-raid) it compares the
+ * player against the bench; with only `spec`/`encounterId` (pre-fight) it shows the
+ * bench windows informationally. Opening the map is an output the page wires.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,9 +24,10 @@ export class BurstWindowsComponent {
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
-  readonly fightDuration = input<number>(0);
-  readonly playerWindows = input<PlayerBurstWindow[]>([]);
-  readonly abilityIcons = input<AbilityIcons>({});
+  /** Post-raid selection - omit (or leave 0/'') for the pre-fight bench-only view. */
+  readonly report = input<string>('');
+  readonly fight = input<number>(0);
+  readonly player = input<number>(0);
   /** Map button is available once the page has loaded top-parse positions. */
   readonly showMap = input<boolean>(false);
 
@@ -40,11 +44,14 @@ export class BurstWindowsComponent {
     effect(() => {
       const spec = this.spec();
       const encounterId = this.encounterId();
-      const fightDuration = this.fightDuration();
-      const playerWindows = this.playerWindows();
-      const abilityIcons = this.abilityIcons();
+      const report = this.report();
+      const fight = this.fight();
+      const player = this.player();
       const token = ++this.loadToken;
-      void this.burst.loadView(spec, encounterId, fightDuration, playerWindows, abilityIcons).then(view => {
+      const load = report && fight && player
+        ? this.burst.loadPlayerView(spec, encounterId, report, fight, player)
+        : this.burst.loadBenchView(spec, encounterId);
+      void load.then(view => {
         if (token !== this.loadToken) return;
         this._windows.set(view.windows);
         this._anchors.set(view.anchors);

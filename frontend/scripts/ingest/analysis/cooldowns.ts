@@ -5,7 +5,7 @@
  * cast summary (first cast, BL alignment, hold windows), and cast efficiency.
  */
 
-import { BLOODLUST_IDS } from '../../../src/app/core/analysis/format.ts';
+import { BLOODLUST_IDS } from './bloodlust.ts';
 import type { RulebookCooldown } from '../../../src/app/core/models/rulebook.models.ts';
 import type { WclResourceEvent } from '../models/wcl.models.ts';
 import type { CdCastSummary, HoldWindow } from '../models/parse-sample.models.ts';

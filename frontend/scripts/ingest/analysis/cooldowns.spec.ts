@@ -3,7 +3,7 @@ import { detectBloodlust, summarizeCooldownCasts, computeCastEfficiency } from '
 import { Events } from '../testing/events.ts';
 import { FIGHT_START } from '../testing/clock.ts';
 import { SHADOW_BLADES, EVISCERATE } from '../testing/spell-ids.ts';
-import { BLOODLUST_IDS } from '../../../src/app/core/analysis/format.ts';
+import { BLOODLUST_IDS } from './bloodlust.ts';
 import type { RulebookCooldown } from '../../../src/app/core/models/rulebook.models.ts';
 
 const SB: RulebookCooldown = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 120, duration: 20 };
