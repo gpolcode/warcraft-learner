@@ -1,0 +1,336 @@
+{
+  "spec": "DemonologyWarlock",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 9,
+      "avg_first_cast_s": 145.1,
+      "stddev_first_cast_s": 65.4,
+      "avg_gap_s": 142,
+      "stddev_gap_s": 8.2,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.337,
+        "stddev": 0.127,
+        "min": 0.238,
+        "max": 0.593
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 73.2,
+      "stddev_first_cast_s": 52.7,
+      "avg_gap_s": 112.3,
+      "stddev_gap_s": 38.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 190.9,
+          "stddev_s": 11.5,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.488,
+        "stddev": 0.152,
+        "min": 0.272,
+        "max": 0.715
+      },
+      "majority_hold": true
+    },
+    "Mortal Coil": {
+      "sample_count": 1,
+      "avg_first_cast_s": 61.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 125.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.53,
+      "uses_per_min": {
+        "avg": 0.534,
+        "stddev": 0,
+        "min": 0.534,
+        "max": 0.534
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 62.2,
+      "dmg_avg": 309417,
+      "dmg_stddev": 54103,
+      "dmg_min": 256498,
+      "dmg_max": 385825,
+      "window_length_s": 4,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 262219,
+          "min_damage": 241331,
+          "max_damage": 307040,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 29017,
+          "min_damage": 14333,
+          "max_damage": 57773,
+          "count": 6
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4685,
+          "min_damage": 658,
+          "max_damage": 19886,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 78.2,
+      "dmg_avg": 459227,
+      "dmg_stddev": 244613,
+      "dmg_min": 106920,
+      "dmg_max": 639706,
+      "window_length_s": 8,
+      "defensive_name": "Unending Resolve",
+      "spell_id": 104773,
+      "common_defensives": [
+        "Unending Resolve"
+      ],
+      "common_cds": [
+        "Unending Resolve"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 222077,
+          "min_damage": 192684,
+          "max_damage": 254000,
+          "count": 3
+        },
+        {
+          "spell_id": 1276829,
+          "avg_damage": 213601,
+          "min_damage": 193152,
+          "max_damage": 234050,
+          "count": 2
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 77898,
+          "min_damage": 70372,
+          "max_damage": 85424,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 39050,
+          "min_damage": 34769,
+          "max_damage": 42952,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 23858,
+          "min_damage": 18931,
+          "max_damage": 28784,
+          "count": 2
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 12143,
+          "min_damage": 3708,
+          "max_damage": 24692,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 198.8,
+      "dmg_avg": 333149,
+      "dmg_stddev": 86005,
+      "dmg_min": 204543,
+      "dmg_max": 501110,
+      "window_length_s": 4.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 61425,
+          "min_damage": 17200,
+          "max_damage": 112301,
+          "count": 7
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 982,
+          "min_damage": 426,
+          "max_damage": 2079,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 201.2,
+      "dmg_avg": 276674,
+      "dmg_stddev": 191486,
+      "dmg_min": 68045,
+      "dmg_max": 556153,
+      "window_length_s": 8,
+      "defensive_name": "Unending Resolve",
+      "spell_id": 104773,
+      "common_defensives": [
+        "Unending Resolve"
+      ],
+      "common_cds": [
+        "Unending Resolve"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 97373,
+          "min_damage": 50472,
+          "max_damage": 146498,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 61360,
+          "min_damage": 37665,
+          "max_damage": 86795,
+          "count": 6
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 1939,
+          "min_damage": 486,
+          "max_damage": 3302,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 6789,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "inv_axe_02",
+      "name": "Melee"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
+    },
+    "1276829": {
+      "icon": "spell_nature_earthquake",
+      "name": "Aftershock"
+    }
+  },
+  "source_signature": "431dc37bea898629"
+}

@@ -1,0 +1,110 @@
+{
+  "spec": "DemonologyWarlock",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 7,
+      "avg_first_cast_s": 117.7,
+      "stddev_first_cast_s": 86.9,
+      "avg_gap_s": 95.5,
+      "stddev_gap_s": 46.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 95.4,
+          "stddev_s": 90.4,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.431,
+        "stddev": 0.299,
+        "min": 0.167,
+        "max": 0.882
+      },
+      "majority_hold": false
+    },
+    "Unending Resolve": {
+      "sample_count": 3,
+      "avg_first_cast_s": 221,
+      "stddev_first_cast_s": 91.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.219,
+        "stddev": 0.052,
+        "min": 0.167,
+        "max": 0.27
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789
+  },
+  "ability_icons": {
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    }
+  },
+  "source_signature": "b93f1060bf596e23"
+}
