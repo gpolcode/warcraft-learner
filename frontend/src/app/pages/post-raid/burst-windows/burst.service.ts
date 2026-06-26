@@ -8,8 +8,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { ComparisonWindow, WindowStatus } from '../../../shared/components/window-comparison/window-comparison';
-import { RangeRow } from '../../../shared/components/range-chart/range-chart';
+import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
 import { BURST_DATA_SOURCE } from './burst-data-source';
 
 /** Spell id -> display info, baked from the report's master abilities (AnalysisResult.ability_icons). */

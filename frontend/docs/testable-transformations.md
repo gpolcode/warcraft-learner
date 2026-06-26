@@ -18,10 +18,11 @@ Split every slice into two parts:
   read prepared data via a `*DataSource`), then calls the pure core, then returns.
   It contains **no arithmetic**.
 - **Functional core** - **exported pure functions colocated in the same
-  `*.service.ts`** (or a sibling shared module when ingest reuses them, e.g.
-  `core/analysis/bench/`): plain functions over plain data. No Angular, no
-  `HttpClient`, no `inject()`. This is where every field is computed, and it is the
-  only thing you unit-test.
+  `*.service.ts`**: plain functions over plain data. No Angular, no `HttpClient`, no
+  `inject()`. This is where every field is computed, and it is the only thing you
+  unit-test. A slice's services are self-contained: they reimplement their own math
+  rather than import shared analysis (ingest keeps its own copy - duplication over
+  coupling).
 
 ```
                 fetch raw            call pure core           return
@@ -59,8 +60,7 @@ The rule of thumb:
 > and a test named after it.
 
 Name the function after **what it returns**, not after the loop it came from, and
-export it from the slice's `*.service.ts` (or `core/analysis/bench/` if ingest reuses
-it too).
+export it from the slice's `*.service.ts` (colocated with the service that calls it).
 
 ### The model to copy (already in the repo)
 
@@ -396,9 +396,8 @@ findings.
 
 For every calculated field in a `*TransformService` or `*FeatureService` core:
 
-- [ ] It has a **named function** exported from the `*.service.ts` (or
-      `core/analysis/bench/`) that returns just that value (or one cohesive group),
-      named after the result.
+- [ ] It has a **named function** exported from and colocated in the `*.service.ts`
+      that returns just that value (or one cohesive group), named after the result.
 - [ ] The function is **pure**: no `inject()`, no `HttpClient`, no Angular, no
       mutation of its inputs.
 - [ ] It is **total**: defined for empty / null input (returns `0`/`null`/`[]`,

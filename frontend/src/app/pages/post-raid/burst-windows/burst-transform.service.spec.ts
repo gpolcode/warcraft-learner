@@ -2,9 +2,69 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { BurstTransformService } from './burst-transform.service';
+import { WclEvent } from '../../../core/models/wcl.models';
+import {
+  BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, cdSpellIds, ParseWindow,
+} from './burst-transform.service';
 
-// A report with one boss fight + one named player + one damage ability.
+function cast(spellId: number, atS: number): WclEvent {
+  return { type: 'cast', timestamp: atS * 1000, abilityGameID: spellId };
+}
+function damage(spellId: number, atS: number, amount: number): WclEvent {
+  return { type: 'damage', timestamp: atS * 1000, abilityGameID: spellId, amount };
+}
+
+/* ----------------------------- pure functions ----------------------------- */
+
+describe('cdSpellIds', () => {
+  it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
+    expect(cdSpellIds(
+      [{ name: 'Shadow Blades', spell_id: 121471, cooldown: 90 }, { name: 'NoId', spell_id: 0, cooldown: 60 }],
+      [{ name: 'Cloak', spell_id: 31224, cooldown: 120 }],
+    )).toEqual({ 'Shadow Blades': 121471, 'Cloak': 31224 });
+  });
+});
+
+describe('findParseWindows', () => {
+  const cooldowns = [{ name: 'Shadow Blades', spell_id: 121471, cooldown: 90, duration: 20 }];
+
+  it('builds a [cast, cast+duration] window and breaks damage down by ability', () => {
+    const timings = cdTimings([cast(121471, 10)], cooldowns, 0);
+    const windows = findParseWindows([damage(279043, 12, 1000)], 0, timings, [cast(121471, 10)], new Map());
+    expect(windows).toHaveLength(1);
+    expect(windows[0]).toMatchObject({ time_s: 10, window_length_s: 20, window_damage: 1000, active_cds: ['Shadow Blades'] });
+    expect(windows[0].ability_breakdown[0]).toMatchObject({ spell_id: 279043, damage: 1000 });
+  });
+
+  it('drops a window below the significance threshold', () => {
+    const timings = cdTimings([cast(121471, 10)], cooldowns, 0);
+    // window has 30 of 1030 total damage (<3%), so it is dropped.
+    const windows = findParseWindows([damage(279043, 12, 30), damage(1, 200, 1000)], 0, timings, [], new Map());
+    expect(windows).toHaveLength(0);
+  });
+});
+
+describe('clusterParseWindows', () => {
+  const window = (timeS: number): ParseWindow => ({
+    time_s: timeS, window_length_s: 20, window_damage: 1000, active_cds: ['Shadow Blades'],
+    ability_breakdown: [{ spell_id: 279043, damage: 600, casts: 2 }],
+  });
+
+  it('emits a cluster present in enough parses, with common cds + ability stats', () => {
+    const out = clusterParseWindows([window(10), window(11)], 2);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({ time_s: 10.5, common_cds: ['Shadow Blades'], dmg_avg: 1000, window_length_s: 20 });
+    expect(out[0].ability_breakdown[0]).toMatchObject({ spell_id: 279043, avg_damage: 600, count: 2 });
+  });
+
+  it('drops a cluster below the min-sample fraction', () => {
+    // 1 window out of 10 samples is below max(2, 10*0.35).
+    expect(clusterParseWindows([window(10)], 10)).toHaveLength(0);
+  });
+});
+
+/* ----------------------------- service (end to end, fake client) ----------------------------- */
+
 function reportFor(playerId: number, playerName: string, fightId: number) {
   return {
     title: 't',
@@ -16,7 +76,6 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
   };
 }
 
-// Two top parses, each: Shadow Blades cast at 0:10 -> a [10,30]s window with damage inside.
 const wclFake = {
   getRankings: async () => [
     { player: 'P1', report_code: 'r1', fight_id: 1 },
@@ -24,11 +83,8 @@ const wclFake = {
   ],
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
-    dataType === 'Casts'
-      ? [{ type: 'cast', timestamp: 10_000, abilityGameID: 121471 }]
-      : [{ type: 'damage', timestamp: 12_000, abilityGameID: 279043, amount: 1000 }],
+    dataType === 'Casts' ? [cast(121471, 10)] : [damage(279043, 12, 1000)],
 };
-
 const filesFake = {
   getRulebook: async () => ({
     spec: 'SubtletyRogue',
@@ -37,25 +93,20 @@ const filesFake = {
   }),
 };
 
-function setup(): BurstTransformService {
-  TestBed.configureTestingModule({
-    providers: [
-      { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
-      { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
-    ],
-  });
-  return TestBed.inject(BurstTransformService);
-}
-
 describe('BurstTransformService (live, in-browser)', () => {
-  it('computes a clustered burst bench from the top parses via the shared pipeline', async () => {
-    const bench = await setup().getBurstBench('SubtletyRogue', 1);
+  it('computes a clustered burst bench from the top parses', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
+        { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
+      ],
+    });
+    const bench = await TestBed.inject(BurstTransformService).getBurstBench('SubtletyRogue', 1);
     expect(bench).not.toBeNull();
     expect(bench!.sample_count).toBe(2);
     expect(bench!.encounter_name).toBe('Boss');
     expect(bench!.cd_spell_ids).toEqual({ 'Shadow Blades': 121471 });
     expect(bench!.windows).toHaveLength(1);
-    expect(bench!.windows[0].time_s).toBe(10);
     expect(bench!.windows[0].common_cds).toContain('Shadow Blades');
   });
 
