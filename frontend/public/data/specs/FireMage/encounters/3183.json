@@ -1,0 +1,904 @@
+{
+  "spec": "FireMage",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "avg_duration_s": 530,
+  "downtime_threshold_ms": 1606,
+  "top_avg_efficiency": 68.4,
+  "top_efficiency_stddev": 3.5,
+  "per_cd_benchmarks": {
+    "Combustion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 7.2,
+      "stddev_first_cast_s": 18.8,
+      "avg_gap_s": 62,
+      "stddev_gap_s": 4.3,
+      "hold_targets": {},
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 1.01,
+      "uses_per_min": {
+        "avg": 1.008,
+        "stddev": 0.042,
+        "min": 0.914,
+        "max": 1.066
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 2.3,
+      "stddev_bl_offset_s": 1.8,
+      "bl_pct": 80
+    },
+    "Meteor": {
+      "sample_count": 10,
+      "avg_first_cast_s": 12.7,
+      "stddev_first_cast_s": 0.4,
+      "avg_gap_s": 61.7,
+      "stddev_gap_s": 8.2,
+      "hold_targets": {
+        "2": {
+          "target_s": 75,
+          "stddev_s": 1,
+          "count": 10,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 136.8,
+          "stddev_s": 0.8,
+          "count": 10,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 193.1,
+          "stddev_s": 2.5,
+          "count": 10,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 256.7,
+          "stddev_s": 1.7,
+          "count": 10,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 316.6,
+          "stddev_s": 2.3,
+          "count": 10,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 376.8,
+          "stddev_s": 3.6,
+          "count": 10,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 438.7,
+          "stddev_s": 20.7,
+          "count": 9,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 500,
+          "stddev_s": 6.2,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 8.8,
+      "avg_uses_per_min": 1,
+      "uses_per_min": {
+        "avg": 0.995,
+        "stddev": 0.09,
+        "min": 0.798,
+        "max": 1.097
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 10.3,
+      "stddev_bl_offset_s": 2,
+      "bl_pct": 80
+    },
+    "Shifting Power": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Mirror Image": {
+      "sample_count": 10,
+      "avg_first_cast_s": 470.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0.1,
+      "avg_uses_per_min": 0.01,
+      "uses_per_min": {
+        "avg": 0.115,
+        "stddev": 0,
+        "min": 0.115,
+        "max": 0.115
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 368.7,
+      "stddev_s": 3,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8441162,
+      "dmg_stddev": 1073560,
+      "dmg_min": 6924781,
+      "dmg_max": 10973251,
+      "ability_breakdown": [
+        {
+          "spell_id": 11366,
+          "avg_damage": 3321017,
+          "min_damage": 2869577,
+          "max_damage": 4060660,
+          "count": 10,
+          "avg_casts": 13
+        },
+        {
+          "spell_id": 12654,
+          "avg_damage": 1473072,
+          "min_damage": 1226742,
+          "max_damage": 1784971,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 449569,
+          "avg_damage": 1028784,
+          "min_damage": 529858,
+          "max_damage": 1644411,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 108853,
+          "avg_damage": 775211,
+          "min_damage": 617688,
+          "max_damage": 917608,
+          "count": 10,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 351140,
+          "avg_damage": 697497,
+          "min_damage": 574803,
+          "max_damage": 747481,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 456139,
+          "avg_damage": 426150,
+          "min_damage": 352330,
+          "max_damage": 511160,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Combustion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 429.8,
+      "stddev_s": 6.7,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 6677759,
+      "dmg_stddev": 3878082,
+      "dmg_min": 4450996,
+      "dmg_max": 13557714,
+      "ability_breakdown": [
+        {
+          "spell_id": 11366,
+          "avg_damage": 2257367,
+          "min_damage": 1849361,
+          "max_damage": 3248028,
+          "count": 5,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 449569,
+          "avg_damage": 800771,
+          "min_damage": 457932,
+          "max_damage": 1375902,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 12654,
+          "avg_damage": 756378,
+          "min_damage": 648248,
+          "max_damage": 900415,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 351140,
+          "avg_damage": 614653,
+          "min_damage": 519198,
+          "max_damage": 794080,
+          "count": 3,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 108853,
+          "avg_damage": 575408,
+          "min_damage": 377247,
+          "max_damage": 932589,
+          "count": 5,
+          "avg_casts": 10
+        },
+        {
+          "spell_id": 456139,
+          "avg_damage": 288547,
+          "min_damage": 185760,
+          "max_damage": 353692,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Combustion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 489.6,
+      "stddev_s": 2.1,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 13607823,
+      "dmg_stddev": 760731,
+      "dmg_min": 13127764,
+      "dmg_max": 15134261,
+      "ability_breakdown": [
+        {
+          "spell_id": 1292446,
+          "avg_damage": 5315667,
+          "min_damage": 5186018,
+          "max_damage": 5341598,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 11366,
+          "avg_damage": 3313200,
+          "min_damage": 3076592,
+          "max_damage": 3662159,
+          "count": 6,
+          "avg_casts": 12
+        },
+        {
+          "spell_id": 12654,
+          "avg_damage": 1572607,
+          "min_damage": 1352845,
+          "max_damage": 2032370,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 108853,
+          "avg_damage": 881106,
+          "min_damage": 792779,
+          "max_damage": 993852,
+          "count": 6,
+          "avg_casts": 12
+        },
+        {
+          "spell_id": 449569,
+          "avg_damage": 803375,
+          "min_damage": 624065,
+          "max_damage": 1016790,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 351140,
+          "avg_damage": 709620,
+          "min_damage": 652610,
+          "max_damage": 743460,
+          "count": 5,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Combustion"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100989,100995,100998,100999,101007,101009,101016,101019,101021,101024,101027,101883,108654,108656,108657,108658,108659,108660,108661,108662,109393,109395,109396,109398,109399,109401,109402,109403,109404,109406,109407,109408,109409,109673,109674,109675,110081,110086,110088,110321,110322,110423,110423,110423,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62119,62122,62123,62124,62125,62127,93524,94643,94644,94645,94646,94647,94648,94649,94650,94651,94652,94653,99829",
+        "count": 2,
+        "pct": 20,
+        "report_code": "1GcnD9Xkryx4TPK3",
+        "fight_id": 38,
+        "player_name": "Padflash"
+      },
+      {
+        "key": "v2:100989,100995,100998,100999,101007,101009,101016,101019,101021,101024,101027,101883,108654,108656,108657,108658,108659,108660,108661,109393,109395,109396,109398,109399,109401,109402,109403,109404,109406,109407,109408,109409,109673,109674,109675,110080,110081,110086,110088,110321,110322,110423,110423,110423,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62116,62119,62122,62123,62124,62125,62127,93524,94643,94644,94645,94646,94647,94648,94649,94650,94651,94652,94653,99829",
+        "count": 2,
+        "pct": 20,
+        "report_code": "f8W6LvjPnRqA9gtx",
+        "fight_id": 2,
+        "player_name": "汪家伟"
+      },
+      {
+        "key": "v2:100989,100995,100998,100999,101007,101009,101016,101019,101021,101024,101027,108654,108656,108657,108658,108659,108660,108661,108662,109393,109395,109396,109398,109399,109401,109402,109403,109404,109406,109407,109408,109409,109673,109674,109675,110079,110081,110086,110088,110321,110322,110423,110423,110423,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62119,62122,62123,62124,62125,62127,93524,94643,94644,94645,94646,94647,94648,94649,94650,94651,94652,94653,99829",
+        "count": 2,
+        "pct": 20,
+        "report_code": "LGY6VrB3J7PDwWA1",
+        "fight_id": 50,
+        "player_name": "Zalea"
+      },
+      {
+        "key": "v2:100989,100995,100998,100999,101007,101009,101016,101019,101021,101024,101027,108654,108656,108657,108658,108659,108660,108661,108662,109393,109395,109396,109398,109399,109401,109402,109403,109404,109406,109407,109408,109409,109673,109674,109675,110081,110086,110088,110321,110322,110423,110423,110423,62085,62086,62091,62092,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62119,62122,62123,62124,62125,62127,93524,94643,94644,94645,94646,94647,94648,94649,94650,94651,94652,94653,99829",
+        "count": 1,
+        "pct": 10,
+        "report_code": "cG2XJVv9QHarkDfY",
+        "fight_id": 61,
+        "player_name": "Shimon"
+      },
+      {
+        "key": "v2:100989,100995,100998,100999,101007,101009,101016,101019,101021,101024,101027,108654,108656,108657,108658,108659,108660,108661,108662,109393,109395,109396,109398,109399,109401,109402,109403,109404,109406,109407,109408,109409,109673,109674,109675,110081,110086,110088,110321,110322,110423,110423,110423,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62107,62112,62114,62115,62119,62122,62123,62124,62125,62127,93524,94643,94644,94645,94646,94647,94648,94649,94650,94651,94652,94653,99829",
+        "count": 1,
+        "pct": 10,
+        "report_code": "8DPKdTaWYAQ2hzHv",
+        "fight_id": 21,
+        "player_name": "米娜瓦尔丶"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "13": [
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 8015,
+          "name": "Enchant Helm - Rune of Avoidance",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7999,
+          "name": "Enchant Shoulders - Nature's Grace",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7983,
+          "name": "Enchant Weapon - Berserker's Rage",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Blazing Barrier",
+      "spell_id": 235313,
+      "avg_uses": 6,
+      "min_uses": 1,
+      "max_uses": 10,
+      "sample_count": 10
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "avg_uses": 2.3,
+      "min_uses": 2,
+      "max_uses": 3,
+      "sample_count": 6
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 8
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Blazing Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 141.6,
+      "stddev_first_cast_s": 104.2,
+      "avg_gap_s": 67.9,
+      "stddev_gap_s": 42.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 196.8,
+          "stddev_s": 87.7,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 212.1,
+          "stddev_s": 131.3,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 259.7,
+          "stddev_s": 89.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 330.7,
+          "stddev_s": 94.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 396.1,
+          "stddev_s": 83.2,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.68,
+        "stddev": 0.321,
+        "min": 0.116,
+        "max": 1.143
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 6,
+      "avg_first_cast_s": 150.2,
+      "stddev_first_cast_s": 89.2,
+      "avg_gap_s": 108.8,
+      "stddev_gap_s": 54.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 280,
+          "stddev_s": 67.9,
+          "count": 4,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.267,
+        "stddev": 0.06,
+        "min": 0.219,
+        "max": 0.346
+      },
+      "majority_hold": true
+    },
+    "Greater Invisibility": {
+      "sample_count": 8,
+      "avg_first_cast_s": 306.1,
+      "stddev_first_cast_s": 75.1,
+      "avg_gap_s": 145.1,
+      "stddev_gap_s": 66.6,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.171,
+        "stddev": 0.122,
+        "min": 0.11,
+        "max": 0.457
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 49,
+      "stddev_s": 5.9,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 193859,
+      "dmg_stddev": 13391,
+      "dmg_min": 175146,
+      "dmg_max": 206097,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 133656,
+          "min_damage": 59907,
+          "max_damage": 206097,
+          "count": 5
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 48024,
+          "min_damage": 32284,
+          "max_damage": 65784,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 4,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 173.5,
+      "stddev_s": 5.8,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 201161,
+      "dmg_stddev": 12721,
+      "dmg_min": 180682,
+      "dmg_max": 213758,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 122108,
+          "min_damage": 53665,
+          "max_damage": 195437,
+          "count": 6
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 55210,
+          "min_damage": 30357,
+          "max_damage": 79307,
+          "count": 4
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 51365,
+          "min_damage": 30357,
+          "max_damage": 76056,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 4.9,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 216.6,
+      "stddev_s": 5.1,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 229728,
+      "dmg_stddev": 55970,
+      "dmg_min": 186598,
+      "dmg_max": 363448,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281473,
+          "avg_damage": 164784,
+          "min_damage": 158646,
+          "max_damage": 169721,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 93873,
+          "min_damage": 27952,
+          "max_damage": 203556,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 3.7,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 275.4,
+      "stddev_s": 4.8,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 208304,
+      "dmg_stddev": 27219,
+      "dmg_min": 170787,
+      "dmg_max": 249815,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 73511,
+          "min_damage": 24553,
+          "max_damage": 110410,
+          "count": 6
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 648,
+          "min_damage": 260,
+          "max_damage": 891,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 2.6,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 332.3,
+      "stddev_s": 3.2,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 209449,
+      "dmg_stddev": 31267,
+      "dmg_min": 183357,
+      "dmg_max": 284121,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 120154,
+          "min_damage": 56332,
+          "max_damage": 168761,
+          "count": 6
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 58854,
+          "min_damage": 23649,
+          "max_damage": 74512,
+          "count": 4
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 51711,
+          "min_damage": 31243,
+          "max_damage": 66556,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 25521,
+          "min_damage": 19229,
+          "max_damage": 41412,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 4.1,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 467.2,
+      "stddev_s": 15.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 231000,
+      "dmg_stddev": 30449,
+      "dmg_min": 190142,
+      "dmg_max": 302274,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 224271,
+          "min_damage": 167930,
+          "max_damage": 302274,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 8,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    },
+    {
+      "time_s": 517.3,
+      "stddev_s": 3.1,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 220947,
+      "dmg_stddev": 24569,
+      "dmg_min": 202152,
+      "dmg_max": 257011,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 181918,
+          "min_damage": 149442,
+          "max_damage": 229971,
+          "count": 4
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 39028,
+          "min_damage": 27040,
+          "max_damage": 52710,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 1.9,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ]
+    }
+  ]
+}
