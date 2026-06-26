@@ -1,0 +1,143 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 8,
+      "avg_first_cast_s": 64,
+      "stddev_first_cast_s": 11.3,
+      "avg_gap_s": 15.4,
+      "stddev_gap_s": 23.4,
+      "hold_targets": {},
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 1.09,
+      "uses_per_min": {
+        "avg": 1.094,
+        "stddev": 0.454,
+        "min": 0.407,
+        "max": 1.693
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 74.3,
+      "stddev_s": 7.9,
+      "count": 14,
+      "total_samples": 10,
+      "dmg_avg": 224445,
+      "dmg_stddev": 171600,
+      "dmg_min": 17798,
+      "dmg_max": 483467,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 246790,
+          "min_damage": 95436,
+          "max_damage": 391722,
+          "count": 8
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 44636,
+          "min_damage": 17798,
+          "max_damage": 97943,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 6.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    },
+    {
+      "time_s": 132.1,
+      "stddev_s": 4.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 95782,
+      "dmg_stddev": 57474,
+      "dmg_min": 41152,
+      "dmg_max": 164611,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 95782,
+          "min_damage": 41152,
+          "max_damage": 164611,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 6.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike, noted as a best-guess spell ID.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {}
+}

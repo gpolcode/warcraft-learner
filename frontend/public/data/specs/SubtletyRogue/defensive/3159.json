@@ -1,0 +1,435 @@
+{
+  "spec": "SubtletyRogue",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 13,
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 11,
+      "avg_first_cast_s": 189.5,
+      "stddev_first_cast_s": 143.3,
+      "avg_gap_s": 142.7,
+      "stddev_gap_s": 22.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 254.1,
+          "stddev_s": 1.7,
+          "count": 8,
+          "total_samples": 11
+        },
+        "2": {
+          "target_s": 389.5,
+          "stddev_s": 10.3,
+          "count": 8,
+          "total_samples": 11
+        }
+      },
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.322,
+        "stddev": 0.126,
+        "min": 0.13,
+        "max": 0.445
+      },
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 8,
+      "avg_first_cast_s": 274.9,
+      "stddev_first_cast_s": 143.3,
+      "avg_gap_s": 195.6,
+      "stddev_gap_s": 57.7,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.194,
+        "stddev": 0.107,
+        "min": 0.118,
+        "max": 0.42
+      },
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 12,
+      "avg_first_cast_s": 167.4,
+      "stddev_first_cast_s": 84.6,
+      "avg_gap_s": 48.5,
+      "stddev_gap_s": 40.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 271.2,
+          "stddev_s": 92.2,
+          "count": 11,
+          "total_samples": 12
+        },
+        "2": {
+          "target_s": 379.4,
+          "stddev_s": 97.9,
+          "count": 6,
+          "total_samples": 12
+        },
+        "3": {
+          "target_s": 303.8,
+          "stddev_s": 112,
+          "count": 6,
+          "total_samples": 12
+        },
+        "4": {
+          "target_s": 337.3,
+          "stddev_s": 78.5,
+          "count": 5,
+          "total_samples": 12
+        }
+      },
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 0.77,
+      "uses_per_min": {
+        "avg": 0.769,
+        "stddev": 0.415,
+        "min": 0.244,
+        "max": 1.377
+      },
+      "majority_hold": true
+    },
+    "Crimson Vial": {
+      "sample_count": 6,
+      "avg_first_cast_s": 382.5,
+      "stddev_first_cast_s": 54.8,
+      "avg_gap_s": 39.3,
+      "stddev_gap_s": 3.3,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.175,
+        "stddev": 0.107,
+        "min": 0.122,
+        "max": 0.392
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 118.7,
+      "stddev_s": 0.9,
+      "count": 7,
+      "total_samples": 13,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "ability_breakdown": [],
+      "ref_game_id": null,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    },
+    {
+      "time_s": 135.9,
+      "stddev_s": 9.3,
+      "count": 10,
+      "total_samples": 13,
+      "dmg_avg": 184542,
+      "dmg_stddev": 115369,
+      "dmg_min": 41015,
+      "dmg_max": 352815,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 49984,
+          "min_damage": 37793,
+          "max_damage": 71533,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6.5,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 254.1,
+      "stddev_s": 1.7,
+      "count": 8,
+      "total_samples": 13,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "ability_breakdown": [],
+      "ref_game_id": null,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    },
+    {
+      "time_s": 269.6,
+      "stddev_s": 10.3,
+      "count": 11,
+      "total_samples": 13,
+      "dmg_avg": 258122,
+      "dmg_stddev": 120904,
+      "dmg_min": 92522,
+      "dmg_max": 416882,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 91627,
+          "min_damage": 74461,
+          "max_damage": 107560,
+          "count": 11
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 316.8,
+      "stddev_s": 8.2,
+      "count": 8,
+      "total_samples": 13,
+      "dmg_avg": 245736,
+      "dmg_stddev": 104139,
+      "dmg_min": 125244,
+      "dmg_max": 387860,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 136363,
+          "min_damage": 125244,
+          "max_damage": 162149,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6.2,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 353.5,
+      "stddev_s": 6.6,
+      "count": 6,
+      "total_samples": 13,
+      "dmg_avg": 188660,
+      "dmg_stddev": 79615,
+      "dmg_min": 130809,
+      "dmg_max": 300538,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 140955,
+          "min_damage": 130809,
+          "max_damage": 152390,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 389.6,
+      "stddev_s": 1.6,
+      "count": 9,
+      "total_samples": 13,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "ability_breakdown": [],
+      "ref_game_id": null,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    },
+    {
+      "time_s": 405.4,
+      "stddev_s": 11.8,
+      "count": 16,
+      "total_samples": 13,
+      "dmg_avg": 217088,
+      "dmg_stddev": 104702,
+      "dmg_min": 24816,
+      "dmg_max": 389502,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 127686,
+          "min_damage": 24816,
+          "max_damage": 205115,
+          "count": 16
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    },
+    {
+      "time_s": 440.1,
+      "stddev_s": 9.4,
+      "count": 8,
+      "total_samples": 13,
+      "dmg_avg": 302814,
+      "dmg_stddev": 104309,
+      "dmg_min": 171966,
+      "dmg_max": 414441,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 181206,
+          "min_damage": 166834,
+          "max_damage": 206247,
+          "count": 8
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 54622,
+          "min_damage": 32070,
+          "max_damage": 78015,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 11
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 6
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "avg_uses": 5.8,
+      "min_uses": 2,
+      "max_uses": 10,
+      "sample_count": 12
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to purge a dangerous magical debuff or to immune a targeted magical ability; must be used proactively since the 5-second window is very short.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use proactively before a burst of physical damage or during a physical tankbuster cleave; grants near-100% dodge for 10 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use when health drops below 50% to restore a meaningful chunk of HP; short enough cooldown to use freely throughout the fight without holding for emergencies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 5,
+      "usage_rule": "Press proactively before any telegraphed AoE damage event; its 15-second cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Crimson Vial": 185311,
+    "Feint": 1966
+  },
+  "ability_icons": {}
+}

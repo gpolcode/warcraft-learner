@@ -1,0 +1,233 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 9,
+  "avg_duration_s": 464,
+  "downtime_threshold_ms": 2582,
+  "top_avg_efficiency": 76.6,
+  "top_efficiency_stddev": 9,
+  "per_cd_benchmarks": {
+    "Arcane Surge": {
+      "sample_count": 9,
+      "avg_first_cast_s": 22.9,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 99.9,
+      "stddev_gap_s": 16.4,
+      "hold_targets": {
+        "4": {
+          "target_s": 389.1,
+          "stddev_s": 45.2,
+          "count": 4,
+          "total_samples": 9
+        },
+        "5": {
+          "target_s": 395.7,
+          "stddev_s": 46.3,
+          "count": 8,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.66,
+      "uses_per_min": {
+        "avg": 0.663,
+        "stddev": 0.051,
+        "min": 0.592,
+        "max": 0.737
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 22.7,
+      "stddev_bl_offset_s": 0.4,
+      "bl_pct": 44
+    },
+    "Touch of the Magi": {
+      "sample_count": 9,
+      "avg_first_cast_s": 23.4,
+      "stddev_first_cast_s": 1.3,
+      "avg_gap_s": 47.3,
+      "stddev_gap_s": 6.6,
+      "hold_targets": {
+        "8": {
+          "target_s": 368.4,
+          "stddev_s": 25.5,
+          "count": 4,
+          "total_samples": 9
+        },
+        "9": {
+          "target_s": 395.8,
+          "stddev_s": 20,
+          "count": 8,
+          "total_samples": 9
+        },
+        "10": {
+          "target_s": 441.6,
+          "stddev_s": 23.9,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 9.9,
+      "avg_uses_per_min": 1.28,
+      "uses_per_min": {
+        "avg": 1.28,
+        "stddev": 0.065,
+        "min": 1.185,
+        "max": 1.351
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 23.3,
+      "stddev_bl_offset_s": 0.4,
+      "bl_pct": 44
+    },
+    "Evocation": {
+      "sample_count": 9,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Presence of Mind": {
+      "sample_count": 9,
+      "avg_first_cast_s": 62,
+      "stddev_first_cast_s": 78.7,
+      "avg_gap_s": 85.3,
+      "stddev_gap_s": 39.6,
+      "hold_targets": {},
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.703,
+        "stddev": 0.21,
+        "min": 0.397,
+        "max": 0.848
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 25.2,
+      "stddev_bl_offset_s": 12.2,
+      "bl_pct": 22
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Arcane Surge",
+      "spell_id": 365350,
+      "cooldown": 90,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Open the burst window with Arcane Surge; it spends all your mana for a 35% spell damage buff and a massive mana refund, so never sit on it because holding it starves the rest of your rotation of mana."
+    },
+    {
+      "name": "Touch of the Magi",
+      "spell_id": 321507,
+      "cooldown": 45,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast Touch of the Magi inside the Arcane Surge window (mid-air after an Arcane Barrage as Spellslinger, or late in Surge to cover Arcane Soul as Sunfury), then dump as much damage as possible into the target before the debuff detonates."
+    },
+    {
+      "name": "Evocation",
+      "spell_id": 12051,
+      "cooldown": 90,
+      "duration": 2,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use Evocation only when you are out of mana, have no procs to spend, and Arcane Surge is not coming up shortly, since Surge will refund your mana for free."
+    },
+    {
+      "name": "Presence of Mind",
+      "spell_id": 205025,
+      "cooldown": 60,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use Presence of Mind to fire instant Arcane Blasts during heavy movement or to squeeze extra casts into a burst window; talent-gated, so zero casts is fine if you did not take it."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "critical",
+      "description": "Open with Arcane Surge then Touch of the Magi",
+      "condition": null,
+      "action": "Pop stat trinkets and potions, cast Arcane Surge, then cast Arcane Barrage and follow it with Touch of the Magi mid-air so Touch lands inside the Surge buff window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Touch of the Magi inside Arcane Surge",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 321507,
+        "spell_name": "Touch of the Magi",
+        "required_spell_id": 365350,
+        "required_spell_name": "Arcane Surge",
+        "window_s": 15
+      },
+      "action": "Always line your first Touch of the Magi up with the Arcane Surge window so both cooldowns detonate together; only the off-Surge 45-second Touch is cast on its own."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never sit on Arcane Surge or Touch of the Magi",
+      "condition": null,
+      "action": "Send Arcane Surge and Touch of the Magi as close to on cooldown as possible; both are short cooldowns and holding them starves your mana and Arcane Salvo, cascading into lost damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Arcane Charges with Barrage to manage mana",
+      "condition": null,
+      "action": "When mana runs low, cast Arcane Barrage at 4 Arcane Charges to throttle your spend and keep casting; running out of mana is fine, just Barrage and continue the priority."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Dump Arcane Salvo with Barrage at max stacks",
+      "condition": null,
+      "action": "Cast Arcane Barrage at max Arcane Salvo stacks (around 20-25 depending on build) with 4 Arcane Charges to convert stored Salvo into a hard-hitting, cleaving Barrage."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Hold Salvo and Barrage for incoming Touch",
+      "condition": null,
+      "action": "If Touch of the Magi or Arcane Surge will be ready within about 4 seconds, hold your big Arcane Barrage so the spend lands inside the cooldown window instead of just before it."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Add Arcane Orb and Pulse on multiple targets",
+      "condition": null,
+      "action": "On 3 or more targets, weave Arcane Orb after Barrage with Clearcasting and use Arcane Pulse to accelerate Arcane Salvo and Arcane Charge generation across the pack."
+    },
+    {
+      "type": "rotation",
+      "priority": "low",
+      "description": "Keep Prismatic Barrier active",
+      "condition": null,
+      "action": "Refresh Prismatic Barrier whenever it falls off; the 0.5s cast costs almost no uptime and a dead mage deals zero damage."
+    }
+  ],
+  "cd_spell_ids": {
+    "Arcane Surge": 365350,
+    "Touch of the Magi": 321507,
+    "Evocation": 12051,
+    "Presence of Mind": 205025,
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {}
+}

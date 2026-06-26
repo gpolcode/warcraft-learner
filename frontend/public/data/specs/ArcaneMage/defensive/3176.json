@@ -1,0 +1,190 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 3,
+      "avg_first_cast_s": 93.2,
+      "stddev_first_cast_s": 36.6,
+      "avg_gap_s": 125.8,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.339,
+        "stddev": 0.194,
+        "min": 0.21,
+        "max": 0.563
+      },
+      "majority_hold": false
+    },
+    "Prismatic Barrier": {
+      "sample_count": 7,
+      "avg_first_cast_s": 105.2,
+      "stddev_first_cast_s": 47.7,
+      "avg_gap_s": 55,
+      "stddev_gap_s": 30.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 189.9,
+          "stddev_s": 25,
+          "count": 4,
+          "total_samples": 7
+        },
+        "2": {
+          "target_s": 196.8,
+          "stddev_s": 41.6,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.649,
+        "stddev": 0.248,
+        "min": 0.318,
+        "max": 1.04
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 131.7,
+      "stddev_s": 6.6,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 192973,
+      "dmg_stddev": 22900,
+      "dmg_min": 171381,
+      "dmg_max": 224654,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 184805,
+          "min_damage": 160374,
+          "max_damage": 224654,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240435,
+      "window_length_s": 9.3,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 180,
+      "stddev_s": 8.9,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 266518,
+      "dmg_stddev": 93380,
+      "dmg_min": 168327,
+      "dmg_max": 408281,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 211656,
+          "min_damage": 86378,
+          "max_damage": 323126,
+          "count": 6
+        },
+        {
+          "spell_id": 1249251,
+          "avg_damage": 107399,
+          "min_damage": 81949,
+          "max_damage": 155094,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240435,
+      "window_length_s": 11.2,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 3
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 7
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {}
+}

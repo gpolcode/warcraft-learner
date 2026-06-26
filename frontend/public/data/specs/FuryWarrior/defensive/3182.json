@@ -1,0 +1,197 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 15,
+  "per_defensive_benchmarks": {
+    "Enraged Regeneration": {
+      "sample_count": 1,
+      "avg_first_cast_s": 16.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 230.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.424,
+        "stddev": 0,
+        "min": 0.424,
+        "max": 0.424
+      },
+      "majority_hold": true
+    },
+    "Spell Reflection": {
+      "sample_count": 11,
+      "avg_first_cast_s": 93.4,
+      "stddev_first_cast_s": 84.6,
+      "avg_gap_s": 68.4,
+      "stddev_gap_s": 36.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 139.4,
+          "stddev_s": 68.4,
+          "count": 9,
+          "total_samples": 11
+        },
+        "2": {
+          "target_s": 196.3,
+          "stddev_s": 56.1,
+          "count": 8,
+          "total_samples": 11
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.7,
+      "uses_per_min": {
+        "avg": 0.698,
+        "stddev": 0.276,
+        "min": 0.21,
+        "max": 1.09
+      },
+      "majority_hold": true
+    },
+    "Rallying Cry": {
+      "sample_count": 11,
+      "avg_first_cast_s": 173.7,
+      "stddev_first_cast_s": 53.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.205,
+        "stddev": 0.016,
+        "min": 0.182,
+        "max": 0.235
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 159,
+      "stddev_s": 11.6,
+      "count": 8,
+      "total_samples": 15,
+      "dmg_avg": 208930,
+      "dmg_stddev": 83390,
+      "dmg_min": 112643,
+      "dmg_max": 346754,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 178301,
+          "min_damage": 63186,
+          "max_damage": 323883,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 34324,
+          "min_damage": 20621,
+          "max_damage": 50537,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240387,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 245.1,
+      "stddev_s": 10.6,
+      "count": 6,
+      "total_samples": 15,
+      "dmg_avg": 241248,
+      "dmg_stddev": 142834,
+      "dmg_min": 45843,
+      "dmg_max": 401228,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 40665,
+          "min_damage": 20949,
+          "max_damage": 46822,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240387,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2,
+      "sample_count": 1
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 11
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "avg_uses": 3.5,
+      "min_uses": 1,
+      "max_uses": 6,
+      "sample_count": 11
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {}
+}

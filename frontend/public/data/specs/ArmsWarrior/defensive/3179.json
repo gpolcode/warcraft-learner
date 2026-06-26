@@ -1,0 +1,202 @@
+{
+  "spec": "ArmsWarrior",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.9,
+      "stddev_first_cast_s": 68,
+      "avg_gap_s": 55.1,
+      "stddev_gap_s": 15.4,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.568,
+        "stddev": 0.447,
+        "min": 0.257,
+        "max": 1.459
+      },
+      "majority_hold": false
+    },
+    "Die by the Sword": {
+      "sample_count": 3,
+      "avg_first_cast_s": 157.1,
+      "stddev_first_cast_s": 60.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.299,
+        "stddev": 0.049,
+        "min": 0.257,
+        "max": 0.353
+      },
+      "majority_hold": false
+    },
+    "Impending Victory": {
+      "sample_count": 1,
+      "avg_first_cast_s": 61.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 135.6,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.593,
+        "stddev": 0,
+        "min": 0.593,
+        "max": 0.593
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 34.8,
+      "stddev_s": 5.2,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 121698,
+      "dmg_stddev": 19068,
+      "dmg_min": 100398,
+      "dmg_max": 146730,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 103832,
+          "min_damage": 96388,
+          "max_damage": 121154,
+          "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 35734,
+          "min_damage": 22123,
+          "max_damage": 49344,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    },
+    {
+      "time_s": 84.3,
+      "stddev_s": 6.8,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 154371,
+      "dmg_stddev": 96246,
+      "dmg_min": 59716,
+      "dmg_max": 269533,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 89974,
+          "min_damage": 59716,
+          "max_damage": 98722,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 3
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 10
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2,
+      "sample_count": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop proactively before heavy physical or parry-able melee damage; it grants a large parry chance plus damage reduction for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-wide emergency button before a large group-wide hit, granting you and nearby allies a temporary maximum-health and effective-health buffer.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a targeted magic cast or projectile to reflect it and reduce incoming magic damage during the short window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Defensive Stance",
+      "spell_id": 197690,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Toggle on during sustained heavy damage for a flat damage reduction, then toggle back to your damage stance once the danger passes.",
+      "talent_gated": false
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "duration": null,
+      "usage_rule": "Cast when below full health to deal damage and instantly heal a chunk of your maximum health; talent_gated as it replaces Victory Rush only when talented.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Die by the Sword": 118038,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920,
+    "Defensive Stance": 197690,
+    "Impending Victory": 202168
+  },
+  "ability_icons": {}
+}

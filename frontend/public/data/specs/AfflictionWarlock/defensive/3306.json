@@ -1,0 +1,207 @@
+{
+  "spec": "AfflictionWarlock",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 8,
+      "avg_first_cast_s": 79.7,
+      "stddev_first_cast_s": 60.8,
+      "avg_gap_s": 59,
+      "stddev_gap_s": 9,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.649,
+        "stddev": 0.348,
+        "min": 0.193,
+        "max": 1.258
+      },
+      "majority_hold": false
+    },
+    "Unending Resolve": {
+      "sample_count": 6,
+      "avg_first_cast_s": 71,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.421,
+        "stddev": 0.011,
+        "min": 0.413,
+        "max": 0.442
+      },
+      "majority_hold": false
+    },
+    "Mortal Coil": {
+      "sample_count": 2,
+      "avg_first_cast_s": 143.4,
+      "stddev_first_cast_s": 71.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.305,
+        "stddev": 0.158,
+        "min": 0.193,
+        "max": 0.417
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 70.5,
+      "stddev_s": 1.8,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 388990,
+      "dmg_stddev": 75437,
+      "dmg_min": 265203,
+      "dmg_max": 452219,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 329586,
+          "min_damage": 231149,
+          "max_damage": 379468,
+          "count": 6
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 65533,
+          "min_damage": 29502,
+          "max_damage": 86315,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4794,
+          "min_damage": 3506,
+          "max_damage": 6512,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 8,
+      "defensive_name": "Unending Resolve",
+      "spell_id": 104773,
+      "common_defensives": [
+        "Unending Resolve"
+      ],
+      "common_cds": [
+        "Unending Resolve"
+      ]
+    },
+    {
+      "time_s": 75.8,
+      "stddev_s": 11.6,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 298956,
+      "dmg_stddev": 145637,
+      "dmg_min": 120024,
+      "dmg_max": 457690,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 170911,
+          "min_damage": 102882,
+          "max_damage": 265026,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5778,
+          "min_damage": 3365,
+          "max_damage": 9376,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 12.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 6
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a heavy spike of incoming damage to reduce damage taken by 40% and prevent spell pushback for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Use proactively ahead of a damage event to sacrifice Soul Shards for a large absorb shield; talented choice, so absence is expected if not selected.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal yourself for a percentage of health while horrifying the target; talented choice on the same row as Howl of Terror.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Consume when your health drops low to instantly restore a chunk of health; create one before the pull and use it freely on its own cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789,
+    "Healthstone": 6262
+  },
+  "ability_icons": {}
+}
