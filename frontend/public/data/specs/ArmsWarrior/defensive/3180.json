@@ -6,22 +6,22 @@
   "per_defensive_benchmarks": {
     "Die by the Sword": {
       "sample_count": 10,
-      "avg_first_cast_s": 184.5,
-      "stddev_first_cast_s": 107.1,
-      "avg_gap_s": 172.8,
-      "stddev_gap_s": 29,
+      "avg_first_cast_s": 177.9,
+      "stddev_first_cast_s": 111.7,
+      "avg_gap_s": 190.4,
+      "stddev_gap_s": 30,
       "hold_targets": {
         "1": {
-          "target_s": 302.8,
-          "stddev_s": 27.7,
-          "count": 4,
+          "target_s": 303,
+          "stddev_s": 24.6,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.22,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.218,
+        "avg": 0.235,
         "stddev": 0.086,
         "min": 0.138,
         "max": 0.354
@@ -29,17 +29,17 @@
       "majority_hold": false
     },
     "Rallying Cry": {
-      "sample_count": 6,
-      "avg_first_cast_s": 258.1,
-      "stddev_first_cast_s": 129,
+      "sample_count": 5,
+      "avg_first_cast_s": 249,
+      "stddev_first_cast_s": 142.1,
       "avg_gap_s": 229,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.2,
-      "avg_uses_per_min": 0.18,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.184,
-        "stddev": 0.064,
+        "avg": 0.192,
+        "stddev": 0.067,
         "min": 0.142,
         "max": 0.306
       },
@@ -47,58 +47,65 @@
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 95.5,
-      "stddev_first_cast_s": 35.6,
-      "avg_gap_s": 71.2,
-      "stddev_gap_s": 28.5,
+      "avg_first_cast_s": 100.9,
+      "stddev_first_cast_s": 38.5,
+      "avg_gap_s": 72.9,
+      "stddev_gap_s": 28.9,
       "hold_targets": {
         "1": {
-          "target_s": 142.8,
-          "stddev_s": 55.6,
+          "target_s": 143.1,
+          "stddev_s": 60.7,
           "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 248.2,
-          "stddev_s": 50.6,
-          "count": 9,
+          "target_s": 249.5,
+          "stddev_s": 54,
+          "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 299.3,
-          "stddev_s": 47.2,
-          "count": 6,
+          "target_s": 298.3,
+          "stddev_s": 50.1,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
-          "target_s": 337.9,
-          "stddev_s": 73.8,
+          "target_s": 348.2,
+          "stddev_s": 78.8,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.65,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.62,
       "uses_per_min": {
-        "avg": 0.647,
-        "stddev": 0.254,
-        "min": 0.306,
+        "avg": 0.624,
+        "stddev": 0.278,
+        "min": 0.302,
         "max": 1.24
       },
       "majority_hold": true
     },
     "Impending Victory": {
-      "sample_count": 6,
-      "avg_first_cast_s": 260.1,
-      "stddev_first_cast_s": 78.3,
+      "sample_count": 4,
+      "avg_first_cast_s": 232,
+      "stddev_first_cast_s": 68.9,
       "avg_gap_s": 44.8,
       "stddev_gap_s": 6,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.21,
+      "hold_targets": {
+        "1": {
+          "target_s": 280.9,
+          "stddev_s": 48.8,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.214,
-        "stddev": 0.112,
+        "avg": 0.25,
+        "stddev": 0.126,
         "min": 0.142,
         "max": 0.383
       },
@@ -107,31 +114,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 89,
-      "stddev_s": 7.1,
-      "count": 7,
-      "total_samples": 10,
-      "dmg_avg": 406567,
-      "dmg_stddev": 116940,
-      "dmg_min": 266386,
+      "time_s": 88.7,
+      "dmg_avg": 399489,
+      "dmg_stddev": 104847,
+      "dmg_min": 282016,
       "dmg_max": 583554,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249024,
-          "avg_damage": 297418,
-          "min_damage": 226130,
-          "max_damage": 377487,
-          "count": 6
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 43152,
-          "min_damage": 34606,
-          "max_damage": 56695,
-          "count": 7
-        }
-      ],
-      "ref_game_id": 240437,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -140,34 +127,31 @@
       ],
       "common_cds": [
         "Spell Reflection"
-      ]
-    },
-    {
-      "time_s": 99.4,
-      "stddev_s": 10.5,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 298278,
-      "dmg_stddev": 237475,
-      "dmg_min": 53949,
-      "dmg_max": 600287,
+      ],
+      "ref_game_id": 240437,
       "ability_breakdown": [
         {
-          "spell_id": 1246749,
-          "avg_damage": 119236,
-          "min_damage": 117918,
-          "max_damage": 120553,
-          "count": 2
+          "spell_id": 1249024,
+          "avg_damage": 324859,
+          "min_damage": 276310,
+          "max_damage": 377487,
+          "count": 5
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 55778,
-          "min_damage": 53949,
-          "max_damage": 57744,
-          "count": 4
+          "avg_damage": 44789,
+          "min_damage": 34606,
+          "max_damage": 56695,
+          "count": 6
         }
-      ],
-      "ref_game_id": 240437,
+      ]
+    },
+    {
+      "time_s": 91.7,
+      "dmg_avg": 318922,
+      "dmg_stddev": 197168,
+      "dmg_min": 53949,
+      "dmg_max": 600287,
       "window_length_s": 8,
       "defensive_name": "Die by the Sword",
       "spell_id": 118038,
@@ -176,34 +160,24 @@
       ],
       "common_cds": [
         "Die by the Sword"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 56649,
+          "min_damage": 53949,
+          "max_damage": 59717,
+          "count": 5
+        }
       ]
     },
     {
-      "time_s": 141.9,
-      "stddev_s": 5.5,
-      "count": 10,
-      "total_samples": 10,
-      "dmg_avg": 271736,
-      "dmg_stddev": 129606,
-      "dmg_min": 153873,
+      "time_s": 142.2,
+      "dmg_avg": 293894,
+      "dmg_stddev": 115440,
+      "dmg_min": 186690,
       "dmg_max": 583480,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249024,
-          "avg_damage": 187344,
-          "min_damage": 128215,
-          "max_damage": 254803,
-          "count": 7
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 41653,
-          "min_damage": 25658,
-          "max_damage": 56053,
-          "count": 10
-        }
-      ],
-      "ref_game_id": 257759,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -212,77 +186,71 @@
       ],
       "common_cds": [
         "Spell Reflection"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 202514,
+          "min_damage": 132628,
+          "max_damage": 254803,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 44519,
+          "min_damage": 30868,
+          "max_damage": 56053,
+          "count": 10
+        }
       ]
     },
     {
       "time_s": 246.7,
-      "stddev_s": 8.2,
-      "count": 9,
-      "total_samples": 10,
-      "dmg_avg": 293567,
-      "dmg_stddev": 84634,
+      "dmg_avg": 308193,
+      "dmg_stddev": 86930,
       "dmg_min": 157082,
       "dmg_max": 397609,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240437,
       "ability_breakdown": [
         {
           "spell_id": 1249024,
-          "avg_damage": 232861,
-          "min_damage": 170956,
+          "avg_damage": 244269,
+          "min_damage": 209285,
           "max_damage": 283115,
           "count": 5
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 61843,
-          "min_damage": 43851,
+          "avg_damage": 65758,
+          "min_damage": 49706,
           "max_damage": 84906,
           "count": 9
         },
         {
           "spell_id": 1255739,
-          "avg_damage": 47904,
+          "avg_damage": 52825,
           "min_damage": 25613,
           "max_damage": 75444,
           "count": 8
         }
-      ],
-      "ref_game_id": 240437,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
       ]
     },
     {
-      "time_s": 300.3,
-      "stddev_s": 4.4,
-      "count": 9,
-      "total_samples": 10,
-      "dmg_avg": 280485,
-      "dmg_stddev": 172577,
+      "time_s": 300.1,
+      "dmg_avg": 275589,
+      "dmg_stddev": 168876,
       "dmg_min": 54641,
       "dmg_max": 537081,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246765,
-          "avg_damage": 92569,
-          "min_damage": 77367,
-          "max_damage": 113246,
-          "count": 5
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 58878,
-          "min_damage": 37702,
-          "max_damage": 80868,
-          "count": 9
-        }
-      ],
-      "ref_game_id": 240431,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -291,55 +259,45 @@
       ],
       "common_cds": [
         "Spell Reflection"
-      ]
-    },
-    {
-      "time_s": 302.8,
-      "stddev_s": 0.9,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 521752,
-      "dmg_stddev": 102027,
-      "dmg_min": 370317,
-      "dmg_max": 593002,
+      ],
+      "ref_game_id": 257759,
       "ability_breakdown": [
         {
-          "spell_id": 1249047,
-          "avg_damage": 191533,
-          "min_damage": 181075,
-          "max_damage": 201991,
-          "count": 2
-        },
-        {
           "spell_id": 1249024,
-          "avg_damage": 163291,
-          "min_damage": 148397,
-          "max_damage": 193417,
+          "avg_damage": 222484,
+          "min_damage": 158747,
+          "max_damage": 283115,
           "count": 4
         },
         {
-          "spell_id": 1246749,
-          "avg_damage": 113569,
-          "min_damage": 95360,
-          "max_damage": 124282,
-          "count": 3
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 90124,
-          "min_damage": 87311,
-          "max_damage": 96649,
+          "spell_id": 1246502,
+          "avg_damage": 111762,
+          "min_damage": 87664,
+          "max_damage": 134000,
           "count": 4
         },
         {
           "spell_id": 1246765,
-          "avg_damage": 78256,
+          "avg_damage": 95925,
           "min_damage": 77367,
-          "max_damage": 79145,
-          "count": 2
+          "max_damage": 113246,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 60503,
+          "min_damage": 37702,
+          "max_damage": 80868,
+          "count": 8
         }
-      ],
-      "ref_game_id": 0,
+      ]
+    },
+    {
+      "time_s": 303,
+      "dmg_avg": 441181,
+      "dmg_stddev": 110345,
+      "dmg_min": 352101,
+      "dmg_max": 563405,
       "window_length_s": 8,
       "defensive_name": "Die by the Sword",
       "spell_id": 118038,
@@ -348,41 +306,57 @@
       ],
       "common_cds": [
         "Die by the Sword"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 167448,
+          "min_damage": 152603,
+          "max_damage": 193417,
+          "count": 5
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 118225,
+          "min_damage": 109329,
+          "max_damage": 124282,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 88531,
+          "min_damage": 85097,
+          "max_damage": 96649,
+          "count": 5
+        }
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Die by the Sword",
       "spell_id": 118038,
-      "avg_uses": 1.4,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 10
+      "max_uses": 2
     },
     {
-      "name": "Rallying Cry",
       "spell_id": 97462,
       "avg_uses": 1.2,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 6
+      "max_uses": 2
     },
     {
-      "name": "Spell Reflection",
       "spell_id": 23920,
-      "avg_uses": 4.2,
+      "avg_uses": 4,
       "min_uses": 2,
-      "max_uses": 7,
-      "sample_count": 10
+      "max_uses": 7
     },
     {
-      "name": "Impending Victory",
       "spell_id": 202168,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 6
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -434,5 +408,47 @@
     "Defensive Stance": 197690,
     "Impending Victory": 202168
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "118038": {
+      "icon": "ability_warrior_challange",
+      "name": "Die by the Sword"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1246765": {
+      "icon": "ability_paladin_divinestorm",
+      "name": "Divine Storm"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "5690dd6663f08963"
 }

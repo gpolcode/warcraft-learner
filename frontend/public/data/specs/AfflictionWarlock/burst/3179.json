@@ -5,14 +5,16 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 3.9,
-      "stddev_s": 1.8,
-      "count": 10,
-      "total_samples": 10,
-      "dmg_avg": 5846574,
-      "dmg_stddev": 647996,
+      "time_s": 3.8,
+      "dmg_avg": 5847158,
+      "dmg_stddev": 648866,
       "dmg_min": 4645051,
       "dmg_max": 6836800,
+      "common_cds": [
+        "Summon Darkglare"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20,
       "ability_breakdown": [
         {
           "spell_id": 1259790,
@@ -62,23 +64,19 @@
           "count": 9,
           "avg_casts": 3
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 130.8,
+      "dmg_avg": 3886092,
+      "dmg_stddev": 1025520,
+      "dmg_min": 2074361,
+      "dmg_max": 5334647,
       "common_cds": [
         "Summon Darkglare"
       ],
       "avg_targets": 1,
-      "window_length_s": 20
-    },
-    {
-      "time_s": 130.8,
-      "stddev_s": 6.2,
-      "count": 9,
-      "total_samples": 10,
-      "dmg_avg": 3885838,
-      "dmg_stddev": 1025506,
-      "dmg_min": 2074361,
-      "dmg_max": 5334647,
+      "window_length_s": 20,
       "ability_breakdown": [
         {
           "spell_id": 1257065,
@@ -120,13 +118,7 @@
           "count": 6,
           "avg_casts": 0
         }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Summon Darkglare"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 20
+      ]
     }
   ],
   "cd_spell_ids": {
@@ -137,5 +129,6 @@
     "Dark Pact": 108416,
     "Mortal Coil": 6789,
     "Healthstone": 6262
-  }
+  },
+  "source_signature": "53cd22d9cbbf7127"
 }

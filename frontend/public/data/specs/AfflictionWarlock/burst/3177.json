@@ -2,49 +2,59 @@
   "spec": "AfflictionWarlock",
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
-  "sample_count": 9,
+  "sample_count": 10,
   "windows": [
     {
-      "time_s": 4.7,
-      "stddev_s": 2,
-      "count": 9,
-      "total_samples": 9,
-      "dmg_avg": 6506843,
-      "dmg_stddev": 551975,
+      "time_s": 5.2,
+      "dmg_avg": 6630211,
+      "dmg_stddev": 650399,
       "dmg_min": 5826337,
-      "dmg_max": 7587824,
+      "dmg_max": 7740518,
+      "common_cds": [
+        "Summon Darkglare"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20,
       "ability_breakdown": [
         {
           "spell_id": 1259790,
-          "avg_damage": 1589898,
+          "avg_damage": 1598022,
           "min_damage": 1373930,
           "max_damage": 1846375,
-          "count": 9,
+          "count": 10,
           "avg_casts": 10
         },
         {
           "spell_id": 205231,
-          "avg_damage": 986585,
+          "avg_damage": 985683,
           "min_damage": 805150,
           "max_damage": 1120873,
-          "count": 9,
+          "count": 10,
           "avg_casts": 0
         },
         {
           "spell_id": 1261153,
-          "avg_damage": 491209,
+          "avg_damage": 496998,
           "min_damage": 343136,
           "max_damage": 669688,
-          "count": 8,
+          "count": 9,
           "avg_casts": 6
         },
         {
           "spell_id": 449801,
-          "avg_damage": 435339,
+          "avg_damage": 438031,
           "min_damage": 331751,
           "max_damage": 643080,
-          "count": 7,
+          "count": 8,
           "avg_casts": 0
+        },
+        {
+          "spell_id": 1261176,
+          "avg_damage": 406675,
+          "min_damage": 347599,
+          "max_damage": 511788,
+          "count": 5,
+          "avg_casts": 10
         },
         {
           "spell_id": 980,
@@ -54,62 +64,58 @@
           "count": 6,
           "avg_casts": 1
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 127,
+      "dmg_avg": 4112431,
+      "dmg_stddev": 693734,
+      "dmg_min": 3167425,
+      "dmg_max": 5564102,
       "common_cds": [
         "Summon Darkglare"
       ],
       "avg_targets": 1,
-      "window_length_s": 20
-    },
-    {
-      "time_s": 126.1,
-      "stddev_s": 4.1,
-      "count": 8,
-      "total_samples": 9,
-      "dmg_avg": 4084012,
-      "dmg_stddev": 735986,
-      "dmg_min": 3167425,
-      "dmg_max": 5564102,
+      "window_length_s": 20,
       "ability_breakdown": [
         {
           "spell_id": 1259790,
-          "avg_damage": 892263,
+          "avg_damage": 892988,
           "min_damage": 608666,
           "max_damage": 1172138,
-          "count": 8,
+          "count": 9,
           "avg_casts": 8
         },
         {
           "spell_id": 205231,
-          "avg_damage": 622987,
+          "avg_damage": 611923,
           "min_damage": 467912,
           "max_damage": 777254,
-          "count": 8,
+          "count": 9,
           "avg_casts": 0
         },
         {
           "spell_id": 1269049,
-          "avg_damage": 528458,
+          "avg_damage": 512079,
           "min_damage": 275671,
           "max_damage": 739908,
-          "count": 5,
+          "count": 6,
           "avg_casts": 0
         },
         {
           "spell_id": 449801,
-          "avg_damage": 343380,
+          "avg_damage": 344434,
           "min_damage": 170235,
           "max_damage": 538705,
-          "count": 7,
+          "count": 8,
           "avg_casts": 0
         },
         {
           "spell_id": 1278047,
-          "avg_damage": 301402,
+          "avg_damage": 306076,
           "min_damage": 216041,
           "max_damage": 432089,
-          "count": 4,
+          "count": 5,
           "avg_casts": 0
         },
         {
@@ -120,13 +126,7 @@
           "count": 6,
           "avg_casts": 4
         }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Summon Darkglare"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 20
+      ]
     }
   ],
   "cd_spell_ids": {
@@ -137,5 +137,6 @@
     "Dark Pact": 108416,
     "Mortal Coil": 6789,
     "Healthstone": 6262
-  }
+  },
+  "source_signature": "fa1f820d31d4605c"
 }
