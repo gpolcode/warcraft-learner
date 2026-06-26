@@ -1,0 +1,934 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "avg_duration_s": 371.3,
+  "downtime_threshold_ms": 2140,
+  "top_avg_efficiency": 81.1,
+  "top_efficiency_stddev": 6.4,
+  "per_cd_benchmarks": {
+    "Dragonrage": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.1,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 122,
+      "stddev_gap_s": 1.6,
+      "hold_targets": {},
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.549,
+        "stddev": 0.033,
+        "min": 0.497,
+        "max": 0.599
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": -27.2,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Eternity Surge": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 15.1,
+      "stddev_gap_s": 2.9,
+      "hold_targets": {},
+      "avg_uses": 24.5,
+      "avg_uses_per_min": 3.95,
+      "uses_per_min": {
+        "avg": 3.949,
+        "stddev": 0.186,
+        "min": 3.592,
+        "max": 4.196
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": -2.1,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Fire Breath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.6,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 19.1,
+      "stddev_gap_s": 3.2,
+      "hold_targets": {},
+      "avg_uses": 19.5,
+      "avg_uses_per_min": 3.15,
+      "uses_per_min": {
+        "avg": 3.146,
+        "stddev": 0.13,
+        "min": 2.873,
+        "max": 3.297
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 7.2,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Deep Breath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Tip the Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.8,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 126,
+      "stddev_gap_s": 6,
+      "hold_targets": {
+        "3": {
+          "target_s": 264.8,
+          "stddev_s": 2.2,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.549,
+        "stddev": 0.033,
+        "min": 0.497,
+        "max": 0.599
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": -26.5,
+      "stddev_bl_offset_s": 0,
+      "bl_pct": 10
+    },
+    "Fury of the Aspects": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 3.5,
+      "stddev_s": 1.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 9592267,
+      "dmg_stddev": 1667110,
+      "dmg_min": 7214699,
+      "dmg_max": 12048418,
+      "ability_breakdown": [
+        {
+          "spell_id": 356995,
+          "avg_damage": 3644644,
+          "min_damage": 2586003,
+          "max_damage": 4719760,
+          "count": 10,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 359077,
+          "avg_damage": 1458221,
+          "min_damage": 1232651,
+          "max_damage": 1717993,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 353759,
+          "avg_damage": 943713,
+          "min_damage": 715432,
+          "max_damage": 1301575,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1265872,
+          "avg_damage": 816903,
+          "min_damage": 443295,
+          "max_damage": 1263305,
+          "count": 9,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 706533,
+          "min_damage": 548516,
+          "max_damage": 987609,
+          "count": 7,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 698632,
+          "min_damage": 551041,
+          "max_damage": 797758,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dragonrage"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18
+    },
+    {
+      "time_s": 124.7,
+      "stddev_s": 1.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4723136,
+      "dmg_stddev": 932491,
+      "dmg_min": 3546035,
+      "dmg_max": 6268669,
+      "ability_breakdown": [
+        {
+          "spell_id": 356995,
+          "avg_damage": 1653906,
+          "min_damage": 1136196,
+          "max_damage": 2492141,
+          "count": 10,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 359077,
+          "avg_damage": 622831,
+          "min_damage": 276006,
+          "max_damage": 1003970,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1265872,
+          "avg_damage": 564251,
+          "min_damage": 377642,
+          "max_damage": 835269,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 441172,
+          "avg_damage": 431532,
+          "min_damage": 356237,
+          "max_damage": 506644,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 414141,
+          "min_damage": 255007,
+          "max_damage": 630059,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 357212,
+          "avg_damage": 411890,
+          "min_damage": 316308,
+          "max_damage": 589248,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dragonrage"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18
+    },
+    {
+      "time_s": 246.5,
+      "stddev_s": 2.5,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 3740027,
+      "dmg_stddev": 857882,
+      "dmg_min": 2924524,
+      "dmg_max": 5233719,
+      "ability_breakdown": [
+        {
+          "spell_id": 356995,
+          "avg_damage": 1494914,
+          "min_damage": 990918,
+          "max_damage": 2437432,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 359077,
+          "avg_damage": 610839,
+          "min_damage": 355674,
+          "max_damage": 1135919,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1265872,
+          "avg_damage": 376553,
+          "min_damage": 179535,
+          "max_damage": 774473,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 295392,
+          "min_damage": 195332,
+          "max_damage": 453556,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 287167,
+          "min_damage": 181524,
+          "max_damage": 520371,
+          "count": 10,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dragonrage"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18
+    },
+    {
+      "time_s": 370.9,
+      "stddev_s": 1.9,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 4329554,
+      "dmg_stddev": 1122043,
+      "dmg_min": 3085773,
+      "dmg_max": 5805297,
+      "ability_breakdown": [
+        {
+          "spell_id": 356995,
+          "avg_damage": 1636159,
+          "min_damage": 1213550,
+          "max_damage": 1852896,
+          "count": 4,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 569652,
+          "min_damage": 495185,
+          "max_damage": 655010,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1265872,
+          "avg_damage": 565804,
+          "min_damage": 246648,
+          "max_damage": 1113789,
+          "count": 4,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 359077,
+          "avg_damage": 558816,
+          "min_damage": 417930,
+          "max_damage": 647448,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 353759,
+          "avg_damage": 356401,
+          "min_damage": 324242,
+          "max_damage": 388560,
+          "count": 2,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 441172,
+          "avg_damage": 241416,
+          "min_damage": 77885,
+          "max_damage": 411241,
+          "count": 3,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dragonrage"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:103843,109793,109794,109795,110064,110414,110414,110414,93272,93273,93274,93275,93280,93281,93284,93285,93288,93289,93292,93294,93295,93300,93302,93304,93305,93306,93307,93308,93309,93310,93311,93312,93313,93314,93316,93318,93319,93320,93322,93323,93324,93325,93326,93327,93328,93329,93330,93331,93332,93333,93334,93341,93343,93344,93345,93346,93348,93349,93350,93351,93352,93354,93355,93366,93715,94921,94928,94933,94934,94936,94939,94941,94943,94944,94952,94953,99827",
+        "count": 3,
+        "pct": 30,
+        "report_code": "kTfcdRbQJ8Fw9a7B",
+        "fight_id": 101,
+        "player_name": "组我等于成功"
+      },
+      {
+        "key": "v2:103843,109793,109794,109795,110064,110414,110414,110414,93272,93273,93274,93275,93281,93284,93285,93288,93289,93290,93295,93300,93302,93304,93305,93306,93307,93308,93309,93310,93311,93312,93313,93314,93316,93318,93319,93320,93322,93323,93324,93325,93326,93327,93328,93329,93330,93331,93332,93333,93334,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93353,93354,93355,93366,93715,94921,94928,94933,94934,94936,94939,94941,94943,94944,94952,94953,99827",
+        "count": 2,
+        "pct": 20,
+        "report_code": "3anHCg4A9D8dbmYt",
+        "fight_id": 56,
+        "player_name": "星火龙"
+      },
+      {
+        "key": "v2:103843,109793,109794,109795,110064,110414,110414,110414,93272,93273,93274,93275,93280,93281,93284,93285,93288,93289,93290,93295,93298,93300,93302,93304,93305,93306,93308,93309,93310,93311,93312,93313,93314,93316,93318,93319,93320,93322,93323,93324,93325,93326,93327,93328,93329,93330,93331,93332,93333,93334,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93353,93354,93355,93366,93715,94921,94928,94933,94934,94936,94939,94941,94943,94944,94952,94953,99827",
+        "count": 1,
+        "pct": 10,
+        "report_code": "V71mFxYrH6cTtMLp",
+        "fight_id": 29,
+        "player_name": "Nightscalie"
+      },
+      {
+        "key": "v2:103843,109793,109794,109795,110064,110065,110414,110414,110414,93272,93273,93274,93275,93280,93281,93284,93285,93288,93289,93295,93300,93302,93304,93305,93306,93307,93308,93309,93310,93311,93312,93313,93314,93316,93318,93319,93320,93322,93323,93324,93325,93326,93327,93328,93329,93330,93331,93332,93333,93334,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93353,93354,93355,93366,93715,94921,94928,94933,94934,94936,94939,94941,94943,94944,94952,94953,99827",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Q8HfzqnwGJh1jDCF",
+        "fight_id": 35,
+        "player_name": "Tahridràkee"
+      },
+      {
+        "key": "v2:103843,109793,109794,109795,110064,110414,110414,110414,93271,93272,93273,93274,93275,93280,93281,93284,93285,93288,93289,93290,93295,93300,93302,93304,93305,93306,93308,93309,93310,93311,93312,93313,93314,93316,93318,93319,93320,93322,93323,93324,93325,93326,93327,93328,93329,93330,93331,93332,93333,93334,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93353,93354,93355,93366,93715,94921,94928,94933,94934,94936,94939,94941,94943,94944,94952,94953,99827",
+        "count": 1,
+        "pct": 10,
+        "report_code": "RygZftTbvLmV3KGC",
+        "fight_id": 34,
+        "player_name": "汇浓浓"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 250256,
+          "name": "Heart of Wind",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 250256,
+          "name": "Heart of Wind",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "avg_uses": 6.5,
+      "min_uses": 3,
+      "max_uses": 10,
+      "sample_count": 10
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "avg_uses": 7.5,
+      "min_uses": 5,
+      "max_uses": 10,
+      "sample_count": 4
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.1,
+      "stddev_first_cast_s": 35.1,
+      "avg_gap_s": 42.4,
+      "stddev_gap_s": 43.5,
+      "hold_targets": {},
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 1.06,
+      "uses_per_min": {
+        "avg": 1.06,
+        "stddev": 0.307,
+        "min": 0.42,
+        "max": 1.432
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 4,
+      "avg_first_cast_s": 127.3,
+      "stddev_first_cast_s": 78.1,
+      "avg_gap_s": 14.4,
+      "stddev_gap_s": 51.2,
+      "hold_targets": {
+        "5": {
+          "target_s": 275.2,
+          "stddev_s": 36.6,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 1.27,
+      "uses_per_min": {
+        "avg": 1.266,
+        "stddev": 0.425,
+        "min": 0.898,
+        "max": 1.808
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 88.6,
+      "stddev_s": 0.6,
+      "count": 15,
+      "total_samples": 10,
+      "dmg_avg": 341730,
+      "dmg_stddev": 21798,
+      "dmg_min": 315985,
+      "dmg_max": 367568,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 207336,
+          "min_damage": 179656,
+          "max_damage": 248896,
+          "count": 15
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 80319,
+          "min_damage": 60039,
+          "max_damage": 100598,
+          "count": 10
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 64202,
+          "min_damage": 43873,
+          "max_damage": 75220,
+          "count": 15
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 24969,
+          "min_damage": 17520,
+          "max_damage": 32417,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 240437,
+      "window_length_s": 8,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ]
+    },
+    {
+      "time_s": 93.1,
+      "stddev_s": 4.8,
+      "count": 14,
+      "total_samples": 10,
+      "dmg_avg": 217175,
+      "dmg_stddev": 186993,
+      "dmg_min": 0,
+      "dmg_max": 614301,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 42355,
+          "min_damage": 12845,
+          "max_damage": 82049,
+          "count": 13
+        }
+      ],
+      "ref_game_id": 240431,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    },
+    {
+      "time_s": 144.4,
+      "stddev_s": 5.2,
+      "count": 15,
+      "total_samples": 10,
+      "dmg_avg": 255520,
+      "dmg_stddev": 220112,
+      "dmg_min": 16620,
+      "dmg_max": 672576,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 56440,
+          "min_damage": 14986,
+          "max_damage": 95373,
+          "count": 15
+        }
+      ],
+      "ref_game_id": 240431,
+      "window_length_s": 7.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    },
+    {
+      "time_s": 246.9,
+      "stddev_s": 2.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 652996,
+      "dmg_stddev": 263954,
+      "dmg_min": 402587,
+      "dmg_max": 903404,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249047,
+          "avg_damage": 302124,
+          "min_damage": 302124,
+          "max_damage": 302124,
+          "count": 5
+        },
+        {
+          "spell_id": 1249024,
+          "avg_damage": 284250,
+          "min_damage": 281462,
+          "max_damage": 287038,
+          "count": 10
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 138937,
+          "min_damage": 138937,
+          "max_damage": 138937,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 86470,
+          "min_damage": 63837,
+          "max_damage": 109103,
+          "count": 10
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 61745,
+          "min_damage": 57288,
+          "max_damage": 66202,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 0,
+      "window_length_s": 8,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ]
+    },
+    {
+      "time_s": 248.4,
+      "stddev_s": 5.1,
+      "count": 16,
+      "total_samples": 10,
+      "dmg_avg": 252712,
+      "dmg_stddev": 201328,
+      "dmg_min": 0,
+      "dmg_max": 565737,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 179128,
+          "min_damage": 125554,
+          "max_damage": 215918,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 76252,
+          "min_damage": 19997,
+          "max_damage": 124053,
+          "count": 14
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 36216,
+          "min_damage": 13643,
+          "max_damage": 69060,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240431,
+      "window_length_s": 6.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    },
+    {
+      "time_s": 301.1,
+      "stddev_s": 0,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 705995,
+      "dmg_stddev": 0,
+      "dmg_min": 705995,
+      "dmg_max": 705995,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 386964,
+          "min_damage": 386964,
+          "max_damage": 386964,
+          "count": 5
+        },
+        {
+          "spell_id": 1249024,
+          "avg_damage": 193456,
+          "min_damage": 193456,
+          "max_damage": 193456,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 120685,
+          "min_damage": 120685,
+          "max_damage": 120685,
+          "count": 5
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 4890,
+          "min_damage": 4890,
+          "max_damage": 4890,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240431,
+      "window_length_s": 8,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ]
+    },
+    {
+      "time_s": 303,
+      "stddev_s": 7.3,
+      "count": 11,
+      "total_samples": 10,
+      "dmg_avg": 415307,
+      "dmg_stddev": 240159,
+      "dmg_min": 22987,
+      "dmg_max": 706553,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 207524,
+          "min_damage": 143595,
+          "max_damage": 286393,
+          "count": 7
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 110661,
+          "min_damage": 107273,
+          "max_damage": 115106,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 89061,
+          "min_damage": 21098,
+          "max_damage": 135035,
+          "count": 11
+        }
+      ],
+      "ref_game_id": 240431,
+      "window_length_s": 7.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    }
+  ]
+}
