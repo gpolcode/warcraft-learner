@@ -13,6 +13,7 @@ import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client';
 import { routes } from './app.routes';
+import { WCL_TRANSPORT, ApolloWclTransport } from './core/services/wcl-transport';
 import { provideDataSource } from './core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from './pages/post-raid/burst-windows/burst-data-source';
 import { BurstDataFileService } from './pages/post-raid/burst-windows/burst-data-file.service';
@@ -64,6 +65,9 @@ export const appConfig: ApplicationConfig = {
       iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
       iconRegistry.addSvgIconLiteral('github', sanitizer.bypassSecurityTrustHtml(GITHUB_SVG));
     }),
+    // WCL GraphQL transport: apollo-angular in the browser (the Node ingestion binds a
+    // plain-fetch transport instead, since apollo-angular does not run headless).
+    { provide: WCL_TRANSPORT, useExisting: ApolloWclTransport },
     // Vertical-slice data sources: file reader in prod, live transform under the dev flag.
     provideDataSource(BURST_DATA_SOURCE, BurstDataFileService, BurstTransformService),
     provideDataSource(ROTATION_DATA_SOURCE, RotationDataFileService, RotationTransformService),

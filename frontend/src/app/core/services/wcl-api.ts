@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { Apollo, gql } from 'apollo-angular';
-import { ServerError, CombinedGraphQLErrors, type FetchPolicy, type OperationVariables } from '@apollo/client';
 import { WclAuthService } from './wcl-auth';
+import { WCL_TRANSPORT, WclTransportError } from './wcl-transport';
 import {
   WclReport, WclAbility, WclEvent,
   PlayerDetailGroups, WclRawRanking, WclCombatantInfo,
@@ -34,43 +32,30 @@ const SPEC_TO_WCL: Record<string, [string, string]> = {
 @Injectable({ providedIn: 'root' })
 export class WclApiService {
   private readonly auth = inject(WclAuthService);
-  private readonly apollo = inject(Apollo);
+  private readonly transport = inject(WCL_TRANSPORT);
 
   /**
-   * Runs a GraphQL query against WCL via Apollo. The client-credentials bearer token is
-   * attached per request through Apollo's operation context (it is renewed on expiry, so
-   * it must not be baked into the link). `fetchPolicy` defaults to `cache-first` to
-   * leverage Apollo's in-memory cache; callers that must always see fresh data (report
-   * polling, large event fetches) pass `network-only`.
+   * Runs a GraphQL query against WCL through the injected transport (Apollo in the
+   * browser, plain fetch in Node ingestion). The client-credentials bearer token is
+   * fetched here and passed per request (it is renewed on expiry). `fetchPolicy`
+   * defaults to `cache-first` to dedupe repeat reads within a session; callers that
+   * must always see fresh data (report polling, large event fetches) pass `network-only`.
+   * On a 401 the cached token is dropped so the next request re-authenticates.
    */
   async query<TData = unknown>(
-    gqlString: string, variables: object = {}, fetchPolicy: FetchPolicy = 'cache-first',
+    gqlString: string, variables: object = {}, fetchPolicy: 'cache-first' | 'network-only' = 'cache-first',
   ): Promise<TData> {
     const token = await this.auth.getToken();
     try {
-      const result = await firstValueFrom(this.apollo.query<TData, OperationVariables>({
-        query: gql(gqlString),
-        variables: variables as OperationVariables,
-        fetchPolicy,
-        context: { headers: { Authorization: `Bearer ${token}` } },
-      }));
-      return result.data as TData;
+      return await this.transport.query<TData>(gqlString, variables, token, fetchPolicy === 'cache-first');
     } catch (error) {
-      // apollo-angular maps a non-2xx HTTP response to ServerError (with statusCode).
-      if (ServerError.is(error)) {
-        if (error.statusCode === 401) {
-          // Token was rejected (e.g. expired early or the secret was rotated); drop the
-          // cached token so the next request fetches a fresh one.
-          this.auth.invalidate();
-          throw new Error('WCL API error (401) - token rejected.');
-        }
-        throw new Error(`WCL API error (${error.statusCode})`);
+      if (error instanceof WclTransportError && error.status === 401) {
+        // Token was rejected (e.g. expired early or the secret was rotated); drop the
+        // cached token so the next request fetches a fresh one.
+        this.auth.invalidate();
+        throw new Error('WCL API error (401) - token rejected.');
       }
-      // A 200 response carrying a top-level `errors` array surfaces as CombinedGraphQLErrors.
-      if (CombinedGraphQLErrors.is(error)) {
-        throw new Error(error.errors[0]?.message || 'WCL GraphQL error');
-      }
-      throw error;
+      throw error instanceof WclTransportError ? new Error(error.message) : error;
     }
   }
 
