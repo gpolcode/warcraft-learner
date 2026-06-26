@@ -1,0 +1,1194 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "avg_duration_s": 346.9,
+  "downtime_threshold_ms": 2532,
+  "top_avg_efficiency": 76.2,
+  "top_efficiency_stddev": 6.7,
+  "per_cd_benchmarks": {
+    "Arcane Surge": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.6,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 98.2,
+      "stddev_gap_s": 10.7,
+      "hold_targets": {
+        "3": {
+          "target_s": 204.8,
+          "stddev_s": 3.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 308.4,
+          "stddev_s": 18.1,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 0.67,
+      "uses_per_min": {
+        "avg": 0.668,
+        "stddev": 0.055,
+        "min": 0.599,
+        "max": 0.746
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 11.3,
+      "stddev_bl_offset_s": 2,
+      "bl_pct": 20
+    },
+    "Touch of the Magi": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.7,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 48.2,
+      "stddev_gap_s": 3.7,
+      "hold_targets": {
+        "4": {
+          "target_s": 158.1,
+          "stddev_s": 4.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 205.1,
+          "stddev_s": 3.3,
+          "count": 8,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 249.1,
+          "stddev_s": 3.9,
+          "count": 9,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 305.1,
+          "stddev_s": 3.9,
+          "count": 7,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 353.8,
+          "stddev_s": 3.6,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 1.3,
+      "uses_per_min": {
+        "avg": 1.296,
+        "stddev": 0.066,
+        "min": 1.163,
+        "max": 1.398
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 11.8,
+      "stddev_bl_offset_s": 1.8,
+      "bl_pct": 20
+    },
+    "Evocation": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Presence of Mind": {
+      "sample_count": 10,
+      "avg_first_cast_s": 20.6,
+      "stddev_first_cast_s": 5.1,
+      "avg_gap_s": 62.8,
+      "stddev_gap_s": 18.6,
+      "hold_targets": {
+        "3": {
+          "target_s": 189.7,
+          "stddev_s": 28.5,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 231.5,
+          "stddev_s": 26.8,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.94,
+      "uses_per_min": {
+        "avg": 0.937,
+        "stddev": 0.199,
+        "min": 0.486,
+        "max": 1.193
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": 22,
+      "stddev_bl_offset_s": 9.7,
+      "bl_pct": 20
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 11.4,
+      "stddev_s": 1.1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8148979,
+      "dmg_stddev": 1842220,
+      "dmg_min": 6074484,
+      "dmg_max": 12129093,
+      "ability_breakdown": [
+        {
+          "spell_id": 44425,
+          "avg_damage": 2296689,
+          "min_damage": 1609626,
+          "max_damage": 3008960,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 1299348,
+          "min_damage": 839029,
+          "max_damage": 2208156,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 153640,
+          "avg_damage": 1236249,
+          "min_damage": 768477,
+          "max_damage": 1992738,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 1098844,
+          "min_damage": 867195,
+          "max_damage": 1468846,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 30451,
+          "avg_damage": 935329,
+          "min_damage": 458623,
+          "max_damage": 1467881,
+          "count": 9,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 1258036,
+          "avg_damage": 928028,
+          "min_damage": 364469,
+          "max_damage": 1463672,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Touch of the Magi",
+        "Arcane Surge",
+        "Presence of Mind"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 19.6
+    },
+    {
+      "time_s": 57.3,
+      "stddev_s": 0.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 2188606,
+      "dmg_stddev": 774916,
+      "dmg_min": 1405902,
+      "dmg_max": 2933389,
+      "ability_breakdown": [
+        {
+          "spell_id": 44425,
+          "avg_damage": 735270,
+          "min_damage": 599926,
+          "max_damage": 873067,
+          "count": 4,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 30451,
+          "avg_damage": 425935,
+          "min_damage": 181910,
+          "max_damage": 733800,
+          "count": 4,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 153640,
+          "avg_damage": 361013,
+          "min_damage": 352433,
+          "max_damage": 369593,
+          "count": 2,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 329629,
+          "min_damage": 287625,
+          "max_damage": 368481,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1258036,
+          "avg_damage": 289052,
+          "min_damage": 157891,
+          "max_damage": 404548,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 197127,
+          "min_damage": 160372,
+          "max_damage": 277164,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Touch of the Magi",
+        "Presence of Mind"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 16
+    },
+    {
+      "time_s": 104.5,
+      "stddev_s": 1.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4412099,
+      "dmg_stddev": 682245,
+      "dmg_min": 3421525,
+      "dmg_max": 5510817,
+      "ability_breakdown": [
+        {
+          "spell_id": 44425,
+          "avg_damage": 1389831,
+          "min_damage": 1085736,
+          "max_damage": 1813976,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 734667,
+          "min_damage": 547153,
+          "max_damage": 1024643,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 706757,
+          "min_damage": 502976,
+          "max_damage": 890886,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 153640,
+          "avg_damage": 549266,
+          "min_damage": 325217,
+          "max_damage": 1141115,
+          "count": 8,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 30451,
+          "avg_damage": 454310,
+          "min_damage": 227645,
+          "max_damage": 753606,
+          "count": 8,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1258036,
+          "avg_damage": 413698,
+          "min_damage": 243861,
+          "max_damage": 727931,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Arcane Surge",
+        "Touch of the Magi"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.9
+    },
+    {
+      "time_s": 201.8,
+      "stddev_s": 5,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 9327908,
+      "dmg_stddev": 1950632,
+      "dmg_min": 7581665,
+      "dmg_max": 13172069,
+      "ability_breakdown": [
+        {
+          "spell_id": 153640,
+          "avg_damage": 3149954,
+          "min_damage": 1426120,
+          "max_damage": 4663012,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 44425,
+          "avg_damage": 2558701,
+          "min_damage": 1431315,
+          "max_damage": 3746766,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 926257,
+          "min_damage": 575882,
+          "max_damage": 1162637,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 827187,
+          "min_damage": 564371,
+          "max_damage": 1060048,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 444720,
+          "avg_damage": 761891,
+          "min_damage": 427108,
+          "max_damage": 1093482,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1258036,
+          "avg_damage": 650431,
+          "min_damage": 368069,
+          "max_damage": 969845,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Arcane Surge",
+        "Touch of the Magi",
+        "Presence of Mind"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17
+    },
+    {
+      "time_s": 248,
+      "stddev_s": 3.3,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 4351716,
+      "dmg_stddev": 1107698,
+      "dmg_min": 2846690,
+      "dmg_max": 5865238,
+      "ability_breakdown": [
+        {
+          "spell_id": 153640,
+          "avg_damage": 1573062,
+          "min_damage": 595432,
+          "max_damage": 2496670,
+          "count": 7,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 44425,
+          "avg_damage": 1258709,
+          "min_damage": 937464,
+          "max_damage": 1686970,
+          "count": 8,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 30451,
+          "avg_damage": 507550,
+          "min_damage": 348812,
+          "max_damage": 760340,
+          "count": 8,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 1258036,
+          "avg_damage": 370987,
+          "min_damage": 155693,
+          "max_damage": 527408,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 357986,
+          "min_damage": 283504,
+          "max_damage": 479984,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 260564,
+          "min_damage": 166131,
+          "max_damage": 319987,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Touch of the Magi",
+        "Presence of Mind"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 19.5
+    },
+    {
+      "time_s": 306.5,
+      "stddev_s": 6,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 7927866,
+      "dmg_stddev": 3648242,
+      "dmg_min": 2769472,
+      "dmg_max": 13945158,
+      "ability_breakdown": [
+        {
+          "spell_id": 153640,
+          "avg_damage": 3556384,
+          "min_damage": 1997425,
+          "max_damage": 7336643,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 44425,
+          "avg_damage": 1702818,
+          "min_damage": 294114,
+          "max_damage": 2586827,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 443763,
+          "avg_damage": 778553,
+          "min_damage": 105907,
+          "max_damage": 1260794,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 444720,
+          "avg_damage": 646775,
+          "min_damage": 471580,
+          "max_damage": 898861,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 210833,
+          "avg_damage": 594198,
+          "min_damage": 411205,
+          "max_damage": 677796,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 30451,
+          "avg_damage": 474146,
+          "min_damage": 214767,
+          "max_damage": 690326,
+          "count": 4,
+          "avg_casts": 6
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Touch of the Magi",
+        "Arcane Surge",
+        "Presence of Mind"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17.8
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:101883,102438,102441,102445,102446,102449,102453,102454,102460,102465,102467,102468,102469,102470,102471,102473,102474,102475,102480,104113,108536,108537,108538,108539,108541,108551,108654,108657,108658,108659,108660,108661,108664,108665,109002,109667,109668,109669,110079,110080,110081,110420,110420,110420,110442,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62116,62121,62122,62123,62125,62127,93524,94654,94655,94656,94657,94658,94659,94660,94661,94662,94663,94664,99830",
+        "count": 3,
+        "pct": 30,
+        "report_code": "qzMFt6H1AfLvmkwX",
+        "fight_id": 29,
+        "player_name": "小沐曾雪菜"
+      },
+      {
+        "key": "v2:101883,102438,102441,102445,102446,102449,102453,102454,102460,102465,102467,102468,102469,102470,102471,102473,102474,102475,102480,104113,108536,108537,108538,108539,108541,108551,108654,108657,108658,108659,108660,108661,108664,108665,109002,109667,109668,109669,110080,110081,110420,110420,110420,110442,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62116,62121,62122,62123,62124,62125,62127,93524,94654,94655,94656,94657,94658,94659,94660,94661,94662,94663,94664,99830",
+        "count": 2,
+        "pct": 20,
+        "report_code": "LNWf7nGjVy2xagBv",
+        "fight_id": 18,
+        "player_name": "Nantaks"
+      },
+      {
+        "key": "v2:102438,102441,102445,102446,102449,102453,102454,102460,102465,102467,102468,102469,102470,102471,102473,102474,102475,102480,104113,108536,108537,108538,108539,108541,108551,108654,108657,108658,108659,108660,108661,108662,108664,108665,109002,109667,109668,109669,110080,110081,110420,110420,110420,110442,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62121,62122,62123,62124,62125,62127,62129,93524,94654,94655,94656,94657,94658,94659,94660,94661,94662,94663,94664,99830",
+        "count": 1,
+        "pct": 10,
+        "report_code": "Fpv6WMgzxHN9tJCq",
+        "fight_id": 226,
+        "player_name": "Xinxiaoxin"
+      },
+      {
+        "key": "v2:101883,102438,102441,102445,102446,102449,102453,102454,102460,102465,102467,102468,102469,102470,102471,102473,102474,102475,102480,104113,108536,108537,108538,108539,108541,108551,108654,108657,108658,108659,108660,108661,108662,108664,108665,109002,109667,109668,109669,110080,110081,110420,110420,110420,110442,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62116,62121,62122,62123,62124,62125,62127,93524,94654,94655,94656,94657,94658,94659,94660,94661,94662,94663,94664,99830",
+        "count": 1,
+        "pct": 10,
+        "report_code": "pPhkFNr6tKZXwdvb",
+        "fight_id": 5,
+        "player_name": "静静守护"
+      },
+      {
+        "key": "v2:102438,102441,102445,102446,102449,102453,102454,102460,102465,102467,102468,102469,102470,102471,102473,102474,102475,102480,104113,108536,108537,108538,108539,108541,108551,108654,108657,108658,108659,108660,108661,108664,108665,109002,109667,109668,109669,110079,110080,110081,110420,110420,110420,110442,62085,62086,62091,62094,62096,62098,62100,62102,62104,62105,62112,62114,62115,62116,62121,62122,62123,62124,62125,62127,93524,94654,94655,94656,94657,94658,94659,94660,94661,94662,94663,94664,99830",
+        "count": 1,
+        "pct": 10,
+        "report_code": "T4ZmGdYDAQ3qrJXV",
+        "fight_id": 19,
+        "player_name": "Ixidora"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 4,
+          "pct": 40
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8015,
+          "name": "Enchant Helm - Rune of Avoidance",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7999,
+          "name": "Enchant Shoulders - Nature's Grace",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7937,
+          "name": "+41 Intellect & +4% Mana",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 5,
+          "pct": 50
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 3,
+          "pct": 30
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 7
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "avg_uses": 7,
+      "min_uses": 2,
+      "max_uses": 11,
+      "sample_count": 10
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Prismatic Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 59.2,
+      "stddev_first_cast_s": 43.7,
+      "avg_gap_s": 41.6,
+      "stddev_gap_s": 15.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 126.3,
+          "stddev_s": 44.4,
+          "count": 7,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 201.3,
+          "stddev_s": 45,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 233.6,
+          "stddev_s": 39.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 240.6,
+          "stddev_s": 39.6,
+          "count": 7,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 284.8,
+          "stddev_s": 56.3,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7,
+      "avg_uses_per_min": 1.19,
+      "uses_per_min": {
+        "avg": 1.188,
+        "stddev": 0.356,
+        "min": 0.418,
+        "max": 1.629
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 7,
+      "avg_first_cast_s": 99.5,
+      "stddev_first_cast_s": 69.5,
+      "avg_gap_s": 127.4,
+      "stddev_gap_s": 70.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 253.4,
+          "stddev_s": 45.3,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.404,
+        "stddev": 0.236,
+        "min": 0.163,
+        "max": 0.874
+      },
+      "majority_hold": true
+    },
+    "Greater Invisibility": {
+      "sample_count": 2,
+      "avg_first_cast_s": 268.3,
+      "stddev_first_cast_s": 33.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.156,
+        "stddev": 0.011,
+        "min": 0.148,
+        "max": 0.163
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 2,
+      "avg_first_cast_s": 128.6,
+      "stddev_first_cast_s": 0.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.184,
+        "stddev": 0.029,
+        "min": 0.163,
+        "max": 0.204
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 37,
+      "stddev_s": 9,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 207860,
+      "dmg_stddev": 35555,
+      "dmg_min": 160204,
+      "dmg_max": 270130,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 168092,
+          "min_damage": 121263,
+          "max_damage": 270130,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 41057,
+          "min_damage": 14375,
+          "max_damage": 59258,
+          "count": 5
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 35988,
+          "min_damage": 18264,
+          "max_damage": 63205,
+          "count": 5
+        },
+        {
+          "spell_id": 1244672,
+          "avg_damage": 6334,
+          "min_damage": 5670,
+          "max_damage": 6744,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 4.4,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 74.6,
+      "stddev_s": 4.1,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 230174,
+      "dmg_stddev": 46816,
+      "dmg_min": 166926,
+      "dmg_max": 320820,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 136184,
+          "min_damage": 133149,
+          "max_damage": 137949,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 69386,
+          "min_damage": 15368,
+          "max_damage": 184020,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 5.5,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 126.3,
+      "stddev_s": 7.7,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 299040,
+      "dmg_stddev": 80033,
+      "dmg_min": 179441,
+      "dmg_max": 437565,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249748,
+          "avg_damage": 233306,
+          "min_damage": 210238,
+          "max_damage": 245974,
+          "count": 7
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 38688,
+          "min_damage": 12876,
+          "max_damage": 115124,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 6.5,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 165.2,
+      "stddev_s": 8.1,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 251970,
+      "dmg_stddev": 41439,
+      "dmg_min": 180153,
+      "dmg_max": 326951,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 171331,
+          "min_damage": 42845,
+          "max_damage": 287594,
+          "count": 5
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 70961,
+          "min_damage": 11871,
+          "max_damage": 115667,
+          "count": 6
+        },
+        {
+          "spell_id": 1244672,
+          "avg_damage": 10677,
+          "min_damage": 6673,
+          "max_damage": 13762,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 242056,
+      "window_length_s": 9.3,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 198.8,
+      "stddev_s": 9.1,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 213844,
+      "dmg_stddev": 18001,
+      "dmg_min": 179823,
+      "dmg_max": 230068,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 112714,
+          "min_damage": 4330,
+          "max_damage": 169535,
+          "count": 3
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 60988,
+          "min_damage": 30736,
+          "max_damage": 92028,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 242056,
+      "window_length_s": 6.8,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 240.1,
+      "stddev_s": 10.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 278296,
+      "dmg_stddev": 65868,
+      "dmg_min": 190000,
+      "dmg_max": 372969,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 83524,
+          "min_damage": 30121,
+          "max_damage": 207232,
+          "count": 10
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 67190,
+          "min_damage": 15239,
+          "max_damage": 105728,
+          "count": 6
+        },
+        {
+          "spell_id": 1252157,
+          "avg_damage": 40245,
+          "min_damage": 39671,
+          "max_damage": 41190,
+          "count": 5
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 36312,
+          "min_damage": 6157,
+          "max_damage": 103759,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 6.1,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 285.1,
+      "stddev_s": 9.8,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 214889,
+      "dmg_stddev": 77550,
+      "dmg_min": 96820,
+      "dmg_max": 391224,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 51498,
+          "min_damage": 29629,
+          "max_damage": 61471,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 10.9,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    },
+    {
+      "time_s": 325.6,
+      "stddev_s": 7.6,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 203701,
+      "dmg_stddev": 15128,
+      "dmg_min": 192553,
+      "dmg_max": 226044,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 144747,
+          "min_damage": 134744,
+          "max_damage": 154749,
+          "count": 2
+        },
+        {
+          "spell_id": 1270513,
+          "avg_damage": 65927,
+          "min_damage": 43812,
+          "max_damage": 88041,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 244552,
+      "window_length_s": 17,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ]
+    }
+  ]
+}

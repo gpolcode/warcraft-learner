@@ -1,0 +1,547 @@
+{
+  "spec": "AfflictionWarlock",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "avg_duration_s": 160.1,
+  "downtime_threshold_ms": 2389,
+  "top_avg_efficiency": 77.2,
+  "top_efficiency_stddev": 6,
+  "per_cd_benchmarks": {
+    "Summon Darkglare": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.5,
+      "stddev_first_cast_s": 1.6,
+      "avg_gap_s": 121.8,
+      "stddev_gap_s": 2.1,
+      "hold_targets": {},
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.81,
+      "uses_per_min": {
+        "avg": 0.811,
+        "stddev": 0.083,
+        "min": 0.58,
+        "max": 0.883
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Malevolence": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Dark Harvest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 2.9,
+      "stddev_s": 1.6,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 5680472,
+      "dmg_stddev": 514077,
+      "dmg_min": 5067943,
+      "dmg_max": 6680334,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259790,
+          "avg_damage": 1659873,
+          "min_damage": 1195179,
+          "max_damage": 2068699,
+          "count": 10,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 205231,
+          "avg_damage": 898650,
+          "min_damage": 735414,
+          "max_damage": 1065730,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1261153,
+          "avg_damage": 428136,
+          "min_damage": 321779,
+          "max_damage": 558656,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 1261176,
+          "avg_damage": 404831,
+          "min_damage": 328784,
+          "max_damage": 484061,
+          "count": 5,
+          "avg_casts": 11
+        },
+        {
+          "spell_id": 449801,
+          "avg_damage": 404627,
+          "min_damage": 325396,
+          "max_damage": 524830,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 449826,
+          "avg_damage": 362757,
+          "min_damage": 315725,
+          "max_damage": 448032,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Summon Darkglare"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 125,
+      "stddev_s": 2.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4260273,
+      "dmg_stddev": 1179591,
+      "dmg_min": 2098435,
+      "dmg_max": 5634002,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259790,
+          "avg_damage": 1155297,
+          "min_damage": 435834,
+          "max_damage": 1516281,
+          "count": 10,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 205231,
+          "avg_damage": 574940,
+          "min_damage": 169160,
+          "max_damage": 836843,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1269049,
+          "avg_damage": 508159,
+          "min_damage": 260559,
+          "max_damage": 715001,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 449801,
+          "avg_damage": 372123,
+          "min_damage": 298977,
+          "max_damage": 545982,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1261176,
+          "avg_damage": 309793,
+          "min_damage": 149755,
+          "max_damage": 429997,
+          "count": 7,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 980,
+          "avg_damage": 304494,
+          "min_damage": 247924,
+          "max_damage": 358681,
+          "count": 6,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Summon Darkglare"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100941,102031,102247,109837,109838,109839,109841,109842,109843,109845,109846,109852,109855,109857,109859,109860,109861,109862,109863,109865,110071,110072,110073,110074,110075,110076,110269,110270,110405,110405,110405,71918,71922,71923,71924,71926,71930,71931,71933,71936,71937,71942,71944,71948,71949,71950,71952,71955,71956,71957,72032,72033,72034,72037,72041,72045,72046,72047,72049,72050,72051,72054,72055,72058,94821,94823,94824,94825,94832,94838,94846,94847,94850,94851,94857,99850",
+        "count": 1,
+        "pct": 10,
+        "report_code": "kKDfAL412aQhBHtn",
+        "fight_id": 26,
+        "player_name": "Zotexx"
+      },
+      {
+        "key": "v2:100941,102031,102247,109837,109838,109839,109840,109841,109842,109843,109845,109846,109847,109848,109852,109855,109857,109858,109859,109860,109861,109862,109864,109865,110071,110072,110073,110074,110075,110269,110270,110405,110405,110405,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71955,71956,71957,72032,72033,72034,72037,72041,72045,72046,72047,72049,72050,72051,72055,72058,94821,94823,94824,94825,94832,94838,94846,94847,94850,94851,94857,99850",
+        "count": 1,
+        "pct": 10,
+        "report_code": "F7vBXyKRx1wDnhG3",
+        "fight_id": 48,
+        "player_name": "Soulshárd"
+      },
+      {
+        "key": "v2:100941,102031,102247,109837,109838,109839,109840,109841,109842,109843,109845,109846,109847,109848,109849,109852,109855,109857,109859,109860,109861,109862,109864,109865,110071,110072,110073,110074,110075,110269,110270,110405,110405,110405,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71987,72032,72033,72034,72037,72045,72046,72047,72049,72050,72051,72055,72058,94821,94823,94824,94825,94832,94838,94846,94847,94850,94851,94857,99850",
+        "count": 1,
+        "pct": 10,
+        "report_code": "yJ2tBb63L79xZADm",
+        "fight_id": 11,
+        "player_name": "Mirv"
+      },
+      {
+        "key": "v2:100941,102031,102247,109837,109838,109839,109840,109841,109842,109843,109845,109846,109847,109852,109855,109857,109858,109859,109860,109861,109862,109863,109865,110071,110072,110073,110074,110075,110269,110270,110405,110405,110405,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,72032,72033,72034,72037,72041,72045,72046,72047,72049,72050,72051,72055,72058,94821,94823,94824,94825,94832,94838,94846,94847,94850,94851,94857,99850",
+        "count": 1,
+        "pct": 10,
+        "report_code": "AwfYMx8X1HRKcrmv",
+        "fight_id": 37,
+        "player_name": "Rossamalpelo"
+      },
+      {
+        "key": "v2:100941,102031,102247,109837,109838,109839,109840,109841,109842,109843,109845,109847,109852,109855,109857,109858,109859,109860,109861,109862,109863,109865,110071,110072,110073,110074,110075,110269,110270,110405,110405,110405,71922,71924,71926,71930,71931,71933,71936,71937,71941,71942,71947,71948,71949,71950,71952,71954,71955,71956,71957,72032,72033,72034,72037,72041,72045,72046,72047,72049,72050,72051,72055,72058,94821,94823,94824,94825,94832,94838,94846,94847,94850,94851,94857,99850",
+        "count": 1,
+        "pct": 10,
+        "report_code": "pwt3qPT62LD1jFgc",
+        "fight_id": 3,
+        "player_name": "还是那个老呆"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 250144,
+          "name": "Emberwing Feather",
+          "count": 3,
+          "pct": 30
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 5935,
+          "name": "Kul Tiran Surveying",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 6
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 8
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 2
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 8,
+      "avg_first_cast_s": 79.7,
+      "stddev_first_cast_s": 60.8,
+      "avg_gap_s": 59,
+      "stddev_gap_s": 9,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.649,
+        "stddev": 0.348,
+        "min": 0.193,
+        "max": 1.258
+      },
+      "majority_hold": false
+    },
+    "Unending Resolve": {
+      "sample_count": 6,
+      "avg_first_cast_s": 71,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.421,
+        "stddev": 0.011,
+        "min": 0.413,
+        "max": 0.442
+      },
+      "majority_hold": false
+    },
+    "Mortal Coil": {
+      "sample_count": 2,
+      "avg_first_cast_s": 143.4,
+      "stddev_first_cast_s": 71.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.305,
+        "stddev": 0.158,
+        "min": 0.193,
+        "max": 0.417
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 70.5,
+      "stddev_s": 1.8,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 388990,
+      "dmg_stddev": 75437,
+      "dmg_min": 265203,
+      "dmg_max": 452219,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 329586,
+          "min_damage": 231149,
+          "max_damage": 379468,
+          "count": 6
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 65533,
+          "min_damage": 29502,
+          "max_damage": 86315,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4794,
+          "min_damage": 3506,
+          "max_damage": 6512,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 8,
+      "defensive_name": "Unending Resolve",
+      "spell_id": 104773,
+      "common_defensives": [
+        "Unending Resolve"
+      ],
+      "common_cds": [
+        "Unending Resolve"
+      ]
+    },
+    {
+      "time_s": 75.8,
+      "stddev_s": 11.6,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 298956,
+      "dmg_stddev": 145637,
+      "dmg_min": 120024,
+      "dmg_max": 457690,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 170911,
+          "min_damage": 102882,
+          "max_damage": 265026,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5778,
+          "min_damage": 3365,
+          "max_damage": 9376,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 12.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ]
+    }
+  ]
+}
