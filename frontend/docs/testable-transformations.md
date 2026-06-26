@@ -17,24 +17,27 @@ Split every slice into two parts:
   `*TransformService`). It does the I/O (fetch raw WCL events via `WclApiService`,
   read prepared data via a `*DataSource`), then calls the pure core, then returns.
   It contains **no arithmetic**.
-- **Functional core** - the `*.vm.ts` file: plain functions over plain data. No
-  Angular, no `HttpClient`, no `inject()`. This is where every field is computed,
-  and it is the only thing you unit-test.
+- **Functional core** - **exported pure functions colocated in the same
+  `*.service.ts`** (or a sibling shared module when ingest reuses them, e.g.
+  `core/analysis/bench/`): plain functions over plain data. No Angular, no
+  `HttpClient`, no `inject()`. This is where every field is computed, and it is the
+  only thing you unit-test.
 
 ```
                 fetch raw            call pure core           return
-  *Service  ->  WclApiService  ->   burst.vm functions     ->  view-model
-  (shell)       *DataSource         (burst.vm.ts core)         (signals)
+  *Service  ->  WclApiService  ->   buildBurstView(...)    ->  view-model
+  (shell)       *DataSource         (pure fns in same file)    (signals)
 ```
 
-This is the convention the repo already uses: `pages/pre-fight/pre-fight.vm.ts`
-and `pages/post-raid/post-raid.vm.ts` are pure-function modules tested by
-`*.vm.spec.ts`, and the components just call them. New slices extend that pattern;
-they do not invent a parallel one.
+`pages/post-raid/burst-windows/burst.service.ts` is the reference: it exports
+`burstWindowStatus`, `splitCommonCds`, `buildBurstView`, ... right next to the
+`BurstFeatureService` that calls them, and `burst.service.spec.ts` tests each
+function directly. (No separate `*.vm.ts` file; the older `pre-fight.vm.ts` /
+`post-raid.vm.ts` are legacy.)
 
 Why this works here specifically:
 
-- The core stays **isomorphic**: the exact same `*.vm.ts` functions run in ingest
+- The core stays **isomorphic**: the exact same pure functions run in ingest
   (Node) and in the browser under the no-ingestion dev flag (the `*TransformService`
   swap). That is only possible because the core never touches the framework.
 - The shell has nothing worth unit-testing (it just wires), so you never need
@@ -56,7 +59,8 @@ The rule of thumb:
 > and a test named after it.
 
 Name the function after **what it returns**, not after the loop it came from, and
-put it in the slice's `*.vm.ts` (or `shared/` if more than one slice needs it).
+export it from the slice's `*.service.ts` (or `core/analysis/bench/` if ingest reuses
+it too).
 
 ### The model to copy (already in the repo)
 
@@ -151,10 +155,10 @@ Problems for testing:
 
 ## 4. Worked refactor A: decompose `summarizeCooldownCasts`
 
-Pull each field into a named pure function in a `*.vm.ts`.
+Pull each field into a named pure function in `cooldown-casts.ts`.
 
 ```ts
-// cooldown.vm.ts - functional core, one field per function.
+// cooldown-casts.ts - functional core, one field per function.
 
 /** Cast timestamps (s, fight-relative), ascending. */
 export function castTimesS(cdCasts: WclResourceEvent[], fightStartMs: number): number[] {
@@ -234,7 +238,7 @@ table-driven cases.
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { bloodlustAlignment, holdWindows, firstCastS } from './cooldown.vm.ts';
+import { bloodlustAlignment, holdWindows, firstCastS } from './cooldown-casts.ts';
 
 describe('bloodlustAlignment', () => {
   // BL at 60s; window is [60 - BEFORE, 60 + AFTER].
@@ -362,7 +366,7 @@ findings.
 
 - **Runner:** vitest. Ingest specs run under `vitest.scripts.config.ts`
   (`scripts/**/*.spec.ts`, node env); frontend specs run under `ng test`. Co-locate
-  `*.vm.spec.ts` next to the `*.vm.ts`.
+  the spec next to the service (`burst.service.spec.ts` beside `burst.service.ts`).
 - **Builders, not literals:** construct inputs with `Events` (`events.ts`),
   `sample()` (`samples.ts`), and `parseClock` (`clock.ts`); reference spells via
   the named constants in `spell-ids.ts` so specs read as sentences.
@@ -392,8 +396,9 @@ findings.
 
 For every calculated field in a `*TransformService` or `*FeatureService` core:
 
-- [ ] It has a **named function** in a `*.vm.ts` that returns just that value (or
-      one cohesive group), named after the result.
+- [ ] It has a **named function** exported from the `*.service.ts` (or
+      `core/analysis/bench/`) that returns just that value (or one cohesive group),
+      named after the result.
 - [ ] The function is **pure**: no `inject()`, no `HttpClient`, no Angular, no
       mutation of its inputs.
 - [ ] It is **total**: defined for empty / null input (returns `0`/`null`/`[]`,
@@ -404,8 +409,8 @@ For every calculated field in a `*TransformService` or `*FeatureService` core:
       **stats module** and are reused, not re-derived.
 - [ ] The service/assembler does **no arithmetic** - it only fetches, calls the
       core, and assembles.
-- [ ] There is a co-located `*.vm.spec.ts` with at least the boundary and empty
-      cases, built with `Events`/`sample`/`parseClock`.
+- [ ] There is a co-located `*.service.spec.ts` (or ingest spec) with at least the
+      boundary and empty cases, built with `Events`/`sample`/`parseClock`.
 
 Net effect: the imperative shells stay swappable (Transform vs DataFile, ingest
 vs browser) and untested-by-design, while the functional core is a flat set of

@@ -25,7 +25,7 @@ import { EncounterGearStats } from '../../core/models/encounter.models';
 import { AnalysisResult } from '../../core/models/analysis.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { AnalysisResultComponent } from './analysis-result/analysis-result';
-import { BurstMapAnchor } from './burst-windows/burst.vm';
+import { BurstMapAnchor } from './burst-windows/burst.service';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { logWarn } from '../../core/log';

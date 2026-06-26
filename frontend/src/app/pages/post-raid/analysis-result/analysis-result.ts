@@ -11,7 +11,7 @@ import {
   rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';
 import { BurstWindowsComponent } from '../burst-windows/burst-windows';
-import { BurstMapAnchor } from '../burst-windows/burst.vm';
+import { BurstMapAnchor } from '../burst-windows/burst.service';
 import { DefensivesSectionComponent } from '../defensives-section/defensives-section';
 import { GearSectionComponent } from '../gear-section/gear-section';
 

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { ComparisonWindow, WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
-import { BurstFeatureService, AbilityIcons } from './burst.service';
-import { BurstMapAnchor } from './burst.vm';
+import { BurstFeatureService, AbilityIcons, BurstMapAnchor } from './burst.service';
 
 /**
  * Burst card. A feature component: it injects exactly one service
