@@ -119,8 +119,7 @@ export function toParseGear(gear: CharacterGear | null): ParseGear | null {
 
 /**
  * Roll per-parse gear up into bench talent builds, per-slot trinkets (12/13), and
- * per-slot enchants - the `EncounterGearStats` block. Mirrors the ingest aggregation
- * (`scripts/ingest/analysis/gear.ts`) but reads already-resolved player gear.
+ * per-slot enchants - the `EncounterGearStats` block.
  */
 export function aggregateParseGear(parses: ParseGear[]): EncounterGearStats {
   const total = parses.length;

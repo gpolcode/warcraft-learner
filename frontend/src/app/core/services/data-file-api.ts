@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Rulebook } from '../models/rulebook.models';
-import { EncounterEntry, EncounterBench, SpecEntry } from '../models/encounter.models';
+import { EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { EncounterPositions } from '../models/positioning.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
 
@@ -38,11 +38,6 @@ export class DataFileApiService {
   /** Raw read of a spec's encounter index (`{spec}/encounters.json`). */
   async getEncounters(spec: string): Promise<EncounterEntry[]> {
     return (await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`)) ?? [];
-  }
-
-  /** Raw read of the generic encounter bench (`{spec}/encounters/{enc}.json`). */
-  getBench(spec: string, encounterId: number): Promise<EncounterBench | null> {
-    return this.io.readJson<EncounterBench>(`${spec}/encounters/${encounterId}.json`);
   }
 
   /** Raw read of ingested top-parse position timelines (`{spec}/positions/{enc}.json`). */

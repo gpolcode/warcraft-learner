@@ -1,13 +1,11 @@
 /**
- * v5 ingestion code-hash.
+ * Ingestion code-hash.
  *
- * The v5 analogue of storage.ts `INGEST_HASH` / `collectEtlSources`: a short, stable
- * fingerprint of the source files that determine the tailored output the new
- * orchestrator writes. Unlike the legacy ETL (whose output is produced by the Node
- * analysis modules under scripts/ingest/analysis/**), the v5 path drives the very
- * Angular `*TransformService`s the browser uses, so the files that matter are the 5
- * transform services + their colocated pure functions, the two pass-through API
- * services + their transports, the data-file API, and the slice DataSource contracts.
+ * A short, stable fingerprint of the source files that determine the tailored output
+ * the orchestrator writes. Because ingestion drives the very Angular
+ * `*TransformService`s the browser uses, the files that matter are the 5 transform
+ * services + their colocated pure functions, the two pass-through API services + their
+ * transports, the data-file API, and the slice DataSource contracts.
  *
  * The hash folds into the per-encounter signature (see signature.ts) so any change to
  * the transform math (or to a shape the transforms emit) invalidates the cached

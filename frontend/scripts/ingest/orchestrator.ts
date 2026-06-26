@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 /**
- * warcraft-learner - v5 ingestion orchestrator (ADDITIVE; npm run ingest:next).
+ * warcraft-learner - ingestion orchestrator (npm run ingest).
  *
- * This is the new ingestion path. Instead of the duplicated Node ETL under
- * scripts/ingest/analysis/**, it boots the headless Angular runtime
- * (bootstrapIngestRuntime) and drives the very `*TransformService`s the browser uses
- * to compute each slice's tailored data, then persists it through the same
- * DataFileApiService. The legacy `npm run ingest` (ingest-parses.ts) is untouched and
- * remains the production pipeline until GHA parity is confirmed separately.
+ * The single ingestion path. Instead of a duplicated Node ETL, it boots the headless
+ * Angular runtime (bootstrapIngestRuntime) and drives the very `*TransformService`s
+ * the browser uses to compute each slice's tailored data, then persists it through the
+ * same DataFileApiService. So local dev (the `useLiveTransform` flag computes the same
+ * benches live in the browser) and the hourly GHA run share one transform implementation.
  *
  * Orchestration only (no transformation lives here):
  *   - discover specs that have a rulebook + validate it (reuses validateRulebook),
@@ -52,8 +51,7 @@ const SLICES = ['burst', 'rotation', 'defensive', 'gear'] as const;
 /**
  * A `WclQueryClient` adapter over the runtime `WclApiService`, so the pure
  * orchestration helper `getEncounters` (worldData discovery + liveness probe) can be
- * reused unchanged. The adapter owns budget tracking via the rateLimitData query, the
- * same way the legacy WCLClient does.
+ * reused unchanged. The adapter owns budget tracking via the rateLimitData query.
  */
 class RuntimeWclClient implements WclQueryClient {
   private _limitPerHour: number | null = null;
@@ -279,7 +277,7 @@ async function ingestSpec(
 
 async function main(): Promise<void> {
   const program = new Command()
-    .name('ingest:next')
+    .name('ingest')
     .description('v5 ingestion: drive the Angular transform services and write tailored files.')
     .option('--spec <spec>', 'target a single spec instead of all (e.g. SubtletyRogue)')
     .addHelpText('after', `\nKnown specs: ${Object.keys(SPEC_TO_WCL).join(', ')}`);
@@ -291,7 +289,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log('warcraft-learner - Parse Ingestion CLI (v5 orchestrator)');
+  console.log('warcraft-learner - Parse Ingestion CLI');
   const runtime = await bootstrapIngestRuntime();
   const client = new RuntimeWclClient(runtime);
   const codeHash = computeCodeHash();

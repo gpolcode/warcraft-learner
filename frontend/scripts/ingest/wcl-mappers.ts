@@ -58,56 +58,12 @@ export const SPEC_TO_WCL = SPEC_TO_WCL_FORWARD;
 
 export const EXCLUDE_ZONE_PATTERNS = ['beta', 'ptr', 'mythic+', 'complete raids', 'delves', 'torghast'];
 
-const TRINKET_INDICES = new Set([12, 13]);
-
-// Trinkets (gear slots 12/13) and permanent enchants. Gear shape is identical
-// across both ranking APIs, so this is shared. The gear array is positionally
-// indexed - the array index IS the slot number (WCL returns no `slot` field).
-export function extractGear(rankingEntry: WclRawRanking): {
-  trinkets: Array<{ slot: number; id: number | string; name: string }>;
-  enchants: Array<{ slot: number; id: number | string; name: string }>;
-} {
-  const gear = rankingEntry.gear ?? [];
-  const trinkets: Array<{ slot: number; id: number | string; name: string }> = [];
-  const enchants: Array<{ slot: number; id: number | string; name: string }> = [];
-  for (let idx = 0; idx < gear.length; idx++) {
-    const item = gear[idx];
-    if (!item || !item.id) continue;
-    const itemId = typeof item.id === 'number' ? item.id : (parseInt(String(item.id)) || item.id);
-    const name = item.name ?? '';
-
-    if (TRINKET_INDICES.has(idx)) {
-      trinkets.push({ slot: idx, id: itemId, name });
-    }
-
-    const rawEnchant = item.permanentEnchant;
-    if (rawEnchant) {
-      const enchantId = typeof rawEnchant === 'number' ? rawEnchant : (parseInt(String(rawEnchant)) || rawEnchant);
-      enchants.push({ slot: idx, id: enchantId, name: item.permanentEnchantName ?? '' });
-    }
-  }
-  return { trinkets, enchants };
-}
-
 // WCL replaces a privacy-anonymized parse's player name with "Character <id>-<id>".
-// Such a name can never match a report actor (real WoW names are letters only), so the
-// parse is unfetchable - getParseEvents would throw "Player not found". We treat these
-// as non-real: they neither count toward a zone's liveness nor get fetched.
+// A real WoW name is letters only, so such a parse can never count toward a zone's
+// liveness probe; it is dropped before the top-`count` slice in mapRankings.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 export function isAnonymizedPlayerName(name: string): boolean {
   return ANONYMIZED_NAME.test(name);
-}
-
-/**
- * Build a `v2:`-prefixed talent key from a CombatantInfo `talentTree` array: the
- * sorted (string order, no dedup) nodeIDs. Matches the key the frontend pre-fight
- * gear check compares against. Ingest-owned (the frontend slice has its own copy).
- */
-export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined): string {
-  if (!tree?.length) return '';
-  const ids = tree.filter(node => node.nodeID != null).map(node => String(node.nodeID));
-  if (!ids.length) return '';
-  return 'v2:' + ids.sort().join(',');
 }
 
 // Filter raw rankings to public, fetchable, non-anonymized parses and map the top
@@ -184,19 +140,4 @@ export function protectedEncounterIds(expansions: WclExpansion[]): Set<number> {
     for (const encounter of (zone.encounters ?? [])) ids.add(encounter.id);
   }
   return ids;
-}
-
-// Extract resolved enchant names from a batched `gameData` alias response (alias
-// `eN` for id `N`, see buildEnchantQuery). Only ids that resolved to a non-empty
-// trimmed name appear in the returned map.
-export function parseEnchantResults(
-  gameData: Record<string, { id: number; name: string } | null | undefined>,
-  ids: Array<number | string>,
-): Map<number | string, string> {
-  const names = new Map<number | string, string>();
-  for (const id of ids) {
-    const name = (gameData[`e${id}`]?.name ?? '').trim();
-    if (name) names.set(id, name);
-  }
-  return names;
 }
