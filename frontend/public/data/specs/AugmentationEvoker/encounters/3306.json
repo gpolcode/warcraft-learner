@@ -1,0 +1,826 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "avg_duration_s": 142.3,
+  "downtime_threshold_ms": 2049,
+  "top_avg_efficiency": 77.1,
+  "top_efficiency_stddev": 4.2,
+  "per_cd_benchmarks": {
+    "Breath of Eons": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Ebon Might": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.6,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 31.6,
+      "stddev_gap_s": 9.4,
+      "hold_targets": {
+        "4": {
+          "target_s": 101.9,
+          "stddev_s": 6.8,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5,
+      "avg_uses_per_min": 2.11,
+      "uses_per_min": {
+        "avg": 2.106,
+        "stddev": 0.233,
+        "min": 1.693,
+        "max": 2.471
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 2.5,
+      "stddev_bl_offset_s": 16.8,
+      "bl_pct": 100
+    },
+    "Tip the Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5.6,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 64.8,
+      "stddev_gap_s": 18.7,
+      "hold_targets": {},
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 1.13,
+      "uses_per_min": {
+        "avg": 1.133,
+        "stddev": 0.163,
+        "min": 0.88,
+        "max": 1.269
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": -23.8,
+      "stddev_bl_offset_s": 2,
+      "bl_pct": 100
+    },
+    "Time Skip": {
+      "sample_count": 10,
+      "avg_first_cast_s": 7.6,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 133.3,
+      "stddev_gap_s": 0.5,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.63,
+      "uses_per_min": {
+        "avg": 0.627,
+        "stddev": 0.201,
+        "min": 0.412,
+        "max": 0.846
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Fire Breath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5.7,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 19.7,
+      "stddev_gap_s": 7.4,
+      "hold_targets": {},
+      "avg_uses": 7.6,
+      "avg_uses_per_min": 3.2,
+      "uses_per_min": {
+        "avg": 3.198,
+        "stddev": 0.227,
+        "min": 2.799,
+        "max": 3.607
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": -1.7,
+      "stddev_bl_offset_s": 3.2,
+      "bl_pct": 100
+    },
+    "Upheaval": {
+      "sample_count": 10,
+      "avg_first_cast_s": 6.2,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 20.9,
+      "stddev_gap_s": 7.9,
+      "hold_targets": {},
+      "avg_uses": 7.2,
+      "avg_uses_per_min": 3.03,
+      "uses_per_min": {
+        "avg": 3.034,
+        "stddev": 0.169,
+        "min": 2.799,
+        "max": 3.294
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": 3.9,
+      "stddev_bl_offset_s": 2,
+      "bl_pct": 100
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 1.6,
+      "stddev_s": 1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1699575,
+      "dmg_stddev": 348838,
+      "dmg_min": 1002621,
+      "dmg_max": 2234239,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 691599,
+          "min_damage": 450757,
+          "max_damage": 974929,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 410089,
+          "avg_damage": 235571,
+          "min_damage": 101197,
+          "max_damage": 509216,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 396288,
+          "avg_damage": 149688,
+          "min_damage": 89670,
+          "max_damage": 292799,
+          "count": 8,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 127663,
+          "min_damage": 82127,
+          "max_damage": 208794,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 404908,
+          "avg_damage": 109922,
+          "min_damage": 58442,
+          "max_damage": 159920,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 105311,
+          "min_damage": 70298,
+          "max_damage": 142572,
+          "count": 8,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might",
+        "Time Skip"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 22.8,
+      "stddev_s": 1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 6023930,
+      "dmg_stddev": 1186866,
+      "dmg_min": 3819688,
+      "dmg_max": 8306843,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 4192771,
+          "min_damage": 2662067,
+          "max_damage": 6766340,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 410089,
+          "avg_damage": 347927,
+          "min_damage": 186554,
+          "max_damage": 689039,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 341277,
+          "min_damage": 231109,
+          "max_damage": 428767,
+          "count": 9,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 287067,
+          "min_damage": 214952,
+          "max_damage": 394966,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 410265,
+          "avg_damage": 212000,
+          "min_damage": 77659,
+          "max_damage": 475493,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 54,
+      "stddev_s": 5.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1441858,
+      "dmg_stddev": 202192,
+      "dmg_min": 1179943,
+      "dmg_max": 1727767,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 384696,
+          "min_damage": 291427,
+          "max_damage": 514813,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 178414,
+          "min_damage": 115818,
+          "max_damage": 245591,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 169693,
+          "min_damage": 83216,
+          "max_damage": 262892,
+          "count": 8,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 396288,
+          "avg_damage": 167589,
+          "min_damage": 90865,
+          "max_damage": 246346,
+          "count": 7,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 144272,
+          "min_damage": 118241,
+          "max_damage": 188108,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 410265,
+          "avg_damage": 134103,
+          "min_damage": 67360,
+          "max_damage": 179145,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 84.1,
+      "stddev_s": 7.2,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 1537694,
+      "dmg_stddev": 284662,
+      "dmg_min": 1229424,
+      "dmg_max": 1931913,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 326987,
+          "min_damage": 236939,
+          "max_damage": 438884,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 283449,
+          "min_damage": 92205,
+          "max_damage": 379015,
+          "count": 5,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 175789,
+          "min_damage": 99361,
+          "max_damage": 355420,
+          "count": 5,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 410265,
+          "avg_damage": 123793,
+          "min_damage": 82391,
+          "max_damage": 154312,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 104.4,
+      "stddev_s": 6.9,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 1252748,
+      "dmg_stddev": 151895,
+      "dmg_min": 1101866,
+      "dmg_max": 1486035,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 366969,
+          "min_damage": 254851,
+          "max_damage": 506429,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 192782,
+          "min_damage": 117101,
+          "max_damage": 337801,
+          "count": 6,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 191183,
+          "min_damage": 126485,
+          "max_damage": 264047,
+          "count": 5,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 410265,
+          "avg_damage": 134931,
+          "min_damage": 97278,
+          "max_damage": 194861,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 410089,
+          "avg_damage": 103951,
+          "min_damage": 59417,
+          "max_damage": 169507,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 64490,
+          "min_damage": 50906,
+          "max_damage": 75985,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10
+    },
+    {
+      "time_s": 123.9,
+      "stddev_s": 5.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1101400,
+      "dmg_stddev": 134405,
+      "dmg_min": 984658,
+      "dmg_max": 1239785,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 385369,
+          "min_damage": 306943,
+          "max_damage": 448199,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 200882,
+          "min_damage": 148508,
+          "max_damage": 232581,
+          "count": 3,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 121252,
+          "min_damage": 92578,
+          "max_damage": 136187,
+          "count": 3,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 410089,
+          "avg_damage": 91934,
+          "min_damage": 41173,
+          "max_damage": 133444,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 84889,
+          "min_damage": 78583,
+          "max_damage": 101496,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 396288,
+          "avg_damage": 77295,
+          "min_damage": 69931,
+          "max_damage": 84659,
+          "count": 2,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10.6
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:102248,102249,103843,109508,109509,109510,110415,110415,110415,93195,93197,93198,93199,93200,93201,93202,93203,93205,93206,93207,93208,93209,93211,93212,93219,93220,93221,93222,93223,93226,93229,93232,93234,93288,93289,93290,93292,93294,93295,93300,93301,93302,93304,93305,93306,93308,93309,93310,93311,93312,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93354,93355,93358,93367,93368,93369,93715,94925,94929,94930,94932,94935,94942,94947,94948,94951,94954,94955,99825",
+        "count": 1,
+        "pct": 10,
+        "report_code": "zLCYFDAjMyrWmN2X",
+        "fight_id": 3,
+        "player_name": "칠성제로먹고싶다"
+      },
+      {
+        "key": "v2:102248,102249,103843,109508,109509,109510,110064,110415,110415,110415,93195,93197,93198,93199,93200,93201,93202,93203,93205,93206,93207,93208,93212,93217,93218,93219,93220,93221,93222,93223,93226,93229,93232,93234,93286,93288,93289,93290,93295,93299,93300,93302,93304,93305,93306,93307,93309,93310,93311,93312,93343,93344,93345,93346,93348,93349,93350,93351,93352,93353,93354,93355,93358,93367,93368,93369,93715,94925,94929,94930,94932,94935,94942,94947,94948,94951,94954,94955,99825",
+        "count": 1,
+        "pct": 10,
+        "report_code": "qckrTXxB2P1v8FyG",
+        "fight_id": 8,
+        "player_name": "Bigmoevoker"
+      },
+      {
+        "key": "v2:102248,102249,103843,109508,109509,109510,110415,110415,110415,93195,93197,93198,93199,93200,93201,93202,93203,93205,93206,93207,93208,93209,93211,93212,93219,93220,93221,93222,93223,93226,93229,93232,93234,93287,93288,93289,93290,93294,93295,93300,93302,93304,93305,93306,93308,93309,93310,93311,93312,93340,93341,93343,93344,93345,93346,93348,93349,93350,93351,93352,93354,93355,93358,93367,93368,93369,93715,94925,94929,94930,94932,94935,94942,94947,94948,94951,94954,94955,99825",
+        "count": 1,
+        "pct": 10,
+        "report_code": "LZNpzyqGWVFgaH3T",
+        "fight_id": 26,
+        "player_name": "Trinvoker"
+      },
+      {
+        "key": "v2:102248,102249,103843,109508,109509,109510,110415,110415,110415,93195,93197,93198,93199,93200,93201,93202,93203,93205,93206,93207,93208,93209,93211,93212,93219,93220,93221,93222,93223,93226,93229,93232,93234,93271,93288,93289,93292,93294,93295,93300,93302,93304,93305,93306,93308,93309,93310,93311,93312,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93354,93355,93358,93367,93368,93369,93715,94925,94929,94930,94932,94935,94942,94947,94948,94951,94954,94955,99825",
+        "count": 1,
+        "pct": 10,
+        "report_code": "2mkDYtRfPcCjhV1y",
+        "fight_id": 3,
+        "player_name": "영턴영"
+      },
+      {
+        "key": "v2:102248,102249,103843,109508,109509,109510,110415,110415,110415,93195,93197,93198,93199,93200,93201,93202,93203,93205,93206,93207,93208,93209,93211,93212,93219,93220,93221,93222,93223,93226,93229,93232,93234,93271,93287,93288,93289,93295,93299,93300,93302,93304,93305,93306,93307,93308,93309,93310,93311,93312,93340,93341,93343,93344,93346,93348,93349,93350,93351,93352,93354,93355,93358,93367,93368,93369,93715,94925,94929,94930,94932,94935,94942,94947,94948,94951,94954,94955,99825",
+        "count": 1,
+        "pct": 10,
+        "report_code": "wM6AdkmCt78DXLjp",
+        "fight_id": 33,
+        "player_name": "Kxin"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249810,
+          "name": "Shadow of the Empyrean Requiem",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 250256,
+          "name": "Heart of Wind",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 250223,
+          "name": "Soulcatcher's Charm",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249808,
+          "name": "Litany of Lightblind Wrath",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 250223,
+          "name": "Soulcatcher's Charm",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249810,
+          "name": "Shadow of the Empyrean Requiem",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 249808,
+          "name": "Litany of Lightblind Wrath",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 9,
+          "pct": 90
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8025,
+          "name": "Enchant Ring - Silvermoon's Alacrity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 8
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 8,
+      "avg_first_cast_s": 64,
+      "stddev_first_cast_s": 11.3,
+      "avg_gap_s": 15.4,
+      "stddev_gap_s": 23.4,
+      "hold_targets": {},
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 1.09,
+      "uses_per_min": {
+        "avg": 1.094,
+        "stddev": 0.454,
+        "min": 0.407,
+        "max": 1.693
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 74.3,
+      "stddev_s": 7.9,
+      "count": 14,
+      "total_samples": 10,
+      "dmg_avg": 224445,
+      "dmg_stddev": 171600,
+      "dmg_min": 17798,
+      "dmg_max": 483467,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 246790,
+          "min_damage": 95436,
+          "max_damage": 391722,
+          "count": 8
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 44636,
+          "min_damage": 17798,
+          "max_damage": 97943,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 6.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    },
+    {
+      "time_s": 132.1,
+      "stddev_s": 4.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 95782,
+      "dmg_stddev": 57474,
+      "dmg_min": 41152,
+      "dmg_max": 164611,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 95782,
+          "min_damage": 41152,
+          "max_damage": 164611,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 245569,
+      "window_length_s": 6.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ]
+    }
+  ]
+}

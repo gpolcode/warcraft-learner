@@ -1,0 +1,831 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "avg_duration_s": 446.2,
+  "downtime_threshold_ms": 2083,
+  "top_avg_efficiency": 77.1,
+  "top_efficiency_stddev": 3.9,
+  "per_cd_benchmarks": {
+    "Celestial Alignment": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Incarnation: Chosen of Elune": {
+      "sample_count": 10,
+      "avg_first_cast_s": 18.4,
+      "stddev_first_cast_s": 8.6,
+      "avg_gap_s": 92.6,
+      "stddev_gap_s": 37.5,
+      "hold_targets": {},
+      "avg_uses": 5.2,
+      "avg_uses_per_min": 0.7,
+      "uses_per_min": {
+        "avg": 0.703,
+        "stddev": 0.054,
+        "min": 0.62,
+        "max": 0.815
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Eclipse": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Force of Nature": {
+      "sample_count": 10,
+      "avg_first_cast_s": 20.9,
+      "stddev_first_cast_s": 6.6,
+      "avg_gap_s": 60.4,
+      "stddev_gap_s": 16.7,
+      "hold_targets": {
+        "4": {
+          "target_s": 208.1,
+          "stddev_s": 21.7,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 343.3,
+          "stddev_s": 17.8,
+          "count": 7,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 391.2,
+          "stddev_s": 5.4,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.6,
+      "avg_uses_per_min": 1.02,
+      "uses_per_min": {
+        "avg": 1.016,
+        "stddev": 0.1,
+        "min": 0.89,
+        "max": 1.26
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Fury of Elune": {
+      "sample_count": 10,
+      "avg_first_cast_s": 24.4,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 67.9,
+      "stddev_gap_s": 7.8,
+      "hold_targets": {},
+      "avg_uses": 0.7,
+      "avg_uses_per_min": 0.09,
+      "uses_per_min": {
+        "avg": 0.95,
+        "stddev": 0,
+        "min": 0.95,
+        "max": 0.95
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Convoke the Spirits": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 15.9,
+      "stddev_s": 7.8,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 9370261,
+      "dmg_stddev": 3313261,
+      "dmg_min": 3429051,
+      "dmg_max": 13022374,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 3573712,
+          "min_damage": 1346299,
+          "max_damage": 6104393,
+          "count": 8,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 1175860,
+          "min_damage": 598014,
+          "max_damage": 1592186,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 885291,
+          "min_damage": 491076,
+          "max_damage": 1388137,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 872657,
+          "min_damage": 541801,
+          "max_damage": 1342953,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 860242,
+          "min_damage": 366886,
+          "max_damage": 1199008,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Incarnation: Chosen of Elune"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 73.7,
+      "stddev_s": 2,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 8189593,
+      "dmg_stddev": 1106803,
+      "dmg_min": 6519156,
+      "dmg_max": 9774629,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 3203566,
+          "min_damage": 2286275,
+          "max_damage": 4450840,
+          "count": 7,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 773893,
+          "min_damage": 607440,
+          "max_damage": 947725,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 771417,
+          "min_damage": 596103,
+          "max_damage": 998801,
+          "count": 7,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 762184,
+          "min_damage": 537645,
+          "max_damage": 1020383,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164815,
+          "avg_damage": 454250,
+          "min_damage": 301440,
+          "max_damage": 591384,
+          "count": 5,
+          "avg_casts": 3
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Incarnation: Chosen of Elune"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 121,
+      "stddev_s": 2.4,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 10339015,
+      "dmg_stddev": 1861484,
+      "dmg_min": 7387067,
+      "dmg_max": 12649477,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 4767140,
+          "min_damage": 2559420,
+          "max_damage": 6181927,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 88751,
+          "avg_damage": 1056911,
+          "min_damage": 710485,
+          "max_damage": 1666203,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 792881,
+          "min_damage": 556992,
+          "max_damage": 1053055,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 667979,
+          "min_damage": 555844,
+          "max_damage": 762670,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 475198,
+          "min_damage": 311027,
+          "max_damage": 618482,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 458770,
+          "min_damage": 389893,
+          "max_damage": 502691,
+          "count": 5,
+          "avg_casts": 4
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Incarnation: Chosen of Elune"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 255.8,
+      "stddev_s": 0.9,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 10637323,
+      "dmg_stddev": 1705828,
+      "dmg_min": 8200530,
+      "dmg_max": 13503295,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 5175145,
+          "min_damage": 3194108,
+          "max_damage": 7256896,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 88751,
+          "avg_damage": 967883,
+          "min_damage": 352579,
+          "max_damage": 1944167,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 751850,
+          "min_damage": 537907,
+          "max_damage": 950542,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 743148,
+          "min_damage": 510451,
+          "max_damage": 955053,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 475828,
+          "min_damage": 360958,
+          "max_damage": 669258,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Incarnation: Chosen of Elune"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    },
+    {
+      "time_s": 391.6,
+      "stddev_s": 1.2,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 13415926,
+      "dmg_stddev": 2054118,
+      "dmg_min": 9886990,
+      "dmg_max": 16474635,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 6673347,
+          "min_damage": 4985288,
+          "max_damage": 9365142,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 88751,
+          "avg_damage": 1463333,
+          "min_damage": 1064860,
+          "max_damage": 1986071,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 948613,
+          "min_damage": 644438,
+          "max_damage": 1273413,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 810821,
+          "min_damage": 546244,
+          "max_damage": 1404479,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 640841,
+          "min_damage": 434987,
+          "max_damage": 839003,
+          "count": 7,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 433850,
+          "avg_damage": 604452,
+          "min_damage": 451858,
+          "max_damage": 706539,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Incarnation: Chosen of Elune"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82231,82232,82233,82234,82235,82236,82244,82246,88201,88202,88203,88204,88206,88207,88209,88210,88212,88214,88215,88216,88218,88221,88222,88223,88225,88227,88228,88231,88232,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "q9hHKVmCbafxtLYg",
+        "fight_id": 12,
+        "player_name": "Bigbilly"
+      },
+      {
+        "key": "v2:100174,100175,100176,100177,100223,103846,103847,104078,104080,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82228,82229,82231,82232,82233,82234,82235,82236,82241,82244,82246,88201,88202,88203,88204,88206,88207,88209,88210,88212,88214,88215,88216,88218,88221,88222,88223,88225,88227,88228,88231,88232,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "8tqZGgw3KRaWAkBp",
+        "fight_id": 70,
+        "player_name": "泽音美乐蒂"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82231,82232,82233,82234,82235,82236,82244,82246,88201,88202,88203,88204,88206,88207,88209,88210,88212,88214,88215,88216,88218,88221,88222,88223,88225,88227,88228,88231,88232,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "1fFpXrM9bYxwtDG3",
+        "fight_id": 1,
+        "player_name": "Noctuss"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82231,82232,82233,82234,82235,82236,82244,82246,88201,88202,88203,88204,88206,88207,88209,88210,88212,88214,88215,88218,88221,88222,88223,88225,88227,88228,88231,88232,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "xwRFWTA6Dcz8daMr",
+        "fight_id": 7,
+        "player_name": "Yasa"
+      },
+      {
+        "key": "v2:100174,100175,100176,100223,103846,103847,104078,104080,104082,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82231,82232,82233,82234,82235,82236,82241,82244,88201,88202,88203,88204,88206,88207,88209,88210,88212,88214,88215,88218,88221,88222,88223,88225,88227,88228,88231,88232,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "tvcTMgFWxDPY4KwN",
+        "fight_id": 40,
+        "player_name": "Pärsemachine"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7959,
+          "name": "Enchant Helm - Hex of Leeching",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7937,
+          "name": "+41 Intellect & +4% Mana",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "avg_uses": 3.9,
+      "min_uses": 3,
+      "max_uses": 6,
+      "sample_count": 10
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 139.6,
+      "stddev_first_cast_s": 88.2,
+      "avg_gap_s": 94.8,
+      "stddev_gap_s": 27.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 255.1,
+          "stddev_s": 81.9,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 390.3,
+          "stddev_s": 91.3,
+          "count": 9,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 0.53,
+      "uses_per_min": {
+        "avg": 0.53,
+        "stddev": 0.174,
+        "min": 0.344,
+        "max": 0.815
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 125.9,
+      "stddev_s": 10,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 533708,
+      "dmg_stddev": 148628,
+      "dmg_min": 326379,
+      "dmg_max": 768152,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 344828,
+          "min_damage": 107033,
+          "max_damage": 640269,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 123115,
+          "min_damage": 110713,
+          "max_damage": 132438,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 206.3,
+      "stddev_s": 14.2,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 396698,
+      "dmg_stddev": 159210,
+      "dmg_min": 282768,
+      "dmg_max": 623926,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 219856,
+          "min_damage": 193947,
+          "max_damage": 266000,
+          "count": 4
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 114854,
+          "min_damage": 49391,
+          "max_damage": 180316,
+          "count": 2
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 23842,
+          "min_damage": 16768,
+          "max_damage": 30916,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 267.7,
+      "stddev_s": 6.9,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 647497,
+      "dmg_stddev": 173980,
+      "dmg_min": 379739,
+      "dmg_max": 904662,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 261832,
+          "min_damage": 33634,
+          "max_damage": 662092,
+          "count": 8
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 227758,
+          "min_damage": 194805,
+          "max_damage": 243808,
+          "count": 8
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 175133,
+          "min_damage": 143057,
+          "max_damage": 205705,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 397.7,
+      "stddev_s": 7.2,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 815130,
+      "dmg_stddev": 161955,
+      "dmg_min": 586878,
+      "dmg_max": 998181,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 387841,
+          "min_damage": 61160,
+          "max_damage": 630125,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 345600,
+          "min_damage": 317847,
+          "max_damage": 368056,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    }
+  ]
+}
