@@ -7,12 +7,25 @@
  */
 
 import type { DefensiveWindow } from '../../../src/app/core/models/analysis.models.ts';
-// Burst/bench types moved to the shared pipeline; re-exported so existing ingest
-// imports keep working.
-import type {
-  HoldWindow, CdCastSummary, RawBurstWindowAbility, RawBurstWindow,
-} from '../../../src/app/core/analysis/bench/models.ts';
-export type { HoldWindow, CdCastSummary, RawBurstWindowAbility, RawBurstWindow };
+
+export interface HoldWindow {
+  cast_index: number;
+  expected_s: number;
+  actual_s: number;
+  hold_amount_s: number;
+}
+
+export interface CdCastSummary {
+  name: string;
+  spell_id: number;
+  total_uses: number;
+  first_cast_s: number | null;
+  bl_aligned: boolean;
+  bl_offset_s: number | null;
+  cast_times_s: number[];
+  hold_windows: HoldWindow[];
+  cast_pattern: 'hold' | 'on_cooldown';
+}
 
 export interface DefensiveCastSummary {
   name: string;
@@ -25,6 +38,19 @@ export interface DefensiveCastSummary {
   cast_pattern: 'hold' | 'on_cooldown';
   windows: DefensiveWindow[];
   fight_duration_s?: number;
+}
+
+export interface RawBurstWindowAbility { spell_id: number; damage: number; pct: number; casts: number; }
+
+export interface RawBurstWindow {
+  time_s: number;
+  window_length_s: number;
+  pct_of_total: number;
+  window_damage: number;
+  total_damage: number;
+  ability_breakdown: RawBurstWindowAbility[];
+  active_cds: string[];
+  target_count: number;
 }
 
 export interface RawDefensiveWindowAbility { spell_id: number; damage: number; pct: number; }

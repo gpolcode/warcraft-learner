@@ -10,10 +10,32 @@
 
 import type { HoldWindow } from './parse-sample.models.ts';
 
-// Shared base + burst cluster types moved to the shared pipeline; re-exported so
-// existing ingest imports keep working.
-import type { ClusterBaseStats, ClusteredBurstWindow } from '../../../src/app/core/analysis/bench/models.ts';
-export type { ClusterBaseStats, ClusteredBurstWindow };
+// Shared base for clustered windows.
+export interface ClusterBaseStats {
+  time_s: number;
+  stddev_s: number;
+  count: number;
+  total_samples: number;
+  dmg_avg: number;
+  dmg_stddev: number;
+  dmg_min: number;
+  dmg_max: number;
+  ability_breakdown: Array<{
+    spell_id: number;
+    avg_damage: number;
+    min_damage: number;
+    max_damage: number;
+    count: number;
+    avg_casts?: number;
+  }>;
+  ref_game_id: number | null;
+}
+
+export interface ClusteredBurstWindow extends ClusterBaseStats {
+  common_cds: string[];
+  avg_targets: number;
+  window_length_s: number;
+}
 
 export interface ClusteredDefensiveWindow extends ClusterBaseStats {
   defensive_name: string;
