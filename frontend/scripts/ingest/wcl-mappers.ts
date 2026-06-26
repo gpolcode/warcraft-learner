@@ -2,8 +2,8 @@
  * Extract layer - pure response-to-model mappers and the spec lookup table.
  *
  * No network, no filesystem, no client: every function takes a raw WCL response
- * fragment and returns an ingest model. Mirrors the role of
- * `src/app/core/services/wcl-mappers.ts` for the frontend. Unit-tested in
+ * fragment and returns an ingest model. The frontend runtime owns its own copy of
+ * the equivalent projections inside each vertical slice. Unit-tested in
  * wcl-mappers.spec.ts.
  */
 
@@ -96,6 +96,18 @@ export function extractGear(rankingEntry: WclRawRanking): {
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 export function isAnonymizedPlayerName(name: string): boolean {
   return ANONYMIZED_NAME.test(name);
+}
+
+/**
+ * Build a `v2:`-prefixed talent key from a CombatantInfo `talentTree` array: the
+ * sorted (string order, no dedup) nodeIDs. Matches the key the frontend pre-fight
+ * gear check compares against. Ingest-owned (the frontend slice has its own copy).
+ */
+export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined): string {
+  if (!tree?.length) return '';
+  const ids = tree.filter(node => node.nodeID != null).map(node => String(node.nodeID));
+  if (!ids.length) return '';
+  return 'v2:' + ids.sort().join(',');
 }
 
 // Filter raw rankings to public, fetchable, non-anonymized parses and map the top

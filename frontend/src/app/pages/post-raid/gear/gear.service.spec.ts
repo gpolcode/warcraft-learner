@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CharacterGear } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { GEAR_DATA_SOURCE, GearBench, GearDataSource } from './gear-data-source';
 import {
@@ -82,9 +82,27 @@ describe('emptyGearView', () => {
 
 /* ----------------------------- feature service ---------------------------- */
 
+// Reconstruct a raw CombatantInfo event from a desired CharacterGear so the feature
+// service (which now reads raw combatant info + extracts gear itself) reproduces it.
+// Names are baked onto the gear items, so getGameNames is not consulted. Talent key
+// parts ride as nodeID strings (the v2:<parts> form round-trips through extraction).
+function toRawEvent(gear: CharacterGear): WclCombatantInfo {
+  const items: WclGearItem[] = [];
+  for (const trinket of gear.trinkets ?? []) items[trinket.slot] = { id: trinket.id, name: trinket.name };
+  for (const enchant of gear.enchants ?? []) {
+    items[enchant.slot] = { ...(items[enchant.slot] ?? { id: 1, name: 'x' }), permanentEnchant: enchant.id, permanentEnchantName: enchant.name };
+  }
+  const parts = (gear.talent_key ?? '').replace(/^v2:/, '');
+  const talentTree = parts ? parts.split(',').map(node => ({ nodeID: node as unknown as number })) : [];
+  return { sourceID: 10, gear: items, talentTree };
+}
+
 function configure(bench: GearBench | null, gear: CharacterGear | null): GearFeatureService {
   const source: GearDataSource = { getGearBench: () => Promise.resolve(bench) };
-  const wclFake = { getCombatantGear: async () => gear ?? { found: false } };
+  const wclFake = {
+    getCombatantInfo: async (): Promise<WclCombatantInfo | null> => (gear?.found ? toRawEvent(gear) : null),
+    getGameNames: async () => ({}),
+  };
   TestBed.configureTestingModule({
     providers: [
       { provide: GEAR_DATA_SOURCE, useValue: source },

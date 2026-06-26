@@ -11,7 +11,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { CharacterGear, ParseRanking } from '../../../core/models/wcl.models';
+import { CharacterGear, ParseRanking, WclRawRanking, WclGearItem } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
 import { GearBench, GearDataSource } from './gear-data-source';
@@ -29,6 +29,75 @@ const MAX_ENCHANTS_PER_SLOT = 3;
 
 function pct(count: number, total: number): number {
   return total ? Math.round((count / total) * 100) : 0;
+}
+
+// WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>",
+// which can never match a report actor (real names are letters only), so the parse
+// is unfetchable. Drop these before mapping.
+const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+
+/** Map raw WCL rankings to the top `count` fetchable parses (report + fight + player). */
+export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
+  return raw
+    .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
+    .slice(0, count)
+    .map(ranking => ({
+      player: ranking.name ?? '',
+      report_code: ranking.report?.code ?? '',
+      fight_id: ranking.report?.fightID ?? 0,
+    }));
+}
+
+/** Normalize a WCL gear icon ("inv_x.jpg") to the bare filename used by zamimg. */
+export function iconFile(icon?: string): string {
+  return (icon ?? '').replace(/\.jpg$/i, '');
+}
+
+/** Decode HTML entities in a string returned by WCL's gameData queries. */
+export function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+/** Extract trinkets (slots 12/13) and enchants from a CombatantInfo gear array. */
+export function extractGear(gear: WclGearItem[] | undefined): {
+  trinkets: NonNullable<CharacterGear['trinkets']>;
+  enchants: NonNullable<CharacterGear['enchants']>;
+} {
+  const trinkets: NonNullable<CharacterGear['trinkets']> = [];
+  const enchants: NonNullable<CharacterGear['enchants']> = [];
+
+  (gear ?? []).forEach((item, slotIndex) => {
+    if (item?.id == null) return;
+    const itemId = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
+
+    if (slotIndex === 12 || slotIndex === 13) {
+      trinkets.push({ slot: slotIndex, id: itemId, name: item.name ?? '', icon: iconFile(item.icon) });
+    }
+
+    const enchant = item.permanentEnchant;
+    if (enchant) {
+      const enchantId = typeof enchant === 'string' ? parseInt(enchant, 10) : enchant;
+      enchants.push({ slot: slotIndex, id: enchantId, name: item.permanentEnchantName ?? '' });
+    }
+  });
+
+  return { trinkets, enchants };
+}
+
+/**
+ * Build a `v2:`-prefixed talent key from a CombatantInfo `talentTree` array: the
+ * sorted (string order, no dedup) nodeIDs, matching ingestion's representation.
+ */
+export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined): string {
+  if (!tree?.length) return '';
+  const ids = tree.filter(node => node.nodeID != null).map(node => String(node.nodeID));
+  if (!ids.length) return '';
+  return 'v2:' + ids.sort().join(',');
 }
 
 /** One top parse reduced to just its gear fingerprint (or null when unavailable). */
@@ -124,7 +193,7 @@ export class GearTransformService implements GearDataSource {
   private readonly wclApi = inject(WclApiService);
 
   async getGearBench(spec: string, encounterId: number): Promise<GearBench | null> {
-    const rankings = await this.wclApi.getRankings(spec, encounterId, TOP_PARSE_COUNT);
+    const rankings = toParseRankings(await this.wclApi.getRankings(spec, encounterId), TOP_PARSE_COUNT);
     if (!rankings.length) return null;
 
     const parses: ParseGear[] = [];
@@ -149,7 +218,7 @@ export class GearTransformService implements GearDataSource {
     };
   }
 
-  /** One parse's gear fingerprint via combatant info; null if it can't be fetched. */
+  /** One parse's gear fingerprint via raw combatant info; null if it can't be fetched. */
   private async fetchParseGear(
     ranking: ParseRanking, spec: string,
   ): Promise<{ gear: ParseGear; encounterName: string } | null> {
@@ -159,7 +228,29 @@ export class GearTransformService implements GearDataSource {
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
-      const characterGear = await this.wclApi.getCombatantGear(ranking.report_code, fight.id, player.id, spec);
+      const event = await this.wclApi.getCombatantInfo(ranking.report_code, fight.id, player.id);
+      if (!event?.gear?.length) return null;
+
+      const { trinkets, enchants } = extractGear(event.gear);
+      const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
+      const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
+      let names: Record<string, { id: number; name: string }> = {};
+      try {
+        names = await this.wclApi.getGameNames(itemIds, enchantIds);
+      } catch (err) {
+        logWarn(`GearTransformService name resolution ${ranking.report_code}:${ranking.fight_id}`, err);
+      }
+      for (const trinket of trinkets) {
+        if (!trinket.name && trinket.id) trinket.name = decodeHtmlEntities(names[`i${trinket.id}`]?.name ?? '');
+      }
+      for (const enchant of enchants) {
+        if (!enchant.name && enchant.id) enchant.name = decodeHtmlEntities(names[`e${enchant.id}`]?.name ?? '');
+      }
+
+      const characterGear: CharacterGear = {
+        found: true, spec, source_report: ranking.report_code,
+        talent_key: talentKeyFromTree(event.talentTree), trinkets, enchants,
+      };
       const gear = toParseGear(characterGear);
       if (!gear) return null;
       return { gear, encounterName: fight.name ?? '' };

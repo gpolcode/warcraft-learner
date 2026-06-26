@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { resolveTalentKey, aggregateGear } from './gear.ts';
-import { talentKeyFromTree } from '../../../src/app/core/services/wcl-mappers.ts';
+import { talentKeyFromTree } from '../wcl-mappers.ts';
 import { sample } from '../testing/samples.ts';
 import type { WclCombatantInfoEvent } from '../models/wcl.models.ts';
 

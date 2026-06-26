@@ -12,7 +12,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
+import { WclEvent, ParseRanking, WclRawRanking } from '../../../core/models/wcl.models';
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
@@ -36,6 +36,23 @@ const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
 const HOLD_TRIGGER_FRAC = 0.4;
 
 /* ----------------------------- pure stats helpers (own math) ----------------------------- */
+
+// WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>",
+// which can never match a report actor (real names are letters only), so the parse
+// is unfetchable. Drop these before mapping.
+const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+
+/** Map raw WCL rankings to the top `count` fetchable parses (report + fight + player). */
+export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
+  return raw
+    .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
+    .slice(0, count)
+    .map(ranking => ({
+      player: ranking.name ?? '',
+      report_code: ranking.report?.code ?? '',
+      fight_id: ranking.report?.fightID ?? 0,
+    }));
+}
 
 export function mean(values: number[]): number {
   return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
@@ -278,7 +295,7 @@ export class RotationTransformService implements RotationDataSource {
     const defensives = rulebook?.defensives ?? [];
     const rules = rulebook?.rules ?? [];
 
-    const rankings = await this.wclApi.getRankings(spec, encounterId, TOP_PARSE_COUNT);
+    const rankings = toParseRankings(await this.wclApi.getRankings(spec, encounterId), TOP_PARSE_COUNT);
     if (!rankings.length) return null;
 
     const perParse: CdSummary[][] = [];

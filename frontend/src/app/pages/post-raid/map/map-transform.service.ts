@@ -22,7 +22,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, WclFight, ParseRanking } from '../../../core/models/wcl.models';
+import { WclEvent, WclFight, ParseRanking, WclRawRanking } from '../../../core/models/wcl.models';
 import { ParsePositions, PosRow } from '../../../core/models/positioning.models';
 import { logWarn } from '../../../core/log';
 import { MapData, MapDataSource } from './map-data-source';
@@ -37,6 +37,23 @@ const MAX_TRACKED_ENEMIES = 5;
 const MIN_ENEMY_SAMPLES = 4;
 
 /* ----------------------------- pure helpers (own math) ----------------------------- */
+
+// WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>",
+// which can never match a report actor (real names are letters only), so the parse
+// is unfetchable. Drop these before mapping.
+const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+
+/** Map raw WCL rankings to the top `count` fetchable parses (report + fight + player). */
+export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
+  return raw
+    .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
+    .slice(0, count)
+    .map(ranking => ({
+      player: ranking.name ?? '',
+      report_code: ranking.report?.code ?? '',
+      fight_id: ranking.report?.fightID ?? 0,
+    }));
+}
 
 /** One raw position sample before resampling (raw WCL units; HP for boss pick). */
 export interface RawPosSample {
@@ -165,7 +182,7 @@ export class MapTransformService implements MapDataSource {
   private readonly dataFiles = inject(DataFileApiService);
 
   async getMapData(spec: string, encounterId: number): Promise<MapData | null> {
-    const rankings = await this.wclApi.getRankings(spec, encounterId, TOP_PARSE_COUNT);
+    const rankings = toParseRankings(await this.wclApi.getRankings(spec, encounterId), TOP_PARSE_COUNT);
     if (!rankings.length) return null;
 
     const parses: ParsePositions[] = [];

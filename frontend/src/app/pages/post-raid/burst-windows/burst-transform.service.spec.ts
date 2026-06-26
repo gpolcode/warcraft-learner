@@ -5,6 +5,7 @@ import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent } from '../../../core/models/wcl.models';
 import {
   BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, cdSpellIds, ParseWindow,
+  toParseRankings,
 } from './burst-transform.service';
 
 function cast(spellId: number, atS: number): WclEvent {
@@ -15,6 +16,29 @@ function damage(spellId: number, atS: number, amount: number): WclEvent {
 }
 
 /* ----------------------------- pure functions ----------------------------- */
+
+describe('toParseRankings', () => {
+  it('maps raw rankings to fetchable parses and caps at count', () => {
+    const raw = [
+      { name: 'P1', report: { code: 'r1', fightID: 1 } },
+      { name: 'P2', report: { code: 'r2', fightID: 2 } },
+      { name: 'P3', report: { code: 'r3', fightID: 3 } },
+    ];
+    expect(toParseRankings(raw, 2)).toEqual([
+      { player: 'P1', report_code: 'r1', fight_id: 1 },
+      { player: 'P2', report_code: 'r2', fight_id: 2 },
+    ]);
+  });
+
+  it('drops anonymized "Character N-N" names and rows without a report code', () => {
+    const raw = [
+      { name: 'Character 123-456', report: { code: 'r1', fightID: 1 } },
+      { name: 'Real', report: { fightID: 2 } },
+      { name: 'Keep', report: { code: 'r3', fightID: 3 } },
+    ];
+    expect(toParseRankings(raw, 10)).toEqual([{ player: 'Keep', report_code: 'r3', fight_id: 3 }]);
+  });
+});
 
 describe('cdSpellIds', () => {
   it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
@@ -78,8 +102,8 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
 
 const wclFake = {
   getRankings: async () => [
-    { player: 'P1', report_code: 'r1', fight_id: 1 },
-    { player: 'P2', report_code: 'r2', fight_id: 2 },
+    { name: 'P1', report: { code: 'r1', fightID: 1 } },
+    { name: 'P2', report: { code: 'r2', fightID: 2 } },
   ],
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>

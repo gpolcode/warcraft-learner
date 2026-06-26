@@ -12,7 +12,7 @@
  * service itself contains no arithmetic.
  */
 import { Injectable, inject } from '@angular/core';
-import { CharacterGear } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { logWarn } from '../../../core/log';
@@ -54,6 +54,88 @@ export function emptyGearView(): GearComparisonView {
     trinketRows: [], trinketStatus: 'ok', benchTrinketRows: [],
     enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
   };
+}
+
+/* ----------------------------- pure gear extraction (own, colocated) ----------------------------- */
+
+/** Normalize a WCL gear icon ("inv_x.jpg") to the bare filename used by zamimg. */
+export function iconFile(icon?: string): string {
+  return (icon ?? '').replace(/\.jpg$/i, '');
+}
+
+/** Decode HTML entities in a string returned by WCL's gameData queries. */
+export function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+/** Extract trinkets (slots 12/13) and enchants from a CombatantInfo gear array. */
+export function extractGear(gear: WclGearItem[] | undefined): {
+  trinkets: NonNullable<CharacterGear['trinkets']>;
+  enchants: NonNullable<CharacterGear['enchants']>;
+} {
+  const trinkets: NonNullable<CharacterGear['trinkets']> = [];
+  const enchants: NonNullable<CharacterGear['enchants']> = [];
+
+  (gear ?? []).forEach((item, slotIndex) => {
+    if (item?.id == null) return;
+    const itemId = typeof item.id === 'string' ? parseInt(item.id, 10) : item.id;
+
+    if (slotIndex === 12 || slotIndex === 13) {
+      trinkets.push({ slot: slotIndex, id: itemId, name: item.name ?? '', icon: iconFile(item.icon) });
+    }
+
+    const enchant = item.permanentEnchant;
+    if (enchant) {
+      const enchantId = typeof enchant === 'string' ? parseInt(enchant, 10) : enchant;
+      enchants.push({ slot: slotIndex, id: enchantId, name: item.permanentEnchantName ?? '' });
+    }
+  });
+
+  return { trinkets, enchants };
+}
+
+/**
+ * Build a `v2:`-prefixed talent key from a CombatantInfo `talentTree` array: the
+ * sorted (string order, no dedup) nodeIDs, matching ingestion's representation.
+ */
+export function talentKeyFromTree(tree: Array<{ nodeID?: number }> | undefined): string {
+  if (!tree?.length) return '';
+  const ids = tree.filter(node => node.nodeID != null).map(node => String(node.nodeID));
+  if (!ids.length) return '';
+  return 'v2:' + ids.sort().join(',');
+}
+
+/**
+ * Assemble a `CharacterGear` from a raw CombatantInfo event + the resolved item /
+ * enchant name map (raw `i<id>` / `e<id>` aliases). Names already on the gear item
+ * win; otherwise they are filled in from the name map and decoded. Returns a
+ * `found:false` placeholder when the event carries no gear.
+ */
+export function buildCharacterGear(
+  event: WclCombatantInfo | null,
+  names: Record<string, { id: number; name: string }>,
+  code: string,
+  spec?: string,
+): CharacterGear {
+  if (!event?.gear?.length) {
+    return { found: false, message: 'No combatant info in this log.' };
+  }
+  const { trinkets, enchants } = extractGear(event.gear);
+  const talent_key = talentKeyFromTree(event.talentTree);
+
+  for (const trinket of trinkets) {
+    if (!trinket.name && trinket.id) trinket.name = decodeHtmlEntities(names[`i${trinket.id}`]?.name ?? '');
+  }
+  for (const enchant of enchants) {
+    if (!enchant.name && enchant.id) enchant.name = decodeHtmlEntities(names[`e${enchant.id}`]?.name ?? '');
+  }
+
+  return { found: true, spec, source_report: code, talent_key, trinkets, enchants };
 }
 
 /* ----------------------------- pure view-model ----------------------------- */
@@ -129,13 +211,30 @@ export class GearFeatureService {
     return buildGearView(null, stats);
   }
 
-  /** Best-effort player gear; null when absent or the fetch fails. */
+  /**
+   * Best-effort player gear; null when absent or the fetch fails. Reads the raw
+   * CombatantInfo event, extracts gear via the colocated pure fns, then resolves
+   * item / enchant names in one batched gameData round-trip.
+   */
   private async fetchPlayerGear(
     reportCode: string, fightId: number, playerId: number, spec: string,
   ): Promise<CharacterGear | null> {
     if (!reportCode || !fightId || !playerId) return null;
     try {
-      const gear = await this.wclApi.getCombatantGear(reportCode, fightId, playerId, spec);
+      const event = await this.wclApi.getCombatantInfo(reportCode, fightId, playerId);
+      if (!event?.gear?.length) return null;
+
+      const { trinkets, enchants } = extractGear(event.gear);
+      const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
+      const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
+      let names: Record<string, { id: number; name: string }> = {};
+      try {
+        names = await this.wclApi.getGameNames(itemIds, enchantIds);
+      } catch (err) {
+        logWarn(`GearFeatureService name resolution ${reportCode}:${fightId}:${playerId}`, err);
+      }
+
+      const gear = buildCharacterGear(event, names, reportCode, spec);
       return gear.found ? gear : null;
     } catch (err) {
       logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, err);

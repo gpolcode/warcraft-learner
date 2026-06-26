@@ -60,12 +60,40 @@ export interface ParseRanking {
   fight_id: number;
 }
 
-export interface CharacterInfo {
+// ---------------------------------------------------------------------------
+// Raw WCL response shapes (bytes as WCL returns them; consumers map these to
+// application models). These belong to the API contract, not the domain model.
+// ---------------------------------------------------------------------------
+
+/** A single gear array entry from a WCL CombatantInfo / ranking. */
+export interface WclGearItem {
+  id?: number | string;
+  name?: string;
+  icon?: string;
+  permanentEnchant?: number | string;
+  permanentEnchantName?: string;
+}
+
+/** A raw CombatantInfo event: gear + talentTree, keyed by sourceID. */
+export interface WclCombatantInfo {
+  sourceID?: number;
+  gear?: WclGearItem[];
+  talentTree?: Array<{ nodeID?: number }>;
+}
+
+/** One `playerDetails` role entry (dps / healers / tanks / unknown). */
+export interface PlayerDetailEntry {
+  id: number;
+  type: string;
   name: string;
-  spec: string | null;
-  server: string;
-  region: string;
-  source_report: string | null;
+  specs?: Array<{ spec: string }>;
+}
+export type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
+
+/** One raw `characterRankings` entry (the fields the transforms need). */
+export interface WclRawRanking {
+  name?: string;
+  report?: { code?: string; fightID?: number };
 }
 
 export interface CharacterGear {

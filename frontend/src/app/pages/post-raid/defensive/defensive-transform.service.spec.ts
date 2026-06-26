@@ -164,8 +164,8 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
 
 const wclFake = {
   getRankings: async () => [
-    { player: 'P1', report_code: 'r1', fight_id: 1 },
-    { player: 'P2', report_code: 'r2', fight_id: 2 },
+    { name: 'P1', report: { code: 'r1', fightID: 1 } },
+    { name: 'P2', report: { code: 'r2', fightID: 2 } },
   ],
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) => {

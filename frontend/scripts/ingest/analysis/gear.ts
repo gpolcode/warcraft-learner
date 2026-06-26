@@ -6,7 +6,7 @@
  * across all samples into the bench `gear` block.
  */
 
-import { talentKeyFromTree } from '../../../src/app/core/services/wcl-mappers.ts';
+import { talentKeyFromTree } from '../wcl-mappers.ts';
 import type { WclCombatantInfoEvent } from '../models/wcl.models.ts';
 import type { ParseSample } from '../models/parse-sample.models.ts';
 import type { GearStats } from '../models/bench.models.ts';

@@ -2,12 +2,45 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { CharacterGear } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
 import {
   GearTransformService, toParseGear, aggregateParseGear, ParseGear,
+  extractGear, talentKeyFromTree, toParseRankings,
 } from './gear-transform.service';
 
 /* ----------------------------- pure functions ----------------------------- */
+
+describe('toParseRankings', () => {
+  it('maps raw rankings to fetchable parses, dropping anonymized names', () => {
+    const raw = [
+      { name: 'Character 1-2', report: { code: 'r0', fightID: 9 } },
+      { name: 'Keep', report: { code: 'r1', fightID: 3 } },
+    ];
+    expect(toParseRankings(raw, 10)).toEqual([{ player: 'Keep', report_code: 'r1', fight_id: 3 }]);
+  });
+});
+
+describe('extractGear', () => {
+  it('extracts trinkets from slots 12/13 (stripping .jpg) and enchants from any slot', () => {
+    const gear: unknown[] = Array(16).fill(null);
+    gear[12] = { id: 200, name: 'Trinket A', icon: 'a.jpg' };
+    gear[13] = { id: '201', name: 'Trinket B', icon: 'b.jpg' };
+    gear[15] = { id: 1, name: 'Wep', permanentEnchant: '8041' };
+    const { trinkets, enchants } = extractGear(gear as never);
+    expect(trinkets).toEqual([
+      { slot: 12, id: 200, name: 'Trinket A', icon: 'a' },
+      { slot: 13, id: 201, name: 'Trinket B', icon: 'b' },
+    ]);
+    expect(enchants).toEqual([{ slot: 15, id: 8041, name: '' }]);
+  });
+});
+
+describe('talentKeyFromTree', () => {
+  it('builds a v2: key from string-sorted nodeIDs', () => {
+    expect(talentKeyFromTree([{ nodeID: 90640 }, { nodeID: 90638 }])).toBe('v2:90638,90640');
+    expect(talentKeyFromTree(undefined)).toBe('');
+  });
+});
 
 describe('toParseGear', () => {
   it('reduces a found CharacterGear to its talent/trinket/enchant fingerprint', () => {
@@ -80,19 +113,23 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
   };
 }
 
-const playerGear = (id: number): CharacterGear => ({
-  found: true, talent_key: 'v2:A',
-  trinkets: [{ slot: 12, id, name: 'A' }],
-  enchants: [{ slot: 15, id: 8041, name: 'Soph' }],
-});
+// Raw CombatantInfo: trinket (slot 12) + enchanted weapon (slot 15), both named so
+// no gameData name resolution is needed. talentTree node 65 -> key 'v2:65'.
+const combatantInfo = (playerId: number): WclCombatantInfo => {
+  const gear: WclGearItem[] = Array(16).fill({});
+  gear[12] = { id: 100, name: 'A', icon: 't.jpg' };
+  gear[15] = { id: 1, name: 'Wep', permanentEnchant: 8041, permanentEnchantName: 'Soph' };
+  return { sourceID: playerId, gear, talentTree: [{ nodeID: 65 }] };
+};
 
 const wclFake = {
   getRankings: async () => [
-    { player: 'P1', report_code: 'r1', fight_id: 1 },
-    { player: 'P2', report_code: 'r2', fight_id: 2 },
+    { name: 'P1', report: { code: 'r1', fightID: 1 } },
+    { name: 'P2', report: { code: 'r2', fightID: 2 } },
   ],
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
-  getCombatantGear: async (code: string) => (code === 'r1' ? playerGear(100) : playerGear(100)),
+  getCombatantInfo: async (code: string) => combatantInfo(code === 'r1' ? 10 : 20),
+  getGameNames: async () => ({}),
 };
 
 describe('GearTransformService (live, in-browser)', () => {
@@ -107,7 +144,7 @@ describe('GearTransformService (live, in-browser)', () => {
     expect(bench).not.toBeNull();
     expect(bench!.sample_count).toBe(2);
     expect(bench!.encounter_name).toBe('Boss');
-    expect(bench!.talent_builds[0]).toMatchObject({ key: 'v2:A', pct: 100 });
+    expect(bench!.talent_builds[0]).toMatchObject({ key: 'v2:65', pct: 100 });
     expect(bench!.trinkets[12]).toEqual([{ id: 100, name: 'A', pct: 100 }]);
     expect(bench!.enchants[15]).toEqual([{ id: 8041, name: 'Soph', pct: 100 }]);
   });

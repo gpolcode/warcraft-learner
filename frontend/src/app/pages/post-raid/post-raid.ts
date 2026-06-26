@@ -15,7 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { WclApiService } from '../../core/services/wcl-api';
 import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
-import { WclFight, WclPlayer, WclReport } from '../../core/models/wcl.models';
+import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { RotationComponent } from './rotation/rotation';
 import { BurstWindowsComponent } from './burst-windows/burst-windows';
@@ -27,6 +27,24 @@ import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { logWarn } from '../../core/log';
 import { extractCode, buildFights, buildPlayers, visiblePlayersOf, pickPlayerId, pickLivePlayerId } from './post-raid.vm';
+
+/**
+ * Resolve the selected player's spec from a raw `playerDetails` response: across
+ * the dps / healers / tanks / unknown roles, find the player by id and build
+ * `<spec><class>` with spaces stripped (e.g. "Subtlety" + "Rogue" -> "SubtletyRogue").
+ * Returns '' when the player is not found or has no spec/class.
+ */
+export function specOf(groups: PlayerDetailGroups, playerId: number): string {
+  for (const role of ['dps', 'healers', 'tanks', 'unknown']) {
+    for (const player of (groups[role] ?? [])) {
+      if (player.id !== playerId) continue;
+      const className = (player.type ?? '').replace(/ /g, '');
+      const spec = ((player.specs ?? [])[0]?.spec ?? '').replace(/ /g, '');
+      return spec && className ? spec + className : '';
+    }
+  }
+  return '';
+}
 
 /**
  * Post-raid analyzer page shell. It owns only selection (report / fight / player),
@@ -250,8 +268,8 @@ export class PostRaidComponent implements OnInit {
     this.loadingAnalysis.set(true);
     this.loadingMsg.set('Resolving spec…');
     try {
-      const specMap = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
-      const spec = specMap[playerId] ?? specMap[String(playerId)] ?? '';
+      const groups = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
+      const spec = specOf(groups, playerId);
       if (!spec) { this.error.set('Could not resolve the selected player\'s spec.'); return; }
       this.spec.set(spec);
 
