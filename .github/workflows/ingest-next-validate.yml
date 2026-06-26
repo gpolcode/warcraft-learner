@@ -1,0 +1,63 @@
+name: Validate v5 ingestion (ingest:next)
+
+# Manual-only. Runs the NEW Angular-transform-driven orchestrator (npm run ingest:next)
+# for a single spec against real WCL, then prints how its output differs from the
+# committed legacy-ETL output. It does NOT commit - the branch data is left intact for
+# review (the workspace changes are discarded when the run ends). Used to confirm parity
+# before cutting npm run ingest over to the v5 path and deleting the Node ETL.
+
+on:
+  workflow_dispatch:
+    inputs:
+      spec:
+        description: 'Spec to ingest via the v5 orchestrator'
+        required: true
+        default: 'SubtletyRogue'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run v5 orchestrator (ingest:next)
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        working-directory: frontend
+        run: npm run ingest:next -- --spec "${{ inputs.spec }}"
+
+      - name: Diff v5 output vs committed legacy output
+        working-directory: frontend
+        run: |
+          SPEC="${{ inputs.spec }}"
+          echo "=== git status (changed files) ==="
+          git -c core.pager=cat status --short "public/data/specs/$SPEC" || true
+          echo
+          echo "=== diffstat for $SPEC slices ==="
+          git -c core.pager=cat diff --stat "public/data/specs/$SPEC" || true
+          echo
+          echo "=== sample: head of a produced burst file (note source_signature) ==="
+          FIRST=$(ls public/data/specs/$SPEC/burst/*.json 2>/dev/null | head -1)
+          echo "file: $FIRST"
+          head -c 1200 "$FIRST" || true
+          echo
+          echo "=== per-slice file counts produced ==="
+          for s in burst rotation defensive gear positions; do
+            echo "$s: $(ls public/data/specs/$SPEC/$s/*.json 2>/dev/null | wc -l) files"
+          done
+          echo
+          echo "=== full diff (first 400 lines) ==="
+          git -c core.pager=cat diff "public/data/specs/$SPEC" | head -400 || true
