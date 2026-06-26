@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclAuthService } from './wcl-auth';
-import { WCL_TRANSPORT, WclTransportError } from './wcl-transport';
+import { WCL_TRANSPORT, WCL_INGEST_MODE, WclTransportError } from './wcl-transport';
 import {
   WclReport, WclAbility, WclEvent,
   PlayerDetailGroups, WclRawRanking, WclCombatantInfo,
@@ -33,6 +33,10 @@ const SPEC_TO_WCL: Record<string, [string, string]> = {
 export class WclApiService {
   private readonly auth = inject(WclAuthService);
   private readonly transport = inject(WCL_TRANSPORT);
+  // In ingestion the otherwise per-pull report/event reads are cached so the 5
+  // transforms share one fetch per stream; the browser keeps them network-only.
+  private readonly liveFetchPolicy: 'cache-first' | 'network-only' =
+    inject(WCL_INGEST_MODE) ? 'cache-first' : 'network-only';
 
   /**
    * Runs a GraphQL query against WCL through the injected transport (Apollo in the
@@ -63,7 +67,7 @@ export class WclApiService {
     const vars: ReportQueryVars = { code };
     // network-only: the report is re-polled to detect new pulls, so it must never
     // be served from cache (a cache hit would silently hide newly-recorded fights).
-    const result = await this.query<{ reportData: { report: WclReport } }>(REPORT_Q, vars, 'network-only');
+    const result = await this.query<{ reportData: { report: WclReport } }>(REPORT_Q, vars, this.liveFetchPolicy);
     return result.reportData.report;
   }
 
@@ -100,7 +104,7 @@ export class WclApiService {
       // network-only: event pages are large and per-pull; caching them wastes memory
       // and risks serving stale data on re-analysis.
       const result = await this.query<{ reportData: { report: { events: { data: WclEvent[]; nextPageTimestamp?: number } } } }>(
-        EVENTS_Q, vars, 'network-only',
+        EVENTS_Q, vars, this.liveFetchPolicy,
       );
       const page = result.reportData.report.events;
       events.push(...(page.data ?? []));

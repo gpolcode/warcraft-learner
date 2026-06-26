@@ -37,6 +37,8 @@ export interface IngestRuntime {
     gear: GearTransformService;
     map: MapTransformService;
   };
+  /** Drop the WCL in-process read cache (call between encounters to bound memory). */
+  clearWclCache(): void;
 }
 
 let booted: IngestRuntime | null = null;
@@ -64,7 +66,7 @@ export async function bootstrapIngestRuntime(dataDir: string = DATA_SPECS_DIR): 
   const { provideHttpClient, withFetch } = await import('@angular/common/http');
 
   // 3. The tokens + node transports + the shared services - also dynamic (single core).
-  const { WCL_TRANSPORT } = await import('../../src/app/core/services/wcl-transport.ts');
+  const { WCL_TRANSPORT, WCL_INGEST_MODE } = await import('../../src/app/core/services/wcl-transport.ts');
   const { DATA_FILE_TRANSPORT } = await import('../../src/app/core/services/data-file-transport.ts');
   const { FetchWclTransport } = await import('./node-wcl-transport.ts');
   const { FsDataFileTransport } = await import('./node-data-file-transport.ts');
@@ -79,11 +81,13 @@ export async function bootstrapIngestRuntime(dataDir: string = DATA_SPECS_DIR): 
   if (!(getTestBed() as { platform?: unknown }).platform) {
     getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
   }
+  const wclTransport = new FetchWclTransport();
   TestBed.configureTestingModule({
     providers: [
       provideZonelessChangeDetection(),
       provideHttpClient(withFetch()),
-      { provide: WCL_TRANSPORT, useValue: new FetchWclTransport() },
+      { provide: WCL_TRANSPORT, useValue: wclTransport },
+      { provide: WCL_INGEST_MODE, useValue: true },
       { provide: DATA_FILE_TRANSPORT, useValue: new FsDataFileTransport(dataDir) },
     ],
   });
@@ -99,6 +103,7 @@ export async function bootstrapIngestRuntime(dataDir: string = DATA_SPECS_DIR): 
       gear: env.get(Gear),
       map: env.get(MapT),
     },
+    clearWclCache: () => wclTransport.clearCache(),
   }));
   return booted;
 }

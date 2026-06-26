@@ -39,3 +39,11 @@ export interface WclTransport {
 }
 
 export const WCL_TRANSPORT = new InjectionToken<WclTransport>('WCL_TRANSPORT');
+
+/**
+ * When true, the otherwise `network-only` report/event reads use `cache-first` so a
+ * single process (the Node ingestion) fetches each report/event stream once even though
+ * the 5 transforms request overlapping streams. Defaults to false: the browser keeps
+ * `network-only` for live-poll freshness. The Node ingestion provides `true`.
+ */
+export const WCL_INGEST_MODE = new InjectionToken<boolean>('WCL_INGEST_MODE', { factory: () => false });

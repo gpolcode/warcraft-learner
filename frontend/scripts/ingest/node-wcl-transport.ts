@@ -15,6 +15,11 @@ interface GraphQLResponse<TData> { data?: TData; errors?: Array<{ message: strin
 export class FetchWclTransport implements WclTransport {
   private readonly cache = new Map<string, Promise<unknown>>();
 
+  /** Drop the in-process read cache (called between encounters to bound memory). */
+  clearCache(): void {
+    this.cache.clear();
+  }
+
   async query<TData>(gqlString: string, variables: object, token: string, cacheFirst: boolean): Promise<TData> {
     const key = cacheFirst ? `${gqlString}::${JSON.stringify(variables)}` : '';
     if (cacheFirst) {

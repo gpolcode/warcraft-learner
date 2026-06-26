@@ -11,6 +11,7 @@
     "test:watch": "ng test --watch",
     "rulebook": "tsx --tsconfig tsconfig.scripts.json scripts/build-rulebook.ts",
     "ingest": "tsx --tsconfig tsconfig.scripts.json scripts/ingest-parses.ts",
+    "ingest:next": "tsx --tsconfig tsconfig.scripts.json scripts/ingest/orchestrator.ts",
     "scrape": "tsx --tsconfig tsconfig.scripts.json scripts/scrape-guides.ts"
   },
   "private": true,
