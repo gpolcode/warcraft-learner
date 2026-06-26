@@ -1,7 +1,13 @@
-import { Injectable, InjectionToken, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { Apollo, gql } from 'apollo-angular';
-import { ServerError, CombinedGraphQLErrors, type FetchPolicy, type OperationVariables } from '@apollo/client';
+import { InjectionToken } from '@angular/core';
+
+/**
+ * Single source of truth for the WCL GraphQL endpoint. The browser authenticates with
+ * the client-credentials grant, so it targets the `/client` endpoint. This module is
+ * dependency-light (no apollo-angular) so the Node ingestion can import it - and the
+ * `WclTransport` interface - without pulling apollo-angular into a headless runtime
+ * (apollo-angular is a partially-compiled library that needs the JIT compiler to load).
+ */
+export const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 
 /**
  * Normalised transport error so `WclApiService` can react to auth failures without
@@ -33,36 +39,3 @@ export interface WclTransport {
 }
 
 export const WCL_TRANSPORT = new InjectionToken<WclTransport>('WCL_TRANSPORT');
-
-/**
- * Browser transport: apollo-angular. Attaches the bearer per request via operation
- * context (it must not be baked into the link, since it is renewed on expiry) and maps
- * Apollo's error shapes to {@link WclTransportError}.
- */
-@Injectable({ providedIn: 'root' })
-export class ApolloWclTransport implements WclTransport {
-  private readonly apollo = inject(Apollo);
-
-  async query<TData>(gqlString: string, variables: object, token: string, cacheFirst: boolean): Promise<TData> {
-    const fetchPolicy: FetchPolicy = cacheFirst ? 'cache-first' : 'network-only';
-    try {
-      const result = await firstValueFrom(this.apollo.query<TData, OperationVariables>({
-        query: gql(gqlString),
-        variables: variables as OperationVariables,
-        fetchPolicy,
-        context: { headers: { Authorization: `Bearer ${token}` } },
-      }));
-      return result.data as TData;
-    } catch (error) {
-      // apollo-angular maps a non-2xx HTTP response to ServerError (with statusCode).
-      if (ServerError.is(error)) {
-        throw new WclTransportError(`WCL API error (${error.statusCode})`, error.statusCode);
-      }
-      // A 200 response carrying a top-level `errors` array surfaces as CombinedGraphQLErrors.
-      if (CombinedGraphQLErrors.is(error)) {
-        throw new WclTransportError(error.errors[0]?.message || 'WCL GraphQL error', 0);
-      }
-      throw error;
-    }
-  }
-}

@@ -13,7 +13,8 @@ import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client';
 import { routes } from './app.routes';
-import { WCL_TRANSPORT, ApolloWclTransport } from './core/services/wcl-transport';
+import { WCL_TRANSPORT, WCL_API_URL } from './core/services/wcl-transport';
+import { ApolloWclTransport } from './core/services/apollo-wcl-transport';
 import { DATA_FILE_TRANSPORT, HttpDataFileTransport } from './core/services/data-file-transport';
 import { provideDataSource } from './core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from './pages/post-raid/burst-windows/burst-data-source';
@@ -31,11 +32,6 @@ import { GearTransformService } from './pages/post-raid/gear/gear-transform.serv
 import { MAP_DATA_SOURCE } from './pages/post-raid/map/map-data-source';
 import { MapDataFileService } from './pages/post-raid/map/map-data-file.service';
 import { MapTransformService } from './pages/post-raid/map/map-transform.service';
-
-// Single source of truth for the WCL GraphQL endpoint (also referenced by WclApiService).
-// The browser authenticates with the client-credentials grant, so it targets the
-// `/client` endpoint (the `/user` endpoint is only for user-token PKCE flows).
-export const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
   <path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577
