@@ -1,0 +1,7445 @@
+[
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "LYqT8Jy9mwaWFtZz",
+    "fight_id": 36,
+    "player_name": "Tacofajita",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "Tacofajita",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 163.7,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 40.4,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        2,
+        3,
+        23,
+        24,
+        29,
+        29,
+        39,
+        71,
+        89,
+        118,
+        162,
+        206,
+        233,
+        259,
+        264,
+        316,
+        325,
+        403,
+        613,
+        647,
+        677,
+        747,
+        753,
+        760,
+        764,
+        768,
+        788,
+        790,
+        800,
+        804,
+        810,
+        814,
+        828,
+        829,
+        829,
+        862,
+        869,
+        873,
+        875,
+        881,
+        911,
+        911,
+        915,
+        919,
+        938,
+        949,
+        950,
+        954,
+        955,
+        963,
+        965,
+        972,
+        988,
+        998,
+        1009,
+        1021,
+        1023,
+        1044,
+        1046,
+        1051,
+        1057,
+        1071,
+        1076,
+        1084,
+        1086,
+        1103,
+        1119,
+        1126,
+        1127,
+        1132,
+        1151,
+        1196,
+        1199,
+        1212,
+        1216,
+        1218,
+        1220,
+        1306,
+        1309,
+        1350,
+        1415,
+        1486,
+        1505,
+        1506,
+        1525,
+        1530,
+        1552,
+        1594,
+        1601,
+        1630,
+        1631,
+        1647,
+        1651,
+        1667,
+        1704,
+        1803,
+        1813,
+        1814,
+        1821,
+        1869,
+        1918,
+        1928,
+        1963,
+        1967,
+        1974,
+        2009,
+        2010,
+        2036,
+        2103,
+        2152,
+        2167,
+        2188,
+        2196,
+        2218,
+        2259,
+        2271,
+        2341,
+        2358,
+        2400,
+        2416,
+        2429,
+        2448,
+        2449,
+        2470,
+        2693,
+        2745,
+        2757,
+        3373,
+        3511
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 2,
+          "first_cast_s": 0.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.34,
+            92.25
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 3,
+          "first_cast_s": 21,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            21.02,
+            68.32,
+            144.46
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 111,
+              "actual_s": 144.5,
+              "hold_amount_s": 33.4
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 3,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.55,
+            67.37,
+            143.38
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 121.5,
+              "actual_s": 143.4,
+              "hold_amount_s": 21.8
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 2,
+          "first_cast_s": 64.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            64.37,
+            140.43
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 94.4,
+              "actual_s": 140.4,
+              "hold_amount_s": 46.1
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 3,
+          "first_cast_s": 50.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            50.71,
+            99.32,
+            152.67
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 140.7,
+              "actual_s": 152.7,
+              "hold_amount_s": 12
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.3,
+          "window_length_s": 30.7,
+          "pct_of_total": 0.284,
+          "window_damage": 9327478,
+          "total_damage": 32880418,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 4032214,
+              "pct": 0.432,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 866093,
+              "pct": 0.093,
+              "casts": 6
+            },
+            {
+              "spell_id": 17877,
+              "damage": 735327,
+              "pct": 0.079,
+              "casts": 3
+            },
+            {
+              "spell_id": 29722,
+              "damage": 635444,
+              "pct": 0.068,
+              "casts": 9
+            },
+            {
+              "spell_id": 445474,
+              "damage": 613217,
+              "pct": 0.066,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 456589,
+              "pct": 0.049,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 67.4,
+          "window_length_s": 18,
+          "pct_of_total": 0.126,
+          "window_damage": 4135588,
+          "total_damage": 32880418,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1678587,
+              "pct": 0.406,
+              "casts": 5
+            },
+            {
+              "spell_id": 445736,
+              "damage": 524549,
+              "pct": 0.127,
+              "casts": 0
+            },
+            {
+              "spell_id": 17962,
+              "damage": 454265,
+              "pct": 0.11,
+              "casts": 3
+            },
+            {
+              "spell_id": 17877,
+              "damage": 408850,
+              "pct": 0.099,
+              "casts": 2
+            },
+            {
+              "spell_id": 445474,
+              "damage": 335917,
+              "pct": 0.081,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 274199,
+              "pct": 0.066,
+              "casts": 5
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 92.3,
+          "window_length_s": 30,
+          "pct_of_total": 0.139,
+          "window_damage": 4578250,
+          "total_damage": 32880418,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1334805,
+              "pct": 0.292,
+              "casts": 6
+            },
+            {
+              "spell_id": 6353,
+              "damage": 533404,
+              "pct": 0.117,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 479539,
+              "pct": 0.105,
+              "casts": 4
+            },
+            {
+              "spell_id": 17877,
+              "damage": 404834,
+              "pct": 0.088,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 334725,
+              "pct": 0.073,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 334134,
+              "pct": 0.073,
+              "casts": 7
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 143.4,
+          "window_length_s": 18,
+          "pct_of_total": 0.169,
+          "window_damage": 5548965,
+          "total_damage": 32880418,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1897356,
+              "pct": 0.342,
+              "casts": 5
+            },
+            {
+              "spell_id": 17962,
+              "damage": 697084,
+              "pct": 0.126,
+              "casts": 4
+            },
+            {
+              "spell_id": 17877,
+              "damage": 692808,
+              "pct": 0.125,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 581136,
+              "pct": 0.105,
+              "casts": 0
+            },
+            {
+              "spell_id": 6353,
+              "damage": 488087,
+              "pct": 0.088,
+              "casts": 1
+            },
+            {
+              "spell_id": 445474,
+              "damage": 304653,
+              "pct": 0.055,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            50.8
+          ],
+          "first_cast_s": 50.8,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 50.8,
+              "end_s": 58.8,
+              "dmg_during": 151030
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 3,
+          "cast_times_s": [
+            30.5,
+            93.7,
+            152.9
+          ],
+          "first_cast_s": 30.5,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 30.5,
+              "end_s": 33,
+              "dmg_during": 328002
+            },
+            {
+              "start_s": 93.7,
+              "end_s": 98.1,
+              "dmg_during": 280013
+            },
+            {
+              "start_s": 152.9,
+              "end_s": 172.9,
+              "dmg_during": 255840
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 30.5,
+          "window_length_s": 2.5,
+          "pct_of_total": 0.057,
+          "window_damage": 328002,
+          "total_damage": 5765457,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 136662,
+              "pct": 0.417
+            },
+            {
+              "spell_id": 1260835,
+              "damage": 86055,
+              "pct": 0.262
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 64734,
+              "pct": 0.197
+            },
+            {
+              "spell_id": 111400,
+              "damage": 39307,
+              "pct": 0.12
+            },
+            {
+              "spell_id": 387846,
+              "damage": 1244,
+              "pct": 0.004
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 50.8,
+          "window_length_s": 8,
+          "pct_of_total": 0.026,
+          "window_damage": 151030,
+          "total_damage": 5765457,
+          "ability_breakdown": [
+            {
+              "spell_id": 1262989,
+              "damage": 108979,
+              "pct": 0.722
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 29038,
+              "pct": 0.192
+            },
+            {
+              "spell_id": 387846,
+              "damage": 13013,
+              "pct": 0.086
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 93.7,
+          "window_length_s": 4.4,
+          "pct_of_total": 0.049,
+          "window_damage": 280013,
+          "total_damage": 5765457,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 157652,
+              "pct": 0.563
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 118237,
+              "pct": 0.422
+            },
+            {
+              "spell_id": 387846,
+              "damage": 4124,
+              "pct": 0.015
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 152.9,
+          "window_length_s": 20,
+          "pct_of_total": 0.044,
+          "window_damage": 255840,
+          "total_damage": 5765457,
+          "ability_breakdown": [
+            {
+              "spell_id": 1250686,
+              "damage": 247780,
+              "pct": 0.968
+            },
+            {
+              "spell_id": 387846,
+              "damage": 8060,
+              "pct": 0.032
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71923,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "LdwMq17XJVajKpvZ",
+    "fight_id": 20,
+    "player_name": "흑마하늘이",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "흑마하늘이",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 211.4,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 48.9,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        9,
+        10,
+        67,
+        78,
+        84,
+        186,
+        208,
+        221,
+        239,
+        293,
+        387,
+        434,
+        485,
+        546,
+        642,
+        647,
+        671,
+        745,
+        767,
+        786,
+        797,
+        822,
+        842,
+        845,
+        849,
+        851,
+        851,
+        853,
+        856,
+        861,
+        863,
+        865,
+        872,
+        879,
+        879,
+        893,
+        900,
+        910,
+        918,
+        924,
+        927,
+        930,
+        937,
+        947,
+        958,
+        976,
+        979,
+        984,
+        985,
+        985,
+        988,
+        989,
+        989,
+        1003,
+        1008,
+        1015,
+        1016,
+        1017,
+        1020,
+        1022,
+        1023,
+        1023,
+        1025,
+        1025,
+        1027,
+        1028,
+        1028,
+        1030,
+        1031,
+        1035,
+        1035,
+        1037,
+        1038,
+        1044,
+        1051,
+        1053,
+        1058,
+        1066,
+        1070,
+        1072,
+        1082,
+        1091,
+        1101,
+        1101,
+        1102,
+        1105,
+        1106,
+        1112,
+        1113,
+        1119,
+        1130,
+        1132,
+        1135,
+        1138,
+        1141,
+        1146,
+        1150,
+        1164,
+        1168,
+        1186,
+        1196,
+        1217,
+        1222,
+        1235,
+        1242,
+        1245,
+        1249,
+        1258,
+        1312,
+        1349,
+        1369,
+        1420,
+        1549,
+        1550,
+        1595,
+        1624,
+        1636,
+        1638,
+        1654,
+        1690,
+        1708,
+        1711,
+        1718,
+        1719,
+        1720,
+        1723,
+        1723,
+        1725,
+        1799,
+        1833,
+        1851,
+        1858,
+        1865,
+        1890,
+        1914,
+        1968,
+        1993,
+        2007,
+        2059,
+        2098,
+        2103,
+        2105,
+        2121,
+        2171,
+        2178,
+        2189,
+        2202,
+        2217,
+        2223,
+        2227,
+        2230,
+        2233,
+        2236,
+        2242,
+        2264,
+        2364,
+        2373,
+        2381,
+        2390,
+        2391,
+        2471,
+        2520,
+        2672,
+        2699,
+        2944
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 0.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.27,
+            93.49,
+            185.61
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 18.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            18.53,
+            64.13,
+            140.51,
+            188.92
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 108.5,
+              "actual_s": 140.5,
+              "hold_amount_s": 32
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 153.5,
+              "actual_s": 188.9,
+              "hold_amount_s": 35.4
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 1.2,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.22,
+            66.63,
+            126.82,
+            187.9
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 3,
+          "first_cast_s": 61.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            61.32,
+            138.45,
+            185.61
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 91.3,
+              "actual_s": 138.4,
+              "hold_amount_s": 47.1
+            },
+            {
+              "cast_index": 3,
+              "expected_s": 121.3,
+              "actual_s": 185.6,
+              "hold_amount_s": 64.3
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 0,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.05,
+            47.05,
+            100.61,
+            147.3,
+            194.39
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 90,
+              "actual_s": 100.6,
+              "hold_amount_s": 10.6
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 135,
+              "actual_s": 147.3,
+              "hold_amount_s": 12.3
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 180,
+              "actual_s": 194.4,
+              "hold_amount_s": 14.3
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.3,
+          "window_length_s": 30,
+          "pct_of_total": 0.21,
+          "window_damage": 8051718,
+          "total_damage": 38338421,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3293581,
+              "pct": 0.409,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 821348,
+              "pct": 0.102,
+              "casts": 6
+            },
+            {
+              "spell_id": 17877,
+              "damage": 722602,
+              "pct": 0.09,
+              "casts": 4
+            },
+            {
+              "spell_id": 29722,
+              "damage": 524605,
+              "pct": 0.065,
+              "casts": 8
+            },
+            {
+              "spell_id": 445474,
+              "damage": 455641,
+              "pct": 0.057,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 432309,
+              "pct": 0.054,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 64.1,
+          "window_length_s": 20.5,
+          "pct_of_total": 0.108,
+          "window_damage": 4143676,
+          "total_damage": 38338421,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1424352,
+              "pct": 0.344,
+              "casts": 5
+            },
+            {
+              "spell_id": 17877,
+              "damage": 645744,
+              "pct": 0.156,
+              "casts": 4
+            },
+            {
+              "spell_id": 17962,
+              "damage": 528758,
+              "pct": 0.128,
+              "casts": 4
+            },
+            {
+              "spell_id": 445736,
+              "damage": 523202,
+              "pct": 0.126,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 367872,
+              "pct": 0.089,
+              "casts": 1
+            },
+            {
+              "spell_id": 446285,
+              "damage": 335977,
+              "pct": 0.081,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 93.5,
+          "window_length_s": 30,
+          "pct_of_total": 0.107,
+          "window_damage": 4112280,
+          "total_damage": 38338421,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1649219,
+              "pct": 0.401,
+              "casts": 7
+            },
+            {
+              "spell_id": 17962,
+              "damage": 536763,
+              "pct": 0.131,
+              "casts": 5
+            },
+            {
+              "spell_id": 445736,
+              "damage": 311938,
+              "pct": 0.076,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 307861,
+              "pct": 0.075,
+              "casts": 7
+            },
+            {
+              "spell_id": 434589,
+              "damage": 242512,
+              "pct": 0.059,
+              "casts": 7
+            },
+            {
+              "spell_id": 445474,
+              "damage": 204442,
+              "pct": 0.05,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 126.8,
+          "window_length_s": 23.7,
+          "pct_of_total": 0.084,
+          "window_damage": 3206313,
+          "total_damage": 38338421,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 861913,
+              "pct": 0.269,
+              "casts": 4
+            },
+            {
+              "spell_id": 6353,
+              "damage": 669126,
+              "pct": 0.209,
+              "casts": 1
+            },
+            {
+              "spell_id": 29722,
+              "damage": 335924,
+              "pct": 0.105,
+              "casts": 6
+            },
+            {
+              "spell_id": 17962,
+              "damage": 308081,
+              "pct": 0.096,
+              "casts": 3
+            },
+            {
+              "spell_id": 445474,
+              "damage": 265617,
+              "pct": 0.083,
+              "casts": 1
+            },
+            {
+              "spell_id": 152108,
+              "damage": 190679,
+              "pct": 0.059,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 185.6,
+          "window_length_s": 30,
+          "pct_of_total": 0.178,
+          "window_damage": 6808042,
+          "total_damage": 38338421,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 3254669,
+              "pct": 0.478,
+              "casts": 17
+            },
+            {
+              "spell_id": 445736,
+              "damage": 557858,
+              "pct": 0.082,
+              "casts": 0
+            },
+            {
+              "spell_id": 17962,
+              "damage": 499568,
+              "pct": 0.073,
+              "casts": 3
+            },
+            {
+              "spell_id": 446285,
+              "damage": 480032,
+              "pct": 0.071,
+              "casts": 1
+            },
+            {
+              "spell_id": 445474,
+              "damage": 397316,
+              "pct": 0.058,
+              "casts": 1
+            },
+            {
+              "spell_id": 6353,
+              "damage": 395217,
+              "pct": 0.058,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            165.7
+          ],
+          "first_cast_s": 165.7,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 165.7,
+              "end_s": 173.7,
+              "dmg_during": 758280
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 1,
+          "cast_times_s": [
+            167.7
+          ],
+          "first_cast_s": 167.7,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 167.7,
+              "end_s": 169.3,
+              "dmg_during": 199081
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 165.7,
+          "window_length_s": 8,
+          "pct_of_total": 0.067,
+          "window_damage": 758280,
+          "total_damage": 11307300,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 487609,
+              "pct": 0.643
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 146280,
+              "pct": 0.193
+            },
+            {
+              "spell_id": 111400,
+              "damage": 117918,
+              "pct": 0.156
+            },
+            {
+              "spell_id": 387846,
+              "damage": 6473,
+              "pct": 0.009
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 167.7,
+          "window_length_s": 1.6,
+          "pct_of_total": 0.018,
+          "window_damage": 199081,
+          "total_damage": 11307300,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 121902,
+              "pct": 0.612
+            },
+            {
+              "spell_id": 111400,
+              "damage": 39306,
+              "pct": 0.197
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 36570,
+              "pct": 0.184
+            },
+            {
+              "spell_id": 387846,
+              "damage": 1303,
+              "pct": 0.007
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109846,109847,109848,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "XAjmpJRkzLF2chy3",
+    "fight_id": 22,
+    "player_name": "극세사이불",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "극세사이불",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 199.5,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 50,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        29,
+        35,
+        39,
+        40,
+        62,
+        118,
+        127,
+        134,
+        168,
+        243,
+        402,
+        481,
+        500,
+        539,
+        563,
+        617,
+        703,
+        733,
+        734,
+        738,
+        739,
+        739,
+        741,
+        743,
+        746,
+        751,
+        756,
+        770,
+        777,
+        826,
+        845,
+        847,
+        849,
+        858,
+        875,
+        877,
+        880,
+        883,
+        901,
+        903,
+        905,
+        916,
+        916,
+        917,
+        919,
+        919,
+        921,
+        925,
+        928,
+        933,
+        945,
+        947,
+        955,
+        959,
+        959,
+        967,
+        973,
+        979,
+        980,
+        981,
+        981,
+        984,
+        987,
+        989,
+        999,
+        999,
+        1002,
+        1004,
+        1004,
+        1012,
+        1013,
+        1016,
+        1025,
+        1027,
+        1033,
+        1042,
+        1042,
+        1049,
+        1051,
+        1066,
+        1075,
+        1075,
+        1084,
+        1101,
+        1113,
+        1121,
+        1121,
+        1130,
+        1134,
+        1134,
+        1145,
+        1152,
+        1156,
+        1158,
+        1160,
+        1162,
+        1178,
+        1179,
+        1199,
+        1231,
+        1235,
+        1243,
+        1250,
+        1315,
+        1359,
+        1365,
+        1379,
+        1433,
+        1439,
+        1479,
+        1512,
+        1522,
+        1526,
+        1549,
+        1549,
+        1552,
+        1564,
+        1612,
+        1652,
+        1700,
+        1702,
+        1722,
+        1723,
+        1741,
+        1743,
+        1785,
+        1788,
+        1799,
+        1846,
+        1852,
+        1858,
+        1880,
+        1889,
+        1930,
+        1931,
+        1933,
+        1934,
+        1944,
+        1953,
+        1963,
+        1971,
+        2008,
+        2019,
+        2039,
+        2089,
+        2160,
+        2189,
+        2247,
+        2271,
+        2307,
+        2312,
+        2387,
+        2389,
+        2400,
+        2484,
+        2500,
+        2709,
+        2739,
+        2896,
+        3091
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 0.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.57,
+            92.66,
+            187.88
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 19.2,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            19.25,
+            68.68,
+            141.3,
+            184.33
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 109.2,
+              "actual_s": 141.3,
+              "hold_amount_s": 32.1
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 154.2,
+              "actual_s": 184.3,
+              "hold_amount_s": 30.1
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.54,
+            67.8,
+            127.8,
+            190.22
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 181.5,
+              "actual_s": 190.2,
+              "hold_amount_s": 8.7
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 3,
+          "first_cast_s": 62.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            62.79,
+            138.08,
+            184.33
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 92.8,
+              "actual_s": 138.1,
+              "hold_amount_s": 45.3
+            },
+            {
+              "cast_index": 3,
+              "expected_s": 122.8,
+              "actual_s": 184.3,
+              "hold_amount_s": 61.5
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 0.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.44,
+            47.69,
+            95.56,
+            146.29,
+            195.37
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 135.4,
+              "actual_s": 146.3,
+              "hold_amount_s": 10.8
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 180.4,
+              "actual_s": 195.4,
+              "hold_amount_s": 14.9
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.6,
+          "window_length_s": 30,
+          "pct_of_total": 0.27,
+          "window_damage": 9581021,
+          "total_damage": 35505756,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3863526,
+              "pct": 0.403,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 1071906,
+              "pct": 0.112,
+              "casts": 7
+            },
+            {
+              "spell_id": 17877,
+              "damage": 844811,
+              "pct": 0.088,
+              "casts": 4
+            },
+            {
+              "spell_id": 29722,
+              "damage": 674310,
+              "pct": 0.07,
+              "casts": 8
+            },
+            {
+              "spell_id": 445474,
+              "damage": 598068,
+              "pct": 0.062,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 478002,
+              "pct": 0.05,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 67.8,
+          "window_length_s": 18,
+          "pct_of_total": 0.111,
+          "window_damage": 3926864,
+          "total_damage": 35505756,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1150906,
+              "pct": 0.293,
+              "casts": 4
+            },
+            {
+              "spell_id": 17877,
+              "damage": 919620,
+              "pct": 0.234,
+              "casts": 5
+            },
+            {
+              "spell_id": 17962,
+              "damage": 601900,
+              "pct": 0.153,
+              "casts": 4
+            },
+            {
+              "spell_id": 445736,
+              "damage": 446828,
+              "pct": 0.114,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 303134,
+              "pct": 0.077,
+              "casts": 0
+            },
+            {
+              "spell_id": 446285,
+              "damage": 223272,
+              "pct": 0.057,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 92.7,
+          "window_length_s": 30,
+          "pct_of_total": 0.122,
+          "window_damage": 4317238,
+          "total_damage": 35505756,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1544089,
+              "pct": 0.358,
+              "casts": 6
+            },
+            {
+              "spell_id": 29722,
+              "damage": 504380,
+              "pct": 0.117,
+              "casts": 7
+            },
+            {
+              "spell_id": 6353,
+              "damage": 383440,
+              "pct": 0.089,
+              "casts": 1
+            },
+            {
+              "spell_id": 17877,
+              "damage": 378693,
+              "pct": 0.088,
+              "casts": 2
+            },
+            {
+              "spell_id": 17962,
+              "damage": 352878,
+              "pct": 0.082,
+              "casts": 3
+            },
+            {
+              "spell_id": 434589,
+              "damage": 221854,
+              "pct": 0.051,
+              "casts": 6
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 127.8,
+          "window_length_s": 23.5,
+          "pct_of_total": 0.088,
+          "window_damage": 3115339,
+          "total_damage": 35505756,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1152508,
+              "pct": 0.37,
+              "casts": 5
+            },
+            {
+              "spell_id": 445474,
+              "damage": 379488,
+              "pct": 0.122,
+              "casts": 2
+            },
+            {
+              "spell_id": 17962,
+              "damage": 360296,
+              "pct": 0.116,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 265702,
+              "pct": 0.085,
+              "casts": 0
+            },
+            {
+              "spell_id": 6353,
+              "damage": 262657,
+              "pct": 0.084,
+              "casts": 1
+            },
+            {
+              "spell_id": 17877,
+              "damage": 187365,
+              "pct": 0.06,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 184.3,
+          "window_length_s": 33.5,
+          "pct_of_total": 0.079,
+          "window_damage": 2812193,
+          "total_damage": 35505756,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 905940,
+              "pct": 0.322,
+              "casts": 7
+            },
+            {
+              "spell_id": 6353,
+              "damage": 384275,
+              "pct": 0.137,
+              "casts": 1
+            },
+            {
+              "spell_id": 446285,
+              "damage": 341333,
+              "pct": 0.121,
+              "casts": 1
+            },
+            {
+              "spell_id": 445474,
+              "damage": 244023,
+              "pct": 0.087,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 239911,
+              "pct": 0.085,
+              "casts": 0
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 175902,
+              "pct": 0.063,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Summon Infernal",
+            "Malevolence"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            88.6
+          ],
+          "first_cast_s": 88.6,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 88.6,
+              "end_s": 96.6,
+              "dmg_during": 784025
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 2,
+          "cast_times_s": [
+            80.9,
+            171
+          ],
+          "first_cast_s": 80.9,
+          "hold_windows": [
+            {
+              "cast_index": 1,
+              "expected_s": 140.9,
+              "actual_s": 171,
+              "hold_amount_s": 30.1
+            }
+          ],
+          "cast_pattern": "hold",
+          "windows": [
+            {
+              "start_s": 80.9,
+              "end_s": 87.8,
+              "dmg_during": 462066
+            },
+            {
+              "start_s": 171,
+              "end_s": 175.1,
+              "dmg_during": 351852
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 80.9,
+          "window_length_s": 6.9,
+          "pct_of_total": 0.042,
+          "window_damage": 462066,
+          "total_damage": 11069106,
+          "ability_breakdown": [
+            {
+              "spell_id": 1250686,
+              "damage": 162938,
+              "pct": 0.353
+            },
+            {
+              "spell_id": 1285504,
+              "damage": 154499,
+              "pct": 0.334
+            },
+            {
+              "spell_id": 111400,
+              "damage": 138277,
+              "pct": 0.299
+            },
+            {
+              "spell_id": 387846,
+              "damage": 6352,
+              "pct": 0.014
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 88.6,
+          "window_length_s": 8,
+          "pct_of_total": 0.071,
+          "window_damage": 784025,
+          "total_damage": 11069106,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 465862,
+              "pct": 0.594
+            },
+            {
+              "spell_id": 111400,
+              "damage": 174622,
+              "pct": 0.223
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 139757,
+              "pct": 0.178
+            },
+            {
+              "spell_id": 387846,
+              "damage": 3784,
+              "pct": 0.005
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 171,
+          "window_length_s": 4.2,
+          "pct_of_total": 0.032,
+          "window_damage": 351852,
+          "total_damage": 11069106,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 154498,
+              "pct": 0.439
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 115873,
+              "pct": 0.329
+            },
+            {
+              "spell_id": 111400,
+              "damage": 79013,
+              "pct": 0.225
+            },
+            {
+              "spell_id": 387846,
+              "damage": 2468,
+              "pct": 0.007
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109846,109847,109848,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "7qCanQbNDJGZfYhM",
+    "fight_id": 22,
+    "player_name": "장빵이",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "장빵이",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 199.5,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 55.6,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        8,
+        15,
+        26,
+        32,
+        39,
+        57,
+        79,
+        85,
+        86,
+        93,
+        96,
+        99,
+        117,
+        140,
+        144,
+        147,
+        152,
+        267,
+        274,
+        352,
+        357,
+        474,
+        525,
+        534,
+        580,
+        591,
+        674,
+        678,
+        689,
+        701,
+        704,
+        729,
+        740,
+        742,
+        747,
+        752,
+        756,
+        756,
+        762,
+        770,
+        839,
+        868,
+        884,
+        884,
+        886,
+        887,
+        887,
+        888,
+        890,
+        893,
+        896,
+        906,
+        932,
+        935,
+        944,
+        947,
+        950,
+        950,
+        953,
+        953,
+        954,
+        954,
+        955,
+        957,
+        957,
+        963,
+        964,
+        965,
+        984,
+        985,
+        997,
+        1001,
+        1009,
+        1022,
+        1024,
+        1034,
+        1037,
+        1045,
+        1054,
+        1060,
+        1061,
+        1071,
+        1074,
+        1075,
+        1075,
+        1076,
+        1077,
+        1083,
+        1088,
+        1097,
+        1104,
+        1109,
+        1119,
+        1120,
+        1120,
+        1129,
+        1130,
+        1138,
+        1138,
+        1142,
+        1144,
+        1146,
+        1152,
+        1169,
+        1169,
+        1171,
+        1176,
+        1178,
+        1183,
+        1186,
+        1195,
+        1221,
+        1223,
+        1224,
+        1230,
+        1238,
+        1240,
+        1246,
+        1316,
+        1402,
+        1447,
+        1457,
+        1474,
+        1477,
+        1480,
+        1487,
+        1490,
+        1516,
+        1519,
+        1548,
+        1562,
+        1563,
+        1566,
+        1570,
+        1609,
+        1616,
+        1645,
+        1660,
+        1665,
+        1672,
+        1692,
+        1734,
+        1794,
+        1824,
+        1931,
+        1934,
+        1937,
+        1982,
+        2001,
+        2001,
+        2046,
+        2062,
+        2064,
+        2079,
+        2098,
+        2110,
+        2114,
+        2115,
+        2140,
+        2223,
+        2226,
+        2307,
+        2367,
+        2373,
+        2373,
+        2488,
+        2498,
+        2626,
+        2730,
+        2747,
+        3196
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.55,
+            92.96,
+            183.7
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 19,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            18.97,
+            63.73,
+            137.3,
+            187.26
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 109,
+              "actual_s": 137.3,
+              "hold_amount_s": 28.3
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 154,
+              "actual_s": 187.3,
+              "hold_amount_s": 33.3
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 2.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            2.7,
+            62.69,
+            122.7,
+            184.85
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 4,
+          "first_cast_s": 0.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.34,
+            49.67,
+            98.59,
+            154.48
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 90.3,
+              "actual_s": 98.6,
+              "hold_amount_s": 8.3
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 135.3,
+              "actual_s": 154.5,
+              "hold_amount_s": 19.1
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.6,
+          "window_length_s": 30,
+          "pct_of_total": 0.24,
+          "window_damage": 9280488,
+          "total_damage": 38592352,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 4019019,
+              "pct": 0.433,
+              "casts": 12
+            },
+            {
+              "spell_id": 17962,
+              "damage": 1154902,
+              "pct": 0.124,
+              "casts": 7
+            },
+            {
+              "spell_id": 29722,
+              "damage": 870362,
+              "pct": 0.094,
+              "casts": 11
+            },
+            {
+              "spell_id": 445474,
+              "damage": 495314,
+              "pct": 0.053,
+              "casts": 2
+            },
+            {
+              "spell_id": 20153,
+              "damage": 494351,
+              "pct": 0.053,
+              "casts": 0
+            },
+            {
+              "spell_id": 409632,
+              "damage": 453884,
+              "pct": 0.049,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 62.7,
+          "window_length_s": 18,
+          "pct_of_total": 0.086,
+          "window_damage": 3323198,
+          "total_damage": 38592352,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1040187,
+              "pct": 0.313,
+              "casts": 3
+            },
+            {
+              "spell_id": 17877,
+              "damage": 649040,
+              "pct": 0.195,
+              "casts": 3
+            },
+            {
+              "spell_id": 17962,
+              "damage": 487701,
+              "pct": 0.147,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 309000,
+              "pct": 0.093,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 282883,
+              "pct": 0.085,
+              "casts": 2
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 187903,
+              "pct": 0.057,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 93,
+          "window_length_s": 54.3,
+          "pct_of_total": 0.222,
+          "window_damage": 8560596,
+          "total_damage": 38592352,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3103226,
+              "pct": 0.363,
+              "casts": 11
+            },
+            {
+              "spell_id": 29722,
+              "damage": 945140,
+              "pct": 0.11,
+              "casts": 14
+            },
+            {
+              "spell_id": 17877,
+              "damage": 909895,
+              "pct": 0.106,
+              "casts": 5
+            },
+            {
+              "spell_id": 17962,
+              "damage": 825679,
+              "pct": 0.096,
+              "casts": 7
+            },
+            {
+              "spell_id": 445474,
+              "damage": 618268,
+              "pct": 0.072,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 485902,
+              "pct": 0.057,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 183.7,
+          "window_length_s": 30,
+          "pct_of_total": 0.092,
+          "window_damage": 3532401,
+          "total_damage": 38592352,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 1893781,
+              "pct": 0.536,
+              "casts": 9
+            },
+            {
+              "spell_id": 17962,
+              "damage": 522053,
+              "pct": 0.148,
+              "casts": 3
+            },
+            {
+              "spell_id": 20153,
+              "damage": 239577,
+              "pct": 0.068,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 226438,
+              "pct": 0.064,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 162916,
+              "pct": 0.046,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 152578,
+              "pct": 0.043,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            103.8
+          ],
+          "first_cast_s": 103.8,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 103.8,
+              "end_s": 111.8,
+              "dmg_during": 406376
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 2,
+          "cast_times_s": [
+            70.8,
+            156.2
+          ],
+          "first_cast_s": 70.8,
+          "hold_windows": [
+            {
+              "cast_index": 1,
+              "expected_s": 130.8,
+              "actual_s": 156.2,
+              "hold_amount_s": 25.4
+            }
+          ],
+          "cast_pattern": "hold",
+          "windows": [
+            {
+              "start_s": 70.8,
+              "end_s": 77.3,
+              "dmg_during": 310434
+            },
+            {
+              "start_s": 156.2,
+              "end_s": 161.9,
+              "dmg_during": 376128
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 70.8,
+          "window_length_s": 6.5,
+          "pct_of_total": 0.045,
+          "window_damage": 310434,
+          "total_damage": 6835476,
+          "ability_breakdown": [
+            {
+              "spell_id": 1250686,
+              "damage": 174095,
+              "pct": 0.561
+            },
+            {
+              "spell_id": 1260835,
+              "damage": 131566,
+              "pct": 0.424
+            },
+            {
+              "spell_id": 387846,
+              "damage": 4773,
+              "pct": 0.015
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 103.8,
+          "window_length_s": 8,
+          "pct_of_total": 0.059,
+          "window_damage": 406376,
+          "total_damage": 6835476,
+          "ability_breakdown": [
+            {
+              "spell_id": 1254018,
+              "damage": 397772,
+              "pct": 0.979
+            },
+            {
+              "spell_id": 387846,
+              "damage": 8604,
+              "pct": 0.021
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 156.2,
+          "window_length_s": 5.7,
+          "pct_of_total": 0.055,
+          "window_damage": 376128,
+          "total_damage": 6835476,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 243891,
+              "pct": 0.648
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 121944,
+              "pct": 0.324
+            },
+            {
+              "spell_id": 387846,
+              "damage": 10293,
+              "pct": 0.027
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109842,109843,109845,109847,110071,110072,110073,110074,110075,110076,110280,110282,110406,110406,110406,71922,71923,71924,71926,71930,71931,71932,71933,71936,71937,71941,71942,71947,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 7991,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 7973,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 8019,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "tmnWdF4Hb6xcALkC",
+    "fight_id": 12,
+    "player_name": "Poneybøy",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "Poneybøy",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 196.2,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 44.2,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        72,
+        76,
+        83,
+        91,
+        129,
+        148,
+        190,
+        229,
+        257,
+        409,
+        449,
+        449,
+        472,
+        525,
+        670,
+        705,
+        728,
+        752,
+        773,
+        782,
+        788,
+        790,
+        888,
+        900,
+        943,
+        956,
+        957,
+        966,
+        973,
+        978,
+        980,
+        981,
+        985,
+        987,
+        989,
+        990,
+        997,
+        998,
+        1019,
+        1033,
+        1077,
+        1092,
+        1103,
+        1104,
+        1107,
+        1108,
+        1112,
+        1119,
+        1121,
+        1121,
+        1127,
+        1129,
+        1131,
+        1133,
+        1137,
+        1137,
+        1145,
+        1147,
+        1149,
+        1150,
+        1155,
+        1156,
+        1180,
+        1186,
+        1190,
+        1198,
+        1209,
+        1209,
+        1209,
+        1212,
+        1215,
+        1219,
+        1223,
+        1224,
+        1227,
+        1229,
+        1231,
+        1240,
+        1245,
+        1248,
+        1281,
+        1282,
+        1299,
+        1340,
+        1375,
+        1382,
+        1383,
+        1456,
+        1475,
+        1518,
+        1524,
+        1560,
+        1562,
+        1564,
+        1597,
+        1633,
+        1635,
+        1678,
+        1694,
+        1712,
+        1727,
+        1737,
+        1763,
+        1846,
+        1847,
+        1852,
+        1867,
+        1878,
+        1883,
+        1885,
+        1889,
+        1891,
+        1897,
+        1963,
+        1972,
+        1974,
+        1978,
+        2023,
+        2023,
+        2025,
+        2027,
+        2065,
+        2079,
+        2207,
+        2217,
+        2239,
+        2260,
+        2296,
+        2321,
+        2366,
+        2441,
+        2459,
+        2477,
+        2487,
+        2512,
+        2572,
+        2695,
+        2716,
+        2765,
+        2801,
+        2937,
+        3026
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 0.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.37,
+            91.2,
+            181.75
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 18.9,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            18.85,
+            63.56,
+            137.87,
+            185.53
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 108.9,
+              "actual_s": 137.9,
+              "hold_amount_s": 29
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 153.9,
+              "actual_s": 185.5,
+              "hold_amount_s": 31.7
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 4,
+          "first_cast_s": 0.2,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.21,
+            48.43,
+            96.17,
+            147.07
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 135.2,
+              "actual_s": 147.1,
+              "hold_amount_s": 11.9
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.4,
+          "window_length_s": 30,
+          "pct_of_total": 0.188,
+          "window_damage": 6662488,
+          "total_damage": 35484143,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 2129833,
+              "pct": 0.32,
+              "casts": 11
+            },
+            {
+              "spell_id": 20153,
+              "damage": 758518,
+              "pct": 0.114,
+              "casts": 0
+            },
+            {
+              "spell_id": 17962,
+              "damage": 756885,
+              "pct": 0.114,
+              "casts": 6
+            },
+            {
+              "spell_id": 17877,
+              "damage": 483075,
+              "pct": 0.073,
+              "casts": 2
+            },
+            {
+              "spell_id": 29722,
+              "damage": 427217,
+              "pct": 0.064,
+              "casts": 8
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 324416,
+              "pct": 0.049,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 63.6,
+          "window_length_s": 10,
+          "pct_of_total": 0.057,
+          "window_damage": 2023125,
+          "total_damage": 35484143,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 671806,
+              "pct": 0.332,
+              "casts": 3
+            },
+            {
+              "spell_id": 432596,
+              "damage": 344507,
+              "pct": 0.17,
+              "casts": 0
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 288430,
+              "pct": 0.143,
+              "casts": 0
+            },
+            {
+              "spell_id": 17877,
+              "damage": 207210,
+              "pct": 0.102,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 169086,
+              "pct": 0.084,
+              "casts": 1
+            },
+            {
+              "spell_id": 1269800,
+              "damage": 94017,
+              "pct": 0.046,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 91.2,
+          "window_length_s": 30,
+          "pct_of_total": 0.127,
+          "window_damage": 4515003,
+          "total_damage": 35484143,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1150315,
+              "pct": 0.255,
+              "casts": 7
+            },
+            {
+              "spell_id": 17962,
+              "damage": 493927,
+              "pct": 0.109,
+              "casts": 4
+            },
+            {
+              "spell_id": 6353,
+              "damage": 465440,
+              "pct": 0.103,
+              "casts": 1
+            },
+            {
+              "spell_id": 20153,
+              "damage": 397432,
+              "pct": 0.088,
+              "casts": 0
+            },
+            {
+              "spell_id": 1269800,
+              "damage": 213988,
+              "pct": 0.047,
+              "casts": 0
+            },
+            {
+              "spell_id": 432596,
+              "damage": 191870,
+              "pct": 0.042,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 137.9,
+          "window_length_s": 10,
+          "pct_of_total": 0.035,
+          "window_damage": 1234216,
+          "total_damage": 35484143,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 452995,
+              "pct": 0.367,
+              "casts": 3
+            },
+            {
+              "spell_id": 17962,
+              "damage": 172627,
+              "pct": 0.14,
+              "casts": 1
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 140935,
+              "pct": 0.114,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 108822,
+              "pct": 0.088,
+              "casts": 1
+            },
+            {
+              "spell_id": 157736,
+              "damage": 90609,
+              "pct": 0.073,
+              "casts": 1
+            },
+            {
+              "spell_id": 1269800,
+              "damage": 53642,
+              "pct": 0.043,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 181.8,
+          "window_length_s": 30,
+          "pct_of_total": 0.135,
+          "window_damage": 4805875,
+          "total_damage": 35484143,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 1791547,
+              "pct": 0.373,
+              "casts": 9
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 608135,
+              "pct": 0.127,
+              "casts": 0
+            },
+            {
+              "spell_id": 432596,
+              "damage": 553624,
+              "pct": 0.115,
+              "casts": 0
+            },
+            {
+              "spell_id": 20153,
+              "damage": 468776,
+              "pct": 0.098,
+              "casts": 0
+            },
+            {
+              "spell_id": 1269800,
+              "damage": 370079,
+              "pct": 0.077,
+              "casts": 0
+            },
+            {
+              "spell_id": 434506,
+              "damage": 210737,
+              "pct": 0.044,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 1,
+          "cast_times_s": [
+            150.8
+          ],
+          "first_cast_s": 150.8,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 150.8,
+              "end_s": 156.6,
+              "dmg_during": 336317
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 150.8,
+          "window_length_s": 5.8,
+          "pct_of_total": 0.039,
+          "window_damage": 336317,
+          "total_damage": 8668273,
+          "ability_breakdown": [
+            {
+              "spell_id": 1260835,
+              "damage": 192318,
+              "pct": 0.572
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 138225,
+              "pct": 0.411
+            },
+            {
+              "spell_id": 387846,
+              "damage": 5774,
+              "pct": 0.017
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109831,109832,109833,109841,109842,109843,109845,109847,110071,110072,110073,110074,110075,110076,110280,110282,110406,110406,110406,71918,71922,71923,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94826,94830,94831,94833,94836,94843,94848,94849,94852,94855,94856,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        },
+        {
+          "slot": 13,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 7961,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8031,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7993,
+          "name": ""
+        },
+        {
+          "slot": 9,
+          "id": 2841,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "c78rRHfCtQq1vkjZ",
+    "fight_id": 25,
+    "player_name": "原居民",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "原居民",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 232.8,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 46.5,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        14,
+        15,
+        31,
+        41,
+        61,
+        66,
+        85,
+        163,
+        166,
+        189,
+        220,
+        223,
+        308,
+        321,
+        352,
+        424,
+        548,
+        623,
+        632,
+        704,
+        718,
+        726,
+        728,
+        733,
+        742,
+        749,
+        754,
+        760,
+        770,
+        773,
+        792,
+        802,
+        828,
+        831,
+        832,
+        833,
+        846,
+        846,
+        850,
+        854,
+        858,
+        865,
+        869,
+        880,
+        885,
+        893,
+        897,
+        900,
+        913,
+        921,
+        923,
+        924,
+        937,
+        937,
+        940,
+        942,
+        950,
+        951,
+        954,
+        957,
+        975,
+        978,
+        982,
+        991,
+        997,
+        1004,
+        1009,
+        1009,
+        1012,
+        1012,
+        1016,
+        1017,
+        1024,
+        1026,
+        1026,
+        1026,
+        1034,
+        1051,
+        1058,
+        1059,
+        1060,
+        1060,
+        1073,
+        1075,
+        1083,
+        1083,
+        1084,
+        1085,
+        1089,
+        1090,
+        1095,
+        1098,
+        1106,
+        1106,
+        1107,
+        1108,
+        1121,
+        1126,
+        1128,
+        1139,
+        1143,
+        1144,
+        1158,
+        1170,
+        1176,
+        1182,
+        1185,
+        1189,
+        1190,
+        1194,
+        1213,
+        1223,
+        1257,
+        1286,
+        1308,
+        1321,
+        1361,
+        1478,
+        1489,
+        1501,
+        1512,
+        1512,
+        1525,
+        1543,
+        1547,
+        1626,
+        1665,
+        1696,
+        1700,
+        1706,
+        1715,
+        1716,
+        1720,
+        1723,
+        1743,
+        1761,
+        1779,
+        1787,
+        1815,
+        1832,
+        1905,
+        1906,
+        1927,
+        1956,
+        2009,
+        2033,
+        2068,
+        2081,
+        2090,
+        2090,
+        2090,
+        2110,
+        2120,
+        2158,
+        2164,
+        2183,
+        2201,
+        2210,
+        2211,
+        2213,
+        2215,
+        2217,
+        2218,
+        2219,
+        2228,
+        2231,
+        2247,
+        2286,
+        2306,
+        2337,
+        2358,
+        2364,
+        2386,
+        2469,
+        2479,
+        2501,
+        2566,
+        2650,
+        2693,
+        2793
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            2.98,
+            93.11,
+            183.5
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 19.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            19.6,
+            63.95,
+            140.53,
+            186.99
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 109.6,
+              "actual_s": 140.5,
+              "hold_amount_s": 30.9
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 154.6,
+              "actual_s": 187,
+              "hold_amount_s": 32.4
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 3.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            3.81,
+            68.02,
+            128.04,
+            189.2
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 1.9,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.94,
+            48.4,
+            96.07,
+            148.89,
+            199.24
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 136.9,
+              "actual_s": 148.9,
+              "hold_amount_s": 12
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 181.9,
+              "actual_s": 199.2,
+              "hold_amount_s": 17.3
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 3,
+          "window_length_s": 30,
+          "pct_of_total": 0.193,
+          "window_damage": 8137635,
+          "total_damage": 42064049,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3601946,
+              "pct": 0.443,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 884662,
+              "pct": 0.109,
+              "casts": 6
+            },
+            {
+              "spell_id": 29722,
+              "damage": 664870,
+              "pct": 0.082,
+              "casts": 9
+            },
+            {
+              "spell_id": 17877,
+              "damage": 604805,
+              "pct": 0.074,
+              "casts": 3
+            },
+            {
+              "spell_id": 445474,
+              "damage": 489973,
+              "pct": 0.06,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 394819,
+              "pct": 0.049,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 64,
+          "window_length_s": 22.1,
+          "pct_of_total": 0.111,
+          "window_damage": 4658498,
+          "total_damage": 42064049,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1574563,
+              "pct": 0.338,
+              "casts": 5
+            },
+            {
+              "spell_id": 445736,
+              "damage": 626051,
+              "pct": 0.134,
+              "casts": 0
+            },
+            {
+              "spell_id": 17877,
+              "damage": 612715,
+              "pct": 0.132,
+              "casts": 3
+            },
+            {
+              "spell_id": 17962,
+              "damage": 525448,
+              "pct": 0.113,
+              "casts": 4
+            },
+            {
+              "spell_id": 445474,
+              "damage": 385784,
+              "pct": 0.083,
+              "casts": 3
+            },
+            {
+              "spell_id": 446285,
+              "damage": 346695,
+              "pct": 0.074,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 93.1,
+          "window_length_s": 30,
+          "pct_of_total": 0.113,
+          "window_damage": 4772287,
+          "total_damage": 42064049,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1622074,
+              "pct": 0.34,
+              "casts": 6
+            },
+            {
+              "spell_id": 6353,
+              "damage": 608317,
+              "pct": 0.127,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 470626,
+              "pct": 0.099,
+              "casts": 4
+            },
+            {
+              "spell_id": 29722,
+              "damage": 333296,
+              "pct": 0.07,
+              "casts": 7
+            },
+            {
+              "spell_id": 17877,
+              "damage": 298760,
+              "pct": 0.063,
+              "casts": 2
+            },
+            {
+              "spell_id": 445474,
+              "damage": 270588,
+              "pct": 0.057,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 128,
+          "window_length_s": 22.5,
+          "pct_of_total": 0.072,
+          "window_damage": 3009483,
+          "total_damage": 42064049,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1068651,
+              "pct": 0.355,
+              "casts": 4
+            },
+            {
+              "spell_id": 445474,
+              "damage": 389192,
+              "pct": 0.129,
+              "casts": 3
+            },
+            {
+              "spell_id": 17962,
+              "damage": 304459,
+              "pct": 0.101,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 240476,
+              "pct": 0.08,
+              "casts": 0
+            },
+            {
+              "spell_id": 29722,
+              "damage": 232672,
+              "pct": 0.077,
+              "casts": 4
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 203178,
+              "pct": 0.068,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 183.5,
+          "window_length_s": 30,
+          "pct_of_total": 0.198,
+          "window_damage": 8327542,
+          "total_damage": 42064049,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3019065,
+              "pct": 0.363,
+              "casts": 7
+            },
+            {
+              "spell_id": 17877,
+              "damage": 755936,
+              "pct": 0.091,
+              "casts": 5
+            },
+            {
+              "spell_id": 445736,
+              "damage": 750645,
+              "pct": 0.09,
+              "casts": 0
+            },
+            {
+              "spell_id": 17962,
+              "damage": 709594,
+              "pct": 0.085,
+              "casts": 5
+            },
+            {
+              "spell_id": 6353,
+              "damage": 629654,
+              "pct": 0.076,
+              "casts": 1
+            },
+            {
+              "spell_id": 445474,
+              "damage": 558331,
+              "pct": 0.067,
+              "casts": 3
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            218.7
+          ],
+          "first_cast_s": 218.7,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 218.7,
+              "end_s": 226.8,
+              "dmg_during": 475315
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 3,
+          "cast_times_s": [
+            104.3,
+            155.4,
+            216.8
+          ],
+          "first_cast_s": 104.3,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 104.3,
+              "end_s": 109,
+              "dmg_during": 452461
+            },
+            {
+              "start_s": 155.4,
+              "end_s": 159.8,
+              "dmg_during": 196889
+            },
+            {
+              "start_s": 216.8,
+              "end_s": 221.1,
+              "dmg_during": 282370
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 104.3,
+          "window_length_s": 4.7,
+          "pct_of_total": 0.047,
+          "window_damage": 452461,
+          "total_damage": 9573333,
+          "ability_breakdown": [
+            {
+              "spell_id": 1254018,
+              "damage": 337848,
+              "pct": 0.747
+            },
+            {
+              "spell_id": 111400,
+              "damage": 109219,
+              "pct": 0.241
+            },
+            {
+              "spell_id": 387846,
+              "damage": 5394,
+              "pct": 0.012
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 155.4,
+          "window_length_s": 4.4,
+          "pct_of_total": 0.021,
+          "window_damage": 196889,
+          "total_damage": 9573333,
+          "ability_breakdown": [
+            {
+              "spell_id": 1250686,
+              "damage": 124456,
+              "pct": 0.632
+            },
+            {
+              "spell_id": 1260835,
+              "damage": 66456,
+              "pct": 0.338
+            },
+            {
+              "spell_id": 387846,
+              "damage": 5977,
+              "pct": 0.03
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 216.8,
+          "window_length_s": 4.3,
+          "pct_of_total": 0.029,
+          "window_damage": 282370,
+          "total_damage": 9573333,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 184331,
+              "pct": 0.653
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 95515,
+              "pct": 0.338
+            },
+            {
+              "spell_id": 387846,
+              "damage": 2524,
+              "pct": 0.009
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 218.7,
+          "window_length_s": 8,
+          "pct_of_total": 0.05,
+          "window_damage": 475315,
+          "total_damage": 9573333,
+          "ability_breakdown": [
+            {
+              "spell_id": 1262989,
+              "damage": 245212,
+              "pct": 0.516
+            },
+            {
+              "spell_id": 1285504,
+              "damage": 100544,
+              "pct": 0.212
+            },
+            {
+              "spell_id": 1254018,
+              "damage": 81737,
+              "pct": 0.172
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 45244,
+              "pct": 0.095
+            },
+            {
+              "spell_id": 387846,
+              "damage": 2578,
+              "pct": 0.005
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 7961,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8031,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "8zqFHK6LnfxYbZ3w",
+    "fight_id": 19,
+    "player_name": "죽음에강럭공격멘",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "죽음에강럭공격멘",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 183.5,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 54.3,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        12,
+        27,
+        107,
+        160,
+        190,
+        193,
+        219,
+        417,
+        450,
+        701,
+        710,
+        713,
+        714,
+        715,
+        735,
+        742,
+        745,
+        745,
+        755,
+        758,
+        767,
+        779,
+        791,
+        808,
+        828,
+        847,
+        857,
+        877,
+        879,
+        897,
+        899,
+        899,
+        916,
+        928,
+        950,
+        954,
+        971,
+        978,
+        993,
+        995,
+        1006,
+        1008,
+        1014,
+        1016,
+        1017,
+        1017,
+        1018,
+        1018,
+        1020,
+        1023,
+        1024,
+        1029,
+        1032,
+        1034,
+        1041,
+        1041,
+        1044,
+        1046,
+        1050,
+        1053,
+        1055,
+        1059,
+        1059,
+        1064,
+        1065,
+        1065,
+        1077,
+        1081,
+        1081,
+        1087,
+        1090,
+        1094,
+        1094,
+        1096,
+        1097,
+        1099,
+        1100,
+        1100,
+        1102,
+        1107,
+        1108,
+        1114,
+        1116,
+        1126,
+        1131,
+        1132,
+        1143,
+        1148,
+        1161,
+        1161,
+        1183,
+        1189,
+        1197,
+        1234,
+        1234,
+        1238,
+        1253,
+        1305,
+        1333,
+        1352,
+        1404,
+        1417,
+        1425,
+        1533,
+        1544,
+        1544,
+        1548,
+        1580,
+        1634,
+        1663,
+        1673,
+        1684,
+        1694,
+        1725,
+        1728,
+        1738,
+        1823,
+        1852,
+        1857,
+        1869,
+        1882,
+        1895,
+        1898,
+        1926,
+        1941,
+        1987,
+        2033,
+        2044,
+        2112,
+        2136,
+        2139,
+        2143,
+        2184,
+        2234,
+        2239,
+        2332,
+        2337,
+        2418,
+        2471,
+        2497,
+        2881,
+        2881,
+        3248,
+        3333
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 2,
+          "first_cast_s": 1.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.63,
+            92.65
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 3,
+          "first_cast_s": 19.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            19.81,
+            67.89,
+            145.3
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 109.8,
+              "actual_s": 145.3,
+              "hold_amount_s": 35.5
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 3,
+          "first_cast_s": 2.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            2.58,
+            66.87,
+            143.75
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 122.6,
+              "actual_s": 143.8,
+              "hold_amount_s": 21.2
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 4,
+          "first_cast_s": 0.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.68,
+            51.36,
+            99.5,
+            161.35
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 90.7,
+              "actual_s": 99.5,
+              "hold_amount_s": 8.8
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 135.7,
+              "actual_s": 161.4,
+              "hold_amount_s": 25.7
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.6,
+          "window_length_s": 30,
+          "pct_of_total": 0.261,
+          "window_damage": 8650215,
+          "total_damage": 33132388,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3931183,
+              "pct": 0.454,
+              "casts": 11
+            },
+            {
+              "spell_id": 17962,
+              "damage": 850038,
+              "pct": 0.098,
+              "casts": 5
+            },
+            {
+              "spell_id": 29722,
+              "damage": 612836,
+              "pct": 0.071,
+              "casts": 9
+            },
+            {
+              "spell_id": 445474,
+              "damage": 603810,
+              "pct": 0.07,
+              "casts": 2
+            },
+            {
+              "spell_id": 20153,
+              "damage": 500582,
+              "pct": 0.058,
+              "casts": 0
+            },
+            {
+              "spell_id": 445736,
+              "damage": 493990,
+              "pct": 0.057,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 66.9,
+          "window_length_s": 18,
+          "pct_of_total": 0.116,
+          "window_damage": 3858138,
+          "total_damage": 33132388,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1078932,
+              "pct": 0.28,
+              "casts": 3
+            },
+            {
+              "spell_id": 17877,
+              "damage": 603119,
+              "pct": 0.156,
+              "casts": 3
+            },
+            {
+              "spell_id": 17962,
+              "damage": 499554,
+              "pct": 0.129,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 481287,
+              "pct": 0.125,
+              "casts": 0
+            },
+            {
+              "spell_id": 446285,
+              "damage": 339932,
+              "pct": 0.088,
+              "casts": 1
+            },
+            {
+              "spell_id": 445474,
+              "damage": 311729,
+              "pct": 0.081,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 92.7,
+          "window_length_s": 30,
+          "pct_of_total": 0.155,
+          "window_damage": 5134835,
+          "total_damage": 33132388,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1730608,
+              "pct": 0.337,
+              "casts": 5
+            },
+            {
+              "spell_id": 17962,
+              "damage": 515007,
+              "pct": 0.1,
+              "casts": 4
+            },
+            {
+              "spell_id": 29722,
+              "damage": 454235,
+              "pct": 0.088,
+              "casts": 7
+            },
+            {
+              "spell_id": 6353,
+              "damage": 426473,
+              "pct": 0.083,
+              "casts": 1
+            },
+            {
+              "spell_id": 17877,
+              "damage": 328725,
+              "pct": 0.064,
+              "casts": 2
+            },
+            {
+              "spell_id": 434589,
+              "damage": 283937,
+              "pct": 0.055,
+              "casts": 5
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 143.8,
+          "window_length_s": 18,
+          "pct_of_total": 0.119,
+          "window_damage": 3940775,
+          "total_damage": 33132388,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 2199756,
+              "pct": 0.558,
+              "casts": 11
+            },
+            {
+              "spell_id": 445736,
+              "damage": 460004,
+              "pct": 0.117,
+              "casts": 0
+            },
+            {
+              "spell_id": 17962,
+              "damage": 448429,
+              "pct": 0.114,
+              "casts": 3
+            },
+            {
+              "spell_id": 445474,
+              "damage": 287387,
+              "pct": 0.073,
+              "casts": 0
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 272632,
+              "pct": 0.069,
+              "casts": 0
+            },
+            {
+              "spell_id": 446285,
+              "damage": 221072,
+              "pct": 0.056,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [],
+      "defensive_windows": [],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109846,109847,109848,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "hVWbdcFD2R4Y3jtG",
+    "fight_id": 20,
+    "player_name": "공장제어불가",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "공장제어불가",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 237.3,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 45.3,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        42,
+        52,
+        62,
+        71,
+        85,
+        91,
+        133,
+        133,
+        148,
+        189,
+        260,
+        264,
+        353,
+        480,
+        516,
+        660,
+        684,
+        685,
+        735,
+        745,
+        774,
+        787,
+        800,
+        803,
+        834,
+        836,
+        837,
+        840,
+        841,
+        842,
+        847,
+        849,
+        850,
+        864,
+        872,
+        873,
+        878,
+        882,
+        886,
+        895,
+        896,
+        897,
+        897,
+        898,
+        899,
+        900,
+        902,
+        903,
+        943,
+        948,
+        951,
+        952,
+        959,
+        968,
+        968,
+        981,
+        982,
+        992,
+        993,
+        994,
+        999,
+        1010,
+        1011,
+        1012,
+        1013,
+        1013,
+        1013,
+        1016,
+        1016,
+        1021,
+        1025,
+        1027,
+        1027,
+        1032,
+        1033,
+        1034,
+        1035,
+        1044,
+        1053,
+        1062,
+        1069,
+        1071,
+        1074,
+        1089,
+        1090,
+        1090,
+        1093,
+        1099,
+        1101,
+        1105,
+        1107,
+        1108,
+        1110,
+        1114,
+        1137,
+        1139,
+        1142,
+        1145,
+        1152,
+        1155,
+        1161,
+        1163,
+        1176,
+        1197,
+        1206,
+        1222,
+        1224,
+        1234,
+        1252,
+        1268,
+        1327,
+        1335,
+        1404,
+        1440,
+        1441,
+        1452,
+        1483,
+        1516,
+        1548,
+        1549,
+        1561,
+        1563,
+        1614,
+        1620,
+        1639,
+        1645,
+        1671,
+        1676,
+        1677,
+        1700,
+        1708,
+        1732,
+        1736,
+        1752,
+        1782,
+        1785,
+        1834,
+        1854,
+        1855,
+        1860,
+        1871,
+        1884,
+        1906,
+        1911,
+        1930,
+        1939,
+        1996,
+        2014,
+        2022,
+        2028,
+        2037,
+        2113,
+        2115,
+        2136,
+        2136,
+        2139,
+        2165,
+        2175,
+        2179,
+        2206,
+        2284,
+        2402,
+        2405,
+        2406,
+        2410,
+        2421,
+        2435,
+        2452,
+        2476,
+        2486,
+        2494,
+        2590,
+        2663,
+        2743,
+        2906,
+        2949,
+        2987,
+        3277,
+        3328
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 0.2,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.15,
+            93.64,
+            184.03
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 18.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            18.73,
+            63.84,
+            141.25,
+            187.98
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 108.7,
+              "actual_s": 141.2,
+              "hold_amount_s": 32.5
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 153.7,
+              "actual_s": 188,
+              "hold_amount_s": 34.2
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 1.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.4,
+            65.85,
+            126.72,
+            188.93
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 4,
+          "first_cast_s": 61.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            61.56,
+            137.84,
+            183.52,
+            233.87
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 91.6,
+              "actual_s": 137.8,
+              "hold_amount_s": 46.3
+            },
+            {
+              "cast_index": 3,
+              "expected_s": 121.6,
+              "actual_s": 183.5,
+              "hold_amount_s": 62
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 151.6,
+              "actual_s": 233.9,
+              "hold_amount_s": 82.3
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 0.1,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.06,
+            46.51,
+            93.58,
+            144.93,
+            195.82
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 135.1,
+              "actual_s": 144.9,
+              "hold_amount_s": 9.9
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 180.1,
+              "actual_s": 195.8,
+              "hold_amount_s": 15.8
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 0.2,
+          "window_length_s": 30,
+          "pct_of_total": 0.201,
+          "window_damage": 8242333,
+          "total_damage": 41094052,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3742536,
+              "pct": 0.454,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 872999,
+              "pct": 0.106,
+              "casts": 6
+            },
+            {
+              "spell_id": 29722,
+              "damage": 625723,
+              "pct": 0.076,
+              "casts": 10
+            },
+            {
+              "spell_id": 445474,
+              "damage": 522135,
+              "pct": 0.063,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 468509,
+              "pct": 0.057,
+              "casts": 0
+            },
+            {
+              "spell_id": 17877,
+              "damage": 404282,
+              "pct": 0.049,
+              "casts": 2
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 63.8,
+          "window_length_s": 20,
+          "pct_of_total": 0.119,
+          "window_damage": 4878654,
+          "total_damage": 41094052,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1794162,
+              "pct": 0.368,
+              "casts": 5
+            },
+            {
+              "spell_id": 17877,
+              "damage": 819101,
+              "pct": 0.168,
+              "casts": 4
+            },
+            {
+              "spell_id": 445736,
+              "damage": 622681,
+              "pct": 0.128,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 514338,
+              "pct": 0.105,
+              "casts": 1
+            },
+            {
+              "spell_id": 446285,
+              "damage": 342428,
+              "pct": 0.07,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 336699,
+              "pct": 0.069,
+              "casts": 2
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 93.6,
+          "window_length_s": 30,
+          "pct_of_total": 0.101,
+          "window_damage": 4167583,
+          "total_damage": 41094052,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1658566,
+              "pct": 0.398,
+              "casts": 6
+            },
+            {
+              "spell_id": 17962,
+              "damage": 499266,
+              "pct": 0.12,
+              "casts": 4
+            },
+            {
+              "spell_id": 29722,
+              "damage": 346150,
+              "pct": 0.083,
+              "casts": 5
+            },
+            {
+              "spell_id": 17877,
+              "damage": 333544,
+              "pct": 0.08,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 267604,
+              "pct": 0.064,
+              "casts": 0
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 222521,
+              "pct": 0.053,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 126.7,
+          "window_length_s": 24.5,
+          "pct_of_total": 0.078,
+          "window_damage": 3188608,
+          "total_damage": 41094052,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 947864,
+              "pct": 0.297,
+              "casts": 4
+            },
+            {
+              "spell_id": 6353,
+              "damage": 443056,
+              "pct": 0.139,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 415359,
+              "pct": 0.13,
+              "casts": 3
+            },
+            {
+              "spell_id": 17877,
+              "damage": 320045,
+              "pct": 0.1,
+              "casts": 2
+            },
+            {
+              "spell_id": 445474,
+              "damage": 281019,
+              "pct": 0.088,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 237367,
+              "pct": 0.074,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 184,
+          "window_length_s": 30,
+          "pct_of_total": 0.192,
+          "window_damage": 7889181,
+          "total_damage": 41094052,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 2023826,
+              "pct": 0.257,
+              "casts": 13
+            },
+            {
+              "spell_id": 116858,
+              "damage": 1541503,
+              "pct": 0.195,
+              "casts": 4
+            },
+            {
+              "spell_id": 445474,
+              "damage": 746847,
+              "pct": 0.095,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 700879,
+              "pct": 0.089,
+              "casts": 0
+            },
+            {
+              "spell_id": 6353,
+              "damage": 620961,
+              "pct": 0.079,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 537418,
+              "pct": 0.068,
+              "casts": 4
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            220
+          ],
+          "first_cast_s": 220,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 220,
+              "end_s": 228,
+              "dmg_during": 517865
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 3,
+          "cast_times_s": [
+            98.7,
+            172.3,
+            218.3
+          ],
+          "first_cast_s": 98.7,
+          "hold_windows": [
+            {
+              "cast_index": 1,
+              "expected_s": 158.7,
+              "actual_s": 172.3,
+              "hold_amount_s": 13.6
+            }
+          ],
+          "cast_pattern": "hold",
+          "windows": [
+            {
+              "start_s": 98.7,
+              "end_s": 99.3,
+              "dmg_during": 286634
+            },
+            {
+              "start_s": 172.3,
+              "end_s": 175.9,
+              "dmg_during": 479694
+            },
+            {
+              "start_s": 218.3,
+              "end_s": 224.8,
+              "dmg_during": 389489
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 98.7,
+          "window_length_s": 0.6,
+          "pct_of_total": 0.022,
+          "window_damage": 286634,
+          "total_damage": 13298585,
+          "ability_breakdown": [
+            {
+              "spell_id": 1262989,
+              "damage": 186327,
+              "pct": 0.65
+            },
+            {
+              "spell_id": 1285504,
+              "damage": 80126,
+              "pct": 0.28
+            },
+            {
+              "spell_id": 111400,
+              "damage": 19753,
+              "pct": 0.069
+            },
+            {
+              "spell_id": 387846,
+              "damage": 428,
+              "pct": 0.001
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 172.3,
+          "window_length_s": 3.6,
+          "pct_of_total": 0.036,
+          "window_damage": 479694,
+          "total_damage": 13298585,
+          "ability_breakdown": [
+            {
+              "spell_id": 1262989,
+              "damage": 186328,
+              "pct": 0.388
+            },
+            {
+              "spell_id": 1285504,
+              "damage": 160254,
+              "pct": 0.334
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 72113,
+              "pct": 0.15
+            },
+            {
+              "spell_id": 111400,
+              "damage": 59261,
+              "pct": 0.124
+            },
+            {
+              "spell_id": 387846,
+              "damage": 1738,
+              "pct": 0.004
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 218.3,
+          "window_length_s": 6.6,
+          "pct_of_total": 0.029,
+          "window_damage": 389489,
+          "total_damage": 13298585,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 176279,
+              "pct": 0.453
+            },
+            {
+              "spell_id": 111400,
+              "damage": 118524,
+              "pct": 0.304
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 52881,
+              "pct": 0.136
+            },
+            {
+              "spell_id": 1254018,
+              "damage": 37266,
+              "pct": 0.096
+            },
+            {
+              "spell_id": 387846,
+              "damage": 4539,
+              "pct": 0.012
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 220,
+          "window_length_s": 8,
+          "pct_of_total": 0.039,
+          "window_damage": 517865,
+          "total_damage": 13298585,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 176279,
+              "pct": 0.34
+            },
+            {
+              "spell_id": 111400,
+              "damage": 158030,
+              "pct": 0.305
+            },
+            {
+              "spell_id": 1254018,
+              "damage": 149063,
+              "pct": 0.288
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 28844,
+              "pct": 0.056
+            },
+            {
+              "spell_id": 387846,
+              "damage": 5649,
+              "pct": 0.011
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109847,109848,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon"
+        },
+        {
+          "slot": 13,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "GZz8v1gQANCny6jW",
+    "fight_id": 61,
+    "player_name": "Jokey",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "Jokey",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 207.8,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 53.4,
+      "cast_gap_list_ms": [
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        4,
+        18,
+        28,
+        87,
+        104,
+        113,
+        169,
+        186,
+        212,
+        231,
+        246,
+        279,
+        311,
+        535,
+        661,
+        733,
+        738,
+        786,
+        792,
+        804,
+        804,
+        818,
+        830,
+        831,
+        871,
+        877,
+        883,
+        884,
+        884,
+        889,
+        892,
+        904,
+        906,
+        907,
+        912,
+        915,
+        918,
+        918,
+        920,
+        921,
+        924,
+        926,
+        929,
+        935,
+        942,
+        942,
+        948,
+        957,
+        965,
+        968,
+        976,
+        981,
+        986,
+        988,
+        988,
+        989,
+        989,
+        992,
+        992,
+        995,
+        995,
+        997,
+        1009,
+        1013,
+        1014,
+        1017,
+        1017,
+        1022,
+        1025,
+        1031,
+        1034,
+        1051,
+        1052,
+        1053,
+        1066,
+        1067,
+        1070,
+        1071,
+        1071,
+        1076,
+        1100,
+        1111,
+        1111,
+        1112,
+        1122,
+        1122,
+        1134,
+        1137,
+        1140,
+        1152,
+        1156,
+        1178,
+        1182,
+        1183,
+        1183,
+        1185,
+        1186,
+        1192,
+        1192,
+        1192,
+        1200,
+        1221,
+        1232,
+        1240,
+        1241,
+        1250,
+        1270,
+        1270,
+        1300,
+        1323,
+        1325,
+        1374,
+        1398,
+        1447,
+        1484,
+        1488,
+        1534,
+        1536,
+        1540,
+        1589,
+        1593,
+        1594,
+        1598,
+        1632,
+        1672,
+        1688,
+        1693,
+        1741,
+        1741,
+        1754,
+        1801,
+        1838,
+        1851,
+        1892,
+        1903,
+        1922,
+        1979,
+        1981,
+        1990,
+        2002,
+        2042,
+        2047,
+        2056,
+        2067,
+        2076,
+        2112,
+        2147,
+        2224,
+        2264,
+        2293,
+        2327,
+        2442,
+        2525,
+        2657,
+        2676,
+        3104,
+        3174,
+        3359,
+        3449,
+        3558,
+        4105
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 2,
+          "first_cast_s": 1.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.76,
+            144.13
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 121.8,
+              "actual_s": 144.1,
+              "hold_amount_s": 22.4
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 3,
+          "first_cast_s": 19.8,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            19.82,
+            66.46,
+            142.23
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 109.8,
+              "actual_s": 142.2,
+              "hold_amount_s": 32.4
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 2.7,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            2.75,
+            67.57,
+            143.17,
+            204.27
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 122.7,
+              "actual_s": 143.2,
+              "hold_amount_s": 20.4
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 182.7,
+              "actual_s": 204.3,
+              "hold_amount_s": 21.5
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 2,
+          "first_cast_s": 62.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            62.31,
+            139.99
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 92.3,
+              "actual_s": 140,
+              "hold_amount_s": 47.7
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 0.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            0.64,
+            49.27,
+            100.83,
+            152.37,
+            198.93
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 90.6,
+              "actual_s": 100.8,
+              "hold_amount_s": 10.2
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 135.6,
+              "actual_s": 152.4,
+              "hold_amount_s": 16.7
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 180.6,
+              "actual_s": 198.9,
+              "hold_amount_s": 18.3
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.8,
+          "window_length_s": 30,
+          "pct_of_total": 0.231,
+          "window_damage": 8414717,
+          "total_damage": 36385409,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3965865,
+              "pct": 0.471,
+              "casts": 9
+            },
+            {
+              "spell_id": 17962,
+              "damage": 848609,
+              "pct": 0.101,
+              "casts": 5
+            },
+            {
+              "spell_id": 29722,
+              "damage": 728922,
+              "pct": 0.087,
+              "casts": 10
+            },
+            {
+              "spell_id": 445474,
+              "damage": 531484,
+              "pct": 0.063,
+              "casts": 4
+            },
+            {
+              "spell_id": 20153,
+              "damage": 378402,
+              "pct": 0.045,
+              "casts": 0
+            },
+            {
+              "spell_id": 445736,
+              "damage": 355629,
+              "pct": 0.042,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 66.5,
+          "window_length_s": 19.1,
+          "pct_of_total": 0.111,
+          "window_damage": 4026496,
+          "total_damage": 36385409,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1400581,
+              "pct": 0.348,
+              "casts": 4
+            },
+            {
+              "spell_id": 17962,
+              "damage": 649476,
+              "pct": 0.161,
+              "casts": 4
+            },
+            {
+              "spell_id": 17877,
+              "damage": 441884,
+              "pct": 0.11,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 439181,
+              "pct": 0.109,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 351859,
+              "pct": 0.087,
+              "casts": 2
+            },
+            {
+              "spell_id": 446285,
+              "damage": 314266,
+              "pct": 0.078,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Malevolence"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 142.2,
+          "window_length_s": 31.9,
+          "pct_of_total": 0.221,
+          "window_damage": 8032095,
+          "total_damage": 36385409,
+          "ability_breakdown": [
+            {
+              "spell_id": 17877,
+              "damage": 2584099,
+              "pct": 0.322,
+              "casts": 12
+            },
+            {
+              "spell_id": 116858,
+              "damage": 1034380,
+              "pct": 0.129,
+              "casts": 2
+            },
+            {
+              "spell_id": 6353,
+              "damage": 906930,
+              "pct": 0.113,
+              "casts": 1
+            },
+            {
+              "spell_id": 17962,
+              "damage": 789812,
+              "pct": 0.098,
+              "casts": 5
+            },
+            {
+              "spell_id": 445736,
+              "damage": 704767,
+              "pct": 0.088,
+              "casts": 0
+            },
+            {
+              "spell_id": 445474,
+              "damage": 513098,
+              "pct": 0.064,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Havoc",
+            "Malevolence",
+            "Summon Infernal"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            173.3
+          ],
+          "first_cast_s": 173.3,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 173.3,
+              "end_s": 181.3,
+              "dmg_during": 340448
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 2,
+          "cast_times_s": [
+            77.9,
+            171.6
+          ],
+          "first_cast_s": 77.9,
+          "hold_windows": [
+            {
+              "cast_index": 1,
+              "expected_s": 137.9,
+              "actual_s": 171.6,
+              "hold_amount_s": 33.7
+            }
+          ],
+          "cast_pattern": "hold",
+          "windows": [
+            {
+              "start_s": 77.9,
+              "end_s": 81.3,
+              "dmg_during": 261560
+            },
+            {
+              "start_s": 171.6,
+              "end_s": 172.5,
+              "dmg_during": 187097
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 77.9,
+          "window_length_s": 3.4,
+          "pct_of_total": 0.03,
+          "window_damage": 261560,
+          "total_damage": 8839394,
+          "ability_breakdown": [
+            {
+              "spell_id": 1260835,
+              "damage": 126519,
+              "pct": 0.484
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 71567,
+              "pct": 0.274
+            },
+            {
+              "spell_id": 111400,
+              "damage": 59502,
+              "pct": 0.227
+            },
+            {
+              "spell_id": 387846,
+              "damage": 3972,
+              "pct": 0.015
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 171.6,
+          "window_length_s": 0.9,
+          "pct_of_total": 0.021,
+          "window_damage": 187097,
+          "total_damage": 8839394,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 162282,
+              "pct": 0.867
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 24343,
+              "pct": 0.13
+            },
+            {
+              "spell_id": 387846,
+              "damage": 472,
+              "pct": 0.003
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 173.3,
+          "window_length_s": 8,
+          "pct_of_total": 0.039,
+          "window_damage": 340448,
+          "total_damage": 8839394,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 190844,
+              "pct": 0.561
+            },
+            {
+              "spell_id": 1262989,
+              "damage": 113865,
+              "pct": 0.334
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 28627,
+              "pct": 0.084
+            },
+            {
+              "spell_id": 387846,
+              "damage": 7112,
+              "pct": 0.021
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71947,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        },
+        {
+          "slot": 13,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 8039,
+          "name": ""
+        }
+      ]
+    }
+  },
+  {
+    "spec": "DestructionWarlock",
+    "encounter_id": 3179,
+    "encounter_name": "Fallen-King Salhadaar",
+    "report_code": "HBQpvXm4kVKhzn6d",
+    "fight_id": 44,
+    "player_name": "Pénzki",
+    "sampled_at": "2026-06-26 14:09:49",
+    "ingest_hash": "db67ffde44e9",
+    "cooldown_data": {
+      "player": "Pénzki",
+      "spec": "DestructionWarlock",
+      "fight_duration_s": 216.7,
+      "bloodlust_s": null,
+      "cast_efficiency_pct": 40.7,
+      "cast_gap_list_ms": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        32,
+        32,
+        44,
+        59,
+        82,
+        115,
+        157,
+        168,
+        171,
+        199,
+        208,
+        285,
+        348,
+        381,
+        416,
+        542,
+        583,
+        614,
+        666,
+        698,
+        706,
+        712,
+        729,
+        738,
+        751,
+        757,
+        760,
+        778,
+        794,
+        826,
+        840,
+        861,
+        879,
+        881,
+        881,
+        884,
+        884,
+        889,
+        889,
+        890,
+        907,
+        911,
+        914,
+        918,
+        919,
+        919,
+        926,
+        928,
+        931,
+        938,
+        942,
+        942,
+        948,
+        957,
+        960,
+        963,
+        965,
+        969,
+        970,
+        975,
+        982,
+        998,
+        1000,
+        1014,
+        1018,
+        1019,
+        1032,
+        1037,
+        1066,
+        1083,
+        1091,
+        1099,
+        1099,
+        1101,
+        1104,
+        1105,
+        1110,
+        1113,
+        1115,
+        1139,
+        1145,
+        1174,
+        1177,
+        1243,
+        1244,
+        1255,
+        1263,
+        1268,
+        1311,
+        1324,
+        1367,
+        1439,
+        1442,
+        1466,
+        1474,
+        1492,
+        1495,
+        1500,
+        1505,
+        1506,
+        1559,
+        1574,
+        1592,
+        1601,
+        1660,
+        1672,
+        1686,
+        1717,
+        1730,
+        1735,
+        1757,
+        1815,
+        1830,
+        1857,
+        1875,
+        1876,
+        1881,
+        1892,
+        1910,
+        1914,
+        1920,
+        1927,
+        1929,
+        1939,
+        1942,
+        1957,
+        1994,
+        2024,
+        2051,
+        2082,
+        2099,
+        2105,
+        2152,
+        2157,
+        2170,
+        2201,
+        2209,
+        2221,
+        2319,
+        2324,
+        2330,
+        2342,
+        2372,
+        2406,
+        2421,
+        2444,
+        2492,
+        2593,
+        2624,
+        2697,
+        2754,
+        2874,
+        2887,
+        3250,
+        3671,
+        4195,
+        4340
+      ],
+      "cooldowns": [
+        {
+          "name": "Summon Infernal",
+          "spell_id": 1122,
+          "total_uses": 3,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.5,
+            93.01,
+            184.69
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Havoc",
+          "spell_id": 80240,
+          "total_uses": 4,
+          "first_cast_s": 18.4,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            18.4,
+            65.07,
+            141.68,
+            188.45
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 3,
+              "expected_s": 108.4,
+              "actual_s": 141.7,
+              "hold_amount_s": 33.3
+            },
+            {
+              "cast_index": 4,
+              "expected_s": 153.4,
+              "actual_s": 188.4,
+              "hold_amount_s": 35
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Malevolence",
+          "spell_id": 442726,
+          "total_uses": 4,
+          "first_cast_s": 2.3,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            2.35,
+            63.61,
+            124.36,
+            185.79
+          ],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Cataclysm",
+          "spell_id": 152108,
+          "total_uses": 3,
+          "first_cast_s": 63.6,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            63.61,
+            139.09,
+            184.48
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 2,
+              "expected_s": 93.6,
+              "actual_s": 139.1,
+              "hold_amount_s": 45.5
+            },
+            {
+              "cast_index": 3,
+              "expected_s": 123.6,
+              "actual_s": 184.5,
+              "hold_amount_s": 60.9
+            }
+          ],
+          "cast_pattern": "hold"
+        },
+        {
+          "name": "Channel Demonfire",
+          "spell_id": 196447,
+          "total_uses": 0,
+          "first_cast_s": null,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [],
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown"
+        },
+        {
+          "name": "Soul Fire",
+          "spell_id": 6353,
+          "total_uses": 5,
+          "first_cast_s": 1.5,
+          "bl_aligned": false,
+          "bl_offset_s": null,
+          "cast_times_s": [
+            1.5,
+            48.41,
+            97.93,
+            149.9,
+            199.01
+          ],
+          "hold_windows": [
+            {
+              "cast_index": 4,
+              "expected_s": 136.5,
+              "actual_s": 149.9,
+              "hold_amount_s": 13.4
+            },
+            {
+              "cast_index": 5,
+              "expected_s": 181.5,
+              "actual_s": 199,
+              "hold_amount_s": 17.5
+            }
+          ],
+          "cast_pattern": "hold"
+        }
+      ],
+      "burst_windows": [
+        {
+          "time_s": 1.5,
+          "window_length_s": 30,
+          "pct_of_total": 0.222,
+          "window_damage": 8573472,
+          "total_damage": 38627582,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 3321200,
+              "pct": 0.387,
+              "casts": 9
+            },
+            {
+              "spell_id": 17962,
+              "damage": 1136963,
+              "pct": 0.133,
+              "casts": 7
+            },
+            {
+              "spell_id": 29722,
+              "damage": 747291,
+              "pct": 0.087,
+              "casts": 11
+            },
+            {
+              "spell_id": 17877,
+              "damage": 471999,
+              "pct": 0.055,
+              "casts": 2
+            },
+            {
+              "spell_id": 445474,
+              "damage": 471109,
+              "pct": 0.055,
+              "casts": 2
+            },
+            {
+              "spell_id": 445736,
+              "damage": 460883,
+              "pct": 0.054,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 63.6,
+          "window_length_s": 18,
+          "pct_of_total": 0.082,
+          "window_damage": 3171410,
+          "total_damage": 38627582,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 1239917,
+              "pct": 0.391,
+              "casts": 4
+            },
+            {
+              "spell_id": 17877,
+              "damage": 377251,
+              "pct": 0.119,
+              "casts": 2
+            },
+            {
+              "spell_id": 29722,
+              "damage": 366730,
+              "pct": 0.116,
+              "casts": 4
+            },
+            {
+              "spell_id": 17962,
+              "damage": 298649,
+              "pct": 0.094,
+              "casts": 2
+            },
+            {
+              "spell_id": 445474,
+              "damage": 257589,
+              "pct": 0.081,
+              "casts": 2
+            },
+            {
+              "spell_id": 1265884,
+              "damage": 242846,
+              "pct": 0.077,
+              "casts": 0
+            }
+          ],
+          "active_cds": [
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 93,
+          "window_length_s": 58.7,
+          "pct_of_total": 0.203,
+          "window_damage": 7850250,
+          "total_damage": 38627582,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 2721902,
+              "pct": 0.347,
+              "casts": 10
+            },
+            {
+              "spell_id": 17962,
+              "damage": 815985,
+              "pct": 0.104,
+              "casts": 7
+            },
+            {
+              "spell_id": 17877,
+              "damage": 669818,
+              "pct": 0.085,
+              "casts": 4
+            },
+            {
+              "spell_id": 445474,
+              "damage": 661848,
+              "pct": 0.084,
+              "casts": 3
+            },
+            {
+              "spell_id": 29722,
+              "damage": 588438,
+              "pct": 0.075,
+              "casts": 11
+            },
+            {
+              "spell_id": 6353,
+              "damage": 523543,
+              "pct": 0.067,
+              "casts": 2
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        },
+        {
+          "time_s": 184.7,
+          "window_length_s": 30,
+          "pct_of_total": 0.19,
+          "window_damage": 7327446,
+          "total_damage": 38627582,
+          "ability_breakdown": [
+            {
+              "spell_id": 116858,
+              "damage": 2568412,
+              "pct": 0.351,
+              "casts": 7
+            },
+            {
+              "spell_id": 445474,
+              "damage": 792210,
+              "pct": 0.108,
+              "casts": 3
+            },
+            {
+              "spell_id": 445736,
+              "damage": 746282,
+              "pct": 0.102,
+              "casts": 0
+            },
+            {
+              "spell_id": 17877,
+              "damage": 718797,
+              "pct": 0.098,
+              "casts": 4
+            },
+            {
+              "spell_id": 17962,
+              "damage": 539332,
+              "pct": 0.074,
+              "casts": 4
+            },
+            {
+              "spell_id": 6353,
+              "damage": 445410,
+              "pct": 0.061,
+              "casts": 1
+            }
+          ],
+          "active_cds": [
+            "Summon Infernal",
+            "Malevolence",
+            "Havoc"
+          ],
+          "target_count": 1
+        }
+      ],
+      "defensives": [
+        {
+          "name": "Unending Resolve",
+          "spell_id": 104773,
+          "cooldown": 180,
+          "uses": 1,
+          "cast_times_s": [
+            87.3
+          ],
+          "first_cast_s": 87.3,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 87.3,
+              "end_s": 95.3,
+              "dmg_during": 580623
+            }
+          ]
+        },
+        {
+          "name": "Dark Pact",
+          "spell_id": 108416,
+          "cooldown": 60,
+          "uses": 3,
+          "cast_times_s": [
+            98.7,
+            151.6,
+            203.4
+          ],
+          "first_cast_s": 98.7,
+          "hold_windows": [],
+          "cast_pattern": "on_cooldown",
+          "windows": [
+            {
+              "start_s": 98.7,
+              "end_s": 104,
+              "dmg_during": 313732
+            },
+            {
+              "start_s": 151.6,
+              "end_s": 155,
+              "dmg_during": 318999
+            },
+            {
+              "start_s": 203.4,
+              "end_s": 208.7,
+              "dmg_during": 297251
+            }
+          ]
+        }
+      ],
+      "defensive_windows": [
+        {
+          "time_s": 87.3,
+          "window_length_s": 8,
+          "pct_of_total": 0.076,
+          "window_damage": 580623,
+          "total_damage": 7679757,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 465334,
+              "pct": 0.801
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 111678,
+              "pct": 0.192
+            },
+            {
+              "spell_id": 387846,
+              "damage": 3611,
+              "pct": 0.006
+            }
+          ],
+          "active_cds": [
+            "Unending Resolve"
+          ],
+          "defensive_name": "Unending Resolve",
+          "spell_id": 104773,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 98.7,
+          "window_length_s": 5.3,
+          "pct_of_total": 0.041,
+          "window_damage": 313732,
+          "total_damage": 7679757,
+          "ability_breakdown": [
+            {
+              "spell_id": 1262989,
+              "damage": 181350,
+              "pct": 0.578
+            },
+            {
+              "spell_id": 1254018,
+              "damage": 120900,
+              "pct": 0.385
+            },
+            {
+              "spell_id": 387846,
+              "damage": 11482,
+              "pct": 0.037
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 151.6,
+          "window_length_s": 3.4,
+          "pct_of_total": 0.042,
+          "window_damage": 318999,
+          "total_damage": 7679757,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 155111,
+              "pct": 0.486
+            },
+            {
+              "spell_id": 1260835,
+              "damage": 90676,
+              "pct": 0.284
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 69801,
+              "pct": 0.219
+            },
+            {
+              "spell_id": 387846,
+              "damage": 3411,
+              "pct": 0.011
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        },
+        {
+          "time_s": 203.4,
+          "window_length_s": 5.2,
+          "pct_of_total": 0.039,
+          "window_damage": 297251,
+          "total_damage": 7679757,
+          "ability_breakdown": [
+            {
+              "spell_id": 1285504,
+              "damage": 155111,
+              "pct": 0.522
+            },
+            {
+              "spell_id": 1250686,
+              "damage": 139600,
+              "pct": 0.47
+            },
+            {
+              "spell_id": 387846,
+              "damage": 2540,
+              "pct": 0.009
+            }
+          ],
+          "active_cds": [
+            "Dark Pact"
+          ],
+          "defensive_name": "Dark Pact",
+          "spell_id": 108416,
+          "ref_game_id": 240432
+        }
+      ],
+      "talent_key": "v2:100941,101992,101994,108681,109834,109835,109836,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71947,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+      "trinkets": [
+        {
+          "slot": 12,
+          "id": 249343,
+          "name": "Gaze of the Alnseer"
+        },
+        {
+          "slot": 13,
+          "id": 249346,
+          "name": "Vaelgor's Final Stare"
+        }
+      ],
+      "enchants": [
+        {
+          "slot": 0,
+          "id": 8017,
+          "name": ""
+        },
+        {
+          "slot": 2,
+          "id": 8001,
+          "name": ""
+        },
+        {
+          "slot": 4,
+          "id": 7987,
+          "name": ""
+        },
+        {
+          "slot": 6,
+          "id": 7935,
+          "name": ""
+        },
+        {
+          "slot": 7,
+          "id": 7963,
+          "name": ""
+        },
+        {
+          "slot": 10,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 11,
+          "id": 7967,
+          "name": ""
+        },
+        {
+          "slot": 15,
+          "id": 7981,
+          "name": ""
+        }
+      ]
+    }
+  }
+]

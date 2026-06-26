@@ -1,0 +1,846 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "avg_duration_s": 204.8,
+  "downtime_threshold_ms": 2157,
+  "top_avg_efficiency": 77.2,
+  "top_efficiency_stddev": 5,
+  "per_cd_benchmarks": {
+    "Summon Infernal": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.1,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 94.7,
+      "stddev_gap_s": 12.4,
+      "hold_targets": {},
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.79,
+      "uses_per_min": {
+        "avg": 0.79,
+        "stddev": 0.113,
+        "min": 0.577,
+        "max": 0.917
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Havoc": {
+      "sample_count": 10,
+      "avg_first_cast_s": 19.3,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 57.4,
+      "stddev_gap_s": 14.4,
+      "hold_targets": {
+        "3": {
+          "target_s": 141.3,
+          "stddev_s": 2.5,
+          "count": 10,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 187.3,
+          "stddev_s": 1.6,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 1.09,
+      "uses_per_min": {
+        "avg": 1.086,
+        "stddev": 0.114,
+        "min": 0.866,
+        "max": 1.223
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Malevolence": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.2,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 63.9,
+      "stddev_gap_s": 5,
+      "hold_targets": {},
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.99,
+      "uses_per_min": {
+        "avg": 1.103,
+        "stddev": 0.081,
+        "min": 0.981,
+        "max": 1.203
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Cataclysm": {
+      "sample_count": 10,
+      "avg_first_cast_s": 62.7,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 63,
+      "stddev_gap_s": 15.4,
+      "hold_targets": {
+        "2": {
+          "target_s": 138.8,
+          "stddev_s": 1.1,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 184.4,
+          "stddev_s": 0.9,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.817,
+        "stddev": 0.149,
+        "min": 0.577,
+        "max": 1.011
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Channel Demonfire": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Soul Fire": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5.6,
+      "stddev_first_cast_s": 15.8,
+      "avg_gap_s": 49.8,
+      "stddev_gap_s": 3.2,
+      "hold_targets": {
+        "3": {
+          "target_s": 100.6,
+          "stddev_s": 23.6,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 148.9,
+          "stddev_s": 5.1,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 197.4,
+          "stddev_s": 2.2,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.5,
+      "avg_uses_per_min": 1.31,
+      "uses_per_min": {
+        "avg": 1.314,
+        "stddev": 0.124,
+        "min": 1.1,
+        "max": 1.504
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 1.1,
+      "stddev_s": 0.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8492157,
+      "dmg_stddev": 834813,
+      "dmg_min": 6662488,
+      "dmg_max": 9581021,
+      "ability_breakdown": [
+        {
+          "spell_id": 116858,
+          "avg_damage": 3590090,
+          "min_damage": 2129833,
+          "max_damage": 4032214,
+          "count": 10,
+          "avg_casts": 10
+        },
+        {
+          "spell_id": 17962,
+          "avg_damage": 926441,
+          "min_damage": 756885,
+          "max_damage": 1154902,
+          "count": 10,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 29722,
+          "avg_damage": 651158,
+          "min_damage": 427217,
+          "max_damage": 870362,
+          "count": 10,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 17877,
+          "avg_damage": 609557,
+          "min_damage": 404282,
+          "max_damage": 844811,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445474,
+          "avg_damage": 531195,
+          "min_damage": 455641,
+          "max_damage": 613217,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 445736,
+          "avg_damage": 442591,
+          "min_damage": 355629,
+          "max_damage": 493990,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Summon Infernal",
+        "Havoc",
+        "Malevolence"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 30.1
+    },
+    {
+      "time_s": 64.1,
+      "stddev_s": 1.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 3814565,
+      "dmg_stddev": 815111,
+      "dmg_min": 2023125,
+      "dmg_max": 4878654,
+      "ability_breakdown": [
+        {
+          "spell_id": 116858,
+          "avg_damage": 1305399,
+          "min_damage": 671806,
+          "max_damage": 1794162,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 17877,
+          "avg_damage": 568453,
+          "min_damage": 207210,
+          "max_damage": 919620,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445736,
+          "avg_damage": 496597,
+          "min_damage": 309000,
+          "max_damage": 626051,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 17962,
+          "avg_damage": 455154,
+          "min_damage": 169086,
+          "max_damage": 649476,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445474,
+          "avg_damage": 345678,
+          "min_damage": 257589,
+          "max_damage": 514338,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 446285,
+          "avg_damage": 317095,
+          "min_damage": 223272,
+          "max_damage": 346695,
+          "count": 6,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Havoc",
+        "Malevolence"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 18.2
+    },
+    {
+      "time_s": 93,
+      "stddev_s": 0.7,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 5334258,
+      "dmg_stddev": 1666826,
+      "dmg_min": 4112280,
+      "dmg_max": 8560596,
+      "ability_breakdown": [
+        {
+          "spell_id": 116858,
+          "avg_damage": 1834978,
+          "min_damage": 1150315,
+          "max_damage": 3103226,
+          "count": 9,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 17962,
+          "avg_damage": 554408,
+          "min_damage": 352878,
+          "max_damage": 825679,
+          "count": 9,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 6353,
+          "avg_damage": 490103,
+          "min_damage": 383440,
+          "max_damage": 608317,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 29722,
+          "avg_damage": 476704,
+          "min_damage": 307861,
+          "max_damage": 945140,
+          "count": 8,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 17877,
+          "avg_damage": 474896,
+          "min_damage": 298760,
+          "max_damage": 909895,
+          "count": 7,
+          "avg_casts": 3
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Summon Infernal"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 35.9
+    },
+    {
+      "time_s": 127.9,
+      "stddev_s": 6.7,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 3631009,
+      "dmg_stddev": 2286590,
+      "dmg_min": 1234216,
+      "dmg_max": 8032095,
+      "ability_breakdown": [
+        {
+          "spell_id": 17877,
+          "avg_damage": 1030503,
+          "min_damage": 187365,
+          "max_damage": 2584099,
+          "count": 3,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 116858,
+          "avg_damage": 919719,
+          "min_damage": 452995,
+          "max_damage": 1152508,
+          "count": 6,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 6353,
+          "avg_damage": 570442,
+          "min_damage": 262657,
+          "max_damage": 906930,
+          "count": 4,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 17962,
+          "avg_damage": 391772,
+          "min_damage": 172627,
+          "max_damage": 789812,
+          "count": 6,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 445474,
+          "avg_damage": 365683,
+          "min_damage": 265617,
+          "max_damage": 513098,
+          "count": 5,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 445736,
+          "avg_damage": 362078,
+          "min_damage": 237367,
+          "max_damage": 704767,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Havoc",
+        "Malevolence"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 22.7
+    },
+    {
+      "time_s": 184,
+      "stddev_s": 1.2,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 5928954,
+      "dmg_stddev": 2200124,
+      "dmg_min": 2812193,
+      "dmg_max": 8327542,
+      "ability_breakdown": [
+        {
+          "spell_id": 17877,
+          "avg_damage": 1620642,
+          "min_damage": 718797,
+          "max_damage": 3254669,
+          "count": 7,
+          "avg_casts": 9
+        },
+        {
+          "spell_id": 17962,
+          "avg_damage": 561593,
+          "min_damage": 499568,
+          "max_damage": 709594,
+          "count": 5,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 445736,
+          "avg_damage": 526415,
+          "min_damage": 162916,
+          "max_damage": 750645,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 6353,
+          "avg_damage": 495103,
+          "min_damage": 384275,
+          "max_damage": 629654,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 445474,
+          "avg_damage": 481884,
+          "min_damage": 152578,
+          "max_damage": 792210,
+          "count": 6,
+          "avg_casts": 2
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Summon Infernal",
+        "Havoc",
+        "Malevolence"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 30.5
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100941,101992,101994,108681,109834,109835,109836,109840,109841,109842,109843,109845,109846,109847,109848,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+        "count": 2,
+        "pct": 20,
+        "report_code": "LdwMq17XJVajKpvZ",
+        "fight_id": 20,
+        "player_name": "흑마하늘이"
+      },
+      {
+        "key": "v2:100941,101992,101994,108681,109834,109835,109836,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71924,71926,71930,71931,71933,71936,71937,71942,71947,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+        "count": 2,
+        "pct": 20,
+        "report_code": "GZz8v1gQANCny6jW",
+        "fight_id": 61,
+        "player_name": "Jokey"
+      },
+      {
+        "key": "v2:100941,101992,101994,108681,109834,109835,109836,109841,109842,109843,109845,109846,109847,110071,110072,110073,110074,110075,110280,110282,110406,110406,110406,71918,71922,71923,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71974,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+        "count": 1,
+        "pct": 10,
+        "report_code": "LYqT8Jy9mwaWFtZz",
+        "fight_id": 36,
+        "player_name": "Tacofajita"
+      },
+      {
+        "key": "v2:100941,101992,101994,108681,109834,109835,109836,109842,109843,109845,109847,110071,110072,110073,110074,110075,110076,110280,110282,110406,110406,110406,71922,71923,71924,71926,71930,71931,71932,71933,71936,71937,71941,71942,71947,71948,71949,71950,71952,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94822,94829,94834,94835,94837,94840,94842,94844,94845,94853,94854,99848",
+        "count": 1,
+        "pct": 10,
+        "report_code": "7qCanQbNDJGZfYhM",
+        "fight_id": 22,
+        "player_name": "장빵이"
+      },
+      {
+        "key": "v2:100941,101992,101994,108681,109831,109832,109833,109841,109842,109843,109845,109847,110071,110072,110073,110074,110075,110076,110280,110282,110406,110406,110406,71918,71922,71923,71924,71926,71930,71931,71933,71936,71937,71942,71948,71949,71950,71952,71954,71955,71956,71957,71960,71961,71964,71965,71966,71968,71969,71971,71973,71975,71979,71980,71983,71985,72059,72060,72062,72065,72066,72067,72068,72069,94826,94830,94831,94833,94836,94843,94848,94849,94852,94855,94856,99848",
+        "count": 1,
+        "pct": 10,
+        "report_code": "tmnWdF4Hb6xcALkC",
+        "fight_id": 12,
+        "player_name": "Poneybøy"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 3,
+          "pct": 30
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 8
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 9
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 8,
+      "avg_first_cast_s": 138.5,
+      "stddev_first_cast_s": 64.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.291,
+        "stddev": 0.035,
+        "min": 0.253,
+        "max": 0.367
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 9,
+      "avg_first_cast_s": 97.8,
+      "stddev_first_cast_s": 41.4,
+      "avg_gap_s": 66.2,
+      "stddev_gap_s": 16.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 171.3,
+          "stddev_s": 7.7,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.648,
+        "stddev": 0.256,
+        "min": 0.284,
+        "max": 1.1
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 93.7,
+      "stddev_s": 12.7,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 338129,
+      "dmg_stddev": 83353,
+      "dmg_min": 261560,
+      "dmg_max": 462066,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 131709,
+          "min_damage": 71567,
+          "max_damage": 174095,
+          "count": 4
+        },
+        {
+          "spell_id": 111400,
+          "avg_damage": 81688,
+          "min_damage": 19753,
+          "max_damage": 138277,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5218,
+          "min_damage": 428,
+          "max_damage": 11482,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 4.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ]
+    },
+    {
+      "time_s": 156.2,
+      "stddev_s": 9.3,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 300211,
+      "dmg_stddev": 98721,
+      "dmg_min": 187097,
+      "dmg_max": 479694,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 166323,
+          "min_damage": 121902,
+          "max_damage": 243891,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 105678,
+          "min_damage": 24343,
+          "max_damage": 247780,
+          "count": 9
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4388,
+          "min_damage": 472,
+          "max_damage": 10293,
+          "count": 9
+        }
+      ],
+      "ref_game_id": 240432,
+      "window_length_s": 5.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ]
+    }
+  ]
+}
