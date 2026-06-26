@@ -1,0 +1,1500 @@
+{
+  "spec": "BeastMasteryHunter",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "avg_duration_s": 456.1,
+  "downtime_threshold_ms": 1657,
+  "top_avg_efficiency": 79.5,
+  "top_efficiency_stddev": 4.9,
+  "per_cd_benchmarks": {
+    "Bestial Wrath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 8.3,
+      "stddev_first_cast_s": 11.4,
+      "avg_gap_s": 39.3,
+      "stddev_gap_s": 7.3,
+      "hold_targets": {},
+      "avg_uses": 12.1,
+      "avg_uses_per_min": 1.59,
+      "uses_per_min": {
+        "avg": 1.592,
+        "stddev": 0.226,
+        "min": 1.353,
+        "max": 1.978
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Wailing Arrow": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Algeth'ar Puzzle Box": {
+      "sample_count": 10,
+      "avg_first_cast_s": 91.2,
+      "stddev_first_cast_s": 80.3,
+      "avg_gap_s": 134.6,
+      "stddev_gap_s": 12.2,
+      "hold_targets": {},
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.438,
+        "stddev": 0.105,
+        "min": 0.264,
+        "max": 0.579
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 1.8,
+      "stddev_s": 2.5,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 3299846,
+      "dmg_stddev": 434509,
+      "dmg_min": 2781176,
+      "dmg_max": 3966134,
+      "ability_breakdown": [
+        {
+          "spell_id": 83381,
+          "avg_damage": 1011813,
+          "min_damage": 690135,
+          "max_damage": 1225511,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 321538,
+          "avg_damage": 590518,
+          "min_damage": 477472,
+          "max_damage": 634532,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 217200,
+          "avg_damage": 450768,
+          "min_damage": 393714,
+          "max_damage": 532955,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 266747,
+          "min_damage": 230904,
+          "max_damage": 288808,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 234572,
+          "min_damage": 172807,
+          "max_damage": 323084,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 173670,
+          "min_damage": 166562,
+          "max_damage": 178095,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 32.1,
+      "stddev_s": 2.7,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 6721467,
+      "dmg_stddev": 832125,
+      "dmg_min": 5549033,
+      "dmg_max": 7809137,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 1255019,
+          "min_damage": 771332,
+          "max_damage": 1702448,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 959599,
+          "min_damage": 814553,
+          "max_damage": 1359887,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 912770,
+          "min_damage": 639305,
+          "max_damage": 1343296,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 389448,
+          "avg_damage": 732257,
+          "min_damage": 513690,
+          "max_damage": 1233581,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 83381,
+          "avg_damage": 665529,
+          "min_damage": 451251,
+          "max_damage": 927501,
+          "count": 10,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 618988,
+          "min_damage": 430651,
+          "max_damage": 974154,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 81,
+      "stddev_s": 6.5,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 5572911,
+      "dmg_stddev": 1539253,
+      "dmg_min": 3153435,
+      "dmg_max": 8593754,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 1036413,
+          "min_damage": 354637,
+          "max_damage": 1665275,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 869987,
+          "min_damage": 506653,
+          "max_damage": 1347146,
+          "count": 8,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 720404,
+          "min_damage": 401416,
+          "max_damage": 1274908,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 629323,
+          "min_damage": 503525,
+          "max_damage": 720576,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 83381,
+          "avg_damage": 552323,
+          "min_damage": 456211,
+          "max_damage": 611125,
+          "count": 9,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 389448,
+          "avg_damage": 533774,
+          "min_damage": 451256,
+          "max_damage": 635223,
+          "count": 5,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 123.2,
+      "stddev_s": 1.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 7503306,
+      "dmg_stddev": 1032131,
+      "dmg_min": 6121669,
+      "dmg_max": 9886767,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 1632108,
+          "min_damage": 1088325,
+          "max_damage": 2516526,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 988248,
+          "min_damage": 883152,
+          "max_damage": 1297439,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 783065,
+          "min_damage": 556595,
+          "max_damage": 1254288,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 741642,
+          "min_damage": 448949,
+          "max_damage": 1077113,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 83381,
+          "avg_damage": 720150,
+          "min_damage": 552344,
+          "max_damage": 904597,
+          "count": 10,
+          "avg_casts": 6
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 169.3,
+      "stddev_s": 5.7,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 6117395,
+      "dmg_stddev": 2035421,
+      "dmg_min": 2692665,
+      "dmg_max": 9158210,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 1346148,
+          "min_damage": 576867,
+          "max_damage": 2989174,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 993281,
+          "min_damage": 385126,
+          "max_damage": 1583576,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 780119,
+          "min_damage": 350790,
+          "max_damage": 1099920,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 563525,
+          "min_damage": 457739,
+          "max_damage": 703816,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 83381,
+          "avg_damage": 554770,
+          "min_damage": 382287,
+          "max_damage": 712754,
+          "count": 9,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 217200,
+          "avg_damage": 430366,
+          "min_damage": 269478,
+          "max_damage": 682088,
+          "count": 5,
+          "avg_casts": 5
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 216.5,
+      "stddev_s": 3.6,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 6082529,
+      "dmg_stddev": 751261,
+      "dmg_min": 5014587,
+      "dmg_max": 7275966,
+      "ability_breakdown": [
+        {
+          "spell_id": 344572,
+          "avg_damage": 863397,
+          "min_damage": 604883,
+          "max_damage": 1129915,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 118459,
+          "avg_damage": 853321,
+          "min_damage": 564427,
+          "max_damage": 1055647,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 844313,
+          "min_damage": 595834,
+          "max_damage": 1241866,
+          "count": 5,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 635287,
+          "min_damage": 460993,
+          "max_damage": 941115,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 538718,
+          "min_damage": 422403,
+          "max_damage": 630693,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 258.2,
+      "stddev_s": 1.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8576577,
+      "dmg_stddev": 800778,
+      "dmg_min": 7531869,
+      "dmg_max": 9617024,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 2004366,
+          "min_damage": 1108284,
+          "max_damage": 2696654,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 1182600,
+          "min_damage": 865590,
+          "max_damage": 1899302,
+          "count": 5,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 1105096,
+          "min_damage": 807033,
+          "max_damage": 1449731,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 908173,
+          "min_damage": 430698,
+          "max_damage": 1246956,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 879374,
+          "min_damage": 634243,
+          "max_damage": 1208236,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 471938,
+          "avg_damage": 853647,
+          "min_damage": 635274,
+          "max_damage": 1068323,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 302.5,
+      "stddev_s": 4.7,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 7004439,
+      "dmg_stddev": 1790597,
+      "dmg_min": 3312399,
+      "dmg_max": 9457696,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 1124534,
+          "min_damage": 498895,
+          "max_damage": 1593105,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 937984,
+          "min_damage": 244155,
+          "max_damage": 1352161,
+          "count": 10,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 909663,
+          "min_damage": 673110,
+          "max_damage": 1215219,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 389448,
+          "avg_damage": 836936,
+          "min_damage": 528346,
+          "max_damage": 1170615,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 805299,
+          "min_damage": 538650,
+          "max_damage": 1063199,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 616397,
+          "min_damage": 229857,
+          "max_damage": 843166,
+          "count": 7,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 349.8,
+      "stddev_s": 6.5,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 6066303,
+      "dmg_stddev": 1287644,
+      "dmg_min": 4876020,
+      "dmg_max": 9252098,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264355,
+          "avg_damage": 901229,
+          "min_damage": 643518,
+          "max_damage": 1071409,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 857367,
+          "min_damage": 456848,
+          "max_damage": 1322369,
+          "count": 9,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 118459,
+          "avg_damage": 814455,
+          "min_damage": 633620,
+          "max_damage": 1272999,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 727883,
+          "min_damage": 549245,
+          "max_damage": 1038872,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 389448,
+          "avg_damage": 530411,
+          "min_damage": 405115,
+          "max_damage": 608654,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 83381,
+          "avg_damage": 521073,
+          "min_damage": 375928,
+          "max_damage": 856658,
+          "count": 9,
+          "avg_casts": 5
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 393.4,
+      "stddev_s": 1.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 9530327,
+      "dmg_stddev": 1630429,
+      "dmg_min": 6697654,
+      "dmg_max": 11759671,
+      "ability_breakdown": [
+        {
+          "spell_id": 118459,
+          "avg_damage": 2015483,
+          "min_damage": 1341062,
+          "max_damage": 3591336,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 1188254,
+          "min_damage": 840264,
+          "max_damage": 1640434,
+          "count": 10,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 1264355,
+          "avg_damage": 1150669,
+          "min_damage": 607706,
+          "max_damage": 1505510,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 1040117,
+          "min_damage": 460211,
+          "max_damage": 1545051,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 1011641,
+          "min_damage": 632425,
+          "max_damage": 1394871,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 471938,
+          "avg_damage": 947240,
+          "min_damage": 617672,
+          "max_damage": 1213740,
+          "count": 8,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 433.4,
+      "stddev_s": 5,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 5408505,
+      "dmg_stddev": 1604049,
+      "dmg_min": 3425901,
+      "dmg_max": 7679085,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264355,
+          "avg_damage": 790148,
+          "min_damage": 418093,
+          "max_damage": 1184964,
+          "count": 6,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 344572,
+          "avg_damage": 746242,
+          "min_damage": 414288,
+          "max_damage": 1053609,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 201594,
+          "avg_damage": 670418,
+          "min_damage": 406367,
+          "max_damage": 1027368,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 389448,
+          "avg_damage": 549853,
+          "min_damage": 306559,
+          "max_damage": 742280,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 217200,
+          "avg_damage": 513926,
+          "min_damage": 294641,
+          "max_damage": 684046,
+          "count": 3,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 201754,
+          "avg_damage": 501692,
+          "min_damage": 469248,
+          "max_damage": 532954,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Bestial Wrath"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:102292,102336,102338,102339,102340,102341,102342,102343,102344,102346,102347,102353,102354,102355,102356,102357,102358,102359,102362,102363,102364,102368,102369,102370,102371,102373,102374,102377,102380,102381,102384,102387,102389,102390,102391,102394,102395,102396,102397,102401,102404,102406,102409,102411,102415,102416,102419,102422,102423,102424,109485,109487,109489,109802,109803,109804,110156,110157,110158,110164,110428,110428,110428,94962,94966,94967,94969,94972,94979,94984,94985,94988,94991,94992,99832",
+        "count": 1,
+        "pct": 10,
+        "report_code": "QGNdrMWZVzk7yKY3",
+        "fight_id": 28,
+        "player_name": "Utako"
+      },
+      {
+        "key": "v2:102292,102336,102338,102339,102340,102341,102342,102343,102344,102346,102347,102353,102354,102355,102356,102357,102358,102359,102362,102363,102364,102368,102369,102370,102371,102373,102374,102377,102380,102381,102384,102387,102389,102390,102391,102395,102396,102397,102401,102404,102406,102409,102411,102416,102419,102422,102423,102424,109483,109484,109485,109487,109802,109803,109804,110154,110155,110157,110158,110164,110428,110428,110428,94962,94966,94967,94969,94972,94979,94984,94985,94988,94991,94992,99832",
+        "count": 1,
+        "pct": 10,
+        "report_code": "tD8vT4mNBCq1khwg",
+        "fight_id": 12,
+        "player_name": "魂魄妖夢"
+      },
+      {
+        "key": "v2:102292,102336,102338,102339,102340,102341,102342,102343,102344,102346,102347,102353,102354,102355,102356,102357,102358,102359,102362,102363,102364,102368,102369,102370,102371,102373,102374,102377,102380,102381,102384,102387,102389,102390,102391,102395,102396,102397,102401,102406,102409,102411,102415,102416,102422,102423,102424,109483,109484,109485,109487,109489,109802,109803,109804,110156,110157,110158,110164,110428,110428,110428,94962,94966,94967,94969,94972,94979,94984,94985,94988,94991,94992,99832",
+        "count": 1,
+        "pct": 10,
+        "report_code": "3tGa2PWKr41DfLXg",
+        "fight_id": 11,
+        "player_name": "Zacían"
+      },
+      {
+        "key": "v2:102292,102336,102338,102339,102340,102341,102342,102343,102344,102346,102347,102353,102354,102355,102356,102357,102358,102359,102362,102363,102364,102368,102369,102370,102371,102373,102374,102377,102380,102381,102384,102387,102389,102390,102391,102394,102396,102397,102401,102404,102406,102409,102411,102416,102419,102422,102423,102424,109483,109484,109485,109487,109802,109803,109804,110155,110157,110158,110164,110428,110428,110428,94962,94966,94967,94969,94972,94979,94984,94985,94988,94991,94992,99832",
+        "count": 1,
+        "pct": 10,
+        "report_code": "BgQ83KrJnqp6zh4A",
+        "fight_id": 3,
+        "player_name": "指尖上巜跳舞"
+      },
+      {
+        "key": "v2:102292,102336,102338,102339,102340,102341,102342,102343,102346,102347,102353,102354,102355,102356,102357,102358,102359,102362,102363,102364,102368,102369,102370,102371,102373,102374,102377,102380,102381,102384,102387,102389,102390,102391,102394,102395,102396,102397,102401,102404,102406,102409,102411,102416,102422,102423,102424,109483,109484,109485,109487,109802,109803,109804,110155,110157,110158,110164,110428,110428,110428,94962,94966,94967,94969,94972,94979,94984,94985,94988,94991,94992,99832",
+        "count": 1,
+        "pct": 10,
+        "report_code": "zZRQTkcx1AYP3Gdj",
+        "fight_id": 1,
+        "player_name": "唐机智"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 252420,
+          "name": "Solarflare Prism",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7969,
+          "name": "Enchant Ring - Zul'jin's Mastery",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7969,
+          "name": "Enchant Ring - Zul'jin's Mastery",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3,
+      "sample_count": 6
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "avg_uses": 8.4,
+      "min_uses": 6,
+      "max_uses": 10,
+      "sample_count": 10
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 8
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 145.8,
+      "stddev_first_cast_s": 90.9,
+      "avg_gap_s": 35.9,
+      "stddev_gap_s": 50.8,
+      "hold_targets": {
+        "2": {
+          "target_s": 271.2,
+          "stddev_s": 76.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 8.4,
+      "avg_uses_per_min": 1.11,
+      "uses_per_min": {
+        "avg": 1.109,
+        "stddev": 0.22,
+        "min": 0.737,
+        "max": 1.404
+      },
+      "majority_hold": true
+    },
+    "Exhilaration": {
+      "sample_count": 8,
+      "avg_first_cast_s": 289.5,
+      "stddev_first_cast_s": 117.1,
+      "avg_gap_s": 103.4,
+      "stddev_gap_s": 36.1,
+      "hold_targets": {},
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.241,
+        "stddev": 0.118,
+        "min": 0.123,
+        "max": 0.483
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 6,
+      "avg_first_cast_s": 243.9,
+      "stddev_first_cast_s": 108.5,
+      "avg_gap_s": 137.3,
+      "stddev_gap_s": 2,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.238,
+        "stddev": 0.129,
+        "min": 0.121,
+        "max": 0.425
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 47.9,
+      "stddev_s": 0.7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 272505,
+      "dmg_stddev": 50578,
+      "dmg_min": 228703,
+      "dmg_max": 316306,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222088,
+          "avg_damage": 102242,
+          "min_damage": 87326,
+          "max_damage": 117158,
+          "count": 4
+        },
+        {
+          "spell_id": 1222122,
+          "avg_damage": 84704,
+          "min_damage": 77513,
+          "max_damage": 91895,
+          "count": 4
+        },
+        {
+          "spell_id": 1222129,
+          "avg_damage": 80544,
+          "min_damage": 80544,
+          "max_damage": 80544,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 45287,
+          "min_damage": 41091,
+          "max_damage": 49482,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 82.6,
+      "stddev_s": 0.1,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 72153,
+      "dmg_stddev": 736,
+      "dmg_min": 71515,
+      "dmg_max": 72790,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 72153,
+          "min_damage": 71515,
+          "max_damage": 72790,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 118.4,
+      "stddev_s": 9.1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 374512,
+      "dmg_stddev": 101091,
+      "dmg_min": 226907,
+      "dmg_max": 487248,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 296236,
+          "min_damage": 74226,
+          "max_damage": 413600,
+          "count": 8
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 66045,
+          "min_damage": 56090,
+          "max_damage": 73648,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 180.9,
+      "stddev_s": 5.7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 210471,
+      "dmg_stddev": 101872,
+      "dmg_min": 122247,
+      "dmg_max": 298694,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 118430,
+          "min_damage": 114612,
+          "max_damage": 122247,
+          "count": 4
+        },
+        {
+          "spell_id": 1222122,
+          "avg_damage": 93746,
+          "min_damage": 93746,
+          "max_damage": 93746,
+          "count": 2
+        },
+        {
+          "spell_id": 1222088,
+          "avg_damage": 90336,
+          "min_damage": 90336,
+          "max_damage": 90336,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 226.1,
+      "stddev_s": 9.6,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 332022,
+      "dmg_stddev": 67896,
+      "dmg_min": 273222,
+      "dmg_max": 390821,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 144597,
+          "min_damage": 141042,
+          "max_damage": 148152,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 125070,
+          "min_damage": 125070,
+          "max_damage": 125070,
+          "count": 2
+        },
+        {
+          "spell_id": 1222088,
+          "avg_damage": 83909,
+          "min_damage": 83909,
+          "max_damage": 83909,
+          "count": 2
+        },
+        {
+          "spell_id": 1222129,
+          "avg_damage": 83036,
+          "min_damage": 83036,
+          "max_damage": 83036,
+          "count": 2
+        },
+        {
+          "spell_id": 1222122,
+          "avg_damage": 82834,
+          "min_damage": 82834,
+          "max_damage": 82834,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 255.1,
+      "stddev_s": 9.2,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 14914,
+      "dmg_stddev": 29828,
+      "dmg_min": 0,
+      "dmg_max": 59656,
+      "ability_breakdown": [],
+      "ref_game_id": 238693,
+      "window_length_s": 3.6,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ]
+    },
+    {
+      "time_s": 267.7,
+      "stddev_s": 9.5,
+      "count": 20,
+      "total_samples": 10,
+      "dmg_avg": 391444,
+      "dmg_stddev": 121272,
+      "dmg_min": 177413,
+      "dmg_max": 582412,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 242847,
+          "min_damage": 56824,
+          "max_damage": 435690,
+          "count": 14
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 139669,
+          "min_damage": 125339,
+          "max_damage": 155303,
+          "count": 20
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 316.9,
+      "stddev_s": 7.2,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 392275,
+      "dmg_stddev": 163446,
+      "dmg_min": 198574,
+      "dmg_max": 561605,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222088,
+          "avg_damage": 213795,
+          "min_damage": 128565,
+          "max_damage": 299024,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 192246,
+          "min_damage": 178715,
+          "max_damage": 199449,
+          "count": 6
+        },
+        {
+          "spell_id": 1222122,
+          "avg_damage": 86250,
+          "min_damage": 83866,
+          "max_damage": 88633,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 353.3,
+      "stddev_s": 1.1,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 377139,
+      "dmg_stddev": 32760,
+      "dmg_min": 346090,
+      "dmg_max": 417532,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 215985,
+          "min_damage": 210382,
+          "max_damage": 220942,
+          "count": 6
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 161154,
+          "min_damage": 129460,
+          "max_damage": 196590,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 390.2,
+      "stddev_s": 2.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "ability_breakdown": [],
+      "ref_game_id": null,
+      "window_length_s": 3.1,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ]
+    },
+    {
+      "time_s": 390.4,
+      "stddev_s": 6.5,
+      "count": 16,
+      "total_samples": 10,
+      "dmg_avg": 505014,
+      "dmg_stddev": 176573,
+      "dmg_min": 192959,
+      "dmg_max": 784745,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 331361,
+          "min_damage": 136180,
+          "max_damage": 460023,
+          "count": 12
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 214623,
+          "min_damage": 169370,
+          "max_damage": 324722,
+          "count": 16
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8.8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    },
+    {
+      "time_s": 418.1,
+      "stddev_s": 9.5,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 384890,
+      "dmg_stddev": 20263,
+      "dmg_min": 362884,
+      "dmg_max": 408142,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 241147,
+          "min_damage": 228043,
+          "max_damage": 253365,
+          "count": 6
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 143743,
+          "min_damage": 120851,
+          "max_damage": 155601,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 238693,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ]
+    }
+  ]
+}

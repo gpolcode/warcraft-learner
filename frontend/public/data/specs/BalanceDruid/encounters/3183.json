@@ -1,0 +1,948 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "avg_duration_s": 530.9,
+  "downtime_threshold_ms": 2222,
+  "top_avg_efficiency": 73.8,
+  "top_efficiency_stddev": 5.5,
+  "per_cd_benchmarks": {
+    "Celestial Alignment": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.8,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 95,
+      "stddev_gap_s": 63,
+      "hold_targets": {
+        "4": {
+          "target_s": 368.5,
+          "stddev_s": 2.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 422.2,
+          "stddev_s": 2.9,
+          "count": 7,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 486.3,
+          "stddev_s": 5.6,
+          "count": 9,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.677,
+        "stddev": 0.017,
+        "min": 0.637,
+        "max": 0.695
+      },
+      "majority_hold": true,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Incarnation: Chosen of Elune": {
+      "sample_count": 10,
+      "avg_first_cast_s": 10.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 95.3,
+      "stddev_gap_s": 76.3,
+      "hold_targets": {},
+      "avg_uses": 0.6,
+      "avg_uses_per_min": 0.07,
+      "uses_per_min": {
+        "avg": 0.688,
+        "stddev": 0,
+        "min": 0.688,
+        "max": 0.688
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Eclipse": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Force of Nature": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.2,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 59.3,
+      "stddev_gap_s": 6.5,
+      "hold_targets": {},
+      "avg_uses": 9.1,
+      "avg_uses_per_min": 1.03,
+      "uses_per_min": {
+        "avg": 1.028,
+        "stddev": 0.016,
+        "min": 1.012,
+        "max": 1.062
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Fury of Elune": {
+      "sample_count": 10,
+      "avg_first_cast_s": 8.9,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 68.2,
+      "stddev_gap_s": 19,
+      "hold_targets": {},
+      "avg_uses": 0.8,
+      "avg_uses_per_min": 0.09,
+      "uses_per_min": {
+        "avg": 0.917,
+        "stddev": 0,
+        "min": 0.917,
+        "max": 0.917
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Convoke the Spirits": {
+      "sample_count": 10,
+      "avg_first_cast_s": 14.5,
+      "stddev_first_cast_s": 1.3,
+      "avg_gap_s": 59.2,
+      "stddev_gap_s": 5.8,
+      "hold_targets": {},
+      "avg_uses": 8.2,
+      "avg_uses_per_min": 0.93,
+      "uses_per_min": {
+        "avg": 1.028,
+        "stddev": 0.017,
+        "min": 1.012,
+        "max": 1.062
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 11.7,
+      "stddev_s": 1.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 7090944,
+      "dmg_stddev": 665085,
+      "dmg_min": 6073486,
+      "dmg_max": 8503905,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 1240634,
+          "min_damage": 711756,
+          "max_damage": 2481851,
+          "count": 9,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 1217768,
+          "min_damage": 810714,
+          "max_damage": 1780066,
+          "count": 10,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 433850,
+          "avg_damage": 837819,
+          "min_damage": 543421,
+          "max_damage": 1070118,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 709819,
+          "min_damage": 426807,
+          "max_damage": 901445,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 520602,
+          "min_damage": 370793,
+          "max_damage": 638712,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 478209,
+          "min_damage": 370189,
+          "max_damage": 598239,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.7
+    },
+    {
+      "time_s": 73.9,
+      "stddev_s": 1.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 5571339,
+      "dmg_stddev": 1156425,
+      "dmg_min": 4265900,
+      "dmg_max": 8173143,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 1172623,
+          "min_damage": 825248,
+          "max_damage": 1837243,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 659104,
+          "min_damage": 507724,
+          "max_damage": 984682,
+          "count": 8,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 433850,
+          "avg_damage": 655272,
+          "min_damage": 311316,
+          "max_damage": 1202545,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 490006,
+          "min_damage": 406930,
+          "max_damage": 614165,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 439415,
+          "min_damage": 281519,
+          "max_damage": 530607,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 389731,
+          "min_damage": 295982,
+          "max_damage": 534627,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.7
+    },
+    {
+      "time_s": 135.4,
+      "stddev_s": 1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 7832117,
+      "dmg_stddev": 1042232,
+      "dmg_min": 6409732,
+      "dmg_max": 9929247,
+      "ability_breakdown": [
+        {
+          "spell_id": 191037,
+          "avg_damage": 1750569,
+          "min_damage": 749196,
+          "max_damage": 2955786,
+          "count": 10,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 1069421,
+          "min_damage": 684720,
+          "max_damage": 1611176,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 433850,
+          "avg_damage": 810827,
+          "min_damage": 508737,
+          "max_damage": 1086225,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 274283,
+          "avg_damage": 657107,
+          "min_damage": 473639,
+          "max_damage": 913778,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 635985,
+          "min_damage": 504445,
+          "max_damage": 782321,
+          "count": 9,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 562939,
+          "min_damage": 390943,
+          "max_damage": 721276,
+          "count": 7,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.7
+    },
+    {
+      "time_s": 367.9,
+      "stddev_s": 2.3,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 13250513,
+      "dmg_stddev": 1803772,
+      "dmg_min": 10175243,
+      "dmg_max": 16192311,
+      "ability_breakdown": [
+        {
+          "spell_id": 78674,
+          "avg_damage": 4075346,
+          "min_damage": 3129691,
+          "max_damage": 5609111,
+          "count": 10,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 1818771,
+          "min_damage": 958254,
+          "max_damage": 2665960,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 1313416,
+          "min_damage": 935316,
+          "max_damage": 1749020,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 190984,
+          "avg_damage": 1092294,
+          "min_damage": 796965,
+          "max_damage": 1673977,
+          "count": 10,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 188046,
+          "avg_damage": 815821,
+          "min_damage": 461477,
+          "max_damage": 1088181,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 732430,
+          "min_damage": 576480,
+          "max_damage": 929249,
+          "count": 9,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.7
+    },
+    {
+      "time_s": 422.3,
+      "stddev_s": 2.9,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 7523016,
+      "dmg_stddev": 690425,
+      "dmg_min": 6508168,
+      "dmg_max": 8748984,
+      "ability_breakdown": [
+        {
+          "spell_id": 78674,
+          "avg_damage": 2267801,
+          "min_damage": 2014321,
+          "max_damage": 2550974,
+          "count": 8,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 787500,
+          "min_damage": 632241,
+          "max_damage": 1036059,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 730939,
+          "min_damage": 582322,
+          "max_damage": 972525,
+          "count": 8,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 190984,
+          "avg_damage": 592918,
+          "min_damage": 408919,
+          "max_damage": 855028,
+          "count": 7,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 436489,
+          "min_damage": 393909,
+          "max_damage": 514450,
+          "count": 8,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 433850,
+          "avg_damage": 353061,
+          "min_damage": 278498,
+          "max_damage": 405350,
+          "count": 4,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.6
+    },
+    {
+      "time_s": 486.2,
+      "stddev_s": 5.2,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 21331925,
+      "dmg_stddev": 1861906,
+      "dmg_min": 18473098,
+      "dmg_max": 24940995,
+      "ability_breakdown": [
+        {
+          "spell_id": 1292446,
+          "avg_damage": 6485114,
+          "min_damage": 5341597,
+          "max_damage": 6676998,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 78674,
+          "avg_damage": 4374174,
+          "min_damage": 3365370,
+          "max_damage": 6214948,
+          "count": 10,
+          "avg_casts": 8
+        },
+        {
+          "spell_id": 202497,
+          "avg_damage": 2269442,
+          "min_damage": 1927749,
+          "max_damage": 2622412,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263250,
+          "avg_damage": 1361461,
+          "min_damage": 818900,
+          "max_damage": 2050758,
+          "count": 10,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 188046,
+          "avg_damage": 1109895,
+          "min_damage": 779867,
+          "max_damage": 1689551,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 880249,
+          "min_damage": 719249,
+          "max_damage": 1102893,
+          "count": 10,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Celestial Alignment",
+        "Convoke the Spirits"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.6
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:100174,100175,100176,100177,100223,103846,103847,104078,104080,104082,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82232,82233,82234,82235,82236,82244,88201,88202,88203,88204,88206,88207,88210,88212,88214,88215,88218,88221,88222,88223,88225,88226,88227,88228,88231,88234,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 2,
+        "pct": 20,
+        "report_code": "rQCYp1LqXVKT4WN8",
+        "fight_id": 61,
+        "player_name": "ßøñðýe"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82231,82232,82233,82234,82235,82236,82241,82244,82246,88202,88203,88204,88206,88207,88208,88210,88212,88214,88215,88218,88221,88222,88223,88225,88226,88227,88228,88231,88234,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "jPTAtxKvGMmF2Jfb",
+        "fight_id": 1,
+        "player_name": "심호흡딜링머신"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82231,82232,82233,82234,82235,82236,82244,82246,88202,88203,88204,88206,88207,88208,88210,88212,88214,88215,88218,88221,88222,88223,88225,88226,88227,88228,88231,88234,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "8XvKRLPnJM1mAt3Y",
+        "fight_id": 21,
+        "player_name": "Boomcant"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104083,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82231,82232,82233,82234,82235,82236,82240,82244,82246,88202,88203,88204,88206,88207,88208,88210,88212,88214,88215,88218,88221,88222,88223,88225,88226,88227,88228,88231,88234,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "HXkwBzfp6F91Gyam",
+        "fight_id": 32,
+        "player_name": "Dtmt"
+      },
+      {
+        "key": "v2:100175,100176,100177,100223,103846,103847,104078,104080,104085,108032,108033,109712,109713,109714,110421,110421,110421,82198,82201,82202,82206,82207,82208,82209,82210,82214,82218,82219,82220,82225,82228,82229,82230,82231,82232,82233,82234,82235,82236,82240,82244,82246,88201,88202,88203,88204,88206,88207,88210,88212,88214,88215,88218,88221,88222,88223,88225,88226,88227,88228,88231,88234,88235,88236,91048,92229,93714,94591,94592,94593,94595,94599,94600,94601,94602,94604,94605,94606,99808",
+        "count": 1,
+        "pct": 10,
+        "report_code": "bG3xDYPqKjLm8XaR",
+        "fight_id": 22,
+        "player_name": "Shidann"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "Enchant Helm - Empowered Rune of Avoidance",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "Enchant Shoulders - Amirdrassil's Grace",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "+41 Intellect & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "Enchant Boots - Lynx's Dexterity",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 8039,
+          "name": "Enchant Weapon - Acuity of the Ren'dorei",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7981,
+          "name": "Enchant Weapon - Jan'alai's Precision",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "avg_uses": 4,
+      "min_uses": 1,
+      "max_uses": 7,
+      "sample_count": 10
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 118.8,
+      "stddev_first_cast_s": 83.1,
+      "avg_gap_s": 99.6,
+      "stddev_gap_s": 47.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 209.3,
+          "stddev_s": 82.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 326,
+          "stddev_s": 134.2,
+          "count": 8,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.453,
+        "stddev": 0.231,
+        "min": 0.113,
+        "max": 0.811
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 210.5,
+      "stddev_s": 7.4,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 422192,
+      "dmg_stddev": 129468,
+      "dmg_min": 166016,
+      "dmg_max": 550619,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281473,
+          "avg_damage": 214138,
+          "min_damage": 112223,
+          "max_damage": 364413,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 175838,
+          "min_damage": 95900,
+          "max_damage": 248041,
+          "count": 9
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 84013,
+          "min_damage": 54703,
+          "max_damage": 112792,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 272.9,
+      "stddev_s": 3.6,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 600714,
+      "dmg_stddev": 128864,
+      "dmg_min": 470099,
+      "dmg_max": 798788,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 203267,
+          "min_damage": 129942,
+          "max_damage": 254331,
+          "count": 5
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 110342,
+          "min_damage": 78220,
+          "max_damage": 167671,
+          "count": 5
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 97539,
+          "min_damage": 95859,
+          "max_damage": 99179,
+          "count": 3
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 92691,
+          "min_damage": 42968,
+          "max_damage": 116789,
+          "count": 5
+        },
+        {
+          "spell_id": 1284530,
+          "avg_damage": 87934,
+          "min_damage": 73330,
+          "max_damage": 100601,
+          "count": 5
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 76105,
+          "min_damage": 61773,
+          "max_damage": 99380,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    },
+    {
+      "time_s": 328.4,
+      "stddev_s": 2.9,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 555124,
+      "dmg_stddev": 50988,
+      "dmg_min": 491791,
+      "dmg_max": 649652,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 199674,
+          "min_damage": 139872,
+          "max_damage": 235835,
+          "count": 7
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 122857,
+          "min_damage": 104769,
+          "max_damage": 136738,
+          "count": 6
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 115518,
+          "min_damage": 100005,
+          "max_damage": 128635,
+          "count": 4
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 98287,
+          "min_damage": 83816,
+          "max_damage": 109391,
+          "count": 6
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 51030,
+          "min_damage": 43654,
+          "max_damage": 54297,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 31855,
+          "min_damage": 18348,
+          "max_damage": 43756,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ]
+    }
+  ]
+}
