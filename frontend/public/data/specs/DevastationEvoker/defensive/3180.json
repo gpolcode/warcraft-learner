@@ -1,0 +1,255 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.1,
+      "stddev_first_cast_s": 35.1,
+      "avg_gap_s": 42.4,
+      "stddev_gap_s": 43.5,
+      "hold_targets": {},
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 1.06,
+      "uses_per_min": {
+        "avg": 1.06,
+        "stddev": 0.307,
+        "min": 0.42,
+        "max": 1.432
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 4,
+      "avg_first_cast_s": 67.5,
+      "stddev_first_cast_s": 41.6,
+      "avg_gap_s": 153.1,
+      "stddev_gap_s": 88.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 272.8,
+          "stddev_s": 40.1,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.33,
+      "uses_per_min": {
+        "avg": 0.333,
+        "stddev": 0.098,
+        "min": 0.192,
+        "max": 0.42
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 93.1,
+      "dmg_avg": 217175,
+      "dmg_stddev": 186993,
+      "dmg_min": 0,
+      "dmg_max": 614301,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 42355,
+          "min_damage": 12845,
+          "max_damage": 82049,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 144.4,
+      "dmg_avg": 255520,
+      "dmg_stddev": 220112,
+      "dmg_min": 16620,
+      "dmg_max": 672576,
+      "window_length_s": 7.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 56440,
+          "min_damage": 14986,
+          "max_damage": 95373,
+          "count": 15
+        }
+      ]
+    },
+    {
+      "time_s": 248.4,
+      "dmg_avg": 252712,
+      "dmg_stddev": 201328,
+      "dmg_min": 0,
+      "dmg_max": 565737,
+      "window_length_s": 6.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 179128,
+          "min_damage": 125554,
+          "max_damage": 215918,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 76252,
+          "min_damage": 19997,
+          "max_damage": 124053,
+          "count": 14
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 36216,
+          "min_damage": 13643,
+          "max_damage": 69060,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 303,
+      "dmg_avg": 415307,
+      "dmg_stddev": 240159,
+      "dmg_min": 22987,
+      "dmg_max": 706553,
+      "window_length_s": 7.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 207524,
+          "min_damage": 143595,
+          "max_damage": 286393,
+          "count": 7
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 110661,
+          "min_damage": 107273,
+          "max_damage": 115106,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 89061,
+          "min_damage": 21098,
+          "max_damage": 135035,
+          "count": 11
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.5,
+      "min_uses": 3,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits. Best-guess cooldown and duration since the guides do not detail defensive timings.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits. Best-guess cooldown since the guides do not detail defensive timings.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out. Best-guess cooldown since the guides do not detail defensive timings.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "3119908550914b66"
+}

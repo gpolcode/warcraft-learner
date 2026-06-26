@@ -1,0 +1,219 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 9,
+      "avg_first_cast_s": 113.1,
+      "stddev_first_cast_s": 67.1,
+      "avg_gap_s": 141.8,
+      "stddev_gap_s": 42.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 245.3,
+          "stddev_s": 48,
+          "count": 8,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.399,
+        "stddev": 0.094,
+        "min": 0.214,
+        "max": 0.531
+      },
+      "majority_hold": true
+    },
+    "Earth Elemental": {
+      "sample_count": 4,
+      "avg_first_cast_s": 193.6,
+      "stddev_first_cast_s": 74.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.184,
+        "stddev": 0.014,
+        "min": 0.176,
+        "max": 0.204
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 143.6,
+      "dmg_avg": 385345,
+      "dmg_stddev": 194813,
+      "dmg_min": 229438,
+      "dmg_max": 668939,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 339295,
+          "min_damage": 252956,
+          "max_damage": 425633,
+          "count": 2
+        },
+        {
+          "spell_id": 1249024,
+          "avg_damage": 170642,
+          "min_damage": 145706,
+          "max_damage": 209951,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 87716,
+          "min_damage": 83732,
+          "max_damage": 90579,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 245.3,
+      "dmg_avg": 378882,
+      "dmg_stddev": 154284,
+      "dmg_min": 230892,
+      "dmg_max": 668527,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 143227,
+          "min_damage": 123485,
+          "max_damage": 171344,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 114868,
+          "min_damage": 101734,
+          "max_damage": 125488,
+          "count": 6
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 103157,
+          "min_damage": 39580,
+          "max_damage": 186674,
+          "count": 5
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 98115,
+          "min_damage": 83895,
+          "max_damage": 114434,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "Drop ahead of incoming damage to absorb a large initial hit plus periodic shields; talent_gated since not every build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate during a high-output window to convert a portion of your damage into raid healing; talent_gated and best used when you are already bursting.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a hit or pull threat off the group as an emergency tank-swap or damage-soak tool when no offensive use is needed.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Stone Bulwark Totem": 108270,
+    "Ancestral Guidance": 108281,
+    "Earth Elemental": 198103
+  },
+  "ability_icons": {
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "498e2e55ee31587e"
+}

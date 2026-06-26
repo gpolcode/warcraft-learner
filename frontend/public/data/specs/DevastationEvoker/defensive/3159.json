@@ -1,0 +1,334 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 167.5,
+      "stddev_first_cast_s": 112.2,
+      "avg_gap_s": 54.2,
+      "stddev_gap_s": 66.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 268.4,
+          "stddev_s": 73.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 0.77,
+      "uses_per_min": {
+        "avg": 0.766,
+        "stddev": 0.342,
+        "min": 0.121,
+        "max": 1.129
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 6,
+      "avg_first_cast_s": 306.8,
+      "stddev_first_cast_s": 139.8,
+      "avg_gap_s": 136.4,
+      "stddev_gap_s": 3.7,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.18,
+        "stddev": 0.108,
+        "min": 0.116,
+        "max": 0.398
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 122.2,
+      "dmg_avg": 476576,
+      "dmg_stddev": 255867,
+      "dmg_min": 118447,
+      "dmg_max": 960635,
+      "window_length_s": 9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 265030,
+          "min_damage": 68434,
+          "max_damage": 588243,
+          "count": 11
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 105440,
+          "min_damage": 32496,
+          "max_damage": 270320,
+          "count": 10
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 75001,
+          "min_damage": 17517,
+          "max_damage": 110817,
+          "count": 12
+        }
+      ]
+    },
+    {
+      "time_s": 268.7,
+      "dmg_avg": 329319,
+      "dmg_stddev": 262514,
+      "dmg_min": 0,
+      "dmg_max": 700799,
+      "window_length_s": 6.8,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 173290,
+          "min_damage": 29972,
+          "max_damage": 431217,
+          "count": 12
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 119530,
+          "min_damage": 13738,
+          "max_damage": 220958,
+          "count": 20
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 75844,
+          "min_damage": 8196,
+          "max_damage": 202027,
+          "count": 11
+        }
+      ]
+    },
+    {
+      "time_s": 404.6,
+      "dmg_avg": 496710,
+      "dmg_stddev": 287022,
+      "dmg_min": 123091,
+      "dmg_max": 1034661,
+      "window_length_s": 9.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 212808,
+          "min_damage": 36077,
+          "max_damage": 520012,
+          "count": 8
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 210815,
+          "min_damage": 27703,
+          "max_damage": 332275,
+          "count": 13
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 127410,
+          "min_damage": 19182,
+          "max_damage": 279346,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 405.6,
+      "dmg_avg": 464550,
+      "dmg_stddev": 129992,
+      "dmg_min": 334169,
+      "dmg_max": 661318,
+      "window_length_s": 8,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 178688,
+          "min_damage": 124933,
+          "max_damage": 248274,
+          "count": 5
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 145414,
+          "min_damage": 24532,
+          "max_damage": 327991,
+          "count": 5
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 121345,
+          "min_damage": 100485,
+          "max_damage": 135723,
+          "count": 3
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 112736,
+          "min_damage": 55353,
+          "max_damage": 158114,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 490.5,
+      "dmg_avg": 444438,
+      "dmg_stddev": 163414,
+      "dmg_min": 291819,
+      "dmg_max": 665695,
+      "window_length_s": 9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 298861,
+          "min_damage": 200089,
+          "max_damage": 406156,
+          "count": 4
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 152083,
+          "min_damage": 150014,
+          "max_damage": 154151,
+          "count": 2
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 69536,
+          "min_damage": 3393,
+          "max_damage": 144223,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 5.8,
+      "min_uses": 1,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits. Best-guess cooldown and duration since the guides do not detail defensive timings.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits. Best-guess cooldown since the guides do not detail defensive timings.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out. Best-guess cooldown since the guides do not detail defensive timings.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "caf3203ce15261da"
+}
