@@ -10,11 +10,8 @@ import {
   onPlanFromEntries,
   rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';
-import {
-  ComparisonWindow,
-  WindowComparisonComponent,
-  WindowStatus,
-} from '../../../shared/components/window-comparison/window-comparison';
+import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
+import { ComparisonWindow, WindowStatus } from '../../../core/models/window-comparison.models';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { ComparisonWindow, WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
+import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
+import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import { BurstFeatureService, AbilityIcons, BurstMapAnchor } from './burst.service';
 
 /**

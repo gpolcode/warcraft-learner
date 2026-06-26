@@ -53,6 +53,13 @@ export interface WclReport {
   };
 }
 
+/** A mapped top parse: which report + fight + player to refetch (from rankings). */
+export interface ParseRanking {
+  player: string;
+  report_code: string;
+  fight_id: number;
+}
+
 export interface CharacterInfo {
   name: string;
   spec: string | null;

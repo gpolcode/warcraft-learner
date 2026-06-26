@@ -10,21 +10,9 @@ import {
   ChartConfiguration,
 } from 'chart.js';
 import { IconCacheService } from '../../../core/services/icon-cache';
+import { RangeRow } from '../../../core/models/window-comparison.models';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
-
-export interface RangeRow {
-  spellId?: number;
-  label: string;
-  playerPct: number | null;
-  // Top-parse range. All three may be null when no comparison data exists for a row.
-  topAvg: number | null;
-  topMin: number | null;
-  topMax: number | null;
-  // Cast counts for the sorted-impact table (burst windows only). Null when unavailable.
-  playerCasts?: number | null;
-  topCasts?: number | null;
-}
 
 interface OverlayPoint {
   avg: number | null;

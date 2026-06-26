@@ -5,7 +5,7 @@
  * They belong here and not inside the transport service so the API contract
  * can evolve independently of the application models.
  */
-import type { CharacterGear } from '../models/wcl.models';
+import type { CharacterGear, ParseRanking } from '../models/wcl.models';
 
 // ---------------------------------------------------------------------------
 // Internal WCL response shapes (not part of the application model)
@@ -39,13 +39,6 @@ export type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 export interface WclRawRanking {
   name?: string;
   report?: { code?: string; fightID?: number };
-}
-
-/** A mapped top parse: which report + fight + player to refetch. */
-export interface ParseRanking {
-  player: string;
-  report_code: string;
-  fight_id: number;
 }
 
 // ---------------------------------------------------------------------------

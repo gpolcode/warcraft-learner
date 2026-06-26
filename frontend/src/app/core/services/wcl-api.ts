@@ -3,7 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { Apollo, gql } from 'apollo-angular';
 import { ServerError, CombinedGraphQLErrors, type FetchPolicy, type OperationVariables } from '@apollo/client';
 import { WclAuthService } from './wcl-auth';
-import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclEvent } from '../models/wcl.models';
+import { WclReport, WclAbility, CharacterInfo, CharacterGear, WclEvent, ParseRanking } from '../models/wcl.models';
 import { logWarn } from '../log';
 import {
   REPORT_Q, REPORT_ABILITIES_Q, PLAYER_DETAILS_Q, FIGHTS_Q, EVENTS_Q,
@@ -13,7 +13,7 @@ import {
 } from './wcl-queries';
 import {
   buildSpecMap, extractGear, talentKeyFromTree, decodeHtmlEntities, mapRankings, SPEC_TO_WCL,
-  WclRankEntry, PlayerDetailGroups, WclRawRanking, ParseRanking,
+  WclRankEntry, PlayerDetailGroups, WclRawRanking,
 } from './wcl-mappers';
 
 /** A CombatantInfo event carries gear + talentTree, keyed by sourceID. */
