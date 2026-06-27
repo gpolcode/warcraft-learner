@@ -1,0 +1,355 @@
+{
+  "spec": "FrostMage",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Ice Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 101.2,
+      "stddev_first_cast_s": 51,
+      "avg_gap_s": 57.9,
+      "stddev_gap_s": 44.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 125.9,
+          "stddev_s": 77.3,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 266.8,
+          "stddev_s": 68.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.67,
+      "uses_per_min": {
+        "avg": 0.666,
+        "stddev": 0.312,
+        "min": 0.333,
+        "max": 1.224
+      },
+      "majority_hold": true
+    },
+    "Ice Cold": {
+      "sample_count": 8,
+      "avg_first_cast_s": 182.9,
+      "stddev_first_cast_s": 106.7,
+      "avg_gap_s": 113.2,
+      "stddev_gap_s": 71.6,
+      "hold_targets": {},
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.356,
+        "stddev": 0.093,
+        "min": 0.162,
+        "max": 0.454
+      },
+      "majority_hold": false
+    },
+    "Alter Time": {
+      "sample_count": 8,
+      "avg_first_cast_s": 36.8,
+      "stddev_first_cast_s": 49.6,
+      "avg_gap_s": 150.2,
+      "stddev_gap_s": 57.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 212.3,
+          "stddev_s": 58.5,
+          "count": 7,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.443,
+        "stddev": 0.163,
+        "min": 0.21,
+        "max": 0.681
+      },
+      "majority_hold": true
+    },
+    "Mirror Image": {
+      "sample_count": 2,
+      "avg_first_cast_s": 127.7,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.187,
+        "stddev": 0.03,
+        "min": 0.166,
+        "max": 0.208
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 126.2,
+      "dmg_avg": 312317,
+      "dmg_stddev": 110118,
+      "dmg_min": 209887,
+      "dmg_max": 548806,
+      "window_length_s": 5.2,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
+      "common_defensives": [
+        "Ice Barrier"
+      ],
+      "common_cds": [
+        "Ice Barrier"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 46787,
+          "min_damage": 18846,
+          "max_damage": 120483,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 151.6,
+      "dmg_avg": 264139,
+      "dmg_stddev": 60022,
+      "dmg_min": 218247,
+      "dmg_max": 369192,
+      "window_length_s": 4.9,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
+      "common_defensives": [
+        "Ice Barrier"
+      ],
+      "common_cds": [
+        "Ice Barrier"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 128143,
+          "min_damage": 113247,
+          "max_damage": 147884,
+          "count": 3
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 81480,
+          "min_damage": 63193,
+          "max_damage": 92469,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 243.6,
+      "dmg_avg": 152968,
+      "dmg_stddev": 14227,
+      "dmg_min": 139541,
+      "dmg_max": 171224,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 59642,
+          "min_damage": 41816,
+          "max_damage": 71176,
+          "count": 4
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 55729,
+          "min_damage": 54533,
+          "max_damage": 57973,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 22714,
+          "min_damage": 18072,
+          "max_damage": 36270,
+          "count": 4
+        },
+        {
+          "spell_id": 1252157,
+          "avg_damage": 16544,
+          "min_damage": 16093,
+          "max_damage": 17117,
+          "count": 3
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 4951,
+          "min_damage": 2444,
+          "max_damage": 7458,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 298.5,
+      "dmg_avg": 362223,
+      "dmg_stddev": 156227,
+      "dmg_min": 220597,
+      "dmg_max": 539469,
+      "window_length_s": 3.7,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
+      "common_defensives": [
+        "Ice Barrier"
+      ],
+      "common_cds": [
+        "Ice Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 191550,
+          "min_damage": 190428,
+          "max_damage": 193740,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 11426,
+      "avg_uses": 3.5,
+      "min_uses": 2,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 414658,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 342245,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Use to fully immune a lethal hit or to drop a deadly debuff; Glacial Bulwark grants two charges, so script its usage across the fight's biggest damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Barrier",
+      "spell_id": 11426,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep an absorb shield up before incoming damage and refresh it on cooldown; Glacial Bulwark grants two charges so you can pre-shield consecutive damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Cold",
+      "spell_id": 414658,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Use as a movement-friendly damage reduction when you need to keep dealing damage through a hit instead of going fully immune; talent-gated alternative to the standard Ice Block.",
+      "talent_gated": true
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate before a burst of damage to snapshot your health and position, then let it return you to safety; talent-gated, so zero casts is normal if not taken.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Use to reduce incoming damage and pull threat off yourself during a dangerous window; talent-gated and not part of the standard damage rotation.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Ice Barrier": 11426,
+    "Ice Cold": 414658,
+    "Alter Time": 342245,
+    "Mirror Image": 55342
+  },
+  "ability_icons": {
+    "11426": {
+      "icon": "spell_ice_lament",
+      "name": "Ice Barrier"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "414658": {
+      "icon": "spell_fire_bluefire",
+      "name": "Ice Cold"
+    },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1252157": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "a39a6ba00d752a03"
+}
