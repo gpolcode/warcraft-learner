@@ -13,54 +13,61 @@
 
   <!-- Timeline track: segments float on a guide line, positioned proportionally along the fight. -->
   <div class="px-4" [class.pt-3]="!title()" [class.pb-3]="!activeWindow()">
-    <div
-      class="relative mx-2 h-9"
-      role="listbox"
-      tabindex="0"
-      aria-label="Burst windows"
-      (keydown)="onKeydown($event)">
-      <!-- Track: rounded rail the segments sit on. -->
-      <div class="absolute left-0 right-0 top-0 h-9 rounded-lg bg-[var(--bg)] border border-[var(--border)]" aria-hidden="true"></div>
-
-      @for (w of windows(); track $index; let i = $index) {
+    <!-- Mobile: a horizontal scroll rail (min-w) so the larger 42px tap targets never overlap; at md the
+         inner holder collapses to the full width and the markers space out by % exactly as before. -->
+    <div class="overflow-x-auto md:overflow-visible">
+      <div class="min-w-[540px] md:min-w-0">
         <div
-          class="absolute top-0 flex flex-col items-center -translate-x-1/2"
-          [style.left.%]="segmentLeftPcts()[i]"
-          [style.z-index]="activeIndex() === i ? 2 : 1">
-          <button
-            type="button"
-            role="option"
-            class="flex items-center justify-center w-9 h-9 rounded"
-            [class.seg-good]="w.status === 'good'"
-            [class.seg-warn]="w.status === 'warn'"
-            [class.seg-bad]="w.status === 'bad'"
-            [class.seg-scheduled]="w.status === 'muted' && w.statusIcon === 'schedule'"
-            [class.seg-missing]="w.status === 'muted' && w.statusIcon !== 'schedule'"
-            [class.seg-info]="w.status === 'info'"
-            [class.seg-active]="activeIndex() === i"
-            [attr.aria-selected]="activeIndex() === i"
-            [attr.aria-label]="(w.timeStartS | formatDuration)"
-            (click)="select(i)">
-            <mat-icon class="text-[18px] h-[18px] w-[18px] leading-none">{{ w.statusIcon }}</mat-icon>
-          </button>
-        </div>
-      }
-    </div>
+          class="relative mx-2 h-[42px] md:h-9"
+          role="listbox"
+          tabindex="0"
+          aria-label="Burst windows"
+          (keydown)="onKeydown($event)">
+          <!-- Track: rounded rail the segments sit on. -->
+          <div class="absolute left-0 right-0 top-0 h-[42px] md:h-9 rounded-lg bg-[var(--bg)] border border-[var(--border)]" aria-hidden="true"></div>
 
-    @if (timeTicks().length) {
-      <div class="flex justify-between tabular-nums text-[10px] text-[var(--muted)] mt-2">
-        @for (tick of timeTicks(); track $index) {
-          <span>{{ tick | formatDuration }}</span>
+          @for (w of windows(); track $index; let i = $index) {
+            <div
+              class="absolute top-0 flex flex-col items-center -translate-x-1/2"
+              [style.left.%]="segmentLeftPcts()[i]"
+              [style.z-index]="activeIndex() === i ? 2 : 1">
+              <button
+                type="button"
+                role="option"
+                class="flex items-center justify-center w-[42px] h-[42px] md:w-9 md:h-9 rounded"
+                [class.seg-good]="w.status === 'good'"
+                [class.seg-warn]="w.status === 'warn'"
+                [class.seg-bad]="w.status === 'bad'"
+                [class.seg-scheduled]="w.status === 'muted' && w.statusIcon === 'schedule'"
+                [class.seg-missing]="w.status === 'muted' && w.statusIcon !== 'schedule'"
+                [class.seg-info]="w.status === 'info'"
+                [class.seg-active]="activeIndex() === i"
+                [attr.aria-selected]="activeIndex() === i"
+                [attr.aria-label]="(w.timeStartS | formatDuration)"
+                (click)="select(i)">
+                <mat-icon class="text-[22px] md:text-[18px] h-[22px] w-[22px] md:h-[18px] md:w-[18px] leading-none">{{ w.statusIcon }}</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (timeTicks().length) {
+          <div class="flex justify-between tabular-nums text-[10px] text-[var(--muted)] mt-2">
+            @for (tick of timeTicks(); track $index) {
+              <span>{{ tick | formatDuration }}</span>
+            }
+          </div>
         }
       </div>
-    }
+    </div>
   </div>
 
   <!-- Detail panel: driven by activeIndex(), inside the same card. -->
   @if (activeWindow(); as w) {
 
-    <!-- Header: status dot · window title · spell icons · value · delta -->
-    <div class="flex items-center gap-2 px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
+    <!-- Header: status dot · window title · spell icons · value · delta.
+         flex-wrap lets the trailing value/delta drop to its own line on narrow screens. -->
+    <div class="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
       <span class="w-2.5 h-2.5 rounded-full shrink-0"
         [class.fill-success]="w.status === 'good'"
         [class.fill-warning]="w.status === 'warn'"
@@ -122,7 +129,8 @@
          Column widths (flex-1 / w-[7.5rem] / w-[9rem] / w-[9rem]) mirror compact-ability-row.html. -->
     @if (w.detailRows.length) {
       <div class="border-t border-[var(--border)] pt-2 pb-2">
-        <div class="flex items-center gap-3 px-4 pb-1">
+        <!-- Column labels are desktop-only; on mobile each row carries inline labels instead. -->
+        <div class="hidden md:flex items-center gap-3 px-4 pb-1">
           <span class="flex-1 text-[10px] text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
             <span class="w-[7.5rem] text-center text-[10px] text-[var(--muted)]">casts</span>
