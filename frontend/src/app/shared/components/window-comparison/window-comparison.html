@@ -138,7 +138,9 @@
     <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
          Column widths (flex-1 / w-[7.5rem] / w-[9rem] / w-[9rem]) mirror compact-ability-row.html. -->
     @if (w.detailRows.length) {
-      <div class="border-t border-[var(--border)] pt-2 pb-2">
+      <!-- Wrapper border is desktop-only; on mobile the per-row borders own the dividers (so the
+           first row does not double up with this one). -->
+      <div class="md:border-t border-[var(--border)] pt-2 pb-2">
         <!-- Column labels are desktop-only; on mobile each row carries inline labels instead. -->
         <div class="hidden md:flex items-center gap-3 px-4 pb-1">
           <span class="flex-1 text-[10px] text-[var(--muted)]">ability</span>
