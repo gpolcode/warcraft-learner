@@ -1,0 +1,281 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 158.4,
+      "stddev_first_cast_s": 100.9,
+      "avg_gap_s": 91.8,
+      "stddev_gap_s": 61,
+      "hold_targets": {
+        "1": {
+          "target_s": 278.7,
+          "stddev_s": 71.4,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.44,
+        "stddev": 0.329,
+        "min": 0.155,
+        "max": 1.225
+      },
+      "majority_hold": true
+    },
+    "Unending Resolve": {
+      "sample_count": 5,
+      "avg_first_cast_s": 150.5,
+      "stddev_first_cast_s": 96.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.163,
+        "stddev": 0.029,
+        "min": 0.131,
+        "max": 0.209
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 150.5,
+      "dmg_avg": 276259,
+      "dmg_stddev": 77768,
+      "dmg_min": 166319,
+      "dmg_max": 333174,
+      "window_length_s": 2.8,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 167170,
+          "min_damage": 71637,
+          "max_damage": 274036,
+          "count": 4
+        },
+        {
+          "spell_id": 1270513,
+          "avg_damage": 51470,
+          "min_damage": 47635,
+          "max_damage": 55304,
+          "count": 2
+        },
+        {
+          "spell_id": 111400,
+          "avg_damage": 42115,
+          "min_damage": 39137,
+          "max_damage": 47635,
+          "count": 3
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 37511,
+          "min_damage": 25768,
+          "max_damage": 46889,
+          "count": 3
+        },
+        {
+          "spell_id": 1244672,
+          "avg_damage": 13458,
+          "min_damage": 8141,
+          "max_damage": 18172,
+          "count": 3
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 181,
+          "min_damage": 78,
+          "max_damage": 284,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 261,
+      "dmg_avg": 364818,
+      "dmg_stddev": 160582,
+      "dmg_min": 178083,
+      "dmg_max": 584351,
+      "window_length_s": 12.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 256679,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 143474,
+          "min_damage": 85118,
+          "max_damage": 309136,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 11421,
+          "min_damage": 1651,
+          "max_damage": 19169,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 306.1,
+      "dmg_avg": 310877,
+      "dmg_stddev": 25514,
+      "dmg_min": 290900,
+      "dmg_max": 347608,
+      "window_length_s": 1.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 189801,
+          "min_damage": 169199,
+          "max_damage": 197130,
+          "count": 6
+        },
+        {
+          "spell_id": 1250071,
+          "avg_damage": 95098,
+          "min_damage": 62327,
+          "max_damage": 125686,
+          "count": 6
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 41271,
+          "min_damage": 21266,
+          "max_damage": 60558,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 7
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "111400": {
+      "icon": "ability_deathwing_sealarmorbreachtga",
+      "name": "Burning Rush"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
+    "1244672": {
+      "icon": "warlock_curse_shadow",
+      "name": "Nullzone"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1270513": {
+      "icon": "spell_nzinsanity_chasedbyshadows",
+      "name": "Shadowmark"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "ad78b79bd8c91e6d"
+}
