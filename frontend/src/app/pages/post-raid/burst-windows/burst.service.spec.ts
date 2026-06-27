@@ -61,7 +61,7 @@ describe('buildBurstView', () => {
     time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     common_cds: ['Shadow Blades'],
     ability_breakdown: [
-      { spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2, is_passive: false },
+      { spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 },
     ],
   };
   const abilities = { 121471: { icon: 'sb', name: 'Shadow Blades' }, 279043: { icon: 'evis', name: 'Eviscerate' } };
@@ -163,7 +163,7 @@ const benchFixture: BurstBench = {
   windows: [{
     time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     common_cds: ['Shadow Blades'],
-    ability_breakdown: [{ spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2, is_passive: false }],
+    ability_breakdown: [{ spell_id: 279043, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }],
   }],
 };
 

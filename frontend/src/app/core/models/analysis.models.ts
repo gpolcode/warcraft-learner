@@ -28,17 +28,14 @@ export interface AbilityBreakdown {
   max_damage: number;
   damage?: number;
   count: number;
+  /** Top-parse average cast count per window. Burst windows only; absent on defensives. */
+  avg_casts?: number;
   /**
-   * Top-parse average cast count per window. Meaningful for burst windows; the
-   * defensive slice (damage-taken comparison, casts never shown) sets it to 0.
+   * Burst windows only: true when no top parse ever cast this ability (passive/proc,
+   * auto-attack, or pet damage), so the UI shows a "passive" tag instead of a cast
+   * count. Absent (treated as false) on defensives and on pre-`is_passive` baked files.
    */
-  avg_casts: number;
-  /**
-   * True when no top parse ever cast this ability (passive/proc, auto-attack, or pet
-   * damage), so the burst card shows a "passive" tag instead of a cast count. The
-   * defensive slice (casts never shown) sets it to false.
-   */
-  is_passive: boolean;
+  is_passive?: boolean;
 }
 
 export interface BurstWindow {

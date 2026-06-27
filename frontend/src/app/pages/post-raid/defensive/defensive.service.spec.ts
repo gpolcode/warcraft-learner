@@ -136,7 +136,7 @@ describe('buildDefensiveWindows', () => {
   const window: BurstWindow = {
     time_s: 30, window_length_s: 5, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     defensive_name: 'Cloak of Shadows', spell_id: 31224, ref_game_id: 6666,
-    ability_breakdown: [{ spell_id: 700, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 0, is_passive: false }],
+    ability_breakdown: [{ spell_id: 700, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }],
   };
   const abilities = { 31224: { icon: 'cloak', name: 'Cloak of Shadows' }, 700: { icon: 'hit', name: 'Boss Hit' } };
 
@@ -208,7 +208,7 @@ function fullBench(): DefensiveBench {
     defensive_windows: [{
       time_s: 30, window_length_s: 5, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
       defensive_name: 'Cloak of Shadows', spell_id: 31224, ref_game_id: 6666,
-      ability_breakdown: [{ spell_id: 700, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 0, is_passive: false }],
+      ability_breakdown: [{ spell_id: 700, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }],
     }],
     top_defensives_summary: [{ spell_id: 31224, avg_uses: 2, min_uses: 1, max_uses: 3 }],
     defensives: [CLOAK_META],

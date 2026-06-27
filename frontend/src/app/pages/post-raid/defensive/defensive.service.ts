@@ -287,11 +287,6 @@ export function defensiveDetailRows(
     topAvg: ability.avg_damage,
     topMin: ability.min_damage,
     topMax: ability.max_damage,
-    // Defensive windows compare damage taken, not casts: the card hides the casts
-    // column (showCasts=false), so these carry neutral, never-rendered values.
-    playerCasts: 0,
-    topCasts: 0,
-    passive: false,
   }));
 }
 
@@ -338,9 +333,7 @@ export function buildDefensiveWindows(
       labels,
       status,
       statusIcon: icon,
-      // The overview is a window-level damage summary, not an ability row, so the
-      // casts fields are unused (neutral values).
-      overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max, playerCasts: 0, topCasts: 0, passive: false },
+      overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
       detailRows: defensiveDetailRows(window.ability_breakdown, playerWindow, abilities),
     });
     anchors.push(defensiveMapAnchor(window, abilities));

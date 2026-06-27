@@ -4,10 +4,7 @@ import { RangeRow } from '../../../core/models/window-comparison.models';
 import { mountVm } from '../../../../testing/component-harness';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
-  return {
-    label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null,
-    playerCasts: 0, topCasts: 0, passive: false, ...overrides,
-  };
+  return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
 }
 
 const mount = (r: RangeRow, extra: Record<string, unknown> = {}) =>
@@ -73,6 +70,11 @@ describe('CompactAbilityRowComponent casts badge', () => {
   it('reports critical state when player is 2+ casts below top', () => {
     const vm = mount(row({ playerCasts: 1, topCasts: 3 }));
     expect((vm['castsStatus'] as () => string)()).toBe('critical');
+  });
+
+  it('falls back to muted when top casts are unknown', () => {
+    const vm = mount(row({ playerCasts: 2, topCasts: null }));
+    expect((vm['castsStatus'] as () => string)()).toBe('muted');
   });
 
   it('reports passive when the row is passive', () => {

@@ -16,13 +16,12 @@ export interface RangeRow {
   topAvg: number | null;
   topMin: number | null;
   topMax: number | null;
-  // Cast counts for the sorted-impact table. The burst card renders these; the
-  // defensive card hides the casts column (showCasts=false) and sets them to 0.
-  playerCasts: number;
-  topCasts: number;
-  // True when the ability is passive (never cast), so the casts cell shows a muted
-  // "passive" tag instead of a count. The defensive card sets it to false.
-  passive: boolean;
+  // Cast counts for the sorted-impact table (burst windows only). Null when unavailable.
+  playerCasts?: number | null;
+  topCasts?: number | null;
+  // Burst windows only: the ability is passive (never cast), so the casts cell shows
+  // a muted "passive" tag instead of a count.
+  passive?: boolean;
 }
 
 /** A spell rendered in a window header chip: id + its baked icon + name. */

@@ -11,7 +11,7 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
     labels: [],
     status,
     statusIcon: 'check_circle',
-    overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false, ...overview },
+    overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overview },
     detailRows: [],
   };
 }
@@ -116,9 +116,9 @@ describe('WindowComparisonComponent activeDetailRows', () => {
 
   it('sorts rows by gap ascending (biggest loss first) when higherIsBetter', () => {
     const rows: RangeRow[] = [
-      { label: 'A', icon: '', playerPct: 90, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false },
-      { label: 'B', icon: '', playerPct: 50, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false },
-      { label: 'C', icon: '', playerPct: 120, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false },
+      { label: 'A', icon: '', playerPct: 90, topAvg: 100, topMin: null, topMax: null },
+      { label: 'B', icon: '', playerPct: 50, topAvg: 100, topMin: null, topMax: null },
+      { label: 'C', icon: '', playerPct: 120, topAvg: 100, topMin: null, topMax: null },
     ];
     const { vm } = mountVm(WindowComparisonComponent, { windows: [winWithRows(rows)], higherIsBetter: true });
     (vm['select'] as (i: number) => void)(0);
@@ -128,9 +128,9 @@ describe('WindowComparisonComponent activeDetailRows', () => {
 
   it('sorts rows so most damage taken (worst) is first when lower is better', () => {
     const rows: RangeRow[] = [
-      { label: 'A', icon: '', playerPct: 90, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false },  // loss = 10
-      { label: 'B', icon: '', playerPct: 150, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false }, // loss = -50 (worst)
-      { label: 'C', icon: '', playerPct: 80, topAvg: 100, topMin: null, topMax: null, playerCasts: 0, topCasts: 0, passive: false },  // loss = 20 (best)
+      { label: 'A', icon: '', playerPct: 90, topAvg: 100, topMin: null, topMax: null },  // loss = 10
+      { label: 'B', icon: '', playerPct: 150, topAvg: 100, topMin: null, topMax: null }, // loss = -50 (worst)
+      { label: 'C', icon: '', playerPct: 80, topAvg: 100, topMin: null, topMax: null },  // loss = 20 (best)
     ];
     const { vm } = mountVm(WindowComparisonComponent, { windows: [winWithRows(rows)], higherIsBetter: false });
     (vm['select'] as (i: number) => void)(0);
