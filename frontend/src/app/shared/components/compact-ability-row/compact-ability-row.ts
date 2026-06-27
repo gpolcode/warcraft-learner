@@ -43,14 +43,12 @@ export class CompactAbilityRowComponent {
 
   // Passive abilities (proc/auto/pet damage) are never cast, so the casts cell shows
   // a "passive" tag instead of a count. Semantic state only; the template renders it.
-  protected readonly isPassive = computed<boolean>(() => this.row().passive === true);
+  protected readonly isPassive = computed<boolean>(() => this.row().passive);
 
   protected readonly castsStatus = computed<RowStatus>(() => {
     const { playerCasts, topCasts } = this.row();
-    if (topCasts == null) return 'muted';
-    const player = playerCasts ?? 0;
-    if (player >= topCasts) return 'success';
-    if (topCasts - player <= 1) return 'warning';
+    if (playerCasts >= topCasts) return 'success';
+    if (topCasts - playerCasts <= 1) return 'warning';
     return 'critical';
   });
 }

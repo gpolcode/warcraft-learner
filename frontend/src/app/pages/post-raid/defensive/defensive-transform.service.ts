@@ -277,6 +277,10 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
           min_damage: Math.round(Math.min(...list)),
           max_damage: Math.round(Math.max(...list)),
           count: list.length,
+          // Defensive windows have no cast/passive dimension (damage-taken comparison);
+          // the shared AbilityBreakdown requires both, so set neutral values.
+          avg_casts: 0,
+          is_passive: false,
         }))
         .sort((a, b) => b.avg_damage - a.avg_damage)
         .slice(0, 6);

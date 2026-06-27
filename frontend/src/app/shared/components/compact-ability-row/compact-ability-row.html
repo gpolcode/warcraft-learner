@@ -51,7 +51,7 @@
               [class.badge-warning]="castsStatus() === 'warning'"
               [class.badge-critical]="castsStatus() === 'critical'"
               [class.badge-muted]="castsStatus() === 'muted'">
-          {{ row().playerCasts ?? 0 }}<span class="text-[var(--muted)]"> / {{ row().topCasts ?? '-' }}</span>
+          {{ row().playerCasts }}<span class="text-[var(--muted)]"> / {{ row().topCasts }}</span>
         </span>
       }
     }

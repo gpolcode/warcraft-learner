@@ -85,9 +85,10 @@ export function burstDetailRows(
     topAvg: ability.avg_damage,
     topMin: ability.min_damage,
     topMax: ability.max_damage,
-    playerCasts: playerByAbility[ability.spell_id]?.casts ?? null,
-    topCasts: ability.avg_casts ?? null,
-    passive: ability.is_passive ?? false,
+    // A bench ability the player never used in this window is genuinely 0 casts.
+    playerCasts: playerByAbility[ability.spell_id]?.casts ?? 0,
+    topCasts: ability.avg_casts,
+    passive: ability.is_passive,
   }));
 }
 
@@ -135,7 +136,9 @@ export function buildBurstView(
       labels,
       status,
       statusIcon: icon,
-      overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
+      // The overview is a window-level damage summary, not an ability row, so the
+      // casts fields are unused (neutral values).
+      overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max, playerCasts: 0, topCasts: 0, passive: false },
       detailRows: burstDetailRows(window.ability_breakdown, playerWindow, abilities),
     });
     anchors.push(burstMapAnchor(window, cdSpellIds, abilities));
