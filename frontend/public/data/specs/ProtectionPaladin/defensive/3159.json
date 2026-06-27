@@ -1,0 +1,671 @@
+{
+  "spec": "ProtectionPaladin",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Ardent Defender": {
+      "sample_count": 9,
+      "avg_first_cast_s": 92.9,
+      "stddev_first_cast_s": 112.7,
+      "avg_gap_s": 85.4,
+      "stddev_gap_s": 27.7,
+      "hold_targets": {},
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.64,
+      "uses_per_min": {
+        "avg": 0.644,
+        "stddev": 0.235,
+        "min": 0.123,
+        "max": 0.932
+      },
+      "majority_hold": false
+    },
+    "Guardian of Ancient Kings": {
+      "sample_count": 9,
+      "avg_first_cast_s": 174,
+      "stddev_first_cast_s": 156.2,
+      "avg_gap_s": 105,
+      "stddev_gap_s": 63.4,
+      "hold_targets": {},
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.412,
+        "stddev": 0.218,
+        "min": 0.116,
+        "max": 0.644
+      },
+      "majority_hold": false
+    },
+    "Shield of the Righteous": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.8,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 2.9,
+      "stddev_gap_s": 2.1,
+      "hold_targets": {},
+      "avg_uses": 159.3,
+      "avg_uses_per_min": 20.73,
+      "uses_per_min": {
+        "avg": 20.726,
+        "stddev": 1.703,
+        "min": 18.253,
+        "max": 23.494
+      },
+      "majority_hold": false
+    },
+    "Word of Glory": {
+      "sample_count": 10,
+      "avg_first_cast_s": 32.1,
+      "stddev_first_cast_s": 19.1,
+      "avg_gap_s": 21.7,
+      "stddev_gap_s": 29.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 95.2,
+          "stddev_s": 92.5,
+          "count": 6,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 137.1,
+          "stddev_s": 115,
+          "count": 5,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 106.7,
+          "stddev_s": 142.5,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 235,
+          "stddev_s": 135.6,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 274.5,
+          "stddev_s": 165.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 190.2,
+          "stddev_s": 69.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 19.5,
+      "avg_uses_per_min": 2.61,
+      "uses_per_min": {
+        "avg": 2.612,
+        "stddev": 1.62,
+        "min": 0.679,
+        "max": 5.186
+      },
+      "majority_hold": true
+    },
+    "Divine Shield": {
+      "sample_count": 4,
+      "avg_first_cast_s": 273,
+      "stddev_first_cast_s": 186.7,
+      "avg_gap_s": 274.4,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.157,
+        "stddev": 0.064,
+        "min": 0.116,
+        "max": 0.251
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 1,
+      "avg_first_cast_s": 410.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.136,
+        "stddev": 0,
+        "min": 0.136,
+        "max": 0.136
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 49.3,
+      "dmg_avg": 390420,
+      "dmg_stddev": 68265,
+      "dmg_min": 289692,
+      "dmg_max": 441052,
+      "window_length_s": 12,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 313245,
+          "min_damage": 178849,
+          "max_damage": 373512,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 62904,
+          "min_damage": 54767,
+          "max_damage": 67540,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 94.2,
+      "dmg_avg": 342715,
+      "dmg_stddev": 116910,
+      "dmg_min": 202302,
+      "dmg_max": 506067,
+      "window_length_s": 8,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 233449,
+          "min_damage": 164657,
+          "max_damage": 263193,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 42609,
+          "min_damage": 33149,
+          "max_damage": 48614,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 160.8,
+      "dmg_avg": 676811,
+      "dmg_stddev": 110591,
+      "dmg_min": 537844,
+      "dmg_max": 897108,
+      "window_length_s": 12,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 351070,
+          "min_damage": 310805,
+          "max_damage": 383247,
+          "count": 7
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 144477,
+          "min_damage": 116918,
+          "max_damage": 161892,
+          "count": 8
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 128095,
+          "min_damage": 97867,
+          "max_damage": 145517,
+          "count": 8
+        },
+        {
+          "spell_id": 1221717,
+          "avg_damage": 37822,
+          "min_damage": 24062,
+          "max_damage": 64434,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 210.4,
+      "dmg_avg": 382896,
+      "dmg_stddev": 118730,
+      "dmg_min": 210080,
+      "dmg_max": 478888,
+      "window_length_s": 8,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 249636,
+          "min_damage": 242351,
+          "max_damage": 263613,
+          "count": 3
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 102758,
+          "min_damage": 89010,
+          "max_damage": 125090,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 79379,
+          "min_damage": 74912,
+          "max_damage": 88732,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 233.3,
+      "dmg_avg": 470269,
+      "dmg_stddev": 158506,
+      "dmg_min": 175730,
+      "dmg_max": 665138,
+      "window_length_s": 12,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 279145,
+          "min_damage": 184245,
+          "max_damage": 359848,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 176317,
+          "min_damage": 147684,
+          "max_damage": 199500,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 297.3,
+      "dmg_avg": 637291,
+      "dmg_stddev": 103395,
+      "dmg_min": 544932,
+      "dmg_max": 747386,
+      "window_length_s": 12,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 277711,
+          "min_damage": 219563,
+          "max_damage": 365258,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 208279,
+          "min_damage": 203635,
+          "max_damage": 216819,
+          "count": 4
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 132780,
+          "min_damage": 115722,
+          "max_damage": 173137,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 346.6,
+      "dmg_avg": 275268,
+      "dmg_stddev": 208109,
+      "dmg_min": 51489,
+      "dmg_max": 495311,
+      "window_length_s": 6.4,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 194601,
+          "min_damage": 152400,
+          "max_damage": 274410,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 97892,
+          "min_damage": 51489,
+          "max_damage": 141314,
+          "count": 5
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 93890,
+          "min_damage": 89248,
+          "max_damage": 98113,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 368.6,
+      "dmg_avg": 646086,
+      "dmg_stddev": 152361,
+      "dmg_min": 471562,
+      "dmg_max": 922359,
+      "window_length_s": 12,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 273837,
+          "min_damage": 256541,
+          "max_damage": 291739,
+          "count": 7
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 272645,
+          "min_damage": 194663,
+          "max_damage": 362942,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 383,
+      "dmg_avg": 324710,
+      "dmg_stddev": 276510,
+      "dmg_min": 68831,
+      "dmg_max": 574380,
+      "window_length_s": 6,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 213419,
+          "min_damage": 205726,
+          "max_damage": 221111,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 102446,
+          "min_damage": 68831,
+          "max_damage": 126067,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 433.4,
+      "dmg_avg": 683425,
+      "dmg_stddev": 291590,
+      "dmg_min": 166588,
+      "dmg_max": 848639,
+      "window_length_s": 11.2,
+      "defensive_name": "Ardent Defender",
+      "spell_id": 31850,
+      "common_defensives": [
+        "Ardent Defender"
+      ],
+      "common_cds": [
+        "Ardent Defender"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 324169,
+          "min_damage": 296512,
+          "max_damage": 363737,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 239487,
+          "min_damage": 17916,
+          "max_damage": 349219,
+          "count": 5
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 128681,
+          "min_damage": 108998,
+          "max_damage": 138312,
+          "count": 4
+        },
+        {
+          "spell_id": 1221717,
+          "avg_damage": 57464,
+          "min_damage": 31017,
+          "max_damage": 107132,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31850,
+      "avg_uses": 5,
+      "min_uses": 1,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 86659,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 642,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 53600,
+      "avg_uses": 159.3,
+      "min_uses": 131,
+      "max_uses": 188
+    },
+    {
+      "spell_id": 85673,
+      "avg_uses": 19.5,
+      "min_uses": 5,
+      "max_uses": 35
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ardent Defender",
+      "spell_id": 31850,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Your largest damage reduction at 50%; reserve it for the most dangerous tankbusters or high-damage windows of the pull rather than pressing it on cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "A strong damage reduction on a long cooldown; save it for the single deadliest moment of the encounter or to cover a gap when Ardent Defender is down.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Your get-out-of-jail immunity; use it to negate a lethal hit or clear a dangerous debuff when no other defensive can survive the moment.",
+      "talent_gated": false
+    },
+    {
+      "name": "Shield of the Righteous",
+      "spell_id": 53600,
+      "cooldown": 16,
+      "duration": 4.5,
+      "usage_rule": "Spend 3-5 Holy Power to keep this active armor and block buff up across tankbusters and melee swings; never sit at Holy Power cap, but pool a charge so it covers the next big physical hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Word of Glory",
+      "spell_id": 85673,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend Holy Power to self-heal when your health drops below 50% or to top off before a known burst; cast it for free whenever the Shining Light proc is active.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Emergency full heal; press it when you are about to die and Word of Glory plus your healers cannot recover you in time.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ardent Defender": 31850,
+    "Guardian of Ancient Kings": 86659,
+    "Divine Shield": 642,
+    "Shield of the Righteous": 53600,
+    "Word of Glory": 85673,
+    "Lay on Hands": 633
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "31850": {
+      "icon": "spell_holy_ardentdefender",
+      "name": "Ardent Defender"
+    },
+    "53600": {
+      "icon": "ability_paladin_shieldofvengeance",
+      "name": "Shield of the Righteous"
+    },
+    "85673": {
+      "icon": "inv_helmet_96",
+      "name": "Word of Glory"
+    },
+    "86659": {
+      "icon": "spell_holy_heroism",
+      "name": "Guardian of Ancient Kings"
+    },
+    "1221717": {
+      "icon": "inv_ability_poison_missile",
+      "name": "Blightshot"
+    },
+    "1221781": {
+      "icon": "inv_misc_herb_ancientlichen",
+      "name": "Putrid Fist"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "3464bd6d432a3bd0"
+}

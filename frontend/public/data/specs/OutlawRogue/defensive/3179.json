@@ -1,0 +1,225 @@
+{
+  "spec": "OutlawRogue",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 6,
+      "avg_first_cast_s": 94.9,
+      "stddev_first_cast_s": 46.9,
+      "avg_gap_s": 43.2,
+      "stddev_gap_s": 36.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 215.9,
+          "stddev_s": 66.5,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.77,
+      "uses_per_min": {
+        "avg": 0.773,
+        "stddev": 0.493,
+        "min": 0.288,
+        "max": 1.504
+      },
+      "majority_hold": true
+    },
+    "Cloak of Shadows": {
+      "sample_count": 3,
+      "avg_first_cast_s": 208.7,
+      "stddev_first_cast_s": 74.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.232,
+        "stddev": 0.053,
+        "min": 0.171,
+        "max": 0.27
+      },
+      "majority_hold": false
+    },
+    "Evasion": {
+      "sample_count": 1,
+      "avg_first_cast_s": 194.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.255,
+        "stddev": 0,
+        "min": 0.255,
+        "max": 0.255
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 103,
+      "dmg_avg": 242326,
+      "dmg_stddev": 49711,
+      "dmg_min": 172696,
+      "dmg_max": 321466,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 189256,
+          "min_damage": 172696,
+          "max_damage": 213892,
+          "count": 4
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 129026,
+          "min_damage": 66318,
+          "max_damage": 229285,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 212.6,
+      "dmg_avg": 351776,
+      "dmg_stddev": 151711,
+      "dmg_min": 207464,
+      "dmg_max": 555727,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 338290,
+          "min_damage": 231997,
+          "max_damage": 444582,
+          "count": 2
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 129984,
+          "min_damage": 111145,
+          "max_damage": 139613,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 1966,
+      "avg_uses": 3.3,
+      "min_uses": 1,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 31224,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Crimson Vial": 185311,
+    "Feint": 1966,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "3b7df85867b5c6a6"
+}
