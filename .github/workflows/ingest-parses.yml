@@ -4,7 +4,6 @@ on:
   # Hourly scheduling is driven by an EXTERNAL scheduler (cron-job.org) that calls the
   # workflow_dispatch REST API once an hour. GitHub's own schedule: cron was removed - it
   # dropped most fires under load (3 fires in 7 hours observed) and ignores the set minute.
-  # See .github/INGEST_TRIGGER.md for the cron-job.org + token setup.
   workflow_dispatch:
 
 concurrency:
