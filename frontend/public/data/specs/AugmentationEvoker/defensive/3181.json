@@ -2,64 +2,51 @@
   "spec": "AugmentationEvoker",
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
-      "sample_count": 9,
-      "avg_first_cast_s": 161.6,
-      "stddev_first_cast_s": 160.5,
-      "avg_gap_s": 38.1,
-      "stddev_gap_s": 67.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 189.9,
+      "stddev_first_cast_s": 175.2,
+      "avg_gap_s": 38.2,
+      "stddev_gap_s": 66.1,
       "hold_targets": {},
-      "avg_uses": 8.2,
-      "avg_uses_per_min": 1.07,
+      "avg_uses": 7.3,
+      "avg_uses_per_min": 0.94,
       "uses_per_min": {
-        "avg": 1.069,
-        "stddev": 0.432,
-        "min": 0.545,
+        "avg": 0.945,
+        "stddev": 0.466,
+        "min": 0.359,
         "max": 1.947
       },
       "majority_hold": true
     },
     "Zephyr": {
-      "sample_count": 2,
-      "avg_first_cast_s": 443.2,
-      "stddev_first_cast_s": 13.7,
-      "avg_gap_s": 0,
-      "stddev_gap_s": 0,
+      "sample_count": 4,
+      "avg_first_cast_s": 326.9,
+      "stddev_first_cast_s": 180.7,
+      "avg_gap_s": 199.7,
+      "stddev_gap_s": 278.7,
       "hold_targets": {},
-      "avg_uses": 5,
-      "avg_uses_per_min": 0.56,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.561,
-        "stddev": 0.006,
-        "min": 0.557,
-        "max": 0.565
+        "avg": 0.183,
+        "stddev": 0.06,
+        "min": 0.124,
+        "max": 0.242
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 46.5,
-      "stddev_s": 16.9,
-      "count": 11,
-      "total_samples": 9,
-      "dmg_avg": 225304,
-      "dmg_stddev": 213177,
+      "time_s": 25.1,
+      "dmg_avg": 454900,
+      "dmg_stddev": 301712,
       "dmg_min": 0,
-      "dmg_max": 600614,
-      "ability_breakdown": [
-        {
-          "spell_id": 1281707,
-          "avg_damage": 137041,
-          "min_damage": 32916,
-          "max_damage": 253767,
-          "count": 9
-        }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 6.2,
+      "dmg_max": 778823,
+      "window_length_s": 9.8,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -67,35 +54,46 @@
       ],
       "common_cds": [
         "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281707,
+          "avg_damage": 238768,
+          "min_damage": 159742,
+          "max_damage": 303423,
+          "count": 4
+        },
+        {
+          "spell_id": 1233649,
+          "avg_damage": 169760,
+          "min_damage": 163452,
+          "max_damage": 182377,
+          "count": 3
+        },
+        {
+          "spell_id": 1243743,
+          "avg_damage": 75511,
+          "min_damage": 68823,
+          "max_damage": 79644,
+          "count": 3
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 71335,
+          "min_damage": 29351,
+          "max_damage": 101454,
+          "count": 3
+        }
       ]
     },
     {
-      "time_s": 85.4,
-      "stddev_s": 11.8,
-      "count": 4,
-      "total_samples": 9,
-      "dmg_avg": 154404,
-      "dmg_stddev": 192503,
+      "time_s": 64.5,
+      "dmg_avg": 162647,
+      "dmg_stddev": 116729,
       "dmg_min": 0,
-      "dmg_max": 426014,
-      "ability_breakdown": [
-        {
-          "spell_id": 1281707,
-          "avg_damage": 155252,
-          "min_damage": 153641,
-          "max_damage": 156862,
-          "count": 2
-        },
-        {
-          "spell_id": 1260027,
-          "avg_damage": 138108,
-          "min_damage": 37960,
-          "max_damage": 238256,
-          "count": 2
-        }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 5.5,
+      "dmg_max": 332364,
+      "window_length_s": 5.9,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -103,23 +101,40 @@
       ],
       "common_cds": [
         "Obsidian Scales"
+      ],
+      "ref_game_id": 243811,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281707,
+          "avg_damage": 104354,
+          "min_damage": 33717,
+          "max_damage": 155438,
+          "count": 6
+        }
       ]
     },
     {
       "time_s": 227.7,
-      "stddev_s": 11.6,
-      "count": 9,
-      "total_samples": 9,
-      "dmg_avg": 256498,
-      "dmg_stddev": 216068,
+      "dmg_avg": 280050,
+      "dmg_stddev": 244134,
       "dmg_min": 24450,
       "dmg_max": 656925,
+      "window_length_s": 7.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
       "ability_breakdown": [
         {
           "spell_id": 1260019,
-          "avg_damage": 101563,
+          "avg_damage": 102448,
           "min_damage": 19859,
-          "max_damage": 158154,
+          "max_damage": 164352,
           "count": 7
         },
         {
@@ -129,59 +144,15 @@
           "max_damage": 73350,
           "count": 5
         }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 7.1,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
       ]
     },
     {
       "time_s": 252.1,
-      "stddev_s": 3.6,
-      "count": 4,
-      "total_samples": 9,
-      "dmg_avg": 221356,
-      "dmg_stddev": 169780,
-      "dmg_min": 112726,
-      "dmg_max": 474671,
-      "ability_breakdown": [
-        {
-          "spell_id": 1237040,
-          "avg_damage": 97618,
-          "min_damage": 47912,
-          "max_damage": 127764,
-          "count": 3
-        },
-        {
-          "spell_id": 1260000,
-          "avg_damage": 70791,
-          "min_damage": 47644,
-          "max_damage": 93938,
-          "count": 2
-        },
-        {
-          "spell_id": 1233826,
-          "avg_damage": 26543,
-          "min_damage": 25728,
-          "max_damage": 27357,
-          "count": 2
-        },
-        {
-          "spell_id": 1260019,
-          "avg_damage": 19279,
-          "min_damage": 18788,
-          "max_damage": 19770,
-          "count": 2
-        }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 4.9,
+      "dmg_avg": 79680,
+      "dmg_stddev": 58595,
+      "dmg_min": 20487,
+      "dmg_max": 144534,
+      "window_length_s": 3.2,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -189,41 +160,31 @@
       ],
       "common_cds": [
         "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1237040,
+          "avg_damage": 56275,
+          "min_damage": 17216,
+          "max_damage": 117177,
+          "count": 3
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 4907,
+          "min_damage": 3271,
+          "max_damage": 6542,
+          "count": 2
+        }
       ]
     },
     {
       "time_s": 377.1,
-      "stddev_s": 9.9,
-      "count": 11,
-      "total_samples": 9,
-      "dmg_avg": 307848,
-      "dmg_stddev": 210826,
+      "dmg_avg": 307987,
+      "dmg_stddev": 234167,
       "dmg_min": 15983,
       "dmg_max": 647462,
-      "ability_breakdown": [
-        {
-          "spell_id": 1239095,
-          "avg_damage": 179217,
-          "min_damage": 92084,
-          "max_damage": 301619,
-          "count": 8
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 107245,
-          "min_damage": 15095,
-          "max_damage": 192458,
-          "count": 8
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 92348,
-          "min_damage": 15983,
-          "max_damage": 179753,
-          "count": 11
-        }
-      ],
-      "ref_game_id": 240430,
       "window_length_s": 7,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
@@ -232,42 +193,79 @@
       ],
       "common_cds": [
         "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 200528,
+          "min_damage": 101867,
+          "max_damage": 301619,
+          "count": 7
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 106994,
+          "min_damage": 15983,
+          "max_damage": 220155,
+          "count": 10
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 106918,
+          "min_damage": 32212,
+          "max_damage": 192458,
+          "count": 7
+        }
       ]
     },
     {
-      "time_s": 418.7,
-      "stddev_s": 12.2,
-      "count": 16,
-      "total_samples": 9,
-      "dmg_avg": 288778,
-      "dmg_stddev": 179085,
+      "time_s": 419.1,
+      "dmg_avg": 282928,
+      "dmg_stddev": 177937,
       "dmg_min": 0,
-      "dmg_max": 692761,
+      "dmg_max": 688433,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 186103,
-          "min_damage": 96453,
-          "max_damage": 295346,
-          "count": 9
+          "avg_damage": 153550,
+          "min_damage": 82639,
+          "max_damage": 289714,
+          "count": 10
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 92641,
+          "avg_damage": 109365,
           "min_damage": 15250,
-          "max_damage": 167108,
-          "count": 13
+          "max_damage": 399759,
+          "count": 14
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 81865,
+          "avg_damage": 90372,
           "min_damage": 14879,
-          "max_damage": 170049,
-          "count": 8
+          "max_damage": 185712,
+          "count": 12
         }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 6.6,
+      ]
+    },
+    {
+      "time_s": 450.6,
+      "dmg_avg": 201043,
+      "dmg_stddev": 162197,
+      "dmg_min": 0,
+      "dmg_max": 371620,
+      "window_length_s": 4.1,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -275,118 +273,85 @@
       ],
       "common_cds": [
         "Obsidian Scales"
-      ]
-    },
-    {
-      "time_s": 443.2,
-      "stddev_s": 10.2,
-      "count": 10,
-      "total_samples": 9,
-      "dmg_avg": 479585,
-      "dmg_stddev": 133164,
-      "dmg_min": 353255,
-      "dmg_max": 605915,
+      ],
+      "ref_game_id": 240430,
       "ability_breakdown": [
         {
-          "spell_id": 1239095,
-          "avg_damage": 224877,
-          "min_damage": 195282,
-          "max_damage": 254471,
-          "count": 10
+          "spell_id": 1260027,
+          "avg_damage": 150200,
+          "min_damage": 129886,
+          "max_damage": 162358,
+          "count": 3
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 139521,
-          "min_damage": 66797,
-          "max_damage": 212245,
-          "count": 10
+          "avg_damage": 75154,
+          "min_damage": 47958,
+          "max_damage": 108459,
+          "count": 4
         },
         {
-          "spell_id": 1233826,
-          "avg_damage": 139199,
-          "min_damage": 139199,
-          "max_damage": 139199,
-          "count": 5
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 91176,
-          "min_damage": 91176,
-          "max_damage": 91176,
-          "count": 5
+          "spell_id": 1238709,
+          "avg_damage": 23979,
+          "min_damage": 11989,
+          "max_damage": 35968,
+          "count": 3
         }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 8.8,
-      "defensive_name": "Zephyr",
-      "spell_id": 374227,
-      "common_defensives": [
-        "Zephyr"
-      ],
-      "common_cds": [
-        "Zephyr"
       ]
     },
     {
-      "time_s": 490,
-      "stddev_s": 7.6,
-      "count": 6,
-      "total_samples": 9,
-      "dmg_avg": 315996,
-      "dmg_stddev": 235790,
-      "dmg_min": 48171,
-      "dmg_max": 593175,
+      "time_s": 486.9,
+      "dmg_avg": 329823,
+      "dmg_stddev": 183460,
+      "dmg_min": 98607,
+      "dmg_max": 566354,
+      "window_length_s": 7.8,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240430,
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 165568,
-          "min_damage": 99871,
+          "avg_damage": 187467,
+          "min_damage": 129954,
           "max_damage": 235391,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 150378,
+          "min_damage": 98607,
+          "max_damage": 190985,
           "count": 4
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 109575,
-          "min_damage": 31563,
-          "max_damage": 180862,
-          "count": 4
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 95392,
-          "min_damage": 16608,
-          "max_damage": 156059,
-          "count": 5
+          "avg_damage": 145545,
+          "min_damage": 52273,
+          "max_damage": 203500,
+          "count": 3
         }
-      ],
-      "ref_game_id": 240430,
-      "window_length_s": 6.5,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Obsidian Scales",
       "spell_id": 363916,
-      "avg_uses": 8.2,
-      "min_uses": 4,
-      "max_uses": 15,
-      "sample_count": 9
+      "avg_uses": 7.3,
+      "min_uses": 3,
+      "max_uses": 15
     },
     {
-      "name": "Zephyr",
       "spell_id": 374227,
-      "avg_uses": 5,
-      "min_uses": 5,
-      "max_uses": 5,
-      "sample_count": 2
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -419,7 +384,7 @@
       "spell_id": 370888,
       "cooldown": 90,
       "duration": 5,
-      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike, noted as a best-guess spell ID.",
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
       "talent_gated": true
     }
   ],
@@ -429,5 +394,67 @@
     "Zephyr": 374227,
     "Twin Guardian": 370888
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1233649": {
+      "icon": "inv_ammo_arrow_03",
+      "name": "Silverstrike Arrow"
+    },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1238709": {
+      "icon": "inv_icon_feather01d",
+      "name": "Dark Rush"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1243743": {
+      "icon": "ability_priest_surgeofdarkness",
+      "name": "Interrupting Tremor"
+    },
+    "1260019": {
+      "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
+      "name": "Simulacrum Backlash"
+    },
+    "1260027": {
+      "icon": "inv_shadowelementalmount",
+      "name": "Grasp of Emptiness"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    },
+    "1281707": {
+      "icon": "spell_priest_burningwill_shadow",
+      "name": "Echoing Darkness"
+    }
+  },
+  "source_signature": "df6a717d64c9c7d0"
 }

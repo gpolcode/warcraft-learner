@@ -2,122 +2,122 @@
   "spec": "AssassinationRogue",
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
-  "sample_count": 12,
-  "avg_duration_s": 522.7,
-  "downtime_threshold_ms": 1302,
-  "top_avg_efficiency": 67.7,
-  "top_efficiency_stddev": 4.7,
+  "sample_count": 10,
+  "avg_duration_s": 524.6,
+  "downtime_threshold_ms": 1275,
+  "top_avg_efficiency": 67.5,
+  "top_efficiency_stddev": 4.3,
   "per_cd_benchmarks": {
     "Deathmark": {
-      "sample_count": 12,
-      "avg_first_cast_s": 9.8,
-      "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 124.6,
-      "stddev_gap_s": 4.6,
-      "hold_targets": {
-        "4": {
-          "target_s": 380.6,
-          "stddev_s": 5.9,
-          "count": 9,
-          "total_samples": 12
-        },
-        "5": {
-          "target_s": 507.5,
-          "stddev_s": 6.5,
-          "count": 10,
-          "total_samples": 12
-        }
-      },
+      "sample_count": 10,
+      "avg_first_cast_s": 9.5,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 125.6,
+      "stddev_gap_s": 7.2,
+      "avg_bl_offset_s": 12,
+      "stddev_bl_offset_s": 5.4,
       "avg_uses": 4.8,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.555,
-        "stddev": 0.043,
+        "avg": 0.549,
+        "stddev": 0.045,
         "min": 0.463,
-        "max": 0.592
+        "max": 0.58
       },
+      "bl_pct": 100,
       "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {
+        "4": {
+          "target_s": 380.9,
+          "stddev_s": 6.2,
+          "count": 8,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 508.9,
+          "stddev_s": 12.6,
+          "count": 8,
+          "total_samples": 10
+        }
+      }
     },
     "Kingsbane": {
-      "sample_count": 12,
-      "avg_first_cast_s": 10.8,
-      "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 63.5,
-      "stddev_gap_s": 7.6,
+      "sample_count": 10,
+      "avg_first_cast_s": 10.5,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 64.1,
+      "stddev_gap_s": 8.9,
+      "avg_bl_offset_s": 13.4,
+      "stddev_bl_offset_s": 5.6,
+      "avg_uses": 8.6,
+      "avg_uses_per_min": 0.98,
+      "uses_per_min": {
+        "avg": 0.984,
+        "stddev": 0.053,
+        "min": 0.919,
+        "max": 1.044
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
       "hold_targets": {
         "7": {
           "target_s": 381.9,
-          "stddev_s": 6.7,
-          "count": 9,
-          "total_samples": 12
+          "stddev_s": 7.2,
+          "count": 8,
+          "total_samples": 10
         },
         "8": {
           "target_s": 452.7,
-          "stddev_s": 18.7,
-          "count": 12,
-          "total_samples": 12
+          "stddev_s": 19.6,
+          "count": 10,
+          "total_samples": 10
         },
         "9": {
-          "target_s": 508.7,
-          "stddev_s": 8.4,
-          "count": 8,
-          "total_samples": 12
+          "target_s": 514.2,
+          "stddev_s": 13.2,
+          "count": 6,
+          "total_samples": 10
         }
-      },
-      "avg_uses": 8.7,
-      "avg_uses_per_min": 0.99,
-      "uses_per_min": {
-        "avg": 0.995,
-        "stddev": 0.054,
-        "min": 0.919,
-        "max": 1.065
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Vanish": {
-      "sample_count": 12,
-      "avg_first_cast_s": 49,
-      "stddev_first_cast_s": 56.8,
-      "avg_gap_s": 125.4,
-      "stddev_gap_s": 5.4,
-      "hold_targets": {
-        "3": {
-          "target_s": 264.7,
-          "stddev_s": 58.7,
-          "count": 6,
-          "total_samples": 12
-        },
-        "4": {
-          "target_s": 391.5,
-          "stddev_s": 58.4,
-          "count": 11,
-          "total_samples": 12
-        },
-        "5": {
-          "target_s": 511.5,
-          "stddev_s": 8.3,
-          "count": 5,
-          "total_samples": 12
-        }
-      },
-      "avg_uses": 4.4,
-      "avg_uses_per_min": 0.51,
+      "sample_count": 10,
+      "avg_first_cast_s": 33.9,
+      "stddev_first_cast_s": 48.2,
+      "avg_gap_s": 125.6,
+      "stddev_gap_s": 6.2,
+      "avg_bl_offset_s": 13.6,
+      "stddev_bl_offset_s": 8.6,
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.507,
-        "stddev": 0.058,
+        "avg": 0.526,
+        "stddev": 0.06,
         "min": 0.44,
         "max": 0.58
       },
+      "bl_pct": 100,
       "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {
+        "3": {
+          "target_s": 261.4,
+          "stddev_s": 3.7,
+          "count": 4,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 384.4,
+          "stddev_s": 50.2,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 512.6,
+          "stddev_s": 10.3,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
     }
   },
   "major_cooldowns": [
@@ -206,5 +206,35 @@
     "Feint": 1966,
     "Crimson Vial": 185311
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "360194": {
+      "icon": "ability_rogue_deathmark",
+      "name": "Deathmark"
+    },
+    "385627": {
+      "icon": "inv_knife_1h_artifactgarona_d_01",
+      "name": "Kingsbane"
+    }
+  },
+  "source_signature": "6b31eeecbd769804"
 }

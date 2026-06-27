@@ -2,85 +2,85 @@
   "spec": "AssassinationRogue",
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
-  "sample_count": 14,
-  "avg_duration_s": 204.7,
-  "downtime_threshold_ms": 1145,
-  "top_avg_efficiency": 73.5,
-  "top_efficiency_stddev": 8.1,
+  "sample_count": 10,
+  "avg_duration_s": 201.6,
+  "downtime_threshold_ms": 1120,
+  "top_avg_efficiency": 74.3,
+  "top_efficiency_stddev": 6.9,
   "per_cd_benchmarks": {
     "Deathmark": {
-      "sample_count": 14,
-      "avg_first_cast_s": 7.3,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 130.4,
-      "stddev_gap_s": 15.8,
+      "sample_count": 10,
+      "avg_first_cast_s": 7.2,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 132.7,
+      "stddev_gap_s": 18.4,
+      "avg_bl_offset_s": 6.3,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.6,
+      "uses_per_min": {
+        "avg": 0.597,
+        "stddev": 0.028,
+        "min": 0.531,
+        "max": 0.631
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
           "target_s": 137.1,
-          "stddev_s": 20.5,
-          "count": 7,
-          "total_samples": 14
+          "stddev_s": 22,
+          "count": 6,
+          "total_samples": 10
         }
-      },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.59,
-      "uses_per_min": {
-        "avg": 0.588,
-        "stddev": 0.033,
-        "min": 0.514,
-        "max": 0.631
-      },
-      "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Kingsbane": {
-      "sample_count": 14,
-      "avg_first_cast_s": 8.3,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 62.3,
-      "stddev_gap_s": 2.7,
-      "hold_targets": {
-        "3": {
-          "target_s": 137.6,
-          "stddev_s": 1.3,
-          "count": 6,
-          "total_samples": 14
-        }
-      },
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 1.11,
+      "sample_count": 10,
+      "avg_first_cast_s": 8.2,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 62.5,
+      "stddev_gap_s": 2.9,
+      "avg_bl_offset_s": 7.3,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 1.1,
       "uses_per_min": {
-        "avg": 1.11,
-        "stddev": 0.116,
+        "avg": 1.1,
+        "stddev": 0.131,
         "min": 0.909,
         "max": 1.254
       },
+      "bl_pct": 80,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {
+        "3": {
+          "target_s": 138.1,
+          "stddev_s": 1.2,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Vanish": {
-      "sample_count": 14,
-      "avg_first_cast_s": 39.7,
-      "stddev_first_cast_s": 58.8,
-      "avg_gap_s": 122.8,
-      "stddev_gap_s": 2.8,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 51.1,
+      "stddev_first_cast_s": 67,
+      "avg_gap_s": 123.2,
+      "stddev_gap_s": 3.5,
+      "avg_bl_offset_s": 9.8,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.504,
-        "stddev": 0.14,
+        "avg": 0.478,
+        "stddev": 0.159,
         "min": 0.265,
         "max": 0.627
       },
+      "bl_pct": 50,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -169,5 +169,35 @@
     "Feint": 1966,
     "Crimson Vial": 185311
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "360194": {
+      "icon": "ability_rogue_deathmark",
+      "name": "Deathmark"
+    },
+    "385627": {
+      "icon": "inv_knife_1h_artifactgarona_d_01",
+      "name": "Kingsbane"
+    }
+  },
+  "source_signature": "86b7dc9649dc8323"
 }

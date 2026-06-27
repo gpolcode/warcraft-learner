@@ -2,107 +2,84 @@
   "spec": "AugmentationEvoker",
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 9,
-      "avg_first_cast_s": 81.1,
-      "stddev_first_cast_s": 15.3,
-      "avg_gap_s": 18.3,
-      "stddev_gap_s": 22.3,
+      "avg_first_cast_s": 83.7,
+      "stddev_first_cast_s": 13.9,
+      "avg_gap_s": 20.8,
+      "stddev_gap_s": 24.6,
       "hold_targets": {},
-      "avg_uses": 4.1,
-      "avg_uses_per_min": 1.35,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 1.348,
-        "stddev": 0.391,
-        "min": 0.686,
-        "max": 1.947
+        "avg": 1.093,
+        "stddev": 0.374,
+        "min": 0.634,
+        "max": 1.683
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 2,
-      "avg_first_cast_s": 86.7,
-      "stddev_first_cast_s": 38.4,
-      "avg_gap_s": 0,
+      "sample_count": 4,
+      "avg_first_cast_s": 73.9,
+      "stddev_first_cast_s": 26.6,
+      "avg_gap_s": 139.9,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 5,
-      "avg_uses_per_min": 1.64,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 1.638,
-        "stddev": 0.055,
-        "min": 1.599,
-        "max": 1.677
+        "avg": 0.387,
+        "stddev": 0.127,
+        "min": 0.317,
+        "max": 0.578
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 59.5,
-      "stddev_s": 0,
-      "count": 5,
-      "total_samples": 9,
-      "dmg_avg": 403436,
-      "dmg_stddev": 5850,
-      "dmg_min": 397027,
-      "dmg_max": 407708,
-      "ability_breakdown": [
-        {
-          "spell_id": 1275558,
-          "avg_damage": 355798,
-          "min_damage": 355798,
-          "max_damage": 355798,
-          "count": 5
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 47638,
-          "min_damage": 41229,
-          "max_damage": 51910,
-          "count": 5
-        }
-      ],
-      "ref_game_id": 240434,
-      "window_length_s": 8.7,
-      "defensive_name": "Zephyr",
-      "spell_id": 374227,
+      "time_s": 89,
+      "dmg_avg": 237670,
+      "dmg_stddev": 182253,
+      "dmg_min": 9988,
+      "dmg_max": 541421,
+      "window_length_s": 7.8,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
       "common_defensives": [
-        "Zephyr"
+        "Obsidian Scales"
       ],
       "common_cds": [
-        "Zephyr"
-      ]
-    },
-    {
-      "time_s": 86.1,
-      "stddev_s": 13.1,
-      "count": 21,
-      "total_samples": 9,
-      "dmg_avg": 202836,
-      "dmg_stddev": 182208,
-      "dmg_min": 0,
-      "dmg_max": 541421,
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 144493,
-          "min_damage": 52053,
+          "avg_damage": 154119,
+          "min_damage": 56946,
           "max_damage": 258662,
-          "count": 11
+          "count": 10
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 35527,
-          "min_damage": 8861,
+          "avg_damage": 37776,
+          "min_damage": 9895,
           "max_damage": 67123,
-          "count": 19
+          "count": 17
         }
-      ],
-      "ref_game_id": 240434,
-      "window_length_s": 7,
+      ]
+    },
+    {
+      "time_s": 115.5,
+      "dmg_avg": 106250,
+      "dmg_stddev": 85178,
+      "dmg_min": 8037,
+      "dmg_max": 215777,
+      "window_length_s": 5.4,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -110,96 +87,41 @@
       ],
       "common_cds": [
         "Obsidian Scales"
-      ]
-    },
-    {
-      "time_s": 113.8,
-      "stddev_s": 0,
-      "count": 5,
-      "total_samples": 9,
-      "dmg_avg": 173858,
-      "dmg_stddev": 0,
-      "dmg_min": 173858,
-      "dmg_max": 173858,
-      "ability_breakdown": [
-        {
-          "spell_id": 1280101,
-          "avg_damage": 99844,
-          "min_damage": 99844,
-          "max_damage": 99844,
-          "count": 5
-        },
-        {
-          "spell_id": 1243270,
-          "avg_damage": 46759,
-          "min_damage": 46759,
-          "max_damage": 46759,
-          "count": 5
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 27255,
-          "min_damage": 27255,
-          "max_damage": 27255,
-          "count": 5
-        }
       ],
       "ref_game_id": 240434,
-      "window_length_s": 8.7,
-      "defensive_name": "Zephyr",
-      "spell_id": 374227,
-      "common_defensives": [
-        "Zephyr"
-      ],
-      "common_cds": [
-        "Zephyr"
-      ]
-    },
-    {
-      "time_s": 114,
-      "stddev_s": 4.4,
-      "count": 7,
-      "total_samples": 9,
-      "dmg_avg": 98234,
-      "dmg_stddev": 92010,
-      "dmg_min": 8037,
-      "dmg_max": 224676,
       "ability_breakdown": [
         {
           "spell_id": 1280101,
-          "avg_damage": 96578,
+          "avg_damage": 95862,
           "min_damage": 12005,
           "max_damage": 187741,
-          "count": 5
+          "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 22570,
+          "avg_damage": 22664,
           "min_damage": 7287,
-          "max_damage": 49099,
-          "count": 7
+          "max_damage": 47297,
+          "count": 4
         }
-      ],
-      "ref_game_id": 240434,
-      "window_length_s": 4.9,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
       ]
     },
     {
       "time_s": 166.4,
-      "stddev_s": 7.3,
-      "count": 6,
-      "total_samples": 9,
       "dmg_avg": 138875,
       "dmg_stddev": 89085,
       "dmg_min": 19976,
       "dmg_max": 214583,
+      "window_length_s": 9.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
       "ability_breakdown": [
         {
           "spell_id": 1272328,
@@ -222,35 +144,21 @@
           "max_damage": 65534,
           "count": 3
         }
-      ],
-      "ref_game_id": 240434,
-      "window_length_s": 9.9,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Obsidian Scales",
       "spell_id": 363916,
-      "avg_uses": 4.1,
+      "avg_uses": 3.3,
       "min_uses": 2,
-      "max_uses": 6,
-      "sample_count": 9
+      "max_uses": 5
     },
     {
-      "name": "Zephyr",
       "spell_id": 374227,
-      "avg_uses": 5,
-      "min_uses": 5,
-      "max_uses": 5,
-      "sample_count": 2
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -283,7 +191,7 @@
       "spell_id": 370888,
       "cooldown": 90,
       "duration": 5,
-      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike, noted as a best-guess spell ID.",
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
       "talent_gated": true
     }
   ],
@@ -293,5 +201,43 @@
     "Zephyr": 374227,
     "Twin Guardian": 370888
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1280101": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Dark Energy"
+    }
+  },
+  "source_signature": "7a08910909f25c54"
 }

@@ -3,9 +3,9 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 190.8,
-  "downtime_threshold_ms": 2007,
-  "top_avg_efficiency": 77.2,
+  "avg_duration_s": 187.1,
+  "downtime_threshold_ms": 1985,
+  "top_avg_efficiency": 76.9,
   "top_efficiency_stddev": 5.1,
   "per_cd_benchmarks": {
     "Breath of Eons": {
@@ -14,139 +14,144 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Ebon Might": {
       "sample_count": 10,
-      "avg_first_cast_s": 2,
+      "avg_first_cast_s": 2.1,
       "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 46.5,
-      "stddev_gap_s": 22.3,
+      "avg_gap_s": 44.8,
+      "stddev_gap_s": 20.4,
+      "avg_bl_offset_s": 3.8,
+      "stddev_bl_offset_s": 7.3,
+      "avg_uses": 4.5,
+      "avg_uses_per_min": 1.45,
+      "uses_per_min": {
+        "avg": 1.446,
+        "stddev": 0.223,
+        "min": 1.146,
+        "max": 1.959
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 64.9,
-          "stddev_s": 12,
+          "target_s": 74.9,
+          "stddev_s": 15.9,
           "count": 9,
           "total_samples": 10
         },
         "3": {
           "target_s": 119.2,
-          "stddev_s": 12,
+          "stddev_s": 18.7,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 148.9,
-          "stddev_s": 13.6,
+          "target_s": 146.1,
+          "stddev_s": 12.5,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 173.5,
-          "stddev_s": 22.9,
+          "target_s": 166.5,
+          "stddev_s": 17.6,
           "count": 4,
           "total_samples": 10
         }
-      },
-      "avg_uses": 4.5,
-      "avg_uses_per_min": 1.42,
-      "uses_per_min": {
-        "avg": 1.415,
-        "stddev": 0.18,
-        "min": 1.146,
-        "max": 1.821
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": -3,
-      "stddev_bl_offset_s": 23.9,
-      "bl_pct": 100
+      }
     },
     "Tip the Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.3,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 65.8,
-      "stddev_gap_s": 19.6,
-      "hold_targets": {},
+      "avg_first_cast_s": 5.5,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 65.6,
+      "stddev_gap_s": 19.8,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 8.8,
       "avg_uses": 3.4,
-      "avg_uses_per_min": 1.07,
+      "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 1.066,
-        "stddev": 0.103,
-        "min": 0.91,
-        "max": 1.204
+        "avg": 1.087,
+        "stddev": 0.112,
+        "min": 0.96,
+        "max": 1.277
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": -23.9,
-      "stddev_bl_offset_s": 1.5,
-      "bl_pct": 100
+      "hold_targets": {}
     },
     "Time Skip": {
       "sample_count": 10,
-      "avg_first_cast_s": 9,
-      "stddev_first_cast_s": 2.4,
-      "avg_gap_s": 137.7,
-      "stddev_gap_s": 4.5,
-      "hold_targets": {},
+      "avg_first_cast_s": 9.2,
+      "stddev_first_cast_s": 2.2,
+      "avg_gap_s": 137.1,
+      "stddev_gap_s": 4.6,
+      "avg_bl_offset_s": 8.7,
+      "stddev_bl_offset_s": 2.6,
       "avg_uses": 2,
-      "avg_uses_per_min": 0.63,
+      "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.633,
-        "stddev": 0.054,
-        "min": 0.57,
+        "avg": 0.644,
+        "stddev": 0.048,
+        "min": 0.573,
         "max": 0.74
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Fire Breath": {
       "sample_count": 10,
       "avg_first_cast_s": 5.7,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 20.1,
-      "stddev_gap_s": 6.3,
-      "hold_targets": {},
-      "avg_uses": 9.6,
-      "avg_uses_per_min": 3.02,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 20.3,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": 4.6,
+      "stddev_bl_offset_s": 1.7,
+      "avg_uses": 9.3,
+      "avg_uses_per_min": 2.98,
       "uses_per_min": {
-        "avg": 3.02,
+        "avg": 2.984,
         "stddev": 0.124,
         "min": 2.865,
         "max": 3.291
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": 1.7,
-      "stddev_bl_offset_s": 3.2,
-      "bl_pct": 100
+      "hold_targets": {}
     },
     "Upheaval": {
       "sample_count": 10,
       "avg_first_cast_s": 6.2,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 21.3,
-      "stddev_gap_s": 6.7,
-      "hold_targets": {},
-      "avg_uses": 9.1,
-      "avg_uses_per_min": 2.87,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 21.2,
+      "stddev_gap_s": 7.2,
+      "avg_bl_offset_s": 5.7,
+      "stddev_bl_offset_s": 0.9,
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 2.86,
       "uses_per_min": {
-        "avg": 2.867,
-        "stddev": 0.166,
+        "avg": 2.859,
+        "stddev": 0.158,
         "min": 2.579,
-        "max": 3.035
+        "max": 3.032
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": 4.6,
-      "stddev_bl_offset_s": 4.3,
-      "bl_pct": 100
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -271,5 +276,47 @@
     "Zephyr": 374227,
     "Twin Guardian": 370888
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "357208": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370553": {
+      "icon": "ability_evoker_tipthescales",
+      "name": "Tip the Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "395152": {
+      "icon": "spell_sarkareth",
+      "name": "Ebon Might"
+    },
+    "396286": {
+      "icon": "ability_evoker_upheaval",
+      "name": "Upheaval"
+    },
+    "404977": {
+      "icon": "ability_evoker_timeskip",
+      "name": "Time Skip"
+    },
+    "442204": {
+      "icon": "ability_evoker_breathofeons",
+      "name": "Breath of Eons"
+    }
+  },
+  "source_signature": "66019b2f2b9d7e57"
 }

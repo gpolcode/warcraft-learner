@@ -2,151 +2,156 @@
   "spec": "AugmentationEvoker",
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
-  "sample_count": 9,
-  "avg_duration_s": 182.1,
-  "downtime_threshold_ms": 1941,
-  "top_avg_efficiency": 76.6,
-  "top_efficiency_stddev": 5.2,
+  "sample_count": 10,
+  "avg_duration_s": 184.6,
+  "downtime_threshold_ms": 1951,
+  "top_avg_efficiency": 76.8,
+  "top_efficiency_stddev": 4.9,
   "per_cd_benchmarks": {
     "Breath of Eons": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Ebon Might": {
-      "sample_count": 9,
-      "avg_first_cast_s": 2.1,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 41.4,
-      "stddev_gap_s": 16.6,
+      "sample_count": 10,
+      "avg_first_cast_s": 2.5,
+      "stddev_first_cast_s": 2,
+      "avg_gap_s": 43.3,
+      "stddev_gap_s": 16.8,
+      "avg_bl_offset_s": -0.1,
+      "stddev_bl_offset_s": 6.6,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 1.53,
+      "uses_per_min": {
+        "avg": 1.529,
+        "stddev": 0.203,
+        "min": 1.269,
+        "max": 1.733
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 56.5,
-          "stddev_s": 15.2,
-          "count": 8,
-          "total_samples": 9
+          "target_s": 64,
+          "stddev_s": 13.8,
+          "count": 10,
+          "total_samples": 10
         },
         "3": {
-          "target_s": 106.5,
-          "stddev_s": 13.8,
-          "count": 8,
-          "total_samples": 9
+          "target_s": 108.1,
+          "stddev_s": 13.3,
+          "count": 10,
+          "total_samples": 10
         },
         "4": {
-          "target_s": 139.6,
-          "stddev_s": 10,
-          "count": 8,
-          "total_samples": 9
+          "target_s": 141.2,
+          "stddev_s": 10.1,
+          "count": 10,
+          "total_samples": 10
         },
         "5": {
           "target_s": 158.9,
-          "stddev_s": 17.8,
-          "count": 4,
-          "total_samples": 9
+          "stddev_s": 16.1,
+          "count": 6,
+          "total_samples": 10
         }
-      },
-      "avg_uses": 4.7,
-      "avg_uses_per_min": 1.54,
-      "uses_per_min": {
-        "avg": 1.54,
-        "stddev": 0.234,
-        "min": 1.279,
-        "max": 1.947
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": -6.6,
-      "stddev_bl_offset_s": 16.7,
-      "bl_pct": 100
+      }
     },
     "Tip the Scales": {
-      "sample_count": 9,
-      "avg_first_cast_s": 5.7,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 67.6,
-      "stddev_gap_s": 19.5,
-      "hold_targets": {},
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 1.02,
+      "sample_count": 10,
+      "avg_first_cast_s": 6,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 66.6,
+      "stddev_gap_s": 19.2,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 9.7,
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 1.04,
       "uses_per_min": {
-        "avg": 1.024,
-        "stddev": 0.058,
-        "min": 0.959,
+        "avg": 1.037,
+        "stddev": 0.07,
+        "min": 0.952,
         "max": 1.161
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": -24.7,
-      "stddev_bl_offset_s": 3.2,
-      "bl_pct": 100
+      "hold_targets": {}
     },
     "Time Skip": {
-      "sample_count": 9,
-      "avg_first_cast_s": 7.7,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 137.6,
-      "stddev_gap_s": 3.3,
-      "hold_targets": {},
+      "sample_count": 10,
+      "avg_first_cast_s": 8.3,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 136.8,
+      "stddev_gap_s": 2.6,
+      "avg_bl_offset_s": 7.1,
+      "stddev_bl_offset_s": 0.8,
       "avg_uses": 2,
-      "avg_uses_per_min": 0.66,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.661,
-        "stddev": 0.035,
-        "min": 0.581,
+        "avg": 0.653,
+        "stddev": 0.044,
+        "min": 0.578,
         "max": 0.691
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Fire Breath": {
-      "sample_count": 9,
-      "avg_first_cast_s": 5.9,
+      "sample_count": 10,
+      "avg_first_cast_s": 6.1,
       "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 20.5,
-      "stddev_gap_s": 6.3,
-      "hold_targets": {},
+      "avg_gap_s": 20.7,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": 4.9,
+      "stddev_bl_offset_s": 1.4,
       "avg_uses": 9,
-      "avg_uses_per_min": 2.97,
+      "avg_uses_per_min": 2.93,
       "uses_per_min": {
-        "avg": 2.968,
-        "stddev": 0.11,
-        "min": 2.765,
-        "max": 3.107
+        "avg": 2.927,
+        "stddev": 0.127,
+        "min": 2.743,
+        "max": 3.106
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": 1.6,
-      "stddev_bl_offset_s": 1.5,
-      "bl_pct": 100
+      "hold_targets": {}
     },
     "Upheaval": {
-      "sample_count": 9,
-      "avg_first_cast_s": 6.4,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 21,
-      "stddev_gap_s": 7.9,
-      "hold_targets": {},
+      "sample_count": 10,
+      "avg_first_cast_s": 6.6,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 21.3,
+      "stddev_gap_s": 7.6,
+      "avg_bl_offset_s": 6.3,
+      "stddev_bl_offset_s": 1.8,
       "avg_uses": 8.8,
-      "avg_uses_per_min": 2.89,
+      "avg_uses_per_min": 2.86,
       "uses_per_min": {
-        "avg": 2.892,
-        "stddev": 0.132,
-        "min": 2.692,
-        "max": 3.086
+        "avg": 2.859,
+        "stddev": 0.124,
+        "min": 2.693,
+        "max": 3.085
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": 6.1,
-      "stddev_bl_offset_s": 2.8,
-      "bl_pct": 100
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -271,5 +276,47 @@
     "Zephyr": 374227,
     "Twin Guardian": 370888
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "357208": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370553": {
+      "icon": "ability_evoker_tipthescales",
+      "name": "Tip the Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "395152": {
+      "icon": "spell_sarkareth",
+      "name": "Ebon Might"
+    },
+    "396286": {
+      "icon": "ability_evoker_upheaval",
+      "name": "Upheaval"
+    },
+    "404977": {
+      "icon": "ability_evoker_timeskip",
+      "name": "Time Skip"
+    },
+    "442204": {
+      "icon": "ability_evoker_breathofeons",
+      "name": "Breath of Eons"
+    }
+  },
+  "source_signature": "7a08910909f25c54"
 }

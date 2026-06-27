@@ -2,71 +2,71 @@
   "spec": "AssassinationRogue",
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
-  "sample_count": 13,
-  "avg_duration_s": 223,
-  "downtime_threshold_ms": 1315,
-  "top_avg_efficiency": 73.2,
-  "top_efficiency_stddev": 8.9,
+  "sample_count": 10,
+  "avg_duration_s": 229.1,
+  "downtime_threshold_ms": 1340,
+  "top_avg_efficiency": 73,
+  "top_efficiency_stddev": 9.2,
   "per_cd_benchmarks": {
     "Deathmark": {
-      "sample_count": 13,
-      "avg_first_cast_s": 8,
+      "sample_count": 10,
+      "avg_first_cast_s": 7.8,
       "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 135.7,
-      "stddev_gap_s": 24.5,
-      "hold_targets": {},
+      "avg_gap_s": 133.8,
+      "stddev_gap_s": 23.3,
+      "avg_bl_offset_s": 7.4,
+      "stddev_bl_offset_s": 0.7,
       "avg_uses": 2.2,
       "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.581,
-        "stddev": 0.056,
+        "avg": 0.576,
+        "stddev": 0.057,
         "min": 0.503,
         "max": 0.655
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Kingsbane": {
-      "sample_count": 13,
-      "avg_first_cast_s": 9,
+      "sample_count": 10,
+      "avg_first_cast_s": 8.8,
       "stddev_first_cast_s": 0.9,
       "avg_gap_s": 61.5,
-      "stddev_gap_s": 1.7,
-      "hold_targets": {},
-      "avg_uses": 4,
+      "stddev_gap_s": 1.8,
+      "avg_bl_offset_s": 8.4,
+      "stddev_bl_offset_s": 0.7,
+      "avg_uses": 4.1,
       "avg_uses_per_min": 1.08,
       "uses_per_min": {
-        "avg": 1.079,
-        "stddev": 0.093,
-        "min": 0.962,
-        "max": 1.221
+        "avg": 1.077,
+        "stddev": 0.087,
+        "min": 0.961,
+        "max": 1.222
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Vanish": {
-      "sample_count": 13,
-      "avg_first_cast_s": 35,
-      "stddev_first_cast_s": 46.4,
-      "avg_gap_s": 130.1,
-      "stddev_gap_s": 18.8,
-      "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.54,
+      "sample_count": 10,
+      "avg_first_cast_s": 23.7,
+      "stddev_first_cast_s": 39.3,
+      "avg_gap_s": 131.8,
+      "stddev_gap_s": 20,
+      "avg_bl_offset_s": 11.1,
+      "stddev_bl_offset_s": 2.5,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.54,
-        "stddev": 0.094,
-        "min": 0.323,
+        "avg": 0.555,
+        "stddev": 0.075,
+        "min": 0.412,
         "max": 0.655
       },
+      "bl_pct": 80,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -155,5 +155,35 @@
     "Feint": 1966,
     "Crimson Vial": 185311
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "360194": {
+      "icon": "ability_rogue_deathmark",
+      "name": "Deathmark"
+    },
+    "385627": {
+      "icon": "inv_knife_1h_artifactgarona_d_01",
+      "name": "Kingsbane"
+    }
+  },
+  "source_signature": "a18aaa5c2df1a427"
 }

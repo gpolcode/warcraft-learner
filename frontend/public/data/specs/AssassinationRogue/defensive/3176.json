@@ -2,25 +2,8 @@
   "spec": "AssassinationRogue",
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
-  "sample_count": 14,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Cloak of Shadows": {
-      "sample_count": 7,
-      "avg_first_cast_s": 100.6,
-      "stddev_first_cast_s": 47.3,
-      "avg_gap_s": 157,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.33,
-      "uses_per_min": {
-        "avg": 0.328,
-        "stddev": 0.083,
-        "min": 0.282,
-        "max": 0.514
-      },
-      "majority_hold": false
-    },
     "Feint": {
       "sample_count": 4,
       "avg_first_cast_s": 64.3,
@@ -40,7 +23,7 @@
       "uses_per_min": {
         "avg": 0.533,
         "stddev": 0.29,
-        "min": 0.293,
+        "min": 0.292,
         "max": 0.909
       },
       "majority_hold": false
@@ -56,60 +39,49 @@
       "avg_uses_per_min": 0.31,
       "uses_per_min": {
         "avg": 0.311,
-        "stddev": 0.006,
+        "stddev": 0.007,
         "min": 0.306,
-        "max": 0.315
+        "max": 0.316
+      },
+      "majority_hold": false
+    },
+    "Cloak of Shadows": {
+      "sample_count": 4,
+      "avg_first_cast_s": 93.3,
+      "stddev_first_cast_s": 50,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.301,
+        "stddev": 0.01,
+        "min": 0.291,
+        "max": 0.313
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 71.3,
-      "stddev_s": 10.1,
-      "count": 5,
-      "total_samples": 14,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "ability_breakdown": [],
-      "ref_game_id": null,
-      "window_length_s": 5,
-      "defensive_name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "common_defensives": [
-        "Cloak of Shadows"
-      ],
-      "common_cds": [
-        "Cloak of Shadows"
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
-      "name": "Cloak of Shadows",
       "spell_id": 31224,
-      "avg_uses": 1.1,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 7
+      "max_uses": 1
     },
     {
-      "name": "Feint",
       "spell_id": 1966,
       "avg_uses": 1.8,
       "min_uses": 1,
-      "max_uses": 3,
-      "sample_count": 4
+      "max_uses": 3
     },
     {
-      "name": "Crimson Vial",
       "spell_id": 185311,
       "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 1,
-      "sample_count": 2
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -152,5 +124,23 @@
     "Feint": 1966,
     "Crimson Vial": 185311
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    }
+  },
+  "source_signature": "86b7dc9649dc8323"
 }

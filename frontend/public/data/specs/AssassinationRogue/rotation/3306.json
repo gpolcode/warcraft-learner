@@ -2,71 +2,71 @@
   "spec": "AssassinationRogue",
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
-  "sample_count": 15,
-  "avg_duration_s": 145.9,
-  "downtime_threshold_ms": 1067,
-  "top_avg_efficiency": 74.2,
-  "top_efficiency_stddev": 7,
+  "sample_count": 10,
+  "avg_duration_s": 146.2,
+  "downtime_threshold_ms": 1052,
+  "top_avg_efficiency": 74.6,
+  "top_efficiency_stddev": 6.7,
   "per_cd_benchmarks": {
     "Deathmark": {
-      "sample_count": 15,
-      "avg_first_cast_s": 7.7,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 123.4,
-      "stddev_gap_s": 1.9,
-      "hold_targets": {},
+      "sample_count": 10,
+      "avg_first_cast_s": 7.5,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 123.9,
+      "stddev_gap_s": 2.2,
+      "avg_bl_offset_s": 6.7,
+      "stddev_bl_offset_s": 1.9,
       "avg_uses": 2,
       "avg_uses_per_min": 0.82,
       "uses_per_min": {
-        "avg": 0.823,
-        "stddev": 0.018,
-        "min": 0.803,
-        "max": 0.857
+        "avg": 0.821,
+        "stddev": 0.013,
+        "min": 0.805,
+        "max": 0.835
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Kingsbane": {
-      "sample_count": 15,
-      "avg_first_cast_s": 8.8,
-      "stddev_first_cast_s": 1.7,
-      "avg_gap_s": 61.7,
-      "stddev_gap_s": 1.8,
-      "hold_targets": {},
+      "sample_count": 10,
+      "avg_first_cast_s": 8.6,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 62,
+      "stddev_gap_s": 2,
+      "avg_bl_offset_s": 7.9,
+      "stddev_bl_offset_s": 2,
       "avg_uses": 3,
       "avg_uses_per_min": 1.23,
       "uses_per_min": {
-        "avg": 1.235,
-        "stddev": 0.027,
-        "min": 1.205,
-        "max": 1.285
+        "avg": 1.231,
+        "stddev": 0.019,
+        "min": 1.208,
+        "max": 1.252
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Vanish": {
-      "sample_count": 15,
-      "avg_first_cast_s": 28.7,
-      "stddev_first_cast_s": 38,
-      "avg_gap_s": 122,
-      "stddev_gap_s": 2.3,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.71,
+      "sample_count": 10,
+      "avg_first_cast_s": 16.4,
+      "stddev_first_cast_s": 8.4,
+      "avg_gap_s": 121.9,
+      "stddev_gap_s": 2.7,
+      "avg_bl_offset_s": 16.1,
+      "stddev_bl_offset_s": 9,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.74,
       "uses_per_min": {
-        "avg": 0.713,
-        "stddev": 0.189,
+        "avg": 0.739,
+        "stddev": 0.174,
         "min": 0.403,
-        "max": 0.857
+        "max": 0.835
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -155,5 +155,35 @@
     "Feint": 1966,
     "Crimson Vial": 185311
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "360194": {
+      "icon": "ability_rogue_deathmark",
+      "name": "Deathmark"
+    },
+    "385627": {
+      "icon": "inv_knife_1h_artifactgarona_d_01",
+      "name": "Kingsbane"
+    }
+  },
+  "source_signature": "3e4c60b5c53de488"
 }

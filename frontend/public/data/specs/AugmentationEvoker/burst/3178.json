@@ -2,127 +2,157 @@
   "spec": "AugmentationEvoker",
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
-  "sample_count": 9,
+  "sample_count": 10,
   "windows": [
     {
-      "time_s": 1.2,
-      "stddev_s": 1,
-      "count": 9,
-      "total_samples": 9,
-      "dmg_avg": 3624634,
-      "dmg_stddev": 470039,
-      "dmg_min": 3099902,
+      "time_s": 1.1,
+      "dmg_avg": 3723947,
+      "dmg_stddev": 411019,
+      "dmg_min": 3255365,
       "dmg_max": 4585914,
-      "ability_breakdown": [
-        {
-          "spell_id": 395152,
-          "avg_damage": 889193,
-          "min_damage": 656127,
-          "max_damage": 1071185,
-          "count": 9,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 395160,
-          "avg_damage": 617857,
-          "min_damage": 395534,
-          "max_damage": 1004873,
-          "count": 9,
-          "avg_casts": 5
-        },
-        {
-          "spell_id": 434481,
-          "avg_damage": 311269,
-          "min_damage": 230616,
-          "max_damage": 462073,
-          "count": 9,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1259172,
-          "avg_damage": 299214,
-          "min_damage": 173536,
-          "max_damage": 387334,
-          "count": 8,
-          "avg_casts": 5
-        },
-        {
-          "spell_id": 1236970,
-          "avg_damage": 282656,
-          "min_damage": 237115,
-          "max_damage": 349189,
-          "count": 5,
-          "avg_casts": 0
-        }
-      ],
-      "ref_game_id": null,
       "common_cds": [
         "Ebon Might",
         "Breath of Eons"
       ],
       "avg_targets": 1,
-      "window_length_s": 11.8
-    },
-    {
-      "time_s": 48.1,
-      "stddev_s": 8.3,
-      "count": 11,
-      "total_samples": 9,
-      "dmg_avg": 2977645,
-      "dmg_stddev": 949265,
-      "dmg_min": 1853039,
-      "dmg_max": 4864658,
+      "window_length_s": 12.1,
       "ability_breakdown": [
         {
-          "spell_id": 1259172,
-          "avg_damage": 559206,
-          "min_damage": 257535,
-          "max_damage": 814111,
-          "count": 11,
-          "avg_casts": 5
-        },
-        {
           "spell_id": 395152,
-          "avg_damage": 552245,
-          "min_damage": 376830,
-          "max_damage": 987042,
-          "count": 11,
-          "avg_casts": 0
+          "avg_damage": 909857,
+          "min_damage": 669638,
+          "max_damage": 1071185,
+          "count": 10,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 395160,
-          "avg_damage": 527524,
-          "min_damage": 183981,
-          "max_damage": 937121,
-          "count": 11,
-          "avg_casts": 5
+          "avg_damage": 645112,
+          "min_damage": 395534,
+          "max_damage": 1004873,
+          "count": 10,
+          "avg_casts": 5,
+          "is_passive": false
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 322660,
+          "min_damage": 230616,
+          "max_damage": 462073,
+          "count": 10,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 302304,
+          "min_damage": 173536,
+          "max_damage": 387334,
+          "count": 9,
+          "avg_casts": 5,
+          "is_passive": false
+        },
+        {
+          "spell_id": 410089,
+          "avg_damage": 272475,
+          "min_damage": 211174,
+          "max_damage": 324709,
+          "count": 6,
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 396288,
-          "avg_damage": 265081,
-          "min_damage": 92840,
-          "max_damage": 382949,
-          "count": 9,
-          "avg_casts": 1
+          "avg_damage": 260383,
+          "min_damage": 205165,
+          "max_damage": 323543,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 48,
+      "dmg_avg": 3297237,
+      "dmg_stddev": 1010702,
+      "dmg_min": 1853039,
+      "dmg_max": 4864658,
       "common_cds": [
         "Breath of Eons",
         "Ebon Might"
       ],
       "avg_targets": 1,
-      "window_length_s": 12.1
+      "window_length_s": 13.3,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259172,
+          "avg_damage": 622129,
+          "min_damage": 305939,
+          "max_damage": 860906,
+          "count": 12,
+          "avg_casts": 5,
+          "is_passive": false
+        },
+        {
+          "spell_id": 395152,
+          "avg_damage": 584275,
+          "min_damage": 376830,
+          "max_damage": 987042,
+          "count": 12,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 564365,
+          "min_damage": 183981,
+          "max_damage": 937121,
+          "count": 12,
+          "avg_casts": 5,
+          "is_passive": false
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 362260,
+          "min_damage": 181235,
+          "max_damage": 695856,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 396288,
+          "avg_damage": 303567,
+          "min_damage": 210642,
+          "max_damage": 382949,
+          "count": 10,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1236970,
+          "avg_damage": 239060,
+          "min_damage": 138900,
+          "max_damage": 406864,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
     },
     {
-      "time_s": 74.6,
-      "stddev_s": 9.6,
-      "count": 4,
-      "total_samples": 9,
-      "dmg_avg": 3242493,
-      "dmg_stddev": 1394513,
+      "time_s": 77.8,
+      "dmg_avg": 3319041,
+      "dmg_stddev": 1363937,
       "dmg_min": 1931409,
       "dmg_max": 5197687,
+      "common_cds": [
+        "Ebon Might"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10,
       "ability_breakdown": [
         {
           "spell_id": 396288,
@@ -130,281 +160,309 @@
           "min_damage": 232059,
           "max_damage": 1564531,
           "count": 3,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 395152,
+          "avg_damage": 671028,
+          "min_damage": 440175,
+          "max_damage": 867155,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1259172,
-          "avg_damage": 672501,
+          "avg_damage": 654780,
           "min_damage": 519567,
           "max_damage": 757790,
           "count": 4,
-          "avg_casts": 3
-        },
-        {
-          "spell_id": 395152,
-          "avg_damage": 568635,
-          "min_damage": 351341,
-          "max_damage": 867155,
-          "count": 4,
-          "avg_casts": 1
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 438653,
-          "avg_damage": 552671,
-          "min_damage": 511253,
+          "avg_damage": 465034,
+          "min_damage": 289761,
           "max_damage": 594089,
-          "count": 2,
-          "avg_casts": 3
+          "count": 3,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 395160,
-          "avg_damage": 330770,
+          "avg_damage": 275575,
           "min_damage": 198002,
-          "max_damage": 554524,
+          "max_damage": 367808,
           "count": 4,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
-          "spell_id": 434481,
-          "avg_damage": 217519,
-          "min_damage": 92374,
-          "max_damage": 342664,
+          "spell_id": 410089,
+          "avg_damage": 212689,
+          "min_damage": 198042,
+          "max_damage": 227336,
           "count": 2,
-          "avg_casts": 0
+          "avg_casts": 1,
+          "is_passive": false
         }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Ebon Might"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 10
+      ]
     },
     {
       "time_s": 97,
-      "stddev_s": 4.3,
-      "count": 5,
-      "total_samples": 9,
-      "dmg_avg": 3842391,
-      "dmg_stddev": 1941238,
-      "dmg_min": 1754861,
+      "dmg_avg": 3922277,
+      "dmg_stddev": 1601747,
+      "dmg_min": 1756305,
       "dmg_max": 6577004,
+      "common_cds": [
+        "Ebon Might",
+        "Breath of Eons"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15.3,
       "ability_breakdown": [
         {
           "spell_id": 1259172,
-          "avg_damage": 796776,
+          "avg_damage": 850664,
           "min_damage": 163419,
           "max_damage": 1901837,
-          "count": 5,
-          "avg_casts": 7
+          "count": 7,
+          "avg_casts": 6,
+          "is_passive": false
         },
         {
           "spell_id": 395152,
-          "avg_damage": 678119,
+          "avg_damage": 664772,
           "min_damage": 361100,
           "max_damage": 1094412,
-          "count": 5,
-          "avg_casts": 1
+          "count": 7,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 395160,
-          "avg_damage": 644009,
-          "min_damage": 394334,
+          "avg_damage": 589096,
+          "min_damage": 344150,
           "max_damage": 937421,
-          "count": 5,
-          "avg_casts": 7
+          "count": 7,
+          "avg_casts": 6,
+          "is_passive": false
         },
         {
           "spell_id": 434481,
-          "avg_damage": 331732,
+          "avg_damage": 325352,
           "min_damage": 256920,
           "max_damage": 408386,
-          "count": 5,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 396288,
-          "avg_damage": 235567,
-          "min_damage": 95916,
-          "max_damage": 334272,
-          "count": 3,
-          "avg_casts": 1
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Ebon Might",
-        "Breath of Eons"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 15.1
-    },
-    {
-      "time_s": 171.9,
-      "stddev_s": 7.7,
-      "count": 9,
-      "total_samples": 9,
-      "dmg_avg": 3208860,
-      "dmg_stddev": 624529,
-      "dmg_min": 1844417,
-      "dmg_max": 3863312,
-      "ability_breakdown": [
-        {
-          "spell_id": 395152,
-          "avg_damage": 874646,
-          "min_damage": 453413,
-          "max_damage": 1201333,
-          "count": 9,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 395160,
-          "avg_damage": 484960,
-          "min_damage": 154572,
-          "max_damage": 768561,
-          "count": 8,
-          "avg_casts": 5
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1236970,
-          "avg_damage": 421653,
-          "min_damage": 203333,
-          "max_damage": 1037633,
-          "count": 6,
-          "avg_casts": 0
+          "avg_damage": 248165,
+          "min_damage": 212172,
+          "max_damage": 279488,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 396288,
-          "avg_damage": 372601,
-          "min_damage": 99010,
-          "max_damage": 1174089,
-          "count": 5,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 1259172,
-          "avg_damage": 265829,
-          "min_damage": 228893,
-          "max_damage": 317493,
-          "count": 8,
-          "avg_casts": 5
+          "avg_damage": 243637,
+          "min_damage": 95916,
+          "max_damage": 334272,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 173,
+      "dmg_avg": 3104650,
+      "dmg_stddev": 601831,
+      "dmg_min": 1844279,
+      "dmg_max": 3649519,
       "common_cds": [
         "Ebon Might",
         "Breath of Eons"
       ],
       "avg_targets": 1,
-      "window_length_s": 13.7
-    },
-    {
-      "time_s": 200.5,
-      "stddev_s": 7.3,
-      "count": 8,
-      "total_samples": 9,
-      "dmg_avg": 3393590,
-      "dmg_stddev": 1290924,
-      "dmg_min": 2214048,
-      "dmg_max": 5942608,
+      "window_length_s": 14,
       "ability_breakdown": [
         {
           "spell_id": 395152,
-          "avg_damage": 817223,
-          "min_damage": 423282,
-          "max_damage": 1084752,
-          "count": 8,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 396288,
-          "avg_damage": 627372,
-          "min_damage": 222725,
-          "max_damage": 1531407,
-          "count": 4,
-          "avg_casts": 1
+          "avg_damage": 801641,
+          "min_damage": 372355,
+          "max_damage": 1201323,
+          "count": 10,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 395160,
-          "avg_damage": 418226,
-          "min_damage": 219260,
-          "max_damage": 850422,
-          "count": 7,
-          "avg_casts": 4
+          "avg_damage": 518464,
+          "min_damage": 154572,
+          "max_damage": 768561,
+          "count": 9,
+          "avg_casts": 6,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1236970,
+          "avg_damage": 413471,
+          "min_damage": 203333,
+          "max_damage": 1037633,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 395105,
+          "min_damage": 245079,
+          "max_damage": 517948,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 396288,
+          "avg_damage": 360186,
+          "min_damage": 99010,
+          "max_damage": 1174089,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1259172,
-          "avg_damage": 383562,
-          "min_damage": 274958,
-          "max_damage": 514105,
-          "count": 7,
-          "avg_casts": 3
-        },
-        {
-          "spell_id": 438653,
-          "avg_damage": 286430,
-          "min_damage": 169620,
-          "max_damage": 435987,
-          "count": 4,
-          "avg_casts": 4
+          "avg_damage": 272506,
+          "min_damage": 228893,
+          "max_damage": 321547,
+          "count": 9,
+          "avg_casts": 6,
+          "is_passive": false
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 203.8,
+      "dmg_avg": 3461715,
+      "dmg_stddev": 1141149,
+      "dmg_min": 2218841,
+      "dmg_max": 5942688,
       "common_cds": [
         "Ebon Might"
       ],
       "avg_targets": 1,
-      "window_length_s": 11.2
-    },
-    {
-      "time_s": 236.1,
-      "stddev_s": 9.3,
-      "count": 6,
-      "total_samples": 9,
-      "dmg_avg": 2968555,
-      "dmg_stddev": 559968,
-      "dmg_min": 2303046,
-      "dmg_max": 3679118,
+      "window_length_s": 11.1,
       "ability_breakdown": [
         {
           "spell_id": 395152,
-          "avg_damage": 530880,
-          "min_damage": 325407,
-          "max_damage": 862136,
-          "count": 6,
-          "avg_casts": 0
+          "avg_damage": 903020,
+          "min_damage": 448156,
+          "max_damage": 1084832,
+          "count": 9,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 395160,
-          "avg_damage": 516788,
-          "min_damage": 235454,
-          "max_damage": 714262,
-          "count": 6,
-          "avg_casts": 4
+          "avg_damage": 459385,
+          "min_damage": 219260,
+          "max_damage": 850422,
+          "count": 7,
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
           "spell_id": 1259172,
-          "avg_damage": 487420,
-          "min_damage": 229645,
-          "max_damage": 701513,
-          "count": 6,
-          "avg_casts": 4
+          "avg_damage": 389360,
+          "min_damage": 274958,
+          "max_damage": 514105,
+          "count": 8,
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
-          "spell_id": 1236970,
-          "avg_damage": 392298,
-          "min_damage": 241679,
-          "max_damage": 908455,
-          "count": 6,
-          "avg_casts": 0
+          "spell_id": 438653,
+          "avg_damage": 331403,
+          "min_damage": 169620,
+          "max_damage": 511298,
+          "count": 5,
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
           "spell_id": 434481,
-          "avg_damage": 239992,
+          "avg_damage": 303680,
+          "min_damage": 168326,
+          "max_damage": 466210,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
+      "time_s": 237.5,
+      "dmg_avg": 3056610,
+      "dmg_stddev": 565126,
+      "dmg_min": 2302882,
+      "dmg_max": 3691546,
+      "common_cds": [
+        "Breath of Eons"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 10.7,
+      "ability_breakdown": [
+        {
+          "spell_id": 395152,
+          "avg_damage": 557750,
+          "min_damage": 325407,
+          "max_damage": 865145,
+          "count": 7,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 395160,
+          "avg_damage": 526059,
+          "min_damage": 235454,
+          "max_damage": 948274,
+          "count": 7,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1259172,
+          "avg_damage": 514406,
+          "min_damage": 229645,
+          "max_damage": 856042,
+          "count": 7,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1236970,
+          "avg_damage": 506627,
+          "min_damage": 241679,
+          "max_damage": 967898,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 434481,
+          "avg_damage": 237889,
           "min_damage": 144445,
-          "max_damage": 392563,
+          "max_damage": 384150,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 396288,
@@ -412,82 +470,10 @@
           "min_damage": 141907,
           "max_damage": 342295,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Breath of Eons"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 10.5
-    },
-    {
-      "time_s": 279.8,
-      "stddev_s": 5.8,
-      "count": 4,
-      "total_samples": 9,
-      "dmg_avg": 3156535,
-      "dmg_stddev": 1153987,
-      "dmg_min": 2249780,
-      "dmg_max": 4826709,
-      "ability_breakdown": [
-        {
-          "spell_id": 395152,
-          "avg_damage": 682874,
-          "min_damage": 384428,
-          "max_damage": 1103284,
-          "count": 4,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 438653,
-          "avg_damage": 670795,
-          "min_damage": 616687,
-          "max_damage": 724902,
-          "count": 2,
-          "avg_casts": 5
-        },
-        {
-          "spell_id": 1259172,
-          "avg_damage": 542452,
-          "min_damage": 219072,
-          "max_damage": 836495,
-          "count": 4,
-          "avg_casts": 5
-        },
-        {
-          "spell_id": 395160,
-          "avg_damage": 440673,
-          "min_damage": 268432,
-          "max_damage": 590035,
-          "count": 4,
-          "avg_casts": 5
-        },
-        {
-          "spell_id": 1236970,
-          "avg_damage": 302651,
-          "min_damage": 130347,
-          "max_damage": 600130,
-          "count": 3,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 434481,
-          "avg_damage": 292489,
-          "min_damage": 205401,
-          "max_damage": 379577,
-          "count": 2,
-          "avg_casts": 0
-        }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Breath of Eons",
-        "Ebon Might"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 11.1
+      ]
     }
   ],
   "cd_spell_ids": {
@@ -501,5 +487,76 @@
     "Renewing Blaze": 374348,
     "Zephyr": 374227,
     "Twin Guardian": 370888
-  }
+  },
+  "ability_icons": {
+    "357208": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370553": {
+      "icon": "ability_evoker_tipthescales",
+      "name": "Tip the Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "395152": {
+      "icon": "spell_sarkareth",
+      "name": "Ebon Might"
+    },
+    "395160": {
+      "icon": "ability_evoker_eruption",
+      "name": "Eruption"
+    },
+    "396286": {
+      "icon": "ability_evoker_upheaval",
+      "name": "Upheaval"
+    },
+    "396288": {
+      "icon": "ability_evoker_upheaval",
+      "name": "Upheaval"
+    },
+    "404977": {
+      "icon": "ability_evoker_timeskip",
+      "name": "Time Skip"
+    },
+    "410089": {
+      "icon": "ability_evoker_prescience",
+      "name": "Prescience"
+    },
+    "434481": {
+      "icon": "inv_ability_scalecommanderevoker_bombardments",
+      "name": "Bombardments"
+    },
+    "438653": {
+      "icon": "ability_evoker_eruption",
+      "name": "Eruption"
+    },
+    "442204": {
+      "icon": "ability_evoker_breathofeons",
+      "name": "Breath of Eons"
+    },
+    "1236970": {
+      "icon": "ability_evoker_pyre",
+      "name": "Pyre"
+    },
+    "1259172": {
+      "icon": "ability_evoker_eruption",
+      "name": "Eruption"
+    }
+  },
+  "source_signature": "7198e8bcdfdf6148"
 }
