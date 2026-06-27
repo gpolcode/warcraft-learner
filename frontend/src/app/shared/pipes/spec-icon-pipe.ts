@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { specIconUrl } from '../spec-meta';
+import { specIconUrl } from '../../core/spec-meta';
 
 /** Spec folder key (e.g. 'SubtletyRogue') -> zamimg spec-icon URL, or '' when unknown. */
 @Pipe({ name: 'specIcon' })

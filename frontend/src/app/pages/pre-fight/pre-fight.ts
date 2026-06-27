@@ -13,7 +13,7 @@ import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../shared/pipes/spec-icon-pipe';
 import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
-import { classList, specsForClass, specMetaOf } from '../../shared/spec-meta';
+import { classList, specsForClass, specMetaOf } from '../../core/spec-meta';
 import { RotationCdPlanComponent } from '../post-raid/rotation/rotation-cd-plan';
 import { DefensivePlanComponent } from '../post-raid/defensive/defensive-plan';
 import { BurstWindowsComponent } from '../post-raid/burst-windows/burst-windows';
@@ -68,6 +68,9 @@ export class PreFightComponent implements OnInit {
   // Specs belonging to the chosen class, restricted to those with ingested data.
   protected readonly specsForSelectedClass = computed(() =>
     specsForClass(this.selectedClass(), this.specs().map(entry => entry.spec)));
+  // The selected encounter row, so the select trigger can render its boss icon + name.
+  protected readonly selectedEncounter = computed(() =>
+    this.encounters().find(entry => entry.id === this.selectedEncId()));
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   // The burst-window positioning button lights up once the top-parse trails have loaded.

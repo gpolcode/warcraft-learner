@@ -27,6 +27,7 @@ import { MapFeatureService, MapAnchor } from './map/map.service';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { SpecIconPipe } from '../../shared/pipes/spec-icon-pipe';
+import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
 import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { SelectionStore } from '../../core/services/selection-store';
@@ -82,7 +83,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
     MatButtonModule, MatCardModule, MatSlideToggleModule,
     LoadingSpinnerComponent, ArtIconComponent, RotationComponent, BurstWindowsComponent,
     DefensiveComponent, GearComponent, MapPanelComponent,
-    FormatDurationPipe, FormatSpecPipe, SpecIconPipe, BossIconPipe,
+    FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   templateUrl: './post-raid.html',
 })
@@ -113,6 +114,11 @@ export class PostRaidComponent {
   /** Resolved spec of the selected player; drives every feature card. Empty until resolved. */
   protected readonly spec = signal('');
 
+  /** playerDetails for the selected fight (all roles), kept so the dropdown can show each
+   *  player's spec icon - `actor.subType` is class-only since Midnight, so the dropdown can't
+   *  resolve specs on its own. */
+  protected readonly playerDetailGroups = signal<PlayerDetailGroups>({});
+
   /** Current report code, driven by loadReport(). Used by the polling pipeline. */
   protected readonly reportCode = signal('');
 
@@ -120,6 +126,19 @@ export class PostRaidComponent {
 
   protected readonly visiblePlayers = computed(() =>
     visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
+
+  /** Per-player resolved spec folder (e.g. 'SubtletyRogue') for the visible roster, for the
+   *  player dropdown's spec icon. Empty for a player until playerDetails for the fight loads. */
+  protected readonly playerSpecs = computed(() => {
+    const groups = this.playerDetailGroups();
+    const result: Record<number, string> = {};
+    for (const player of this.visiblePlayers()) result[player.id] = specOf(groups, player.id);
+    return result;
+  });
+
+  /** The selected fight row, so the select trigger can render its boss icon + label. */
+  protected readonly selectedFight = computed(() =>
+    this.fights().find(f => f.id === this.selectedFightId()));
 
   /** Encounter id of the selected fight, passed to every feature card. */
   protected readonly selectedEncounterId = computed(() =>
@@ -193,6 +212,7 @@ export class PostRaidComponent {
     this.fights.set([]);
     this.players.set([]);
     this.spec.set('');
+    this.playerDetailGroups.set({});
     this.mapFeature.clear();
 
     try {
@@ -283,6 +303,7 @@ export class PostRaidComponent {
     this.loadingMsg.set('Resolving spec…');
     try {
       const groups = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
+      this.playerDetailGroups.set(groups);
       const spec = specOf(groups, playerId);
       if (!spec) { this.error.set('Could not resolve the selected player\'s spec.'); return; }
       this.spec.set(spec);

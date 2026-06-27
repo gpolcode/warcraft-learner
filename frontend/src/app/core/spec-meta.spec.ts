@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { SPEC_META, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl } from './spec-meta';
 
 /**
- * The folder keys here must stay in lock-step with `SPEC_TO_WCL` in `core/services/wcl-api.ts`
- * (that const is private, so the expected list is mirrored here). If a spec is added/removed
- * there, this list - and `SPEC_META` - must change too.
+ * SPEC_META is the single source for the spec->class split (it replaced the old private
+ * `SPEC_TO_WCL` in `wcl-api.ts`). This list pins the supported spec folders; adding/removing a
+ * spec must change both.
  */
 const EXPECTED_SPECS = [
   'RetributionPaladin', 'HolyPaladin', 'ProtectionPaladin',
@@ -32,11 +32,20 @@ describe('SPEC_META', () => {
     expect(Object.keys(SPEC_META).sort()).toEqual([...EXPECTED_SPECS].sort());
   });
 
-  it('gives every spec a non-empty class and spec icon stem', () => {
+  it('gives every spec a non-empty class name, spec name, and icon stems', () => {
     for (const meta of Object.values(SPEC_META)) {
+      expect(meta.className, meta.spec).not.toBe('');
+      expect(meta.specName, meta.spec).not.toBe('');
       expect(meta.classIcon, meta.spec).not.toBe('');
       expect(meta.specIcon, meta.spec).not.toBe('');
     }
+  });
+
+  it('keeps the WCL rankings split that wcl-api consumes (className + specName)', () => {
+    expect(SPEC_META['BeastMasteryHunter'].className).toBe('Hunter');
+    expect(SPEC_META['BeastMasteryHunter'].specName).toBe('BeastMastery');
+    expect(SPEC_META['BloodDeathKnight'].className).toBe('DeathKnight');
+    expect(SPEC_META['SubtletyRogue'].specName).toBe('Subtlety');
   });
 
   it('derives the class icon from the lowercased class name', () => {
@@ -95,8 +104,13 @@ describe('icon URL helpers', () => {
     expect(classIconUrl('Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
   });
 
-  it('returns empty for a missing class name', () => {
+  it('accepts a spaced class name (the player fallback uses subType like "Death Knight")', () => {
+    expect(classIconUrl('Death Knight')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_deathknight.jpg');
+  });
+
+  it('returns empty for an unknown or missing class name', () => {
     expect(classIconUrl('')).toBe('');
+    expect(classIconUrl('Unknown')).toBe('');
   });
 
   it('builds a spec icon URL from the baked stem', () => {

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { classIconUrl } from '../spec-meta';
+import { classIconUrl } from '../../core/spec-meta';
 
 /** No-space class name (e.g. 'DeathKnight') -> zamimg class-icon URL, or '' when empty. */
 @Pipe({ name: 'classIcon' })
