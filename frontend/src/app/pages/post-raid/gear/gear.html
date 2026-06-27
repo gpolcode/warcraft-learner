@@ -166,7 +166,7 @@
           <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5">On plan</span>
           @for (row of view().trinketRows; track row.slotLabel) {
             <span class="chip-onplan">
-              <span class="text-[13px] text-[var(--muted)]">{{ row.name }}</span>
+              <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
             </span>
           }
         </div>
