@@ -3,12 +3,23 @@
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Warcraft Logs Report URL or Code</mat-label>
         <input matInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
-               (input)="onReportChange()" (keydown.enter)="loadReport()" />
+               (keydown.enter)="loadReport()" />
+        @if (reportControl.hasError('invalidReportCode')) {
+          <mat-error>Paste a Warcraft Logs report URL or a 16-character report code.</mat-error>
+        }
       </mat-form-field>
 
-      <mat-slide-toggle [formControl]="liveControl" (change)="onLiveToggle()" class="mt-2">
-        Live sync (auto-follow latest pull)
-      </mat-slide-toggle>
+      <div class="mt-1 flex flex-wrap items-center gap-4">
+        <button mat-flat-button color="primary" type="button"
+                [disabled]="reportControl.invalid || !reportControl.value.trim() || loadingReport()"
+                (click)="loadReport()">
+          Analyze
+        </button>
+
+        <mat-slide-toggle [formControl]="liveControl" (change)="onLiveToggle()">
+          Live sync (auto-follow latest pull)
+        </mat-slide-toggle>
+      </div>
 
       @if (fights().length) {
         <div class="mt-4 border-t border-[var(--border)] pt-4">
