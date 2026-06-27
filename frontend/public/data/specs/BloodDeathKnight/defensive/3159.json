@@ -4,42 +4,12 @@
   "encounter_name": "Rotmire",
   "sample_count": 8,
   "per_defensive_benchmarks": {
-    "Anti-Magic Shell": {
-      "sample_count": 3,
-      "avg_first_cast_s": 139.2,
-      "stddev_first_cast_s": 121.3,
-      "avg_gap_s": 150.6,
-      "stddev_gap_s": 82.5,
-      "hold_targets": {
-        "1": {
-          "target_s": 302.6,
-          "stddev_s": 119.2,
-          "count": 3,
-          "total_samples": 3
-        },
-        "2": {
-          "target_s": 398.1,
-          "stddev_s": 61.4,
-          "count": 2,
-          "total_samples": 3
-        }
-      },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.4,
-      "uses_per_min": {
-        "avg": 0.399,
-        "stddev": 0.144,
-        "min": 0.233,
-        "max": 0.485
-      },
-      "majority_hold": true
-    },
     "Vampiric Blood": {
       "sample_count": 7,
-      "avg_first_cast_s": 46.4,
-      "stddev_first_cast_s": 35.9,
-      "avg_gap_s": 66.6,
-      "stddev_gap_s": 50.9,
+      "avg_first_cast_s": 60.8,
+      "stddev_first_cast_s": 38.6,
+      "avg_gap_s": 82,
+      "stddev_gap_s": 56.6,
       "hold_targets": {
         "1": {
           "target_s": 192.9,
@@ -48,102 +18,89 @@
           "total_samples": 7
         }
       },
-      "avg_uses": 6.4,
-      "avg_uses_per_min": 0.78,
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.782,
-        "stddev": 0.543,
+        "avg": 0.564,
+        "stddev": 0.415,
         "min": 0.133,
-        "max": 1.679
+        "max": 1.337
       },
       "majority_hold": true
     },
-    "Icebound Fortitude": {
-      "sample_count": 3,
-      "avg_first_cast_s": 312.3,
-      "stddev_first_cast_s": 202.8,
-      "avg_gap_s": 184.8,
-      "stddev_gap_s": 53,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.22,
-      "uses_per_min": {
-        "avg": 0.215,
-        "stddev": 0.09,
-        "min": 0.115,
-        "max": 0.29
-      },
-      "majority_hold": false
-    },
     "Anti-Magic Zone": {
       "sample_count": 7,
-      "avg_first_cast_s": 172.7,
-      "stddev_first_cast_s": 107.3,
-      "avg_gap_s": 275.5,
-      "stddev_gap_s": 8.7,
+      "avg_first_cast_s": 172.1,
+      "stddev_first_cast_s": 107.5,
+      "avg_gap_s": 276.4,
+      "stddev_gap_s": 9.4,
       "hold_targets": {
         "1": {
-          "target_s": 406.1,
-          "stddev_s": 14.9,
-          "count": 6,
+          "target_s": 405.5,
+          "stddev_s": 16.7,
+          "count": 5,
           "total_samples": 7
         }
       },
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.232,
-        "stddev": 0.055,
+        "avg": 0.219,
+        "stddev": 0.063,
         "min": 0.116,
         "max": 0.29
       },
       "majority_hold": true
     },
-    "Lichborne": {
-      "sample_count": 1,
-      "avg_first_cast_s": 246.6,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": 191,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.24,
+    "Anti-Magic Shell": {
+      "sample_count": 2,
+      "avg_first_cast_s": 194.8,
+      "stddev_first_cast_s": 104.6,
+      "avg_gap_s": 149.1,
+      "stddev_gap_s": 58.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 369.3,
+          "stddev_s": 159.5,
+          "count": 2,
+          "total_samples": 2
+        }
+      },
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.24,
-        "stddev": 0,
-        "min": 0.24,
-        "max": 0.24
+        "avg": 0.359,
+        "stddev": 0.178,
+        "min": 0.233,
+        "max": 0.485
       },
       "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 2,
+      "avg_first_cast_s": 313.4,
+      "stddev_first_cast_s": 286.7,
+      "avg_gap_s": 222.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.202,
+        "stddev": 0.124,
+        "min": 0.115,
+        "max": 0.29
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 59.9,
-      "stddev_s": 11.4,
-      "count": 5,
-      "total_samples": 8,
-      "dmg_avg": 1156422,
-      "dmg_stddev": 354680,
+      "time_s": 58.1,
+      "dmg_avg": 1178788,
+      "dmg_stddev": 405457,
       "dmg_min": 695420,
       "dmg_max": 1681352,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221781,
-          "avg_damage": 855736,
-          "min_damage": 604583,
-          "max_damage": 1172447,
-          "count": 5
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 101787,
-          "min_damage": 78161,
-          "max_damage": 126968,
-          "count": 5
-        }
-      ],
-      "ref_game_id": 238693,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -152,34 +109,64 @@
       ],
       "common_cds": [
         "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 907580,
+          "min_damage": 604583,
+          "max_damage": 1172447,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 95492,
+          "min_damage": 78161,
+          "max_damage": 121426,
+          "count": 4
+        }
       ]
     },
     {
       "time_s": 98.8,
-      "stddev_s": 7.3,
-      "count": 5,
-      "total_samples": 8,
-      "dmg_avg": 1100983,
-      "dmg_stddev": 459223,
+      "dmg_avg": 1164753,
+      "dmg_stddev": 492979,
       "dmg_min": 742506,
       "dmg_max": 1870354,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 721236,
-          "min_damage": 697844,
+          "avg_damage": 731507,
+          "min_damage": 716791,
           "max_damage": 743659,
           "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 139735,
+          "avg_damage": 140320,
           "min_damage": 127058,
-          "max_damage": 152221,
+          "max_damage": 155145,
           "count": 5
         }
-      ],
-      "ref_game_id": 238693,
+      ]
+    },
+    {
+      "time_s": 193.1,
+      "dmg_avg": 1766821,
+      "dmg_stddev": 503496,
+      "dmg_min": 1271775,
+      "dmg_max": 2278361,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -188,17 +175,8 @@
       ],
       "common_cds": [
         "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 196.3,
-      "stddev_s": 7.7,
-      "count": 4,
-      "total_samples": 8,
-      "dmg_avg": 1390009,
-      "dmg_stddev": 858461,
-      "dmg_min": 259573,
-      "dmg_max": 2278361,
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221781,
@@ -216,56 +194,19 @@
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 238934,
+          "avg_damage": 232055,
           "min_damage": 197998,
           "max_damage": 284671,
-          "count": 4
+          "count": 3
         }
-      ],
-      "ref_game_id": 238693,
-      "window_length_s": 10,
-      "defensive_name": "Vampiric Blood",
-      "spell_id": 55233,
-      "common_defensives": [
-        "Vampiric Blood"
-      ],
-      "common_cds": [
-        "Vampiric Blood"
       ]
     },
     {
-      "time_s": 237.7,
-      "stddev_s": 10.4,
-      "count": 4,
-      "total_samples": 8,
-      "dmg_avg": 1770571,
-      "dmg_stddev": 753253,
+      "time_s": 241.6,
+      "dmg_avg": 1461504,
+      "dmg_stddev": 527208,
       "dmg_min": 1021765,
-      "dmg_max": 2697773,
-      "ability_breakdown": [
-        {
-          "spell_id": 1,
-          "avg_damage": 1117710,
-          "min_damage": 540170,
-          "max_damage": 1695249,
-          "count": 2
-        },
-        {
-          "spell_id": 1221781,
-          "avg_damage": 849817,
-          "min_damage": 693937,
-          "max_damage": 1225598,
-          "count": 4
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 285918,
-          "min_damage": 275854,
-          "max_damage": 308587,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 238693,
+      "dmg_max": 2045956,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -274,41 +215,31 @@
       ],
       "common_cds": [
         "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 301.1,
-      "stddev_s": 5.7,
-      "count": 3,
-      "total_samples": 8,
-      "dmg_avg": 1305317,
-      "dmg_stddev": 444881,
-      "dmg_min": 836166,
-      "dmg_max": 1721116,
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 758537,
-          "min_damage": 726544,
-          "max_damage": 790529,
-          "count": 2
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 385946,
-          "min_damage": 341626,
-          "max_damage": 414652,
+          "avg_damage": 901777,
+          "min_damage": 737010,
+          "max_damage": 1225598,
           "count": 3
         },
         {
-          "spell_id": 1222278,
-          "avg_damage": 269840,
-          "min_damage": 225621,
-          "max_damage": 314059,
-          "count": 2
+          "spell_id": 1222284,
+          "avg_damage": 278361,
+          "min_damage": 275854,
+          "max_damage": 280188,
+          "count": 3
         }
-      ],
-      "ref_game_id": 238693,
+      ]
+    },
+    {
+      "time_s": 330.5,
+      "dmg_avg": 1748338,
+      "dmg_stddev": 699860,
+      "dmg_min": 1240960,
+      "dmg_max": 2546756,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -317,24 +248,15 @@
       ],
       "common_cds": [
         "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 331.9,
-      "stddev_s": 7.8,
-      "count": 4,
-      "total_samples": 8,
-      "dmg_avg": 1703315,
-      "dmg_stddev": 578484,
-      "dmg_min": 1240960,
-      "dmg_max": 2546756,
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 896278,
+          "avg_damage": 825271,
           "min_damage": 599228,
           "max_damage": 1150361,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1,
@@ -345,13 +267,19 @@
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 332623,
+          "avg_damage": 326570,
           "min_damage": 234651,
           "max_damage": 387431,
-          "count": 4
+          "count": 3
         }
-      ],
-      "ref_game_id": 238693,
+      ]
+    },
+    {
+      "time_s": 389.2,
+      "dmg_avg": 1220461,
+      "dmg_stddev": 152332,
+      "dmg_min": 1089737,
+      "dmg_max": 1387746,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -360,41 +288,31 @@
       ],
       "common_cds": [
         "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 393.3,
-      "stddev_s": 3.2,
-      "count": 3,
-      "total_samples": 8,
-      "dmg_avg": 1329851,
-      "dmg_stddev": 217037,
-      "dmg_min": 1089737,
-      "dmg_max": 1512070,
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 649462,
+          "avg_damage": 640600,
           "min_damage": 612883,
           "max_damage": 668317,
-          "count": 3
+          "count": 2
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 469467,
+          "avg_damage": 454133,
           "min_damage": 425428,
-          "max_damage": 512335,
+          "max_damage": 470638,
           "count": 3
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 313275,
-          "min_damage": 294001,
-          "max_damage": 332548,
-          "count": 2
         }
-      ],
-      "ref_game_id": 238693,
+      ]
+    },
+    {
+      "time_s": 467,
+      "dmg_avg": 1408679,
+      "dmg_stddev": 218743,
+      "dmg_min": 1164296,
+      "dmg_max": 1586155,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
       "spell_id": 55233,
@@ -403,128 +321,50 @@
       ],
       "common_cds": [
         "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 460.8,
-      "stddev_s": 4.7,
-      "count": 3,
-      "total_samples": 8,
-      "dmg_avg": 1068449,
-      "dmg_stddev": 571688,
-      "dmg_min": 454896,
-      "dmg_max": 1586155,
+      ],
+      "ref_game_id": 238693,
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 845642,
+          "avg_damage": 793465,
           "min_damage": 570191,
           "max_damage": 1121092,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 483454,
-          "min_damage": 454896,
+          "avg_damage": 501507,
+          "min_damage": 465063,
           "max_damage": 530403,
           "count": 3
         }
-      ],
-      "ref_game_id": 238693,
-      "window_length_s": 10,
-      "defensive_name": "Vampiric Blood",
-      "spell_id": 55233,
-      "common_defensives": [
-        "Vampiric Blood"
-      ],
-      "common_cds": [
-        "Vampiric Blood"
-      ]
-    },
-    {
-      "time_s": 490.3,
-      "stddev_s": 10.3,
-      "count": 4,
-      "total_samples": 8,
-      "dmg_avg": 1627487,
-      "dmg_stddev": 774006,
-      "dmg_min": 632968,
-      "dmg_max": 2453655,
-      "ability_breakdown": [
-        {
-          "spell_id": 1,
-          "avg_damage": 821048,
-          "min_damage": 309265,
-          "max_damage": 1332831,
-          "count": 2
-        },
-        {
-          "spell_id": 1221781,
-          "avg_damage": 637286,
-          "min_damage": 584815,
-          "max_damage": 689113,
-          "count": 3
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 565344,
-          "min_damage": 509056,
-          "max_damage": 630381,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 238693,
-      "window_length_s": 10,
-      "defensive_name": "Vampiric Blood",
-      "spell_id": 55233,
-      "common_defensives": [
-        "Vampiric Blood"
-      ],
-      "common_cds": [
-        "Vampiric Blood"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Vampiric Blood",
       "spell_id": 55233,
-      "avg_uses": 6.4,
+      "avg_uses": 4.6,
       "min_uses": 1,
-      "max_uses": 14,
-      "sample_count": 7
+      "max_uses": 11
     },
     {
-      "name": "Icebound Fortitude",
       "spell_id": 48792,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 48707,
+      "avg_uses": 2.5,
+      "min_uses": 2,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 51052,
       "avg_uses": 1.7,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 3
-    },
-    {
-      "name": "Anti-Magic Shell",
-      "spell_id": 48707,
-      "avg_uses": 3,
-      "min_uses": 2,
-      "max_uses": 4,
-      "sample_count": 3
-    },
-    {
-      "name": "Lichborne",
-      "spell_id": 49039,
-      "avg_uses": 2,
-      "min_uses": 2,
-      "max_uses": 2,
-      "sample_count": 1
-    },
-    {
-      "name": "Anti-Magic Zone",
-      "spell_id": 51052,
-      "avg_uses": 1.9,
-      "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 7
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -585,5 +425,47 @@
     "Lichborne": 49039,
     "Anti-Magic Zone": 51052
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221781": {
+      "icon": "inv_misc_herb_ancientlichen",
+      "name": "Putrid Fist"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "5c261bb31ef222cf"
 }

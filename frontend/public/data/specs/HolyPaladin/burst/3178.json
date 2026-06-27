@@ -69,24 +69,16 @@
     },
     {
       "time_s": 64.6,
-      "dmg_avg": 526188,
-      "dmg_stddev": 239943,
+      "dmg_avg": 591739,
+      "dmg_stddev": 279385,
       "dmg_min": 310316,
-      "dmg_max": 862822,
+      "dmg_max": 985044,
       "common_cds": [
         "Avenging Crusader"
       ],
       "avg_targets": 1,
-      "window_length_s": 12.7,
+      "window_length_s": 14.7,
       "ability_breakdown": [
-        {
-          "spell_id": 1241413,
-          "avg_damage": 82943,
-          "min_damage": 57065,
-          "max_damage": 99323,
-          "count": 3,
-          "avg_casts": 2
-        },
         {
           "spell_id": 1279187,
           "avg_damage": 69436,
@@ -169,14 +161,17 @@
       ]
     },
     {
-      "time_s": 185,
-      "dmg_avg": 613652,
-      "dmg_stddev": 385631,
+      "time_s": 185.2,
+      "dmg_avg": 652858,
+      "dmg_stddev": 433630,
       "dmg_min": 351458,
       "dmg_max": 1292535,
-      "common_cds": [],
+      "common_cds": [
+        "Avenging Crusader",
+        "Avenging Wrath"
+      ],
       "avg_targets": 1,
-      "window_length_s": 14.4,
+      "window_length_s": 16,
       "ability_breakdown": [
         {
           "spell_id": 447258,
@@ -201,66 +196,28 @@
           "max_damage": 161286,
           "count": 3,
           "avg_casts": 0
-        }
-      ]
-    },
-    {
-      "time_s": 273,
-      "dmg_avg": 532207,
-      "dmg_stddev": 235645,
-      "dmg_min": 282595,
-      "dmg_max": 798543,
-      "common_cds": [
-        "Avenging Wrath"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 20.1,
-      "ability_breakdown": [
+        },
         {
-          "spell_id": 1242230,
-          "avg_damage": 176688,
-          "min_damage": 107373,
-          "max_damage": 246002,
+          "spell_id": 1279187,
+          "avg_damage": 84033,
+          "min_damage": 57495,
+          "max_damage": 110571,
+          "count": 2,
+          "avg_casts": 3
+        },
+        {
+          "spell_id": 81297,
+          "avg_damage": 42547,
+          "min_damage": 15426,
+          "max_damage": 69668,
           "count": 2,
           "avg_casts": 0
         },
         {
-          "spell_id": 1241413,
-          "avg_damage": 141711,
-          "min_damage": 76705,
-          "max_damage": 217543,
-          "count": 3,
-          "avg_casts": 2
-        },
-        {
-          "spell_id": 25912,
-          "avg_damage": 115846,
-          "min_damage": 90893,
-          "max_damage": 140798,
-          "count": 2,
-          "avg_casts": 2
-        },
-        {
-          "spell_id": 433808,
-          "avg_damage": 80701,
-          "min_damage": 67576,
-          "max_damage": 93826,
-          "count": 2,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1239282,
-          "avg_damage": 66845,
-          "min_damage": 61256,
-          "max_damage": 72434,
-          "count": 2,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 431911,
-          "avg_damage": 50146,
-          "min_damage": 21572,
-          "max_damage": 78719,
+          "spell_id": 1,
+          "avg_damage": 39291,
+          "min_damage": 38843,
+          "max_damage": 39739,
           "count": 2,
           "avg_casts": 0
         }
@@ -282,5 +239,99 @@
     "Blessing of Sacrifice": 6940,
     "Divine Protection": 498
   },
-  "source_signature": "ecd2cb774eac0687"
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "20473": {
+      "icon": "spell_holy_searinglight",
+      "name": "Holy Shock"
+    },
+    "25912": {
+      "icon": "spell_holy_searinglight",
+      "name": "Holy Shock"
+    },
+    "31821": {
+      "icon": "spell_holy_auramastery",
+      "name": "Aura Mastery"
+    },
+    "31884": {
+      "icon": "spell_holy_avenginewrath",
+      "name": "Avenging Wrath"
+    },
+    "81297": {
+      "icon": "spell_holy_innerfire",
+      "name": "Consecration"
+    },
+    "114165": {
+      "icon": "spell_paladin_holyprism",
+      "name": "Holy Prism"
+    },
+    "216331": {
+      "icon": "ability_paladin_veneration",
+      "name": "Avenging Crusader"
+    },
+    "375576": {
+      "icon": "inv_ability_paladin_divinetoll",
+      "name": "Divine Toll"
+    },
+    "414448": {
+      "icon": "spell_holy_holynova",
+      "name": "Shining Righteousness"
+    },
+    "415091": {
+      "icon": "ability_paladin_shieldofvengeance",
+      "name": "Shield of the Righteous"
+    },
+    "432459": {
+      "icon": "inv_ability_lightsmithpaladin_holybulwark",
+      "name": "Holy Bulwark"
+    },
+    "432472": {
+      "icon": "inv_ability_lightsmithpaladin_sacredweapon",
+      "name": "Sacred Weapon"
+    },
+    "433808": {
+      "icon": "spell_holy_lightsgrace",
+      "name": "Divine Guidance"
+    },
+    "447258": {
+      "icon": "inv_shield_1h_artifactnorgannon_d_06",
+      "name": "Forge's Reckoning"
+    },
+    "1239282": {
+      "icon": "inv_sword_2h_lightforged_c_01",
+      "name": "Lesser Weapon"
+    },
+    "1241413": {
+      "icon": "inv12_ability_paladin_hammerofwrath",
+      "name": "Hammer of Wrath"
+    },
+    "1279187": {
+      "icon": "spell_holy_crusaderstrike",
+      "name": "Crusader Strike"
+    }
+  },
+  "source_signature": "dfffd599018efd2e"
 }

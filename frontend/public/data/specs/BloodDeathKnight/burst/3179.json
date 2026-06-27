@@ -6,13 +6,15 @@
   "windows": [
     {
       "time_s": 1.9,
-      "stddev_s": 0.6,
-      "count": 8,
-      "total_samples": 8,
-      "dmg_avg": 1760092,
-      "dmg_stddev": 244885,
+      "dmg_avg": 1762025,
+      "dmg_stddev": 243730,
       "dmg_min": 1474840,
       "dmg_max": 2155301,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12,
       "ability_breakdown": [
         {
           "spell_id": 49998,
@@ -32,7 +34,7 @@
         },
         {
           "spell_id": 1,
-          "avg_damage": 185566,
+          "avg_damage": 186583,
           "min_damage": 158206,
           "max_damage": 221748,
           "count": 8,
@@ -56,29 +58,25 @@
         },
         {
           "spell_id": 1263752,
-          "avg_damage": 59119,
-          "min_damage": 46004,
+          "avg_damage": 60166,
+          "min_damage": 52757,
           "max_damage": 73259,
           "count": 7,
           "avg_casts": 0
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 100.1,
+      "dmg_avg": 2608577,
+      "dmg_stddev": 835074,
+      "dmg_min": 1364101,
+      "dmg_max": 4333594,
       "common_cds": [
         "Dancing Rune Weapon"
       ],
       "avg_targets": 1,
-      "window_length_s": 12
-    },
-    {
-      "time_s": 100.1,
-      "stddev_s": 5.3,
-      "count": 8,
-      "total_samples": 8,
-      "dmg_avg": 2599097,
-      "dmg_stddev": 827920,
-      "dmg_min": 1364101,
-      "dmg_max": 4311412,
+      "window_length_s": 12,
       "ability_breakdown": [
         {
           "spell_id": 49998,
@@ -98,18 +96,18 @@
         },
         {
           "spell_id": 1,
-          "avg_damage": 164916,
+          "avg_damage": 166276,
           "min_damage": 132216,
-          "max_damage": 285947,
+          "max_damage": 288713,
           "count": 8,
           "avg_casts": 0
         },
         {
           "spell_id": 434144,
-          "avg_damage": 122329,
-          "min_damage": 69241,
+          "avg_damage": 132946,
+          "min_damage": 84636,
           "max_damage": 245671,
-          "count": 6,
+          "count": 5,
           "avg_casts": 7
         },
         {
@@ -128,27 +126,23 @@
           "count": 4,
           "avg_casts": 2
         }
-      ],
-      "ref_game_id": null,
+      ]
+    },
+    {
+      "time_s": 186.4,
+      "dmg_avg": 3048453,
+      "dmg_stddev": 1141269,
+      "dmg_min": 1306744,
+      "dmg_max": 4121638,
       "common_cds": [
         "Dancing Rune Weapon"
       ],
       "avg_targets": 1,
-      "window_length_s": 12
-    },
-    {
-      "time_s": 186.4,
-      "stddev_s": 6.8,
-      "count": 6,
-      "total_samples": 8,
-      "dmg_avg": 3037061,
-      "dmg_stddev": 1124990,
-      "dmg_min": 1290836,
-      "dmg_max": 4096477,
+      "window_length_s": 12,
       "ability_breakdown": [
         {
           "spell_id": 49998,
-          "avg_damage": 1789156,
+          "avg_damage": 1776183,
           "min_damage": 845473,
           "max_damage": 2500875,
           "count": 6,
@@ -156,10 +150,10 @@
         },
         {
           "spell_id": 50842,
-          "avg_damage": 418826,
-          "min_damage": 65203,
+          "avg_damage": 536700,
+          "min_damage": 232406,
           "max_damage": 884798,
-          "count": 4,
+          "count": 3,
           "avg_casts": 2
         },
         {
@@ -172,18 +166,10 @@
         },
         {
           "spell_id": 1263752,
-          "avg_damage": 218709,
-          "min_damage": 84923,
+          "avg_damage": 190209,
+          "min_damage": 73702,
           "max_damage": 314241,
-          "count": 4,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1263786,
-          "avg_damage": 200296,
-          "min_damage": 88118,
-          "max_damage": 258017,
-          "count": 3,
+          "count": 6,
           "avg_casts": 0
         },
         {
@@ -193,14 +179,16 @@
           "max_damage": 201512,
           "count": 5,
           "avg_casts": 0
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 112021,
+          "min_damage": 90438,
+          "max_damage": 132406,
+          "count": 5,
+          "avg_casts": 0
         }
-      ],
-      "ref_game_id": null,
-      "common_cds": [
-        "Dancing Rune Weapon"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 12
+      ]
     }
   ],
   "cd_spell_ids": {
@@ -213,5 +201,76 @@
     "Rune Tap": 194679,
     "Lichborne": 49039,
     "Anti-Magic Zone": 51052
-  }
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49028": {
+      "icon": "inv_sword_07",
+      "name": "Dancing Rune Weapon"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "49998": {
+      "icon": "spell_deathknight_butcher2",
+      "name": "Death Strike"
+    },
+    "50842": {
+      "icon": "spell_deathknight_bloodboil",
+      "name": "Blood Boil"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55078": {
+      "icon": "spell_deathknight_bloodplague",
+      "name": "Blood Plague"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    },
+    "274156": {
+      "icon": "inv_axe_2h_artifactmaw_d_01",
+      "name": "Consumption"
+    },
+    "433895": {
+      "icon": "inv_ability_sanlayndeathknight_vampiricstrike",
+      "name": "Vampiric Strike"
+    },
+    "434144": {
+      "icon": "ability_warrior_bloodbath",
+      "name": "Infliction of Sorrow"
+    },
+    "439843": {
+      "icon": "inv_ability_deathbringerdeathknight_reapersmark",
+      "name": "Reaper's Mark"
+    },
+    "1263752": {
+      "icon": "ability_revendreth_deathknight",
+      "name": "Blood Mist"
+    },
+    "1263786": {
+      "icon": "spell_animarevendreth_groundstate",
+      "name": "Sanguinary Burst"
+    }
+  },
+  "source_signature": "9fb7083e70fed38b"
 }

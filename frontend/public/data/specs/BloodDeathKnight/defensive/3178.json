@@ -6,7 +6,7 @@
   "per_defensive_benchmarks": {
     "Vampiric Blood": {
       "sample_count": 6,
-      "avg_first_cast_s": 200.2,
+      "avg_first_cast_s": 200.1,
       "stddev_first_cast_s": 151.2,
       "avg_gap_s": 53.7,
       "stddev_gap_s": 15.9,
@@ -51,7 +51,7 @@
         "avg": 0.659,
         "stddev": 0.236,
         "min": 0.396,
-        "max": 0.853
+        "max": 0.852
       },
       "majority_hold": false
     },
@@ -93,44 +93,34 @@
   "defensive_windows": [],
   "top_defensives_summary": [
     {
-      "name": "Vampiric Blood",
       "spell_id": 55233,
       "avg_uses": 2.8,
       "min_uses": 1,
-      "max_uses": 7,
-      "sample_count": 6
+      "max_uses": 7
     },
     {
-      "name": "Icebound Fortitude",
       "spell_id": 48792,
       "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 1,
-      "sample_count": 1
+      "max_uses": 1
     },
     {
-      "name": "Anti-Magic Shell",
       "spell_id": 48707,
       "avg_uses": 2.9,
       "min_uses": 1,
-      "max_uses": 6,
-      "sample_count": 8
+      "max_uses": 6
     },
     {
-      "name": "Lichborne",
       "spell_id": 49039,
       "avg_uses": 3.7,
       "min_uses": 2,
-      "max_uses": 5,
-      "sample_count": 3
+      "max_uses": 5
     },
     {
-      "name": "Anti-Magic Zone",
       "spell_id": 51052,
       "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 1,
-      "sample_count": 1
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -191,5 +181,31 @@
     "Lichborne": 49039,
     "Anti-Magic Zone": 51052
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    }
+  },
+  "source_signature": "c9de0f573c6f1df8"
 }
