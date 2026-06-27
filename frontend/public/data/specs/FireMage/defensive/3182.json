@@ -1,0 +1,344 @@
+{
+  "spec": "FireMage",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blazing Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 89.1,
+      "stddev_first_cast_s": 33.2,
+      "avg_gap_s": 60.2,
+      "stddev_gap_s": 39.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 163.5,
+          "stddev_s": 56.6,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 193,
+          "stddev_s": 32.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.67,
+      "uses_per_min": {
+        "avg": 0.666,
+        "stddev": 0.28,
+        "min": 0.222,
+        "max": 1.024
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 2,
+      "avg_first_cast_s": 140.6,
+      "stddev_first_cast_s": 178.8,
+      "avg_gap_s": 66.4,
+      "stddev_gap_s": 23.9,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.54,
+      "uses_per_min": {
+        "avg": 0.536,
+        "stddev": 0.472,
+        "min": 0.202,
+        "max": 0.87
+      },
+      "majority_hold": false
+    },
+    "Greater Invisibility": {
+      "sample_count": 1,
+      "avg_first_cast_s": 169.6,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.202,
+        "stddev": 0,
+        "min": 0.202,
+        "max": 0.202
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 98.3,
+      "dmg_avg": 240920,
+      "dmg_stddev": 52884,
+      "dmg_min": 169597,
+      "dmg_max": 301193,
+      "window_length_s": 5,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241333,
+          "avg_damage": 183361,
+          "min_damage": 153000,
+          "max_damage": 239845,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 54918,
+          "min_damage": 27691,
+          "max_damage": 91246,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 151.1,
+      "dmg_avg": 261501,
+      "dmg_stddev": 69642,
+      "dmg_min": 191859,
+      "dmg_max": 371513,
+      "window_length_s": 7.5,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 126009,
+          "min_damage": 61275,
+          "max_damage": 191859,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 178.2,
+      "dmg_avg": 188748,
+      "dmg_stddev": 16094,
+      "dmg_min": 177926,
+      "dmg_max": 212621,
+      "window_length_s": 8,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 85356,
+          "min_damage": 30420,
+          "max_damage": 183767,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 206.6,
+      "dmg_avg": 260496,
+      "dmg_stddev": 54106,
+      "dmg_min": 189929,
+      "dmg_max": 333323,
+      "window_length_s": 7.5,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 100080,
+          "min_damage": 29801,
+          "max_damage": 189929,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 235.5,
+      "dmg_avg": 306094,
+      "dmg_stddev": 137593,
+      "dmg_min": 214449,
+      "dmg_max": 510492,
+      "window_length_s": 4.9,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 73267,
+          "min_damage": 31906,
+          "max_damage": 126164,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 268.7,
+      "dmg_avg": 362473,
+      "dmg_stddev": 93601,
+      "dmg_min": 280771,
+      "dmg_max": 489743,
+      "window_length_s": 7.3,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241333,
+          "avg_damage": 236954,
+          "min_damage": 186493,
+          "max_damage": 313699,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 77567,
+          "min_damage": 59843,
+          "max_damage": 95719,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 235313,
+      "avg_uses": 3.2,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 342245,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 110959,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Use as a full immunity to survive an otherwise lethal hit or to clear a deadly debuff; with the Ice Cold talent it also briefly boosts damage, so it can be worked into a defensive-into-burst plan.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blazing Barrier",
+      "spell_id": 235313,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep this absorb shield up before predictable damage and refresh it on cooldown during damage-heavy phases since the short cooldown allows near-constant uptime.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mass Barrier",
+      "spell_id": 414660,
+      "cooldown": 90,
+      "duration": 60,
+      "usage_rule": "Use before a raid-wide damage event to shield yourself and nearby allies; talent-gated, so only expected when the build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before taking a large hit or moving to a dangerous spot, then let it expire to snap your health and position back to where they were when you cast it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 90,
+      "duration": 3,
+      "usage_rule": "Use to drop threat and gain a strong damage reduction while invisible, ideal for surviving a targeted mechanic; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Blazing Barrier": 235313,
+    "Mass Barrier": 414660,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235313": {
+      "icon": "ability_mage_moltenarmor",
+      "name": "Blazing Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "414660": {
+      "icon": "ability_racial_magicalresistance",
+      "name": "Mass Barrier"
+    },
+    "1241333": {
+      "icon": "inv_phoenix2mount_blue",
+      "name": "Death Drop"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "6f2ed579d2862876"
+}

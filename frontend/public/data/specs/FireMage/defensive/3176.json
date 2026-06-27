@@ -2,7 +2,7 @@
   "spec": "FireMage",
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 1,
@@ -22,18 +22,18 @@
       "majority_hold": false
     },
     "Blazing Barrier": {
-      "sample_count": 1,
-      "avg_first_cast_s": 38.1,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 79.9,
+      "stddev_first_cast_s": 59.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.293,
-        "stddev": 0,
-        "min": 0.293,
+        "avg": 0.292,
+        "stddev": 0.001,
+        "min": 0.291,
         "max": 0.293
       },
       "majority_hold": false
@@ -104,6 +104,10 @@
     "Greater Invisibility": 110959
   },
   "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
     "110959": {
       "icon": "ability_mage_greaterinvisibility",
       "name": "Greater Invisibility"
@@ -115,7 +119,11 @@
     "342245": {
       "icon": "spell_mage_altertime",
       "name": "Alter Time"
+    },
+    "414660": {
+      "icon": "ability_racial_magicalresistance",
+      "name": "Mass Barrier"
     }
   },
-  "source_signature": "a12a26bc9b60629f"
+  "source_signature": "8ad7581206ac5537"
 }
