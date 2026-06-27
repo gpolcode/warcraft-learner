@@ -15,7 +15,7 @@
   <div class="px-4" [class.pt-3]="!title()" [class.pb-3]="!activeWindow()">
     <!-- Mobile: a horizontal scroll rail (min-w) so the larger 42px tap targets never overlap; at md the
          inner holder collapses to the full width and the markers space out by % exactly as before. -->
-    <div class="overflow-x-auto md:overflow-visible">
+    <div class="overflow-x-auto md:overflow-visible pt-2 md:pt-0">
       <div class="min-w-[540px] md:min-w-0">
         <div
           class="relative mx-2 h-[42px] md:h-9"
@@ -65,8 +65,8 @@
   <!-- Detail panel: driven by activeIndex(), inside the same card. -->
   @if (activeWindow(); as w) {
 
-    <!-- Header: status dot · window title · spell icons · value · delta.
-         flex-wrap lets the trailing value/delta drop to its own line on narrow screens. -->
+    <!-- Header: status dot · window title · spell icons, then a meta group (map + value/delta).
+         The title never wraps; the meta group drops to its own line on mobile and sits right at md. -->
     <div class="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
       <span class="w-2.5 h-2.5 rounded-full shrink-0"
         [class.fill-success]="w.status === 'good'"
@@ -74,7 +74,7 @@
         [class.fill-critical]="w.status === 'bad'"
         [class.fill-muted]="w.status === 'muted'"
         [class.fill-info]="w.status === 'info'"></span>
-      <span class="flex-1 text-sm font-medium">
+      <span class="text-sm font-medium whitespace-nowrap">
         Window {{ activeIndex() + 1 }} - {{ w.timeStartS | formatDuration }} to {{ w.timeEndS | formatDuration }}
       </span>
       @for (spell of w.spells; track spell.id) {
@@ -83,24 +83,28 @@
       @for (lbl of w.labels; track lbl) {
         <span class="text-sm text-[var(--muted)]">{{ lbl }}</span>
       }
-      @if (showMap()) {
-        <button mat-icon-button aria-label="Open positioning map" (click)="openMap.emit(activeIndex())">
-          <mat-icon>my_location</mat-icon>
-        </button>
-      }
-      @if (!activeIsMuted()) {
-        <span class="tabular-nums text-xs ml-auto flex items-baseline gap-1">
-          <span class="text-[var(--muted)]">{{ w.overview.playerPct | formatDamage }}</span>
-          @if (overviewDeltaText()) {
-            <span class="text-[var(--muted)]">·</span>
-            <span
-              [class.badge-muted]="overviewDeltaStatus() === 'muted'"
-              [class.badge-success]="overviewDeltaStatus() === 'better'"
-              [class.badge-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDeltaText() }}</span>
+      @if (showMap() || !activeIsMuted() || activeIsNotReached()) {
+        <div class="basis-full md:basis-auto md:ml-auto flex items-center gap-2">
+          @if (showMap()) {
+            <button mat-icon-button aria-label="Open positioning map" (click)="openMap.emit(activeIndex())">
+              <mat-icon>my_location</mat-icon>
+            </button>
           }
-        </span>
-      } @else {
-        <span class="text-xs text-[var(--muted)] ml-auto italic">not reached</span>
+          @if (!activeIsMuted()) {
+            <span class="tabular-nums text-xs flex items-baseline gap-1">
+              <span class="text-[var(--muted)]">{{ w.overview.playerPct | formatDamage }}</span>
+              @if (overviewDeltaText()) {
+                <span class="text-[var(--muted)]">·</span>
+                <span
+                  [class.badge-muted]="overviewDeltaStatus() === 'muted'"
+                  [class.badge-success]="overviewDeltaStatus() === 'better'"
+                  [class.badge-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDeltaText() }}</span>
+              }
+            </span>
+          } @else if (activeIsNotReached()) {
+            <span class="text-xs text-[var(--muted)] italic">not reached</span>
+          }
+        </div>
       }
     </div>
 

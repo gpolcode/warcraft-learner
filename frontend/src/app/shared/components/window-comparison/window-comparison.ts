@@ -89,6 +89,11 @@ export class WindowComparisonComponent {
     return status === 'muted' || status === 'info';
   });
 
+  // "Not reached" only applies to a real player window the player never entered
+  // ('muted'); a bench-only ('info', pre-fight) window has no player to reach, so
+  // the label is suppressed there.
+  protected readonly activeIsNotReached = computed(() => this.activeWindow()?.status === 'muted');
+
   // Active window's ability rows, sorted by absolute gap (biggest damage loss
   // first) so the most actionable abilities surface at the top of the table.
   // Direction-aware: burst wants player >= top (loss = negative gap); defensives
