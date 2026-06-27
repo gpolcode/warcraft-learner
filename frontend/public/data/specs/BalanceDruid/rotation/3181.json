@@ -3,10 +3,10 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 510.6,
-  "downtime_threshold_ms": 2201,
-  "top_avg_efficiency": 75.9,
-  "top_efficiency_stddev": 2,
+  "avg_duration_s": 509.7,
+  "downtime_threshold_ms": 2113,
+  "top_avg_efficiency": 76.1,
+  "top_efficiency_stddev": 2.4,
   "per_cd_benchmarks": {
     "Celestial Alignment": {
       "sample_count": 10,
@@ -14,34 +14,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Incarnation: Chosen of Elune": {
       "sample_count": 10,
-      "avg_first_cast_s": 23.7,
-      "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 106.7,
-      "stddev_gap_s": 61.6,
-      "hold_targets": {},
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 0.62,
-      "uses_per_min": {
-        "avg": 0.622,
-        "stddev": 0.048,
-        "min": 0.572,
-        "max": 0.708
-      },
-      "majority_hold": false,
+      "avg_first_cast_s": 23.6,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 110.7,
+      "stddev_gap_s": 62.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.6,
+      "uses_per_min": {
+        "avg": 0.6,
+        "stddev": 0.029,
+        "min": 0.572,
+        "max": 0.677
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Eclipse": {
       "sample_count": 10,
@@ -49,128 +54,133 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Force of Nature": {
       "sample_count": 10,
-      "avg_first_cast_s": 23.5,
-      "stddev_first_cast_s": 1.3,
+      "avg_first_cast_s": 23.8,
+      "stddev_first_cast_s": 1.7,
       "avg_gap_s": 66.1,
-      "stddev_gap_s": 21.1,
+      "stddev_gap_s": 20.8,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 8,
+      "avg_uses_per_min": 0.94,
+      "uses_per_min": {
+        "avg": 0.942,
+        "stddev": 0.022,
+        "min": 0.903,
+        "max": 0.97
+      },
+      "bl_pct": 0,
+      "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 178.5,
+          "target_s": 178.2,
           "stddev_s": 2.2,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 233.1,
-          "stddev_s": 5.1,
+          "target_s": 234,
+          "stddev_s": 2.5,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 286.3,
+          "target_s": 286.2,
           "stddev_s": 1.9,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 369,
-          "stddev_s": 12.5,
+          "stddev_s": 8.7,
           "count": 10,
           "total_samples": 10
         },
         "7": {
           "target_s": 429.8,
-          "stddev_s": 9.2,
+          "stddev_s": 8.8,
           "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 485.3,
-          "stddev_s": 9.1,
+          "target_s": 484.7,
+          "stddev_s": 8.2,
           "count": 10,
           "total_samples": 10
         }
-      },
-      "avg_uses": 8,
-      "avg_uses_per_min": 0.94,
-      "uses_per_min": {
-        "avg": 0.941,
-        "stddev": 0.028,
-        "min": 0.903,
-        "max": 0.988
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Fury of Elune": {
       "sample_count": 10,
-      "avg_first_cast_s": 22.6,
-      "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 67.5,
-      "stddev_gap_s": 10.9,
+      "avg_first_cast_s": 22.9,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 67.2,
+      "stddev_gap_s": 10.8,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 6.4,
+      "avg_uses_per_min": 0.75,
+      "uses_per_min": {
+        "avg": 0.942,
+        "stddev": 0.024,
+        "min": 0.903,
+        "max": 0.97
+      },
+      "bl_pct": 0,
+      "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 178,
-          "stddev_s": 2.2,
-          "count": 9,
+          "target_s": 177.6,
+          "stddev_s": 2.4,
+          "count": 8,
           "total_samples": 10
         },
         "4": {
-          "target_s": 238.9,
-          "stddev_s": 2.7,
-          "count": 9,
+          "target_s": 238.3,
+          "stddev_s": 3,
+          "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 300.2,
+          "target_s": 299.5,
           "stddev_s": 2.9,
-          "count": 9,
+          "count": 8,
           "total_samples": 10
         },
         "6": {
-          "target_s": 367.5,
-          "stddev_s": 8.4,
-          "count": 9,
+          "target_s": 366.6,
+          "stddev_s": 9.1,
+          "count": 8,
           "total_samples": 10
         },
         "7": {
-          "target_s": 430.3,
-          "stddev_s": 8.7,
-          "count": 9,
+          "target_s": 428.5,
+          "stddev_s": 9.1,
+          "count": 8,
           "total_samples": 10
         },
         "8": {
-          "target_s": 494.6,
-          "stddev_s": 8.2,
+          "target_s": 489.8,
+          "stddev_s": 8.9,
           "count": 8,
           "total_samples": 10
         }
-      },
-      "avg_uses": 7.1,
-      "avg_uses_per_min": 0.84,
-      "uses_per_min": {
-        "avg": 0.929,
-        "stddev": 0.034,
-        "min": 0.865,
-        "max": 0.97
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Convoke the Spirits": {
       "sample_count": 10,
@@ -178,14 +188,19 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -312,5 +327,43 @@
     "Renewal": 108238,
     "Survival Instincts": 61336
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "79577": {
+      "icon": "ability_druid_eclipseorange",
+      "name": "Eclipse"
+    },
+    "102560": {
+      "icon": "spell_druid_incarnation",
+      "name": "Incarnation: Chosen of Elune"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "194223": {
+      "icon": "spell_nature_natureguardian",
+      "name": "Celestial Alignment"
+    },
+    "202770": {
+      "icon": "ability_druid_dreamstate",
+      "name": "Fury of Elune"
+    },
+    "205636": {
+      "icon": "ability_druid_forceofnature",
+      "name": "Force of Nature"
+    },
+    "391528": {
+      "icon": "inv_ability_druid_convokethespirits",
+      "name": "Convoke the Spirits"
+    }
+  },
+  "source_signature": "a88ae469cdb37a2b"
 }

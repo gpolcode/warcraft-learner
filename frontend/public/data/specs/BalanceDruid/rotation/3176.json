@@ -3,8 +3,8 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 230.7,
-  "downtime_threshold_ms": 1968,
+  "avg_duration_s": 227.5,
+  "downtime_threshold_ms": 2017,
   "top_avg_efficiency": 76.6,
   "top_efficiency_stddev": 3.6,
   "per_cd_benchmarks": {
@@ -14,34 +14,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Incarnation: Chosen of Elune": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.8,
+      "avg_first_cast_s": 4.6,
       "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 73.5,
-      "stddev_gap_s": 19.1,
-      "hold_targets": {},
-      "avg_uses": 3.4,
-      "avg_uses_per_min": 0.89,
+      "avg_gap_s": 71.9,
+      "stddev_gap_s": 18.5,
+      "avg_bl_offset_s": 2.5,
+      "stddev_bl_offset_s": 4.2,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.87,
       "uses_per_min": {
-        "avg": 0.888,
-        "stddev": 0.045,
-        "min": 0.832,
-        "max": 0.992
+        "avg": 0.873,
+        "stddev": 0.031,
+        "min": 0.833,
+        "max": 0.915
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Eclipse": {
       "sample_count": 10,
@@ -49,41 +54,46 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Force of Nature": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.2,
-      "stddev_first_cast_s": 1.7,
-      "avg_gap_s": 60.7,
-      "stddev_gap_s": 13.4,
+      "avg_first_cast_s": 4.1,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 60.3,
+      "stddev_gap_s": 13.5,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 4,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 1.14,
+      "uses_per_min": {
+        "avg": 1.143,
+        "stddev": 0.062,
+        "min": 1.041,
+        "max": 1.22
+      },
+      "bl_pct": 90,
+      "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 138,
+          "target_s": 137.5,
           "stddev_s": 1.4,
           "count": 10,
           "total_samples": 10
         }
-      },
-      "avg_uses": 4.3,
-      "avg_uses_per_min": 1.12,
-      "uses_per_min": {
-        "avg": 1.122,
-        "stddev": 0.072,
-        "min": 0.992,
-        "max": 1.22
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Fury of Elune": {
       "sample_count": 10,
@@ -91,14 +101,19 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Convoke the Spirits": {
       "sample_count": 10,
@@ -106,14 +121,19 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -240,5 +260,43 @@
     "Renewal": 108238,
     "Survival Instincts": 61336
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "79577": {
+      "icon": "ability_druid_eclipseorange",
+      "name": "Eclipse"
+    },
+    "102560": {
+      "icon": "spell_druid_incarnation",
+      "name": "Incarnation: Chosen of Elune"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "194223": {
+      "icon": "spell_nature_natureguardian",
+      "name": "Celestial Alignment"
+    },
+    "202770": {
+      "icon": "ability_druid_dreamstate",
+      "name": "Fury of Elune"
+    },
+    "205636": {
+      "icon": "ability_druid_forceofnature",
+      "name": "Force of Nature"
+    },
+    "391528": {
+      "icon": "inv_ability_druid_convokethespirits",
+      "name": "Convoke the Spirits"
+    }
+  },
+  "source_signature": "b0db76c38919090b"
 }

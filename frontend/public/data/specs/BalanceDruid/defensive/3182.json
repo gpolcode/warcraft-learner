@@ -38,13 +38,20 @@
   "defensive_windows": [
     {
       "time_s": 134.4,
-      "stddev_s": 13.1,
-      "count": 8,
-      "total_samples": 10,
       "dmg_avg": 403299,
       "dmg_stddev": 126624,
       "dmg_min": 259426,
       "dmg_max": 608236,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
       "ability_breakdown": [
         {
           "spell_id": 1241932,
@@ -60,8 +67,14 @@
           "max_damage": 88257,
           "count": 8
         }
-      ],
-      "ref_game_id": 240387,
+      ]
+    },
+    {
+      "time_s": 214.5,
+      "dmg_avg": 471276,
+      "dmg_stddev": 211127,
+      "dmg_min": 182989,
+      "dmg_max": 642303,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -70,17 +83,8 @@
       ],
       "common_cds": [
         "Barkskin"
-      ]
-    },
-    {
-      "time_s": 214.5,
-      "stddev_s": 15.7,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 471276,
-      "dmg_stddev": 211127,
-      "dmg_min": 182989,
-      "dmg_max": 642303,
+      ],
+      "ref_game_id": 240387,
       "ability_breakdown": [
         {
           "spell_id": 1242803,
@@ -103,27 +107,15 @@
           "max_damage": 84649,
           "count": 4
         }
-      ],
-      "ref_game_id": 240387,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Barkskin",
       "spell_id": 22812,
       "avg_uses": 2.5,
       "min_uses": 1,
-      "max_uses": 3,
-      "sample_count": 8
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -157,5 +149,35 @@
     "Renewal": 108238,
     "Survival Instincts": 61336
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1242803": {
+      "icon": "inv_ability_holyfire_wave",
+      "name": "Light Flames"
+    },
+    "1242991": {
+      "icon": "inv_ability_holyfire_orb",
+      "name": "Light Echo"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "b5b7cfe5c164aa5d"
 }

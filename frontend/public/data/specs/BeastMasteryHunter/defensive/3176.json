@@ -5,57 +5,47 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
-      "sample_count": 4,
-      "avg_first_cast_s": 116.5,
-      "stddev_first_cast_s": 4.2,
-      "avg_gap_s": 8.8,
-      "stddev_gap_s": 21.4,
+      "sample_count": 5,
+      "avg_first_cast_s": 117.2,
+      "stddev_first_cast_s": 10.4,
+      "avg_gap_s": 47.3,
+      "stddev_gap_s": 47.2,
       "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.78,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.778,
-        "stddev": 0.38,
-        "min": 0.547,
-        "max": 1.346
+        "avg": 0.399,
+        "stddev": 0.247,
+        "min": 0.271,
+        "max": 0.839
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 1,
+      "avg_first_cast_s": 122.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 61.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.56,
+        "stddev": 0,
+        "min": 0.56,
+        "max": 0.56
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 115.6,
-      "stddev_s": 3.9,
-      "count": 8,
-      "total_samples": 10,
-      "dmg_avg": 171658,
-      "dmg_stddev": 44457,
-      "dmg_min": 136234,
-      "dmg_max": 239224,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259903,
-          "avg_damage": 109622,
-          "min_damage": 98421,
-          "max_damage": 116797,
-          "count": 8
-        },
-        {
-          "spell_id": 1280075,
-          "avg_damage": 69613,
-          "min_damage": 29069,
-          "max_damage": 110156,
-          "count": 4
-        },
-        {
-          "spell_id": 1249262,
-          "avg_damage": 27230,
-          "min_damage": 25675,
-          "max_damage": 30647,
-          "count": 8
-        }
-      ],
-      "ref_game_id": 240435,
+      "time_s": 117.3,
+      "dmg_avg": 192271,
+      "dmg_stddev": 89658,
+      "dmg_min": 113144,
+      "dmg_max": 350280,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -64,17 +54,38 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 113656,
+          "min_damage": 110559,
+          "max_damage": 116797,
+          "count": 6
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 51980,
+          "min_damage": 25675,
+          "max_damage": 129647,
+          "count": 4
+        }
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Survival of the Fittest",
       "spell_id": 264735,
-      "avg_uses": 2.5,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 2,
       "min_uses": 2,
-      "max_uses": 4,
-      "sample_count": 4
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -108,5 +119,27 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "3816d4de0aeebee0"
 }

@@ -3,30 +3,30 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 307.1,
-  "downtime_threshold_ms": 1638,
-  "top_avg_efficiency": 81.1,
-  "top_efficiency_stddev": 9.6,
+  "avg_duration_s": 301.9,
+  "downtime_threshold_ms": 1605,
+  "top_avg_efficiency": 81.2,
+  "top_efficiency_stddev": 9.7,
   "per_cd_benchmarks": {
     "Bestial Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.6,
-      "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 35.7,
-      "stddev_gap_s": 5.9,
-      "hold_targets": {},
-      "avg_uses": 9.2,
-      "avg_uses_per_min": 1.82,
+      "avg_first_cast_s": 2.8,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 36.2,
+      "stddev_gap_s": 6.1,
+      "avg_bl_offset_s": 1.6,
+      "stddev_bl_offset_s": 1.1,
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 1.8,
       "uses_per_min": {
-        "avg": 1.821,
-        "stddev": 0.201,
+        "avg": 1.796,
+        "stddev": 0.2,
         "min": 1.64,
-        "max": 2.129
+        "max": 2.128
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Wailing Arrow": {
       "sample_count": 10,
@@ -34,34 +34,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Algeth'ar Puzzle Box": {
       "sample_count": 10,
-      "avg_first_cast_s": 79.1,
-      "stddev_first_cast_s": 67,
-      "avg_gap_s": 139.4,
-      "stddev_gap_s": 21.5,
-      "hold_targets": {},
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.42,
+      "avg_first_cast_s": 66.2,
+      "stddev_first_cast_s": 68.2,
+      "avg_gap_s": 135.1,
+      "stddev_gap_s": 18.2,
+      "avg_bl_offset_s": -0.3,
+      "stddev_bl_offset_s": 1.2,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.421,
-        "stddev": 0.11,
+        "avg": 0.445,
+        "stddev": 0.113,
         "min": 0.299,
-        "max": 0.564
+        "max": 0.565
       },
+      "bl_pct": 50,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -159,5 +164,31 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "19574": {
+      "icon": "ability_druid_ferociousbite",
+      "name": "Bestial Wrath"
+    },
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "383781": {
+      "icon": "inv_misc_enggizmos_18",
+      "name": "Algeth'ar Puzzle"
+    },
+    "392060": {
+      "icon": "ability_theblackarrow",
+      "name": "Wailing Arrow"
+    }
+  },
+  "source_signature": "6c1b685de0839cb6"
 }

@@ -3,30 +3,30 @@
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
-  "avg_duration_s": 354,
-  "downtime_threshold_ms": 1369,
-  "top_avg_efficiency": 79.6,
-  "top_efficiency_stddev": 6.9,
+  "avg_duration_s": 352,
+  "downtime_threshold_ms": 1388,
+  "top_avg_efficiency": 79.7,
+  "top_efficiency_stddev": 6.8,
   "per_cd_benchmarks": {
     "Colossus Smash": {
       "sample_count": 10,
-      "avg_first_cast_s": 25.1,
+      "avg_first_cast_s": 25,
       "stddev_first_cast_s": 7.9,
-      "avg_gap_s": 36.8,
-      "stddev_gap_s": 9.4,
-      "hold_targets": {},
-      "avg_uses": 9.6,
-      "avg_uses_per_min": 1.68,
+      "avg_gap_s": 36,
+      "stddev_gap_s": 9.2,
+      "avg_bl_offset_s": 23.7,
+      "stddev_bl_offset_s": 9,
+      "avg_uses": 9.7,
+      "avg_uses_per_min": 1.7,
       "uses_per_min": {
-        "avg": 1.675,
-        "stddev": 0.28,
+        "avg": 1.7,
+        "stddev": 0.278,
         "min": 1.476,
         "max": 2.416
       },
+      "bl_pct": 80,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Warbreaker": {
       "sample_count": 10,
@@ -34,34 +34,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Avatar": {
       "sample_count": 10,
-      "avg_first_cast_s": 24.6,
+      "avg_first_cast_s": 24.5,
       "stddev_first_cast_s": 7.7,
-      "avg_gap_s": 77,
-      "stddev_gap_s": 14.8,
-      "hold_targets": {},
-      "avg_uses": 4.8,
-      "avg_uses_per_min": 0.84,
+      "avg_gap_s": 79,
+      "stddev_gap_s": 19.8,
+      "avg_bl_offset_s": 23.3,
+      "stddev_bl_offset_s": 8.8,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 0.838,
-        "stddev": 0.132,
-        "min": 0.769,
+        "avg": 0.826,
+        "stddev": 0.144,
+        "min": 0.648,
         "max": 1.208
       },
+      "bl_pct": 80,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Bladestorm": {
       "sample_count": 10,
@@ -69,73 +74,72 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Ravager": {
       "sample_count": 10,
-      "avg_first_cast_s": 26.4,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 118.9,
-      "stddev_gap_s": 28.1,
+      "avg_first_cast_s": 26.2,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 123.7,
+      "stddev_gap_s": 29.3,
+      "avg_bl_offset_s": 25.8,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.48,
+      "uses_per_min": {
+        "avg": 0.533,
+        "stddev": 0.066,
+        "min": 0.477,
+        "max": 0.624
+      },
+      "bl_pct": 70,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 179.1,
+          "target_s": 179,
           "stddev_s": 0.8,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 277.8,
-          "stddev_s": 3.3,
+          "target_s": 277.4,
+          "stddev_s": 21.2,
           "count": 9,
           "total_samples": 10
-        },
-        "4": {
-          "target_s": 372.4,
-          "stddev_s": 7.5,
-          "count": 5,
-          "total_samples": 10
         }
-      },
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.51,
-      "uses_per_min": {
-        "avg": 0.565,
-        "stddev": 0.071,
-        "min": 0.477,
-        "max": 0.639
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     },
     "Demolish": {
       "sample_count": 10,
-      "avg_first_cast_s": 28.5,
+      "avg_first_cast_s": 28.3,
       "stddev_first_cast_s": 0.4,
-      "avg_gap_s": 34.9,
-      "stddev_gap_s": 10.4,
-      "hold_targets": {},
-      "avg_uses": 9.5,
+      "avg_gap_s": 34.8,
+      "stddev_gap_s": 10.6,
+      "avg_bl_offset_s": 27.7,
+      "stddev_bl_offset_s": 0.9,
+      "avg_uses": 9.4,
       "avg_uses_per_min": 1.51,
       "uses_per_min": {
-        "avg": 1.68,
-        "stddev": 0.048,
-        "min": 1.598,
+        "avg": 1.673,
+        "stddev": 0.047,
+        "min": 1.617,
         "max": 1.75
       },
+      "bl_pct": 70,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Champion's Spear": {
       "sample_count": 10,
@@ -143,47 +147,52 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Sweeping Strikes": {
       "sample_count": 10,
-      "avg_first_cast_s": 118.5,
-      "stddev_first_cast_s": 24.8,
-      "avg_gap_s": 54,
-      "stddev_gap_s": 23.4,
+      "avg_first_cast_s": 118.7,
+      "stddev_first_cast_s": 25,
+      "avg_gap_s": 55.6,
+      "stddev_gap_s": 28.3,
+      "avg_bl_offset_s": 49.5,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.441,
+        "stddev": 0.069,
+        "min": 0.307,
+        "max": 0.492
+      },
+      "bl_pct": 10,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 173.1,
-          "stddev_s": 16.7,
+          "target_s": 171.7,
+          "stddev_s": 14.4,
           "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 206.5,
-          "stddev_s": 40.1,
+          "target_s": 216.9,
+          "stddev_s": 38.1,
           "count": 7,
           "total_samples": 10
         }
-      },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.44,
-      "uses_per_min": {
-        "avg": 0.438,
-        "stddev": 0.067,
-        "min": 0.307,
-        "max": 0.492
-      },
-      "majority_hold": true,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      }
     }
   },
   "major_cooldowns": [
@@ -344,5 +353,59 @@
     "Defensive Stance": 197690,
     "Impending Victory": 202168
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "107574": {
+      "icon": "warrior_talent_icon_avatar",
+      "name": "Avatar"
+    },
+    "118038": {
+      "icon": "ability_warrior_challange",
+      "name": "Die by the Sword"
+    },
+    "167105": {
+      "icon": "inv_warbreaker",
+      "name": "Colossus Smash"
+    },
+    "197690": {
+      "icon": "ability_warrior_defensivestance",
+      "name": "Defensive Stance"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    },
+    "227847": {
+      "icon": "ability_warrior_bladestorm",
+      "name": "Bladestorm"
+    },
+    "228920": {
+      "icon": "warrior_talent_icon_ravager",
+      "name": "Ravager"
+    },
+    "260708": {
+      "icon": "ability_rogue_slicedice",
+      "name": "Sweeping Strikes"
+    },
+    "262161": {
+      "icon": "inv_warbreaker",
+      "name": "Warbreaker"
+    },
+    "376079": {
+      "icon": "inv_ability_warrior_championsspear",
+      "name": "Champion's Spear"
+    },
+    "436358": {
+      "icon": "inv_ability_colossuswarrior_demolish",
+      "name": "Demolish"
+    }
+  },
+  "source_signature": "491414e4d61fa694"
 }

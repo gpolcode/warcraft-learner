@@ -2,31 +2,37 @@
   "spec": "ArmsWarrior",
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Spell Reflection": {
-      "sample_count": 4,
-      "avg_first_cast_s": 161.3,
-      "stddev_first_cast_s": 17.8,
-      "avg_gap_s": 125.8,
-      "stddev_gap_s": 86.1,
+      "sample_count": 5,
+      "avg_first_cast_s": 130.1,
+      "stddev_first_cast_s": 71.4,
+      "avg_gap_s": 80.5,
+      "stddev_gap_s": 67.3,
       "hold_targets": {
         "1": {
           "target_s": 304.3,
           "stddev_s": 79,
           "count": 2,
-          "total_samples": 4
+          "total_samples": 5
+        },
+        "2": {
+          "target_s": 205.3,
+          "stddev_s": 163.8,
+          "count": 2,
+          "total_samples": 5
         }
       },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.341,
-        "stddev": 0.151,
+        "avg": 0.553,
+        "stddev": 0.492,
         "min": 0.206,
-        "max": 0.557
+        "max": 1.402
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Die by the Sword": {
       "sample_count": 1,
@@ -79,9 +85,9 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 1.8,
+      "avg_uses": 2.4,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 5
     }
   ],
   "defensives": [
@@ -146,10 +152,14 @@
       "icon": "ability_warrior_challange",
       "name": "Die by the Sword"
     },
+    "197690": {
+      "icon": "ability_warrior_defensivestance",
+      "name": "Defensive Stance"
+    },
     "202168": {
       "icon": "spell_impending_victory",
       "name": "Impending Victory"
     }
   },
-  "source_signature": "666263674b135c5f"
+  "source_signature": "d407db6b4700f5b8"
 }
