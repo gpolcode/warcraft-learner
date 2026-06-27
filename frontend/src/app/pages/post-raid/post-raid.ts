@@ -167,6 +167,13 @@ export class PostRaidComponent {
     takeUntilDestroyed(),
   ).subscribe();
 
+  protected onPaste(): void {
+    // The pasted text is committed to the control after this event fires; defer a tick so
+    // loadReport() reads the updated value, then load it (loadReport validates first, so a
+    // pasted non-code never reaches WCL).
+    setTimeout(() => void this.loadReport());
+  }
+
   protected async loadReport(): Promise<void> {
     this.error.set('');
     const code = extractCode(this.reportControl.value.trim());
