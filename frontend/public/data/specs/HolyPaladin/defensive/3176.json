@@ -1,0 +1,291 @@
+{
+  "spec": "HolyPaladin",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Lay on Hands": {
+      "sample_count": 4,
+      "avg_first_cast_s": 192.6,
+      "stddev_first_cast_s": 89,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.247,
+        "stddev": 0.047,
+        "min": 0.207,
+        "max": 0.307
+      },
+      "majority_hold": false
+    },
+    "Blessing of Sacrifice": {
+      "sample_count": 6,
+      "avg_first_cast_s": 135.1,
+      "stddev_first_cast_s": 74,
+      "avg_gap_s": 128.9,
+      "stddev_gap_s": 4.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 194,
+          "stddev_s": 70.4,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.363,
+        "stddev": 0.151,
+        "min": 0.211,
+        "max": 0.621
+      },
+      "majority_hold": false
+    },
+    "Divine Protection": {
+      "sample_count": 6,
+      "avg_first_cast_s": 90.6,
+      "stddev_first_cast_s": 45.6,
+      "avg_gap_s": 65.1,
+      "stddev_gap_s": 19.3,
+      "hold_targets": {},
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.68,
+        "stddev": 0.236,
+        "min": 0.307,
+        "max": 1.004
+      },
+      "majority_hold": true
+    },
+    "Divine Shield": {
+      "sample_count": 2,
+      "avg_first_cast_s": 147,
+      "stddev_first_cast_s": 81,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.257,
+        "stddev": 0.035,
+        "min": 0.232,
+        "max": 0.281
+      },
+      "majority_hold": false
+    },
+    "Blessing of Protection": {
+      "sample_count": 1,
+      "avg_first_cast_s": 260.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.201,
+        "stddev": 0,
+        "min": 0.201,
+        "max": 0.201
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 115.6,
+      "dmg_avg": 254409,
+      "dmg_stddev": 78842,
+      "dmg_min": 191545,
+      "dmg_max": 399425,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 158479,
+          "min_damage": 150778,
+          "max_damage": 163772,
+          "count": 6
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 56872,
+          "min_damage": 32424,
+          "max_damage": 129851,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 234.8,
+      "dmg_avg": 225668,
+      "dmg_stddev": 44638,
+      "dmg_min": 192026,
+      "dmg_max": 289494,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 195219,
+          "min_damage": 132801,
+          "max_damage": 289494,
+          "count": 4
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 33807,
+          "min_damage": 30472,
+          "max_damage": 37141,
+          "count": 2
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 27091,
+          "min_damage": 25429,
+          "max_damage": 28753,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 1022,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 6940,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 498,
+      "avg_uses": 3.2,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to save yourself in an emergency or after a mistake, or in Mythic+ as a pseudo healing cooldown since removing yourself from the heal load is roughly a 20% group damage reduction; it also fully immunes Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Use to instantly fully heal a player who would otherwise die; treat it as a last-resort emergency button given its very long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on an ally to immune physical damage or remove a deadly physical debuff like a bleed; remember it wipes the target's aggro, so do not use it on the tank unless asked, and with Echoing Blessings it also grants 15% magic reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use it often as your main external on a player taking heavy damage; it transfers a share of their damage to you, so watch your own health and avoid using it on tanks taking giant hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before a predictable burst of incoming damage to reduce magic damage taken; note it does not reduce Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Divine Shield": 642,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Sacrifice": 6940,
+    "Divine Protection": 498
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "210380": {
+      "icon": "ability_deathwing_bloodcorruption_earth",
+      "name": "Blessing of Dawn"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "0b7b03c8c1c2ec67"
+}

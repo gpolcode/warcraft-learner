@@ -1,0 +1,228 @@
+{
+  "spec": "HolyPaladin",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Divine Shield": {
+      "sample_count": 4,
+      "avg_first_cast_s": 142.9,
+      "stddev_first_cast_s": 127.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.226,
+        "stddev": 0.029,
+        "min": 0.184,
+        "max": 0.252
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 5,
+      "avg_first_cast_s": 125.8,
+      "stddev_first_cast_s": 63.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.248,
+        "stddev": 0.041,
+        "min": 0.184,
+        "max": 0.293
+      },
+      "majority_hold": false
+    },
+    "Blessing of Sacrifice": {
+      "sample_count": 4,
+      "avg_first_cast_s": 172.3,
+      "stddev_first_cast_s": 62.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.235,
+        "stddev": 0.045,
+        "min": 0.184,
+        "max": 0.293
+      },
+      "majority_hold": false
+    },
+    "Divine Protection": {
+      "sample_count": 6,
+      "avg_first_cast_s": 143.2,
+      "stddev_first_cast_s": 52.1,
+      "avg_gap_s": 74.7,
+      "stddev_gap_s": 38.2,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.433,
+        "stddev": 0.18,
+        "min": 0.238,
+        "max": 0.692
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 199.9,
+      "dmg_avg": 396357,
+      "dmg_stddev": 134598,
+      "dmg_min": 194994,
+      "dmg_max": 476455,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 200579,
+          "min_damage": 123850,
+          "max_damage": 347716,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 138704,
+          "min_damage": 105125,
+          "max_damage": 150987,
+          "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 88590,
+          "min_damage": 22720,
+          "max_damage": 195297,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 6940,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 498,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to save yourself in an emergency or after a mistake, or in Mythic+ as a pseudo healing cooldown since removing yourself from the heal load is roughly a 20% group damage reduction; it also fully immunes Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Use to instantly fully heal a player who would otherwise die; treat it as a last-resort emergency button given its very long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on an ally to immune physical damage or remove a deadly physical debuff like a bleed; remember it wipes the target's aggro, so do not use it on the tank unless asked, and with Echoing Blessings it also grants 15% magic reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use it often as your main external on a player taking heavy damage; it transfers a share of their damage to you, so watch your own health and avoid using it on tanks taking giant hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before a predictable burst of incoming damage to reduce magic damage taken; note it does not reduce Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Divine Shield": 642,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Sacrifice": 6940,
+    "Divine Protection": 498
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "7cef89b4fa08add2"
+}
