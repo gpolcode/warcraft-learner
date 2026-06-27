@@ -1,0 +1,329 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 113.8,
+      "stddev_first_cast_s": 91.8,
+      "avg_gap_s": 93,
+      "stddev_gap_s": 29.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 195,
+          "stddev_s": 85.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 262.4,
+          "stddev_s": 46,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.53,
+      "uses_per_min": {
+        "avg": 0.526,
+        "stddev": 0.201,
+        "min": 0.168,
+        "max": 0.848
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 10,
+      "avg_first_cast_s": 91.5,
+      "stddev_first_cast_s": 52.5,
+      "avg_gap_s": 122,
+      "stddev_gap_s": 63.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 245.7,
+          "stddev_s": 44.2,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.35,
+      "uses_per_min": {
+        "avg": 0.353,
+        "stddev": 0.201,
+        "min": 0.152,
+        "max": 0.837
+      },
+      "majority_hold": true
+    },
+    "Survival Instincts": {
+      "sample_count": 9,
+      "avg_first_cast_s": 174.9,
+      "stddev_first_cast_s": 80.6,
+      "avg_gap_s": 214.9,
+      "stddev_gap_s": 10.2,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.231,
+        "stddev": 0.074,
+        "min": 0.165,
+        "max": 0.349
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 156.9,
+      "dmg_avg": 120419,
+      "dmg_stddev": 95868,
+      "dmg_min": 40195,
+      "dmg_max": 237144,
+      "window_length_s": 2.7,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 105233,
+          "min_damage": 54062,
+          "max_damage": 168574,
+          "count": 3
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 72608,
+          "min_damage": 40195,
+          "max_damage": 119268,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 245,
+      "dmg_avg": 630978,
+      "dmg_stddev": 122426,
+      "dmg_min": 469639,
+      "dmg_max": 776359,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 248143,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 195524,
+          "min_damage": 153014,
+          "max_damage": 229938,
+          "count": 5
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 161394,
+          "min_damage": 30289,
+          "max_damage": 260744,
+          "count": 6
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 157501,
+          "min_damage": 112216,
+          "max_damage": 252130,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 142664,
+          "min_damage": 82245,
+          "max_damage": 174115,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 245.7,
+      "dmg_avg": 179671,
+      "dmg_stddev": 100577,
+      "dmg_min": 91864,
+      "dmg_max": 323734,
+      "window_length_s": 3,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 105491,
+          "min_damage": 78646,
+          "max_damage": 121840,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 27839,
+          "min_damage": 13218,
+          "max_damage": 41962,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 304.7,
+      "dmg_avg": 242932,
+      "dmg_stddev": 82518,
+      "dmg_min": 170584,
+      "dmg_max": 360517,
+      "window_length_s": 6,
+      "defensive_name": "Survival Instincts",
+      "spell_id": 61336,
+      "common_defensives": [
+        "Survival Instincts"
+      ],
+      "common_cds": [
+        "Survival Instincts"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 133111,
+          "min_damage": 108533,
+          "max_damage": 153636,
+          "count": 3
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 72303,
+          "min_damage": 67083,
+          "max_damage": 79796,
+          "count": 3
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 70769,
+          "min_damage": 41108,
+          "max_damage": 100430,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "1953814252d02b27"
+}

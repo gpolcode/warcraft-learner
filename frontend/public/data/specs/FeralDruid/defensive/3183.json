@@ -1,0 +1,442 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 173.5,
+      "stddev_first_cast_s": 132.8,
+      "avg_gap_s": 95.9,
+      "stddev_gap_s": 38.9,
+      "hold_targets": {
+        "2": {
+          "target_s": 297.3,
+          "stddev_s": 133.3,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 303.9,
+          "stddev_s": 133.9,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.403,
+        "stddev": 0.228,
+        "min": 0.114,
+        "max": 0.709
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 9,
+      "avg_first_cast_s": 215,
+      "stddev_first_cast_s": 106.3,
+      "avg_gap_s": 129.4,
+      "stddev_gap_s": 65.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 319.6,
+          "stddev_s": 57.9,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.255,
+        "stddev": 0.11,
+        "min": 0.112,
+        "max": 0.461
+      },
+      "majority_hold": true
+    },
+    "Survival Instincts": {
+      "sample_count": 6,
+      "avg_first_cast_s": 292.1,
+      "stddev_first_cast_s": 79.2,
+      "avg_gap_s": 268.4,
+      "stddev_gap_s": 15.2,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.156,
+        "stddev": 0.064,
+        "min": 0.11,
+        "max": 0.24
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 70.1,
+      "dmg_avg": 498298,
+      "dmg_stddev": 33015,
+      "dmg_min": 470091,
+      "dmg_max": 535237,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 315206,
+          "min_damage": 289308,
+          "max_damage": 331800,
+          "count": 4
+        },
+        {
+          "spell_id": 1251649,
+          "avg_damage": 183093,
+          "min_damage": 159332,
+          "max_damage": 203437,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 211.5,
+      "dmg_avg": 398566,
+      "dmg_stddev": 112200,
+      "dmg_min": 234692,
+      "dmg_max": 517820,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 206791,
+          "min_damage": 120579,
+          "max_damage": 255187,
+          "count": 8
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 191775,
+          "min_damage": 114113,
+          "max_damage": 348226,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 273.1,
+      "dmg_avg": 587425,
+      "dmg_stddev": 141110,
+      "dmg_min": 376828,
+      "dmg_max": 677189,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 240658,
+          "min_damage": 232227,
+          "max_damage": 245708,
+          "count": 4
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 117544,
+          "min_damage": 114150,
+          "max_damage": 120507,
+          "count": 3
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 105872,
+          "min_damage": 102662,
+          "max_damage": 109100,
+          "count": 3
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 98826,
+          "min_damage": 95201,
+          "max_damage": 105831,
+          "count": 3
+        },
+        {
+          "spell_id": 1284530,
+          "avg_damage": 89334,
+          "min_damage": 79538,
+          "max_damage": 99215,
+          "count": 3
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 2604,
+          "min_damage": 2557,
+          "max_damage": 2677,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 318.7,
+      "dmg_avg": 561524,
+      "dmg_stddev": 84223,
+      "dmg_min": 495436,
+      "dmg_max": 674038,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 222324,
+          "min_damage": 171338,
+          "max_damage": 248206,
+          "count": 4
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 139271,
+          "min_damage": 134938,
+          "max_damage": 143603,
+          "count": 2
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 107874,
+          "min_damage": 102541,
+          "max_damage": 114883,
+          "count": 4
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 57080,
+          "min_damage": 56224,
+          "max_damage": 57935,
+          "count": 2
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 28810,
+          "min_damage": 23859,
+          "max_damage": 33761,
+          "count": 2
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 1704,
+          "min_damage": 480,
+          "max_damage": 2643,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 332,
+      "dmg_avg": 234967,
+      "dmg_stddev": 169830,
+      "dmg_min": 70479,
+      "dmg_max": 399529,
+      "window_length_s": 2.2,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281123,
+          "avg_damage": 186736,
+          "min_damage": 184868,
+          "max_damage": 188604,
+          "count": 2
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 149390,
+          "min_damage": 147895,
+          "max_damage": 150884,
+          "count": 2
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 60905,
+          "min_damage": 29117,
+          "max_damage": 95625,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 11530,
+          "min_damage": 11013,
+          "max_damage": 12047,
+          "count": 2
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 470,
+          "min_damage": 309,
+          "max_damage": 630,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.5,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1251649": {
+      "icon": "inv_pet_naaru",
+      "name": "Disintegration"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    },
+    "1282372": {
+      "icon": "ability_evoker_unravel",
+      "name": "Cosmic Fission"
+    },
+    "1284530": {
+      "icon": "spell_mage_supernova",
+      "name": "Galvanize"
+    },
+    "1285827": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Overkill Current"
+    }
+  },
+  "source_signature": "2591003b91030e46"
+}
