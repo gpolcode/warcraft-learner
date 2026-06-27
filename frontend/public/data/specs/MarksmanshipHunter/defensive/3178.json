@@ -1,0 +1,241 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 9,
+      "avg_first_cast_s": 163.1,
+      "stddev_first_cast_s": 136.6,
+      "avg_gap_s": 117.6,
+      "stddev_gap_s": 71.4,
+      "hold_targets": {},
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.423,
+        "stddev": 0.226,
+        "min": 0.146,
+        "max": 0.664
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 2,
+      "avg_first_cast_s": 144.4,
+      "stddev_first_cast_s": 8.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.183,
+        "stddev": 0.045,
+        "min": 0.151,
+        "max": 0.214
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 2,
+      "avg_first_cast_s": 128.9,
+      "stddev_first_cast_s": 40.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.217,
+        "stddev": 0.004,
+        "min": 0.214,
+        "max": 0.219
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 67.3,
+      "dmg_avg": 380943,
+      "dmg_stddev": 30057,
+      "dmg_min": 336517,
+      "dmg_max": 400934,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 120464,
+          "min_damage": 116276,
+          "max_damage": 124651,
+          "count": 2
+        },
+        {
+          "spell_id": 1245500,
+          "avg_damage": 105480,
+          "min_damage": 104504,
+          "max_damage": 106076,
+          "count": 3
+        },
+        {
+          "spell_id": 1283711,
+          "avg_damage": 94659,
+          "min_damage": 91221,
+          "max_damage": 98096,
+          "count": 2
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 84663,
+          "min_damage": 45228,
+          "max_damage": 125226,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 83910,
+          "min_damage": 53572,
+          "max_damage": 116097,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 262.6,
+      "dmg_avg": 283822,
+      "dmg_stddev": 189409,
+      "dmg_min": 26567,
+      "dmg_max": 546717,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1283711,
+          "avg_damage": 97846,
+          "min_damage": 94083,
+          "max_damage": 102646,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 85894,
+          "min_damage": 26567,
+          "max_damage": 177697,
+          "count": 5
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 66712,
+          "min_damage": 41741,
+          "max_damage": 90018,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction; spell_id is my best guess and should be verified at wowhead.com/spell=264735.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1245500": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Gloom"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1283711": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    },
+    "1283712": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    }
+  },
+  "source_signature": "b0cbff737a0f00fd"
+}
