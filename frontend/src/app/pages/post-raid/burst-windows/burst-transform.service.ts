@@ -79,33 +79,6 @@ export function cdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDe
   return map;
 }
 
-/**
- * Bake icon/name for every spell the burst card renders: each rulebook cooldown /
- * defensive (header chips) and each clustered-window ability (detail rows). The
- * `.jpg` extension is stripped. A spell present in the parses' master data uses its
- * real name + icon; a rulebook spell that WCL omits (a passive) gets the rulebook
- * name + an empty icon, so the map is complete and the runtime needs no fallback.
- */
-export function bakeBurstIcons(
-  cooldowns: RulebookCooldown[],
-  defensives: RulebookDefensive[],
-  windows: BurstWindow[],
-  abilityMeta: Map<number, { name: string; icon: string }>,
-): Record<number, { icon: string; name: string }> {
-  const icons: Record<number, { icon: string; name: string }> = {};
-  const add = (spellId: number, rulebookName: string): void => {
-    if (icons[spellId]) return;
-    const meta = abilityMeta.get(spellId);
-    icons[spellId] = meta
-      ? { icon: (meta.icon || '').replace(/\.jpg$/i, ''), name: meta.name || rulebookName }
-      : { icon: '', name: rulebookName };
-  };
-  for (const cooldown of cooldowns) if (cooldown.spell_id) add(cooldown.spell_id, cooldown.name);
-  for (const defensive of defensives) if (defensive.spell_id) add(defensive.spell_id, defensive.name);
-  for (const window of windows) for (const ability of window.ability_breakdown) add(ability.spell_id, '');
-  return icons;
-}
-
 interface CdTiming { name: string; duration: number; castTimesS: number[]; }
 
 /** Per-cooldown cast times (fight-relative seconds) + its window duration. */
@@ -273,45 +246,50 @@ export class BurstTransformService implements BurstDataSource {
     if (!rankings.length) return null;
 
     const allWindows: ParseWindow[] = [];
-    const abilityMeta = new Map<number, { name: string; icon: string }>();
     let sampleCount = 0;
     let encounterName = '';
     for (const ranking of rankings) {
       const parse = await this.computeParseWindows(ranking, cooldowns);
       if (!parse) continue;
       allWindows.push(...parse.windows);
-      for (const [id, meta] of parse.abilityMeta) if (!abilityMeta.has(id)) abilityMeta.set(id, meta);
       encounterName ||= parse.encounterName;
       sampleCount += 1;
     }
     if (!sampleCount) return null;
 
     const windows = clusterParseWindows(allWindows, sampleCount);
+    const cd_spell_ids = cdSpellIds(cooldowns, defensives);
+    // Resolve a real icon for every spell the card renders - header cooldowns and
+    // each window ability - by id, so the map is complete (no fallback).
+    const referencedIds = [
+      ...Object.values(cd_spell_ids),
+      ...windows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
+    ];
     return {
       spec,
       encounter_id: encounterId,
       encounter_name: encounterName,
       sample_count: sampleCount,
       windows,
-      cd_spell_ids: cdSpellIds(cooldowns, defensives),
-      ability_icons: bakeBurstIcons(cooldowns, defensives, windows, abilityMeta),
+      cd_spell_ids,
+      ability_icons: await this.wclApi.getAbilities(referencedIds),
     };
   }
 
   /** One parse's burst windows via the colocated pure fns; null if it can't be fetched. */
   private async computeParseWindows(
     ranking: ParseRanking, cooldowns: RulebookCooldown[],
-  ): Promise<{ windows: ParseWindow[]; encounterName: string; abilityMeta: Map<number, { name: string; icon: string }> } | null> {
+  ): Promise<{ windows: ParseWindow[]; encounterName: string } | null> {
     try {
       const report = await this.wclApi.getReport(ranking.report_code);
       const fight = report.fights.find(entry => entry.id === ranking.fight_id);
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
-      const abilityMeta = new Map<number, { name: string; icon: string }>(
-        (report.masterData?.abilities ?? []).map(ability => [ability.gameID, { name: ability.name, icon: ability.icon }]),
+      // Names only - used to attribute casts by ability name inside a parse window.
+      const abilityNames = new Map<number, string>(
+        (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
       );
-      const abilityNames = new Map<number, string>([...abilityMeta].map(([id, meta]) => [id, meta.name]));
       const [casts, damage] = await Promise.all([
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
@@ -319,7 +297,7 @@ export class BurstTransformService implements BurstDataSource {
 
       const timings = cdTimings(casts, cooldowns, fight.startTime);
       const windows = findParseWindows(damage, fight.startTime, timings, casts, abilityNames);
-      return { windows, encounterName: fight.name ?? '', abilityMeta };
+      return { windows, encounterName: fight.name ?? '' };
     } catch (err) {
       logWarn(`BurstTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
       return null;

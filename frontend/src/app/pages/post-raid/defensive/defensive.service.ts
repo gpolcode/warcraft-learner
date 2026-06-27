@@ -402,12 +402,6 @@ export class DefensiveFeatureService {
       const fEnd = fight.endTime;
       const fightDurationS = (fEnd - fStart) / 1000;
 
-      // Baked bench icons, augmented by the player's own report (`.jpg` stripped).
-      const abilities: AbilityIcons = { ...bench.ability_icons };
-      for (const ability of report.masterData?.abilities ?? []) {
-        abilities[ability.gameID] = { icon: (ability.icon ?? '').replace(/\.jpg$/i, ''), name: ability.name ?? '' };
-      }
-
       const [casts, buffs, dtEvents] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fStart, fEnd, playerId),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fStart, fEnd, playerId),
@@ -422,9 +416,9 @@ export class DefensiveFeatureService {
       const playerWindows = computePlayerDefensiveWindows(bench.defensive_windows, dtEvents, fStart);
       const iconByName: Record<string, string> = {};
       for (const [name, spellId] of Object.entries(bench.cd_spell_ids)) {
-        iconByName[name] = abilities[spellId].icon;
+        iconByName[name] = bench.ability_icons[spellId].icon;
       }
-      const { windows, anchors } = buildDefensiveWindows(bench.defensive_windows, playerWindows, fightDurationS, abilities);
+      const { windows, anchors } = buildDefensiveWindows(bench.defensive_windows, playerWindows, fightDurationS, bench.ability_icons);
       return { findings, spellIdsByName: bench.cd_spell_ids, iconByName, windows, anchors };
     } catch (err) {
       logWarn(`DefensiveFeatureService.loadAnalysisView ${reportCode}:${fightId}`, err);

@@ -217,13 +217,9 @@ export class BurstFeatureService {
     try {
       const report = await this.wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
-      // Baked bench icons, augmented by the player's own report (`.jpg` stripped).
-      const abilities: AbilityIcons = { ...bench.ability_icons };
-      for (const ability of report.masterData?.abilities ?? []) {
-        abilities[ability.gameID] = { icon: (ability.icon ?? '').replace(/\.jpg$/i, ''), name: ability.name ?? '' };
-      }
-      if (!fight) return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, abilities, true);
+      if (!fight) return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
 
+      // Names only, to attribute the player's casts by ability name in each window.
       const abilityNames = new Map<number, string>();
       for (const ability of report.masterData?.abilities ?? []) abilityNames.set(ability.gameID, ability.name);
 
@@ -233,7 +229,7 @@ export class BurstFeatureService {
       ]);
       const playerWindows = findPlayerBurstWindows(bench.windows, damage, casts, fight.startTime, abilityNames);
       const fightDurationS = (fight.endTime - fight.startTime) / 1000;
-      return buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, abilities);
+      return buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
     } catch (err) {
       logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, err);
       return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);

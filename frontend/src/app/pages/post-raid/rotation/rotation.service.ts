@@ -535,12 +535,6 @@ export class RotationFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       if (!fight) return empty;
 
-      // Baked bench icons, augmented by the player's own report (`.jpg` stripped).
-      const abilities: AbilityIcons = { ...bench.ability_icons };
-      for (const ability of report.masterData?.abilities ?? []) {
-        abilities[ability.gameID] = { icon: (ability.icon ?? '').replace(/\.jpg$/i, ''), name: ability.name ?? '' };
-      }
-
       const [casts, buffs] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
@@ -549,7 +543,7 @@ export class RotationFeatureService {
       const findings = analyzeRotationFindings(
         fight.startTime, fight.endTime, casts, buffs, bench.major_cooldowns, bench.rules, bench,
       );
-      const { ruleRows, offensiveRows, onPlan } = bucketRotationFindings(findings, bench.cd_spell_ids, abilities);
+      const { ruleRows, offensiveRows, onPlan } = bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
       const comparison = buildComparisonTable(fight.startTime, fight.endTime, casts, bench.major_cooldowns, bench);
       return { ruleRows, offensiveRows, onPlan, comparison };
     } catch (err) {
