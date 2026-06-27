@@ -2,61 +2,68 @@
   "spec": "RestorationShaman",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 8,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 7,
-      "avg_first_cast_s": 202.3,
-      "stddev_first_cast_s": 108.2,
-      "avg_gap_s": 186.4,
-      "stddev_gap_s": 88,
-      "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.2,
+      "sample_count": 9,
+      "avg_first_cast_s": 185.5,
+      "stddev_first_cast_s": 99.6,
+      "avg_gap_s": 189.3,
+      "stddev_gap_s": 67.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 331,
+          "stddev_s": 78.1,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.199,
-        "stddev": 0.096,
+        "avg": 0.229,
+        "stddev": 0.105,
         "min": 0.129,
-        "max": 0.374
+        "max": 0.386
       },
       "majority_hold": false
     },
     "Spirit Link Totem": {
-      "sample_count": 8,
-      "avg_first_cast_s": 207.8,
-      "stddev_first_cast_s": 86.3,
-      "avg_gap_s": 252.5,
-      "stddev_gap_s": 26.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 206,
+      "stddev_first_cast_s": 83,
+      "avg_gap_s": 246.6,
+      "stddev_gap_s": 34.1,
       "hold_targets": {
         "1": {
-          "target_s": 391.2,
-          "stddev_s": 37.7,
-          "count": 5,
-          "total_samples": 8
+          "target_s": 403.4,
+          "stddev_s": 36,
+          "count": 7,
+          "total_samples": 10
         }
       },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.227,
-        "stddev": 0.067,
+        "avg": 0.236,
+        "stddev": 0.063,
         "min": 0.129,
         "max": 0.295
       },
       "majority_hold": true
     },
     "Healing Tide Totem": {
-      "sample_count": 3,
-      "avg_first_cast_s": 91.7,
-      "stddev_first_cast_s": 51.9,
-      "avg_gap_s": 143.5,
-      "stddev_gap_s": 19.4,
+      "sample_count": 4,
+      "avg_first_cast_s": 98.7,
+      "stddev_first_cast_s": 44.6,
+      "avg_gap_s": 141.1,
+      "stddev_gap_s": 17,
       "hold_targets": {},
       "avg_uses": 3,
-      "avg_uses_per_min": 0.41,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.407,
-        "stddev": 0.025,
+        "avg": 0.402,
+        "stddev": 0.023,
         "min": 0.386,
         "max": 0.435
       },
@@ -65,9 +72,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 118.4,
-      "dmg_avg": 534654,
-      "dmg_stddev": 187548,
+      "time_s": 119.4,
+      "dmg_avg": 536240,
+      "dmg_stddev": 153790,
       "dmg_min": 362400,
       "dmg_max": 798637,
       "window_length_s": 12,
@@ -83,26 +90,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 384175,
+          "avg_damage": 353726,
           "min_damage": 50134,
           "max_damage": 694209,
-          "count": 4
+          "count": 6
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 95403,
+          "avg_damage": 98373,
           "min_damage": 86360,
-          "max_damage": 104428,
-          "count": 4
+          "max_damage": 105849,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 270.3,
-      "dmg_avg": 449589,
-      "dmg_stddev": 121878,
+      "time_s": 269.3,
+      "dmg_avg": 506313,
+      "dmg_stddev": 150909,
       "dmg_min": 311417,
-      "dmg_max": 541818,
+      "dmg_max": 676486,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -116,10 +123,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 176998,
+          "avg_damage": 181434,
           "min_damage": 135953,
           "max_damage": 209035,
-          "count": 3
+          "count": 4
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 164211,
+          "min_damage": 30471,
+          "max_damage": 481744,
+          "count": 4
         },
         {
           "spell_id": 1221965,
@@ -134,23 +148,16 @@
           "min_damage": 39770,
           "max_damage": 162832,
           "count": 2
-        },
-        {
-          "spell_id": 1221637,
-          "avg_damage": 58366,
-          "min_damage": 30471,
-          "max_damage": 79118,
-          "count": 3
         }
       ]
     },
     {
-      "time_s": 404.7,
-      "dmg_avg": 552016,
-      "dmg_stddev": 73270,
+      "time_s": 397.5,
+      "dmg_avg": 610015,
+      "dmg_stddev": 130517,
       "dmg_min": 475162,
-      "dmg_max": 621080,
-      "window_length_s": 10.7,
+      "dmg_max": 784013,
+      "window_length_s": 11,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
       "common_defensives": [
@@ -162,18 +169,18 @@
       "ref_game_id": 238693,
       "ability_breakdown": [
         {
-          "spell_id": 1222284,
-          "avg_damage": 239161,
-          "min_damage": 170825,
-          "max_damage": 300237,
-          "count": 3
+          "spell_id": 1221637,
+          "avg_damage": 262258,
+          "min_damage": 58981,
+          "max_damage": 489939,
+          "count": 4
         },
         {
-          "spell_id": 1221637,
-          "avg_damage": 186364,
-          "min_damage": 58981,
-          "max_damage": 374658,
-          "count": 3
+          "spell_id": 1222284,
+          "avg_damage": 252890,
+          "min_damage": 170825,
+          "max_damage": 300237,
+          "count": 4
         },
         {
           "spell_id": 1221965,
@@ -188,13 +195,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.4,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 98008,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -266,5 +273,5 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "10b602523248b1c6"
+  "source_signature": "38e78e17849d11bf"
 }
