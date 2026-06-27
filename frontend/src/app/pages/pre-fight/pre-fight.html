@@ -45,7 +45,7 @@
     <wl-defensive-plan [spec]="selectedSpec()" [encounterId]="selectedEncId()"></wl-defensive-plan>
 
     <!-- Burst windows (bench-only) -->
-    <wl-burst-windows [spec]="selectedSpec()" [encounterId]="selectedEncId()" (openMap)="onOpenMap($event)"></wl-burst-windows>
+    <wl-burst-windows [spec]="selectedSpec()" [encounterId]="selectedEncId()" [showMap]="mapReady()" (openMap)="onOpenMap($event)"></wl-burst-windows>
   }
 
   <wl-map-panel></wl-map-panel>

@@ -94,6 +94,10 @@ export class WindowComparisonComponent {
   // the label is suppressed there.
   protected readonly activeIsNotReached = computed(() => this.activeWindow()?.status === 'muted');
 
+  // Bench-only (pre-fight) window: no player overlay at all, so the You/Top
+  // comparison bar is hidden and the header shows the top-parse damage instead.
+  protected readonly activeIsBenchOnly = computed(() => this.activeWindow()?.status === 'info');
+
   // Active window's ability rows, sorted by absolute gap (biggest damage loss
   // first) so the most actionable abilities surface at the top of the table.
   // Direction-aware: burst wants player >= top (loss = negative gap); defensives
