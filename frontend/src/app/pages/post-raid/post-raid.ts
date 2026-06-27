@@ -26,6 +26,9 @@ import { MapPanelComponent } from './map/map-panel';
 import { MapFeatureService, MapAnchor } from './map/map.service';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
+import { SpecIconPipe } from '../../shared/pipes/spec-icon-pipe';
+import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
+import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { SelectionStore } from '../../core/services/selection-store';
 import { extractCode, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId } from './post-raid.vm';
 
@@ -77,9 +80,9 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule, MatSlideToggleModule,
-    LoadingSpinnerComponent, RotationComponent, BurstWindowsComponent,
+    LoadingSpinnerComponent, ArtIconComponent, RotationComponent, BurstWindowsComponent,
     DefensiveComponent, GearComponent, MapPanelComponent,
-    FormatDurationPipe, FormatSpecPipe,
+    FormatDurationPipe, FormatSpecPipe, SpecIconPipe, BossIconPipe,
   ],
   templateUrl: './post-raid.html',
 })

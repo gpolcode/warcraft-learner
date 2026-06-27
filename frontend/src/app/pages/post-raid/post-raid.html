@@ -24,7 +24,10 @@
               <mat-select [formControl]="fightControl" (selectionChange)="onFightChange()">
                 @for (f of fights(); track f.id) {
                   <mat-option [value]="f.id">
-                    {{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}
+                    <span class="flex items-center gap-2">
+                      <wl-art-icon [src]="f.encounterID | bossIcon" [alt]="f.name"></wl-art-icon>
+                      <span class="truncate">{{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}</span>
+                    </span>
                   </mat-option>
                 }
               </mat-select>
@@ -34,7 +37,12 @@
               <mat-label>Player</mat-label>
               <mat-select [formControl]="playerControl" (selectionChange)="onPlayerChange()">
                 @for (p of visiblePlayers(); track p.id) {
-                  <mat-option [value]="p.id">{{ p.name }} - {{ p.spec | formatSpec }}</mat-option>
+                  <mat-option [value]="p.id">
+                    <span class="flex items-center gap-2">
+                      <wl-art-icon [src]="p.spec | specIcon" [alt]="p.spec | formatSpec"></wl-art-icon>
+                      <span class="truncate">{{ p.name }}</span>
+                    </span>
+                  </mat-option>
                 }
               </mat-select>
             </mat-form-field>
