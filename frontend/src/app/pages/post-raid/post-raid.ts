@@ -140,6 +140,10 @@ export class PostRaidComponent {
   protected readonly selectedFight = computed(() =>
     this.fights().find(f => f.id === this.selectedFightId()));
 
+  /** The selected player, so the select trigger can render its spec icon + name. */
+  protected readonly selectedPlayer = computed(() =>
+    this.visiblePlayers().find(p => p.id === this.selectedPlayerId()));
+
   /** Encounter id of the selected fight, passed to every feature card. */
   protected readonly selectedEncounterId = computed(() =>
     this.fights().find(f => f.id === this.selectedFightId())?.encounterID ?? 0);

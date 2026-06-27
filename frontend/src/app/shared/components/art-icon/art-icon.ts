@@ -11,7 +11,7 @@ import { NgOptimizedImage } from '@angular/common';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-art-icon',
-  host: { class: 'inline-flex shrink-0' },
+  host: { class: 'inline-flex items-center shrink-0 align-middle' },
   imports: [NgOptimizedImage],
   templateUrl: './art-icon.html',
 })
