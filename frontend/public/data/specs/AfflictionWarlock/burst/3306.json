@@ -5,9 +5,9 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 2.8,
-      "dmg_avg": 5791921,
-      "dmg_stddev": 486603,
+      "time_s": 3.3,
+      "dmg_avg": 5875684,
+      "dmg_stddev": 566725,
       "dmg_min": 5276894,
       "dmg_max": 6680334,
       "common_cds": [
@@ -18,35 +18,39 @@
       "ability_breakdown": [
         {
           "spell_id": 1259790,
-          "avg_damage": 1720225,
-          "min_damage": 1329759,
+          "avg_damage": 1753343,
+          "min_damage": 1247085,
           "max_damage": 2068699,
           "count": 10,
-          "avg_casts": 11
+          "avg_casts": 11,
+          "is_passive": false
         },
         {
           "spell_id": 205231,
-          "avg_damage": 931546,
+          "avg_damage": 931567,
           "min_damage": 826280,
           "max_damage": 1065730,
           "count": 10,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1261153,
-          "avg_damage": 462600,
+          "avg_damage": 477362,
           "min_damage": 321779,
           "max_damage": 605940,
           "count": 7,
-          "avg_casts": 6
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 449801,
-          "avg_damage": 412925,
-          "min_damage": 361990,
-          "max_damage": 524830,
+          "avg_damage": 459921,
+          "min_damage": 337385,
+          "max_damage": 944436,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1261176,
@@ -54,23 +58,25 @@
           "min_damage": 328784,
           "max_damage": 484061,
           "count": 6,
-          "avg_casts": 11
+          "avg_casts": 11,
+          "is_passive": false
         },
         {
           "spell_id": 449826,
-          "avg_damage": 360703,
+          "avg_damage": 364168,
           "min_damage": 315725,
           "max_damage": 448032,
-          "count": 6,
-          "avg_casts": 0
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     },
     {
-      "time_s": 124.2,
-      "dmg_avg": 4370611,
-      "dmg_stddev": 1233457,
-      "dmg_min": 2098435,
+      "time_s": 125,
+      "dmg_avg": 4477796,
+      "dmg_stddev": 1036359,
+      "dmg_min": 2737707,
       "dmg_max": 5634002,
       "common_cds": [
         "Summon Darkglare"
@@ -80,51 +86,57 @@
       "ability_breakdown": [
         {
           "spell_id": 1259790,
-          "avg_damage": 1153811,
-          "min_damage": 435834,
+          "avg_damage": 1219127,
+          "min_damage": 744336,
           "max_damage": 1516281,
           "count": 10,
-          "avg_casts": 8
+          "avg_casts": 8,
+          "is_passive": false
         },
         {
           "spell_id": 205231,
-          "avg_damage": 603013,
-          "min_damage": 169160,
+          "avg_damage": 599503,
+          "min_damage": 315447,
           "max_damage": 836843,
           "count": 10,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1269049,
-          "avg_damage": 534608,
-          "min_damage": 260559,
+          "avg_damage": 548045,
+          "min_damage": 341181,
           "max_damage": 715001,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 449801,
-          "avg_damage": 383512,
+          "avg_damage": 384171,
           "min_damage": 298977,
           "max_damage": 545982,
-          "count": 9,
-          "avg_casts": 0
+          "count": 8,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1261153,
+          "avg_damage": 328526,
+          "min_damage": 253092,
+          "max_damage": 427591,
+          "count": 7,
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 1261176,
-          "avg_damage": 311453,
-          "min_damage": 149755,
+          "avg_damage": 316675,
+          "min_damage": 240667,
           "max_damage": 429997,
-          "count": 7,
-          "avg_casts": 8
-        },
-        {
-          "spell_id": 980,
-          "avg_damage": 310559,
-          "min_damage": 247924,
-          "max_damage": 358681,
-          "count": 5,
-          "avg_casts": 1
+          "count": 8,
+          "avg_casts": 8,
+          "is_passive": false
         }
       ]
     }
@@ -138,5 +150,63 @@
     "Mortal Coil": 6789,
     "Healthstone": 6262
   },
-  "source_signature": "074bd713714657cf"
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "205180": {
+      "icon": "inv_beholderwarlock",
+      "name": "Summon Darkglare"
+    },
+    "205231": {
+      "icon": "inv_beholderwarlock",
+      "name": "Eye Beam"
+    },
+    "439527": {
+      "icon": "inv_10_dungeonjewelry_primalist_trinket_1ragingelement_frost",
+      "name": "Repulsion"
+    },
+    "442726": {
+      "icon": "inv_ability_hellcallerwarlock_malevolence",
+      "name": "Malevolence"
+    },
+    "449801": {
+      "icon": "inv_ability_soulharvesterwarlock_demonicsoul",
+      "name": "Demonic Soul"
+    },
+    "449826": {
+      "icon": "inv_staff_2h_artifactdeadwind_d_05",
+      "name": "Wicked Reaping"
+    },
+    "1259790": {
+      "icon": "spell_shadow_unstableaffliction_3",
+      "name": "Unstable Affliction"
+    },
+    "1261153": {
+      "icon": "ability_warlock_everlastingaffliction",
+      "name": "Malefic Grasp"
+    },
+    "1261176": {
+      "icon": "spell_shadow_unstableaffliction_3",
+      "name": "Unstable Affliction"
+    },
+    "1269049": {
+      "icon": "ability_creature_disease_05",
+      "name": "Soul Swipe"
+    }
+  },
+  "source_signature": "d098ba144f8c3093"
 }

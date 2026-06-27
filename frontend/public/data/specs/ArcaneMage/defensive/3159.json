@@ -2,7 +2,7 @@
   "spec": "ArcaneMage",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 7,
@@ -35,40 +35,57 @@
       "majority_hold": true
     },
     "Prismatic Barrier": {
-      "sample_count": 8,
-      "avg_first_cast_s": 201.9,
-      "stddev_first_cast_s": 88.1,
-      "avg_gap_s": 64,
-      "stddev_gap_s": 45.5,
+      "sample_count": 9,
+      "avg_first_cast_s": 213.2,
+      "stddev_first_cast_s": 89.1,
+      "avg_gap_s": 63.3,
+      "stddev_gap_s": 43.3,
       "hold_targets": {
         "1": {
-          "target_s": 251.8,
-          "stddev_s": 119.4,
-          "count": 7,
-          "total_samples": 8
+          "target_s": 277.8,
+          "stddev_s": 116.1,
+          "count": 8,
+          "total_samples": 9
         },
         "2": {
-          "target_s": 352.2,
-          "stddev_s": 60.1,
-          "count": 5,
-          "total_samples": 8
+          "target_s": 370,
+          "stddev_s": 63.4,
+          "count": 6,
+          "total_samples": 9
         },
         "3": {
-          "target_s": 387.9,
-          "stddev_s": 58.9,
-          "count": 5,
-          "total_samples": 8
+          "target_s": 403.3,
+          "stddev_s": 65.6,
+          "count": 6,
+          "total_samples": 9
         }
       },
-      "avg_uses": 4.4,
+      "avg_uses": 4.3,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.554,
-        "stddev": 0.296,
+        "avg": 0.546,
+        "stddev": 0.278,
         "min": 0.135,
         "max": 1.032
       },
       "majority_hold": true
+    },
+    "Mirror Image": {
+      "sample_count": 2,
+      "avg_first_cast_s": 177.8,
+      "stddev_first_cast_s": 31.5,
+      "avg_gap_s": 135.8,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.185,
+        "stddev": 0.078,
+        "min": 0.129,
+        "max": 0.24
+      },
+      "majority_hold": false
     },
     "Greater Invisibility": {
       "sample_count": 1,
@@ -84,23 +101,6 @@
         "stddev": 0,
         "min": 0.119,
         "max": 0.119
-      },
-      "majority_hold": false
-    },
-    "Mirror Image": {
-      "sample_count": 1,
-      "avg_first_cast_s": 200,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.13,
-      "uses_per_min": {
-        "avg": 0.129,
-        "stddev": 0,
-        "min": 0.129,
-        "max": 0.129
       },
       "majority_hold": false
     }
@@ -173,12 +173,12 @@
       ]
     },
     {
-      "time_s": 387.9,
-      "dmg_avg": 288775,
-      "dmg_stddev": 130050,
+      "time_s": 387.8,
+      "dmg_avg": 273642,
+      "dmg_stddev": 122084,
       "dmg_min": 76858,
       "dmg_max": 416850,
-      "window_length_s": 15.1,
+      "window_length_s": 13.5,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -198,20 +198,20 @@
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 105615,
+          "avg_damage": 121009,
           "min_damage": 33384,
-          "max_damage": 167725,
-          "count": 5
+          "max_damage": 197977,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 429.3,
-      "dmg_avg": 194939,
-      "dmg_stddev": 24846,
+      "time_s": 424.2,
+      "dmg_avg": 197433,
+      "dmg_stddev": 23047,
       "dmg_min": 164899,
       "dmg_max": 229914,
-      "window_length_s": 2.9,
+      "window_length_s": 2.8,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -224,16 +224,42 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 116632,
+          "avg_damage": 115372,
           "min_damage": 69979,
           "max_damage": 184216,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1222278,
-          "avg_damage": 97884,
+          "avg_damage": 98474,
           "min_damage": 46379,
           "max_damage": 155735,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 472.8,
+      "dmg_avg": 207941,
+      "dmg_stddev": 34889,
+      "dmg_min": 166316,
+      "dmg_max": 251022,
+      "window_length_s": 3.9,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 183633,
+          "min_damage": 115550,
+          "max_damage": 251022,
           "count": 4
         }
       ]
@@ -254,13 +280,13 @@
     },
     {
       "spell_id": 55342,
-      "avg_uses": 1,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     },
     {
       "spell_id": 235450,
-      "avg_uses": 4.4,
+      "avg_uses": 4.3,
       "min_uses": 1,
       "max_uses": 7
     }
@@ -315,6 +341,10 @@
     "Prismatic Barrier": 235450
   },
   "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
     "55342": {
       "icon": "spell_magic_lesserinvisibilty",
       "name": "Mirror Image"
@@ -344,5 +374,5 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "a5940afaaf6b6b54"
+  "source_signature": "f70596a912b1b87f"
 }

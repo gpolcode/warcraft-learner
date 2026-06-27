@@ -5,10 +5,10 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 3.8,
-      "dmg_avg": 5847158,
-      "dmg_stddev": 648866,
-      "dmg_min": 4645051,
+      "time_s": 2.9,
+      "dmg_avg": 5886638,
+      "dmg_stddev": 595342,
+      "dmg_min": 4979606,
       "dmg_max": 6836800,
       "common_cds": [
         "Summon Darkglare"
@@ -18,59 +18,56 @@
       "ability_breakdown": [
         {
           "spell_id": 1259790,
-          "avg_damage": 1418775,
+          "avg_damage": 1422559,
           "min_damage": 1016333,
           "max_damage": 1887456,
           "count": 10,
-          "avg_casts": 9
+          "avg_casts": 9,
+          "is_passive": false
         },
         {
           "spell_id": 205231,
-          "avg_damage": 891645,
+          "avg_damage": 924538,
           "min_damage": 769468,
-          "max_damage": 1075107,
+          "max_damage": 1154237,
           "count": 10,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1261153,
-          "avg_damage": 436783,
-          "min_damage": 361358,
+          "avg_damage": 430225,
+          "min_damage": 358432,
           "max_damage": 499342,
-          "count": 9,
-          "avg_casts": 5
+          "count": 8,
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 449801,
-          "avg_damage": 404439,
-          "min_damage": 235589,
-          "max_damage": 530362,
+          "avg_damage": 429177,
+          "min_damage": 299777,
+          "max_damage": 577429,
           "count": 9,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 449826,
-          "avg_damage": 395718,
-          "min_damage": 253958,
-          "max_damage": 533362,
-          "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 980,
-          "avg_damage": 392877,
-          "min_damage": 282186,
+          "avg_damage": 382486,
+          "min_damage": 302258,
           "max_damage": 484857,
           "count": 9,
-          "avg_casts": 3
+          "avg_casts": 2,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 130.8,
-      "dmg_avg": 3886092,
-      "dmg_stddev": 1025520,
-      "dmg_min": 2074361,
+      "time_s": 126.1,
+      "dmg_avg": 3895696,
+      "dmg_stddev": 861156,
+      "dmg_min": 2610029,
       "dmg_max": 5334647,
       "common_cds": [
         "Summon Darkglare"
@@ -80,35 +77,30 @@
       "ability_breakdown": [
         {
           "spell_id": 1257065,
-          "avg_damage": 815350,
+          "avg_damage": 706325,
           "min_damage": 194002,
-          "max_damage": 1095385,
+          "max_damage": 957437,
           "count": 5,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1259790,
-          "avg_damage": 659520,
-          "min_damage": 337954,
+          "avg_damage": 657448,
+          "min_damage": 293233,
           "max_damage": 1319587,
           "count": 9,
-          "avg_casts": 6
+          "avg_casts": 6,
+          "is_passive": false
         },
         {
           "spell_id": 205231,
-          "avg_damage": 497240,
-          "min_damage": 305112,
+          "avg_damage": 517789,
+          "min_damage": 383694,
           "max_damage": 627227,
           "count": 9,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 980,
-          "avg_damage": 435202,
-          "min_damage": 241697,
-          "max_damage": 1015143,
-          "count": 9,
-          "avg_casts": 4
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 449801,
@@ -116,7 +108,17 @@
           "min_damage": 265728,
           "max_damage": 627983,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 980,
+          "avg_damage": 414951,
+          "min_damage": 241697,
+          "max_damage": 1015143,
+          "count": 9,
+          "avg_casts": 4,
+          "is_passive": false
         }
       ]
     }
@@ -130,5 +132,59 @@
     "Mortal Coil": 6789,
     "Healthstone": 6262
   },
-  "source_signature": "53cd22d9cbbf7127"
+  "ability_icons": {
+    "980": {
+      "icon": "spell_shadow_curseofsargeras",
+      "name": "Agony"
+    },
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "205180": {
+      "icon": "inv_beholderwarlock",
+      "name": "Summon Darkglare"
+    },
+    "205231": {
+      "icon": "inv_beholderwarlock",
+      "name": "Eye Beam"
+    },
+    "439527": {
+      "icon": "inv_10_dungeonjewelry_primalist_trinket_1ragingelement_frost",
+      "name": "Repulsion"
+    },
+    "442726": {
+      "icon": "inv_ability_hellcallerwarlock_malevolence",
+      "name": "Malevolence"
+    },
+    "449801": {
+      "icon": "inv_ability_soulharvesterwarlock_demonicsoul",
+      "name": "Demonic Soul"
+    },
+    "1257065": {
+      "icon": "spell_warlock_harvestoflife",
+      "name": "Dark Harvest"
+    },
+    "1259790": {
+      "icon": "spell_shadow_unstableaffliction_3",
+      "name": "Unstable Affliction"
+    },
+    "1261153": {
+      "icon": "ability_warlock_everlastingaffliction",
+      "name": "Malefic Grasp"
+    }
+  },
+  "source_signature": "eed5a21a01c08bee"
 }
