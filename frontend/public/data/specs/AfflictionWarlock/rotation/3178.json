@@ -104,11 +104,12 @@
     },
     {
       "name": "Dark Harvest",
-      "spell_id": 439527,
+      "spell_id": 387016,
+      "id_note": "Dark Harvest (387016) is the canonical Affliction talent of that name and is a passive; if the Soul Harvester active this entry describes does not exist as a tracked cast, ingestion will simply find no casts for it.",
       "cooldown": 40,
       "align_with_bloodlust": false,
       "opener_priority": 4,
-      "usage_rule": "Cast on cooldown without overcapping Soul Shards, syncing it into the Darkglare window as Soul Harvester to refill the 3 shards consumed; spell ID is a best guess for the hero-tree Dark Harvest cast, verify against your logs."
+      "usage_rule": "Cast on cooldown without overcapping Soul Shards, syncing it into the Darkglare window as Soul Harvester to refill the 3 shards consumed."
     }
   ],
   "rules": [
@@ -172,7 +173,7 @@
   "cd_spell_ids": {
     "Summon Darkglare": 205180,
     "Malevolence": 442726,
-    "Dark Harvest": 439527,
+    "Dark Harvest": 387016,
     "Unending Resolve": 104773,
     "Dark Pact": 108416,
     "Mortal Coil": 6789,
@@ -199,14 +200,14 @@
       "icon": "inv_beholderwarlock",
       "name": "Summon Darkglare"
     },
-    "439527": {
-      "icon": "inv_10_dungeonjewelry_primalist_trinket_1ragingelement_frost",
-      "name": "Repulsion"
+    "387016": {
+      "icon": "ability_creature_disease_02",
+      "name": "Dark Harvest"
     },
     "442726": {
       "icon": "inv_ability_hellcallerwarlock_malevolence",
       "name": "Malevolence"
     }
   },
-  "source_signature": "c489f0a84acdfe78"
+  "source_signature": "a65645b24e44c2a3"
 }
