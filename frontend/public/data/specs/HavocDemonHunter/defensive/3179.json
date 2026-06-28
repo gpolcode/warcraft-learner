@@ -6,34 +6,34 @@
   "per_defensive_benchmarks": {
     "Blur": {
       "sample_count": 8,
-      "avg_first_cast_s": 138.4,
-      "stddev_first_cast_s": 66.9,
-      "avg_gap_s": 43.8,
-      "stddev_gap_s": 22.6,
+      "avg_first_cast_s": 141.7,
+      "stddev_first_cast_s": 64.2,
+      "avg_gap_s": 46.9,
+      "stddev_gap_s": 30.6,
       "hold_targets": {},
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.5,
-        "stddev": 0.225,
+        "avg": 0.514,
+        "stddev": 0.223,
         "min": 0.195,
         "max": 0.901
       },
       "majority_hold": false
     },
     "Darkness": {
-      "sample_count": 3,
-      "avg_first_cast_s": 164.5,
-      "stddev_first_cast_s": 57.1,
+      "sample_count": 2,
+      "avg_first_cast_s": 137.8,
+      "stddev_first_cast_s": 47.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.281,
-        "stddev": 0.064,
-        "min": 0.21,
+        "avg": 0.317,
+        "stddev": 0.023,
+        "min": 0.3,
         "max": 0.333
       },
       "majority_hold": false
@@ -43,7 +43,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 198589,
-      "avg_uses": 1.8,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -86,6 +86,10 @@
     "Netherwalk": 196555
   },
   "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
     "196718": {
       "icon": "ability_demonhunter_darkness",
       "name": "Darkness"
@@ -95,6 +99,6 @@
       "name": "Blur"
     }
   },
-  "source_signature": "d72ed8bcc199f238",
-  "ingest_version": 0
+  "source_signature": "283550b233164967",
+  "ingest_version": 1
 }

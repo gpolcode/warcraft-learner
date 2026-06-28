@@ -3,28 +3,28 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 474.6,
-  "downtime_threshold_ms": 1356,
-  "top_avg_efficiency": 74.1,
-  "top_efficiency_stddev": 6.7,
+  "avg_duration_s": 471.8,
+  "downtime_threshold_ms": 1311,
+  "top_avg_efficiency": 74.3,
+  "top_efficiency_stddev": 6.4,
   "per_cd_benchmarks": {
     "Incarnation: Guardian of Ursoc": {
       "sample_count": 10,
-      "avg_first_cast_s": 14,
-      "stddev_first_cast_s": 17.5,
-      "avg_gap_s": 148.5,
-      "stddev_gap_s": 21,
-      "avg_bl_offset_s": 1.6,
-      "stddev_bl_offset_s": 3.9,
+      "avg_first_cast_s": 13.9,
+      "stddev_first_cast_s": 17.6,
+      "avg_gap_s": 146.2,
+      "stddev_gap_s": 19.6,
+      "avg_bl_offset_s": 2.2,
+      "stddev_bl_offset_s": 3.8,
       "avg_uses": 3.8,
       "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.48,
-        "stddev": 0.049,
+        "avg": 0.483,
+        "stddev": 0.048,
         "min": 0.39,
         "max": 0.52
       },
-      "bl_pct": 80,
+      "bl_pct": 70,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -50,16 +50,16 @@
     },
     "Lunar Beam": {
       "sample_count": 10,
-      "avg_first_cast_s": 8.8,
-      "stddev_first_cast_s": 11.2,
+      "avg_first_cast_s": 8.4,
+      "stddev_first_cast_s": 11.4,
       "avg_gap_s": 33,
-      "stddev_gap_s": 15.8,
-      "avg_bl_offset_s": -1.8,
-      "stddev_bl_offset_s": 7.3,
-      "avg_uses": 14.8,
+      "stddev_gap_s": 15.7,
+      "avg_bl_offset_s": -2.9,
+      "stddev_bl_offset_s": 7.8,
+      "avg_uses": 14.7,
       "avg_uses_per_min": 1.87,
       "uses_per_min": {
-        "avg": 1.87,
+        "avg": 1.869,
         "stddev": 0.098,
         "min": 1.69,
         "max": 2.023
@@ -178,11 +178,11 @@
     },
     {
       "name": "Red Moon",
-      "spell_id": 459558,
+      "spell_id": 1253582,
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Talent-gated; cast on cooldown as a top-priority button when Mangle is available and Red Moon is not already ticking on the target (spell_id is a best guess for the Boundless Moonlight Red Moon ability and may need verification)."
+      "usage_rule": "Talent-gated; cast on cooldown as a top-priority button when Mangle is available and Red Moon is not already ticking on the target."
     }
   ],
   "rules": [
@@ -249,7 +249,7 @@
     "Lunar Beam": 204066,
     "Convoke the Spirits": 391528,
     "Heart of the Wild": 319454,
-    "Red Moon": 459558,
+    "Red Moon": 1253582,
     "Survival Instincts": 61336,
     "Barkskin": 22812,
     "Frenzied Regeneration": 22842,
@@ -292,11 +292,11 @@
       "icon": "inv_ability_druid_convokethespirits",
       "name": "Convoke the Spirits"
     },
-    "459558": {
-      "icon": "trade_engineering",
-      "name": "[DNT] Gazlowe Throws Toolbox"
+    "1253582": {
+      "icon": "sha_ability_mage_firestarter_nightmare",
+      "name": "Red Moon"
     }
   },
-  "source_signature": "77900e9c41f9dd21",
-  "ingest_version": 0
+  "source_signature": "89b37089249b0697",
+  "ingest_version": 1
 }

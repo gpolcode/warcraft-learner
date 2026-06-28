@@ -3,25 +3,25 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 541.2,
-  "downtime_threshold_ms": 1341,
-  "top_avg_efficiency": 80.2,
-  "top_efficiency_stddev": 3.4,
+  "avg_duration_s": 539.3,
+  "downtime_threshold_ms": 1333,
+  "top_avg_efficiency": 80.8,
+  "top_efficiency_stddev": 4.3,
   "per_cd_benchmarks": {
     "Incarnation: Guardian of Ursoc": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.9,
-      "stddev_first_cast_s": 2.5,
+      "avg_first_cast_s": 2.1,
+      "stddev_first_cast_s": 0.5,
       "avg_gap_s": 128.2,
-      "stddev_gap_s": 4,
-      "avg_bl_offset_s": 19.9,
-      "stddev_bl_offset_s": 8.4,
+      "stddev_gap_s": 3.8,
+      "avg_bl_offset_s": 18.7,
+      "stddev_bl_offset_s": 7,
       "avg_uses": 4.9,
-      "avg_uses_per_min": 0.54,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.544,
-        "stddev": 0.04,
-        "min": 0.448,
+        "avg": 0.546,
+        "stddev": 0.036,
+        "min": 0.465,
         "max": 0.59
       },
       "bl_pct": 100,
@@ -50,19 +50,19 @@
     },
     "Lunar Beam": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.4,
-      "stddev_first_cast_s": 5.8,
-      "avg_gap_s": 29,
-      "stddev_gap_s": 6.6,
-      "avg_bl_offset_s": 8.1,
-      "stddev_bl_offset_s": 3.6,
-      "avg_uses": 18.8,
-      "avg_uses_per_min": 2.09,
+      "avg_first_cast_s": 6.5,
+      "stddev_first_cast_s": 6,
+      "avg_gap_s": 28.4,
+      "stddev_gap_s": 6.2,
+      "avg_bl_offset_s": 6.9,
+      "stddev_bl_offset_s": 4.5,
+      "avg_uses": 19.3,
+      "avg_uses_per_min": 2.15,
       "uses_per_min": {
-        "avg": 2.086,
-        "stddev": 0.154,
-        "min": 1.793,
-        "max": 2.348
+        "avg": 2.151,
+        "stddev": 0.152,
+        "min": 2.021,
+        "max": 2.439
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -178,11 +178,11 @@
     },
     {
       "name": "Red Moon",
-      "spell_id": 459558,
+      "spell_id": 1253582,
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Talent-gated; cast on cooldown as a top-priority button when Mangle is available and Red Moon is not already ticking on the target (spell_id is a best guess for the Boundless Moonlight Red Moon ability and may need verification)."
+      "usage_rule": "Talent-gated; cast on cooldown as a top-priority button when Mangle is available and Red Moon is not already ticking on the target."
     }
   ],
   "rules": [
@@ -249,7 +249,7 @@
     "Lunar Beam": 204066,
     "Convoke the Spirits": 391528,
     "Heart of the Wild": 319454,
-    "Red Moon": 459558,
+    "Red Moon": 1253582,
     "Survival Instincts": 61336,
     "Barkskin": 22812,
     "Frenzied Regeneration": 22842,
@@ -292,11 +292,11 @@
       "icon": "inv_ability_druid_convokethespirits",
       "name": "Convoke the Spirits"
     },
-    "459558": {
-      "icon": "trade_engineering",
-      "name": "[DNT] Gazlowe Throws Toolbox"
+    "1253582": {
+      "icon": "sha_ability_mage_firestarter_nightmare",
+      "name": "Red Moon"
     }
   },
-  "source_signature": "da2dfb5e5c4d0a36",
-  "ingest_version": 0
+  "source_signature": "0c200ae0f2fd58f6",
+  "ingest_version": 1
 }

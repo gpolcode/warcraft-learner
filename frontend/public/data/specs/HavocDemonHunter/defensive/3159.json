@@ -2,35 +2,41 @@
   "spec": "HavocDemonHunter",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 6,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Blur": {
-      "sample_count": 6,
-      "avg_first_cast_s": 176.8,
-      "stddev_first_cast_s": 130,
-      "avg_gap_s": 74.9,
-      "stddev_gap_s": 57.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 182,
+      "stddev_first_cast_s": 108,
+      "avg_gap_s": 75.9,
+      "stddev_gap_s": 58.2,
       "hold_targets": {
         "1": {
           "target_s": 267,
-          "stddev_s": 20.2,
-          "count": 3,
-          "total_samples": 6
+          "stddev_s": 70.2,
+          "count": 5,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 337.5,
-          "stddev_s": 59.8,
-          "count": 3,
-          "total_samples": 6
+          "target_s": 304.9,
+          "stddev_s": 66.5,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 399.5,
+          "stddev_s": 7,
+          "count": 4,
+          "total_samples": 10
         }
       },
-      "avg_uses": 3.3,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.447,
-        "stddev": 0.253,
+        "avg": 0.535,
+        "stddev": 0.188,
         "min": 0.13,
-        "max": 0.756
+        "max": 0.777
       },
       "majority_hold": true
     },
@@ -56,7 +62,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 198589,
-      "avg_uses": 3.3,
+      "avg_uses": 4,
       "min_uses": 1,
       "max_uses": 6
     },
@@ -99,6 +105,10 @@
     "Netherwalk": 196555
   },
   "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
     "196718": {
       "icon": "ability_demonhunter_darkness",
       "name": "Darkness"
@@ -108,6 +118,6 @@
       "name": "Blur"
     }
   },
-  "source_signature": "eaee0467329ee48d",
-  "ingest_version": 0
+  "source_signature": "3d48c50f8d51dedc",
+  "ingest_version": 1
 }

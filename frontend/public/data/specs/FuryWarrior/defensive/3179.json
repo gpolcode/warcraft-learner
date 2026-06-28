@@ -6,53 +6,46 @@
   "per_defensive_benchmarks": {
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 135.3,
-      "stddev_first_cast_s": 91.1,
-      "avg_gap_s": 54.9,
-      "stddev_gap_s": 36.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 214.3,
-          "stddev_s": 97,
-          "count": 4,
-          "total_samples": 10
-        }
-      },
-      "avg_uses": 2.8,
+      "avg_first_cast_s": 133.1,
+      "stddev_first_cast_s": 92.2,
+      "avg_gap_s": 50.9,
+      "stddev_gap_s": 33.2,
+      "hold_targets": {},
+      "avg_uses": 2.7,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.552,
-        "stddev": 0.606,
+        "avg": 0.548,
+        "stddev": 0.608,
         "min": 0.172,
         "max": 2.023
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Rallying Cry": {
-      "sample_count": 7,
-      "avg_first_cast_s": 118.3,
-      "stddev_first_cast_s": 46.9,
-      "avg_gap_s": 239,
-      "stddev_gap_s": 0,
+      "sample_count": 6,
+      "avg_first_cast_s": 121.1,
+      "stddev_first_cast_s": 50.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.214,
-        "stddev": 0.064,
+        "avg": 0.192,
+        "stddev": 0.03,
         "min": 0.175,
-        "max": 0.346
+        "max": 0.253
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 79.8,
-      "dmg_avg": 111338,
-      "dmg_stddev": 41910,
+      "time_s": 81.2,
+      "dmg_avg": 127059,
+      "dmg_stddev": 42305,
       "dmg_min": 89941,
-      "dmg_max": 174201,
+      "dmg_max": 177388,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -66,36 +59,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1250686,
-          "avg_damage": 90509,
-          "min_damage": 89941,
+          "avg_damage": 89232,
+          "min_damage": 84127,
           "max_damage": 90886,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 103.4,
-      "dmg_avg": 202528,
-      "dmg_stddev": 46538,
-      "dmg_min": 139617,
-      "dmg_max": 247302,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1254018,
-          "avg_damage": 202528,
-          "min_damage": 139617,
-          "max_damage": 247302,
-          "count": 4
+          "count": 5
         }
       ]
     },
@@ -133,9 +100,9 @@
       ]
     },
     {
-      "time_s": 226.5,
-      "dmg_avg": 226750,
-      "dmg_stddev": 44046,
+      "time_s": 227.1,
+      "dmg_avg": 221552,
+      "dmg_stddev": 49058,
       "dmg_min": 151410,
       "dmg_max": 258610,
       "window_length_s": 5,
@@ -151,10 +118,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 226750,
+          "avg_damage": 221552,
           "min_damage": 151410,
           "max_damage": 258610,
-          "count": 5
+          "count": 4
         }
       ]
     }
@@ -162,13 +129,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 97462,
-      "avg_uses": 1.1,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     },
     {
       "spell_id": 23920,
-      "avg_uses": 2.8,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 8
     }
@@ -230,6 +197,6 @@
       "name": "Despotic Command"
     }
   },
-  "source_signature": "a5836bb125204327",
-  "ingest_version": 0
+  "source_signature": "3c36daa0bfc2bccc",
+  "ingest_version": 1
 }

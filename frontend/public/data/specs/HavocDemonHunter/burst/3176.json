@@ -6,10 +6,10 @@
   "windows": [
     {
       "time_s": 64.7,
-      "dmg_avg": 3021061,
-      "dmg_stddev": 1371849,
+      "dmg_avg": 3020438,
+      "dmg_stddev": 1370602,
       "dmg_min": 1361130,
-      "dmg_max": 5465665,
+      "dmg_max": 5460062,
       "common_cds": [
         "Eye Beam"
       ],
@@ -22,7 +22,8 @@
           "min_damage": 540340,
           "max_damage": 1419307,
           "count": 9,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 452416,
@@ -30,7 +31,8 @@
           "min_damage": 223140,
           "max_damage": 890649,
           "count": 9,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 198030,
@@ -38,7 +40,8 @@
           "min_damage": 172516,
           "max_damage": 645027,
           "count": 9,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 390197,
@@ -46,7 +49,8 @@
           "min_damage": 113176,
           "max_damage": 610800,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 370969,
@@ -54,16 +58,17 @@
           "min_damage": 60589,
           "max_damage": 741821,
           "count": 9,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         }
       ]
     },
     {
       "time_s": 137.4,
-      "dmg_avg": 1756347,
-      "dmg_stddev": 493817,
+      "dmg_avg": 1753972,
+      "dmg_stddev": 490192,
       "dmg_min": 1316936,
-      "dmg_max": 2323149,
+      "dmg_max": 2313651,
       "common_cds": [
         "Immolation Aura",
         "Eye Beam"
@@ -77,7 +82,8 @@
           "min_damage": 337372,
           "max_damage": 1000534,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 198030,
@@ -85,7 +91,8 @@
           "min_damage": 173887,
           "max_damage": 628558,
           "count": 3,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 453177,
@@ -93,7 +100,8 @@
           "min_damage": 61964,
           "max_damage": 369448,
           "count": 2,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 370969,
@@ -101,7 +109,8 @@
           "min_damage": 105771,
           "max_damage": 162973,
           "count": 3,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 427908,
@@ -109,15 +118,17 @@
           "min_damage": 51891,
           "max_damage": 158465,
           "count": 2,
-          "avg_casts": 2
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
-          "spell_id": 258922,
-          "avg_damage": 83534,
-          "min_damage": 34200,
-          "max_damage": 119178,
-          "count": 3,
-          "avg_casts": 1
+          "spell_id": 393055,
+          "avg_damage": 82803,
+          "min_damage": 70630,
+          "max_damage": 94975,
+          "count": 2,
+          "avg_casts": 1,
+          "is_passive": false
         }
       ]
     }
@@ -133,6 +144,76 @@
     "Darkness": 196718,
     "Netherwalk": 196555
   },
-  "source_signature": "530ae2cf68b37675",
-  "ingest_version": 0
+  "ability_icons": {
+    "191427": {
+      "icon": "ability_demonhunter_metamorphasisdps",
+      "name": "Metamorphosis"
+    },
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198013": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    },
+    "198030": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    },
+    "198793": {
+      "icon": "ability_demonhunter_vengefulretreat2",
+      "name": "Vengeful Retreat"
+    },
+    "258860": {
+      "icon": "spell_shadow_ritualofsacrifice",
+      "name": "Essence Break"
+    },
+    "258920": {
+      "icon": "ability_demonhunter_immolation",
+      "name": "Immolation Aura"
+    },
+    "370965": {
+      "icon": "inv_ability_demonhunter_thehunt",
+      "name": "The Hunt"
+    },
+    "370969": {
+      "icon": "inv_ability_demonhunter_thehunt",
+      "name": "The Hunt"
+    },
+    "390197": {
+      "icon": "spell_fire_fireballgreen",
+      "name": "Ragefire"
+    },
+    "393055": {
+      "icon": "ability_demonhunter_bladedance",
+      "name": "Death Sweep"
+    },
+    "427908": {
+      "icon": "ability_demonhunter_immolation",
+      "name": "Immolation Aura"
+    },
+    "452416": {
+      "icon": "inv_ability_felscarreddemonhunter_demonsurge",
+      "name": "Demonsurge"
+    },
+    "453177": {
+      "icon": "inv_glaive_1h_artifactazgalor_d_02dual",
+      "name": "Burning Blades"
+    },
+    "1287949": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    }
+  },
+  "source_signature": "6a8b9af3eead892c",
+  "ingest_version": 1
 }
