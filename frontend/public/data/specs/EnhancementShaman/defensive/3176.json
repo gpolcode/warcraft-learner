@@ -6,32 +6,32 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 5,
-      "avg_first_cast_s": 106.5,
-      "stddev_first_cast_s": 25.4,
+      "avg_first_cast_s": 115.2,
+      "stddev_first_cast_s": 40.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.31,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.312,
-        "stddev": 0.007,
+        "avg": 0.315,
+        "stddev": 0.008,
         "min": 0.304,
-        "max": 0.322
+        "max": 0.325
       },
       "majority_hold": false
     },
     "Spirit Walk": {
-      "sample_count": 8,
-      "avg_first_cast_s": 104.6,
-      "stddev_first_cast_s": 63.5,
+      "sample_count": 7,
+      "avg_first_cast_s": 100.5,
+      "stddev_first_cast_s": 67.5,
       "avg_gap_s": 60,
       "stddev_gap_s": 59.2,
       "hold_targets": {},
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.57,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.6,
       "uses_per_min": {
-        "avg": 0.567,
+        "avg": 0.604,
         "stddev": 0.275,
         "min": 0.247,
         "max": 0.936
@@ -41,10 +41,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 156,
-      "dmg_avg": 181872,
-      "dmg_stddev": 26867,
-      "dmg_min": 129284,
+      "time_s": 158,
+      "dmg_avg": 192389,
+      "dmg_stddev": 8525,
+      "dmg_min": 177943,
       "dmg_max": 200412,
       "window_length_s": 8,
       "defensive_name": "Spirit Walk",
@@ -59,10 +59,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 181872,
-          "min_damage": 129284,
+          "avg_damage": 192389,
+          "min_damage": 177943,
           "max_damage": 200412,
-          "count": 6
+          "count": 5
         }
       ]
     },
@@ -109,7 +109,7 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 1.9,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -172,6 +172,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -189,5 +193,5 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "08cf5a3e17ebae00"
+  "source_signature": "23a7d0377482605f"
 }

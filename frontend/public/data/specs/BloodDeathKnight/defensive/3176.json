@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Vampiric Blood": {
-      "sample_count": 8,
-      "avg_first_cast_s": 105.9,
-      "stddev_first_cast_s": 107.3,
-      "avg_gap_s": 61.4,
-      "stddev_gap_s": 30.3,
+      "sample_count": 9,
+      "avg_first_cast_s": 101.3,
+      "stddev_first_cast_s": 101.3,
+      "avg_gap_s": 71.7,
+      "stddev_gap_s": 45.8,
       "hold_targets": {},
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.537,
-        "stddev": 0.459,
+        "avg": 0.527,
+        "stddev": 0.43,
         "min": 0.172,
         "max": 1.562
       },
@@ -40,23 +40,23 @@
     },
     "Anti-Magic Shell": {
       "sample_count": 8,
-      "avg_first_cast_s": 122,
-      "stddev_first_cast_s": 80.5,
-      "avg_gap_s": 63.7,
-      "stddev_gap_s": 21.6,
+      "avg_first_cast_s": 141.2,
+      "stddev_first_cast_s": 75.3,
+      "avg_gap_s": 65.4,
+      "stddev_gap_s": 21.7,
       "hold_targets": {
         "1": {
-          "target_s": 130.6,
-          "stddev_s": 53.8,
+          "target_s": 187.1,
+          "stddev_s": 70.6,
           "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.58,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.584,
-        "stddev": 0.217,
+        "avg": 0.531,
+        "stddev": 0.185,
         "min": 0.333,
         "max": 0.892
       },
@@ -64,23 +64,23 @@
     },
     "Lichborne": {
       "sample_count": 5,
-      "avg_first_cast_s": 58.4,
-      "stddev_first_cast_s": 80,
-      "avg_gap_s": 118.5,
-      "stddev_gap_s": 20.1,
+      "avg_first_cast_s": 24.2,
+      "stddev_first_cast_s": 50.1,
+      "avg_gap_s": 119.4,
+      "stddev_gap_s": 19.4,
       "hold_targets": {
         "1": {
-          "target_s": 136.1,
-          "stddev_s": 3.1,
-          "count": 3,
+          "target_s": 138.4,
+          "stddev_s": 2.9,
+          "count": 4,
           "total_samples": 5
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.48,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.479,
-        "stddev": 0.209,
+        "avg": 0.555,
+        "stddev": 0.192,
         "min": 0.223,
         "max": 0.676
       },
@@ -89,10 +89,50 @@
   },
   "defensive_windows": [
     {
-      "time_s": 61.3,
-      "dmg_avg": 1181028,
-      "dmg_stddev": 111799,
-      "dmg_min": 1039842,
+      "time_s": 1.8,
+      "dmg_avg": 548380,
+      "dmg_stddev": 372054,
+      "dmg_min": 285844,
+      "dmg_max": 1083562,
+      "window_length_s": 12,
+      "defensive_name": "Lichborne",
+      "spell_id": 49039,
+      "common_defensives": [
+        "Lichborne"
+      ],
+      "common_cds": [
+        "Lichborne"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 510912,
+          "min_damage": 230190,
+          "max_damage": 791633,
+          "count": 2
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 173521,
+          "min_damage": 165874,
+          "max_damage": 182027,
+          "count": 4
+        },
+        {
+          "spell_id": 1249251,
+          "avg_damage": 119403,
+          "min_damage": 113669,
+          "max_damage": 123352,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 64.6,
+      "dmg_avg": 1102010,
+      "dmg_stddev": 201477,
+      "dmg_min": 785940,
       "dmg_max": 1294248,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
@@ -103,38 +143,78 @@
       "common_cds": [
         "Vampiric Blood"
       ],
-      "ref_game_id": 252918,
+      "ref_game_id": 251176,
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 735692,
-          "min_damage": 621640,
+          "avg_damage": 648541,
+          "min_damage": 299936,
           "max_damage": 890074,
+          "count": 5
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 242218,
+          "min_damage": 227590,
+          "max_damage": 256158,
+          "count": 5
+        },
+        {
+          "spell_id": 1255683,
+          "avg_damage": 211252,
+          "min_damage": 30688,
+          "max_damage": 419333,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 138.4,
+      "dmg_avg": 1053644,
+      "dmg_stddev": 332294,
+      "dmg_min": 683717,
+      "dmg_max": 1384052,
+      "window_length_s": 12,
+      "defensive_name": "Lichborne",
+      "spell_id": 49039,
+      "common_defensives": [
+        "Lichborne"
+      ],
+      "common_cds": [
+        "Lichborne"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 648584,
+          "min_damage": 352540,
+          "max_damage": 981147,
           "count": 4
         },
         {
           "spell_id": 1259903,
-          "avg_damage": 238733,
-          "min_damage": 227590,
-          "max_damage": 253275,
+          "avg_damage": 351149,
+          "min_damage": 313553,
+          "max_damage": 371786,
           "count": 4
         },
         {
           "spell_id": 1255683,
-          "avg_damage": 206603,
-          "min_damage": 30688,
-          "max_damage": 419333,
+          "avg_damage": 53911,
+          "min_damage": 17624,
+          "max_damage": 108842,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 115,
-      "dmg_avg": 542372,
-      "dmg_stddev": 301205,
-      "dmg_min": 268874,
-      "dmg_max": 967312,
-      "window_length_s": 7,
+      "time_s": 168.1,
+      "dmg_avg": 679039,
+      "dmg_stddev": 196808,
+      "dmg_min": 411619,
+      "dmg_max": 864361,
+      "window_length_s": 6.1,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -147,44 +227,11 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 398817,
-          "min_damage": 214220,
-          "max_damage": 753876,
-          "count": 3
-        },
-        {
-          "spell_id": 1259903,
-          "avg_damage": 170390,
-          "min_damage": 159288,
-          "max_damage": 177057,
+          "avg_damage": 375910,
+          "min_damage": 207906,
+          "max_damage": 634065,
           "count": 4
         },
-        {
-          "spell_id": 1249262,
-          "avg_damage": 72868,
-          "min_damage": 41515,
-          "max_damage": 113879,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 163.6,
-      "dmg_avg": 630376,
-      "dmg_stddev": 212592,
-      "dmg_min": 387059,
-      "dmg_max": 864361,
-      "window_length_s": 6.3,
-      "defensive_name": "Anti-Magic Shell",
-      "spell_id": 48707,
-      "common_defensives": [
-        "Anti-Magic Shell"
-      ],
-      "common_cds": [
-        "Anti-Magic Shell"
-      ],
-      "ref_game_id": 240435,
-      "ability_breakdown": [
         {
           "spell_id": 1258883,
           "avg_damage": 348943,
@@ -193,18 +240,11 @@
           "count": 3
         },
         {
-          "spell_id": 1,
-          "avg_damage": 348523,
-          "min_damage": 207906,
-          "max_damage": 634065,
-          "count": 5
-        },
-        {
           "spell_id": 1259903,
-          "avg_damage": 147770,
+          "avg_damage": 147706,
           "min_damage": 67052,
           "max_damage": 183231,
-          "count": 6
+          "count": 5
         }
       ]
     },
@@ -252,7 +292,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 55233,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 7
     },
@@ -264,13 +304,13 @@
     },
     {
       "spell_id": 48707,
-      "avg_uses": 2.5,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 49039,
-      "avg_uses": 2.2,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -362,6 +402,10 @@
       "icon": "spell_deathknight_runetap",
       "name": "Rune Tap"
     },
+    "1249251": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    },
     "1249262": {
       "icon": "spell_arcane_arcanetorrent",
       "name": "Umbral Collapse"
@@ -379,5 +423,5 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "aac4a3277ea84070"
+  "source_signature": "145d89ba36aae448"
 }

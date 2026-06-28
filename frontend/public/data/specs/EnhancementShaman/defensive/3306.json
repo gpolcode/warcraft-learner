@@ -5,18 +5,18 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 7,
-      "avg_first_cast_s": 94.7,
-      "stddev_first_cast_s": 40.6,
+      "sample_count": 8,
+      "avg_first_cast_s": 100.8,
+      "stddev_first_cast_s": 41.3,
       "avg_gap_s": 103.2,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.475,
-        "stddev": 0.152,
-        "min": 0.406,
+        "avg": 0.465,
+        "stddev": 0.143,
+        "min": 0.401,
         "max": 0.818
       },
       "majority_hold": false
@@ -24,12 +24,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 139.7,
-      "dmg_avg": 270403,
-      "dmg_stddev": 123898,
+      "time_s": 140,
+      "dmg_avg": 278722,
+      "dmg_stddev": 108899,
       "dmg_min": 97282,
       "dmg_max": 377977,
-      "window_length_s": 9,
+      "window_length_s": 8.8,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
       "common_defensives": [
@@ -42,17 +42,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 179099,
+          "avg_damage": 200426,
           "min_damage": 68675,
-          "max_damage": 245014,
-          "count": 3
+          "max_damage": 264405,
+          "count": 4
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 75681,
+          "avg_damage": 70063,
           "min_damage": 28607,
           "max_damage": 136384,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -123,6 +123,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -140,5 +144,5 @@
       "name": "Consume"
     }
   },
-  "source_signature": "a8ef55d6148f2cb6"
+  "source_signature": "680831c900ea1702"
 }

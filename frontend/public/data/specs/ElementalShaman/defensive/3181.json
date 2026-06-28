@@ -6,32 +6,32 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 244.9,
-      "stddev_first_cast_s": 167.1,
-      "avg_gap_s": 267,
-      "stddev_gap_s": 113.4,
+      "avg_first_cast_s": 242.3,
+      "stddev_first_cast_s": 169.4,
+      "avg_gap_s": 280.6,
+      "stddev_gap_s": 125.6,
       "hold_targets": {
         "1": {
-          "target_s": 409.5,
-          "stddev_s": 47.3,
+          "target_s": 414.9,
+          "stddev_s": 29.8,
           "count": 5,
           "total_samples": 9
         }
       },
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.206,
-        "stddev": 0.085,
+        "avg": 0.203,
+        "stddev": 0.08,
         "min": 0.119,
-        "max": 0.361
+        "max": 0.338
       },
       "majority_hold": true
     },
     "Earth Elemental": {
       "sample_count": 7,
-      "avg_first_cast_s": 416,
-      "stddev_first_cast_s": 48.3,
+      "avg_first_cast_s": 427.7,
+      "stddev_first_cast_s": 50.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -48,9 +48,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 410,
-      "dmg_avg": 624685,
-      "dmg_stddev": 284312,
+      "time_s": 410.4,
+      "dmg_avg": 639008,
+      "dmg_stddev": 262125,
       "dmg_min": 402763,
       "dmg_max": 1149421,
       "window_length_s": 12,
@@ -66,24 +66,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 206064,
+          "avg_damage": 200516,
           "min_damage": 157415,
-          "max_damage": 270061,
-          "count": 6
+          "max_damage": 279252,
+          "count": 7
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 149461,
+          "avg_damage": 151138,
           "min_damage": 85483,
           "max_damage": 223672,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 132805,
+          "avg_damage": 135969,
           "min_damage": 41575,
-          "max_damage": 163767,
-          "count": 6
+          "max_damage": 165269,
+          "count": 7
         }
       ]
     }
@@ -172,5 +172,5 @@
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "33f06c93fbd507d6"
+  "source_signature": "f00745b206f98853"
 }

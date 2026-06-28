@@ -6,35 +6,41 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 8,
-      "avg_first_cast_s": 130.5,
-      "stddev_first_cast_s": 77.2,
-      "avg_gap_s": 137.4,
-      "stddev_gap_s": 73.8,
+      "avg_first_cast_s": 140,
+      "stddev_first_cast_s": 74,
+      "avg_gap_s": 145.2,
+      "stddev_gap_s": 71,
       "hold_targets": {
         "1": {
-          "target_s": 244.7,
-          "stddev_s": 92.3,
+          "target_s": 260.3,
+          "stddev_s": 86.9,
           "count": 7,
+          "total_samples": 8
+        },
+        "2": {
+          "target_s": 368.3,
+          "stddev_s": 26.5,
+          "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.399,
-        "stddev": 0.161,
+        "avg": 0.374,
+        "stddev": 0.124,
         "min": 0.176,
-        "max": 0.669
+        "max": 0.569
       },
       "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 76.6,
-      "dmg_avg": 506682,
-      "dmg_stddev": 138626,
-      "dmg_min": 314451,
+      "time_s": 76.9,
+      "dmg_avg": 554740,
+      "dmg_stddev": 101123,
+      "dmg_min": 443348,
       "dmg_max": 683343,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -56,24 +62,24 @@
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 143316,
+          "avg_damage": 134929,
           "min_damage": 87521,
           "max_damage": 180515,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1245302,
-          "avg_damage": 132580,
+          "avg_damage": 130912,
           "min_damage": 125316,
-          "max_damage": 137584,
-          "count": 4
+          "max_damage": 136048,
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 244.6,
-      "dmg_avg": 669106,
-      "dmg_stddev": 186025,
+      "time_s": 244.7,
+      "dmg_avg": 657968,
+      "dmg_stddev": 163016,
       "dmg_min": 409707,
       "dmg_max": 831182,
       "window_length_s": 12,
@@ -96,17 +102,17 @@
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 197701,
+          "avg_damage": 193534,
           "min_damage": 87547,
           "max_damage": 265299,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 155166,
+          "avg_damage": 186973,
           "min_damage": 112259,
-          "max_damage": 258842,
-          "count": 4
+          "max_damage": 314201,
+          "count": 5
         },
         {
           "spell_id": 1245302,
@@ -118,9 +124,9 @@
       ]
     },
     {
-      "time_s": 373.5,
-      "dmg_avg": 495378,
-      "dmg_stddev": 144206,
+      "time_s": 373.4,
+      "dmg_avg": 497221,
+      "dmg_stddev": 131731,
       "dmg_min": 325456,
       "dmg_max": 693498,
       "window_length_s": 12,
@@ -132,7 +138,7 @@
       "common_cds": [
         "Barkskin"
       ],
-      "ref_game_id": 256679,
+      "ref_game_id": 244552,
       "ability_breakdown": [
         {
           "spell_id": 1245175,
@@ -142,18 +148,18 @@
           "count": 5
         },
         {
-          "spell_id": 1259275,
-          "avg_damage": 140530,
-          "min_damage": 73692,
-          "max_damage": 182337,
-          "count": 6
+          "spell_id": 1245302,
+          "avg_damage": 132904,
+          "min_damage": 128079,
+          "max_damage": 138172,
+          "count": 5
         },
         {
-          "spell_id": 1245302,
-          "avg_damage": 134110,
-          "min_damage": 130055,
-          "max_damage": 138172,
-          "count": 4
+          "spell_id": 1259275,
+          "avg_damage": 128624,
+          "min_damage": 57186,
+          "max_damage": 182337,
+          "count": 7
         }
       ]
     }
@@ -161,7 +167,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.6,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -227,5 +233,5 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "95b9c1d1a5258043"
+  "source_signature": "9c1d5c6b0e7bd902"
 }

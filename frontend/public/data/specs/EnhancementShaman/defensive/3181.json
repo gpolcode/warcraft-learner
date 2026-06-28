@@ -2,42 +2,42 @@
   "spec": "EnhancementShaman",
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 9,
-      "avg_first_cast_s": 133,
-      "stddev_first_cast_s": 142.6,
-      "avg_gap_s": 204.5,
-      "stddev_gap_s": 113.6,
+      "sample_count": 10,
+      "avg_first_cast_s": 155.7,
+      "stddev_first_cast_s": 152.3,
+      "avg_gap_s": 197.3,
+      "stddev_gap_s": 112.9,
       "hold_targets": {
         "1": {
           "target_s": 350.6,
           "stddev_s": 70.7,
           "count": 7,
-          "total_samples": 9
+          "total_samples": 10
         },
         "2": {
           "target_s": 422.2,
           "stddev_s": 26.6,
           "count": 4,
-          "total_samples": 9
+          "total_samples": 10
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.31,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.309,
-        "stddev": 0.098,
+        "avg": 0.301,
+        "stddev": 0.096,
         "min": 0.128,
         "max": 0.445
       },
       "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 5,
-      "avg_first_cast_s": 263.2,
-      "stddev_first_cast_s": 148.6,
+      "sample_count": 6,
+      "avg_first_cast_s": 285.7,
+      "stddev_first_cast_s": 143.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -45,7 +45,7 @@
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
         "avg": 0.118,
-        "stddev": 0.008,
+        "stddev": 0.007,
         "min": 0.111,
         "max": 0.131
       },
@@ -65,6 +65,23 @@
         "stddev": 0.816,
         "min": 0.124,
         "max": 1.556
+      },
+      "majority_hold": true
+    },
+    "Spirit Walk": {
+      "sample_count": 1,
+      "avg_first_cast_s": 39.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 84.5,
+      "stddev_gap_s": 54.2,
+      "hold_targets": {},
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.69,
+      "uses_per_min": {
+        "avg": 0.688,
+        "stddev": 0,
+        "min": 0.688,
+        "max": 0.688
       },
       "majority_hold": true
     }
@@ -116,12 +133,59 @@
           "count": 3
         }
       ]
+    },
+    {
+      "time_s": 446.6,
+      "dmg_avg": 447621,
+      "dmg_stddev": 101606,
+      "dmg_min": 304179,
+      "dmg_max": 541307,
+      "window_length_s": 11,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 200480,
+          "min_damage": 89400,
+          "max_damage": 259395,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 131148,
+          "min_damage": 62886,
+          "max_damage": 185636,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 112937,
+          "min_damage": 13664,
+          "max_damage": 212209,
+          "count": 2
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 80665,
+          "min_damage": 65970,
+          "max_damage": 95360,
+          "count": 2
+        }
+      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.6,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -130,6 +194,12 @@
       "avg_uses": 1,
       "min_uses": 1,
       "max_uses": 1
+    },
+    {
+      "spell_id": 58875,
+      "avg_uses": 6,
+      "min_uses": 6,
+      "max_uses": 6
     },
     {
       "spell_id": 8004,
@@ -196,6 +266,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -203,6 +277,10 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
     },
     "1237040": {
       "icon": "ability_ironmaidens_convulsiveshadows",
@@ -221,5 +299,5 @@
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "42b9ea8f0260875f"
+  "source_signature": "b4ee0fed28f50708"
 }

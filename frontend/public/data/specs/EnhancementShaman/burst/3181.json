@@ -2,20 +2,20 @@
   "spec": "EnhancementShaman",
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
-  "sample_count": 9,
+  "sample_count": 10,
   "windows": [
     {
-      "time_s": 23.9,
-      "dmg_avg": 13094786,
-      "dmg_stddev": 1835043,
-      "dmg_min": 9495927,
+      "time_s": 23.4,
+      "dmg_avg": 12458270,
+      "dmg_stddev": 2567652,
+      "dmg_min": 7366139,
       "dmg_max": 16012151,
       "common_cds": [
         "Surging Totem",
         "Doom Winds"
       ],
       "avg_targets": 1,
-      "window_length_s": 22.5,
+      "window_length_s": 21.7,
       "ability_breakdown": [
         {
           "spell_id": 455622,
@@ -23,7 +23,8 @@
           "min_damage": 1299119,
           "max_damage": 2012548,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -31,7 +32,8 @@
           "min_damage": 1066112,
           "max_damage": 1666572,
           "count": 6,
-          "avg_casts": 8
+          "avg_casts": 8,
+          "is_passive": false
         },
         {
           "spell_id": 195592,
@@ -39,7 +41,8 @@
           "min_damage": 752322,
           "max_damage": 2047465,
           "count": 5,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 188196,
@@ -47,15 +50,8 @@
           "min_damage": 853073,
           "max_damage": 1414041,
           "count": 5,
-          "avg_casts": 6
-        },
-        {
-          "spell_id": 469270,
-          "avg_damage": 979434,
-          "min_damage": 884275,
-          "max_damage": 1046466,
-          "count": 4,
-          "avg_casts": 11
+          "avg_casts": 6,
+          "is_passive": false
         },
         {
           "spell_id": 458147,
@@ -63,7 +59,17 @@
           "min_damage": 809297,
           "max_damage": 1226192,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 922689,
+          "min_damage": 752250,
+          "max_damage": 1140597,
+          "count": 5,
+          "avg_casts": 10,
+          "is_passive": false
         }
       ]
     },
@@ -86,7 +92,8 @@
           "min_damage": 1465049,
           "max_damage": 2710657,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -94,7 +101,8 @@
           "min_damage": 977854,
           "max_damage": 1586958,
           "count": 5,
-          "avg_casts": 7
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 458267,
@@ -102,7 +110,8 @@
           "min_damage": 617229,
           "max_damage": 1990872,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 458147,
@@ -110,7 +119,8 @@
           "min_damage": 849234,
           "max_damage": 1411119,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 467283,
@@ -118,7 +128,8 @@
           "min_damage": 1056622,
           "max_damage": 1219661,
           "count": 3,
-          "avg_casts": 9
+          "avg_casts": 9,
+          "is_passive": false
         },
         {
           "spell_id": 195592,
@@ -126,22 +137,23 @@
           "min_damage": 866682,
           "max_damage": 1119948,
           "count": 3,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 177.4,
-      "dmg_avg": 7623172,
-      "dmg_stddev": 1286575,
+      "time_s": 177.7,
+      "dmg_avg": 7747318,
+      "dmg_stddev": 1274943,
       "dmg_min": 4769027,
-      "dmg_max": 8815594,
+      "dmg_max": 8864634,
       "common_cds": [
         "Surging Totem",
         "Doom Winds"
       ],
       "avg_targets": 1,
-      "window_length_s": 21.7,
+      "window_length_s": 21,
       "ability_breakdown": [
         {
           "spell_id": 455622,
@@ -149,7 +161,8 @@
           "min_damage": 828230,
           "max_damage": 1578850,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -157,7 +170,26 @@
           "min_damage": 635389,
           "max_damage": 968192,
           "count": 6,
-          "avg_casts": 11
+          "avg_casts": 11,
+          "is_passive": false
+        },
+        {
+          "spell_id": 195592,
+          "avg_damage": 625555,
+          "min_damage": 407484,
+          "max_damage": 1093777,
+          "count": 6,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 592555,
+          "min_damage": 370382,
+          "max_damage": 958551,
+          "count": 5,
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 458147,
@@ -165,7 +197,8 @@
           "min_damage": 430489,
           "max_damage": 863772,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 467283,
@@ -173,23 +206,8 @@
           "min_damage": 436749,
           "max_damage": 674378,
           "count": 6,
-          "avg_casts": 13
-        },
-        {
-          "spell_id": 458267,
-          "avg_damage": 540611,
-          "min_damage": 373426,
-          "max_damage": 690552,
-          "count": 5,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 195592,
-          "avg_damage": 531911,
-          "min_damage": 407484,
-          "max_damage": 649585,
-          "count": 5,
-          "avg_casts": 4
+          "avg_casts": 13,
+          "is_passive": false
         }
       ]
     },
@@ -212,7 +230,8 @@
           "min_damage": 516224,
           "max_damage": 779835,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -220,7 +239,8 @@
           "min_damage": 242325,
           "max_damage": 449492,
           "count": 6,
-          "avg_casts": 8
+          "avg_casts": 8,
+          "is_passive": false
         },
         {
           "spell_id": 458267,
@@ -228,7 +248,8 @@
           "min_damage": 257128,
           "max_damage": 472084,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 467283,
@@ -236,7 +257,8 @@
           "min_damage": 205439,
           "max_damage": 370473,
           "count": 5,
-          "avg_casts": 10
+          "avg_casts": 10,
+          "is_passive": false
         },
         {
           "spell_id": 458147,
@@ -244,7 +266,8 @@
           "min_damage": 253962,
           "max_damage": 352265,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 469270,
@@ -252,14 +275,15 @@
           "min_damage": 178298,
           "max_damage": 360145,
           "count": 5,
-          "avg_casts": 11
+          "avg_casts": 11,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 300,
-      "dmg_avg": 3679023,
-      "dmg_stddev": 1354035,
+      "time_s": 301,
+      "dmg_avg": 3595597,
+      "dmg_stddev": 1228203,
       "dmg_min": 2297417,
       "dmg_max": 5630024,
       "common_cds": [
@@ -267,7 +291,7 @@
         "Doom Winds"
       ],
       "avg_targets": 1,
-      "window_length_s": 25,
+      "window_length_s": 23.3,
       "ability_breakdown": [
         {
           "spell_id": 455622,
@@ -275,7 +299,8 @@
           "min_damage": 200431,
           "max_damage": 1079926,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -283,7 +308,8 @@
           "min_damage": 152703,
           "max_damage": 556442,
           "count": 5,
-          "avg_casts": 7
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 467283,
@@ -291,15 +317,26 @@
           "min_damage": 202234,
           "max_damage": 407048,
           "count": 4,
-          "avg_casts": 10
+          "avg_casts": 10,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 277840,
+          "min_damage": 236683,
+          "max_damage": 335531,
+          "count": 3,
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 469270,
-          "avg_damage": 217545,
+          "avg_damage": 232179,
           "min_damage": 158315,
-          "max_damage": 254312,
-          "count": 4,
-          "avg_casts": 11
+          "max_damage": 290716,
+          "count": 5,
+          "avg_casts": 11,
+          "is_passive": false
         },
         {
           "spell_id": 25504,
@@ -307,7 +344,8 @@
           "min_damage": 122645,
           "max_damage": 252145,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     },
@@ -330,7 +368,8 @@
           "min_damage": 368843,
           "max_damage": 507067,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 455622,
@@ -338,7 +377,8 @@
           "min_damage": 334317,
           "max_damage": 522881,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
@@ -346,7 +386,8 @@
           "min_damage": 407421,
           "max_damage": 426466,
           "count": 4,
-          "avg_casts": 8
+          "avg_casts": 8,
+          "is_passive": false
         },
         {
           "spell_id": 467283,
@@ -354,7 +395,8 @@
           "min_damage": 218228,
           "max_damage": 394393,
           "count": 4,
-          "avg_casts": 10
+          "avg_casts": 10,
+          "is_passive": false
         },
         {
           "spell_id": 188196,
@@ -362,7 +404,8 @@
           "min_damage": 212920,
           "max_damage": 328856,
           "count": 3,
-          "avg_casts": 5
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 195592,
@@ -370,70 +413,77 @@
           "min_damage": 190203,
           "max_damage": 291562,
           "count": 3,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 434,
-      "dmg_avg": 5489133,
-      "dmg_stddev": 621478,
-      "dmg_min": 4813463,
-      "dmg_max": 6444848,
+      "time_s": 424.5,
+      "dmg_avg": 5021024,
+      "dmg_stddev": 251677,
+      "dmg_min": 4793524,
+      "dmg_max": 5255097,
       "common_cds": [
         "Surging Totem",
         "Doom Winds"
       ],
       "avg_targets": 1,
-      "window_length_s": 25,
+      "window_length_s": 22.5,
       "ability_breakdown": [
         {
           "spell_id": 455622,
-          "avg_damage": 641558,
+          "avg_damage": 593197,
           "min_damage": 500414,
-          "max_damage": 796747,
-          "count": 5,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 458147,
-          "avg_damage": 481012,
-          "min_damage": 412461,
-          "max_damage": 525629,
+          "max_damage": 665980,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 60103,
-          "avg_damage": 474136,
-          "min_damage": 449238,
+          "avg_damage": 483559,
+          "min_damage": 455317,
           "max_damage": 537950,
-          "count": 5,
-          "avg_casts": 8
+          "count": 3,
+          "avg_casts": 8,
+          "is_passive": false
         },
         {
           "spell_id": 458267,
-          "avg_damage": 458713,
+          "avg_damage": 441022,
           "min_damage": 399258,
           "max_damage": 502190,
-          "count": 5,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 467283,
-          "avg_damage": 364177,
-          "min_damage": 278278,
-          "max_damage": 453305,
-          "count": 5,
-          "avg_casts": 9
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 469270,
-          "avg_damage": 360765,
+          "avg_damage": 370855,
           "min_damage": 301185,
-          "max_damage": 429889,
-          "count": 4,
-          "avg_casts": 11
+          "max_damage": 491689,
+          "count": 3,
+          "avg_casts": 11,
+          "is_passive": false
+        },
+        {
+          "spell_id": 467283,
+          "avg_damage": 336456,
+          "min_damage": 278278,
+          "max_damage": 379117,
+          "count": 3,
+          "avg_casts": 10,
+          "is_passive": false
+        },
+        {
+          "spell_id": 195592,
+          "avg_damage": 334053,
+          "min_damage": 268301,
+          "max_damage": 393624,
+          "count": 3,
+          "avg_casts": 3,
+          "is_passive": false
         }
       ]
     },
@@ -456,7 +506,8 @@
           "min_damage": 402606,
           "max_damage": 830965,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 458147,
@@ -464,7 +515,8 @@
           "min_damage": 401066,
           "max_damage": 616055,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 188196,
@@ -472,7 +524,8 @@
           "min_damage": 355648,
           "max_damage": 858828,
           "count": 3,
-          "avg_casts": 7
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 60103,
@@ -480,7 +533,8 @@
           "min_damage": 361976,
           "max_damage": 632447,
           "count": 3,
-          "avg_casts": 7
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 458267,
@@ -488,7 +542,8 @@
           "min_damage": 254096,
           "max_damage": 674596,
           "count": 3,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 467283,
@@ -496,7 +551,8 @@
           "min_damage": 254540,
           "max_damage": 426903,
           "count": 2,
-          "avg_casts": 9
+          "avg_casts": 9,
+          "is_passive": false
         }
       ]
     }
@@ -514,5 +570,91 @@
     "Spirit Walk": 58875,
     "Healing Surge": 8004
   },
-  "source_signature": "42b9ea8f0260875f"
+  "ability_icons": {
+    "8004": {
+      "icon": "spell_nature_healingway",
+      "name": "Healing Surge"
+    },
+    "25504": {
+      "icon": "spell_shaman_unleashweapon_wind",
+      "name": "Windfury Attack"
+    },
+    "51533": {
+      "icon": "spell_shaman_feralspirit",
+      "name": "Feral Spirit"
+    },
+    "58875": {
+      "icon": "ability_tracking",
+      "name": "Spirit Walk"
+    },
+    "60103": {
+      "icon": "ability_shaman_lavalash",
+      "name": "Lava Lash"
+    },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "114051": {
+      "icon": "8026696",
+      "name": "Ascendance"
+    },
+    "188196": {
+      "icon": "spell_nature_lightning",
+      "name": "Lightning Bolt"
+    },
+    "188443": {
+      "icon": "spell_nature_chainlightning",
+      "name": "Chain Lightning"
+    },
+    "195592": {
+      "icon": "spell_shaman_crashlightning",
+      "name": "Crash Lightning"
+    },
+    "197214": {
+      "icon": "ability_rhyolith_lavapool",
+      "name": "Sundering"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "320137": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Stormkeeper"
+    },
+    "384352": {
+      "icon": "ability_ironmaidens_swirlingvortex",
+      "name": "Doom Winds"
+    },
+    "444995": {
+      "icon": "inv_ability_totemicshaman_surgingtotem",
+      "name": "Surging Totem"
+    },
+    "455622": {
+      "icon": "spell_nature_earthquake",
+      "name": "Tremor"
+    },
+    "458147": {
+      "icon": "spell_fire_totemofwrath",
+      "name": "Searing Volley"
+    },
+    "458267": {
+      "icon": "ability_vehicle_electrocharge",
+      "name": "Surging Bolt"
+    },
+    "467283": {
+      "icon": "ability_rhyolith_lavapool",
+      "name": "Sundering"
+    },
+    "469270": {
+      "icon": "ability_ironmaidens_swirlingvortex",
+      "name": "Doom Winds"
+    }
+  },
+  "source_signature": "b4ee0fed28f50708"
 }

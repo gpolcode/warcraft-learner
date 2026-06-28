@@ -5,113 +5,87 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 10,
-      "avg_first_cast_s": 148.8,
-      "stddev_first_cast_s": 69.8,
-      "avg_gap_s": 104.3,
-      "stddev_gap_s": 0,
+      "sample_count": 9,
+      "avg_first_cast_s": 120,
+      "stddev_first_cast_s": 47.7,
+      "avg_gap_s": 109.3,
+      "stddev_gap_s": 6.5,
       "hold_targets": {},
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.32,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.315,
-        "stddev": 0.109,
-        "min": 0.168,
+        "avg": 0.37,
+        "stddev": 0.117,
+        "min": 0.211,
         "max": 0.573
       },
       "majority_hold": false
     },
     "Spirit Walk": {
       "sample_count": 8,
-      "avg_first_cast_s": 54.1,
-      "stddev_first_cast_s": 53.2,
-      "avg_gap_s": 66.2,
-      "stddev_gap_s": 35.7,
+      "avg_first_cast_s": 62.7,
+      "stddev_first_cast_s": 73.9,
+      "avg_gap_s": 85.6,
+      "stddev_gap_s": 44.8,
       "hold_targets": {
         "1": {
-          "target_s": 146.6,
-          "stddev_s": 34.4,
-          "count": 4,
+          "target_s": 126.8,
+          "stddev_s": 37.1,
+          "count": 5,
           "total_samples": 8
         }
       },
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.74,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.744,
-        "stddev": 0.391,
+        "avg": 0.639,
+        "stddev": 0.31,
         "min": 0.287,
-        "max": 1.308
+        "max": 1.123
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 4,
-      "avg_first_cast_s": 167.4,
-      "stddev_first_cast_s": 123,
+      "sample_count": 3,
+      "avg_first_cast_s": 88.7,
+      "stddev_first_cast_s": 16.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.275,
-        "stddev": 0.075,
-        "min": 0.168,
+        "avg": 0.269,
+        "stddev": 0.082,
+        "min": 0.181,
         "max": 0.342
       },
       "majority_hold": false
     },
     "Healing Surge": {
       "sample_count": 1,
-      "avg_first_cast_s": 53.8,
+      "avg_first_cast_s": 83,
       "stddev_first_cast_s": 0,
-      "avg_gap_s": 151.2,
-      "stddev_gap_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.337,
+        "avg": 0.181,
         "stddev": 0,
-        "min": 0.337,
-        "max": 0.337
+        "min": 0.181,
+        "max": 0.181
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 62.2,
-      "dmg_avg": 240951,
-      "dmg_stddev": 129803,
-      "dmg_min": 164107,
-      "dmg_max": 435172,
-      "window_length_s": 8,
-      "defensive_name": "Spirit Walk",
-      "spell_id": 58875,
-      "common_defensives": [
-        "Spirit Walk"
-      ],
-      "common_cds": [
-        "Spirit Walk"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250686,
-          "avg_damage": 177193,
-          "min_damage": 164107,
-          "max_damage": 186196,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 101.9,
-      "dmg_avg": 378204,
-      "dmg_stddev": 138781,
-      "dmg_min": 268527,
+      "time_s": 96.2,
+      "dmg_avg": 424629,
+      "dmg_stddev": 147414,
+      "dmg_min": 297166,
       "dmg_max": 648192,
       "window_length_s": 10.6,
       "defensive_name": "Astral Shift",
@@ -126,20 +100,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 250571,
+          "avg_damage": 257918,
           "min_damage": 94830,
-          "max_damage": 388340,
-          "count": 4
+          "max_damage": 364276,
+          "count": 3
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 255021,
+          "min_damage": 84938,
+          "max_damage": 430359,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 132002,
+          "min_damage": 102585,
+          "max_damage": 152641,
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 137.1,
-      "dmg_avg": 176311,
-      "dmg_stddev": 204519,
+      "time_s": 126.8,
+      "dmg_avg": 40845,
+      "dmg_stddev": 81689,
       "dmg_min": 0,
-      "dmg_max": 608527,
-      "window_length_s": 8,
+      "dmg_max": 163378,
+      "window_length_s": 8.1,
       "defensive_name": "Spirit Walk",
       "spell_id": 58875,
       "common_defensives": [
@@ -149,23 +137,15 @@
         "Spirit Walk"
       ],
       "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250686,
-          "avg_damage": 159164,
-          "min_damage": 144623,
-          "max_damage": 170169,
-          "count": 5
-        }
-      ]
+      "ability_breakdown": []
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.1,
+      "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     },
     {
       "spell_id": 198103,
@@ -175,15 +155,15 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 2.8,
+      "avg_uses": 2.3,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 3
     },
     {
       "spell_id": 8004,
-      "avg_uses": 2,
-      "min_uses": 2,
-      "max_uses": 2
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -244,6 +224,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -259,7 +243,11 @@
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
     }
   },
-  "source_signature": "e47e72ca8cf71694"
+  "source_signature": "46a49a0b689bf674"
 }

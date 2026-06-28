@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 122.8,
-      "stddev_first_cast_s": 98.6,
+      "avg_first_cast_s": 110.4,
+      "stddev_first_cast_s": 82.2,
       "avg_gap_s": 36.9,
       "stddev_gap_s": 47.6,
       "hold_targets": {},
@@ -16,7 +16,7 @@
       "uses_per_min": {
         "avg": 0.833,
         "stddev": 0.438,
-        "min": 0.197,
+        "min": 0.194,
         "max": 1.418
       },
       "majority_hold": false
@@ -173,12 +173,12 @@
       ]
     },
     {
-      "time_s": 164.4,
-      "dmg_avg": 288647,
-      "dmg_stddev": 168984,
+      "time_s": 163.3,
+      "dmg_avg": 317234,
+      "dmg_stddev": 166577,
       "dmg_min": 21758,
       "dmg_max": 475450,
-      "window_length_s": 9.6,
+      "window_length_s": 10,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -190,11 +190,18 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
+          "spell_id": 413924,
+          "avg_damage": 90395,
+          "min_damage": 12369,
+          "max_damage": 148842,
+          "count": 3
+        },
+        {
           "spell_id": 1264650,
-          "avg_damage": 57198,
+          "avg_damage": 60534,
           "min_damage": 21758,
-          "max_damage": 72175,
-          "count": 5
+          "max_damage": 77216,
+          "count": 6
         }
       ]
     },
@@ -265,11 +272,11 @@
       ]
     },
     {
-      "time_s": 276.2,
-      "dmg_avg": 366951,
-      "dmg_stddev": 183520,
+      "time_s": 274.7,
+      "dmg_avg": 302465,
+      "dmg_stddev": 131084,
       "dmg_min": 135501,
-      "dmg_max": 624896,
+      "dmg_max": 424479,
       "window_length_s": 12,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
@@ -283,17 +290,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1242815,
-          "avg_damage": 332338,
+          "avg_damage": 264000,
           "min_damage": 116144,
-          "max_damage": 537353,
-          "count": 4
+          "max_damage": 341049,
+          "count": 3
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 53040,
+          "avg_damage": 44415,
           "min_damage": 19357,
-          "max_damage": 87543,
-          "count": 5
+          "max_damage": 72492,
+          "count": 4
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 11473,
+          "min_damage": 10938,
+          "max_damage": 12008,
+          "count": 2
         }
       ]
     }
@@ -377,5 +391,5 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "7c314195fe55e863"
+  "source_signature": "3387518014c90dd6"
 }
