@@ -6,40 +6,40 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 113.1,
-      "stddev_first_cast_s": 67.1,
-      "avg_gap_s": 141.8,
-      "stddev_gap_s": 42.4,
+      "avg_first_cast_s": 126.7,
+      "stddev_first_cast_s": 55.9,
+      "avg_gap_s": 144.1,
+      "stddev_gap_s": 45,
       "hold_targets": {
         "1": {
-          "target_s": 245.3,
-          "stddev_s": 48,
+          "target_s": 248.7,
+          "stddev_s": 30.3,
           "count": 8,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.399,
-        "stddev": 0.094,
+        "avg": 0.378,
+        "stddev": 0.082,
         "min": 0.214,
-        "max": 0.531
+        "max": 0.529
       },
       "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 4,
-      "avg_first_cast_s": 193.6,
-      "stddev_first_cast_s": 74.7,
+      "sample_count": 3,
+      "avg_first_cast_s": 229.3,
+      "stddev_first_cast_s": 27,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.18,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.184,
-        "stddev": 0.014,
+        "avg": 0.186,
+        "stddev": 0.016,
         "min": 0.176,
         "max": 0.204
       },
@@ -49,8 +49,8 @@
   "defensive_windows": [
     {
       "time_s": 143.6,
-      "dmg_avg": 385345,
-      "dmg_stddev": 194813,
+      "dmg_avg": 397683,
+      "dmg_stddev": 189038,
       "dmg_min": 229438,
       "dmg_max": 668939,
       "window_length_s": 12,
@@ -66,23 +66,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1246502,
-          "avg_damage": 339295,
-          "min_damage": 252956,
+          "avg_damage": 250732,
+          "min_damage": 73607,
           "max_damage": 425633,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1249024,
-          "avg_damage": 170642,
+          "avg_damage": 160591,
           "min_damage": 145706,
-          "max_damage": 209951,
+          "max_damage": 179800,
           "count": 3
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 87716,
+          "avg_damage": 89190,
           "min_damage": 83732,
-          "max_damage": 90579,
+          "max_damage": 95412,
           "count": 4
         }
       ]
@@ -138,7 +138,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.1,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -190,9 +190,17 @@
     "Earth Elemental": 198103
   },
   "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
     },
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
@@ -215,5 +223,5 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "498e2e55ee31587e"
+  "source_signature": "3eca32d8d3c866a0"
 }

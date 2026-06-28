@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 7,
-      "avg_first_cast_s": 135,
-      "stddev_first_cast_s": 58.1,
+      "sample_count": 6,
+      "avg_first_cast_s": 147,
+      "stddev_first_cast_s": 53.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.35,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.345,
-        "stddev": 0.125,
+        "avg": 0.333,
+        "stddev": 0.132,
         "min": 0.156,
         "max": 0.43
       },
@@ -39,37 +39,37 @@
       "majority_hold": false
     },
     "Fade": {
-      "sample_count": 6,
-      "avg_first_cast_s": 75.9,
-      "stddev_first_cast_s": 67.5,
-      "avg_gap_s": 76.9,
-      "stddev_gap_s": 68.2,
+      "sample_count": 5,
+      "avg_first_cast_s": 78.6,
+      "stddev_first_cast_s": 75.1,
+      "avg_gap_s": 102.7,
+      "stddev_gap_s": 71.2,
       "hold_targets": {
         "1": {
           "target_s": 129.8,
           "stddev_s": 148.1,
           "count": 3,
-          "total_samples": 6
+          "total_samples": 5
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.71,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.715,
-        "stddev": 0.485,
+        "avg": 0.605,
+        "stddev": 0.453,
         "min": 0.187,
         "max": 1.29
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 107.8,
-      "dmg_avg": 262159,
-      "dmg_stddev": 92472,
-      "dmg_min": 200339,
-      "dmg_max": 398984,
+      "time_s": 126.2,
+      "dmg_avg": 381315,
+      "dmg_stddev": 175790,
+      "dmg_min": 236846,
+      "dmg_max": 622877,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -82,17 +82,17 @@
       "ref_game_id": 245569,
       "ability_breakdown": [
         {
-          "spell_id": 1258192,
-          "avg_damage": 229812,
-          "min_damage": 212465,
-          "max_damage": 247158,
-          "count": 2
+          "spell_id": 1246653,
+          "avg_damage": 199018,
+          "min_damage": 130265,
+          "max_damage": 250698,
+          "count": 4
         },
         {
-          "spell_id": 1246653,
-          "avg_damage": 189150,
-          "min_damage": 130265,
-          "max_damage": 236846,
+          "spell_id": 32409,
+          "avg_damage": 23386,
+          "min_damage": 15855,
+          "max_damage": 32743,
           "count": 3
         }
       ]
@@ -153,7 +153,7 @@
     },
     {
       "spell_id": 586,
-      "avg_uses": 2,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -188,7 +188,7 @@
       "spell_id": 47585,
       "cooldown": 120,
       "duration": 6,
-      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit. Spell ID is best guess for the Discipline-available version.",
+      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit.",
       "talent_gated": false
     },
     {
@@ -228,18 +228,18 @@
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
     },
+    "62618": {
+      "icon": "spell_holy_powerwordbarrier",
+      "name": "Power Word: Barrier"
+    },
     "1246653": {
       "icon": "inv_ability_poison_orb",
       "name": "Caustic Phlegm"
-    },
-    "1258192": {
-      "icon": "spell_azerite_essence01",
-      "name": "Lingering Miasma"
     },
     "1273112": {
       "icon": "spell_deathknight_gnaw_ghoul",
       "name": "Consume"
     }
   },
-  "source_signature": "dc18d178e357cbbd"
+  "source_signature": "473273cd64c9f5a4"
 }

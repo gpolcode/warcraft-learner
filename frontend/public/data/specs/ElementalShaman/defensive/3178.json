@@ -5,35 +5,35 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 8,
-      "avg_first_cast_s": 226.5,
-      "stddev_first_cast_s": 85.8,
+      "sample_count": 7,
+      "avg_first_cast_s": 223.7,
+      "stddev_first_cast_s": 92.3,
       "avg_gap_s": 154.9,
       "stddev_gap_s": 76.2,
       "hold_targets": {},
       "avg_uses": 1.3,
       "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.239,
-        "stddev": 0.107,
+        "avg": 0.243,
+        "stddev": 0.116,
         "min": 0.136,
         "max": 0.415
       },
       "majority_hold": false
     },
     "Earth Elemental": {
-      "sample_count": 2,
-      "avg_first_cast_s": 138.8,
-      "stddev_first_cast_s": 92.3,
+      "sample_count": 3,
+      "avg_first_cast_s": 187.7,
+      "stddev_first_cast_s": 106.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.2,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.199,
-        "stddev": 0.002,
-        "min": 0.197,
+        "avg": 0.188,
+        "stddev": 0.019,
+        "min": 0.166,
         "max": 0.2
       },
       "majority_hold": false
@@ -41,10 +41,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 245.9,
-      "dmg_avg": 506212,
-      "dmg_stddev": 246578,
-      "dmg_min": 293953,
+      "time_s": 244.8,
+      "dmg_avg": 559277,
+      "dmg_stddev": 249590,
+      "dmg_min": 389276,
       "dmg_max": 924089,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
@@ -59,10 +59,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1285954,
-          "avg_damage": 175492,
+          "avg_damage": 180483,
           "min_damage": 148847,
           "max_damage": 254644,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1245302,
@@ -73,17 +73,17 @@
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 127819,
-          "min_damage": 72669,
+          "avg_damage": 141606,
+          "min_damage": 73263,
           "max_damage": 207156,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 104860,
-          "min_damage": 65753,
+          "avg_damage": 114637,
+          "min_damage": 78397,
           "max_damage": 188755,
-          "count": 5
+          "count": 4
         }
       ]
     }
@@ -143,9 +143,17 @@
     "Earth Elemental": 198103
   },
   "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
     },
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
@@ -168,5 +176,5 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "cf4e97ef6c9d1807"
+  "source_signature": "1770019e29999dd7"
 }

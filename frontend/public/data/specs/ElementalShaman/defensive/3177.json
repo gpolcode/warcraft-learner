@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 96.8,
-      "stddev_first_cast_s": 34.2,
+      "avg_first_cast_s": 108.6,
+      "stddev_first_cast_s": 47.6,
       "avg_gap_s": 104.1,
       "stddev_gap_s": 11.9,
       "hold_targets": {},
@@ -22,17 +22,17 @@
       "majority_hold": false
     },
     "Earth Elemental": {
-      "sample_count": 3,
-      "avg_first_cast_s": 82.2,
-      "stddev_first_cast_s": 92.5,
+      "sample_count": 2,
+      "avg_first_cast_s": 106.6,
+      "stddev_first_cast_s": 116.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.296,
-        "stddev": 0.03,
+        "avg": 0.303,
+        "stddev": 0.04,
         "min": 0.274,
         "max": 0.331
       },
@@ -41,9 +41,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 89.9,
-      "dmg_avg": 343732,
-      "dmg_stddev": 134847,
+      "time_s": 88.6,
+      "dmg_avg": 363593,
+      "dmg_stddev": 132411,
       "dmg_min": 159961,
       "dmg_max": 546501,
       "window_length_s": 12,
@@ -59,34 +59,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 188925,
-          "min_damage": 92028,
+          "avg_damage": 205075,
+          "min_damage": 98853,
           "max_damage": 341803,
-          "count": 7
-        },
-        {
-          "spell_id": 1280101,
-          "avg_damage": 99146,
-          "min_damage": 29754,
-          "max_damage": 288753,
-          "count": 4
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 46950,
-          "min_damage": 44504,
+          "avg_damage": 47299,
+          "min_damage": 45209,
           "max_damage": 49876,
-          "count": 8
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 193.3,
-      "dmg_avg": 512703,
-      "dmg_stddev": 370306,
+      "time_s": 197.1,
+      "dmg_avg": 531360,
+      "dmg_stddev": 323397,
       "dmg_min": 204757,
       "dmg_max": 1041781,
-      "window_length_s": 11,
+      "window_length_s": 11.2,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
       "common_defensives": [
@@ -99,31 +92,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 288544,
+          "avg_damage": 270256,
           "min_damage": 225105,
           "max_damage": 351983,
-          "count": 2
-        },
-        {
-          "spell_id": 1275558,
-          "avg_damage": 138189,
-          "min_damage": 47088,
-          "max_damage": 229290,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 88390,
+          "avg_damage": 90197,
           "min_damage": 59335,
           "max_damage": 103680,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272328,
-          "avg_damage": 59174,
+          "avg_damage": 60238,
           "min_damage": 57723,
-          "max_damage": 61943,
-          "count": 3
+          "max_damage": 63428,
+          "count": 4
         }
       ]
     }
@@ -183,9 +169,17 @@
     "Earth Elemental": 198103
   },
   "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
     },
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
@@ -202,15 +196,7 @@
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
-    },
-    "1275558": {
-      "icon": "inv_voidcreepermount_blue",
-      "name": "Parasite Expulsion"
-    },
-    "1280101": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Dark Energy"
     }
   },
-  "source_signature": "0d07f2cfb0f55b99"
+  "source_signature": "3757d9708c6ef773"
 }
