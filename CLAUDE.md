@@ -141,7 +141,6 @@ warcraft-learner/
 │       │   ├── signature.ts         # source_signature + ingest_version compute/compare (signature-skip)
 │       │   ├── git-mtime.ts         # Git last-commit time of a spec's data dir (work-ordering)
 │       │   ├── ordering.ts          # Spec/encounter work-ordering (empty -> old-version -> current, oldest git-time within)
-│       │   ├── migrate-version.ts   # One-time backfill of ingest_version onto existing data files
 │       │   ├── wcl-fetchers.ts      # Discovery: getEncounters (worldData + rankings liveness probe)
 │       │   ├── wcl-client.ts        # Discovery: WclQueryClient interface + EventFetchOptions + BudgetExceededError
 │       │   ├── wcl-queries.ts       # Discovery: RATE_LIMIT_QUERY, ENCOUNTERS_QUERY, RANKINGS_QUERY (+ RankingsQueryVars)
@@ -211,7 +210,7 @@ The `src/**` specs cannot run under a bare `npx vitest` - they need the `@angula
 | `*-transform.service.spec.ts` | the slice's bench math (clustering / aggregation) as pure fns, **plus** an end-to-end pass through the `*TransformService` with a fake `WclApiService` |
 | `*.service.spec.ts` | the `*FeatureService`'s pure view-model fns (table-driven), **plus** an end-to-end pass with a fake `*_DATA_SOURCE` (and a fake `WclApiService` where the slice fetches the player log) |
 
-Ingestion runs these very `*TransformService`s headlessly, so the only specs under `scripts/ingest/**` cover the discovery + orchestration helpers it still owns (`wcl-fetchers.spec.ts`, `wcl-mappers.spec.ts`, `signature.spec.ts`, `ordering.spec.ts`, `migrate-version.spec.ts`).
+Ingestion runs these very `*TransformService`s headlessly, so the only specs under `scripts/ingest/**` cover the discovery + orchestration helpers it still owns (`wcl-fetchers.spec.ts`, `wcl-mappers.spec.ts`, `signature.spec.ts`, `ordering.spec.ts`).
 
 **Conventions: tests as documentation.** Colocate specs next to the unit (`burst.service.spec.ts` beside `burst.service.ts`). `describe` names the unit (`'burstWindowStatus'`); `it` is a behavior sentence with no "should" (`it('flags a value more than 2 sigma above the mean')`). For rule/threshold tests, pair every "triggers" case with a "does not trigger at the boundary" case - boundary comparisons are strict (a value exactly at `mean + 2*stddev` is **not** an outlier).
 
@@ -396,7 +395,7 @@ AI-generated rulebook. Extra top-level fields added on save: `guide_count`, `sav
 Per-parse position timelines for the positioning map (written by `MapTransformService.getMapData` run headlessly by `scripts/ingest/orchestrator.ts`; consumed by `core/services/positioning-core.ts` + `core/models/positioning.models.ts`). Top-level: `{spec, encounter_id, encounter_name, interval_s, sample_count, parses[]}`. Each parse: `{report_code, fight_id, player_name, duration_s, interval_s, player: PosRow[], enemies: [{game_id, name, is_boss, samples: PosRow[]}]}`. A `PosRow` is `[t_s, x, y, facing|null, mapID|null]` with **raw** WCL units (x/y in hundredths of a yard, facing in milliradians) - the frontend scales them. Enemies are keyed by `game_id` so the same boss/add matches across parses; `is_boss` = the enemy with the highest `maxHitPoints`.
 
 ### Signature stamps (every slice + positions file)
-Every tailored file (`{burst,rotation,defensive,gear}/{enc}.json` + `positions/{enc}.json`) carries two ingestion stamps: `source_signature` (the `sha256(INGEST_VERSION + parse-set fingerprint)` skip key) and the bare `ingest_version` integer (the same version, unhashed, read by the work-ordering to tell stale-version data from current). `ingest_version` is required - `migrate-version.ts` backfilled it onto pre-existing files (v1 where the gear file already carried `source_id`, else v0), and every write stamps it.
+Every tailored file (`{burst,rotation,defensive,gear}/{enc}.json` + `positions/{enc}.json`) carries two ingestion stamps: `source_signature` (the `sha256(INGEST_VERSION + parse-set fingerprint)` skip key) and the bare `ingest_version` integer (the same version, unhashed, read by the work-ordering to tell stale-version data from current). `ingest_version` is required - every write stamps it, and a one-time migration backfilled it onto pre-existing files (v1 where the gear file already carried `source_id`, else v0).
 
 ### Raw parse samples (no longer persisted)
 Raw per-parse samples are no longer written to disk (the old `parse_samples/{enc_id}.json` file is gone). The transform services compute each slice directly from WCL in-memory during ingestion, so there is no intermediate sample file.
