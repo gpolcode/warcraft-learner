@@ -3,34 +3,34 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 442.4,
+  "avg_duration_s": 445.2,
   "downtime_threshold_ms": 2546,
-  "top_avg_efficiency": 74.1,
-  "top_efficiency_stddev": 7.9,
+  "top_avg_efficiency": 74.2,
+  "top_efficiency_stddev": 7.8,
   "per_cd_benchmarks": {
     "Rewind": {
       "sample_count": 10,
-      "avg_first_cast_s": 213.5,
-      "stddev_first_cast_s": 126.3,
-      "avg_gap_s": 268,
-      "stddev_gap_s": 27.9,
+      "avg_first_cast_s": 183.3,
+      "stddev_first_cast_s": 99.6,
+      "avg_gap_s": 268.7,
+      "stddev_gap_s": 25,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.2,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.203,
-        "stddev": 0.066,
-        "min": 0.129,
+        "avg": 0.214,
+        "stddev": 0.062,
+        "min": 0.135,
         "max": 0.31
       },
       "bl_pct": 0,
       "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 396.9,
-          "stddev_s": 7.3,
-          "count": 4,
+          "target_s": 398.5,
+          "stddev_s": 7.8,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -57,32 +57,32 @@
     },
     "Stasis": {
       "sample_count": 10,
-      "avg_first_cast_s": 39.8,
-      "stddev_first_cast_s": 52.3,
-      "avg_gap_s": 99.4,
-      "stddev_gap_s": 10,
-      "avg_bl_offset_s": 8.4,
-      "stddev_bl_offset_s": 5.2,
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.43,
+      "avg_first_cast_s": 50.8,
+      "stddev_first_cast_s": 54.3,
+      "avg_gap_s": 100,
+      "stddev_gap_s": 13.5,
+      "avg_bl_offset_s": 7,
+      "stddev_bl_offset_s": 5.3,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.608,
-        "stddev": 0.073,
-        "min": 0.493,
+        "avg": 0.585,
+        "stddev": 0.083,
+        "min": 0.486,
         "max": 0.707
       },
-      "bl_pct": 40,
+      "bl_pct": 30,
       "majority_hold": false,
       "hold_targets": {
         "3": {
           "target_s": 230.9,
-          "stddev_s": 39,
+          "stddev_s": 65.2,
           "count": 5,
           "total_samples": 10
         },
         "4": {
           "target_s": 334.5,
-          "stddev_s": 27.5,
+          "stddev_s": 69.1,
           "count": 4,
           "total_samples": 10
         }
@@ -90,26 +90,26 @@
     },
     "Tip the Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 6,
-      "stddev_first_cast_s": 10.9,
-      "avg_gap_s": 109.9,
-      "stddev_gap_s": 39.1,
-      "avg_bl_offset_s": 5.7,
-      "stddev_bl_offset_s": 10.8,
+      "avg_first_cast_s": 18.2,
+      "stddev_first_cast_s": 38.5,
+      "avg_gap_s": 107.6,
+      "stddev_gap_s": 33.4,
+      "avg_bl_offset_s": 6.6,
+      "stddev_bl_offset_s": 11.2,
       "avg_uses": 4.4,
       "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.594,
-        "stddev": 0.17,
-        "min": 0.386,
+        "avg": 0.592,
+        "stddev": 0.173,
+        "min": 0.364,
         "max": 0.825
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {
         "3": {
-          "target_s": 332.2,
-          "stddev_s": 59.9,
+          "target_s": 354,
+          "stddev_s": 69.6,
           "count": 4,
           "total_samples": 10
         }
@@ -174,7 +174,7 @@
       "duration": 5,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error. Spell ID is a best guess and should be verified."
+      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error."
     }
   ],
   "rules": [
@@ -289,6 +289,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "3ea3537ad3f30320",
-  "ingest_version": 0
+  "source_signature": "d3d9fbaa4c5ff668",
+  "ingest_version": 1
 }

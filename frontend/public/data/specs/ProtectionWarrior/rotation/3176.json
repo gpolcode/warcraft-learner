@@ -3,10 +3,10 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 213.6,
-  "downtime_threshold_ms": 1065,
-  "top_avg_efficiency": 82,
-  "top_efficiency_stddev": 8.5,
+  "avg_duration_s": 214,
+  "downtime_threshold_ms": 1064,
+  "top_avg_efficiency": 82.6,
+  "top_efficiency_stddev": 9.2,
   "per_cd_benchmarks": {
     "Avatar": {
       "sample_count": 10,
@@ -30,17 +30,17 @@
     },
     "Demoralizing Shout": {
       "sample_count": 10,
-      "avg_first_cast_s": 24.4,
-      "stddev_first_cast_s": 69.8,
-      "avg_gap_s": 28.7,
-      "stddev_gap_s": 9.3,
-      "avg_bl_offset_s": 1.2,
-      "stddev_bl_offset_s": 1,
-      "avg_uses": 7,
-      "avg_uses_per_min": 2.01,
+      "avg_first_cast_s": 24.1,
+      "stddev_first_cast_s": 69.9,
+      "avg_gap_s": 28.1,
+      "stddev_gap_s": 8.6,
+      "avg_bl_offset_s": 1,
+      "stddev_bl_offset_s": 0.9,
+      "avg_uses": 7.1,
+      "avg_uses_per_min": 2.04,
       "uses_per_min": {
-        "avg": 2.014,
-        "stddev": 0.604,
+        "avg": 2.042,
+        "stddev": 0.609,
         "min": 0.433,
         "max": 2.612
       },
@@ -153,7 +153,7 @@
       "cooldown": 35,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so verify the player took Shield Charge before flagging missed casts.",
+      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so a missing cast may be normal if Shield Charge was not taken.",
       "talent_gated": true
     },
     {
@@ -309,6 +309,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "5b3cf196bd638e9c",
-  "ingest_version": 0
+  "source_signature": "c1350207215ffc6b",
+  "ingest_version": 1
 }

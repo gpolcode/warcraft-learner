@@ -3,25 +3,25 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 247.4,
-  "downtime_threshold_ms": 2538,
-  "top_avg_efficiency": 73.2,
-  "top_efficiency_stddev": 10,
+  "avg_duration_s": 258.9,
+  "downtime_threshold_ms": 2556,
+  "top_avg_efficiency": 73.3,
+  "top_efficiency_stddev": 9.8,
   "per_cd_benchmarks": {
     "Rewind": {
       "sample_count": 10,
-      "avg_first_cast_s": 159.1,
-      "stddev_first_cast_s": 67.2,
+      "avg_first_cast_s": 173.9,
+      "stddev_first_cast_s": 85,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "avg_bl_offset_s": 38.1,
       "stddev_bl_offset_s": 0,
       "avg_uses": 0.7,
-      "avg_uses_per_min": 0.17,
+      "avg_uses_per_min": 0.16,
       "uses_per_min": {
-        "avg": 0.241,
-        "stddev": 0.042,
-        "min": 0.192,
+        "avg": 0.227,
+        "stddev": 0.044,
+        "min": 0.181,
         "max": 0.306
       },
       "bl_pct": 10,
@@ -50,43 +50,43 @@
     },
     "Stasis": {
       "sample_count": 10,
-      "avg_first_cast_s": 71.4,
-      "stddev_first_cast_s": 34,
-      "avg_gap_s": 111.7,
-      "stddev_gap_s": 19.6,
+      "avg_first_cast_s": 75.4,
+      "stddev_first_cast_s": 38.6,
+      "avg_gap_s": 115.4,
+      "stddev_gap_s": 18.9,
       "avg_bl_offset_s": 12.8,
       "stddev_bl_offset_s": 0,
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.31,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.52,
-        "stddev": 0.068,
-        "min": 0.436,
+        "avg": 0.488,
+        "stddev": 0.09,
+        "min": 0.362,
         "max": 0.614
       },
       "bl_pct": 10,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 200.9,
-          "stddev_s": 8.3,
-          "count": 4,
+          "target_s": 204.5,
+          "stddev_s": 20.9,
+          "count": 5,
           "total_samples": 10
         }
       }
     },
     "Tip the Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 33.1,
-      "stddev_first_cast_s": 42.6,
-      "avg_gap_s": 128.1,
-      "stddev_gap_s": 33.7,
-      "avg_bl_offset_s": 0.7,
-      "stddev_bl_offset_s": 2.6,
-      "avg_uses": 2.3,
+      "avg_first_cast_s": 38.2,
+      "stddev_first_cast_s": 41.8,
+      "avg_gap_s": 128.2,
+      "stddev_gap_s": 32.3,
+      "avg_bl_offset_s": 11.1,
+      "stddev_bl_offset_s": 23,
+      "avg_uses": 2.4,
       "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.567,
+        "avg": 0.566,
         "stddev": 0.137,
         "min": 0.409,
         "max": 0.823
@@ -161,7 +161,7 @@
       "duration": 5,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error. Spell ID is a best guess and should be verified."
+      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error."
     }
   ],
   "rules": [
@@ -276,6 +276,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "dfe3768ecd0e51df",
-  "ingest_version": 0
+  "source_signature": "e2f3d01b9453c302",
+  "ingest_version": 1
 }

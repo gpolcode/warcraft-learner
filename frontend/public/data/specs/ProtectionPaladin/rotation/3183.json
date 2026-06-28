@@ -3,26 +3,26 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 539.2,
-  "downtime_threshold_ms": 1162,
+  "avg_duration_s": 536.8,
+  "downtime_threshold_ms": 1156,
   "top_avg_efficiency": 73.6,
-  "top_efficiency_stddev": 9.9,
+  "top_efficiency_stddev": 9.7,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 11.8,
+      "avg_first_cast_s": 12.2,
       "stddev_first_cast_s": 4.4,
-      "avg_gap_s": 64,
-      "stddev_gap_s": 8,
+      "avg_gap_s": 63.6,
+      "stddev_gap_s": 7.1,
       "avg_bl_offset_s": -1,
-      "stddev_bl_offset_s": 17.8,
+      "stddev_bl_offset_s": 17.9,
       "avg_uses": 8.8,
       "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.979,
-        "stddev": 0.038,
+        "avg": 0.984,
+        "stddev": 0.043,
         "min": 0.904,
-        "max": 1.03
+        "max": 1.045
       },
       "bl_pct": 100,
       "majority_hold": true,
@@ -34,20 +34,20 @@
           "total_samples": 10
         },
         "7": {
-          "target_s": 399.5,
-          "stddev_s": 20.6,
-          "count": 7,
+          "target_s": 401.6,
+          "stddev_s": 21.4,
+          "count": 6,
           "total_samples": 10
         },
         "8": {
-          "target_s": 463.7,
+          "target_s": 459.9,
           "stddev_s": 21.9,
           "count": 9,
           "total_samples": 10
         },
         "9": {
-          "target_s": 515,
-          "stddev_s": 21.5,
+          "target_s": 510.2,
+          "stddev_s": 19.8,
           "count": 8,
           "total_samples": 10
         }
@@ -55,19 +55,19 @@
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.2,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 63.9,
-      "stddev_gap_s": 7.8,
-      "avg_bl_offset_s": 1.1,
-      "stddev_bl_offset_s": 18.5,
-      "avg_uses": 8.7,
-      "avg_uses_per_min": 0.97,
+      "avg_first_cast_s": 14.3,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 63.5,
+      "stddev_gap_s": 7,
+      "avg_bl_offset_s": 1,
+      "stddev_bl_offset_s": 18.3,
+      "avg_uses": 8.8,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.968,
-        "stddev": 0.047,
-        "min": 0.888,
-        "max": 1.03
+        "avg": 0.984,
+        "stddev": 0.043,
+        "min": 0.904,
+        "max": 1.045
       },
       "bl_pct": 100,
       "majority_hold": true,
@@ -79,38 +79,38 @@
           "total_samples": 10
         },
         "7": {
-          "target_s": 399.9,
-          "stddev_s": 17.7,
-          "count": 7,
+          "target_s": 401.9,
+          "stddev_s": 17.9,
+          "count": 6,
           "total_samples": 10
         },
         "8": {
-          "target_s": 468.2,
-          "stddev_s": 18.9,
+          "target_s": 462.2,
+          "stddev_s": 19.7,
           "count": 8,
           "total_samples": 10
         },
         "9": {
-          "target_s": 515.3,
-          "stddev_s": 20.2,
-          "count": 6,
+          "target_s": 511.1,
+          "stddev_s": 18.8,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Hammer of Light": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.4,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 26.2,
-      "stddev_gap_s": 18.4,
-      "avg_bl_offset_s": 1.7,
-      "stddev_bl_offset_s": 11.1,
-      "avg_uses": 20.5,
-      "avg_uses_per_min": 2.28,
+      "avg_first_cast_s": 15.6,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 25.9,
+      "stddev_gap_s": 17.8,
+      "avg_bl_offset_s": 4.9,
+      "stddev_bl_offset_s": 10.5,
+      "avg_uses": 20.7,
+      "avg_uses_per_min": 2.31,
       "uses_per_min": {
-        "avg": 2.281,
-        "stddev": 0.144,
+        "avg": 2.314,
+        "stddev": 0.138,
         "min": 2.034,
         "max": 2.515
       },
@@ -183,7 +183,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "opener_priority": 5,
-      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build (best-guess spell_id, verify on Wowhead)."
+      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build."
     },
     {
       "name": "Holy Bulwark",
@@ -191,7 +191,7 @@
       "cooldown": 60,
       "duration": 10,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     },
     {
@@ -200,7 +200,7 @@
       "cooldown": 60,
       "duration": 25,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     }
   ],
@@ -328,6 +328,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "579e5e340a326a5c",
-  "ingest_version": 0
+  "source_signature": "624f13c63a5c74d5",
+  "ingest_version": 1
 }

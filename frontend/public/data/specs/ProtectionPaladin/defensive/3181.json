@@ -5,47 +5,47 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Ardent Defender": {
-      "sample_count": 9,
-      "avg_first_cast_s": 41.4,
-      "stddev_first_cast_s": 21.9,
-      "avg_gap_s": 128.1,
-      "stddev_gap_s": 58.3,
+      "sample_count": 10,
+      "avg_first_cast_s": 37.6,
+      "stddev_first_cast_s": 24,
+      "avg_gap_s": 139.7,
+      "stddev_gap_s": 70.2,
       "hold_targets": {
         "1": {
-          "target_s": 245.8,
-          "stddev_s": 41.8,
-          "count": 6,
-          "total_samples": 9
+          "target_s": 254.3,
+          "stddev_s": 38.2,
+          "count": 7,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 382.1,
-          "stddev_s": 14.9,
-          "count": 4,
-          "total_samples": 9
+          "target_s": 384.2,
+          "stddev_s": 15.6,
+          "count": 5,
+          "total_samples": 10
         }
       },
-      "avg_uses": 4.1,
-      "avg_uses_per_min": 0.49,
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.495,
-        "stddev": 0.121,
+        "avg": 0.469,
+        "stddev": 0.109,
         "min": 0.352,
         "max": 0.697
       },
       "majority_hold": true
     },
     "Guardian of Ancient Kings": {
-      "sample_count": 9,
-      "avg_first_cast_s": 140.5,
-      "stddev_first_cast_s": 147.3,
-      "avg_gap_s": 132.8,
-      "stddev_gap_s": 99.4,
+      "sample_count": 10,
+      "avg_first_cast_s": 130.4,
+      "stddev_first_cast_s": 142.5,
+      "avg_gap_s": 129.8,
+      "stddev_gap_s": 111.7,
       "hold_targets": {},
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.39,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.39,
-        "stddev": 0.104,
+        "avg": 0.399,
+        "stddev": 0.103,
         "min": 0.226,
         "max": 0.517
       },
@@ -53,16 +53,16 @@
     },
     "Shield of the Righteous": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.9,
+      "avg_first_cast_s": 3.8,
       "stddev_first_cast_s": 0.9,
       "avg_gap_s": 3.2,
-      "stddev_gap_s": 4.1,
+      "stddev_gap_s": 4.2,
       "hold_targets": {},
-      "avg_uses": 154.5,
-      "avg_uses_per_min": 18.65,
+      "avg_uses": 155.1,
+      "avg_uses_per_min": 18.72,
       "uses_per_min": {
-        "avg": 18.652,
-        "stddev": 2.08,
+        "avg": 18.721,
+        "stddev": 2.173,
         "min": 15.376,
         "max": 22.064
       },
@@ -70,14 +70,20 @@
     },
     "Word of Glory": {
       "sample_count": 10,
-      "avg_first_cast_s": 38.7,
-      "stddev_first_cast_s": 38.2,
-      "avg_gap_s": 22.1,
-      "stddev_gap_s": 25.6,
+      "avg_first_cast_s": 26.1,
+      "stddev_first_cast_s": 17.2,
+      "avg_gap_s": 20.2,
+      "stddev_gap_s": 21,
       "hold_targets": {
         "7": {
           "target_s": 228.3,
           "stddev_s": 113.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 186.3,
+          "stddev_s": 50.7,
           "count": 4,
           "total_samples": 10
         },
@@ -89,18 +95,18 @@
         },
         "14": {
           "target_s": 414.6,
-          "stddev_s": 127.5,
+          "stddev_s": 106.3,
           "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 18.4,
-      "avg_uses_per_min": 2.25,
+      "avg_uses": 20.8,
+      "avg_uses_per_min": 2.54,
       "uses_per_min": {
-        "avg": 2.249,
-        "stddev": 1.359,
+        "avg": 2.538,
+        "stddev": 1.235,
         "min": 0.113,
-        "max": 4.517
+        "max": 4.41
       },
       "majority_hold": true
     },
@@ -142,8 +148,8 @@
   "defensive_windows": [
     {
       "time_s": 27.5,
-      "dmg_avg": 1094571,
-      "dmg_stddev": 248874,
+      "dmg_avg": 1074753,
+      "dmg_stddev": 257961,
       "dmg_min": 874073,
       "dmg_max": 1569012,
       "window_length_s": 12,
@@ -159,21 +165,21 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 458670,
+          "avg_damage": 438440,
           "min_damage": 179226,
           "max_damage": 581572,
           "count": 6
         },
         {
           "spell_id": 1281707,
-          "avg_damage": 218084,
+          "avg_damage": 214597,
           "min_damage": 194649,
           "max_damage": 240895,
           "count": 6
         },
         {
           "spell_id": 1233789,
-          "avg_damage": 149469,
+          "avg_damage": 150843,
           "min_damage": 98093,
           "max_damage": 169467,
           "count": 4
@@ -187,14 +193,14 @@
         },
         {
           "spell_id": 1233826,
-          "avg_damage": 95171,
-          "min_damage": 78624,
+          "avg_damage": 101305,
+          "min_damage": 97024,
           "max_damage": 105399,
           "count": 3
         },
         {
           "spell_id": 1243743,
-          "avg_damage": 64445,
+          "avg_damage": 64319,
           "min_damage": 41732,
           "max_damage": 72640,
           "count": 4
@@ -203,11 +209,11 @@
     },
     {
       "time_s": 59.1,
-      "dmg_avg": 617737,
-      "dmg_stddev": 414386,
-      "dmg_min": 247017,
-      "dmg_max": 1323833,
-      "window_length_s": 10.2,
+      "dmg_avg": 374935,
+      "dmg_stddev": 202436,
+      "dmg_min": 51016,
+      "dmg_max": 597697,
+      "window_length_s": 7.5,
       "defensive_name": "Guardian of Ancient Kings",
       "spell_id": 86659,
       "common_defensives": [
@@ -216,35 +222,68 @@
       "common_cds": [
         "Guardian of Ancient Kings"
       ],
-      "ref_game_id": 243805,
+      "ref_game_id": 243811,
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 379466,
+          "avg_damage": 227988,
           "min_damage": 134491,
-          "max_damage": 1080284,
-          "count": 5
+          "max_damage": 408920,
+          "count": 6
         },
         {
           "spell_id": 1281707,
-          "avg_damage": 97569,
-          "min_damage": 63010,
-          "max_damage": 181372,
-          "count": 5
+          "avg_damage": 74877,
+          "min_damage": 40795,
+          "max_damage": 92072,
+          "count": 7
         },
         {
           "spell_id": 1233826,
-          "avg_damage": 55195,
-          "min_damage": 10806,
+          "avg_damage": 49950,
+          "min_damage": 10221,
           "max_damage": 91730,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 85,
+      "dmg_avg": 404592,
+      "dmg_stddev": 383438,
+      "dmg_min": 38709,
+      "dmg_max": 777837,
+      "window_length_s": 7.3,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 243811,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 336474,
+          "min_damage": 12848,
+          "max_damage": 712568,
+          "count": 4
+        },
+        {
+          "spell_id": 1281707,
+          "avg_damage": 63693,
+          "min_damage": 25861,
+          "max_damage": 86608,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 91.7,
-      "dmg_avg": 887373,
-      "dmg_stddev": 709768,
+      "time_s": 91.6,
+      "dmg_avg": 794009,
+      "dmg_stddev": 740673,
       "dmg_min": 377093,
       "dmg_max": 1903432,
       "window_length_s": 12,
@@ -259,67 +298,34 @@
       "ref_game_id": 243811,
       "ability_breakdown": [
         {
-          "spell_id": 1,
-          "avg_damage": 212898,
-          "min_damage": 3095,
-          "max_damage": 616523,
-          "count": 4
-        },
-        {
           "spell_id": 1281707,
-          "avg_damage": 143467,
-          "min_damage": 110505,
+          "avg_damage": 141302,
+          "min_damage": 101847,
           "max_damage": 173375,
           "count": 4
         },
         {
-          "spell_id": 1233826,
-          "avg_damage": 81493,
-          "min_damage": 21879,
-          "max_damage": 120347,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 94,
-      "dmg_avg": 221047,
-      "dmg_stddev": 314792,
-      "dmg_min": 38709,
-      "dmg_max": 690622,
-      "window_length_s": 7.3,
-      "defensive_name": "Guardian of Ancient Kings",
-      "spell_id": 86659,
-      "common_defensives": [
-        "Guardian of Ancient Kings"
-      ],
-      "common_cds": [
-        "Guardian of Ancient Kings"
-      ],
-      "ref_game_id": 243811,
-      "ability_breakdown": [
-        {
           "spell_id": 1,
-          "avg_damage": 211110,
-          "min_damage": 12848,
-          "max_damage": 595888,
-          "count": 3
+          "avg_damage": 127530,
+          "min_damage": 3095,
+          "max_damage": 275049,
+          "count": 4
         },
         {
-          "spell_id": 1281707,
-          "avg_damage": 58290,
-          "min_damage": 25861,
-          "max_damage": 86608,
-          "count": 4
+          "spell_id": 1233826,
+          "avg_damage": 73718,
+          "min_damage": 21879,
+          "max_damage": 102252,
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 206.5,
-      "dmg_avg": 630472,
-      "dmg_stddev": 303534,
-      "dmg_min": 339134,
-      "dmg_max": 1001665,
+      "time_s": 255.3,
+      "dmg_avg": 635053,
+      "dmg_stddev": 224829,
+      "dmg_min": 424333,
+      "dmg_max": 949864,
       "window_length_s": 12,
       "defensive_name": "Ardent Defender",
       "spell_id": 31850,
@@ -333,37 +339,44 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 349678,
-          "min_damage": 112087,
-          "max_damage": 618805,
-          "count": 3
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 140832,
-          "min_damage": 117345,
-          "max_damage": 168133,
+          "avg_damage": 266649,
+          "min_damage": 166536,
+          "max_damage": 407364,
           "count": 3
         },
         {
           "spell_id": 1260019,
-          "avg_damage": 138947,
-          "min_damage": 106075,
-          "max_damage": 155655,
+          "avg_damage": 160022,
+          "min_damage": 91220,
+          "max_damage": 281249,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 134499,
+          "min_damage": 103308,
+          "max_damage": 153189,
           "count": 3
         },
         {
           "spell_id": 1246461,
-          "avg_damage": 98745,
-          "min_damage": 71392,
-          "max_damage": 118289,
-          "count": 4
+          "avg_damage": 114463,
+          "min_damage": 106259,
+          "max_damage": 119237,
+          "count": 3
         },
         {
           "spell_id": 1233826,
-          "avg_damage": 84588,
-          "min_damage": 79505,
-          "max_damage": 89671,
+          "avg_damage": 93616,
+          "min_damage": 70424,
+          "max_damage": 116808,
+          "count": 2
+        },
+        {
+          "spell_id": 1259869,
+          "avg_damage": 83030,
+          "min_damage": 62046,
+          "max_damage": 104013,
           "count": 2
         }
       ]
@@ -416,12 +429,12 @@
       ]
     },
     {
-      "time_s": 365.5,
-      "dmg_avg": 322531,
-      "dmg_stddev": 166926,
-      "dmg_min": 170368,
+      "time_s": 364.8,
+      "dmg_avg": 267741,
+      "dmg_stddev": 186961,
+      "dmg_min": 67031,
       "dmg_max": 536361,
-      "window_length_s": 8,
+      "window_length_s": 7.2,
       "defensive_name": "Guardian of Ancient Kings",
       "spell_id": 86659,
       "common_defensives": [
@@ -440,34 +453,27 @@
           "count": 3
         },
         {
-          "spell_id": 1239095,
-          "avg_damage": 114955,
-          "min_damage": 92170,
-          "max_damage": 137740,
-          "count": 2
-        },
-        {
           "spell_id": 1237040,
-          "avg_damage": 106659,
-          "min_damage": 86690,
+          "avg_damage": 64423,
+          "min_damage": 11523,
           "max_damage": 126628,
-          "count": 2
+          "count": 4
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 71613,
-          "min_damage": 50641,
+          "avg_damage": 57514,
+          "min_damage": 34179,
           "max_damage": 86001,
-          "count": 3
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 384.2,
-      "dmg_avg": 582024,
-      "dmg_stddev": 211896,
+      "time_s": 376.7,
+      "dmg_avg": 712797,
+      "dmg_stddev": 235534,
       "dmg_min": 364186,
-      "dmg_max": 821429,
+      "dmg_max": 879169,
       "window_length_s": 12,
       "defensive_name": "Ardent Defender",
       "spell_id": 31850,
@@ -477,68 +483,42 @@
       "common_cds": [
         "Ardent Defender"
       ],
-      "ref_game_id": 240430,
+      "ref_game_id": 254172,
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 293419,
-          "min_damage": 97927,
-          "max_damage": 516847,
-          "count": 5
+          "avg_damage": 478191,
+          "min_damage": 207471,
+          "max_damage": 698908,
+          "count": 4
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 171346,
+          "avg_damage": 166290,
           "min_damage": 161114,
-          "max_damage": 191538,
-          "count": 4
+          "max_damage": 171465,
+          "count": 2
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 126392,
+          "avg_damage": 138065,
           "min_damage": 94119,
-          "max_damage": 156715,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 418.6,
-      "dmg_avg": 166125,
-      "dmg_stddev": 83587,
-      "dmg_min": 79590,
-      "dmg_max": 280427,
-      "window_length_s": 7,
-      "defensive_name": "Guardian of Ancient Kings",
-      "spell_id": 86659,
-      "common_defensives": [
-        "Guardian of Ancient Kings"
-      ],
-      "common_cds": [
-        "Guardian of Ancient Kings"
-      ],
-      "ref_game_id": 240430,
-      "ability_breakdown": [
-        {
-          "spell_id": 1237040,
-          "avg_damage": 66698,
-          "min_damage": 45060,
-          "max_damage": 78194,
+          "max_damage": 180261,
           "count": 4
         },
         {
-          "spell_id": 1261289,
-          "avg_damage": 54855,
-          "min_damage": 34530,
-          "max_damage": 70770,
-          "count": 3
+          "spell_id": 1233826,
+          "avg_damage": 23511,
+          "min_damage": 22302,
+          "max_damage": 24720,
+          "count": 2
         }
       ]
     },
     {
-      "time_s": 419.4,
-      "dmg_avg": 524134,
-      "dmg_stddev": 190894,
+      "time_s": 407.5,
+      "dmg_avg": 546391,
+      "dmg_stddev": 167574,
       "dmg_min": 264205,
       "dmg_max": 669021,
       "window_length_s": 12,
@@ -554,31 +534,64 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 340438,
-          "min_damage": 271249,
+          "avg_damage": 264189,
+          "min_damage": 155313,
           "max_damage": 409626,
-          "count": 2
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 137776,
-          "min_damage": 75537,
-          "max_damage": 204341,
           "count": 4
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 136797,
-          "min_damage": 122087,
+          "avg_damage": 139422,
+          "min_damage": 123267,
           "max_damage": 151315,
-          "count": 4
+          "count": 5
         },
         {
-          "spell_id": 1239095,
-          "avg_damage": 130017,
-          "min_damage": 88919,
-          "max_damage": 171114,
-          "count": 2
+          "spell_id": 1237040,
+          "avg_damage": 126760,
+          "min_damage": 75537,
+          "max_damage": 191538,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 420.4,
+      "dmg_avg": 267353,
+      "dmg_stddev": 202579,
+      "dmg_min": 79590,
+      "dmg_max": 562999,
+      "window_length_s": 7.2,
+      "defensive_name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "common_defensives": [
+        "Guardian of Ancient Kings"
+      ],
+      "common_cds": [
+        "Guardian of Ancient Kings"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 258971,
+          "min_damage": 85275,
+          "max_damage": 425705,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 67540,
+          "min_damage": 45060,
+          "max_damage": 83161,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 60517,
+          "min_damage": 34530,
+          "max_damage": 76251,
+          "count": 3
         }
       ]
     },
@@ -626,13 +639,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 31850,
-      "avg_uses": 4.1,
+      "avg_uses": 3.9,
       "min_uses": 3,
       "max_uses": 6
     },
     {
       "spell_id": 86659,
-      "avg_uses": 3.2,
+      "avg_uses": 3.3,
       "min_uses": 2,
       "max_uses": 4
     },
@@ -644,15 +657,15 @@
     },
     {
       "spell_id": 53600,
-      "avg_uses": 154.5,
+      "avg_uses": 155.1,
       "min_uses": 130,
       "max_uses": 190
     },
     {
       "spell_id": 85673,
-      "avg_uses": 18.4,
+      "avg_uses": 20.8,
       "min_uses": 1,
-      "max_uses": 36
+      "max_uses": 35
     },
     {
       "spell_id": 633,
@@ -764,10 +777,6 @@
       "icon": "ability_ironmaidens_convulsiveshadows",
       "name": "Voidstalker Sting"
     },
-    "1239095": {
-      "icon": "spell_holy_circleofrenewal_shadow",
-      "name": "Gravity Collapse"
-    },
     "1243743": {
       "icon": "ability_priest_surgeofdarkness",
       "name": "Interrupting Tremor"
@@ -775,6 +784,10 @@
     "1246461": {
       "icon": "spell_priest_mindspike",
       "name": "Rift Slash"
+    },
+    "1259869": {
+      "icon": "inv_ammo_arrow_02",
+      "name": "Silverstrike Ricochet"
     },
     "1260019": {
       "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
@@ -793,6 +806,6 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "027f4d089a836617",
-  "ingest_version": 0
+  "source_signature": "79ff7aeb9c9bfed8",
+  "ingest_version": 1
 }

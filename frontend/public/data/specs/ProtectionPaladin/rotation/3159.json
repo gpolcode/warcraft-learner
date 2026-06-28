@@ -3,24 +3,24 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 473.9,
-  "downtime_threshold_ms": 1230,
-  "top_avg_efficiency": 74.6,
-  "top_efficiency_stddev": 13,
+  "avg_duration_s": 465.9,
+  "downtime_threshold_ms": 1227,
+  "top_avg_efficiency": 75.1,
+  "top_efficiency_stddev": 13.9,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
       "avg_first_cast_s": 18.6,
-      "stddev_first_cast_s": 28.9,
-      "avg_gap_s": 64.9,
-      "stddev_gap_s": 6.2,
-      "avg_bl_offset_s": 0.2,
-      "stddev_bl_offset_s": 0.5,
-      "avg_uses": 7.6,
-      "avg_uses_per_min": 0.96,
+      "stddev_first_cast_s": 28.8,
+      "avg_gap_s": 65,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": 0.3,
+      "stddev_bl_offset_s": 0.6,
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 0.97,
       "uses_per_min": {
-        "avg": 0.962,
-        "stddev": 0.067,
+        "avg": 0.966,
+        "stddev": 0.07,
         "min": 0.848,
         "max": 1.048
       },
@@ -28,44 +28,44 @@
       "majority_hold": true,
       "hold_targets": {
         "5": {
-          "target_s": 257.1,
-          "stddev_s": 29.3,
+          "target_s": 257.6,
+          "stddev_s": 29.2,
           "count": 10,
           "total_samples": 10
         },
         "6": {
-          "target_s": 319.6,
-          "stddev_s": 35.8,
+          "target_s": 319.3,
+          "stddev_s": 35.9,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 392.8,
-          "stddev_s": 26.8,
+          "target_s": 393.2,
+          "stddev_s": 26.7,
           "count": 9,
           "total_samples": 10
         },
         "8": {
-          "target_s": 453.6,
-          "stddev_s": 24.5,
-          "count": 6,
+          "target_s": 453.5,
+          "stddev_s": 26.9,
+          "count": 5,
           "total_samples": 10
         }
       }
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 12.7,
-      "stddev_first_cast_s": 25.2,
+      "avg_first_cast_s": 12.8,
+      "stddev_first_cast_s": 25.1,
       "avg_gap_s": 64.9,
-      "stddev_gap_s": 6.2,
-      "avg_bl_offset_s": 0.3,
-      "stddev_bl_offset_s": 0.6,
-      "avg_uses": 7.7,
-      "avg_uses_per_min": 0.97,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": 0.4,
+      "stddev_bl_offset_s": 0.8,
+      "avg_uses": 7.6,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.973,
-        "stddev": 0.071,
+        "avg": 0.978,
+        "stddev": 0.073,
         "min": 0.848,
         "max": 1.048
       },
@@ -73,44 +73,44 @@
       "majority_hold": true,
       "hold_targets": {
         "5": {
-          "target_s": 257.1,
-          "stddev_s": 25.5,
+          "target_s": 257.2,
+          "stddev_s": 25.4,
           "count": 10,
           "total_samples": 10
         },
         "6": {
-          "target_s": 319.2,
+          "target_s": 318.7,
           "stddev_s": 31.4,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 393.1,
-          "stddev_s": 20.1,
+          "target_s": 393.2,
+          "stddev_s": 20,
           "count": 9,
           "total_samples": 10
         },
         "8": {
-          "target_s": 453.6,
+          "target_s": 453.5,
           "stddev_s": 0.5,
-          "count": 6,
+          "count": 5,
           "total_samples": 10
         }
       }
     },
     "Hammer of Light": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.6,
-      "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 24.6,
-      "stddev_gap_s": 15.7,
-      "avg_bl_offset_s": 1.3,
-      "stddev_bl_offset_s": 0.6,
-      "avg_uses": 17.9,
-      "avg_uses_per_min": 2.26,
+      "avg_first_cast_s": 1.7,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 24.8,
+      "stddev_gap_s": 15.8,
+      "avg_bl_offset_s": 1.4,
+      "stddev_bl_offset_s": 0.7,
+      "avg_uses": 17.5,
+      "avg_uses_per_min": 2.25,
       "uses_per_min": {
-        "avg": 2.507,
-        "stddev": 0.133,
+        "avg": 2.496,
+        "stddev": 0.142,
         "min": 2.325,
         "max": 2.685
       },
@@ -183,7 +183,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "opener_priority": 5,
-      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build (best-guess spell_id, verify on Wowhead)."
+      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build."
     },
     {
       "name": "Holy Bulwark",
@@ -191,7 +191,7 @@
       "cooldown": 60,
       "duration": 10,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     },
     {
@@ -200,7 +200,7 @@
       "cooldown": 60,
       "duration": 25,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     }
   ],
@@ -328,6 +328,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "708dee4c02672e12",
-  "ingest_version": 0
+  "source_signature": "fea7f5f1eaa133f8",
+  "ingest_version": 1
 }

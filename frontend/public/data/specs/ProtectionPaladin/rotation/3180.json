@@ -3,59 +3,83 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 368.5,
-  "downtime_threshold_ms": 1177,
-  "top_avg_efficiency": 76,
-  "top_efficiency_stddev": 13.6,
+  "avg_duration_s": 375.7,
+  "downtime_threshold_ms": 1176,
+  "top_avg_efficiency": 76.3,
+  "top_efficiency_stddev": 14.1,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 13.1,
-      "stddev_first_cast_s": 24.9,
-      "avg_gap_s": 62.6,
-      "stddev_gap_s": 4.1,
-      "avg_bl_offset_s": 1,
-      "stddev_bl_offset_s": 0.7,
-      "avg_uses": 6.2,
-      "avg_uses_per_min": 1.01,
+      "avg_first_cast_s": 13.7,
+      "stddev_first_cast_s": 24.6,
+      "avg_gap_s": 62.8,
+      "stddev_gap_s": 4.7,
+      "avg_bl_offset_s": 1.6,
+      "stddev_bl_offset_s": 1.4,
+      "avg_uses": 6.4,
+      "avg_uses_per_min": 1.02,
       "uses_per_min": {
-        "avg": 1.008,
-        "stddev": 0.065,
+        "avg": 1.024,
+        "stddev": 0.082,
         "min": 0.843,
-        "max": 1.074
+        "max": 1.138
       },
-      "bl_pct": 50,
-      "majority_hold": false,
+      "bl_pct": 70,
+      "majority_hold": true,
       "hold_targets": {
         "5": {
-          "target_s": 262.5,
-          "stddev_s": 5.8,
+          "target_s": 260.9,
+          "stddev_s": 1.5,
           "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 323.5,
+          "stddev_s": 6.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 383.7,
+          "stddev_s": 10.4,
+          "count": 5,
           "total_samples": 10
         }
       }
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.9,
-      "stddev_first_cast_s": 18.6,
-      "avg_gap_s": 62.5,
-      "stddev_gap_s": 3.9,
-      "avg_bl_offset_s": 2.3,
+      "avg_first_cast_s": 8.3,
+      "stddev_first_cast_s": 18.4,
+      "avg_gap_s": 62.8,
+      "stddev_gap_s": 4.7,
+      "avg_bl_offset_s": 2.4,
       "stddev_bl_offset_s": 1.2,
-      "avg_uses": 6.3,
-      "avg_uses_per_min": 1.03,
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 1.04,
       "uses_per_min": {
-        "avg": 1.025,
-        "stddev": 0.028,
-        "min": 0.982,
-        "max": 1.074
+        "avg": 1.041,
+        "stddev": 0.053,
+        "min": 0.954,
+        "max": 1.138
       },
-      "bl_pct": 50,
+      "bl_pct": 70,
       "majority_hold": false,
       "hold_targets": {
         "5": {
-          "target_s": 263.5,
+          "target_s": 262,
+          "stddev_s": 1.7,
+          "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 324.4,
+          "stddev_s": 1.2,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 387.5,
           "stddev_s": 6.3,
           "count": 4,
           "total_samples": 10
@@ -64,21 +88,21 @@
     },
     "Hammer of Light": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.2,
-      "stddev_first_cast_s": 1.4,
-      "avg_gap_s": 24.3,
+      "avg_first_cast_s": 3.6,
+      "stddev_first_cast_s": 1.5,
+      "avg_gap_s": 24,
       "stddev_gap_s": 15.6,
-      "avg_bl_offset_s": 3.4,
+      "avg_bl_offset_s": 3.5,
       "stddev_bl_offset_s": 1.1,
-      "avg_uses": 15.5,
-      "avg_uses_per_min": 2.52,
+      "avg_uses": 16.1,
+      "avg_uses_per_min": 2.58,
       "uses_per_min": {
-        "avg": 2.516,
-        "stddev": 0.187,
-        "min": 2.195,
-        "max": 2.795
+        "avg": 2.576,
+        "stddev": 0.135,
+        "min": 2.384,
+        "max": 2.796
       },
-      "bl_pct": 60,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -147,7 +171,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "opener_priority": 5,
-      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build (best-guess spell_id, verify on Wowhead)."
+      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build."
     },
     {
       "name": "Holy Bulwark",
@@ -155,7 +179,7 @@
       "cooldown": 60,
       "duration": 10,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     },
     {
@@ -164,7 +188,7 @@
       "cooldown": 60,
       "duration": 25,
       "align_with_bloodlust": false,
-      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build.",
       "talent_gated": true
     }
   ],
@@ -292,6 +316,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "1527568f76098472",
-  "ingest_version": 0
+  "source_signature": "97e5090da0ff5202",
+  "ingest_version": 1
 }

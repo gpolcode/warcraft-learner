@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Shield Block": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.8,
+      "avg_first_cast_s": 2.7,
       "stddev_first_cast_s": 2.1,
-      "avg_gap_s": 10.2,
+      "avg_gap_s": 10.3,
       "stddev_gap_s": 3.9,
       "hold_targets": {},
-      "avg_uses": 21,
-      "avg_uses_per_min": 5.93,
+      "avg_uses": 20.9,
+      "avg_uses_per_min": 5.88,
       "uses_per_min": {
-        "avg": 5.927,
-        "stddev": 0.386,
+        "avg": 5.88,
+        "stddev": 0.36,
         "min": 5.17,
         "max": 6.393
       },
@@ -23,21 +23,21 @@
     },
     "Ignore Pain": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.1,
-      "stddev_first_cast_s": 4.1,
-      "avg_gap_s": 55.4,
-      "stddev_gap_s": 60.6,
+      "avg_first_cast_s": 4,
+      "stddev_first_cast_s": 2.8,
+      "avg_gap_s": 57.5,
+      "stddev_gap_s": 60.8,
       "hold_targets": {
         "1": {
-          "target_s": 110.3,
-          "stddev_s": 65.9,
+          "target_s": 126.3,
+          "stddev_s": 55.7,
           "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 140.2,
-          "stddev_s": 49.9,
-          "count": 5,
+          "target_s": 140.3,
+          "stddev_s": 44.7,
+          "count": 6,
           "total_samples": 10
         },
         "4": {
@@ -47,11 +47,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 4.1,
-      "avg_uses_per_min": 1.13,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 1.16,
       "uses_per_min": {
-        "avg": 1.126,
-        "stddev": 0.497,
+        "avg": 1.157,
+        "stddev": 0.474,
         "min": 0.606,
         "max": 2.322
       },
@@ -75,17 +75,17 @@
       "majority_hold": false
     },
     "Shield Wall": {
-      "sample_count": 6,
-      "avg_first_cast_s": 136,
-      "stddev_first_cast_s": 88.1,
+      "sample_count": 7,
+      "avg_first_cast_s": 136.5,
+      "stddev_first_cast_s": 80.5,
       "avg_gap_s": 62,
       "stddev_gap_s": 43.9,
       "hold_targets": {},
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.524,
-        "stddev": 0.321,
+        "avg": 0.495,
+        "stddev": 0.302,
         "min": 0.216,
         "max": 0.902
       },
@@ -118,12 +118,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 3.6,
-      "dmg_avg": 3713006,
-      "dmg_stddev": 2887761,
+      "time_s": 3.2,
+      "dmg_avg": 4113974,
+      "dmg_stddev": 2647505,
       "dmg_min": 193406,
       "dmg_max": 7448984,
-      "window_length_s": 96.3,
+      "window_length_s": 106.3,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -136,31 +136,38 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 1950499,
-          "min_damage": 200587,
+          "avg_damage": 2163915,
+          "min_damage": 904478,
           "max_damage": 3374955,
           "count": 10
         },
         {
           "spell_id": 1,
-          "avg_damage": 1708122,
+          "avg_damage": 1722759,
           "min_damage": 114954,
           "max_damage": 3798741,
-          "count": 10
+          "count": 11
         },
         {
           "spell_id": 1249251,
-          "avg_damage": 183477,
+          "avg_damage": 191471,
           "min_damage": 78452,
-          "max_damage": 252594,
-          "count": 10
+          "max_damage": 271419,
+          "count": 11
         },
         {
           "spell_id": 1249262,
-          "avg_damage": 153900,
+          "avg_damage": 150765,
           "min_damage": 69308,
           "max_damage": 294718,
-          "count": 9
+          "count": 10
+        },
+        {
+          "spell_id": 1255683,
+          "avg_damage": 102313,
+          "min_damage": 13392,
+          "max_damage": 292245,
+          "count": 6
         }
       ]
     },
@@ -212,12 +219,52 @@
       ]
     },
     {
-      "time_s": 144.1,
-      "dmg_avg": 854495,
-      "dmg_stddev": 798384,
+      "time_s": 136.9,
+      "dmg_avg": 370547,
+      "dmg_stddev": 76801,
+      "dmg_min": 270666,
+      "dmg_max": 455967,
+      "window_length_s": 8,
+      "defensive_name": "Shield Wall",
+      "spell_id": 871,
+      "common_defensives": [
+        "Shield Wall"
+      ],
+      "common_cds": [
+        "Shield Wall"
+      ],
+      "ref_game_id": 252918,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 201587,
+          "min_damage": 172094,
+          "max_damage": 235869,
+          "count": 4
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 104844,
+          "min_damage": 96926,
+          "max_damage": 113909,
+          "count": 4
+        },
+        {
+          "spell_id": 1255683,
+          "avg_damage": 36944,
+          "min_damage": 22060,
+          "max_damage": 51828,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 140.4,
+      "dmg_avg": 958813,
+      "dmg_stddev": 728141,
       "dmg_min": 150511,
-      "dmg_max": 1985821,
-      "window_length_s": 20.8,
+      "dmg_max": 2160787,
+      "window_length_s": 21.2,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -230,24 +277,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 393413,
+          "avg_damage": 447759,
           "min_damage": 107415,
-          "max_damage": 927198,
-          "count": 5
+          "max_damage": 1090606,
+          "count": 9
         },
         {
           "spell_id": 1259903,
-          "avg_damage": 383029,
+          "avg_damage": 413138,
           "min_damage": 14620,
-          "max_damage": 890762,
-          "count": 5
-        },
-        {
-          "spell_id": 1255683,
-          "avg_damage": 60376,
-          "min_damage": 21190,
-          "max_damage": 108110,
-          "count": 3
+          "max_damage": 1070181,
+          "count": 9
         }
       ]
     },
@@ -321,7 +361,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 871,
-      "avg_uses": 1.8,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -333,13 +373,13 @@
     },
     {
       "spell_id": 2565,
-      "avg_uses": 21,
-      "min_uses": 19,
+      "avg_uses": 20.9,
+      "min_uses": 18,
       "max_uses": 27
     },
     {
       "spell_id": 190456,
-      "avg_uses": 4.1,
+      "avg_uses": 4.2,
       "min_uses": 2,
       "max_uses": 8
     },
@@ -467,6 +507,6 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "5b3cf196bd638e9c",
-  "ingest_version": 0
+  "source_signature": "c1350207215ffc6b",
+  "ingest_version": 1
 }
