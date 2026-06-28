@@ -5,38 +5,38 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Alter Time": {
-      "sample_count": 3,
-      "avg_first_cast_s": 93.2,
-      "stddev_first_cast_s": 36.6,
+      "sample_count": 4,
+      "avg_first_cast_s": 115.9,
+      "stddev_first_cast_s": 54.3,
       "avg_gap_s": 125.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.34,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.339,
-        "stddev": 0.194,
-        "min": 0.21,
+        "avg": 0.306,
+        "stddev": 0.172,
+        "min": 0.207,
         "max": 0.563
       },
       "majority_hold": false
     },
     "Prismatic Barrier": {
       "sample_count": 7,
-      "avg_first_cast_s": 105.2,
-      "stddev_first_cast_s": 47.7,
-      "avg_gap_s": 55,
-      "stddev_gap_s": 30.1,
+      "avg_first_cast_s": 100.9,
+      "stddev_first_cast_s": 46.3,
+      "avg_gap_s": 57.6,
+      "stddev_gap_s": 30.2,
       "hold_targets": {
         "1": {
-          "target_s": 189.9,
-          "stddev_s": 25,
+          "target_s": 182.7,
+          "stddev_s": 27.6,
           "count": 4,
           "total_samples": 7
         },
         "2": {
           "target_s": 196.8,
-          "stddev_s": 41.6,
+          "stddev_s": 41,
           "count": 4,
           "total_samples": 7
         }
@@ -44,7 +44,7 @@
       "avg_uses": 2.6,
       "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.649,
+        "avg": 0.648,
         "stddev": 0.248,
         "min": 0.318,
         "max": 1.04
@@ -54,12 +54,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 131.7,
-      "dmg_avg": 192973,
-      "dmg_stddev": 22900,
-      "dmg_min": 171381,
-      "dmg_max": 224654,
-      "window_length_s": 9.3,
+      "time_s": 92.5,
+      "dmg_avg": 192222,
+      "dmg_stddev": 16995,
+      "dmg_min": 178360,
+      "dmg_max": 217013,
+      "window_length_s": 6.6,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -72,20 +72,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 184805,
-          "min_damage": 160374,
-          "max_damage": 224654,
+          "avg_damage": 127086,
+          "min_damage": 37366,
+          "max_damage": 186829,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 180,
-      "dmg_avg": 266518,
-      "dmg_stddev": 93380,
-      "dmg_min": 168327,
+      "time_s": 173.3,
+      "dmg_avg": 271143,
+      "dmg_stddev": 88080,
+      "dmg_min": 181872,
       "dmg_max": 408281,
-      "window_length_s": 11.2,
+      "window_length_s": 12,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -98,17 +98,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 211656,
-          "min_damage": 86378,
+          "avg_damage": 229940,
+          "min_damage": 181872,
           "max_damage": 323126,
           "count": 6
-        },
-        {
-          "spell_id": 1249251,
-          "avg_damage": 107399,
-          "min_damage": 81949,
-          "max_damage": 155094,
-          "count": 3
         }
       ]
     }
@@ -197,14 +190,10 @@
       "icon": "spell_mage_altertime",
       "name": "Alter Time"
     },
-    "1249251": {
-      "icon": "ability_priest_voidentropy",
-      "name": "Dark Upheaval"
-    },
     "1259903": {
       "icon": "ability_priest_voidentropy",
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "913be7cf446d6a54"
+  "source_signature": "b1bdb84afb1d0c50"
 }

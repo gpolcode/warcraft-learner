@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Die by the Sword": {
-      "sample_count": 7,
-      "avg_first_cast_s": 94.9,
-      "stddev_first_cast_s": 49.3,
+      "sample_count": 8,
+      "avg_first_cast_s": 105.8,
+      "stddev_first_cast_s": 55.1,
       "avg_gap_s": 125.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.334,
-        "stddev": 0.088,
+        "avg": 0.331,
+        "stddev": 0.082,
         "min": 0.239,
         "max": 0.521
       },
@@ -40,24 +40,24 @@
     },
     "Spell Reflection": {
       "sample_count": 8,
-      "avg_first_cast_s": 57.6,
-      "stddev_first_cast_s": 31.8,
-      "avg_gap_s": 51.8,
-      "stddev_gap_s": 31,
+      "avg_first_cast_s": 56.7,
+      "stddev_first_cast_s": 31.1,
+      "avg_gap_s": 54.6,
+      "stddev_gap_s": 32.5,
       "hold_targets": {
         "1": {
-          "target_s": 160.3,
-          "stddev_s": 35.8,
-          "count": 5,
+          "target_s": 171.2,
+          "stddev_s": 34,
+          "count": 6,
           "total_samples": 8
         }
       },
-      "avg_uses": 3.3,
-      "avg_uses_per_min": 0.95,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.99,
       "uses_per_min": {
-        "avg": 0.953,
-        "stddev": 0.54,
-        "min": 0.289,
+        "avg": 0.993,
+        "stddev": 0.494,
+        "min": 0.611,
         "max": 2.122
       },
       "majority_hold": true
@@ -82,9 +82,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 62,
-      "dmg_avg": 221954,
-      "dmg_stddev": 123910,
+      "time_s": 71.9,
+      "dmg_avg": 204010,
+      "dmg_stddev": 105837,
       "dmg_min": 26527,
       "dmg_max": 334754,
       "window_length_s": 5,
@@ -99,18 +99,11 @@
       "ref_game_id": 240434,
       "ability_breakdown": [
         {
-          "spell_id": 1275558,
-          "avg_damage": 273977,
-          "min_damage": 230462,
-          "max_damage": 303389,
-          "count": 3
-        },
-        {
           "spell_id": 1272950,
-          "avg_damage": 27447,
+          "avg_damage": 26702,
           "min_damage": 19855,
           "max_damage": 31365,
-          "count": 5
+          "count": 7
         }
       ]
     },
@@ -155,39 +148,6 @@
       ]
     },
     {
-      "time_s": 93.6,
-      "dmg_avg": 121073,
-      "dmg_stddev": 73807,
-      "dmg_min": 33018,
-      "dmg_max": 230100,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 253475,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259186,
-          "avg_damage": 84068,
-          "min_damage": 60136,
-          "max_damage": 125388,
-          "count": 3
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 27930,
-          "min_damage": 20578,
-          "max_damage": 34054,
-          "count": 5
-        }
-      ]
-    },
-    {
       "time_s": 158.1,
       "dmg_avg": 138673,
       "dmg_stddev": 72881,
@@ -221,9 +181,9 @@
       ]
     },
     {
-      "time_s": 183.3,
-      "dmg_avg": 335463,
-      "dmg_stddev": 78165,
+      "time_s": 183.4,
+      "dmg_avg": 330812,
+      "dmg_stddev": 70835,
       "dmg_min": 203817,
       "dmg_max": 412089,
       "window_length_s": 5,
@@ -239,17 +199,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 270990,
-          "min_damage": 182817,
+          "avg_damage": 252701,
+          "min_damage": 161257,
           "max_damage": 303389,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 52713,
+          "avg_damage": 48559,
           "min_damage": 21000,
           "max_damage": 62733,
-          "count": 5
+          "count": 6
         }
       ]
     }
@@ -269,8 +229,8 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 3.3,
-      "min_uses": 1,
+      "avg_uses": 3.4,
+      "min_uses": 2,
       "max_uses": 7
     },
     {
@@ -367,5 +327,5 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "348bf53b4da6afd8"
+  "source_signature": "f637ffb728697a84"
 }
