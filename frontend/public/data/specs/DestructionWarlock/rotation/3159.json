@@ -2,79 +2,91 @@
   "spec": "DestructionWarlock",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 8,
-  "avg_duration_s": 427.2,
-  "downtime_threshold_ms": 2248,
+  "sample_count": 10,
+  "avg_duration_s": 436.1,
+  "downtime_threshold_ms": 2278,
   "top_avg_efficiency": 75.3,
-  "top_efficiency_stddev": 5,
+  "top_efficiency_stddev": 5.5,
   "per_cd_benchmarks": {
     "Summon Infernal": {
-      "sample_count": 8,
-      "avg_first_cast_s": 1,
+      "sample_count": 10,
+      "avg_first_cast_s": 1.1,
       "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 94.3,
-      "stddev_gap_s": 6.5,
-      "avg_bl_offset_s": -0.6,
-      "stddev_bl_offset_s": 2.2,
-      "avg_uses": 5,
+      "avg_gap_s": 94,
+      "stddev_gap_s": 5.9,
+      "avg_bl_offset_s": -2.1,
+      "stddev_bl_offset_s": 5.3,
+      "avg_uses": 5.1,
       "avg_uses_per_min": 0.7,
       "uses_per_min": {
         "avg": 0.704,
-        "stddev": 0.039,
+        "stddev": 0.035,
         "min": 0.632,
         "max": 0.743
       },
-      "bl_pct": 88,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Havoc": {
-      "sample_count": 8,
-      "avg_first_cast_s": 24.8,
-      "stddev_first_cast_s": 1.2,
-      "avg_gap_s": 53.9,
-      "stddev_gap_s": 17.2,
-      "avg_bl_offset_s": 24.1,
-      "stddev_bl_offset_s": 1.7,
-      "avg_uses": 7.8,
-      "avg_uses_per_min": 1.09,
+      "sample_count": 10,
+      "avg_first_cast_s": 25.7,
+      "stddev_first_cast_s": 2.9,
+      "avg_gap_s": 52.4,
+      "stddev_gap_s": 16.2,
+      "avg_bl_offset_s": 21.4,
+      "stddev_bl_offset_s": 8.5,
+      "avg_uses": 8.1,
+      "avg_uses_per_min": 1.11,
       "uses_per_min": {
-        "avg": 1.089,
-        "stddev": 0.138,
+        "avg": 1.112,
+        "stddev": 0.133,
         "min": 0.892,
         "max": 1.301
       },
-      "bl_pct": 88,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 142.5,
-          "stddev_s": 19.3,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 159.5,
+          "stddev_s": 19.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 210.4,
+          "stddev_s": 0.7,
+          "count": 4,
+          "total_samples": 10
         },
         "5": {
-          "target_s": 295.4,
-          "stddev_s": 40.2,
-          "count": 4,
-          "total_samples": 8
+          "target_s": 294.9,
+          "stddev_s": 38.1,
+          "count": 5,
+          "total_samples": 10
         },
         "6": {
-          "target_s": 301.2,
-          "stddev_s": 39.6,
-          "count": 8,
-          "total_samples": 8
+          "target_s": 296.4,
+          "stddev_s": 37.1,
+          "count": 9,
+          "total_samples": 10
         },
         "7": {
-          "target_s": 372.4,
-          "stddev_s": 43.1,
+          "target_s": 346.8,
+          "stddev_s": 40.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 377,
+          "stddev_s": 13.9,
           "count": 4,
-          "total_samples": 8
+          "total_samples": 10
         }
       }
     },
     "Malevolence": {
-      "sample_count": 8,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -94,76 +106,76 @@
       "hold_targets": {}
     },
     "Cataclysm": {
-      "sample_count": 8,
-      "avg_first_cast_s": 34.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 34.7,
       "stddev_first_cast_s": 2,
-      "avg_gap_s": 45.9,
-      "stddev_gap_s": 7.2,
-      "avg_bl_offset_s": 26,
-      "stddev_bl_offset_s": 20.6,
-      "avg_uses": 9.1,
+      "avg_gap_s": 45.8,
+      "stddev_gap_s": 6.8,
+      "avg_bl_offset_s": 25.5,
+      "stddev_bl_offset_s": 18.5,
+      "avg_uses": 9.3,
       "avg_uses_per_min": 1.28,
       "uses_per_min": {
-        "avg": 1.282,
-        "stddev": 0.056,
+        "avg": 1.28,
+        "stddev": 0.05,
         "min": 1.159,
         "max": 1.338
       },
-      "bl_pct": 88,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 82.4,
-          "stddev_s": 3.4,
-          "count": 8,
-          "total_samples": 8
+          "target_s": 82.9,
+          "stddev_s": 3,
+          "count": 10,
+          "total_samples": 10
         },
         "3": {
-          "target_s": 122.9,
-          "stddev_s": 0.7,
-          "count": 8,
-          "total_samples": 8
+          "target_s": 122.7,
+          "stddev_s": 0.6,
+          "count": 10,
+          "total_samples": 10
         },
         "4": {
           "target_s": 170.9,
-          "stddev_s": 3.7,
-          "count": 8,
-          "total_samples": 8
+          "stddev_s": 3.5,
+          "count": 10,
+          "total_samples": 10
         },
         "5": {
           "target_s": 219.8,
-          "stddev_s": 2.6,
-          "count": 8,
-          "total_samples": 8
+          "stddev_s": 2.4,
+          "count": 10,
+          "total_samples": 10
         },
         "6": {
           "target_s": 259,
-          "stddev_s": 0.8,
-          "count": 8,
-          "total_samples": 8
+          "stddev_s": 0.9,
+          "count": 10,
+          "total_samples": 10
         },
         "7": {
           "target_s": 308,
-          "stddev_s": 3.1,
-          "count": 8,
-          "total_samples": 8
+          "stddev_s": 3,
+          "count": 10,
+          "total_samples": 10
         },
         "8": {
-          "target_s": 354.6,
-          "stddev_s": 15.8,
-          "count": 8,
-          "total_samples": 8
+          "target_s": 357,
+          "stddev_s": 14,
+          "count": 10,
+          "total_samples": 10
         },
         "9": {
           "target_s": 395.3,
           "stddev_s": 1.1,
-          "count": 7,
-          "total_samples": 8
+          "count": 9,
+          "total_samples": 10
         }
       }
     },
     "Channel Demonfire": {
-      "sample_count": 8,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -183,65 +195,65 @@
       "hold_targets": {}
     },
     "Soul Fire": {
-      "sample_count": 8,
-      "avg_first_cast_s": 7,
-      "stddev_first_cast_s": 17.8,
-      "avg_gap_s": 55.2,
-      "stddev_gap_s": 13.1,
-      "avg_bl_offset_s": 7.6,
-      "stddev_bl_offset_s": 19,
-      "avg_uses": 8,
+      "sample_count": 10,
+      "avg_first_cast_s": 5.7,
+      "stddev_first_cast_s": 16,
+      "avg_gap_s": 56,
+      "stddev_gap_s": 12.7,
+      "avg_bl_offset_s": 6.4,
+      "stddev_bl_offset_s": 16.7,
+      "avg_uses": 8.1,
       "avg_uses_per_min": 1.12,
       "uses_per_min": {
-        "avg": 1.122,
-        "stddev": 0.245,
+        "avg": 1.115,
+        "stddev": 0.219,
         "min": 0.576,
         "max": 1.314
       },
-      "bl_pct": 88,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 101.5,
-          "stddev_s": 19.4,
-          "count": 7,
-          "total_samples": 8
+          "target_s": 102.1,
+          "stddev_s": 16.8,
+          "count": 9,
+          "total_samples": 10
         },
         "4": {
-          "target_s": 157.8,
-          "stddev_s": 44.3,
-          "count": 8,
-          "total_samples": 8
+          "target_s": 166,
+          "stddev_s": 39.7,
+          "count": 10,
+          "total_samples": 10
         },
         "5": {
-          "target_s": 199.5,
-          "stddev_s": 19.9,
-          "count": 7,
-          "total_samples": 8
+          "target_s": 219.2,
+          "stddev_s": 21.5,
+          "count": 9,
+          "total_samples": 10
         },
         "6": {
-          "target_s": 251.6,
-          "stddev_s": 33.7,
-          "count": 7,
-          "total_samples": 8
+          "target_s": 274.6,
+          "stddev_s": 30.7,
+          "count": 9,
+          "total_samples": 10
         },
         "7": {
-          "target_s": 306.1,
-          "stddev_s": 34.6,
-          "count": 7,
-          "total_samples": 8
+          "target_s": 331.2,
+          "stddev_s": 31.1,
+          "count": 9,
+          "total_samples": 10
         },
         "8": {
-          "target_s": 357.2,
-          "stddev_s": 35.3,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 380.6,
+          "stddev_s": 32.8,
+          "count": 8,
+          "total_samples": 10
         },
         "9": {
           "target_s": 405.6,
-          "stddev_s": 0.6,
-          "count": 4,
-          "total_samples": 8
+          "stddev_s": 32.6,
+          "count": 5,
+          "total_samples": 10
         }
       }
     }
@@ -272,7 +284,7 @@
       "align_with_bloodlust": true,
       "opener_priority": 2,
       "talent_gated": true,
-      "usage_rule": "Hellcaller capstone: cast after Summon Infernal once Wither is applied to as many targets as possible, then dump every Soul Shard you can before it expires; spell_id is a best guess and should be verified against the Hellcaller talent ID."
+      "usage_rule": "Hellcaller capstone: cast after Summon Infernal once Wither is applied to as many targets as possible, then dump every Soul Shard you can before it expires."
     },
     {
       "name": "Cataclysm",
@@ -417,5 +429,5 @@
       "name": "Malevolence"
     }
   },
-  "source_signature": "541d5531dbe2d18b"
+  "source_signature": "ecf546caa758668e"
 }

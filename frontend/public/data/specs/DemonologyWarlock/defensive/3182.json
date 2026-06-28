@@ -5,16 +5,16 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Unending Resolve": {
-      "sample_count": 4,
-      "avg_first_cast_s": 217.7,
-      "stddev_first_cast_s": 70.2,
+      "sample_count": 5,
+      "avg_first_cast_s": 224.1,
+      "stddev_first_cast_s": 62.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.191,
+        "avg": 0.19,
         "stddev": 0.008,
         "min": 0.182,
         "max": 0.201
@@ -22,24 +22,24 @@
       "majority_hold": false
     },
     "Dark Pact": {
-      "sample_count": 8,
-      "avg_first_cast_s": 131.7,
-      "stddev_first_cast_s": 47.9,
-      "avg_gap_s": 87.4,
-      "stddev_gap_s": 39.6,
+      "sample_count": 7,
+      "avg_first_cast_s": 136.7,
+      "stddev_first_cast_s": 49.5,
+      "avg_gap_s": 85.5,
+      "stddev_gap_s": 41.2,
       "hold_targets": {
         "1": {
-          "target_s": 244.3,
-          "stddev_s": 32.8,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 246.8,
+          "stddev_s": 27.3,
+          "count": 5,
+          "total_samples": 7
         }
       },
       "avg_uses": 2.4,
       "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.446,
-        "stddev": 0.22,
+        "avg": 0.453,
+        "stddev": 0.236,
         "min": 0.195,
         "max": 0.937
       },
@@ -64,53 +64,6 @@
     }
   },
   "defensive_windows": [
-    {
-      "time_s": 106.7,
-      "dmg_avg": 486364,
-      "dmg_stddev": 30832,
-      "dmg_min": 451599,
-      "dmg_max": 526631,
-      "window_length_s": 13.5,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1242803,
-          "avg_damage": 203298,
-          "min_damage": 200468,
-          "max_damage": 206128,
-          "count": 2
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 145992,
-          "min_damage": 99535,
-          "max_damage": 187560,
-          "count": 4
-        },
-        {
-          "spell_id": 1241333,
-          "avg_damage": 139082,
-          "min_damage": 129643,
-          "max_damage": 153083,
-          "count": 4
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 7498,
-          "min_damage": 5134,
-          "max_damage": 9332,
-          "count": 4
-        }
-      ]
-    },
     {
       "time_s": 170.3,
       "dmg_avg": 498023,
@@ -364,5 +317,5 @@
       "name": "Void Burn"
     }
   },
-  "source_signature": "1757ec4df2363432"
+  "source_signature": "96ceed3863210c56"
 }

@@ -6,33 +6,33 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 10,
-      "avg_first_cast_s": 87.1,
-      "stddev_first_cast_s": 39.5,
+      "avg_first_cast_s": 76.9,
+      "stddev_first_cast_s": 36.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.413,
-        "stddev": 0.005,
+        "avg": 0.411,
+        "stddev": 0.006,
         "min": 0.401,
-        "max": 0.419
+        "max": 0.418
       },
       "majority_hold": false
     },
     "Dark Pact": {
       "sample_count": 9,
-      "avg_first_cast_s": 81.6,
-      "stddev_first_cast_s": 45,
-      "avg_gap_s": 60.8,
-      "stddev_gap_s": 12.3,
+      "avg_first_cast_s": 76,
+      "stddev_first_cast_s": 51.2,
+      "avg_gap_s": 60.7,
+      "stddev_gap_s": 10,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.64,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.73,
       "uses_per_min": {
-        "avg": 0.641,
-        "stddev": 0.302,
+        "avg": 0.729,
+        "stddev": 0.34,
         "min": 0.41,
         "max": 1.255
       },
@@ -40,30 +40,30 @@
     },
     "Mortal Coil": {
       "sample_count": 3,
-      "avg_first_cast_s": 73.4,
-      "stddev_first_cast_s": 20.9,
+      "avg_first_cast_s": 78.4,
+      "stddev_first_cast_s": 24.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.414,
-        "stddev": 0.005,
-        "min": 0.41,
-        "max": 0.419
+        "avg": 0.408,
+        "stddev": 0.006,
+        "min": 0.401,
+        "max": 0.413
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 66.6,
-      "dmg_avg": 272067,
-      "dmg_stddev": 74587,
-      "dmg_min": 189897,
+      "time_s": 67.8,
+      "dmg_avg": 270972,
+      "dmg_stddev": 84000,
+      "dmg_min": 146417,
       "dmg_max": 392871,
-      "window_length_s": 4.3,
+      "window_length_s": 6.9,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -76,23 +76,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 168974,
+          "avg_damage": 165782,
           "min_damage": 97347,
           "max_damage": 306412,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 127112,
-          "min_damage": 60240,
-          "max_damage": 229571,
+          "avg_damage": 119892,
+          "min_damage": 84966,
+          "max_damage": 142260,
           "count": 5
         },
         {
           "spell_id": 387846,
-          "avg_damage": 1601,
-          "min_damage": 585,
-          "max_damage": 2841,
+          "avg_damage": 2533,
+          "min_damage": 1493,
+          "max_damage": 7491,
           "count": 6
         }
       ]
@@ -138,12 +138,12 @@
       ]
     },
     {
-      "time_s": 139.9,
-      "dmg_avg": 259338,
-      "dmg_stddev": 144826,
+      "time_s": 139.5,
+      "dmg_avg": 263132,
+      "dmg_stddev": 132588,
       "dmg_min": 28641,
       "dmg_max": 403311,
-      "window_length_s": 6.1,
+      "window_length_s": 6.6,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -163,17 +163,17 @@
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 69267,
+          "avg_damage": 99628,
           "min_damage": 26934,
-          "max_damage": 157911,
-          "count": 6
+          "max_damage": 281797,
+          "count": 7
         },
         {
           "spell_id": 387846,
-          "avg_damage": 1391,
+          "avg_damage": 1778,
           "min_damage": 616,
-          "max_damage": 3044,
-          "count": 6
+          "max_damage": 4104,
+          "count": 7
         }
       ]
     }
@@ -187,7 +187,7 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -255,5 +255,5 @@
       "name": "Consume"
     }
   },
-  "source_signature": "828800dd2c028a39"
+  "source_signature": "f318b5fd1da5795b"
 }
