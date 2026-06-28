@@ -6,30 +6,30 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 118.7,
-      "stddev_first_cast_s": 83.2,
-      "avg_gap_s": 100.6,
-      "stddev_gap_s": 48.1,
+      "avg_first_cast_s": 103.9,
+      "stddev_first_cast_s": 75.9,
+      "avg_gap_s": 102.3,
+      "stddev_gap_s": 47,
       "hold_targets": {
         "1": {
-          "target_s": 213.3,
-          "stddev_s": 82.1,
-          "count": 4,
+          "target_s": 209.4,
+          "stddev_s": 71.7,
+          "count": 5,
           "total_samples": 10
         },
         "2": {
-          "target_s": 326,
-          "stddev_s": 134.2,
-          "count": 8,
+          "target_s": 327.7,
+          "stddev_s": 125.6,
+          "count": 9,
           "total_samples": 10
         }
       },
-      "avg_uses": 4,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.453,
-        "stddev": 0.231,
-        "min": 0.113,
+        "avg": 0.473,
+        "stddev": 0.206,
+        "min": 0.316,
         "max": 0.811
       },
       "majority_hold": true
@@ -37,9 +37,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 210.5,
-      "dmg_avg": 442544,
-      "dmg_stddev": 159327,
+      "time_s": 209.4,
+      "dmg_avg": 458859,
+      "dmg_stddev": 145545,
       "dmg_min": 166016,
       "dmg_max": 712258,
       "window_length_s": 12,
@@ -55,24 +55,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1281473,
-          "avg_damage": 197879,
-          "min_damage": 112223,
+          "avg_damage": 214487,
+          "min_damage": 114731,
           "max_damage": 335680,
           "count": 8
         },
         {
           "spell_id": 1249797,
-          "avg_damage": 184573,
-          "min_damage": 95900,
+          "avg_damage": 192203,
+          "min_damage": 146281,
           "max_damage": 248041,
           "count": 9
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 86942,
-          "min_damage": 54703,
+          "avg_damage": 92316,
+          "min_damage": 74447,
           "max_damage": 112792,
-          "count": 7
+          "count": 6
         }
       ]
     },
@@ -139,8 +139,8 @@
     },
     {
       "time_s": 328.7,
-      "dmg_avg": 569983,
-      "dmg_stddev": 63780,
+      "dmg_avg": 566517,
+      "dmg_stddev": 59857,
       "dmg_min": 491791,
       "dmg_max": 656906,
       "window_length_s": 12,
@@ -156,17 +156,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 199038,
+          "avg_damage": 201837,
           "min_damage": 139872,
           "max_damage": 235835,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 122440,
+          "avg_damage": 123200,
           "min_damage": 104769,
           "max_damage": 136738,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1254398,
@@ -177,24 +177,24 @@
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 97953,
+          "avg_damage": 98560,
           "min_damage": 83816,
           "max_damage": 109391,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1254257,
-          "avg_damage": 50895,
+          "avg_damage": 51173,
           "min_damage": 43654,
           "max_damage": 54297,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 31764,
+          "avg_damage": 32457,
           "min_damage": 18348,
           "max_damage": 43756,
-          "count": 7
+          "count": 8
         }
       ]
     }
@@ -202,8 +202,8 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 4,
-      "min_uses": 1,
+      "avg_uses": 4.2,
+      "min_uses": 3,
       "max_uses": 7
     }
   ],
@@ -292,5 +292,5 @@
       "name": "Overkill Current"
     }
   },
-  "source_signature": "92775fde661ac2c6"
+  "source_signature": "3cbe6d0cc2d3deff"
 }
