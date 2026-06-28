@@ -3,34 +3,40 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 399.1,
-  "downtime_threshold_ms": 1391,
+  "avg_duration_s": 396,
+  "downtime_threshold_ms": 1404,
   "top_avg_efficiency": 73.6,
-  "top_efficiency_stddev": 7.7,
+  "top_efficiency_stddev": 8.1,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 29.1,
-      "stddev_first_cast_s": 12.1,
-      "avg_gap_s": 130,
-      "stddev_gap_s": 11.9,
-      "avg_bl_offset_s": 27.7,
-      "stddev_bl_offset_s": 13.3,
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.41,
+      "avg_first_cast_s": 22.2,
+      "stddev_first_cast_s": 14.1,
+      "avg_gap_s": 127.9,
+      "stddev_gap_s": 11.5,
+      "avg_bl_offset_s": 19.9,
+      "stddev_bl_offset_s": 14.1,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.509,
-        "stddev": 0.057,
-        "min": 0.42,
+        "avg": 0.535,
+        "stddev": 0.058,
+        "min": 0.444,
         "max": 0.615
       },
-      "bl_pct": 60,
+      "bl_pct": 70,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 304.2,
-          "stddev_s": 18.9,
-          "count": 7,
+          "target_s": 281.8,
+          "stddev_s": 38.1,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 400.7,
+          "stddev_s": 21.8,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -57,21 +63,21 @@
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.3,
-      "stddev_first_cast_s": 7.9,
-      "avg_gap_s": 37.6,
-      "stddev_gap_s": 8.5,
-      "avg_bl_offset_s": 10.3,
-      "stddev_bl_offset_s": 6.4,
-      "avg_uses": 7.7,
-      "avg_uses_per_min": 1.14,
+      "avg_first_cast_s": 14.9,
+      "stddev_first_cast_s": 7.5,
+      "avg_gap_s": 35.8,
+      "stddev_gap_s": 6,
+      "avg_bl_offset_s": 13.2,
+      "stddev_bl_offset_s": 7,
+      "avg_uses": 8,
+      "avg_uses_per_min": 1.2,
       "uses_per_min": {
-        "avg": 1.63,
-        "stddev": 0.157,
-        "min": 1.339,
-        "max": 1.844
+        "avg": 1.72,
+        "stddev": 0.147,
+        "min": 1.479,
+        "max": 1.895
       },
-      "bl_pct": 50,
+      "bl_pct": 60,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -97,21 +103,21 @@
     },
     "Holy Shock": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.6,
+      "avg_first_cast_s": 5,
       "stddev_first_cast_s": 7.6,
-      "avg_gap_s": 4.8,
-      "stddev_gap_s": 4.3,
-      "avg_bl_offset_s": 4.7,
-      "stddev_bl_offset_s": 8.6,
-      "avg_uses": 80.6,
-      "avg_uses_per_min": 11.92,
+      "avg_gap_s": 5,
+      "stddev_gap_s": 4.6,
+      "avg_bl_offset_s": 4.9,
+      "stddev_bl_offset_s": 8,
+      "avg_uses": 76.9,
+      "avg_uses_per_min": 11.5,
       "uses_per_min": {
-        "avg": 11.917,
-        "stddev": 3.926,
+        "avg": 11.502,
+        "stddev": 3.74,
         "min": 4.251,
-        "max": 16.09
+        "max": 15.161
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -157,26 +163,26 @@
     },
     "Aura Mastery": {
       "sample_count": 10,
-      "avg_first_cast_s": 160.6,
-      "stddev_first_cast_s": 66.2,
-      "avg_gap_s": 220.1,
-      "stddev_gap_s": 32,
+      "avg_first_cast_s": 138.7,
+      "stddev_first_cast_s": 49.8,
+      "avg_gap_s": 212.9,
+      "stddev_gap_s": 34.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.24,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.265,
-        "stddev": 0.069,
-        "min": 0.153,
+        "avg": 0.276,
+        "stddev": 0.068,
+        "min": 0.137,
         "max": 0.354
       },
       "bl_pct": 0,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 345.6,
-          "stddev_s": 42,
+          "target_s": 351.4,
+          "stddev_s": 53.6,
           "count": 6,
           "total_samples": 10
         }
@@ -230,7 +236,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank; spell_id is the Holy Armaments Holy Bulwark cast and may need verification."
+      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank."
     },
     {
       "name": "Sacred Weapon",
@@ -238,7 +244,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer; spell_id is the Holy Armaments Sacred Weapon cast and may need verification."
+      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer."
     },
     {
       "name": "Aura Mastery",
@@ -376,6 +382,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "b8893d1cd660f6a3",
-  "ingest_version": 0
+  "source_signature": "d315534b3e821fbe",
+  "ingest_version": 1
 }

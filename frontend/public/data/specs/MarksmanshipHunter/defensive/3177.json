@@ -6,15 +6,15 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 73.7,
-      "stddev_first_cast_s": 10.9,
-      "avg_gap_s": 70.6,
-      "stddev_gap_s": 49,
+      "avg_first_cast_s": 73.8,
+      "stddev_first_cast_s": 11,
+      "avg_gap_s": 68.3,
+      "stddev_gap_s": 50.8,
       "hold_targets": {},
       "avg_uses": 2.4,
       "avg_uses_per_min": 0.7,
       "uses_per_min": {
-        "avg": 0.695,
+        "avg": 0.701,
         "stddev": 0.296,
         "min": 0.272,
         "max": 1.159
@@ -59,10 +59,10 @@
   "defensive_windows": [
     {
       "time_s": 65.2,
-      "dmg_avg": 188499,
-      "dmg_stddev": 118774,
+      "dmg_avg": 241732,
+      "dmg_stddev": 215751,
       "dmg_min": 17842,
-      "dmg_max": 430730,
+      "dmg_max": 725517,
       "window_length_s": 6.9,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -76,17 +76,64 @@
       "ability_breakdown": [
         {
           "spell_id": 1272950,
-          "avg_damage": 31103,
+          "avg_damage": 31306,
           "min_damage": 8720,
-          "max_damage": 38158,
+          "max_damage": 38888,
           "count": 9
         }
       ]
     },
     {
-      "time_s": 185.8,
-      "dmg_avg": 156783,
-      "dmg_stddev": 139921,
+      "time_s": 89.1,
+      "dmg_avg": 319921,
+      "dmg_stddev": 167120,
+      "dmg_min": 162511,
+      "dmg_max": 555804,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 169539,
+          "min_damage": 56240,
+          "max_damage": 230772,
+          "count": 4
+        },
+        {
+          "spell_id": 1243270,
+          "avg_damage": 98853,
+          "min_damage": 48825,
+          "max_damage": 148880,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 37390,
+          "min_damage": 34996,
+          "max_damage": 38593,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 29771,
+          "min_damage": 18853,
+          "max_damage": 40689,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 184.8,
+      "dmg_avg": 144517,
+      "dmg_stddev": 144316,
       "dmg_min": 16740,
       "dmg_max": 395181,
       "window_length_s": 7.4,
@@ -102,10 +149,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1272950,
-          "avg_damage": 58400,
+          "avg_damage": 56644,
           "min_damage": 16740,
           "max_damage": 74030,
-          "count": 9
+          "count": 8
         }
       ]
     }
@@ -144,7 +191,7 @@
       "spell_id": 264735,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction; spell_id is my best guess and should be verified at wowhead.com/spell=264735.",
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
       "talent_gated": false
     },
     {
@@ -162,6 +209,10 @@
     "Exhilaration": 109304
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "109304": {
       "icon": "ability_hunter_onewithnature",
       "name": "Exhilaration"
@@ -174,11 +225,19 @@
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
     },
+    "1243270": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Dark Goo"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
     }
   },
-  "source_signature": "fd0cd45d571e507a",
-  "ingest_version": 0
+  "source_signature": "4e923aabc6214b02",
+  "ingest_version": 1
 }

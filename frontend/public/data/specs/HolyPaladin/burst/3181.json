@@ -5,10 +5,10 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 5.2,
-      "dmg_avg": 751839,
-      "dmg_stddev": 477532,
-      "dmg_min": 335723,
+      "time_s": 5,
+      "dmg_avg": 902632,
+      "dmg_stddev": 474627,
+      "dmg_min": 514618,
       "dmg_max": 2041045,
       "common_cds": [
         "Avenging Wrath"
@@ -18,73 +18,30 @@
       "ability_breakdown": [
         {
           "spell_id": 1263725,
-          "avg_damage": 356331,
+          "avg_damage": 375939,
           "min_damage": 213339,
           "max_damage": 580056,
-          "count": 8,
-          "avg_casts": 1
+          "count": 10,
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1242230,
-          "avg_damage": 206081,
+          "avg_damage": 185582,
           "min_damage": 125265,
           "max_damage": 338942,
           "count": 9,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1241413,
-          "avg_damage": 175592,
+          "avg_damage": 175973,
           "min_damage": 98663,
           "max_damage": 439897,
-          "count": 6,
-          "avg_casts": 2
-        }
-      ]
-    },
-    {
-      "time_s": 170.2,
-      "dmg_avg": 541198,
-      "dmg_stddev": 392702,
-      "dmg_min": 322871,
-      "dmg_max": 1128990,
-      "common_cds": [
-        "Avenging Wrath"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 18,
-      "ability_breakdown": [
-        {
-          "spell_id": 1242230,
-          "avg_damage": 188843,
-          "min_damage": 180372,
-          "max_damage": 193943,
-          "count": 3,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 25912,
-          "avg_damage": 65347,
-          "min_damage": 40910,
-          "max_damage": 93622,
-          "count": 3,
-          "avg_casts": 4
-        },
-        {
-          "spell_id": 1263725,
-          "avg_damage": 62871,
-          "min_damage": 48890,
-          "max_damage": 76851,
-          "count": 2,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 275773,
-          "avg_damage": 31991,
-          "min_damage": 18528,
-          "max_damage": 40944,
-          "count": 3,
-          "avg_casts": 1
+          "count": 7,
+          "avg_casts": 2,
+          "is_passive": false
         }
       ]
     },
@@ -106,7 +63,8 @@
           "min_damage": 167690,
           "max_damage": 276573,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1263725,
@@ -114,7 +72,8 @@
           "min_damage": 26247,
           "max_damage": 226957,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1241413,
@@ -122,7 +81,8 @@
           "min_damage": 44047,
           "max_damage": 125565,
           "count": 4,
-          "avg_casts": 2
+          "avg_casts": 2,
+          "is_passive": false
         }
       ]
     }
@@ -167,10 +127,6 @@
       "icon": "spell_holy_searinglight",
       "name": "Holy Shock"
     },
-    "25912": {
-      "icon": "spell_holy_searinglight",
-      "name": "Holy Shock"
-    },
     "31821": {
       "icon": "spell_holy_auramastery",
       "name": "Aura Mastery"
@@ -186,10 +142,6 @@
     "216331": {
       "icon": "ability_paladin_veneration",
       "name": "Avenging Crusader"
-    },
-    "275773": {
-      "icon": "spell_holy_righteousfury",
-      "name": "Judgment"
     },
     "375576": {
       "icon": "inv_ability_paladin_divinetoll",
@@ -216,6 +168,6 @@
       "name": "Beacon of Lightblind Wrath"
     }
   },
-  "source_signature": "c1ad73337175c3c7",
-  "ingest_version": 0
+  "source_signature": "dbb486d43a68ed41",
+  "ingest_version": 1
 }

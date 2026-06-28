@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 3,
-      "avg_first_cast_s": 98.9,
-      "stddev_first_cast_s": 39.4,
+      "avg_first_cast_s": 96.9,
+      "stddev_first_cast_s": 37.5,
       "avg_gap_s": 137.2,
       "stddev_gap_s": 43.9,
       "hold_targets": {
@@ -21,36 +21,12 @@
       "avg_uses": 1.7,
       "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.437,
-        "stddev": 0.099,
-        "min": 0.326,
+        "avg": 0.439,
+        "stddev": 0.097,
+        "min": 0.33,
         "max": 0.515
       },
       "majority_hold": true
-    },
-    "Fade": {
-      "sample_count": 7,
-      "avg_first_cast_s": 106.6,
-      "stddev_first_cast_s": 66.5,
-      "avg_gap_s": 70.2,
-      "stddev_gap_s": 32.6,
-      "hold_targets": {
-        "1": {
-          "target_s": 115,
-          "stddev_s": 63,
-          "count": 3,
-          "total_samples": 7
-        }
-      },
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.51,
-      "uses_per_min": {
-        "avg": 0.514,
-        "stddev": 0.294,
-        "min": 0.219,
-        "max": 0.977
-      },
-      "majority_hold": false
     },
     "Guardian Spirit": {
       "sample_count": 1,
@@ -68,13 +44,37 @@
         "max": 0.322
       },
       "majority_hold": false
+    },
+    "Fade": {
+      "sample_count": 6,
+      "avg_first_cast_s": 109.5,
+      "stddev_first_cast_s": 72.4,
+      "avg_gap_s": 87.9,
+      "stddev_gap_s": 22.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 115,
+          "stddev_s": 63,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.437,
+        "stddev": 0.231,
+        "min": 0.219,
+        "max": 0.772
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 115.9,
-      "dmg_avg": 368007,
-      "dmg_stddev": 146333,
+      "time_s": 115.5,
+      "dmg_avg": 392833,
+      "dmg_stddev": 156340,
       "dmg_min": 229971,
       "dmg_max": 546941,
       "window_length_s": 10,
@@ -90,17 +90,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 224984,
+          "avg_damage": 224922,
           "min_damage": 185102,
           "max_damage": 301752,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1249262,
-          "avg_damage": 100185,
+          "avg_damage": 114364,
           "min_damage": 36517,
           "max_damage": 234963,
-          "count": 5
+          "count": 4
         }
       ]
     }
@@ -120,7 +120,7 @@
     },
     {
       "spell_id": 586,
-      "avg_uses": 1.9,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -178,6 +178,6 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "5d230e6c21209311",
-  "ingest_version": 0
+  "source_signature": "292fa48709b254b5",
+  "ingest_version": 1
 }

@@ -5,33 +5,33 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 7,
-      "avg_first_cast_s": 109.5,
-      "stddev_first_cast_s": 91.8,
-      "avg_gap_s": 120.3,
-      "stddev_gap_s": 14.6,
+      "sample_count": 8,
+      "avg_first_cast_s": 115.9,
+      "stddev_first_cast_s": 86.9,
+      "avg_gap_s": 120.9,
+      "stddev_gap_s": 12.7,
       "hold_targets": {
         "1": {
-          "target_s": 169.4,
-          "stddev_s": 46.3,
-          "count": 3,
-          "total_samples": 7
+          "target_s": 203.4,
+          "stddev_s": 62.3,
+          "count": 4,
+          "total_samples": 8
         }
       },
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.36,
-        "stddev": 0.147,
+        "avg": 0.361,
+        "stddev": 0.136,
         "min": 0.198,
         "max": 0.55
       },
       "majority_hold": false
     },
     "Fade": {
-      "sample_count": 6,
-      "avg_first_cast_s": 98.6,
-      "stddev_first_cast_s": 74.2,
+      "sample_count": 7,
+      "avg_first_cast_s": 107.3,
+      "stddev_first_cast_s": 71.5,
       "avg_gap_s": 48.6,
       "stddev_gap_s": 15.4,
       "hold_targets": {
@@ -39,37 +39,37 @@
           "target_s": 160.6,
           "stddev_s": 89.6,
           "count": 4,
-          "total_samples": 6
+          "total_samples": 7
         },
         "2": {
           "target_s": 154.6,
           "stddev_s": 25.4,
           "count": 3,
-          "total_samples": 6
+          "total_samples": 7
         }
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.66,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.656,
-        "stddev": 0.373,
-        "min": 0.228,
+        "avg": 0.589,
+        "stddev": 0.384,
+        "min": 0.184,
         "max": 1.213
       },
       "majority_hold": true
     },
     "Guardian Spirit": {
-      "sample_count": 3,
-      "avg_first_cast_s": 181.4,
-      "stddev_first_cast_s": 108.9,
+      "sample_count": 4,
+      "avg_first_cast_s": 192.1,
+      "stddev_first_cast_s": 91.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.24,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.243,
-        "stddev": 0.076,
+        "avg": 0.228,
+        "stddev": 0.069,
         "min": 0.167,
         "max": 0.319
       },
@@ -118,10 +118,10 @@
       ]
     },
     {
-      "time_s": 155,
-      "dmg_avg": 518002,
-      "dmg_stddev": 156271,
-      "dmg_min": 407163,
+      "time_s": 155.4,
+      "dmg_avg": 479216,
+      "dmg_stddev": 160739,
+      "dmg_min": 324073,
       "dmg_max": 749591,
       "window_length_s": 10,
       "defensive_name": "Fade",
@@ -136,17 +136,57 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 269403,
-          "min_damage": 232665,
+          "avg_damage": 241448,
+          "min_damage": 129629,
           "max_damage": 312658,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 186264,
+          "avg_damage": 187900,
           "min_damage": 174498,
           "max_damage": 200050,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 165.1,
+      "dmg_avg": 362113,
+      "dmg_stddev": 178002,
+      "dmg_min": 219898,
+      "dmg_max": 616913,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260835,
+          "avg_damage": 184800,
+          "min_damage": 57748,
+          "max_damage": 311852,
+          "count": 2
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 179425,
+          "min_damage": 130520,
+          "max_damage": 226265,
           "count": 4
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 120384,
+          "min_damage": 64815,
+          "max_damage": 217540,
+          "count": 3
         }
       ]
     }
@@ -166,7 +206,7 @@
     },
     {
       "spell_id": 586,
-      "avg_uses": 2.7,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -223,11 +263,15 @@
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
     },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
+    },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "1fde6760b4b00a3a",
-  "ingest_version": 0
+  "source_signature": "b07cc14c46996fd1",
+  "ingest_version": 1
 }

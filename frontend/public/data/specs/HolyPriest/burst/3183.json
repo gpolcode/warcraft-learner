@@ -5,69 +5,6 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 130.1,
-      "dmg_avg": 1412940,
-      "dmg_stddev": 246190,
-      "dmg_min": 1166323,
-      "dmg_max": 1731223,
-      "common_cds": [
-        "Halo",
-        "Apotheosis"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 17.9,
-      "ability_breakdown": [
-        {
-          "spell_id": 120696,
-          "avg_damage": 793167,
-          "min_damage": 536670,
-          "max_damage": 1088512,
-          "count": 4,
-          "avg_casts": 1
-        },
-        {
-          "spell_id": 400370,
-          "avg_damage": 402295,
-          "min_damage": 305593,
-          "max_damage": 498996,
-          "count": 2,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 196811,
-          "avg_damage": 190646,
-          "min_damage": 63846,
-          "max_damage": 317619,
-          "count": 4,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 14914,
-          "avg_damage": 108343,
-          "min_damage": 52644,
-          "max_damage": 231534,
-          "count": 4,
-          "avg_casts": 2
-        },
-        {
-          "spell_id": 585,
-          "avg_damage": 87195,
-          "min_damage": 47603,
-          "max_damage": 144407,
-          "count": 4,
-          "avg_casts": 3
-        },
-        {
-          "spell_id": 88625,
-          "avg_damage": 61545,
-          "min_damage": 27673,
-          "max_damage": 95417,
-          "count": 2,
-          "avg_casts": 2
-        }
-      ]
-    },
-    {
       "time_s": 464.4,
       "dmg_avg": 5506939,
       "dmg_stddev": 1993220,
@@ -86,7 +23,8 @@
           "min_damage": 3561064,
           "max_damage": 8902661,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 120696,
@@ -94,7 +32,8 @@
           "min_damage": 129371,
           "max_damage": 221617,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 132157,
@@ -102,7 +41,8 @@
           "min_damage": 79846,
           "max_damage": 203974,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 14914,
@@ -110,54 +50,77 @@
           "min_damage": 41204,
           "max_damage": 137943,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 496.4,
-      "dmg_avg": 8675340,
-      "dmg_stddev": 5231521,
-      "dmg_min": 1342127,
-      "dmg_max": 15373374,
+      "time_s": 486.9,
+      "dmg_avg": 11814092,
+      "dmg_stddev": 4865421,
+      "dmg_min": 3906426,
+      "dmg_max": 16633673,
       "common_cds": [
         "Apotheosis",
         "Halo"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.3,
+      "window_length_s": 24.2,
       "ability_breakdown": [
         {
           "spell_id": 1292446,
-          "avg_damage": 7922034,
-          "min_damage": 1335400,
+          "avg_damage": 10558946,
+          "min_damage": 3457344,
           "max_damage": 14244259,
-          "count": 11,
-          "avg_casts": 0
+          "count": 8,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
-          "spell_id": 196811,
-          "avg_damage": 243636,
-          "min_damage": 23941,
-          "max_damage": 712104,
-          "count": 8,
-          "avg_casts": 0
+          "spell_id": 14914,
+          "avg_damage": 463932,
+          "min_damage": 49153,
+          "max_damage": 1374013,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 120696,
-          "avg_damage": 226172,
-          "min_damage": 70346,
-          "max_damage": 422455,
+          "avg_damage": 310846,
+          "min_damage": 80755,
+          "max_damage": 505171,
+          "count": 6,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 196811,
+          "avg_damage": 259029,
+          "min_damage": 23941,
+          "max_damage": 1026505,
           "count": 7,
-          "avg_casts": 1
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 585,
-          "avg_damage": 213701,
+          "avg_damage": 219397,
           "min_damage": 138207,
           "max_damage": 314875,
           "count": 6,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 132157,
+          "avg_damage": 124784,
+          "min_damage": 91693,
+          "max_damage": 199563,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
         }
       ]
     }
@@ -173,6 +136,68 @@
     "Desperate Prayer": 19236,
     "Fade": 586
   },
-  "source_signature": "d28f9a08b300befc",
-  "ingest_version": 0
+  "ability_icons": {
+    "585": {
+      "icon": "spell_holy_holysmite",
+      "name": "Smite"
+    },
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "14914": {
+      "icon": "spell_holy_searinglight",
+      "name": "Holy Fire"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    },
+    "64843": {
+      "icon": "spell_holy_divinehymn",
+      "name": "Divine Hymn"
+    },
+    "88625": {
+      "icon": "spell_holy_chastise",
+      "name": "Holy Word: Chastise"
+    },
+    "120517": {
+      "icon": "ability_priest_halo",
+      "name": "Halo"
+    },
+    "120696": {
+      "icon": "ability_priest_halo",
+      "name": "Halo"
+    },
+    "132157": {
+      "icon": "spell_holy_holynova",
+      "name": "Holy Nova"
+    },
+    "196811": {
+      "icon": "spell_holy_divineprovidence",
+      "name": "Searing Light"
+    },
+    "200183": {
+      "icon": "ability_priest_ascension",
+      "name": "Apotheosis"
+    },
+    "372616": {
+      "icon": "ability_priest_empyrealblaze",
+      "name": "Empyreal Blaze"
+    },
+    "372760": {
+      "icon": "spell_priest_chakra",
+      "name": "Divine Word"
+    },
+    "1292446": {
+      "icon": "spell_holy_aspiration",
+      "name": "The Last Light"
+    }
+  },
+  "source_signature": "94bdfb80e0a6250f",
+  "ingest_version": 1
 }

@@ -6,40 +6,40 @@
   "per_defensive_benchmarks": {
     "Divine Shield": {
       "sample_count": 6,
-      "avg_first_cast_s": 146.6,
-      "stddev_first_cast_s": 37.9,
-      "avg_gap_s": 310.7,
-      "stddev_gap_s": 0,
+      "avg_first_cast_s": 162.9,
+      "stddev_first_cast_s": 57.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.19,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.186,
-        "stddev": 0.04,
+        "avg": 0.18,
+        "stddev": 0.029,
         "min": 0.152,
-        "max": 0.252
+        "max": 0.217
       },
       "majority_hold": false
     },
     "Divine Protection": {
       "sample_count": 10,
-      "avg_first_cast_s": 172.8,
-      "stddev_first_cast_s": 99.1,
-      "avg_gap_s": 87.7,
-      "stddev_gap_s": 38.5,
+      "avg_first_cast_s": 167.2,
+      "stddev_first_cast_s": 105.5,
+      "avg_gap_s": 85.6,
+      "stddev_gap_s": 33.2,
       "hold_targets": {
         "1": {
-          "target_s": 245.2,
-          "stddev_s": 88,
-          "count": 7,
+          "target_s": 245.5,
+          "stddev_s": 93.1,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.39,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.387,
-        "stddev": 0.177,
+        "avg": 0.346,
+        "stddev": 0.162,
         "min": 0.142,
         "max": 0.666
       },
@@ -53,60 +53,34 @@
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.15,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.151,
-        "stddev": 0.018,
-        "min": 0.126,
-        "max": 0.175
+        "avg": 0.166,
+        "stddev": 0.029,
+        "min": 0.136,
+        "max": 0.217
       },
       "majority_hold": false
     },
     "Blessing of Sacrifice": {
       "sample_count": 2,
-      "avg_first_cast_s": 189,
-      "stddev_first_cast_s": 134.1,
-      "avg_gap_s": 337,
+      "avg_first_cast_s": 190.8,
+      "stddev_first_cast_s": 131.6,
+      "avg_gap_s": 124.9,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.5,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.214,
-        "stddev": 0.054,
+        "avg": 0.305,
+        "stddev": 0.183,
         "min": 0.175,
-        "max": 0.252
+        "max": 0.434
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
-    {
-      "time_s": 151.8,
-      "dmg_avg": 132151,
-      "dmg_stddev": 78641,
-      "dmg_min": 15680,
-      "dmg_max": 188579,
-      "window_length_s": 8,
-      "defensive_name": "Divine Shield",
-      "spell_id": 642,
-      "common_defensives": [
-        "Divine Shield"
-      ],
-      "common_cds": [
-        "Divine Shield"
-      ],
-      "ref_game_id": 242056,
-      "ability_breakdown": [
-        {
-          "spell_id": 1244413,
-          "avg_damage": 102108,
-          "min_damage": 15680,
-          "max_damage": 162824,
-          "count": 4
-        }
-      ]
-    },
     {
       "time_s": 169.4,
       "dmg_avg": 264994,
@@ -134,9 +108,9 @@
       ]
     },
     {
-      "time_s": 245.5,
-      "dmg_avg": 617771,
-      "dmg_stddev": 207908,
+      "time_s": 245.4,
+      "dmg_avg": 653232,
+      "dmg_stddev": 221926,
       "dmg_min": 320518,
       "dmg_max": 771334,
       "window_length_s": 8,
@@ -152,24 +126,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 224801,
-          "min_damage": 149701,
+          "avg_damage": 249834,
+          "min_damage": 158451,
           "max_damage": 303887,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1285954,
-          "avg_damage": 224695,
-          "min_damage": 188180,
+          "avg_damage": 233823,
+          "min_damage": 209949,
           "max_damage": 260347,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 137936,
+          "avg_damage": 137909,
           "min_damage": 66256,
           "max_damage": 211893,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1245175,
@@ -184,9 +158,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 642,
-      "avg_uses": 1.2,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     },
     {
       "spell_id": 633,
@@ -202,9 +176,9 @@
     },
     {
       "spell_id": 498,
-      "avg_uses": 2.6,
+      "avg_uses": 2.2,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -277,10 +251,6 @@
       "icon": "spell_holy_sealofsacrifice",
       "name": "Blessing of Sacrifice"
     },
-    "1244413": {
-      "icon": "warlock_curse_shadow_aura",
-      "name": "Nullsnap"
-    },
     "1245175": {
       "icon": "inv_cosmicvoid_missile",
       "name": "Voidbolt"
@@ -298,6 +268,6 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "dfffd599018efd2e",
-  "ingest_version": 0
+  "source_signature": "74bc3a8e7d7c6a09",
+  "ingest_version": 1
 }

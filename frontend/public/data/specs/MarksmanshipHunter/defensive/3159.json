@@ -2,21 +2,21 @@
   "spec": "MarksmanshipHunter",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
-      "sample_count": 8,
-      "avg_first_cast_s": 176.5,
-      "stddev_first_cast_s": 78.9,
+      "sample_count": 9,
+      "avg_first_cast_s": 200.7,
+      "stddev_first_cast_s": 103.6,
       "avg_gap_s": 74,
       "stddev_gap_s": 55.7,
       "hold_targets": {},
-      "avg_uses": 4,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.547,
-        "stddev": 0.283,
-        "min": 0.146,
+        "avg": 0.501,
+        "stddev": 0.299,
+        "min": 0.132,
         "max": 1.005
       },
       "majority_hold": false
@@ -138,9 +138,9 @@
       ]
     },
     {
-      "time_s": 404.7,
-      "dmg_avg": 458603,
-      "dmg_stddev": 208106,
+      "time_s": 404.6,
+      "dmg_avg": 431739,
+      "dmg_stddev": 210689,
       "dmg_min": 97477,
       "dmg_max": 712338,
       "window_length_s": 7.4,
@@ -162,18 +162,11 @@
           "count": 6
         },
         {
-          "spell_id": 1221965,
-          "avg_damage": 183824,
-          "min_damage": 156764,
-          "max_damage": 212824,
-          "count": 4
-        },
-        {
           "spell_id": 1222284,
-          "avg_damage": 181069,
+          "avg_damage": 185042,
           "min_damage": 97477,
           "max_damage": 236320,
-          "count": 8
+          "count": 9
         }
       ]
     }
@@ -187,7 +180,7 @@
     },
     {
       "spell_id": 264735,
-      "avg_uses": 4,
+      "avg_uses": 3.7,
       "min_uses": 1,
       "max_uses": 7
     },
@@ -212,7 +205,7 @@
       "spell_id": 264735,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction; spell_id is my best guess and should be verified at wowhead.com/spell=264735.",
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
       "talent_gated": false
     },
     {
@@ -255,6 +248,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "eadac2902c9d66f0",
-  "ingest_version": 0
+  "source_signature": "27c9514458df24d3",
+  "ingest_version": 1
 }

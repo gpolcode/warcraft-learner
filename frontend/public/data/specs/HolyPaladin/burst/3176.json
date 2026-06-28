@@ -5,9 +5,9 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 1.5,
-      "dmg_avg": 1191454,
-      "dmg_stddev": 377410,
+      "time_s": 2,
+      "dmg_avg": 1279737,
+      "dmg_stddev": 351392,
       "dmg_min": 679781,
       "dmg_max": 1828829,
       "common_cds": [
@@ -18,35 +18,48 @@
       "ability_breakdown": [
         {
           "spell_id": 1239282,
-          "avg_damage": 202325,
-          "min_damage": 62733,
+          "avg_damage": 222726,
+          "min_damage": 91445,
           "max_damage": 324596,
           "count": 10,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 447258,
-          "avg_damage": 198165,
+          "avg_damage": 212780,
           "min_damage": 86291,
           "max_damage": 435214,
           "count": 10,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1279187,
-          "avg_damage": 146990,
-          "min_damage": 118681,
-          "max_damage": 181850,
-          "count": 6,
-          "avg_casts": 5
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 414448,
-          "avg_damage": 145528,
-          "min_damage": 83056,
+          "avg_damage": 159831,
+          "min_damage": 87289,
           "max_damage": 245869,
           "count": 8,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1279187,
+          "avg_damage": 159610,
+          "min_damage": 118681,
+          "max_damage": 235329,
+          "count": 7,
+          "avg_casts": 5,
+          "is_passive": false
+        },
+        {
+          "spell_id": 415091,
+          "avg_damage": 151592,
+          "min_damage": 73450,
+          "max_damage": 224013,
+          "count": 5,
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 1241413,
@@ -54,23 +67,16 @@
           "min_damage": 68921,
           "max_damage": 219758,
           "count": 8,
-          "avg_casts": 4
-        },
-        {
-          "spell_id": 415091,
-          "avg_damage": 136816,
-          "min_damage": 71207,
-          "max_damage": 224013,
-          "count": 5,
-          "avg_casts": 6
+          "avg_casts": 4,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 61.3,
-      "dmg_avg": 1069904,
-      "dmg_stddev": 213380,
-      "dmg_min": 781954,
+      "time_s": 62.3,
+      "dmg_avg": 1023506,
+      "dmg_stddev": 246877,
+      "dmg_min": 741906,
       "dmg_max": 1363235,
       "common_cds": [
         "Avenging Crusader"
@@ -80,58 +86,64 @@
       "ability_breakdown": [
         {
           "spell_id": 447258,
-          "avg_damage": 311605,
+          "avg_damage": 272821,
           "min_damage": 127849,
-          "max_damage": 447716,
+          "max_damage": 395699,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 415091,
-          "avg_damage": 214161,
+          "avg_damage": 189280,
           "min_damage": 75220,
           "max_damage": 376962,
           "count": 7,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1279187,
+          "avg_damage": 113209,
+          "min_damage": 86745,
+          "max_damage": 158312,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 414448,
-          "avg_damage": 107722,
+          "avg_damage": 111550,
           "min_damage": 90207,
           "max_damage": 166174,
-          "count": 5,
-          "avg_casts": 0
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1241413,
-          "avg_damage": 102528,
+          "avg_damage": 103578,
           "min_damage": 67269,
           "max_damage": 204005,
-          "count": 6,
-          "avg_casts": 2
-        },
-        {
-          "spell_id": 1239282,
-          "avg_damage": 98654,
-          "min_damage": 44560,
-          "max_damage": 172752,
-          "count": 6,
-          "avg_casts": 0
+          "count": 7,
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 1,
-          "avg_damage": 92521,
+          "avg_damage": 100402,
           "min_damage": 74446,
           "max_damage": 130437,
           "count": 4,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     },
     {
-      "time_s": 122,
-      "dmg_avg": 789556,
-      "dmg_stddev": 203258,
+      "time_s": 123.2,
+      "dmg_avg": 797767,
+      "dmg_stddev": 203592,
       "dmg_min": 427619,
       "dmg_max": 1163472,
       "common_cds": [
@@ -142,59 +154,65 @@
       "ability_breakdown": [
         {
           "spell_id": 447258,
-          "avg_damage": 168018,
+          "avg_damage": 173257,
           "min_damage": 28853,
           "max_damage": 275545,
           "count": 8,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1241413,
-          "avg_damage": 120607,
+          "avg_damage": 119894,
           "min_damage": 59075,
           "max_damage": 201518,
-          "count": 7,
-          "avg_casts": 2
-        },
-        {
-          "spell_id": 1279187,
-          "avg_damage": 112670,
-          "min_damage": 67131,
-          "max_damage": 157440,
-          "count": 5,
-          "avg_casts": 4
+          "count": 6,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 414448,
-          "avg_damage": 112527,
-          "min_damage": 77356,
+          "avg_damage": 116868,
+          "min_damage": 88299,
           "max_damage": 192144,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1239282,
-          "avg_damage": 104995,
+          "avg_damage": 112313,
           "min_damage": 74581,
           "max_damage": 133814,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1279187,
+          "avg_damage": 107933,
+          "min_damage": 67131,
+          "max_damage": 157440,
+          "count": 6,
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
           "spell_id": 415091,
-          "avg_damage": 96224,
+          "avg_damage": 99863,
           "min_damage": 65080,
           "max_damage": 143983,
           "count": 7,
-          "avg_casts": 5
+          "avg_casts": 5,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 185.1,
-      "dmg_avg": 848394,
-      "dmg_stddev": 263118,
-      "dmg_min": 508125,
+      "time_s": 185.8,
+      "dmg_avg": 872095,
+      "dmg_stddev": 235141,
+      "dmg_min": 630806,
       "dmg_max": 1382969,
       "common_cds": [
         "Avenging Crusader"
@@ -204,11 +222,12 @@
       "ability_breakdown": [
         {
           "spell_id": 1279187,
-          "avg_damage": 170709,
-          "min_damage": 111204,
+          "avg_damage": 149772,
+          "min_damage": 66025,
           "max_damage": 216222,
-          "count": 4,
-          "avg_casts": 4
+          "count": 5,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 1263725,
@@ -216,101 +235,44 @@
           "min_damage": 85628,
           "max_damage": 183283,
           "count": 4,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         },
         {
           "spell_id": 1241413,
-          "avg_damage": 133976,
+          "avg_damage": 132081,
           "min_damage": 36300,
           "max_damage": 193299,
           "count": 8,
-          "avg_casts": 2
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 447258,
-          "avg_damage": 117688,
-          "min_damage": 47153,
+          "avg_damage": 127384,
+          "min_damage": 83193,
           "max_damage": 203519,
           "count": 8,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 1239282,
-          "avg_damage": 110708,
+          "avg_damage": 116088,
           "min_damage": 63870,
           "max_damage": 164725,
           "count": 7,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 415091,
-          "avg_damage": 106799,
-          "min_damage": 77618,
-          "max_damage": 161276,
-          "count": 4,
-          "avg_casts": 5
-        }
-      ]
-    },
-    {
-      "time_s": 248.4,
-      "dmg_avg": 1061438,
-      "dmg_stddev": 271799,
-      "dmg_min": 830062,
-      "dmg_max": 1399774,
-      "common_cds": [
-        "Avenging Crusader"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 12,
-      "ability_breakdown": [
-        {
-          "spell_id": 447258,
-          "avg_damage": 380597,
-          "min_damage": 255457,
-          "max_damage": 557461,
-          "count": 4,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 415091,
-          "avg_damage": 184401,
-          "min_damage": 115485,
-          "max_damage": 293442,
-          "count": 4,
-          "avg_casts": 4
-        },
-        {
-          "spell_id": 1239282,
-          "avg_damage": 119426,
-          "min_damage": 68185,
-          "max_damage": 173948,
-          "count": 3,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 88919,
-          "min_damage": 76125,
-          "max_damage": 113582,
-          "count": 3,
-          "avg_casts": 0
-        },
-        {
-          "spell_id": 1241413,
-          "avg_damage": 82329,
-          "min_damage": 79103,
-          "max_damage": 85554,
-          "count": 2,
-          "avg_casts": 2
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 414448,
-          "avg_damage": 74022,
-          "min_damage": 50107,
-          "max_damage": 106416,
-          "count": 4,
-          "avg_casts": 0
+          "avg_damage": 107946,
+          "min_damage": 71804,
+          "max_damage": 188481,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     }
@@ -416,6 +378,6 @@
       "name": "Crusader Strike"
     }
   },
-  "source_signature": "feef94ffb701da67",
-  "ingest_version": 0
+  "source_signature": "d789635a57dea1ed",
+  "ingest_version": 1
 }

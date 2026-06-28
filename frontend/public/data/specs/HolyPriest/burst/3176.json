@@ -5,11 +5,11 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 3.9,
-      "dmg_avg": 1809785,
-      "dmg_stddev": 427446,
+      "time_s": 3.5,
+      "dmg_avg": 1978350,
+      "dmg_stddev": 708038,
       "dmg_min": 1091211,
-      "dmg_max": 2280189,
+      "dmg_max": 3294095,
       "common_cds": [
         "Apotheosis"
       ],
@@ -18,42 +18,46 @@
       "ability_breakdown": [
         {
           "spell_id": 14914,
-          "avg_damage": 703337,
+          "avg_damage": 752545,
           "min_damage": 436109,
-          "max_damage": 961991,
+          "max_damage": 1306450,
           "count": 7,
-          "avg_casts": 11
+          "avg_casts": 11,
+          "is_passive": false
         },
         {
           "spell_id": 196811,
-          "avg_damage": 625730,
+          "avg_damage": 713702,
           "min_damage": 362971,
-          "max_damage": 967765,
+          "max_damage": 1416278,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 88625,
-          "avg_damage": 204080,
+          "avg_damage": 213005,
           "min_damage": 161159,
-          "max_damage": 250701,
+          "max_damage": 306524,
           "count": 7,
-          "avg_casts": 5
+          "avg_casts": 5,
+          "is_passive": false
         },
         {
           "spell_id": 585,
-          "avg_damage": 151950,
-          "min_damage": 40185,
+          "avg_damage": 165655,
+          "min_damage": 41848,
           "max_damage": 416090,
           "count": 7,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
         }
       ]
     },
     {
       "time_s": 127.2,
-      "dmg_avg": 2086543,
-      "dmg_stddev": 360205,
+      "dmg_avg": 2094130,
+      "dmg_stddev": 366661,
       "dmg_min": 1477327,
       "dmg_max": 2520042,
       "common_cds": [
@@ -64,43 +68,48 @@
       "ability_breakdown": [
         {
           "spell_id": 14914,
-          "avg_damage": 575797,
+          "avg_damage": 582376,
           "min_damage": 396062,
-          "max_damage": 767278,
+          "max_damage": 813326,
           "count": 7,
-          "avg_casts": 8
+          "avg_casts": 9,
+          "is_passive": false
         },
         {
           "spell_id": 196811,
-          "avg_damage": 496914,
+          "avg_damage": 529769,
           "min_damage": 372902,
-          "max_damage": 668222,
+          "max_damage": 669436,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 400370,
-          "avg_damage": 461749,
+          "avg_damage": 449343,
           "min_damage": 48946,
           "max_damage": 725845,
           "count": 7,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 585,
-          "avg_damage": 144153,
-          "min_damage": 88583,
+          "avg_damage": 137237,
+          "min_damage": 74675,
           "max_damage": 203078,
           "count": 5,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
           "spell_id": 88625,
-          "avg_damage": 121944,
+          "avg_damage": 118588,
           "min_damage": 74659,
-          "max_damage": 179301,
+          "max_damage": 157515,
           "count": 7,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
         }
       ]
     }
@@ -116,6 +125,60 @@
     "Desperate Prayer": 19236,
     "Fade": 586
   },
-  "source_signature": "5d230e6c21209311",
-  "ingest_version": 0
+  "ability_icons": {
+    "585": {
+      "icon": "spell_holy_holysmite",
+      "name": "Smite"
+    },
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "14914": {
+      "icon": "spell_holy_searinglight",
+      "name": "Holy Fire"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    },
+    "64843": {
+      "icon": "spell_holy_divinehymn",
+      "name": "Divine Hymn"
+    },
+    "88625": {
+      "icon": "spell_holy_chastise",
+      "name": "Holy Word: Chastise"
+    },
+    "120517": {
+      "icon": "ability_priest_halo",
+      "name": "Halo"
+    },
+    "196811": {
+      "icon": "spell_holy_divineprovidence",
+      "name": "Searing Light"
+    },
+    "200183": {
+      "icon": "ability_priest_ascension",
+      "name": "Apotheosis"
+    },
+    "372616": {
+      "icon": "ability_priest_empyrealblaze",
+      "name": "Empyreal Blaze"
+    },
+    "372760": {
+      "icon": "spell_priest_chakra",
+      "name": "Divine Word"
+    },
+    "400370": {
+      "icon": "ability_paladin_sacredcleansing",
+      "name": "Burning Vehemence"
+    }
+  },
+  "source_signature": "292fa48709b254b5",
+  "ingest_version": 1
 }

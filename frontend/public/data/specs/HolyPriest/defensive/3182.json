@@ -2,7 +2,7 @@
   "spec": "HolyPriest",
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Guardian Spirit": {
       "sample_count": 8,
@@ -22,9 +22,9 @@
       "majority_hold": false
     },
     "Desperate Prayer": {
-      "sample_count": 9,
-      "avg_first_cast_s": 93.1,
-      "stddev_first_cast_s": 58.7,
+      "sample_count": 10,
+      "avg_first_cast_s": 104.5,
+      "stddev_first_cast_s": 65.9,
       "avg_gap_s": 120.3,
       "stddev_gap_s": 26.4,
       "hold_targets": {
@@ -32,37 +32,44 @@
           "target_s": 201.9,
           "stddev_s": 31.9,
           "count": 4,
-          "total_samples": 9
+          "total_samples": 10
         },
         "2": {
           "target_s": 272.9,
           "stddev_s": 28.2,
           "count": 4,
-          "total_samples": 9
+          "total_samples": 10
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.425,
-        "stddev": 0.188,
+        "avg": 0.403,
+        "stddev": 0.19,
         "min": 0.201,
         "max": 0.636
       },
       "majority_hold": true
     },
     "Fade": {
-      "sample_count": 8,
-      "avg_first_cast_s": 29.1,
+      "sample_count": 9,
+      "avg_first_cast_s": 31,
       "stddev_first_cast_s": 16.1,
-      "avg_gap_s": 31.2,
-      "stddev_gap_s": 15,
-      "hold_targets": {},
-      "avg_uses": 7.9,
-      "avg_uses_per_min": 1.59,
+      "avg_gap_s": 33.4,
+      "stddev_gap_s": 22.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 113,
+          "stddev_s": 66.9,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 7.3,
+      "avg_uses_per_min": 1.49,
       "uses_per_min": {
-        "avg": 1.592,
-        "stddev": 0.762,
+        "avg": 1.485,
+        "stddev": 0.782,
         "min": 0.204,
         "max": 2.608
       },
@@ -97,11 +104,11 @@
       ]
     },
     {
-      "time_s": 60.9,
-      "dmg_avg": 435457,
-      "dmg_stddev": 245165,
+      "time_s": 57.6,
+      "dmg_avg": 495757,
+      "dmg_stddev": 299647,
       "dmg_min": 77874,
-      "dmg_max": 829791,
+      "dmg_max": 1038456,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -114,11 +121,18 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
+          "spell_id": 1241932,
+          "avg_damage": 376560,
+          "min_damage": 166663,
+          "max_damage": 532543,
+          "count": 5
+        },
+        {
           "spell_id": 1264650,
-          "avg_damage": 90254,
+          "avg_damage": 90155,
           "min_damage": 68633,
           "max_damage": 112370,
-          "count": 9
+          "count": 10
         }
       ]
     },
@@ -275,10 +289,10 @@
     },
     {
       "time_s": 216.9,
-      "dmg_avg": 423182,
-      "dmg_stddev": 320339,
+      "dmg_avg": 454476,
+      "dmg_stddev": 328767,
       "dmg_min": 75738,
-      "dmg_max": 866218,
+      "dmg_max": 907750,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -292,10 +306,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1264650,
-          "avg_damage": 85758,
+          "avg_damage": 86779,
           "min_damage": 66836,
           "max_damage": 115329,
-          "count": 8
+          "count": 10
         }
       ]
     },
@@ -375,13 +389,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.1,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 586,
-      "avg_uses": 7.9,
+      "avg_uses": 7.3,
       "min_uses": 1,
       "max_uses": 13
     }
@@ -451,6 +465,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "87ed3e26053bc850",
-  "ingest_version": 0
+  "source_signature": "e87ce44045a36661",
+  "ingest_version": 1
 }

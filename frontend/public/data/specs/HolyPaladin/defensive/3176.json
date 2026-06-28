@@ -22,66 +22,59 @@
       "majority_hold": false
     },
     "Blessing of Sacrifice": {
-      "sample_count": 6,
-      "avg_first_cast_s": 130.9,
-      "stddev_first_cast_s": 79.3,
+      "sample_count": 5,
+      "avg_first_cast_s": 118.3,
+      "stddev_first_cast_s": 81.8,
       "avg_gap_s": 132.2,
-      "stddev_gap_s": 8,
+      "stddev_gap_s": 7.9,
       "hold_targets": {
         "1": {
-          "target_s": 181.8,
-          "stddev_s": 72.3,
+          "target_s": 181.7,
+          "stddev_s": 72.4,
           "count": 3,
-          "total_samples": 6
+          "total_samples": 5
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.377,
+        "avg": 0.406,
         "stddev": 0.158,
         "min": 0.211,
         "max": 0.621
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Divine Protection": {
       "sample_count": 6,
-      "avg_first_cast_s": 95.8,
-      "stddev_first_cast_s": 35.2,
-      "avg_gap_s": 69.7,
-      "stddev_gap_s": 20.6,
-      "hold_targets": {
-        "1": {
-          "target_s": 195.9,
-          "stddev_s": 52.2,
-          "count": 3,
-          "total_samples": 6
-        }
-      },
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.63,
+      "avg_first_cast_s": 91.1,
+      "stddev_first_cast_s": 33.7,
+      "avg_gap_s": 71.4,
+      "stddev_gap_s": 21,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.633,
-        "stddev": 0.18,
-        "min": 0.307,
+        "avg": 0.564,
+        "stddev": 0.226,
+        "min": 0.278,
         "max": 0.842
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Divine Shield": {
-      "sample_count": 2,
-      "avg_first_cast_s": 147,
-      "stddev_first_cast_s": 81,
+      "sample_count": 1,
+      "avg_first_cast_s": 204.2,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.257,
-        "stddev": 0.035,
-        "min": 0.232,
+        "avg": 0.281,
+        "stddev": 0,
+        "min": 0.281,
         "max": 0.281
       },
       "majority_hold": false
@@ -89,9 +82,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 116.7,
-      "dmg_avg": 234260,
-      "dmg_stddev": 82860,
+      "time_s": 116.5,
+      "dmg_avg": 238294,
+      "dmg_stddev": 91979,
       "dmg_min": 170452,
       "dmg_max": 399425,
       "window_length_s": 8,
@@ -107,17 +100,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 154675,
+          "avg_damage": 154680,
           "min_damage": 138672,
           "max_damage": 163772,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1249262,
-          "avg_damage": 40527,
+          "avg_damage": 41830,
           "min_damage": 31780,
           "max_damage": 55712,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -137,13 +130,13 @@
     },
     {
       "spell_id": 6940,
-      "avg_uses": 1.7,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 498,
-      "avg_uses": 2.8,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -227,6 +220,6 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "feef94ffb701da67",
-  "ingest_version": 0
+  "source_signature": "d789635a57dea1ed",
+  "ingest_version": 1
 }

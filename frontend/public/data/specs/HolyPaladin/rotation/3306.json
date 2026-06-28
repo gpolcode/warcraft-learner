@@ -3,10 +3,10 @@
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
-  "avg_duration_s": 319.7,
-  "downtime_threshold_ms": 1379,
-  "top_avg_efficiency": 75,
-  "top_efficiency_stddev": 6.5,
+  "avg_duration_s": 318.7,
+  "downtime_threshold_ms": 1377,
+  "top_avg_efficiency": 74.7,
+  "top_efficiency_stddev": 6.6,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
@@ -30,27 +30,27 @@
     },
     "Avenging Crusader": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.8,
-      "stddev_first_cast_s": 9.5,
-      "avg_gap_s": 68.1,
-      "stddev_gap_s": 13.1,
-      "avg_bl_offset_s": 9,
-      "stddev_bl_offset_s": 9.6,
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.74,
+      "avg_first_cast_s": 5.7,
+      "stddev_first_cast_s": 8.6,
+      "avg_gap_s": 66.4,
+      "stddev_gap_s": 10.8,
+      "avg_bl_offset_s": 6.4,
+      "stddev_bl_offset_s": 9.4,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.78,
       "uses_per_min": {
-        "avg": 0.929,
-        "stddev": 0.194,
-        "min": 0.57,
+        "avg": 0.98,
+        "stddev": 0.13,
+        "min": 0.804,
         "max": 1.227
       },
       "bl_pct": 60,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 140.5,
-          "stddev_s": 24.7,
-          "count": 6,
+          "target_s": 138.8,
+          "stddev_s": 21.6,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
@@ -109,17 +109,17 @@
     },
     "Holy Shock": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.7,
-      "stddev_first_cast_s": 8.1,
-      "avg_gap_s": 5,
-      "stddev_gap_s": 4,
-      "avg_bl_offset_s": 6.3,
-      "stddev_bl_offset_s": 9.6,
-      "avg_uses": 62.3,
-      "avg_uses_per_min": 11.29,
+      "avg_first_cast_s": 6.5,
+      "stddev_first_cast_s": 8.6,
+      "avg_gap_s": 5.1,
+      "stddev_gap_s": 4.3,
+      "avg_bl_offset_s": 7.7,
+      "stddev_bl_offset_s": 9.9,
+      "avg_uses": 61.6,
+      "avg_uses_per_min": 11.18,
       "uses_per_min": {
-        "avg": 11.293,
-        "stddev": 3.424,
+        "avg": 11.184,
+        "stddev": 3.511,
         "min": 5.317,
         "max": 17.226
       },
@@ -129,37 +129,44 @@
     },
     "Holy Bulwark": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.2,
-      "stddev_first_cast_s": 17.7,
-      "avg_gap_s": 60,
-      "stddev_gap_s": 17.1,
-      "avg_bl_offset_s": 9.9,
-      "stddev_bl_offset_s": 13.5,
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.8,
+      "avg_first_cast_s": 14.9,
+      "stddev_first_cast_s": 18,
+      "avg_gap_s": 61,
+      "stddev_gap_s": 17.8,
+      "avg_bl_offset_s": 9.8,
+      "stddev_bl_offset_s": 13.6,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 1.005,
-        "stddev": 0.21,
+        "avg": 1.032,
+        "stddev": 0.186,
         "min": 0.753,
         "max": 1.253
       },
       "bl_pct": 60,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "5": {
+          "target_s": 285.3,
+          "stddev_s": 40.8,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Sacred Weapon": {
       "sample_count": 10,
-      "avg_first_cast_s": 22.6,
+      "avg_first_cast_s": 22.7,
       "stddev_first_cast_s": 29.1,
       "avg_gap_s": 64.4,
       "stddev_gap_s": 17.6,
-      "avg_bl_offset_s": 12.7,
-      "stddev_bl_offset_s": 12.8,
-      "avg_uses": 4,
-      "avg_uses_per_min": 0.77,
+      "avg_bl_offset_s": 13,
+      "stddev_bl_offset_s": 12.5,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.96,
-        "stddev": 0.168,
+        "avg": 0.987,
+        "stddev": 0.148,
         "min": 0.753,
         "max": 1.213
       },
@@ -167,8 +174,14 @@
       "majority_hold": true,
       "hold_targets": {
         "4": {
-          "target_s": 234.5,
-          "stddev_s": 58.4,
+          "target_s": 230,
+          "stddev_s": 59.4,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 288.6,
+          "stddev_s": 55,
           "count": 4,
           "total_samples": 10
         }
@@ -176,21 +189,21 @@
     },
     "Aura Mastery": {
       "sample_count": 10,
-      "avg_first_cast_s": 155.7,
-      "stddev_first_cast_s": 119.6,
+      "avg_first_cast_s": 177.5,
+      "stddev_first_cast_s": 114.8,
       "avg_gap_s": 182.4,
       "stddev_gap_s": 0.7,
-      "avg_bl_offset_s": 23,
-      "stddev_bl_offset_s": 0,
-      "avg_uses": 0.9,
-      "avg_uses_per_min": 0.18,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0.8,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.263,
-        "stddev": 0.115,
+        "avg": 0.276,
+        "stddev": 0.121,
         "min": 0.157,
         "max": 0.424
       },
-      "bl_pct": 10,
+      "bl_pct": 0,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -242,7 +255,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank; spell_id is the Holy Armaments Holy Bulwark cast and may need verification."
+      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank."
     },
     {
       "name": "Sacred Weapon",
@@ -250,7 +263,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer; spell_id is the Holy Armaments Sacred Weapon cast and may need verification."
+      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer."
     },
     {
       "name": "Aura Mastery",
@@ -388,6 +401,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "3512dc94f9463f9f",
-  "ingest_version": 0
+  "source_signature": "c4c41a42ecbd678b",
+  "ingest_version": 1
 }

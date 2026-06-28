@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Guardian Spirit": {
       "sample_count": 9,
-      "avg_first_cast_s": 338.6,
-      "stddev_first_cast_s": 58.4,
+      "avg_first_cast_s": 322.6,
+      "stddev_first_cast_s": 59,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -23,14 +23,14 @@
     },
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 127.6,
+      "avg_first_cast_s": 126.4,
       "stddev_first_cast_s": 56,
-      "avg_gap_s": 122.2,
-      "stddev_gap_s": 41.7,
+      "avg_gap_s": 123.1,
+      "stddev_gap_s": 41.6,
       "hold_targets": {
         "1": {
-          "target_s": 254.3,
-          "stddev_s": 59.2,
+          "target_s": 254.7,
+          "stddev_s": 58.7,
           "count": 5,
           "total_samples": 10
         },
@@ -44,7 +44,7 @@
       "avg_uses": 3,
       "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.433,
+        "avg": 0.434,
         "stddev": 0.112,
         "min": 0.28,
         "max": 0.639
@@ -53,32 +53,32 @@
     },
     "Fade": {
       "sample_count": 10,
-      "avg_first_cast_s": 115.9,
-      "stddev_first_cast_s": 61.1,
-      "avg_gap_s": 51.9,
-      "stddev_gap_s": 34.7,
+      "avg_first_cast_s": 112.5,
+      "stddev_first_cast_s": 61,
+      "avg_gap_s": 53.4,
+      "stddev_gap_s": 36,
       "hold_targets": {
         "1": {
-          "target_s": 240.8,
-          "stddev_s": 71.1,
-          "count": 8,
+          "target_s": 253.5,
+          "stddev_s": 76.6,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 303.1,
-          "stddev_s": 97.9,
-          "count": 4,
+          "target_s": 254.6,
+          "stddev_s": 87.5,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 280,
-          "stddev_s": 56.5,
-          "count": 4,
+          "target_s": 295.6,
+          "stddev_s": 55.1,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
           "target_s": 302.4,
-          "stddev_s": 73.8,
+          "stddev_s": 82.6,
           "count": 5,
           "total_samples": 10
         }
@@ -86,7 +86,7 @@
       "avg_uses": 6.1,
       "avg_uses_per_min": 0.88,
       "uses_per_min": {
-        "avg": 0.877,
+        "avg": 0.878,
         "stddev": 0.456,
         "min": 0.297,
         "max": 1.783
@@ -96,9 +96,42 @@
   },
   "defensive_windows": [
     {
+      "time_s": 85.3,
+      "dmg_avg": 393934,
+      "dmg_stddev": 386394,
+      "dmg_min": 87466,
+      "dmg_max": 943429,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222088,
+          "avg_damage": 255746,
+          "min_damage": 123474,
+          "max_damage": 388017,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 109703,
+          "min_damage": 87466,
+          "max_damage": 128972,
+          "count": 4
+        }
+      ]
+    },
+    {
       "time_s": 118.7,
-      "dmg_avg": 637782,
-      "dmg_stddev": 200258,
+      "dmg_avg": 648172,
+      "dmg_stddev": 198387,
       "dmg_min": 320763,
       "dmg_max": 964562,
       "window_length_s": 10,
@@ -114,14 +147,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 469819,
+          "avg_damage": 506841,
           "min_damage": 39388,
           "max_damage": 820532,
           "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 127605,
+          "avg_damage": 129128,
           "min_damage": 100966,
           "max_damage": 144038,
           "count": 10
@@ -129,9 +162,9 @@
       ]
     },
     {
-      "time_s": 125.3,
-      "dmg_avg": 783063,
-      "dmg_stddev": 271539,
+      "time_s": 122.3,
+      "dmg_avg": 796050,
+      "dmg_stddev": 261578,
       "dmg_min": 330318,
       "dmg_max": 1189654,
       "window_length_s": 12.5,
@@ -147,21 +180,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 482364,
+          "avg_damage": 529964,
           "min_damage": 39388,
           "max_damage": 710066,
           "count": 7
         },
         {
-          "spell_id": 1221965,
-          "avg_damage": 254056,
-          "min_damage": 210068,
-          "max_damage": 305597,
-          "count": 4
-        },
-        {
           "spell_id": 1222284,
-          "avg_damage": 172939,
+          "avg_damage": 174843,
           "min_damage": 116454,
           "max_damage": 325194,
           "count": 8
@@ -202,10 +228,10 @@
       ]
     },
     {
-      "time_s": 218.7,
-      "dmg_avg": 466912,
-      "dmg_stddev": 219642,
-      "dmg_min": 247411,
+      "time_s": 218.5,
+      "dmg_avg": 510812,
+      "dmg_stddev": 214124,
+      "dmg_min": 353455,
       "dmg_max": 868637,
       "window_length_s": 10,
       "defensive_name": "Fade",
@@ -220,10 +246,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 222296,
+          "avg_damage": 217273,
           "min_damage": 156106,
           "max_damage": 288344,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1,
@@ -235,10 +261,10 @@
       ]
     },
     {
-      "time_s": 254,
-      "dmg_avg": 732095,
-      "dmg_stddev": 205958,
-      "dmg_min": 327599,
+      "time_s": 254.2,
+      "dmg_avg": 815416,
+      "dmg_stddev": 169293,
+      "dmg_min": 539435,
       "dmg_max": 1014911,
       "window_length_s": 10,
       "defensive_name": "Fade",
@@ -253,24 +279,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 463602,
-          "min_damage": 88704,
-          "max_damage": 719662,
-          "count": 9
+          "avg_damage": 547019,
+          "min_damage": 116341,
+          "max_damage": 725192,
+          "count": 8
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 259996,
+          "avg_damage": 267562,
           "min_damage": 227757,
           "max_damage": 295249,
-          "count": 10
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 254,
-      "dmg_avg": 798943,
-      "dmg_stddev": 186572,
+      "time_s": 254.5,
+      "dmg_avg": 848072,
+      "dmg_stddev": 198944,
       "dmg_min": 539435,
       "dmg_max": 1082472,
       "window_length_s": 10,
@@ -286,14 +312,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 466707,
+          "avg_damage": 507011,
           "min_damage": 116341,
           "max_damage": 784513,
           "count": 6
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 258031,
+          "avg_damage": 265862,
           "min_damage": 227757,
           "max_damage": 297959,
           "count": 6
@@ -367,9 +393,9 @@
       ]
     },
     {
-      "time_s": 344.3,
-      "dmg_avg": 482569,
-      "dmg_stddev": 154592,
+      "time_s": 342.7,
+      "dmg_avg": 477896,
+      "dmg_stddev": 158611,
       "dmg_min": 312173,
       "dmg_max": 700462,
       "window_length_s": 10,
@@ -385,26 +411,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 364290,
+          "avg_damage": 366537,
           "min_damage": 312173,
           "max_damage": 439582,
           "count": 8
         },
         {
           "spell_id": 1222278,
-          "avg_damage": 189246,
-          "min_damage": 55361,
+          "avg_damage": 222717,
+          "min_damage": 193016,
           "max_damage": 260880,
-          "count": 5
+          "count": 4
         }
       ]
     },
     {
       "time_s": 352.1,
-      "dmg_avg": 650332,
-      "dmg_stddev": 151904,
-      "dmg_min": 442597,
-      "dmg_max": 841476,
+      "dmg_avg": 730780,
+      "dmg_stddev": 116854,
+      "dmg_min": 564537,
+      "dmg_max": 844839,
       "window_length_s": 12,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -418,15 +444,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 496237,
-          "min_damage": 325725,
+          "avg_damage": 498317,
+          "min_damage": 336127,
           "max_damage": 841476,
           "count": 5
         },
         {
           "spell_id": 1222278,
-          "avg_damage": 189865,
-          "min_damage": 116872,
+          "avg_damage": 223649,
+          "min_damage": 159153,
           "max_damage": 264503,
           "count": 4
         }
@@ -434,8 +460,8 @@
     },
     {
       "time_s": 389,
-      "dmg_avg": 777230,
-      "dmg_stddev": 240091,
+      "dmg_avg": 764433,
+      "dmg_stddev": 227842,
       "dmg_min": 384131,
       "dmg_max": 1106880,
       "window_length_s": 10,
@@ -451,17 +477,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 452999,
+          "avg_damage": 437338,
           "min_damage": 70152,
           "max_damage": 676485,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 356957,
+          "avg_damage": 354220,
           "min_damage": 298582,
           "max_damage": 430395,
-          "count": 8
+          "count": 9
         }
       ]
     },
@@ -552,8 +578,8 @@
   },
   "ability_icons": {
     "1": {
-      "icon": "inv_axe_02",
-      "name": "Melee"
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
     },
     "586": {
       "icon": "spell_magic_lesserinvisibilty",
@@ -571,9 +597,9 @@
       "icon": "inv_misc_herb_plaguebloom",
       "name": "Fungal Bloom"
     },
-    "1221965": {
-      "icon": "inv_misc_starspecklemushroom",
-      "name": "Bursting Shroom"
+    "1222088": {
+      "icon": "ability_creature_poison_04",
+      "name": "Festering Vines"
     },
     "1222278": {
       "icon": "inv_misc_herb_zoanthid",
@@ -584,6 +610,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "213ecfb586b5183b",
-  "ingest_version": 0
+  "source_signature": "13b7bde2b5f3eb56",
+  "ingest_version": 1
 }

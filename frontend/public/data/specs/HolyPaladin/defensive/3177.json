@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Lay on Hands": {
-      "sample_count": 6,
-      "avg_first_cast_s": 146.9,
-      "stddev_first_cast_s": 63.6,
+      "sample_count": 5,
+      "avg_first_cast_s": 152.9,
+      "stddev_first_cast_s": 69.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.25,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.249,
-        "stddev": 0.048,
+        "avg": 0.239,
+        "stddev": 0.047,
         "min": 0.19,
         "max": 0.3
       },
@@ -23,23 +23,23 @@
     },
     "Divine Protection": {
       "sample_count": 9,
-      "avg_first_cast_s": 86.7,
-      "stddev_first_cast_s": 47.1,
-      "avg_gap_s": 115.5,
-      "stddev_gap_s": 10.4,
+      "avg_first_cast_s": 101.6,
+      "stddev_first_cast_s": 54.1,
+      "avg_gap_s": 105.3,
+      "stddev_gap_s": 26,
       "hold_targets": {
         "1": {
-          "target_s": 184.4,
-          "stddev_s": 13.4,
-          "count": 7,
+          "target_s": 189.4,
+          "stddev_s": 12.7,
+          "count": 6,
           "total_samples": 9
         }
       },
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.45,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.454,
-        "stddev": 0.129,
+        "avg": 0.43,
+        "stddev": 0.12,
         "min": 0.244,
         "max": 0.6
       },
@@ -82,39 +82,6 @@
   },
   "defensive_windows": [
     {
-      "time_s": 59.6,
-      "dmg_avg": 284672,
-      "dmg_stddev": 125086,
-      "dmg_min": 129236,
-      "dmg_max": 435451,
-      "window_length_s": 8,
-      "defensive_name": "Divine Protection",
-      "spell_id": 498,
-      "common_defensives": [
-        "Divine Protection"
-      ],
-      "common_cds": [
-        "Divine Protection"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1275558,
-          "avg_damage": 289148,
-          "min_damage": 246725,
-          "max_damage": 371187,
-          "count": 3
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 41000,
-          "min_damage": 36135,
-          "max_damage": 43690,
-          "count": 4
-        }
-      ]
-    },
-    {
       "time_s": 86,
       "dmg_avg": 380019,
       "dmg_stddev": 195495,
@@ -156,9 +123,9 @@
     },
     {
       "time_s": 183.8,
-      "dmg_avg": 306494,
-      "dmg_stddev": 127520,
-      "dmg_min": 151531,
+      "dmg_avg": 359801,
+      "dmg_stddev": 99085,
+      "dmg_min": 200133,
       "dmg_max": 453934,
       "window_length_s": 8,
       "defensive_name": "Divine Protection",
@@ -173,16 +140,16 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 239013,
-          "min_damage": 64458,
-          "max_damage": 334724,
+          "avg_damage": 307183,
+          "min_damage": 250267,
+          "max_damage": 337141,
           "count": 4
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 83705,
+          "avg_damage": 82474,
           "min_damage": 76254,
-          "max_damage": 87073,
+          "max_damage": 85820,
           "count": 5
         }
       ]
@@ -301,6 +268,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "952f3642eddccfdc",
-  "ingest_version": 0
+  "source_signature": "42bddfaba5e754cd",
+  "ingest_version": 1
 }

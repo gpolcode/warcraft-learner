@@ -3,45 +3,45 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 497.7,
-  "downtime_threshold_ms": 1354,
-  "top_avg_efficiency": 71.2,
-  "top_efficiency_stddev": 11.2,
+  "avg_duration_s": 500.5,
+  "downtime_threshold_ms": 1350,
+  "top_avg_efficiency": 71.3,
+  "top_efficiency_stddev": 12,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 5,
-      "stddev_first_cast_s": 0.4,
-      "avg_gap_s": 134.8,
-      "stddev_gap_s": 21.6,
-      "avg_bl_offset_s": 5.8,
-      "stddev_bl_offset_s": 22.5,
-      "avg_uses": 3.7,
+      "avg_first_cast_s": 5.2,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 132.1,
+      "stddev_gap_s": 20.5,
+      "avg_bl_offset_s": 8.8,
+      "stddev_bl_offset_s": 25.2,
+      "avg_uses": 3.8,
       "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.495,
-        "stddev": 0.043,
+        "avg": 0.505,
+        "stddev": 0.053,
         "min": 0.444,
         "max": 0.594
       },
-      "bl_pct": 50,
+      "bl_pct": 40,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 170.2,
-          "stddev_s": 27.1,
+          "target_s": 165.6,
+          "stddev_s": 34.3,
           "count": 4,
           "total_samples": 10
         },
         "3": {
-          "target_s": 283.5,
-          "stddev_s": 34.2,
+          "target_s": 262.2,
+          "stddev_s": 34.9,
           "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 436.4,
-          "stddev_s": 35.2,
+          "target_s": 409,
+          "stddev_s": 36.6,
           "count": 7,
           "total_samples": 10
         }
@@ -69,19 +69,19 @@
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 22.9,
-      "stddev_first_cast_s": 8.6,
-      "avg_gap_s": 35.8,
-      "stddev_gap_s": 6.2,
-      "avg_bl_offset_s": -3.4,
-      "stddev_bl_offset_s": 7.3,
-      "avg_uses": 12.5,
+      "avg_first_cast_s": 23.2,
+      "stddev_first_cast_s": 8.3,
+      "avg_gap_s": 35.6,
+      "stddev_gap_s": 6.3,
+      "avg_bl_offset_s": -0.4,
+      "stddev_bl_offset_s": 10.1,
+      "avg_uses": 12.6,
       "avg_uses_per_min": 1.51,
       "uses_per_min": {
-        "avg": 1.674,
-        "stddev": 0.116,
+        "avg": 1.676,
+        "stddev": 0.104,
         "min": 1.443,
-        "max": 1.81
+        "max": 1.786
       },
       "bl_pct": 90,
       "majority_hold": false,
@@ -109,19 +109,19 @@
     },
     "Holy Shock": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.8,
-      "stddev_first_cast_s": 16,
-      "avg_gap_s": 4.7,
-      "stddev_gap_s": 3.8,
-      "avg_bl_offset_s": 0.4,
+      "avg_first_cast_s": 7.2,
+      "stddev_first_cast_s": 15.9,
+      "avg_gap_s": 4.8,
+      "stddev_gap_s": 3.9,
+      "avg_bl_offset_s": -0.3,
       "stddev_bl_offset_s": 4,
       "avg_uses": 104,
-      "avg_uses_per_min": 12.53,
+      "avg_uses_per_min": 12.45,
       "uses_per_min": {
-        "avg": 12.528,
-        "stddev": 2.448,
+        "avg": 12.45,
+        "stddev": 2.505,
         "min": 5.694,
-        "max": 13.792
+        "max": 14.701
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -169,8 +169,8 @@
     },
     "Aura Mastery": {
       "sample_count": 10,
-      "avg_first_cast_s": 205.3,
-      "stddev_first_cast_s": 189.7,
+      "avg_first_cast_s": 211.5,
+      "stddev_first_cast_s": 198.2,
       "avg_gap_s": 329.5,
       "stddev_gap_s": 95.1,
       "avg_bl_offset_s": null,
@@ -242,7 +242,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank; spell_id is the Holy Armaments Holy Bulwark cast and may need verification."
+      "usage_rule": "As Lightsmith, press it on cooldown when you have 3 Holy Power (or 2 or fewer to avoid overcapping), prioritizing squishy targets or yourself so Solidarity's extra Bulwark lands on a tank."
     },
     {
       "name": "Sacred Weapon",
@@ -250,7 +250,7 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer; spell_id is the Holy Armaments Sacred Weapon cast and may need verification."
+      "usage_rule": "As Lightsmith, cast it on yourself on cooldown when you need 3 Holy Power so the extra weapon goes to another healer."
     },
     {
       "name": "Aura Mastery",
@@ -388,6 +388,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "c1ad73337175c3c7",
-  "ingest_version": 0
+  "source_signature": "dbb486d43a68ed41",
+  "ingest_version": 1
 }
