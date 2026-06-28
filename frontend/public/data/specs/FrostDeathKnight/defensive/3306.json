@@ -6,35 +6,69 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 8,
-      "avg_first_cast_s": 65,
-      "stddev_first_cast_s": 20.1,
-      "avg_gap_s": 65.3,
-      "stddev_gap_s": 8.6,
+      "avg_first_cast_s": 60.4,
+      "stddev_first_cast_s": 21.4,
+      "avg_gap_s": 61.2,
+      "stddev_gap_s": 9.9,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.691,
-        "stddev": 0.219,
+        "avg": 0.791,
+        "stddev": 0.26,
         "min": 0.419,
-        "max": 0.927
+        "max": 1.228
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 3,
+      "avg_first_cast_s": 94.1,
+      "stddev_first_cast_s": 39.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.412,
+        "stddev": 0.004,
+        "min": 0.409,
+        "max": 0.417
       },
       "majority_hold": false
     },
     "Lichborne": {
-      "sample_count": 1,
-      "avg_first_cast_s": 1.3,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 49.8,
+      "stddev_first_cast_s": 68.6,
       "avg_gap_s": 92.1,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.83,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.62,
       "uses_per_min": {
-        "avg": 0.829,
-        "stddev": 0,
-        "min": 0.829,
+        "avg": 0.619,
+        "stddev": 0.297,
+        "min": 0.409,
         "max": 0.829
+      },
+      "majority_hold": false
+    },
+    "Death Strike": {
+      "sample_count": 1,
+      "avg_first_cast_s": 95,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.409,
+        "stddev": 0,
+        "min": 0.409,
+        "max": 0.409
       },
       "majority_hold": false
     },
@@ -54,31 +88,14 @@
         "max": 0.411
       },
       "majority_hold": false
-    },
-    "Icebound Fortitude": {
-      "sample_count": 2,
-      "avg_first_cast_s": 103.6,
-      "stddev_first_cast_s": 50.2,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.41,
-      "uses_per_min": {
-        "avg": 0.414,
-        "stddev": 0.004,
-        "min": 0.411,
-        "max": 0.417
-      },
-      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
       "time_s": 71.9,
-      "dmg_avg": 417456,
-      "dmg_stddev": 149870,
-      "dmg_min": 101783,
+      "dmg_avg": 425076,
+      "dmg_stddev": 131359,
+      "dmg_min": 155120,
       "dmg_max": 583199,
       "window_length_s": 5.9,
       "defensive_name": "Anti-Magic Shell",
@@ -93,10 +110,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 376843,
-          "min_damage": 101783,
+          "avg_damage": 422686,
+          "min_damage": 353848,
           "max_damage": 528330,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1246653,
@@ -108,12 +125,12 @@
       ]
     },
     {
-      "time_s": 138.3,
-      "dmg_avg": 275620,
-      "dmg_stddev": 98276,
+      "time_s": 139.7,
+      "dmg_avg": 292872,
+      "dmg_stddev": 97531,
       "dmg_min": 137717,
       "dmg_max": 396598,
-      "window_length_s": 5.2,
+      "window_length_s": 4.9,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -126,10 +143,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 231519,
+          "avg_damage": 240215,
           "min_damage": 137717,
           "max_damage": 292853,
-          "count": 4
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 100566,
+          "min_damage": 93822,
+          "max_damage": 104130,
+          "count": 3
         }
       ]
     }
@@ -137,9 +161,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 1.6,
+      "avg_uses": 1.9,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     },
     {
       "spell_id": 48792,
@@ -149,9 +173,15 @@
     },
     {
       "spell_id": 49039,
-      "avg_uses": 2,
-      "min_uses": 2,
+      "avg_uses": 1.5,
+      "min_uses": 1,
       "max_uses": 2
+    },
+    {
+      "spell_id": 49998,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     },
     {
       "spell_id": 51052,
@@ -239,5 +269,5 @@
       "name": "Consume"
     }
   },
-  "source_signature": "bd585b5db7482944"
+  "source_signature": "bda2e27143ee81f4"
 }

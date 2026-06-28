@@ -6,20 +6,20 @@
   "per_defensive_benchmarks": {
     "Ice Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 84.2,
-      "stddev_first_cast_s": 36.5,
-      "avg_gap_s": 44.3,
-      "stddev_gap_s": 35.4,
+      "avg_first_cast_s": 84.1,
+      "stddev_first_cast_s": 36.4,
+      "avg_gap_s": 43.9,
+      "stddev_gap_s": 35.6,
       "hold_targets": {
         "1": {
-          "target_s": 176.6,
-          "stddev_s": 70.8,
+          "target_s": 179.5,
+          "stddev_s": 71.6,
           "count": 4,
           "total_samples": 10
         },
         "2": {
           "target_s": 196.9,
-          "stddev_s": 60.6,
+          "stddev_s": 56.2,
           "count": 4,
           "total_samples": 10
         }
@@ -27,7 +27,7 @@
       "avg_uses": 3.6,
       "avg_uses_per_min": 0.72,
       "uses_per_min": {
-        "avg": 0.722,
+        "avg": 0.721,
         "stddev": 0.654,
         "min": 0.183,
         "max": 2.064
@@ -102,11 +102,11 @@
   "defensive_windows": [
     {
       "time_s": 100.9,
-      "dmg_avg": 319038,
-      "dmg_stddev": 112754,
+      "dmg_avg": 317855,
+      "dmg_stddev": 113239,
       "dmg_min": 201030,
       "dmg_max": 538327,
-      "window_length_s": 8.4,
+      "window_length_s": 8.9,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -119,14 +119,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1241333,
-          "avg_damage": 208457,
+          "avg_damage": 203149,
           "min_damage": 133182,
           "max_damage": 274879,
           "count": 7
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 83513,
+          "avg_damage": 86975,
           "min_damage": 26473,
           "max_damage": 245431,
           "count": 8
@@ -201,11 +201,11 @@
     },
     {
       "time_s": 258.9,
-      "dmg_avg": 305336,
-      "dmg_stddev": 58660,
-      "dmg_min": 250665,
+      "dmg_avg": 325586,
+      "dmg_stddev": 52188,
+      "dmg_min": 259476,
       "dmg_max": 383357,
-      "window_length_s": 6.6,
+      "window_length_s": 6.3,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -218,7 +218,7 @@
       "ability_breakdown": [
         {
           "spell_id": 1264650,
-          "avg_damage": 79374,
+          "avg_damage": 74547,
           "min_damage": 30799,
           "max_damage": 219046,
           "count": 5
@@ -306,6 +306,10 @@
       "icon": "spell_ice_lament",
       "name": "Ice Barrier"
     },
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
     "55342": {
       "icon": "spell_magic_lesserinvisibilty",
       "name": "Mirror Image"
@@ -335,5 +339,5 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "89ac4f8a52c0c43f"
+  "source_signature": "051dd1c4893eca11"
 }

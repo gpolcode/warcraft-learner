@@ -23,16 +23,16 @@
     },
     "Ice Cold": {
       "sample_count": 8,
-      "avg_first_cast_s": 72.7,
-      "stddev_first_cast_s": 32.4,
-      "avg_gap_s": 51.5,
-      "stddev_gap_s": 27.7,
+      "avg_first_cast_s": 69.1,
+      "stddev_first_cast_s": 34.1,
+      "avg_gap_s": 47.3,
+      "stddev_gap_s": 25.8,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.63,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.626,
-        "stddev": 0.221,
+        "avg": 0.678,
+        "stddev": 0.218,
         "min": 0.408,
         "max": 0.864
       },
@@ -56,24 +56,17 @@
       "majority_hold": false
     },
     "Alter Time": {
-      "sample_count": 5,
-      "avg_first_cast_s": 30.2,
-      "stddev_first_cast_s": 34,
+      "sample_count": 6,
+      "avg_first_cast_s": 36.6,
+      "stddev_first_cast_s": 34.2,
       "avg_gap_s": 95.2,
       "stddev_gap_s": 35.8,
-      "hold_targets": {
-        "1": {
-          "target_s": 130.9,
-          "stddev_s": 12,
-          "count": 2,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.67,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.669,
-        "stddev": 0.221,
+        "avg": 0.628,
+        "stddev": 0.222,
         "min": 0.421,
         "max": 0.838
       },
@@ -81,6 +74,46 @@
     }
   },
   "defensive_windows": [
+    {
+      "time_s": 42.4,
+      "dmg_avg": 56605,
+      "dmg_stddev": 34713,
+      "dmg_min": 16966,
+      "dmg_max": 90849,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 36982,
+          "min_damage": 16966,
+          "max_damage": 50707,
+          "count": 4
+        },
+        {
+          "spell_id": 1275637,
+          "avg_damage": 20423,
+          "min_damage": 20363,
+          "max_damage": 20483,
+          "count": 2
+        },
+        {
+          "spell_id": 1264782,
+          "avg_damage": 18823,
+          "min_damage": 17987,
+          "max_damage": 19659,
+          "count": 2
+        }
+      ]
+    },
     {
       "time_s": 55.1,
       "dmg_avg": 292988,
@@ -109,8 +142,8 @@
     },
     {
       "time_s": 74.3,
-      "dmg_avg": 96435,
-      "dmg_stddev": 27523,
+      "dmg_avg": 94427,
+      "dmg_stddev": 24851,
       "dmg_min": 72786,
       "dmg_max": 131220,
       "window_length_s": 6,
@@ -126,7 +159,7 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 91851,
+          "avg_damage": 90890,
           "min_damage": 72786,
           "max_damage": 124269,
           "count": 5
@@ -176,13 +209,13 @@
     },
     {
       "spell_id": 414658,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 342245,
-      "avg_uses": 1.6,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -247,6 +280,10 @@
       "icon": "spell_ice_lament",
       "name": "Ice Barrier"
     },
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
     "55342": {
       "icon": "spell_magic_lesserinvisibilty",
       "name": "Mirror Image"
@@ -267,10 +304,18 @@
       "icon": "inv_azeritefireball",
       "name": "Rift Emergence"
     },
+    "1264782": {
+      "icon": "sha_spell_warlock_demonsoul",
+      "name": "Rift Madness"
+    },
     "1273112": {
       "icon": "spell_deathknight_gnaw_ghoul",
       "name": "Consume"
+    },
+    "1275637": {
+      "icon": "sha_spell_warlock_demonsoul",
+      "name": "Rift Madness"
     }
   },
-  "source_signature": "d552386afb769317"
+  "source_signature": "e216d0ac3bdfc64d"
 }

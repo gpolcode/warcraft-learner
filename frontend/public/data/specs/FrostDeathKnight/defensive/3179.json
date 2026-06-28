@@ -6,27 +6,44 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 7,
-      "avg_first_cast_s": 95.9,
-      "stddev_first_cast_s": 43.3,
-      "avg_gap_s": 80.8,
-      "stddev_gap_s": 19.9,
+      "avg_first_cast_s": 90.8,
+      "stddev_first_cast_s": 47.3,
+      "avg_gap_s": 80.6,
+      "stddev_gap_s": 26.3,
       "hold_targets": {
         "1": {
-          "target_s": 196,
-          "stddev_s": 10.6,
-          "count": 4,
+          "target_s": 195.8,
+          "stddev_s": 14.9,
+          "count": 5,
           "total_samples": 7
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.55,
-        "stddev": 0.166,
-        "min": 0.305,
+        "avg": 0.629,
+        "stddev": 0.16,
+        "min": 0.488,
         "max": 0.86
       },
       "majority_hold": true
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 2,
+      "avg_first_cast_s": 194.9,
+      "stddev_first_cast_s": 37.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.235,
+        "stddev": 0.07,
+        "min": 0.185,
+        "max": 0.284
+      },
+      "majority_hold": false
     },
     "Icebound Fortitude": {
       "sample_count": 2,
@@ -44,33 +61,16 @@
         "max": 0.266
       },
       "majority_hold": false
-    },
-    "Anti-Magic Zone": {
-      "sample_count": 1,
-      "avg_first_cast_s": 221.5,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.19,
-      "uses_per_min": {
-        "avg": 0.185,
-        "stddev": 0,
-        "min": 0.185,
-        "max": 0.185
-      },
-      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 92.2,
-      "dmg_avg": 414737,
-      "dmg_stddev": 76959,
-      "dmg_min": 302380,
+      "time_s": 93,
+      "dmg_avg": 437208,
+      "dmg_stddev": 60134,
+      "dmg_min": 357949,
       "dmg_max": 513308,
-      "window_length_s": 5.8,
+      "window_length_s": 5.6,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -83,17 +83,90 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 203554,
+          "avg_damage": 217999,
           "min_damage": 60939,
           "max_damage": 427405,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 117000,
+          "avg_damage": 103798,
           "min_damage": 85903,
-          "max_damage": 156606,
+          "max_damage": 131180,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 169.2,
+      "dmg_avg": 248497,
+      "dmg_stddev": 177926,
+      "dmg_min": 10873,
+      "dmg_max": 398688,
+      "window_length_s": 5.1,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 245839,
+          "min_damage": 147822,
+          "max_damage": 306684,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 81866,
+          "min_damage": 66519,
+          "max_damage": 92004,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 196.6,
+      "dmg_avg": 317104,
+      "dmg_stddev": 117931,
+      "dmg_min": 150556,
+      "dmg_max": 402709,
+      "window_length_s": 6.1,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 147941,
+          "min_damage": 65446,
+          "max_damage": 306685,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 133307,
+          "min_damage": 92004,
+          "max_damage": 150556,
           "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 113063,
+          "min_damage": 28976,
+          "max_damage": 197149,
+          "count": 2
         }
       ]
     }
@@ -101,8 +174,8 @@
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 2,
-      "min_uses": 1,
+      "avg_uses": 2.3,
+      "min_uses": 2,
       "max_uses": 3
     },
     {
@@ -192,10 +265,14 @@
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
     },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
+    },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "f223de155eae638b"
+  "source_signature": "853a3cd974f713f3"
 }

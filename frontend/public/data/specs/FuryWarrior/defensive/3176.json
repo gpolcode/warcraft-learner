@@ -6,42 +6,42 @@
   "per_defensive_benchmarks": {
     "Spell Reflection": {
       "sample_count": 9,
-      "avg_first_cast_s": 93.7,
-      "stddev_first_cast_s": 64.7,
-      "avg_gap_s": 74.5,
-      "stddev_gap_s": 43.3,
+      "avg_first_cast_s": 79.7,
+      "stddev_first_cast_s": 55.2,
+      "avg_gap_s": 79.2,
+      "stddev_gap_s": 43.9,
       "hold_targets": {
         "1": {
-          "target_s": 143.2,
-          "stddev_s": 81.6,
-          "count": 6,
+          "target_s": 168.2,
+          "stddev_s": 73.2,
+          "count": 7,
           "total_samples": 9
         }
       },
       "avg_uses": 2.1,
-      "avg_uses_per_min": 0.56,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.56,
-        "stddev": 0.303,
+        "avg": 0.567,
+        "stddev": 0.264,
         "min": 0.206,
         "max": 1.149
       },
       "majority_hold": true
     },
     "Enraged Regeneration": {
-      "sample_count": 1,
-      "avg_first_cast_s": 179,
-      "stddev_first_cast_s": 0,
+      "sample_count": 3,
+      "avg_first_cast_s": 178.4,
+      "stddev_first_cast_s": 5.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.206,
-        "stddev": 0,
+        "avg": 0.27,
+        "stddev": 0.055,
         "min": 0.206,
-        "max": 0.206
+        "max": 0.304
       },
       "majority_hold": false
     },
@@ -65,9 +65,35 @@
   },
   "defensive_windows": [
     {
-      "time_s": 116.9,
-      "dmg_avg": 130065,
-      "dmg_stddev": 50518,
+      "time_s": 71,
+      "dmg_avg": 183219,
+      "dmg_stddev": 116490,
+      "dmg_min": 91685,
+      "dmg_max": 338558,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 98088,
+          "min_damage": 91685,
+          "max_damage": 106140,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 119.7,
+      "dmg_avg": 139586,
+      "dmg_stddev": 45426,
       "dmg_min": 93111,
       "dmg_max": 201932,
       "window_length_s": 5,
@@ -83,25 +109,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 94839,
+          "avg_damage": 95357,
           "min_damage": 93111,
-          "max_damage": 96540,
+          "max_damage": 98612,
           "count": 4
         },
         {
           "spell_id": 1249262,
-          "avg_damage": 70453,
+          "avg_damage": 58972,
           "min_damage": 34523,
           "max_damage": 106382,
-          "count": 2
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 180.8,
-      "dmg_avg": 184003,
-      "dmg_stddev": 126145,
-      "dmg_min": 93486,
+      "time_s": 179,
+      "dmg_avg": 179830,
+      "dmg_stddev": 142286,
+      "dmg_min": 86519,
       "dmg_max": 419475,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
@@ -116,10 +142,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 94426,
+          "avg_damage": 91423,
           "min_damage": 76124,
           "max_damage": 104016,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -197,5 +223,5 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "a5587dd4805c19e3"
+  "source_signature": "bb225b618b0bf664"
 }

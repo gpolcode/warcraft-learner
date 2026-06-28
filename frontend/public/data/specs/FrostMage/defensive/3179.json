@@ -2,104 +2,98 @@
   "spec": "FrostMage",
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
-  "sample_count": 9,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Ice Cold": {
-      "sample_count": 7,
-      "avg_first_cast_s": 184,
-      "stddev_first_cast_s": 80.2,
-      "avg_gap_s": 88.6,
-      "stddev_gap_s": 53.2,
+    "Ice Barrier": {
+      "sample_count": 6,
+      "avg_first_cast_s": 160.2,
+      "stddev_first_cast_s": 70.3,
+      "avg_gap_s": 75.6,
+      "stddev_gap_s": 55.6,
       "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.31,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.314,
-        "stddev": 0.093,
+        "avg": 0.367,
+        "stddev": 0.204,
+        "min": 0.198,
+        "max": 0.762
+      },
+      "majority_hold": false
+    },
+    "Ice Cold": {
+      "sample_count": 6,
+      "avg_first_cast_s": 190.9,
+      "stddev_first_cast_s": 85.9,
+      "avg_gap_s": 78.9,
+      "stddev_gap_s": 46.5,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.362,
+        "stddev": 0.197,
         "min": 0.175,
-        "max": 0.484
+        "max": 0.691
       },
       "majority_hold": false
     },
     "Alter Time": {
-      "sample_count": 4,
-      "avg_first_cast_s": 101.6,
-      "stddev_first_cast_s": 49.6,
-      "avg_gap_s": 122.6,
-      "stddev_gap_s": 31.4,
+      "sample_count": 2,
+      "avg_first_cast_s": 93.4,
+      "stddev_first_cast_s": 84.4,
+      "avg_gap_s": 123.5,
+      "stddev_gap_s": 44.3,
       "hold_targets": {
         "1": {
-          "target_s": 231.7,
-          "stddev_s": 104,
-          "count": 3,
-          "total_samples": 4
-        },
-        "2": {
-          "target_s": 294.3,
-          "stddev_s": 85.2,
+          "target_s": 219.4,
+          "stddev_s": 146.7,
           "count": 2,
-          "total_samples": 4
+          "total_samples": 2
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.413,
-        "stddev": 0.121,
-        "min": 0.276,
+        "avg": 0.436,
+        "stddev": 0.127,
+        "min": 0.346,
         "max": 0.525
       },
       "majority_hold": true
-    },
-    "Ice Barrier": {
-      "sample_count": 5,
-      "avg_first_cast_s": 142.1,
-      "stddev_first_cast_s": 75.2,
-      "avg_gap_s": 81.8,
-      "stddev_gap_s": 27.8,
-      "hold_targets": {
-        "1": {
-          "target_s": 181,
-          "stddev_s": 137.1,
-          "count": 2,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.38,
-      "uses_per_min": {
-        "avg": 0.375,
-        "stddev": 0.262,
-        "min": 0.168,
-        "max": 0.829
-      },
-      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 227.3,
-      "dmg_avg": 102508,
-      "dmg_stddev": 65294,
-      "dmg_min": 0,
-      "dmg_max": 182196,
-      "window_length_s": 6,
-      "defensive_name": "Ice Cold",
-      "spell_id": 414658,
+      "time_s": 214.5,
+      "dmg_avg": 272189,
+      "dmg_stddev": 30463,
+      "dmg_min": 236470,
+      "dmg_max": 324920,
+      "window_length_s": 4.5,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
       "common_defensives": [
-        "Ice Cold"
+        "Ice Barrier"
       ],
       "common_cds": [
-        "Ice Cold"
+        "Ice Barrier"
       ],
       "ref_game_id": 240432,
       "ability_breakdown": [
         {
-          "spell_id": 1254018,
-          "avg_damage": 110115,
-          "min_damage": 107479,
-          "max_damage": 113794,
-          "count": 3
+          "spell_id": 1285504,
+          "avg_damage": 95706,
+          "min_damage": 56163,
+          "max_damage": 147116,
+          "count": 5
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 84682,
+          "min_damage": 23598,
+          "max_damage": 177804,
+          "count": 4
         }
       ]
     }
@@ -107,20 +101,20 @@
   "top_defensives_summary": [
     {
       "spell_id": 11426,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 4
     },
     {
       "spell_id": 414658,
-      "avg_uses": 1.4,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 342245,
-      "avg_uses": 2.3,
-      "min_uses": 1,
+      "avg_uses": 2.5,
+      "min_uses": 2,
       "max_uses": 3
     }
   ],
@@ -178,6 +172,10 @@
       "icon": "spell_ice_lament",
       "name": "Ice Barrier"
     },
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
     "55342": {
       "icon": "spell_magic_lesserinvisibilty",
       "name": "Mirror Image"
@@ -190,10 +188,14 @@
       "icon": "spell_fire_bluefire",
       "name": "Ice Cold"
     },
-    "1254018": {
-      "icon": "inv_112_etherealwraps_empowered_blue",
-      "name": "Entropic Unraveling"
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
     }
   },
-  "source_signature": "f5ea918afaecd8f4"
+  "source_signature": "1a058404804bad49"
 }
