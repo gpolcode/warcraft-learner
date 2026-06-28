@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 173.5,
-      "stddev_first_cast_s": 132.8,
-      "avg_gap_s": 95.9,
-      "stddev_gap_s": 38.9,
+      "avg_first_cast_s": 173.7,
+      "stddev_first_cast_s": 133,
+      "avg_gap_s": 98,
+      "stddev_gap_s": 39.7,
       "hold_targets": {
         "2": {
           "target_s": 297.3,
@@ -24,35 +24,35 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.403,
-        "stddev": 0.228,
+        "avg": 0.414,
+        "stddev": 0.214,
         "min": 0.114,
         "max": 0.709
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
-      "sample_count": 9,
-      "avg_first_cast_s": 215,
-      "stddev_first_cast_s": 106.3,
-      "avg_gap_s": 129.4,
-      "stddev_gap_s": 65.7,
+      "sample_count": 10,
+      "avg_first_cast_s": 213.8,
+      "stddev_first_cast_s": 100.3,
+      "avg_gap_s": 130.2,
+      "stddev_gap_s": 62.7,
       "hold_targets": {
         "1": {
-          "target_s": 319.6,
-          "stddev_s": 57.9,
-          "count": 6,
-          "total_samples": 9
+          "target_s": 334.1,
+          "stddev_s": 52.8,
+          "count": 7,
+          "total_samples": 10
         }
       },
       "avg_uses": 2.2,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.255,
-        "stddev": 0.11,
+        "avg": 0.253,
+        "stddev": 0.104,
         "min": 0.112,
         "max": 0.461
       },
@@ -60,16 +60,23 @@
     },
     "Survival Instincts": {
       "sample_count": 6,
-      "avg_first_cast_s": 292.1,
-      "stddev_first_cast_s": 79.2,
-      "avg_gap_s": 268.4,
-      "stddev_gap_s": 15.2,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.16,
+      "avg_first_cast_s": 292.3,
+      "stddev_first_cast_s": 79,
+      "avg_gap_s": 265.2,
+      "stddev_gap_s": 12,
+      "hold_targets": {
+        "1": {
+          "target_s": 497.4,
+          "stddev_s": 11.5,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.156,
-        "stddev": 0.064,
+        "avg": 0.175,
+        "stddev": 0.067,
         "min": 0.11,
         "max": 0.24
       },
@@ -205,10 +212,10 @@
       ]
     },
     {
-      "time_s": 318.7,
-      "dmg_avg": 561524,
-      "dmg_stddev": 84223,
-      "dmg_min": 495436,
+      "time_s": 319.5,
+      "dmg_avg": 574394,
+      "dmg_stddev": 74080,
+      "dmg_min": 498463,
       "dmg_max": 674038,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -223,8 +230,8 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 222324,
-          "min_damage": 171338,
+          "avg_damage": 233279,
+          "min_damage": 215158,
           "max_damage": 248206,
           "count": 4
         },
@@ -251,14 +258,14 @@
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 28810,
-          "min_damage": 23859,
+          "avg_damage": 32867,
+          "min_damage": 31973,
           "max_damage": 33761,
           "count": 2
         },
         {
           "spell_id": 1282004,
-          "avg_damage": 1704,
+          "avg_damage": 1592,
           "min_damage": 480,
           "max_damage": 2643,
           "count": 4
@@ -266,12 +273,12 @@
       ]
     },
     {
-      "time_s": 332,
-      "dmg_avg": 234967,
-      "dmg_stddev": 169830,
+      "time_s": 334.1,
+      "dmg_avg": 209072,
+      "dmg_stddev": 158064,
       "dmg_min": 70479,
       "dmg_max": 399529,
-      "window_length_s": 2.2,
+      "window_length_s": 2.3,
       "defensive_name": "Frenzied Regeneration",
       "spell_id": 22842,
       "common_defensives": [
@@ -283,39 +290,18 @@
       "ref_game_id": 240391,
       "ability_breakdown": [
         {
-          "spell_id": 1281123,
-          "avg_damage": 186736,
-          "min_damage": 184868,
-          "max_damage": 188604,
-          "count": 2
-        },
-        {
-          "spell_id": 1281178,
-          "avg_damage": 149390,
-          "min_damage": 147895,
-          "max_damage": 150884,
-          "count": 2
-        },
-        {
           "spell_id": 1249797,
-          "avg_damage": 60905,
+          "avg_damage": 67504,
           "min_damage": 29117,
           "max_damage": 95625,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 11530,
+          "avg_damage": 11551,
           "min_damage": 11013,
           "max_damage": 12047,
-          "count": 2
-        },
-        {
-          "spell_id": 1282004,
-          "avg_damage": 470,
-          "min_damage": 309,
-          "max_damage": 630,
-          "count": 2
+          "count": 3
         }
       ]
     }
@@ -323,13 +309,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 22812,
-      "avg_uses": 3.5,
+      "avg_uses": 3.6,
       "min_uses": 1,
       "max_uses": 6
     },
@@ -442,5 +428,5 @@
       "name": "Overkill Current"
     }
   },
-  "source_signature": "fc4a6f0183ed3895"
+  "source_signature": "2a7400a0fba64b9e"
 }

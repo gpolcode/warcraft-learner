@@ -3,23 +3,23 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 447.7,
-  "downtime_threshold_ms": 1592,
+  "avg_duration_s": 448.2,
+  "downtime_threshold_ms": 1593,
   "top_avg_efficiency": 76.8,
-  "top_efficiency_stddev": 3.2,
+  "top_efficiency_stddev": 3.4,
   "per_cd_benchmarks": {
     "Berserk": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.2,
-      "stddev_first_cast_s": 37.8,
-      "avg_gap_s": 129.5,
-      "stddev_gap_s": 6,
-      "avg_bl_offset_s": 1.9,
-      "stddev_bl_offset_s": 1.1,
+      "avg_first_cast_s": 13.9,
+      "stddev_first_cast_s": 37.9,
+      "avg_gap_s": 129.6,
+      "stddev_gap_s": 6.2,
+      "avg_bl_offset_s": 1.6,
+      "stddev_bl_offset_s": 1.2,
       "avg_uses": 3.9,
       "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.527,
+        "avg": 0.526,
         "stddev": 0.069,
         "min": 0.361,
         "max": 0.598
@@ -51,62 +51,74 @@
     "Tiger's Fury": {
       "sample_count": 10,
       "avg_first_cast_s": 4.2,
-      "stddev_first_cast_s": 8.7,
-      "avg_gap_s": 32.4,
-      "stddev_gap_s": 4.3,
+      "stddev_first_cast_s": 8.8,
+      "avg_gap_s": 32.7,
+      "stddev_gap_s": 4.6,
       "avg_bl_offset_s": 3.6,
       "stddev_bl_offset_s": 8.5,
-      "avg_uses": 14,
-      "avg_uses_per_min": 1.88,
+      "avg_uses": 13.9,
+      "avg_uses_per_min": 1.86,
       "uses_per_min": {
-        "avg": 1.877,
-        "stddev": 0.056,
-        "min": 1.795,
+        "avg": 1.862,
+        "stddev": 0.074,
+        "min": 1.724,
         "max": 1.995
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
+        "6": {
+          "target_s": 160,
+          "stddev_s": 15.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 199.8,
+          "stddev_s": 15.2,
+          "count": 4,
+          "total_samples": 10
+        },
         "8": {
           "target_s": 222,
-          "stddev_s": 17.4,
-          "count": 6,
+          "stddev_s": 18.2,
+          "count": 7,
           "total_samples": 10
         },
         "9": {
-          "target_s": 254.7,
-          "stddev_s": 13.3,
+          "target_s": 256,
+          "stddev_s": 15.4,
           "count": 10,
           "total_samples": 10
         },
         "10": {
-          "target_s": 284.9,
-          "stddev_s": 13.4,
+          "target_s": 287.6,
+          "stddev_s": 15.3,
           "count": 10,
           "total_samples": 10
         },
         "11": {
-          "target_s": 315.7,
-          "stddev_s": 16.2,
+          "target_s": 318.4,
+          "stddev_s": 17.7,
           "count": 10,
           "total_samples": 10
         },
         "12": {
-          "target_s": 347.4,
-          "stddev_s": 18.4,
+          "target_s": 349.4,
+          "stddev_s": 21.2,
           "count": 10,
           "total_samples": 10
         },
         "13": {
           "target_s": 391.3,
-          "stddev_s": 12.5,
+          "stddev_s": 16.4,
           "count": 9,
           "total_samples": 10
         },
         "14": {
-          "target_s": 421.3,
-          "stddev_s": 14.7,
-          "count": 7,
+          "target_s": 422.5,
+          "stddev_s": 16.1,
+          "count": 6,
           "total_samples": 10
         },
         "15": {
@@ -119,16 +131,16 @@
     },
     "Convoke the Spirits": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.5,
+      "avg_first_cast_s": 5.3,
       "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 129.8,
-      "stddev_gap_s": 6.7,
-      "avg_bl_offset_s": 4.6,
+      "avg_gap_s": 129.7,
+      "stddev_gap_s": 6.6,
+      "avg_bl_offset_s": 4.4,
       "stddev_bl_offset_s": 1.6,
       "avg_uses": 4,
       "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.539,
+        "avg": 0.538,
         "stddev": 0.042,
         "min": 0.482,
         "max": 0.598
@@ -137,14 +149,14 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 260.5,
+          "target_s": 260.2,
           "stddev_s": 3.1,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 397.8,
-          "stddev_s": 6.8,
+          "target_s": 397,
+          "stddev_s": 6.7,
           "count": 10,
           "total_samples": 10
         }
@@ -341,5 +353,5 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "c2c65803b87cd5c6"
+  "source_signature": "1722addeacab6506"
 }

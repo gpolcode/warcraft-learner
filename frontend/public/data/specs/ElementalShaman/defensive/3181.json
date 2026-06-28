@@ -6,52 +6,52 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 242.3,
-      "stddev_first_cast_s": 169.4,
-      "avg_gap_s": 280.6,
-      "stddev_gap_s": 125.6,
+      "avg_first_cast_s": 262.8,
+      "stddev_first_cast_s": 180.4,
+      "avg_gap_s": 305.8,
+      "stddev_gap_s": 122.2,
       "hold_targets": {
         "1": {
-          "target_s": 414.9,
-          "stddev_s": 29.8,
-          "count": 5,
+          "target_s": 423.1,
+          "stddev_s": 29.6,
+          "count": 4,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.2,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.203,
-        "stddev": 0.08,
-        "min": 0.119,
+        "avg": 0.187,
+        "stddev": 0.081,
+        "min": 0.117,
         "max": 0.338
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Earth Elemental": {
-      "sample_count": 7,
-      "avg_first_cast_s": 427.7,
-      "stddev_first_cast_s": 50.3,
+      "sample_count": 6,
+      "avg_first_cast_s": 433.7,
+      "stddev_first_cast_s": 52.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
-        "avg": 0.122,
-        "stddev": 0.004,
+        "avg": 0.121,
+        "stddev": 0.003,
         "min": 0.118,
-        "max": 0.13
+        "max": 0.125
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 410.4,
-      "dmg_avg": 639008,
-      "dmg_stddev": 262125,
-      "dmg_min": 402763,
+      "time_s": 417.2,
+      "dmg_avg": 621273,
+      "dmg_stddev": 251957,
+      "dmg_min": 352578,
       "dmg_max": 1149421,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
@@ -66,24 +66,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 200516,
+          "avg_damage": 215777,
           "min_damage": 157415,
-          "max_damage": 279252,
+          "max_damage": 286881,
           "count": 7
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 151138,
+          "avg_damage": 150317,
           "min_damage": 85483,
           "max_damage": 223672,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 135969,
+          "avg_damage": 149690,
           "min_damage": 41575,
-          "max_damage": 165269,
-          "count": 7
+          "max_damage": 187978,
+          "count": 8
         }
       ]
     }
@@ -91,7 +91,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -172,5 +172,5 @@
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "f00745b206f98853"
+  "source_signature": "d5ba604e9eef367f"
 }

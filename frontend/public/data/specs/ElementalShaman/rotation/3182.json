@@ -3,26 +3,26 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 315.6,
-  "downtime_threshold_ms": 2467,
-  "top_avg_efficiency": 72.8,
+  "avg_duration_s": 316.5,
+  "downtime_threshold_ms": 2472,
+  "top_avg_efficiency": 72.9,
   "top_efficiency_stddev": 3.8,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
-      "avg_first_cast_s": 0.9,
+      "avg_first_cast_s": 0.7,
       "stddev_first_cast_s": 0.6,
       "avg_gap_s": 139.9,
       "stddev_gap_s": 22.3,
-      "avg_bl_offset_s": 7.9,
-      "stddev_bl_offset_s": 3.5,
+      "avg_bl_offset_s": 8.2,
+      "stddev_bl_offset_s": 3.4,
       "avg_uses": 2.7,
       "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.572,
-        "stddev": 0.019,
+        "avg": 0.57,
+        "stddev": 0.016,
         "min": 0.552,
-        "max": 0.605
+        "max": 0.591
       },
       "bl_pct": 90,
       "majority_hold": false,
@@ -33,38 +33,45 @@
       "avg_first_cast_s": 15.8,
       "stddev_first_cast_s": 29.8,
       "avg_gap_s": 55.3,
-      "stddev_gap_s": 10,
-      "avg_bl_offset_s": 6.9,
+      "stddev_gap_s": 8.3,
+      "avg_bl_offset_s": 7.3,
       "stddev_bl_offset_s": 4.2,
       "avg_uses": 5.3,
       "avg_uses_per_min": 1.01,
       "uses_per_min": {
-        "avg": 1.121,
-        "stddev": 0.107,
+        "avg": 1.117,
+        "stddev": 0.104,
         "min": 0.937,
         "max": 1.288
       },
       "bl_pct": 90,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 71.7,
+          "stddev_s": 1.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Ancestral Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.4,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 37.7,
-      "stddev_gap_s": 9.3,
-      "avg_bl_offset_s": 8.1,
-      "stddev_bl_offset_s": 4.7,
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.49,
+      "avg_first_cast_s": 1.5,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 37,
+      "stddev_gap_s": 10.1,
+      "avg_bl_offset_s": 9.4,
+      "stddev_bl_offset_s": 5.9,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 1.642,
-        "stddev": 0.186,
+        "avg": 1.656,
+        "stddev": 0.261,
         "min": 1.471,
         "max": 1.84
       },
-      "bl_pct": 30,
+      "bl_pct": 20,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -274,5 +281,5 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "fbbaa1381237fed8"
+  "source_signature": "d05992e06300e921"
 }

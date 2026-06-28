@@ -6,38 +6,38 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 113.8,
-      "stddev_first_cast_s": 91.8,
-      "avg_gap_s": 93,
-      "stddev_gap_s": 29.5,
+      "avg_first_cast_s": 118,
+      "stddev_first_cast_s": 95.3,
+      "avg_gap_s": 92.5,
+      "stddev_gap_s": 30.8,
       "hold_targets": {
         "1": {
-          "target_s": 195,
-          "stddev_s": 85.1,
-          "count": 7,
+          "target_s": 182.6,
+          "stddev_s": 91.3,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
-          "target_s": 262.4,
-          "stddev_s": 46,
-          "count": 7,
+          "target_s": 253.7,
+          "stddev_s": 35.7,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.526,
-        "stddev": 0.201,
+        "avg": 0.518,
+        "stddev": 0.204,
         "min": 0.168,
         "max": 0.848
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
-      "sample_count": 10,
-      "avg_first_cast_s": 91.5,
-      "stddev_first_cast_s": 52.5,
+      "sample_count": 9,
+      "avg_first_cast_s": 84.7,
+      "stddev_first_cast_s": 50.9,
       "avg_gap_s": 122,
       "stddev_gap_s": 63.2,
       "hold_targets": {
@@ -45,13 +45,13 @@
           "target_s": 245.7,
           "stddev_s": 44.2,
           "count": 7,
-          "total_samples": 10
+          "total_samples": 9
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.353,
+        "avg": 0.374,
         "stddev": 0.201,
         "min": 0.152,
         "max": 0.837
@@ -60,17 +60,17 @@
     },
     "Survival Instincts": {
       "sample_count": 9,
-      "avg_first_cast_s": 174.9,
-      "stddev_first_cast_s": 80.6,
+      "avg_first_cast_s": 149.1,
+      "stddev_first_cast_s": 83.2,
       "avg_gap_s": 214.9,
       "stddev_gap_s": 10.2,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.23,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.231,
-        "stddev": 0.074,
-        "min": 0.165,
+        "avg": 0.236,
+        "stddev": 0.07,
+        "min": 0.167,
         "max": 0.349
       },
       "majority_hold": false
@@ -78,12 +78,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 156.9,
-      "dmg_avg": 120419,
-      "dmg_stddev": 95868,
+      "time_s": 159.5,
+      "dmg_avg": 91238,
+      "dmg_stddev": 81101,
       "dmg_min": 40195,
-      "dmg_max": 237144,
-      "window_length_s": 2.7,
+      "dmg_max": 212332,
+      "window_length_s": 2.6,
       "defensive_name": "Frenzied Regeneration",
       "spell_id": 22842,
       "common_defensives": [
@@ -96,10 +96,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 105233,
+          "avg_damage": 73563,
           "min_damage": 54062,
-          "max_damage": 168574,
-          "count": 3
+          "max_damage": 93064,
+          "count": 2
         },
         {
           "spell_id": 1285954,
@@ -111,9 +111,9 @@
       ]
     },
     {
-      "time_s": 245,
-      "dmg_avg": 630978,
-      "dmg_stddev": 122426,
+      "time_s": 244.9,
+      "dmg_avg": 650994,
+      "dmg_stddev": 125420,
       "dmg_min": 469639,
       "dmg_max": 776359,
       "window_length_s": 12,
@@ -125,21 +125,14 @@
       "common_cds": [
         "Barkskin"
       ],
-      "ref_game_id": 248143,
+      "ref_game_id": 244552,
       "ability_breakdown": [
         {
           "spell_id": 1285954,
-          "avg_damage": 195524,
-          "min_damage": 153014,
+          "avg_damage": 206151,
+          "min_damage": 187048,
           "max_damage": 229938,
-          "count": 5
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 161394,
-          "min_damage": 30289,
-          "max_damage": 260744,
-          "count": 6
+          "count": 4
         },
         {
           "spell_id": 1245302,
@@ -149,11 +142,18 @@
           "count": 4
         },
         {
+          "spell_id": 1245175,
+          "avg_damage": 152187,
+          "min_damage": 30289,
+          "max_damage": 260744,
+          "count": 5
+        },
+        {
           "spell_id": 1259275,
-          "avg_damage": 142664,
+          "avg_damage": 137106,
           "min_damage": 82245,
           "max_damage": 174115,
-          "count": 6
+          "count": 5
         }
       ]
     },
@@ -187,6 +187,46 @@
           "min_damage": 13218,
           "max_damage": 41962,
           "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 279,
+      "dmg_avg": 346932,
+      "dmg_stddev": 239616,
+      "dmg_min": 133892,
+      "dmg_max": 626307,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 256679,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 140168,
+          "min_damage": 88119,
+          "max_damage": 175952,
+          "count": 4
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 124164,
+          "min_damage": 123601,
+          "max_damage": 124727,
+          "count": 2
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 90186,
+          "min_damage": 70692,
+          "max_damage": 109679,
+          "count": 2
         }
       ]
     },
@@ -240,13 +280,13 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 3,
+      "avg_uses": 2.9,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 22842,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -308,6 +348,10 @@
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
     },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
     "1245175": {
       "icon": "inv_cosmicvoid_missile",
       "name": "Voidbolt"
@@ -329,5 +373,5 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "78120ce47bbd439e"
+  "source_signature": "3ff1fe12068d406f"
 }

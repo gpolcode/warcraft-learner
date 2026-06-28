@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Survival Instincts": {
       "sample_count": 9,
-      "avg_first_cast_s": 351,
-      "stddev_first_cast_s": 130.1,
+      "avg_first_cast_s": 335.4,
+      "stddev_first_cast_s": 119.6,
       "avg_gap_s": 210.9,
       "stddev_gap_s": 53.2,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.16,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
         "avg": 0.165,
-        "stddev": 0.064,
+        "stddev": 0.063,
         "min": 0.115,
         "max": 0.258
       },
@@ -23,34 +23,34 @@
     },
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 109.5,
-      "stddev_first_cast_s": 112.3,
-      "avg_gap_s": 114.9,
-      "stddev_gap_s": 71.6,
+      "avg_first_cast_s": 123,
+      "stddev_first_cast_s": 117,
+      "avg_gap_s": 109.6,
+      "stddev_gap_s": 71.8,
       "hold_targets": {
         "1": {
-          "target_s": 256.5,
-          "stddev_s": 97.2,
+          "target_s": 295.6,
+          "stddev_s": 97.4,
           "count": 9,
           "total_samples": 10
         },
         "2": {
           "target_s": 335.1,
-          "stddev_s": 78.4,
+          "stddev_s": 79.9,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 419.1,
-          "stddev_s": 35.3,
-          "count": 5,
+          "target_s": 412.3,
+          "stddev_s": 31,
+          "count": 4,
           "total_samples": 10
         }
       },
       "avg_uses": 4.1,
       "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.503,
+        "avg": 0.504,
         "stddev": 0.134,
         "min": 0.35,
         "max": 0.689
@@ -59,14 +59,14 @@
     },
     "Frenzied Regeneration": {
       "sample_count": 10,
-      "avg_first_cast_s": 156.3,
-      "stddev_first_cast_s": 164.4,
-      "avg_gap_s": 116.9,
-      "stddev_gap_s": 66,
+      "avg_first_cast_s": 166.9,
+      "stddev_first_cast_s": 158.8,
+      "avg_gap_s": 118,
+      "stddev_gap_s": 67.8,
       "hold_targets": {
         "1": {
           "target_s": 219.3,
-          "stddev_s": 93,
+          "stddev_s": 106.4,
           "count": 8,
           "total_samples": 10
         },
@@ -77,11 +77,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.381,
-        "stddev": 0.173,
+        "avg": 0.37,
+        "stddev": 0.169,
         "min": 0.12,
         "max": 0.647
       },
@@ -123,9 +123,129 @@
       ]
     },
     {
-      "time_s": 337.7,
-      "dmg_avg": 498728,
-      "dmg_stddev": 137839,
+      "time_s": 149,
+      "dmg_avg": 30412,
+      "dmg_stddev": 43020,
+      "dmg_min": 0,
+      "dmg_max": 94165,
+      "window_length_s": 2.7,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1234570,
+          "avg_damage": 13741,
+          "min_damage": 11880,
+          "max_damage": 15601,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 224.7,
+      "dmg_avg": 477057,
+      "dmg_stddev": 34792,
+      "dmg_min": 450401,
+      "dmg_max": 524983,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1237040,
+          "avg_damage": 179536,
+          "min_damage": 90627,
+          "max_damage": 234254,
+          "count": 4
+        },
+        {
+          "spell_id": 1260019,
+          "avg_damage": 123696,
+          "min_damage": 69258,
+          "max_damage": 156609,
+          "count": 4
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 99684,
+          "min_damage": 34975,
+          "max_damage": 191428,
+          "count": 3
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 76530,
+          "min_damage": 29423,
+          "max_damage": 131536,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 294.5,
+      "dmg_avg": 671179,
+      "dmg_stddev": 275636,
+      "dmg_min": 486195,
+      "dmg_max": 1080957,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260019,
+          "avg_damage": 237303,
+          "min_damage": 178249,
+          "max_damage": 294922,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 213947,
+          "min_damage": 199737,
+          "max_damage": 224252,
+          "count": 4
+        },
+        {
+          "spell_id": 1260000,
+          "avg_damage": 73559,
+          "min_damage": 53157,
+          "max_damage": 110806,
+          "count": 3
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 30280,
+          "min_damage": 30023,
+          "max_damage": 30537,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 336.4,
+      "dmg_avg": 513589,
+      "dmg_stddev": 154468,
       "dmg_min": 372395,
       "dmg_max": 704113,
       "window_length_s": 12,
@@ -141,25 +261,39 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 252832,
+          "avg_damage": 236229,
           "min_damage": 98741,
           "max_damage": 308969,
-          "count": 4
+          "count": 3
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 171968,
+          "min_damage": 107594,
+          "max_damage": 236342,
+          "count": 2
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 162697,
+          "avg_damage": 169210,
           "min_damage": 71419,
           "max_damage": 233885,
-          "count": 5
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 162446,
+          "min_damage": 91005,
+          "max_damage": 233886,
+          "count": 2
         }
       ]
     },
     {
-      "time_s": 392,
-      "dmg_avg": 603829,
-      "dmg_stddev": 200344,
-      "dmg_min": 386599,
+      "time_s": 391.6,
+      "dmg_avg": 576623,
+      "dmg_stddev": 200812,
+      "dmg_min": 386178,
       "dmg_max": 936937,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -174,17 +308,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 245649,
+          "avg_damage": 217263,
           "min_damage": 87071,
           "max_damage": 337990,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 193373,
+          "avg_damage": 195490,
           "min_damage": 134825,
           "max_damage": 237694,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1261289,
@@ -229,12 +363,12 @@
       ]
     },
     {
-      "time_s": 440.4,
-      "dmg_avg": 130504,
-      "dmg_stddev": 97792,
+      "time_s": 440.7,
+      "dmg_avg": 138165,
+      "dmg_stddev": 107303,
       "dmg_min": 27063,
       "dmg_max": 297818,
-      "window_length_s": 2.1,
+      "window_length_s": 1.9,
       "defensive_name": "Frenzied Regeneration",
       "spell_id": 22842,
       "common_defensives": [
@@ -247,19 +381,19 @@
       "ability_breakdown": [
         {
           "spell_id": 1237040,
-          "avg_damage": 53742,
+          "avg_damage": 55259,
           "min_damage": 25746,
           "max_damage": 94862,
-          "count": 6
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 457.9,
-      "dmg_avg": 495613,
-      "dmg_stddev": 200012,
+      "time_s": 457.3,
+      "dmg_avg": 556111,
+      "dmg_stddev": 273806,
       "dmg_min": 156364,
-      "dmg_max": 761804,
+      "dmg_max": 1020710,
       "window_length_s": 10.5,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -273,31 +407,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1260027,
-          "avg_damage": 226678,
+          "avg_damage": 253880,
           "min_damage": 152028,
-          "max_damage": 307274,
-          "count": 4
+          "max_damage": 362690,
+          "count": 5
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 168409,
+          "avg_damage": 195661,
           "min_damage": 88487,
-          "max_damage": 233038,
+          "max_damage": 432842,
           "count": 8
         },
         {
           "spell_id": 1239095,
-          "avg_damage": 160187,
+          "avg_damage": 160611,
           "min_damage": 114515,
-          "max_damage": 224708,
+          "max_damage": 225178,
           "count": 5
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 114127,
-          "min_damage": 18281,
+          "avg_damage": 130101,
+          "min_damage": 36936,
           "max_damage": 216738,
-          "count": 7
+          "count": 6
         }
       ]
     }
@@ -317,7 +451,7 @@
     },
     {
       "spell_id": 22842,
-      "avg_uses": 3.1,
+      "avg_uses": 3,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -383,6 +517,14 @@
       "icon": "inv_ammo_arrow_03",
       "name": "Silverstrike Arrow"
     },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
+    },
+    "1234570": {
+      "icon": "spell_priest_divinestar_shadow",
+      "name": "Stellar Emission"
+    },
     "1237040": {
       "icon": "ability_ironmaidens_convulsiveshadows",
       "name": "Voidstalker Sting"
@@ -390,6 +532,14 @@
     "1239095": {
       "icon": "spell_holy_circleofrenewal_shadow",
       "name": "Gravity Collapse"
+    },
+    "1260000": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Void Barrage"
+    },
+    "1260019": {
+      "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
+      "name": "Simulacrum Backlash"
     },
     "1260027": {
       "icon": "inv_shadowelementalmount",
@@ -404,5 +554,5 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "1f8d31fed7fdc19c"
+  "source_signature": "f9f7c8769eda2ee3"
 }

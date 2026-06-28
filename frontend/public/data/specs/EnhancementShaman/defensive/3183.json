@@ -6,68 +6,85 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 137.9,
-      "stddev_first_cast_s": 73.2,
-      "avg_gap_s": 141.2,
-      "stddev_gap_s": 39.4,
+      "avg_first_cast_s": 151.1,
+      "stddev_first_cast_s": 71.1,
+      "avg_gap_s": 136.6,
+      "stddev_gap_s": 36,
       "hold_targets": {
         "1": {
-          "target_s": 325.8,
-          "stddev_s": 57.5,
-          "count": 9,
+          "target_s": 326.9,
+          "stddev_s": 54.5,
+          "count": 8,
           "total_samples": 10
         },
         "2": {
           "target_s": 417.9,
-          "stddev_s": 106.8,
-          "count": 6,
+          "stddev_s": 106.1,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.348,
-        "stddev": 0.109,
-        "min": 0.221,
+        "avg": 0.303,
+        "stddev": 0.128,
+        "min": 0.109,
         "max": 0.553
       },
       "majority_hold": true
     },
     "Spirit Walk": {
       "sample_count": 10,
-      "avg_first_cast_s": 131.4,
-      "stddev_first_cast_s": 125.7,
-      "avg_gap_s": 79.3,
-      "stddev_gap_s": 51.5,
+      "avg_first_cast_s": 94,
+      "stddev_first_cast_s": 57.1,
+      "avg_gap_s": 84.6,
+      "stddev_gap_s": 55.9,
       "hold_targets": {
         "1": {
-          "target_s": 328,
-          "stddev_s": 79,
-          "count": 5,
+          "target_s": 329.4,
+          "stddev_s": 76.7,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
-          "target_s": 331.3,
-          "stddev_s": 100.8,
-          "count": 5,
+          "target_s": 351.4,
+          "stddev_s": 115.6,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.2,
-      "avg_uses_per_min": 0.59,
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.59,
-        "stddev": 0.354,
-        "min": 0.108,
+        "avg": 0.609,
+        "stddev": 0.327,
+        "min": 0.326,
         "max": 1.107
       },
       "majority_hold": true
     },
     "Earth Elemental": {
       "sample_count": 5,
-      "avg_first_cast_s": 185.7,
-      "stddev_first_cast_s": 107.1,
+      "avg_first_cast_s": 227.1,
+      "stddev_first_cast_s": 43,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.111,
+        "stddev": 0.002,
+        "min": 0.109,
+        "max": 0.113
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 1,
+      "avg_first_cast_s": 332.9,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -75,35 +92,18 @@
       "avg_uses_per_min": 0.11,
       "uses_per_min": {
         "avg": 0.112,
-        "stddev": 0.002,
-        "min": 0.109,
-        "max": 0.114
-      },
-      "majority_hold": false
-    },
-    "Healing Surge": {
-      "sample_count": 2,
-      "avg_first_cast_s": 333.6,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 36.9,
-      "stddev_gap_s": 52.6,
-      "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.28,
-      "uses_per_min": {
-        "avg": 0.284,
-        "stddev": 0.243,
+        "stddev": 0,
         "min": 0.112,
-        "max": 0.456
+        "max": 0.112
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 59.1,
-      "dmg_avg": 274792,
-      "dmg_stddev": 208929,
+      "time_s": 57.7,
+      "dmg_avg": 312609,
+      "dmg_stddev": 226778,
       "dmg_min": 0,
       "dmg_max": 573456,
       "window_length_s": 7,
@@ -119,7 +119,7 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 250028,
+          "avg_damage": 251511,
           "min_damage": 164884,
           "max_damage": 363762,
           "count": 6
@@ -153,11 +153,11 @@
       ]
     },
     {
-      "time_s": 181.4,
-      "dmg_avg": 195805,
-      "dmg_stddev": 74894,
+      "time_s": 181.3,
+      "dmg_avg": 200468,
+      "dmg_stddev": 77316,
       "dmg_min": 26567,
-      "dmg_max": 233766,
+      "dmg_max": 248337,
       "window_length_s": 7,
       "defensive_name": "Spirit Walk",
       "spell_id": 58875,
@@ -171,18 +171,18 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 195805,
+          "avg_damage": 200468,
           "min_damage": 26567,
-          "max_damage": 233766,
+          "max_damage": 248337,
           "count": 7
         }
       ]
     },
     {
-      "time_s": 215,
-      "dmg_avg": 262478,
-      "dmg_stddev": 48380,
-      "dmg_min": 216568,
+      "time_s": 214.6,
+      "dmg_avg": 274349,
+      "dmg_stddev": 45473,
+      "dmg_min": 223264,
       "dmg_max": 351431,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
@@ -197,14 +197,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 153933,
+          "avg_damage": 158233,
           "min_damage": 122473,
           "max_damage": 182897,
           "count": 8
         },
         {
           "spell_id": 1281473,
-          "avg_damage": 104823,
+          "avg_damage": 106141,
           "min_damage": 77811,
           "max_damage": 177392,
           "count": 8
@@ -259,9 +259,9 @@
       ]
     },
     {
-      "time_s": 326.9,
-      "dmg_avg": 417648,
-      "dmg_stddev": 51595,
+      "time_s": 327.5,
+      "dmg_avg": 427382,
+      "dmg_stddev": 54219,
       "dmg_min": 336778,
       "dmg_max": 518948,
       "window_length_s": 12,
@@ -277,42 +277,42 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 156376,
+          "avg_damage": 164733,
           "min_damage": 123630,
           "max_damage": 213733,
-          "count": 10
+          "count": 9
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 109237,
-          "min_damage": 102465,
-          "max_damage": 118008,
-          "count": 9
+          "avg_damage": 109446,
+          "min_damage": 106354,
+          "max_damage": 112907,
+          "count": 8
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 87390,
-          "min_damage": 81972,
-          "max_damage": 94406,
-          "count": 9
+          "avg_damage": 87557,
+          "min_damage": 85084,
+          "max_damage": 90326,
+          "count": 8
         },
         {
           "spell_id": 1254257,
-          "avg_damage": 42663,
-          "min_damage": 39208,
+          "avg_damage": 42602,
+          "min_damage": 39926,
           "max_damage": 47751,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 23092,
+          "avg_damage": 24892,
           "min_damage": 6286,
           "max_damage": 39766,
-          "count": 10
+          "count": 9
         },
         {
           "spell_id": 1282004,
-          "avg_damage": 883,
+          "avg_damage": 783,
           "min_damage": 370,
           "max_damage": 1617,
           "count": 6
@@ -320,9 +320,9 @@
       ]
     },
     {
-      "time_s": 330.4,
-      "dmg_avg": 343505,
-      "dmg_stddev": 141790,
+      "time_s": 330.8,
+      "dmg_avg": 347957,
+      "dmg_stddev": 142144,
       "dmg_min": 187499,
       "dmg_max": 625941,
       "window_length_s": 8.3,
@@ -338,38 +338,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 164004,
+          "avg_damage": 164272,
           "min_damage": 122404,
-          "max_damage": 226283,
-          "count": 8
-        },
-        {
-          "spell_id": 1281178,
-          "avg_damage": 116907,
-          "min_damage": 85084,
-          "max_damage": 149940,
-          "count": 4
+          "max_damage": 216591,
+          "count": 7
         },
         {
           "spell_id": 1254257,
-          "avg_damage": 46804,
-          "min_damage": 39208,
-          "max_damage": 69428,
+          "avg_damage": 51652,
+          "min_damage": 39926,
+          "max_damage": 73145,
           "count": 7
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 26053,
+          "avg_damage": 27737,
           "min_damage": 16916,
-          "max_damage": 34494,
+          "max_damage": 39854,
           "count": 7
-        },
-        {
-          "spell_id": 1282004,
-          "avg_damage": 892,
-          "min_damage": 178,
-          "max_damage": 2398,
-          "count": 4
         }
       ]
     },
@@ -407,9 +393,9 @@
       ]
     },
     {
-      "time_s": 449,
-      "dmg_avg": 320531,
-      "dmg_stddev": 345851,
+      "time_s": 443.2,
+      "dmg_avg": 282836,
+      "dmg_stddev": 311508,
       "dmg_min": 0,
       "dmg_max": 822489,
       "window_length_s": 8,
@@ -425,27 +411,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 316662,
+          "avg_damage": 323863,
           "min_damage": 160940,
           "max_damage": 672693,
           "count": 4
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 37073,
+          "avg_damage": 38884,
           "min_damage": 29943,
-          "max_damage": 42217,
+          "max_damage": 47651,
           "count": 3
         }
       ]
     },
     {
-      "time_s": 505.1,
-      "dmg_avg": 629093,
-      "dmg_stddev": 430924,
-      "dmg_min": 0,
+      "time_s": 496.4,
+      "dmg_avg": 731053,
+      "dmg_stddev": 327223,
+      "dmg_min": 82267,
       "dmg_max": 1151834,
-      "window_length_s": 6.1,
+      "window_length_s": 6.7,
       "defensive_name": "Spirit Walk",
       "spell_id": 58875,
       "common_defensives": [
@@ -458,49 +444,16 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 574276,
-          "min_damage": 422536,
-          "max_damage": 672693,
-          "count": 4
+          "avg_damage": 571402,
+          "min_damage": 82267,
+          "max_damage": 725089,
+          "count": 7
         },
         {
           "spell_id": 1287445,
-          "avg_damage": 105480,
-          "min_damage": 35410,
-          "max_damage": 149795,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 515.4,
-      "dmg_avg": 586216,
-      "dmg_stddev": 129236,
-      "dmg_min": 403116,
-      "dmg_max": 677906,
-      "window_length_s": 11,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 542724,
-          "min_damage": 395116,
-          "max_damage": 630298,
-          "count": 4
-        },
-        {
-          "spell_id": 1287445,
-          "avg_damage": 43492,
-          "min_damage": 8000,
-          "max_damage": 69002,
+          "avg_damage": 146408,
+          "min_damage": 131234,
+          "max_damage": 157942,
           "count": 4
         }
       ]
@@ -509,8 +462,8 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 3.1,
-      "min_uses": 2,
+      "avg_uses": 2.7,
+      "min_uses": 1,
       "max_uses": 5
     },
     {
@@ -521,15 +474,15 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 5.2,
-      "min_uses": 1,
+      "avg_uses": 5.4,
+      "min_uses": 3,
       "max_uses": 10
     },
     {
       "spell_id": 8004,
-      "avg_uses": 2.5,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -590,6 +543,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -635,5 +592,5 @@
       "name": "Heaven & Hell"
     }
   },
-  "source_signature": "83c580ac1b972d5e"
+  "source_signature": "25d130529f1eff39"
 }

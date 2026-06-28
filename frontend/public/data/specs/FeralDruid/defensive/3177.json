@@ -6,57 +6,57 @@
   "per_defensive_benchmarks": {
     "Survival Instincts": {
       "sample_count": 7,
-      "avg_first_cast_s": 134.2,
-      "stddev_first_cast_s": 53.2,
+      "avg_first_cast_s": 134.9,
+      "stddev_first_cast_s": 54.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.29,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.287,
-        "stddev": 0.02,
-        "min": 0.265,
+        "avg": 0.28,
+        "stddev": 0.03,
+        "min": 0.225,
         "max": 0.314
       },
       "majority_hold": false
     },
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 68.8,
-      "stddev_first_cast_s": 17.9,
-      "avg_gap_s": 114,
-      "stddev_gap_s": 20.3,
+      "avg_first_cast_s": 62.8,
+      "stddev_first_cast_s": 27.8,
+      "avg_gap_s": 114.9,
+      "stddev_gap_s": 28.3,
       "hold_targets": {
         "1": {
           "target_s": 183.4,
-          "stddev_s": 5.9,
+          "stddev_s": 35.9,
           "count": 7,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.51,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.506,
-        "stddev": 0.114,
+        "avg": 0.521,
+        "stddev": 0.127,
         "min": 0.304,
-        "max": 0.606
+        "max": 0.676
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
-      "sample_count": 8,
-      "avg_first_cast_s": 137,
-      "stddev_first_cast_s": 67.2,
+      "sample_count": 9,
+      "avg_first_cast_s": 131.6,
+      "stddev_first_cast_s": 64.9,
       "avg_gap_s": 124.9,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
-      "avg_uses_per_min": 0.31,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.314,
-        "stddev": 0.093,
+        "avg": 0.304,
+        "stddev": 0.092,
         "min": 0.211,
         "max": 0.529
       },
@@ -65,9 +65,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 60.6,
-      "dmg_avg": 336500,
-      "dmg_stddev": 73966,
+      "time_s": 60.7,
+      "dmg_avg": 329958,
+      "dmg_stddev": 77352,
       "dmg_min": 222326,
       "dmg_max": 406344,
       "window_length_s": 12,
@@ -83,17 +83,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 243697,
+          "avg_damage": 229828,
           "min_damage": 55836,
           "max_damage": 346619,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 58078,
+          "avg_damage": 58462,
           "min_damage": 55350,
           "max_damage": 61084,
-          "count": 8
+          "count": 7
         }
       ]
     },
@@ -131,11 +131,11 @@
       ]
     },
     {
-      "time_s": 183.4,
-      "dmg_avg": 322825,
-      "dmg_stddev": 84380,
+      "time_s": 183.7,
+      "dmg_avg": 303369,
+      "dmg_stddev": 73241,
       "dmg_min": 189076,
-      "dmg_max": 439560,
+      "dmg_max": 394156,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -149,17 +149,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 205131,
+          "avg_damage": 180777,
           "min_damage": 57562,
-          "max_damage": 326904,
-          "count": 6
+          "max_damage": 279179,
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 114168,
+          "avg_damage": 114420,
           "min_damage": 96798,
           "max_damage": 121753,
-          "count": 7
+          "count": 6
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 76604,
+          "min_damage": 74557,
+          "max_damage": 77767,
+          "count": 3
         }
       ]
     }
@@ -173,9 +180,9 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 1.8,
+      "avg_uses": 1.9,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     },
     {
       "spell_id": 22842,
@@ -245,6 +252,10 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -254,5 +265,5 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "96ff647ea0eb94c4"
+  "source_signature": "5c1dd47fbdb50b1d"
 }

@@ -6,40 +6,40 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 125,
-      "stddev_first_cast_s": 63.8,
-      "avg_gap_s": 97.7,
-      "stddev_gap_s": 30.7,
+      "avg_first_cast_s": 128.9,
+      "stddev_first_cast_s": 57.2,
+      "avg_gap_s": 91.1,
+      "stddev_gap_s": 25,
       "hold_targets": {
         "1": {
           "target_s": 236.3,
-          "stddev_s": 48,
+          "stddev_s": 53.8,
           "count": 9,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.451,
-        "stddev": 0.085,
+        "avg": 0.479,
+        "stddev": 0.109,
         "min": 0.385,
-        "max": 0.595
+        "max": 0.668
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
       "sample_count": 9,
-      "avg_first_cast_s": 164.5,
-      "stddev_first_cast_s": 99.4,
-      "avg_gap_s": 80.6,
-      "stddev_gap_s": 70.2,
+      "avg_first_cast_s": 172.3,
+      "stddev_first_cast_s": 92.6,
+      "avg_gap_s": 87.3,
+      "stddev_gap_s": 68.7,
       "hold_targets": {},
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.384,
-        "stddev": 0.199,
+        "avg": 0.41,
+        "stddev": 0.188,
         "min": 0.195,
         "max": 0.702
       },
@@ -47,16 +47,16 @@
     },
     "Survival Instincts": {
       "sample_count": 6,
-      "avg_first_cast_s": 250.1,
-      "stddev_first_cast_s": 22.9,
+      "avg_first_cast_s": 238.6,
+      "stddev_first_cast_s": 44.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.206,
-        "stddev": 0.015,
+        "avg": 0.209,
+        "stddev": 0.016,
         "min": 0.192,
         "max": 0.234
       },
@@ -65,10 +65,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 159.5,
-      "dmg_avg": 459804,
-      "dmg_stddev": 120238,
-      "dmg_min": 283141,
+      "time_s": 152.8,
+      "dmg_avg": 442006,
+      "dmg_stddev": 121053,
+      "dmg_min": 298337,
       "dmg_max": 594392,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -83,24 +83,76 @@
       "ability_breakdown": [
         {
           "spell_id": 1241932,
-          "avg_damage": 305455,
-          "min_damage": 247917,
+          "avg_damage": 297276,
+          "min_damage": 215199,
           "max_damage": 357651,
           "count": 4
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 86271,
+          "avg_damage": 82811,
           "min_damage": 81039,
-          "max_damage": 93482,
-          "count": 5
+          "max_damage": 85530,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 273.8,
-      "dmg_avg": 98780,
-      "dmg_stddev": 156304,
+      "time_s": 189.4,
+      "dmg_avg": 293567,
+      "dmg_stddev": 33475,
+      "dmg_min": 251921,
+      "dmg_max": 328628,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 88882,
+          "min_damage": 85013,
+          "max_damage": 93800,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 259.7,
+      "dmg_avg": 612357,
+      "dmg_stddev": 466311,
+      "dmg_min": 187580,
+      "dmg_max": 1226227,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 89376,
+          "min_damage": 87685,
+          "max_damage": 90174,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 273.7,
+      "dmg_avg": 87804,
+      "dmg_stddev": 149871,
       "dmg_min": 0,
       "dmg_max": 464457,
       "window_length_s": 2.8,
@@ -133,13 +185,13 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 2.2,
+      "avg_uses": 2.3,
       "min_uses": 2,
       "max_uses": 3
     },
     {
       "spell_id": 22842,
-      "avg_uses": 1.9,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -210,5 +262,5 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "b91bd4c382ed6958"
+  "source_signature": "72ef13be06cba691"
 }

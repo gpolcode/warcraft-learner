@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 7,
-      "avg_first_cast_s": 268.4,
-      "stddev_first_cast_s": 113,
+      "avg_first_cast_s": 257.8,
+      "stddev_first_cast_s": 118.9,
       "avg_gap_s": 229.2,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.178,
-        "stddev": 0.076,
+        "avg": 0.18,
+        "stddev": 0.075,
         "min": 0.136,
         "max": 0.347
       },
@@ -23,46 +23,46 @@
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 134.4,
-      "stddev_first_cast_s": 91.4,
-      "avg_gap_s": 87.3,
-      "stddev_gap_s": 37.3,
+      "avg_first_cast_s": 134.5,
+      "stddev_first_cast_s": 91.3,
+      "avg_gap_s": 88.2,
+      "stddev_gap_s": 37.4,
       "hold_targets": {
         "1": {
-          "target_s": 203.8,
-          "stddev_s": 57.2,
+          "target_s": 205,
+          "stddev_s": 57.1,
           "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 284.7,
-          "stddev_s": 47.4,
+          "target_s": 295.5,
+          "stddev_s": 47.8,
           "count": 6,
           "total_samples": 10
         }
       },
       "avg_uses": 3.3,
-      "avg_uses_per_min": 0.5,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.505,
-        "stddev": 0.196,
+        "avg": 0.51,
+        "stddev": 0.195,
         "min": 0.164,
         "max": 0.861
       },
       "majority_hold": true
     },
     "Mortal Coil": {
-      "sample_count": 3,
-      "avg_first_cast_s": 258,
-      "stddev_first_cast_s": 47.6,
+      "sample_count": 2,
+      "avg_first_cast_s": 284.7,
+      "stddev_first_cast_s": 16.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.16,
       "uses_per_min": {
-        "avg": 0.156,
-        "stddev": 0.014,
+        "avg": 0.158,
+        "stddev": 0.019,
         "min": 0.145,
         "max": 0.172
       },
@@ -144,12 +144,12 @@
       ]
     },
     {
-      "time_s": 284.8,
-      "dmg_avg": 230650,
-      "dmg_stddev": 99172,
+      "time_s": 301.8,
+      "dmg_avg": 254588,
+      "dmg_stddev": 93726,
       "dmg_min": 82729,
-      "dmg_max": 327235,
-      "window_length_s": 3.5,
+      "dmg_max": 379275,
+      "window_length_s": 2.9,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -162,31 +162,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 191004,
-          "min_damage": 184597,
-          "max_damage": 200337,
-          "count": 4
+          "avg_damage": 182845,
+          "min_damage": 116906,
+          "max_damage": 202523,
+          "count": 7
         },
         {
-          "spell_id": 1259275,
-          "avg_damage": 77537,
-          "min_damage": 60012,
-          "max_damage": 121378,
-          "count": 4
-        },
-        {
-          "spell_id": 1244672,
-          "avg_damage": 9163,
-          "min_damage": 8537,
-          "max_damage": 9536,
-          "count": 4
+          "spell_id": 1250071,
+          "avg_damage": 115847,
+          "min_damage": 65321,
+          "max_damage": 195712,
+          "count": 5
         },
         {
           "spell_id": 387846,
-          "avg_damage": 1949,
+          "avg_damage": 1725,
           "min_damage": 238,
           "max_damage": 3079,
-          "count": 6
+          "count": 7
         }
       ]
     },
@@ -292,13 +285,13 @@
       "icon": "spell_shadow_felarmour",
       "name": "Fel Armor"
     },
-    "1244672": {
-      "icon": "warlock_curse_shadow",
-      "name": "Nullzone"
-    },
     "1245302": {
       "icon": "inv_cosmicvoid_orb",
       "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
     },
     "1259275": {
       "icon": "inv_cosmicvoid_buff",
@@ -309,5 +302,5 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "beeee7001bfc1a19"
+  "source_signature": "7496fe03e34e1acd"
 }

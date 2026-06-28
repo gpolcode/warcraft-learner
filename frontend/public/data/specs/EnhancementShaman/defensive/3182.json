@@ -6,18 +6,18 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 8,
-      "avg_first_cast_s": 148.5,
-      "stddev_first_cast_s": 86.1,
-      "avg_gap_s": 119.6,
-      "stddev_gap_s": 46.3,
+      "avg_first_cast_s": 157.1,
+      "stddev_first_cast_s": 73.9,
+      "avg_gap_s": 108.4,
+      "stddev_gap_s": 20.2,
       "hold_targets": {},
       "avg_uses": 1.8,
-      "avg_uses_per_min": 0.38,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.384,
-        "stddev": 0.115,
+        "avg": 0.398,
+        "stddev": 0.122,
         "min": 0.195,
-        "max": 0.493
+        "max": 0.499
       },
       "majority_hold": false
     },
@@ -40,40 +40,80 @@
     },
     "Spirit Walk": {
       "sample_count": 7,
-      "avg_first_cast_s": 102,
-      "stddev_first_cast_s": 94.7,
+      "avg_first_cast_s": 116,
+      "stddev_first_cast_s": 84.1,
       "avg_gap_s": 59.1,
       "stddev_gap_s": 32.5,
       "hold_targets": {},
       "avg_uses": 2.1,
-      "avg_uses_per_min": 0.49,
+      "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.488,
-        "stddev": 0.419,
-        "min": 0.192,
+        "avg": 0.497,
+        "stddev": 0.413,
+        "min": 0.206,
         "max": 1.212
       },
       "majority_hold": false
     },
     "Healing Surge": {
-      "sample_count": 1,
-      "avg_first_cast_s": 163.3,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+      "sample_count": 2,
+      "avg_first_cast_s": 145.5,
+      "stddev_first_cast_s": 25.2,
+      "avg_gap_s": 52.3,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.24,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.239,
-        "stddev": 0,
+        "avg": 0.369,
+        "stddev": 0.184,
         "min": 0.239,
-        "max": 0.239
+        "max": 0.499
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
+    {
+      "time_s": 105.8,
+      "dmg_avg": 649935,
+      "dmg_stddev": 385674,
+      "dmg_min": 439434,
+      "dmg_max": 1227810,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 478395,
+          "min_damage": 354063,
+          "max_damage": 602727,
+          "count": 2
+        },
+        {
+          "spell_id": 1242815,
+          "avg_damage": 391967,
+          "min_damage": 387146,
+          "max_damage": 401606,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 84235,
+          "min_damage": 63280,
+          "max_damage": 94920,
+          "count": 4
+        }
+      ]
+    },
     {
       "time_s": 224.3,
       "dmg_avg": 216655,
@@ -169,9 +209,9 @@
     },
     {
       "spell_id": 8004,
-      "avg_uses": 1,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -232,6 +272,10 @@
       "icon": "ability_tracking",
       "name": "Spirit Walk"
     },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
     "108271": {
       "icon": "ability_shaman_astralshift",
       "name": "Astral Shift"
@@ -253,5 +297,5 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "5b5cafadb59811b9"
+  "source_signature": "5fcdc5d54a2ef866"
 }

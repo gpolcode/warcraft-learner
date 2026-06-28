@@ -3,136 +3,117 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 504.8,
-  "downtime_threshold_ms": 1179,
-  "top_avg_efficiency": 70.8,
-  "top_efficiency_stddev": 5.1,
+  "avg_duration_s": 508.1,
+  "downtime_threshold_ms": 1222,
+  "top_avg_efficiency": 70.7,
+  "top_efficiency_stddev": 4.6,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
-      "avg_first_cast_s": 15,
+      "avg_first_cast_s": 15.1,
       "stddev_first_cast_s": 30.7,
-      "avg_gap_s": 110.7,
-      "stddev_gap_s": 22.4,
-      "avg_bl_offset_s": 9.3,
-      "stddev_bl_offset_s": 10.3,
-      "avg_uses": 5,
-      "avg_uses_per_min": 0.6,
+      "avg_gap_s": 107,
+      "stddev_gap_s": 19.3,
+      "avg_bl_offset_s": 10.5,
+      "stddev_bl_offset_s": 9.9,
+      "avg_uses": 5.2,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.595,
-        "stddev": 0.096,
+        "avg": 0.615,
+        "stddev": 0.088,
         "min": 0.464,
         "max": 0.696
       },
-      "bl_pct": 60,
+      "bl_pct": 70,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 177.5,
-          "stddev_s": 2.2,
-          "count": 4,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 298.2,
-          "stddev_s": 10.2,
-          "count": 4,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 421.8,
-          "stddev_s": 24.3,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.8,
-      "stddev_first_cast_s": 10,
-      "avg_gap_s": 73.2,
-      "stddev_gap_s": 16.4,
-      "avg_bl_offset_s": 9.8,
-      "stddev_bl_offset_s": 11.5,
-      "avg_uses": 7.3,
-      "avg_uses_per_min": 0.87,
+      "avg_first_cast_s": 17.4,
+      "stddev_first_cast_s": 9.9,
+      "avg_gap_s": 74.8,
+      "stddev_gap_s": 17.7,
+      "avg_bl_offset_s": 12.2,
+      "stddev_bl_offset_s": 13.2,
+      "avg_uses": 7.2,
+      "avg_uses_per_min": 0.85,
       "uses_per_min": {
-        "avg": 0.869,
-        "stddev": 0.052,
-        "min": 0.812,
+        "avg": 0.852,
+        "stddev": 0.082,
+        "min": 0.668,
         "max": 0.956
       },
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 100.1,
-          "stddev_s": 5.8,
-          "count": 5,
+          "target_s": 100.3,
+          "stddev_s": 6.7,
+          "count": 4,
           "total_samples": 10
         },
         "3": {
-          "target_s": 185.3,
-          "stddev_s": 9.1,
+          "target_s": 187.5,
+          "stddev_s": 10.3,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 249.9,
-          "stddev_s": 16.5,
+          "target_s": 251.6,
+          "stddev_s": 21.7,
           "count": 10,
           "total_samples": 10
         },
         "5": {
           "target_s": 318,
-          "stddev_s": 25.7,
+          "stddev_s": 34.5,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 393.7,
-          "stddev_s": 28.4,
+          "stddev_s": 42.3,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 456.7,
-          "stddev_s": 29.3,
-          "count": 10,
+          "target_s": 454.7,
+          "stddev_s": 30.5,
+          "count": 9,
           "total_samples": 10
         }
       }
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 164.4,
-      "stddev_first_cast_s": 148.6,
-      "avg_gap_s": 205.2,
-      "stddev_gap_s": 107.9,
-      "avg_bl_offset_s": 6.4,
-      "stddev_bl_offset_s": 7.4,
-      "avg_uses": 2.4,
+      "avg_first_cast_s": 181.7,
+      "stddev_first_cast_s": 139.4,
+      "avg_gap_s": 185.4,
+      "stddev_gap_s": 92.2,
+      "avg_bl_offset_s": 9.6,
+      "stddev_bl_offset_s": 7.6,
+      "avg_uses": 2.5,
       "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.285,
-        "stddev": 0.097,
+        "avg": 0.295,
+        "stddev": 0.096,
         "min": 0.116,
         "max": 0.458
       },
-      "bl_pct": 20,
+      "bl_pct": 30,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 393.3,
-          "stddev_s": 61.5,
+          "target_s": 373.8,
+          "stddev_s": 63.8,
           "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 473.3,
-          "stddev_s": 48.6,
-          "count": 4,
+          "target_s": 487.3,
+          "stddev_s": 44.4,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -277,5 +258,5 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "928a5dc07fab095b"
+  "source_signature": "dc73c37f77f51edc"
 }
