@@ -2,104 +2,121 @@
   "spec": "BloodDeathKnight",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 8,
+  "sample_count": 10,
   "per_defensive_benchmarks": {
     "Vampiric Blood": {
-      "sample_count": 7,
-      "avg_first_cast_s": 60.8,
-      "stddev_first_cast_s": 38.6,
-      "avg_gap_s": 82,
-      "stddev_gap_s": 56.6,
-      "hold_targets": {
-        "1": {
-          "target_s": 192.9,
-          "stddev_s": 130.8,
-          "count": 3,
-          "total_samples": 7
-        }
-      },
-      "avg_uses": 4.6,
-      "avg_uses_per_min": 0.56,
+      "sample_count": 9,
+      "avg_first_cast_s": 93.4,
+      "stddev_first_cast_s": 116.8,
+      "avg_gap_s": 72.7,
+      "stddev_gap_s": 51.6,
+      "hold_targets": {},
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.564,
-        "stddev": 0.415,
+        "avg": 0.595,
+        "stddev": 0.46,
         "min": 0.133,
         "max": 1.337
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Anti-Magic Zone": {
-      "sample_count": 7,
-      "avg_first_cast_s": 172.1,
-      "stddev_first_cast_s": 107.5,
-      "avg_gap_s": 276.4,
-      "stddev_gap_s": 9.4,
+      "sample_count": 9,
+      "avg_first_cast_s": 163.8,
+      "stddev_first_cast_s": 94.6,
+      "avg_gap_s": 273,
+      "stddev_gap_s": 11,
       "hold_targets": {
         "1": {
           "target_s": 405.5,
-          "stddev_s": 16.7,
-          "count": 5,
-          "total_samples": 7
+          "stddev_s": 15,
+          "count": 7,
+          "total_samples": 9
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.22,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.219,
-        "stddev": 0.063,
+        "avg": 0.23,
+        "stddev": 0.059,
         "min": 0.116,
         "max": 0.29
       },
       "majority_hold": true
     },
     "Anti-Magic Shell": {
-      "sample_count": 2,
-      "avg_first_cast_s": 194.8,
-      "stddev_first_cast_s": 104.6,
-      "avg_gap_s": 149.1,
-      "stddev_gap_s": 58.8,
+      "sample_count": 3,
+      "avg_first_cast_s": 132.7,
+      "stddev_first_cast_s": 130.5,
+      "avg_gap_s": 105.9,
+      "stddev_gap_s": 53.9,
       "hold_targets": {
         "1": {
-          "target_s": 369.3,
-          "stddev_s": 159.5,
-          "count": 2,
-          "total_samples": 2
+          "target_s": 256.5,
+          "stddev_s": 201.7,
+          "count": 3,
+          "total_samples": 3
         }
       },
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.49,
       "uses_per_min": {
-        "avg": 0.359,
-        "stddev": 0.178,
+        "avg": 0.493,
+        "stddev": 0.264,
         "min": 0.233,
-        "max": 0.485
+        "max": 0.76
       },
       "majority_hold": true
     },
     "Icebound Fortitude": {
-      "sample_count": 2,
-      "avg_first_cast_s": 313.4,
-      "stddev_first_cast_s": 286.7,
-      "avg_gap_s": 222.3,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.2,
+      "sample_count": 3,
+      "avg_first_cast_s": 233.8,
+      "stddev_first_cast_s": 245.1,
+      "avg_gap_s": 205.5,
+      "stddev_gap_s": 63.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 333.2,
+          "stddev_s": 0.4,
+          "count": 2,
+          "total_samples": 3
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.202,
-        "stddev": 0.124,
+        "avg": 0.262,
+        "stddev": 0.135,
         "min": 0.115,
-        "max": 0.29
+        "max": 0.38
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 1,
+      "avg_first_cast_s": 31.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 103,
+      "stddev_gap_s": 12.6,
+      "hold_targets": {},
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.63,
+      "uses_per_min": {
+        "avg": 0.633,
+        "stddev": 0,
+        "min": 0.633,
+        "max": 0.633
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 58.1,
-      "dmg_avg": 1178788,
-      "dmg_stddev": 405457,
-      "dmg_min": 695420,
+      "time_s": 53,
+      "dmg_avg": 1063841,
+      "dmg_stddev": 487899,
+      "dmg_min": 651148,
       "dmg_max": 1681352,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
@@ -114,24 +131,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 907580,
-          "min_damage": 604583,
+          "avg_damage": 868342,
+          "min_damage": 547054,
           "max_damage": 1172447,
           "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 95492,
+          "avg_damage": 89979,
           "min_damage": 78161,
-          "max_damage": 121426,
+          "max_damage": 99375,
           "count": 4
         }
       ]
     },
     {
       "time_s": 98.8,
-      "dmg_avg": 1164753,
-      "dmg_stddev": 492979,
+      "dmg_avg": 1151582,
+      "dmg_stddev": 442113,
       "dmg_min": 742506,
       "dmg_max": 1870354,
       "window_length_s": 10,
@@ -147,24 +164,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 731507,
-          "min_damage": 716791,
+          "avg_damage": 713342,
+          "min_damage": 640684,
           "max_damage": 743659,
-          "count": 4
+          "count": 5
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 637673,
+          "min_damage": 313540,
+          "max_damage": 999637,
+          "count": 3
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 140320,
+          "avg_damage": 138345,
           "min_damage": 127058,
           "max_damage": 155145,
-          "count": 5
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 193.1,
-      "dmg_avg": 1766821,
-      "dmg_stddev": 503496,
+      "time_s": 201.3,
+      "dmg_avg": 1768520,
+      "dmg_stddev": 411117,
       "dmg_min": 1271775,
       "dmg_max": 2278361,
       "window_length_s": 10,
@@ -180,31 +204,45 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 920681,
-          "min_damage": 694191,
+          "avg_damage": 845510,
+          "min_damage": 619998,
           "max_damage": 1069541,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1,
-          "avg_damage": 774673,
+          "avg_damage": 710194,
           "min_damage": 554020,
           "max_damage": 995325,
+          "count": 3
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 289484,
+          "min_damage": 285285,
+          "max_damage": 293682,
           "count": 2
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 232055,
+          "avg_damage": 241893,
           "min_damage": 197998,
           "max_damage": 284671,
-          "count": 3
+          "count": 4
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 7459,
+          "min_damage": 7290,
+          "max_damage": 7628,
+          "count": 2
         }
       ]
     },
     {
-      "time_s": 241.6,
-      "dmg_avg": 1461504,
-      "dmg_stddev": 527208,
+      "time_s": 239.2,
+      "dmg_avg": 1403292,
+      "dmg_stddev": 445930,
       "dmg_min": 1021765,
       "dmg_max": 2045956,
       "window_length_s": 10,
@@ -226,19 +264,26 @@
           "count": 3
         },
         {
+          "spell_id": 1,
+          "avg_damage": 730322,
+          "min_damage": 540170,
+          "max_damage": 920474,
+          "count": 2
+        },
+        {
           "spell_id": 1222284,
-          "avg_damage": 278361,
+          "avg_damage": 284985,
           "min_damage": 275854,
-          "max_damage": 280188,
-          "count": 3
+          "max_damage": 304858,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 330.5,
-      "dmg_avg": 1748338,
-      "dmg_stddev": 699860,
-      "dmg_min": 1240960,
+      "time_s": 309.3,
+      "dmg_avg": 1852379,
+      "dmg_stddev": 499318,
+      "dmg_min": 1358669,
       "dmg_max": 2546756,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
@@ -253,32 +298,39 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 825271,
-          "min_damage": 599228,
+          "avg_damage": 842691,
+          "min_damage": 703330,
           "max_damage": 1150361,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1,
-          "avg_damage": 767596,
-          "min_damage": 496424,
+          "avg_damage": 736928,
+          "min_damage": 579920,
           "max_damage": 1038768,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 326570,
-          "min_damage": 234651,
-          "max_damage": 387431,
-          "count": 3
+          "avg_damage": 382448,
+          "min_damage": 341626,
+          "max_damage": 415888,
+          "count": 4
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 4203,
+          "min_damage": 893,
+          "max_damage": 7513,
+          "count": 2
         }
       ]
     },
     {
       "time_s": 389.2,
-      "dmg_avg": 1220461,
-      "dmg_stddev": 152332,
-      "dmg_min": 1089737,
+      "dmg_avg": 1201969,
+      "dmg_stddev": 167869,
+      "dmg_min": 995703,
       "dmg_max": 1387746,
       "window_length_s": 10,
       "defensive_name": "Vampiric Blood",
@@ -293,50 +345,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 640600,
-          "min_damage": 612883,
+          "avg_damage": 545771,
+          "min_damage": 273693,
           "max_damage": 668317,
-          "count": 2
+          "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 454133,
-          "min_damage": 425428,
+          "avg_damage": 418376,
+          "min_damage": 361966,
           "max_damage": 470638,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 467,
-      "dmg_avg": 1408679,
-      "dmg_stddev": 218743,
-      "dmg_min": 1164296,
-      "dmg_max": 1586155,
-      "window_length_s": 10,
-      "defensive_name": "Vampiric Blood",
-      "spell_id": 55233,
-      "common_defensives": [
-        "Vampiric Blood"
-      ],
-      "common_cds": [
-        "Vampiric Blood"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221781,
-          "avg_damage": 793465,
-          "min_damage": 570191,
-          "max_damage": 1121092,
-          "count": 3
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 501507,
-          "min_damage": 465063,
-          "max_damage": 530403,
-          "count": 3
+          "count": 5
         }
       ]
     }
@@ -344,25 +363,31 @@
   "top_defensives_summary": [
     {
       "spell_id": 55233,
-      "avg_uses": 4.6,
+      "avg_uses": 4.8,
       "min_uses": 1,
       "max_uses": 11
     },
     {
       "spell_id": 48792,
-      "avg_uses": 1.5,
+      "avg_uses": 2,
       "min_uses": 1,
-      "max_uses": 2
-    },
-    {
-      "spell_id": 48707,
-      "avg_uses": 2.5,
-      "min_uses": 2,
       "max_uses": 3
     },
     {
+      "spell_id": 48707,
+      "avg_uses": 3.7,
+      "min_uses": 2,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 5,
+      "min_uses": 5,
+      "max_uses": 5
+    },
+    {
       "spell_id": 51052,
-      "avg_uses": 1.7,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -462,10 +487,18 @@
       "icon": "inv_misc_herb_ancientlichen",
       "name": "Putrid Fist"
     },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
     "1222284": {
       "icon": "ability_creature_poison_06",
       "name": "Rotting Pustules"
+    },
+    "1287955": {
+      "icon": "ability_rhyolith_magmaflow_wave",
+      "name": "Rune of Void-Tainted Shell"
     }
   },
-  "source_signature": "5c261bb31ef222cf"
+  "source_signature": "010b94f0abd0cec5"
 }

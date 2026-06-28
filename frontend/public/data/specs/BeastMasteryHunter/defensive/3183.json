@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Aspect of the Turtle": {
       "sample_count": 7,
-      "avg_first_cast_s": 473.7,
-      "stddev_first_cast_s": 146.4,
+      "avg_first_cast_s": 466.5,
+      "stddev_first_cast_s": 141.7,
       "avg_gap_s": 287.2,
       "stddev_gap_s": 0,
       "hold_targets": {},
@@ -23,25 +23,25 @@
     },
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 124.9,
-      "stddev_first_cast_s": 70.2,
-      "avg_gap_s": 39.8,
-      "stddev_gap_s": 59.7,
+      "avg_first_cast_s": 114.7,
+      "stddev_first_cast_s": 62.5,
+      "avg_gap_s": 98.9,
+      "stddev_gap_s": 64.2,
       "hold_targets": {
-        "2": {
-          "target_s": 216.1,
-          "stddev_s": 112.5,
+        "1": {
+          "target_s": 216.3,
+          "stddev_s": 112.2,
           "count": 8,
           "total_samples": 10
         }
       },
-      "avg_uses": 8.6,
-      "avg_uses_per_min": 0.91,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.913,
-        "stddev": 0.154,
-        "min": 0.637,
-        "max": 1.052
+        "avg": 0.457,
+        "stddev": 0.078,
+        "min": 0.318,
+        "max": 0.531
       },
       "majority_hold": true
     },
@@ -56,7 +56,7 @@
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
         "avg": 0.122,
-        "stddev": 0.046,
+        "stddev": 0.045,
         "min": 0.103,
         "max": 0.234
       },
@@ -66,37 +66,50 @@
   "defensive_windows": [
     {
       "time_s": 70.8,
-      "stddev_s": 0.5,
-      "count": 12,
-      "total_samples": 10,
-      "dmg_avg": 402883,
-      "dmg_stddev": 28007,
+      "dmg_avg": 406808,
+      "dmg_stddev": 26180,
       "dmg_min": 374138,
       "dmg_max": 441077,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240391,
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 163754,
-          "min_damage": 144321,
+          "avg_damage": 166803,
+          "min_damage": 150458,
           "max_damage": 184541,
-          "count": 12
+          "count": 6
         },
         {
           "spell_id": 1251649,
-          "avg_damage": 138784,
-          "min_damage": 118333,
+          "avg_damage": 138895,
+          "min_damage": 118999,
           "max_damage": 151784,
-          "count": 12
+          "count": 6
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 100345,
+          "avg_damage": 101110,
           "min_damage": 89097,
-          "max_damage": 111583,
-          "count": 12
+          "max_damage": 116176,
+          "count": 6
         }
-      ],
-      "ref_game_id": 240391,
+      ]
+    },
+    {
+      "time_s": 216.3,
+      "dmg_avg": 274132,
+      "dmg_stddev": 27621,
+      "dmg_min": 229107,
+      "dmg_max": 310070,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -105,41 +118,38 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 215.8,
-      "stddev_s": 7.8,
-      "count": 22,
-      "total_samples": 10,
-      "dmg_avg": 273033,
-      "dmg_stddev": 23535,
-      "dmg_min": 238099,
-      "dmg_max": 302740,
+      ],
+      "ref_game_id": 240391,
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 132269,
-          "min_damage": 112111,
+          "avg_damage": 127977,
+          "min_damage": 88044,
           "max_damage": 145567,
-          "count": 22
+          "count": 11
         },
         {
           "spell_id": 1281473,
-          "avg_damage": 99128,
-          "min_damage": 85213,
+          "avg_damage": 100603,
+          "min_damage": 85692,
           "max_damage": 104924,
-          "count": 22
+          "count": 11
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 50888,
-          "min_damage": 40775,
+          "avg_damage": 50760,
+          "min_damage": 39624,
           "max_damage": 59082,
-          "count": 18
+          "count": 9
         }
-      ],
-      "ref_game_id": 240391,
+      ]
+    },
+    {
+      "time_s": 241.3,
+      "dmg_avg": 452309,
+      "dmg_stddev": 19170,
+      "dmg_min": 435852,
+      "dmg_max": 477607,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -148,62 +158,59 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 241.5,
-      "stddev_s": 1.6,
-      "count": 12,
-      "total_samples": 10,
-      "dmg_avg": 458028,
-      "dmg_stddev": 20841,
-      "dmg_min": 435852,
-      "dmg_max": 484779,
+      ],
+      "ref_game_id": 240391,
       "ability_breakdown": [
         {
           "spell_id": 1285827,
-          "avg_damage": 149413,
+          "avg_damage": 150053,
           "min_damage": 128616,
           "max_damage": 214361,
-          "count": 12
+          "count": 5
         },
         {
           "spell_id": 1249797,
-          "avg_damage": 118505,
+          "avg_damage": 118037,
           "min_damage": 109349,
-          "max_damage": 123093,
-          "count": 12
+          "max_damage": 124040,
+          "count": 5
         },
         {
           "spell_id": 1284530,
-          "avg_damage": 79974,
-          "min_damage": 78778,
+          "avg_damage": 80385,
+          "min_damage": 80385,
           "max_damage": 80385,
-          "count": 10
+          "count": 4
         },
         {
           "spell_id": 1282372,
-          "avg_damage": 69712,
+          "avg_damage": 68031,
           "min_damage": 55522,
           "max_damage": 87751,
-          "count": 12
+          "count": 5
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 52490,
+          "avg_damage": 50622,
           "min_damage": 40637,
-          "max_damage": 63956,
-          "count": 12
+          "max_damage": 55417,
+          "count": 5
         },
         {
           "spell_id": 1282004,
-          "avg_damage": 1262,
+          "avg_damage": 1258,
           "min_damage": 1157,
-          "max_damage": 1305,
-          "count": 12
+          "max_damage": 1313,
+          "count": 5
         }
-      ],
-      "ref_game_id": 240391,
+      ]
+    },
+    {
+      "time_s": 328,
+      "dmg_avg": 402728,
+      "dmg_stddev": 37216,
+      "dmg_min": 313251,
+      "dmg_max": 431976,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -212,218 +219,72 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 328.3,
-      "stddev_s": 0.5,
-      "count": 18,
-      "total_samples": 10,
-      "dmg_avg": 418849,
-      "dmg_stddev": 17957,
-      "dmg_min": 377211,
-      "dmg_max": 441976,
+      ],
+      "ref_game_id": 240391,
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 112440,
-          "min_damage": 101249,
-          "max_damage": 117982,
-          "count": 18
+          "avg_damage": 105377,
+          "min_damage": 70944,
+          "max_damage": 116375,
+          "count": 9
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 107070,
-          "min_damage": 103415,
+          "avg_damage": 105343,
+          "min_damage": 90996,
           "max_damage": 113392,
-          "count": 18
+          "count": 9
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 85656,
-          "min_damage": 82732,
+          "avg_damage": 84275,
+          "min_damage": 72798,
           "max_damage": 90714,
-          "count": 18
+          "count": 9
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 57487,
-          "min_damage": 48437,
-          "max_damage": 68631,
-          "count": 16
+          "avg_damage": 52580,
+          "min_damage": 29381,
+          "max_damage": 59681,
+          "count": 8
         },
         {
           "spell_id": 1254257,
-          "avg_damage": 44773,
-          "min_damage": 43089,
+          "avg_damage": 44053,
+          "min_damage": 37915,
           "max_damage": 48136,
-          "count": 18
+          "count": 9
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 17352,
-          "min_damage": 12500,
+          "avg_damage": 16439,
+          "min_damage": 10617,
           "max_damage": 19814,
-          "count": 18
+          "count": 9
         }
-      ],
-      "ref_game_id": 240391,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 405.8,
-      "stddev_s": 0.6,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 342439,
-      "dmg_stddev": 3103,
-      "dmg_min": 339116,
-      "dmg_max": 346039,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 142697,
-          "min_damage": 141484,
-          "max_damage": 144370,
-          "count": 6
-        },
-        {
-          "spell_id": 1266810,
-          "avg_damage": 90600,
-          "min_damage": 89831,
-          "max_damage": 91664,
-          "count": 6
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 83668,
-          "min_damage": 82544,
-          "max_damage": 84231,
-          "count": 6
-        },
-        {
-          "spell_id": 1254644,
-          "avg_damage": 25474,
-          "min_damage": 25257,
-          "max_damage": 25774,
-          "count": 6
-        }
-      ],
-      "ref_game_id": 257959,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 448.6,
-      "stddev_s": 1.2,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 349166,
-      "dmg_stddev": 30089,
-      "dmg_min": 314450,
-      "dmg_max": 381616,
-      "ability_breakdown": [
-        {
-          "spell_id": 1251080,
-          "avg_damage": 167290,
-          "min_damage": 165910,
-          "max_damage": 168451,
-          "count": 6
-        },
-        {
-          "spell_id": 1249797,
-          "avg_damage": 99629,
-          "min_damage": 70918,
-          "max_damage": 123282,
-          "count": 6
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 65454,
-          "min_damage": 62114,
-          "max_damage": 71924,
-          "count": 6
-        },
-        {
-          "spell_id": 1254644,
-          "avg_damage": 16792,
-          "min_damage": 12756,
-          "max_damage": 18900,
-          "count": 6
-        }
-      ],
-      "ref_game_id": 257959,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 578.1,
-      "stddev_s": 5.1,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "ability_breakdown": [],
-      "ref_game_id": null,
-      "window_length_s": 8,
-      "defensive_name": "Aspect of the Turtle",
-      "spell_id": 186265,
-      "common_defensives": [
-        "Aspect of the Turtle"
-      ],
-      "common_cds": [
-        "Aspect of the Turtle"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Aspect of the Turtle",
       "spell_id": 186265,
       "avg_uses": 1.1,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 7
+      "max_uses": 2
     },
     {
-      "name": "Survival of the Fittest",
       "spell_id": 264735,
-      "avg_uses": 8.6,
-      "min_uses": 6,
-      "max_uses": 10,
-      "sample_count": 10
+      "avg_uses": 4.3,
+      "min_uses": 3,
+      "max_uses": 5
     },
     {
-      "name": "Exhilaration",
       "spell_id": 109304,
       "avg_uses": 1.1,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 8
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -457,5 +318,67 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1251649": {
+      "icon": "inv_pet_naaru",
+      "name": "Disintegration"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254398": {
+      "icon": "inv_jewelcrafting_dawnstone_02",
+      "name": "Glimmering"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    },
+    "1282372": {
+      "icon": "ability_evoker_unravel",
+      "name": "Cosmic Fission"
+    },
+    "1284530": {
+      "icon": "spell_mage_supernova",
+      "name": "Galvanize"
+    },
+    "1285827": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Overkill Current"
+    }
+  },
+  "source_signature": "e0049b0d3bc9184b"
 }

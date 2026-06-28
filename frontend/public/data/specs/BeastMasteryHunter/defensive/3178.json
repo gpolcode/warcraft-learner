@@ -4,6 +4,23 @@
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 179.1,
+      "stddev_first_cast_s": 97.4,
+      "avg_gap_s": 68.8,
+      "stddev_gap_s": 30.3,
+      "hold_targets": {},
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.48,
+      "uses_per_min": {
+        "avg": 0.482,
+        "stddev": 0.266,
+        "min": 0.139,
+        "max": 0.837
+      },
+      "majority_hold": false
+    },
     "Aspect of the Turtle": {
       "sample_count": 4,
       "avg_first_cast_s": 96.5,
@@ -21,204 +38,31 @@
       },
       "majority_hold": false
     },
-    "Survival of the Fittest": {
-      "sample_count": 10,
-      "avg_first_cast_s": 187.2,
-      "stddev_first_cast_s": 102.9,
-      "avg_gap_s": 27.8,
-      "stddev_gap_s": 39.4,
-      "hold_targets": {},
-      "avg_uses": 6.4,
-      "avg_uses_per_min": 0.93,
-      "uses_per_min": {
-        "avg": 0.932,
-        "stddev": 0.542,
-        "min": 0.278,
-        "max": 1.674
-      },
-      "majority_hold": false
-    },
     "Exhilaration": {
-      "sample_count": 5,
-      "avg_first_cast_s": 228.3,
-      "stddev_first_cast_s": 165.4,
-      "avg_gap_s": 139.1,
-      "stddev_gap_s": 27,
+      "sample_count": 4,
+      "avg_first_cast_s": 265.7,
+      "stddev_first_cast_s": 164.9,
+      "avg_gap_s": 122.3,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.246,
-        "stddev": 0.141,
+        "avg": 0.191,
+        "stddev": 0.079,
         "min": 0.128,
-        "max": 0.467
+        "max": 0.306
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 35.4,
-      "stddev_s": 1.4,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 219961,
-      "dmg_stddev": 30219,
-      "dmg_min": 193790,
-      "dmg_max": 246131,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 111993,
-          "min_damage": 110247,
-          "max_damage": 113739,
-          "count": 4
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 49412,
-          "min_damage": 49286,
-          "max_damage": 49538,
-          "count": 4
-        },
-        {
-          "spell_id": 1244413,
-          "avg_damage": 45114,
-          "min_damage": 23739,
-          "max_damage": 66489,
-          "count": 4
-        },
-        {
-          "spell_id": 1244672,
-          "avg_damage": 13442,
-          "min_damage": 10518,
-          "max_damage": 16365,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 74.3,
-      "stddev_s": 2.4,
-      "count": 4,
-      "total_samples": 10,
-      "dmg_avg": 274223,
-      "dmg_stddev": 92683,
-      "dmg_min": 193957,
-      "dmg_max": 354489,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 101937,
-          "min_damage": 97607,
-          "max_damage": 106267,
-          "count": 4
-        },
-        {
-          "spell_id": 1245500,
-          "avg_damage": 99380,
-          "min_damage": 99380,
-          "max_damage": 99380,
-          "count": 2
-        },
-        {
-          "spell_id": 1283712,
-          "avg_damage": 74063,
-          "min_damage": 38403,
-          "max_damage": 109723,
-          "count": 4
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 48533,
-          "min_damage": 47779,
-          "max_damage": 49287,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 167.3,
-      "stddev_s": 9.2,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 265344,
-      "dmg_stddev": 214998,
-      "dmg_min": 111590,
-      "dmg_max": 542346,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 111442,
-          "min_damage": 111293,
-          "max_damage": 111590,
-          "count": 4
-        },
-        {
-          "spell_id": 1270513,
-          "avg_damage": 46960,
-          "min_damage": 18482,
-          "max_damage": 75438,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
       "time_s": 205,
-      "stddev_s": 4.8,
-      "count": 10,
-      "total_samples": 10,
-      "dmg_avg": 247089,
-      "dmg_stddev": 88555,
+      "dmg_avg": 233591,
+      "dmg_stddev": 90283,
       "dmg_min": 159429,
       "dmg_max": 369340,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 111339,
-          "min_damage": 110038,
-          "max_damage": 111855,
-          "count": 8
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 49593,
-          "min_damage": 47636,
-          "max_damage": 51330,
-          "count": 10
-        }
-      ],
-      "ref_game_id": 244552,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -227,48 +71,78 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 111706,
+          "min_damage": 110038,
+          "max_damage": 113177,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 50148,
+          "min_damage": 47636,
+          "max_damage": 52923,
+          "count": 6
+        }
       ]
     },
     {
       "time_s": 244.3,
-      "stddev_s": 0.2,
-      "count": 8,
-      "total_samples": 10,
-      "dmg_avg": 403874,
-      "dmg_stddev": 73979,
+      "dmg_avg": 429463,
+      "dmg_stddev": 89794,
       "dmg_min": 329314,
-      "dmg_max": 501794,
+      "dmg_max": 531823,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 242056,
       "ability_breakdown": [
         {
           "spell_id": 1285954,
-          "avg_damage": 175847,
+          "avg_damage": 174278,
           "min_damage": 160052,
           "max_damage": 194585,
-          "count": 8
+          "count": 5
         },
         {
           "spell_id": 1245302,
-          "avg_damage": 124174,
+          "avg_damage": 123036,
           "min_damage": 76745,
           "max_damage": 208130,
-          "count": 8
+          "count": 5
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 73556,
+          "avg_damage": 79696,
           "min_damage": 46278,
-          "max_damage": 99580,
-          "count": 8
+          "max_damage": 104255,
+          "count": 5
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 46351,
+          "avg_damage": 77928,
           "min_damage": 37421,
-          "max_damage": 55281,
-          "count": 4
+          "max_damage": 141082,
+          "count": 3
         }
-      ],
-      "ref_game_id": 242056,
+      ]
+    },
+    {
+      "time_s": 301.9,
+      "dmg_avg": 384486,
+      "dmg_stddev": 51667,
+      "dmg_min": 296418,
+      "dmg_max": 465266,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -277,162 +151,51 @@
       ],
       "common_cds": [
         "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 298.4,
-      "stddev_s": 9,
-      "count": 18,
-      "total_samples": 10,
-      "dmg_avg": 398577,
-      "dmg_stddev": 61201,
-      "dmg_min": 296418,
-      "dmg_max": 525406,
+      ],
+      "ref_game_id": 244552,
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 225094,
+          "avg_damage": 226685,
           "min_damage": 72159,
-          "max_damage": 306315,
-          "count": 10
+          "max_damage": 291619,
+          "count": 5
         },
         {
           "spell_id": 1245302,
-          "avg_damage": 118226,
+          "avg_damage": 121504,
           "min_damage": 94070,
           "max_damage": 183411,
-          "count": 12
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 79236,
-          "min_damage": 13232,
-          "max_damage": 148081,
-          "count": 10
+          "count": 5
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 76275,
+          "avg_damage": 71459,
           "min_damage": 12702,
           "max_damage": 99973,
-          "count": 10
-        }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 372.1,
-      "stddev_s": 0.6,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 228719,
-      "dmg_stddev": 47387,
-      "dmg_min": 192819,
-      "dmg_max": 289568,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 109319,
-          "min_damage": 106512,
-          "max_damage": 112680,
-          "count": 6
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 80955,
-          "min_damage": 49286,
-          "max_damage": 98576,
-          "count": 6
-        },
-        {
-          "spell_id": 1283712,
-          "avg_damage": 37713,
-          "min_damage": 37021,
-          "max_damage": 38404,
           "count": 4
         }
-      ],
-      "ref_game_id": 244552,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ]
-    },
-    {
-      "time_s": 415,
-      "stddev_s": 5.2,
-      "count": 6,
-      "total_samples": 10,
-      "dmg_avg": 229563,
-      "dmg_stddev": 93376,
-      "dmg_min": 113846,
-      "dmg_max": 316678,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259275,
-          "avg_damage": 116137,
-          "min_damage": 49667,
-          "max_damage": 150880,
-          "count": 6
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 98299,
-          "min_damage": 86294,
-          "max_damage": 110303,
-          "count": 4
-        }
-      ],
-      "ref_game_id": 256679,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
       ]
     }
   ],
   "top_defensives_summary": [
     {
-      "name": "Aspect of the Turtle",
       "spell_id": 186265,
       "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 2,
-      "sample_count": 4
+      "max_uses": 2
     },
     {
-      "name": "Survival of the Fittest",
       "spell_id": 264735,
-      "avg_uses": 6.4,
-      "min_uses": 2,
-      "max_uses": 12,
-      "sample_count": 10
+      "avg_uses": 3.3,
+      "min_uses": 1,
+      "max_uses": 6
     },
     {
-      "name": "Exhilaration",
       "spell_id": 109304,
-      "avg_uses": 1.6,
+      "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 3,
-      "sample_count": 5
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -466,5 +229,39 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "1b78ca3235572310"
 }

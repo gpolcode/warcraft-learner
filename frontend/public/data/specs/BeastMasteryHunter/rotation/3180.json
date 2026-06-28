@@ -3,30 +3,30 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 381,
-  "downtime_threshold_ms": 1451,
-  "top_avg_efficiency": 80.9,
-  "top_efficiency_stddev": 5.1,
+  "avg_duration_s": 381.9,
+  "downtime_threshold_ms": 1446,
+  "top_avg_efficiency": 81,
+  "top_efficiency_stddev": 5.3,
   "per_cd_benchmarks": {
     "Bestial Wrath": {
       "sample_count": 10,
       "avg_first_cast_s": 4.2,
-      "stddev_first_cast_s": 1.1,
+      "stddev_first_cast_s": 1.2,
       "avg_gap_s": 31,
       "stddev_gap_s": 1.3,
-      "hold_targets": {},
+      "avg_bl_offset_s": 3.7,
+      "stddev_bl_offset_s": 1.5,
       "avg_uses": 12.8,
-      "avg_uses_per_min": 2.02,
+      "avg_uses_per_min": 2.01,
       "uses_per_min": {
-        "avg": 2.017,
-        "stddev": 0.05,
+        "avg": 2.012,
+        "stddev": 0.044,
         "min": 1.947,
-        "max": 2.08
+        "max": 2.064
       },
+      "bl_pct": 90,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Wailing Arrow": {
       "sample_count": 10,
@@ -34,34 +34,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Algeth'ar Puzzle Box": {
       "sample_count": 10,
-      "avg_first_cast_s": 32.6,
-      "stddev_first_cast_s": 57.5,
-      "avg_gap_s": 130.5,
-      "stddev_gap_s": 17.1,
-      "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.39,
+      "avg_first_cast_s": 48.1,
+      "stddev_first_cast_s": 63.7,
+      "avg_gap_s": 130.2,
+      "stddev_gap_s": 17.7,
+      "avg_bl_offset_s": 1.4,
+      "stddev_bl_offset_s": 2.1,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.491,
-        "stddev": 0.104,
-        "min": 0.343,
-        "max": 0.608
+        "avg": 0.471,
+        "stddev": 0.095,
+        "min": 0.337,
+        "max": 0.57
       },
+      "bl_pct": 50,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -81,7 +86,7 @@
       "align_with_bloodlust": false,
       "opener_priority": 3,
       "talent_gated": true,
-      "usage_rule": "Dark Ranger only: granted by Wailing Dead from Bestial Wrath and usable for 15 seconds, so fire it somewhere inside your Bestial Wrath window without wasting resources such as letting Kill Command cap at two charges, and always release it before the buff expires (spell_id is the Wailing Arrow cast and may need verification for Midnight)."
+      "usage_rule": "Dark Ranger only: granted by Wailing Dead from Bestial Wrath and usable for 15 seconds, so fire it somewhere inside your Bestial Wrath window without wasting resources such as letting Kill Command cap at two charges, and always release it before the buff expires."
     },
     {
       "name": "Algeth'ar Puzzle Box",
@@ -159,5 +164,31 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "19574": {
+      "icon": "ability_druid_ferociousbite",
+      "name": "Bestial Wrath"
+    },
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "383781": {
+      "icon": "inv_misc_enggizmos_18",
+      "name": "Algeth'ar Puzzle"
+    },
+    "392060": {
+      "icon": "ability_theblackarrow",
+      "name": "Wailing Arrow"
+    }
+  },
+  "source_signature": "5f2dde493231794c"
 }

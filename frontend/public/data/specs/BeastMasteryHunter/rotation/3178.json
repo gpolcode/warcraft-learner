@@ -4,29 +4,29 @@
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
   "avg_duration_s": 407.9,
-  "downtime_threshold_ms": 1573,
-  "top_avg_efficiency": 78.8,
-  "top_efficiency_stddev": 4.7,
+  "downtime_threshold_ms": 1567,
+  "top_avg_efficiency": 79,
+  "top_efficiency_stddev": 5,
   "per_cd_benchmarks": {
     "Bestial Wrath": {
       "sample_count": 10,
       "avg_first_cast_s": 3.6,
-      "stddev_first_cast_s": 1.2,
+      "stddev_first_cast_s": 1.1,
       "avg_gap_s": 34.8,
       "stddev_gap_s": 4.7,
-      "hold_targets": {},
+      "avg_bl_offset_s": 2.7,
+      "stddev_bl_offset_s": 1.9,
       "avg_uses": 12.3,
-      "avg_uses_per_min": 1.82,
+      "avg_uses_per_min": 1.81,
       "uses_per_min": {
         "avg": 1.815,
         "stddev": 0.086,
         "min": 1.661,
         "max": 1.921
       },
+      "bl_pct": 100,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     },
     "Wailing Arrow": {
       "sample_count": 10,
@@ -34,34 +34,39 @@
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
-      "uses_per_min": {},
-      "majority_hold": false,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Algeth'ar Puzzle Box": {
       "sample_count": 10,
-      "avg_first_cast_s": 47.8,
-      "stddev_first_cast_s": 81.1,
-      "avg_gap_s": 155.4,
-      "stddev_gap_s": 27.5,
-      "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.3,
+      "avg_first_cast_s": 55.7,
+      "stddev_first_cast_s": 85.8,
+      "avg_gap_s": 155.6,
+      "stddev_gap_s": 29.4,
+      "avg_bl_offset_s": 0,
+      "stddev_bl_offset_s": 0.1,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.43,
-        "stddev": 0.096,
+        "avg": 0.424,
+        "stddev": 0.104,
         "min": 0.279,
         "max": 0.524
       },
+      "bl_pct": 40,
       "majority_hold": false,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "bl_pct": 0
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -81,7 +86,7 @@
       "align_with_bloodlust": false,
       "opener_priority": 3,
       "talent_gated": true,
-      "usage_rule": "Dark Ranger only: granted by Wailing Dead from Bestial Wrath and usable for 15 seconds, so fire it somewhere inside your Bestial Wrath window without wasting resources such as letting Kill Command cap at two charges, and always release it before the buff expires (spell_id is the Wailing Arrow cast and may need verification for Midnight)."
+      "usage_rule": "Dark Ranger only: granted by Wailing Dead from Bestial Wrath and usable for 15 seconds, so fire it somewhere inside your Bestial Wrath window without wasting resources such as letting Kill Command cap at two charges, and always release it before the buff expires."
     },
     {
       "name": "Algeth'ar Puzzle Box",
@@ -159,5 +164,31 @@
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
   },
-  "ability_icons": {}
+  "ability_icons": {
+    "19574": {
+      "icon": "ability_druid_ferociousbite",
+      "name": "Bestial Wrath"
+    },
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "383781": {
+      "icon": "inv_misc_enggizmos_18",
+      "name": "Algeth'ar Puzzle"
+    },
+    "392060": {
+      "icon": "ability_theblackarrow",
+      "name": "Wailing Arrow"
+    }
+  },
+  "source_signature": "1b78ca3235572310"
 }
