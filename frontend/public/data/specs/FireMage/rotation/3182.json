@@ -3,25 +3,25 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 287.2,
-  "downtime_threshold_ms": 1663,
-  "top_avg_efficiency": 68.3,
-  "top_efficiency_stddev": 2.2,
+  "avg_duration_s": 284.2,
+  "downtime_threshold_ms": 1648,
+  "top_avg_efficiency": 68.6,
+  "top_efficiency_stddev": 2.4,
   "per_cd_benchmarks": {
     "Combustion": {
       "sample_count": 10,
-      "avg_first_cast_s": 5,
-      "stddev_first_cast_s": 5.6,
-      "avg_gap_s": 67.1,
-      "stddev_gap_s": 11.6,
-      "avg_bl_offset_s": 10.6,
-      "stddev_bl_offset_s": 5.6,
+      "avg_first_cast_s": 4.8,
+      "stddev_first_cast_s": 5.5,
+      "avg_gap_s": 66.4,
+      "stddev_gap_s": 10.8,
+      "avg_bl_offset_s": 10.7,
+      "stddev_bl_offset_s": 5.5,
       "avg_uses": 4.8,
-      "avg_uses_per_min": 1,
+      "avg_uses_per_min": 1.01,
       "uses_per_min": {
-        "avg": 1.002,
-        "stddev": 0.072,
-        "min": 0.889,
+        "avg": 1.013,
+        "stddev": 0.061,
+        "min": 0.94,
         "max": 1.139
       },
       "bl_pct": 100,
@@ -31,17 +31,17 @@
     "Meteor": {
       "sample_count": 10,
       "avg_first_cast_s": 13.8,
-      "stddev_first_cast_s": 8.5,
-      "avg_gap_s": 64.9,
-      "stddev_gap_s": 11.1,
-      "avg_bl_offset_s": 17.3,
-      "stddev_bl_offset_s": 6.6,
+      "stddev_first_cast_s": 8.6,
+      "avg_gap_s": 64,
+      "stddev_gap_s": 9.9,
+      "avg_bl_offset_s": 17,
+      "stddev_bl_offset_s": 6.8,
       "avg_uses": 4.9,
-      "avg_uses_per_min": 1.02,
+      "avg_uses_per_min": 1.03,
       "uses_per_min": {
-        "avg": 1.021,
-        "stddev": 0.085,
-        "min": 0.889,
+        "avg": 1.032,
+        "stddev": 0.072,
+        "min": 0.94,
         "max": 1.154
       },
       "bl_pct": 100,
@@ -49,19 +49,19 @@
       "hold_targets": {
         "2": {
           "target_s": 73.1,
-          "stddev_s": 13.4,
+          "stddev_s": 13,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 131.7,
-          "stddev_s": 15.9,
+          "stddev_s": 15.5,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 192.4,
-          "stddev_s": 22.3,
+          "stddev_s": 17,
           "count": 10,
           "total_samples": 10
         },
@@ -95,18 +95,18 @@
     },
     "Mirror Image": {
       "sample_count": 10,
-      "avg_first_cast_s": 110.2,
-      "stddev_first_cast_s": 0,
+      "avg_first_cast_s": 158.1,
+      "stddev_first_cast_s": 67.7,
       "avg_gap_s": 144,
       "stddev_gap_s": 0,
       "avg_bl_offset_s": -4,
       "stddev_bl_offset_s": 0,
-      "avg_uses": 0.2,
-      "avg_uses_per_min": 0.04,
+      "avg_uses": 0.3,
+      "avg_uses_per_min": 0.07,
       "uses_per_min": {
-        "avg": 0.407,
-        "stddev": 0,
-        "min": 0.407,
+        "avg": 0.329,
+        "stddev": 0.111,
+        "min": 0.25,
         "max": 0.407
       },
       "bl_pct": 10,
@@ -139,7 +139,7 @@
       "cooldown": 60,
       "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; best ID guess for the current Retail spell, talent-gated.",
+      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; talent-gated.",
       "talent_gated": true
     },
     {
@@ -259,5 +259,5 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "6f2ed579d2862876"
+  "source_signature": "e96b62a610ec3306"
 }

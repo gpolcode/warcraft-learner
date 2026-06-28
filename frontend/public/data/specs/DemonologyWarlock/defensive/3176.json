@@ -6,16 +6,23 @@
   "per_defensive_benchmarks": {
     "Dark Pact": {
       "sample_count": 6,
-      "avg_first_cast_s": 127.1,
-      "stddev_first_cast_s": 70.4,
-      "avg_gap_s": 94.6,
-      "stddev_gap_s": 59.8,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.39,
+      "avg_first_cast_s": 105.9,
+      "stddev_first_cast_s": 77.2,
+      "avg_gap_s": 104.4,
+      "stddev_gap_s": 56.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 177.1,
+          "stddev_s": 81.2,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.393,
-        "stddev": 0.255,
+        "avg": 0.437,
+        "stddev": 0.263,
         "min": 0.202,
         "max": 0.882
       },
@@ -41,12 +48,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 168.6,
-      "dmg_avg": 390506,
-      "dmg_stddev": 129412,
+      "time_s": 175.3,
+      "dmg_avg": 333676,
+      "dmg_stddev": 34719,
       "dmg_min": 309126,
-      "dmg_max": 615800,
-      "window_length_s": 8.9,
+      "dmg_max": 384652,
+      "window_length_s": 8.3,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -59,17 +66,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 239015,
+          "avg_damage": 225040,
           "min_damage": 25935,
-          "max_damage": 345287,
-          "count": 5
+          "max_damage": 310445,
+          "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 3472,
+          "avg_damage": 3027,
           "min_damage": 313,
-          "max_damage": 5639,
-          "count": 5
+          "max_damage": 4280,
+          "count": 4
         }
       ]
     }
@@ -83,7 +90,7 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 1.7,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -141,5 +148,5 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "b37b44154a4bdf6a"
+  "source_signature": "817e70f277baf7cb"
 }

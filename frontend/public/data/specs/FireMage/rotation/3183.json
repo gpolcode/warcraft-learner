@@ -3,24 +3,24 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 530,
-  "downtime_threshold_ms": 1606,
-  "top_avg_efficiency": 68.4,
-  "top_efficiency_stddev": 3.5,
+  "avg_duration_s": 532.6,
+  "downtime_threshold_ms": 1599,
+  "top_avg_efficiency": 68.5,
+  "top_efficiency_stddev": 4,
   "per_cd_benchmarks": {
     "Combustion": {
       "sample_count": 10,
       "avg_first_cast_s": 7.2,
       "stddev_first_cast_s": 18.8,
-      "avg_gap_s": 62,
-      "stddev_gap_s": 4.3,
-      "avg_bl_offset_s": 2.5,
-      "stddev_bl_offset_s": 1.8,
+      "avg_gap_s": 61.6,
+      "stddev_gap_s": 3.4,
+      "avg_bl_offset_s": 2.4,
+      "stddev_bl_offset_s": 1.9,
       "avg_uses": 8.9,
-      "avg_uses_per_min": 1.01,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 1.008,
-        "stddev": 0.042,
+        "avg": 1.003,
+        "stddev": 0.04,
         "min": 0.914,
         "max": 1.066
       },
@@ -32,66 +32,66 @@
       "sample_count": 10,
       "avg_first_cast_s": 12.7,
       "stddev_first_cast_s": 0.4,
-      "avg_gap_s": 61.7,
-      "stddev_gap_s": 8.2,
-      "avg_bl_offset_s": 10.8,
-      "stddev_bl_offset_s": 2.6,
-      "avg_uses": 8.8,
+      "avg_gap_s": 61.2,
+      "stddev_gap_s": 7.9,
+      "avg_bl_offset_s": 10.6,
+      "stddev_bl_offset_s": 2.8,
+      "avg_uses": 8.9,
       "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 0.995,
-        "stddev": 0.09,
+        "avg": 1.001,
+        "stddev": 0.096,
         "min": 0.798,
-        "max": 1.097
+        "max": 1.106
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 75,
+          "target_s": 74.9,
           "stddev_s": 1,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 136.8,
+          "target_s": 136.7,
           "stddev_s": 0.8,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 193.1,
-          "stddev_s": 2.5,
+          "target_s": 193,
+          "stddev_s": 2.7,
           "count": 10,
           "total_samples": 10
         },
         "5": {
           "target_s": 256.7,
-          "stddev_s": 1.7,
+          "stddev_s": 1.9,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 316.6,
-          "stddev_s": 2.3,
+          "stddev_s": 2.2,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 376.8,
-          "stddev_s": 3.6,
+          "target_s": 376.3,
+          "stddev_s": 3.9,
           "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 438.7,
-          "stddev_s": 20.7,
+          "target_s": 437.2,
+          "stddev_s": 21,
           "count": 9,
           "total_samples": 10
         },
         "9": {
-          "target_s": 500,
-          "stddev_s": 6.2,
+          "target_s": 498.5,
+          "stddev_s": 4.1,
           "count": 7,
           "total_samples": 10
         }
@@ -163,7 +163,7 @@
       "cooldown": 60,
       "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; best ID guess for the current Retail spell, talent-gated.",
+      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; talent-gated.",
       "talent_gated": true
     },
     {
@@ -283,5 +283,5 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "2333b3077f604805"
+  "source_signature": "a82a516907757250"
 }

@@ -3,26 +3,26 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 205.4,
-  "downtime_threshold_ms": 1551,
-  "top_avg_efficiency": 70.7,
-  "top_efficiency_stddev": 6,
+  "avg_duration_s": 202,
+  "downtime_threshold_ms": 1559,
+  "top_avg_efficiency": 70.2,
+  "top_efficiency_stddev": 5.7,
   "per_cd_benchmarks": {
     "Combustion": {
       "sample_count": 10,
-      "avg_first_cast_s": 8,
-      "stddev_first_cast_s": 4.6,
-      "avg_gap_s": 61.8,
-      "stddev_gap_s": 1.7,
-      "avg_bl_offset_s": 7.1,
-      "stddev_bl_offset_s": 4.8,
+      "avg_first_cast_s": 9,
+      "stddev_first_cast_s": 4.1,
+      "avg_gap_s": 61.6,
+      "stddev_gap_s": 1.6,
+      "avg_bl_offset_s": 8.4,
+      "stddev_bl_offset_s": 4.4,
       "avg_uses": 3.6,
-      "avg_uses_per_min": 1.05,
+      "avg_uses_per_min": 1.07,
       "uses_per_min": {
-        "avg": 1.048,
-        "stddev": 0.067,
+        "avg": 1.068,
+        "stddev": 0.089,
         "min": 0.937,
-        "max": 1.133
+        "max": 1.242
       },
       "bl_pct": 90,
       "majority_hold": false,
@@ -30,17 +30,17 @@
     },
     "Meteor": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.3,
-      "stddev_first_cast_s": 3.7,
-      "avg_gap_s": 58.5,
-      "stddev_gap_s": 7.4,
-      "avg_bl_offset_s": 16.4,
-      "stddev_bl_offset_s": 3.6,
+      "avg_first_cast_s": 18,
+      "stddev_first_cast_s": 3.5,
+      "avg_gap_s": 58.2,
+      "stddev_gap_s": 7,
+      "avg_bl_offset_s": 17.1,
+      "stddev_bl_offset_s": 3.5,
       "avg_uses": 3.8,
-      "avg_uses_per_min": 1.11,
+      "avg_uses_per_min": 1.13,
       "uses_per_min": {
-        "avg": 1.112,
-        "stddev": 0.094,
+        "avg": 1.132,
+        "stddev": 0.097,
         "min": 0.998,
         "max": 1.291
       },
@@ -48,20 +48,20 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 76.4,
-          "stddev_s": 5.8,
-          "count": 9,
+          "target_s": 76,
+          "stddev_s": 5.7,
+          "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 137.7,
-          "stddev_s": 2.9,
+          "target_s": 138.3,
+          "stddev_s": 2.4,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 187.7,
-          "stddev_s": 5,
+          "stddev_s": 4.9,
           "count": 7,
           "total_samples": 10
         }
@@ -133,7 +133,7 @@
       "cooldown": 60,
       "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; best ID guess for the current Retail spell, talent-gated.",
+      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; talent-gated.",
       "talent_gated": true
     },
     {
@@ -253,5 +253,5 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "a5002a8459f05241"
+  "source_signature": "e8210f95e60f07f5"
 }

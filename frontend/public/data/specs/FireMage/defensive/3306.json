@@ -4,6 +4,23 @@
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 7,
+      "avg_first_cast_s": 17.4,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 51.7,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.5,
+      "uses_per_min": {
+        "avg": 0.498,
+        "stddev": 0.202,
+        "min": 0.404,
+        "max": 0.954
+      },
+      "majority_hold": false
+    },
     "Blazing Barrier": {
       "sample_count": 5,
       "avg_first_cast_s": 47.6,
@@ -18,23 +35,6 @@
         "stddev": 0.556,
         "min": 0.404,
         "max": 1.662
-      },
-      "majority_hold": false
-    },
-    "Alter Time": {
-      "sample_count": 6,
-      "avg_first_cast_s": 17.3,
-      "stddev_first_cast_s": 1.8,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.42,
-      "uses_per_min": {
-        "avg": 0.422,
-        "stddev": 0.017,
-        "min": 0.404,
-        "max": 0.448
       },
       "majority_hold": false
     }
@@ -83,9 +83,9 @@
     },
     {
       "spell_id": 342245,
-      "avg_uses": 1,
+      "avg_uses": 1.1,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -167,5 +167,5 @@
       "name": "Discordant Roar"
     }
   },
-  "source_signature": "b53808a370d57bdf"
+  "source_signature": "adf29d6ac668c1a6"
 }
