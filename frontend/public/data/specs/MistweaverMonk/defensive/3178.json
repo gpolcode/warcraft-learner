@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 117.4,
-      "stddev_first_cast_s": 70.2,
-      "avg_gap_s": 79.3,
-      "stddev_gap_s": 19,
+      "avg_first_cast_s": 100.8,
+      "stddev_first_cast_s": 55.6,
+      "avg_gap_s": 86.4,
+      "stddev_gap_s": 39,
       "hold_targets": {},
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.467,
-        "stddev": 0.294,
+        "avg": 0.461,
+        "stddev": 0.296,
         "min": 0.128,
         "max": 1.047
       },
@@ -23,15 +23,15 @@
     },
     "Fortifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 137.1,
-      "stddev_first_cast_s": 121,
-      "avg_gap_s": 146.4,
-      "stddev_gap_s": 46.5,
+      "avg_first_cast_s": 155.5,
+      "stddev_first_cast_s": 136.3,
+      "avg_gap_s": 144.2,
+      "stddev_gap_s": 48.1,
       "hold_targets": {
         "1": {
-          "target_s": 244,
-          "stddev_s": 98.2,
-          "count": 7,
+          "target_s": 224.6,
+          "stddev_s": 103.7,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
@@ -41,28 +41,69 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.338,
-        "stddev": 0.127,
+        "avg": 0.327,
+        "stddev": 0.136,
         "min": 0.144,
         "max": 0.523
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 306.1,
+      "dmg_avg": 484772,
+      "dmg_stddev": 220464,
+      "dmg_min": 198098,
+      "dmg_max": 658975,
+      "window_length_s": 10.8,
+      "defensive_name": "Life Cocoon",
+      "spell_id": 116849,
+      "common_defensives": [
+        "Life Cocoon"
+      ],
+      "common_cds": [
+        "Life Cocoon"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 518695,
+          "min_damage": 470778,
+          "max_damage": 566611,
+          "count": 2
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 199454,
+          "min_damage": 123642,
+          "max_damage": 275265,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 81356,
+          "min_damage": 74456,
+          "max_damage": 88256,
+          "count": 2
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 3,
+      "avg_uses": 2.9,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2.2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -126,6 +167,10 @@
     "Zen Meditation": 115176
   },
   "ability_icons": {
+    "115176": {
+      "icon": "ability_monk_zenmeditation",
+      "name": "Zen Meditation"
+    },
     "115203": {
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
@@ -133,8 +178,32 @@
     "116849": {
       "icon": "ability_monk_chicocoon",
       "name": "Life Cocoon"
+    },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122281": {
+      "icon": "ability_monk_jasmineforcetea",
+      "name": "Healing Elixir"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "127a2497d9f84788",
-  "ingest_version": 0
+  "source_signature": "60807c32c45fe93c",
+  "ingest_version": 1
 }

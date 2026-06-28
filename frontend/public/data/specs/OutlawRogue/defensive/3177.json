@@ -22,17 +22,17 @@
       "majority_hold": false
     },
     "Feint": {
-      "sample_count": 6,
-      "avg_first_cast_s": 76.7,
-      "stddev_first_cast_s": 12.2,
+      "sample_count": 7,
+      "avg_first_cast_s": 74.5,
+      "stddev_first_cast_s": 12.5,
       "avg_gap_s": 45.5,
       "stddev_gap_s": 45.8,
       "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.66,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.661,
-        "stddev": 0.538,
+        "avg": 0.61,
+        "stddev": 0.509,
         "min": 0.285,
         "max": 1.625
       },
@@ -40,17 +40,17 @@
     },
     "Cloak of Shadows": {
       "sample_count": 6,
-      "avg_first_cast_s": 140.9,
-      "stddev_first_cast_s": 68.9,
+      "avg_first_cast_s": 138.2,
+      "stddev_first_cast_s": 66.3,
       "avg_gap_s": 123.2,
       "stddev_gap_s": 1.2,
       "hold_targets": {},
       "avg_uses": 1.5,
-      "avg_uses_per_min": 0.41,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.407,
-        "stddev": 0.152,
-        "min": 0.244,
+        "avg": 0.417,
+        "stddev": 0.14,
+        "min": 0.287,
         "max": 0.577
       },
       "majority_hold": false
@@ -75,9 +75,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 81.7,
-      "dmg_avg": 243857,
-      "dmg_stddev": 139007,
+      "time_s": 81.5,
+      "dmg_avg": 235173,
+      "dmg_stddev": 132613,
       "dmg_min": 115112,
       "dmg_max": 478335,
       "window_length_s": 6,
@@ -100,10 +100,10 @@
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 24003,
+          "avg_damage": 24042,
           "min_damage": 23012,
           "max_damage": 26285,
-          "count": 8
+          "count": 9
         }
       ]
     },
@@ -142,8 +142,8 @@
     },
     {
       "time_s": 204,
-      "dmg_avg": 52075,
-      "dmg_stddev": 57256,
+      "dmg_avg": 35289,
+      "dmg_stddev": 54858,
       "dmg_min": 0,
       "dmg_max": 113046,
       "window_length_s": 5,
@@ -156,15 +156,7 @@
         "Cloak of Shadows"
       ],
       "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272328,
-          "avg_damage": 104149,
-          "min_damage": 98688,
-          "max_damage": 113046,
-          "count": 3
-        }
-      ]
+      "ability_breakdown": []
     }
   ],
   "top_defensives_summary": [
@@ -176,7 +168,7 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 2.5,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 6
     },
@@ -254,10 +246,6 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -267,6 +255,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "fddeb8cc30db91eb",
-  "ingest_version": 0
+  "source_signature": "ce8b6ffde2ec31cb",
+  "ingest_version": 1
 }

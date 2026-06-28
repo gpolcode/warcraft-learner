@@ -6,23 +6,23 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 145.7,
-      "stddev_first_cast_s": 100.9,
-      "avg_gap_s": 103,
-      "stddev_gap_s": 59.6,
+      "avg_first_cast_s": 131,
+      "stddev_first_cast_s": 92.3,
+      "avg_gap_s": 105.9,
+      "stddev_gap_s": 59.2,
       "hold_targets": {
         "1": {
-          "target_s": 282.3,
-          "stddev_s": 36,
+          "target_s": 251.3,
+          "stddev_s": 32.5,
           "count": 4,
           "total_samples": 10
         }
       },
       "avg_uses": 2.8,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.404,
-        "stddev": 0.226,
+        "avg": 0.409,
+        "stddev": 0.224,
         "min": 0.137,
         "max": 0.84
       },
@@ -30,37 +30,30 @@
     },
     "Fortifying Brew": {
       "sample_count": 9,
-      "avg_first_cast_s": 161.4,
-      "stddev_first_cast_s": 121.6,
-      "avg_gap_s": 117.7,
-      "stddev_gap_s": 30.1,
-      "hold_targets": {
-        "1": {
-          "target_s": 257,
-          "stddev_s": 36.4,
-          "count": 4,
-          "total_samples": 9
-        }
-      },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.33,
+      "avg_first_cast_s": 176.5,
+      "stddev_first_cast_s": 127.7,
+      "avg_gap_s": 126.8,
+      "stddev_gap_s": 36.9,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.331,
-        "stddev": 0.155,
+        "avg": 0.299,
+        "stddev": 0.154,
         "min": 0.127,
         "max": 0.547
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 313.7,
-      "dmg_avg": 309460,
-      "dmg_stddev": 212296,
-      "dmg_min": 43800,
-      "dmg_max": 606974,
-      "window_length_s": 10.6,
+      "time_s": 249.6,
+      "dmg_avg": 486119,
+      "dmg_stddev": 140660,
+      "dmg_min": 331570,
+      "dmg_max": 641959,
+      "window_length_s": 11.3,
       "defensive_name": "Life Cocoon",
       "spell_id": 116849,
       "common_defensives": [
@@ -73,10 +66,50 @@
       "ability_breakdown": [
         {
           "spell_id": 1258661,
-          "avg_damage": 139770,
+          "avg_damage": 172126,
+          "min_damage": 159118,
+          "max_damage": 184047,
+          "count": 4
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 144964,
+          "min_damage": 33224,
+          "max_damage": 256704,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 322.3,
+      "dmg_avg": 327009,
+      "dmg_stddev": 224306,
+      "dmg_min": 43800,
+      "dmg_max": 606974,
+      "window_length_s": 10.4,
+      "defensive_name": "Life Cocoon",
+      "spell_id": 116849,
+      "common_defensives": [
+        "Life Cocoon"
+      ],
+      "common_cds": [
+        "Life Cocoon"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246749,
+          "avg_damage": 158610,
+          "min_damage": 133347,
+          "max_damage": 185331,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 140524,
           "min_damage": 31532,
-          "max_damage": 180245,
-          "count": 6
+          "max_damage": 186815,
+          "count": 5
         }
       ]
     }
@@ -90,7 +123,7 @@
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2.2,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -154,6 +187,10 @@
     "Zen Meditation": 115176
   },
   "ability_icons": {
+    "115176": {
+      "icon": "ability_monk_zenmeditation",
+      "name": "Zen Meditation"
+    },
     "115203": {
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
@@ -162,11 +199,31 @@
       "icon": "ability_monk_chicocoon",
       "name": "Life Cocoon"
     },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122281": {
+      "icon": "ability_monk_jasmineforcetea",
+      "name": "Healing Elixir"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
     "1258661": {
       "icon": "spell_holy_auramastery",
       "name": "Light Infusion"
     }
   },
-  "source_signature": "13b62536ebcd536d",
-  "ingest_version": 0
+  "source_signature": "ec70fa1632711ce8",
+  "ingest_version": 1
 }

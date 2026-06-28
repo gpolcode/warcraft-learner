@@ -6,25 +6,25 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 9,
-      "avg_first_cast_s": 105.4,
-      "stddev_first_cast_s": 72.1,
-      "avg_gap_s": 64.2,
-      "stddev_gap_s": 6.7,
+      "avg_first_cast_s": 129.1,
+      "stddev_first_cast_s": 77.6,
+      "avg_gap_s": 67.6,
+      "stddev_gap_s": 11,
       "hold_targets": {},
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.49,
       "uses_per_min": {
-        "avg": 0.533,
-        "stddev": 0.347,
+        "avg": 0.493,
+        "stddev": 0.316,
         "min": 0.215,
         "max": 1.08
       },
       "majority_hold": false
     },
     "Fortifying Brew": {
-      "sample_count": 8,
-      "avg_first_cast_s": 75.2,
-      "stddev_first_cast_s": 68.2,
+      "sample_count": 7,
+      "avg_first_cast_s": 80.7,
+      "stddev_first_cast_s": 71.7,
       "avg_gap_s": 124.3,
       "stddev_gap_s": 3.9,
       "hold_targets": {
@@ -32,14 +32,14 @@
           "target_s": 173,
           "stddev_s": 39.6,
           "count": 5,
-          "total_samples": 8
+          "total_samples": 7
         }
       },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.41,
-        "stddev": 0.164,
+        "avg": 0.434,
+        "stddev": 0.162,
         "min": 0.215,
         "max": 0.614
       },
@@ -50,13 +50,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 2.1,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 115203,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -120,6 +120,10 @@
     "Zen Meditation": 115176
   },
   "ability_icons": {
+    "115176": {
+      "icon": "ability_monk_zenmeditation",
+      "name": "Zen Meditation"
+    },
     "115203": {
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
@@ -127,8 +131,20 @@
     "116849": {
       "icon": "ability_monk_chicocoon",
       "name": "Life Cocoon"
+    },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122281": {
+      "icon": "ability_monk_jasmineforcetea",
+      "name": "Healing Elixir"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
     }
   },
-  "source_signature": "77e35c67401c022a",
-  "ingest_version": 0
+  "source_signature": "3fd9d7f14f6bf301",
+  "ingest_version": 1
 }

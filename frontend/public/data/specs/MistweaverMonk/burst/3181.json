@@ -5,17 +5,16 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 9.5,
-      "dmg_avg": 2277633,
-      "dmg_stddev": 967385,
+      "time_s": 9.8,
+      "dmg_avg": 2142910,
+      "dmg_stddev": 952321,
       "dmg_min": 841076,
       "dmg_max": 3481714,
       "common_cds": [
-        "Invoke Chi-Ji, the Red Crane",
-        "Celestial Conduit"
+        "Invoke Chi-Ji, the Red Crane"
       ],
       "avg_targets": 1,
-      "window_length_s": 21.5,
+      "window_length_s": 22,
       "ability_breakdown": [
         {
           "spell_id": 1248815,
@@ -23,7 +22,8 @@
           "min_damage": 399232,
           "max_damage": 852341,
           "count": 5,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 185099,
@@ -31,39 +31,35 @@
           "min_damage": 253458,
           "max_damage": 935617,
           "count": 5,
-          "avg_casts": 7
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 107270,
-          "avg_damage": 453730,
-          "min_damage": 229242,
+          "avg_damage": 398021,
+          "min_damage": 175184,
           "max_damage": 602146,
-          "count": 4,
-          "avg_casts": 3
-        },
-        {
-          "spell_id": 443038,
-          "avg_damage": 284856,
-          "min_damage": 178051,
-          "max_damage": 384404,
-          "count": 3,
-          "avg_casts": 1
+          "count": 5,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 228649,
-          "avg_damage": 241346,
+          "avg_damage": 214300,
           "min_damage": 61608,
           "max_damage": 419023,
-          "count": 4,
-          "avg_casts": 3
+          "count": 5,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
-          "spell_id": 1263725,
-          "avg_damage": 216774,
-          "min_damage": 181076,
-          "max_damage": 245716,
-          "count": 3,
-          "avg_casts": 1
+          "spell_id": 1,
+          "avg_damage": 131371,
+          "min_damage": 17717,
+          "max_damage": 278186,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     }
@@ -84,6 +80,10 @@
     "Zen Meditation": 115176
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "107270": {
       "icon": "ability_monk_cranekick_new",
       "name": "Spinning Crane Kick"
@@ -148,19 +148,11 @@
       "icon": "inv_ability_conduitofthecelestialsmonk_celestialconduit",
       "name": "Celestial Conduit"
     },
-    "443038": {
-      "icon": "inv_ability_conduitofthecelestialsmonk_celestialconduit",
-      "name": "Celestial Conduit"
-    },
     "1248815": {
       "icon": "inv_ability_monk_jadefirestomp",
       "name": "Jadefire Stomp"
-    },
-    "1263725": {
-      "icon": "inv_12_trinket_raid_voidspire_healer2_litanyoflightblindwrath",
-      "name": "Beacon of Lightblind Wrath"
     }
   },
-  "source_signature": "f76c247911509690",
-  "ingest_version": 0
+  "source_signature": "2cda1d1f7b6bf98b",
+  "ingest_version": 1
 }

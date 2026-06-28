@@ -5,21 +5,21 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Life Cocoon": {
-      "sample_count": 1,
-      "avg_first_cast_s": 91,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 115.9,
+      "stddev_first_cast_s": 35.2,
       "avg_gap_s": 129.4,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.408,
-        "stddev": 0,
-        "min": 0.408,
+        "avg": 0.339,
+        "stddev": 0.098,
+        "min": 0.27,
         "max": 0.408
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Fortifying Brew": {
       "sample_count": 1,
@@ -43,8 +43,8 @@
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 2,
-      "min_uses": 2,
+      "avg_uses": 1.5,
+      "min_uses": 1,
       "max_uses": 2
     },
     {
@@ -113,6 +113,10 @@
     "Zen Meditation": 115176
   },
   "ability_icons": {
+    "115176": {
+      "icon": "ability_monk_zenmeditation",
+      "name": "Zen Meditation"
+    },
     "115203": {
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
@@ -120,8 +124,20 @@
     "116849": {
       "icon": "ability_monk_chicocoon",
       "name": "Life Cocoon"
+    },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122281": {
+      "icon": "ability_monk_jasmineforcetea",
+      "name": "Healing Elixir"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
     }
   },
-  "source_signature": "8da7cc0a6e064ef9",
-  "ingest_version": 0
+  "source_signature": "0ce89644a22a7f85",
+  "ingest_version": 1
 }
