@@ -5,43 +5,36 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Dark Pact": {
-      "sample_count": 9,
-      "avg_first_cast_s": 84,
-      "stddev_first_cast_s": 72.1,
-      "avg_gap_s": 78.9,
-      "stddev_gap_s": 30.1,
-      "hold_targets": {
-        "1": {
-          "target_s": 183.8,
-          "stddev_s": 94.5,
-          "count": 4,
-          "total_samples": 9
-        }
-      },
+      "sample_count": 8,
+      "avg_first_cast_s": 109.5,
+      "stddev_first_cast_s": 93.3,
+      "avg_gap_s": 64.2,
+      "stddev_gap_s": 17.9,
+      "hold_targets": {},
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.67,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.667,
-        "stddev": 0.361,
+        "avg": 0.652,
+        "stddev": 0.377,
         "min": 0.334,
         "max": 1.214
       },
       "majority_hold": false
     },
     "Unending Resolve": {
-      "sample_count": 7,
-      "avg_first_cast_s": 105.5,
-      "stddev_first_cast_s": 41.6,
+      "sample_count": 5,
+      "avg_first_cast_s": 95.1,
+      "stddev_first_cast_s": 45.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.37,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.371,
-        "stddev": 0.087,
-        "min": 0.175,
-        "max": 0.414
+        "avg": 0.402,
+        "stddev": 0.002,
+        "min": 0.401,
+        "max": 0.405
       },
       "majority_hold": false
     }
@@ -49,11 +42,11 @@
   "defensive_windows": [
     {
       "time_s": 70,
-      "dmg_avg": 310659,
-      "dmg_stddev": 72422,
+      "dmg_avg": 325922,
+      "dmg_stddev": 69347,
       "dmg_min": 225613,
       "dmg_max": 395437,
-      "window_length_s": 5,
+      "window_length_s": 3.3,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -73,27 +66,27 @@
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 90038,
-          "min_damage": 25810,
+          "avg_damage": 106096,
+          "min_damage": 58895,
           "max_damage": 172438,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 2892,
+          "avg_damage": 2304,
           "min_damage": 778,
-          "max_damage": 5829,
-          "count": 6
+          "max_damage": 3529,
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 140.1,
-      "dmg_avg": 264627,
-      "dmg_stddev": 232587,
+      "time_s": 137.3,
+      "dmg_avg": 264448,
+      "dmg_stddev": 268568,
       "dmg_min": 621,
       "dmg_max": 612360,
-      "window_length_s": 17.9,
+      "window_length_s": 17.4,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -106,63 +99,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1246653,
-          "avg_damage": 285045,
-          "min_damage": 84148,
+          "avg_damage": 385493,
+          "min_damage": 318624,
           "max_damage": 452362,
-          "count": 3
+          "count": 2
         },
         {
           "spell_id": 1273112,
-          "avg_damage": 145235,
+          "avg_damage": 129522,
           "min_damage": 112004,
-          "max_damage": 176660,
-          "count": 3
+          "max_damage": 147040,
+          "count": 2
         },
         {
           "spell_id": 387846,
-          "avg_damage": 6460,
+          "avg_damage": 6940,
           "min_damage": 621,
           "max_damage": 12958,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 140.4,
-      "dmg_avg": 293891,
-      "dmg_stddev": 140009,
-      "dmg_min": 116938,
-      "dmg_max": 449393,
-      "window_length_s": 8,
-      "defensive_name": "Unending Resolve",
-      "spell_id": 104773,
-      "common_defensives": [
-        "Unending Resolve"
-      ],
-      "common_cds": [
-        "Unending Resolve"
-      ],
-      "ref_game_id": 245569,
-      "ability_breakdown": [
-        {
-          "spell_id": 1273112,
-          "avg_damage": 211145,
-          "min_damage": 112004,
-          "max_damage": 344772,
-          "count": 3
-        },
-        {
-          "spell_id": 1246653,
-          "avg_damage": 96677,
-          "min_damage": 84148,
-          "max_damage": 106209,
-          "count": 3
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 5302,
-          "min_damage": 4538,
-          "max_damage": 6786,
           "count": 4
         }
       ]
@@ -239,5 +192,5 @@
       "name": "Consume"
     }
   },
-  "source_signature": "4b3312e57d587bbd"
+  "source_signature": "3691fb41b3bf15c1"
 }

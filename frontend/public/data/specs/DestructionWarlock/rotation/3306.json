@@ -3,48 +3,48 @@
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
-  "avg_duration_s": 187.2,
-  "downtime_threshold_ms": 2155,
-  "top_avg_efficiency": 77.2,
-  "top_efficiency_stddev": 8.9,
+  "avg_duration_s": 184.6,
+  "downtime_threshold_ms": 2168,
+  "top_avg_efficiency": 76.9,
+  "top_efficiency_stddev": 8.6,
   "per_cd_benchmarks": {
     "Summon Infernal": {
       "sample_count": 10,
-      "avg_first_cast_s": 1,
-      "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 98.1,
-      "stddev_gap_s": 9.4,
-      "avg_bl_offset_s": 0.4,
-      "stddev_bl_offset_s": 1,
+      "avg_first_cast_s": 3.7,
+      "stddev_first_cast_s": 8,
+      "avg_gap_s": 97.3,
+      "stddev_gap_s": 9.7,
+      "avg_bl_offset_s": 3.3,
+      "stddev_bl_offset_s": 8.4,
       "avg_uses": 2.4,
-      "avg_uses_per_min": 0.79,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.794,
-        "stddev": 0.064,
+        "avg": 0.798,
+        "stddev": 0.055,
         "min": 0.668,
         "max": 0.89
       },
-      "bl_pct": 100,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Havoc": {
       "sample_count": 10,
-      "avg_first_cast_s": 37.3,
-      "stddev_first_cast_s": 10.2,
-      "avg_gap_s": 42.5,
-      "stddev_gap_s": 18,
-      "avg_bl_offset_s": 36.7,
-      "stddev_bl_offset_s": 10.4,
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.69,
+      "avg_first_cast_s": 36,
+      "stddev_first_cast_s": 11.6,
+      "avg_gap_s": 47.3,
+      "stddev_gap_s": 23.2,
+      "avg_bl_offset_s": 34.5,
+      "stddev_bl_offset_s": 12.1,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.763,
-        "stddev": 0.327,
+        "avg": 0.757,
+        "stddev": 0.214,
         "min": 0.401,
-        "max": 1.401
+        "max": 1.002
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -70,30 +70,23 @@
     },
     "Cataclysm": {
       "sample_count": 10,
-      "avg_first_cast_s": 26.4,
-      "stddev_first_cast_s": 15.3,
-      "avg_gap_s": 48.5,
-      "stddev_gap_s": 18.8,
-      "avg_bl_offset_s": 25.7,
-      "stddev_bl_offset_s": 15.6,
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.7,
+      "avg_first_cast_s": 33.6,
+      "stddev_first_cast_s": 4.2,
+      "avg_gap_s": 47.1,
+      "stddev_gap_s": 16.6,
+      "avg_bl_offset_s": 33.4,
+      "stddev_bl_offset_s": 4.6,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.995,
-        "stddev": 0.667,
+        "avg": 0.774,
+        "stddev": 0.514,
         "min": 0.401,
-        "max": 2.07
+        "max": 1.619
       },
-      "bl_pct": 70,
+      "bl_pct": 60,
       "majority_hold": false,
-      "hold_targets": {
-        "4": {
-          "target_s": 164.3,
-          "stddev_s": 48.5,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Channel Demonfire": {
       "sample_count": 10,
@@ -117,32 +110,32 @@
     },
     "Soul Fire": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.5,
-      "stddev_first_cast_s": 15.9,
-      "avg_gap_s": 52.9,
-      "stddev_gap_s": 8.6,
-      "avg_bl_offset_s": 4.8,
-      "stddev_bl_offset_s": 15.9,
-      "avg_uses": 4,
-      "avg_uses_per_min": 1.33,
+      "avg_first_cast_s": 13.8,
+      "stddev_first_cast_s": 29.1,
+      "avg_gap_s": 53.5,
+      "stddev_gap_s": 10.7,
+      "avg_bl_offset_s": 6.2,
+      "stddev_bl_offset_s": 17.7,
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 1.28,
       "uses_per_min": {
-        "avg": 1.328,
-        "stddev": 0.279,
+        "avg": 1.275,
+        "stddev": 0.333,
         "min": 0.805,
         "max": 1.619
       },
-      "bl_pct": 100,
+      "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 101.9,
-          "stddev_s": 7.2,
-          "count": 7,
+          "target_s": 102.5,
+          "stddev_s": 18.2,
+          "count": 6,
           "total_samples": 10
         },
         "4": {
           "target_s": 147.6,
-          "stddev_s": 25,
+          "stddev_s": 30.8,
           "count": 5,
           "total_samples": 10
         }
@@ -175,7 +168,7 @@
       "align_with_bloodlust": true,
       "opener_priority": 2,
       "talent_gated": true,
-      "usage_rule": "Hellcaller capstone: cast after Summon Infernal once Wither is applied to as many targets as possible, then dump every Soul Shard you can before it expires; spell_id is a best guess and should be verified against the Hellcaller talent ID."
+      "usage_rule": "Hellcaller capstone: cast after Summon Infernal once Wither is applied to as many targets as possible, then dump every Soul Shard you can before it expires."
     },
     {
       "name": "Cataclysm",
@@ -320,5 +313,5 @@
       "name": "Malevolence"
     }
   },
-  "source_signature": "4b3312e57d587bbd"
+  "source_signature": "3691fb41b3bf15c1"
 }

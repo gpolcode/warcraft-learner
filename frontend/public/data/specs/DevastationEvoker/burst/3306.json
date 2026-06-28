@@ -5,73 +5,79 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 0.4,
-      "dmg_avg": 6668869,
-      "dmg_stddev": 3189954,
+      "time_s": 0.6,
+      "dmg_avg": 6884333,
+      "dmg_stddev": 3337069,
       "dmg_min": 3625671,
-      "dmg_max": 12027291,
+      "dmg_max": 13183407,
       "common_cds": [
         "Dragonrage"
       ],
       "avg_targets": 1,
-      "window_length_s": 23.5,
+      "window_length_s": 23,
       "ability_breakdown": [
         {
           "spell_id": 444089,
-          "avg_damage": 2510126,
-          "min_damage": 1818185,
-          "max_damage": 4006573,
-          "count": 6,
-          "avg_casts": 0
+          "avg_damage": 2701221,
+          "min_damage": 1960652,
+          "max_damage": 5135093,
+          "count": 7,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 356995,
-          "avg_damage": 1988596,
+          "avg_damage": 2005345,
           "min_damage": 1300146,
           "max_damage": 4122632,
-          "count": 8,
-          "avg_casts": 11
+          "count": 9,
+          "avg_casts": 11,
+          "is_passive": false
         },
         {
           "spell_id": 359077,
-          "avg_damage": 636543,
-          "min_damage": 366646,
-          "max_damage": 1250414,
-          "count": 8,
-          "avg_casts": 2
+          "avg_damage": 647699,
+          "min_damage": 370016,
+          "max_damage": 1210614,
+          "count": 9,
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 357209,
-          "avg_damage": 550956,
+          "avg_damage": 575226,
           "min_damage": 306720,
-          "max_damage": 1379186,
-          "count": 7,
-          "avg_casts": 3
+          "max_damage": 1423838,
+          "count": 8,
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 1265872,
-          "avg_damage": 448994,
+          "avg_damage": 464818,
           "min_damage": 161388,
           "max_damage": 943623,
           "count": 8,
-          "avg_casts": 4
+          "avg_casts": 4,
+          "is_passive": false
         },
         {
           "spell_id": 1265980,
-          "avg_damage": 200577,
+          "avg_damage": 194292,
           "min_damage": 124077,
-          "max_damage": 419933,
-          "count": 6,
-          "avg_casts": 7
+          "max_damage": 367585,
+          "count": 7,
+          "avg_casts": 7,
+          "is_passive": false
         }
       ]
     },
     {
-      "time_s": 121,
-      "dmg_avg": 2541398,
-      "dmg_stddev": 314550,
-      "dmg_min": 1938008,
-      "dmg_max": 3018888,
+      "time_s": 121.3,
+      "dmg_avg": 2685679,
+      "dmg_stddev": 292099,
+      "dmg_min": 2193662,
+      "dmg_max": 3269450,
       "common_cds": [
         "Dragonrage"
       ],
@@ -80,51 +86,57 @@
       "ability_breakdown": [
         {
           "spell_id": 444089,
-          "avg_damage": 792342,
-          "min_damage": 509546,
+          "avg_damage": 861388,
+          "min_damage": 653067,
           "max_damage": 1013392,
           "count": 8,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 356995,
-          "avg_damage": 786004,
-          "min_damage": 638095,
+          "avg_damage": 846014,
+          "min_damage": 708223,
           "max_damage": 1183086,
           "count": 10,
-          "avg_casts": 6
+          "avg_casts": 7,
+          "is_passive": false
         },
         {
           "spell_id": 359077,
-          "avg_damage": 318864,
-          "min_damage": 206284,
-          "max_damage": 478303,
+          "avg_damage": 307371,
+          "min_damage": 163925,
+          "max_damage": 476342,
           "count": 10,
-          "avg_casts": 2
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 1265872,
-          "avg_damage": 235945,
-          "min_damage": 96873,
+          "avg_damage": 276801,
+          "min_damage": 119213,
           "max_damage": 671477,
-          "count": 10,
-          "avg_casts": 2
+          "count": 9,
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 357209,
-          "avg_damage": 226195,
+          "avg_damage": 237291,
           "min_damage": 126641,
           "max_damage": 336812,
           "count": 9,
-          "avg_casts": 2
+          "avg_casts": 2,
+          "is_passive": false
         },
         {
           "spell_id": 1265980,
-          "avg_damage": 103989,
-          "min_damage": 68527,
-          "max_damage": 143916,
+          "avg_damage": 106391,
+          "min_damage": 77166,
+          "max_damage": 139933,
           "count": 5,
-          "avg_casts": 5
+          "avg_casts": 5,
+          "is_passive": false
         }
       ]
     }
@@ -140,5 +152,67 @@
     "Renewing Blaze": 374348,
     "Zephyr": 374227
   },
-  "source_signature": "b3e124da23854595"
+  "ability_icons": {
+    "356995": {
+      "icon": "ability_evoker_disintegrate",
+      "name": "Disintegrate"
+    },
+    "357208": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
+    "357209": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
+    "357210": {
+      "icon": "ability_evoker_deepbreath",
+      "name": "Deep Breath"
+    },
+    "359073": {
+      "icon": "ability_evoker_eternitysurge",
+      "name": "Eternity Surge"
+    },
+    "359077": {
+      "icon": "ability_evoker_eternitysurge",
+      "name": "Eternity Surge"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370553": {
+      "icon": "ability_evoker_tipthescales",
+      "name": "Tip the Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "375087": {
+      "icon": "ability_evoker_dragonrage",
+      "name": "Dragonrage"
+    },
+    "390386": {
+      "icon": "ability_evoker_furyoftheaspects",
+      "name": "Fury of the Aspects"
+    },
+    "444089": {
+      "icon": "inv_shadowflames_wave",
+      "name": "Consume Flame"
+    },
+    "1265872": {
+      "icon": "inv_10_skinning_dragonscales_blue",
+      "name": "Azure Sweep"
+    },
+    "1265980": {
+      "icon": "ability_evoker_infernosblessing",
+      "name": "Twin Flame"
+    }
+  },
+  "source_signature": "f7ed632e28c996a0"
 }

@@ -6,14 +6,14 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 7,
-      "avg_first_cast_s": 107.3,
-      "stddev_first_cast_s": 90.6,
-      "avg_gap_s": 116.4,
-      "stddev_gap_s": 3.1,
+      "avg_first_cast_s": 106.2,
+      "stddev_first_cast_s": 92,
+      "avg_gap_s": 130.3,
+      "stddev_gap_s": 29,
       "hold_targets": {
         "1": {
-          "target_s": 163.9,
-          "stddev_s": 39.4,
+          "target_s": 179.8,
+          "stddev_s": 29.5,
           "count": 4,
           "total_samples": 7
         }
@@ -21,24 +21,24 @@
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.373,
-        "stddev": 0.125,
+        "avg": 0.372,
+        "stddev": 0.124,
         "min": 0.201,
-        "max": 0.486
+        "max": 0.485
       },
       "majority_hold": true
     },
     "Fade": {
       "sample_count": 7,
-      "avg_first_cast_s": 60.9,
-      "stddev_first_cast_s": 60.2,
-      "avg_gap_s": 66.4,
-      "stddev_gap_s": 36.4,
+      "avg_first_cast_s": 59.9,
+      "stddev_first_cast_s": 61.3,
+      "avg_gap_s": 53.2,
+      "stddev_gap_s": 32.7,
       "hold_targets": {
         "1": {
-          "target_s": 117.4,
-          "stddev_s": 41,
-          "count": 4,
+          "target_s": 105.8,
+          "stddev_s": 50,
+          "count": 3,
           "total_samples": 7
         },
         "2": {
@@ -48,13 +48,13 @@
           "total_samples": 7
         }
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.66,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 0.657,
-        "stddev": 0.32,
+        "avg": 0.828,
+        "stddev": 0.488,
         "min": 0.196,
-        "max": 1.026
+        "max": 1.68
       },
       "majority_hold": true
     },
@@ -78,11 +78,65 @@
   },
   "defensive_windows": [
     {
-      "time_s": 212.9,
-      "dmg_avg": 409901,
-      "dmg_stddev": 134228,
-      "dmg_min": 242216,
-      "dmg_max": 587748,
+      "time_s": 18.3,
+      "dmg_avg": 347969,
+      "dmg_stddev": 90880,
+      "dmg_min": 232574,
+      "dmg_max": 432808,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260052,
+          "avg_damage": 237019,
+          "min_damage": 231613,
+          "max_damage": 242424,
+          "count": 2
+        },
+        {
+          "spell_id": 1276812,
+          "avg_damage": 236602,
+          "min_damage": 236245,
+          "max_damage": 236959,
+          "count": 2
+        },
+        {
+          "spell_id": 1241808,
+          "avg_damage": 131437,
+          "min_damage": 120085,
+          "max_damage": 142789,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 45092,
+          "min_damage": 40074,
+          "max_damage": 51336,
+          "count": 3
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 15174,
+          "min_damage": 9700,
+          "max_damage": 25914,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 207.5,
+      "dmg_avg": 480704,
+      "dmg_stddev": 115761,
+      "dmg_min": 333457,
+      "dmg_max": 596228,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -96,28 +150,21 @@
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 196165,
+          "avg_damage": 196936,
           "min_damage": 67708,
           "max_damage": 459840,
-          "count": 4
-        },
-        {
-          "spell_id": 1280101,
-          "avg_damage": 136645,
-          "min_damage": 26086,
-          "max_damage": 203382,
-          "count": 3
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 93535,
-          "min_damage": 46200,
+          "avg_damage": 101618,
+          "min_damage": 83067,
           "max_damage": 122061,
           "count": 5
         },
         {
           "spell_id": 32409,
-          "avg_damage": 17598,
+          "avg_damage": 16308,
           "min_damage": 8127,
           "max_damage": 27062,
           "count": 5
@@ -140,9 +187,9 @@
     },
     {
       "spell_id": 586,
-      "avg_uses": 2.7,
+      "avg_uses": 3.4,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 7
     }
   ],
   "defensives": [
@@ -175,7 +222,7 @@
       "spell_id": 47585,
       "cooldown": 120,
       "duration": 6,
-      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit. Spell ID is best guess for the Discipline-available version.",
+      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit.",
       "talent_gated": false
     },
     {
@@ -219,18 +266,26 @@
       "icon": "spell_holy_powerwordbarrier",
       "name": "Power Word: Barrier"
     },
+    "1241808": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
     "1259186": {
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
+    },
+    "1260052": {
+      "icon": "spell_fire_twilightflamebreath",
+      "name": "Primordial Roar"
     },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
     },
-    "1280101": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Dark Energy"
+    "1276812": {
+      "icon": "spell_nature_earthquake",
+      "name": "Aftershock"
     }
   },
-  "source_signature": "64c822175b3ea9f2"
+  "source_signature": "245c4d4ee35b7dd0"
 }
