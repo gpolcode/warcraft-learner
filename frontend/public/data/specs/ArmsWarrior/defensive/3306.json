@@ -6,31 +6,31 @@
   "per_defensive_benchmarks": {
     "Die by the Sword": {
       "sample_count": 4,
-      "avg_first_cast_s": 105.3,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 170,
-      "stddev_gap_s": 0,
+      "avg_first_cast_s": 105.1,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.2,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
       "uses_per_min": {
-        "avg": 0.199,
-        "stddev": 0.075,
+        "avg": 0.162,
+        "stddev": 0.003,
         "min": 0.159,
-        "max": 0.311
+        "max": 0.166
       },
       "majority_hold": false
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 129.3,
-      "stddev_first_cast_s": 74.8,
-      "avg_gap_s": 92.1,
-      "stddev_gap_s": 46.2,
+      "avg_first_cast_s": 129.6,
+      "stddev_first_cast_s": 74.3,
+      "avg_gap_s": 90.4,
+      "stddev_gap_s": 43.1,
       "hold_targets": {
         "1": {
-          "target_s": 230.1,
-          "stddev_s": 52.7,
+          "target_s": 221,
+          "stddev_s": 52.4,
           "count": 8,
           "total_samples": 10
         }
@@ -38,19 +38,36 @@
       "avg_uses": 2.4,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.41,
-        "stddev": 0.159,
+        "avg": 0.413,
+        "stddev": 0.157,
         "min": 0.159,
         "max": 0.656
       },
       "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 1,
+      "avg_first_cast_s": 58.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.166,
+        "stddev": 0,
+        "min": 0.166,
+        "max": 0.166
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 54.8,
-      "dmg_avg": 155937,
-      "dmg_stddev": 76513,
+      "time_s": 56.7,
+      "dmg_avg": 155302,
+      "dmg_stddev": 76903,
       "dmg_min": 114687,
       "dmg_max": 270626,
       "window_length_s": 5,
@@ -66,19 +83,19 @@
       "ability_breakdown": [
         {
           "spell_id": 1246653,
-          "avg_damage": 117298,
+          "avg_damage": 116663,
           "min_damage": 114687,
-          "max_damage": 121551,
+          "max_damage": 119011,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 105.3,
-      "dmg_avg": 362135,
-      "dmg_stddev": 142636,
+      "time_s": 104.8,
+      "dmg_avg": 291877,
+      "dmg_stddev": 64908,
       "dmg_min": 218876,
-      "dmg_max": 553626,
+      "dmg_max": 374626,
       "window_length_s": 8,
       "defensive_name": "Die by the Sword",
       "spell_id": 118038,
@@ -92,24 +109,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1246653,
-          "avg_damage": 168467,
+          "avg_damage": 166750,
           "min_damage": 158865,
           "max_damage": 183400,
           "count": 4
         },
         {
           "spell_id": 1245919,
-          "avg_damage": 148003,
+          "avg_damage": 109790,
           "min_damage": 35476,
-          "max_damage": 264898,
+          "max_damage": 215761,
           "count": 4
-        },
-        {
-          "spell_id": 1267201,
-          "avg_damage": 91330,
-          "min_damage": 61346,
-          "max_damage": 121313,
-          "count": 2
         }
       ]
     },
@@ -147,9 +157,9 @@
       ]
     },
     {
-      "time_s": 230.1,
-      "dmg_avg": 99525,
-      "dmg_stddev": 49692,
+      "time_s": 227.8,
+      "dmg_avg": 99265,
+      "dmg_stddev": 49568,
       "dmg_min": 23934,
       "dmg_max": 180003,
       "window_length_s": 4.1,
@@ -165,9 +175,9 @@
       "ability_breakdown": [
         {
           "spell_id": 1246653,
-          "avg_damage": 88342,
+          "avg_damage": 88082,
           "min_damage": 23934,
-          "max_damage": 121095,
+          "max_damage": 119670,
           "count": 8
         }
       ]
@@ -202,15 +212,21 @@
   "top_defensives_summary": [
     {
       "spell_id": 118038,
-      "avg_uses": 1.3,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     },
     {
       "spell_id": 23920,
       "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
+    },
+    {
+      "spell_id": 202168,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -294,11 +310,7 @@
     "1258192": {
       "icon": "spell_azerite_essence01",
       "name": "Lingering Miasma"
-    },
-    "1267201": {
-      "icon": "inv_artifact_powerofthedarkside",
-      "name": "Dissonance"
     }
   },
-  "source_signature": "e8a5e0a8fc1af020"
+  "source_signature": "61fde3cdf87a8c19"
 }

@@ -3,23 +3,23 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 509.2,
-  "downtime_threshold_ms": 2342,
-  "top_avg_efficiency": 73.3,
-  "top_efficiency_stddev": 6.4,
+  "avg_duration_s": 510.6,
+  "downtime_threshold_ms": 2288,
+  "top_avg_efficiency": 73.5,
+  "top_efficiency_stddev": 5.1,
   "per_cd_benchmarks": {
     "Summon Infernal": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.9,
+      "avg_first_cast_s": 10,
       "stddev_first_cast_s": 28.2,
-      "avg_gap_s": 94.9,
-      "stddev_gap_s": 13.1,
-      "avg_bl_offset_s": 6,
-      "stddev_bl_offset_s": 3.1,
+      "avg_gap_s": 94.6,
+      "stddev_gap_s": 12.7,
+      "avg_bl_offset_s": 5.3,
+      "stddev_bl_offset_s": 2.7,
       "avg_uses": 5.8,
       "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.685,
+        "avg": 0.683,
         "stddev": 0.06,
         "min": 0.561,
         "max": 0.765
@@ -30,80 +30,86 @@
     },
     "Havoc": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.9,
-      "stddev_first_cast_s": 15.6,
-      "avg_gap_s": 54.7,
-      "stddev_gap_s": 21.4,
-      "avg_bl_offset_s": 1.6,
-      "stddev_bl_offset_s": 3,
-      "avg_uses": 9.6,
-      "avg_uses_per_min": 1.13,
+      "avg_first_cast_s": 18.1,
+      "stddev_first_cast_s": 14.8,
+      "avg_gap_s": 56.6,
+      "stddev_gap_s": 21.9,
+      "avg_bl_offset_s": 0.7,
+      "stddev_bl_offset_s": 3.1,
+      "avg_uses": 9.3,
+      "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 1.132,
-        "stddev": 0.094,
+        "avg": 1.094,
+        "stddev": 0.082,
         "min": 0.968,
-        "max": 1.272
+        "max": 1.204
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
+        "3": {
+          "target_s": 175.9,
+          "stddev_s": 0.6,
+          "count": 4,
+          "total_samples": 10
+        },
         "4": {
-          "target_s": 195.1,
-          "stddev_s": 29.4,
-          "count": 7,
+          "target_s": 215.2,
+          "stddev_s": 29.5,
+          "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 253.8,
-          "stddev_s": 27,
-          "count": 7,
+          "target_s": 270.7,
+          "stddev_s": 26.9,
+          "count": 8,
           "total_samples": 10
         },
         "6": {
-          "target_s": 288.6,
-          "stddev_s": 44.6,
+          "target_s": 298,
+          "stddev_s": 45.9,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 358.1,
-          "stddev_s": 44.8,
+          "target_s": 370.1,
+          "stddev_s": 44.5,
           "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 413.5,
-          "stddev_s": 38.1,
+          "target_s": 418.5,
+          "stddev_s": 40.8,
           "count": 10,
           "total_samples": 10
         },
         "9": {
-          "target_s": 450.9,
-          "stddev_s": 29.7,
+          "target_s": 470.5,
+          "stddev_s": 35.5,
           "count": 9,
           "total_samples": 10
         },
         "10": {
-          "target_s": 479.5,
-          "stddev_s": 12.9,
-          "count": 6,
+          "target_s": 487.4,
+          "stddev_s": 15.5,
+          "count": 4,
           "total_samples": 10
         }
       }
     },
     "Malevolence": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.5,
+      "avg_first_cast_s": 3.4,
       "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 69.7,
-      "stddev_gap_s": 19,
-      "avg_bl_offset_s": 3.5,
-      "stddev_bl_offset_s": 3.1,
+      "avg_gap_s": 69.8,
+      "stddev_gap_s": 18.9,
+      "avg_bl_offset_s": 3.1,
+      "stddev_bl_offset_s": 3,
       "avg_uses": 7.9,
       "avg_uses_per_min": 0.93,
       "uses_per_min": {
-        "avg": 0.931,
-        "stddev": 0.027,
+        "avg": 0.928,
+        "stddev": 0.028,
         "min": 0.892,
         "max": 0.968
       },
@@ -111,38 +117,38 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 179.1,
+          "target_s": 179.9,
           "stddev_s": 6,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 240.8,
+          "target_s": 240.7,
           "stddev_s": 5.9,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 302,
+          "target_s": 301.6,
           "stddev_s": 5.7,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 364.1,
-          "stddev_s": 6.5,
+          "stddev_s": 8.7,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 425.8,
-          "stddev_s": 6.8,
+          "target_s": 427,
+          "stddev_s": 8.8,
           "count": 10,
           "total_samples": 10
         },
         "8": {
           "target_s": 488.8,
-          "stddev_s": 8.5,
+          "stddev_s": 9.7,
           "count": 9,
           "total_samples": 10
         }
@@ -190,63 +196,75 @@
     },
     "Soul Fire": {
       "sample_count": 10,
-      "avg_first_cast_s": 20.1,
-      "stddev_first_cast_s": 28.2,
+      "avg_first_cast_s": 15.1,
+      "stddev_first_cast_s": 26.5,
       "avg_gap_s": 57.9,
-      "stddev_gap_s": 13,
-      "avg_bl_offset_s": 9.5,
-      "stddev_bl_offset_s": 3.1,
-      "avg_uses": 9.2,
+      "stddev_gap_s": 12.4,
+      "avg_bl_offset_s": 8,
+      "stddev_bl_offset_s": 3.8,
+      "avg_uses": 9.3,
       "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 1.085,
-        "stddev": 0.08,
+        "avg": 1.093,
+        "stddev": 0.081,
         "min": 0.963,
         "max": 1.21
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
+        "2": {
+          "target_s": 73.5,
+          "stddev_s": 21.6,
+          "count": 5,
+          "total_samples": 10
+        },
         "3": {
-          "target_s": 109.8,
-          "stddev_s": 45.1,
+          "target_s": 116.9,
+          "stddev_s": 41.3,
           "count": 9,
           "total_samples": 10
         },
         "4": {
-          "target_s": 186.8,
-          "stddev_s": 30.3,
+          "target_s": 185.2,
+          "stddev_s": 30.6,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 241.2,
-          "stddev_s": 28.4,
+          "target_s": 238.9,
+          "stddev_s": 27.9,
           "count": 10,
           "total_samples": 10
         },
         "6": {
-          "target_s": 300.9,
-          "stddev_s": 33.8,
+          "target_s": 291.7,
+          "stddev_s": 33,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 372.4,
-          "stddev_s": 31.2,
+          "target_s": 368.3,
+          "stddev_s": 32.3,
           "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 427.9,
-          "stddev_s": 31.4,
+          "target_s": 422.1,
+          "stddev_s": 33.2,
           "count": 10,
           "total_samples": 10
         },
         "9": {
-          "target_s": 478.7,
-          "stddev_s": 27.8,
+          "target_s": 473.7,
+          "stddev_s": 28.1,
           "count": 9,
+          "total_samples": 10
+        },
+        "10": {
+          "target_s": 503.2,
+          "stddev_s": 13.7,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -423,5 +441,5 @@
       "name": "Malevolence"
     }
   },
-  "source_signature": "6731fbd400e7985e"
+  "source_signature": "60169e69d7234502"
 }

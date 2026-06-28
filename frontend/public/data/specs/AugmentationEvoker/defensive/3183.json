@@ -6,87 +6,54 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 197.5,
-      "stddev_first_cast_s": 35.6,
-      "avg_gap_s": 44.4,
-      "stddev_gap_s": 54.4,
+      "avg_first_cast_s": 201.5,
+      "stddev_first_cast_s": 34.4,
+      "avg_gap_s": 45,
+      "stddev_gap_s": 55.4,
       "hold_targets": {
         "2": {
-          "target_s": 357.1,
-          "stddev_s": 37.1,
-          "count": 4,
+          "target_s": 356.6,
+          "stddev_s": 40.7,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 6.2,
-      "avg_uses_per_min": 0.65,
+      "avg_uses": 5.5,
+      "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.65,
-        "stddev": 0.267,
+        "avg": 0.58,
+        "stddev": 0.163,
         "min": 0.208,
-        "max": 1.25
+        "max": 0.736
       },
       "majority_hold": true
     },
     "Zephyr": {
-      "sample_count": 8,
-      "avg_first_cast_s": 311.7,
-      "stddev_first_cast_s": 48,
-      "avg_gap_s": 363.5,
-      "stddev_gap_s": 0,
+      "sample_count": 7,
+      "avg_first_cast_s": 328.6,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.12,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.1,
       "uses_per_min": {
-        "avg": 0.118,
-        "stddev": 0.037,
+        "avg": 0.105,
+        "stddev": 0.001,
         "min": 0.104,
-        "max": 0.208
+        "max": 0.105
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 178.9,
-      "dmg_avg": 210834,
-      "dmg_stddev": 169052,
-      "dmg_min": 41552,
-      "dmg_max": 379818,
-      "window_length_s": 6.8,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 109692,
-          "min_damage": 17418,
-          "max_damage": 254533,
-          "count": 4
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 50446,
-          "min_damage": 24134,
-          "max_damage": 95335,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 215.3,
-      "dmg_avg": 210118,
-      "dmg_stddev": 123005,
+      "time_s": 214.3,
+      "dmg_avg": 227963,
+      "dmg_stddev": 122067,
       "dmg_min": 0,
       "dmg_max": 469663,
-      "window_length_s": 7.2,
+      "window_length_s": 7.6,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -99,17 +66,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 129280,
+          "avg_damage": 145216,
           "min_damage": 20458,
-          "max_damage": 248795,
-          "count": 17
+          "max_damage": 254533,
+          "count": 18
         },
         {
           "spell_id": 1281473,
-          "avg_damage": 117781,
-          "min_damage": 60551,
+          "avg_damage": 122672,
+          "min_damage": 94717,
           "max_damage": 220868,
-          "count": 13
+          "count": 14
         }
       ]
     },
@@ -229,9 +196,9 @@
       ]
     },
     {
-      "time_s": 435.1,
-      "dmg_avg": 227099,
-      "dmg_stddev": 147810,
+      "time_s": 437.7,
+      "dmg_avg": 228939,
+      "dmg_stddev": 172057,
       "dmg_min": 4629,
       "dmg_max": 446703,
       "window_length_s": 6.5,
@@ -247,17 +214,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 133891,
-          "min_damage": 16023,
+          "avg_damage": 150946,
+          "min_damage": 64108,
           "max_damage": 205254,
-          "count": 12
+          "count": 8
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 24773,
+          "avg_damage": 22952,
           "min_damage": 66,
           "max_damage": 43642,
-          "count": 13
+          "count": 10
         },
         {
           "spell_id": 413924,
@@ -319,15 +286,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 6.2,
+      "avg_uses": 5.5,
       "min_uses": 2,
-      "max_uses": 12
+      "max_uses": 7
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.1,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -407,10 +374,6 @@
       "icon": "spell_holy_purifyingpower",
       "name": "Tears of L'ura"
     },
-    "1254398": {
-      "icon": "inv_jewelcrafting_dawnstone_02",
-      "name": "Glimmering"
-    },
     "1254644": {
       "icon": "ability_bossgorefiend_touchofdoom",
       "name": "Thunderous Well"
@@ -436,5 +399,5 @@
       "name": "Abyssal Pool"
     }
   },
-  "source_signature": "e0de6190ca0e9bcc"
+  "source_signature": "e4d9a37b9d3fb7b1"
 }
