@@ -6,33 +6,33 @@
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 7,
-      "avg_first_cast_s": 17.4,
-      "stddev_first_cast_s": 1.7,
+      "avg_first_cast_s": 17.1,
+      "stddev_first_cast_s": 1.3,
       "avg_gap_s": 51.7,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.498,
+        "avg": 0.497,
         "stddev": 0.202,
-        "min": 0.404,
+        "min": 0.402,
         "max": 0.954
       },
       "majority_hold": false
     },
     "Blazing Barrier": {
-      "sample_count": 5,
-      "avg_first_cast_s": 47.6,
-      "stddev_first_cast_s": 15.5,
-      "avg_gap_s": 31.8,
-      "stddev_gap_s": 1.4,
+      "sample_count": 6,
+      "avg_first_cast_s": 46.5,
+      "stddev_first_cast_s": 14.1,
+      "avg_gap_s": 35.1,
+      "stddev_gap_s": 10.9,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.67,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.76,
       "uses_per_min": {
-        "avg": 0.667,
-        "stddev": 0.556,
+        "avg": 0.757,
+        "stddev": 0.544,
         "min": 0.404,
         "max": 1.662
       },
@@ -41,12 +41,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 41.3,
-      "dmg_avg": 207233,
-      "dmg_stddev": 52588,
+      "time_s": 40.9,
+      "dmg_avg": 202460,
+      "dmg_stddev": 46776,
       "dmg_min": 178983,
       "dmg_max": 286042,
-      "window_length_s": 6.6,
+      "window_length_s": 5.6,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -58,18 +58,18 @@
       "ref_game_id": 245569,
       "ability_breakdown": [
         {
-          "spell_id": 1246653,
-          "avg_damage": 143372,
-          "min_damage": 56552,
-          "max_damage": 179786,
-          "count": 4
+          "spell_id": 1249207,
+          "avg_damage": 128303,
+          "min_damage": 127567,
+          "max_damage": 129467,
+          "count": 3
         },
         {
-          "spell_id": 1249207,
-          "avg_damage": 127721,
-          "min_damage": 127567,
-          "max_damage": 127874,
-          "count": 2
+          "spell_id": 1246653,
+          "avg_damage": 125478,
+          "min_damage": 53902,
+          "max_damage": 179786,
+          "count": 5
         }
       ]
     }
@@ -77,7 +77,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -167,6 +167,6 @@
       "name": "Discordant Roar"
     }
   },
-  "source_signature": "adf29d6ac668c1a6",
+  "source_signature": "2612b94dc8d989cb",
   "ingest_version": 1
 }
