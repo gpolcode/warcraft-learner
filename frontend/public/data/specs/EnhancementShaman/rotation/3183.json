@@ -3,24 +3,24 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 535.1,
-  "downtime_threshold_ms": 1235,
-  "top_avg_efficiency": 74.6,
-  "top_efficiency_stddev": 12.2,
+  "avg_duration_s": 534,
+  "downtime_threshold_ms": 1250,
+  "top_avg_efficiency": 74.9,
+  "top_efficiency_stddev": 11.7,
   "per_cd_benchmarks": {
     "Doom Winds": {
       "sample_count": 10,
-      "avg_first_cast_s": 13,
-      "stddev_first_cast_s": 1.7,
-      "avg_gap_s": 63.9,
-      "stddev_gap_s": 8.9,
-      "avg_bl_offset_s": 6.5,
-      "stddev_bl_offset_s": 12.4,
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 0.99,
+      "avg_first_cast_s": 13.2,
+      "stddev_first_cast_s": 1.5,
+      "avg_gap_s": 64.4,
+      "stddev_gap_s": 9.4,
+      "avg_bl_offset_s": 5.6,
+      "stddev_bl_offset_s": 12.1,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.987,
-        "stddev": 0.048,
+        "avg": 0.978,
+        "stddev": 0.054,
         "min": 0.885,
         "max": 1.051
       },
@@ -28,27 +28,27 @@
       "majority_hold": true,
       "hold_targets": {
         "6": {
-          "target_s": 322,
-          "stddev_s": 14.3,
+          "target_s": 345.5,
+          "stddev_s": 14.7,
           "count": 5,
           "total_samples": 10
         },
         "7": {
-          "target_s": 382.9,
-          "stddev_s": 11.7,
+          "target_s": 383.8,
+          "stddev_s": 14.8,
           "count": 7,
           "total_samples": 10
         },
         "8": {
-          "target_s": 456.2,
-          "stddev_s": 20.4,
+          "target_s": 462.9,
+          "stddev_s": 20.6,
           "count": 10,
           "total_samples": 10
         },
         "9": {
-          "target_s": 515.1,
-          "stddev_s": 14.6,
-          "count": 8,
+          "target_s": 521,
+          "stddev_s": 14.4,
+          "count": 7,
           "total_samples": 10
         }
       }
@@ -75,98 +75,92 @@
     },
     "Sundering": {
       "sample_count": 10,
-      "avg_first_cast_s": 11.7,
-      "stddev_first_cast_s": 1.7,
-      "avg_gap_s": 33.5,
-      "stddev_gap_s": 8.7,
-      "avg_bl_offset_s": 8.7,
-      "stddev_bl_offset_s": 4.7,
-      "avg_uses": 16.3,
-      "avg_uses_per_min": 1.83,
+      "avg_first_cast_s": 12,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 34.2,
+      "stddev_gap_s": 9.7,
+      "avg_bl_offset_s": 7.9,
+      "stddev_bl_offset_s": 4.8,
+      "avg_uses": 15.9,
+      "avg_uses_per_min": 1.79,
       "uses_per_min": {
-        "avg": 1.828,
-        "stddev": 0.127,
+        "avg": 1.786,
+        "stddev": 0.134,
         "min": 1.549,
-        "max": 1.993
+        "max": 1.961
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "8": {
           "target_s": 258,
-          "stddev_s": 11.1,
-          "count": 8,
+          "stddev_s": 10.4,
+          "count": 9,
           "total_samples": 10
         },
         "9": {
-          "target_s": 288.5,
-          "stddev_s": 11,
-          "count": 8,
+          "target_s": 288.1,
+          "stddev_s": 10.3,
+          "count": 9,
           "total_samples": 10
         },
         "10": {
-          "target_s": 318.9,
-          "stddev_s": 17.4,
+          "target_s": 319.3,
+          "stddev_s": 17.7,
           "count": 9,
           "total_samples": 10
         },
         "11": {
-          "target_s": 348.9,
-          "stddev_s": 16.4,
+          "target_s": 350.3,
+          "stddev_s": 17.3,
           "count": 9,
           "total_samples": 10
         },
         "12": {
-          "target_s": 380.7,
-          "stddev_s": 16.3,
-          "count": 9,
-          "total_samples": 10
-        },
-        "13": {
-          "target_s": 411.1,
+          "target_s": 381.1,
           "stddev_s": 17.2,
           "count": 9,
           "total_samples": 10
         },
+        "13": {
+          "target_s": 412.5,
+          "stddev_s": 27.9,
+          "count": 9,
+          "total_samples": 10
+        },
         "14": {
-          "target_s": 452.4,
-          "stddev_s": 28.3,
+          "target_s": 456.4,
+          "stddev_s": 31.9,
           "count": 9,
           "total_samples": 10
         },
         "15": {
-          "target_s": 479.4,
-          "stddev_s": 24.8,
-          "count": 9,
-          "total_samples": 10
-        },
-        "16": {
-          "target_s": 507.2,
-          "stddev_s": 22.1,
+          "target_s": 481.2,
+          "stddev_s": 24.6,
           "count": 8,
           "total_samples": 10
         },
-        "17": {
-          "target_s": 520.9,
-          "stddev_s": 11.4,
-          "count": 4,
+        "16": {
+          "target_s": 509.9,
+          "stddev_s": 20.4,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Surging Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 10.6,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 63.9,
-      "stddev_gap_s": 8.6,
-      "avg_bl_offset_s": 4.3,
-      "stddev_bl_offset_s": 12.2,
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 0.99,
+      "avg_first_cast_s": 10.9,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 64.5,
+      "stddev_gap_s": 9.2,
+      "avg_bl_offset_s": 3.6,
+      "stddev_bl_offset_s": 12,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.987,
-        "stddev": 0.048,
+        "avg": 0.978,
+        "stddev": 0.054,
         "min": 0.885,
         "max": 1.051
       },
@@ -174,27 +168,27 @@
       "majority_hold": true,
       "hold_targets": {
         "6": {
-          "target_s": 319.4,
-          "stddev_s": 13.9,
+          "target_s": 343.4,
+          "stddev_s": 14.1,
           "count": 5,
           "total_samples": 10
         },
         "7": {
-          "target_s": 380.7,
-          "stddev_s": 11.7,
+          "target_s": 380.8,
+          "stddev_s": 14.3,
           "count": 7,
           "total_samples": 10
         },
         "8": {
-          "target_s": 453.2,
-          "stddev_s": 19.9,
+          "target_s": 460.2,
+          "stddev_s": 20.2,
           "count": 10,
           "total_samples": 10
         },
         "9": {
-          "target_s": 513.8,
-          "stddev_s": 14.3,
-          "count": 8,
+          "target_s": 518.5,
+          "stddev_s": 13.9,
+          "count": 7,
           "total_samples": 10
         }
       }
@@ -418,6 +412,6 @@
       "name": "Surging Totem"
     }
   },
-  "source_signature": "a282f07199161bb7",
+  "source_signature": "2f89e422daf6f81e",
   "ingest_version": 1
 }

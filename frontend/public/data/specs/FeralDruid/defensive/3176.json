@@ -6,91 +6,57 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 6,
-      "avg_first_cast_s": 73.3,
-      "stddev_first_cast_s": 35.9,
-      "avg_gap_s": 71.6,
-      "stddev_gap_s": 13.9,
+      "avg_first_cast_s": 94.7,
+      "stddev_first_cast_s": 57.7,
+      "avg_gap_s": 81.4,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.411,
-        "stddev": 0.162,
+        "avg": 0.349,
+        "stddev": 0.103,
         "min": 0.293,
-        "max": 0.67
+        "max": 0.559
       },
       "majority_hold": false
     },
     "Frenzied Regeneration": {
-      "sample_count": 5,
-      "avg_first_cast_s": 107.4,
-      "stddev_first_cast_s": 25.7,
+      "sample_count": 6,
+      "avg_first_cast_s": 104.6,
+      "stddev_first_cast_s": 24,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.27,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.27,
-        "stddev": 0.052,
+        "avg": 0.275,
+        "stddev": 0.048,
         "min": 0.211,
         "max": 0.317
       },
       "majority_hold": false
     },
     "Survival Instincts": {
-      "sample_count": 3,
-      "avg_first_cast_s": 135.5,
-      "stddev_first_cast_s": 126.5,
+      "sample_count": 2,
+      "avg_first_cast_s": 184.6,
+      "stddev_first_cast_s": 132.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.29,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.288,
-        "stddev": 0.067,
+        "avg": 0.264,
+        "stddev": 0.075,
         "min": 0.211,
-        "max": 0.335
+        "max": 0.317
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 116.8,
-      "dmg_avg": 363997,
-      "dmg_stddev": 182139,
-      "dmg_min": 261573,
-      "dmg_max": 636430,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240435,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259903,
-          "avg_damage": 209314,
-          "min_damage": 202683,
-          "max_damage": 213073,
-          "count": 4
-        },
-        {
-          "spell_id": 1249262,
-          "avg_damage": 72094,
-          "min_damage": 48500,
-          "max_damage": 96195,
-          "count": 4
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 61336,
@@ -100,7 +66,7 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 1.3,
+      "avg_uses": 1.2,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -167,16 +133,8 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
-    },
-    "1249262": {
-      "icon": "spell_arcane_arcanetorrent",
-      "name": "Umbral Collapse"
-    },
-    "1259903": {
-      "icon": "ability_priest_voidentropy",
-      "name": "Dark Upheaval"
     }
   },
-  "source_signature": "f907ff386cfc9ddf",
+  "source_signature": "0d87c8ab2be42300",
   "ingest_version": 1
 }

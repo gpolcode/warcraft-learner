@@ -22,17 +22,24 @@
       "majority_hold": false
     },
     "Astral Shift": {
-      "sample_count": 8,
-      "avg_first_cast_s": 135.8,
-      "stddev_first_cast_s": 59.8,
+      "sample_count": 7,
+      "avg_first_cast_s": 125.8,
+      "stddev_first_cast_s": 56.9,
       "avg_gap_s": 114.7,
       "stddev_gap_s": 12.8,
-      "hold_targets": {},
+      "hold_targets": {
+        "1": {
+          "target_s": 187.4,
+          "stddev_s": 3.3,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
       "avg_uses": 1.4,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.402,
-        "stddev": 0.158,
+        "avg": 0.421,
+        "stddev": 0.16,
         "min": 0.26,
         "max": 0.627
       },
@@ -266,6 +273,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "9435bbb665908368",
+  "source_signature": "c3bb3fb5f0d73554",
   "ingest_version": 1
 }

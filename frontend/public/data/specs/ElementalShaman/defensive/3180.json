@@ -6,14 +6,14 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 126.7,
-      "stddev_first_cast_s": 55.9,
-      "avg_gap_s": 144.1,
-      "stddev_gap_s": 45,
+      "avg_first_cast_s": 124.6,
+      "stddev_first_cast_s": 55.5,
+      "avg_gap_s": 151.9,
+      "stddev_gap_s": 43,
       "hold_targets": {
         "1": {
-          "target_s": 248.7,
-          "stddev_s": 30.3,
+          "target_s": 273.2,
+          "stddev_s": 31.9,
           "count": 8,
           "total_samples": 9
         }
@@ -21,7 +21,7 @@
       "avg_uses": 2,
       "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.378,
+        "avg": 0.376,
         "stddev": 0.082,
         "min": 0.214,
         "max": 0.529
@@ -29,17 +29,17 @@
       "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 3,
-      "avg_first_cast_s": 229.3,
-      "stddev_first_cast_s": 27,
+      "sample_count": 2,
+      "avg_first_cast_s": 244.9,
+      "stddev_first_cast_s": 1.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.186,
-        "stddev": 0.016,
+        "avg": 0.19,
+        "stddev": 0.02,
         "min": 0.176,
         "max": 0.204
       },
@@ -48,51 +48,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 143.6,
-      "dmg_avg": 397683,
-      "dmg_stddev": 189038,
-      "dmg_min": 229438,
-      "dmg_max": 668939,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 257759,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246502,
-          "avg_damage": 250732,
-          "min_damage": 73607,
-          "max_damage": 425633,
-          "count": 3
-        },
-        {
-          "spell_id": 1249024,
-          "avg_damage": 160591,
-          "min_damage": 145706,
-          "max_damage": 179800,
-          "count": 3
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 89190,
-          "min_damage": 83732,
-          "max_damage": 95412,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 245.3,
-      "dmg_avg": 378882,
-      "dmg_stddev": 154284,
-      "dmg_min": 230892,
-      "dmg_max": 668527,
+      "time_s": 139.6,
+      "dmg_avg": 537158,
+      "dmg_stddev": 225771,
+      "dmg_min": 343535,
+      "dmg_max": 787337,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -105,24 +65,57 @@
       "ref_game_id": 240431,
       "ability_breakdown": [
         {
+          "spell_id": 1246502,
+          "avg_damage": 310963,
+          "min_damage": 73607,
+          "max_damage": 491654,
+          "count": 4
+        },
+        {
           "spell_id": 1249024,
-          "avg_damage": 143227,
-          "min_damage": 123485,
-          "max_damage": 171344,
-          "count": 3
+          "avg_damage": 168034,
+          "min_damage": 156268,
+          "max_damage": 179800,
+          "count": 2
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 114868,
-          "min_damage": 101734,
-          "max_damage": 125488,
-          "count": 6
-        },
+          "avg_damage": 89063,
+          "min_damage": 83224,
+          "max_damage": 95412,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 243.6,
+      "dmg_avg": 320953,
+      "dmg_stddev": 67720,
+      "dmg_min": 230892,
+      "dmg_max": 408177,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
         {
           "spell_id": 1255739,
-          "avg_damage": 103157,
-          "min_damage": 39580,
+          "avg_damage": 119051,
+          "min_damage": 41947,
           "max_damage": 186674,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 115176,
+          "min_damage": 101734,
+          "max_damage": 125488,
           "count": 5
         },
         {
@@ -131,6 +124,46 @@
           "min_damage": 83895,
           "max_damage": 114434,
           "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 297.2,
+      "dmg_avg": 405306,
+      "dmg_stddev": 165539,
+      "dmg_min": 158682,
+      "dmg_max": 506060,
+      "window_length_s": 10,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 228388,
+          "min_damage": 76253,
+          "max_damage": 380522,
+          "count": 2
+        },
+        {
+          "spell_id": 1249024,
+          "avg_damage": 199249,
+          "min_damage": 182539,
+          "max_damage": 215959,
+          "count": 2
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 135607,
+          "min_damage": 114976,
+          "max_damage": 158682,
+          "count": 4
         }
       ]
     }
@@ -223,6 +256,6 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "96655185795dad49",
+  "source_signature": "6fa5f3ff570de856",
   "ingest_version": 1
 }

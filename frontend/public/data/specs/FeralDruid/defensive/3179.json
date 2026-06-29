@@ -5,34 +5,34 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival Instincts": {
-      "sample_count": 6,
-      "avg_first_cast_s": 136.4,
-      "stddev_first_cast_s": 47.3,
+      "sample_count": 7,
+      "avg_first_cast_s": 146.1,
+      "stddev_first_cast_s": 50.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.271,
-        "stddev": 0.055,
+        "avg": 0.272,
+        "stddev": 0.051,
         "min": 0.218,
         "max": 0.365
       },
       "majority_hold": false
     },
     "Frenzied Regeneration": {
-      "sample_count": 5,
-      "avg_first_cast_s": 113.3,
-      "stddev_first_cast_s": 66.7,
+      "sample_count": 6,
+      "avg_first_cast_s": 108.6,
+      "stddev_first_cast_s": 60.7,
       "avg_gap_s": 12.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.2,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.319,
-        "stddev": 0.082,
+        "avg": 0.312,
+        "stddev": 0.075,
         "min": 0.218,
         "max": 0.443
       },
@@ -40,16 +40,23 @@
     },
     "Barkskin": {
       "sample_count": 8,
-      "avg_first_cast_s": 92.8,
-      "stddev_first_cast_s": 27,
-      "avg_gap_s": 103.8,
-      "stddev_gap_s": 46.7,
-      "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.44,
+      "avg_first_cast_s": 90.8,
+      "stddev_first_cast_s": 26.8,
+      "avg_gap_s": 99,
+      "stddev_gap_s": 43.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 195.4,
+          "stddev_s": 30.8,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.442,
-        "stddev": 0.148,
+        "avg": 0.469,
+        "stddev": 0.146,
         "min": 0.245,
         "max": 0.665
       },
@@ -58,10 +65,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 103.7,
-      "dmg_avg": 505534,
-      "dmg_stddev": 60132,
-      "dmg_min": 453246,
+      "time_s": 95.3,
+      "dmg_avg": 449233,
+      "dmg_stddev": 92132,
+      "dmg_min": 334393,
       "dmg_max": 591803,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -76,9 +83,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 455168,
+          "avg_damage": 455808,
           "min_damage": 347728,
           "max_damage": 538003,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 170204,
+          "min_damage": 141084,
+          "max_damage": 184917,
+          "count": 3
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 167424,
+          "min_damage": 53800,
+          "max_damage": 261588,
           "count": 4
         }
       ]
@@ -126,7 +147,7 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -198,11 +219,19 @@
       "icon": "inv_cosmicvoid_groundsate",
       "name": "Torturous Extract"
     },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
     }
   },
-  "source_signature": "e4df62bc75784406",
+  "source_signature": "1745e7e6f8b137ae",
   "ingest_version": 1
 }

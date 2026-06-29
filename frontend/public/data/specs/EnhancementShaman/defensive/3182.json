@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 8,
-      "avg_first_cast_s": 160.7,
-      "stddev_first_cast_s": 68.5,
+      "avg_first_cast_s": 158.9,
+      "stddev_first_cast_s": 65.8,
       "avg_gap_s": 108.1,
       "stddev_gap_s": 22.5,
       "hold_targets": {},
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.37,
-        "stddev": 0.127,
+        "avg": 0.371,
+        "stddev": 0.126,
         "min": 0.195,
         "max": 0.499
       },
@@ -40,20 +40,27 @@
     },
     "Spirit Walk": {
       "sample_count": 7,
-      "avg_first_cast_s": 125.8,
-      "stddev_first_cast_s": 71.5,
-      "avg_gap_s": 64,
+      "avg_first_cast_s": 129.9,
+      "stddev_first_cast_s": 69.1,
+      "avg_gap_s": 71.4,
       "stddev_gap_s": 48,
-      "hold_targets": {},
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.43,
+      "hold_targets": {
+        "1": {
+          "target_s": 202.6,
+          "stddev_s": 15.5,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.431,
-        "stddev": 0.361,
+        "avg": 0.466,
+        "stddev": 0.349,
         "min": 0.206,
         "max": 1.212
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Healing Surge": {
       "sample_count": 1,
@@ -75,9 +82,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 105.8,
-      "dmg_avg": 649935,
-      "dmg_stddev": 385674,
+      "time_s": 107.8,
+      "dmg_avg": 612428,
+      "dmg_stddev": 344372,
       "dmg_min": 439434,
       "dmg_max": 1227810,
       "window_length_s": 8,
@@ -93,10 +100,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1242803,
-          "avg_damage": 478395,
+          "avg_damage": 443766,
           "min_damage": 354063,
           "max_damage": 602727,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1242815,
@@ -107,19 +114,59 @@
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 84235,
+          "avg_damage": 84966,
           "min_damage": 63280,
           "max_damage": 94920,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 227.4,
+      "dmg_avg": 314381,
+      "dmg_stddev": 207365,
+      "dmg_min": 62856,
+      "dmg_max": 515102,
+      "window_length_s": 8.7,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 313334,
+          "min_damage": 200803,
+          "max_damage": 425864,
+          "count": 2
+        },
+        {
+          "spell_id": 1241333,
+          "avg_damage": 149643,
+          "min_damage": 143072,
+          "max_damage": 156213,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 82893,
+          "min_damage": 62856,
+          "max_damage": 92668,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 266.4,
-      "dmg_avg": 463822,
-      "dmg_stddev": 255313,
-      "dmg_min": 149683,
-      "dmg_max": 768505,
+      "time_s": 231.4,
+      "dmg_avg": 412926,
+      "dmg_stddev": 107991,
+      "dmg_min": 277455,
+      "dmg_max": 541316,
       "window_length_s": 11,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -133,23 +180,16 @@
       "ability_breakdown": [
         {
           "spell_id": 1242815,
-          "avg_damage": 535481,
-          "min_damage": 442486,
-          "max_damage": 628475,
-          "count": 2
-        },
-        {
-          "spell_id": 1242803,
-          "avg_damage": 219845,
-          "min_damage": 91258,
-          "max_damage": 348432,
-          "count": 2
+          "avg_damage": 288117,
+          "min_damage": 239734,
+          "max_damage": 337059,
+          "count": 3
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 61508,
-          "min_damage": 48772,
-          "max_damage": 75426,
+          "avg_damage": 60948,
+          "min_damage": 37721,
+          "max_damage": 75936,
           "count": 4
         }
       ]
@@ -170,7 +210,7 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 1.9,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 5
     },
@@ -251,6 +291,10 @@
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
     },
+    "1241333": {
+      "icon": "inv_phoenix2mount_blue",
+      "name": "Death Drop"
+    },
     "1242803": {
       "icon": "inv_ability_holyfire_wave",
       "name": "Light Flames"
@@ -264,6 +308,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "dfa9121486bc39b4",
+  "source_signature": "4c3d2603999feabe",
   "ingest_version": 1
 }

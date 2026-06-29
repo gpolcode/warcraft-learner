@@ -4,23 +4,40 @@
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Survival Instincts": {
+      "sample_count": 7,
+      "avg_first_cast_s": 173.9,
+      "stddev_first_cast_s": 74.1,
+      "avg_gap_s": 212.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.192,
+        "stddev": 0.062,
+        "min": 0.148,
+        "max": 0.326
+      },
+      "majority_hold": false
+    },
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 80.4,
-      "stddev_first_cast_s": 31.1,
-      "avg_gap_s": 98.1,
-      "stddev_gap_s": 45.2,
+      "avg_first_cast_s": 84.7,
+      "stddev_first_cast_s": 28,
+      "avg_gap_s": 94.3,
+      "stddev_gap_s": 33.4,
       "hold_targets": {
         "1": {
           "target_s": 232.6,
-          "stddev_s": 65.5,
+          "stddev_s": 57.2,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 248.7,
-          "stddev_s": 57.2,
-          "count": 8,
+          "target_s": 248,
+          "stddev_s": 32.8,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
@@ -30,70 +47,53 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 3.6,
-      "avg_uses_per_min": 0.57,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.57,
-        "stddev": 0.105,
-        "min": 0.426,
+        "avg": 0.563,
+        "stddev": 0.116,
+        "min": 0.361,
         "max": 0.687
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
       "sample_count": 10,
-      "avg_first_cast_s": 105.1,
-      "stddev_first_cast_s": 71.6,
-      "avg_gap_s": 116.2,
-      "stddev_gap_s": 55.2,
+      "avg_first_cast_s": 103.6,
+      "stddev_first_cast_s": 72.1,
+      "avg_gap_s": 132.7,
+      "stddev_gap_s": 54.8,
       "hold_targets": {
         "1": {
-          "target_s": 238,
-          "stddev_s": 54.3,
+          "target_s": 245.2,
+          "stddev_s": 42.8,
           "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 346,
-          "stddev_s": 37.8,
-          "count": 7,
+          "target_s": 346.2,
+          "stddev_s": 18.2,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.449,
-        "stddev": 0.153,
+        "avg": 0.414,
+        "stddev": 0.124,
         "min": 0.204,
-        "max": 0.709
+        "max": 0.671
       },
       "majority_hold": true
-    },
-    "Survival Instincts": {
-      "sample_count": 6,
-      "avg_first_cast_s": 178.6,
-      "stddev_first_cast_s": 80,
-      "avg_gap_s": 212.5,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.19,
-      "uses_per_min": {
-        "avg": 0.194,
-        "stddev": 0.068,
-        "min": 0.148,
-        "max": 0.326
-      },
-      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 68.5,
-      "dmg_avg": 518850,
-      "dmg_stddev": 200382,
-      "dmg_min": 185777,
+      "time_s": 70.2,
+      "dmg_avg": 512624,
+      "dmg_stddev": 170587,
+      "dmg_min": 308336,
       "dmg_max": 734458,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -129,10 +129,10 @@
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 98997,
-          "min_damage": 82087,
+          "avg_damage": 99450,
+          "min_damage": 88980,
           "max_damage": 112134,
-          "count": 7
+          "count": 8
         }
       ]
     },
@@ -204,8 +204,8 @@
     },
     {
       "time_s": 233.8,
-      "dmg_avg": 540807,
-      "dmg_stddev": 236380,
+      "dmg_avg": 538380,
+      "dmg_stddev": 221233,
       "dmg_min": 387016,
       "dmg_max": 1113531,
       "window_length_s": 12,
@@ -228,26 +228,26 @@
         },
         {
           "spell_id": 1255739,
-          "avg_damage": 181329,
+          "avg_damage": 164581,
           "min_damage": 26263,
           "max_damage": 282288,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 146460,
+          "avg_damage": 145233,
           "min_damage": 108662,
           "max_damage": 155672,
-          "count": 8
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 245.2,
-      "dmg_avg": 185843,
-      "dmg_stddev": 132423,
+      "time_s": 241.6,
+      "dmg_avg": 135456,
+      "dmg_stddev": 80344,
       "dmg_min": 41643,
-      "dmg_max": 387392,
+      "dmg_max": 224244,
       "window_length_s": 2.6,
       "defensive_name": "Frenzied Regeneration",
       "spell_id": 22842,
@@ -261,24 +261,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1255739,
-          "avg_damage": 90203,
-          "min_damage": 67609,
+          "avg_damage": 101501,
+          "min_damage": 76988,
           "max_damage": 126013,
-          "count": 3
+          "count": 2
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 36436,
+          "avg_damage": 37632,
           "min_damage": 24452,
           "max_damage": 46800,
-          "count": 4
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 302.9,
-      "dmg_avg": 531008,
-      "dmg_stddev": 242427,
+      "time_s": 301.5,
+      "dmg_avg": 564248,
+      "dmg_stddev": 241357,
       "dmg_min": 254265,
       "dmg_max": 849219,
       "window_length_s": 12,
@@ -301,64 +301,24 @@
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 153299,
+          "avg_damage": 152167,
           "min_damage": 123409,
           "max_damage": 172567,
-          "count": 8
+          "count": 7
         },
         {
           "spell_id": 1246749,
-          "avg_damage": 128297,
+          "avg_damage": 127039,
           "min_damage": 108907,
           "max_damage": 144109,
-          "count": 8
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 305.1,
-      "dmg_avg": 216459,
-      "dmg_stddev": 139647,
-      "dmg_min": 84864,
-      "dmg_max": 359929,
-      "window_length_s": 2.3,
-      "defensive_name": "Frenzied Regeneration",
-      "spell_id": 22842,
-      "common_defensives": [
-        "Frenzied Regeneration"
-      ],
-      "common_cds": [
-        "Frenzied Regeneration"
-      ],
-      "ref_game_id": 257759,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249024,
-          "avg_damage": 244393,
-          "min_damage": 201850,
-          "max_damage": 286936,
-          "count": 2
-        },
-        {
-          "spell_id": 1246502,
-          "avg_damage": 84015,
-          "min_damage": 83709,
-          "max_damage": 84320,
-          "count": 2
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 52255,
-          "min_damage": 25489,
-          "max_damage": 84864,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 350.5,
-      "dmg_avg": 233981,
-      "dmg_stddev": 152352,
+      "time_s": 348.5,
+      "dmg_avg": 259719,
+      "dmg_stddev": 149294,
       "dmg_min": 55766,
       "dmg_max": 513964,
       "window_length_s": 2.9,
@@ -381,10 +341,10 @@
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 54904,
+          "avg_damage": 49975,
           "min_damage": 38237,
-          "max_damage": 79548,
-          "count": 6
+          "max_damage": 72582,
+          "count": 5
         }
       ]
     }
@@ -392,21 +352,21 @@
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 1.2,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 22812,
-      "avg_uses": 3.6,
-      "min_uses": 3,
+      "avg_uses": 3.5,
+      "min_uses": 2,
       "max_uses": 5
     },
     {
       "spell_id": 22842,
-      "avg_uses": 2.9,
+      "avg_uses": 2.6,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -487,6 +447,6 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "a9141fd311f4371c",
+  "source_signature": "a7849cdaa0084ff7",
   "ingest_version": 1
 }
