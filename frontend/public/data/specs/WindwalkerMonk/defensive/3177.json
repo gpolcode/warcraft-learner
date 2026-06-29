@@ -6,22 +6,22 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 30.6,
-      "stddev_first_cast_s": 26.2,
-      "avg_gap_s": 104.3,
-      "stddev_gap_s": 14.3,
+      "avg_first_cast_s": 35.9,
+      "stddev_first_cast_s": 26.9,
+      "avg_gap_s": 106.1,
+      "stddev_gap_s": 14.2,
       "hold_targets": {
         "1": {
-          "target_s": 172.8,
-          "stddev_s": 25.3,
-          "count": 6,
+          "target_s": 178.8,
+          "stddev_s": 24,
+          "count": 7,
           "total_samples": 10
         }
       },
       "avg_uses": 2.3,
       "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.68,
+        "avg": 0.681,
         "stddev": 0.124,
         "min": 0.546,
         "max": 0.884
@@ -31,9 +31,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 9,
-      "dmg_avg": 94786,
-      "dmg_stddev": 94769,
+      "time_s": 8.2,
+      "dmg_avg": 101604,
+      "dmg_stddev": 104296,
       "dmg_min": 45538,
       "dmg_max": 287908,
       "window_length_s": 10,
@@ -49,25 +49,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1272950,
-          "avg_damage": 42222,
+          "avg_damage": 42533,
           "min_damage": 26118,
           "max_damage": 69795,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1260052,
-          "avg_damage": 19454,
+          "avg_damage": 19311,
           "min_damage": 18734,
-          "max_damage": 20029,
-          "count": 5
+          "max_damage": 19668,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 60.8,
-      "dmg_avg": 368752,
-      "dmg_stddev": 111554,
-      "dmg_min": 270850,
+      "time_s": 61.1,
+      "dmg_avg": 344293,
+      "dmg_stddev": 111015,
+      "dmg_min": 246458,
       "dmg_max": 468462,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
@@ -82,57 +82,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 308844,
-          "min_damage": 208462,
+          "avg_damage": 286489,
+          "min_damage": 197068,
           "max_damage": 412468,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 59908,
-          "min_damage": 55994,
+          "avg_damage": 57804,
+          "min_damage": 49390,
           "max_damage": 62388,
-          "count": 4
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 102.7,
-      "dmg_avg": 456407,
-      "dmg_stddev": 120446,
-      "dmg_min": 327625,
-      "dmg_max": 603265,
-      "window_length_s": 10,
-      "defensive_name": "Touch of Karma",
-      "spell_id": 122470,
-      "common_defensives": [
-        "Touch of Karma"
-      ],
-      "common_cds": [
-        "Touch of Karma"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1280101,
-          "avg_damage": 393430,
-          "min_damage": 262006,
-          "max_damage": 536500,
-          "count": 4
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 62977,
-          "min_damage": 55832,
-          "max_damage": 66765,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 181.9,
-      "dmg_avg": 497809,
-      "dmg_stddev": 115528,
+      "time_s": 181.6,
+      "dmg_avg": 505140,
+      "dmg_stddev": 107231,
       "dmg_min": 306916,
       "dmg_max": 640577,
       "window_length_s": 10,
@@ -148,24 +115,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 407442,
+          "avg_damage": 412177,
           "min_damage": 357854,
           "max_damage": 437910,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 114558,
+          "avg_damage": 115728,
           "min_damage": 74507,
           "max_damage": 129818,
-          "count": 6
-        },
-        {
-          "spell_id": 1272328,
-          "avg_damage": 99651,
-          "min_damage": 98463,
-          "max_damage": 102026,
-          "count": 3
+          "count": 7
         }
       ]
     }
@@ -239,10 +199,6 @@
       "icon": "spell_fire_twilightflamebreath",
       "name": "Primordial Roar"
     },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -250,12 +206,8 @@
     "1275558": {
       "icon": "inv_voidcreepermount_blue",
       "name": "Parasite Expulsion"
-    },
-    "1280101": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Dark Energy"
     }
   },
-  "source_signature": "1ed6c8a9a829b91d",
-  "ingest_version": 0
+  "source_signature": "07bf45932c41ef69",
+  "ingest_version": 1
 }

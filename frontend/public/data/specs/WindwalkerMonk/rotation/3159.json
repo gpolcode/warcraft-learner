@@ -2,14 +2,14 @@
   "spec": "WindwalkerMonk",
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
-  "sample_count": 9,
-  "avg_duration_s": 459,
-  "downtime_threshold_ms": 2709,
-  "top_avg_efficiency": 73.6,
-  "top_efficiency_stddev": 2.9,
+  "sample_count": 10,
+  "avg_duration_s": 454.9,
+  "downtime_threshold_ms": 2708,
+  "top_avg_efficiency": 73.8,
+  "top_efficiency_stddev": 2.8,
   "per_cd_benchmarks": {
     "Invoke Xuen, the White Tiger": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -29,27 +29,27 @@
       "hold_targets": {}
     },
     "Zenith": {
-      "sample_count": 9,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "sample_count": 10,
+      "avg_first_cast_s": 1.9,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 54.1,
+      "stddev_gap_s": 22.3,
+      "avg_bl_offset_s": 0.3,
+      "stddev_bl_offset_s": 1.4,
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 1.17,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 1.175,
+        "stddev": 0.05,
+        "min": 1.1,
+        "max": 1.258
       },
-      "bl_pct": 0,
+      "bl_pct": 100,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Celestial Conduit": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -69,7 +69,7 @@
       "hold_targets": {}
     },
     "Strike of the Windlord": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -89,35 +89,35 @@
       "hold_targets": {}
     },
     "Touch of Death": {
-      "sample_count": 9,
-      "avg_first_cast_s": 156.7,
-      "stddev_first_cast_s": 119,
-      "avg_gap_s": 128.3,
-      "stddev_gap_s": 27.1,
-      "avg_bl_offset_s": 12.6,
-      "stddev_bl_offset_s": 36,
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.37,
+      "sample_count": 10,
+      "avg_first_cast_s": 152,
+      "stddev_first_cast_s": 113.2,
+      "avg_gap_s": 146.9,
+      "stddev_gap_s": 51.3,
+      "avg_bl_offset_s": 21,
+      "stddev_bl_offset_s": 38.9,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.374,
-        "stddev": 0.108,
+        "avg": 0.353,
+        "stddev": 0.099,
         "min": 0.147,
-        "max": 0.484
+        "max": 0.477
       },
-      "bl_pct": 44,
+      "bl_pct": 30,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 242.1,
-          "stddev_s": 63.4,
-          "count": 7,
-          "total_samples": 9
+          "target_s": 243.5,
+          "stddev_s": 84,
+          "count": 8,
+          "total_samples": 10
         },
         "3": {
-          "target_s": 368.2,
-          "stddev_s": 50.5,
+          "target_s": 370,
+          "stddev_s": 54.8,
           "count": 7,
-          "total_samples": 9
+          "total_samples": 10
         }
       }
     }
@@ -134,11 +134,11 @@
     },
     {
       "name": "Zenith",
-      "spell_id": 1239521,
+      "spell_id": 1249625,
       "cooldown": 90,
       "duration": 20,
       "align_with_bloodlust": true,
-      "usage_rule": "Use this flexible-cooldown burst window during Invoke Xuen and Bloodlust to accelerate your cooldowns coming back; it has two charges so plan its use for the best moment rather than pressing on sight (spell_id is a best guess for the Midnight Shado-Pan Zenith ability and may need verification)."
+      "usage_rule": "Use this flexible-cooldown burst window during Invoke Xuen and Bloodlust to accelerate your cooldowns coming back; it has two charges so plan its use for the best moment rather than pressing on sight."
     },
     {
       "name": "Celestial Conduit",
@@ -234,7 +234,7 @@
   ],
   "cd_spell_ids": {
     "Invoke Xuen, the White Tiger": 123904,
-    "Zenith": 1239521,
+    "Zenith": 1249625,
     "Celestial Conduit": 443028,
     "Strike of the Windlord": 392983,
     "Touch of Death": 322109,
@@ -276,11 +276,11 @@
       "icon": "inv_ability_conduitofthecelestialsmonk_celestialconduit",
       "name": "Celestial Conduit"
     },
-    "1239521": {
-      "icon": "inv_ability_voidweaverpriest_entropicrift",
-      "name": "Aether Slam"
+    "1249625": {
+      "icon": "inv_ability_monk_weaponsoforder",
+      "name": "Zenith"
     }
   },
-  "source_signature": "abb8f5fa5f69ba5f",
-  "ingest_version": 0
+  "source_signature": "8535a1a5d07e3f1b",
+  "ingest_version": 1
 }

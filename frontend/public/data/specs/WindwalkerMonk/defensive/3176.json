@@ -6,24 +6,24 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 72.5,
-      "stddev_first_cast_s": 53.6,
-      "avg_gap_s": 126.9,
-      "stddev_gap_s": 33.3,
+      "avg_first_cast_s": 59,
+      "stddev_first_cast_s": 36.4,
+      "avg_gap_s": 126,
+      "stddev_gap_s": 34.3,
       "hold_targets": {
         "1": {
-          "target_s": 178.1,
-          "stddev_s": 20.9,
-          "count": 5,
+          "target_s": 175.1,
+          "stddev_s": 24.1,
+          "count": 4,
           "total_samples": 10
         }
       },
       "avg_uses": 1.6,
-      "avg_uses_per_min": 0.47,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.473,
-        "stddev": 0.155,
-        "min": 0.29,
+        "avg": 0.483,
+        "stddev": 0.16,
+        "min": 0.292,
         "max": 0.706
       },
       "majority_hold": false
@@ -31,10 +31,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 44.4,
-      "dmg_avg": 296968,
-      "dmg_stddev": 79430,
-      "dmg_min": 209291,
+      "time_s": 35.5,
+      "dmg_avg": 333652,
+      "dmg_stddev": 70687,
+      "dmg_min": 246228,
       "dmg_max": 415338,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
@@ -49,26 +49,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 233295,
-          "min_damage": 209291,
+          "avg_damage": 236788,
+          "min_damage": 226757,
           "max_damage": 242935,
           "count": 5
         },
         {
           "spell_id": 1249262,
-          "avg_damage": 102551,
+          "avg_damage": 118402,
           "min_damage": 44538,
           "max_damage": 175514,
-          "count": 3
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 175.1,
-      "dmg_avg": 333468,
-      "dmg_stddev": 199430,
-      "dmg_min": 219799,
-      "dmg_max": 632230,
+      "time_s": 113.9,
+      "dmg_avg": 297587,
+      "dmg_stddev": 64297,
+      "dmg_min": 227305,
+      "dmg_max": 361661,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -82,10 +82,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1259903,
-          "avg_damage": 234926,
-          "min_damage": 219799,
-          "max_damage": 242934,
-          "count": 4
+          "avg_damage": 232031,
+          "min_damage": 227305,
+          "max_damage": 235499,
+          "count": 5
         }
       ]
     }
@@ -164,6 +164,6 @@
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "72c2b0f28645d196",
-  "ingest_version": 0
+  "source_signature": "719407a48fa2290c",
+  "ingest_version": 1
 }

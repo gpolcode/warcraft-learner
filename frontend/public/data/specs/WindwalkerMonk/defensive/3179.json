@@ -6,24 +6,24 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 44.7,
-      "stddev_first_cast_s": 38.1,
-      "avg_gap_s": 110.4,
-      "stddev_gap_s": 22.8,
+      "avg_first_cast_s": 45.9,
+      "stddev_first_cast_s": 37.9,
+      "avg_gap_s": 111.5,
+      "stddev_gap_s": 22,
       "hold_targets": {
         "1": {
-          "target_s": 176,
-          "stddev_s": 18.9,
-          "count": 4,
+          "target_s": 175.1,
+          "stddev_s": 17.1,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.59,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.586,
-        "stddev": 0.187,
-        "min": 0.306,
+        "avg": 0.611,
+        "stddev": 0.161,
+        "min": 0.315,
         "max": 0.956
       },
       "majority_hold": false
@@ -32,9 +32,9 @@
   "defensive_windows": [
     {
       "time_s": 34,
-      "dmg_avg": 668733,
-      "dmg_stddev": 226084,
-      "dmg_min": 466610,
+      "dmg_avg": 546827,
+      "dmg_stddev": 281652,
+      "dmg_min": 210439,
       "dmg_max": 990912,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
@@ -49,15 +49,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 440800,
-          "min_damage": 233890,
+          "avg_damage": 336807,
+          "min_damage": 75157,
           "max_damage": 764433,
           "count": 5
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 227933,
-          "min_damage": 224342,
+          "avg_damage": 210020,
+          "min_damage": 135282,
           "max_damage": 232720,
           "count": 5
         }
@@ -104,9 +104,9 @@
       ]
     },
     {
-      "time_s": 175.1,
-      "dmg_avg": 324701,
-      "dmg_stddev": 271160,
+      "time_s": 172.5,
+      "dmg_avg": 332896,
+      "dmg_stddev": 243362,
       "dmg_min": 62371,
       "dmg_max": 644075,
       "window_length_s": 10,
@@ -122,17 +122,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 300353,
-          "min_damage": 224696,
+          "avg_damage": 263611,
+          "min_damage": 153382,
           "max_damage": 364511,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 155151,
+          "avg_damage": 147128,
           "min_damage": 62371,
           "max_damage": 230381,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -140,7 +140,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 122470,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -215,6 +215,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "ac8c2c9805757458",
-  "ingest_version": 0
+  "source_signature": "0cb99944718a8b8c",
+  "ingest_version": 1
 }

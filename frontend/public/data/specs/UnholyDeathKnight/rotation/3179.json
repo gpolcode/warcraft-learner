@@ -2,26 +2,26 @@
   "spec": "UnholyDeathKnight",
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
-  "sample_count": 9,
-  "avg_duration_s": 201.6,
-  "downtime_threshold_ms": 1297,
+  "sample_count": 10,
+  "avg_duration_s": 196.5,
+  "downtime_threshold_ms": 1304,
   "top_avg_efficiency": 86.4,
-  "top_efficiency_stddev": 7.8,
+  "top_efficiency_stddev": 8.6,
   "per_cd_benchmarks": {
     "Army of the Dead": {
-      "sample_count": 9,
-      "avg_first_cast_s": 3.6,
-      "stddev_first_cast_s": 0.2,
-      "avg_gap_s": 91.2,
-      "stddev_gap_s": 0.9,
-      "avg_bl_offset_s": 3,
-      "stddev_bl_offset_s": 0.3,
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.83,
+      "sample_count": 10,
+      "avg_first_cast_s": 3.5,
+      "stddev_first_cast_s": 0.5,
+      "avg_gap_s": 92.2,
+      "stddev_gap_s": 2.4,
+      "avg_bl_offset_s": 2.7,
+      "stddev_bl_offset_s": 0.6,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.825,
-        "stddev": 0.081,
-        "min": 0.684,
+        "avg": 0.791,
+        "stddev": 0.102,
+        "min": 0.622,
         "max": 0.924
       },
       "bl_pct": 100,
@@ -29,19 +29,19 @@
       "hold_targets": {}
     },
     "Dark Transformation": {
-      "sample_count": 9,
-      "avg_first_cast_s": 4.1,
+      "sample_count": 10,
+      "avg_first_cast_s": 3.8,
       "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 45.7,
-      "stddev_gap_s": 0.7,
-      "avg_bl_offset_s": 3.4,
+      "avg_gap_s": 46.1,
+      "stddev_gap_s": 1.6,
+      "avg_bl_offset_s": 3,
       "stddev_bl_offset_s": 0.7,
-      "avg_uses": 4.9,
-      "avg_uses_per_min": 1.46,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 1.43,
       "uses_per_min": {
-        "avg": 1.457,
-        "stddev": 0.069,
-        "min": 1.349,
+        "avg": 1.435,
+        "stddev": 0.092,
+        "min": 1.243,
         "max": 1.541
       },
       "bl_pct": 100,
@@ -49,7 +49,7 @@
       "hold_targets": {}
     },
     "Apocalypse": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -69,7 +69,7 @@
       "hold_targets": {}
     },
     "Summon Gargoyle": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -89,7 +89,7 @@
       "hold_targets": {}
     },
     "Unholy Assault": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -133,7 +133,7 @@
       "spell_id": 275699,
       "cooldown": 90,
       "align_with_bloodlust": false,
-      "usage_rule": "Cast on cooldown to burst your stacked Festering Wounds and summon ghouls; this entry is talent-gated and its spell ID is my best guess for the current Retail Apocalypse cast, so verify on Wowhead."
+      "usage_rule": "Cast on cooldown to burst your stacked Festering Wounds and summon ghouls; this entry is talent-gated."
     },
     {
       "name": "Summon Gargoyle",
@@ -151,7 +151,7 @@
       "duration": 20,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Use to generate burst Festering Wounds and a haste buff inside your cooldown window; only taken in builds that talent it, and its spell ID is my best guess so verify on Wowhead."
+      "usage_rule": "Use to generate burst Festering Wounds and a haste buff inside your cooldown window; only taken in builds that talent it."
     }
   ],
   "rules": [
@@ -266,6 +266,6 @@
       "name": "Dark Transformation"
     }
   },
-  "source_signature": "3b64c9fb49afaac9",
-  "ingest_version": 0
+  "source_signature": "744eddf59d07fe2c",
+  "ingest_version": 1
 }

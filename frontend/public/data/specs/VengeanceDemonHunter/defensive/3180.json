@@ -6,17 +6,17 @@
   "per_defensive_benchmarks": {
     "Fiery Brand": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.1,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 42.9,
-      "stddev_gap_s": 11.5,
+      "avg_first_cast_s": 1.2,
+      "stddev_first_cast_s": 1.3,
+      "avg_gap_s": 43.3,
+      "stddev_gap_s": 12.3,
       "hold_targets": {},
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 1.46,
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 1.45,
       "uses_per_min": {
-        "avg": 1.459,
-        "stddev": 0.053,
-        "min": 1.393,
+        "avg": 1.45,
+        "stddev": 0.058,
+        "min": 1.38,
         "max": 1.556
       },
       "majority_hold": false
@@ -25,31 +25,31 @@
       "sample_count": 10,
       "avg_first_cast_s": 3.4,
       "stddev_first_cast_s": 3.7,
-      "avg_gap_s": 9.6,
-      "stddev_gap_s": 3.8,
+      "avg_gap_s": 9.2,
+      "stddev_gap_s": 3.6,
       "hold_targets": {},
-      "avg_uses": 38.1,
-      "avg_uses_per_min": 6.32,
+      "avg_uses": 40.3,
+      "avg_uses_per_min": 6.56,
       "uses_per_min": {
-        "avg": 6.321,
-        "stddev": 1.015,
-        "min": 4.414,
+        "avg": 6.556,
+        "stddev": 0.766,
+        "min": 4.75,
         "max": 7.488
       },
       "majority_hold": false
     },
     "Darkness": {
-      "sample_count": 7,
-      "avg_first_cast_s": 221.9,
-      "stddev_first_cast_s": 89.9,
+      "sample_count": 6,
+      "avg_first_cast_s": 227.1,
+      "stddev_first_cast_s": 97.4,
       "avg_gap_s": 274.2,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.1,
+      "avg_uses": 1.2,
       "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.186,
-        "stddev": 0.057,
+        "avg": 0.19,
+        "stddev": 0.061,
         "min": 0.132,
         "max": 0.31
       },
@@ -57,16 +57,16 @@
     },
     "Metamorphosis": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.6,
-      "stddev_first_cast_s": 2,
-      "avg_gap_s": 39.5,
-      "stddev_gap_s": 17.7,
+      "avg_first_cast_s": 5.5,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 38.7,
+      "stddev_gap_s": 17.2,
       "hold_targets": {},
-      "avg_uses": 9.5,
-      "avg_uses_per_min": 1.58,
+      "avg_uses": 9.8,
+      "avg_uses_per_min": 1.6,
       "uses_per_min": {
-        "avg": 1.576,
-        "stddev": 0.228,
+        "avg": 1.597,
+        "stddev": 0.21,
         "min": 1.21,
         "max": 1.986
       },
@@ -76,72 +76,11 @@
   "defensive_windows": [
     {
       "time_s": 5.1,
-      "dmg_avg": 1996873,
-      "dmg_stddev": 522230,
+      "dmg_avg": 2143347,
+      "dmg_stddev": 606775,
       "dmg_min": 1540525,
-      "dmg_max": 2925209,
-      "window_length_s": 28.9,
-      "defensive_name": "Metamorphosis",
-      "spell_id": 187827,
-      "common_defensives": [
-        "Metamorphosis"
-      ],
-      "common_cds": [
-        "Metamorphosis"
-      ],
-      "ref_game_id": 240438,
-      "ability_breakdown": [
-        {
-          "spell_id": 1255739,
-          "avg_damage": 672251,
-          "min_damage": 584884,
-          "max_damage": 734712,
-          "count": 10
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 648065,
-          "min_damage": 143224,
-          "max_damage": 1255030,
-          "count": 10
-        },
-        {
-          "spell_id": 1246745,
-          "avg_damage": 254794,
-          "min_damage": 91259,
-          "max_damage": 414355,
-          "count": 9
-        },
-        {
-          "spell_id": 1246765,
-          "avg_damage": 152020,
-          "min_damage": 78194,
-          "max_damage": 227785,
-          "count": 9
-        },
-        {
-          "spell_id": 1246749,
-          "avg_damage": 133207,
-          "min_damage": 80978,
-          "max_damage": 165861,
-          "count": 10
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 132476,
-          "min_damage": 77242,
-          "max_damage": 162135,
-          "count": 10
-        }
-      ]
-    },
-    {
-      "time_s": 43.5,
-      "dmg_avg": 738358,
-      "dmg_stddev": 130107,
-      "dmg_min": 616519,
-      "dmg_max": 1021570,
-      "window_length_s": 10.3,
+      "dmg_max": 3095728,
+      "window_length_s": 29.9,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -154,41 +93,102 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 336767,
-          "min_damage": 204200,
-          "max_damage": 539190,
-          "count": 6
+          "avg_damage": 779323,
+          "min_damage": 332742,
+          "max_damage": 1455802,
+          "count": 10
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 665984,
+          "min_damage": 584884,
+          "max_damage": 734712,
+          "count": 10
         },
         {
           "spell_id": 1246745,
-          "avg_damage": 300533,
-          "min_damage": 151222,
-          "max_damage": 553749,
-          "count": 7
+          "avg_damage": 266698,
+          "min_damage": 91259,
+          "max_damage": 414355,
+          "count": 9
         },
         {
           "spell_id": 1246765,
-          "avg_damage": 80392,
-          "min_damage": 54011,
-          "max_damage": 106649,
-          "count": 6
+          "avg_damage": 150456,
+          "min_damage": 78194,
+          "max_damage": 227785,
+          "count": 9
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 139772,
+          "min_damage": 80978,
+          "max_damage": 231516,
+          "count": 10
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 58272,
-          "min_damage": 44593,
-          "max_damage": 74385,
-          "count": 8
+          "avg_damage": 137107,
+          "min_damage": 77242,
+          "max_damage": 201622,
+          "count": 10
         }
       ]
     },
     {
-      "time_s": 78.9,
-      "dmg_avg": 1686150,
-      "dmg_stddev": 1291904,
+      "time_s": 42.5,
+      "dmg_avg": 755763,
+      "dmg_stddev": 130083,
+      "dmg_min": 631812,
+      "dmg_max": 1021570,
+      "window_length_s": 10.4,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 356306,
+          "min_damage": 204200,
+          "max_damage": 539190,
+          "count": 5
+        },
+        {
+          "spell_id": 1246745,
+          "avg_damage": 305944,
+          "min_damage": 151222,
+          "max_damage": 553749,
+          "count": 6
+        },
+        {
+          "spell_id": 1246765,
+          "avg_damage": 83588,
+          "min_damage": 54011,
+          "max_damage": 106649,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 60172,
+          "min_damage": 44593,
+          "max_damage": 74385,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 77.9,
+      "dmg_avg": 1658936,
+      "dmg_stddev": 1283590,
       "dmg_min": 544933,
       "dmg_max": 5114980,
-      "window_length_s": 24,
+      "window_length_s": 22.6,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -201,28 +201,28 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 528254,
+          "avg_damage": 533944,
           "min_damage": 88280,
           "max_damage": 1548625,
           "count": 12
         },
         {
           "spell_id": 1246745,
-          "avg_damage": 459574,
+          "avg_damage": 480555,
           "min_damage": 164059,
           "max_damage": 894550,
           "count": 8
         },
         {
           "spell_id": 1249024,
-          "avg_damage": 191270,
+          "avg_damage": 202215,
           "min_damage": 129675,
           "max_damage": 269939,
           "count": 7
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 160270,
+          "avg_damage": 155444,
           "min_damage": 49402,
           "max_damage": 410300,
           "count": 12
@@ -231,11 +231,11 @@
     },
     {
       "time_s": 112,
-      "dmg_avg": 2261085,
-      "dmg_stddev": 1799815,
-      "dmg_min": 525048,
+      "dmg_avg": 2049831,
+      "dmg_stddev": 1703555,
+      "dmg_min": 181777,
       "dmg_max": 5521921,
-      "window_length_s": 29.7,
+      "window_length_s": 27.4,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -248,48 +248,41 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 637607,
-          "min_damage": 170607,
-          "max_damage": 1454950,
-          "count": 5
-        },
-        {
-          "spell_id": 1251812,
-          "avg_damage": 376198,
-          "min_damage": 334638,
-          "max_damage": 455462,
-          "count": 3
+          "avg_damage": 677359,
+          "min_damage": 58188,
+          "max_damage": 1495290,
+          "count": 7
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 219957,
-          "min_damage": 52591,
+          "avg_damage": 199467,
+          "min_damage": 51079,
           "max_damage": 535332,
-          "count": 5
-        },
-        {
-          "spell_id": 1246749,
-          "avg_damage": 184689,
-          "min_damage": 98504,
-          "max_damage": 260858,
-          "count": 4
+          "count": 7
         },
         {
           "spell_id": 1255739,
-          "avg_damage": 178073,
+          "avg_damage": 180482,
           "min_damage": 29924,
           "max_damage": 330981,
-          "count": 5
+          "count": 6
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 164359,
+          "min_damage": 69450,
+          "max_damage": 260858,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 150.1,
-      "dmg_avg": 1653325,
-      "dmg_stddev": 986986,
+      "time_s": 155,
+      "dmg_avg": 1645879,
+      "dmg_stddev": 980183,
       "dmg_min": 315810,
       "dmg_max": 2876678,
-      "window_length_s": 21.1,
+      "window_length_s": 21.2,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -301,29 +294,29 @@
       "ref_game_id": 240431,
       "ability_breakdown": [
         {
+          "spell_id": 1251812,
+          "avg_damage": 392804,
+          "min_damage": 285610,
+          "max_damage": 485254,
+          "count": 5
+        },
+        {
           "spell_id": 1,
-          "avg_damage": 434833,
+          "avg_damage": 378448,
           "min_damage": 108780,
-          "max_damage": 1073250,
+          "max_damage": 651142,
           "count": 9
         },
         {
           "spell_id": 1251859,
-          "avg_damage": 322233,
+          "avg_damage": 324268,
           "min_damage": 237599,
           "max_damage": 523845,
           "count": 5
         },
         {
-          "spell_id": 1251857,
-          "avg_damage": 312629,
-          "min_damage": 282079,
-          "max_damage": 329129,
-          "count": 5
-        },
-        {
           "spell_id": 1258661,
-          "avg_damage": 162930,
+          "avg_damage": 161551,
           "min_damage": 46439,
           "max_damage": 257613,
           "count": 9
@@ -331,73 +324,12 @@
       ]
     },
     {
-      "time_s": 178.6,
-      "dmg_avg": 1235957,
-      "dmg_stddev": 823572,
-      "dmg_min": 755112,
-      "dmg_max": 2469024,
-      "window_length_s": 14,
-      "defensive_name": "Metamorphosis",
-      "spell_id": 187827,
-      "common_defensives": [
-        "Metamorphosis"
-      ],
-      "common_cds": [
-        "Metamorphosis"
-      ],
-      "ref_game_id": 240437,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246745,
-          "avg_damage": 387551,
-          "min_damage": 166740,
-          "max_damage": 629496,
-          "count": 4
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 290542,
-          "min_damage": 157840,
-          "max_damage": 531796,
-          "count": 4
-        },
-        {
-          "spell_id": 1255739,
-          "avg_damage": 279202,
-          "min_damage": 97104,
-          "max_damage": 640239,
-          "count": 3
-        },
-        {
-          "spell_id": 1246749,
-          "avg_damage": 161228,
-          "min_damage": 112667,
-          "max_damage": 277706,
-          "count": 4
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 136848,
-          "min_damage": 78497,
-          "max_damage": 283370,
-          "count": 4
-        },
-        {
-          "spell_id": 1246765,
-          "avg_damage": 100776,
-          "min_damage": 95134,
-          "max_damage": 106417,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 223.3,
-      "dmg_avg": 1544773,
-      "dmg_stddev": 1065534,
+      "time_s": 222.6,
+      "dmg_avg": 1401378,
+      "dmg_stddev": 743632,
       "dmg_min": 402199,
-      "dmg_max": 4664634,
-      "window_length_s": 19.4,
+      "dmg_max": 2586646,
+      "window_length_s": 17.7,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -410,34 +342,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 469512,
+          "avg_damage": 436888,
           "min_damage": 127570,
-          "max_damage": 1490691,
-          "count": 16
+          "max_damage": 1039539,
+          "count": 17
         },
         {
           "spell_id": 1246745,
-          "avg_damage": 356277,
+          "avg_damage": 314400,
           "min_damage": 86177,
           "max_damage": 629519,
-          "count": 11
+          "count": 12
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 203332,
+          "avg_damage": 190214,
           "min_damage": 72933,
-          "max_damage": 510017,
-          "count": 17
+          "max_damage": 373660,
+          "count": 18
         }
       ]
     },
     {
-      "time_s": 270.4,
-      "dmg_avg": 1687461,
-      "dmg_stddev": 1382293,
+      "time_s": 272.8,
+      "dmg_avg": 1595667,
+      "dmg_stddev": 1335175,
       "dmg_min": 243740,
       "dmg_max": 4722871,
-      "window_length_s": 19,
+      "window_length_s": 18.1,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -457,34 +389,34 @@
         },
         {
           "spell_id": 1,
-          "avg_damage": 435767,
+          "avg_damage": 436176,
           "min_damage": 105261,
           "max_damage": 1085649,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 192469,
+          "avg_damage": 183479,
           "min_damage": 63838,
           "max_damage": 382554,
-          "count": 9
+          "count": 10
         },
         {
           "spell_id": 1246749,
-          "avg_damage": 167969,
+          "avg_damage": 158888,
           "min_damage": 90131,
           "max_damage": 259346,
-          "count": 5
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 315.4,
-      "dmg_avg": 1152943,
-      "dmg_stddev": 787717,
+      "time_s": 319.3,
+      "dmg_avg": 1169534,
+      "dmg_stddev": 802766,
       "dmg_min": 0,
       "dmg_max": 2422078,
-      "window_length_s": 17.9,
+      "window_length_s": 18,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -496,15 +428,22 @@
       "ref_game_id": 240431,
       "ability_breakdown": [
         {
+          "spell_id": 1251857,
+          "avg_damage": 353862,
+          "min_damage": 156852,
+          "max_damage": 810757,
+          "count": 7
+        },
+        {
           "spell_id": 1,
-          "avg_damage": 303882,
+          "avg_damage": 282823,
           "min_damage": 96308,
-          "max_damage": 637228,
+          "max_damage": 485600,
           "count": 10
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 182588,
+          "avg_damage": 184774,
           "min_damage": 32987,
           "max_damage": 354993,
           "count": 12
@@ -512,12 +451,12 @@
       ]
     },
     {
-      "time_s": 356.3,
-      "dmg_avg": 856681,
-      "dmg_stddev": 441228,
+      "time_s": 357,
+      "dmg_avg": 823594,
+      "dmg_stddev": 439124,
       "dmg_min": 393256,
       "dmg_max": 1383681,
-      "window_length_s": 12.1,
+      "window_length_s": 12,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -541,25 +480,25 @@
   "top_defensives_summary": [
     {
       "spell_id": 204021,
-      "avg_uses": 8.8,
+      "avg_uses": 8.9,
       "min_uses": 8,
       "max_uses": 11
     },
     {
       "spell_id": 203720,
-      "avg_uses": 38.1,
-      "min_uses": 27,
+      "avg_uses": 40.3,
+      "min_uses": 29,
       "max_uses": 50
     },
     {
       "spell_id": 196718,
-      "avg_uses": 1.1,
+      "avg_uses": 1.2,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 187827,
-      "avg_uses": 9.5,
+      "avg_uses": 9.8,
       "min_uses": 7,
       "max_uses": 12
     }
@@ -662,6 +601,6 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "406feb1b8dae6e83",
-  "ingest_version": 0
+  "source_signature": "ad8439573639bc71",
+  "ingest_version": 1
 }

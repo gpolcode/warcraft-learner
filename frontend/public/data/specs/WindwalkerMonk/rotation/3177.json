@@ -4,9 +4,9 @@
   "encounter_name": "Vorasius",
   "sample_count": 10,
   "avg_duration_s": 202.5,
-  "downtime_threshold_ms": 2568,
+  "downtime_threshold_ms": 2542,
   "top_avg_efficiency": 74.2,
-  "top_efficiency_stddev": 3.4,
+  "top_efficiency_stddev": 3.5,
   "per_cd_benchmarks": {
     "Invoke Xuen, the White Tiger": {
       "sample_count": 10,
@@ -30,21 +30,21 @@
     },
     "Zenith": {
       "sample_count": 10,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "avg_first_cast_s": 3.1,
+      "stddev_first_cast_s": 0.4,
+      "avg_gap_s": 46.8,
+      "stddev_gap_s": 18.7,
+      "avg_bl_offset_s": 2.5,
+      "stddev_bl_offset_s": 0.4,
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 1.45,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 1.454,
+        "stddev": 0.075,
+        "min": 1.366,
+        "max": 1.591
       },
-      "bl_pct": 0,
+      "bl_pct": 100,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -90,10 +90,10 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 106.4,
-      "stddev_first_cast_s": 41.6,
-      "avg_gap_s": 93.3,
-      "stddev_gap_s": 2.1,
+      "avg_first_cast_s": 106.2,
+      "stddev_first_cast_s": 41.7,
+      "avg_gap_s": 96.1,
+      "stddev_gap_s": 9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "avg_uses": 1.8,
@@ -121,11 +121,11 @@
     },
     {
       "name": "Zenith",
-      "spell_id": 1239521,
+      "spell_id": 1249625,
       "cooldown": 90,
       "duration": 20,
       "align_with_bloodlust": true,
-      "usage_rule": "Use this flexible-cooldown burst window during Invoke Xuen and Bloodlust to accelerate your cooldowns coming back; it has two charges so plan its use for the best moment rather than pressing on sight (spell_id is a best guess for the Midnight Shado-Pan Zenith ability and may need verification)."
+      "usage_rule": "Use this flexible-cooldown burst window during Invoke Xuen and Bloodlust to accelerate your cooldowns coming back; it has two charges so plan its use for the best moment rather than pressing on sight."
     },
     {
       "name": "Celestial Conduit",
@@ -221,7 +221,7 @@
   ],
   "cd_spell_ids": {
     "Invoke Xuen, the White Tiger": 123904,
-    "Zenith": 1239521,
+    "Zenith": 1249625,
     "Celestial Conduit": 443028,
     "Strike of the Windlord": 392983,
     "Touch of Death": 322109,
@@ -263,11 +263,11 @@
       "icon": "inv_ability_conduitofthecelestialsmonk_celestialconduit",
       "name": "Celestial Conduit"
     },
-    "1239521": {
-      "icon": "inv_ability_voidweaverpriest_entropicrift",
-      "name": "Aether Slam"
+    "1249625": {
+      "icon": "inv_ability_monk_weaponsoforder",
+      "name": "Zenith"
     }
   },
-  "source_signature": "1ed6c8a9a829b91d",
-  "ingest_version": 0
+  "source_signature": "07bf45932c41ef69",
+  "ingest_version": 1
 }

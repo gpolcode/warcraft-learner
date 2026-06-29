@@ -3,26 +3,26 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 288.4,
-  "downtime_threshold_ms": 1329,
-  "top_avg_efficiency": 83.8,
-  "top_efficiency_stddev": 3.9,
+  "avg_duration_s": 287.7,
+  "downtime_threshold_ms": 1328,
+  "top_avg_efficiency": 84.1,
+  "top_efficiency_stddev": 3.7,
   "per_cd_benchmarks": {
     "Army of the Dead": {
       "sample_count": 10,
       "avg_first_cast_s": 11.8,
       "stddev_first_cast_s": 7.8,
       "avg_gap_s": 96,
-      "stddev_gap_s": 8,
-      "avg_bl_offset_s": 6.3,
-      "stddev_bl_offset_s": 6,
+      "stddev_gap_s": 7.8,
+      "avg_bl_offset_s": 7.5,
+      "stddev_bl_offset_s": 6.7,
       "avg_uses": 3.4,
       "avg_uses_per_min": 0.71,
       "uses_per_min": {
-        "avg": 0.707,
-        "stddev": 0.05,
+        "avg": 0.709,
+        "stddev": 0.053,
         "min": 0.581,
-        "max": 0.753
+        "max": 0.767
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -30,17 +30,17 @@
     },
     "Dark Transformation": {
       "sample_count": 10,
-      "avg_first_cast_s": 12.2,
-      "stddev_first_cast_s": 7.8,
+      "avg_first_cast_s": 12.3,
+      "stddev_first_cast_s": 7.7,
       "avg_gap_s": 47.9,
       "stddev_gap_s": 5.4,
-      "avg_bl_offset_s": 6.6,
-      "stddev_bl_offset_s": 5.7,
+      "avg_bl_offset_s": 8,
+      "stddev_bl_offset_s": 6.5,
       "avg_uses": 6.3,
       "avg_uses_per_min": 1.32,
       "uses_per_min": {
-        "avg": 1.315,
-        "stddev": 0.082,
+        "avg": 1.319,
+        "stddev": 0.079,
         "min": 1.161,
         "max": 1.416
       },
@@ -133,7 +133,7 @@
       "spell_id": 275699,
       "cooldown": 90,
       "align_with_bloodlust": false,
-      "usage_rule": "Cast on cooldown to burst your stacked Festering Wounds and summon ghouls; this entry is talent-gated and its spell ID is my best guess for the current Retail Apocalypse cast, so verify on Wowhead."
+      "usage_rule": "Cast on cooldown to burst your stacked Festering Wounds and summon ghouls; this entry is talent-gated."
     },
     {
       "name": "Summon Gargoyle",
@@ -151,7 +151,7 @@
       "duration": 20,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Use to generate burst Festering Wounds and a haste buff inside your cooldown window; only taken in builds that talent it, and its spell ID is my best guess so verify on Wowhead."
+      "usage_rule": "Use to generate burst Festering Wounds and a haste buff inside your cooldown window; only taken in builds that talent it."
     }
   ],
   "rules": [
@@ -266,6 +266,6 @@
       "name": "Dark Transformation"
     }
   },
-  "source_signature": "14b83aba87f2aad3",
-  "ingest_version": 0
+  "source_signature": "2a27d254da155c25",
+  "ingest_version": 1
 }

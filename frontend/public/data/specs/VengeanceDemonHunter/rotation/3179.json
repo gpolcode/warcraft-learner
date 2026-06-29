@@ -3,59 +3,65 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 235.6,
-  "downtime_threshold_ms": 1019,
-  "top_avg_efficiency": 67.4,
-  "top_efficiency_stddev": 3.9,
+  "avg_duration_s": 225.4,
+  "downtime_threshold_ms": 955,
+  "top_avg_efficiency": 67.9,
+  "top_efficiency_stddev": 3.7,
   "per_cd_benchmarks": {
     "Metamorphosis": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.1,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 26.2,
-      "stddev_gap_s": 14,
-      "avg_bl_offset_s": 4.4,
+      "avg_first_cast_s": 4.7,
+      "stddev_first_cast_s": 2.4,
+      "avg_gap_s": 24.5,
+      "stddev_gap_s": 13.6,
+      "avg_bl_offset_s": 3.9,
       "stddev_bl_offset_s": 2.6,
-      "avg_uses": 9.2,
-      "avg_uses_per_min": 2.36,
+      "avg_uses": 9.4,
+      "avg_uses_per_min": 2.51,
       "uses_per_min": {
-        "avg": 2.355,
-        "stddev": 0.273,
-        "min": 2.038,
-        "max": 2.736
+        "avg": 2.514,
+        "stddev": 0.338,
+        "min": 2.077,
+        "max": 2.85
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Fel Devastation": {
       "sample_count": 10,
-      "avg_first_cast_s": 10.1,
-      "stddev_first_cast_s": 7.8,
-      "avg_gap_s": 52.2,
-      "stddev_gap_s": 14.9,
-      "avg_bl_offset_s": 10.5,
-      "stddev_bl_offset_s": 8.8,
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 0.95,
+      "avg_first_cast_s": 7.9,
+      "stddev_first_cast_s": 4.8,
+      "avg_gap_s": 49.9,
+      "stddev_gap_s": 13.7,
+      "avg_bl_offset_s": 7.4,
+      "stddev_bl_offset_s": 5,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 1.1,
       "uses_per_min": {
-        "avg": 1.061,
-        "stddev": 0.51,
+        "avg": 1.223,
+        "stddev": 0.453,
         "min": 0.228,
         "max": 1.699
       },
-      "bl_pct": 70,
-      "majority_hold": false,
+      "bl_pct": 80,
+      "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 108.9,
-          "stddev_s": 27.2,
-          "count": 5,
+          "target_s": 125,
+          "stddev_s": 26.3,
+          "count": 4,
           "total_samples": 10
         },
         "4": {
-          "target_s": 184.5,
-          "stddev_s": 20.2,
+          "target_s": 177.7,
+          "stddev_s": 21.9,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 199.6,
+          "stddev_s": 39.6,
           "count": 4,
           "total_samples": 10
         }
@@ -83,17 +89,17 @@
     },
     "Sigil of Spite": {
       "sample_count": 10,
-      "avg_first_cast_s": 12.6,
-      "stddev_first_cast_s": 20.3,
-      "avg_gap_s": 66.9,
-      "stddev_gap_s": 10.4,
-      "avg_bl_offset_s": 6.7,
-      "stddev_bl_offset_s": 6.6,
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.99,
+      "avg_first_cast_s": 19.8,
+      "stddev_first_cast_s": 24.5,
+      "avg_gap_s": 67.4,
+      "stddev_gap_s": 10.8,
+      "avg_bl_offset_s": 8.5,
+      "stddev_bl_offset_s": 7.7,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.988,
-        "stddev": 0.193,
+        "avg": 0.98,
+        "stddev": 0.185,
         "min": 0.566,
         "max": 1.2
       },
@@ -101,14 +107,14 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 143.8,
-          "stddev_s": 64.1,
-          "count": 4,
+          "target_s": 138.1,
+          "stddev_s": 57.4,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
-          "target_s": 198.4,
-          "stddev_s": 5.7,
+          "target_s": 202.6,
+          "stddev_s": 14.1,
           "count": 4,
           "total_samples": 10
         }
@@ -239,6 +245,6 @@
       "name": "Sigil of Spite"
     }
   },
-  "source_signature": "7b1c6370798587b9",
-  "ingest_version": 0
+  "source_signature": "73379a25ffd7a109",
+  "ingest_version": 1
 }
