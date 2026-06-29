@@ -3,24 +3,24 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 408.2,
-  "downtime_threshold_ms": 1548,
-  "top_avg_efficiency": 71.7,
-  "top_efficiency_stddev": 3.1,
+  "avg_duration_s": 405.6,
+  "downtime_threshold_ms": 1503,
+  "top_avg_efficiency": 71.8,
+  "top_efficiency_stddev": 3.3,
   "per_cd_benchmarks": {
     "Shadow Blades": {
       "sample_count": 10,
       "avg_first_cast_s": 4.1,
       "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 100,
-      "stddev_gap_s": 10.2,
+      "avg_gap_s": 98.8,
+      "stddev_gap_s": 9.9,
       "avg_bl_offset_s": 3.5,
-      "stddev_bl_offset_s": 1.2,
+      "stddev_bl_offset_s": 1.1,
       "avg_uses": 4.5,
       "avg_uses_per_min": 0.66,
       "uses_per_min": {
-        "avg": 0.661,
-        "stddev": 0.04,
+        "avg": 0.665,
+        "stddev": 0.041,
         "min": 0.6,
         "max": 0.712
       },
@@ -28,20 +28,20 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 206.4,
-          "stddev_s": 14.3,
+          "target_s": 206.2,
+          "stddev_s": 15.3,
           "count": 9,
           "total_samples": 10
         },
         "4": {
           "target_s": 308.4,
-          "stddev_s": 14.6,
+          "stddev_s": 15.9,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 398.6,
-          "stddev_s": 18.3,
+          "target_s": 378.7,
+          "stddev_s": 12.3,
           "count": 5,
           "total_samples": 10
         }
@@ -50,16 +50,16 @@
     "Shadow Dance": {
       "sample_count": 10,
       "avg_first_cast_s": 4.1,
-      "stddev_first_cast_s": 1.4,
+      "stddev_first_cast_s": 1.3,
       "avg_gap_s": 19.8,
       "stddev_gap_s": 6.8,
-      "avg_bl_offset_s": 3.6,
+      "avg_bl_offset_s": 3.5,
       "stddev_bl_offset_s": 1.2,
-      "avg_uses": 21.1,
-      "avg_uses_per_min": 3.1,
+      "avg_uses": 21,
+      "avg_uses_per_min": 3.11,
       "uses_per_min": {
-        "avg": 3.103,
-        "stddev": 0.065,
+        "avg": 3.107,
+        "stddev": 0.06,
         "min": 3.008,
         "max": 3.179
       },
@@ -71,17 +71,17 @@
       "sample_count": 10,
       "avg_first_cast_s": 4.2,
       "stddev_first_cast_s": 1.4,
-      "avg_gap_s": 20.7,
-      "stddev_gap_s": 4.9,
-      "avg_bl_offset_s": 3.7,
-      "stddev_bl_offset_s": 1.3,
-      "avg_uses": 20,
-      "avg_uses_per_min": 2.94,
+      "avg_gap_s": 20.8,
+      "stddev_gap_s": 4.8,
+      "avg_bl_offset_s": 3.6,
+      "stddev_bl_offset_s": 1.2,
+      "avg_uses": 19.8,
+      "avg_uses_per_min": 2.93,
       "uses_per_min": {
-        "avg": 2.939,
-        "stddev": 0.081,
+        "avg": 2.929,
+        "stddev": 0.077,
         "min": 2.819,
-        "max": 3.015
+        "max": 3.012
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -89,23 +89,36 @@
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 79.2,
-      "stddev_first_cast_s": 113,
-      "avg_gap_s": 145.7,
-      "stddev_gap_s": 23.2,
-      "avg_bl_offset_s": 4.8,
-      "stddev_bl_offset_s": 5.3,
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.23,
+      "avg_first_cast_s": 63.8,
+      "stddev_first_cast_s": 114,
+      "avg_gap_s": 151,
+      "stddev_gap_s": 24.9,
+      "avg_bl_offset_s": 4.4,
+      "stddev_bl_offset_s": 4.8,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.29,
-        "stddev": 0.173,
-        "min": 0.131,
+        "avg": 0.326,
+        "stddev": 0.165,
+        "min": 0.141,
         "max": 0.547
       },
-      "bl_pct": 50,
+      "bl_pct": 60,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 172.2,
+          "stddev_s": 74,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 307.3,
+          "stddev_s": 21.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     }
   },
   "major_cooldowns": [
@@ -266,6 +279,6 @@
       "name": "Secret Technique"
     }
   },
-  "source_signature": "ef3a938715096fde",
+  "source_signature": "770fa7c228481d55",
   "ingest_version": 1
 }

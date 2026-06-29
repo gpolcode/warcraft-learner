@@ -3,69 +3,24 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 536.8,
-  "downtime_threshold_ms": 1156,
-  "top_avg_efficiency": 73.6,
-  "top_efficiency_stddev": 9.7,
+  "avg_duration_s": 536.5,
+  "downtime_threshold_ms": 1163,
+  "top_avg_efficiency": 73.3,
+  "top_efficiency_stddev": 8.6,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 12.2,
+      "avg_first_cast_s": 12.1,
       "stddev_first_cast_s": 4.4,
-      "avg_gap_s": 63.6,
-      "stddev_gap_s": 7.1,
-      "avg_bl_offset_s": -1,
-      "stddev_bl_offset_s": 17.9,
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 0.98,
+      "avg_gap_s": 63.4,
+      "stddev_gap_s": 6.8,
+      "avg_bl_offset_s": 0.2,
+      "stddev_bl_offset_s": 16.7,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 0.97,
       "uses_per_min": {
-        "avg": 0.984,
-        "stddev": 0.043,
-        "min": 0.904,
-        "max": 1.045
-      },
-      "bl_pct": 100,
-      "majority_hold": true,
-      "hold_targets": {
-        "6": {
-          "target_s": 343.7,
-          "stddev_s": 12.9,
-          "count": 4,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 401.6,
-          "stddev_s": 21.4,
-          "count": 6,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 459.9,
-          "stddev_s": 21.9,
-          "count": 9,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 510.2,
-          "stddev_s": 19.8,
-          "count": 8,
-          "total_samples": 10
-        }
-      }
-    },
-    "Divine Toll": {
-      "sample_count": 10,
-      "avg_first_cast_s": 14.3,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 63.5,
-      "stddev_gap_s": 7,
-      "avg_bl_offset_s": 1,
-      "stddev_bl_offset_s": 18.3,
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 0.98,
-      "uses_per_min": {
-        "avg": 0.984,
-        "stddev": 0.043,
+        "avg": 0.973,
+        "stddev": 0.042,
         "min": 0.904,
         "max": 1.045
       },
@@ -74,43 +29,88 @@
       "hold_targets": {
         "6": {
           "target_s": 344,
-          "stddev_s": 13.2,
+          "stddev_s": 12,
           "count": 4,
           "total_samples": 10
         },
         "7": {
-          "target_s": 401.9,
+          "target_s": 403.6,
+          "stddev_s": 21.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 446.6,
+          "stddev_s": 22.4,
+          "count": 9,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 507.6,
+          "stddev_s": 19.7,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
+    },
+    "Divine Toll": {
+      "sample_count": 10,
+      "avg_first_cast_s": 14.5,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 63.4,
+      "stddev_gap_s": 6.7,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 17.1,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 0.97,
+      "uses_per_min": {
+        "avg": 0.973,
+        "stddev": 0.042,
+        "min": 0.904,
+        "max": 1.045
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
+      "hold_targets": {
+        "6": {
+          "target_s": 344.3,
+          "stddev_s": 12.2,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 404.9,
           "stddev_s": 17.9,
           "count": 6,
           "total_samples": 10
         },
         "8": {
-          "target_s": 462.2,
-          "stddev_s": 19.7,
+          "target_s": 455.8,
+          "stddev_s": 20.7,
           "count": 8,
           "total_samples": 10
         },
         "9": {
-          "target_s": 511.1,
-          "stddev_s": 18.8,
-          "count": 7,
+          "target_s": 509.8,
+          "stddev_s": 19.3,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Hammer of Light": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.6,
-      "stddev_first_cast_s": 0.9,
+      "avg_first_cast_s": 15.7,
+      "stddev_first_cast_s": 0.8,
       "avg_gap_s": 25.9,
-      "stddev_gap_s": 17.8,
-      "avg_bl_offset_s": 4.9,
-      "stddev_bl_offset_s": 10.5,
-      "avg_uses": 20.7,
-      "avg_uses_per_min": 2.31,
+      "stddev_gap_s": 17.7,
+      "avg_bl_offset_s": 5.1,
+      "stddev_bl_offset_s": 10.4,
+      "avg_uses": 20.6,
+      "avg_uses_per_min": 2.3,
       "uses_per_min": {
-        "avg": 2.314,
-        "stddev": 0.138,
+        "avg": 2.304,
+        "stddev": 0.142,
         "min": 2.034,
         "max": 2.515
       },
@@ -328,6 +328,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "624f13c63a5c74d5",
+  "source_signature": "124f910d77cd8d17",
   "ingest_version": 1
 }

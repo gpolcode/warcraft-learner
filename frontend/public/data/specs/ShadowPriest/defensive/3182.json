@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 9,
-      "avg_first_cast_s": 128,
-      "stddev_first_cast_s": 95.4,
+      "sample_count": 10,
+      "avg_first_cast_s": 132.4,
+      "stddev_first_cast_s": 91,
       "avg_gap_s": 97.3,
       "stddev_gap_s": 47.7,
       "hold_targets": {},
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.455,
-        "stddev": 0.202,
+        "avg": 0.434,
+        "stddev": 0.201,
         "min": 0.186,
         "max": 0.849
       },
@@ -23,24 +23,17 @@
     },
     "Vampiric Embrace": {
       "sample_count": 9,
-      "avg_first_cast_s": 23,
-      "stddev_first_cast_s": 34.5,
-      "avg_gap_s": 133.1,
-      "stddev_gap_s": 16.3,
-      "hold_targets": {
-        "2": {
-          "target_s": 290.9,
-          "stddev_s": 11.9,
-          "count": 4,
-          "total_samples": 9
-        }
-      },
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.58,
+      "avg_first_cast_s": 31.9,
+      "stddev_first_cast_s": 38.9,
+      "avg_gap_s": 131.5,
+      "stddev_gap_s": 14.5,
+      "hold_targets": {},
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.583,
-        "stddev": 0.059,
-        "min": 0.493,
+        "avg": 0.574,
+        "stddev": 0.067,
+        "min": 0.489,
         "max": 0.677
       },
       "majority_hold": true
@@ -65,9 +58,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 4.3,
-      "dmg_avg": 383412,
-      "dmg_stddev": 139647,
+      "time_s": 4.1,
+      "dmg_avg": 386420,
+      "dmg_stddev": 152727,
       "dmg_min": 119185,
       "dmg_max": 555860,
       "window_length_s": 12,
@@ -83,17 +76,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1241932,
-          "avg_damage": 299123,
+          "avg_damage": 312447,
           "min_damage": 216217,
           "max_damage": 435803,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 126214,
+          "avg_damage": 125106,
           "min_damage": 119185,
           "max_damage": 134887,
-          "count": 7
+          "count": 6
         }
       ]
     },
@@ -131,9 +124,9 @@
       ]
     },
     {
-      "time_s": 126.5,
-      "dmg_avg": 892892,
-      "dmg_stddev": 310615,
+      "time_s": 127.4,
+      "dmg_avg": 883400,
+      "dmg_stddev": 339148,
       "dmg_min": 667484,
       "dmg_max": 1561213,
       "window_length_s": 12,
@@ -156,17 +149,17 @@
         },
         {
           "spell_id": 1242815,
-          "avg_damage": 560831,
+          "avg_damage": 475447,
           "min_damage": 203432,
-          "max_damage": 816983,
-          "count": 4
+          "max_damage": 619378,
+          "count": 3
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 123643,
+          "avg_damage": 122106,
           "min_damage": 115239,
           "max_damage": 133524,
-          "count": 7
+          "count": 6
         }
       ]
     },
@@ -260,13 +253,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.1,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 15286,
-      "avg_uses": 2.8,
+      "avg_uses": 2.7,
       "min_uses": 2,
       "max_uses": 3
     }
@@ -336,6 +329,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "99c40f4df5d7c5a0",
+  "source_signature": "0a2fbd06d115a969",
   "ingest_version": 1
 }

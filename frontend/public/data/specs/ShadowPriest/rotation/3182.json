@@ -3,25 +3,25 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 286.5,
-  "downtime_threshold_ms": 1510,
-  "top_avg_efficiency": 64.5,
-  "top_efficiency_stddev": 2.6,
+  "avg_duration_s": 279.4,
+  "downtime_threshold_ms": 1500,
+  "top_avg_efficiency": 64.8,
+  "top_efficiency_stddev": 3.1,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 21,
-      "stddev_first_cast_s": 33.1,
-      "avg_gap_s": 63.2,
-      "stddev_gap_s": 68.3,
-      "avg_bl_offset_s": 16.8,
-      "stddev_bl_offset_s": 11.7,
-      "avg_uses": 4.8,
-      "avg_uses_per_min": 1.01,
+      "avg_first_cast_s": 28.9,
+      "stddev_first_cast_s": 37.9,
+      "avg_gap_s": 57.5,
+      "stddev_gap_s": 66.9,
+      "avg_bl_offset_s": 15.9,
+      "stddev_bl_offset_s": 12.3,
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 1.05,
       "uses_per_min": {
-        "avg": 1.012,
-        "stddev": 0.274,
-        "min": 0.568,
+        "avg": 1.053,
+        "stddev": 0.227,
+        "min": 0.637,
         "max": 1.353
       },
       "bl_pct": 100,
@@ -30,33 +30,33 @@
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 20.7,
-      "stddev_first_cast_s": 33.1,
-      "avg_gap_s": 133.4,
-      "stddev_gap_s": 16.1,
-      "avg_bl_offset_s": 16.6,
-      "stddev_bl_offset_s": 11.6,
-      "avg_uses": 2.8,
+      "avg_first_cast_s": 28.7,
+      "stddev_first_cast_s": 37.8,
+      "avg_gap_s": 132,
+      "stddev_gap_s": 14.6,
+      "avg_bl_offset_s": 15.7,
+      "stddev_bl_offset_s": 12.3,
+      "avg_uses": 2.7,
       "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.585,
-        "stddev": 0.056,
-        "min": 0.493,
+        "avg": 0.577,
+        "stddev": 0.064,
+        "min": 0.489,
         "max": 0.677
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 126.7,
-          "stddev_s": 37.5,
+          "target_s": 128.2,
+          "stddev_s": 41.9,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 271.6,
+          "target_s": 267.6,
           "stddev_s": 17.9,
-          "count": 8,
+          "count": 7,
           "total_samples": 10
         }
       }
@@ -83,21 +83,21 @@
     },
     "Void Torrent": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.2,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": 33.2,
-      "stddev_gap_s": 4.1,
-      "avg_bl_offset_s": -14.8,
-      "stddev_bl_offset_s": 0,
-      "avg_uses": 0.9,
-      "avg_uses_per_min": 0.19,
+      "avg_first_cast_s": 3.1,
+      "stddev_first_cast_s": 1.6,
+      "avg_gap_s": 33.8,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": -4.6,
+      "stddev_bl_offset_s": 14.5,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 1.88,
-        "stddev": 0,
+        "avg": 1.918,
+        "stddev": 0.053,
         "min": 1.88,
-        "max": 1.88
+        "max": 1.955
       },
-      "bl_pct": 10,
+      "bl_pct": 20,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -249,6 +249,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "99c40f4df5d7c5a0",
+  "source_signature": "0a2fbd06d115a969",
   "ingest_version": 1
 }

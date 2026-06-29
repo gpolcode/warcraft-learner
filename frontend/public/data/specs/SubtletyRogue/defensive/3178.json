@@ -5,24 +5,24 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
-      "sample_count": 8,
-      "avg_first_cast_s": 183.4,
-      "stddev_first_cast_s": 134,
-      "avg_gap_s": 195.6,
-      "stddev_gap_s": 51.2,
+      "sample_count": 7,
+      "avg_first_cast_s": 203.3,
+      "stddev_first_cast_s": 131.4,
+      "avg_gap_s": 179.1,
+      "stddev_gap_s": 35.4,
       "hold_targets": {
         "1": {
-          "target_s": 321.4,
-          "stddev_s": 41.6,
-          "count": 5,
-          "total_samples": 8
+          "target_s": 313.8,
+          "stddev_s": 47.5,
+          "count": 4,
+          "total_samples": 7
         }
       },
-      "avg_uses": 1.8,
+      "avg_uses": 1.7,
       "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.26,
-        "stddev": 0.108,
+        "avg": 0.259,
+        "stddev": 0.117,
         "min": 0.137,
         "max": 0.452
       },
@@ -30,50 +30,43 @@
     },
     "Crimson Vial": {
       "sample_count": 6,
-      "avg_first_cast_s": 176.8,
-      "stddev_first_cast_s": 87.4,
-      "avg_gap_s": 136.7,
-      "stddev_gap_s": 109,
-      "hold_targets": {
-        "1": {
-          "target_s": 331,
-          "stddev_s": 54.9,
-          "count": 3,
-          "total_samples": 6
-        }
-      },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.29,
+      "avg_first_cast_s": 177.1,
+      "stddev_first_cast_s": 87.2,
+      "avg_gap_s": 123.2,
+      "stddev_gap_s": 116.2,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.287,
-        "stddev": 0.128,
-        "min": 0.142,
+        "avg": 0.266,
+        "stddev": 0.141,
+        "min": 0.139,
         "max": 0.452
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Feint": {
       "sample_count": 10,
-      "avg_first_cast_s": 125.4,
-      "stddev_first_cast_s": 99.2,
-      "avg_gap_s": 41.6,
-      "stddev_gap_s": 32.6,
+      "avg_first_cast_s": 134.2,
+      "stddev_first_cast_s": 97,
+      "avg_gap_s": 43.8,
+      "stddev_gap_s": 36.5,
       "hold_targets": {
         "1": {
-          "target_s": 152.8,
-          "stddev_s": 114.2,
+          "target_s": 229.5,
+          "stddev_s": 119.6,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 205.8,
-          "stddev_s": 92.7,
-          "count": 5,
+          "target_s": 189.1,
+          "stddev_s": 106.8,
+          "count": 4,
           "total_samples": 10
         },
         "3": {
           "target_s": 222.9,
-          "stddev_s": 54.2,
+          "stddev_s": 91,
           "count": 6,
           "total_samples": 10
         },
@@ -84,11 +77,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 6.5,
-      "avg_uses_per_min": 0.95,
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.88,
       "uses_per_min": {
-        "avg": 0.946,
-        "stddev": 0.615,
+        "avg": 0.884,
+        "stddev": 0.62,
         "min": 0.168,
         "max": 1.84
       },
@@ -114,9 +107,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 69.4,
-      "dmg_avg": 254777,
-      "dmg_stddev": 59446,
+      "time_s": 75.6,
+      "dmg_avg": 242464,
+      "dmg_stddev": 57273,
       "dmg_min": 170813,
       "dmg_max": 319022,
       "window_length_s": 6,
@@ -132,17 +125,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1259275,
-          "avg_damage": 124296,
+          "avg_damage": 124033,
           "min_damage": 118484,
           "max_damage": 129537,
-          "count": 6
-        },
-        {
-          "spell_id": 1283712,
-          "avg_damage": 61164,
-          "min_damage": 60389,
-          "max_damage": 61812,
-          "count": 3
+          "count": 5
         }
       ]
     },
@@ -181,8 +167,8 @@
     },
     {
       "time_s": 156.7,
-      "dmg_avg": 231640,
-      "dmg_stddev": 117069,
+      "dmg_avg": 223370,
+      "dmg_stddev": 107510,
       "dmg_min": 118381,
       "dmg_max": 385028,
       "window_length_s": 6,
@@ -198,17 +184,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 140189,
+          "avg_damage": 148443,
           "min_damage": 42280,
-          "max_damage": 230017,
+          "max_damage": 236086,
           "count": 4
         }
       ]
     },
     {
-      "time_s": 204.4,
-      "dmg_avg": 311019,
-      "dmg_stddev": 165742,
+      "time_s": 204.2,
+      "dmg_avg": 336822,
+      "dmg_stddev": 171302,
       "dmg_min": 178800,
       "dmg_max": 597543,
       "window_length_s": 6.3,
@@ -224,17 +210,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 147408,
+          "avg_damage": 155765,
           "min_damage": 117998,
           "max_damage": 230285,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 74178,
-          "min_damage": 59664,
+          "avg_damage": 77807,
+          "min_damage": 59789,
           "max_damage": 101742,
-          "count": 5
+          "count": 4
         }
       ]
     },
@@ -287,9 +273,9 @@
     },
     {
       "time_s": 305.7,
-      "dmg_avg": 317619,
-      "dmg_stddev": 150233,
-      "dmg_min": 20472,
+      "dmg_avg": 344696,
+      "dmg_stddev": 133041,
+      "dmg_min": 42150,
       "dmg_max": 634949,
       "window_length_s": 6.1,
       "defensive_name": "Feint",
@@ -304,20 +290,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 175159,
-          "min_damage": 20472,
-          "max_damage": 226533,
+          "avg_damage": 193989,
+          "min_damage": 42150,
+          "max_damage": 238103,
           "count": 12
         }
       ]
     },
     {
       "time_s": 349.8,
-      "dmg_avg": 132625,
-      "dmg_stddev": 145070,
+      "dmg_avg": 106044,
+      "dmg_stddev": 157622,
       "dmg_min": 0,
       "dmg_max": 340564,
-      "window_length_s": 6.4,
+      "window_length_s": 6.5,
       "defensive_name": "Feint",
       "spell_id": 1966,
       "common_defensives": [
@@ -333,7 +319,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 31224,
-      "avg_uses": 1.8,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -345,13 +331,13 @@
     },
     {
       "spell_id": 185311,
-      "avg_uses": 2,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 1966,
-      "avg_uses": 6.5,
+      "avg_uses": 6,
       "min_uses": 1,
       "max_uses": 13
     }
@@ -438,6 +424,6 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "ef3a938715096fde",
+  "source_signature": "770fa7c228481d55",
   "ingest_version": 1
 }

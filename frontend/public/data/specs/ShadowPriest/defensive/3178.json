@@ -5,47 +5,47 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 10,
-      "avg_first_cast_s": 192.1,
-      "stddev_first_cast_s": 91.9,
+      "sample_count": 9,
+      "avg_first_cast_s": 186.1,
+      "stddev_first_cast_s": 95.4,
       "avg_gap_s": 89.3,
       "stddev_gap_s": 29.2,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.346,
-        "stddev": 0.221,
+        "avg": 0.359,
+        "stddev": 0.23,
         "min": 0.159,
         "max": 0.832
       },
       "majority_hold": false
     },
     "Vampiric Embrace": {
-      "sample_count": 9,
-      "avg_first_cast_s": 100.5,
-      "stddev_first_cast_s": 127.7,
-      "avg_gap_s": 149.1,
-      "stddev_gap_s": 23,
+      "sample_count": 10,
+      "avg_first_cast_s": 91.2,
+      "stddev_first_cast_s": 123.9,
+      "avg_gap_s": 149.3,
+      "stddev_gap_s": 21.7,
       "hold_targets": {
         "1": {
-          "target_s": 168.1,
-          "stddev_s": 87.9,
-          "count": 6,
-          "total_samples": 9
+          "target_s": 169.1,
+          "stddev_s": 80.9,
+          "count": 7,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 307.9,
-          "stddev_s": 31.3,
-          "count": 4,
-          "total_samples": 9
+          "target_s": 308.8,
+          "stddev_s": 27.8,
+          "count": 5,
+          "total_samples": 10
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.39,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.393,
-        "stddev": 0.156,
+        "avg": 0.405,
+        "stddev": 0.152,
         "min": 0.146,
         "max": 0.532
       },
@@ -71,9 +71,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 5.8,
-      "dmg_avg": 109490,
-      "dmg_stddev": 192032,
+      "time_s": 5.9,
+      "dmg_avg": 91242,
+      "dmg_stddev": 177480,
       "dmg_min": 0,
       "dmg_max": 443423,
       "window_length_s": 12,
@@ -89,9 +89,9 @@
       "ability_breakdown": []
     },
     {
-      "time_s": 168.1,
-      "dmg_avg": 347552,
-      "dmg_stddev": 121738,
+      "time_s": 169.1,
+      "dmg_avg": 317212,
+      "dmg_stddev": 125370,
       "dmg_min": 192827,
       "dmg_max": 484596,
       "window_length_s": 12,
@@ -107,33 +107,19 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 191575,
+          "avg_damage": 192430,
           "min_damage": 183832,
           "max_damage": 196591,
-          "count": 4
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 132355,
-          "min_damage": 131266,
-          "max_damage": 133444,
-          "count": 2
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 61209,
-          "min_damage": 60212,
-          "max_damage": 62206,
-          "count": 2
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 245.8,
-      "dmg_avg": 665543,
-      "dmg_stddev": 173913,
+      "time_s": 246.3,
+      "dmg_avg": 632331,
+      "dmg_stddev": 181588,
       "dmg_min": 363577,
-      "dmg_max": 798392,
+      "dmg_max": 743504,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -147,30 +133,30 @@
       "ability_breakdown": [
         {
           "spell_id": 1285954,
-          "avg_damage": 255492,
+          "avg_damage": 239292,
           "min_damage": 233276,
-          "max_damage": 304093,
-          "count": 4
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 171878,
-          "min_damage": 92075,
-          "max_damage": 204613,
-          "count": 5
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 170229,
-          "min_damage": 162849,
-          "max_damage": 174959,
+          "max_damage": 250786,
           "count": 3
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 162055,
-          "min_damage": 106747,
+          "avg_damage": 180491,
+          "min_damage": 136669,
           "max_damage": 242263,
+          "count": 3
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 167864,
+          "min_damage": 162849,
+          "max_damage": 172878,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 165687,
+          "min_damage": 92075,
+          "max_damage": 204613,
           "count": 4
         }
       ]
@@ -209,9 +195,9 @@
       ]
     },
     {
-      "time_s": 307.9,
-      "dmg_avg": 1089411,
-      "dmg_stddev": 445510,
+      "time_s": 308.8,
+      "dmg_avg": 1055737,
+      "dmg_stddev": 393101,
       "dmg_min": 788481,
       "dmg_max": 1747295,
       "window_length_s": 12,
@@ -227,24 +213,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 681061,
+          "avg_damage": 694860,
           "min_damage": 647709,
-          "max_damage": 706951,
-          "count": 4
+          "max_damage": 750058,
+          "count": 5
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 244757,
+          "avg_damage": 226315,
           "min_damage": 81530,
           "max_damage": 497214,
-          "count": 3
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 174477,
-          "min_damage": 172340,
-          "max_damage": 176614,
-          "count": 2
+          "count": 4
         }
       ]
     }
@@ -258,13 +237,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 15286,
-      "avg_uses": 2.3,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -334,6 +313,6 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "ee18bdba6c474a3d",
+  "source_signature": "3d462ba25d1a696f",
   "ingest_version": 1
 }
