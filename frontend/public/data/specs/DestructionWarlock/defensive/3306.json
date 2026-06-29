@@ -4,49 +4,49 @@
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Dark Pact": {
-      "sample_count": 8,
-      "avg_first_cast_s": 123.6,
-      "stddev_first_cast_s": 80.1,
-      "avg_gap_s": 74.2,
-      "stddev_gap_s": 18.7,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.51,
-      "uses_per_min": {
-        "avg": 0.506,
-        "stddev": 0.2,
-        "min": 0.334,
-        "max": 0.831
-      },
-      "majority_hold": false
-    },
     "Unending Resolve": {
       "sample_count": 4,
-      "avg_first_cast_s": 110.6,
-      "stddev_first_cast_s": 38.2,
+      "avg_first_cast_s": 108.5,
+      "stddev_first_cast_s": 32.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.404,
-        "stddev": 0.004,
+        "avg": 0.412,
+        "stddev": 0.014,
         "min": 0.401,
-        "max": 0.41
+        "max": 0.432
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 8,
+      "avg_first_cast_s": 119,
+      "stddev_first_cast_s": 84,
+      "avg_gap_s": 68,
+      "stddev_gap_s": 20.2,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.564,
+        "stddev": 0.231,
+        "min": 0.334,
+        "max": 0.865
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 70,
-      "dmg_avg": 286399,
-      "dmg_stddev": 72841,
-      "dmg_min": 225613,
+      "time_s": 68.2,
+      "dmg_avg": 284553,
+      "dmg_stddev": 94741,
+      "dmg_min": 183274,
       "dmg_max": 395437,
-      "window_length_s": 4.3,
+      "window_length_s": 3.5,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -59,24 +59,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 165820,
-          "min_damage": 107578,
+          "avg_damage": 178303,
+          "min_damage": 134358,
           "max_damage": 280880,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 112588,
-          "min_damage": 80703,
+          "avg_damage": 104505,
+          "min_damage": 48369,
           "max_damage": 172438,
           "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 3141,
-          "min_damage": 1464,
-          "max_damage": 7027,
-          "count": 5
+          "avg_damage": 1746,
+          "min_damage": 547,
+          "max_damage": 2760,
+          "count": 4
         }
       ]
     }
@@ -90,7 +90,7 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -152,6 +152,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "22612830367e646a",
+  "source_signature": "9ea907d09f9623f7",
   "ingest_version": 1
 }

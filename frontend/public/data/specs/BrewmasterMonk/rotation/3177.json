@@ -3,9 +3,9 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 269.1,
-  "downtime_threshold_ms": 1026,
-  "top_avg_efficiency": 82.3,
+  "avg_duration_s": 268.7,
+  "downtime_threshold_ms": 1027,
+  "top_avg_efficiency": 82.6,
   "top_efficiency_stddev": 9,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
@@ -14,12 +14,12 @@
       "stddev_first_cast_s": 1.2,
       "avg_gap_s": 109.9,
       "stddev_gap_s": 13.5,
-      "avg_bl_offset_s": 0.6,
+      "avg_bl_offset_s": 0.5,
       "stddev_bl_offset_s": 1.4,
       "avg_uses": 2.9,
       "avg_uses_per_min": 0.66,
       "uses_per_min": {
-        "avg": 0.663,
+        "avg": 0.665,
         "stddev": 0.119,
         "min": 0.538,
         "max": 0.876
@@ -30,32 +30,38 @@
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.9,
+      "avg_first_cast_s": 17.7,
       "stddev_first_cast_s": 12.2,
-      "avg_gap_s": 65.3,
+      "avg_gap_s": 65.4,
       "stddev_gap_s": 5.8,
-      "avg_bl_offset_s": 14.5,
-      "stddev_bl_offset_s": 10.5,
+      "avg_bl_offset_s": 14.2,
+      "stddev_bl_offset_s": 10.3,
       "avg_uses": 4.4,
       "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 1,
-        "stddev": 0.121,
-        "min": 0.861,
+        "avg": 1.001,
+        "stddev": 0.12,
+        "min": 0.874,
         "max": 1.231
       },
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
+        "2": {
+          "target_s": 89.4,
+          "stddev_s": 16.7,
+          "count": 4,
+          "total_samples": 10
+        },
         "3": {
-          "target_s": 153.2,
-          "stddev_s": 14.8,
+          "target_s": 157.9,
+          "stddev_s": 14.2,
           "count": 6,
           "total_samples": 10
         },
         "4": {
           "target_s": 217.8,
-          "stddev_s": 15.1,
+          "stddev_s": 15.2,
           "count": 7,
           "total_samples": 10
         },
@@ -69,27 +75,27 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 98,
-      "stddev_first_cast_s": 34.2,
-      "avg_gap_s": 166.6,
-      "stddev_gap_s": 63.8,
+      "avg_first_cast_s": 109.7,
+      "stddev_first_cast_s": 47.7,
+      "avg_gap_s": 163.2,
+      "stddev_gap_s": 68.1,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.419,
-        "stddev": 0.138,
+        "avg": 0.398,
+        "stddev": 0.151,
         "min": 0.179,
         "max": 0.616
       },
       "bl_pct": 0,
-      "majority_hold": true,
+      "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 298.4,
-          "stddev_s": 54.9,
-          "count": 6,
+          "target_s": 318,
+          "stddev_s": 61.3,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -234,6 +240,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "f5fb50a3422d63f4",
+  "source_signature": "8e45949aaa0a72d3",
   "ingest_version": 1
 }
