@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
+import { RulebookRule } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { ROTATION_DATA_SOURCE, RotationBench, RotationDataSource } from './rotation-data-source';
 import {
@@ -11,6 +12,7 @@ import {
   fmtClock, sortBySeverity,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateRules, buildCastTimes,
   analyzeRotationFindings, bucketRotationFindings, buildCdPlan,
+  ruleLabel, rulesFollowed,
 } from './rotation.service';
 
 function cast(spellId: number, atS: number): WclEvent {
@@ -128,6 +130,73 @@ describe('rule engine', () => {
   });
 });
 
+/* ----------------------------- rules followed (on-plan) ----------------------------- */
+
+describe('ruleLabel', () => {
+  it('prefers the rule description when present', () => {
+    expect(ruleLabel(
+      { kind: 'cast_without_prior', spell_id: 1, spell_name: 'A', required_spell_id: 2, required_spell_name: 'B' },
+      'Pair A with B',
+    )).toBe('Pair A with B');
+  });
+
+  it('falls back to a positive cast_without_prior label', () => {
+    expect(ruleLabel(
+      { kind: 'cast_without_prior', spell_id: 1, spell_name: 'A', required_spell_id: 2, required_spell_name: 'B' },
+    )).toBe('A with B');
+  });
+
+  it('falls back to a positive hold_cooldown_for_anchor label', () => {
+    expect(ruleLabel(
+      { kind: 'hold_cooldown_for_anchor', spell_ids: [2], spell_names: ['Dance'], anchor_spell_id: 1, anchor_spell_name: 'Blades' },
+    )).toBe('Dance held for Blades');
+  });
+});
+
+describe('rulesFollowed', () => {
+  const castWithoutPrior: RulebookRule = {
+    priority: 'warning', description: 'Pair A with B',
+    condition: { kind: 'cast_without_prior', spell_id: 100, spell_name: 'A', required_spell_id: 200, required_spell_name: 'B', window_s: 5 },
+  };
+  const holdForAnchor: RulebookRule = {
+    priority: 'critical', description: 'Hold Dance for Blades',
+    condition: { kind: 'hold_cooldown_for_anchor', spell_ids: [2], spell_names: ['Dance'], anchor_spell_id: 1, anchor_spell_name: 'Blades', hold_window_s: 15 },
+  };
+
+  it('lists a cast_without_prior rule cast with its companion in window', () => {
+    expect(rulesFollowed([castWithoutPrior], [cast(100, 10), cast(200, 12)], 0)).toEqual(['Pair A with B']);
+  });
+
+  it('does not list a cast_without_prior rule that was violated', () => {
+    expect(rulesFollowed([castWithoutPrior], [cast(100, 10), cast(200, 30)], 0)).toEqual([]);
+  });
+
+  it('does not list a cast_without_prior rule whose primary spell was never cast', () => {
+    expect(rulesFollowed([castWithoutPrior], [cast(200, 12)], 0)).toEqual([]);
+  });
+
+  it('lists a hold_cooldown_for_anchor rule held clear of the pre-anchor window', () => {
+    // anchors at 10 and 120; the held cast at 50 is outside [105,120)
+    expect(rulesFollowed([holdForAnchor], [cast(1, 10), cast(1, 120), cast(2, 50)], 0)).toEqual(['Hold Dance for Blades']);
+  });
+
+  it('does not list a hold_cooldown_for_anchor rule spent inside the hold window', () => {
+    expect(rulesFollowed([holdForAnchor], [cast(1, 10), cast(1, 120), cast(2, 110)], 0)).toEqual([]);
+  });
+
+  it('does not list a hold_cooldown_for_anchor rule whose held spell was never cast', () => {
+    expect(rulesFollowed([holdForAnchor], [cast(1, 10), cast(1, 120)], 0)).toEqual([]);
+  });
+
+  it('does not list a hold_cooldown_for_anchor rule with only a single anchor cast', () => {
+    expect(rulesFollowed([holdForAnchor], [cast(1, 10), cast(2, 5)], 0)).toEqual([]);
+  });
+
+  it('skips rules without a condition', () => {
+    expect(rulesFollowed([{ description: 'r', condition: null }], [cast(1, 1)], 0)).toEqual([]);
+  });
+});
+
 /* ----------------------------- offensive analysis ----------------------------- */
 
 describe('analyzeRotationFindings', () => {
@@ -227,7 +296,7 @@ describe('RotationFeatureService', () => {
   it('returns an empty player view when bench is absent', async () => {
     const service = withSource(null);
     const view = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(view).toEqual({ ruleRows: [], offensiveRows: [], onPlan: [] });
+    expect(view).toEqual({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] });
   });
 
   it('computes player findings from the player log', async () => {
