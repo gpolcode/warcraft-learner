@@ -74,30 +74,47 @@ describe('findParseDefensiveWindows', () => {
     const windows = buildBuffWindows([applybuff(31224, 10), removebuff(31224, 15)], 0);
     const result = findParseDefensiveWindows(
       [dtaken(700, 12, 500, 9), dtaken(701, 13, 200, 8), dtaken(700, 100, 999, 9)],
-      0, windows, [CLOAK], new Map([[9, 6666], [8, 5555]]),
+      0, 300, windows, [CLOAK], new Map([[9, 6666], [8, 5555]]),
     );
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ defensive_name: 'Cloak of Shadows', spell_id: 31224, window_damage: 700, ref_game_id: 6666 });
     expect(result[0].ability_breakdown[0]).toMatchObject({ spell_id: 700, damage: 500 });
   });
+
+  it('runs an open buff to fight end (no rulebook duration)', () => {
+    const windows = buildBuffWindows([applybuff(31224, 10)], 0); // no remove
+    const result = findParseDefensiveWindows(
+      [dtaken(700, 50, 400, 9)], 0, 300, windows, [CLOAK], new Map([[9, 6666]]),
+    );
+    expect(result[0].window_length_s).toBe(290); // 10 -> 300 (fight end), not 10 + duration
+    expect(result[0].window_damage).toBe(400);
+  });
 });
 
 describe('clusterDefensiveWindows', () => {
-  const window = (timeS: number): ParseDefWindow => ({
-    time_s: timeS, window_length_s: 5, window_damage: 700, defensive_name: 'Cloak of Shadows', spell_id: 31224,
-    ref_game_id: 6666, ability_breakdown: [{ spell_id: 700, damage: 500 }],
+  const window = (timeS: number, parseIndex: number, pct = 0.2): ParseDefWindow => ({
+    time_s: timeS, window_length_s: 5, window_damage: 700, pct_of_total: pct, parse_index: parseIndex,
+    defensive_name: 'Cloak of Shadows', spell_id: 31224, ref_game_id: 6666, ability_breakdown: [{ spell_id: 700, damage: 500 }],
   });
 
-  it('emits a per-defensive cluster present in enough parses, with majority ref enemy', () => {
-    const out = clusterDefensiveWindows([window(10), window(11)], 2);
+  it('emits a per-defensive cluster present in a majority of distinct parses, with majority ref enemy', () => {
+    const out = clusterDefensiveWindows([window(10, 0), window(11, 1)], 2);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ time_s: 10.5, defensive_name: 'Cloak of Shadows', spell_id: 31224, dmg_avg: 700, ref_game_id: 6666 });
     expect(out[0].common_defensives).toEqual(['Cloak of Shadows']);
     expect(out[0].ability_breakdown[0]).toMatchObject({ spell_id: 700, avg_damage: 500, count: 2 });
   });
 
-  it('drops a cluster below the min-sample fraction', () => {
-    expect(clusterDefensiveWindows([window(10)], 10)).toHaveLength(0);
+  it('keeps a window in exactly half the parses, drops one just below (majority boundary)', () => {
+    const five = [window(10, 0), window(11, 1), window(10, 2), window(12, 3), window(11, 4)];
+    expect(clusterDefensiveWindows(five, 10)).toHaveLength(1);
+    const four = [window(10, 0), window(11, 1), window(10, 2), window(12, 3)];
+    expect(clusterDefensiveWindows(four, 10)).toHaveLength(0);
+  });
+
+  it('drops a consensus window whose median damage share is below the gate', () => {
+    const low = [window(10, 0, 0.01), window(11, 1, 0.01)];
+    expect(clusterDefensiveWindows(low, 2)).toHaveLength(0);
   });
 });
 

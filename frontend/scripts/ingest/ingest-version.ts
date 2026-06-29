@@ -14,7 +14,10 @@
  * such change.
  *
  * Current value:
+ *   2 - data-driven analysis rework: burst windows measured from DamageDone density,
+ *       prior-relative consensus hold targets, defensive windows from consensus
+ *       high-mitigation damage clumps. Invalidates every pre-v2 tailored file.
  *   1 - the `source_id` change is incorporated (gear parses carry `source_id` for the
  *       "View parse" deep-link). Data produced before it is v0.
  */
-export const INGEST_VERSION = 1;
+export const INGEST_VERSION = 2;

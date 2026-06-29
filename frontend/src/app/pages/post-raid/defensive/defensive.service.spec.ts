@@ -2,13 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
+import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
 import { DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensiveDataSource } from './defensive-data-source';
 import {
   DefensiveFeatureService,
   analyzeDefensives, analyzeDefensiveFindings, computePlayerDefensiveWindows,
   defensiveWindowStatus, defensiveMapAnchor, buildDefensiveWindows, buildDefensivePlanRows,
+  playerCoveredWindow, playerUsefulTiming, windowMissFindings,
 } from './defensive.service';
 
 function applybuff(spellId: number, atS: number): WclEvent {
@@ -37,14 +38,21 @@ describe('analyzeDefensives', () => {
     expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 15, dmg_during: 500 });
   });
 
-  it('falls back to explicit casts (cast+duration window) when no buffs exist', () => {
+  it('falls back to a point usage (no rulebook-duration window) when no buffs exist', () => {
     const out = analyzeDefensives(
       [CLOAK_META],
       [{ type: 'cast', timestamp: 20_000, abilityGameID: 31224 }], [], [dtaken(700, 21, 300)],
       0, 300_000,
     );
     expect(out[0]).toMatchObject({ uses: 1, cast_times_s: [20] });
-    expect(out[0].windows[0]).toMatchObject({ start_s: 20, end_s: 25, dmg_during: 300 });
+    expect(out[0].windows[0]).toMatchObject({ start_s: 20, end_s: 20, dmg_during: 0 });
+  });
+
+  it('runs an open buff to fight end, not a rulebook duration', () => {
+    const out = analyzeDefensives(
+      [CLOAK_META], [], [applybuff(31224, 10)], [dtaken(700, 50, 400)], 0, 300_000,
+    );
+    expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 300, dmg_during: 400 });
   });
 });
 
@@ -105,15 +113,55 @@ describe('computePlayerDefensiveWindows', () => {
 /* ----------------------------- defensive windows view ----------------------------- */
 
 describe('defensiveWindowStatus', () => {
-  // topAvg 1000, topMax 1200, stddev 100 -> bad above 1300, warn above 1100. Lower is better.
+  // topAvg 1000, topMax 1200, stddev 100. Lower damage is better; covering the window is required.
   it.each([
-    { name: 'not reached -> muted', player: 950 as number | null, notReached: true, status: 'muted', icon: 'schedule' },
-    { name: 'missing -> muted', player: null, notReached: false, status: 'muted', icon: 'help_outline' },
-    { name: 'far above max -> bad', player: 1400, notReached: false, status: 'bad', icon: 'error' },
-    { name: 'above avg band -> warn', player: 1150, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'within range -> good', player: 1000, notReached: false, status: 'good', icon: 'check_circle' },
-  ])('$name', ({ player, notReached, status, icon }) => {
-    expect(defensiveWindowStatus(player, 1000, 1200, 100, notReached)).toEqual({ status, icon });
+    { name: 'not reached -> muted', player: 950 as number | null, notReached: true, covered: true, useful: false, status: 'muted', icon: 'schedule' },
+    { name: 'missing -> muted', player: null, notReached: false, covered: true, useful: false, status: 'muted', icon: 'help_outline' },
+    { name: 'not covered -> bad', player: 900, notReached: false, covered: false, useful: false, status: 'bad', icon: 'error' },
+    { name: 'covered + useful timing -> good', player: 1400, notReached: false, covered: true, useful: true, status: 'good', icon: 'check_circle' },
+    { name: 'covered, far above max -> warn', player: 1400, notReached: false, covered: true, useful: false, status: 'warn', icon: 'warning_amber' },
+    { name: 'covered, above avg band -> warn', player: 1150, notReached: false, covered: true, useful: false, status: 'warn', icon: 'warning_amber' },
+    { name: 'covered, within range -> good', player: 1000, notReached: false, covered: true, useful: false, status: 'good', icon: 'check_circle' },
+  ])('$name', ({ player, notReached, covered, useful, status, icon }) => {
+    expect(defensiveWindowStatus(player, 1000, 1200, 100, notReached, covered, useful)).toEqual({ status, icon });
+  });
+});
+
+describe('playerCoveredWindow', () => {
+  const window = { time_s: 30, window_length_s: 5 } as BurstWindow;
+  const withSpans = (spans: { start_s: number; end_s: number; dmg_during: number }[]): PlayerDefensive =>
+    ({ name: 'Cloak of Shadows', spell_id: 31224, cooldown: 120, uses: spans.length, windows: spans });
+
+  it('is true when a player span overlaps the window plus slack', () => {
+    expect(playerCoveredWindow(window, withSpans([{ start_s: 33, end_s: 38, dmg_during: 0 }]))).toBe(true);
+  });
+
+  it('covers a span reaching the slack edge, not one just short of it', () => {
+    // window [30,35], slack 3 -> covers [27,38]; a span ending at 27 reaches the edge.
+    expect(playerCoveredWindow(window, withSpans([{ start_s: 10, end_s: 27, dmg_during: 0 }]))).toBe(true);
+    expect(playerCoveredWindow(window, withSpans([{ start_s: 10, end_s: 26, dmg_during: 0 }]))).toBe(false);
+  });
+
+  it('is false with no player defensive', () => {
+    expect(playerCoveredWindow(window, undefined)).toBe(false);
+  });
+});
+
+describe('playerUsefulTiming', () => {
+  const window = { time_s: 30, window_length_s: 5, dmg_min: 800 } as BurstWindow;
+  const withSpans = (spans: { start_s: number; end_s: number; dmg_during: number }[]): PlayerDefensive =>
+    ({ name: 'Cloak of Shadows', spell_id: 31224, cooldown: 120, uses: spans.length, windows: spans });
+
+  it('is true when a covering span mitigated at least the window minimum', () => {
+    expect(playerUsefulTiming(window, withSpans([{ start_s: 31, end_s: 36, dmg_during: 800 }]))).toBe(true);
+  });
+
+  it('is false when the covering span mitigated just under the minimum (boundary)', () => {
+    expect(playerUsefulTiming(window, withSpans([{ start_s: 31, end_s: 36, dmg_during: 799 }]))).toBe(false);
+  });
+
+  it('is false when the big mitigation is not near the window', () => {
+    expect(playerUsefulTiming(window, withSpans([{ start_s: 100, end_s: 105, dmg_during: 5000 }]))).toBe(false);
   });
 });
 
@@ -142,7 +190,9 @@ describe('buildDefensiveWindows', () => {
 
   it('pairs each window with player damage taken at the same index', () => {
     const player: PlayerBurstWindow[] = [{ time_s: 30, window_damage: 1150, ability_breakdown: [{ spell_id: 700, damage: 700 }] }];
-    const { windows, anchors } = buildDefensiveWindows([window], player, 300, abilities);
+    // Covered the window (span 30-35), mitigated under dmg_min, took above the avg band -> warn.
+    const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', spell_id: 31224, cooldown: 120, uses: 1, windows: [{ start_s: 30, end_s: 35, dmg_during: 700 }] }];
+    const { windows, anchors } = buildDefensiveWindows([window], player, playerDef, 300, abilities);
     expect(windows[0].overview.playerPct).toBe(1150);
     expect(windows[0].status).toBe('warn');
     expect(windows[0].spells).toEqual([{ id: 31224, icon: 'cloak', name: 'Cloak of Shadows' }]);
@@ -150,10 +200,38 @@ describe('buildDefensiveWindows', () => {
     expect(anchors[0]).toEqual({ timeS: 30, label: 'Cloak of Shadows', spells: [{ id: 31224, icon: 'cloak', name: 'Cloak of Shadows' }], refGameId: 6666 });
   });
 
+  it('marks an uncovered window bad', () => {
+    const player: PlayerBurstWindow[] = [{ time_s: 30, window_damage: 900, ability_breakdown: [] }];
+    const { windows } = buildDefensiveWindows([window], player, [], 300, abilities);
+    expect(windows[0].status).toBe('bad');
+  });
+
   it('mutes and drops player data for a window the fight never reached', () => {
-    const { windows } = buildDefensiveWindows([window], [], 5, abilities);
+    const { windows } = buildDefensiveWindows([window], [], [], 5, abilities);
     expect(windows[0].status).toBe('muted');
     expect(windows[0].overview.playerPct).toBeNull();
+  });
+});
+
+describe('windowMissFindings', () => {
+  const missWindow: BurstWindow = {
+    time_s: 30, window_length_s: 5, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
+    defensive_name: 'Cloak of Shadows', spell_id: 31224, common_cds: ['Cloak of Shadows'], ability_breakdown: [],
+  };
+  const covering: PlayerDefensive[] = [{ name: 'Cloak of Shadows', spell_id: 31224, cooldown: 120, uses: 1, windows: [{ start_s: 30, end_s: 35, dmg_during: 900 }] }];
+
+  it('warns for an uncovered consensus window', () => {
+    const out = windowMissFindings([missWindow], [], 300);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({ severity: 'warning', category: 'defensive_window', cd_name: 'Cloak of Shadows' });
+  });
+
+  it('does not warn when the player covered the window', () => {
+    expect(windowMissFindings([missWindow], covering, 300)).toEqual([]);
+  });
+
+  it('does not warn for a window the fight never reached', () => {
+    expect(windowMissFindings([missWindow], [], 5)).toEqual([]);
   });
 });
 
