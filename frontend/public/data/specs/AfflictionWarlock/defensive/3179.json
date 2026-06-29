@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Unending Resolve": {
-      "sample_count": 6,
-      "avg_first_cast_s": 119.5,
-      "stddev_first_cast_s": 68.4,
+      "sample_count": 7,
+      "avg_first_cast_s": 126.3,
+      "stddev_first_cast_s": 65,
       "avg_gap_s": 184.5,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.341,
-        "stddev": 0.097,
+        "avg": 0.335,
+        "stddev": 0.09,
         "min": 0.274,
         "max": 0.536
       },
@@ -23,20 +23,27 @@
     },
     "Dark Pact": {
       "sample_count": 9,
-      "avg_first_cast_s": 54.6,
-      "stddev_first_cast_s": 22.6,
-      "avg_gap_s": 67,
-      "stddev_gap_s": 30.7,
-      "hold_targets": {},
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.76,
+      "avg_first_cast_s": 51.6,
+      "stddev_first_cast_s": 16.4,
+      "avg_gap_s": 67.9,
+      "stddev_gap_s": 29.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 158,
+          "stddev_s": 8.2,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.757,
-        "stddev": 0.249,
-        "min": 0.309,
+        "avg": 0.788,
+        "stddev": 0.198,
+        "min": 0.593,
         "max": 1.197
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Mortal Coil": {
       "sample_count": 4,
@@ -98,12 +105,12 @@
       ]
     },
     {
-      "time_s": 100,
-      "dmg_avg": 399019,
-      "dmg_stddev": 119816,
+      "time_s": 98.9,
+      "dmg_avg": 384810,
+      "dmg_stddev": 128182,
       "dmg_min": 187713,
       "dmg_max": 519091,
-      "window_length_s": 7.1,
+      "window_length_s": 7.2,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -116,27 +123,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 289754,
+          "avg_damage": 281799,
           "min_damage": 132659,
           "max_damage": 511953,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 387846,
-          "avg_damage": 4149,
+          "avg_damage": 4441,
           "min_damage": 992,
           "max_damage": 7138,
-          "count": 6
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 157.7,
-      "dmg_avg": 406452,
-      "dmg_stddev": 71039,
+      "time_s": 154.6,
+      "dmg_avg": 412682,
+      "dmg_stddev": 69029,
       "dmg_min": 315851,
       "dmg_max": 524611,
-      "window_length_s": 8.3,
+      "window_length_s": 8,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -149,24 +156,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 183186,
-          "min_damage": 155601,
+          "avg_damage": 168814,
+          "min_damage": 82582,
           "max_damage": 237415,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 153436,
+          "avg_damage": 152443,
           "min_damage": 94964,
           "max_damage": 214781,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 387846,
-          "avg_damage": 4104,
+          "avg_damage": 4085,
           "min_damage": 1785,
           "max_damage": 6121,
-          "count": 8
+          "count": 9
         }
       ]
     }
@@ -174,14 +181,14 @@
   "top_defensives_summary": [
     {
       "spell_id": 104773,
-      "avg_uses": 1.2,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 108416,
-      "avg_uses": 2.6,
-      "min_uses": 1,
+      "avg_uses": 2.7,
+      "min_uses": 2,
       "max_uses": 4
     },
     {
@@ -269,6 +276,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "a6985d73cc2957c8",
+  "source_signature": "27af356baa68cc17",
   "ingest_version": 1
 }

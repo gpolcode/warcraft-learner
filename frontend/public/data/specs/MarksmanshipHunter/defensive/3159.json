@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 9,
-      "avg_first_cast_s": 200.7,
-      "stddev_first_cast_s": 103.6,
-      "avg_gap_s": 74,
-      "stddev_gap_s": 55.7,
+      "avg_first_cast_s": 185.2,
+      "stddev_first_cast_s": 104,
+      "avg_gap_s": 70.9,
+      "stddev_gap_s": 52.5,
       "hold_targets": {},
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.501,
-        "stddev": 0.299,
+        "avg": 0.552,
+        "stddev": 0.322,
         "min": 0.132,
         "max": 1.005
       },
@@ -23,44 +23,44 @@
     },
     "Exhilaration": {
       "sample_count": 6,
-      "avg_first_cast_s": 279.9,
-      "stddev_first_cast_s": 113.8,
-      "avg_gap_s": 111.2,
-      "stddev_gap_s": 20.9,
+      "avg_first_cast_s": 252.2,
+      "stddev_first_cast_s": 98.4,
+      "avg_gap_s": 106,
+      "stddev_gap_s": 21.5,
       "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.228,
-        "stddev": 0.118,
+        "avg": 0.254,
+        "stddev": 0.111,
         "min": 0.133,
         "max": 0.431
       },
       "majority_hold": false
     },
     "Aspect of the Turtle": {
-      "sample_count": 2,
-      "avg_first_cast_s": 303.2,
-      "stddev_first_cast_s": 261.6,
+      "sample_count": 3,
+      "avg_first_cast_s": 309.4,
+      "stddev_first_cast_s": 185.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.13,
+      "avg_uses_per_min": 0.14,
       "uses_per_min": {
-        "avg": 0.129,
-        "stddev": 0.02,
+        "avg": 0.135,
+        "stddev": 0.017,
         "min": 0.115,
-        "max": 0.143
+        "max": 0.147
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 132,
-      "dmg_avg": 378131,
-      "dmg_stddev": 94197,
+      "time_s": 131.8,
+      "dmg_avg": 380605,
+      "dmg_stddev": 84470,
       "dmg_min": 231415,
       "dmg_max": 491640,
       "window_length_s": 8,
@@ -75,6 +75,13 @@
       "ref_game_id": 238693,
       "ability_breakdown": [
         {
+          "spell_id": 1221637,
+          "avg_damage": 193979,
+          "min_damage": 134311,
+          "max_damage": 312885,
+          "count": 5
+        },
+        {
           "spell_id": 1221965,
           "avg_damage": 177163,
           "min_damage": 156764,
@@ -82,25 +89,51 @@
           "count": 5
         },
         {
-          "spell_id": 1221637,
-          "avg_damage": 164253,
-          "min_damage": 134311,
-          "max_damage": 194695,
-          "count": 4
+          "spell_id": 1222284,
+          "avg_damage": 71320,
+          "min_damage": 63406,
+          "max_damage": 80089,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 225.3,
+      "dmg_avg": 217317,
+      "dmg_stddev": 177846,
+      "dmg_min": 59080,
+      "dmg_max": 467129,
+      "window_length_s": 4.3,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222088,
+          "avg_damage": 128269,
+          "min_damage": 103469,
+          "max_damage": 153068,
+          "count": 2
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 69566,
-          "min_damage": 63406,
-          "max_damage": 79777,
-          "count": 5
+          "avg_damage": 84689,
+          "min_damage": 58748,
+          "max_damage": 162154,
+          "count": 4
         }
       ]
     },
     {
       "time_s": 264.5,
-      "dmg_avg": 514387,
-      "dmg_stddev": 98789,
+      "dmg_avg": 510502,
+      "dmg_stddev": 100552,
       "dmg_min": 379674,
       "dmg_max": 641881,
       "window_length_s": 8,
@@ -116,7 +149,7 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 251975,
+          "avg_damage": 249406,
           "min_damage": 115941,
           "max_damage": 340520,
           "count": 5
@@ -130,17 +163,43 @@
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 147624,
+          "avg_damage": 146309,
           "min_damage": 116375,
-          "max_damage": 164552,
+          "max_damage": 159112,
           "count": 5
         }
       ]
     },
     {
-      "time_s": 404.6,
-      "dmg_avg": 431739,
-      "dmg_stddev": 210689,
+      "time_s": 316.8,
+      "dmg_avg": 234523,
+      "dmg_stddev": 186990,
+      "dmg_min": 76486,
+      "dmg_max": 503577,
+      "window_length_s": 4.1,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 96045,
+          "min_damage": 76486,
+          "max_damage": 161726,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 402.8,
+      "dmg_avg": 427896,
+      "dmg_stddev": 212991,
       "dmg_min": 97477,
       "dmg_max": 712338,
       "window_length_s": 7.4,
@@ -156,14 +215,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 214206,
+          "avg_damage": 219846,
           "min_damage": 86814,
           "max_damage": 478881,
           "count": 6
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 185042,
+          "avg_damage": 177439,
           "min_damage": 97477,
           "max_damage": 236320,
           "count": 9
@@ -180,13 +239,13 @@
     },
     {
       "spell_id": 264735,
-      "avg_uses": 3.7,
+      "avg_uses": 4,
       "min_uses": 1,
       "max_uses": 7
     },
     {
       "spell_id": 109304,
-      "avg_uses": 1.7,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -243,11 +302,15 @@
       "icon": "inv_misc_starspecklemushroom",
       "name": "Bursting Shroom"
     },
+    "1222088": {
+      "icon": "ability_creature_poison_04",
+      "name": "Festering Vines"
+    },
     "1222284": {
       "icon": "ability_creature_poison_06",
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "27c9514458df24d3",
+  "source_signature": "1a652156e065917a",
   "ingest_version": 1
 }

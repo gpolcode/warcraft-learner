@@ -6,41 +6,34 @@
   "per_defensive_benchmarks": {
     "Feint": {
       "sample_count": 6,
-      "avg_first_cast_s": 94.9,
-      "stddev_first_cast_s": 46.9,
-      "avg_gap_s": 43.2,
-      "stddev_gap_s": 36.3,
-      "hold_targets": {
-        "1": {
-          "target_s": 215.9,
-          "stddev_s": 66.5,
-          "count": 3,
-          "total_samples": 6
-        }
-      },
-      "avg_uses": 3.3,
-      "avg_uses_per_min": 0.77,
+      "avg_first_cast_s": 114.9,
+      "stddev_first_cast_s": 51.5,
+      "avg_gap_s": 48.7,
+      "stddev_gap_s": 42.4,
+      "hold_targets": {},
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.773,
-        "stddev": 0.493,
-        "min": 0.288,
-        "max": 1.504
+        "avg": 0.561,
+        "stddev": 0.375,
+        "min": 0.235,
+        "max": 1.276
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Cloak of Shadows": {
-      "sample_count": 3,
-      "avg_first_cast_s": 208.7,
-      "stddev_first_cast_s": 74.3,
+      "sample_count": 2,
+      "avg_first_cast_s": 165.9,
+      "stddev_first_cast_s": 6.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.23,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.232,
-        "stddev": 0.053,
-        "min": 0.171,
+        "avg": 0.263,
+        "stddev": 0.011,
+        "min": 0.255,
         "max": 0.27
       },
       "majority_hold": false
@@ -65,10 +58,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 103,
-      "dmg_avg": 242326,
-      "dmg_stddev": 49711,
-      "dmg_min": 172696,
+      "time_s": 102.1,
+      "dmg_avg": 256252,
+      "dmg_stddev": 40429,
+      "dmg_min": 213892,
       "dmg_max": 321466,
       "window_length_s": 6,
       "defensive_name": "Feint",
@@ -83,10 +76,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 189256,
-          "min_damage": 172696,
+          "avg_damage": 194776,
+          "min_damage": 181845,
           "max_damage": 213892,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1285504,
@@ -96,47 +89,14 @@
           "count": 4
         }
       ]
-    },
-    {
-      "time_s": 212.6,
-      "dmg_avg": 351776,
-      "dmg_stddev": 151711,
-      "dmg_min": 207464,
-      "dmg_max": 555727,
-      "window_length_s": 6,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1285504,
-          "avg_damage": 338290,
-          "min_damage": 231997,
-          "max_damage": 444582,
-          "count": 2
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 129984,
-          "min_damage": 111145,
-          "max_damage": 139613,
-          "count": 3
-        }
-      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 1966,
-      "avg_uses": 3.3,
+      "avg_uses": 2.2,
       "min_uses": 1,
-      "max_uses": 8
+      "max_uses": 5
     },
     {
       "spell_id": 31224,
@@ -208,10 +168,6 @@
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
     },
-    "1250686": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Twisting Obscurity"
-    },
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
@@ -221,6 +177,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "6ebe3655d6e75a2f",
+  "source_signature": "b4dcc4ce0564742e",
   "ingest_version": 1
 }

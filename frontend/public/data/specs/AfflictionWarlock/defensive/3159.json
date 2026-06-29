@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 8,
-      "avg_first_cast_s": 303.9,
-      "stddev_first_cast_s": 106.3,
+      "avg_first_cast_s": 336.8,
+      "stddev_first_cast_s": 106.9,
       "avg_gap_s": 136.1,
       "stddev_gap_s": 1.3,
       "hold_targets": {},
@@ -16,121 +16,67 @@
       "uses_per_min": {
         "avg": 0.174,
         "stddev": 0.11,
-        "min": 0.116,
+        "min": 0.117,
         "max": 0.445
       },
       "majority_hold": false
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 120.5,
-      "stddev_first_cast_s": 89.1,
-      "avg_gap_s": 119,
-      "stddev_gap_s": 62.6,
+      "avg_first_cast_s": 136.6,
+      "stddev_first_cast_s": 76.4,
+      "avg_gap_s": 122,
+      "stddev_gap_s": 76.5,
       "hold_targets": {
         "1": {
-          "target_s": 255.9,
-          "stddev_s": 106,
-          "count": 7,
+          "target_s": 316,
+          "stddev_s": 79.4,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
-          "target_s": 340,
-          "stddev_s": 105.9,
-          "count": 6,
+          "target_s": 379.9,
+          "stddev_s": 74.7,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.43,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.43,
-        "stddev": 0.161,
+        "avg": 0.402,
+        "stddev": 0.129,
         "min": 0.119,
-        "max": 0.665
+        "max": 0.593
       },
       "majority_hold": true
     },
     "Mortal Coil": {
       "sample_count": 3,
-      "avg_first_cast_s": 143.4,
-      "stddev_first_cast_s": 56.1,
-      "avg_gap_s": 190.7,
-      "stddev_gap_s": 71.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 332,
-          "stddev_s": 110.1,
-          "count": 2,
-          "total_samples": 3
-        }
-      },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.26,
+      "avg_first_cast_s": 253.4,
+      "stddev_first_cast_s": 147.8,
+      "avg_gap_s": 271.6,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.262,
-        "stddev": 0.144,
-        "min": 0.131,
-        "max": 0.416
+        "avg": 0.166,
+        "stddev": 0.062,
+        "min": 0.13,
+        "max": 0.238
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 63.7,
-      "dmg_avg": 372832,
-      "dmg_stddev": 72123,
-      "dmg_min": 301804,
-      "dmg_max": 473178,
-      "window_length_s": 9.2,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1222088,
-          "avg_damage": 167647,
-          "min_damage": 164168,
-          "max_damage": 171126,
-          "count": 2
-        },
-        {
-          "spell_id": 1222122,
-          "avg_damage": 161362,
-          "min_damage": 158013,
-          "max_damage": 164710,
-          "count": 2
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 126464,
-          "min_damage": 16427,
-          "max_damage": 292546,
-          "count": 4
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 4151,
-          "min_damage": 388,
-          "max_damage": 9258,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 119,
-      "dmg_avg": 367864,
-      "dmg_stddev": 46365,
+      "time_s": 118.7,
+      "dmg_avg": 406123,
+      "dmg_stddev": 81570,
       "dmg_min": 305762,
-      "dmg_max": 412107,
-      "window_length_s": 1.7,
+      "dmg_max": 514814,
+      "window_length_s": 2.6,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -143,34 +89,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 338966,
+          "avg_damage": 364632,
           "min_damage": 291926,
-          "max_damage": 367926,
-          "count": 4
+          "max_damage": 452565,
+          "count": 5
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 28242,
+          "avg_damage": 40514,
           "min_damage": 13587,
-          "max_damage": 43467,
-          "count": 4
+          "max_damage": 71753,
+          "count": 5
         },
         {
           "spell_id": 387846,
-          "avg_damage": 657,
+          "avg_damage": 977,
           "min_damage": 249,
-          "max_damage": 1044,
-          "count": 4
+          "max_damage": 2042,
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 232.7,
-      "dmg_avg": 378629,
-      "dmg_stddev": 91427,
-      "dmg_min": 276949,
-      "dmg_max": 509596,
-      "window_length_s": 3.4,
+      "time_s": 254.5,
+      "dmg_avg": 412505,
+      "dmg_stddev": 51162,
+      "dmg_min": 355701,
+      "dmg_max": 480087,
+      "window_length_s": 1.9,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -181,145 +127,25 @@
       ],
       "ref_game_id": 238693,
       "ability_breakdown": [
-        {
-          "spell_id": 1222284,
-          "avg_damage": 118586,
-          "min_damage": 60889,
-          "max_damage": 245294,
-          "count": 5
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 1704,
-          "min_damage": 781,
-          "max_damage": 3348,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 269.6,
-      "dmg_avg": 427695,
-      "dmg_stddev": 168155,
-      "dmg_min": 249132,
-      "dmg_max": 615552,
-      "window_length_s": 8,
-      "defensive_name": "Unending Resolve",
-      "spell_id": 104773,
-      "common_defensives": [
-        "Unending Resolve"
-      ],
-      "common_cds": [
-        "Unending Resolve"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221965,
-          "avg_damage": 195558,
-          "min_damage": 149857,
-          "max_damage": 246389,
-          "count": 3
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 162062,
-          "min_damage": 119241,
-          "max_damage": 196824,
-          "count": 4
-        },
         {
           "spell_id": 1221637,
-          "avg_damage": 114482,
-          "min_damage": 48058,
-          "max_damage": 178140,
+          "avg_damage": 254897,
+          "min_damage": 57791,
+          "max_damage": 353241,
           "count": 4
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 4482,
-          "min_damage": 3741,
-          "max_damage": 5721,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 369.7,
-      "dmg_avg": 415629,
-      "dmg_stddev": 35163,
-      "dmg_min": 374294,
-      "dmg_max": 469547,
-      "window_length_s": 4.1,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1222284,
-          "avg_damage": 187207,
-          "min_damage": 88303,
-          "max_damage": 371507,
-          "count": 5
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 2072,
-          "min_damage": 424,
-          "max_damage": 3321,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 412.4,
-      "dmg_avg": 462604,
-      "dmg_stddev": 35249,
-      "dmg_min": 437422,
-      "dmg_max": 513282,
-      "window_length_s": 3.2,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221965,
-          "avg_damage": 246850,
-          "min_damage": 181106,
-          "max_damage": 312594,
-          "count": 2
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 144192,
-          "min_damage": 86776,
-          "max_damage": 214101,
+          "avg_damage": 76736,
+          "min_damage": 29585,
+          "max_damage": 125601,
           "count": 4
         },
         {
-          "spell_id": 1221637,
-          "avg_damage": 127064,
-          "min_damage": 113003,
-          "max_damage": 141125,
-          "count": 2
-        },
-        {
           "spell_id": 387846,
-          "avg_damage": 2651,
-          "min_damage": 909,
-          "max_damage": 4118,
+          "avg_damage": 941,
+          "min_damage": 556,
+          "max_damage": 1245,
           "count": 4
         }
       ]
@@ -334,15 +160,15 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 3.2,
+      "avg_uses": 3,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 4
     },
     {
       "spell_id": 6789,
-      "avg_uses": 2,
+      "avg_uses": 1.3,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -410,23 +236,11 @@
       "icon": "inv_misc_herb_plaguebloom",
       "name": "Fungal Bloom"
     },
-    "1221965": {
-      "icon": "inv_misc_starspecklemushroom",
-      "name": "Bursting Shroom"
-    },
-    "1222088": {
-      "icon": "ability_creature_poison_04",
-      "name": "Festering Vines"
-    },
-    "1222122": {
-      "icon": "ability_creature_poison_04",
-      "name": "Festering Vines"
-    },
     "1222284": {
       "icon": "ability_creature_poison_06",
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "d94e410ebd9f4307",
+  "source_signature": "31a23ee3f880928c",
   "ingest_version": 1
 }
