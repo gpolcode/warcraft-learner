@@ -6,64 +6,64 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 185.5,
-      "stddev_first_cast_s": 99.6,
-      "avg_gap_s": 189.3,
-      "stddev_gap_s": 67.5,
+      "avg_first_cast_s": 187.3,
+      "stddev_first_cast_s": 98.4,
+      "avg_gap_s": 189.9,
+      "stddev_gap_s": 75.6,
       "hold_targets": {
         "1": {
           "target_s": 331,
-          "stddev_s": 78.1,
+          "stddev_s": 73.6,
           "count": 4,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.229,
-        "stddev": 0.105,
+        "avg": 0.221,
+        "stddev": 0.094,
         "min": 0.129,
-        "max": 0.386
+        "max": 0.374
       },
       "majority_hold": false
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 206,
-      "stddev_first_cast_s": 83,
-      "avg_gap_s": 246.6,
-      "stddev_gap_s": 34.1,
+      "avg_first_cast_s": 191.1,
+      "stddev_first_cast_s": 83.9,
+      "avg_gap_s": 256.1,
+      "stddev_gap_s": 25.3,
       "hold_targets": {
         "1": {
-          "target_s": 403.4,
-          "stddev_s": 36,
-          "count": 7,
+          "target_s": 397.3,
+          "stddev_s": 33.9,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.24,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.236,
-        "stddev": 0.063,
+        "avg": 0.226,
+        "stddev": 0.067,
         "min": 0.129,
         "max": 0.295
       },
       "majority_hold": true
     },
     "Healing Tide Totem": {
-      "sample_count": 4,
-      "avg_first_cast_s": 98.7,
-      "stddev_first_cast_s": 44.6,
-      "avg_gap_s": 141.1,
-      "stddev_gap_s": 17,
+      "sample_count": 3,
+      "avg_first_cast_s": 91.7,
+      "stddev_first_cast_s": 51.9,
+      "avg_gap_s": 143.5,
+      "stddev_gap_s": 19.4,
       "hold_targets": {},
       "avg_uses": 3,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.402,
-        "stddev": 0.023,
+        "avg": 0.407,
+        "stddev": 0.025,
         "min": 0.386,
         "max": 0.435
       },
@@ -72,10 +72,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 119.4,
-      "dmg_avg": 536240,
-      "dmg_stddev": 153790,
-      "dmg_min": 362400,
+      "time_s": 127.3,
+      "dmg_avg": 481309,
+      "dmg_stddev": 175587,
+      "dmg_min": 289521,
       "dmg_max": 798637,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
@@ -90,26 +90,40 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 353726,
-          "min_damage": 50134,
+          "avg_damage": 275219,
+          "min_damage": 45297,
           "max_damage": 694209,
           "count": 6
         },
         {
+          "spell_id": 1221965,
+          "avg_damage": 153610,
+          "min_damage": 125301,
+          "max_damage": 201839,
+          "count": 3
+        },
+        {
           "spell_id": 1222284,
-          "avg_damage": 98373,
-          "min_damage": 86360,
+          "avg_damage": 92742,
+          "min_damage": 68988,
           "max_damage": 105849,
           "count": 6
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 73086,
+          "min_damage": 49935,
+          "max_damage": 86612,
+          "count": 3
         }
       ]
     },
     {
-      "time_s": 269.3,
-      "dmg_avg": 506313,
-      "dmg_stddev": 150909,
-      "dmg_min": 311417,
-      "dmg_max": 676486,
+      "time_s": 269.8,
+      "dmg_avg": 413175,
+      "dmg_stddev": 123315,
+      "dmg_min": 303933,
+      "dmg_max": 541818,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -123,24 +137,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 181434,
-          "min_damage": 135953,
+          "avg_damage": 165875,
+          "min_damage": 132507,
           "max_damage": 209035,
           "count": 4
         },
         {
-          "spell_id": 1221637,
-          "avg_damage": 164211,
-          "min_damage": 30471,
-          "max_damage": 481744,
-          "count": 4
-        },
-        {
           "spell_id": 1221965,
-          "avg_damage": 146691,
+          "avg_damage": 137011,
           "min_damage": 96346,
           "max_damage": 181216,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1222278,
@@ -148,6 +155,13 @@
           "min_damage": 39770,
           "max_damage": 162832,
           "count": 2
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 59638,
+          "min_damage": 30471,
+          "max_damage": 79118,
+          "count": 4
         }
       ]
     },
@@ -195,13 +209,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 98008,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -273,6 +287,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "38e78e17849d11bf",
-  "ingest_version": 0
+  "source_signature": "737261d19f6b279b",
+  "ingest_version": 1
 }

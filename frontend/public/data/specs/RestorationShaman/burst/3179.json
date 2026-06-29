@@ -5,6 +5,142 @@
   "sample_count": 10,
   "windows": [
     {
+      "time_s": 27.5,
+      "dmg_avg": 642168,
+      "dmg_stddev": 166221,
+      "dmg_min": 478133,
+      "dmg_max": 872646,
+      "common_cds": [
+        "Spiritwalker's Grace"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 13.8,
+      "ability_breakdown": [
+        {
+          "spell_id": 285452,
+          "avg_damage": 225843,
+          "min_damage": 136896,
+          "max_damage": 315340,
+          "count": 4,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 202087,
+          "min_damage": 138916,
+          "max_damage": 258380,
+          "count": 3,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 378597,
+          "avg_damage": 143304,
+          "min_damage": 45653,
+          "max_damage": 237276,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 188389,
+          "avg_damage": 65738,
+          "min_damage": 50789,
+          "max_damage": 92525,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1286970,
+          "avg_damage": 4462,
+          "min_damage": 3325,
+          "max_damage": 6642,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1264948,
+          "avg_damage": 3568,
+          "min_damage": 3559,
+          "max_damage": 3576,
+          "count": 2,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
+      "time_s": 66.1,
+      "dmg_avg": 593318,
+      "dmg_stddev": 333627,
+      "dmg_min": 327605,
+      "dmg_max": 1070188,
+      "common_cds": [
+        "Spiritwalker's Grace"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 17.5,
+      "ability_breakdown": [
+        {
+          "spell_id": 188443,
+          "avg_damage": 271555,
+          "min_damage": 133119,
+          "max_damage": 409990,
+          "count": 2,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 378597,
+          "avg_damage": 185986,
+          "min_damage": 49578,
+          "max_damage": 286789,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 127467,
+          "min_damage": 48502,
+          "max_damage": 197573,
+          "count": 3,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188389,
+          "avg_damage": 50157,
+          "min_damage": 34809,
+          "max_damage": 59166,
+          "count": 3,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1264948,
+          "avg_damage": 5619,
+          "min_damage": 5483,
+          "max_damage": 5754,
+          "count": 2,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 972,
+          "min_damage": 253,
+          "max_damage": 2151,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
       "time_s": 104.3,
       "dmg_avg": 867946,
       "dmg_stddev": 394781,
@@ -23,7 +159,8 @@
           "min_damage": 132300,
           "max_damage": 538975,
           "count": 6,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 188196,
@@ -31,7 +168,8 @@
           "min_damage": 39474,
           "max_damage": 542966,
           "count": 5,
-          "avg_casts": 3
+          "avg_casts": 3,
+          "is_passive": false
         },
         {
           "spell_id": 378597,
@@ -39,7 +177,8 @@
           "min_damage": 106825,
           "max_damage": 275188,
           "count": 6,
-          "avg_casts": 0
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 188389,
@@ -47,7 +186,8 @@
           "min_damage": 32896,
           "max_damage": 64715,
           "count": 6,
-          "avg_casts": 1
+          "avg_casts": 1,
+          "is_passive": false
         }
       ]
     }
@@ -62,6 +202,10 @@
     "Astral Shift": 108271
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "79206": {
       "icon": "spell_shaman_spiritwalkersgrace",
       "name": "Spiritwalker's Grace"
@@ -90,6 +234,10 @@
       "icon": "spell_fire_flameshock",
       "name": "Flame Shock"
     },
+    "188443": {
+      "icon": "spell_nature_chainlightning",
+      "name": "Chain Lightning"
+    },
     "285452": {
       "icon": "spell_shaman_lavaburst",
       "name": "Lava Burst"
@@ -105,8 +253,16 @@
     "443454": {
       "icon": "inv_ability_farseershaman_ancestralswiftness",
       "name": "Ancestral Swiftness"
+    },
+    "1264948": {
+      "icon": "inv_12_trinket_raid_darkwelle_healer3_cosmiccrescendo",
+      "name": "Cosmic Crescendo"
+    },
+    "1286970": {
+      "icon": "inv_summerfest_firespirit",
+      "name": "Rune of Unleashed Fire"
     }
   },
-  "source_signature": "e6c7c28c99be47e3",
-  "ingest_version": 0
+  "source_signature": "461f24d927b6b244",
+  "ingest_version": 1
 }

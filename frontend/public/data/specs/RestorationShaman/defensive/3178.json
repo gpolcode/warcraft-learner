@@ -6,38 +6,38 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 151.5,
-      "stddev_first_cast_s": 80.2,
-      "avg_gap_s": 128.2,
-      "stddev_gap_s": 37.9,
+      "avg_first_cast_s": 144.2,
+      "stddev_first_cast_s": 80.4,
+      "avg_gap_s": 142.3,
+      "stddev_gap_s": 41.6,
       "hold_targets": {
         "1": {
-          "target_s": 295.6,
-          "stddev_s": 43.4,
-          "count": 5,
+          "target_s": 294.8,
+          "stddev_s": 40,
+          "count": 6,
           "total_samples": 10
         }
       },
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.29,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.295,
-        "stddev": 0.097,
+        "avg": 0.296,
+        "stddev": 0.1,
         "min": 0.148,
-        "max": 0.423
+        "max": 0.446
       },
       "majority_hold": true
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 136.3,
-      "stddev_first_cast_s": 95.6,
-      "avg_gap_s": 224.3,
-      "stddev_gap_s": 39.7,
+      "avg_first_cast_s": 131.3,
+      "stddev_first_cast_s": 92.8,
+      "avg_gap_s": 223.1,
+      "stddev_gap_s": 40,
       "hold_targets": {
         "1": {
           "target_s": 308.4,
-          "stddev_s": 53.2,
+          "stddev_s": 32.2,
           "count": 5,
           "total_samples": 10
         }
@@ -70,62 +70,7 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 304.2,
-      "dmg_avg": 536705,
-      "dmg_stddev": 258555,
-      "dmg_min": 267224,
-      "dmg_max": 939504,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250071,
-          "avg_damage": 263318,
-          "min_damage": 120397,
-          "max_damage": 413187,
-          "count": 4
-        },
-        {
-          "spell_id": 1285954,
-          "avg_damage": 142513,
-          "min_damage": 68621,
-          "max_damage": 252483,
-          "count": 3
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 103303,
-          "min_damage": 98335,
-          "max_damage": 110475,
-          "count": 3
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 100291,
-          "min_damage": 73931,
-          "max_damage": 110341,
-          "count": 4
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 41077,
-          "min_damage": 11768,
-          "max_damage": 70616,
-          "count": 3
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -189,28 +134,8 @@
     "108280": {
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
-    },
-    "1245175": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Voidbolt"
-    },
-    "1245302": {
-      "icon": "inv_cosmicvoid_orb",
-      "name": "Void Howl"
-    },
-    "1250071": {
-      "icon": "inv_cosmicdragonmount",
-      "name": "Midnight Flames"
-    },
-    "1259275": {
-      "icon": "inv_cosmicvoid_buff",
-      "name": "Midnight Manifestation"
-    },
-    "1285954": {
-      "icon": "spell_priest_void-blast",
-      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "41c90b0deeee7c13",
-  "ingest_version": 0
+  "source_signature": "2268fbdc1a7e71b6",
+  "ingest_version": 1
 }

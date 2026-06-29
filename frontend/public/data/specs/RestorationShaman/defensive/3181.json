@@ -4,10 +4,34 @@
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Spirit Link Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 71.8,
+      "stddev_first_cast_s": 124.7,
+      "avg_gap_s": 288,
+      "stddev_gap_s": 97.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 416.3,
+          "stddev_s": 25.8,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.272,
+        "stddev": 0.071,
+        "min": 0.137,
+        "max": 0.37
+      },
+      "majority_hold": true
+    },
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 213.1,
-      "stddev_first_cast_s": 148.5,
+      "avg_first_cast_s": 213,
+      "stddev_first_cast_s": 148.3,
       "avg_gap_s": 237.4,
       "stddev_gap_s": 104,
       "hold_targets": {
@@ -21,36 +45,12 @@
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.194,
-        "stddev": 0.083,
-        "min": 0.129,
+        "avg": 0.193,
+        "stddev": 0.084,
+        "min": 0.118,
         "max": 0.368
       },
       "majority_hold": false
-    },
-    "Spirit Link Totem": {
-      "sample_count": 10,
-      "avg_first_cast_s": 75,
-      "stddev_first_cast_s": 123,
-      "avg_gap_s": 311.6,
-      "stddev_gap_s": 93.2,
-      "hold_targets": {
-        "1": {
-          "target_s": 403.5,
-          "stddev_s": 76.8,
-          "count": 8,
-          "total_samples": 10
-        }
-      },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.26,
-      "uses_per_min": {
-        "avg": 0.262,
-        "stddev": 0.064,
-        "min": 0.137,
-        "max": 0.37
-      },
-      "majority_hold": true
     }
   },
   "defensive_windows": [],
@@ -63,7 +63,7 @@
     },
     {
       "spell_id": 98008,
-      "avg_uses": 2.1,
+      "avg_uses": 2.2,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -113,6 +113,6 @@
       "name": "Healing Tide Totem"
     }
   },
-  "source_signature": "755a045c0bfd5f78",
-  "ingest_version": 0
+  "source_signature": "7bf876f40a389386",
+  "ingest_version": 1
 }

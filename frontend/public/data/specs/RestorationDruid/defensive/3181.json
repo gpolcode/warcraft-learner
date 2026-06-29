@@ -6,23 +6,23 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 218.5,
-      "stddev_first_cast_s": 144.6,
-      "avg_gap_s": 122.9,
-      "stddev_gap_s": 74.1,
+      "avg_first_cast_s": 230.1,
+      "stddev_first_cast_s": 130.2,
+      "avg_gap_s": 120.8,
+      "stddev_gap_s": 71.5,
       "hold_targets": {
         "1": {
-          "target_s": 301.6,
-          "stddev_s": 93.1,
-          "count": 4,
+          "target_s": 359.2,
+          "stddev_s": 85.3,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.3,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.298,
-        "stddev": 0.161,
+        "avg": 0.288,
+        "stddev": 0.153,
         "min": 0.128,
         "max": 0.535
       },
@@ -30,25 +30,25 @@
     },
     "Ironbark": {
       "sample_count": 8,
-      "avg_first_cast_s": 218.5,
-      "stddev_first_cast_s": 137.9,
-      "avg_gap_s": 273.5,
-      "stddev_gap_s": 112.2,
+      "avg_first_cast_s": 193,
+      "stddev_first_cast_s": 145.6,
+      "avg_gap_s": 253.1,
+      "stddev_gap_s": 112.6,
       "hold_targets": {
         "1": {
-          "target_s": 431.4,
-          "stddev_s": 116.3,
+          "target_s": 362.3,
+          "stddev_s": 104.8,
           "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.19,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.188,
-        "stddev": 0.062,
+        "avg": 0.205,
+        "stddev": 0.088,
         "min": 0.122,
-        "max": 0.267
+        "max": 0.363
       },
       "majority_hold": false
     }
@@ -56,8 +56,8 @@
   "defensive_windows": [
     {
       "time_s": 358.2,
-      "dmg_avg": 527224,
-      "dmg_stddev": 84147,
+      "dmg_avg": 507979,
+      "dmg_stddev": 98308,
       "dmg_min": 418732,
       "dmg_max": 609004,
       "window_length_s": 12,
@@ -80,16 +80,16 @@
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 212727,
-          "min_damage": 188612,
-          "max_damage": 231655,
+          "avg_damage": 196277,
+          "min_damage": 165852,
+          "max_damage": 219549,
           "count": 4
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 101230,
-          "min_damage": 36227,
-          "max_damage": 166233,
+          "avg_damage": 181060,
+          "min_damage": 166233,
+          "max_damage": 195887,
           "count": 2
         }
       ]
@@ -133,67 +133,20 @@
           "count": 4
         }
       ]
-    },
-    {
-      "time_s": 470.2,
-      "dmg_avg": 893790,
-      "dmg_stddev": 271198,
-      "dmg_min": 533839,
-      "dmg_max": 1192379,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240430,
-      "ability_breakdown": [
-        {
-          "spell_id": 1260027,
-          "avg_damage": 387892,
-          "min_damage": 372929,
-          "max_damage": 402855,
-          "count": 2
-        },
-        {
-          "spell_id": 1239095,
-          "avg_damage": 261945,
-          "min_damage": 118474,
-          "max_damage": 427768,
-          "count": 4
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 239970,
-          "min_damage": 187213,
-          "max_damage": 279866,
-          "count": 4
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 224222,
-          "min_damage": 212271,
-          "max_damage": 232243,
-          "count": 3
-        }
-      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -261,15 +214,11 @@
       "icon": "spell_holy_circleofrenewal_shadow",
       "name": "Gravity Collapse"
     },
-    "1260027": {
-      "icon": "inv_shadowelementalmount",
-      "name": "Grasp of Emptiness"
-    },
     "1261289": {
       "icon": "inv_cosmicvoid_buff",
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "ce011cf98941a321",
-  "ingest_version": 0
+  "source_signature": "2bc13fdf848992b0",
+  "ingest_version": 1
 }

@@ -6,47 +6,47 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 158.5,
-      "stddev_first_cast_s": 65.5,
-      "avg_gap_s": 144.3,
-      "stddev_gap_s": 34.6,
+      "avg_first_cast_s": 154,
+      "stddev_first_cast_s": 55.8,
+      "avg_gap_s": 140.8,
+      "stddev_gap_s": 37.4,
       "hold_targets": {
         "1": {
-          "target_s": 299.8,
-          "stddev_s": 53.8,
-          "count": 9,
+          "target_s": 248.1,
+          "stddev_s": 28.7,
+          "count": 8,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.33,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.329,
-        "stddev": 0.086,
-        "min": 0.148,
+        "avg": 0.309,
+        "stddev": 0.103,
+        "min": 0.144,
         "max": 0.446
       },
       "majority_hold": true
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 81.6,
-      "stddev_first_cast_s": 108.4,
-      "avg_gap_s": 201.1,
-      "stddev_gap_s": 30.5,
+      "avg_first_cast_s": 63.2,
+      "stddev_first_cast_s": 108.7,
+      "avg_gap_s": 196.3,
+      "stddev_gap_s": 27,
       "hold_targets": {
-        "1": {
-          "target_s": 332.6,
-          "stddev_s": 31.1,
-          "count": 4,
+        "2": {
+          "target_s": 398.5,
+          "stddev_s": 6.1,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.37,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.374,
-        "stddev": 0.105,
+        "avg": 0.397,
+        "stddev": 0.099,
         "min": 0.154,
         "max": 0.469
       },
@@ -55,9 +55,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 142.9,
-      "dmg_avg": 353494,
-      "dmg_stddev": 83197,
+      "time_s": 143.8,
+      "dmg_avg": 333328,
+      "dmg_stddev": 71774,
       "dmg_min": 259957,
       "dmg_max": 444667,
       "window_length_s": 12,
@@ -73,14 +73,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1249024,
-          "avg_damage": 193906,
+          "avg_damage": 202271,
           "min_damage": 134398,
           "max_damage": 295997,
           "count": 6
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 91393,
+          "avg_damage": 91988,
           "min_damage": 80874,
           "max_damage": 97434,
           "count": 6
@@ -88,9 +88,9 @@
       ]
     },
     {
-      "time_s": 247.6,
-      "dmg_avg": 351410,
-      "dmg_stddev": 52328,
+      "time_s": 247,
+      "dmg_avg": 361399,
+      "dmg_stddev": 46027,
       "dmg_min": 279328,
       "dmg_max": 422786,
       "window_length_s": 12,
@@ -106,64 +106,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1249024,
-          "avg_damage": 205376,
+          "avg_damage": 209200,
           "min_damage": 174386,
-          "max_damage": 222541,
-          "count": 4
+          "max_damage": 223185,
+          "count": 6
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 118799,
+          "avg_damage": 119430,
           "min_damage": 113753,
-          "max_damage": 124007,
-          "count": 5
+          "max_damage": 125474,
+          "count": 7
         },
         {
           "spell_id": 1255739,
-          "avg_damage": 59614,
+          "avg_damage": 55175,
           "min_damage": 19173,
           "max_damage": 81221,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 301.5,
-      "dmg_avg": 441751,
-      "dmg_stddev": 132404,
-      "dmg_min": 318963,
-      "dmg_max": 638919,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 257759,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249024,
-          "avg_damage": 195657,
-          "min_damage": 169674,
-          "max_damage": 222410,
-          "count": 4
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 136407,
-          "min_damage": 129489,
-          "max_damage": 145970,
           "count": 5
-        },
-        {
-          "spell_id": 1246749,
-          "avg_damage": 109896,
-          "min_damage": 108135,
-          "max_damage": 113396,
-          "count": 3
         }
       ]
     }
@@ -171,13 +131,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.1,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 98008,
-      "avg_uses": 2.4,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -226,10 +186,6 @@
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
     },
-    "1246749": {
-      "icon": "ability_bastion_paladin",
-      "name": "Sacred Toll"
-    },
     "1249024": {
       "icon": "spell_paladin_executionsentence",
       "name": "Execution Sentence"
@@ -243,6 +199,6 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "87f35f003dbfedea",
-  "ingest_version": 0
+  "source_signature": "d0f9f3ef30691efe",
+  "ingest_version": 1
 }

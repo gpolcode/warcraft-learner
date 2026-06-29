@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Astral Shift": {
-      "sample_count": 8,
-      "avg_first_cast_s": 86.4,
-      "stddev_first_cast_s": 26.5,
+      "sample_count": 7,
+      "avg_first_cast_s": 77.3,
+      "stddev_first_cast_s": 30,
       "avg_gap_s": 103.5,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
-      "avg_uses_per_min": 0.36,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.364,
-        "stddev": 0.209,
+        "avg": 0.387,
+        "stddev": 0.215,
         "min": 0.196,
         "max": 0.808
       },
@@ -23,74 +23,40 @@
     },
     "Spirit Link Totem": {
       "sample_count": 9,
-      "avg_first_cast_s": 111.2,
-      "stddev_first_cast_s": 37.9,
-      "avg_gap_s": 233.7,
-      "stddev_gap_s": 32.7,
+      "avg_first_cast_s": 118.3,
+      "stddev_first_cast_s": 36.1,
+      "avg_gap_s": 256.8,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.355,
-        "stddev": 0.094,
-        "min": 0.196,
+        "avg": 0.331,
+        "stddev": 0.106,
+        "min": 0.191,
         "max": 0.447
       },
       "majority_hold": false
     },
     "Healing Tide Totem": {
-      "sample_count": 2,
-      "avg_first_cast_s": 69.4,
-      "stddev_first_cast_s": 1.7,
+      "sample_count": 1,
+      "avg_first_cast_s": 68.2,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.41,
-        "stddev": 0.002,
-        "min": 0.408,
+        "avg": 0.411,
+        "stddev": 0,
+        "min": 0.411,
         "max": 0.411
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 75,
-      "dmg_avg": 289055,
-      "dmg_stddev": 170632,
-      "dmg_min": 120632,
-      "dmg_max": 469825,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 245569,
-      "ability_breakdown": [
-        {
-          "spell_id": 1273112,
-          "avg_damage": 368333,
-          "min_damage": 337638,
-          "max_damage": 399027,
-          "count": 2
-        },
-        {
-          "spell_id": 1246653,
-          "avg_damage": 65277,
-          "min_damage": 59755,
-          "max_damage": 70798,
-          "count": 2
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -100,7 +66,7 @@
     },
     {
       "spell_id": 98008,
-      "avg_uses": 1.2,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -154,16 +120,8 @@
     "108280": {
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
-    },
-    "1246653": {
-      "icon": "inv_ability_poison_orb",
-      "name": "Caustic Phlegm"
-    },
-    "1273112": {
-      "icon": "spell_deathknight_gnaw_ghoul",
-      "name": "Consume"
     }
   },
-  "source_signature": "57c9a0be933db702",
-  "ingest_version": 0
+  "source_signature": "ae54f51742dc7f52",
+  "ingest_version": 1
 }

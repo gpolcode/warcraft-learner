@@ -3,57 +3,57 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 564.5,
-  "downtime_threshold_ms": 2182,
-  "top_avg_efficiency": 71.8,
+  "avg_duration_s": 556.5,
+  "downtime_threshold_ms": 2176,
+  "top_avg_efficiency": 71.7,
   "top_efficiency_stddev": 8.3,
   "per_cd_benchmarks": {
     "Tranquility": {
       "sample_count": 10,
-      "avg_first_cast_s": 29.6,
-      "stddev_first_cast_s": 30.6,
-      "avg_gap_s": 207.1,
-      "stddev_gap_s": 34.6,
-      "avg_bl_offset_s": 28.8,
-      "stddev_bl_offset_s": 21.3,
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.29,
+      "avg_first_cast_s": 30.2,
+      "stddev_first_cast_s": 29.7,
+      "avg_gap_s": 209.7,
+      "stddev_gap_s": 35.4,
+      "avg_bl_offset_s": 23.4,
+      "stddev_bl_offset_s": 20.5,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.288,
-        "stddev": 0.075,
-        "min": 0.2,
+        "avg": 0.313,
+        "stddev": 0.063,
+        "min": 0.209,
         "max": 0.422
       },
-      "bl_pct": 30,
+      "bl_pct": 40,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 199.6,
-          "stddev_s": 49.1,
+          "target_s": 260.3,
+          "stddev_s": 46.5,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 433.5,
-          "stddev_s": 52.4,
-          "count": 5,
+          "target_s": 459.3,
+          "stddev_s": 54.9,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Convoke the Spirits": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.5,
-      "stddev_first_cast_s": 2.7,
-      "avg_gap_s": 66.5,
-      "stddev_gap_s": 9.2,
-      "avg_bl_offset_s": 2.4,
-      "stddev_bl_offset_s": 14.9,
-      "avg_uses": 9,
+      "avg_first_cast_s": 4.6,
+      "stddev_first_cast_s": 3,
+      "avg_gap_s": 66.8,
+      "stddev_gap_s": 8.5,
+      "avg_bl_offset_s": -0.8,
+      "stddev_bl_offset_s": 13.8,
+      "avg_uses": 8.9,
       "avg_uses_per_min": 0.96,
       "uses_per_min": {
-        "avg": 0.956,
-        "stddev": 0.03,
+        "avg": 0.96,
+        "stddev": 0.028,
         "min": 0.921,
         "max": 1.006
       },
@@ -83,17 +83,17 @@
     },
     "Innervate": {
       "sample_count": 10,
-      "avg_first_cast_s": 122.9,
-      "stddev_first_cast_s": 84.2,
-      "avg_gap_s": 241.3,
-      "stddev_gap_s": 66.4,
+      "avg_first_cast_s": 104.3,
+      "stddev_first_cast_s": 81.4,
+      "avg_gap_s": 237.2,
+      "stddev_gap_s": 73.7,
       "avg_bl_offset_s": 21.7,
       "stddev_bl_offset_s": 0,
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.2,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.225,
-        "stddev": 0.069,
+        "avg": 0.229,
+        "stddev": 0.073,
         "min": 0.104,
         "max": 0.346
       },
@@ -101,9 +101,9 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 392.1,
-          "stddev_s": 107.1,
-          "count": 6,
+          "target_s": 326.6,
+          "stddev_s": 91.1,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -286,6 +286,6 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "f9f391bbaa81f415",
-  "ingest_version": 0
+  "source_signature": "58e3b86f9f5f80bb",
+  "ingest_version": 1
 }

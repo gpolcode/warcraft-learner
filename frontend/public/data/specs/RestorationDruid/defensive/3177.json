@@ -5,58 +5,153 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 10,
-      "avg_first_cast_s": 93.6,
-      "stddev_first_cast_s": 74.1,
-      "avg_gap_s": 91.7,
-      "stddev_gap_s": 37.3,
+      "sample_count": 9,
+      "avg_first_cast_s": 89.4,
+      "stddev_first_cast_s": 77.3,
+      "avg_gap_s": 101.6,
+      "stddev_gap_s": 43.5,
       "hold_targets": {
         "1": {
-          "target_s": 130.1,
-          "stddev_s": 47.7,
-          "count": 5,
-          "total_samples": 10
+          "target_s": 158.4,
+          "stddev_s": 60.5,
+          "count": 6,
+          "total_samples": 9
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.44,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.437,
-        "stddev": 0.252,
+        "avg": 0.477,
+        "stddev": 0.244,
         "min": 0.201,
         "max": 0.877
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Ironbark": {
-      "sample_count": 3,
-      "avg_first_cast_s": 123.3,
-      "stddev_first_cast_s": 70.1,
+      "sample_count": 2,
+      "avg_first_cast_s": 144.9,
+      "stddev_first_cast_s": 83.7,
       "avg_gap_s": 98.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.349,
-        "stddev": 0.203,
+        "avg": 0.403,
+        "stddev": 0.254,
         "min": 0.224,
         "max": 0.583
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 147.4,
+      "dmg_avg": 305046,
+      "dmg_stddev": 114758,
+      "dmg_min": 200360,
+      "dmg_max": 412378,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241808,
+          "avg_damage": 222724,
+          "min_damage": 147769,
+          "max_damage": 297679,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 116160,
+          "min_damage": 102893,
+          "max_damage": 128076,
+          "count": 4
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 82386,
+          "min_damage": 81389,
+          "max_damage": 83383,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 205.9,
+      "dmg_avg": 416359,
+      "dmg_stddev": 156012,
+      "dmg_min": 275131,
+      "dmg_max": 583401,
+      "window_length_s": 10.9,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 159266,
+          "min_damage": 57227,
+          "max_damage": 302786,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 105822,
+          "min_damage": 65742,
+          "max_damage": 125303,
+          "count": 4
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 72956,
+          "min_damage": 72540,
+          "max_damage": 73372,
+          "count": 2
+        },
+        {
+          "spell_id": 1280101,
+          "avg_damage": 72525,
+          "min_damage": 58247,
+          "max_damage": 86802,
+          "count": 2
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 43053,
+          "min_damage": 27755,
+          "max_damage": 58350,
+          "count": 2
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 1.7,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -102,6 +197,10 @@
     "Ironbark": 102342
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "22812": {
       "icon": "spell_nature_stoneclawtotem",
       "name": "Barkskin"
@@ -117,8 +216,28 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
+    },
+    "1241808": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1280101": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Dark Energy"
     }
   },
-  "source_signature": "f6e11b441ee362af",
-  "ingest_version": 0
+  "source_signature": "3cac79a8d007b3de",
+  "ingest_version": 1
 }

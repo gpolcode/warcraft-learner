@@ -3,24 +3,24 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 342.6,
-  "downtime_threshold_ms": 2556,
+  "avg_duration_s": 342.1,
+  "downtime_threshold_ms": 2639,
   "top_avg_efficiency": 70.7,
   "top_efficiency_stddev": 9.2,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
-      "avg_first_cast_s": 63,
-      "stddev_first_cast_s": 45.7,
-      "avg_gap_s": 203.1,
+      "avg_first_cast_s": 61,
+      "stddev_first_cast_s": 44.6,
+      "avg_gap_s": 205,
       "stddev_gap_s": 12.6,
-      "avg_bl_offset_s": 28.1,
+      "avg_bl_offset_s": 28.2,
       "stddev_bl_offset_s": 16,
       "avg_uses": 1.7,
       "avg_uses_per_min": 0.3,
       "uses_per_min": {
         "avg": 0.333,
-        "stddev": 0.083,
+        "stddev": 0.082,
         "min": 0.148,
         "max": 0.42
       },
@@ -28,8 +28,8 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 244.2,
-          "stddev_s": 24,
+          "target_s": 245.4,
+          "stddev_s": 22.6,
           "count": 8,
           "total_samples": 10
         }
@@ -57,10 +57,10 @@
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 136.3,
-      "stddev_first_cast_s": 95.6,
-      "avg_gap_s": 224.2,
-      "stddev_gap_s": 39.7,
+      "avg_first_cast_s": 131.3,
+      "stddev_first_cast_s": 92.8,
+      "avg_gap_s": 223.1,
+      "stddev_gap_s": 40,
       "avg_bl_offset_s": 37.1,
       "stddev_bl_offset_s": 0,
       "avg_uses": 1.6,
@@ -76,7 +76,7 @@
       "hold_targets": {
         "2": {
           "target_s": 308.4,
-          "stddev_s": 53.2,
+          "stddev_s": 32.2,
           "count": 5,
           "total_samples": 10
         }
@@ -84,17 +84,17 @@
     },
     "Nature's Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 30.6,
-      "stddev_first_cast_s": 12.5,
-      "avg_gap_s": 70.5,
-      "stddev_gap_s": 15.6,
-      "avg_bl_offset_s": 28.9,
-      "stddev_bl_offset_s": 12.9,
-      "avg_uses": 4.9,
-      "avg_uses_per_min": 0.86,
+      "avg_first_cast_s": 28.5,
+      "stddev_first_cast_s": 15.5,
+      "avg_gap_s": 68.5,
+      "stddev_gap_s": 14.9,
+      "avg_bl_offset_s": 26.6,
+      "stddev_bl_offset_s": 15.9,
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.87,
       "uses_per_min": {
-        "avg": 0.856,
-        "stddev": 0.116,
+        "avg": 0.873,
+        "stddev": 0.119,
         "min": 0.636,
         "max": 1.02
       },
@@ -102,21 +102,27 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 172.7,
-          "stddev_s": 33.7,
+          "target_s": 168.7,
+          "stddev_s": 37.9,
           "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 239.3,
-          "stddev_s": 23.9,
+          "target_s": 232.7,
+          "stddev_s": 25.6,
           "count": 7,
           "total_samples": 10
         },
         "5": {
-          "target_s": 297.5,
-          "stddev_s": 36.3,
+          "target_s": 287,
+          "stddev_s": 37.3,
           "count": 7,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 336.5,
+          "stddev_s": 21.1,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -143,18 +149,18 @@
     },
     "Spiritwalker's Grace": {
       "sample_count": 10,
-      "avg_first_cast_s": 111.6,
-      "stddev_first_cast_s": 85.1,
-      "avg_gap_s": 73.1,
-      "stddev_gap_s": 57.4,
-      "avg_bl_offset_s": 37.1,
-      "stddev_bl_offset_s": 4,
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.44,
+      "avg_first_cast_s": 90.4,
+      "stddev_first_cast_s": 62.2,
+      "avg_gap_s": 67.2,
+      "stddev_gap_s": 51.6,
+      "avg_bl_offset_s": 36.8,
+      "stddev_bl_offset_s": 3.6,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.484,
-        "stddev": 0.381,
-        "min": 0.141,
+        "avg": 0.563,
+        "stddev": 0.398,
+        "min": 0.159,
         "max": 1.261
       },
       "bl_pct": 40,
@@ -193,7 +199,7 @@
       "spell_id": 378081,
       "cooldown": 60,
       "align_with_bloodlust": false,
-      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately. Spell ID is the talent Nature's Swiftness; verify at wowhead.com/spell=378081."
+      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately."
     },
     {
       "name": "Ancestral Swiftness",
@@ -201,7 +207,7 @@
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer; verify spell ID at wowhead.com/spell=443454."
+      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer."
     },
     {
       "name": "Spiritwalker's Grace",
@@ -309,6 +315,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "41c90b0deeee7c13",
-  "ingest_version": 0
+  "source_signature": "2268fbdc1a7e71b6",
+  "ingest_version": 1
 }

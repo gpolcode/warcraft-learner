@@ -6,60 +6,60 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 182,
-      "stddev_first_cast_s": 181.6,
-      "avg_gap_s": 140.9,
-      "stddev_gap_s": 51.7,
+      "avg_first_cast_s": 176.7,
+      "stddev_first_cast_s": 124.5,
+      "avg_gap_s": 138.6,
+      "stddev_gap_s": 50.9,
       "hold_targets": {
         "1": {
-          "target_s": 220.3,
-          "stddev_s": 52.9,
-          "count": 7,
+          "target_s": 327.4,
+          "stddev_s": 55.9,
+          "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 327,
-          "stddev_s": 99.6,
+          "target_s": 446.9,
+          "stddev_s": 131,
           "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.3,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.3,
-        "stddev": 0.119,
-        "min": 0.109,
+        "avg": 0.291,
+        "stddev": 0.088,
+        "min": 0.116,
         "max": 0.443
       },
       "majority_hold": true
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 104.5,
-      "stddev_first_cast_s": 28.7,
-      "avg_gap_s": 245.3,
-      "stddev_gap_s": 70.3,
+      "avg_first_cast_s": 92.8,
+      "stddev_first_cast_s": 27,
+      "avg_gap_s": 243,
+      "stddev_gap_s": 58.3,
       "hold_targets": {
         "1": {
-          "target_s": 275.6,
-          "stddev_s": 113.9,
-          "count": 7,
+          "target_s": 303.1,
+          "stddev_s": 96.5,
+          "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 502.5,
-          "stddev_s": 34.8,
-          "count": 4,
+          "target_s": 547.1,
+          "stddev_s": 31.9,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.228,
-        "stddev": 0.098,
-        "min": 0.105,
+        "avg": 0.261,
+        "stddev": 0.093,
+        "min": 0.107,
         "max": 0.348
       },
       "majority_hold": true
@@ -84,44 +84,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 70.6,
-      "dmg_avg": 361624,
-      "dmg_stddev": 27432,
-      "dmg_min": 325535,
-      "dmg_max": 396984,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 227139,
-          "min_damage": 206508,
-          "max_damage": 248808,
-          "count": 5
-        },
-        {
-          "spell_id": 1251649,
-          "avg_damage": 134485,
-          "min_damage": 119027,
-          "max_damage": 148176,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 219.5,
-      "dmg_avg": 206902,
-      "dmg_stddev": 80466,
+      "time_s": 219.6,
+      "dmg_avg": 257377,
+      "dmg_stddev": 138430,
       "dmg_min": 77821,
-      "dmg_max": 365076,
+      "dmg_max": 503269,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -135,26 +102,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 117241,
+          "avg_damage": 135954,
           "min_damage": 77821,
-          "max_damage": 199294,
-          "count": 8
+          "max_damage": 226189,
+          "count": 9
         },
         {
           "spell_id": 1281473,
-          "avg_damage": 92854,
-          "min_damage": 90462,
-          "max_damage": 98470,
-          "count": 7
+          "avg_damage": 107159,
+          "min_damage": 89262,
+          "max_damage": 201953,
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 327.1,
-      "dmg_avg": 444217,
-      "dmg_stddev": 73883,
+      "time_s": 327.8,
+      "dmg_avg": 483817,
+      "dmg_stddev": 87833,
       "dmg_min": 337999,
-      "dmg_max": 562424,
+      "dmg_max": 582589,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -168,71 +135,45 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 157870,
+          "avg_damage": 171757,
           "min_damage": 134106,
           "max_damage": 198798,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 104158,
+          "avg_damage": 105090,
           "min_damage": 78091,
-          "max_damage": 113086,
-          "count": 8
+          "max_damage": 116087,
+          "count": 9
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 83326,
+          "avg_damage": 84073,
           "min_damage": 62473,
-          "max_damage": 90469,
-          "count": 8
+          "max_damage": 92871,
+          "count": 9
         },
         {
           "spell_id": 1254398,
-          "avg_damage": 48617,
-          "min_damage": 17789,
+          "avg_damage": 72810,
+          "min_damage": 34589,
           "max_damage": 104826,
-          "count": 6
-        },
-        {
-          "spell_id": 1254257,
-          "avg_damage": 43218,
-          "min_damage": 32538,
-          "max_damage": 47119,
           "count": 7
         },
         {
-          "spell_id": 1254644,
-          "avg_damage": 23975,
-          "min_damage": 18774,
-          "max_damage": 30624,
+          "spell_id": 1254257,
+          "avg_damage": 43728,
+          "min_damage": 32538,
+          "max_damage": 48882,
           "count": 8
-        }
-      ]
-    },
-    {
-      "time_s": 570.2,
-      "dmg_avg": 374641,
-      "dmg_stddev": 649993,
-      "dmg_min": 0,
-      "dmg_max": 1347704,
-      "window_length_s": 8,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
+        },
         {
-          "spell_id": 1249797,
-          "avg_damage": 499521,
-          "min_damage": 50856,
-          "max_damage": 1347704,
-          "count": 3
+          "spell_id": 1254644,
+          "avg_damage": 26364,
+          "min_damage": 18774,
+          "max_damage": 33183,
+          "count": 9
         }
       ]
     }
@@ -240,13 +181,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.8,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 98008,
-      "avg_uses": 2.1,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -305,10 +246,6 @@
       "icon": "spell_holy_elunesgrace",
       "name": "Shattered Sky"
     },
-    "1251649": {
-      "icon": "inv_pet_naaru",
-      "name": "Disintegration"
-    },
     "1254257": {
       "icon": "spell_holy_purifyingpower",
       "name": "Tears of L'ura"
@@ -334,6 +271,6 @@
       "name": "Starsplinter"
     }
   },
-  "source_signature": "6cfa5cd7b80bc0bb",
-  "ingest_version": 0
+  "source_signature": "ec8df474fd7aef75",
+  "ingest_version": 1
 }

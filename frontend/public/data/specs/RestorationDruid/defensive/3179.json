@@ -5,79 +5,53 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 8,
-      "avg_first_cast_s": 111.1,
-      "stddev_first_cast_s": 65.2,
-      "avg_gap_s": 80.5,
-      "stddev_gap_s": 20.3,
-      "hold_targets": {},
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.49,
+      "sample_count": 7,
+      "avg_first_cast_s": 131.9,
+      "stddev_first_cast_s": 63.6,
+      "avg_gap_s": 85.3,
+      "stddev_gap_s": 21.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 153.7,
+          "stddev_s": 46.8,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.486,
-        "stddev": 0.183,
+        "avg": 0.403,
+        "stddev": 0.165,
         "min": 0.192,
-        "max": 0.741
+        "max": 0.619
       },
       "majority_hold": false
     },
     "Ironbark": {
-      "sample_count": 7,
-      "avg_first_cast_s": 158.5,
-      "stddev_first_cast_s": 79.2,
-      "avg_gap_s": 79.3,
-      "stddev_gap_s": 9.5,
+      "sample_count": 6,
+      "avg_first_cast_s": 184.2,
+      "stddev_first_cast_s": 44.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.28,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.28,
-        "stddev": 0.125,
+        "avg": 0.234,
+        "stddev": 0.032,
         "min": 0.192,
-        "max": 0.556
+        "max": 0.276
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 104.7,
-      "dmg_avg": 490357,
-      "dmg_stddev": 35726,
-      "dmg_min": 465357,
-      "dmg_max": 542231,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1254018,
-          "avg_damage": 465867,
-          "min_damage": 415562,
-          "max_damage": 542231,
-          "count": 4
-        },
-        {
-          "spell_id": 1285504,
-          "avg_damage": 48979,
-          "min_damage": 45320,
-          "max_damage": 52638,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 160.2,
-      "dmg_avg": 436921,
-      "dmg_stddev": 201656,
-      "dmg_min": 210762,
+      "time_s": 161.6,
+      "dmg_avg": 375163,
+      "dmg_stddev": 270741,
+      "dmg_min": 84358,
       "dmg_max": 651246,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -92,16 +66,9 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 184591,
-          "min_damage": 110928,
+          "avg_damage": 145993,
+          "min_damage": 52724,
           "max_damage": 211644,
-          "count": 4
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 150597,
-          "min_damage": 99834,
-          "max_damage": 190479,
           "count": 4
         },
         {
@@ -112,6 +79,13 @@
           "count": 2
         },
         {
+          "spell_id": 1250686,
+          "avg_damage": 127438,
+          "min_damage": 31634,
+          "max_damage": 190479,
+          "count": 4
+        },
+        {
           "spell_id": 1245592,
           "avg_damage": 72243,
           "min_damage": 71733,
@@ -119,60 +93,20 @@
           "count": 2
         }
       ]
-    },
-    {
-      "time_s": 208.4,
-      "dmg_avg": 523042,
-      "dmg_stddev": 198400,
-      "dmg_min": 409082,
-      "dmg_max": 819940,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1285504,
-          "avg_damage": 172626,
-          "min_damage": 98349,
-          "max_damage": 221633,
-          "count": 4
-        },
-        {
-          "spell_id": 1254018,
-          "avg_damage": 153615,
-          "min_damage": 81130,
-          "max_damage": 226099,
-          "count": 2
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 134673,
-          "min_damage": 49833,
-          "max_damage": 199468,
-          "count": 4
-        }
-      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.1,
+      "avg_uses": 1.7,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 3
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.3,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -240,10 +174,6 @@
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
     },
-    "1254018": {
-      "icon": "inv_112_etherealwraps_empowered_blue",
-      "name": "Entropic Unraveling"
-    },
     "1260835": {
       "icon": "inv_cosmicvoid_debuff",
       "name": "Despotic Command"
@@ -253,6 +183,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "bc9be7980e834ef5",
-  "ingest_version": 0
+  "source_signature": "60d0d79556f050b0",
+  "ingest_version": 1
 }

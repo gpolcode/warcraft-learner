@@ -3,34 +3,40 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 556,
-  "downtime_threshold_ms": 2624,
-  "top_avg_efficiency": 68.7,
-  "top_efficiency_stddev": 4.1,
+  "avg_duration_s": 553.9,
+  "downtime_threshold_ms": 2565,
+  "top_avg_efficiency": 68.3,
+  "top_efficiency_stddev": 3.7,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
-      "avg_first_cast_s": 41.6,
-      "stddev_first_cast_s": 97.7,
-      "avg_gap_s": 194.7,
-      "stddev_gap_s": 23.8,
-      "avg_bl_offset_s": 15.3,
-      "stddev_bl_offset_s": 16.2,
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.32,
+      "avg_first_cast_s": 42.9,
+      "stddev_first_cast_s": 97.2,
+      "avg_gap_s": 214.1,
+      "stddev_gap_s": 33.2,
+      "avg_bl_offset_s": 10.1,
+      "stddev_bl_offset_s": 6.4,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.357,
-        "stddev": 0.069,
+        "avg": 0.335,
+        "stddev": 0.06,
         "min": 0.232,
         "max": 0.428
       },
-      "bl_pct": 60,
+      "bl_pct": 30,
       "majority_hold": true,
       "hold_targets": {
+        "2": {
+          "target_s": 273.2,
+          "stddev_s": 100.7,
+          "count": 6,
+          "total_samples": 10
+        },
         "3": {
-          "target_s": 417.2,
+          "target_s": 506.6,
           "stddev_s": 54.3,
-          "count": 5,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -57,50 +63,50 @@
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 104.5,
-      "stddev_first_cast_s": 28.7,
-      "avg_gap_s": 245.3,
-      "stddev_gap_s": 70.4,
+      "avg_first_cast_s": 92.8,
+      "stddev_first_cast_s": 27,
+      "avg_gap_s": 243,
+      "stddev_gap_s": 58.3,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.228,
-        "stddev": 0.098,
-        "min": 0.105,
+        "avg": 0.261,
+        "stddev": 0.093,
+        "min": 0.107,
         "max": 0.348
       },
       "bl_pct": 0,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 275.6,
-          "stddev_s": 113.9,
-          "count": 7,
+          "target_s": 303.1,
+          "stddev_s": 96.5,
+          "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 502.5,
-          "stddev_s": 34.8,
-          "count": 4,
+          "target_s": 547.1,
+          "stddev_s": 31.9,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Nature's Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 16.9,
+      "avg_first_cast_s": 17,
       "stddev_first_cast_s": 12,
-      "avg_gap_s": 73.4,
-      "stddev_gap_s": 13.7,
-      "avg_bl_offset_s": 20.8,
-      "stddev_bl_offset_s": 22.1,
-      "avg_uses": 7.9,
-      "avg_uses_per_min": 0.85,
+      "avg_gap_s": 71.7,
+      "stddev_gap_s": 13,
+      "avg_bl_offset_s": 5.1,
+      "stddev_bl_offset_s": 31,
+      "avg_uses": 8,
+      "avg_uses_per_min": 0.87,
       "uses_per_min": {
-        "avg": 0.853,
-        "stddev": 0.08,
+        "avg": 0.866,
+        "stddev": 0.081,
         "min": 0.748,
         "max": 0.996
       },
@@ -109,37 +115,37 @@
       "hold_targets": {
         "3": {
           "target_s": 167.5,
-          "stddev_s": 22.1,
+          "stddev_s": 23.9,
           "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 249.5,
-          "stddev_s": 27.7,
-          "count": 9,
+          "target_s": 246.4,
+          "stddev_s": 33,
+          "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 315.7,
-          "stddev_s": 30.5,
+          "target_s": 289.9,
+          "stddev_s": 31.4,
           "count": 10,
           "total_samples": 10
         },
         "6": {
-          "target_s": 392.1,
-          "stddev_s": 41.9,
+          "target_s": 356.6,
+          "stddev_s": 44,
           "count": 10,
           "total_samples": 10
         },
         "7": {
-          "target_s": 459.8,
-          "stddev_s": 44.7,
+          "target_s": 428.5,
+          "stddev_s": 48.1,
           "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 527.1,
-          "stddev_s": 33.5,
+          "target_s": 484.5,
+          "stddev_s": 30.1,
           "count": 7,
           "total_samples": 10
         }
@@ -167,21 +173,21 @@
     },
     "Spiritwalker's Grace": {
       "sample_count": 10,
-      "avg_first_cast_s": 54.2,
-      "stddev_first_cast_s": 23.4,
-      "avg_gap_s": 79.1,
-      "stddev_gap_s": 49.6,
-      "avg_bl_offset_s": 13.5,
-      "stddev_bl_offset_s": 24.9,
-      "avg_uses": 7.1,
-      "avg_uses_per_min": 0.77,
+      "avg_first_cast_s": 48.8,
+      "stddev_first_cast_s": 20.7,
+      "avg_gap_s": 73.3,
+      "stddev_gap_s": 46.6,
+      "avg_bl_offset_s": 18.6,
+      "stddev_bl_offset_s": 20.2,
+      "avg_uses": 7.6,
+      "avg_uses_per_min": 0.82,
       "uses_per_min": {
-        "avg": 0.767,
-        "stddev": 0.221,
+        "avg": 0.824,
+        "stddev": 0.215,
         "min": 0.533,
         "max": 1.18
       },
-      "bl_pct": 50,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -217,7 +223,7 @@
       "spell_id": 378081,
       "cooldown": 60,
       "align_with_bloodlust": false,
-      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately. Spell ID is the talent Nature's Swiftness; verify at wowhead.com/spell=378081."
+      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately."
     },
     {
       "name": "Ancestral Swiftness",
@@ -225,7 +231,7 @@
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer; verify spell ID at wowhead.com/spell=443454."
+      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer."
     },
     {
       "name": "Spiritwalker's Grace",
@@ -333,6 +339,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "6cfa5cd7b80bc0bb",
-  "ingest_version": 0
+  "source_signature": "ec8df474fd7aef75",
+  "ingest_version": 1
 }

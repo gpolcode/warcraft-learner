@@ -4,10 +4,34 @@
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 8,
+      "avg_first_cast_s": 107.5,
+      "stddev_first_cast_s": 70.3,
+      "avg_gap_s": 152.9,
+      "stddev_gap_s": 42.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 242.1,
+          "stddev_s": 38.2,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.31,
+        "stddev": 0.098,
+        "min": 0.188,
+        "max": 0.399
+      },
+      "majority_hold": true
+    },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 166.9,
-      "stddev_first_cast_s": 22.6,
+      "avg_first_cast_s": 167.8,
+      "stddev_first_cast_s": 22.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -37,37 +61,54 @@
         "max": 0.386
       },
       "majority_hold": false
-    },
-    "Astral Shift": {
-      "sample_count": 7,
-      "avg_first_cast_s": 96.5,
-      "stddev_first_cast_s": 68.2,
-      "avg_gap_s": 152.9,
-      "stddev_gap_s": 42.1,
-      "hold_targets": {
-        "1": {
-          "target_s": 242.1,
-          "stddev_s": 38.2,
-          "count": 5,
-          "total_samples": 7
-        }
-      },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.33,
-      "uses_per_min": {
-        "avg": 0.326,
-        "stddev": 0.092,
-        "min": 0.188,
-        "max": 0.399
-      },
-      "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 189,
+      "dmg_avg": 349159,
+      "dmg_stddev": 163392,
+      "dmg_min": 166290,
+      "dmg_max": 558157,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242991,
+          "avg_damage": 320694,
+          "min_damage": 159248,
+          "max_damage": 482139,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 72751,
+          "min_damage": 70003,
+          "max_damage": 76018,
+          "count": 4
+        },
+        {
+          "spell_id": 1266404,
+          "avg_damage": 49926,
+          "min_damage": 29259,
+          "max_damage": 70592,
+          "count": 2
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -127,8 +168,20 @@
     "108280": {
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
+    },
+    "1242991": {
+      "icon": "inv_ability_holyfire_orb",
+      "name": "Light Echo"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    },
+    "1266404": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Void Burn"
     }
   },
-  "source_signature": "d6c9b0e63e3ac627",
-  "ingest_version": 0
+  "source_signature": "cf87768c57b9fc73",
+  "ingest_version": 1
 }

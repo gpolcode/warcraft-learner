@@ -4,16 +4,16 @@
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
   "avg_duration_s": 314.9,
-  "downtime_threshold_ms": 2669,
+  "downtime_threshold_ms": 2683,
   "top_avg_efficiency": 69.7,
-  "top_efficiency_stddev": 6.1,
+  "top_efficiency_stddev": 5.9,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
       "avg_first_cast_s": 52.6,
       "stddev_first_cast_s": 72.8,
-      "avg_gap_s": 257.1,
-      "stddev_gap_s": 51.7,
+      "avg_gap_s": 258,
+      "stddev_gap_s": 52.1,
       "avg_bl_offset_s": 22.8,
       "stddev_bl_offset_s": 22.5,
       "avg_uses": 1.5,
@@ -29,7 +29,7 @@
       "hold_targets": {
         "2": {
           "target_s": 286.3,
-          "stddev_s": 9.8,
+          "stddev_s": 8.5,
           "count": 5,
           "total_samples": 10
         }
@@ -57,11 +57,11 @@
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 166.9,
-      "stddev_first_cast_s": 22.6,
+      "avg_first_cast_s": 167.8,
+      "stddev_first_cast_s": 22.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": 44.8,
+      "avg_bl_offset_s": 44.7,
       "stddev_bl_offset_s": 4,
       "avg_uses": 1,
       "avg_uses_per_min": 0.19,
@@ -77,12 +77,12 @@
     },
     "Nature's Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 26.4,
-      "stddev_first_cast_s": 46.3,
-      "avg_gap_s": 72.4,
-      "stddev_gap_s": 18.2,
-      "avg_bl_offset_s": 26.4,
-      "stddev_bl_offset_s": 7.6,
+      "avg_first_cast_s": 26.3,
+      "stddev_first_cast_s": 46.4,
+      "avg_gap_s": 72.8,
+      "stddev_gap_s": 18.1,
+      "avg_bl_offset_s": 25.3,
+      "stddev_bl_offset_s": 8.2,
       "avg_uses": 4.3,
       "avg_uses_per_min": 0.82,
       "uses_per_min": {
@@ -95,9 +95,9 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 71.1,
-          "stddev_s": 70.1,
-          "count": 6,
+          "target_s": 71.4,
+          "stddev_s": 74.5,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
@@ -107,14 +107,14 @@
           "total_samples": 10
         },
         "4": {
-          "target_s": 206.6,
-          "stddev_s": 25.7,
+          "target_s": 209,
+          "stddev_s": 25.2,
           "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 274.5,
-          "stddev_s": 18.2,
+          "target_s": 280.9,
+          "stddev_s": 17.7,
           "count": 6,
           "total_samples": 10
         }
@@ -143,18 +143,18 @@
     "Spiritwalker's Grace": {
       "sample_count": 10,
       "avg_first_cast_s": 101.9,
-      "stddev_first_cast_s": 52,
-      "avg_gap_s": 68,
-      "stddev_gap_s": 51.3,
-      "avg_bl_offset_s": 8.6,
-      "stddev_bl_offset_s": 14.2,
-      "avg_uses": 3.6,
-      "avg_uses_per_min": 0.69,
+      "stddev_first_cast_s": 52.2,
+      "avg_gap_s": 69.5,
+      "stddev_gap_s": 52.1,
+      "avg_bl_offset_s": 8.5,
+      "stddev_bl_offset_s": 14.3,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.685,
-        "stddev": 0.222,
+        "avg": 0.666,
+        "stddev": 0.182,
         "min": 0.386,
-        "max": 1.155
+        "max": 0.962
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -192,7 +192,7 @@
       "spell_id": 378081,
       "cooldown": 60,
       "align_with_bloodlust": false,
-      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately. Spell ID is the talent Nature's Swiftness; verify at wowhead.com/spell=378081."
+      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately."
     },
     {
       "name": "Ancestral Swiftness",
@@ -200,7 +200,7 @@
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer; verify spell ID at wowhead.com/spell=443454."
+      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer."
     },
     {
       "name": "Spiritwalker's Grace",
@@ -308,6 +308,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "d6c9b0e63e3ac627",
-  "ingest_version": 0
+  "source_signature": "cf87768c57b9fc73",
+  "ingest_version": 1
 }
