@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 8,
-      "avg_first_cast_s": 38.2,
-      "stddev_first_cast_s": 30.4,
+      "avg_first_cast_s": 37.9,
+      "stddev_first_cast_s": 30.6,
       "avg_gap_s": 61.5,
       "stddev_gap_s": 5.3,
       "hold_targets": {},
       "avg_uses": 1.9,
       "avg_uses_per_min": 0.76,
       "uses_per_min": {
-        "avg": 0.762,
-        "stddev": 0.397,
+        "avg": 0.764,
+        "stddev": 0.395,
         "min": 0.409,
         "max": 1.231
       },
@@ -23,33 +23,33 @@
     },
     "Mirror Image": {
       "sample_count": 8,
-      "avg_first_cast_s": 21.3,
-      "stddev_first_cast_s": 2.5,
+      "avg_first_cast_s": 20.1,
+      "stddev_first_cast_s": 3.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.408,
-        "stddev": 0.006,
+        "avg": 0.41,
+        "stddev": 0.01,
         "min": 0.401,
-        "max": 0.418
+        "max": 0.43
       },
       "majority_hold": false
     },
     "Prismatic Barrier": {
       "sample_count": 9,
-      "avg_first_cast_s": 59.5,
-      "stddev_first_cast_s": 37.4,
+      "avg_first_cast_s": 52.9,
+      "stddev_first_cast_s": 39.8,
       "avg_gap_s": 56,
       "stddev_gap_s": 15.8,
       "hold_targets": {},
       "avg_uses": 1.4,
       "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.588,
-        "stddev": 0.296,
+        "avg": 0.59,
+        "stddev": 0.294,
         "min": 0.401,
         "max": 1.229
       },
@@ -75,10 +75,10 @@
   },
   "defensive_windows": [
     {
-      "time_s": 21.1,
-      "dmg_avg": 239851,
-      "dmg_stddev": 45361,
-      "dmg_min": 194711,
+      "time_s": 20.8,
+      "dmg_avg": 220087,
+      "dmg_stddev": 59474,
+      "dmg_min": 118163,
       "dmg_max": 315402,
       "window_length_s": 15,
       "defensive_name": "Mirror Image",
@@ -93,20 +93,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1246653,
-          "avg_damage": 196972,
-          "min_damage": 114795,
-          "max_damage": 276274,
+          "avg_damage": 164896,
+          "min_damage": 19664,
+          "max_damage": 243402,
           "count": 8
         }
       ]
     },
     {
-      "time_s": 61.1,
-      "dmg_avg": 270900,
-      "dmg_stddev": 74817,
+      "time_s": 53.7,
+      "dmg_avg": 276742,
+      "dmg_stddev": 82104,
       "dmg_min": 199552,
       "dmg_max": 392472,
-      "window_length_s": 9.9,
+      "window_length_s": 11.3,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -118,18 +118,11 @@
       "ref_game_id": 245569,
       "ability_breakdown": [
         {
-          "spell_id": 1273112,
-          "avg_damage": 242130,
-          "min_damage": 203290,
-          "max_damage": 302130,
-          "count": 3
-        },
-        {
           "spell_id": 1246653,
-          "avg_damage": 104365,
-          "min_damage": 20721,
+          "avg_damage": 121094,
+          "min_damage": 30113,
           "max_damage": 237158,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -233,12 +226,8 @@
     "1246653": {
       "icon": "inv_ability_poison_orb",
       "name": "Caustic Phlegm"
-    },
-    "1273112": {
-      "icon": "spell_deathknight_gnaw_ghoul",
-      "name": "Consume"
     }
   },
-  "source_signature": "06edcfde74a8f4d8",
+  "source_signature": "f90c89e7bf5518cb",
   "ingest_version": 1
 }

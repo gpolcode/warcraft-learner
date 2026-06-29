@@ -5,18 +5,18 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Die by the Sword": {
-      "sample_count": 8,
-      "avg_first_cast_s": 105.8,
-      "stddev_first_cast_s": 55.1,
+      "sample_count": 7,
+      "avg_first_cast_s": 133,
+      "stddev_first_cast_s": 68.3,
       "avg_gap_s": 125.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
-      "avg_uses_per_min": 0.33,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.331,
-        "stddev": 0.082,
-        "min": 0.239,
+        "avg": 0.318,
+        "stddev": 0.098,
+        "min": 0.222,
         "max": 0.521
       },
       "majority_hold": false
@@ -39,24 +39,30 @@
       "majority_hold": false
     },
     "Spell Reflection": {
-      "sample_count": 8,
-      "avg_first_cast_s": 56.7,
-      "stddev_first_cast_s": 31.1,
-      "avg_gap_s": 54.6,
-      "stddev_gap_s": 32.5,
+      "sample_count": 7,
+      "avg_first_cast_s": 69.3,
+      "stddev_first_cast_s": 30,
+      "avg_gap_s": 50.2,
+      "stddev_gap_s": 29,
       "hold_targets": {
         "1": {
-          "target_s": 171.2,
-          "stddev_s": 34,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 182,
+          "stddev_s": 13.8,
+          "count": 5,
+          "total_samples": 7
+        },
+        "3": {
+          "target_s": 209.6,
+          "stddev_s": 76.2,
+          "count": 3,
+          "total_samples": 7
         }
       },
-      "avg_uses": 3.4,
-      "avg_uses_per_min": 0.99,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 0.993,
-        "stddev": 0.494,
+        "avg": 0.998,
+        "stddev": 0.528,
         "min": 0.611,
         "max": 2.122
       },
@@ -82,9 +88,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 71.9,
-      "dmg_avg": 204010,
-      "dmg_stddev": 105837,
+      "time_s": 77.7,
+      "dmg_avg": 171634,
+      "dmg_stddev": 119732,
       "dmg_min": 26527,
       "dmg_max": 334754,
       "window_length_s": 5,
@@ -100,50 +106,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1272950,
-          "avg_damage": 26702,
+          "avg_damage": 27249,
           "min_damage": 19855,
-          "max_damage": 31365,
+          "max_damage": 33018,
           "count": 7
-        }
-      ]
-    },
-    {
-      "time_s": 78.2,
-      "dmg_avg": 280257,
-      "dmg_stddev": 103175,
-      "dmg_min": 135561,
-      "dmg_max": 414520,
-      "window_length_s": 8,
-      "defensive_name": "Die by the Sword",
-      "spell_id": 118038,
-      "common_defensives": [
-        "Die by the Sword"
-      ],
-      "common_cds": [
-        "Die by the Sword"
-      ],
-      "ref_game_id": 253475,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259186,
-          "avg_damage": 207690,
-          "min_damage": 167152,
-          "max_damage": 282831,
-          "count": 3
-        },
-        {
-          "spell_id": 1272328,
-          "avg_damage": 73548,
-          "min_damage": 71437,
-          "max_damage": 75233,
-          "count": 3
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 35981,
-          "min_damage": 34412,
-          "max_damage": 38518,
-          "count": 5
         }
       ]
     },
@@ -182,8 +148,8 @@
     },
     {
       "time_s": 183.4,
-      "dmg_avg": 330812,
-      "dmg_stddev": 70835,
+      "dmg_avg": 335288,
+      "dmg_stddev": 72928,
       "dmg_min": 203817,
       "dmg_max": 412089,
       "window_length_s": 5,
@@ -199,16 +165,16 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 252701,
+          "avg_damage": 256410,
           "min_damage": 161257,
-          "max_damage": 303389,
+          "max_damage": 310330,
           "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 48559,
+          "avg_damage": 49326,
           "min_damage": 21000,
-          "max_damage": 62733,
+          "max_damage": 64165,
           "count": 6
         }
       ]
@@ -229,7 +195,7 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 3.4,
+      "avg_uses": 3.6,
       "min_uses": 2,
       "max_uses": 7
     },
@@ -310,10 +276,6 @@
       "icon": "spell_impending_victory",
       "name": "Impending Victory"
     },
-    "1259186": {
-      "icon": "ability_argus_soulburst",
-      "name": "Blisterburst"
-    },
     "1272328": {
       "icon": "inv_misc_rylakclaw",
       "name": "Shadowclaw Slam"
@@ -327,6 +289,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "f637ffb728697a84",
+  "source_signature": "fac0059bd1306cd1",
   "ingest_version": 1
 }

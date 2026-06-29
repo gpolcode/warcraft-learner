@@ -3,33 +3,39 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 302.5,
-  "downtime_threshold_ms": 2588,
-  "top_avg_efficiency": 72.4,
+  "avg_duration_s": 303.9,
+  "downtime_threshold_ms": 2595,
+  "top_avg_efficiency": 72.3,
   "top_efficiency_stddev": 6.2,
   "per_cd_benchmarks": {
     "Arcane Surge": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.1,
-      "stddev_first_cast_s": 5.5,
-      "avg_gap_s": 100.8,
-      "stddev_gap_s": 11.2,
-      "avg_bl_offset_s": 3.2,
-      "stddev_bl_offset_s": 1.9,
+      "avg_first_cast_s": 16.3,
+      "stddev_first_cast_s": 5.4,
+      "avg_gap_s": 101.3,
+      "stddev_gap_s": 11.1,
+      "avg_bl_offset_s": 2.8,
+      "stddev_bl_offset_s": 1.6,
       "avg_uses": 3.3,
       "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.654,
-        "stddev": 0.083,
+        "avg": 0.651,
+        "stddev": 0.078,
         "min": 0.571,
-        "max": 0.78
+        "max": 0.761
       },
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
+        "2": {
+          "target_s": 116.6,
+          "stddev_s": 2.2,
+          "count": 4,
+          "total_samples": 10
+        },
         "3": {
           "target_s": 217.3,
-          "stddev_s": 13.4,
+          "stddev_s": 12.9,
           "count": 9,
           "total_samples": 10
         }
@@ -37,38 +43,44 @@
     },
     "Touch of the Magi": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.3,
-      "stddev_first_cast_s": 5.4,
-      "avg_gap_s": 49.9,
-      "stddev_gap_s": 5.8,
-      "avg_bl_offset_s": 4.4,
+      "avg_first_cast_s": 16.6,
+      "stddev_first_cast_s": 5.3,
+      "avg_gap_s": 50.1,
+      "stddev_gap_s": 5.9,
+      "avg_bl_offset_s": 4,
       "stddev_bl_offset_s": 3.2,
       "avg_uses": 6.2,
       "avg_uses_per_min": 1.23,
       "uses_per_min": {
-        "avg": 1.232,
-        "stddev": 0.088,
+        "avg": 1.226,
+        "stddev": 0.08,
         "min": 1.139,
-        "max": 1.364
+        "max": 1.332
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
+        "3": {
+          "target_s": 116.8,
+          "stddev_s": 1.9,
+          "count": 4,
+          "total_samples": 10
+        },
         "4": {
-          "target_s": 165.4,
-          "stddev_s": 9.9,
+          "target_s": 166.3,
+          "stddev_s": 9.8,
           "count": 6,
           "total_samples": 10
         },
         "5": {
-          "target_s": 215.8,
-          "stddev_s": 11.3,
+          "target_s": 216.1,
+          "stddev_s": 10.9,
           "count": 8,
           "total_samples": 10
         },
         "6": {
           "target_s": 279,
-          "stddev_s": 12.2,
+          "stddev_s": 11.7,
           "count": 8,
           "total_samples": 10
         }
@@ -96,39 +108,33 @@
     },
     "Presence of Mind": {
       "sample_count": 10,
-      "avg_first_cast_s": 27.7,
-      "stddev_first_cast_s": 18.7,
-      "avg_gap_s": 63.5,
-      "stddev_gap_s": 19.5,
-      "avg_bl_offset_s": 10.2,
-      "stddev_bl_offset_s": 8,
-      "avg_uses": 4.7,
-      "avg_uses_per_min": 0.93,
+      "avg_first_cast_s": 25.3,
+      "stddev_first_cast_s": 18.2,
+      "avg_gap_s": 62.5,
+      "stddev_gap_s": 19,
+      "avg_bl_offset_s": 9.8,
+      "stddev_bl_offset_s": 7.7,
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 0.94,
       "uses_per_min": {
-        "avg": 0.929,
-        "stddev": 0.214,
+        "avg": 0.943,
+        "stddev": 0.222,
         "min": 0.418,
         "max": 1.141
       },
       "bl_pct": 100,
-      "majority_hold": true,
+      "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 128.1,
-          "stddev_s": 9.7,
-          "count": 5,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 177,
-          "stddev_s": 40.9,
+          "target_s": 127.1,
+          "stddev_s": 10.7,
           "count": 4,
           "total_samples": 10
         },
         "4": {
-          "target_s": 240,
-          "stddev_s": 30.7,
-          "count": 5,
+          "target_s": 244.5,
+          "stddev_s": 32.9,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -285,6 +291,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "c3b24bbb0b672145",
+  "source_signature": "bd016eaee5c2a778",
   "ingest_version": 1
 }
