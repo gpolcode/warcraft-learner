@@ -3,104 +3,110 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 473.7,
-  "downtime_threshold_ms": 1730,
-  "top_avg_efficiency": 73.9,
-  "top_efficiency_stddev": 5.4,
+  "avg_duration_s": 473.6,
+  "downtime_threshold_ms": 1771,
+  "top_avg_efficiency": 74.2,
+  "top_efficiency_stddev": 5.5,
   "per_cd_benchmarks": {
     "Thunder Focus Tea": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.2,
-      "stddev_first_cast_s": 2.9,
-      "avg_gap_s": 28.2,
-      "stddev_gap_s": 12.5,
-      "avg_bl_offset_s": 0.9,
-      "stddev_bl_offset_s": 7.4,
-      "avg_uses": 17,
-      "avg_uses_per_min": 2.15,
+      "avg_first_cast_s": 4.9,
+      "stddev_first_cast_s": 3.5,
+      "avg_gap_s": 28.9,
+      "stddev_gap_s": 13.3,
+      "avg_bl_offset_s": 2,
+      "stddev_bl_offset_s": 6.9,
+      "avg_uses": 16.6,
+      "avg_uses_per_min": 2.1,
       "uses_per_min": {
-        "avg": 2.149,
-        "stddev": 0.266,
+        "avg": 2.103,
+        "stddev": 0.225,
         "min": 1.629,
-        "max": 2.555
+        "max": 2.392
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "6": {
-          "target_s": 179.4,
-          "stddev_s": 21.6,
-          "count": 7,
+          "target_s": 179,
+          "stddev_s": 20.4,
+          "count": 8,
           "total_samples": 10
         },
         "7": {
-          "target_s": 204.6,
-          "stddev_s": 24.8,
-          "count": 7,
+          "target_s": 204.4,
+          "stddev_s": 23.3,
+          "count": 8,
           "total_samples": 10
         },
         "8": {
-          "target_s": 237.4,
-          "stddev_s": 22.5,
-          "count": 6,
+          "target_s": 236.3,
+          "stddev_s": 20.8,
+          "count": 7,
           "total_samples": 10
         },
         "9": {
-          "target_s": 287.3,
-          "stddev_s": 19.8,
-          "count": 4,
+          "target_s": 280.8,
+          "stddev_s": 20.7,
+          "count": 5,
           "total_samples": 10
         }
       }
     },
     "Invoke Yu'lon, the Jade Serpent": {
       "sample_count": 10,
-      "avg_first_cast_s": 137.3,
-      "stddev_first_cast_s": 136.8,
-      "avg_gap_s": 127.5,
-      "stddev_gap_s": 11.2,
-      "avg_bl_offset_s": -14.4,
-      "stddev_bl_offset_s": 0,
-      "avg_uses": 0.6,
-      "avg_uses_per_min": 0.07,
+      "avg_first_cast_s": 234,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 144.3,
+      "stddev_gap_s": 0,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0.2,
+      "avg_uses_per_min": 0.03,
       "uses_per_min": {
-        "avg": 0.368,
-        "stddev": 0.138,
+        "avg": 0.27,
+        "stddev": 0,
         "min": 0.27,
-        "max": 0.465
+        "max": 0.27
       },
-      "bl_pct": 10,
+      "bl_pct": 0,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Invoke Chi-Ji, the Red Crane": {
       "sample_count": 10,
-      "avg_first_cast_s": 61,
-      "stddev_first_cast_s": 137.1,
-      "avg_gap_s": 97.5,
-      "stddev_gap_s": 46.5,
-      "avg_bl_offset_s": 5.7,
-      "stddev_bl_offset_s": 22.1,
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.5,
+      "avg_first_cast_s": 56.5,
+      "stddev_first_cast_s": 128.9,
+      "avg_gap_s": 102.4,
+      "stddev_gap_s": 47.6,
+      "avg_bl_offset_s": 8.3,
+      "stddev_bl_offset_s": 21.8,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.62,
-        "stddev": 0.287,
+        "avg": 0.603,
+        "stddev": 0.273,
         "min": 0.225,
         "max": 0.964
       },
-      "bl_pct": 70,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 168.8,
-          "stddev_s": 14.9,
-          "count": 4,
+          "target_s": 174.9,
+          "stddev_s": 18.7,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
           "target_s": 325.9,
-          "stddev_s": 58.9,
+          "stddev_s": 51.4,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 450.2,
+          "stddev_s": 29,
           "count": 4,
           "total_samples": 10
         }
@@ -108,17 +114,17 @@
     },
     "Revival": {
       "sample_count": 10,
-      "avg_first_cast_s": 201.3,
-      "stddev_first_cast_s": 178.2,
-      "avg_gap_s": 186.1,
-      "stddev_gap_s": 31.6,
+      "avg_first_cast_s": 201.9,
+      "stddev_first_cast_s": 177.6,
+      "avg_gap_s": 183.4,
+      "stddev_gap_s": 29.3,
       "avg_bl_offset_s": 41.2,
       "stddev_bl_offset_s": 0,
       "avg_uses": 2.2,
       "avg_uses_per_min": 0.28,
       "uses_per_min": {
         "avg": 0.282,
-        "stddev": 0.121,
+        "stddev": 0.122,
         "min": 0.113,
         "max": 0.413
       },
@@ -127,13 +133,13 @@
       "hold_targets": {
         "2": {
           "target_s": 254.5,
-          "stddev_s": 25.3,
+          "stddev_s": 19.1,
           "count": 4,
           "total_samples": 10
         },
         "3": {
           "target_s": 413.4,
-          "stddev_s": 39.2,
+          "stddev_s": 27.2,
           "count": 4,
           "total_samples": 10
         }
@@ -161,16 +167,16 @@
     },
     "Celestial Conduit": {
       "sample_count": 10,
-      "avg_first_cast_s": 86.5,
-      "stddev_first_cast_s": 135.4,
-      "avg_gap_s": 107.3,
-      "stddev_gap_s": 23.3,
+      "avg_first_cast_s": 95.3,
+      "stddev_first_cast_s": 142,
+      "avg_gap_s": 109,
+      "stddev_gap_s": 24.7,
       "avg_bl_offset_s": 21.6,
       "stddev_bl_offset_s": 15.8,
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.48,
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.53,
+        "avg": 0.509,
         "stddev": 0.174,
         "min": 0.225,
         "max": 0.712
@@ -185,21 +191,15 @@
           "total_samples": 10
         },
         "3": {
-          "target_s": 267.8,
-          "stddev_s": 36.8,
-          "count": 7,
+          "target_s": 270.4,
+          "stddev_s": 39.2,
+          "count": 6,
           "total_samples": 10
         },
         "4": {
-          "target_s": 361.8,
-          "stddev_s": 37.1,
-          "count": 7,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 424.5,
-          "stddev_s": 27.8,
-          "count": 4,
+          "target_s": 371,
+          "stddev_s": 38.3,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -410,6 +410,6 @@
       "name": "Celestial Conduit"
     }
   },
-  "source_signature": "2cda1d1f7b6bf98b",
+  "source_signature": "b2709685bd5bdf42",
   "ingest_version": 1
 }

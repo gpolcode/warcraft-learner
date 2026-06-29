@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Shield of Vengeance": {
       "sample_count": 9,
-      "avg_first_cast_s": 87.7,
-      "stddev_first_cast_s": 81.2,
-      "avg_gap_s": 98.2,
-      "stddev_gap_s": 23.9,
+      "avg_first_cast_s": 85.1,
+      "stddev_first_cast_s": 82.9,
+      "avg_gap_s": 93.7,
+      "stddev_gap_s": 25.8,
       "hold_targets": {
         "1": {
           "target_s": 224.7,
@@ -18,59 +18,59 @@
           "total_samples": 9
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.552,
-        "stddev": 0.187,
+        "avg": 0.626,
+        "stddev": 0.264,
         "min": 0.18,
-        "max": 0.873
+        "max": 1.022
       },
       "majority_hold": true
     },
     "Divine Shield": {
-      "sample_count": 4,
-      "avg_first_cast_s": 220.1,
-      "stddev_first_cast_s": 84.4,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.24,
-      "uses_per_min": {
-        "avg": 0.237,
-        "stddev": 0.05,
-        "min": 0.18,
-        "max": 0.298
-      },
-      "majority_hold": false
-    },
-    "Lay on Hands": {
       "sample_count": 2,
-      "avg_first_cast_s": 164.1,
-      "stddev_first_cast_s": 63.1,
+      "avg_first_cast_s": 272.1,
+      "stddev_first_cast_s": 77.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.219,
-        "stddev": 0.001,
+        "avg": 0.216,
+        "stddev": 0.05,
+        "min": 0.18,
+        "max": 0.251
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 2,
+      "avg_first_cast_s": 149.6,
+      "stddev_first_cast_s": 83.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.28,
+        "stddev": 0.087,
         "min": 0.218,
-        "max": 0.219
+        "max": 0.341
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 104.1,
-      "dmg_avg": 184251,
-      "dmg_stddev": 93668,
-      "dmg_min": 0,
-      "dmg_max": 252390,
-      "window_length_s": 5.5,
+      "time_s": 103.5,
+      "dmg_avg": 212555,
+      "dmg_stddev": 20602,
+      "dmg_min": 189972,
+      "dmg_max": 246040,
+      "window_length_s": 4.9,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -83,20 +83,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 198787,
+          "avg_damage": 193961,
           "min_damage": 78405,
-          "max_damage": 252390,
-          "count": 5
+          "max_damage": 246040,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 224.7,
-      "dmg_avg": 210154,
-      "dmg_stddev": 15005,
+      "time_s": 225.3,
+      "dmg_avg": 207555,
+      "dmg_stddev": 15973,
       "dmg_min": 186666,
       "dmg_max": 225491,
-      "window_length_s": 4.8,
+      "window_length_s": 4.4,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -116,10 +116,10 @@
         },
         {
           "spell_id": 1285504,
-          "avg_damage": 76384,
+          "avg_damage": 85277,
           "min_damage": 54970,
           "max_damage": 115584,
-          "count": 3
+          "count": 2
         }
       ]
     }
@@ -127,7 +127,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 184662,
-      "avg_uses": 2.4,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -236,6 +236,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "c095ceeedcc110e7",
+  "source_signature": "b816f256a8726c5a",
   "ingest_version": 1
 }
