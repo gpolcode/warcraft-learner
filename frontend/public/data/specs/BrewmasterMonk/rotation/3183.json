@@ -3,25 +3,25 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 561.7,
+  "avg_duration_s": 555.8,
   "downtime_threshold_ms": 1089,
   "top_avg_efficiency": 77.1,
-  "top_efficiency_stddev": 3.6,
+  "top_efficiency_stddev": 6,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.3,
+      "avg_first_cast_s": 4.2,
       "stddev_first_cast_s": 5.5,
-      "avg_gap_s": 103.7,
-      "stddev_gap_s": 11.5,
-      "avg_bl_offset_s": 0.4,
-      "stddev_bl_offset_s": 22.8,
-      "avg_uses": 6,
+      "avg_gap_s": 104.2,
+      "stddev_gap_s": 12.1,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 21.3,
+      "avg_uses": 5.9,
       "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.642,
-        "stddev": 0.025,
-        "min": 0.607,
+        "avg": 0.638,
+        "stddev": 0.042,
+        "min": 0.55,
         "max": 0.688
       },
       "bl_pct": 100,
@@ -30,17 +30,17 @@
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 13.4,
-      "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 69.1,
-      "stddev_gap_s": 13.3,
-      "avg_bl_offset_s": -9.7,
-      "stddev_bl_offset_s": 15.6,
-      "avg_uses": 8.4,
+      "avg_first_cast_s": 13.7,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 68.9,
+      "stddev_gap_s": 12,
+      "avg_bl_offset_s": -13.8,
+      "stddev_bl_offset_s": 12.2,
+      "avg_uses": 8.3,
       "avg_uses_per_min": 0.9,
       "uses_per_min": {
-        "avg": 0.897,
-        "stddev": 0.042,
+        "avg": 0.896,
+        "stddev": 0.038,
         "min": 0.842,
         "max": 0.971
       },
@@ -49,65 +49,59 @@
       "hold_targets": {
         "4": {
           "target_s": 208,
-          "stddev_s": 4,
+          "stddev_s": 4.6,
           "count": 5,
           "total_samples": 10
         },
         "5": {
-          "target_s": 268.6,
-          "stddev_s": 4.6,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 348.7,
-          "stddev_s": 5.3,
+          "target_s": 269,
+          "stddev_s": 4.7,
           "count": 8,
           "total_samples": 10
         },
-        "7": {
-          "target_s": 418.5,
-          "stddev_s": 13.9,
+        "6": {
+          "target_s": 347.9,
+          "stddev_s": 4.8,
           "count": 9,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 417.8,
+          "stddev_s": 13,
+          "count": 10,
           "total_samples": 10
         },
         "8": {
-          "target_s": 486.4,
-          "stddev_s": 34.6,
-          "count": 9,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 544.6,
-          "stddev_s": 20.5,
-          "count": 4,
+          "target_s": 485,
+          "stddev_s": 30.8,
+          "count": 10,
           "total_samples": 10
         }
       }
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 282,
-      "stddev_first_cast_s": 180.3,
-      "avg_gap_s": 226.9,
-      "stddev_gap_s": 118.3,
+      "avg_first_cast_s": 337.3,
+      "stddev_first_cast_s": 174.4,
+      "avg_gap_s": 203.8,
+      "stddev_gap_s": 119.3,
       "avg_bl_offset_s": 54.7,
       "stddev_bl_offset_s": 0,
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.17,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.12,
       "uses_per_min": {
-        "avg": 0.213,
-        "stddev": 0.054,
+        "avg": 0.195,
+        "stddev": 0.04,
         "min": 0.115,
-        "max": 0.315
+        "max": 0.224
       },
       "bl_pct": 10,
-      "majority_hold": true,
+      "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 479.3,
-          "stddev_s": 69.5,
-          "count": 7,
+          "target_s": 549.3,
+          "stddev_s": 72.5,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -252,6 +246,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "fa29d697d0cee621",
+  "source_signature": "5d470d73d4c612cb",
   "ingest_version": 1
 }

@@ -3,60 +3,60 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 279.4,
-  "downtime_threshold_ms": 1024,
-  "top_avg_efficiency": 82,
-  "top_efficiency_stddev": 8.7,
+  "avg_duration_s": 269.1,
+  "downtime_threshold_ms": 1026,
+  "top_avg_efficiency": 82.3,
+  "top_efficiency_stddev": 9,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.3,
-      "stddev_first_cast_s": 1.4,
-      "avg_gap_s": 115.2,
-      "stddev_gap_s": 11.5,
-      "avg_bl_offset_s": 0.2,
+      "avg_first_cast_s": 1.4,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 109.9,
+      "stddev_gap_s": 13.5,
+      "avg_bl_offset_s": 0.6,
       "stddev_bl_offset_s": 1.4,
       "avg_uses": 2.9,
-      "avg_uses_per_min": 0.63,
+      "avg_uses_per_min": 0.66,
       "uses_per_min": {
-        "avg": 0.632,
-        "stddev": 0.087,
+        "avg": 0.663,
+        "stddev": 0.119,
         "min": 0.538,
-        "max": 0.815
+        "max": 0.876
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 25,
-      "stddev_first_cast_s": 17.4,
-      "avg_gap_s": 65.1,
-      "stddev_gap_s": 5.3,
-      "avg_bl_offset_s": 18.8,
-      "stddev_bl_offset_s": 13.2,
+      "avg_first_cast_s": 17.9,
+      "stddev_first_cast_s": 12.2,
+      "avg_gap_s": 65.3,
+      "stddev_gap_s": 5.8,
+      "avg_bl_offset_s": 14.5,
+      "stddev_bl_offset_s": 10.5,
       "avg_uses": 4.4,
-      "avg_uses_per_min": 0.96,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 0.958,
-        "stddev": 0.116,
-        "min": 0.857,
+        "avg": 1,
+        "stddev": 0.121,
+        "min": 0.861,
         "max": 1.231
       },
-      "bl_pct": 70,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 162.4,
-          "stddev_s": 16.5,
+          "target_s": 153.2,
+          "stddev_s": 14.8,
           "count": 6,
           "total_samples": 10
         },
         "4": {
-          "target_s": 228.6,
-          "stddev_s": 19.3,
-          "count": 8,
+          "target_s": 217.8,
+          "stddev_s": 15.1,
+          "count": 7,
           "total_samples": 10
         },
         "5": {
@@ -69,17 +69,17 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 87.3,
-      "stddev_first_cast_s": 2.4,
-      "avg_gap_s": 178.4,
-      "stddev_gap_s": 57.2,
+      "avg_first_cast_s": 98,
+      "stddev_first_cast_s": 34.2,
+      "avg_gap_s": 166.6,
+      "stddev_gap_s": 63.8,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "avg_uses": 1.8,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.402,
-        "stddev": 0.132,
+        "avg": 0.419,
+        "stddev": 0.138,
         "min": 0.179,
         "max": 0.616
       },
@@ -87,9 +87,9 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 278.7,
-          "stddev_s": 49.8,
-          "count": 7,
+          "target_s": 298.4,
+          "stddev_s": 54.9,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -234,6 +234,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "2da482df630dab56",
+  "source_signature": "f5fb50a3422d63f4",
   "ingest_version": 1
 }
