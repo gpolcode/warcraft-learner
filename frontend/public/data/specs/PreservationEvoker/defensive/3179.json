@@ -6,50 +6,57 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 9,
-      "avg_first_cast_s": 123.4,
-      "stddev_first_cast_s": 88.7,
-      "avg_gap_s": 26,
-      "stddev_gap_s": 29.2,
+      "avg_first_cast_s": 109.9,
+      "stddev_first_cast_s": 66.2,
+      "avg_gap_s": 24.7,
+      "stddev_gap_s": 28.7,
       "hold_targets": {},
-      "avg_uses": 4.3,
-      "avg_uses_per_min": 1.02,
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 1.1,
       "uses_per_min": {
-        "avg": 1.022,
-        "stddev": 0.557,
-        "min": 0.187,
+        "avg": 1.101,
+        "stddev": 0.467,
+        "min": 0.455,
         "max": 2.02
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 5,
-      "avg_first_cast_s": 153.1,
-      "stddev_first_cast_s": 65.7,
+      "sample_count": 4,
+      "avg_first_cast_s": 133.2,
+      "stddev_first_cast_s": 55.7,
       "avg_gap_s": 123.7,
       "stddev_gap_s": 7.2,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.338,
-        "stddev": 0.121,
-        "min": 0.187,
+        "avg": 0.376,
+        "stddev": 0.1,
+        "min": 0.253,
         "max": 0.459
       },
       "majority_hold": false
     },
     "Time Dilation": {
-      "sample_count": 6,
-      "avg_first_cast_s": 138.5,
-      "stddev_first_cast_s": 90.6,
-      "avg_gap_s": 39.8,
-      "stddev_gap_s": 45.5,
-      "hold_targets": {},
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.46,
+      "sample_count": 5,
+      "avg_first_cast_s": 119.9,
+      "stddev_first_cast_s": 87.5,
+      "avg_gap_s": 43.7,
+      "stddev_gap_s": 51.3,
+      "hold_targets": {
+        "2": {
+          "target_s": 200,
+          "stddev_s": 34.7,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.464,
-        "stddev": 0.259,
+        "avg": 0.445,
+        "stddev": 0.284,
         "min": 0.253,
         "max": 0.918
       },
@@ -132,11 +139,11 @@
     },
     {
       "time_s": 157.3,
-      "dmg_avg": 236728,
-      "dmg_stddev": 217756,
+      "dmg_avg": 234564,
+      "dmg_stddev": 203498,
       "dmg_min": 0,
       "dmg_max": 657766,
-      "window_length_s": 6.4,
+      "window_length_s": 6.3,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -149,24 +156,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 111227,
+          "avg_damage": 122483,
           "min_damage": 52285,
           "max_damage": 213889,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 97300,
+          "avg_damage": 89053,
           "min_damage": 15763,
           "max_damage": 190389,
-          "count": 10
-        },
-        {
-          "spell_id": 1260835,
-          "avg_damage": 93031,
-          "min_damage": 21578,
-          "max_damage": 196333,
-          "count": 7
+          "count": 12
         }
       ]
     },
@@ -202,90 +202,24 @@
           "count": 3
         }
       ]
-    },
-    {
-      "time_s": 225.5,
-      "dmg_avg": 615274,
-      "dmg_stddev": 442261,
-      "dmg_min": 320049,
-      "dmg_max": 1271010,
-      "window_length_s": 8,
-      "defensive_name": "Zephyr",
-      "spell_id": 374227,
-      "common_defensives": [
-        "Zephyr"
-      ],
-      "common_cds": [
-        "Zephyr"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1254018,
-          "avg_damage": 393494,
-          "min_damage": 386784,
-          "max_damage": 401099,
-          "count": 3
-        },
-        {
-          "spell_id": 361029,
-          "avg_damage": 162345,
-          "min_damage": 90652,
-          "max_damage": 234037,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 231.5,
-      "dmg_avg": 474106,
-      "dmg_stddev": 523091,
-      "dmg_min": 61343,
-      "dmg_max": 1178785,
-      "window_length_s": 4.6,
-      "defensive_name": "Time Dilation",
-      "spell_id": 357170,
-      "common_defensives": [
-        "Time Dilation"
-      ],
-      "common_cds": [
-        "Time Dilation"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1254018,
-          "avg_damage": 229096,
-          "min_damage": 50138,
-          "max_damage": 453943,
-          "count": 4
-        },
-        {
-          "spell_id": 361029,
-          "avg_damage": 114721,
-          "min_damage": 42087,
-          "max_damage": 191950,
-          "count": 3
-        }
-      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 4.3,
-      "min_uses": 1,
+      "avg_uses": 4.6,
+      "min_uses": 2,
       "max_uses": 9
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 357170,
-      "avg_uses": 2.2,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -344,10 +278,6 @@
       "icon": "ability_evoker_timedilation",
       "name": "Time Dilation"
     },
-    "361029": {
-      "icon": "ability_evoker_timedilation",
-      "name": "Time Dilation"
-    },
     "363916": {
       "icon": "inv_artifact_dragonscales",
       "name": "Obsidian Scales"
@@ -372,15 +302,11 @@
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
     },
-    "1260835": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Despotic Command"
-    },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "31ef4b7d568e20dd",
+  "source_signature": "d3a4a1e9e37dc1a6",
   "ingest_version": 1
 }

@@ -25,8 +25,8 @@
       "sample_count": 10,
       "avg_first_cast_s": 71.4,
       "stddev_first_cast_s": 50.6,
-      "avg_gap_s": 83.6,
-      "stddev_gap_s": 34.9,
+      "avg_gap_s": 74.1,
+      "stddev_gap_s": 38.4,
       "hold_targets": {
         "1": {
           "target_s": 183.6,
@@ -35,24 +35,24 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.6,
       "uses_per_min": {
-        "avg": 0.523,
-        "stddev": 0.299,
+        "avg": 0.595,
+        "stddev": 0.328,
         "min": 0.281,
         "max": 1.156
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 59.8,
-      "dmg_avg": 189820,
-      "dmg_stddev": 125885,
+      "time_s": 60.3,
+      "dmg_avg": 178199,
+      "dmg_stddev": 113499,
       "dmg_min": 20404,
-      "dmg_max": 315116,
+      "dmg_max": 298562,
       "window_length_s": 4.7,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -66,26 +66,66 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 250243,
+          "avg_damage": 230854,
           "min_damage": 186459,
-          "max_damage": 294792,
+          "max_damage": 269478,
           "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 22614,
-          "min_damage": 20324,
+          "avg_damage": 22626,
+          "min_damage": 20387,
           "max_damage": 29084,
           "count": 5
         }
       ]
     },
     {
-      "time_s": 185.8,
-      "dmg_avg": 258793,
-      "dmg_stddev": 133612,
+      "time_s": 83,
+      "dmg_avg": 254476,
+      "dmg_stddev": 108792,
+      "dmg_min": 98871,
+      "dmg_max": 342540,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 167361,
+          "min_damage": 65446,
+          "max_damage": 243209,
+          "count": 3
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 84885,
+          "min_damage": 84017,
+          "max_damage": 85753,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 27098,
+          "min_damage": 19955,
+          "max_damage": 34148,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 184.9,
+      "dmg_avg": 281265,
+      "dmg_stddev": 135690,
       "dmg_min": 84680,
-      "dmg_max": 376931,
+      "dmg_max": 416100,
       "window_length_s": 4.9,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -99,24 +139,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 247562,
+          "avg_damage": 274407,
           "min_damage": 186461,
-          "max_damage": 312001,
-          "count": 3
-        },
-        {
-          "spell_id": 1243270,
-          "avg_damage": 69021,
-          "min_damage": 49481,
-          "max_damage": 104412,
-          "count": 3
+          "max_damage": 354941,
+          "count": 4
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 42819,
+          "avg_damage": 45439,
           "min_damage": 21509,
           "max_damage": 64930,
-          "count": 6
+          "count": 7
         }
       ]
     }
@@ -130,7 +163,7 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 1.8,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -179,9 +212,13 @@
       "icon": "ability_warrior_focusedrage",
       "name": "Enraged Regeneration"
     },
-    "1243270": {
-      "icon": "inv_cosmicvoid_nova",
-      "name": "Dark Goo"
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
     },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
@@ -192,6 +229,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "78e1a82f54dbe367",
+  "source_signature": "b5383fd9eec115ec",
   "ingest_version": 1
 }

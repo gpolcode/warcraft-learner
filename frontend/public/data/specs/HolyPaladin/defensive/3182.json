@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Divine Shield": {
       "sample_count": 10,
-      "avg_first_cast_s": 162,
-      "stddev_first_cast_s": 9.9,
+      "avg_first_cast_s": 169,
+      "stddev_first_cast_s": 24.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -22,9 +22,9 @@
       "majority_hold": false
     },
     "Lay on Hands": {
-      "sample_count": 7,
-      "avg_first_cast_s": 199.8,
-      "stddev_first_cast_s": 95.1,
+      "sample_count": 8,
+      "avg_first_cast_s": 204.7,
+      "stddev_first_cast_s": 89.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -32,57 +32,16 @@
       "avg_uses_per_min": 0.19,
       "uses_per_min": {
         "avg": 0.193,
-        "stddev": 0.011,
+        "stddev": 0.01,
         "min": 0.185,
         "max": 0.217
       },
       "majority_hold": false
     },
-    "Blessing of Sacrifice": {
-      "sample_count": 4,
-      "avg_first_cast_s": 178.8,
-      "stddev_first_cast_s": 36.4,
-      "avg_gap_s": 112.8,
-      "stddev_gap_s": 52.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 295.8,
-          "stddev_s": 2.8,
-          "count": 2,
-          "total_samples": 4
-        }
-      },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.33,
-      "uses_per_min": {
-        "avg": 0.331,
-        "stddev": 0.09,
-        "min": 0.197,
-        "max": 0.382
-      },
-      "majority_hold": false
-    },
-    "Divine Protection": {
-      "sample_count": 10,
-      "avg_first_cast_s": 126.8,
-      "stddev_first_cast_s": 102.5,
-      "avg_gap_s": 88.4,
-      "stddev_gap_s": 48.6,
-      "hold_targets": {},
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.45,
-      "uses_per_min": {
-        "avg": 0.445,
-        "stddev": 0.295,
-        "min": 0.189,
-        "max": 0.937
-      },
-      "majority_hold": false
-    },
     "Blessing of Protection": {
       "sample_count": 5,
-      "avg_first_cast_s": 204.5,
-      "stddev_first_cast_s": 98.1,
+      "avg_first_cast_s": 183.9,
+      "stddev_first_cast_s": 90.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -95,13 +54,54 @@
         "max": 0.217
       },
       "majority_hold": false
+    },
+    "Blessing of Sacrifice": {
+      "sample_count": 5,
+      "avg_first_cast_s": 174.5,
+      "stddev_first_cast_s": 33,
+      "avg_gap_s": 112.8,
+      "stddev_gap_s": 52.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 295.8,
+          "stddev_s": 2.8,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.304,
+        "stddev": 0.099,
+        "min": 0.193,
+        "max": 0.382
+      },
+      "majority_hold": false
+    },
+    "Divine Protection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 111,
+      "stddev_first_cast_s": 106.3,
+      "avg_gap_s": 77.2,
+      "stddev_gap_s": 44.9,
+      "hold_targets": {},
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.54,
+      "uses_per_min": {
+        "avg": 0.542,
+        "stddev": 0.355,
+        "min": 0.189,
+        "max": 1.159
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 56.2,
-      "dmg_avg": 354069,
-      "dmg_stddev": 157153,
+      "time_s": 66.5,
+      "dmg_avg": 315784,
+      "dmg_stddev": 147423,
       "dmg_min": 145920,
       "dmg_max": 539684,
       "window_length_s": 8,
@@ -116,63 +116,16 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
-          "spell_id": 1241932,
-          "avg_damage": 231579,
-          "min_damage": 92858,
-          "max_damage": 373928,
-          "count": 3
-        },
-        {
           "spell_id": 1264650,
-          "avg_damage": 55271,
+          "avg_damage": 60826,
           "min_damage": 43167,
-          "max_damage": 68098,
-          "count": 5
+          "max_damage": 77121,
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 134.5,
-      "dmg_avg": 944907,
-      "dmg_stddev": 437117,
-      "dmg_min": 570672,
-      "dmg_max": 1403413,
-      "window_length_s": 8,
-      "defensive_name": "Divine Protection",
-      "spell_id": 498,
-      "common_defensives": [
-        "Divine Protection"
-      ],
-      "common_cds": [
-        "Divine Protection"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1242815,
-          "avg_damage": 693232,
-          "min_damage": 453375,
-          "max_damage": 1012993,
-          "count": 4
-        },
-        {
-          "spell_id": 1242803,
-          "avg_damage": 334266,
-          "min_damage": 321185,
-          "max_damage": 347347,
-          "count": 2
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 71748,
-          "min_damage": 67021,
-          "max_damage": 77492,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 164.7,
+      "time_s": 165.1,
       "dmg_avg": 0,
       "dmg_stddev": 0,
       "dmg_min": 0,
@@ -244,15 +197,15 @@
     },
     {
       "spell_id": 6940,
-      "avg_uses": 1.8,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 498,
-      "avg_uses": 2.3,
+      "avg_uses": 2.8,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 6
     }
   ],
   "defensives": [
@@ -325,23 +278,15 @@
       "icon": "spell_holy_sealofsacrifice",
       "name": "Blessing of Sacrifice"
     },
-    "1241932": {
-      "icon": "inv_12_dualityphoenix_lightvoid_channel",
-      "name": "Voidlight Convergence"
-    },
     "1242803": {
       "icon": "inv_ability_holyfire_wave",
       "name": "Light Flames"
-    },
-    "1242815": {
-      "icon": "inv_cosmicvoid_wave",
-      "name": "Void Flames"
     },
     "1264650": {
       "icon": "inv_ragnaros_heart",
       "name": "Burning Heart"
     }
   },
-  "source_signature": "befe078490ce6f5a",
+  "source_signature": "1fa5bb107bd83902",
   "ingest_version": 1
 }

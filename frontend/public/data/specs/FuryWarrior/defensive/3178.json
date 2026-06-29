@@ -6,64 +6,64 @@
   "per_defensive_benchmarks": {
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 31.1,
-      "stddev_first_cast_s": 12.4,
-      "avg_gap_s": 46.3,
-      "stddev_gap_s": 21.3,
+      "avg_first_cast_s": 45,
+      "stddev_first_cast_s": 37.4,
+      "avg_gap_s": 49.4,
+      "stddev_gap_s": 33.4,
       "hold_targets": {
         "1": {
-          "target_s": 76.8,
-          "stddev_s": 1.8,
+          "target_s": 77.8,
+          "stddev_s": 104.6,
           "count": 6,
           "total_samples": 10
         },
         "2": {
           "target_s": 153.5,
-          "stddev_s": 36.6,
-          "count": 10,
+          "stddev_s": 39.8,
+          "count": 8,
           "total_samples": 10
         },
         "3": {
           "target_s": 193.9,
-          "stddev_s": 43.8,
-          "count": 9,
+          "stddev_s": 49.5,
+          "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 244.3,
-          "stddev_s": 40.2,
-          "count": 10,
+          "target_s": 244.6,
+          "stddev_s": 44.5,
+          "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 284.4,
-          "stddev_s": 39.8,
-          "count": 8,
+          "target_s": 284.3,
+          "stddev_s": 46.2,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 7.4,
-      "avg_uses_per_min": 1.24,
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 1.11,
       "uses_per_min": {
-        "avg": 1.243,
-        "stddev": 0.279,
-        "min": 1.02,
+        "avg": 1.113,
+        "stddev": 0.453,
+        "min": 0.356,
         "max": 1.744
       },
       "majority_hold": true
     },
     "Rallying Cry": {
-      "sample_count": 7,
-      "avg_first_cast_s": 232,
-      "stddev_first_cast_s": 69.8,
+      "sample_count": 5,
+      "avg_first_cast_s": 214.5,
+      "stddev_first_cast_s": 74.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.17,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.173,
-        "stddev": 0.019,
+        "avg": 0.176,
+        "stddev": 0.022,
         "min": 0.154,
         "max": 0.212
       },
@@ -89,9 +89,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 36.9,
-      "dmg_avg": 206904,
-      "dmg_stddev": 22680,
+      "time_s": 37.2,
+      "dmg_avg": 205351,
+      "dmg_stddev": 23970,
       "dmg_min": 168250,
       "dmg_max": 239802,
       "window_length_s": 5,
@@ -107,73 +107,40 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 137176,
+          "avg_damage": 137473,
           "min_damage": 118195,
           "max_damage": 154429,
-          "count": 10
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 39353,
-          "min_damage": 27226,
-          "max_damage": 47638,
-          "count": 9
-        },
-        {
-          "spell_id": 1244413,
-          "avg_damage": 29092,
-          "min_damage": 11209,
-          "max_damage": 50712,
           "count": 8
         },
         {
-          "spell_id": 1244672,
-          "avg_damage": 11037,
-          "min_damage": 6296,
-          "max_damage": 14354,
-          "count": 10
-        }
-      ]
-    },
-    {
-      "time_s": 76.7,
-      "dmg_avg": 195942,
-      "dmg_stddev": 113312,
-      "dmg_min": 29054,
-      "dmg_max": 458441,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 172444,
-          "min_damage": 131792,
-          "max_damage": 373013,
+          "spell_id": 1259275,
+          "avg_damage": 37647,
+          "min_damage": 27226,
+          "max_damage": 46824,
           "count": 7
         },
         {
-          "spell_id": 1259275,
-          "avg_damage": 63677,
-          "min_damage": 29054,
-          "max_damage": 94648,
-          "count": 10
+          "spell_id": 1244413,
+          "avg_damage": 32605,
+          "min_damage": 11209,
+          "max_damage": 50712,
+          "count": 6
+        },
+        {
+          "spell_id": 1244672,
+          "avg_damage": 10484,
+          "min_damage": 6296,
+          "max_damage": 14354,
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 169.4,
-      "dmg_avg": 268429,
-      "dmg_stddev": 186664,
-      "dmg_min": 134551,
-      "dmg_max": 764008,
+      "time_s": 76.6,
+      "dmg_avg": 165606,
+      "dmg_stddev": 69716,
+      "dmg_min": 29054,
+      "dmg_max": 242404,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -187,19 +154,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 170510,
-          "min_damage": 130226,
-          "max_damage": 293882,
+          "avg_damage": 137543,
+          "min_damage": 123910,
+          "max_damage": 147756,
           "count": 6
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 61074,
+          "min_damage": 29054,
+          "max_damage": 94648,
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 204.6,
-      "dmg_avg": 262405,
-      "dmg_stddev": 108776,
-      "dmg_min": 107262,
-      "dmg_max": 418310,
+      "time_s": 169.3,
+      "dmg_avg": 259542,
+      "dmg_stddev": 136081,
+      "dmg_min": 134551,
+      "dmg_max": 514627,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -212,20 +186,46 @@
       "ref_game_id": 244552,
       "ability_breakdown": [
         {
-          "spell_id": 1259275,
-          "avg_damage": 44089,
-          "min_damage": 15632,
-          "max_damage": 62252,
-          "count": 8
+          "spell_id": 1245302,
+          "avg_damage": 178566,
+          "min_damage": 134551,
+          "max_damage": 293882,
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 244.6,
-      "dmg_avg": 322616,
-      "dmg_stddev": 58757,
+      "time_s": 200.6,
+      "dmg_avg": 242917,
+      "dmg_stddev": 98062,
+      "dmg_min": 107262,
+      "dmg_max": 397643,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 44286,
+          "min_damage": 15632,
+          "max_damage": 62252,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 244.8,
+      "dmg_avg": 323287,
+      "dmg_stddev": 63314,
       "dmg_min": 200566,
-      "dmg_max": 391973,
+      "dmg_max": 398856,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -239,31 +239,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 140399,
+          "avg_damage": 142062,
           "min_damage": 128625,
-          "max_damage": 148378,
-          "count": 8
+          "max_damage": 157662,
+          "count": 7
         },
         {
           "spell_id": 1285954,
-          "avg_damage": 135158,
+          "avg_damage": 134482,
           "min_damage": 43658,
           "max_damage": 157526,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 63050,
+          "avg_damage": 64805,
           "min_damage": 43144,
-          "max_damage": 93584,
-          "count": 10
+          "max_damage": 91457,
+          "count": 9
         }
       ]
     },
     {
       "time_s": 284.5,
-      "dmg_avg": 237297,
-      "dmg_stddev": 60514,
+      "dmg_avg": 239978,
+      "dmg_stddev": 65396,
       "dmg_min": 116138,
       "dmg_max": 337699,
       "window_length_s": 5,
@@ -279,38 +279,38 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 144253,
+          "avg_damage": 144543,
           "min_damage": 126497,
-          "max_damage": 156097,
-          "count": 8
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 71037,
-          "min_damage": 43437,
-          "max_damage": 94294,
-          "count": 10
-        },
-        {
-          "spell_id": 1244413,
-          "avg_damage": 14124,
-          "min_damage": 6083,
-          "max_damage": 40541,
+          "max_damage": 155345,
           "count": 6
         },
         {
+          "spell_id": 1259275,
+          "avg_damage": 71245,
+          "min_damage": 43437,
+          "max_damage": 93377,
+          "count": 8
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 15732,
+          "min_damage": 6125,
+          "max_damage": 40541,
+          "count": 5
+        },
+        {
           "spell_id": 1244672,
-          "avg_damage": 10128,
+          "avg_damage": 10189,
           "min_damage": 6367,
           "max_damage": 14151,
-          "count": 8
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 317.8,
-      "dmg_avg": 447555,
-      "dmg_stddev": 145506,
+      "time_s": 314.2,
+      "dmg_avg": 461515,
+      "dmg_stddev": 129821,
       "dmg_min": 290030,
       "dmg_max": 642461,
       "window_length_s": 5,
@@ -326,64 +326,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 236358,
+          "avg_damage": 232945,
           "min_damage": 185348,
           "max_damage": 272097,
-          "count": 4
-        },
-        {
-          "spell_id": 1283712,
-          "avg_damage": 115158,
-          "min_damage": 115023,
-          "max_damage": 115292,
-          "count": 2
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 56567,
-          "min_damage": 50656,
-          "max_damage": 62477,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 372.3,
-      "dmg_avg": 346455,
-      "dmg_stddev": 194824,
-      "dmg_min": 169628,
-      "dmg_max": 537338,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 223746,
-          "min_damage": 140122,
-          "max_damage": 314507,
-          "count": 4
-        },
-        {
-          "spell_id": 1245500,
-          "avg_damage": 162372,
-          "min_damage": 131971,
-          "max_damage": 192772,
-          "count": 2
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 41523,
-          "min_damage": 29506,
-          "max_damage": 47641,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -403,8 +349,8 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 7.4,
-      "min_uses": 5,
+      "avg_uses": 6.5,
+      "min_uses": 2,
       "max_uses": 11
     }
   ],
@@ -460,17 +406,9 @@
       "icon": "warlock_curse_shadow",
       "name": "Nullzone"
     },
-    "1245175": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Voidbolt"
-    },
     "1245302": {
       "icon": "inv_cosmicvoid_orb",
       "name": "Void Howl"
-    },
-    "1245500": {
-      "icon": "inv_cosmicvoid_nova",
-      "name": "Gloom"
     },
     "1250071": {
       "icon": "inv_cosmicdragonmount",
@@ -480,15 +418,11 @@
       "icon": "inv_cosmicvoid_buff",
       "name": "Midnight Manifestation"
     },
-    "1283712": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Gloomtouched"
-    },
     "1285954": {
       "icon": "spell_priest_void-blast",
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "b84e2af4127cc2bc",
+  "source_signature": "61e55a77e9c09d92",
   "ingest_version": 1
 }

@@ -5,53 +5,70 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
-      "sample_count": 3,
-      "avg_first_cast_s": 193.1,
-      "stddev_first_cast_s": 128.3,
-      "avg_gap_s": 87.3,
-      "stddev_gap_s": 138.9,
+      "sample_count": 2,
+      "avg_first_cast_s": 263,
+      "stddev_first_cast_s": 59.9,
+      "avg_gap_s": 7.1,
+      "stddev_gap_s": 1.7,
       "hold_targets": {},
       "avg_uses": 2,
-      "avg_uses_per_min": 0.39,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.394,
-        "stddev": 0.038,
+        "avg": 0.399,
+        "stddev": 0.052,
         "min": 0.362,
         "max": 0.436
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 5,
-      "avg_first_cast_s": 129.6,
-      "stddev_first_cast_s": 109.4,
-      "avg_gap_s": 197.8,
-      "stddev_gap_s": 0,
+      "sample_count": 4,
+      "avg_first_cast_s": 151.6,
+      "stddev_first_cast_s": 112.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.26,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.256,
-        "stddev": 0.079,
+        "avg": 0.225,
+        "stddev": 0.038,
         "min": 0.181,
-        "max": 0.384
+        "max": 0.274
       },
       "majority_hold": false
     },
     "Time Dilation": {
       "sample_count": 3,
-      "avg_first_cast_s": 113,
-      "stddev_first_cast_s": 52.7,
+      "avg_first_cast_s": 92.9,
+      "stddev_first_cast_s": 37.8,
       "avg_gap_s": 3.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.284,
-        "stddev": 0.132,
-        "min": 0.192,
+        "avg": 0.32,
+        "stddev": 0.107,
+        "min": 0.225,
         "max": 0.436
+      },
+      "majority_hold": false
+    },
+    "Cauterizing Flame": {
+      "sample_count": 1,
+      "avg_first_cast_s": 196.5,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.298,
+        "stddev": 0,
+        "min": 0.298,
+        "max": 0.298
       },
       "majority_hold": false
     }
@@ -66,15 +83,21 @@
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.2,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     },
     {
       "spell_id": 357170,
       "avg_uses": 1.3,
       "min_uses": 1,
       "max_uses": 2
+    },
+    {
+      "spell_id": 374251,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -148,6 +171,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "e2f3d01b9453c302",
+  "source_signature": "1b041d0c4e624bf5",
   "ingest_version": 1
 }

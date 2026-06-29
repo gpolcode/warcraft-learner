@@ -5,9 +5,9 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 7,
-      "avg_first_cast_s": 88.3,
-      "stddev_first_cast_s": 46.3,
+      "sample_count": 8,
+      "avg_first_cast_s": 85.3,
+      "stddev_first_cast_s": 43.8,
       "avg_gap_s": 114.5,
       "stddev_gap_s": 10.7,
       "hold_targets": {
@@ -15,56 +15,62 @@
           "target_s": 185,
           "stddev_s": 18.5,
           "count": 4,
-          "total_samples": 7
+          "total_samples": 8
         }
       },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.409,
-        "stddev": 0.14,
-        "min": 0.23,
+        "avg": 0.387,
+        "stddev": 0.144,
+        "min": 0.228,
         "max": 0.59
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Fade": {
-      "sample_count": 6,
-      "avg_first_cast_s": 47.1,
-      "stddev_first_cast_s": 32.5,
-      "avg_gap_s": 51.9,
-      "stddev_gap_s": 28.6,
+      "sample_count": 7,
+      "avg_first_cast_s": 49.5,
+      "stddev_first_cast_s": 30.4,
+      "avg_gap_s": 52.9,
+      "stddev_gap_s": 28,
       "hold_targets": {
+        "1": {
+          "target_s": 59.1,
+          "stddev_s": 44.5,
+          "count": 3,
+          "total_samples": 7
+        },
         "2": {
           "target_s": 160.6,
           "stddev_s": 20.6,
           "count": 4,
-          "total_samples": 6
+          "total_samples": 7
         }
       },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.86,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.858,
-        "stddev": 0.529,
+        "avg": 0.801,
+        "stddev": 0.506,
         "min": 0.23,
         "max": 1.585
       },
       "majority_hold": true
     },
     "Guardian Spirit": {
-      "sample_count": 5,
-      "avg_first_cast_s": 164.4,
-      "stddev_first_cast_s": 44.7,
+      "sample_count": 4,
+      "avg_first_cast_s": 163.9,
+      "stddev_first_cast_s": 51.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.26,
-        "stddev": 0.033,
-        "min": 0.222,
+        "avg": 0.269,
+        "stddev": 0.029,
+        "min": 0.226,
         "max": 0.293
       },
       "majority_hold": false
@@ -72,9 +78,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 59.1,
-      "dmg_avg": 308904,
-      "dmg_stddev": 161989,
+      "time_s": 59.6,
+      "dmg_avg": 299604,
+      "dmg_stddev": 146668,
       "dmg_min": 122365,
       "dmg_max": 497202,
       "window_length_s": 10,
@@ -90,17 +96,50 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 290637,
+          "avg_damage": 260477,
           "min_damage": 69599,
           "max_damage": 435864,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 56181,
+          "avg_damage": 56658,
           "min_damage": 50554,
           "max_damage": 61338,
-          "count": 5
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 60,
+      "dmg_avg": 344926,
+      "dmg_stddev": 182740,
+      "dmg_min": 152020,
+      "dmg_max": 570964,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 328221,
+          "min_damage": 139838,
+          "max_damage": 500531,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 60550,
+          "min_damage": 53398,
+          "max_damage": 70433,
+          "count": 4
         }
       ]
     },
@@ -147,13 +186,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 1.6,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 586,
-      "avg_uses": 3.5,
+      "avg_uses": 3.3,
       "min_uses": 1,
       "max_uses": 7
     }
@@ -211,6 +250,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "c73139fb41b4b919",
+  "source_signature": "715af8611e5add24",
   "ingest_version": 1
 }
