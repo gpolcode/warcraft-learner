@@ -3,10 +3,10 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 467,
-  "downtime_threshold_ms": 1148,
-  "top_avg_efficiency": 71.2,
-  "top_efficiency_stddev": 5.1,
+  "avg_duration_s": 469.9,
+  "downtime_threshold_ms": 1132,
+  "top_avg_efficiency": 71,
+  "top_efficiency_stddev": 5.4,
   "per_cd_benchmarks": {
     "Avatar": {
       "sample_count": 10,
@@ -30,16 +30,16 @@
     },
     "Demoralizing Shout": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.6,
-      "stddev_first_cast_s": 3,
-      "avg_gap_s": 32.9,
-      "stddev_gap_s": 17.2,
-      "avg_bl_offset_s": 4.1,
-      "stddev_bl_offset_s": 3.3,
-      "avg_uses": 14.7,
-      "avg_uses_per_min": 1.88,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 1.5,
+      "avg_gap_s": 32.8,
+      "stddev_gap_s": 16.4,
+      "avg_bl_offset_s": 2.4,
+      "stddev_bl_offset_s": 6.9,
+      "avg_uses": 14.8,
+      "avg_uses_per_min": 1.89,
       "uses_per_min": {
-        "avg": 1.884,
+        "avg": 1.886,
         "stddev": 0.234,
         "min": 1.485,
         "max": 2.264
@@ -153,7 +153,7 @@
       "cooldown": 35,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so verify the player took Shield Charge before flagging missed casts.",
+      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so a missing cast may be normal if Shield Charge was not taken.",
       "talent_gated": true
     },
     {
@@ -309,6 +309,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "f3cb7639f9fa5248",
-  "ingest_version": 0
+  "source_signature": "94710a363863a6e8",
+  "ingest_version": 1
 }

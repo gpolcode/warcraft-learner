@@ -6,46 +6,46 @@
   "per_defensive_benchmarks": {
     "Blur": {
       "sample_count": 10,
-      "avg_first_cast_s": 178,
-      "stddev_first_cast_s": 148.9,
-      "avg_gap_s": 85.5,
-      "stddev_gap_s": 87.6,
+      "avg_first_cast_s": 174.9,
+      "stddev_first_cast_s": 152.5,
+      "avg_gap_s": 90.3,
+      "stddev_gap_s": 89.5,
       "hold_targets": {
         "1": {
-          "target_s": 298.5,
-          "stddev_s": 140.7,
-          "count": 5,
+          "target_s": 260,
+          "stddev_s": 143,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
-          "target_s": 375.1,
-          "stddev_s": 57.6,
+          "target_s": 376.2,
+          "stddev_s": 42.5,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.5,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.53,
-        "stddev": 0.159,
+        "avg": 0.514,
+        "stddev": 0.138,
         "min": 0.242,
-        "max": 0.774
+        "max": 0.677
       },
       "majority_hold": true
     },
     "Darkness": {
-      "sample_count": 8,
-      "avg_first_cast_s": 373.5,
-      "stddev_first_cast_s": 91.3,
+      "sample_count": 7,
+      "avg_first_cast_s": 366.3,
+      "stddev_first_cast_s": 96.2,
       "avg_gap_s": 193,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
-      "avg_uses_per_min": 0.13,
+      "avg_uses_per_min": 0.14,
       "uses_per_min": {
-        "avg": 0.133,
-        "stddev": 0.043,
+        "avg": 0.136,
+        "stddev": 0.046,
         "min": 0.111,
         "max": 0.238
       },
@@ -56,9 +56,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 198589,
-      "avg_uses": 4.5,
+      "avg_uses": 4.3,
       "min_uses": 2,
-      "max_uses": 7
+      "max_uses": 6
     },
     {
       "spell_id": 196718,
@@ -99,6 +99,10 @@
     "Netherwalk": 196555
   },
   "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
     "196718": {
       "icon": "ability_demonhunter_darkness",
       "name": "Darkness"
@@ -108,6 +112,6 @@
       "name": "Blur"
     }
   },
-  "source_signature": "d7064eb218a6dcdc",
-  "ingest_version": 0
+  "source_signature": "cdb5f674028632fb",
+  "ingest_version": 1
 }

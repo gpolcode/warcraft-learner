@@ -3,7 +3,77 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "windows": [],
+  "windows": [
+    {
+      "time_s": 168.8,
+      "dmg_avg": 1864138,
+      "dmg_stddev": 465038,
+      "dmg_min": 1353774,
+      "dmg_max": 2322606,
+      "common_cds": [
+        "Eye Beam",
+        "Immolation Aura"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 6,
+      "ability_breakdown": [
+        {
+          "spell_id": 1287949,
+          "avg_damage": 601947,
+          "min_damage": 372097,
+          "max_damage": 705358,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 452416,
+          "avg_damage": 279086,
+          "min_damage": 159278,
+          "max_damage": 461155,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 370966,
+          "avg_damage": 248412,
+          "min_damage": 116646,
+          "max_damage": 315508,
+          "count": 3,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 198030,
+          "avg_damage": 247875,
+          "min_damage": 204403,
+          "max_damage": 283355,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 370969,
+          "avg_damage": 191301,
+          "min_damage": 108963,
+          "max_damage": 324256,
+          "count": 4,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 453177,
+          "avg_damage": 79274,
+          "min_damage": 28070,
+          "max_damage": 130477,
+          "count": 2,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    }
+  ],
   "cd_spell_ids": {
     "Eye Beam": 198013,
     "Metamorphosis": 191427,
@@ -15,6 +85,68 @@
     "Darkness": 196718,
     "Netherwalk": 196555
   },
-  "source_signature": "5bfe4425e2eed6ee",
-  "ingest_version": 0
+  "ability_icons": {
+    "191427": {
+      "icon": "ability_demonhunter_metamorphasisdps",
+      "name": "Metamorphosis"
+    },
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198013": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    },
+    "198030": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    },
+    "198793": {
+      "icon": "ability_demonhunter_vengefulretreat2",
+      "name": "Vengeful Retreat"
+    },
+    "258860": {
+      "icon": "spell_shadow_ritualofsacrifice",
+      "name": "Essence Break"
+    },
+    "258920": {
+      "icon": "ability_demonhunter_immolation",
+      "name": "Immolation Aura"
+    },
+    "370965": {
+      "icon": "inv_ability_demonhunter_thehunt",
+      "name": "The Hunt"
+    },
+    "370966": {
+      "icon": "inv_ability_demonhunter_thehunt",
+      "name": "The Hunt"
+    },
+    "370969": {
+      "icon": "inv_ability_demonhunter_thehunt",
+      "name": "The Hunt"
+    },
+    "452416": {
+      "icon": "inv_ability_felscarreddemonhunter_demonsurge",
+      "name": "Demonsurge"
+    },
+    "453177": {
+      "icon": "inv_glaive_1h_artifactazgalor_d_02dual",
+      "name": "Burning Blades"
+    },
+    "1287949": {
+      "icon": "ability_demonhunter_eyebeam",
+      "name": "Eye Beam"
+    }
+  },
+  "source_signature": "dd4f164b3993eeb1",
+  "ingest_version": 1
 }

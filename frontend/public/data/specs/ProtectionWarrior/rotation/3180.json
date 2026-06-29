@@ -2,14 +2,14 @@
   "spec": "ProtectionWarrior",
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
-  "sample_count": 9,
-  "avg_duration_s": 378.1,
-  "downtime_threshold_ms": 1084,
+  "sample_count": 10,
+  "avg_duration_s": 385,
+  "downtime_threshold_ms": 1086,
   "top_avg_efficiency": 80.7,
-  "top_efficiency_stddev": 6.1,
+  "top_efficiency_stddev": 5.7,
   "per_cd_benchmarks": {
     "Avatar": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -29,27 +29,27 @@
       "hold_targets": {}
     },
     "Demoralizing Shout": {
-      "sample_count": 9,
-      "avg_first_cast_s": 3.3,
+      "sample_count": 10,
+      "avg_first_cast_s": 3.1,
       "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 23.5,
-      "stddev_gap_s": 6.4,
-      "avg_bl_offset_s": 2.8,
-      "stddev_bl_offset_s": 1.2,
-      "avg_uses": 16.3,
-      "avg_uses_per_min": 2.58,
+      "avg_gap_s": 23.7,
+      "stddev_gap_s": 6.3,
+      "avg_bl_offset_s": 2.6,
+      "stddev_bl_offset_s": 1.4,
+      "avg_uses": 16.5,
+      "avg_uses_per_min": 2.57,
       "uses_per_min": {
-        "avg": 2.585,
-        "stddev": 0.192,
+        "avg": 2.568,
+        "stddev": 0.189,
         "min": 2.108,
         "max": 2.795
       },
-      "bl_pct": 78,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Shield Charge": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -69,7 +69,7 @@
       "hold_targets": {}
     },
     "Ravager": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -89,7 +89,7 @@
       "hold_targets": {}
     },
     "Demolish": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -109,7 +109,7 @@
       "hold_targets": {}
     },
     "Champion's Spear": {
-      "sample_count": 9,
+      "sample_count": 10,
       "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
@@ -153,7 +153,7 @@
       "cooldown": 35,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so verify the player took Shield Charge before flagging missed casts.",
+      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so a missing cast may be normal if Shield Charge was not taken.",
       "talent_gated": true
     },
     {
@@ -309,6 +309,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "adec530ca031e8af",
-  "ingest_version": 0
+  "source_signature": "d2e6ab265f7276f0",
+  "ingest_version": 1
 }

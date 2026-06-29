@@ -6,47 +6,47 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 76.3,
-      "stddev_first_cast_s": 22.9,
-      "avg_gap_s": 63.3,
-      "stddev_gap_s": 21.3,
+      "avg_first_cast_s": 74.1,
+      "stddev_first_cast_s": 22.7,
+      "avg_gap_s": 55.9,
+      "stddev_gap_s": 29.2,
       "hold_targets": {},
       "avg_uses": 1.6,
-      "avg_uses_per_min": 0.66,
+      "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.661,
-        "stddev": 0.21,
+        "avg": 0.667,
+        "stddev": 0.212,
         "min": 0.41,
-        "max": 0.841
+        "max": 0.846
       },
       "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 1,
-      "avg_first_cast_s": 74.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 78.5,
+      "stddev_first_cast_s": 6.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.42,
-        "stddev": 0,
+        "avg": 0.422,
+        "stddev": 0.002,
         "min": 0.42,
-        "max": 0.42
+        "max": 0.423
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 73.9,
-      "dmg_avg": 242783,
-      "dmg_stddev": 91551,
+      "time_s": 73.8,
+      "dmg_avg": 247776,
+      "dmg_stddev": 105237,
       "dmg_min": 79240,
       "dmg_max": 377671,
-      "window_length_s": 7.4,
+      "window_length_s": 6.8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
       "common_defensives": [
@@ -59,14 +59,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 213937,
+          "avg_damage": 228308,
           "min_damage": 79240,
           "max_damage": 331450,
           "count": 7
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 25901,
+          "avg_damage": 30211,
           "min_damage": 14095,
           "max_damage": 46221,
           "count": 5
@@ -75,9 +75,9 @@
     },
     {
       "time_s": 141.5,
-      "dmg_avg": 225105,
-      "dmg_stddev": 109195,
-      "dmg_min": 83693,
+      "dmg_avg": 253387,
+      "dmg_stddev": 94367,
+      "dmg_min": 152508,
       "dmg_max": 369354,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
@@ -92,10 +92,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 169435,
-          "min_damage": 83693,
+          "avg_damage": 190870,
+          "min_damage": 97408,
           "max_damage": 277472,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1246653,
@@ -135,7 +135,7 @@
       "spell_id": 264735,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction; spell_id is my best guess and should be verified at wowhead.com/spell=264735.",
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
       "talent_gated": false
     },
     {
@@ -174,6 +174,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "969a9907ec37edbe",
-  "ingest_version": 0
+  "source_signature": "d90b01473d758155",
+  "ingest_version": 1
 }

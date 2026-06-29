@@ -3,10 +3,10 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 539.9,
-  "downtime_threshold_ms": 1074,
-  "top_avg_efficiency": 77.2,
-  "top_efficiency_stddev": 11.2,
+  "avg_duration_s": 545.1,
+  "downtime_threshold_ms": 1077,
+  "top_avg_efficiency": 77.7,
+  "top_efficiency_stddev": 12.3,
   "per_cd_benchmarks": {
     "Avatar": {
       "sample_count": 10,
@@ -30,19 +30,19 @@
     },
     "Demoralizing Shout": {
       "sample_count": 10,
-      "avg_first_cast_s": 8.2,
-      "stddev_first_cast_s": 5.7,
-      "avg_gap_s": 32.4,
-      "stddev_gap_s": 7.4,
-      "avg_bl_offset_s": 1.2,
-      "stddev_bl_offset_s": 6.9,
-      "avg_uses": 16.9,
-      "avg_uses_per_min": 1.88,
+      "avg_first_cast_s": 10.9,
+      "stddev_first_cast_s": 11.3,
+      "avg_gap_s": 32.9,
+      "stddev_gap_s": 8.8,
+      "avg_bl_offset_s": 1.1,
+      "stddev_bl_offset_s": 6.3,
+      "avg_uses": 16.8,
+      "avg_uses_per_min": 1.85,
       "uses_per_min": {
-        "avg": 1.876,
-        "stddev": 0.093,
-        "min": 1.739,
-        "max": 2.016
+        "avg": 1.852,
+        "stddev": 0.226,
+        "min": 1.251,
+        "max": 2.029
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -153,7 +153,7 @@
       "cooldown": 35,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so verify the player took Shield Charge before flagging missed casts.",
+      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so a missing cast may be normal if Shield Charge was not taken.",
       "talent_gated": true
     },
     {
@@ -309,6 +309,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "36d525ffecbbf643",
-  "ingest_version": 0
+  "source_signature": "06f94d07236baf66",
+  "ingest_version": 1
 }

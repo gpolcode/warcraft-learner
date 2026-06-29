@@ -6,17 +6,17 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 7,
-      "avg_first_cast_s": 92.8,
-      "stddev_first_cast_s": 53.8,
+      "avg_first_cast_s": 81.9,
+      "stddev_first_cast_s": 48.4,
       "avg_gap_s": 128.6,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.466,
+        "avg": 0.467,
         "stddev": 0.152,
-        "min": 0.401,
+        "min": 0.403,
         "max": 0.811
       },
       "majority_hold": false
@@ -40,7 +40,7 @@
     },
     "Feint": {
       "sample_count": 8,
-      "avg_first_cast_s": 47.2,
+      "avg_first_cast_s": 47.3,
       "stddev_first_cast_s": 25.5,
       "avg_gap_s": 29.1,
       "stddev_gap_s": 21.7,
@@ -56,28 +56,28 @@
       "avg_uses_per_min": 1.28,
       "uses_per_min": {
         "avg": 1.28,
-        "stddev": 1.078,
-        "min": 0.401,
+        "stddev": 1.077,
+        "min": 0.406,
         "max": 3.741
       },
       "majority_hold": true
     },
     "Crimson Vial": {
-      "sample_count": 2,
-      "avg_first_cast_s": 111.5,
-      "stddev_first_cast_s": 49.7,
+      "sample_count": 1,
+      "avg_first_cast_s": 76.3,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": 66.4,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.62,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 0.616,
-        "stddev": 0.304,
-        "min": 0.401,
+        "avg": 0.831,
+        "stddev": 0,
+        "min": 0.831,
         "max": 0.831
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [
@@ -109,8 +109,8 @@
     },
     {
       "time_s": 72.8,
-      "dmg_avg": 176766,
-      "dmg_stddev": 120545,
+      "dmg_avg": 176623,
+      "dmg_stddev": 120665,
       "dmg_min": 0,
       "dmg_max": 354331,
       "window_length_s": 6,
@@ -126,7 +126,7 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 179156,
+          "avg_damage": 178942,
           "min_damage": 81564,
           "max_damage": 242847,
           "count": 6
@@ -165,31 +165,13 @@
           "count": 6
         }
       ]
-    },
-    {
-      "time_s": 145.6,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "window_length_s": 5,
-      "defensive_name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "common_defensives": [
-        "Cloak of Shadows"
-      ],
-      "common_cds": [
-        "Cloak of Shadows"
-      ],
-      "ref_game_id": null,
-      "ability_breakdown": []
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 185311,
-      "avg_uses": 1.5,
-      "min_uses": 1,
+      "avg_uses": 2,
+      "min_uses": 2,
       "max_uses": 2
     },
     {
@@ -277,6 +259,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "73bee086ad09f147",
-  "ingest_version": 0
+  "source_signature": "6aa57d71791fe07d",
+  "ingest_version": 1
 }
