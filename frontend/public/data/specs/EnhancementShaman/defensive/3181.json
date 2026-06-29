@@ -6,29 +6,23 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 155.7,
-      "stddev_first_cast_s": 152.3,
-      "avg_gap_s": 197.3,
-      "stddev_gap_s": 112.9,
+      "avg_first_cast_s": 157.5,
+      "stddev_first_cast_s": 150.6,
+      "avg_gap_s": 210.4,
+      "stddev_gap_s": 120.7,
       "hold_targets": {
         "1": {
-          "target_s": 350.6,
-          "stddev_s": 70.7,
+          "target_s": 399,
+          "stddev_s": 65.3,
           "count": 7,
-          "total_samples": 10
-        },
-        "2": {
-          "target_s": 422.2,
-          "stddev_s": 26.6,
-          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.3,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.301,
-        "stddev": 0.096,
+        "avg": 0.287,
+        "stddev": 0.091,
         "min": 0.128,
         "max": 0.445
       },
@@ -36,18 +30,18 @@
     },
     "Earth Elemental": {
       "sample_count": 6,
-      "avg_first_cast_s": 285.7,
-      "stddev_first_cast_s": 143.9,
+      "avg_first_cast_s": 243,
+      "stddev_first_cast_s": 148.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
-        "avg": 0.118,
-        "stddev": 0.007,
+        "avg": 0.117,
+        "stddev": 0.005,
         "min": 0.111,
-        "max": 0.131
+        "max": 0.127
       },
       "majority_hold": false
     },
@@ -88,11 +82,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 401.1,
-      "dmg_avg": 523333,
-      "dmg_stddev": 145623,
+      "time_s": 404.9,
+      "dmg_avg": 469917,
+      "dmg_stddev": 115603,
       "dmg_min": 318518,
-      "dmg_max": 688889,
+      "dmg_max": 625702,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -105,32 +99,18 @@
       "ref_game_id": 240430,
       "ability_breakdown": [
         {
-          "spell_id": 1261289,
-          "avg_damage": 178882,
-          "min_damage": 165238,
-          "max_damage": 185084,
-          "count": 4
-        },
-        {
           "spell_id": 1237040,
-          "avg_damage": 163934,
+          "avg_damage": 168068,
           "min_damage": 80621,
-          "max_damage": 199209,
+          "max_damage": 214863,
           "count": 5
         },
         {
-          "spell_id": 1239095,
-          "avg_damage": 116713,
-          "min_damage": 74140,
-          "max_damage": 185224,
-          "count": 3
-        },
-        {
-          "spell_id": 1243743,
-          "avg_damage": 71951,
-          "min_damage": 71653,
-          "max_damage": 72123,
-          "count": 3
+          "spell_id": 1261289,
+          "avg_damage": 136444,
+          "min_damage": 15333,
+          "max_damage": 183457,
+          "count": 4
         }
       ]
     },
@@ -185,7 +165,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.5,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -290,15 +270,11 @@
       "icon": "spell_holy_circleofrenewal_shadow",
       "name": "Gravity Collapse"
     },
-    "1243743": {
-      "icon": "ability_priest_surgeofdarkness",
-      "name": "Interrupting Tremor"
-    },
     "1261289": {
       "icon": "inv_cosmicvoid_buff",
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "b4ee0fed28f50708",
+  "source_signature": "eb2a2d698153cb01",
   "ingest_version": 1
 }

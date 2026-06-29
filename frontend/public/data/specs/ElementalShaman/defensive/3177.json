@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 108.6,
-      "stddev_first_cast_s": 47.6,
+      "avg_first_cast_s": 115.9,
+      "stddev_first_cast_s": 47.9,
       "avg_gap_s": 104.1,
       "stddev_gap_s": 11.9,
       "hold_targets": {},
       "avg_uses": 1.4,
       "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.418,
-        "stddev": 0.144,
+        "avg": 0.421,
+        "stddev": 0.141,
         "min": 0.284,
         "max": 0.577
       },
@@ -41,9 +41,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 88.6,
-      "dmg_avg": 363593,
-      "dmg_stddev": 132411,
+      "time_s": 89.9,
+      "dmg_avg": 368549,
+      "dmg_stddev": 144336,
       "dmg_min": 159961,
       "dmg_max": 546501,
       "window_length_s": 12,
@@ -55,21 +55,28 @@
       "common_cds": [
         "Astral Shift"
       ],
-      "ref_game_id": 253475,
+      "ref_game_id": 240434,
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 205075,
+          "avg_damage": 200332,
           "min_damage": 98853,
           "max_damage": 341803,
-          "count": 6
+          "count": 5
+        },
+        {
+          "spell_id": 1280101,
+          "avg_damage": 122188,
+          "min_damage": 29754,
+          "max_damage": 288753,
+          "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 47299,
-          "min_damage": 45209,
+          "avg_damage": 47648,
+          "min_damage": 45471,
           "max_damage": 49876,
-          "count": 7
+          "count": 6
         }
       ]
     },
@@ -196,8 +203,12 @@
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
+    },
+    "1280101": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Dark Energy"
     }
   },
-  "source_signature": "3757d9708c6ef773",
+  "source_signature": "2d5d952bc0fcc1b8",
   "ingest_version": 1
 }

@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Spirit Walk": {
       "sample_count": 8,
-      "avg_first_cast_s": 60.2,
-      "stddev_first_cast_s": 25.6,
-      "avg_gap_s": 68.3,
-      "stddev_gap_s": 65.9,
+      "avg_first_cast_s": 64,
+      "stddev_first_cast_s": 27.4,
+      "avg_gap_s": 69.8,
+      "stddev_gap_s": 72.3,
       "hold_targets": {},
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.67,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.6,
       "uses_per_min": {
-        "avg": 0.668,
-        "stddev": 0.282,
+        "avg": 0.596,
+        "stddev": 0.295,
         "min": 0.294,
         "max": 1.027
       },
@@ -41,9 +41,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 74.6,
-      "dmg_avg": 400407,
-      "dmg_stddev": 176332,
+      "time_s": 77.8,
+      "dmg_avg": 395147,
+      "dmg_stddev": 186095,
       "dmg_min": 150470,
       "dmg_max": 655771,
       "window_length_s": 8,
@@ -55,11 +55,11 @@
       "common_cds": [
         "Spirit Walk"
       ],
-      "ref_game_id": 240434,
+      "ref_game_id": 253475,
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 347556,
+          "avg_damage": 317053,
           "min_damage": 233656,
           "max_damage": 490193,
           "count": 5
@@ -73,10 +73,10 @@
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 51874,
+          "avg_damage": 52017,
           "min_damage": 50043,
           "max_damage": 53632,
-          "count": 10
+          "count": 9
         }
       ]
     },
@@ -114,9 +114,9 @@
       ]
     },
     {
-      "time_s": 200.2,
-      "dmg_avg": 531591,
-      "dmg_stddev": 81576,
+      "time_s": 204.4,
+      "dmg_avg": 545014,
+      "dmg_stddev": 87588,
       "dmg_min": 416636,
       "dmg_max": 609411,
       "window_length_s": 8,
@@ -138,11 +138,25 @@
           "count": 3
         },
         {
+          "spell_id": 1243270,
+          "avg_damage": 199778,
+          "min_damage": 194655,
+          "max_damage": 204901,
+          "count": 2
+        },
+        {
           "spell_id": 1272950,
-          "avg_damage": 103587,
+          "avg_damage": 103664,
           "min_damage": 100562,
           "max_damage": 107122,
-          "count": 5
+          "count": 4
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 103319,
+          "min_damage": 102024,
+          "max_damage": 104613,
+          "count": 2
         }
       ]
     }
@@ -156,7 +170,7 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 2.3,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -231,6 +245,10 @@
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
     },
+    "1243270": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Dark Goo"
+    },
     "1259186": {
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
@@ -248,6 +266,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "f5a7f9e5a8d36d14",
+  "source_signature": "9435bbb665908368",
   "ingest_version": 1
 }
