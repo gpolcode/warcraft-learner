@@ -6,44 +6,44 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 8,
-      "avg_first_cast_s": 152.7,
-      "stddev_first_cast_s": 72.7,
+      "avg_first_cast_s": 152,
+      "stddev_first_cast_s": 73.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.268,
-        "stddev": 0.031,
+        "avg": 0.269,
+        "stddev": 0.033,
         "min": 0.218,
-        "max": 0.314
+        "max": 0.322
       },
       "majority_hold": false
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 98.4,
-      "stddev_first_cast_s": 56.3,
-      "avg_gap_s": 95,
-      "stddev_gap_s": 29.5,
+      "avg_first_cast_s": 98,
+      "stddev_first_cast_s": 56.6,
+      "avg_gap_s": 98,
+      "stddev_gap_s": 29,
       "hold_targets": {
         "1": {
-          "target_s": 181.5,
-          "stddev_s": 3.3,
-          "count": 4,
+          "target_s": 183.1,
+          "stddev_s": 3,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.48,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.477,
-        "stddev": 0.189,
+        "avg": 0.51,
+        "stddev": 0.186,
         "min": 0.259,
         "max": 0.815
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Mortal Coil": {
       "sample_count": 4,
@@ -65,12 +65,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 61.2,
-      "dmg_avg": 491133,
-      "dmg_stddev": 89423,
-      "dmg_min": 366704,
+      "time_s": 60.9,
+      "dmg_avg": 503142,
+      "dmg_stddev": 72633,
+      "dmg_min": 424347,
       "dmg_max": 624532,
-      "window_length_s": 9.1,
+      "window_length_s": 7,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -83,10 +83,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 352097,
+          "avg_damage": 361616,
           "min_damage": 225274,
           "max_damage": 433353,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 111400,
@@ -96,32 +96,25 @@
           "count": 3
         },
         {
-          "spell_id": 1272328,
-          "avg_damage": 102918,
-          "min_damage": 87344,
-          "max_damage": 114869,
-          "count": 3
-        },
-        {
           "spell_id": 1272950,
-          "avg_damage": 56962,
+          "avg_damage": 44951,
           "min_damage": 27227,
-          "max_damage": 100273,
+          "max_damage": 85105,
           "count": 6
         },
         {
           "spell_id": 387846,
-          "avg_damage": 4775,
-          "min_damage": 2085,
-          "max_damage": 8778,
+          "avg_damage": 3535,
+          "min_damage": 1343,
+          "max_damage": 7218,
           "count": 6
         }
       ]
     },
     {
-      "time_s": 88.4,
-      "dmg_avg": 229766,
-      "dmg_stddev": 142566,
+      "time_s": 85.6,
+      "dmg_avg": 230133,
+      "dmg_stddev": 142597,
       "dmg_min": 105049,
       "dmg_max": 426748,
       "window_length_s": 8,
@@ -137,21 +130,21 @@
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 146096,
+          "avg_damage": 146377,
           "min_damage": 105626,
-          "max_damage": 201306,
+          "max_damage": 202150,
           "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 36557,
-          "min_damage": 32534,
+          "avg_damage": 36717,
+          "min_damage": 33006,
           "max_damage": 44724,
           "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 4880,
+          "avg_damage": 4876,
           "min_damage": 3663,
           "max_damage": 6927,
           "count": 4
@@ -166,12 +159,12 @@
       ]
     },
     {
-      "time_s": 181.5,
-      "dmg_avg": 471337,
-      "dmg_stddev": 77500,
+      "time_s": 183.1,
+      "dmg_avg": 458980,
+      "dmg_stddev": 77936,
       "dmg_min": 324899,
       "dmg_max": 528234,
-      "window_length_s": 6.7,
+      "window_length_s": 8.6,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -184,31 +177,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 302316,
+          "avg_damage": 306492,
           "min_damage": 78959,
           "max_damage": 427030,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 100699,
-          "min_damage": 58866,
+          "avg_damage": 94372,
+          "min_damage": 56410,
           "max_damage": 137212,
-          "count": 6
-        },
-        {
-          "spell_id": 111400,
-          "avg_damage": 89209,
-          "min_damage": 39260,
-          "max_damage": 118311,
-          "count": 3
+          "count": 7
         },
         {
           "spell_id": 387846,
-          "avg_damage": 1115,
+          "avg_damage": 1107,
           "min_damage": 30,
           "max_damage": 2149,
-          "count": 6
+          "count": 7
         }
       ]
     }
@@ -222,7 +208,7 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 1.8,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -302,10 +288,6 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -319,6 +301,6 @@
       "name": "Rune of Void-Tainted Shell"
     }
   },
-  "source_signature": "af9822aedcbd03bc",
+  "source_signature": "f3cb80d779461329",
   "ingest_version": 1
 }

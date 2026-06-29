@@ -6,29 +6,29 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 71.3,
-      "stddev_first_cast_s": 77.2,
-      "avg_gap_s": 118.3,
-      "stddev_gap_s": 13.8,
+      "avg_first_cast_s": 60.5,
+      "stddev_first_cast_s": 78.7,
+      "avg_gap_s": 114.3,
+      "stddev_gap_s": 14.2,
       "hold_targets": {
         "1": {
-          "target_s": 128.6,
-          "stddev_s": 70.3,
+          "target_s": 121.8,
+          "stddev_s": 69.2,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 232,
-          "stddev_s": 18.7,
-          "count": 4,
+          "target_s": 225.7,
+          "stddev_s": 25.7,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.51,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.508,
-        "stddev": 0.157,
+        "avg": 0.534,
+        "stddev": 0.173,
         "min": 0.242,
         "max": 0.768
       },
@@ -37,11 +37,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 0.8,
-      "dmg_avg": 583281,
-      "dmg_stddev": 68459,
+      "time_s": 1.2,
+      "dmg_avg": 570582,
+      "dmg_stddev": 68774,
       "dmg_min": 496079,
-      "dmg_max": 647860,
+      "dmg_max": 648091,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -55,25 +55,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1241932,
-          "avg_damage": 498108,
+          "avg_damage": 485674,
           "min_damage": 409739,
-          "max_damage": 554402,
-          "count": 5
+          "max_damage": 559024,
+          "count": 6
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 85172,
+          "avg_damage": 84909,
           "min_damage": 62526,
-          "max_damage": 93458,
-          "count": 5
+          "max_damage": 92958,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 121.2,
-      "dmg_avg": 695226,
-      "dmg_stddev": 175918,
-      "dmg_min": 515046,
+      "time_s": 112.1,
+      "dmg_avg": 759776,
+      "dmg_stddev": 173987,
+      "dmg_min": 609524,
       "dmg_max": 1095000,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
@@ -88,26 +88,26 @@
       "ability_breakdown": [
         {
           "spell_id": 1242803,
-          "avg_damage": 495430,
+          "avg_damage": 532208,
           "min_damage": 312804,
           "max_damage": 628065,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 93075,
+          "avg_damage": 102077,
           "min_damage": 72788,
           "max_damage": 128559,
-          "count": 8
+          "count": 6
         }
       ]
     },
     {
       "time_s": 232,
-      "dmg_avg": 510338,
-      "dmg_stddev": 256941,
+      "dmg_avg": 418386,
+      "dmg_stddev": 275953,
       "dmg_min": 128559,
-      "dmg_max": 703767,
+      "dmg_max": 691429,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -120,18 +120,11 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
-          "spell_id": 1242815,
-          "avg_damage": 474502,
-          "min_damage": 208060,
-          "max_damage": 615505,
-          "count": 3
-        },
-        {
           "spell_id": 1264650,
-          "avg_damage": 87315,
+          "avg_damage": 87712,
           "min_damage": 31959,
           "max_damage": 128559,
-          "count": 6
+          "count": 4
         }
       ]
     }
@@ -139,7 +132,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 122470,
-      "avg_uses": 2.3,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -209,15 +202,11 @@
       "icon": "inv_ability_holyfire_wave",
       "name": "Light Flames"
     },
-    "1242815": {
-      "icon": "inv_cosmicvoid_wave",
-      "name": "Void Flames"
-    },
     "1264650": {
       "icon": "inv_ragnaros_heart",
       "name": "Burning Heart"
     }
   },
-  "source_signature": "c522e5739e9dc04b",
-  "ingest_version": 0
+  "source_signature": "38bb8f01c5c60c9f",
+  "ingest_version": 1
 }

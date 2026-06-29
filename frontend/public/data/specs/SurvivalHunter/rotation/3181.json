@@ -3,64 +3,114 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 488.6,
-  "downtime_threshold_ms": 1729,
-  "top_avg_efficiency": 72.6,
-  "top_efficiency_stddev": 2.3,
+  "avg_duration_s": 493.8,
+  "downtime_threshold_ms": 1768,
+  "top_avg_efficiency": 72.8,
+  "top_efficiency_stddev": 1.9,
   "per_cd_benchmarks": {
     "Takedown": {
       "sample_count": 10,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "avg_first_cast_s": 21.4,
+      "stddev_first_cast_s": 7.4,
+      "avg_gap_s": 68,
+      "stddev_gap_s": 12.1,
+      "avg_bl_offset_s": 3.2,
+      "stddev_bl_offset_s": 9.1,
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 0.91,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 0.911,
+        "stddev": 0.057,
+        "min": 0.775,
+        "max": 0.974
       },
-      "bl_pct": 0,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 100,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 96.3,
+          "stddev_s": 9.4,
+          "count": 5,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 177.7,
+          "stddev_s": 2.5,
+          "count": 10,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 238.3,
+          "stddev_s": 2.4,
+          "count": 10,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 301.4,
+          "stddev_s": 15.5,
+          "count": 10,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 367.2,
+          "stddev_s": 15.1,
+          "count": 10,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 428.9,
+          "stddev_s": 5.6,
+          "count": 9,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 490,
+          "stddev_s": 6.4,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
     },
     "Boomstick": {
       "sample_count": 10,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "avg_first_cast_s": 14.8,
+      "stddev_first_cast_s": 12.2,
+      "avg_gap_s": 40.9,
+      "stddev_gap_s": 15.3,
+      "avg_bl_offset_s": 3.5,
+      "stddev_bl_offset_s": 9,
+      "avg_uses": 12.3,
+      "avg_uses_per_min": 1.5,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 1.498,
+        "stddev": 0.146,
+        "min": 1.242,
+        "max": 1.697
       },
-      "bl_pct": 0,
+      "bl_pct": 100,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "4": {
+          "target_s": 184.7,
+          "stddev_s": 2.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Wildfire Bomb": {
       "sample_count": 10,
-      "avg_first_cast_s": 4,
-      "stddev_first_cast_s": 2.9,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 2.6,
       "avg_gap_s": 9.7,
-      "stddev_gap_s": 6,
-      "avg_bl_offset_s": 0.2,
-      "stddev_bl_offset_s": 3.7,
-      "avg_uses": 50.5,
-      "avg_uses_per_min": 6.19,
+      "stddev_gap_s": 5.6,
+      "avg_bl_offset_s": 1.5,
+      "stddev_bl_offset_s": 3.5,
+      "avg_uses": 50.8,
+      "avg_uses_per_min": 6.16,
       "uses_per_min": {
-        "avg": 6.194,
-        "stddev": 0.335,
+        "avg": 6.162,
+        "stddev": 0.291,
         "min": 5.704,
         "max": 6.738
       },
@@ -112,20 +162,20 @@
   "major_cooldowns": [
     {
       "name": "Takedown",
-      "spell_id": 1217803,
+      "spell_id": 1250646,
       "cooldown": 60,
       "duration": 8,
       "align_with_bloodlust": true,
       "opener_priority": 1,
-      "usage_rule": "Use on cooldown as your primary burst window, always buffed with a Tip of the Spear stack and synced with Bloodlust, on-use trinkets, and your potion; note the spell_id is a best guess for the Midnight-era ability and may need verification."
+      "usage_rule": "Use on cooldown as your primary burst window, always buffed with a Tip of the Spear stack and synced with Bloodlust, on-use trinkets, and your potion."
     },
     {
       "name": "Boomstick",
-      "spell_id": 1227033,
+      "spell_id": 1261193,
       "cooldown": 45,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Spend a Tip of the Spear stack on this high-damage frontal cone whenever it is available, holding it for stacked packs in AoE since Lethal Calibration drops its cooldown as low as 15 seconds; the spell_id is a best guess and may need verification."
+      "usage_rule": "Spend a Tip of the Spear stack on this high-damage frontal cone whenever it is available, holding it for stacked packs in AoE since Lethal Calibration drops its cooldown as low as 15 seconds."
     },
     {
       "name": "Wildfire Bomb",
@@ -137,19 +187,19 @@
     },
     {
       "name": "Flamefang Pitch",
-      "spell_id": 1217788,
+      "spell_id": 1251592,
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Use during Takedown so it lines up naturally with Savagery, but avoid casting it if you cannot hold another Wildfire Bomb charge; the spell_id is a best guess for this Midnight talent and may need verification."
+      "usage_rule": "Use during Takedown so it lines up naturally with Savagery, but avoid casting it if you cannot hold another Wildfire Bomb charge."
     },
     {
       "name": "Moonlight Chakram",
-      "spell_id": 1227036,
+      "spell_id": 1264902,
       "cooldown": 60,
       "align_with_bloodlust": true,
       "talent_gated": true,
-      "usage_rule": "On the Sentinel build this replaces Takedown on the same keybind; spend a Tip of the Spear stack on it on cooldown, delaying with Stalk and Strike to capture the 10s Wildfire Bomb cooldown reduction; the spell_id is a best guess and may need verification."
+      "usage_rule": "On the Sentinel build this replaces Takedown on the same keybind; spend a Tip of the Spear stack on it on cooldown, delaying with Stalk and Strike to capture the 10s Wildfire Bomb cooldown reduction."
     }
   ],
   "rules": [
@@ -211,11 +261,11 @@
     }
   ],
   "cd_spell_ids": {
-    "Takedown": 1217803,
-    "Boomstick": 1227033,
+    "Takedown": 1250646,
+    "Boomstick": 1261193,
     "Wildfire Bomb": 259495,
-    "Flamefang Pitch": 1217788,
-    "Moonlight Chakram": 1227036,
+    "Flamefang Pitch": 1251592,
+    "Moonlight Chakram": 1264902,
     "Aspect of the Turtle": 186265,
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
@@ -237,19 +287,23 @@
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
     },
-    "1217788": {
-      "icon": "ability_hunter_improvedtracking",
-      "name": "Manhunter"
+    "1250646": {
+      "icon": "inv12_ability_hunter_takedown",
+      "name": "Takedown"
     },
-    "1217803": {
-      "icon": "ability_warrior_endlessrage",
-      "name": "Angry"
+    "1251592": {
+      "icon": "inv_10_blacksmithing_craftedoptional_blacksmithdye_fire",
+      "name": "Flamefang Pitch"
     },
-    "1227036": {
-      "icon": "inv_ability_web_groundstate",
-      "name": "Sticky Silk"
+    "1261193": {
+      "icon": "inv_musket_04",
+      "name": "Boomstick"
+    },
+    "1264902": {
+      "icon": "inv_ability_hunter_deathchakram",
+      "name": "Moonlight Chakram"
     }
   },
-  "source_signature": "e5effda83d58c44e",
-  "ingest_version": 0
+  "source_signature": "0fb2e1c74599487a",
+  "ingest_version": 1
 }

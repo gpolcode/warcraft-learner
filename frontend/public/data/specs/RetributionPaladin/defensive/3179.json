@@ -6,49 +6,49 @@
   "per_defensive_benchmarks": {
     "Shield of Vengeance": {
       "sample_count": 9,
-      "avg_first_cast_s": 96.8,
-      "stddev_first_cast_s": 75.2,
-      "avg_gap_s": 91.7,
-      "stddev_gap_s": 22.7,
+      "avg_first_cast_s": 87.7,
+      "stddev_first_cast_s": 81.2,
+      "avg_gap_s": 98.2,
+      "stddev_gap_s": 23.9,
       "hold_targets": {
         "1": {
-          "target_s": 221.4,
-          "stddev_s": 6.1,
-          "count": 4,
+          "target_s": 224.7,
+          "stddev_s": 41.6,
+          "count": 5,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.531,
-        "stddev": 0.189,
+        "avg": 0.552,
+        "stddev": 0.187,
         "min": 0.18,
         "max": 0.873
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Divine Shield": {
-      "sample_count": 6,
-      "avg_first_cast_s": 213.1,
-      "stddev_first_cast_s": 69.4,
+      "sample_count": 4,
+      "avg_first_cast_s": 220.1,
+      "stddev_first_cast_s": 84.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.25,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.25,
-        "stddev": 0.047,
+        "avg": 0.237,
+        "stddev": 0.05,
         "min": 0.18,
-        "max": 0.302
+        "max": 0.298
       },
       "majority_hold": false
     },
     "Lay on Hands": {
-      "sample_count": 1,
-      "avg_first_cast_s": 119.4,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 164.1,
+      "stddev_first_cast_s": 63.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -56,8 +56,8 @@
       "avg_uses_per_min": 0.22,
       "uses_per_min": {
         "avg": 0.219,
-        "stddev": 0,
-        "min": 0.219,
+        "stddev": 0.001,
+        "min": 0.218,
         "max": 0.219
       },
       "majority_hold": false
@@ -65,12 +65,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 103.5,
-      "dmg_avg": 198254,
-      "dmg_stddev": 83986,
+      "time_s": 104.1,
+      "dmg_avg": 184251,
+      "dmg_stddev": 93668,
       "dmg_min": 0,
-      "dmg_max": 258147,
-      "window_length_s": 5.9,
+      "dmg_max": 252390,
+      "window_length_s": 5.5,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -83,20 +83,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 218959,
-          "min_damage": 179262,
+          "avg_damage": 198787,
+          "min_damage": 78405,
           "max_damage": 252390,
           "count": 5
         }
       ]
     },
     {
-      "time_s": 218.1,
-      "dmg_avg": 214704,
-      "dmg_stddev": 18161,
+      "time_s": 224.7,
+      "dmg_avg": 210154,
+      "dmg_stddev": 15005,
       "dmg_min": 186666,
-      "dmg_max": 233006,
-      "window_length_s": 4.4,
+      "dmg_max": 225491,
+      "window_length_s": 4.8,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -108,17 +108,17 @@
       "ref_game_id": 240432,
       "ability_breakdown": [
         {
-          "spell_id": 1285504,
-          "avg_damage": 130310,
-          "min_damage": 58597,
-          "max_damage": 216750,
+          "spell_id": 1254018,
+          "avg_damage": 196195,
+          "min_damage": 155289,
+          "max_damage": 225491,
           "count": 3
         },
         {
-          "spell_id": 1250686,
-          "avg_damage": 69426,
-          "min_damage": 16256,
-          "max_damage": 120941,
+          "spell_id": 1285504,
+          "avg_damage": 76384,
+          "min_damage": 54970,
+          "max_damage": 115584,
           "count": 3
         }
       ]
@@ -127,7 +127,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 184662,
-      "avg_uses": 2.2,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -227,10 +227,6 @@
       "icon": "spell_holy_blessingofprotection",
       "name": "Blessing of Spellwarding"
     },
-    "1250686": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Twisting Obscurity"
-    },
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
@@ -240,6 +236,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "03c9fcb8579fb589",
-  "ingest_version": 0
+  "source_signature": "c095ceeedcc110e7",
+  "ingest_version": 1
 }

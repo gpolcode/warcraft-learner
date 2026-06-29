@@ -6,45 +6,45 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 8,
-      "avg_first_cast_s": 82.7,
-      "stddev_first_cast_s": 43,
-      "avg_gap_s": 38.9,
-      "stddev_gap_s": 19.8,
+      "avg_first_cast_s": 81.8,
+      "stddev_first_cast_s": 43.2,
+      "avg_gap_s": 47.6,
+      "stddev_gap_s": 23.6,
       "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.57,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.62,
       "uses_per_min": {
-        "avg": 0.573,
-        "stddev": 0.218,
+        "avg": 0.623,
+        "stddev": 0.227,
         "min": 0.402,
         "max": 0.847
       },
       "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 1,
-      "avg_first_cast_s": 58.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 53.6,
+      "stddev_first_cast_s": 6.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.402,
-        "stddev": 0,
+        "avg": 0.409,
+        "stddev": 0.009,
         "min": 0.402,
-        "max": 0.402
+        "max": 0.415
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 71.4,
-      "dmg_avg": 295538,
-      "dmg_stddev": 90445,
-      "dmg_min": 169083,
+      "time_s": 70.3,
+      "dmg_avg": 333208,
+      "dmg_stddev": 72540,
+      "dmg_min": 212468,
       "dmg_max": 420324,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
@@ -59,17 +59,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 260070,
-          "min_damage": 169083,
+          "avg_damage": 287013,
+          "min_damage": 261476,
           "max_damage": 315238,
           "count": 5
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 65102,
+          "avg_damage": 70343,
           "min_damage": 40976,
           "max_damage": 105086,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -77,7 +77,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 264735,
-      "avg_uses": 1.4,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -141,6 +141,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "8f06a29d897efce8",
-  "ingest_version": 0
+  "source_signature": "d135a4326a2f5017",
+  "ingest_version": 1
 }
