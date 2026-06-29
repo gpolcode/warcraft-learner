@@ -5,30 +5,30 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 8,
-      "avg_first_cast_s": 77.3,
-      "stddev_first_cast_s": 45.7,
-      "avg_gap_s": 89.5,
-      "stddev_gap_s": 17.4,
+      "sample_count": 9,
+      "avg_first_cast_s": 76.3,
+      "stddev_first_cast_s": 42.8,
+      "avg_gap_s": 86.7,
+      "stddev_gap_s": 17.5,
       "hold_targets": {
         "1": {
-          "target_s": 143.3,
-          "stddev_s": 53.4,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 137.2,
+          "stddev_s": 50.1,
+          "count": 7,
+          "total_samples": 9
         },
         "2": {
-          "target_s": 235.4,
-          "stddev_s": 15.7,
-          "count": 4,
-          "total_samples": 8
+          "target_s": 228.4,
+          "stddev_s": 17.1,
+          "count": 5,
+          "total_samples": 9
         }
       },
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.58,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.581,
-        "stddev": 0.185,
+        "avg": 0.591,
+        "stddev": 0.176,
         "min": 0.232,
         "max": 0.768
       },
@@ -37,9 +37,49 @@
   },
   "defensive_windows": [
     {
-      "time_s": 134.4,
-      "dmg_avg": 403299,
-      "dmg_stddev": 126624,
+      "time_s": 65.6,
+      "dmg_avg": 288731,
+      "dmg_stddev": 86514,
+      "dmg_min": 194444,
+      "dmg_max": 390926,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 82772,
+          "min_damage": 80483,
+          "max_damage": 83945,
+          "count": 4
+        },
+        {
+          "spell_id": 1241340,
+          "avg_damage": 79676,
+          "min_damage": 42528,
+          "max_damage": 160900,
+          "count": 4
+        },
+        {
+          "spell_id": 1241291,
+          "avg_damage": 73991,
+          "min_damage": 50232,
+          "max_damage": 109997,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 136.5,
+      "dmg_avg": 406638,
+      "dmg_stddev": 118868,
       "dmg_min": 259426,
       "dmg_max": 608236,
       "window_length_s": 12,
@@ -55,25 +95,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1241932,
-          "avg_damage": 277833,
+          "avg_damage": 287439,
           "min_damage": 181735,
           "max_damage": 371130,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 81407,
+          "avg_damage": 81103,
           "min_damage": 73445,
           "max_damage": 88257,
-          "count": 8
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 214.5,
-      "dmg_avg": 471276,
-      "dmg_stddev": 211127,
-      "dmg_min": 182989,
+      "time_s": 210.2,
+      "dmg_avg": 392819,
+      "dmg_stddev": 253394,
+      "dmg_min": 78992,
       "dmg_max": 642303,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
@@ -87,25 +127,11 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
-          "spell_id": 1242803,
-          "avg_damage": 547335,
-          "min_damage": 534868,
-          "max_damage": 559802,
-          "count": 2
-        },
-        {
-          "spell_id": 1242991,
-          "avg_damage": 143586,
-          "min_damage": 98340,
-          "max_damage": 188832,
-          "count": 2
-        },
-        {
           "spell_id": 1264650,
-          "avg_damage": 81357,
+          "avg_damage": 80884,
           "min_damage": 78122,
           "max_damage": 84649,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -113,7 +139,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.5,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -162,23 +188,23 @@
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
     },
+    "1241291": {
+      "icon": "inv_phoenix2pet_yellow",
+      "name": "Light Dive"
+    },
+    "1241340": {
+      "icon": "inv_phoenix2pet",
+      "name": "Void Dive"
+    },
     "1241932": {
       "icon": "inv_12_dualityphoenix_lightvoid_channel",
       "name": "Voidlight Convergence"
-    },
-    "1242803": {
-      "icon": "inv_ability_holyfire_wave",
-      "name": "Light Flames"
-    },
-    "1242991": {
-      "icon": "inv_ability_holyfire_orb",
-      "name": "Light Echo"
     },
     "1264650": {
       "icon": "inv_ragnaros_heart",
       "name": "Burning Heart"
     }
   },
-  "source_signature": "b800d1c63e6b5def",
+  "source_signature": "d81c19d289384435",
   "ingest_version": 1
 }
