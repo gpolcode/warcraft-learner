@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   encounterSignature, readStoredSignature, readStoredVersion, signatureMatches, stampSignature,
-  type SignatureRanking,
+  selectSignatureRankings, parseKey, readInaccessibleParses,
+  type SignatureRanking, type RawSignatureRanking,
 } from './signature.ts';
 
 const rankings = (...rows: Array<[string, number]>): SignatureRanking[] =>
@@ -33,6 +34,74 @@ describe('encounterSignature', () => {
     const a = encounterSignature('code', rankings(['r1', 1]));
     const b = encounterSignature('code', rankings(['r1', 2]));
     expect(a).not.toBe(b);
+  });
+});
+
+describe('parseKey', () => {
+  it('joins report code and fight id', () => {
+    expect(parseKey({ report_code: 'r1', fight_id: 3 })).toBe('r1:3');
+  });
+});
+
+describe('selectSignatureRankings', () => {
+  const raw = (...rows: Array<[string, string, number]>): RawSignatureRanking[] =>
+    rows.map(([name, code, fightID]) => ({ name, report: { code, fightID } }));
+
+  it('drops anonymized "Character <id>-<id>" parses', () => {
+    const rows = raw(['Realname', 'r1', 1], ['Character 12-34', 'r2', 2], ['Other', 'r3', 3]);
+    expect(selectSignatureRankings(rows, 10)).toEqual([
+      { report_code: 'r1', fight_id: 1 },
+      { report_code: 'r3', fight_id: 3 },
+    ]);
+  });
+
+  it('drops rows with no report code', () => {
+    const rows: RawSignatureRanking[] = [{ name: 'A', report: { fightID: 1 } }, { name: 'B', report: { code: 'r2', fightID: 2 } }];
+    expect(selectSignatureRankings(rows, 10)).toEqual([{ report_code: 'r2', fight_id: 2 }]);
+  });
+
+  it('slices to count, preserving rank order', () => {
+    const rows = raw(['A', 'r1', 1], ['B', 'r2', 2], ['C', 'r3', 3]);
+    expect(selectSignatureRankings(rows, 2)).toEqual([
+      { report_code: 'r1', fight_id: 1 },
+      { report_code: 'r2', fight_id: 2 },
+    ]);
+  });
+});
+
+describe('readInaccessibleParses', () => {
+  it('reads the persisted key set', () => {
+    expect(readInaccessibleParses({ inaccessible_parses: ['r1:1', 'r2:2'] })).toEqual(new Set(['r1:1', 'r2:2']));
+  });
+
+  it('returns an empty set for missing / null', () => {
+    expect(readInaccessibleParses(null)).toEqual(new Set());
+    expect(readInaccessibleParses({})).toEqual(new Set());
+  });
+});
+
+describe('inaccessible-aware skip key', () => {
+  // Mimics the orchestrator: usedRows = pool minus known-inaccessible, top N, then hash.
+  const skipKey = (pool: SignatureRanking[], inaccessible: string[], n: number): string => {
+    const known = new Set(inaccessible);
+    const used = pool.filter(row => !known.has(parseKey(row))).slice(0, n);
+    return encounterSignature('1', used);
+  };
+  const pool = (...codes: string[]): SignatureRanking[] =>
+    codes.map((report_code, index) => ({ report_code, fight_id: index + 1 }));
+
+  it('is unchanged when only the tail past the top-N accessible churns', () => {
+    const inaccessible = ['p3:3']; // p3 is known inaccessible; top-3 accessible is p1, p2, p4
+    const before = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p5'), inaccessible, 3);
+    const after = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p9'), inaccessible, 3); // unused p5 -> p9
+    expect(after).toBe(before);
+  });
+
+  it('changes when an accessible top-N parse changes', () => {
+    const inaccessible = ['p3:3'];
+    const before = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p5'), inaccessible, 3);
+    const after = skipKey(pool('p1', 'p2', 'p3', 'pX', 'p5'), inaccessible, 3); // used p4 -> pX
+    expect(after).not.toBe(before);
   });
 });
 
