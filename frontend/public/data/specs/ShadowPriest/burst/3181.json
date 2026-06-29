@@ -5,9 +5,9 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 20.8,
-      "dmg_avg": 17236023,
-      "dmg_stddev": 5099818,
+      "time_s": 19.8,
+      "dmg_avg": 15874296,
+      "dmg_stddev": 5795220,
       "dmg_min": 8350613,
       "dmg_max": 23826691,
       "common_cds": [
@@ -15,20 +15,29 @@
         "Void Eruption"
       ],
       "avg_targets": 1,
-      "window_length_s": 20.6,
+      "window_length_s": 20.8,
       "ability_breakdown": [
         {
           "spell_id": 199486,
-          "avg_damage": 3797369,
+          "avg_damage": 3674364,
           "min_damage": 1679526,
           "max_damage": 5352587,
-          "count": 7,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
+          "spell_id": 390964,
+          "avg_damage": 2193113,
+          "min_damage": 1238428,
+          "max_damage": 3342693,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
           "spell_id": 335467,
-          "avg_damage": 2188907,
+          "avg_damage": 2184682,
           "min_damage": 1407168,
           "max_damage": 3075136,
           "count": 10,
@@ -36,26 +45,17 @@
           "is_passive": false
         },
         {
-          "spell_id": 390964,
-          "avg_damage": 2184172,
-          "min_damage": 1238428,
-          "max_damage": 3342693,
-          "count": 8,
-          "avg_casts": 0,
-          "is_passive": false
-        },
-        {
           "spell_id": 391403,
-          "avg_damage": 2103442,
+          "avg_damage": 2035064,
           "min_damage": 1728089,
           "max_damage": 2962570,
-          "count": 7,
+          "count": 5,
           "avg_casts": 4,
           "is_passive": false
         },
         {
           "spell_id": 413231,
-          "avg_damage": 1732820,
+          "avg_damage": 1610049,
           "min_damage": 841995,
           "max_damage": 2506474,
           "count": 9,
@@ -64,90 +64,21 @@
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 1465830,
+          "avg_damage": 1390039,
           "min_damage": 639409,
           "max_damage": 2071552,
-          "count": 9,
+          "count": 7,
           "avg_casts": 3,
           "is_passive": false
         }
       ]
     },
     {
-      "time_s": 176.4,
-      "dmg_avg": 8355153,
-      "dmg_stddev": 1768319,
-      "dmg_min": 4669881,
+      "time_s": 176.3,
+      "dmg_avg": 8823689,
+      "dmg_stddev": 1154664,
+      "dmg_min": 7516268,
       "dmg_max": 11128820,
-      "common_cds": [
-        "Power Infusion",
-        "Void Eruption"
-      ],
-      "avg_targets": 1,
-      "window_length_s": 20.7,
-      "ability_breakdown": [
-        {
-          "spell_id": 335467,
-          "avg_damage": 1428105,
-          "min_damage": 465818,
-          "max_damage": 2224451,
-          "count": 10,
-          "avg_casts": 6,
-          "is_passive": false
-        },
-        {
-          "spell_id": 8092,
-          "avg_damage": 1121094,
-          "min_damage": 791798,
-          "max_damage": 1439350,
-          "count": 7,
-          "avg_casts": 6,
-          "is_passive": false
-        },
-        {
-          "spell_id": 390964,
-          "avg_damage": 880346,
-          "min_damage": 604007,
-          "max_damage": 1141211,
-          "count": 8,
-          "avg_casts": 0,
-          "is_passive": false
-        },
-        {
-          "spell_id": 391403,
-          "avg_damage": 871596,
-          "min_damage": 464131,
-          "max_damage": 1382068,
-          "count": 7,
-          "avg_casts": 4,
-          "is_passive": false
-        },
-        {
-          "spell_id": 1242189,
-          "avg_damage": 835606,
-          "min_damage": 434137,
-          "max_damage": 1071486,
-          "count": 8,
-          "avg_casts": 4,
-          "is_passive": false
-        },
-        {
-          "spell_id": 413231,
-          "avg_damage": 634589,
-          "min_damage": 518768,
-          "max_damage": 723106,
-          "count": 5,
-          "avg_casts": 26,
-          "is_passive": false
-        }
-      ]
-    },
-    {
-      "time_s": 298.9,
-      "dmg_avg": 4532628,
-      "dmg_stddev": 522866,
-      "dmg_min": 3690325,
-      "dmg_max": 4990410,
       "common_cds": [
         "Power Infusion",
         "Void Eruption"
@@ -157,10 +88,80 @@
       "ability_breakdown": [
         {
           "spell_id": 335467,
-          "avg_damage": 768481,
+          "avg_damage": 1574580,
+          "min_damage": 1272054,
+          "max_damage": 2224451,
+          "count": 10,
+          "avg_casts": 7,
+          "is_passive": false
+        },
+        {
+          "spell_id": 8092,
+          "avg_damage": 1175976,
+          "min_damage": 995593,
+          "max_damage": 1439350,
+          "count": 6,
+          "avg_casts": 6,
+          "is_passive": false
+        },
+        {
+          "spell_id": 391403,
+          "avg_damage": 957665,
+          "min_damage": 798221,
+          "max_damage": 1382068,
+          "count": 5,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 390964,
+          "avg_damage": 898321,
+          "min_damage": 604007,
+          "max_damage": 1141211,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1242189,
+          "avg_damage": 875235,
+          "min_damage": 434137,
+          "max_damage": 1071486,
+          "count": 7,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 413231,
+          "avg_damage": 641384,
+          "min_damage": 518768,
+          "max_damage": 723106,
+          "count": 7,
+          "avg_casts": 26,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 299.1,
+      "dmg_avg": 4528915,
+      "dmg_stddev": 467754,
+      "dmg_min": 3690325,
+      "dmg_max": 4990410,
+      "common_cds": [
+        "Power Infusion",
+        "Void Eruption",
+        "Void Torrent"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 20.8,
+      "ability_breakdown": [
+        {
+          "spell_id": 335467,
+          "avg_damage": 810114,
           "min_damage": 581171,
           "max_damage": 1023045,
-          "count": 5,
+          "count": 6,
           "avg_casts": 5,
           "is_passive": false
         },
@@ -184,10 +185,10 @@
         },
         {
           "spell_id": 1242189,
-          "avg_damage": 466279,
+          "avg_damage": 445768,
           "min_damage": 292117,
           "max_damage": 656303,
-          "count": 5,
+          "count": 6,
           "avg_casts": 3,
           "is_passive": false
         },
@@ -198,6 +199,15 @@
           "max_damage": 513539,
           "count": 5,
           "avg_casts": 21,
+          "is_passive": false
+        },
+        {
+          "spell_id": 589,
+          "avg_damage": 394399,
+          "min_damage": 358063,
+          "max_damage": 415262,
+          "count": 3,
+          "avg_casts": 0,
           "is_passive": false
         }
       ]
@@ -343,6 +353,6 @@
       "name": "Void Volley"
     }
   },
-  "source_signature": "1047bdeb0a94e640",
-  "ingest_version": 0
+  "source_signature": "05590bedf61238c0",
+  "ingest_version": 1
 }

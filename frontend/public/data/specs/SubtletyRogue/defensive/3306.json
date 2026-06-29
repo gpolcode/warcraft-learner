@@ -5,42 +5,42 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Feint": {
-      "sample_count": 5,
-      "avg_first_cast_s": 71.5,
-      "stddev_first_cast_s": 52.7,
-      "avg_gap_s": 48.1,
-      "stddev_gap_s": 25.4,
+      "sample_count": 4,
+      "avg_first_cast_s": 64.3,
+      "stddev_first_cast_s": 58,
+      "avg_gap_s": 61.5,
+      "stddev_gap_s": 18.6,
       "hold_targets": {
         "1": {
-          "target_s": 98.5,
-          "stddev_s": 38.7,
-          "count": 4,
-          "total_samples": 5
+          "target_s": 72.5,
+          "stddev_s": 43.3,
+          "count": 3,
+          "total_samples": 4
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.92,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.85,
       "uses_per_min": {
-        "avg": 0.923,
-        "stddev": 0.337,
+        "avg": 0.85,
+        "stddev": 0.341,
         "min": 0.409,
         "max": 1.232
       },
       "majority_hold": true
     },
     "Cloak of Shadows": {
-      "sample_count": 4,
-      "avg_first_cast_s": 94.3,
-      "stddev_first_cast_s": 55.3,
+      "sample_count": 3,
+      "avg_first_cast_s": 77.9,
+      "stddev_first_cast_s": 54.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.408,
-        "stddev": 0.004,
-        "min": 0.404,
+        "avg": 0.409,
+        "stddev": 0.003,
+        "min": 0.405,
         "max": 0.411
       },
       "majority_hold": false
@@ -63,58 +63,24 @@
       "majority_hold": false
     },
     "Crimson Vial": {
-      "sample_count": 2,
-      "avg_first_cast_s": 73.1,
-      "stddev_first_cast_s": 25.9,
+      "sample_count": 1,
+      "avg_first_cast_s": 54.8,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.408,
-        "stddev": 0.005,
-        "min": 0.404,
+        "avg": 0.411,
+        "stddev": 0,
+        "min": 0.411,
         "max": 0.411
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 142.7,
-      "dmg_avg": 101580,
-      "dmg_stddev": 53939,
-      "dmg_min": 24303,
-      "dmg_max": 166750,
-      "window_length_s": 5.2,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 245569,
-      "ability_breakdown": [
-        {
-          "spell_id": 1273112,
-          "avg_damage": 85942,
-          "min_damage": 66958,
-          "max_damage": 112796,
-          "count": 3
-        },
-        {
-          "spell_id": 1246653,
-          "avg_damage": 62519,
-          "min_damage": 24303,
-          "max_damage": 130159,
-          "count": 4
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -136,7 +102,7 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 2.2,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -197,16 +163,8 @@
     "185311": {
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
-    },
-    "1246653": {
-      "icon": "inv_ability_poison_orb",
-      "name": "Caustic Phlegm"
-    },
-    "1273112": {
-      "icon": "spell_deathknight_gnaw_ghoul",
-      "name": "Consume"
     }
   },
-  "source_signature": "094c28d2b61f088c",
-  "ingest_version": 0
+  "source_signature": "f93da5b1c2521130",
+  "ingest_version": 1
 }

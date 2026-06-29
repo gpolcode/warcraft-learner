@@ -3,25 +3,25 @@
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
-  "avg_duration_s": 144.1,
-  "downtime_threshold_ms": 1376,
-  "top_avg_efficiency": 64.8,
-  "top_efficiency_stddev": 4.6,
+  "avg_duration_s": 143.4,
+  "downtime_threshold_ms": 1382,
+  "top_avg_efficiency": 64.9,
+  "top_efficiency_stddev": 4.5,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.1,
+      "avg_first_cast_s": 4,
       "stddev_first_cast_s": 1,
-      "avg_gap_s": 47.1,
-      "stddev_gap_s": 60.8,
+      "avg_gap_s": 43.9,
+      "stddev_gap_s": 60,
       "avg_bl_offset_s": 3.2,
       "stddev_bl_offset_s": 1,
-      "avg_uses": 3.6,
-      "avg_uses_per_min": 1.5,
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 1.59,
       "uses_per_min": {
-        "avg": 1.504,
-        "stddev": 0.366,
-        "min": 0.806,
+        "avg": 1.593,
+        "stddev": 0.275,
+        "min": 0.823,
         "max": 1.776
       },
       "bl_pct": 100,
@@ -30,26 +30,26 @@
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.6,
+      "avg_first_cast_s": 3.5,
       "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 122.9,
-      "stddev_gap_s": 1.5,
+      "avg_gap_s": 123.3,
+      "stddev_gap_s": 1.6,
       "avg_bl_offset_s": 2.7,
-      "stddev_bl_offset_s": 0.7,
+      "stddev_bl_offset_s": 0.6,
       "avg_uses": 2,
-      "avg_uses_per_min": 0.83,
+      "avg_uses_per_min": 0.84,
       "uses_per_min": {
-        "avg": 0.834,
-        "stddev": 0.026,
-        "min": 0.806,
+        "avg": 0.838,
+        "stddev": 0.024,
+        "min": 0.809,
         "max": 0.888
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 127,
-          "stddev_s": 1.9,
+          "target_s": 127.2,
+          "stddev_s": 2,
           "count": 10,
           "total_samples": 10
         }
@@ -77,21 +77,21 @@
     },
     "Void Torrent": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.8,
+      "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
-      "avg_gap_s": 30.7,
-      "stddev_gap_s": 0.7,
-      "avg_bl_offset_s": 3.6,
-      "stddev_bl_offset_s": 0,
-      "avg_uses": 0.5,
-      "avg_uses_per_min": 0.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
       "uses_per_min": {
-        "avg": 2.016,
+        "avg": 0,
         "stddev": 0,
-        "min": 2.016,
-        "max": 2.016
+        "min": 0,
+        "max": 0
       },
-      "bl_pct": 10,
+      "bl_pct": 0,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -243,6 +243,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "d5e3c0cde5c34be0",
-  "ingest_version": 0
+  "source_signature": "9ec8fdf7aa18852b",
+  "ingest_version": 1
 }

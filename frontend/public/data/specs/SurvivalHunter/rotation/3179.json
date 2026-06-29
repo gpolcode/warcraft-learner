@@ -3,68 +3,94 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 271.8,
-  "downtime_threshold_ms": 1462,
-  "top_avg_efficiency": 81.3,
-  "top_efficiency_stddev": 4,
+  "avg_duration_s": 263.8,
+  "downtime_threshold_ms": 1539,
+  "top_avg_efficiency": 81.1,
+  "top_efficiency_stddev": 3.6,
   "per_cd_benchmarks": {
     "Takedown": {
       "sample_count": 10,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "avg_first_cast_s": 4.7,
+      "stddev_first_cast_s": 5.3,
+      "avg_gap_s": 66.3,
+      "stddev_gap_s": 8.8,
+      "avg_bl_offset_s": 4.4,
+      "stddev_bl_offset_s": 5.4,
+      "avg_uses": 4.5,
+      "avg_uses_per_min": 1.01,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 1.013,
+        "stddev": 0.101,
+        "min": 0.856,
+        "max": 1.122
       },
-      "bl_pct": 0,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 90,
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 138.7,
+          "stddev_s": 17,
+          "count": 8,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 200.5,
+          "stddev_s": 25.9,
+          "count": 6,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 260.7,
+          "stddev_s": 1,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Boomstick": {
       "sample_count": 10,
-      "avg_first_cast_s": 0,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0,
-      "avg_uses_per_min": 0,
+      "avg_first_cast_s": 6.7,
+      "stddev_first_cast_s": 5.5,
+      "avg_gap_s": 43.7,
+      "stddev_gap_s": 11.5,
+      "avg_bl_offset_s": 6.5,
+      "stddev_bl_offset_s": 5.6,
+      "avg_uses": 6.6,
+      "avg_uses_per_min": 1.5,
       "uses_per_min": {
-        "avg": 0,
-        "stddev": 0,
-        "min": 0,
-        "max": 0
+        "avg": 1.503,
+        "stddev": 0.172,
+        "min": 1.21,
+        "max": 1.74
       },
-      "bl_pct": 0,
+      "bl_pct": 90,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 65.5,
+          "stddev_s": 0.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Wildfire Bomb": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.5,
-      "stddev_first_cast_s": 1.9,
-      "avg_gap_s": 9,
-      "stddev_gap_s": 4,
-      "avg_bl_offset_s": 1.7,
-      "stddev_bl_offset_s": 2,
-      "avg_uses": 30.4,
-      "avg_uses_per_min": 6.7,
+      "avg_first_cast_s": 3.1,
+      "stddev_first_cast_s": 2.8,
+      "avg_gap_s": 9.1,
+      "stddev_gap_s": 3.9,
+      "avg_bl_offset_s": 2.2,
+      "stddev_bl_offset_s": 2.9,
+      "avg_uses": 29.1,
+      "avg_uses_per_min": 6.61,
       "uses_per_min": {
-        "avg": 6.695,
-        "stddev": 0.475,
+        "avg": 6.615,
+        "stddev": 0.447,
         "min": 5.626,
-        "max": 7.238
+        "max": 6.978
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -112,20 +138,20 @@
   "major_cooldowns": [
     {
       "name": "Takedown",
-      "spell_id": 1217803,
+      "spell_id": 1250646,
       "cooldown": 60,
       "duration": 8,
       "align_with_bloodlust": true,
       "opener_priority": 1,
-      "usage_rule": "Use on cooldown as your primary burst window, always buffed with a Tip of the Spear stack and synced with Bloodlust, on-use trinkets, and your potion; note the spell_id is a best guess for the Midnight-era ability and may need verification."
+      "usage_rule": "Use on cooldown as your primary burst window, always buffed with a Tip of the Spear stack and synced with Bloodlust, on-use trinkets, and your potion."
     },
     {
       "name": "Boomstick",
-      "spell_id": 1227033,
+      "spell_id": 1261193,
       "cooldown": 45,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Spend a Tip of the Spear stack on this high-damage frontal cone whenever it is available, holding it for stacked packs in AoE since Lethal Calibration drops its cooldown as low as 15 seconds; the spell_id is a best guess and may need verification."
+      "usage_rule": "Spend a Tip of the Spear stack on this high-damage frontal cone whenever it is available, holding it for stacked packs in AoE since Lethal Calibration drops its cooldown as low as 15 seconds."
     },
     {
       "name": "Wildfire Bomb",
@@ -137,19 +163,19 @@
     },
     {
       "name": "Flamefang Pitch",
-      "spell_id": 1217788,
+      "spell_id": 1251592,
       "cooldown": 30,
       "align_with_bloodlust": false,
       "talent_gated": true,
-      "usage_rule": "Use during Takedown so it lines up naturally with Savagery, but avoid casting it if you cannot hold another Wildfire Bomb charge; the spell_id is a best guess for this Midnight talent and may need verification."
+      "usage_rule": "Use during Takedown so it lines up naturally with Savagery, but avoid casting it if you cannot hold another Wildfire Bomb charge."
     },
     {
       "name": "Moonlight Chakram",
-      "spell_id": 1227036,
+      "spell_id": 1264902,
       "cooldown": 60,
       "align_with_bloodlust": true,
       "talent_gated": true,
-      "usage_rule": "On the Sentinel build this replaces Takedown on the same keybind; spend a Tip of the Spear stack on it on cooldown, delaying with Stalk and Strike to capture the 10s Wildfire Bomb cooldown reduction; the spell_id is a best guess and may need verification."
+      "usage_rule": "On the Sentinel build this replaces Takedown on the same keybind; spend a Tip of the Spear stack on it on cooldown, delaying with Stalk and Strike to capture the 10s Wildfire Bomb cooldown reduction."
     }
   ],
   "rules": [
@@ -211,11 +237,11 @@
     }
   ],
   "cd_spell_ids": {
-    "Takedown": 1217803,
-    "Boomstick": 1227033,
+    "Takedown": 1250646,
+    "Boomstick": 1261193,
     "Wildfire Bomb": 259495,
-    "Flamefang Pitch": 1217788,
-    "Moonlight Chakram": 1227036,
+    "Flamefang Pitch": 1251592,
+    "Moonlight Chakram": 1264902,
     "Aspect of the Turtle": 186265,
     "Survival of the Fittest": 264735,
     "Exhilaration": 109304
@@ -237,19 +263,23 @@
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
     },
-    "1217788": {
-      "icon": "ability_hunter_improvedtracking",
-      "name": "Manhunter"
+    "1250646": {
+      "icon": "inv12_ability_hunter_takedown",
+      "name": "Takedown"
     },
-    "1217803": {
-      "icon": "ability_warrior_endlessrage",
-      "name": "Angry"
+    "1251592": {
+      "icon": "inv_10_blacksmithing_craftedoptional_blacksmithdye_fire",
+      "name": "Flamefang Pitch"
     },
-    "1227036": {
-      "icon": "inv_ability_web_groundstate",
-      "name": "Sticky Silk"
+    "1261193": {
+      "icon": "inv_musket_04",
+      "name": "Boomstick"
+    },
+    "1264902": {
+      "icon": "inv_ability_hunter_deathchakram",
+      "name": "Moonlight Chakram"
     }
   },
-  "source_signature": "bc9297b5d64dbe1c",
-  "ingest_version": 0
+  "source_signature": "462bb61ec8a09c63",
+  "ingest_version": 1
 }

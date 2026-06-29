@@ -6,64 +6,64 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 158.9,
-      "stddev_first_cast_s": 95.8,
-      "avg_gap_s": 88.2,
-      "stddev_gap_s": 46,
+      "avg_first_cast_s": 132,
+      "stddev_first_cast_s": 83.5,
+      "avg_gap_s": 72.1,
+      "stddev_gap_s": 40,
       "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.383,
-        "stddev": 0.17,
+        "avg": 0.429,
+        "stddev": 0.16,
         "min": 0.171,
         "max": 0.642
       },
       "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 4,
-      "avg_first_cast_s": 192.5,
-      "stddev_first_cast_s": 56.5,
+      "sample_count": 6,
+      "avg_first_cast_s": 202.9,
+      "stddev_first_cast_s": 47.1,
       "avg_gap_s": 120,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.251,
-        "stddev": 0.12,
+        "avg": 0.234,
+        "stddev": 0.097,
         "min": 0.171,
         "max": 0.428
       },
       "majority_hold": false
     },
     "Aspect of the Turtle": {
-      "sample_count": 1,
-      "avg_first_cast_s": 218.5,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 214.7,
+      "stddev_first_cast_s": 5.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.17,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.171,
-        "stddev": 0,
+        "avg": 0.179,
+        "stddev": 0.011,
         "min": 0.171,
-        "max": 0.171
+        "max": 0.186
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 104.6,
-      "dmg_avg": 320168,
-      "dmg_stddev": 128042,
-      "dmg_min": 232314,
+      "time_s": 104.2,
+      "dmg_avg": 299294,
+      "dmg_stddev": 100253,
+      "dmg_min": 217897,
       "dmg_max": 542371,
-      "window_length_s": 9.6,
+      "window_length_s": 8.9,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
       "common_defensives": [
@@ -76,17 +76,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 290967,
+          "avg_damage": 275124,
           "min_damage": 211987,
           "max_damage": 499182,
+          "count": 7
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 92848,
+          "min_damage": 43189,
+          "max_damage": 138564,
           "count": 5
         }
       ]
     },
     {
-      "time_s": 171.8,
-      "dmg_avg": 190844,
-      "dmg_stddev": 206797,
+      "time_s": 172,
+      "dmg_avg": 185331,
+      "dmg_stddev": 238364,
       "dmg_min": 22750,
       "dmg_max": 532991,
       "window_length_s": 8,
@@ -102,17 +109,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 191248,
+          "avg_damage": 220341,
           "min_damage": 87332,
           "max_damage": 353350,
-          "count": 3
+          "count": 2
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 56067,
+          "avg_damage": 50125,
           "min_damage": 22750,
-          "max_damage": 79836,
-          "count": 5
+          "max_damage": 79501,
+          "count": 4
         }
       ]
     }
@@ -126,13 +133,13 @@
     },
     {
       "spell_id": 264735,
-      "avg_uses": 1.7,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 109304,
-      "avg_uses": 1.3,
+      "avg_uses": 1.2,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -194,6 +201,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "bc9297b5d64dbe1c",
-  "ingest_version": 0
+  "source_signature": "462bb61ec8a09c63",
+  "ingest_version": 1
 }

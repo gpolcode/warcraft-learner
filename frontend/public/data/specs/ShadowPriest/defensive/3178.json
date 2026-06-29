@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 179.3,
-      "stddev_first_cast_s": 98.1,
-      "avg_gap_s": 101,
-      "stddev_gap_s": 36.9,
+      "avg_first_cast_s": 192.1,
+      "stddev_first_cast_s": 91.9,
+      "avg_gap_s": 89.3,
+      "stddev_gap_s": 29.2,
       "hold_targets": {},
       "avg_uses": 2,
       "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.354,
-        "stddev": 0.225,
+        "avg": 0.346,
+        "stddev": 0.221,
         "min": 0.159,
         "max": 0.832
       },
@@ -23,29 +23,29 @@
     },
     "Vampiric Embrace": {
       "sample_count": 9,
-      "avg_first_cast_s": 75.8,
-      "stddev_first_cast_s": 121.1,
-      "avg_gap_s": 149.6,
-      "stddev_gap_s": 22.3,
+      "avg_first_cast_s": 100.5,
+      "stddev_first_cast_s": 127.7,
+      "avg_gap_s": 149.1,
+      "stddev_gap_s": 23,
       "hold_targets": {
         "1": {
-          "target_s": 166.8,
-          "stddev_s": 13.4,
+          "target_s": 168.1,
+          "stddev_s": 87.9,
           "count": 6,
           "total_samples": 9
         },
         "2": {
-          "target_s": 308.2,
-          "stddev_s": 27.9,
-          "count": 5,
+          "target_s": 307.9,
+          "stddev_s": 31.3,
+          "count": 4,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.417,
-        "stddev": 0.151,
+        "avg": 0.393,
+        "stddev": 0.156,
         "min": 0.146,
         "max": 0.532
       },
@@ -71,9 +71,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 5.9,
-      "dmg_avg": 108356,
-      "dmg_stddev": 171781,
+      "time_s": 5.8,
+      "dmg_avg": 109490,
+      "dmg_stddev": 192032,
       "dmg_min": 0,
       "dmg_max": 443423,
       "window_length_s": 12,
@@ -89,9 +89,9 @@
       "ability_breakdown": []
     },
     {
-      "time_s": 167.1,
-      "dmg_avg": 316689,
-      "dmg_stddev": 126006,
+      "time_s": 168.1,
+      "dmg_avg": 347552,
+      "dmg_stddev": 121738,
       "dmg_min": 192827,
       "dmg_max": 484596,
       "window_length_s": 12,
@@ -107,19 +107,33 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 191908,
+          "avg_damage": 191575,
           "min_damage": 183832,
           "max_damage": 196591,
-          "count": 5
+          "count": 4
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 132355,
+          "min_damage": 131266,
+          "max_damage": 133444,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 61209,
+          "min_damage": 60212,
+          "max_damage": 62206,
+          "count": 2
         }
       ]
     },
     {
-      "time_s": 245.7,
-      "dmg_avg": 717182,
-      "dmg_stddev": 200489,
+      "time_s": 245.8,
+      "dmg_avg": 665543,
+      "dmg_stddev": 173913,
       "dmg_min": 363577,
-      "dmg_max": 975374,
+      "dmg_max": 798392,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -133,38 +147,71 @@
       "ability_breakdown": [
         {
           "spell_id": 1285954,
-          "avg_damage": 270183,
+          "avg_damage": 255492,
           "min_damage": 233276,
-          "max_damage": 328946,
-          "count": 5
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 173912,
-          "min_damage": 92075,
-          "max_damage": 204613,
-          "count": 6
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 173533,
-          "min_damage": 162849,
-          "max_damage": 183444,
+          "max_damage": 304093,
           "count": 4
         },
         {
+          "spell_id": 1259275,
+          "avg_damage": 171878,
+          "min_damage": 92075,
+          "max_damage": 204613,
+          "count": 5
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 170229,
+          "min_damage": 162849,
+          "max_damage": 174959,
+          "count": 3
+        },
+        {
           "spell_id": 1245175,
-          "avg_damage": 165914,
+          "avg_damage": 162055,
           "min_damage": 106747,
           "max_damage": 242263,
-          "count": 5
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 308.2,
-      "dmg_avg": 1061883,
-      "dmg_stddev": 390702,
+      "time_s": 307.3,
+      "dmg_avg": 956877,
+      "dmg_stddev": 72868,
+      "dmg_min": 840290,
+      "dmg_max": 1040214,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 476590,
+          "min_damage": 290501,
+          "max_damage": 537762,
+          "count": 5
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 213331,
+          "min_damage": 142448,
+          "max_damage": 325206,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 307.9,
+      "dmg_avg": 1089411,
+      "dmg_stddev": 445510,
       "dmg_min": 788481,
       "dmg_max": 1747295,
       "window_length_s": 12,
@@ -180,77 +227,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 699921,
+          "avg_damage": 681061,
           "min_damage": 647709,
-          "max_damage": 775363,
-          "count": 5
+          "max_damage": 706951,
+          "count": 4
         },
         {
           "spell_id": 1245175,
-          "avg_damage": 227670,
+          "avg_damage": 244757,
           "min_damage": 81530,
           "max_damage": 497214,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 313.8,
-      "dmg_avg": 936042,
-      "dmg_stddev": 64698,
-      "dmg_min": 840290,
-      "dmg_max": 982793,
-      "window_length_s": 10,
-      "defensive_name": "Desperate Prayer",
-      "spell_id": 19236,
-      "common_defensives": [
-        "Desperate Prayer"
-      ],
-      "common_cds": [
-        "Desperate Prayer"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250071,
-          "avg_damage": 523112,
-          "min_damage": 490382,
-          "max_damage": 537762,
-          "count": 4
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 203669,
-          "min_damage": 136281,
-          "max_damage": 271056,
-          "count": 2
-        },
-        {
-          "spell_id": 1244225,
-          "avg_damage": 179066,
-          "min_damage": 177026,
-          "max_damage": 181105,
-          "count": 2
-        },
-        {
-          "spell_id": 1245500,
-          "avg_damage": 170007,
-          "min_damage": 165874,
-          "max_damage": 174139,
-          "count": 2
+          "count": 3
         },
         {
           "spell_id": 1245302,
-          "avg_damage": 157394,
-          "min_damage": 142448,
-          "max_damage": 172340,
-          "count": 2
-        },
-        {
-          "spell_id": 1255979,
-          "avg_damage": 103307,
-          "min_damage": 102131,
-          "max_damage": 104483,
+          "avg_damage": 174477,
+          "min_damage": 172340,
+          "max_damage": 176614,
           "count": 2
         }
       ]
@@ -271,7 +264,7 @@
     },
     {
       "spell_id": 15286,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -320,10 +313,6 @@
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
     },
-    "1244225": {
-      "icon": "ability_rogue_envelopingshadows",
-      "name": "Dread Breath"
-    },
     "1245175": {
       "icon": "inv_cosmicvoid_missile",
       "name": "Voidbolt"
@@ -332,17 +321,9 @@
       "icon": "inv_cosmicvoid_orb",
       "name": "Void Howl"
     },
-    "1245500": {
-      "icon": "inv_cosmicvoid_nova",
-      "name": "Gloom"
-    },
     "1250071": {
       "icon": "inv_cosmicdragonmount",
       "name": "Midnight Flames"
-    },
-    "1255979": {
-      "icon": "ability_rogue_envelopingshadows",
-      "name": "Dread Breath"
     },
     "1259275": {
       "icon": "inv_cosmicvoid_buff",
@@ -353,6 +334,6 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "4540466dafe9da50",
-  "ingest_version": 0
+  "source_signature": "ee18bdba6c474a3d",
+  "ingest_version": 1
 }

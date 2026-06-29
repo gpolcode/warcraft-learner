@@ -6,29 +6,29 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 196.5,
-      "stddev_first_cast_s": 115,
-      "avg_gap_s": 124.9,
-      "stddev_gap_s": 29.5,
+      "avg_first_cast_s": 197.1,
+      "stddev_first_cast_s": 123.4,
+      "avg_gap_s": 129.9,
+      "stddev_gap_s": 29.6,
       "hold_targets": {
         "1": {
-          "target_s": 269.8,
-          "stddev_s": 50.5,
+          "target_s": 270,
+          "stddev_s": 50.4,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 401.4,
-          "stddev_s": 7.6,
-          "count": 4,
+          "target_s": 401.7,
+          "stddev_s": 6.6,
+          "count": 5,
           "total_samples": 10
         }
       },
       "avg_uses": 2.6,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.319,
-        "stddev": 0.113,
+        "avg": 0.326,
+        "stddev": 0.128,
         "min": 0.126,
         "max": 0.477
       },
@@ -38,29 +38,29 @@
       "sample_count": 10,
       "avg_first_cast_s": 3.8,
       "stddev_first_cast_s": 4.2,
-      "avg_gap_s": 129.1,
-      "stddev_gap_s": 6.4,
+      "avg_gap_s": 129,
+      "stddev_gap_s": 6.3,
       "hold_targets": {
         "2": {
-          "target_s": 255.2,
-          "stddev_s": 8,
-          "count": 6,
+          "target_s": 256.4,
+          "stddev_s": 8.6,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 391,
-          "stddev_s": 5.8,
+          "target_s": 390.5,
+          "stddev_s": 6.4,
           "count": 10,
           "total_samples": 10
         }
       },
       "avg_uses": 4.1,
-      "avg_uses_per_min": 0.51,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.506,
-        "stddev": 0.034,
+        "avg": 0.52,
+        "stddev": 0.045,
         "min": 0.469,
-        "max": 0.58
+        "max": 0.584
       },
       "majority_hold": true
     },
@@ -84,11 +84,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 2.6,
-      "dmg_avg": 268496,
-      "dmg_stddev": 74730,
+      "time_s": 2.7,
+      "dmg_avg": 273380,
+      "dmg_stddev": 75268,
       "dmg_min": 61791,
-      "dmg_max": 319788,
+      "dmg_max": 316369,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
@@ -102,14 +102,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1222278,
-          "avg_damage": 272843,
-          "min_damage": 237736,
-          "max_damage": 299684,
+          "avg_damage": 277957,
+          "min_damage": 263841,
+          "max_damage": 295939,
           "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 22937,
+          "avg_damage": 23219,
           "min_damage": 14050,
           "max_damage": 61791,
           "count": 10
@@ -117,11 +117,11 @@
       ]
     },
     {
-      "time_s": 125.6,
-      "dmg_avg": 891064,
-      "dmg_stddev": 185000,
+      "time_s": 126,
+      "dmg_avg": 928112,
+      "dmg_stddev": 193597,
       "dmg_min": 449016,
-      "dmg_max": 1072605,
+      "dmg_max": 1120992,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
@@ -135,21 +135,21 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 598136,
+          "avg_damage": 601637,
           "min_damage": 521124,
-          "max_damage": 682999,
+          "max_damage": 697549,
           "count": 9
         },
         {
           "spell_id": 1221965,
-          "avg_damage": 261763,
+          "avg_damage": 268940,
           "min_damage": 238361,
           "max_damage": 310229,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 167013,
+          "avg_damage": 169710,
           "min_damage": 156245,
           "max_damage": 179085,
           "count": 10
@@ -157,11 +157,11 @@
       ]
     },
     {
-      "time_s": 134.4,
-      "dmg_avg": 475590,
-      "dmg_stddev": 164097,
+      "time_s": 134.9,
+      "dmg_avg": 428179,
+      "dmg_stddev": 115896,
       "dmg_min": 267035,
-      "dmg_max": 760056,
+      "dmg_max": 617280,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -175,32 +175,32 @@
       "ability_breakdown": [
         {
           "spell_id": 1221965,
-          "avg_damage": 250254,
+          "avg_damage": 250168,
           "min_damage": 225360,
           "max_damage": 268634,
-          "count": 5
-        },
-        {
-          "spell_id": 1221637,
-          "avg_damage": 165556,
-          "min_damage": 48498,
-          "max_damage": 387719,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 127848,
+          "avg_damage": 128866,
           "min_damage": 114794,
           "max_damage": 147370,
-          "count": 7
+          "count": 6
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 110015,
+          "min_damage": 48498,
+          "max_damage": 211121,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 254,
-      "dmg_avg": 1154878,
-      "dmg_stddev": 109487,
-      "dmg_min": 1019424,
+      "time_s": 253.4,
+      "dmg_avg": 1146665,
+      "dmg_stddev": 94452,
+      "dmg_min": 1041488,
       "dmg_max": 1321871,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
@@ -215,25 +215,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 803635,
-          "min_damage": 689248,
+          "avg_damage": 759702,
+          "min_damage": 432628,
           "max_damage": 946158,
           "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 350545,
-          "min_damage": 289699,
-          "max_damage": 378658,
+          "avg_damage": 354102,
+          "min_damage": 339094,
+          "max_damage": 375713,
           "count": 9
         }
       ]
     },
     {
-      "time_s": 269.8,
-      "dmg_avg": 679445,
-      "dmg_stddev": 147190,
-      "dmg_min": 524244,
+      "time_s": 270,
+      "dmg_avg": 624126,
+      "dmg_stddev": 199068,
+      "dmg_min": 350529,
       "dmg_max": 928089,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
@@ -248,31 +248,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 260458,
+          "avg_damage": 264731,
           "min_damage": 243358,
           "max_damage": 303452,
           "count": 6
         },
         {
           "spell_id": 1221965,
-          "avg_damage": 258854,
+          "avg_damage": 253956,
           "min_damage": 223653,
           "max_damage": 331254,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 192923,
+          "avg_damage": 203407,
           "min_damage": 98187,
           "max_damage": 293383,
-          "count": 5
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 391,
-      "dmg_avg": 1219825,
-      "dmg_stddev": 184075,
+      "time_s": 390.5,
+      "dmg_avg": 1180513,
+      "dmg_stddev": 191280,
       "dmg_min": 852944,
       "dmg_max": 1470798,
       "window_length_s": 12,
@@ -288,33 +288,33 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 673333,
+          "avg_damage": 634849,
           "min_damage": 151304,
           "max_damage": 919068,
           "count": 10
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 514629,
+          "avg_damage": 513896,
           "min_damage": 442255,
           "max_damage": 588637,
           "count": 10
         },
         {
           "spell_id": 32409,
-          "avg_damage": 11253,
-          "min_damage": 10087,
+          "avg_damage": 11094,
+          "min_damage": 10307,
           "max_damage": 13190,
           "count": 6
         }
       ]
     },
     {
-      "time_s": 402.4,
-      "dmg_avg": 863472,
-      "dmg_stddev": 165066,
+      "time_s": 401.7,
+      "dmg_avg": 958672,
+      "dmg_stddev": 211237,
       "dmg_min": 675883,
-      "dmg_max": 1102405,
+      "dmg_max": 1204935,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -328,31 +328,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 382180,
+          "avg_damage": 450733,
           "min_damage": 177072,
-          "max_damage": 704983,
-          "count": 4
+          "max_damage": 768927,
+          "count": 6
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 366675,
+          "avg_damage": 388576,
           "min_damage": 334932,
-          "max_damage": 397422,
-          "count": 5
+          "max_damage": 450648,
+          "count": 7
         },
         {
           "spell_id": 1221965,
-          "avg_damage": 212549,
+          "avg_damage": 239056,
           "min_damage": 193174,
-          "max_damage": 239745,
-          "count": 3
+          "max_damage": 318575,
+          "count": 4
         },
         {
           "spell_id": 32409,
-          "avg_damage": 11085,
+          "avg_damage": 11354,
           "min_damage": 9960,
-          "max_damage": 11819,
-          "count": 4
+          "max_damage": 12431,
+          "count": 5
         }
       ]
     }
@@ -442,6 +442,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "358f434bb819b217",
-  "ingest_version": 0
+  "source_signature": "3967cd1e1ecc1d77",
+  "ingest_version": 1
 }

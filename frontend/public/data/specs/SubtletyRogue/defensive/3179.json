@@ -4,80 +4,80 @@
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Crimson Vial": {
-      "sample_count": 4,
-      "avg_first_cast_s": 143.1,
-      "stddev_first_cast_s": 99.9,
-      "avg_gap_s": 144.3,
-      "stddev_gap_s": 96.7,
+    "Feint": {
+      "sample_count": 6,
+      "avg_first_cast_s": 112.7,
+      "stddev_first_cast_s": 108.7,
+      "avg_gap_s": 41.5,
+      "stddev_gap_s": 33.4,
       "hold_targets": {
         "1": {
-          "target_s": 235.6,
-          "stddev_s": 86.4,
+          "target_s": 106.9,
+          "stddev_s": 106.6,
+          "count": 5,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.76,
+      "uses_per_min": {
+        "avg": 0.756,
+        "stddev": 0.463,
+        "min": 0.325,
+        "max": 1.59
+      },
+      "majority_hold": true
+    },
+    "Cloak of Shadows": {
+      "sample_count": 6,
+      "avg_first_cast_s": 203.8,
+      "stddev_first_cast_s": 122.6,
+      "avg_gap_s": 173.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.237,
+        "stddev": 0.071,
+        "min": 0.162,
+        "max": 0.353
+      },
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 4,
+      "avg_first_cast_s": 163.1,
+      "stddev_first_cast_s": 96,
+      "avg_gap_s": 130,
+      "stddev_gap_s": 116.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 261.3,
+          "stddev_s": 50.1,
           "count": 2,
           "total_samples": 4
         }
       },
       "avg_uses": 1.5,
-      "avg_uses_per_min": 0.33,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.331,
-        "stddev": 0.182,
+        "avg": 0.272,
+        "stddev": 0.085,
         "min": 0.165,
-        "max": 0.586
-      },
-      "majority_hold": false
-    },
-    "Feint": {
-      "sample_count": 5,
-      "avg_first_cast_s": 130.5,
-      "stddev_first_cast_s": 111.4,
-      "avg_gap_s": 40,
-      "stddev_gap_s": 40,
-      "hold_targets": {
-        "1": {
-          "target_s": 215.9,
-          "stddev_s": 117.7,
-          "count": 3,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.75,
-      "uses_per_min": {
-        "avg": 0.754,
-        "stddev": 0.581,
-        "min": 0.325,
-        "max": 1.759
-      },
-      "majority_hold": true
-    },
-    "Cloak of Shadows": {
-      "sample_count": 5,
-      "avg_first_cast_s": 213.4,
-      "stddev_first_cast_s": 134.6,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
-      "uses_per_min": {
-        "avg": 0.213,
-        "stddev": 0.047,
-        "min": 0.162,
-        "max": 0.267
+        "max": 0.353
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 99.7,
-      "dmg_avg": 330570,
-      "dmg_stddev": 161626,
-      "dmg_min": 195704,
+      "time_s": 104.6,
+      "dmg_avg": 351447,
+      "dmg_stddev": 145968,
+      "dmg_min": 197667,
       "dmg_max": 547620,
-      "window_length_s": 6,
+      "window_length_s": 6.6,
       "defensive_name": "Feint",
       "spell_id": 1966,
       "common_defensives": [
@@ -90,23 +90,49 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 207784,
-          "min_damage": 195704,
+          "avg_damage": 192412,
+          "min_damage": 147131,
           "max_damage": 219864,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 221.1,
+      "dmg_avg": 555784,
+      "dmg_stddev": 365776,
+      "dmg_min": 216247,
+      "dmg_max": 926016,
+      "window_length_s": 7.5,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 411674,
+          "min_damage": 95109,
+          "max_damage": 728238,
           "count": 2
         },
         {
-          "spell_id": 1285504,
-          "avg_damage": 198457,
-          "min_damage": 158516,
-          "max_damage": 238397,
+          "spell_id": 1254018,
+          "avg_damage": 199161,
+          "min_damage": 182074,
+          "max_damage": 216247,
           "count": 2
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 117367,
-          "min_damage": 95108,
-          "max_damage": 139625,
+          "avg_damage": 137527,
+          "min_damage": 77275,
+          "max_damage": 197778,
           "count": 2
         }
       ]
@@ -115,9 +141,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 31224,
-      "avg_uses": 1,
+      "avg_uses": 1.2,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     },
     {
       "spell_id": 185311,
@@ -127,9 +153,9 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 3,
+      "avg_uses": 3.5,
       "min_uses": 2,
-      "max_uses": 6
+      "max_uses": 9
     }
   ],
   "defensives": [
@@ -202,6 +228,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "1834d0d886072878",
-  "ingest_version": 0
+  "source_signature": "83b95867247dea5f",
+  "ingest_version": 1
 }
