@@ -6,34 +6,34 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 80.4,
-      "stddev_first_cast_s": 47.7,
-      "avg_gap_s": 31.1,
-      "stddev_gap_s": 39.9,
+      "avg_first_cast_s": 80.9,
+      "stddev_first_cast_s": 47.8,
+      "avg_gap_s": 31,
+      "stddev_gap_s": 39.8,
       "hold_targets": {},
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 1.27,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 1.28,
       "uses_per_min": {
-        "avg": 1.275,
-        "stddev": 0.512,
+        "avg": 1.277,
+        "stddev": 0.514,
         "min": 0.558,
         "max": 2.101
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 4,
-      "avg_first_cast_s": 156.5,
-      "stddev_first_cast_s": 48,
+      "sample_count": 5,
+      "avg_first_cast_s": 144.2,
+      "stddev_first_cast_s": 49.8,
       "avg_gap_s": 0.4,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.38,
-        "stddev": 0.166,
-        "min": 0.279,
+        "avg": 0.359,
+        "stddev": 0.15,
+        "min": 0.278,
         "max": 0.626
       },
       "majority_hold": false
@@ -67,12 +67,12 @@
       ]
     },
     {
-      "time_s": 91.7,
-      "dmg_avg": 235707,
-      "dmg_stddev": 189177,
+      "time_s": 92.2,
+      "dmg_avg": 262716,
+      "dmg_stddev": 191917,
       "dmg_min": 0,
       "dmg_max": 511701,
-      "window_length_s": 6.6,
+      "window_length_s": 7.3,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -85,27 +85,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1259186,
-          "avg_damage": 215209,
-          "min_damage": 110262,
+          "avg_damage": 196905,
+          "min_damage": 47902,
           "max_damage": 359344,
           "count": 7
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 33916,
-          "min_damage": 9676,
+          "avg_damage": 37359,
+          "min_damage": 15723,
           "max_damage": 56156,
-          "count": 9
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 184.4,
-      "dmg_avg": 203535,
-      "dmg_stddev": 172855,
+      "time_s": 186.7,
+      "dmg_avg": 208993,
+      "dmg_stddev": 168354,
       "dmg_min": 36917,
       "dmg_max": 539389,
-      "window_length_s": 7.5,
+      "window_length_s": 7.3,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -118,10 +118,43 @@
       "ability_breakdown": [
         {
           "spell_id": 1272950,
-          "avg_damage": 61006,
+          "avg_damage": 62453,
           "min_damage": 20391,
-          "max_damage": 115518,
-          "count": 12
+          "max_damage": 117919,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 208.6,
+      "dmg_avg": 188268,
+      "dmg_stddev": 130973,
+      "dmg_min": 0,
+      "dmg_max": 291029,
+      "window_length_s": 9.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 123407,
+          "min_damage": 93504,
+          "max_damage": 179634,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 58055,
+          "min_damage": 47753,
+          "max_damage": 78615,
+          "count": 3
         }
       ]
     }
@@ -129,13 +162,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 4.2,
+      "avg_uses": 4.3,
       "min_uses": 2,
       "max_uses": 7
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.3,
+      "avg_uses": 1.2,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -193,6 +226,6 @@
       "name": "Primordial Power"
     }
   },
-  "source_signature": "54ce1d51d3830404",
+  "source_signature": "17bf5868daac5627",
   "ingest_version": 1
 }

@@ -3,24 +3,24 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 528.2,
+  "avg_duration_s": 528.9,
   "downtime_threshold_ms": 1841,
-  "top_avg_efficiency": 70.6,
-  "top_efficiency_stddev": 8.8,
+  "top_avg_efficiency": 71,
+  "top_efficiency_stddev": 8.7,
   "per_cd_benchmarks": {
     "Dragonrage": {
       "sample_count": 10,
       "avg_first_cast_s": 49.8,
       "stddev_first_cast_s": 60.8,
-      "avg_gap_s": 121.9,
+      "avg_gap_s": 122,
       "stddev_gap_s": 3.2,
-      "avg_bl_offset_s": -2.6,
-      "stddev_bl_offset_s": 10.7,
+      "avg_bl_offset_s": -1.3,
+      "stddev_bl_offset_s": 8.3,
       "avg_uses": 4.6,
       "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.523,
-        "stddev": 0.061,
+        "avg": 0.522,
+        "stddev": 0.06,
         "min": 0.445,
         "max": 0.592
       },
@@ -70,19 +70,19 @@
     },
     "Deep Breath": {
       "sample_count": 10,
-      "avg_first_cast_s": 77.4,
+      "avg_first_cast_s": 0,
       "stddev_first_cast_s": 0,
-      "avg_gap_s": 368.3,
-      "stddev_gap_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 0.2,
-      "avg_uses_per_min": 0.02,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
       "uses_per_min": {
-        "avg": 0.228,
+        "avg": 0,
         "stddev": 0,
-        "min": 0.228,
-        "max": 0.228
+        "min": 0,
+        "max": 0
       },
       "bl_pct": 0,
       "majority_hold": false,
@@ -90,16 +90,16 @@
     },
     "Tip the Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.4,
-      "stddev_first_cast_s": 7.1,
-      "avg_gap_s": 125,
-      "stddev_gap_s": 5.4,
-      "avg_bl_offset_s": 15.6,
+      "avg_first_cast_s": 6.3,
+      "stddev_first_cast_s": 7,
+      "avg_gap_s": 124.8,
+      "stddev_gap_s": 5.1,
+      "avg_bl_offset_s": 15.9,
       "stddev_bl_offset_s": 17,
       "avg_uses": 4.9,
       "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.557,
+        "avg": 0.556,
         "stddev": 0.038,
         "min": 0.462,
         "max": 0.592
@@ -109,19 +109,19 @@
       "hold_targets": {
         "3": {
           "target_s": 264.2,
-          "stddev_s": 10.3,
+          "stddev_s": 9.8,
           "count": 6,
           "total_samples": 10
         },
         "4": {
-          "target_s": 393.9,
-          "stddev_s": 12.4,
+          "target_s": 392.4,
+          "stddev_s": 12,
           "count": 6,
           "total_samples": 10
         },
         "5": {
-          "target_s": 514.2,
-          "stddev_s": 7.2,
+          "target_s": 514.1,
+          "stddev_s": 5.4,
           "count": 5,
           "total_samples": 10
         }
@@ -306,6 +306,6 @@
       "name": "Fury of the Aspects"
     }
   },
-  "source_signature": "46dd164d77375cd1",
+  "source_signature": "90076c731b362a61",
   "ingest_version": 1
 }

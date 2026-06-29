@@ -6,16 +6,23 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 189.4,
-      "stddev_first_cast_s": 140.8,
-      "avg_gap_s": 51.4,
-      "stddev_gap_s": 76.3,
-      "hold_targets": {},
-      "avg_uses": 6,
+      "avg_first_cast_s": 191.8,
+      "stddev_first_cast_s": 138.5,
+      "avg_gap_s": 49.8,
+      "stddev_gap_s": 69,
+      "hold_targets": {
+        "2": {
+          "target_s": 347.4,
+          "stddev_s": 132.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6.1,
       "avg_uses_per_min": 0.77,
       "uses_per_min": {
-        "avg": 0.768,
-        "stddev": 0.223,
+        "avg": 0.773,
+        "stddev": 0.224,
         "min": 0.486,
         "max": 1.13
       },
@@ -23,16 +30,16 @@
     },
     "Zephyr": {
       "sample_count": 9,
-      "avg_first_cast_s": 274.5,
-      "stddev_first_cast_s": 172.4,
-      "avg_gap_s": 172.3,
-      "stddev_gap_s": 123.2,
+      "avg_first_cast_s": 275.3,
+      "stddev_first_cast_s": 171.2,
+      "avg_gap_s": 149.5,
+      "stddev_gap_s": 63.8,
       "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.19,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.187,
-        "stddev": 0.107,
+        "avg": 0.198,
+        "stddev": 0.119,
         "min": 0.117,
         "max": 0.438
       },
@@ -41,12 +48,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 69.1,
-      "dmg_avg": 212153,
-      "dmg_stddev": 148585,
-      "dmg_min": 38803,
-      "dmg_max": 395055,
-      "window_length_s": 5.2,
+      "time_s": 89.8,
+      "dmg_avg": 232000,
+      "dmg_stddev": 197849,
+      "dmg_min": 25598,
+      "dmg_max": 407466,
+      "window_length_s": 6,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -58,11 +65,25 @@
       "ref_game_id": 240430,
       "ability_breakdown": [
         {
+          "spell_id": 1260027,
+          "avg_damage": 213646,
+          "min_damage": 154799,
+          "max_damage": 272493,
+          "count": 2
+        },
+        {
           "spell_id": 1281707,
-          "avg_damage": 106863,
-          "min_damage": 38803,
-          "max_damage": 159225,
-          "count": 3
+          "avg_damage": 108055,
+          "min_damage": 25598,
+          "max_damage": 222779,
+          "count": 4
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 28451,
+          "min_damage": 27013,
+          "max_damage": 29888,
+          "count": 2
         }
       ]
     },
@@ -188,8 +209,8 @@
     },
     {
       "time_s": 407.4,
-      "dmg_avg": 307934,
-      "dmg_stddev": 224347,
+      "dmg_avg": 312741,
+      "dmg_stddev": 231164,
       "dmg_min": 17874,
       "dmg_max": 724646,
       "window_length_s": 6.2,
@@ -205,34 +226,67 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 164105,
+          "avg_damage": 179754,
           "min_damage": 88991,
           "max_damage": 342584,
-          "count": 10
+          "count": 11
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 114284,
+          "avg_damage": 116586,
           "min_damage": 32868,
-          "max_damage": 196003,
+          "max_damage": 230529,
           "count": 15
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 91736,
+          "avg_damage": 89323,
           "min_damage": 15687,
           "max_damage": 186070,
-          "count": 15
+          "count": 16
         }
       ]
     },
     {
-      "time_s": 482.1,
-      "dmg_avg": 293468,
-      "dmg_stddev": 260348,
+      "time_s": 459.3,
+      "dmg_avg": 534872,
+      "dmg_stddev": 82009,
+      "dmg_min": 413529,
+      "dmg_max": 594264,
+      "window_length_s": 8.1,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 291018,
+          "min_damage": 230563,
+          "max_damage": 378685,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 192755,
+          "min_damage": 173890,
+          "max_damage": 215579,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 480.7,
+      "dmg_avg": 299353,
+      "dmg_stddev": 240585,
       "dmg_min": 0,
       "dmg_max": 707976,
-      "window_length_s": 7.1,
+      "window_length_s": 6.2,
       "defensive_name": "Obsidian Scales",
       "spell_id": 363916,
       "common_defensives": [
@@ -245,17 +299,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1237040,
-          "avg_damage": 103441,
-          "min_damage": 15825,
+          "avg_damage": 102660,
+          "min_damage": 19051,
           "max_damage": 298890,
-          "count": 8
+          "count": 10
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 93607,
-          "min_damage": 32042,
+          "avg_damage": 102402,
+          "min_damage": 47062,
           "max_damage": 145272,
-          "count": 8
+          "count": 7
         }
       ]
     }
@@ -263,13 +317,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 6,
+      "avg_uses": 6.1,
       "min_uses": 4,
       "max_uses": 9
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.4,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -351,6 +405,6 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "836f67cbcb77f616",
+  "source_signature": "59de8740fd676e0f",
   "ingest_version": 1
 }
