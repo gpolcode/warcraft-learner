@@ -81,27 +81,107 @@ describe('readInaccessibleParses', () => {
 });
 
 describe('inaccessible-aware skip key', () => {
-  // Mimics the orchestrator: usedRows = pool minus known-inaccessible, top N, then hash.
-  const skipKey = (pool: SignatureRanking[], inaccessible: string[], n: number): string => {
-    const known = new Set(inaccessible);
-    const used = pool.filter(row => !known.has(parseKey(row))).slice(0, n);
-    return encounterSignature('1', used);
+  // Each parse has a STABLE identity (report_code:fight_id) independent of its rank, so a
+  // parse keeps its key when it moves position - the helpers below model that, then mimic
+  // the two halves of the orchestrator: the cheap skip check and the post-fetch stamp.
+  const P = (report_code: string): SignatureRanking => ({ report_code, fight_id: 1 });
+  const pool = (...codes: string[]): SignatureRanking[] => codes.map(P);
+  const sig = (rows: SignatureRanking[]): string => encounterSignature('1', rows);
+
+  // Skip check (orchestrator loop): key on the top-N accessible parses (pool minus the
+  // persisted known-inaccessible keys).
+  const skipKey = (rows: SignatureRanking[], knownInaccessible: string[], n = 10): string => {
+    const known = new Set(knownInaccessible);
+    return sig(rows.filter(row => !known.has(parseKey(row))).slice(0, n));
   };
-  const pool = (...codes: string[]): SignatureRanking[] =>
-    codes.map((report_code, index) => ({ report_code, fight_id: index + 1 }));
+
+  // Post-fetch stamp (ingestEncounter): given the report codes the fetch found inaccessible,
+  // return the stamped signature + the inaccessible key set persisted on the burst file.
+  // Codes never fetched (e.g. a parse below the 10th accessible) are naturally pruned.
+  const stampAfterCompute = (rows: SignatureRanking[], inaccessibleCodes: string[], n = 10) => {
+    const codes = new Set(inaccessibleCodes);
+    const inaccessible_parses = rows.filter(row => codes.has(row.report_code)).map(parseKey);
+    return { signature: skipKey(rows, inaccessible_parses, n), inaccessible_parses };
+  };
 
   it('is unchanged when only the tail past the top-N accessible churns', () => {
-    const inaccessible = ['p3:3']; // p3 is known inaccessible; top-3 accessible is p1, p2, p4
-    const before = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p5'), inaccessible, 3);
-    const after = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p9'), inaccessible, 3); // unused p5 -> p9
+    const known = ['c:1']; // c inaccessible -> top-10 accessible pulls in k, l stays unused
+    const before = skipKey(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'), known);
+    const after = skipKey(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'z'), known); // unused l -> z
     expect(after).toBe(before);
   });
 
   it('changes when an accessible top-N parse changes', () => {
-    const inaccessible = ['p3:3'];
-    const before = skipKey(pool('p1', 'p2', 'p3', 'p4', 'p5'), inaccessible, 3);
-    const after = skipKey(pool('p1', 'p2', 'p3', 'pX', 'p5'), inaccessible, 3); // used p4 -> pX
+    const known = ['c:1'];
+    const before = skipKey(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'), known);
+    const after = skipKey(pool('a', 'b', 'c', 'X', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'), known); // used d -> X
     expect(after).not.toBe(before);
+  });
+
+  it('recomputes, then stabilizes, when a new inaccessible log enters the top 10', () => {
+    const stampN = stampAfterCompute(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'), []);
+    expect(stampN.inaccessible_parses).toEqual([]);
+
+    // X (private) enters at rank 5, pushing j to rank 11.
+    const poolN1 = pool('a', 'b', 'c', 'd', 'X', 'e', 'f', 'g', 'h', 'i', 'j');
+
+    // The cheap check still uses last run's (empty) set, so the unknown X counts in the
+    // top-10 and the key changes -> recompute fires.
+    expect(skipKey(poolN1, stampN.inaccessible_parses)).not.toBe(stampN.signature);
+
+    // The recompute fetches X, finds it inaccessible, persists it, and keys on the top-10
+    // accessible - which is the original a..j, so the data and signature are unchanged.
+    const stampN1 = stampAfterCompute(poolN1, ['X']);
+    expect(stampN1.inaccessible_parses).toEqual(['X:1']);
+    expect(stampN1.signature).toBe(stampN.signature);
+
+    // Next run: X is now known-inaccessible, excluded by the cheap check -> SKIP.
+    expect(skipKey(poolN1, stampN1.inaccessible_parses)).toBe(stampN1.signature);
+  });
+
+  it('recomputes when a new accessible log pushes the inaccessible 10th out of the top 10', () => {
+    // T is rank 10 and inaccessible; u, v are the accessible tail (ranks 11-12).
+    const poolA = pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'T', 'u', 'v');
+    const stampA = stampAfterCompute(poolA, ['T']);
+    expect(stampA.inaccessible_parses).toEqual(['T:1']);
+    // u backfills the inaccessible 10th, so the data keys on a..i + u.
+    expect(stampA.signature).toBe(sig(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'u')));
+
+    // Y (accessible) enters at rank 5, pushing T to rank 11 (out of the top 10).
+    const poolB = pool('a', 'b', 'c', 'd', 'Y', 'e', 'f', 'g', 'h', 'i', 'T', 'u', 'v');
+
+    // Top-10 accessible is now a..i + Y (u no longer needed) -> differs from stampA -> recompute.
+    expect(skipKey(poolB, stampA.inaccessible_parses)).not.toBe(stampA.signature);
+
+    // The recompute reaches 10 accessible without fetching T (now rank 11), so T is pruned
+    // from the persisted set and the key is the plain top-10.
+    const stampB = stampAfterCompute(poolB, []);
+    expect(stampB.inaccessible_parses).toEqual([]);
+    expect(stampB.signature).toBe(sig(pool('a', 'b', 'c', 'd', 'Y', 'e', 'f', 'g', 'h', 'i')));
+    expect(skipKey(poolB, stampB.inaccessible_parses)).toBe(stampB.signature);
+  });
+
+  it('does not recompute when a new log enters below the top-N accessible', () => {
+    const stampN = stampAfterCompute(pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'), []);
+    // A new log lands at rank 11 - the top-10 accessible (a..j) is untouched, so SKIP.
+    const poolN1 = pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'w');
+    expect(skipKey(poolN1, stampN.inaccessible_parses)).toBe(stampN.signature);
+  });
+
+  it('excludes multiple known-inaccessible parses and keys on the next accessible ones', () => {
+    // c and f (ranks 3, 6) inaccessible -> top-10 accessible pulls in k and l.
+    const rows = pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l');
+    expect(skipKey(rows, ['c:1', 'f:1'])).toBe(sig(pool('a', 'b', 'd', 'e', 'g', 'h', 'i', 'j', 'k', 'l')));
+  });
+
+  it('a top-N parse turning inaccessible is missed by the cheap check until a recompute (documented residual)', () => {
+    // d is accessible at the last compute, so it is NOT in the persisted set; the key
+    // includes it. If d later goes private with no ranking change, the cheap check - still
+    // keyed on the same pool minus the same (d-free) known set - produces the same key and
+    // SKIPS. The staleness self-heals only when the encounter recomputes for another reason.
+    const rows = pool('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j');
+    const stampN = stampAfterCompute(rows, []);
+    expect(skipKey(rows, stampN.inaccessible_parses)).toBe(stampN.signature);
   });
 });
 
