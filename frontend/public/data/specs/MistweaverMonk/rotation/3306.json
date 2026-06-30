@@ -25,7 +25,7 @@
         "max": 2.435
       },
       "bl_pct": 60,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {}
     },
     "Invoke Yu'lon, the Jade Serpent": {
@@ -106,14 +106,7 @@
       },
       "bl_pct": 20,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 208.1,
-          "stddev_s": 30.7,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Celestial Conduit": {
       "sample_count": 10,
@@ -137,13 +130,21 @@
         "2": {
           "target_s": 174.8,
           "stddev_s": 19.5,
+          "delay_s": 23.4,
+          "delay_stddev_s": 15.1,
+          "band_s": 15.1,
+          "effective_cd_s": 90,
           "count": 6,
           "total_samples": 10
         },
         "3": {
-          "target_s": 268.7,
-          "stddev_s": 27.4,
-          "count": 8,
+          "target_s": 266.7,
+          "stddev_s": 32.1,
+          "delay_s": 19.2,
+          "delay_stddev_s": 23.3,
+          "band_s": 23.3,
+          "effective_cd_s": 90,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -354,6 +355,6 @@
       "name": "Celestial Conduit"
     }
   },
-  "source_signature": "26c0546cdc3082f3",
-  "ingest_version": 1
+  "source_signature": "a4e3f7764c21969e",
+  "ingest_version": 2
 }

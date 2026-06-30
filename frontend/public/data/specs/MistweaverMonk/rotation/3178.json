@@ -66,14 +66,7 @@
       },
       "bl_pct": 80,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 175.9,
-          "stddev_s": 30.6,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Revival": {
       "sample_count": 10,
@@ -97,6 +90,10 @@
         "2": {
           "target_s": 331.7,
           "stddev_s": 71.1,
+          "delay_s": 57.3,
+          "delay_stddev_s": 39.7,
+          "band_s": 39.7,
+          "effective_cd_s": 180,
           "count": 5,
           "total_samples": 10
         }
@@ -144,18 +141,20 @@
         "2": {
           "target_s": 127.6,
           "stddev_s": 36,
+          "delay_s": 11.7,
+          "delay_stddev_s": 24.8,
+          "band_s": 24.8,
+          "effective_cd_s": 90,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 235.1,
-          "stddev_s": 38.9,
-          "count": 8,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 319.2,
-          "stddev_s": 47.4,
+          "target_s": 244.4,
+          "stddev_s": 38.1,
+          "delay_s": 13.2,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
+          "effective_cd_s": 90,
           "count": 7,
           "total_samples": 10
         }
@@ -367,6 +366,6 @@
       "name": "Celestial Conduit"
     }
   },
-  "source_signature": "8988b13b7911791d",
-  "ingest_version": 1
+  "source_signature": "d3627459639530f0",
+  "ingest_version": 2
 }

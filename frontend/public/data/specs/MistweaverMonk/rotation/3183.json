@@ -3,24 +3,24 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 556.6,
-  "downtime_threshold_ms": 1756,
+  "avg_duration_s": 555.6,
+  "downtime_threshold_ms": 1764,
   "top_avg_efficiency": 76.2,
-  "top_efficiency_stddev": 8.1,
+  "top_efficiency_stddev": 8.3,
   "per_cd_benchmarks": {
     "Thunder Focus Tea": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.5,
+      "avg_first_cast_s": 7.9,
       "stddev_first_cast_s": 4.8,
-      "avg_gap_s": 23.8,
-      "stddev_gap_s": 4.3,
-      "avg_bl_offset_s": -0.3,
-      "stddev_bl_offset_s": 8,
-      "avg_uses": 23.6,
-      "avg_uses_per_min": 2.55,
+      "avg_gap_s": 24,
+      "stddev_gap_s": 4.6,
+      "avg_bl_offset_s": -1.8,
+      "stddev_bl_offset_s": 8.7,
+      "avg_uses": 23.4,
+      "avg_uses_per_min": 2.53,
       "uses_per_min": {
-        "avg": 2.545,
-        "stddev": 0.085,
+        "avg": 2.528,
+        "stddev": 0.083,
         "min": 2.443,
         "max": 2.662
       },
@@ -32,15 +32,15 @@
       "sample_count": 10,
       "avg_first_cast_s": 4.9,
       "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 126.6,
+      "avg_gap_s": 126.8,
       "stddev_gap_s": 5.3,
-      "avg_bl_offset_s": 16.8,
+      "avg_bl_offset_s": 17.3,
       "stddev_bl_offset_s": 2.1,
       "avg_uses": 3.5,
       "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.526,
-        "stddev": 0.006,
+        "avg": 0.527,
+        "stddev": 0.007,
         "min": 0.516,
         "max": 0.535
       },
@@ -48,21 +48,13 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 260.2,
+          "target_s": 260.5,
           "stddev_s": 2.7,
+          "delay_s": 12.4,
+          "delay_stddev_s": 3.1,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 6,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 382,
-          "stddev_s": 3,
-          "count": 7,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 510.5,
-          "stddev_s": 7.6,
-          "count": 7,
           "total_samples": 10
         }
       }
@@ -89,17 +81,17 @@
     },
     "Revival": {
       "sample_count": 10,
-      "avg_first_cast_s": 87.1,
-      "stddev_first_cast_s": 28.9,
-      "avg_gap_s": 232.7,
-      "stddev_gap_s": 46,
+      "avg_first_cast_s": 87,
+      "stddev_first_cast_s": 29,
+      "avg_gap_s": 227.8,
+      "stddev_gap_s": 46.6,
       "avg_bl_offset_s": 49.2,
       "stddev_bl_offset_s": 0,
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.22,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.239,
-        "stddev": 0.093,
+        "avg": 0.228,
+        "stddev": 0.088,
         "min": 0.107,
         "max": 0.359
       },
@@ -108,14 +100,12 @@
       "hold_targets": {
         "2": {
           "target_s": 291.2,
-          "stddev_s": 49.7,
+          "stddev_s": 50.4,
+          "delay_s": 33.7,
+          "delay_stddev_s": 50.4,
+          "band_s": 50.4,
+          "effective_cd_s": 180,
           "count": 7,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 530.3,
-          "stddev_s": 43.2,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -142,16 +132,16 @@
     },
     "Celestial Conduit": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.8,
+      "avg_first_cast_s": 3.9,
       "stddev_first_cast_s": 4.3,
-      "avg_gap_s": 107.7,
+      "avg_gap_s": 107.8,
       "stddev_gap_s": 16.6,
-      "avg_bl_offset_s": -21.3,
-      "stddev_bl_offset_s": 8.5,
+      "avg_bl_offset_s": -20.5,
+      "stddev_bl_offset_s": 8.1,
       "avg_uses": 5.8,
-      "avg_uses_per_min": 0.62,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.625,
+        "avg": 0.626,
         "stddev": 0.027,
         "min": 0.565,
         "max": 0.665
@@ -162,50 +152,60 @@
         "2": {
           "target_s": 110.9,
           "stddev_s": 1.9,
+          "delay_s": 18.5,
+          "delay_stddev_s": 3.4,
+          "band_s": 5,
+          "effective_cd_s": 90,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 243.9,
-          "stddev_s": 14.5,
-          "count": 9,
+          "target_s": 244.8,
+          "stddev_s": 2.3,
+          "delay_s": 43.4,
+          "delay_stddev_s": 2.4,
+          "band_s": 5,
+          "effective_cd_s": 90,
+          "count": 8,
           "total_samples": 10
         },
         "4": {
-          "target_s": 343.4,
-          "stddev_s": 2.4,
-          "count": 9,
+          "target_s": 345.3,
+          "stddev_s": 1.8,
+          "delay_s": 10.6,
+          "delay_stddev_s": 15.7,
+          "band_s": 15.7,
+          "effective_cd_s": 90,
+          "count": 7,
           "total_samples": 10
         },
         "5": {
-          "target_s": 449,
-          "stddev_s": 6.4,
-          "count": 10,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 540.3,
-          "stddev_s": 9.6,
-          "count": 8,
+          "target_s": 449.8,
+          "stddev_s": 1,
+          "delay_s": 15.1,
+          "delay_stddev_s": 19,
+          "band_s": 19,
+          "effective_cd_s": 90,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Sheilun's Gift": {
       "sample_count": 10,
-      "avg_first_cast_s": 29.2,
+      "avg_first_cast_s": 29.3,
       "stddev_first_cast_s": 43.7,
-      "avg_gap_s": 4.7,
-      "stddev_gap_s": 5.5,
-      "avg_bl_offset_s": 1.6,
-      "stddev_bl_offset_s": 4.8,
-      "avg_uses": 99.6,
-      "avg_uses_per_min": 10.56,
+      "avg_gap_s": 4.8,
+      "stddev_gap_s": 5.6,
+      "avg_bl_offset_s": 1.3,
+      "stddev_bl_offset_s": 4.9,
+      "avg_uses": 97.6,
+      "avg_uses_per_min": 10.37,
       "uses_per_min": {
-        "avg": 11.738,
-        "stddev": 3.669,
+        "avg": 11.527,
+        "stddev": 3.52,
         "min": 4.543,
-        "max": 14.839
+        "max": 14.152
       },
       "bl_pct": 90,
       "majority_hold": false,
@@ -397,6 +397,6 @@
       "name": "Celestial Conduit"
     }
   },
-  "source_signature": "86d800171ea744f0",
-  "ingest_version": 1
+  "source_signature": "e7b1a83068aede39",
+  "ingest_version": 2
 }

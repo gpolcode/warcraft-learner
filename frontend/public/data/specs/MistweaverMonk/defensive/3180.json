@@ -6,114 +6,54 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 131,
-      "stddev_first_cast_s": 92.3,
-      "avg_gap_s": 105.9,
-      "stddev_gap_s": 59.2,
+      "avg_first_cast_s": 138.3,
+      "stddev_first_cast_s": 91.7,
+      "avg_gap_s": 104.8,
+      "stddev_gap_s": 58.3,
       "hold_targets": {
         "1": {
-          "target_s": 251.3,
-          "stddev_s": 32.5,
+          "target_s": 278.1,
+          "stddev_s": 35.6,
           "count": 4,
           "total_samples": 10
         }
       },
       "avg_uses": 2.8,
-      "avg_uses_per_min": 0.41,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.409,
-        "stddev": 0.224,
+        "avg": 0.416,
+        "stddev": 0.22,
         "min": 0.137,
         "max": 0.84
       },
       "majority_hold": false
     },
     "Fortifying Brew": {
-      "sample_count": 9,
-      "avg_first_cast_s": 176.5,
-      "stddev_first_cast_s": 127.7,
-      "avg_gap_s": 126.8,
-      "stddev_gap_s": 36.9,
-      "hold_targets": {},
+      "sample_count": 10,
+      "avg_first_cast_s": 175.4,
+      "stddev_first_cast_s": 120.5,
+      "avg_gap_s": 128,
+      "stddev_gap_s": 35,
+      "hold_targets": {
+        "1": {
+          "target_s": 283.7,
+          "stddev_s": 27.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
       "avg_uses": 2,
       "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.299,
-        "stddev": 0.154,
+        "avg": 0.304,
+        "stddev": 0.146,
         "min": 0.127,
         "max": 0.547
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 249.6,
-      "dmg_avg": 486119,
-      "dmg_stddev": 140660,
-      "dmg_min": 331570,
-      "dmg_max": 641959,
-      "window_length_s": 11.3,
-      "defensive_name": "Life Cocoon",
-      "spell_id": 116849,
-      "common_defensives": [
-        "Life Cocoon"
-      ],
-      "common_cds": [
-        "Life Cocoon"
-      ],
-      "ref_game_id": 240431,
-      "ability_breakdown": [
-        {
-          "spell_id": 1258661,
-          "avg_damage": 172126,
-          "min_damage": 159118,
-          "max_damage": 184047,
-          "count": 4
-        },
-        {
-          "spell_id": 1255739,
-          "avg_damage": 144964,
-          "min_damage": 33224,
-          "max_damage": 256704,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 322.3,
-      "dmg_avg": 327009,
-      "dmg_stddev": 224306,
-      "dmg_min": 43800,
-      "dmg_max": 606974,
-      "window_length_s": 10.4,
-      "defensive_name": "Life Cocoon",
-      "spell_id": 116849,
-      "common_defensives": [
-        "Life Cocoon"
-      ],
-      "common_cds": [
-        "Life Cocoon"
-      ],
-      "ref_game_id": 240431,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246749,
-          "avg_damage": 158610,
-          "min_damage": 133347,
-          "max_damage": 185331,
-          "count": 3
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 140524,
-          "min_damage": 31532,
-          "max_damage": 186815,
-          "count": 5
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 116849,
@@ -210,20 +150,8 @@
     "122783": {
       "icon": "spell_monk_diffusemagic",
       "name": "Diffuse Magic"
-    },
-    "1246749": {
-      "icon": "ability_bastion_paladin",
-      "name": "Sacred Toll"
-    },
-    "1255739": {
-      "icon": "inv_ability_holyfire_buff",
-      "name": "Searing Radiance"
-    },
-    "1258661": {
-      "icon": "spell_holy_auramastery",
-      "name": "Light Infusion"
     }
   },
-  "source_signature": "ec70fa1632711ce8",
-  "ingest_version": 1
+  "source_signature": "f9c583e45705b741",
+  "ingest_version": 2
 }

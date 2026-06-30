@@ -28,15 +28,23 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 203.6,
-          "stddev_s": 14.1,
-          "count": 9,
+          "target_s": 207.5,
+          "stddev_s": 17.4,
+          "delay_s": 11.2,
+          "delay_stddev_s": 2.6,
+          "band_s": 5,
+          "effective_cd_s": 90,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
-          "target_s": 307.9,
-          "stddev_s": 25.8,
-          "count": 9,
+          "target_s": 308.4,
+          "stddev_s": 26.9,
+          "delay_s": 12.4,
+          "delay_stddev_s": 18.4,
+          "band_s": 18.4,
+          "effective_cd_s": 90,
+          "count": 8,
           "total_samples": 10
         }
       }
@@ -60,33 +68,13 @@
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
-        "4": {
-          "target_s": 158.4,
-          "stddev_s": 21,
-          "count": 6,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 205.1,
-          "stddev_s": 17.3,
-          "count": 10,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 250.6,
-          "stddev_s": 22.4,
-          "count": 10,
-          "total_samples": 10
-        },
         "7": {
-          "target_s": 308.2,
-          "stddev_s": 24.9,
-          "count": 9,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 352.6,
-          "stddev_s": 3.8,
+          "target_s": 306.6,
+          "stddev_s": 27.8,
+          "delay_s": 12.1,
+          "delay_stddev_s": 6,
+          "band_s": 6,
+          "effective_cd_s": 45,
           "count": 6,
           "total_samples": 10
         }
@@ -130,14 +118,7 @@
       },
       "bl_pct": 80,
       "majority_hold": true,
-      "hold_targets": {
-        "4": {
-          "target_s": 222.2,
-          "stddev_s": 26.5,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -291,6 +272,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "3651897996e0b636",
-  "ingest_version": 1
+  "source_signature": "482e46eb3d9783c8",
+  "ingest_version": 2
 }

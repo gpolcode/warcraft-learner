@@ -27,16 +27,14 @@
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 116.6,
-          "stddev_s": 2.2,
-          "count": 4,
-          "total_samples": 10
-        },
         "3": {
-          "target_s": 217.3,
-          "stddev_s": 9,
-          "count": 7,
+          "target_s": 222.6,
+          "stddev_s": 8.7,
+          "delay_s": 16,
+          "delay_stddev_s": 7.1,
+          "band_s": 7.1,
+          "effective_cd_s": 90,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -59,32 +57,7 @@
       },
       "bl_pct": 100,
       "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 116.8,
-          "stddev_s": 1.9,
-          "count": 4,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 166.3,
-          "stddev_s": 8.1,
-          "count": 6,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 217.5,
-          "stddev_s": 9,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 269,
-          "stddev_s": 11.1,
-          "count": 9,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Evocation": {
       "sample_count": 10,
@@ -124,20 +97,7 @@
       },
       "bl_pct": 100,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 122.5,
-          "stddev_s": 9.9,
-          "count": 4,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 235,
-          "stddev_s": 42,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -291,6 +251,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "b59fef258404641c",
-  "ingest_version": 1
+  "source_signature": "32ff92adf665a22c",
+  "ingest_version": 2
 }
