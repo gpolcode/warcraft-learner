@@ -125,24 +125,16 @@
         "max": 1.227
       },
       "bl_pct": 100,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 115.2,
-          "stddev_s": 9.7,
-          "count": 4,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 173.6,
-          "stddev_s": 16.8,
-          "count": 4,
-          "total_samples": 10
-        },
         "4": {
-          "target_s": 268.3,
-          "stddev_s": 27.6,
-          "count": 4,
+          "target_s": 255.3,
+          "stddev_s": 52.5,
+          "delay_s": 14.3,
+          "delay_stddev_s": 28.4,
+          "band_s": 28.4,
+          "effective_cd_s": 60,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -169,19 +161,21 @@
         "2": {
           "target_s": 120.8,
           "stddev_s": 20,
+          "delay_s": 22.5,
+          "delay_stddev_s": 11,
+          "band_s": 11,
+          "effective_cd_s": 60,
           "count": 5,
           "total_samples": 10
         },
         "3": {
           "target_s": 201.2,
-          "stddev_s": 42.4,
+          "stddev_s": 43.9,
+          "delay_s": 18.2,
+          "delay_stddev_s": 12.3,
+          "band_s": 12.3,
+          "effective_cd_s": 60,
           "count": 6,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 258.8,
-          "stddev_s": 49.5,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -400,6 +394,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "42bddfaba5e754cd",
-  "ingest_version": 1
+  "source_signature": "0ef19fca7c22580a",
+  "ingest_version": 2
 }

@@ -46,38 +46,7 @@
       },
       "bl_pct": 100,
       "majority_hold": true,
-      "hold_targets": {
-        "4": {
-          "target_s": 197.4,
-          "stddev_s": 7.7,
-          "count": 5,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 256.8,
-          "stddev_s": 6.2,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 318.2,
-          "stddev_s": 5.5,
-          "count": 9,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 381.5,
-          "stddev_s": 7.3,
-          "count": 9,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 448,
-          "stddev_s": 7.6,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Divine Toll": {
       "sample_count": 10,
@@ -158,28 +127,24 @@
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
-        "4": {
-          "target_s": 221.6,
-          "stddev_s": 31.3,
-          "count": 4,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 273.7,
-          "stddev_s": 35.8,
+        "3": {
+          "target_s": 115.7,
+          "stddev_s": 50.9,
+          "delay_s": 14.8,
+          "delay_stddev_s": 10,
+          "band_s": 10,
+          "effective_cd_s": 60,
           "count": 5,
           "total_samples": 10
         },
         "6": {
-          "target_s": 354,
-          "stddev_s": 31.8,
-          "count": 5,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 394.8,
-          "stddev_s": 15.6,
-          "count": 5,
+          "target_s": 335.2,
+          "stddev_s": 33.9,
+          "delay_s": 17.1,
+          "delay_stddev_s": 7,
+          "band_s": 7,
+          "effective_cd_s": 60,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -203,40 +168,34 @@
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 113.8,
-          "stddev_s": 16.4,
-          "count": 4,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 163.9,
-          "stddev_s": 13.7,
-          "count": 5,
-          "total_samples": 10
-        },
         "4": {
           "target_s": 229.4,
-          "stddev_s": 27.8,
+          "stddev_s": 24.3,
+          "delay_s": 11.8,
+          "delay_stddev_s": 13.5,
+          "band_s": 13.5,
+          "effective_cd_s": 60,
           "count": 6,
           "total_samples": 10
         },
         "5": {
-          "target_s": 301.8,
-          "stddev_s": 22.8,
-          "count": 7,
+          "target_s": 280.6,
+          "stddev_s": 25.5,
+          "delay_s": 10.9,
+          "delay_stddev_s": 3.2,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 6,
           "total_samples": 10
         },
         "6": {
-          "target_s": 351.1,
-          "stddev_s": 31.4,
-          "count": 8,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 412.5,
-          "stddev_s": 29.7,
-          "count": 6,
+          "target_s": 389.5,
+          "stddev_s": 26.9,
+          "delay_s": 16.7,
+          "delay_stddev_s": 8.2,
+          "band_s": 8.2,
+          "effective_cd_s": 60,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -263,6 +222,10 @@
         "2": {
           "target_s": 401,
           "stddev_s": 27.6,
+          "delay_s": 91.6,
+          "delay_stddev_s": 27.2,
+          "band_s": 27.2,
+          "effective_cd_s": 180,
           "count": 5,
           "total_samples": 10
         }
@@ -462,6 +425,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "421186f36423468f",
-  "ingest_version": 1
+  "source_signature": "7be504703ee63edb",
+  "ingest_version": 2
 }

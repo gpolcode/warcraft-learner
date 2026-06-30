@@ -26,20 +26,7 @@
       },
       "bl_pct": 70,
       "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 281.8,
-          "stddev_s": 38.1,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 400.7,
-          "stddev_s": 21.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Avenging Crusader": {
       "sample_count": 10,
@@ -183,6 +170,10 @@
         "2": {
           "target_s": 351.4,
           "stddev_s": 53.6,
+          "delay_s": 28.1,
+          "delay_stddev_s": 34.4,
+          "band_s": 34.4,
+          "effective_cd_s": 180,
           "count": 6,
           "total_samples": 10
         }
@@ -382,6 +373,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "d315534b3e821fbe",
-  "ingest_version": 1
+  "source_signature": "4d9ec055da32981c",
+  "ingest_version": 2
 }

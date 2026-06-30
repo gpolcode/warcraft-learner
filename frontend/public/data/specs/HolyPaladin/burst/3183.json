@@ -5,61 +5,71 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 500.4,
-      "dmg_avg": 8923996,
-      "dmg_stddev": 2366414,
-      "dmg_min": 3670336,
-      "dmg_max": 10544705,
+      "time_s": 497.5,
+      "dmg_avg": 35655181,
+      "dmg_stddev": 1694040,
+      "dmg_min": 32833423,
+      "dmg_max": 36940237,
       "common_cds": [
-        "Avenging Wrath"
+        "Avenging Wrath",
+        "Divine Toll",
+        "Holy Shock"
       ],
-      "avg_targets": 1,
-      "window_length_s": 18.5,
+      "window_length_s": 70.2,
       "ability_breakdown": [
         {
           "spell_id": 1292446,
-          "avg_damage": 7762218,
-          "min_damage": 3561064,
-          "max_damage": 8902664,
-          "count": 9,
+          "avg_damage": 31209926,
+          "min_damage": 29785400,
+          "max_damage": 32481755,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 25912,
-          "avg_damage": 560056,
-          "min_damage": 193951,
-          "max_damage": 929073,
-          "count": 8,
-          "avg_casts": 5,
+          "avg_damage": 2120758,
+          "min_damage": 1302211,
+          "max_damage": 3282763,
+          "count": 6,
+          "avg_casts": 20,
           "is_passive": false
         },
         {
           "spell_id": 1242230,
-          "avg_damage": 329098,
-          "min_damage": 56641,
-          "max_damage": 571347,
+          "avg_damage": 775146,
+          "min_damage": 196550,
+          "max_damage": 1264119,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1263725,
+          "avg_damage": 521275,
+          "min_damage": 399198,
+          "max_damage": 686904,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 431911,
+          "avg_damage": 484878,
+          "min_damage": 244813,
+          "max_damage": 746829,
           "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 275773,
-          "avg_damage": 183816,
-          "min_damage": 46432,
-          "max_damage": 301903,
-          "count": 9,
-          "avg_casts": 2,
+          "avg_damage": 431853,
+          "min_damage": 227992,
+          "max_damage": 606334,
+          "count": 6,
+          "avg_casts": 6,
           "is_passive": false
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 61078,
-          "min_damage": 15760,
-          "max_damage": 153280,
-          "count": 8,
-          "avg_casts": 0,
-          "is_passive": true
         }
       ]
     }
@@ -80,10 +90,6 @@
     "Divine Protection": 498
   },
   "ability_icons": {
-    "1": {
-      "icon": "trade_engineering",
-      "name": "Word of Recall (OLD)"
-    },
     "498": {
       "icon": "spell_holy_divineprotection",
       "name": "Divine Protection"
@@ -136,6 +142,10 @@
       "icon": "inv_ability_paladin_divinetoll",
       "name": "Divine Toll"
     },
+    "431911": {
+      "icon": "ability_paladin_holyavenger",
+      "name": "Sun's Avatar"
+    },
     "432459": {
       "icon": "inv_ability_lightsmithpaladin_holybulwark",
       "name": "Holy Bulwark"
@@ -148,11 +158,16 @@
       "icon": "ability_paladin_toweroflight",
       "name": "Liberation"
     },
+    "1263725": {
+      "icon": "inv_12_trinket_raid_voidspire_healer2_litanyoflightblindwrath",
+      "name": "Beacon of Lightblind Wrath"
+    },
     "1292446": {
       "icon": "spell_holy_aspiration",
       "name": "The Last Light"
     }
   },
-  "source_signature": "6c898ad17980501b",
-  "ingest_version": 1
+  "source_signature": "df71077a6e410048",
+  "ingest_version": 2,
+  "inaccessible_parses": []
 }
