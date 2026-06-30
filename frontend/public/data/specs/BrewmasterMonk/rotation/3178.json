@@ -3,65 +3,65 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 376.8,
-  "downtime_threshold_ms": 1062,
-  "top_avg_efficiency": 78.7,
-  "top_efficiency_stddev": 4.9,
+  "avg_duration_s": 380.6,
+  "downtime_threshold_ms": 1061,
+  "top_avg_efficiency": 78.8,
+  "top_efficiency_stddev": 4.8,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.2,
+      "avg_first_cast_s": 1.3,
       "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 111,
-      "stddev_gap_s": 40.5,
-      "avg_bl_offset_s": 0.4,
-      "stddev_bl_offset_s": 1.8,
-      "avg_uses": 3.9,
+      "avg_gap_s": 109.5,
+      "stddev_gap_s": 39.4,
+      "avg_bl_offset_s": 0.5,
+      "stddev_bl_offset_s": 1.7,
+      "avg_uses": 4,
       "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.626,
-        "stddev": 0.128,
+        "avg": 0.634,
+        "stddev": 0.13,
         "min": 0.282,
         "max": 0.733
       },
-      "bl_pct": 70,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 16.5,
-      "stddev_first_cast_s": 12.5,
-      "avg_gap_s": 75.3,
-      "stddev_gap_s": 18.9,
-      "avg_bl_offset_s": 16.5,
-      "stddev_bl_offset_s": 15.4,
+      "avg_first_cast_s": 16.4,
+      "stddev_first_cast_s": 12.6,
+      "avg_gap_s": 75.1,
+      "stddev_gap_s": 19,
+      "avg_bl_offset_s": 15.4,
+      "stddev_bl_offset_s": 14.6,
       "avg_uses": 5.3,
-      "avg_uses_per_min": 0.85,
+      "avg_uses_per_min": 0.84,
       "uses_per_min": {
-        "avg": 0.848,
-        "stddev": 0.109,
+        "avg": 0.839,
+        "stddev": 0.104,
         "min": 0.564,
         "max": 0.938
       },
-      "bl_pct": 70,
+      "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 80.4,
+          "target_s": 80.5,
           "stddev_s": 37.7,
           "count": 6,
           "total_samples": 10
         },
         "3": {
-          "target_s": 173.1,
+          "target_s": 173.2,
           "stddev_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 246.5,
-          "stddev_s": 44.1,
+          "stddev_s": 44.5,
           "count": 10,
           "total_samples": 10
         },
@@ -72,8 +72,8 @@
           "total_samples": 10
         },
         "6": {
-          "target_s": 374.2,
-          "stddev_s": 3.8,
+          "target_s": 370,
+          "stddev_s": 3.3,
           "count": 5,
           "total_samples": 10
         }
@@ -81,27 +81,33 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 162.3,
-      "stddev_first_cast_s": 74.1,
-      "avg_gap_s": 124.7,
-      "stddev_gap_s": 25.8,
-      "avg_bl_offset_s": 44.7,
-      "stddev_bl_offset_s": 0.5,
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.32,
+      "avg_first_cast_s": 144.8,
+      "stddev_first_cast_s": 78.8,
+      "avg_gap_s": 138.6,
+      "stddev_gap_s": 43.3,
+      "avg_bl_offset_s": 45.5,
+      "stddev_bl_offset_s": 1.5,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.319,
-        "stddev": 0.122,
+        "avg": 0.331,
+        "stddev": 0.127,
         "min": 0.14,
         "max": 0.458
       },
-      "bl_pct": 20,
-      "majority_hold": false,
+      "bl_pct": 30,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 295.2,
-          "stddev_s": 77,
-          "count": 5,
+          "target_s": 296.5,
+          "stddev_s": 70.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 377.1,
+          "stddev_s": 62.4,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -246,6 +252,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "9722701f297c90ef",
+  "source_signature": "fd4d23df5de00b48",
   "ingest_version": 1
 }
