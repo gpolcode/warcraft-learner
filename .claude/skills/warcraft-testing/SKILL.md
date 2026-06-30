@@ -7,20 +7,9 @@ description: warcraft-learner testing conventions and harness. Covers how tests 
 
 The goals are readability, speed, and trivial testability: a test reads like a statement of the business rule, runs in milliseconds, and needs no ceremony.
 
-**Framework and how to run.** Tests use [Vitest](https://vitest.dev) via Angular's official `@angular/build:unit-test` builder (configured in `angular.json`). jsdom is the DOM environment and the builder initializes the `TestBed` environment itself. The app is zoneless (no zone.js); component tests opt into zoneless change detection per-`TestBed` through the `mountVm` harness, so there is no global setup file. The builder needs Node `>= 22.22.3` (the Angular CLI floor).
+**Framework and layout.** Tests use [Vitest](https://vitest.dev) via Angular's official `@angular/build:unit-test` builder (configured in `angular.json`). jsdom is the DOM environment and the builder initializes the `TestBed` environment itself. The app is zoneless (no zone.js); component tests opt into zoneless change detection per-`TestBed` through the `mountVm` harness, so there is no global setup file. The builder needs Node `>= 22.22.3` (the Angular CLI floor). The `npm test` command (see CLAUDE.md) runs three suites in sequence: the frontend specs under `src/**` (TestBed-backed, via the Angular builder), the ingestion specs under `scripts/ingest/**` (plain Node Vitest), and a `tsc` typecheck of the Node scripts.
 
-```bash
-npm test            # ng test (Vitest) + scripts Vitest + scripts typecheck
-npm run test:watch  # watch mode for the frontend suite
-```
-
-`npm test` runs three things in sequence:
-
-1. `ng test` - the frontend specs under `src/**` (TestBed-backed; needs the Angular builder).
-2. `vitest run --config vitest.scripts.config.ts` - the ingestion specs under `scripts/ingest/**`.
-3. `tsc -p tsconfig.scripts.json --noEmit` - typechecks the Node scripts.
-
-The `src/**` specs cannot run under a bare `npx vitest` - they need the `@angular/build:unit-test` builder to set up the Angular TestBed. Use `ng test` for those; the `scripts/**` specs are plain Node Vitest.
+The `src/**` specs cannot run under a bare `npx vitest` - they need the `@angular/build:unit-test` builder to set up the Angular TestBed; the `scripts/**` specs are plain Node Vitest.
 
 **Functional core, imperative shell (per slice).** There is no central analysis module. Each vertical slice (`pages/post-raid/{rotation,burst-windows,defensive,gear,map}/`) owns its math as named, pure, **total** functions colocated in its own `*.service.ts` / `*-transform.service.ts` - no Angular, no async, no IO. The service classes are thin imperative shells that fetch and call those pure functions. So every slice has two kinds of spec, colocated next to the code:
 

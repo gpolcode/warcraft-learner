@@ -1,6 +1,6 @@
 ---
 name: warcraft-frontend
-description: warcraft-learner project Angular conventions - hard rules for all Angular/TypeScript code in frontend/src. Covers Material + Tailwind styling, the no-hardcoded-colors rule, template-owns-styling, the wl-game-icon leaf, all-formatting-through-pipes, get*/GraphQL-string API service rules, polling/async state, the ESLint-enforced conventions, and the lint setup. Load this before editing or creating anything under frontend/src (components, templates, services, pipes). Pairs with the generic angular-developer skill; on conflict these project rules win.
+description: warcraft-learner project Angular conventions - hard rules for all Angular/TypeScript code in frontend/src. Covers Material + Tailwind styling, the no-hardcoded-colors rule, template-owns-styling, all-formatting-through-pipes, get*/GraphQL-string API service rules, polling/async state, the ESLint-enforced conventions, and the lint setup. Load this before editing or creating anything under frontend/src (components, templates, services, pipes). Pairs with the generic angular-developer skill; on conflict these project rules win.
 ---
 
 # warcraft-learner frontend conventions
@@ -17,8 +17,6 @@ These are hard rules for all Angular code. The `angular-developer` skill (`.clau
 - **Use an external `templateUrl` file for any component beyond a trivial handful of elements.** Inline `template:` strings are only for tiny (roughly <10-line) markup. A table row, a card, or anything with multiple `@if`/`@for` branches gets its own `.html` file next to the `.ts` (CLAUDE's inline-template note is for genuinely small components; readability wins for anything larger).
 - **All formatting goes through Angular pipes**, never ad-hoc string building in component TS. Durations -> `FormatDurationPipe` (`formatDuration`), compact damage -> `FormatDamagePipe` (`formatDamage`), decimals -> the built-in `DecimalPipe` (`number`), spec names -> `FormatSpecPipe`. View-model `computed()`s should expose **raw numeric values**; the template formats them. Add a new shared pipe under `shared/pipes/` rather than formatting inline.
 - Time windows are rendered as a `m:ss - m:ss` range (start to end), matching the live/post pages.
-- **Spells and items render through the shared `wl-game-icon` component** (`shared/components/game-icon`), never ad-hoc text or `<img>`. It is an **inputs-only leaf with three required inputs** - `[id]`, `[icon]`, `[name]` are all `input.required` and every call site passes all three resolved values directly (no `!`, no `?? ''`, no optional `icon?`). The component normalizes a trailing image extension before building the zamimg URL, so a baked `.jpg` icon is fine; an empty `icon=""` legitimately renders name-only (no art). Feature services resolve icon + name from the ingest-baked `ability_icons` map (complete by construction - see the analysis-design note on complete ingested data) and/or the report's `masterData.abilities`; there is **no runtime fallback** for a missing entry (an absent icon/name is an ingestion problem). There is no global icon cache. On `/pre` the icons come straight from the baked `ability_icons`, so spells render with art there too.
-- **`wl-game-icon` already renders both the icon and the name** (as a Wowhead link). Never place a separate `{{ label }}`/name `<span>` next to a `wl-game-icon` for the same spell/item - that double-prints the name. Render `<wl-game-icon [id]="id" [icon]="row.icon" [name]="row.name">` (inside an `@if (row.spellId; as id)` narrowing branch) alone; use a plain `<span>` label **only** as the `@else` fallback when there is no `spellId`/`id` to give the icon component.
 
 ## API service conventions
 
@@ -47,10 +45,6 @@ These are the general Angular/TypeScript best practices for the app. The mechani
 
 ## Linting
 
-ESLint enforces the Angular/TypeScript conventions. Flat config lives in `frontend/eslint.config.js` (typescript-eslint + angular-eslint, recommended + stylistic sets) and runs through the Angular CLI lint target (`src/**/*.ts` + `src/**/*.html`; the Node `scripts/**` are not linted).
-
-```bash
-npm run lint   # ng lint -> eslint over src/**
-```
+ESLint enforces the Angular/TypeScript conventions (run via `npm run lint` - see CLAUDE.md commands). Flat config lives in `frontend/eslint.config.js` (typescript-eslint + angular-eslint, recommended + stylistic sets) and runs through the Angular CLI lint target (`src/**/*.ts` + `src/**/*.html`; the Node `scripts/**` are not linted).
 
 On top of the recommended sets the config pins the convention rules: `@typescript-eslint/no-explicit-any` (ban `any`), `@angular-eslint/prefer-standalone`, `@angular-eslint/prefer-host-metadata-property`, `@angular-eslint/prefer-inject`, and `@angular-eslint/template/prefer-control-flow`, plus the `wl` selector prefix. A few recommended rules carry deliberate option tweaks documented inline: template `eqeqeq` allows the `x != null` idiom, `no-unused-vars` allows the `_`-prefix convention, and `no-empty-function` allows empty private constructors (the static-factory guard).

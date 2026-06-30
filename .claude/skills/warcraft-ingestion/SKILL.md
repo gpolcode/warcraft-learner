@@ -5,13 +5,7 @@ description: warcraft-learner ingestion, rulebook, and scraping pipelines plus t
 
 # warcraft-learner ingestion & content pipelines
 
-The CLI scripts are TypeScript run via `tsx` (e.g. `tsx --tsconfig tsconfig.scripts.json scripts/ingest/orchestrator.ts`), not `.mjs`/`node`. `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` come from the [Warcraft Logs API clients](https://www.warcraftlogs.com/api/clients/) page and are only used server-side (GHA secrets), never in the browser. No Anthropic API key is needed - rulebook generation is a copy-prompt / paste-back flow that works with any LLM.
-
-| Command | Description |
-|---|---|
-| `npm run ingest` | Run the ingestion orchestrator (`scripts/ingest/orchestrator.ts`), which drives the Angular transform services headlessly (all rulebook specs by default, or `--spec Name` for one); needs `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` |
-| `npm run scrape` | Re-scrape all existing guides (default); `--spec Name --url URL` to add and scrape one |
-| `npm run rulebook` | Manage rulebooks (build AI prompt, save AI JSON output) |
+The CLI scripts are TypeScript run via `tsx` (e.g. `tsx --tsconfig tsconfig.scripts.json scripts/ingest/orchestrator.ts`), not `.mjs`/`node`. `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` come from the [Warcraft Logs API clients](https://www.warcraftlogs.com/api/clients/) page and are only used server-side (GHA secrets), never in the browser. No Anthropic API key is needed - rulebook generation is a copy-prompt / paste-back flow that works with any LLM. The `npm run ingest` / `npm run scrape` / `npm run rulebook` invocations are listed in CLAUDE.md.
 
 ## Ingestion (`npm run ingest`)
 Runs `frontend/scripts/ingest/orchestrator.ts`, which boots a headless Angular runtime (`scripts/ingest/angular-runtime.ts`: jsdom + Angular TestBed injector wired to the Node WCL + data-file transports) and drives the SAME five `*TransformService`s the browser uses, persisting through the SAME `DataFileApiService` (Node filesystem transport). There is no separate Node analysis pipeline. Also runs as the `ingest-parses.yml` GHA hourly (cron `23 * * * *`) and on manual `workflow_dispatch`. The same hourly workflow runs `npm run scrape` first to keep guide content fresh, then ingestion.
@@ -60,9 +54,6 @@ AI-generated rulebook. Extra top-level fields added on save: `guide_count`, `sav
 
 ### Signature stamps (every slice + positions file)
 Every tailored file (`{burst,rotation,defensive,gear}/{enc}.json` + `positions/{enc}.json`) carries two ingestion stamps: `source_signature` (the `sha256(INGEST_VERSION + parse-set fingerprint)` skip key) and the bare `ingest_version` integer (the same version, unhashed, read by the work-ordering to tell stale-version data from current). `ingest_version` is required - every write stamps it, and a one-time migration backfilled it onto pre-existing files (v1 where the gear file already carried `source_id`, else v0).
-
-### Raw parse samples (no longer persisted)
-Raw per-parse samples are no longer written to disk (the old `parse_samples/{enc_id}.json` file is gone). The transform services compute each slice directly from WCL in-memory during ingestion, so there is no intermediate sample file.
 
 > The `positions/{enc_id}.json` schema lives in the **warcraft-wcl-data** skill (it pairs with the WCL position/facing-unit quirks).
 
