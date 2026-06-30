@@ -23,54 +23,37 @@
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 70.7,
-      "stddev_first_cast_s": 52.9,
-      "avg_gap_s": 84.2,
-      "stddev_gap_s": 54.6,
+      "avg_first_cast_s": 75.8,
+      "stddev_first_cast_s": 53.3,
+      "avg_gap_s": 88.7,
+      "stddev_gap_s": 55.2,
       "hold_targets": {
         "1": {
-          "target_s": 153.3,
-          "stddev_s": 66,
+          "target_s": 178.2,
+          "stddev_s": 67.4,
           "count": 5,
           "total_samples": 10
         }
       },
       "avg_uses": 2.4,
-      "avg_uses_per_min": 0.63,
+      "avg_uses_per_min": 0.6,
       "uses_per_min": {
-        "avg": 0.63,
-        "stddev": 0.348,
+        "avg": 0.601,
+        "stddev": 0.341,
         "min": 0.287,
         "max": 1.363
-      },
-      "majority_hold": false
-    },
-    "Mortal Coil": {
-      "sample_count": 1,
-      "avg_first_cast_s": 153.6,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
-      "uses_per_min": {
-        "avg": 0.278,
-        "stddev": 0,
-        "min": 0.278,
-        "max": 0.278
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 48.5,
-      "dmg_avg": 325568,
-      "dmg_stddev": 81472,
+      "time_s": 41.3,
+      "dmg_avg": 330725,
+      "dmg_stddev": 87988,
       "dmg_min": 271035,
       "dmg_max": 505286,
-      "window_length_s": 11.1,
+      "window_length_s": 9.6,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -83,10 +66,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1250686,
-          "avg_damage": 171436,
+          "avg_damage": 151939,
           "min_damage": 49182,
           "max_damage": 301706,
-          "count": 7
+          "count": 6
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 131442,
+          "min_damage": 79139,
+          "max_damage": 159023,
+          "count": 3
         },
         {
           "spell_id": 1260835,
@@ -97,20 +87,20 @@
         },
         {
           "spell_id": 387846,
-          "avg_damage": 5727,
+          "avg_damage": 5647,
           "min_damage": 891,
           "max_damage": 17454,
-          "count": 7
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 100.3,
-      "dmg_avg": 226565,
-      "dmg_stddev": 77038,
+      "time_s": 100.8,
+      "dmg_avg": 240974,
+      "dmg_stddev": 74089,
       "dmg_min": 148934,
       "dmg_max": 332872,
-      "window_length_s": 8.6,
+      "window_length_s": 7.8,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -123,41 +113,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 142696,
+          "avg_damage": 180992,
           "min_damage": 125912,
-          "max_damage": 176089,
-          "count": 3
-        },
-        {
-          "spell_id": 1285504,
-          "avg_damage": 112971,
-          "min_damage": 79139,
-          "max_damage": 146802,
-          "count": 2
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 30695,
-          "min_damage": 22348,
-          "max_damage": 39042,
-          "count": 2
+          "max_damage": 295879,
+          "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 3264,
+          "avg_damage": 3157,
           "min_damage": 1452,
           "max_damage": 6650,
-          "count": 4
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 153.3,
-      "dmg_avg": 294901,
-      "dmg_stddev": 38850,
+      "time_s": 154.1,
+      "dmg_avg": 293695,
+      "dmg_stddev": 42415,
       "dmg_min": 239240,
       "dmg_max": 354793,
-      "window_length_s": 4.5,
+      "window_length_s": 4.4,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -177,24 +153,24 @@
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 107604,
+          "avg_damage": 107018,
           "min_damage": 46533,
           "max_damage": 239202,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1260835,
-          "avg_damage": 100790,
+          "avg_damage": 78811,
           "min_damage": 31522,
-          "max_damage": 188707,
-          "count": 5
+          "max_damage": 124907,
+          "count": 4
         },
         {
           "spell_id": 387846,
-          "avg_damage": 2024,
+          "avg_damage": 1977,
           "min_damage": 672,
           "max_damage": 4820,
-          "count": 7
+          "count": 6
         }
       ]
     }
@@ -211,12 +187,6 @@
       "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
-    },
-    {
-      "spell_id": 6789,
-      "avg_uses": 1,
-      "min_uses": 1,
-      "max_uses": 1
     }
   ],
   "defensives": [
@@ -284,6 +254,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "808af6c763707613",
+  "source_signature": "e0e840e7d1e4b9bf",
   "ingest_version": 1
 }

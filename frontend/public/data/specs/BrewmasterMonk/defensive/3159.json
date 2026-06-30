@@ -7,15 +7,15 @@
     "Purifying Brew": {
       "sample_count": 10,
       "avg_first_cast_s": 11.1,
-      "stddev_first_cast_s": 8.9,
+      "stddev_first_cast_s": 8.8,
       "avg_gap_s": 9.9,
       "stddev_gap_s": 6.7,
       "hold_targets": {},
-      "avg_uses": 43.7,
-      "avg_uses_per_min": 5.94,
+      "avg_uses": 43.9,
+      "avg_uses_per_min": 5.96,
       "uses_per_min": {
-        "avg": 5.942,
-        "stddev": 1.549,
+        "avg": 5.965,
+        "stddev": 1.579,
         "min": 3.568,
         "max": 8.162
       },
@@ -23,16 +23,16 @@
     },
     "Celestial Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.6,
+      "avg_first_cast_s": 14.8,
       "stddev_first_cast_s": 7.9,
-      "avg_gap_s": 24.6,
-      "stddev_gap_s": 8.3,
+      "avg_gap_s": 24.8,
+      "stddev_gap_s": 8.5,
       "hold_targets": {},
-      "avg_uses": 17.8,
-      "avg_uses_per_min": 2.42,
+      "avg_uses": 17.7,
+      "avg_uses_per_min": 2.4,
       "uses_per_min": {
-        "avg": 2.419,
-        "stddev": 0.29,
+        "avg": 2.404,
+        "stddev": 0.298,
         "min": 2.074,
         "max": 2.935
       },
@@ -40,10 +40,10 @@
     },
     "Black Ox Brew": {
       "sample_count": 8,
-      "avg_first_cast_s": 120.9,
-      "stddev_first_cast_s": 137.9,
-      "avg_gap_s": 100.1,
-      "stddev_gap_s": 57.5,
+      "avg_first_cast_s": 121.4,
+      "stddev_first_cast_s": 137.5,
+      "avg_gap_s": 91.7,
+      "stddev_gap_s": 52.4,
       "hold_targets": {
         "1": {
           "target_s": 374.5,
@@ -52,11 +52,11 @@
           "total_samples": 8
         }
       },
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.51,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.514,
-        "stddev": 0.289,
+        "avg": 0.548,
+        "stddev": 0.309,
         "min": 0.129,
         "max": 0.882
       },
@@ -64,16 +64,16 @@
     },
     "Fortifying Brew": {
       "sample_count": 8,
-      "avg_first_cast_s": 131.9,
-      "stddev_first_cast_s": 141.9,
-      "avg_gap_s": 150.7,
-      "stddev_gap_s": 53,
+      "avg_first_cast_s": 132.3,
+      "stddev_first_cast_s": 141.6,
+      "avg_gap_s": 153.4,
+      "stddev_gap_s": 55,
       "hold_targets": {},
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.32,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.324,
-        "stddev": 0.191,
+        "avg": 0.307,
+        "stddev": 0.172,
         "min": 0.129,
         "max": 0.588
       },
@@ -82,12 +82,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 15,
-      "dmg_avg": 1488159,
-      "dmg_stddev": 845364,
+      "time_s": 16,
+      "dmg_avg": 1470949,
+      "dmg_stddev": 842735,
       "dmg_min": 387108,
       "dmg_max": 3105599,
-      "window_length_s": 18.3,
+      "window_length_s": 18.4,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -100,40 +100,127 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1099202,
-          "min_damage": 898950,
+          "avg_damage": 1095612,
+          "min_damage": 870229,
           "max_damage": 1258140,
           "count": 8
         },
         {
           "spell_id": 1222278,
-          "avg_damage": 248448,
+          "avg_damage": 252292,
           "min_damage": 95913,
           "max_damage": 531044,
           "count": 10
         },
         {
           "spell_id": 124255,
-          "avg_damage": 225688,
+          "avg_damage": 237459,
           "min_damage": 44598,
           "max_damage": 502923,
           "count": 12
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 93994,
+          "avg_damage": 94907,
           "min_damage": 18038,
           "max_damage": 199189,
           "count": 12
+        },
+        {
+          "spell_id": 1221717,
+          "avg_damage": 56454,
+          "min_damage": 42085,
+          "max_damage": 63952,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 49.4,
-      "dmg_avg": 1146608,
-      "dmg_stddev": 434191,
+      "time_s": 50,
+      "dmg_avg": 1187540,
+      "dmg_stddev": 471128,
       "dmg_min": 260362,
-      "dmg_max": 1744853,
+      "dmg_max": 1763552,
+      "window_length_s": 10.8,
+      "defensive_name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "common_defensives": [
+        "Celestial Infusion"
+      ],
+      "common_cds": [
+        "Celestial Infusion"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 1098130,
+          "min_damage": 956187,
+          "max_damage": 1258268,
+          "count": 8
+        },
+        {
+          "spell_id": 124255,
+          "avg_damage": 205881,
+          "min_damage": 50479,
+          "max_damage": 578689,
+          "count": 11
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 91352,
+          "min_damage": 23267,
+          "max_damage": 140447,
+          "count": 11
+        }
+      ]
+    },
+    {
+      "time_s": 78.9,
+      "dmg_avg": 1356656,
+      "dmg_stddev": 426345,
+      "dmg_min": 702652,
+      "dmg_max": 2090178,
+      "window_length_s": 9.4,
+      "defensive_name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "common_defensives": [
+        "Celestial Infusion"
+      ],
+      "common_cds": [
+        "Celestial Infusion"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 1136058,
+          "min_damage": 1019208,
+          "max_damage": 1258268,
+          "count": 9
+        },
+        {
+          "spell_id": 124255,
+          "avg_damage": 177943,
+          "min_damage": 35909,
+          "max_damage": 344282,
+          "count": 14
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 115031,
+          "min_damage": 17349,
+          "max_damage": 247595,
+          "count": 14
+        }
+      ]
+    },
+    {
+      "time_s": 120.2,
+      "dmg_avg": 1051740,
+      "dmg_stddev": 434586,
+      "dmg_min": 381828,
+      "dmg_max": 2086441,
       "window_length_s": 11.3,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
@@ -146,162 +233,82 @@
       "ref_game_id": 238693,
       "ability_breakdown": [
         {
-          "spell_id": 1221781,
-          "avg_damage": 1101952,
-          "min_damage": 956187,
-          "max_damage": 1258268,
-          "count": 7
-        },
-        {
-          "spell_id": 124255,
-          "avg_damage": 218626,
-          "min_damage": 50479,
-          "max_damage": 578689,
-          "count": 11
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 94929,
-          "min_damage": 23267,
-          "max_damage": 140447,
-          "count": 11
-        }
-      ]
-    },
-    {
-      "time_s": 78.9,
-      "dmg_avg": 1330439,
-      "dmg_stddev": 392393,
-      "dmg_min": 702652,
-      "dmg_max": 2090178,
-      "window_length_s": 9.8,
-      "defensive_name": "Celestial Infusion",
-      "spell_id": 1241059,
-      "common_defensives": [
-        "Celestial Infusion"
-      ],
-      "common_cds": [
-        "Celestial Infusion"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221781,
-          "avg_damage": 1127592,
-          "min_damage": 1019208,
-          "max_damage": 1258268,
-          "count": 9
-        },
-        {
-          "spell_id": 124255,
-          "avg_damage": 188126,
-          "min_damage": 35909,
-          "max_damage": 344282,
-          "count": 14
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 119719,
-          "min_damage": 17349,
-          "max_damage": 247595,
-          "count": 14
-        }
-      ]
-    },
-    {
-      "time_s": 113.4,
-      "dmg_avg": 954777,
-      "dmg_stddev": 340476,
-      "dmg_min": 381828,
-      "dmg_max": 1411561,
-      "window_length_s": 9.9,
-      "defensive_name": "Celestial Infusion",
-      "spell_id": 1241059,
-      "common_defensives": [
-        "Celestial Infusion"
-      ],
-      "common_cds": [
-        "Celestial Infusion"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
           "spell_id": 1,
-          "avg_damage": 477526,
+          "avg_damage": 535275,
           "min_damage": 4463,
-          "max_damage": 980401,
-          "count": 8
+          "max_damage": 997270,
+          "count": 9
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 413417,
-          "min_damage": 142874,
-          "max_damage": 609551,
+          "avg_damage": 380219,
+          "min_damage": 34902,
+          "max_damage": 687886,
+          "count": 12
+        },
+        {
+          "spell_id": 124255,
+          "avg_damage": 159646,
+          "min_damage": 33626,
+          "max_damage": 461223,
+          "count": 16
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 150406,
+          "min_damage": 32742,
+          "max_damage": 401041,
+          "count": 16
+        }
+      ]
+    },
+    {
+      "time_s": 150.9,
+      "dmg_avg": 1434801,
+      "dmg_stddev": 434563,
+      "dmg_min": 723976,
+      "dmg_max": 2177867,
+      "window_length_s": 13.5,
+      "defensive_name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "common_defensives": [
+        "Celestial Infusion"
+      ],
+      "common_cds": [
+        "Celestial Infusion"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 1098367,
+          "min_damage": 887990,
+          "max_damage": 1194834,
           "count": 9
         },
         {
-          "spell_id": 124255,
-          "avg_damage": 162305,
-          "min_damage": 33626,
-          "max_damage": 461223,
-          "count": 13
-        },
-        {
           "spell_id": 1222284,
-          "avg_damage": 127690,
-          "min_damage": 32742,
-          "max_damage": 334898,
-          "count": 13
-        }
-      ]
-    },
-    {
-      "time_s": 148.2,
-      "dmg_avg": 1353773,
-      "dmg_stddev": 448662,
-      "dmg_min": 596176,
-      "dmg_max": 2086441,
-      "window_length_s": 12.9,
-      "defensive_name": "Celestial Infusion",
-      "spell_id": 1241059,
-      "common_defensives": [
-        "Celestial Infusion"
-      ],
-      "common_cds": [
-        "Celestial Infusion"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221781,
-          "avg_damage": 1108262,
-          "min_damage": 827034,
-          "max_damage": 1258268,
-          "count": 10
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 223558,
-          "min_damage": 60875,
-          "max_damage": 401041,
-          "count": 15
+          "avg_damage": 250624,
+          "min_damage": 171850,
+          "max_damage": 450517,
+          "count": 12
         },
         {
           "spell_id": 124255,
-          "avg_damage": 157235,
+          "avg_damage": 169074,
           "min_damage": 64107,
           "max_damage": 282470,
-          "count": 15
+          "count": 12
         }
       ]
     },
     {
-      "time_s": 174.2,
-      "dmg_avg": 1522136,
-      "dmg_stddev": 501522,
+      "time_s": 174.4,
+      "dmg_avg": 1518104,
+      "dmg_stddev": 497901,
       "dmg_min": 1017676,
       "dmg_max": 2436091,
-      "window_length_s": 12.3,
+      "window_length_s": 11.6,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -314,45 +321,45 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1085131,
+          "avg_damage": 1097966,
           "min_damage": 1032828,
           "max_damage": 1170938,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1,
-          "avg_damage": 521009,
+          "avg_damage": 620473,
           "min_damage": 454395,
-          "max_damage": 592040,
-          "count": 7
+          "max_damage": 1076908,
+          "count": 6
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 276991,
+          "avg_damage": 264602,
           "min_damage": 85540,
           "max_damage": 532400,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 124255,
-          "avg_damage": 200879,
+          "avg_damage": 212285,
           "min_damage": 74311,
           "max_damage": 349953,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 1221717,
-          "avg_damage": 65136,
+          "avg_damage": 53758,
           "min_damage": 51854,
-          "max_damage": 110649,
-          "count": 5
+          "max_damage": 56646,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 211.7,
-      "dmg_avg": 1599927,
-      "dmg_stddev": 597301,
+      "time_s": 210.7,
+      "dmg_avg": 1670475,
+      "dmg_stddev": 611525,
       "dmg_min": 644024,
       "dmg_max": 3113628,
       "window_length_s": 8.8,
@@ -368,34 +375,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1170630,
+          "avg_damage": 1253152,
           "min_damage": 876339,
-          "max_damage": 1972069,
+          "max_damage": 1988082,
           "count": 13
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 219580,
-          "min_damage": 40772,
+          "avg_damage": 222161,
+          "min_damage": 21052,
           "max_damage": 569188,
           "count": 15
         },
         {
           "spell_id": 124255,
-          "avg_damage": 135526,
+          "avg_damage": 140397,
           "min_damage": 35330,
           "max_damage": 365469,
-          "count": 15
+          "count": 14
         }
       ]
     },
     {
       "time_s": 255.1,
-      "dmg_avg": 1085225,
-      "dmg_stddev": 356117,
+      "dmg_avg": 1142005,
+      "dmg_stddev": 377920,
       "dmg_min": 674629,
       "dmg_max": 1961857,
-      "window_length_s": 6.8,
+      "window_length_s": 6.7,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -408,28 +415,28 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 459496,
+          "avg_damage": 500520,
           "min_damage": 5493,
-          "max_damage": 544731,
-          "count": 10
+          "max_damage": 941826,
+          "count": 12
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 314130,
+          "avg_damage": 302592,
           "min_damage": 39848,
           "max_damage": 457070,
           "count": 14
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 173374,
+          "avg_damage": 170719,
           "min_damage": 23788,
           "max_damage": 390951,
           "count": 19
         },
         {
           "spell_id": 124255,
-          "avg_damage": 132303,
+          "avg_damage": 128002,
           "min_damage": 34058,
           "max_damage": 374799,
           "count": 19
@@ -437,12 +444,12 @@
       ]
     },
     {
-      "time_s": 285.6,
-      "dmg_avg": 1354682,
-      "dmg_stddev": 591353,
-      "dmg_min": 614308,
+      "time_s": 291.2,
+      "dmg_avg": 1322364,
+      "dmg_stddev": 515466,
+      "dmg_min": 627237,
       "dmg_max": 2343571,
-      "window_length_s": 10.4,
+      "window_length_s": 9.8,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -455,74 +462,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1163333,
-          "min_damage": 1085679,
+          "avg_damage": 1138571,
+          "min_damage": 965235,
           "max_damage": 1258268,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 329038,
+          "avg_damage": 313918,
           "min_damage": 86914,
           "max_damage": 644535,
-          "count": 11
+          "count": 14
         },
         {
           "spell_id": 124255,
-          "avg_damage": 190503,
+          "avg_damage": 184886,
           "min_damage": 22308,
           "max_damage": 364267,
-          "count": 11
+          "count": 14
         }
       ]
     },
     {
-      "time_s": 320.7,
-      "dmg_avg": 1323501,
-      "dmg_stddev": 443447,
+      "time_s": 335.2,
+      "dmg_avg": 1418881,
+      "dmg_stddev": 470775,
       "dmg_min": 595163,
-      "dmg_max": 2213935,
-      "window_length_s": 8.1,
-      "defensive_name": "Celestial Infusion",
-      "spell_id": 1241059,
-      "common_defensives": [
-        "Celestial Infusion"
-      ],
-      "common_cds": [
-        "Celestial Infusion"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221781,
-          "avg_damage": 1064345,
-          "min_damage": 898949,
-          "max_damage": 1258268,
-          "count": 10
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 287091,
-          "min_damage": 34217,
-          "max_damage": 555693,
-          "count": 14
-        },
-        {
-          "spell_id": 124255,
-          "avg_damage": 160939,
-          "min_damage": 57048,
-          "max_damage": 394712,
-          "count": 14
-        }
-      ]
-    },
-    {
-      "time_s": 359.6,
-      "dmg_avg": 1391303,
-      "dmg_stddev": 470251,
-      "dmg_min": 644035,
       "dmg_max": 2503050,
-      "window_length_s": 7.1,
+      "window_length_s": 7.9,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -535,34 +502,74 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1098206,
-          "min_damage": 1019208,
-          "max_damage": 1149894,
-          "count": 11
+          "avg_damage": 1102134,
+          "min_damage": 1006614,
+          "max_damage": 1258268,
+          "count": 14
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 277978,
+          "avg_damage": 286142,
           "min_damage": 32164,
           "max_damage": 729738,
-          "count": 15
+          "count": 18
         },
         {
           "spell_id": 124255,
-          "avg_damage": 168147,
+          "avg_damage": 150333,
           "min_damage": 41331,
           "max_damage": 397829,
-          "count": 15
+          "count": 18
         }
       ]
     },
     {
-      "time_s": 392.1,
-      "dmg_avg": 1077202,
-      "dmg_stddev": 292914,
+      "time_s": 368.8,
+      "dmg_avg": 1248876,
+      "dmg_stddev": 424076,
       "dmg_min": 681404,
+      "dmg_max": 1919438,
+      "window_length_s": 7.9,
+      "defensive_name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "common_defensives": [
+        "Celestial Infusion"
+      ],
+      "common_cds": [
+        "Celestial Infusion"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 1089940,
+          "min_damage": 1019208,
+          "max_damage": 1149894,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 304746,
+          "min_damage": 109708,
+          "max_damage": 593929,
+          "count": 12
+        },
+        {
+          "spell_id": 124255,
+          "avg_damage": 145255,
+          "min_damage": 74727,
+          "max_damage": 242635,
+          "count": 12
+        }
+      ]
+    },
+    {
+      "time_s": 395.3,
+      "dmg_avg": 1220117,
+      "dmg_stddev": 281368,
+      "dmg_min": 749867,
       "dmg_max": 1654692,
-      "window_length_s": 8.1,
+      "window_length_s": 8,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -575,41 +582,41 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 577036,
-          "min_damage": 4866,
+          "avg_damage": 641017,
+          "min_damage": 450752,
           "max_damage": 1150266,
           "count": 8
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 377691,
+          "avg_damage": 404568,
           "min_damage": 105159,
-          "max_damage": 619747,
-          "count": 13
+          "max_damage": 643199,
+          "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 288880,
+          "avg_damage": 286870,
           "min_damage": 80752,
           "max_damage": 704153,
-          "count": 15
+          "count": 12
         },
         {
           "spell_id": 124255,
-          "avg_damage": 131820,
+          "avg_damage": 139799,
           "min_damage": 66868,
-          "max_damage": 242635,
-          "count": 15
+          "max_damage": 222763,
+          "count": 12
         }
       ]
     },
     {
-      "time_s": 429.5,
-      "dmg_avg": 946351,
-      "dmg_stddev": 329636,
-      "dmg_min": 691604,
+      "time_s": 432.3,
+      "dmg_avg": 989544,
+      "dmg_stddev": 394306,
+      "dmg_min": 617201,
       "dmg_max": 1564401,
-      "window_length_s": 8.6,
+      "window_length_s": 8.8,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -622,27 +629,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 373694,
+          "avg_damage": 380477,
           "min_damage": 126840,
-          "max_damage": 579062,
+          "max_damage": 546437,
           "count": 8
         },
         {
           "spell_id": 124255,
-          "avg_damage": 167369,
-          "min_damage": 59092,
+          "avg_damage": 142028,
+          "min_damage": 32825,
           "max_damage": 447385,
           "count": 8
         }
       ]
     },
     {
-      "time_s": 461.2,
-      "dmg_avg": 1412657,
-      "dmg_stddev": 460502,
+      "time_s": 464.6,
+      "dmg_avg": 1398633,
+      "dmg_stddev": 513422,
       "dmg_min": 623751,
       "dmg_max": 1961860,
-      "window_length_s": 5.7,
+      "window_length_s": 5.5,
       "defensive_name": "Celestial Infusion",
       "spell_id": 1241059,
       "common_defensives": [
@@ -655,24 +662,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1221781,
-          "avg_damage": 1069849,
+          "avg_damage": 1056141,
           "min_damage": 955868,
           "max_damage": 1194835,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 266445,
+          "avg_damage": 254679,
           "min_damage": 91743,
           "max_damage": 506351,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 124255,
-          "avg_damage": 133022,
-          "min_damage": 32825,
+          "avg_damage": 153061,
+          "min_damage": 52326,
           "max_damage": 251365,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -680,25 +687,25 @@
   "top_defensives_summary": [
     {
       "spell_id": 119582,
-      "avg_uses": 43.7,
+      "avg_uses": 43.9,
       "min_uses": 29,
       "max_uses": 62
     },
     {
       "spell_id": 1241059,
-      "avg_uses": 17.8,
+      "avg_uses": 17.7,
       "min_uses": 15,
       "max_uses": 24
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 115399,
-      "avg_uses": 3.8,
+      "avg_uses": 4,
       "min_uses": 1,
       "max_uses": 6
     }
@@ -828,6 +835,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "944a98a14ca92114",
+  "source_signature": "b8802a49014cd539",
   "ingest_version": 1
 }

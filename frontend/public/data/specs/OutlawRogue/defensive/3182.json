@@ -5,36 +5,36 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Feint": {
-      "sample_count": 9,
-      "avg_first_cast_s": 95.9,
-      "stddev_first_cast_s": 86.1,
-      "avg_gap_s": 42.3,
-      "stddev_gap_s": 27.2,
+      "sample_count": 10,
+      "avg_first_cast_s": 91.7,
+      "stddev_first_cast_s": 82.3,
+      "avg_gap_s": 40.3,
+      "stddev_gap_s": 25.8,
       "hold_targets": {
         "1": {
-          "target_s": 141.3,
-          "stddev_s": 58.5,
-          "count": 6,
-          "total_samples": 9
+          "target_s": 117.1,
+          "stddev_s": 53.9,
+          "count": 7,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 213,
-          "stddev_s": 69,
-          "count": 7,
-          "total_samples": 9
+          "target_s": 190.9,
+          "stddev_s": 64.1,
+          "count": 8,
+          "total_samples": 10
         },
         "3": {
-          "target_s": 187.7,
-          "stddev_s": 54.9,
-          "count": 5,
-          "total_samples": 9
+          "target_s": 192.1,
+          "stddev_s": 49.1,
+          "count": 6,
+          "total_samples": 10
         }
       },
-      "avg_uses": 4.9,
-      "avg_uses_per_min": 1.04,
+      "avg_uses": 5.3,
+      "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 1.035,
-        "stddev": 0.505,
+        "avg": 1.093,
+        "stddev": 0.511,
         "min": 0.181,
         "max": 1.649
       },
@@ -42,16 +42,23 @@
     },
     "Cloak of Shadows": {
       "sample_count": 10,
-      "avg_first_cast_s": 160.7,
-      "stddev_first_cast_s": 45.4,
-      "avg_gap_s": 137.2,
-      "stddev_gap_s": 16.5,
-      "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.29,
+      "avg_first_cast_s": 163.8,
+      "stddev_first_cast_s": 44.4,
+      "avg_gap_s": 141.3,
+      "stddev_gap_s": 17,
+      "hold_targets": {
+        "1": {
+          "target_s": 300.1,
+          "stddev_s": 29,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.292,
-        "stddev": 0.105,
+        "avg": 0.307,
+        "stddev": 0.103,
         "min": 0.181,
         "max": 0.445
       },
@@ -117,11 +124,11 @@
       ]
     },
     {
-      "time_s": 96.6,
-      "dmg_avg": 138014,
-      "dmg_stddev": 77700,
+      "time_s": 104.3,
+      "dmg_avg": 167184,
+      "dmg_stddev": 121121,
       "dmg_min": 37061,
-      "dmg_max": 234532,
+      "dmg_max": 434106,
       "window_length_s": 6,
       "defensive_name": "Feint",
       "spell_id": 1966,
@@ -135,15 +142,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1264650,
-          "avg_damage": 38886,
-          "min_damage": 36790,
+          "avg_damage": 38410,
+          "min_damage": 36370,
           "max_damage": 42404,
-          "count": 7
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 133.5,
+      "time_s": 135.2,
       "dmg_avg": 0,
       "dmg_stddev": 0,
       "dmg_min": 0,
@@ -161,9 +168,9 @@
       "ability_breakdown": []
     },
     {
-      "time_s": 158,
-      "dmg_avg": 147915,
-      "dmg_stddev": 97593,
+      "time_s": 159,
+      "dmg_avg": 151509,
+      "dmg_stddev": 90924,
       "dmg_min": 17303,
       "dmg_max": 288560,
       "window_length_s": 6,
@@ -186,15 +193,15 @@
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 30837,
+          "avg_damage": 31671,
           "min_damage": 17303,
           "max_damage": 38164,
-          "count": 7
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 164.6,
+      "time_s": 163.9,
       "dmg_avg": 0,
       "dmg_stddev": 0,
       "dmg_min": 0,
@@ -212,70 +219,11 @@
       "ability_breakdown": []
     },
     {
-      "time_s": 187.7,
-      "dmg_avg": 167884,
-      "dmg_stddev": 78593,
+      "time_s": 208,
+      "dmg_avg": 238262,
+      "dmg_stddev": 157050,
       "dmg_min": 36370,
-      "dmg_max": 234593,
-      "window_length_s": 6,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1241932,
-          "avg_damage": 172578,
-          "min_damage": 133555,
-          "max_damage": 197058,
-          "count": 3
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 36165,
-          "min_damage": 34186,
-          "max_damage": 38158,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 222.1,
-      "dmg_avg": 227050,
-      "dmg_stddev": 197356,
-      "dmg_min": 37060,
       "dmg_max": 562016,
-      "window_length_s": 6.6,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1264650,
-          "avg_damage": 37842,
-          "min_damage": 17642,
-          "max_damage": 51102,
-          "count": 8
-        }
-      ]
-    },
-    {
-      "time_s": 248.8,
-      "dmg_avg": 199115,
-      "dmg_stddev": 185705,
-      "dmg_min": 35642,
-      "dmg_max": 468100,
       "window_length_s": 6.4,
       "defensive_name": "Feint",
       "spell_id": 1966,
@@ -288,11 +236,70 @@
       "ref_game_id": 240387,
       "ability_breakdown": [
         {
-          "spell_id": 1264650,
-          "avg_damage": 40907,
-          "min_damage": 35642,
-          "max_damage": 57294,
+          "spell_id": 1241932,
+          "avg_damage": 182254,
+          "min_damage": 60964,
+          "max_damage": 310603,
           "count": 7
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 38028,
+          "min_damage": 34186,
+          "max_damage": 51102,
+          "count": 12
+        }
+      ]
+    },
+    {
+      "time_s": 247.8,
+      "dmg_avg": 201838,
+      "dmg_stddev": 159579,
+      "dmg_min": 35642,
+      "dmg_max": 468100,
+      "window_length_s": 6.7,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 40312,
+          "min_damage": 17642,
+          "max_damage": 57294,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 275,
+      "dmg_avg": 299118,
+      "dmg_stddev": 209412,
+      "dmg_min": 37758,
+      "dmg_max": 634929,
+      "window_length_s": 6.8,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 39994,
+          "min_damage": 32615,
+          "max_damage": 50256,
+          "count": 6
         }
       ]
     },
@@ -324,13 +331,13 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 4.9,
+      "avg_uses": 5.3,
       "min_uses": 1,
-      "max_uses": 8
+      "max_uses": 9
     },
     {
       "spell_id": 31224,
-      "avg_uses": 1.4,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -409,6 +416,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "94ff2bcd3fb9e6cc",
+  "source_signature": "d8cc224a0bd2b7f1",
   "ingest_version": 1
 }

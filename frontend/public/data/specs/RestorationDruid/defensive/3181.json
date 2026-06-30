@@ -6,40 +6,47 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 226.6,
-      "stddev_first_cast_s": 135.4,
-      "avg_gap_s": 114.2,
-      "stddev_gap_s": 94.6,
+      "avg_first_cast_s": 221.5,
+      "stddev_first_cast_s": 129.1,
+      "avg_gap_s": 113.2,
+      "stddev_gap_s": 91.2,
       "hold_targets": {
         "1": {
-          "target_s": 369.7,
-          "stddev_s": 114.3,
-          "count": 5,
+          "target_s": 390.5,
+          "stddev_s": 113.7,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.3,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.298,
-        "stddev": 0.195,
+        "avg": 0.309,
+        "stddev": 0.187,
         "min": 0.128,
         "max": 0.733
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Ironbark": {
-      "sample_count": 8,
-      "avg_first_cast_s": 200.6,
-      "stddev_first_cast_s": 118.5,
-      "avg_gap_s": 277.1,
-      "stddev_gap_s": 114.2,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.19,
+      "sample_count": 9,
+      "avg_first_cast_s": 192,
+      "stddev_first_cast_s": 113.7,
+      "avg_gap_s": 242,
+      "stddev_gap_s": 108,
+      "hold_targets": {
+        "1": {
+          "target_s": 362.3,
+          "stddev_s": 92.5,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.188,
-        "stddev": 0.087,
+        "avg": 0.207,
+        "stddev": 0.099,
         "min": 0.122,
         "max": 0.363
       },
@@ -48,9 +55,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 410.3,
-      "dmg_avg": 641548,
-      "dmg_stddev": 84891,
+      "time_s": 411.3,
+      "dmg_avg": 641702,
+      "dmg_stddev": 94910,
       "dmg_min": 510966,
       "dmg_max": 773874,
       "window_length_s": 12,
@@ -66,24 +73,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 298423,
+          "avg_damage": 294909,
           "min_damage": 208184,
           "max_damage": 379118,
-          "count": 6
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 162671,
-          "min_damage": 18868,
-          "max_damage": 220088,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 161982,
+          "avg_damage": 168682,
           "min_damage": 112507,
           "max_damage": 232047,
-          "count": 6
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 155943,
+          "min_damage": 18868,
+          "max_damage": 220088,
+          "count": 5
         }
       ]
     }
@@ -91,13 +98,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.4,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.5,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -172,6 +179,6 @@
       "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "c519a3587d5e4290",
+  "source_signature": "6ed6b4400041df93",
   "ingest_version": 1
 }

@@ -3,23 +3,23 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 441.6,
-  "downtime_threshold_ms": 1094,
+  "avg_duration_s": 441.9,
+  "downtime_threshold_ms": 1099,
   "top_avg_efficiency": 80.9,
-  "top_efficiency_stddev": 4.8,
+  "top_efficiency_stddev": 4.4,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
       "avg_first_cast_s": 15.7,
       "stddev_first_cast_s": 37.8,
-      "avg_gap_s": 115.4,
-      "stddev_gap_s": 16.4,
-      "avg_bl_offset_s": 3.2,
-      "stddev_bl_offset_s": 8.1,
+      "avg_gap_s": 115.3,
+      "stddev_gap_s": 19.2,
+      "avg_bl_offset_s": 2.9,
+      "stddev_bl_offset_s": 8.3,
       "avg_uses": 4.3,
       "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.587,
+        "avg": 0.586,
         "stddev": 0.096,
         "min": 0.437,
         "max": 0.735
@@ -28,14 +28,14 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 255.1,
-          "stddev_s": 51.1,
-          "count": 6,
+          "target_s": 254.1,
+          "stddev_s": 56.2,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
           "target_s": 385.1,
-          "stddev_s": 7.8,
+          "stddev_s": 7.6,
           "count": 6,
           "total_samples": 10
         }
@@ -43,56 +43,50 @@
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 21.1,
-      "stddev_first_cast_s": 17.5,
-      "avg_gap_s": 69.9,
-      "stddev_gap_s": 10.1,
+      "avg_first_cast_s": 21.2,
+      "stddev_first_cast_s": 17.3,
+      "avg_gap_s": 70.1,
+      "stddev_gap_s": 10.6,
       "avg_bl_offset_s": 18.6,
       "stddev_bl_offset_s": 17.8,
       "avg_uses": 6.7,
       "avg_uses_per_min": 0.91,
       "uses_per_min": {
-        "avg": 0.911,
-        "stddev": 0.108,
+        "avg": 0.91,
+        "stddev": 0.107,
         "min": 0.738,
         "max": 1.058
       },
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 122.6,
-          "stddev_s": 22.4,
-          "count": 4,
-          "total_samples": 10
-        },
         "3": {
-          "target_s": 177.4,
-          "stddev_s": 17.7,
-          "count": 7,
+          "target_s": 183.2,
+          "stddev_s": 14,
+          "count": 6,
           "total_samples": 10
         },
         "4": {
-          "target_s": 256.4,
-          "stddev_s": 19.9,
-          "count": 7,
+          "target_s": 256.5,
+          "stddev_s": 13.6,
+          "count": 6,
           "total_samples": 10
         },
         "5": {
           "target_s": 306.7,
-          "stddev_s": 40.4,
+          "stddev_s": 41.6,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 358.2,
-          "stddev_s": 43.3,
+          "stddev_s": 42.6,
           "count": 9,
           "total_samples": 10
         },
         "7": {
-          "target_s": 397.4,
-          "stddev_s": 38.9,
+          "target_s": 404.4,
+          "stddev_s": 38.5,
           "count": 6,
           "total_samples": 10
         }
@@ -100,32 +94,32 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 156.7,
-      "stddev_first_cast_s": 142.6,
-      "avg_gap_s": 150.4,
-      "stddev_gap_s": 48.2,
-      "avg_bl_offset_s": 38.6,
-      "stddev_bl_offset_s": 6.6,
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.35,
+      "avg_first_cast_s": 142.8,
+      "stddev_first_cast_s": 146.2,
+      "avg_gap_s": 149.8,
+      "stddev_gap_s": 46.7,
+      "avg_bl_offset_s": 40.2,
+      "stddev_bl_offset_s": 5.5,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.352,
-        "stddev": 0.128,
+        "avg": 0.366,
+        "stddev": 0.141,
         "min": 0.142,
-        "max": 0.488
+        "max": 0.549
       },
-      "bl_pct": 20,
+      "bl_pct": 30,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 278.1,
-          "stddev_s": 83.7,
+          "target_s": 211.1,
+          "stddev_s": 85.7,
           "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 362.9,
-          "stddev_s": 60.8,
+          "target_s": 325.5,
+          "stddev_s": 58.3,
           "count": 7,
           "total_samples": 10
         }
@@ -271,6 +265,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "944a98a14ca92114",
+  "source_signature": "b8802a49014cd539",
   "ingest_version": 1
 }

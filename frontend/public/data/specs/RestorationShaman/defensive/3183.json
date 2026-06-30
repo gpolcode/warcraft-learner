@@ -6,50 +6,50 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 176.7,
-      "stddev_first_cast_s": 124.5,
-      "avg_gap_s": 138.6,
-      "stddev_gap_s": 50.9,
+      "avg_first_cast_s": 176.5,
+      "stddev_first_cast_s": 124.7,
+      "avg_gap_s": 147.3,
+      "stddev_gap_s": 50.6,
       "hold_targets": {
         "1": {
-          "target_s": 327.4,
-          "stddev_s": 55.9,
-          "count": 8,
+          "target_s": 327,
+          "stddev_s": 57,
+          "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 446.9,
-          "stddev_s": 131,
-          "count": 6,
+          "target_s": 329.5,
+          "stddev_s": 127.9,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.29,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.291,
-        "stddev": 0.088,
+        "avg": 0.28,
+        "stddev": 0.072,
         "min": 0.116,
-        "max": 0.443
+        "max": 0.332
       },
       "majority_hold": true
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 92.8,
-      "stddev_first_cast_s": 27,
-      "avg_gap_s": 243,
-      "stddev_gap_s": 58.3,
+      "avg_first_cast_s": 92.6,
+      "stddev_first_cast_s": 27.1,
+      "avg_gap_s": 244.6,
+      "stddev_gap_s": 58,
       "hold_targets": {
         "1": {
           "target_s": 303.1,
-          "stddev_s": 96.5,
+          "stddev_s": 96.6,
           "count": 8,
           "total_samples": 10
         },
         "2": {
           "target_s": 547.1,
-          "stddev_s": 31.9,
+          "stddev_s": 27.6,
           "count": 6,
           "total_samples": 10
         }
@@ -66,18 +66,18 @@
     },
     "Healing Tide Totem": {
       "sample_count": 1,
-      "avg_first_cast_s": 5.6,
+      "avg_first_cast_s": 7.2,
       "stddev_first_cast_s": 0,
-      "avg_gap_s": 132.6,
-      "stddev_gap_s": 15.1,
+      "avg_gap_s": 139.8,
+      "stddev_gap_s": 30.1,
       "hold_targets": {},
-      "avg_uses": 5,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.554,
+        "avg": 0.443,
         "stddev": 0,
-        "min": 0.554,
-        "max": 0.554
+        "min": 0.443,
+        "max": 0.443
       },
       "majority_hold": false
     }
@@ -85,8 +85,8 @@
   "defensive_windows": [
     {
       "time_s": 219.6,
-      "dmg_avg": 257377,
-      "dmg_stddev": 138430,
+      "dmg_avg": 255578,
+      "dmg_stddev": 139219,
       "dmg_min": 77821,
       "dmg_max": 503269,
       "window_length_s": 12,
@@ -102,14 +102,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 135954,
+          "avg_damage": 134038,
           "min_damage": 77821,
           "max_damage": 226189,
           "count": 9
         },
         {
           "spell_id": 1281473,
-          "avg_damage": 107159,
+          "avg_damage": 107290,
           "min_damage": 89262,
           "max_damage": 201953,
           "count": 8
@@ -118,9 +118,9 @@
     },
     {
       "time_s": 327.8,
-      "dmg_avg": 483817,
-      "dmg_stddev": 87833,
-      "dmg_min": 337999,
+      "dmg_avg": 480440,
+      "dmg_stddev": 94473,
+      "dmg_min": 307606,
       "dmg_max": 582589,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
@@ -135,22 +135,22 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 171757,
-          "min_damage": 134106,
+          "avg_damage": 168967,
+          "min_damage": 117733,
           "max_damage": 198798,
           "count": 9
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 105090,
-          "min_damage": 78091,
+          "avg_damage": 105065,
+          "min_damage": 77864,
           "max_damage": 116087,
           "count": 9
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 84073,
-          "min_damage": 62473,
+          "avg_damage": 84052,
+          "min_damage": 62291,
           "max_damage": 92871,
           "count": 9
         },
@@ -163,14 +163,14 @@
         },
         {
           "spell_id": 1254257,
-          "avg_damage": 43728,
-          "min_damage": 32538,
+          "avg_damage": 43311,
+          "min_damage": 29199,
           "max_damage": 48882,
           "count": 8
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 26364,
+          "avg_damage": 26177,
           "min_damage": 18774,
           "max_damage": 33183,
           "count": 9
@@ -181,9 +181,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.7,
+      "avg_uses": 2.6,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 3
     },
     {
       "spell_id": 98008,
@@ -193,9 +193,9 @@
     },
     {
       "spell_id": 108280,
-      "avg_uses": 5,
-      "min_uses": 5,
-      "max_uses": 5
+      "avg_uses": 4,
+      "min_uses": 4,
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -271,6 +271,6 @@
       "name": "Starsplinter"
     }
   },
-  "source_signature": "ec8df474fd7aef75",
+  "source_signature": "e931f9ca03122b8e",
   "ingest_version": 1
 }
