@@ -20,7 +20,7 @@ The `src/**` specs cannot run under a bare `npx vitest` - they need the `@angula
 
 Ingestion runs these very `*TransformService`s headlessly, so the only specs under `scripts/ingest/**` cover the discovery + orchestration helpers it still owns (`wcl-fetchers.spec.ts`, `wcl-mappers.spec.ts`, `signature.spec.ts`, `ordering.spec.ts`).
 
-**Conventions: tests as documentation.** Colocate specs next to the unit (`burst.service.spec.ts` beside `burst.service.ts`). `describe` names the unit (`'burstWindowStatus'`); `it` is a behavior sentence with no "should" (`it('flags a value more than 2 sigma above the mean')`). For rule/threshold tests, pair every "triggers" case with a "does not trigger at the boundary" case - boundary comparisons are strict (a value exactly at `mean + 2*stddev` is **not** an outlier).
+**Conventions: tests as documentation.** Colocate specs next to the unit (`burst.service.spec.ts` beside `burst.service.ts`). For rule/threshold tests, pair every "triggers" case with a "does not trigger at the boundary" case - boundary comparisons are strict (a value exactly at `mean + 2*stddev` is **not** an outlier).
 
 **Use readable named constants, never magic numbers or raw ids (hard requirement).** Import spell/item ids from `src/testing/spell-ids.ts` (`SHADOW_BLADES`, `CLOAK_OF_SHADOWS`, `SHADOW_BLADES_DAMAGE`, ...) and give every computed threshold/timing/damage value its own named `const` with a one-line derivation comment. A bare `279043`/`31224` spell id, or an unexplained `48`/`0.5` in a spec, is a defect - name it so the test reads as documentation.
 

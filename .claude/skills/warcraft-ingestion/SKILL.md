@@ -1,6 +1,6 @@
 ---
 name: warcraft-ingestion
-description: warcraft-learner ingestion, rulebook, and scraping pipelines plus the data-file schemas they write. Covers the orchestrator that boots a headless Angular runtime and drives the same five *TransformServices as the browser, the signature-skip + manual INGEST_VERSION bump rule (bump it whenever a change should produce different tailored data), spec/encounter work-ordering, the rulebook CLI (npm run rulebook) and guide scraping (npm run scrape, Supadata for YouTube), and the index.json / guides.json / rulebook.json / signature-stamp schemas and rulebook + rule-condition JSON schema. Load this before touching scripts/ingest/**, the rulebook flow, guide scraping, INGEST_VERSION, or data/specs file shapes.
+description: warcraft-learner ingestion, rulebook, and scraping pipelines. Covers the orchestrator that boots a headless Angular runtime and drives the same five *TransformServices as the browser, the signature-skip + manual INGEST_VERSION bump rule (bump it whenever a change should produce different tailored data), spec/encounter work-ordering, and the rulebook CLI + guide scraping (Supadata for YouTube). The rulebook prompt and JSON schema (rulebook_skill.md, rulebook.schema.json) live in this skill's own directory. Load this before touching scripts/ingest/**, the rulebook flow, guide scraping, INGEST_VERSION, or data/specs file shapes.
 ---
 
 # warcraft-learner ingestion & content pipelines
@@ -19,105 +19,22 @@ Runs `frontend/scripts/ingest/orchestrator.ts`, which boots a headless Angular r
 
 GHA commits `frontend/public/data/specs/**`, which triggers `deploy-pages.yml` to rebuild and redeploy.
 
-> **Keep data shapes in sync.** Because ingestion runs the very same `*TransformService`s the browser uses, the tailored slice shapes are defined in exactly one place - each slice's `*Bench` interface (its `*-data-source.ts`) plus the relevant `core/models/*` - and ingestion writes precisely those, so the slice shapes stay in sync automatically. Changing a slice's `*Bench`/model therefore updates runtime and ingest at once (one implementation). You still keep the rulebook skill + schema in sync (`prompts/rulebook_skill.md`, `prompts/rulebook.schema.json`) since the transforms consume the rulebook (`duration`, `spell_id`s), and the indexes (`index.json`, `{spec}/encounters.json`) and `positions/{enc}.json` documented in the **Data models** section below. Already-committed JSON under `data/specs/**` keeps stale fields until the next re-ingest - harmless, since consumers ignore unknown fields.
+> **Keep data shapes in sync.** Because ingestion runs the very same `*TransformService`s the browser uses, the tailored slice shapes are defined in exactly one place - each slice's `*Bench` interface (its `*-data-source.ts`) plus the relevant `core/models/*` - and ingestion writes precisely those, so the slice shapes stay in sync automatically. Changing a slice's `*Bench`/model therefore updates runtime and ingest at once (one implementation). You still keep the rulebook prompt + schema in sync (`rulebook_skill.md`, `rulebook.schema.json` in this skill's directory) since the transforms consume the rulebook (`duration`, `spell_id`s). The data-file shapes are defined in code - see "Data file shapes" below. Already-committed JSON under `data/specs/**` keeps stale fields until the next re-ingest - harmless, since consumers ignore unknown fields.
 
 ## Rulebook management (`npm run rulebook` / `npm run scrape`)
 No web UI for rulebook management. Everything is CLI.
 
 1. **Add + scrape guides** - `npm run scrape` re-scrapes every existing guide across all specs (web/YouTube/SimC APL), refreshing `guides.json`; this is what the hourly ingest workflow runs. To add a new guide, `npm run scrape -- --spec Name --url URL [--type web|youtube|simc]` appends and scrapes it.
    - **YouTube transcripts go through the Supadata API.** YouTube now gates caption/transcript data behind an authenticated, bot-checked session, so anonymous fetching (youtubei.js, yt-dlp) is refused from any IP. `scrapeYouTube` calls the [Supadata](https://supadata.ai) transcript API instead; set `SUPADATA_API_KEY` (env var locally, GHA secret for the hourly run). Transcripts are immutable, so the bulk refresh skips already-scraped YouTube guides - the metered API is only hit once per new/errored video. Without the key, YouTube guides record a non-fatal error; web/SimC are unaffected.
-2. **Build AI prompt** - `npm run rulebook` -> "Copy prompt": assembles `prompts/rulebook_skill.md` + all scraped guide content into a clipboard-ready prompt.
-3. **Save rulebook** - paste AI output -> `npm run rulebook` -> "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates schema directly.
+2. **Build AI prompt** - `npm run rulebook` -> "Copy prompt": assembles this skill's `rulebook_skill.md` (with `rulebook.schema.json` inlined) + all scraped guide content into a clipboard-ready prompt.
+3. **Save rulebook** - paste AI output -> `npm run rulebook` -> "Save rulebook": writes to `rulebook.json`. No validation server needed - the CLI validates against `rulebook.schema.json` directly (`frontend/scripts/lib.ts`).
 
-## Data models (ingestion output)
+## Data file shapes
 
-### `index.json` (`frontend/public/data/specs/index.json`)
-Spec manifest rebuilt by the orchestrator (`scripts/ingest/orchestrator.ts` `rebuildSpecIndex`) by scanning each spec's `encounters.json` on disk - safe to run sharded (one spec at a time). Consumed by `DataFileApiService.getSpecs()` to populate the spec dropdown on `/pre`.
+The data files ingestion writes are deliberately **not** schema-documented here - read each shape from its source of truth so the docs cannot drift:
 
-| field | notes |
-|---|---|
-| spec | WCL spec folder name, e.g. `SubtletyRogue` |
-| encounter_count | Number of encounters with `sample_count > 0` |
-
-### `guides.json` (`frontend/public/data/specs/{spec}/guides.json`)
-| field | notes |
-|---|---|
-| id | Auto-incrementing integer |
-| spec | WCL spec name, e.g. `SubtletyRogue` |
-| url | Source URL |
-| guide_type | `web`, `youtube`, or `simc` |
-| content | Scraped text (up to 60k chars) |
-| status | `pending` -> `scraped` -> `error` |
-
-### `rulebook.json` (`frontend/public/data/specs/{spec}/rulebook.json`)
-AI-generated rulebook. Extra top-level fields added on save: `guide_count`, `saved_at`.
-
-### Signature stamps (every slice + positions file)
-Every tailored file (`{burst,rotation,defensive,gear}/{enc}.json` + `positions/{enc}.json`) carries two ingestion stamps: `source_signature` (the `sha256(INGEST_VERSION + parse-set fingerprint)` skip key) and the bare `ingest_version` integer (the same version, unhashed, read by the work-ordering to tell stale-version data from current). `ingest_version` is required - every write stamps it, and a one-time migration backfilled it onto pre-existing files (v1 where the gear file already carried `source_id`, else v0).
-
-> The `positions/{enc_id}.json` schema lives in the **warcraft-wcl-data** skill (it pairs with the WCL position/facing-unit quirks).
-
-### Rulebook JSON schema
-
-All spell IDs **must** come from the rulebook - never hardcode spec-specific IDs.
-
-```json
-{
-  "spec": "SubtletyRogue",
-  "major_cooldowns": [
-    {
-      "name": "Shadow Blades",
-      "spell_id": 121471,
-      "cooldown": 90,
-      "duration": 20,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "..."
-    }
-  ],
-  "defensives": [
-    {
-      "name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "cooldown": 120,
-      "duration": 5,
-      "usage_rule": "..."
-    }
-  ],
-  "rules": [
-    {
-      "type": "cooldown_pairing|cd_hold|opener|rotation|positioning|aoe_switch",
-      "priority": "critical|high|medium|low",
-      "description": "Rule title shown in the UI",
-      "condition": null,
-      "action": "Prescriptive coaching text shown as remedy"
-    }
-  ],
-  "source_summary": "..."
-}
-```
-
-### Rule condition schema
-
-**`cast_without_prior`** - spell cast without a required companion within a time window:
-```json
-{
-  "kind": "cast_without_prior",
-  "spell_id": 185313, "spell_name": "Shadow Dance",
-  "required_spell_id": 280719, "required_spell_name": "Secret Technique",
-  "window_s": 5,
-  "exception": { "context_spell_id": 121471, "context_window_s": 25, "position": "before" }
-}
-```
-
-**`hold_cooldown_for_anchor`** - spell(s) used within hold window before an anchor spell:
-```json
-{
-  "kind": "hold_cooldown_for_anchor",
-  "spell_ids": [185313, 280719], "spell_names": ["Shadow Dance", "Secret Technique"],
-  "anchor_spell_id": 121471, "anchor_spell_name": "Shadow Blades",
-  "hold_window_s": 15
-}
-```
-
-Rules without a `condition` (or `null`) are silently skipped.
+- **Rulebook** (`rulebook.json`) - `rulebook.schema.json` + `rulebook_skill.md` in this skill's directory. The schema is the authoritative contract (validated by `frontend/scripts/lib.ts`); all spell IDs come from the rulebook, never hardcode spec-specific IDs. The rule-engine condition kinds (`cast_without_prior`, `hold_cooldown_for_anchor`) are defined in the schema and the rotation rule-engine code.
+- **Slice benches** (`{burst,rotation,defensive,gear}/{enc}.json`) - each slice's `*Bench` interface in its `*-data-source.ts`, plus `core/models/*`.
+- **Indexes** (`index.json`, `{spec}/encounters.json`) and `guides.json` - `core/models/*` and the orchestrator's `rebuildSpecIndex`.
+- **Signature stamps** (`source_signature`, `ingest_version`, on every slice + positions file) - `scripts/ingest/ingest-version.ts` + `signature.ts`.
+- **Positions** (`positions/{enc}.json`) - `core/models/positioning.models.ts`; see the **warcraft-wcl-data** skill for the WCL position/facing-unit quirks behind it.

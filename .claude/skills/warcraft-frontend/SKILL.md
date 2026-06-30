@@ -24,7 +24,6 @@ These are hard rules for all Angular code. The `angular-developer` skill (`.clau
 - **GraphQL query strings live in `core/services/wcl-queries.ts` only.** Never inline a query string inside a method. Each query must have a companion `*Vars` interface (e.g. `ReportQueryVars { code: string }`). Never use `Record<string, unknown>` as the variables type - use the typed interface.
 - **Response-to-model mapping lives in the consuming slice/shell, not the transport.** `wcl-api.ts` is pass-through: it calls `query(...)` and returns the raw WCL shape (typed in `core/models/wcl.models.ts`). Each slice/shell colocates the small pure projection it needs (e.g. `toParseRankings`, `extractGear`, `specOf`). There is no runtime `wcl-mappers.ts`.
 - **No silent error swallowing.** Any `catch` on a best-effort operation must call `logWarn(context, err)` from `core/log.ts` before discarding the error. This applies to `.catch(() => {})`, empty `catch {}` blocks, and any fallback that silently substitutes a default. The best-effort fallback itself is fine (e.g. returning `[]`); the silence is not.
-- **No single-letter identifiers for non-trivial values.** `d`, `fd`, `p`, `r`, `e` as local variable names are banned where the value has semantic content. Name by content: `result`, `fightsData`, `enchantData`, `queryParams`, `reportParam`. Short lambda params (`f`, `c`) in obvious inline callbacks (e.g. `.find(f => f.id === id)`) are acceptable.
 
 ## Polling and async state conventions
 
@@ -36,7 +35,6 @@ These are hard rules for all Angular code. The `angular-developer` skill (`.clau
 These are the general Angular/TypeScript best practices for the app. The mechanizable ones are **enforced by ESLint** (`frontend/eslint.config.js`, run via `npm run lint`): no `any` (use `unknown`); native control flow (`@if`/`@for`/`@switch`) over `*ngIf`/`*ngFor`; standalone components with no explicit `standalone: true`; host bindings in the `host` object, never `@HostBinding`/`@HostListener`; `inject()` over constructor injection; and the `wl` component/directive selector prefix. The remaining guidance is **not lintable** but still expected:
 
 - **Accessibility is a hard requirement.** Markup must pass AXE checks and meet WCAG AA minimums - focus management, color contrast, and ARIA attributes. Interactive elements must be focusable (a `role`/`(keydown)` handler needs a `tabindex`).
-- **Keep components small and focused** on a single responsibility; keep services around a single responsibility with `providedIn: 'root'` for singletons.
 - **Prefer type inference** when the type is obvious; use strict type checking.
 - **Signals for state**: `signal()` for local state, `computed()` for derived state, `set`/`update` never `mutate`. Keep state transformations pure and predictable.
 - **`input()`/`output()` functions** over the `@Input`/`@Output` decorators. Reactive forms over template-driven. `class`/`style` bindings over `ngClass`/`ngStyle` (the styling rules above already require this).

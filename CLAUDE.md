@@ -30,8 +30,8 @@ frontend/        # the entire Angular 22 app
   src/app/core/  # the two API services, data-source token, models
   scripts/ingest # ingestion orchestrator + discovery helpers (run via tsx)
   public/data/specs/  # static ingested data (slices, encounters, positions, rulebooks)
-prompts/         # rulebook LLM prompt + schema
 .github/workflows/  # deploy-pages, ingest-parses (hourly), pr-preview, test
+.claude/skills/   # on-demand skills (incl. the rulebook LLM prompt + schema in warcraft-ingestion/)
 ```
 
 ## Commands (run from `frontend/`)

@@ -1,6 +1,6 @@
 ---
 name: warcraft-wcl-data
-description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model, and position data. Covers the intentional embedded client-credentials secret (a deliberate trade-off, NOT a leak to fix), the non-obvious WCL API quirks that have caused bugs (Midnight actor.subType / playerDetails spec resolution, positionally-indexed gear array, weapon/trinket slot indices, v1 vs v2 talent formats, permanentEnchant string, server.region string, removed gameData.spell(), event positions via includeResources and their flattened x/y/facing/mapID units), the external-API auth table, and the positions/{enc_id}.json schema. Load this before touching WCL queries, gear/spec/talent/enchant extraction, wcl-auth, the embedded secret, or anything reading event positions.
+description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model, and position data. Covers the intentional embedded client-credentials secret (a deliberate trade-off, NOT a leak to fix), the non-obvious WCL API quirks that have caused bugs (Midnight actor.subType / playerDetails spec resolution, positionally-indexed gear array, weapon/trinket slot indices, v1 vs v2 talent formats, permanentEnchant string, server.region string, removed gameData.spell(), event positions via includeResources and their flattened x/y/facing/mapID units), and the external-API auth table. Load this before touching WCL queries, gear/spec/talent/enchant extraction, wcl-auth, the embedded secret, or anything reading event positions.
 ---
 
 # warcraft-learner WCL integration
@@ -42,5 +42,6 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 | Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (browser; embedded secret, see "Browser auth model") | Report events, character rankings, gear lookup |
 | Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (CLI/GHA only, never browser) | The transform services fetching parses (via the shared `WclApiService` under the Node transport, driven by `scripts/ingest/orchestrator.ts`) |
 
-## `positions/{enc_id}.json`
-Per-parse position timelines for the positioning map (written by `MapTransformService.getMapData` run headlessly by `scripts/ingest/orchestrator.ts`; consumed by `core/services/positioning-core.ts` + `core/models/positioning.models.ts`). Top-level: `{spec, encounter_id, encounter_name, interval_s, sample_count, parses[]}`. Each parse: `{report_code, fight_id, player_name, duration_s, interval_s, player: PosRow[], enemies: [{game_id, name, is_boss, samples: PosRow[]}]}`. A `PosRow` is `[t_s, x, y, facing|null, mapID|null]` with **raw** WCL units (x/y in hundredths of a yard, facing in milliradians) - the frontend scales them. Enemies are keyed by `game_id` so the same boss/add matches across parses; `is_boss` = the enemy with the highest `maxHitPoints`.
+## Event positions
+
+The on-disk `positions/{enc_id}.json` shape is not duplicated here - read it from `core/models/positioning.models.ts` (written by `MapTransformService.getMapData`, consumed by `core/services/positioning-core.ts`). The non-obvious part that bites is the **raw WCL units** stored in each row (x/y in hundredths of a yard, facing in milliradians) - the position/facing-unit quirks in the table above explain the conversions the frontend applies.
