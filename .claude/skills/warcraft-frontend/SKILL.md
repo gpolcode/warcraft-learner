@@ -34,7 +34,6 @@ These are hard rules for all Angular code. The `angular-developer` skill (`.clau
 
 These are the general Angular/TypeScript best practices for the app. The mechanizable ones are **enforced by ESLint** (`frontend/eslint.config.js`, run via `npm run lint`): no `any` (use `unknown`); native control flow (`@if`/`@for`/`@switch`) over `*ngIf`/`*ngFor`; standalone components with no explicit `standalone: true`; host bindings in the `host` object, never `@HostBinding`/`@HostListener`; `inject()` over constructor injection; and the `wl` component/directive selector prefix. The remaining guidance is **not lintable** but still expected:
 
-- **Accessibility is a hard requirement.** Markup must pass AXE checks and meet WCAG AA minimums - focus management, color contrast, and ARIA attributes. Interactive elements must be focusable (a `role`/`(keydown)` handler needs a `tabindex`).
 - **Prefer type inference** when the type is obvious; use strict type checking.
 - **Signals for state**: `signal()` for local state, `computed()` for derived state, `set`/`update` never `mutate`. Keep state transformations pure and predictable.
 - **`input()`/`output()` functions** over the `@Input`/`@Output` decorators. Reactive forms over template-driven. `class`/`style` bindings over `ngClass`/`ngStyle` (the styling rules above already require this).
