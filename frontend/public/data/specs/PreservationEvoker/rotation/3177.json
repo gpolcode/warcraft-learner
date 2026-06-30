@@ -3,24 +3,24 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 233.6,
-  "downtime_threshold_ms": 2727,
-  "top_avg_efficiency": 72.4,
-  "top_efficiency_stddev": 13.6,
+  "avg_duration_s": 239.3,
+  "downtime_threshold_ms": 2644,
+  "top_avg_efficiency": 72.6,
+  "top_efficiency_stddev": 15.1,
   "per_cd_benchmarks": {
     "Rewind": {
       "sample_count": 10,
-      "avg_first_cast_s": 113.1,
-      "stddev_first_cast_s": 65.9,
+      "avg_first_cast_s": 93.1,
+      "stddev_first_cast_s": 53.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "avg_uses": 0.7,
-      "avg_uses_per_min": 0.18,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.255,
-        "stddev": 0.031,
+        "avg": 0.247,
+        "stddev": 0.032,
         "min": 0.21,
         "max": 0.292
       },
@@ -50,50 +50,43 @@
     },
     "Stasis": {
       "sample_count": 10,
-      "avg_first_cast_s": 53,
-      "stddev_first_cast_s": 45.6,
-      "avg_gap_s": 124.1,
-      "stddev_gap_s": 43.2,
-      "avg_bl_offset_s": 13.9,
-      "stddev_bl_offset_s": 15.8,
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.25,
+      "avg_first_cast_s": 44.4,
+      "stddev_first_cast_s": 45.9,
+      "avg_gap_s": 115.8,
+      "stddev_gap_s": 38,
+      "avg_bl_offset_s": 8.5,
+      "stddev_bl_offset_s": 14.5,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.494,
-        "stddev": 0.154,
+        "avg": 0.522,
+        "stddev": 0.153,
         "min": 0.292,
         "max": 0.694
       },
-      "bl_pct": 20,
+      "bl_pct": 30,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Tip the Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 48.2,
-      "stddev_first_cast_s": 76.4,
-      "avg_gap_s": 109.9,
-      "stddev_gap_s": 29.4,
-      "avg_bl_offset_s": 2.6,
-      "stddev_bl_offset_s": 4.2,
+      "avg_first_cast_s": 57.4,
+      "stddev_first_cast_s": 75.3,
+      "avg_gap_s": 109,
+      "stddev_gap_s": 29.9,
+      "avg_bl_offset_s": 3,
+      "stddev_bl_offset_s": 4.7,
       "avg_uses": 2,
-      "avg_uses_per_min": 0.53,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.585,
-        "stddev": 0.253,
+        "avg": 0.566,
+        "stddev": 0.238,
         "min": 0.21,
         "max": 0.925
       },
-      "bl_pct": 50,
+      "bl_pct": 40,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 159.3,
-          "stddev_s": 28.7,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Emerald Communion": {
       "sample_count": 10,
@@ -269,6 +262,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "3f5905e7dbbb50b8",
-  "ingest_version": 1
+  "source_signature": "422fa50ee16527c6",
+  "ingest_version": 2
 }

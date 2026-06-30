@@ -70,6 +70,10 @@
         "2": {
           "target_s": 397.3,
           "stddev_s": 33.9,
+          "delay_s": 83.8,
+          "delay_stddev_s": 25.3,
+          "band_s": 25.3,
+          "effective_cd_s": 180,
           "count": 6,
           "total_samples": 10
         }
@@ -97,31 +101,11 @@
         "2": {
           "target_s": 120.2,
           "stddev_s": 56.5,
+          "delay_s": 22.4,
+          "delay_stddev_s": 11.8,
+          "band_s": 11.8,
+          "effective_cd_s": 60,
           "count": 5,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 184.9,
-          "stddev_s": 64.2,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 217.9,
-          "stddev_s": 66.4,
-          "count": 7,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 284.1,
-          "stddev_s": 19.8,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 351.6,
-          "stddev_s": 17.3,
-          "count": 7,
           "total_samples": 10
         }
       }
@@ -164,14 +148,7 @@
       },
       "bl_pct": 50,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 279.9,
-          "stddev_s": 110.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -321,6 +298,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "737261d19f6b279b",
-  "ingest_version": 1
+  "source_signature": "44b4386c7b06e632",
+  "ingest_version": 2
 }

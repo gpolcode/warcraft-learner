@@ -3,33 +3,37 @@
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
-  "avg_duration_s": 321.6,
+  "avg_duration_s": 321.9,
   "downtime_threshold_ms": 2294,
-  "top_avg_efficiency": 73.6,
-  "top_efficiency_stddev": 12.2,
+  "top_avg_efficiency": 73.7,
+  "top_efficiency_stddev": 12.1,
   "per_cd_benchmarks": {
     "Tranquility": {
       "sample_count": 10,
-      "avg_first_cast_s": 105,
-      "stddev_first_cast_s": 37.5,
+      "avg_first_cast_s": 102.3,
+      "stddev_first_cast_s": 41,
       "avg_gap_s": 220.1,
       "stddev_gap_s": 22.6,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
+      "avg_bl_offset_s": 46.9,
+      "stddev_bl_offset_s": 0,
       "avg_uses": 1.5,
       "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.312,
-        "stddev": 0.078,
+        "avg": 0.311,
+        "stddev": 0.077,
         "min": 0.173,
-        "max": 0.413
+        "max": 0.405
       },
-      "bl_pct": 0,
+      "bl_pct": 10,
       "majority_hold": false,
       "hold_targets": {
         "2": {
           "target_s": 308,
           "stddev_s": 19,
+          "delay_s": 48.2,
+          "delay_stddev_s": 17,
+          "band_s": 17,
+          "effective_cd_s": 180,
           "count": 5,
           "total_samples": 10
         }
@@ -37,19 +41,19 @@
     },
     "Convoke the Spirits": {
       "sample_count": 10,
-      "avg_first_cast_s": 18.8,
-      "stddev_first_cast_s": 27.6,
-      "avg_gap_s": 67.4,
+      "avg_first_cast_s": 19,
+      "stddev_first_cast_s": 27.5,
+      "avg_gap_s": 67.6,
       "stddev_gap_s": 24.2,
-      "avg_bl_offset_s": 6.1,
-      "stddev_bl_offset_s": 3,
+      "avg_bl_offset_s": 6.3,
+      "stddev_bl_offset_s": 3.3,
       "avg_uses": 5,
-      "avg_uses_per_min": 0.96,
+      "avg_uses_per_min": 0.95,
       "uses_per_min": {
-        "avg": 0.955,
-        "stddev": 0.204,
+        "avg": 0.953,
+        "stddev": 0.201,
         "min": 0.519,
-        "max": 1.238
+        "max": 1.214
       },
       "bl_pct": 60,
       "majority_hold": false,
@@ -77,21 +81,21 @@
     },
     "Innervate": {
       "sample_count": 10,
-      "avg_first_cast_s": 109.6,
-      "stddev_first_cast_s": 137.6,
+      "avg_first_cast_s": 123.9,
+      "stddev_first_cast_s": 124.9,
       "avg_gap_s": 188.4,
       "stddev_gap_s": 0,
-      "avg_bl_offset_s": 23.2,
-      "stddev_bl_offset_s": 32.5,
+      "avg_bl_offset_s": 46.2,
+      "stddev_bl_offset_s": 0,
       "avg_uses": 0.5,
       "avg_uses_per_min": 0.11,
       "uses_per_min": {
-        "avg": 0.267,
-        "stddev": 0.122,
+        "avg": 0.265,
+        "stddev": 0.118,
         "min": 0.161,
-        "max": 0.413
+        "max": 0.405
       },
-      "bl_pct": 20,
+      "bl_pct": 10,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -273,6 +277,6 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "a19fa969037dc5bb",
-  "ingest_version": 1
+  "source_signature": "1ff9ec87f2d4696e",
+  "ingest_version": 2
 }

@@ -6,204 +6,82 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 80,
-      "stddev_first_cast_s": 66.6,
-      "avg_gap_s": 122.2,
-      "stddev_gap_s": 67.3,
+      "avg_first_cast_s": 103.8,
+      "stddev_first_cast_s": 73,
+      "avg_gap_s": 139.2,
+      "stddev_gap_s": 83.7,
       "hold_targets": {
         "1": {
-          "target_s": 248.7,
-          "stddev_s": 59.2,
-          "count": 5,
+          "target_s": 286.8,
+          "stddev_s": 135.7,
+          "count": 6,
           "total_samples": 9
         },
         "2": {
-          "target_s": 329.7,
-          "stddev_s": 137.5,
-          "count": 7,
+          "target_s": 344.2,
+          "stddev_s": 114.7,
+          "count": 6,
           "total_samples": 9
         },
         "3": {
-          "target_s": 379,
-          "stddev_s": 112.8,
-          "count": 6,
+          "target_s": 429.1,
+          "stddev_s": 97.1,
+          "count": 5,
           "total_samples": 9
         }
       },
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.45,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.452,
-        "stddev": 0.154,
-        "min": 0.218,
-        "max": 0.728
+        "avg": 0.394,
+        "stddev": 0.134,
+        "min": 0.209,
+        "max": 0.559
       },
       "majority_hold": true
     },
     "Ironbark": {
       "sample_count": 9,
-      "avg_first_cast_s": 236.3,
-      "stddev_first_cast_s": 199.5,
-      "avg_gap_s": 156.1,
-      "stddev_gap_s": 48.4,
+      "avg_first_cast_s": 247.8,
+      "stddev_first_cast_s": 194.4,
+      "avg_gap_s": 161.2,
+      "stddev_gap_s": 51.7,
       "hold_targets": {
         "1": {
-          "target_s": 271.6,
+          "target_s": 271.8,
           "stddev_s": 119.4,
           "count": 6,
           "total_samples": 9
+        },
+        "2": {
+          "target_s": 328.7,
+          "stddev_s": 121.5,
+          "count": 4,
+          "total_samples": 9
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.26,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.26,
-        "stddev": 0.139,
+        "avg": 0.249,
+        "stddev": 0.128,
         "min": 0.104,
         "max": 0.423
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 211,
-      "dmg_avg": 509791,
-      "dmg_stddev": 114604,
-      "dmg_min": 392575,
-      "dmg_max": 668204,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 234855,
-          "min_damage": 198826,
-          "max_damage": 262421,
-          "count": 5
-        },
-        {
-          "spell_id": 1281473,
-          "avg_damage": 192508,
-          "min_damage": 118039,
-          "max_damage": 359035,
-          "count": 5
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 82428,
-          "min_damage": 46748,
-          "max_damage": 115505,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 329.2,
-      "dmg_avg": 666337,
-      "dmg_stddev": 124710,
-      "dmg_min": 493791,
-      "dmg_max": 790486,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 230083,
-          "min_damage": 161037,
-          "max_damage": 273937,
-          "count": 6
-        },
-        {
-          "spell_id": 1281123,
-          "avg_damage": 134055,
-          "min_damage": 107531,
-          "max_damage": 145423,
-          "count": 6
-        },
-        {
-          "spell_id": 1281178,
-          "avg_damage": 124854,
-          "min_damage": 86025,
-          "max_damage": 217982,
-          "count": 6
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 123217,
-          "min_damage": 108027,
-          "max_damage": 134092,
-          "count": 5
-        },
-        {
-          "spell_id": 1254257,
-          "avg_damage": 58067,
-          "min_damage": 54458,
-          "max_damage": 61253,
-          "count": 4
-        },
-        {
-          "spell_id": 1254644,
-          "avg_damage": 35409,
-          "min_damage": 22873,
-          "max_damage": 42623,
-          "count": 6
-        }
-      ]
-    },
-    {
-      "time_s": 561.4,
-      "dmg_avg": 969929,
-      "dmg_stddev": 314515,
-      "dmg_min": 603313,
-      "dmg_max": 1347771,
-      "window_length_s": 8.9,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 942579,
-          "min_damage": 603313,
-          "max_damage": 1347771,
-          "count": 4
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 4.2,
+      "avg_uses": 3.7,
       "min_uses": 2,
-      "max_uses": 7
+      "max_uses": 5
     },
     {
       "spell_id": 102342,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -264,36 +142,8 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
-    },
-    "1249797": {
-      "icon": "spell_holy_elunesgrace",
-      "name": "Shattered Sky"
-    },
-    "1254257": {
-      "icon": "spell_holy_purifyingpower",
-      "name": "Tears of L'ura"
-    },
-    "1254398": {
-      "icon": "inv_jewelcrafting_dawnstone_02",
-      "name": "Glimmering"
-    },
-    "1254644": {
-      "icon": "ability_bossgorefiend_touchofdoom",
-      "name": "Thunderous Well"
-    },
-    "1281123": {
-      "icon": "inv_112_raiddimensius_blackhole",
-      "name": "Dark Meltdown"
-    },
-    "1281178": {
-      "icon": "ability_thunderking_thunderstruck",
-      "name": "Criticality"
-    },
-    "1281473": {
-      "icon": "inv_12_profession_enchanting_spellboundshatterer",
-      "name": "Starsplinter"
     }
   },
-  "source_signature": "6af9e9e949147739",
-  "ingest_version": 1
+  "source_signature": "13b37b81e4137192",
+  "ingest_version": 2
 }

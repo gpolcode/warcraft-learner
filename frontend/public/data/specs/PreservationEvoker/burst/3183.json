@@ -3,7 +3,77 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "windows": [],
+  "windows": [
+    {
+      "time_s": 498.5,
+      "dmg_avg": 37729282,
+      "dmg_stddev": 4701724,
+      "dmg_min": 30201121,
+      "dmg_max": 44790622,
+      "common_cds": [
+        "Tip the Scales",
+        "Stasis",
+        "Rewind"
+      ],
+      "window_length_s": 67.2,
+      "ability_breakdown": [
+        {
+          "spell_id": 1292446,
+          "avg_damage": 29846623,
+          "min_damage": 22676234,
+          "max_damage": 32011070,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 356995,
+          "avg_damage": 3558341,
+          "min_damage": 2575957,
+          "max_damage": 5807368,
+          "count": 6,
+          "avg_casts": 10,
+          "is_passive": false
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 2360325,
+          "min_damage": 868911,
+          "max_damage": 5881099,
+          "count": 6,
+          "avg_casts": 6,
+          "is_passive": false
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 1092251,
+          "min_damage": 505093,
+          "max_damage": 1344817,
+          "count": 6,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 444017,
+          "avg_damage": 651411,
+          "min_damage": 508661,
+          "max_damage": 771737,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1265980,
+          "avg_damage": 342685,
+          "min_damage": 191798,
+          "max_damage": 440667,
+          "count": 3,
+          "avg_casts": 11,
+          "is_passive": false
+        }
+      ]
+    }
+  ],
   "cd_spell_ids": {
     "Rewind": 363534,
     "Dream Flight": 359816,
@@ -17,13 +87,25 @@
     "Cauterizing Flame": 374251
   },
   "ability_icons": {
+    "356995": {
+      "icon": "ability_evoker_disintegrate",
+      "name": "Disintegrate"
+    },
     "357170": {
       "icon": "ability_evoker_timedilation",
       "name": "Time Dilation"
     },
+    "357209": {
+      "icon": "ability_evoker_firebreath",
+      "name": "Fire Breath"
+    },
     "359816": {
       "icon": "ability_evoker_dreamflight",
       "name": "Dream Flight"
+    },
+    "361500": {
+      "icon": "ability_evoker_livingflame",
+      "name": "Living Flame"
     },
     "363534": {
       "icon": "ability_evoker_rewind",
@@ -56,9 +138,21 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "444017": {
+      "icon": "inv_10_elementalcombinedfoozles_purifiedshadowflame",
+      "name": "Enkindle"
+    },
+    "1265980": {
+      "icon": "ability_evoker_infernosblessing",
+      "name": "Twin Flame"
+    },
+    "1292446": {
+      "icon": "spell_holy_aspiration",
+      "name": "The Last Light"
     }
   },
-  "source_signature": "e766f8f771412203",
-  "ingest_version": 1,
+  "source_signature": "dcc0ae155af10fed",
+  "ingest_version": 2,
   "inaccessible_parses": []
 }

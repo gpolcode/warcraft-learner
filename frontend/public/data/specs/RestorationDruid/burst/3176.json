@@ -3,7 +3,191 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "windows": [],
+  "windows": [
+    {
+      "time_s": 5.5,
+      "dmg_avg": 951831,
+      "dmg_stddev": 411696,
+      "dmg_min": 495881,
+      "dmg_max": 1602339,
+      "common_cds": [
+        "Convoke the Spirits"
+      ],
+      "window_length_s": 9.5,
+      "ability_breakdown": [
+        {
+          "spell_id": 5176,
+          "avg_damage": 443564,
+          "min_damage": 90980,
+          "max_damage": 942866,
+          "count": 8,
+          "avg_casts": 7,
+          "is_passive": false
+        },
+        {
+          "spell_id": 197626,
+          "avg_damage": 263506,
+          "min_damage": 76683,
+          "max_damage": 415914,
+          "count": 8,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 40614,
+          "min_damage": 21792,
+          "max_damage": 73298,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 191037,
+          "avg_damage": 8439,
+          "min_damage": 4731,
+          "max_damage": 12877,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
+      "time_s": 57,
+      "dmg_avg": 690985,
+      "dmg_stddev": 467403,
+      "dmg_min": 349817,
+      "dmg_max": 1768115,
+      "common_cds": [],
+      "window_length_s": 6.7,
+      "ability_breakdown": [
+        {
+          "spell_id": 197626,
+          "avg_damage": 323597,
+          "min_damage": 259835,
+          "max_damage": 435971,
+          "count": 6,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 5176,
+          "avg_damage": 130472,
+          "min_damage": 24612,
+          "max_damage": 321999,
+          "count": 7,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 26682,
+          "min_damage": 6663,
+          "max_damage": 116564,
+          "count": 8,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164815,
+          "avg_damage": 6845,
+          "min_damage": 3668,
+          "max_damage": 11415,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 137.5,
+      "dmg_avg": 903336,
+      "dmg_stddev": 591729,
+      "dmg_min": 295993,
+      "dmg_max": 2079632,
+      "common_cds": [],
+      "window_length_s": 7.3,
+      "ability_breakdown": [
+        {
+          "spell_id": 197628,
+          "avg_damage": 519486,
+          "min_damage": 48056,
+          "max_damage": 1073737,
+          "count": 7,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 197626,
+          "avg_damage": 180344,
+          "min_damage": 62702,
+          "max_damage": 338775,
+          "count": 7,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 5176,
+          "avg_damage": 136737,
+          "min_damage": 817,
+          "max_damage": 432957,
+          "count": 6,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 27233,
+          "min_damage": 6836,
+          "max_damage": 51901,
+          "count": 10,
+          "avg_casts": 0,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 176,
+      "dmg_avg": 451313,
+      "dmg_stddev": 105649,
+      "dmg_min": 335616,
+      "dmg_max": 572109,
+      "common_cds": [
+        "Convoke the Spirits"
+      ],
+      "window_length_s": 4.6,
+      "ability_breakdown": [
+        {
+          "spell_id": 197626,
+          "avg_damage": 213536,
+          "min_damage": 143424,
+          "max_damage": 355242,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 5176,
+          "avg_damage": 135491,
+          "min_damage": 49630,
+          "max_damage": 222846,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 10143,
+          "min_damage": 6775,
+          "max_damage": 16880,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": false
+        }
+      ]
+    }
+  ],
   "cd_spell_ids": {
     "Tranquility": 740,
     "Convoke the Spirits": 391528,
@@ -19,6 +203,10 @@
     "740": {
       "icon": "spell_nature_tranquility",
       "name": "Tranquility"
+    },
+    "5176": {
+      "icon": "spell_nature_wrathv2",
+      "name": "Wrath"
     },
     "22812": {
       "icon": "spell_nature_stoneclawtotem",
@@ -44,6 +232,26 @@
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
     },
+    "164812": {
+      "icon": "spell_nature_starfall",
+      "name": "Moonfire"
+    },
+    "164815": {
+      "icon": "ability_mage_firestarter",
+      "name": "Sunfire"
+    },
+    "191037": {
+      "icon": "ability_druid_starfall",
+      "name": "Starfall"
+    },
+    "197626": {
+      "icon": "spell_arcane_arcane03",
+      "name": "Starsurge"
+    },
+    "197628": {
+      "icon": "spell_arcane_starfire",
+      "name": "Starfire"
+    },
     "197721": {
       "icon": "spell_druid_wildburst",
       "name": "Flourish"
@@ -53,7 +261,7 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "92f55db1a74831dd",
-  "ingest_version": 1,
+  "source_signature": "e56cad6d5b03c1a5",
+  "ingest_version": 2,
   "inaccessible_parses": []
 }

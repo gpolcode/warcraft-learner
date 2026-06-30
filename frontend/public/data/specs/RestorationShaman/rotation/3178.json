@@ -3,33 +3,37 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 342.1,
-  "downtime_threshold_ms": 2639,
-  "top_avg_efficiency": 70.7,
-  "top_efficiency_stddev": 9.2,
+  "avg_duration_s": 342.3,
+  "downtime_threshold_ms": 2671,
+  "top_avg_efficiency": 70.2,
+  "top_efficiency_stddev": 10.1,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
-      "avg_first_cast_s": 61,
-      "stddev_first_cast_s": 44.6,
-      "avg_gap_s": 205,
-      "stddev_gap_s": 12.6,
-      "avg_bl_offset_s": 28.2,
-      "stddev_bl_offset_s": 16,
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.3,
+      "avg_first_cast_s": 49.3,
+      "stddev_first_cast_s": 27.7,
+      "avg_gap_s": 202.8,
+      "stddev_gap_s": 14,
+      "avg_bl_offset_s": 29.1,
+      "stddev_bl_offset_s": 16.5,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.333,
-        "stddev": 0.082,
-        "min": 0.148,
-        "max": 0.42
+        "avg": 0.353,
+        "stddev": 0.043,
+        "min": 0.297,
+        "max": 0.41
       },
       "bl_pct": 40,
       "majority_hold": true,
       "hold_targets": {
         "2": {
           "target_s": 245.4,
-          "stddev_s": 22.6,
+          "stddev_s": 24.4,
+          "delay_s": 22,
+          "delay_stddev_s": 14,
+          "band_s": 14,
+          "effective_cd_s": 180,
           "count": 8,
           "total_samples": 10
         }
@@ -57,75 +61,43 @@
     },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 131.3,
-      "stddev_first_cast_s": 92.8,
-      "avg_gap_s": 223.1,
-      "stddev_gap_s": 40,
+      "avg_first_cast_s": 156.8,
+      "stddev_first_cast_s": 104.1,
+      "avg_gap_s": 218,
+      "stddev_gap_s": 47.2,
       "avg_bl_offset_s": 37.1,
       "stddev_bl_offset_s": 0,
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.28,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.279,
-        "stddev": 0.08,
-        "min": 0.17,
-        "max": 0.42
+        "avg": 0.262,
+        "stddev": 0.084,
+        "min": 0.155,
+        "max": 0.394
       },
       "bl_pct": 10,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 308.4,
-          "stddev_s": 32.2,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Nature's Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 28.5,
-      "stddev_first_cast_s": 15.5,
-      "avg_gap_s": 68.5,
-      "stddev_gap_s": 14.9,
-      "avg_bl_offset_s": 26.6,
-      "stddev_bl_offset_s": 15.9,
-      "avg_uses": 5,
-      "avg_uses_per_min": 0.87,
+      "avg_first_cast_s": 35.9,
+      "stddev_first_cast_s": 27.6,
+      "avg_gap_s": 73.1,
+      "stddev_gap_s": 37.2,
+      "avg_bl_offset_s": 26.9,
+      "stddev_bl_offset_s": 17,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.82,
       "uses_per_min": {
-        "avg": 0.873,
-        "stddev": 0.119,
-        "min": 0.636,
+        "avg": 0.825,
+        "stddev": 0.213,
+        "min": 0.309,
         "max": 1.02
       },
-      "bl_pct": 90,
-      "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 168.7,
-          "stddev_s": 37.9,
-          "count": 7,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 232.7,
-          "stddev_s": 25.6,
-          "count": 7,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 287,
-          "stddev_s": 37.3,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 336.5,
-          "stddev_s": 21.1,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "bl_pct": 80,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Ancestral Swiftness": {
       "sample_count": 10,
@@ -149,19 +121,19 @@
     },
     "Spiritwalker's Grace": {
       "sample_count": 10,
-      "avg_first_cast_s": 90.4,
-      "stddev_first_cast_s": 62.2,
-      "avg_gap_s": 67.2,
-      "stddev_gap_s": 51.6,
-      "avg_bl_offset_s": 36.8,
-      "stddev_bl_offset_s": 3.6,
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.51,
+      "avg_first_cast_s": 81.1,
+      "stddev_first_cast_s": 56.3,
+      "avg_gap_s": 81.1,
+      "stddev_gap_s": 55.2,
+      "avg_bl_offset_s": 39.2,
+      "stddev_bl_offset_s": 2.6,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.563,
-        "stddev": 0.398,
+        "avg": 0.485,
+        "stddev": 0.294,
         "min": 0.159,
-        "max": 1.261
+        "max": 1.041
       },
       "bl_pct": 40,
       "majority_hold": false,
@@ -315,6 +287,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "2268fbdc1a7e71b6",
-  "ingest_version": 1
+  "source_signature": "d00dbbdc150856ac",
+  "ingest_version": 2
 }

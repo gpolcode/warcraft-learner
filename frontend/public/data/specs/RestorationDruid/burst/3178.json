@@ -3,7 +3,149 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "windows": [],
+  "windows": [
+    {
+      "time_s": 7,
+      "dmg_avg": 877502,
+      "dmg_stddev": 242650,
+      "dmg_min": 655079,
+      "dmg_max": 1297603,
+      "common_cds": [],
+      "window_length_s": 14.1,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 533702,
+          "min_damage": 379557,
+          "max_damage": 626123,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 143833,
+          "min_damage": 29675,
+          "max_damage": 384667,
+          "count": 6,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 68496,
+          "min_damage": 30173,
+          "max_damage": 121382,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 54329,
+          "min_damage": 19383,
+          "max_damage": 102925,
+          "count": 6,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 440122,
+          "avg_damage": 37619,
+          "min_damage": 6936,
+          "max_damage": 79458,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
+      "time_s": 168,
+      "dmg_avg": 526368,
+      "dmg_stddev": 273149,
+      "dmg_min": 233643,
+      "dmg_max": 967177,
+      "common_cds": [],
+      "window_length_s": 11.1,
+      "ability_breakdown": [
+        {
+          "spell_id": 274838,
+          "avg_damage": 320203,
+          "min_damage": 197596,
+          "max_damage": 384301,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 5176,
+          "avg_damage": 82026,
+          "min_damage": 22199,
+          "max_damage": 135136,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1079,
+          "avg_damage": 74550,
+          "min_damage": 36774,
+          "max_damage": 152876,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 24449,
+          "min_damage": 7172,
+          "max_damage": 51740,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 208,
+      "dmg_avg": 271934,
+      "dmg_stddev": 209030,
+      "dmg_min": 127180,
+      "dmg_max": 686593,
+      "common_cds": [],
+      "window_length_s": 5.3,
+      "ability_breakdown": [
+        {
+          "spell_id": 5176,
+          "avg_damage": 80864,
+          "min_damage": 52266,
+          "max_damage": 126774,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 164812,
+          "avg_damage": 27248,
+          "min_damage": 9808,
+          "max_damage": 45177,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 155722,
+          "avg_damage": 10854,
+          "min_damage": 5250,
+          "max_damage": 19147,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": false
+        }
+      ]
+    }
+  ],
   "cd_spell_ids": {
     "Tranquility": 740,
     "Convoke the Spirits": 391528,
@@ -19,6 +161,14 @@
     "740": {
       "icon": "spell_nature_tranquility",
       "name": "Tranquility"
+    },
+    "1079": {
+      "icon": "ability_ghoulfrenzy",
+      "name": "Rip"
+    },
+    "5176": {
+      "icon": "spell_nature_wrathv2",
+      "name": "Wrath"
     },
     "22812": {
       "icon": "spell_nature_stoneclawtotem",
@@ -44,16 +194,32 @@
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
     },
+    "155722": {
+      "icon": "ability_druid_disembowel",
+      "name": "Rake"
+    },
+    "164812": {
+      "icon": "spell_nature_starfall",
+      "name": "Moonfire"
+    },
     "197721": {
       "icon": "spell_druid_wildburst",
       "name": "Flourish"
     },
+    "274838": {
+      "icon": "ability_druid_rake",
+      "name": "Feral Frenzy"
+    },
     "391528": {
       "icon": "inv_ability_druid_convokethespirits",
       "name": "Convoke the Spirits"
+    },
+    "440122": {
+      "icon": "inv_misc_thornnecklace",
+      "name": "Bursting Growth"
     }
   },
-  "source_signature": "771e101d2d8f3257",
-  "ingest_version": 1,
+  "source_signature": "ed45aaf1cdb25d42",
+  "ingest_version": 2,
   "inaccessible_parses": []
 }
