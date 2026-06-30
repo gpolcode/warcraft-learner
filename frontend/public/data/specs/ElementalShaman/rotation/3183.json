@@ -45,8 +45,39 @@
         "max": 1.216
       },
       "bl_pct": 90,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "5": {
+          "target_s": 258.1,
+          "stddev_s": 0.5,
+          "delay_s": 14.9,
+          "delay_stddev_s": 1.1,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 9,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 379.8,
+          "stddev_s": 1.4,
+          "delay_s": 14.4,
+          "delay_stddev_s": 2.6,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 7,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 502,
+          "stddev_s": 3.6,
+          "delay_s": 14.9,
+          "delay_stddev_s": 4.1,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Ancestral Swiftness": {
       "sample_count": 10,
@@ -274,6 +305,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "986fcab8ebe73218",
-  "ingest_version": 1
+  "source_signature": "dd6d496863fcaa18",
+  "ingest_version": 2
 }

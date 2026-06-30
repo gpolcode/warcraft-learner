@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival Instincts": {
-      "sample_count": 7,
-      "avg_first_cast_s": 146.1,
-      "stddev_first_cast_s": 50.2,
+      "sample_count": 6,
+      "avg_first_cast_s": 136.4,
+      "stddev_first_cast_s": 47.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.272,
-        "stddev": 0.051,
+        "avg": 0.271,
+        "stddev": 0.055,
         "min": 0.218,
         "max": 0.365
       },
@@ -23,16 +23,16 @@
     },
     "Frenzied Regeneration": {
       "sample_count": 6,
-      "avg_first_cast_s": 108.6,
-      "stddev_first_cast_s": 60.7,
+      "avg_first_cast_s": 112,
+      "stddev_first_cast_s": 59.7,
       "avg_gap_s": 12.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.2,
-      "avg_uses_per_min": 0.31,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.312,
-        "stddev": 0.075,
+        "avg": 0.316,
+        "stddev": 0.074,
         "min": 0.218,
         "max": 0.443
       },
@@ -40,23 +40,16 @@
     },
     "Barkskin": {
       "sample_count": 8,
-      "avg_first_cast_s": 90.8,
-      "stddev_first_cast_s": 26.8,
-      "avg_gap_s": 99,
-      "stddev_gap_s": 43.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 195.4,
-          "stddev_s": 30.8,
-          "count": 4,
-          "total_samples": 8
-        }
-      },
+      "avg_first_cast_s": 93.4,
+      "stddev_first_cast_s": 27.4,
+      "avg_gap_s": 97.3,
+      "stddev_gap_s": 44.7,
+      "hold_targets": {},
       "avg_uses": 1.8,
       "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.469,
-        "stddev": 0.146,
+        "avg": 0.475,
+        "stddev": 0.151,
         "min": 0.245,
         "max": 0.665
       },
@@ -65,11 +58,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 95.3,
-      "dmg_avg": 449233,
-      "dmg_stddev": 92132,
-      "dmg_min": 334393,
+      "time_s": 108.1,
+      "dmg_avg": 422729,
+      "dmg_stddev": 199672,
+      "dmg_min": 76264,
       "dmg_max": 591803,
+      "dmg_pct_avg": 0.068,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -83,57 +77,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 455808,
+          "avg_damage": 458979,
           "min_damage": 347728,
           "max_damage": 538003,
-          "count": 3
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 170204,
-          "min_damage": 141084,
-          "max_damage": 184917,
-          "count": 3
-        },
-        {
-          "spell_id": 1285504,
-          "avg_damage": 167424,
-          "min_damage": 53800,
-          "max_damage": 261588,
           "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 108.1,
-      "dmg_avg": 170164,
-      "dmg_stddev": 44726,
-      "dmg_min": 135783,
-      "dmg_max": 235896,
-      "window_length_s": 6,
-      "defensive_name": "Survival Instincts",
-      "spell_id": 61336,
-      "common_defensives": [
-        "Survival Instincts"
-      ],
-      "common_cds": [
-        "Survival Instincts"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245592,
-          "avg_damage": 116105,
-          "min_damage": 84544,
-          "max_damage": 147666,
-          "count": 2
-        },
-        {
-          "spell_id": 1254018,
-          "avg_damage": 98608,
-          "min_damage": 51239,
-          "max_damage": 156356,
-          "count": 3
         }
       ]
     }
@@ -215,23 +162,11 @@
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
     },
-    "1245592": {
-      "icon": "inv_cosmicvoid_groundsate",
-      "name": "Torturous Extract"
-    },
-    "1250686": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Twisting Obscurity"
-    },
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
-    },
-    "1285504": {
-      "icon": "inv_enchant_essencecosmicgreater",
-      "name": "Dark Radiation"
     }
   },
-  "source_signature": "1745e7e6f8b137ae",
-  "ingest_version": 1
+  "source_signature": "4fc755918c5d672e",
+  "ingest_version": 2
 }

@@ -6,16 +6,23 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 7,
-      "avg_first_cast_s": 231.7,
-      "stddev_first_cast_s": 102.6,
-      "avg_gap_s": 154.9,
-      "stddev_gap_s": 76.2,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.24,
+      "avg_first_cast_s": 218.4,
+      "stddev_first_cast_s": 106.7,
+      "avg_gap_s": 143.5,
+      "stddev_gap_s": 46.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 284.2,
+          "stddev_s": 24.5,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.239,
-        "stddev": 0.119,
+        "avg": 0.269,
+        "stddev": 0.133,
         "min": 0.135,
         "max": 0.415
       },
@@ -23,77 +30,29 @@
     },
     "Earth Elemental": {
       "sample_count": 3,
-      "avg_first_cast_s": 187.7,
-      "stddev_first_cast_s": 106.9,
+      "avg_first_cast_s": 263,
+      "stddev_first_cast_s": 51.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.19,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.188,
-        "stddev": 0.019,
-        "min": 0.166,
+        "avg": 0.168,
+        "stddev": 0.032,
+        "min": 0.137,
         "max": 0.2
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 244.8,
-      "dmg_avg": 559277,
-      "dmg_stddev": 249590,
-      "dmg_min": 389276,
-      "dmg_max": 924089,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 242056,
-      "ability_breakdown": [
-        {
-          "spell_id": 1285954,
-          "avg_damage": 180483,
-          "min_damage": 148847,
-          "max_damage": 254644,
-          "count": 4
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 142120,
-          "min_damage": 104753,
-          "max_damage": 209693,
-          "count": 3
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 141606,
-          "min_damage": 73263,
-          "max_damage": 207156,
-          "count": 4
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 114637,
-          "min_damage": 78397,
-          "max_damage": 188755,
-          "count": 4
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.3,
+      "avg_uses": 1.6,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     },
     {
       "spell_id": 198103,
@@ -158,24 +117,8 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
-    },
-    "1245175": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Voidbolt"
-    },
-    "1245302": {
-      "icon": "inv_cosmicvoid_orb",
-      "name": "Void Howl"
-    },
-    "1259275": {
-      "icon": "inv_cosmicvoid_buff",
-      "name": "Midnight Manifestation"
-    },
-    "1285954": {
-      "icon": "spell_priest_void-blast",
-      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "ee2610852d5077e4",
-  "ingest_version": 1
+  "source_signature": "8be8c44c7ea169d1",
+  "ingest_version": 2
 }

@@ -65,63 +65,8 @@
         "max": 2.117
       },
       "bl_pct": 80,
-      "majority_hold": true,
-      "hold_targets": {
-        "5": {
-          "target_s": 131.9,
-          "stddev_s": 3.1,
-          "count": 4,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 165.1,
-          "stddev_s": 3.9,
-          "count": 5,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 195.1,
-          "stddev_s": 4.8,
-          "count": 5,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 225.1,
-          "stddev_s": 4.6,
-          "count": 7,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 261.3,
-          "stddev_s": 7.5,
-          "count": 9,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 291.4,
-          "stddev_s": 8.5,
-          "count": 8,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 322.8,
-          "stddev_s": 8,
-          "count": 8,
-          "total_samples": 10
-        },
-        "12": {
-          "target_s": 353,
-          "stddev_s": 8.1,
-          "count": 6,
-          "total_samples": 10
-        },
-        "13": {
-          "target_s": 389,
-          "stddev_s": 6.3,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Convoke the Spirits": {
       "sample_count": 10,
@@ -142,15 +87,13 @@
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 134.1,
-          "stddev_s": 20.1,
-          "count": 4,
-          "total_samples": 10
-        },
         "3": {
           "target_s": 267.7,
           "stddev_s": 22.8,
+          "delay_s": 14.4,
+          "delay_stddev_s": 10.9,
+          "band_s": 10.9,
+          "effective_cd_s": 120,
           "count": 9,
           "total_samples": 10
         }
@@ -347,6 +290,6 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "a7849cdaa0084ff7",
-  "ingest_version": 1
+  "source_signature": "9e1c95116057958a",
+  "ingest_version": 2
 }
