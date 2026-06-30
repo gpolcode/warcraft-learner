@@ -3,24 +3,24 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 294.7,
-  "downtime_threshold_ms": 1559,
-  "top_avg_efficiency": 75.3,
-  "top_efficiency_stddev": 3.4,
+  "avg_duration_s": 292.7,
+  "downtime_threshold_ms": 1552,
+  "top_avg_efficiency": 75.1,
+  "top_efficiency_stddev": 2.8,
   "per_cd_benchmarks": {
     "Shadow Blades": {
       "sample_count": 10,
-      "avg_first_cast_s": 3,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 103.7,
-      "stddev_gap_s": 12,
-      "avg_bl_offset_s": 2.1,
-      "stddev_bl_offset_s": 1.7,
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.73,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 102.2,
+      "stddev_gap_s": 12.1,
+      "avg_bl_offset_s": 1.7,
+      "stddev_bl_offset_s": 0.7,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.75,
       "uses_per_min": {
-        "avg": 0.727,
-        "stddev": 0.084,
+        "avg": 0.754,
+        "stddev": 0.089,
         "min": 0.65,
         "max": 0.931
       },
@@ -28,39 +28,41 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 102.9,
-          "stddev_s": 2.7,
-          "count": 7,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 224.7,
-          "stddev_s": 14.8,
+          "target_s": 103.1,
+          "stddev_s": 1.6,
+          "delay_s": 11.2,
+          "delay_stddev_s": 1.4,
+          "band_s": 5,
+          "effective_cd_s": 90,
           "count": 8,
           "total_samples": 10
         },
-        "4": {
-          "target_s": 319.8,
-          "stddev_s": 15.7,
-          "count": 5,
+        "3": {
+          "target_s": 226,
+          "stddev_s": 10.1,
+          "delay_s": 31.9,
+          "delay_stddev_s": 9.6,
+          "band_s": 9.6,
+          "effective_cd_s": 90,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Shadow Dance": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.1,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 19.3,
-      "stddev_gap_s": 7.1,
-      "avg_bl_offset_s": 2.3,
-      "stddev_bl_offset_s": 1.6,
+      "avg_first_cast_s": 2.7,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 19.1,
+      "stddev_gap_s": 7,
+      "avg_bl_offset_s": 1.7,
+      "stddev_bl_offset_s": 0.8,
       "avg_uses": 15.8,
-      "avg_uses_per_min": 3.24,
+      "avg_uses_per_min": 3.26,
       "uses_per_min": {
-        "avg": 3.241,
-        "stddev": 0.147,
-        "min": 2.979,
+        "avg": 3.261,
+        "stddev": 0.123,
+        "min": 3.086,
         "max": 3.469
       },
       "bl_pct": 100,
@@ -69,18 +71,18 @@
     },
     "Secret Technique": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.2,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 20.1,
-      "stddev_gap_s": 5.1,
-      "avg_bl_offset_s": 2.3,
-      "stddev_bl_offset_s": 1.6,
-      "avg_uses": 15.1,
-      "avg_uses_per_min": 3.09,
+      "avg_first_cast_s": 2.7,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 20,
+      "stddev_gap_s": 4.9,
+      "avg_bl_offset_s": 1.8,
+      "stddev_bl_offset_s": 0.8,
+      "avg_uses": 15,
+      "avg_uses_per_min": 3.08,
       "uses_per_min": {
-        "avg": 3.087,
-        "stddev": 0.153,
-        "min": 2.813,
+        "avg": 3.081,
+        "stddev": 0.124,
+        "min": 2.923,
         "max": 3.356
       },
       "bl_pct": 100,
@@ -89,30 +91,23 @@
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.8,
-      "stddev_first_cast_s": 12.5,
-      "avg_gap_s": 145.5,
-      "stddev_gap_s": 51.6,
-      "avg_bl_offset_s": 14,
-      "stddev_bl_offset_s": 12.7,
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.46,
+      "avg_first_cast_s": 14.7,
+      "stddev_first_cast_s": 13.7,
+      "avg_gap_s": 135.6,
+      "stddev_gap_s": 26.8,
+      "avg_bl_offset_s": 13.8,
+      "stddev_bl_offset_s": 13.9,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.461,
-        "stddev": 0.123,
+        "avg": 0.482,
+        "stddev": 0.122,
         "min": 0.177,
         "max": 0.621
       },
       "bl_pct": 100,
-      "majority_hold": true,
-      "hold_targets": {
-        "2": {
-          "target_s": 166,
-          "stddev_s": 65.9,
-          "count": 6,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -273,6 +268,6 @@
       "name": "Secret Technique"
     }
   },
-  "source_signature": "83b95867247dea5f",
-  "ingest_version": 1
+  "source_signature": "1d0f787e0ee7ed2c",
+  "ingest_version": 2
 }

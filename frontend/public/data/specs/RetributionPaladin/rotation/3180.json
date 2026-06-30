@@ -26,14 +26,7 @@
       },
       "bl_pct": 60,
       "majority_hold": true,
-      "hold_targets": {
-        "7": {
-          "target_s": 376.9,
-          "stddev_s": 3.9,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Execution Sentence": {
       "sample_count": 10,
@@ -57,37 +50,51 @@
         "2": {
           "target_s": 63.5,
           "stddev_s": 1.4,
+          "delay_s": 31.2,
+          "delay_stddev_s": 0.9,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 125.2,
           "stddev_s": 2.1,
+          "delay_s": 30.4,
+          "delay_stddev_s": 2,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 186.1,
           "stddev_s": 2.1,
+          "delay_s": 30.8,
+          "delay_stddev_s": 0.9,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 10,
           "total_samples": 10
         },
         "5": {
           "target_s": 248.3,
           "stddev_s": 6,
+          "delay_s": 32.4,
+          "delay_stddev_s": 5.9,
+          "band_s": 5.9,
+          "effective_cd_s": 30,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 311.6,
           "stddev_s": 9.7,
+          "delay_s": 31.6,
+          "delay_stddev_s": 5.9,
+          "band_s": 5.9,
+          "effective_cd_s": 30,
           "count": 7,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 380.4,
-          "stddev_s": 3.2,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -110,32 +117,7 @@
       },
       "bl_pct": 60,
       "majority_hold": true,
-      "hold_targets": {
-        "9": {
-          "target_s": 254,
-          "stddev_s": 6.1,
-          "count": 5,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 284.9,
-          "stddev_s": 5.7,
-          "count": 5,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 326.9,
-          "stddev_s": 7.1,
-          "count": 4,
-          "total_samples": 10
-        },
-        "13": {
-          "target_s": 379.4,
-          "stddev_s": 5.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Divine Toll": {
       "sample_count": 10,
@@ -154,21 +136,8 @@
         "max": 1.861
       },
       "bl_pct": 60,
-      "majority_hold": true,
-      "hold_targets": {
-        "5": {
-          "target_s": 256,
-          "stddev_s": 5.8,
-          "count": 4,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 384.6,
-          "stddev_s": 3,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Crusade": {
       "sample_count": 10,
@@ -402,6 +371,6 @@
       "name": "Divine Toll"
     }
   },
-  "source_signature": "c0f06bc19ccc2fe6",
-  "ingest_version": 1
+  "source_signature": "962565cdedca8818",
+  "ingest_version": 2
 }

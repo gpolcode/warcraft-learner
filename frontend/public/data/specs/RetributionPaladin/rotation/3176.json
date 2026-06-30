@@ -25,11 +25,15 @@
         "max": 1.179
       },
       "bl_pct": 80,
-      "majority_hold": true,
+      "majority_hold": false,
       "hold_targets": {
         "3": {
           "target_s": 138.3,
           "stddev_s": 1.5,
+          "delay_s": 15.6,
+          "delay_stddev_s": 1.8,
+          "band_s": 5,
+          "effective_cd_s": 60,
           "count": 5,
           "total_samples": 10
         }
@@ -57,18 +61,30 @@
         "2": {
           "target_s": 62.6,
           "stddev_s": 0.6,
+          "delay_s": 30.6,
+          "delay_stddev_s": 0.7,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 9,
           "total_samples": 10
         },
         "3": {
           "target_s": 136.3,
           "stddev_s": 7.1,
+          "delay_s": 43,
+          "delay_stddev_s": 7.1,
+          "band_s": 7.1,
+          "effective_cd_s": 30,
           "count": 9,
           "total_samples": 10
         },
         "4": {
           "target_s": 187.4,
           "stddev_s": 6.3,
+          "delay_s": 31.7,
+          "delay_stddev_s": 1.1,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 6,
           "total_samples": 10
         }
@@ -96,12 +112,10 @@
         "5": {
           "target_s": 138.8,
           "stddev_s": 1.7,
-          "count": 6,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 170.9,
-          "stddev_s": 2.3,
+          "delay_s": 13.3,
+          "delay_stddev_s": 2.1,
+          "band_s": 5,
+          "effective_cd_s": 30,
           "count": 6,
           "total_samples": 10
         }
@@ -359,6 +373,6 @@
       "name": "Divine Toll"
     }
   },
-  "source_signature": "7d4bc8a83ac9f889",
-  "ingest_version": 1
+  "source_signature": "f8a02af731dd7982",
+  "ingest_version": 2
 }
