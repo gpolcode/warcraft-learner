@@ -3,55 +3,48 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 221.1,
-  "downtime_threshold_ms": 2506,
-  "top_avg_efficiency": 75.7,
-  "top_efficiency_stddev": 5.6,
+  "avg_duration_s": 214.5,
+  "downtime_threshold_ms": 2492,
+  "top_avg_efficiency": 75.6,
+  "top_efficiency_stddev": 5.3,
   "per_cd_benchmarks": {
     "Arcane Surge": {
       "sample_count": 10,
-      "avg_first_cast_s": 10.3,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 97.3,
-      "stddev_gap_s": 8.9,
-      "avg_bl_offset_s": 9.6,
-      "stddev_bl_offset_s": 2.2,
+      "avg_first_cast_s": 10,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 95.8,
+      "stddev_gap_s": 7.5,
+      "avg_bl_offset_s": 9.2,
+      "stddev_bl_offset_s": 2.1,
       "avg_uses": 2.8,
-      "avg_uses_per_min": 0.76,
+      "avg_uses_per_min": 0.78,
       "uses_per_min": {
-        "avg": 0.761,
-        "stddev": 0.101,
+        "avg": 0.783,
+        "stddev": 0.102,
         "min": 0.612,
-        "max": 0.883
+        "max": 0.884
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
-      "hold_targets": {
-        "3": {
-          "target_s": 200.8,
-          "stddev_s": 12.9,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Touch of the Magi": {
       "sample_count": 10,
-      "avg_first_cast_s": 10.6,
-      "stddev_first_cast_s": 2.3,
-      "avg_gap_s": 48.7,
-      "stddev_gap_s": 6,
-      "avg_bl_offset_s": 9.9,
+      "avg_first_cast_s": 10.3,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 48,
+      "stddev_gap_s": 4.7,
+      "avg_bl_offset_s": 9.6,
       "stddev_bl_offset_s": 2.3,
       "avg_uses": 4.9,
-      "avg_uses_per_min": 1.33,
+      "avg_uses_per_min": 1.37,
       "uses_per_min": {
-        "avg": 1.334,
-        "stddev": 0.122,
-        "min": 1.111,
-        "max": 1.472
+        "avg": 1.37,
+        "stddev": 0.1,
+        "min": 1.224,
+        "max": 1.473
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "4": {
@@ -61,9 +54,9 @@
           "total_samples": 10
         },
         "5": {
-          "target_s": 199.4,
-          "stddev_s": 11.6,
-          "count": 5,
+          "target_s": 199.2,
+          "stddev_s": 2,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -90,36 +83,23 @@
     },
     "Presence of Mind": {
       "sample_count": 10,
-      "avg_first_cast_s": 23.6,
-      "stddev_first_cast_s": 10,
-      "avg_gap_s": 61.8,
-      "stddev_gap_s": 18.2,
-      "avg_bl_offset_s": 24.3,
-      "stddev_bl_offset_s": 9.4,
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 1.05,
+      "avg_first_cast_s": 22.2,
+      "stddev_first_cast_s": 10.5,
+      "avg_gap_s": 58.9,
+      "stddev_gap_s": 14.4,
+      "avg_bl_offset_s": 24.2,
+      "stddev_bl_offset_s": 10,
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 1.1,
       "uses_per_min": {
-        "avg": 1.045,
-        "stddev": 0.25,
-        "min": 0.667,
+        "avg": 1.096,
+        "stddev": 0.214,
+        "min": 0.728,
         "max": 1.441
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 113.3,
-          "stddev_s": 7.8,
-          "count": 4,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 187.8,
-          "stddev_s": 30.1,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -273,6 +253,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "ab3fc594569b5c2b",
+  "source_signature": "a39e7359c66df5d6",
   "ingest_version": 1
 }

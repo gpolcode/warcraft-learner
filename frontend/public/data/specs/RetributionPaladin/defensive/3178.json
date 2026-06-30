@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Shield of Vengeance": {
       "sample_count": 10,
-      "avg_first_cast_s": 72.9,
-      "stddev_first_cast_s": 65.7,
-      "avg_gap_s": 94.1,
-      "stddev_gap_s": 28.1,
+      "avg_first_cast_s": 81.1,
+      "stddev_first_cast_s": 70.5,
+      "avg_gap_s": 92.9,
+      "stddev_gap_s": 27.8,
       "hold_targets": {
         "1": {
           "target_s": 170.5,
@@ -18,11 +18,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 0.56,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.558,
-        "stddev": 0.184,
+        "avg": 0.545,
+        "stddev": 0.179,
         "min": 0.15,
         "max": 0.809
       },
@@ -30,8 +30,8 @@
     },
     "Divine Shield": {
       "sample_count": 4,
-      "avg_first_cast_s": 305,
-      "stddev_first_cast_s": 1.1,
+      "avg_first_cast_s": 305.8,
+      "stddev_first_cast_s": 1.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -39,26 +39,26 @@
       "avg_uses_per_min": 0.15,
       "uses_per_min": {
         "avg": 0.153,
-        "stddev": 0.015,
-        "min": 0.135,
+        "stddev": 0.014,
+        "min": 0.137,
         "max": 0.166
       },
       "majority_hold": false
     },
     "Lay on Hands": {
-      "sample_count": 1,
-      "avg_first_cast_s": 206.4,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+      "sample_count": 2,
+      "avg_first_cast_s": 143.4,
+      "stddev_first_cast_s": 89.1,
+      "avg_gap_s": 169.9,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.16,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.162,
-        "stddev": 0,
+        "avg": 0.218,
+        "stddev": 0.078,
         "min": 0.162,
-        "max": 0.162
+        "max": 0.273
       },
       "majority_hold": false
     }
@@ -112,45 +112,12 @@
       ]
     },
     {
-      "time_s": 73.9,
-      "dmg_avg": 284615,
-      "dmg_stddev": 114697,
-      "dmg_min": 174601,
-      "dmg_max": 424421,
-      "window_length_s": 4.6,
-      "defensive_name": "Shield of Vengeance",
-      "spell_id": 184662,
-      "common_defensives": [
-        "Shield of Vengeance"
-      ],
-      "common_cds": [
-        "Shield of Vengeance"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1245302,
-          "avg_damage": 121613,
-          "min_damage": 117046,
-          "max_damage": 126180,
-          "count": 2
-        },
-        {
-          "spell_id": 1259275,
-          "avg_damage": 76994,
-          "min_damage": 62034,
-          "max_damage": 91954,
-          "count": 2
-        }
-      ]
-    },
-    {
       "time_s": 170.2,
-      "dmg_avg": 160697,
-      "dmg_stddev": 35886,
+      "dmg_avg": 167631,
+      "dmg_stddev": 44687,
       "dmg_min": 114335,
-      "dmg_max": 222029,
-      "window_length_s": 9.1,
+      "dmg_max": 240818,
+      "window_length_s": 8.3,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -163,20 +130,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 121519,
+          "avg_damage": 121302,
           "min_damage": 116837,
           "max_damage": 124033,
-          "count": 6
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 244.2,
-      "dmg_avg": 244991,
-      "dmg_stddev": 71590,
+      "time_s": 244.3,
+      "dmg_avg": 245782,
+      "dmg_stddev": 71031,
       "dmg_min": 184596,
       "dmg_max": 384225,
-      "window_length_s": 3.3,
+      "window_length_s": 2.9,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -189,15 +156,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1245302,
-          "avg_damage": 138061,
+          "avg_damage": 135621,
           "min_damage": 97058,
           "max_damage": 240148,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1285954,
-          "avg_damage": 69259,
-          "min_damage": 27443,
+          "avg_damage": 60128,
+          "min_damage": 14608,
           "max_damage": 157729,
           "count": 8
         },
@@ -211,11 +178,11 @@
       ]
     },
     {
-      "time_s": 304.9,
-      "dmg_avg": 38690,
-      "dmg_stddev": 58266,
+      "time_s": 305.8,
+      "dmg_avg": 61656,
+      "dmg_stddev": 71194,
       "dmg_min": 0,
-      "dmg_max": 123191,
+      "dmg_max": 123433,
       "window_length_s": 8,
       "defensive_name": "Divine Shield",
       "spell_id": 642,
@@ -229,20 +196,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1270513,
-          "avg_damage": 77381,
-          "min_damage": 31570,
-          "max_damage": 123191,
+          "avg_damage": 123312,
+          "min_damage": 123191,
+          "max_damage": 123433,
           "count": 2
         }
       ]
     },
     {
       "time_s": 306.5,
-      "dmg_avg": 229709,
-      "dmg_stddev": 73649,
+      "dmg_avg": 245979,
+      "dmg_stddev": 73429,
       "dmg_min": 186754,
       "dmg_max": 339678,
-      "window_length_s": 3,
+      "window_length_s": 4,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -255,10 +222,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1250071,
-          "avg_damage": 125565,
+          "avg_damage": 134360,
           "min_damage": 60560,
           "max_damage": 308272,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1245302,
@@ -270,12 +237,12 @@
       ]
     },
     {
-      "time_s": 370.8,
-      "dmg_avg": 271576,
-      "dmg_stddev": 22642,
-      "dmg_min": 241440,
-      "dmg_max": 295531,
-      "window_length_s": 2.4,
+      "time_s": 372,
+      "dmg_avg": 248819,
+      "dmg_stddev": 41703,
+      "dmg_min": 181748,
+      "dmg_max": 286571,
+      "window_length_s": 1.9,
       "defensive_name": "Shield of Vengeance",
       "spell_id": 184662,
       "common_defensives": [
@@ -288,23 +255,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1245500,
-          "avg_damage": 121960,
+          "avg_damage": 125155,
           "min_damage": 108135,
           "max_damage": 158259,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1245302,
-          "avg_damage": 119386,
+          "avg_damage": 118807,
           "min_damage": 116986,
           "max_damage": 121255,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1259275,
-          "avg_damage": 27007,
+          "avg_damage": 19097,
           "min_damage": 15125,
-          "max_damage": 62034,
+          "max_damage": 30394,
           "count": 4
         }
       ]
@@ -313,7 +280,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 184662,
-      "avg_uses": 3.7,
+      "avg_uses": 3.6,
       "min_uses": 1,
       "max_uses": 5
     },
@@ -325,9 +292,9 @@
     },
     {
       "spell_id": 633,
-      "avg_uses": 1,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -446,6 +413,6 @@
       "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "4583ba26db48137e",
+  "source_signature": "933978614457cb6e",
   "ingest_version": 1
 }

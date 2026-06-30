@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Shield of Vengeance": {
       "sample_count": 10,
-      "avg_first_cast_s": 127.7,
-      "stddev_first_cast_s": 86.6,
-      "avg_gap_s": 94.2,
-      "stddev_gap_s": 33.6,
+      "avg_first_cast_s": 108,
+      "stddev_first_cast_s": 60.1,
+      "avg_gap_s": 89.9,
+      "stddev_gap_s": 32.8,
       "hold_targets": {
         "1": {
           "target_s": 225.3,
@@ -18,63 +18,63 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.467,
-        "stddev": 0.222,
-        "min": 0.182,
+        "avg": 0.521,
+        "stddev": 0.211,
+        "min": 0.239,
         "max": 0.767
       },
       "majority_hold": false
     },
     "Divine Shield": {
       "sample_count": 10,
-      "avg_first_cast_s": 156.7,
-      "stddev_first_cast_s": 48.4,
+      "avg_first_cast_s": 153.8,
+      "stddev_first_cast_s": 48.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.217,
-        "stddev": 0.031,
-        "min": 0.182,
+        "avg": 0.223,
+        "stddev": 0.03,
+        "min": 0.185,
         "max": 0.256
       },
       "majority_hold": false
     },
     "Lay on Hands": {
-      "sample_count": 5,
-      "avg_first_cast_s": 163.6,
-      "stddev_first_cast_s": 107.6,
+      "sample_count": 4,
+      "avg_first_cast_s": 123.9,
+      "stddev_first_cast_s": 70.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.22,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.221,
-        "stddev": 0.036,
-        "min": 0.182,
+        "avg": 0.231,
+        "stddev": 0.032,
+        "min": 0.185,
         "max": 0.256
       },
       "majority_hold": false
     },
     "Blessing of Protection": {
       "sample_count": 3,
-      "avg_first_cast_s": 185.3,
-      "stddev_first_cast_s": 110.3,
+      "avg_first_cast_s": 162.1,
+      "stddev_first_cast_s": 82,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.207,
-        "stddev": 0.037,
-        "min": 0.182,
+        "avg": 0.227,
+        "stddev": 0.033,
+        "min": 0.189,
         "max": 0.25
       },
       "majority_hold": false
@@ -82,7 +82,40 @@
   },
   "defensive_windows": [
     {
-      "time_s": 123.8,
+      "time_s": 100.2,
+      "dmg_avg": 308537,
+      "dmg_stddev": 135624,
+      "dmg_min": 171197,
+      "dmg_max": 486127,
+      "window_length_s": 6.6,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 358401,
+          "min_damage": 291709,
+          "max_damage": 425092,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 55499,
+          "min_damage": 41263,
+          "max_damage": 64200,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 127.2,
       "dmg_avg": 0,
       "dmg_stddev": 0,
       "dmg_min": 0,
@@ -100,22 +133,63 @@
       "ability_breakdown": []
     },
     {
-      "time_s": 165.9,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "window_length_s": 8,
-      "defensive_name": "Divine Shield",
-      "spell_id": 642,
+      "time_s": 170.5,
+      "dmg_avg": 167803,
+      "dmg_stddev": 56706,
+      "dmg_min": 91926,
+      "dmg_max": 221015,
+      "window_length_s": 6.9,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
       "common_defensives": [
-        "Divine Shield"
+        "Shield of Vengeance"
       ],
       "common_cds": [
-        "Divine Shield"
+        "Shield of Vengeance"
       ],
-      "ref_game_id": null,
-      "ability_breakdown": []
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 71361,
+          "min_damage": 58530,
+          "max_damage": 91926,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 230.4,
+      "dmg_avg": 266161,
+      "dmg_stddev": 89926,
+      "dmg_min": 189008,
+      "dmg_max": 361382,
+      "window_length_s": 5.7,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242815,
+          "avg_damage": 195167,
+          "min_damage": 147328,
+          "max_damage": 290621,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 49129,
+          "min_damage": 41680,
+          "max_damage": 70761,
+          "count": 4
+        }
+      ]
     },
     {
       "time_s": 267.3,
@@ -154,7 +228,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 184662,
-      "avg_uses": 2.2,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -264,11 +338,19 @@
       "icon": "inv_12_dualityphoenix_lightvoid_channel",
       "name": "Voidlight Convergence"
     },
+    "1242803": {
+      "icon": "inv_ability_holyfire_wave",
+      "name": "Light Flames"
+    },
+    "1242815": {
+      "icon": "inv_cosmicvoid_wave",
+      "name": "Void Flames"
+    },
     "1264650": {
       "icon": "inv_ragnaros_heart",
       "name": "Burning Heart"
     }
   },
-  "source_signature": "31610c641964e6dd",
+  "source_signature": "8a7c5ed1bff24394",
   "ingest_version": 1
 }

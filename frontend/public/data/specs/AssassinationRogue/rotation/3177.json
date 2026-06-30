@@ -3,67 +3,54 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 217.7,
-  "downtime_threshold_ms": 1135,
-  "top_avg_efficiency": 74,
-  "top_efficiency_stddev": 4.7,
+  "avg_duration_s": 214.5,
+  "downtime_threshold_ms": 1110,
+  "top_avg_efficiency": 74.1,
+  "top_efficiency_stddev": 6.6,
   "per_cd_benchmarks": {
     "Deathmark": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.1,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 127.4,
-      "stddev_gap_s": 4.9,
-      "avg_bl_offset_s": 8.2,
-      "stddev_bl_offset_s": 2.6,
+      "avg_first_cast_s": 8.5,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 126.4,
+      "stddev_gap_s": 4.6,
+      "avg_bl_offset_s": 7.6,
+      "stddev_bl_offset_s": 1.3,
       "avg_uses": 2.1,
-      "avg_uses_per_min": 0.58,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.58,
-        "stddev": 0.031,
-        "min": 0.528,
-        "max": 0.612
+        "avg": 0.588,
+        "stddev": 0.026,
+        "min": 0.534,
+        "max": 0.615
+      },
+      "bl_pct": 90,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Kingsbane": {
+      "sample_count": 10,
+      "avg_first_cast_s": 9.5,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 62.7,
+      "stddev_gap_s": 2.9,
+      "avg_bl_offset_s": 8.6,
+      "stddev_bl_offset_s": 1.3,
+      "avg_uses": 4,
+      "avg_uses_per_min": 1.13,
+      "uses_per_min": {
+        "avg": 1.126,
+        "stddev": 0.107,
+        "min": 0.915,
+        "max": 1.229
       },
       "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {
-        "2": {
-          "target_s": 142.2,
-          "stddev_s": 5.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
-    },
-    "Kingsbane": {
-      "sample_count": 10,
-      "avg_first_cast_s": 10.1,
-      "stddev_first_cast_s": 2.2,
-      "avg_gap_s": 63,
-      "stddev_gap_s": 3.1,
-      "avg_bl_offset_s": 9.2,
-      "stddev_bl_offset_s": 2.5,
-      "avg_uses": 4,
-      "avg_uses_per_min": 1.11,
-      "uses_per_min": {
-        "avg": 1.109,
-        "stddev": 0.102,
-        "min": 0.915,
-        "max": 1.223
-      },
-      "bl_pct": 90,
-      "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 143.3,
-          "stddev_s": 5.8,
-          "count": 4,
-          "total_samples": 10
-        },
         "4": {
-          "target_s": 200.5,
-          "stddev_s": 5.4,
-          "count": 5,
+          "target_s": 199.7,
+          "stddev_s": 4.8,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -72,17 +59,17 @@
       "sample_count": 10,
       "avg_first_cast_s": 47.6,
       "stddev_first_cast_s": 58.9,
-      "avg_gap_s": 125.3,
-      "stddev_gap_s": 4.8,
-      "avg_bl_offset_s": 10.9,
+      "avg_gap_s": 123.8,
+      "stddev_gap_s": 3.2,
+      "avg_bl_offset_s": 10.8,
       "stddev_bl_offset_s": 1.5,
       "avg_uses": 1.8,
-      "avg_uses_per_min": 0.5,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.502,
-        "stddev": 0.129,
+        "avg": 0.511,
+        "stddev": 0.134,
         "min": 0.278,
-        "max": 0.612
+        "max": 0.615
       },
       "bl_pct": 60,
       "majority_hold": false,
@@ -205,6 +192,6 @@
       "name": "Kingsbane"
     }
   },
-  "source_signature": "4141d4c0774db3e6",
+  "source_signature": "dfa61fe138363e0f",
   "ingest_version": 1
 }

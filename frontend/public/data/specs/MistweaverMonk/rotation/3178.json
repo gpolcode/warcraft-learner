@@ -3,24 +3,24 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 385,
-  "downtime_threshold_ms": 1441,
-  "top_avg_efficiency": 80.7,
-  "top_efficiency_stddev": 6.9,
+  "avg_duration_s": 376.2,
+  "downtime_threshold_ms": 1406,
+  "top_avg_efficiency": 80.9,
+  "top_efficiency_stddev": 6.3,
   "per_cd_benchmarks": {
     "Thunder Focus Tea": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.1,
+      "avg_first_cast_s": 3.9,
       "stddev_first_cast_s": 6,
-      "avg_gap_s": 24,
+      "avg_gap_s": 24.1,
       "stddev_gap_s": 4,
-      "avg_bl_offset_s": 3.2,
+      "avg_bl_offset_s": 2.9,
       "stddev_bl_offset_s": 6.8,
-      "avg_uses": 16.4,
+      "avg_uses": 16,
       "avg_uses_per_min": 2.55,
       "uses_per_min": {
-        "avg": 2.551,
-        "stddev": 0.138,
+        "avg": 2.548,
+        "stddev": 0.137,
         "min": 2.291,
         "max": 2.75
       },
@@ -50,47 +50,54 @@
     },
     "Invoke Chi-Ji, the Red Crane": {
       "sample_count": 10,
-      "avg_first_cast_s": 29,
-      "stddev_first_cast_s": 27.3,
-      "avg_gap_s": 87.2,
-      "stddev_gap_s": 29.5,
-      "avg_bl_offset_s": 19.9,
-      "stddev_bl_offset_s": 19.9,
-      "avg_uses": 4.4,
-      "avg_uses_per_min": 0.68,
+      "avg_first_cast_s": 32.6,
+      "stddev_first_cast_s": 25.6,
+      "avg_gap_s": 86.4,
+      "stddev_gap_s": 29.7,
+      "avg_bl_offset_s": 24.2,
+      "stddev_bl_offset_s": 19.2,
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.676,
-        "stddev": 0.249,
+        "avg": 0.673,
+        "stddev": 0.251,
         "min": 0.357,
         "max": 0.984
       },
       "bl_pct": 80,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 175.9,
+          "stddev_s": 30.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Revival": {
       "sample_count": 10,
-      "avg_first_cast_s": 100.8,
-      "stddev_first_cast_s": 80.9,
-      "avg_gap_s": 211.2,
-      "stddev_gap_s": 47.3,
-      "avg_bl_offset_s": 38.6,
-      "stddev_bl_offset_s": 12.7,
+      "avg_first_cast_s": 102.9,
+      "stddev_first_cast_s": 79.8,
+      "avg_gap_s": 204.5,
+      "stddev_gap_s": 50.6,
+      "avg_bl_offset_s": 32.2,
+      "stddev_bl_offset_s": 8.6,
       "avg_uses": 2,
       "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.316,
+        "avg": 0.323,
         "stddev": 0.079,
         "min": 0.162,
         "max": 0.432
       },
-      "bl_pct": 30,
-      "majority_hold": true,
+      "bl_pct": 20,
+      "majority_hold": false,
       "hold_targets": {
         "2": {
-          "target_s": 309,
-          "stddev_s": 68.9,
-          "count": 6,
+          "target_s": 331.7,
+          "stddev_s": 71.1,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -117,17 +124,17 @@
     },
     "Celestial Conduit": {
       "sample_count": 10,
-      "avg_first_cast_s": 29.3,
-      "stddev_first_cast_s": 20.6,
-      "avg_gap_s": 100.4,
-      "stddev_gap_s": 14.2,
-      "avg_bl_offset_s": 25.4,
-      "stddev_bl_offset_s": 13,
-      "avg_uses": 4.1,
-      "avg_uses_per_min": 0.64,
+      "avg_first_cast_s": 28.7,
+      "stddev_first_cast_s": 20.4,
+      "avg_gap_s": 102.5,
+      "stddev_gap_s": 15.2,
+      "avg_bl_offset_s": 24.5,
+      "stddev_bl_offset_s": 12.4,
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.645,
-        "stddev": 0.087,
+        "avg": 0.627,
+        "stddev": 0.092,
         "min": 0.512,
         "max": 0.809
       },
@@ -136,41 +143,41 @@
       "hold_targets": {
         "2": {
           "target_s": 127.6,
-          "stddev_s": 35.9,
+          "stddev_s": 36,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 227.5,
-          "stddev_s": 38,
+          "target_s": 235.1,
+          "stddev_s": 38.9,
           "count": 8,
           "total_samples": 10
         },
         "4": {
-          "target_s": 322,
-          "stddev_s": 44.2,
-          "count": 8,
+          "target_s": 319.2,
+          "stddev_s": 47.4,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Sheilun's Gift": {
       "sample_count": 10,
-      "avg_first_cast_s": 71.2,
-      "stddev_first_cast_s": 46.7,
-      "avg_gap_s": 17.5,
-      "stddev_gap_s": 22.5,
-      "avg_bl_offset_s": 36.8,
-      "stddev_bl_offset_s": 18.1,
-      "avg_uses": 8.6,
-      "avg_uses_per_min": 1.27,
+      "avg_first_cast_s": 82.6,
+      "stddev_first_cast_s": 35.6,
+      "avg_gap_s": 22,
+      "stddev_gap_s": 25.4,
+      "avg_bl_offset_s": 47.1,
+      "stddev_bl_offset_s": 4.1,
+      "avg_uses": 6.3,
+      "avg_uses_per_min": 1.02,
       "uses_per_min": {
-        "avg": 2.55,
-        "stddev": 2.234,
+        "avg": 2.05,
+        "stddev": 1.384,
         "min": 0.562,
-        "max": 6.008
+        "max": 3.509
       },
-      "bl_pct": 30,
+      "bl_pct": 20,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -360,6 +367,6 @@
       "name": "Celestial Conduit"
     }
   },
-  "source_signature": "60807c32c45fe93c",
+  "source_signature": "8988b13b7911791d",
   "ingest_version": 1
 }

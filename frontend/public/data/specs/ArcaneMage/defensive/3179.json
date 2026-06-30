@@ -6,25 +6,25 @@
   "per_defensive_benchmarks": {
     "Prismatic Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 93.3,
-      "stddev_first_cast_s": 31.9,
-      "avg_gap_s": 51,
-      "stddev_gap_s": 23.1,
+      "avg_first_cast_s": 88.3,
+      "stddev_first_cast_s": 34.9,
+      "avg_gap_s": 52,
+      "stddev_gap_s": 25.7,
       "hold_targets": {
         "1": {
-          "target_s": 171.7,
-          "stddev_s": 48.7,
-          "count": 7,
+          "target_s": 171.4,
+          "stddev_s": 52.8,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
           "target_s": 169.9,
-          "stddev_s": 39.2,
+          "stddev_s": 34.1,
           "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.8,
+      "avg_uses": 2.7,
       "avg_uses_per_min": 0.76,
       "uses_per_min": {
         "avg": 0.76,
@@ -71,12 +71,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 92.7,
-      "dmg_avg": 266084,
-      "dmg_stddev": 53780,
+      "time_s": 91.9,
+      "dmg_avg": 260740,
+      "dmg_stddev": 55247,
       "dmg_min": 179596,
       "dmg_max": 343717,
-      "window_length_s": 7.5,
+      "window_length_s": 7.1,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
       "common_defensives": [
@@ -89,15 +89,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 156208,
+          "avg_damage": 164027,
           "min_damage": 111317,
           "max_damage": 227499,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 92095,
-          "min_damage": 16934,
+          "avg_damage": 98271,
+          "min_damage": 51186,
           "max_damage": 179596,
           "count": 8
         }
@@ -138,10 +138,10 @@
     },
     {
       "time_s": 171,
-      "dmg_avg": 229644,
-      "dmg_stddev": 40590,
+      "dmg_avg": 216289,
+      "dmg_stddev": 19669,
       "dmg_min": 177525,
-      "dmg_max": 325016,
+      "dmg_max": 238872,
       "window_length_s": 7.9,
       "defensive_name": "Prismatic Barrier",
       "spell_id": 235450,
@@ -155,14 +155,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 121268,
+          "avg_damage": 127595,
           "min_damage": 51648,
           "max_damage": 170623,
           "count": 6
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 101258,
+          "avg_damage": 98979,
           "min_damage": 33458,
           "max_damage": 177525,
           "count": 9
@@ -185,7 +185,7 @@
     },
     {
       "spell_id": 235450,
-      "avg_uses": 2.8,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -273,6 +273,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "ab3fc594569b5c2b",
+  "source_signature": "a39e7359c66df5d6",
   "ingest_version": 1
 }

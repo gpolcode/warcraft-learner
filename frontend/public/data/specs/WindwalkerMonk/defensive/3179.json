@@ -6,23 +6,23 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 49,
-      "stddev_first_cast_s": 41.4,
-      "avg_gap_s": 113.6,
-      "stddev_gap_s": 22,
+      "avg_first_cast_s": 55.8,
+      "stddev_first_cast_s": 43.1,
+      "avg_gap_s": 109.7,
+      "stddev_gap_s": 19.3,
       "hold_targets": {
         "1": {
-          "target_s": 175.1,
-          "stddev_s": 17.1,
-          "count": 5,
+          "target_s": 172.5,
+          "stddev_s": 19.7,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.58,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.579,
-        "stddev": 0.189,
+        "avg": 0.549,
+        "stddev": 0.207,
         "min": 0.297,
         "max": 0.956
       },
@@ -31,9 +31,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 34,
-      "dmg_avg": 546827,
-      "dmg_stddev": 281652,
+      "time_s": 34.9,
+      "dmg_avg": 566882,
+      "dmg_stddev": 321076,
       "dmg_min": 210439,
       "dmg_max": 990912,
       "window_length_s": 10,
@@ -49,24 +49,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 336807,
+          "avg_damage": 362536,
           "min_damage": 75157,
           "max_damage": 764433,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 210020,
+          "avg_damage": 204346,
           "min_damage": 135282,
-          "max_damage": 232720,
-          "count": 5
+          "max_damage": 231279,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 102.9,
-      "dmg_avg": 421817,
-      "dmg_stddev": 153162,
+      "time_s": 102.5,
+      "dmg_avg": 433143,
+      "dmg_stddev": 142992,
       "dmg_min": 163696,
       "dmg_max": 556037,
       "window_length_s": 10,
@@ -82,18 +82,18 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 369780,
+          "avg_damage": 336185,
           "min_damage": 54032,
           "max_damage": 556037,
-          "count": 5
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 175.1,
-      "dmg_avg": 282832,
-      "dmg_stddev": 235018,
-      "dmg_min": 62371,
+      "time_s": 172.5,
+      "dmg_avg": 337947,
+      "dmg_stddev": 231070,
+      "dmg_min": 109148,
       "dmg_max": 644075,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
@@ -115,10 +115,17 @@
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 129234,
-          "min_damage": 62371,
+          "avg_damage": 151521,
+          "min_damage": 109148,
           "max_damage": 230381,
-          "count": 4
+          "count": 3
+        },
+        {
+          "spell_id": 1245592,
+          "avg_damage": 103646,
+          "min_damage": 101841,
+          "max_damage": 105451,
+          "count": 2
         }
       ]
     }
@@ -126,7 +133,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 122470,
-      "avg_uses": 2,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -188,6 +195,10 @@
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
     },
+    "1245592": {
+      "icon": "inv_cosmicvoid_groundsate",
+      "name": "Torturous Extract"
+    },
     "1250686": {
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
@@ -201,6 +212,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "6ea8b9fad185cadb",
+  "source_signature": "505f680bc99ee6fd",
   "ingest_version": 1
 }
