@@ -53,6 +53,7 @@
       "dmg_stddev": 98488,
       "dmg_min": 315320,
       "dmg_max": 564105,
+      "dmg_pct_avg": 0.061,
       "window_length_s": 11.2,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
@@ -91,180 +92,6 @@
           "min_damage": 558,
           "max_damage": 21164,
           "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 77.9,
-      "dmg_avg": 367566,
-      "dmg_stddev": 75336,
-      "dmg_min": 219796,
-      "dmg_max": 489495,
-      "window_length_s": 6.6,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259186,
-          "avg_damage": 172098,
-          "min_damage": 88299,
-          "max_damage": 270362,
-          "count": 5
-        },
-        {
-          "spell_id": 1272328,
-          "avg_damage": 123270,
-          "min_damage": 102580,
-          "max_damage": 160302,
-          "count": 4
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 48149,
-          "min_damage": 14735,
-          "max_damage": 94223,
-          "count": 8
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 7186,
-          "min_damage": 1053,
-          "max_damage": 22330,
-          "count": 8
-        }
-      ]
-    },
-    {
-      "time_s": 83.2,
-      "dmg_avg": 356106,
-      "dmg_stddev": 109993,
-      "dmg_min": 201778,
-      "dmg_max": 491482,
-      "window_length_s": 8,
-      "defensive_name": "Unending Resolve",
-      "spell_id": 104773,
-      "common_defensives": [
-        "Unending Resolve"
-      ],
-      "common_cds": [
-        "Unending Resolve"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259186,
-          "avg_damage": 194356,
-          "min_damage": 102658,
-          "max_damage": 302438,
-          "count": 5
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 38836,
-          "min_damage": 33846,
-          "max_damage": 43912,
-          "count": 6
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 7283,
-          "min_damage": 3892,
-          "max_damage": 9934,
-          "count": 6
-        }
-      ]
-    },
-    {
-      "time_s": 154.5,
-      "dmg_avg": 310170,
-      "dmg_stddev": 5703,
-      "dmg_min": 302944,
-      "dmg_max": 314763,
-      "window_length_s": 4.3,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1276811,
-          "avg_damage": 308854,
-          "min_damage": 302944,
-          "max_damage": 314763,
-          "count": 2
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 114050,
-          "min_damage": 84612,
-          "max_damage": 143488,
-          "count": 2
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 2642,
-          "min_damage": 1979,
-          "max_damage": 3304,
-          "count": 2
-        }
-      ]
-    },
-    {
-      "time_s": 202,
-      "dmg_avg": 270055,
-      "dmg_stddev": 110964,
-      "dmg_min": 149621,
-      "dmg_max": 378534,
-      "window_length_s": 3,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272328,
-          "avg_damage": 115485,
-          "min_damage": 113184,
-          "max_damage": 117785,
-          "count": 2
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 48311,
-          "min_damage": 29179,
-          "max_damage": 85603,
-          "count": 3
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 31412,
-          "min_damage": 29847,
-          "max_damage": 32976,
-          "count": 2
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 2488,
-          "min_damage": 1080,
-          "max_damage": 5203,
-          "count": 4
         }
       ]
     }
@@ -315,10 +142,6 @@
     "Healthstone": 6262
   },
   "ability_icons": {
-    "1": {
-      "icon": "trade_engineering",
-      "name": "Word of Recall (OLD)"
-    },
     "6262": {
       "icon": "warlock_-healthstone",
       "name": "Healthstone"
@@ -339,10 +162,6 @@
       "icon": "inv_misc_rylakclaw",
       "name": "Shadowclaw Slam"
     },
-    "1259186": {
-      "icon": "ability_argus_soulburst",
-      "name": "Blisterburst"
-    },
     "1272328": {
       "icon": "inv_misc_rylakclaw",
       "name": "Shadowclaw Slam"
@@ -350,12 +169,8 @@
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
-    },
-    "1276811": {
-      "icon": "spell_nature_earthquake",
-      "name": "Aftershock"
     }
   },
-  "source_signature": "33a5537b9e165ed6",
-  "ingest_version": 1
+  "source_signature": "cb70fc878720ef4e",
+  "ingest_version": 2
 }
