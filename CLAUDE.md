@@ -60,7 +60,7 @@ Load the matching skill(s) **before** you start that step. The `warcraft-*` skil
 | Ingestion, rulebooks, scraping, `data/specs` file shapes, or `INGEST_VERSION` | **warcraft-ingestion** |
 | Writing or changing tests | **warcraft-testing** |
 | General refactor / code-quality cleanup | **solid** + `/simplify` (project rules win on conflict) |
-| Reviewing code, a diff, or a PR | `/code-review` + the domain skill(s) for the changed area |
+| Reviewing code, a diff, or a PR | `/code-review` + **solid** + the domain skill(s) for the changed area |
 | Verifying a change runs / manual end-to-end check | `/verify` or `/run` |
 
 On any conflict between a skill and this file, or between a generic skill (`angular-developer`, `solid`) and a `warcraft-*` project skill, the **project skill / this file wins**.
