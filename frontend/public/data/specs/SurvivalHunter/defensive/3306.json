@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 8,
-      "avg_first_cast_s": 81.8,
-      "stddev_first_cast_s": 43.2,
-      "avg_gap_s": 47.6,
-      "stddev_gap_s": 23.6,
+      "avg_first_cast_s": 72.8,
+      "stddev_first_cast_s": 35.5,
+      "avg_gap_s": 53.2,
+      "stddev_gap_s": 24.1,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.62,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.623,
-        "stddev": 0.227,
+        "avg": 0.674,
+        "stddev": 0.217,
         "min": 0.402,
         "max": 0.847
       },
@@ -41,11 +41,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 70.3,
-      "dmg_avg": 333208,
-      "dmg_stddev": 72540,
+      "time_s": 70.9,
+      "dmg_avg": 329044,
+      "dmg_stddev": 67130,
       "dmg_min": 212468,
       "dmg_max": 420324,
+      "dmg_pct_avg": 0.099,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -59,17 +60,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 287013,
+          "avg_damage": 285455,
           "min_damage": 261476,
           "max_damage": 315238,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 70343,
-          "min_damage": 40976,
+          "avg_damage": 63018,
+          "min_damage": 26391,
           "max_damage": 105086,
-          "count": 5
+          "count": 6
         }
       ]
     }
@@ -77,7 +78,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 264735,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -141,6 +142,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "d135a4326a2f5017",
-  "ingest_version": 1
+  "source_signature": "6baa8d8c5312c773",
+  "ingest_version": 2
 }

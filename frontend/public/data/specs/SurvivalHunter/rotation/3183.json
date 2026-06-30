@@ -25,24 +25,16 @@
         "max": 1.061
       },
       "bl_pct": 100,
-      "majority_hold": true,
+      "majority_hold": false,
       "hold_targets": {
-        "7": {
-          "target_s": 382.3,
-          "stddev_s": 1.4,
-          "count": 5,
-          "total_samples": 10
-        },
         "8": {
-          "target_s": 451.8,
-          "stddev_s": 9.8,
-          "count": 10,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 513.4,
-          "stddev_s": 9.7,
-          "count": 8,
+          "target_s": 458.3,
+          "stddev_s": 8,
+          "delay_s": 16.9,
+          "delay_stddev_s": 8.1,
+          "band_s": 8.1,
+          "effective_cd_s": 60,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -69,61 +61,31 @@
         "2": {
           "target_s": 77.8,
           "stddev_s": 0.7,
+          "delay_s": 17.9,
+          "delay_stddev_s": 0.8,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 8,
           "total_samples": 10
         },
         "3": {
           "target_s": 139.4,
           "stddev_s": 0.6,
-          "count": 8,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 184.8,
-          "stddev_s": 6.8,
-          "count": 8,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 234.6,
-          "stddev_s": 11.4,
-          "count": 8,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 280.8,
-          "stddev_s": 15.6,
-          "count": 8,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 326.2,
-          "stddev_s": 22.6,
+          "delay_s": 16.7,
+          "delay_stddev_s": 0.9,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 8,
           "total_samples": 10
         },
         "8": {
-          "target_s": 381.5,
-          "stddev_s": 26.9,
-          "count": 8,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 427.6,
-          "stddev_s": 35,
-          "count": 8,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 479.3,
-          "stddev_s": 10.5,
+          "target_s": 383.5,
+          "stddev_s": 37.7,
+          "delay_s": 14.1,
+          "delay_stddev_s": 2.4,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 6,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 514.2,
-          "stddev_s": 24.9,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -334,6 +296,6 @@
       "name": "Moonlight Chakram"
     }
   },
-  "source_signature": "2c9a63c761f423b3",
-  "ingest_version": 1
+  "source_signature": "dee165107be86812",
+  "ingest_version": 2
 }

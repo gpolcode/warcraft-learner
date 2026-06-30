@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Aspect of the Turtle": {
       "sample_count": 9,
-      "avg_first_cast_s": 101.2,
-      "stddev_first_cast_s": 56.2,
-      "avg_gap_s": 131,
-      "stddev_gap_s": 11.1,
+      "avg_first_cast_s": 100.1,
+      "stddev_first_cast_s": 57,
+      "avg_gap_s": 136.5,
+      "stddev_gap_s": 14.1,
       "hold_targets": {},
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.37,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.371,
-        "stddev": 0.134,
+        "avg": 0.363,
+        "stddev": 0.129,
         "min": 0.211,
         "max": 0.546
       },
@@ -23,16 +23,16 @@
     },
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 89.6,
-      "stddev_first_cast_s": 48.1,
-      "avg_gap_s": 66.2,
-      "stddev_gap_s": 42.9,
+      "avg_first_cast_s": 100,
+      "stddev_first_cast_s": 49.8,
+      "avg_gap_s": 67.1,
+      "stddev_gap_s": 42.8,
       "hold_targets": {},
       "avg_uses": 3.1,
-      "avg_uses_per_min": 0.7,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.695,
-        "stddev": 0.132,
+        "avg": 0.684,
+        "stddev": 0.134,
         "min": 0.459,
         "max": 0.936
       },
@@ -40,15 +40,15 @@
     },
     "Exhilaration": {
       "sample_count": 6,
-      "avg_first_cast_s": 166.2,
-      "stddev_first_cast_s": 60,
+      "avg_first_cast_s": 178.1,
+      "stddev_first_cast_s": 66,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.224,
+        "avg": 0.217,
         "stddev": 0.024,
         "min": 0.182,
         "max": 0.245
@@ -56,103 +56,7 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 69.1,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "window_length_s": 4.3,
-      "defensive_name": "Aspect of the Turtle",
-      "spell_id": 186265,
-      "common_defensives": [
-        "Aspect of the Turtle"
-      ],
-      "common_cds": [
-        "Aspect of the Turtle"
-      ],
-      "ref_game_id": null,
-      "ability_breakdown": []
-    },
-    {
-      "time_s": 137.4,
-      "dmg_avg": 226260,
-      "dmg_stddev": 115374,
-      "dmg_min": 32096,
-      "dmg_max": 362643,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1241932,
-          "avg_damage": 159637,
-          "min_damage": 57585,
-          "max_damage": 240984,
-          "count": 6
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 42026,
-          "min_damage": 30142,
-          "max_damage": 53610,
-          "count": 11
-        }
-      ]
-    },
-    {
-      "time_s": 196.5,
-      "dmg_avg": 0,
-      "dmg_stddev": 0,
-      "dmg_min": 0,
-      "dmg_max": 0,
-      "window_length_s": 5,
-      "defensive_name": "Aspect of the Turtle",
-      "spell_id": 186265,
-      "common_defensives": [
-        "Aspect of the Turtle"
-      ],
-      "common_cds": [
-        "Aspect of the Turtle"
-      ],
-      "ref_game_id": null,
-      "ability_breakdown": []
-    },
-    {
-      "time_s": 225.1,
-      "dmg_avg": 290562,
-      "dmg_stddev": 105186,
-      "dmg_min": 122218,
-      "dmg_max": 421174,
-      "window_length_s": 8,
-      "defensive_name": "Survival of the Fittest",
-      "spell_id": 264735,
-      "common_defensives": [
-        "Survival of the Fittest"
-      ],
-      "common_cds": [
-        "Survival of the Fittest"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1264650,
-          "avg_damage": 46701,
-          "min_damage": 32704,
-          "max_damage": 56027,
-          "count": 9
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 186265,
@@ -216,16 +120,8 @@
     "264735": {
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
-    },
-    "1241932": {
-      "icon": "inv_12_dualityphoenix_lightvoid_channel",
-      "name": "Voidlight Convergence"
-    },
-    "1264650": {
-      "icon": "inv_ragnaros_heart",
-      "name": "Burning Heart"
     }
   },
-  "source_signature": "20aa945bb2715615",
-  "ingest_version": 1
+  "source_signature": "e2e03bf493d56cdc",
+  "ingest_version": 2
 }

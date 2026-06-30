@@ -3,60 +3,58 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 205,
-  "downtime_threshold_ms": 2146,
+  "avg_duration_s": 202.7,
+  "downtime_threshold_ms": 2165,
   "top_avg_efficiency": 77.3,
-  "top_efficiency_stddev": 4.8,
+  "top_efficiency_stddev": 4.6,
   "per_cd_benchmarks": {
     "Summon Infernal": {
       "sample_count": 10,
-      "avg_first_cast_s": 1,
+      "avg_first_cast_s": 1.1,
       "stddev_first_cast_s": 1,
-      "avg_gap_s": 95,
-      "stddev_gap_s": 12.4,
-      "avg_bl_offset_s": 0.4,
+      "avg_gap_s": 91.9,
+      "stddev_gap_s": 1.8,
+      "avg_bl_offset_s": 0.6,
       "stddev_bl_offset_s": 1,
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.79,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 0.789,
-        "stddev": 0.113,
-        "min": 0.577,
+        "avg": 0.826,
+        "stddev": 0.084,
+        "min": 0.654,
         "max": 0.917
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Havoc": {
       "sample_count": 10,
-      "avg_first_cast_s": 19.2,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 57.3,
-      "stddev_gap_s": 14.5,
-      "avg_bl_offset_s": 18.7,
-      "stddev_bl_offset_s": 0.9,
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 1.09,
+      "avg_first_cast_s": 19.4,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 57,
+      "stddev_gap_s": 14.2,
+      "avg_bl_offset_s": 18.9,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 1.12,
       "uses_per_min": {
-        "avg": 1.085,
-        "stddev": 0.114,
-        "min": 0.866,
+        "avg": 1.125,
+        "stddev": 0.077,
+        "min": 0.981,
         "max": 1.223
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 140.9,
-          "stddev_s": 2.5,
+          "target_s": 140.8,
+          "stddev_s": 2.7,
+          "delay_s": 31.3,
+          "delay_stddev_s": 1.6,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 187,
-          "stddev_s": 1.5,
-          "count": 7,
           "total_samples": 10
         }
       }
@@ -65,51 +63,59 @@
       "sample_count": 10,
       "avg_first_cast_s": 2.2,
       "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 64.1,
-      "stddev_gap_s": 5,
-      "avg_bl_offset_s": 1.7,
+      "avg_gap_s": 63.5,
+      "stddev_gap_s": 4.4,
+      "avg_bl_offset_s": 1.9,
       "stddev_bl_offset_s": 0.8,
       "avg_uses": 3.4,
-      "avg_uses_per_min": 0.99,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 1.102,
-        "stddev": 0.081,
+        "avg": 1.114,
+        "stddev": 0.073,
         "min": 0.981,
         "max": 1.203
       },
-      "bl_pct": 70,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Cataclysm": {
       "sample_count": 10,
-      "avg_first_cast_s": 62.7,
-      "stddev_first_cast_s": 1.2,
-      "avg_gap_s": 63,
-      "stddev_gap_s": 15.3,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.49,
+      "avg_first_cast_s": 55.7,
+      "stddev_first_cast_s": 17.8,
+      "avg_gap_s": 60.9,
+      "stddev_gap_s": 15.6,
+      "avg_bl_offset_s": 18.7,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.817,
-        "stddev": 0.149,
-        "min": 0.577,
-        "max": 1.011
+        "avg": 0.884,
+        "stddev": 0.142,
+        "min": 0.733,
+        "max": 1.151
       },
-      "bl_pct": 0,
+      "bl_pct": 10,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 138.4,
-          "stddev_s": 1.1,
+          "target_s": 138.3,
+          "stddev_s": 31,
+          "delay_s": 45.3,
+          "delay_stddev_s": 13.3,
+          "band_s": 13.3,
+          "effective_cd_s": 30,
           "count": 6,
           "total_samples": 10
         },
         "3": {
-          "target_s": 184.4,
-          "stddev_s": 0.9,
-          "count": 4,
+          "target_s": 184.3,
+          "stddev_s": 20.5,
+          "delay_s": 16.3,
+          "delay_stddev_s": 13.3,
+          "band_s": 13.3,
+          "effective_cd_s": 30,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -136,42 +142,23 @@
     },
     "Soul Fire": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.5,
+      "avg_first_cast_s": 5.6,
       "stddev_first_cast_s": 15.9,
-      "avg_gap_s": 49.8,
-      "stddev_gap_s": 3.1,
-      "avg_bl_offset_s": 6.3,
-      "stddev_bl_offset_s": 17.7,
-      "avg_uses": 4.5,
-      "avg_uses_per_min": 1.31,
+      "avg_gap_s": 50.1,
+      "stddev_gap_s": 4.4,
+      "avg_bl_offset_s": 5.7,
+      "stddev_bl_offset_s": 16.7,
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 1.3,
       "uses_per_min": {
-        "avg": 1.313,
-        "stddev": 0.124,
+        "avg": 1.297,
+        "stddev": 0.129,
         "min": 1.099,
         "max": 1.504
       },
-      "bl_pct": 80,
-      "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 100.6,
-          "stddev_s": 23.6,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 147.3,
-          "stddev_s": 5.2,
-          "count": 9,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 196.6,
-          "stddev_s": 2,
-          "count": 6,
-          "total_samples": 10
-        }
-      }
+      "bl_pct": 90,
+      "majority_hold": false,
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -345,6 +332,6 @@
       "name": "Malevolence"
     }
   },
-  "source_signature": "74f4eb16094ca84b",
-  "ingest_version": 1
+  "source_signature": "7da6f3b114fc2b56",
+  "ingest_version": 2
 }

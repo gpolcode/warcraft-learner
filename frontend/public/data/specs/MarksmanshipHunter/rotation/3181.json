@@ -3,23 +3,23 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 494.4,
-  "downtime_threshold_ms": 3449,
+  "avg_duration_s": 495.6,
+  "downtime_threshold_ms": 3455,
   "top_avg_efficiency": 72.3,
-  "top_efficiency_stddev": 4.9,
+  "top_efficiency_stddev": 5.9,
   "per_cd_benchmarks": {
     "Trueshot": {
       "sample_count": 10,
-      "avg_first_cast_s": 25.2,
-      "stddev_first_cast_s": 7.4,
-      "avg_gap_s": 146.8,
-      "stddev_gap_s": 23.8,
-      "avg_bl_offset_s": 3.5,
+      "avg_first_cast_s": 25.4,
+      "stddev_first_cast_s": 7.3,
+      "avg_gap_s": 146.7,
+      "stddev_gap_s": 24.1,
+      "avg_bl_offset_s": 3.6,
       "stddev_bl_offset_s": 2.9,
       "avg_uses": 3.9,
       "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.473,
+        "avg": 0.472,
         "stddev": 0.024,
         "min": 0.424,
         "max": 0.503
@@ -28,38 +28,40 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 180.5,
+          "target_s": 180.1,
           "stddev_s": 3.1,
+          "delay_s": 37,
+          "delay_stddev_s": 6.5,
+          "band_s": 6.5,
+          "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 359,
-          "stddev_s": 33.9,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 478.2,
-          "stddev_s": 31.5,
-          "count": 9,
+          "target_s": 366.8,
+          "stddev_s": 5.1,
+          "delay_s": 62.2,
+          "delay_stddev_s": 4.9,
+          "band_s": 5,
+          "effective_cd_s": 120,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Volley": {
       "sample_count": 10,
-      "avg_first_cast_s": 23.5,
-      "stddev_first_cast_s": 11.8,
-      "avg_gap_s": 62.3,
-      "stddev_gap_s": 17.8,
-      "avg_bl_offset_s": 7,
-      "stddev_bl_offset_s": 2,
-      "avg_uses": 8.3,
-      "avg_uses_per_min": 1.01,
+      "avg_first_cast_s": 22.5,
+      "stddev_first_cast_s": 11.9,
+      "avg_gap_s": 61.5,
+      "stddev_gap_s": 16.2,
+      "avg_bl_offset_s": 6.5,
+      "stddev_bl_offset_s": 2.5,
+      "avg_uses": 8.4,
+      "avg_uses_per_min": 1.02,
       "uses_per_min": {
-        "avg": 1.009,
-        "stddev": 0.078,
+        "avg": 1.018,
+        "stddev": 0.072,
         "min": 0.922,
         "max": 1.132
       },
@@ -67,45 +69,53 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 183.4,
-          "stddev_s": 1.4,
-          "count": 6,
+          "target_s": 183.7,
+          "stddev_s": 1.5,
+          "delay_s": 44,
+          "delay_stddev_s": 16.6,
+          "band_s": 16.6,
+          "effective_cd_s": 45,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
-          "target_s": 233.7,
-          "stddev_s": 27,
-          "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 286.2,
-          "stddev_s": 27.5,
-          "count": 10,
+          "target_s": 183.7,
+          "stddev_s": 23.1,
+          "delay_s": 23.7,
+          "delay_stddev_s": 11.4,
+          "band_s": 11.4,
+          "effective_cd_s": 45,
+          "count": 6,
           "total_samples": 10
         },
         "6": {
           "target_s": 367.3,
-          "stddev_s": 46.6,
-          "count": 10,
+          "stddev_s": 41,
+          "delay_s": 33.2,
+          "delay_stddev_s": 16.9,
+          "band_s": 16.9,
+          "effective_cd_s": 45,
+          "count": 7,
           "total_samples": 10
         },
         "7": {
-          "target_s": 419.6,
-          "stddev_s": 32.3,
-          "count": 10,
+          "target_s": 371,
+          "stddev_s": 30,
+          "delay_s": 29.9,
+          "delay_stddev_s": 13.2,
+          "band_s": 13.2,
+          "effective_cd_s": 45,
+          "count": 7,
           "total_samples": 10
         },
         "8": {
-          "target_s": 484.4,
-          "stddev_s": 33.7,
-          "count": 9,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 474.8,
-          "stddev_s": 12.9,
-          "count": 4,
+          "target_s": 429.4,
+          "stddev_s": 32.9,
+          "delay_s": 13.9,
+          "delay_stddev_s": 4.1,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 7,
           "total_samples": 10
         }
       }
@@ -224,6 +234,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "b141acd191fa7cc0",
-  "ingest_version": 1
+  "source_signature": "dfb5de4c12fff3fe",
+  "ingest_version": 2
 }

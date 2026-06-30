@@ -2,20 +2,20 @@
   "spec": "MarksmanshipHunter",
   "encounter_id": 3306,
   "encounter_name": "Chimaerus, the Undreamt God",
-  "sample_count": 10,
+  "sample_count": 8,
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
-      "sample_count": 10,
-      "avg_first_cast_s": 78,
-      "stddev_first_cast_s": 25.3,
-      "avg_gap_s": 52.4,
-      "stddev_gap_s": 25.2,
+      "sample_count": 8,
+      "avg_first_cast_s": 79.4,
+      "stddev_first_cast_s": 28.5,
+      "avg_gap_s": 48.9,
+      "stddev_gap_s": 26.5,
       "hold_targets": {},
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.665,
-        "stddev": 0.212,
+        "avg": 0.674,
+        "stddev": 0.215,
         "min": 0.401,
         "max": 0.846
       },
@@ -58,12 +58,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 73.7,
-      "dmg_avg": 232968,
-      "dmg_stddev": 119937,
+      "time_s": 73.8,
+      "dmg_avg": 207301,
+      "dmg_stddev": 117011,
       "dmg_min": 36631,
       "dmg_max": 379123,
-      "window_length_s": 7.1,
+      "dmg_pct_avg": 0.065,
+      "window_length_s": 6.9,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
       "common_defensives": [
@@ -76,27 +77,28 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 224340,
+          "avg_damage": 200762,
           "min_damage": 79240,
-          "max_damage": 331450,
-          "count": 9
+          "max_damage": 292226,
+          "count": 7
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 44370,
+          "avg_damage": 45475,
           "min_damage": 14095,
           "max_damage": 122905,
-          "count": 7
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 142.4,
-      "dmg_avg": 207030,
-      "dmg_stddev": 84002,
+      "time_s": 143.7,
+      "dmg_avg": 192819,
+      "dmg_stddev": 89790,
       "dmg_min": 107777,
       "dmg_max": 316622,
-      "window_length_s": 8,
+      "dmg_pct_avg": 0.059,
+      "window_length_s": 4,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
       "common_defensives": [
@@ -109,17 +111,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 154223,
+          "avg_damage": 145831,
           "min_damage": 97408,
           "max_damage": 200810,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 66009,
+          "avg_damage": 62651,
           "min_damage": 17040,
           "max_damage": 115812,
-          "count": 4
+          "count": 3
         }
       ]
     }
@@ -197,6 +199,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "b575b036bd6c356b",
-  "ingest_version": 1
+  "source_signature": "a94788241e0913c1",
+  "ingest_version": 2
 }

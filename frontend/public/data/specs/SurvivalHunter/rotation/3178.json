@@ -3,99 +3,110 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 353.6,
-  "downtime_threshold_ms": 1583,
-  "top_avg_efficiency": 80.1,
-  "top_efficiency_stddev": 2.7,
+  "avg_duration_s": 347.8,
+  "downtime_threshold_ms": 1647,
+  "top_avg_efficiency": 79.6,
+  "top_efficiency_stddev": 2.2,
   "per_cd_benchmarks": {
     "Takedown": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.8,
-      "stddev_first_cast_s": 0.6,
-      "avg_gap_s": 76.4,
-      "stddev_gap_s": 10.9,
+      "avg_first_cast_s": 6.4,
+      "stddev_first_cast_s": 11.4,
+      "avg_gap_s": 75.7,
+      "stddev_gap_s": 10.7,
       "avg_bl_offset_s": 2.4,
       "stddev_bl_offset_s": 0.8,
-      "avg_uses": 5.1,
+      "avg_uses": 5,
       "avg_uses_per_min": 0.86,
       "uses_per_min": {
-        "avg": 0.862,
-        "stddev": 0.044,
-        "min": 0.813,
+        "avg": 0.859,
+        "stddev": 0.041,
+        "min": 0.818,
         "max": 0.922
       },
-      "bl_pct": 100,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "2": {
           "target_s": 78.5,
           "stddev_s": 0.6,
-          "count": 10,
+          "delay_s": 15.8,
+          "delay_stddev_s": 1.1,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 9,
           "total_samples": 10
         },
         "3": {
           "target_s": 171.5,
-          "stddev_s": 1,
+          "stddev_s": 0.8,
+          "delay_s": 32.7,
+          "delay_stddev_s": 7.5,
+          "band_s": 7.5,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 246.4,
-          "stddev_s": 0.9,
+          "target_s": 246.5,
+          "stddev_s": 0.7,
+          "delay_s": 15.1,
+          "delay_stddev_s": 0.7,
+          "band_s": 5,
+          "effective_cd_s": 60,
           "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 308.7,
-          "stddev_s": 1.6,
-          "count": 7,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 374,
-          "stddev_s": 0.6,
-          "count": 4,
           "total_samples": 10
         }
       }
     },
     "Boomstick": {
       "sample_count": 10,
-      "avg_first_cast_s": 5,
-      "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 40.6,
-      "stddev_gap_s": 10,
+      "avg_first_cast_s": 4.7,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 40.4,
+      "stddev_gap_s": 10.5,
       "avg_bl_offset_s": 4.6,
-      "stddev_bl_offset_s": 0.8,
-      "avg_uses": 9.3,
-      "avg_uses_per_min": 1.58,
+      "stddev_bl_offset_s": 0.9,
+      "avg_uses": 9.2,
+      "avg_uses_per_min": 1.59,
       "uses_per_min": {
-        "avg": 1.579,
-        "stddev": 0.079,
+        "avg": 1.589,
+        "stddev": 0.088,
         "min": 1.431,
-        "max": 1.659
+        "max": 1.699
       },
-      "bl_pct": 100,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 90,
+      "majority_hold": true,
+      "hold_targets": {
+        "5": {
+          "target_s": 174.1,
+          "stddev_s": 1.1,
+          "delay_s": 12.1,
+          "delay_stddev_s": 5.6,
+          "band_s": 5.6,
+          "effective_cd_s": 45,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Wildfire Bomb": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.5,
+      "avg_first_cast_s": 4.2,
       "stddev_first_cast_s": 4.2,
-      "avg_gap_s": 9.4,
+      "avg_gap_s": 9.5,
       "stddev_gap_s": 4.8,
-      "avg_bl_offset_s": 3.1,
-      "stddev_bl_offset_s": 4.3,
-      "avg_uses": 37.5,
-      "avg_uses_per_min": 6.38,
+      "avg_bl_offset_s": 3.7,
+      "stddev_bl_offset_s": 4.5,
+      "avg_uses": 36.8,
+      "avg_uses_per_min": 6.37,
       "uses_per_min": {
-        "avg": 6.382,
-        "stddev": 0.321,
+        "avg": 6.369,
+        "stddev": 0.315,
         "min": 5.841,
         "max": 6.802
       },
-      "bl_pct": 100,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -285,6 +296,6 @@
       "name": "Moonlight Chakram"
     }
   },
-  "source_signature": "fab2535e20ec4aa2",
-  "ingest_version": 1
+  "source_signature": "9a23165c0a786704",
+  "ingest_version": 2
 }
