@@ -3,10 +3,10 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 500,
-  "downtime_threshold_ms": 2306,
-  "top_avg_efficiency": 75.1,
-  "top_efficiency_stddev": 8.1,
+  "avg_duration_s": 499.9,
+  "downtime_threshold_ms": 2324,
+  "top_avg_efficiency": 75.2,
+  "top_efficiency_stddev": 7.4,
   "per_cd_benchmarks": {
     "Evangelism": {
       "sample_count": 10,
@@ -30,30 +30,51 @@
     },
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.6,
-      "stddev_first_cast_s": 6.9,
-      "avg_gap_s": 67.9,
-      "stddev_gap_s": 78.2,
-      "avg_bl_offset_s": 5.7,
-      "stddev_bl_offset_s": 7.4,
-      "avg_uses": 7.7,
-      "avg_uses_per_min": 0.93,
+      "avg_first_cast_s": 7.4,
+      "stddev_first_cast_s": 8.2,
+      "avg_gap_s": 69.8,
+      "stddev_gap_s": 78.4,
+      "avg_bl_offset_s": 5.5,
+      "stddev_bl_offset_s": 6.7,
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 0.9,
       "uses_per_min": {
-        "avg": 0.925,
-        "stddev": 0.092,
-        "min": 0.707,
+        "avg": 0.902,
+        "stddev": 0.115,
+        "min": 0.705,
         "max": 1.024
       },
-      "bl_pct": 60,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 70,
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 178.3,
+          "stddev_s": 6.8,
+          "delay_s": 56.1,
+          "delay_stddev_s": 10.8,
+          "band_s": 10.8,
+          "effective_cd_s": 120,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 371.9,
+          "stddev_s": 64.2,
+          "delay_s": 68,
+          "delay_stddev_s": 26.6,
+          "band_s": 26.6,
+          "effective_cd_s": 120,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Ultimate Penitence": {
       "sample_count": 10,
-      "avg_first_cast_s": 52.7,
-      "stddev_first_cast_s": 26,
-      "avg_gap_s": 332.6,
-      "stddev_gap_s": 67,
+      "avg_first_cast_s": 56.7,
+      "stddev_first_cast_s": 24.3,
+      "avg_gap_s": 346.5,
+      "stddev_gap_s": 65.4,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
       "avg_uses": 2,
@@ -68,8 +89,12 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 434.8,
-          "stddev_s": 90,
+          "target_s": 451.5,
+          "stddev_s": 86.2,
+          "delay_s": 252.6,
+          "delay_stddev_s": 65.4,
+          "band_s": 65.4,
+          "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         }
@@ -77,23 +102,34 @@
     },
     "Power Word: Radiance": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.6,
-      "stddev_first_cast_s": 2.4,
-      "avg_gap_s": 15.5,
+      "avg_first_cast_s": 3.4,
+      "stddev_first_cast_s": 2.5,
+      "avg_gap_s": 15.6,
       "stddev_gap_s": 12.9,
-      "avg_bl_offset_s": -3.1,
-      "stddev_bl_offset_s": 11.9,
+      "avg_bl_offset_s": -3.9,
+      "stddev_bl_offset_s": 11.1,
       "avg_uses": 32.4,
       "avg_uses_per_min": 3.89,
       "uses_per_min": {
-        "avg": 3.889,
+        "avg": 3.89,
         "stddev": 0.139,
         "min": 3.658,
         "max": 4.148
       },
-      "bl_pct": 60,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 70,
+      "majority_hold": true,
+      "hold_targets": {
+        "7": {
+          "target_s": 92.5,
+          "stddev_s": 3.6,
+          "delay_s": 9.1,
+          "delay_stddev_s": 2.9,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Shadowfiend": {
       "sample_count": 10,
@@ -306,6 +342,6 @@
       "name": "Ultimate Penitence"
     }
   },
-  "source_signature": "e710fbd813bccf08",
-  "ingest_version": 1
+  "source_signature": "0ff53744d681f115",
+  "ingest_version": 2
 }

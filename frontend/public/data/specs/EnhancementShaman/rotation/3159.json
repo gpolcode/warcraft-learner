@@ -50,12 +50,20 @@
         "3": {
           "target_s": 257,
           "stddev_s": 1.8,
+          "delay_s": 12.2,
+          "delay_stddev_s": 1.4,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 393,
           "stddev_s": 1.9,
+          "delay_s": 16.1,
+          "delay_stddev_s": 1.1,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         }
@@ -80,76 +88,14 @@
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
-        "3": {
-          "target_s": 74.4,
-          "stddev_s": 4.2,
-          "count": 4,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 123.6,
-          "stddev_s": 1.7,
-          "count": 4,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 167.5,
-          "stddev_s": 3.3,
-          "count": 4,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 203.8,
-          "stddev_s": 23.3,
-          "count": 6,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 242.2,
-          "stddev_s": 29.5,
-          "count": 6,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 279.5,
-          "stddev_s": 35.9,
-          "count": 6,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 258.7,
-          "stddev_s": 41.3,
-          "count": 9,
-          "total_samples": 10
-        },
         "10": {
-          "target_s": 301.9,
-          "stddev_s": 48.8,
-          "count": 9,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 333.5,
-          "stddev_s": 50.1,
-          "count": 8,
-          "total_samples": 10
-        },
-        "12": {
-          "target_s": 356.1,
-          "stddev_s": 53.7,
-          "count": 6,
-          "total_samples": 10
-        },
-        "13": {
-          "target_s": 393.3,
-          "stddev_s": 50.5,
-          "count": 6,
-          "total_samples": 10
-        },
-        "14": {
-          "target_s": 426.9,
-          "stddev_s": 3.3,
-          "count": 4,
+          "target_s": 390.9,
+          "stddev_s": 49.8,
+          "delay_s": 14.9,
+          "delay_stddev_s": 8.1,
+          "band_s": 8.1,
+          "effective_cd_s": 30,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -393,6 +339,6 @@
       "name": "Surging Totem"
     }
   },
-  "source_signature": "c9aa2c4736362403",
-  "ingest_version": 1
+  "source_signature": "bb00c1bb328c2404",
+  "ingest_version": 2
 }

@@ -45,8 +45,19 @@
         "max": 1.094
       },
       "bl_pct": 100,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "9": {
+          "target_s": 529,
+          "stddev_s": 13.5,
+          "delay_s": 35.9,
+          "delay_stddev_s": 13.7,
+          "band_s": 13.7,
+          "effective_cd_s": 120,
+          "count": 8,
+          "total_samples": 10
+        }
+      }
     },
     "Ultimate Penitence": {
       "sample_count": 10,
@@ -70,6 +81,10 @@
         "2": {
           "target_s": 313.2,
           "stddev_s": 2.5,
+          "delay_s": 121.8,
+          "delay_stddev_s": 1,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         }
@@ -92,8 +107,79 @@
         "max": 3.831
       },
       "bl_pct": 100,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "5": {
+          "target_s": 67.9,
+          "stddev_s": 0.5,
+          "delay_s": 15,
+          "delay_stddev_s": 0.8,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 8,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 129.2,
+          "stddev_s": 0.9,
+          "delay_s": 12.9,
+          "delay_stddev_s": 1.3,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 8,
+          "total_samples": 10
+        },
+        "11": {
+          "target_s": 190.4,
+          "stddev_s": 0.8,
+          "delay_s": 13.4,
+          "delay_stddev_s": 1.2,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 7,
+          "total_samples": 10
+        },
+        "14": {
+          "target_s": 244.4,
+          "stddev_s": 0.6,
+          "delay_s": 11.3,
+          "delay_stddev_s": 0.7,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 5,
+          "total_samples": 10
+        },
+        "17": {
+          "target_s": 274.9,
+          "stddev_s": 16.6,
+          "delay_s": 9,
+          "delay_stddev_s": 7,
+          "band_s": 7,
+          "effective_cd_s": 20,
+          "count": 5,
+          "total_samples": 10
+        },
+        "18": {
+          "target_s": 304.8,
+          "stddev_s": 11.4,
+          "delay_s": 11,
+          "delay_stddev_s": 1.6,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 8,
+          "total_samples": 10
+        },
+        "20": {
+          "target_s": 336.7,
+          "stddev_s": 0.8,
+          "delay_s": 10.4,
+          "delay_stddev_s": 0.8,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
     },
     "Shadowfiend": {
       "sample_count": 10,
@@ -306,6 +392,6 @@
       "name": "Ultimate Penitence"
     }
   },
-  "source_signature": "a5886aacd0417db8",
-  "ingest_version": 1
+  "source_signature": "1fc9c074bbc6d065",
+  "ingest_version": 2
 }

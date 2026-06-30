@@ -45,8 +45,19 @@
         "max": 1.27
       },
       "bl_pct": 80,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 134.4,
+          "stddev_s": 16.6,
+          "delay_s": 11.2,
+          "delay_stddev_s": 16.7,
+          "band_s": 16.7,
+          "effective_cd_s": 120,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
     },
     "Ultimate Penitence": {
       "sample_count": 10,
@@ -70,6 +81,10 @@
         "2": {
           "target_s": 358.5,
           "stddev_s": 46.2,
+          "delay_s": 132.9,
+          "delay_stddev_s": 20.2,
+          "band_s": 20.2,
+          "effective_cd_s": 120,
           "count": 6,
           "total_samples": 10
         }
@@ -92,7 +107,7 @@
         "max": 3.995
       },
       "bl_pct": 90,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {}
     },
     "Shadowfiend": {
@@ -306,6 +321,6 @@
       "name": "Ultimate Penitence"
     }
   },
-  "source_signature": "5aa6e1498d6e3eee",
-  "ingest_version": 1
+  "source_signature": "3429783743a0943a",
+  "ingest_version": 2
 }

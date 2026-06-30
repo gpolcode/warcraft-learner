@@ -50,6 +50,10 @@
         "2": {
           "target_s": 138.5,
           "stddev_s": 2.3,
+          "delay_s": 15.2,
+          "delay_stddev_s": 2.3,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 9,
           "total_samples": 10
         }
@@ -75,21 +79,13 @@
       "majority_hold": true,
       "hold_targets": {
         "5": {
-          "target_s": 137.7,
-          "stddev_s": 12.2,
-          "count": 9,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 173.7,
-          "stddev_s": 13,
-          "count": 7,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 208.6,
-          "stddev_s": 27.6,
-          "count": 4,
+          "target_s": 137.5,
+          "stddev_s": 1.9,
+          "delay_s": 11.3,
+          "delay_stddev_s": 1.8,
+          "band_s": 5,
+          "effective_cd_s": 30,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -333,6 +329,6 @@
       "name": "Surging Totem"
     }
   },
-  "source_signature": "4aeab1dd58d246ab",
-  "ingest_version": 1
+  "source_signature": "31cfbe9e3ad91ffc",
+  "ingest_version": 2
 }

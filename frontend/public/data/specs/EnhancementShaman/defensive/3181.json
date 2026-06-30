@@ -6,42 +6,42 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 157.5,
-      "stddev_first_cast_s": 150.6,
-      "avg_gap_s": 210.4,
-      "stddev_gap_s": 120.7,
+      "avg_first_cast_s": 192,
+      "stddev_first_cast_s": 160.6,
+      "avg_gap_s": 198.7,
+      "stddev_gap_s": 117.2,
       "hold_targets": {
         "1": {
-          "target_s": 399,
-          "stddev_s": 65.3,
-          "count": 7,
+          "target_s": 374.8,
+          "stddev_s": 70.3,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.29,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.287,
-        "stddev": 0.091,
-        "min": 0.128,
+        "avg": 0.274,
+        "stddev": 0.104,
+        "min": 0.127,
         "max": 0.445
       },
       "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 6,
-      "avg_first_cast_s": 243,
-      "stddev_first_cast_s": 148.4,
+      "sample_count": 5,
+      "avg_first_cast_s": 266.9,
+      "stddev_first_cast_s": 152.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.12,
+      "avg_uses_per_min": 0.11,
       "uses_per_min": {
-        "avg": 0.117,
-        "stddev": 0.005,
+        "avg": 0.115,
+        "stddev": 0.002,
         "min": 0.111,
-        "max": 0.127
+        "max": 0.117
       },
       "majority_hold": false
     },
@@ -80,92 +80,11 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 404.9,
-      "dmg_avg": 469917,
-      "dmg_stddev": 115603,
-      "dmg_min": 318518,
-      "dmg_max": 625702,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240430,
-      "ability_breakdown": [
-        {
-          "spell_id": 1237040,
-          "avg_damage": 168068,
-          "min_damage": 80621,
-          "max_damage": 214863,
-          "count": 5
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 136444,
-          "min_damage": 15333,
-          "max_damage": 183457,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 446.6,
-      "dmg_avg": 447621,
-      "dmg_stddev": 101606,
-      "dmg_min": 304179,
-      "dmg_max": 541307,
-      "window_length_s": 11,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240430,
-      "ability_breakdown": [
-        {
-          "spell_id": 1239095,
-          "avg_damage": 200480,
-          "min_damage": 89400,
-          "max_damage": 259395,
-          "count": 3
-        },
-        {
-          "spell_id": 1237040,
-          "avg_damage": 131148,
-          "min_damage": 62886,
-          "max_damage": 185636,
-          "count": 4
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 112937,
-          "min_damage": 13664,
-          "max_damage": 212209,
-          "count": 2
-        },
-        {
-          "spell_id": 1233826,
-          "avg_damage": 80665,
-          "min_damage": 65970,
-          "max_damage": 95360,
-          "count": 2
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -257,24 +176,8 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
-    },
-    "1233826": {
-      "icon": "inv_nullstone_void",
-      "name": "Void Expulsion"
-    },
-    "1237040": {
-      "icon": "ability_ironmaidens_convulsiveshadows",
-      "name": "Voidstalker Sting"
-    },
-    "1239095": {
-      "icon": "spell_holy_circleofrenewal_shadow",
-      "name": "Gravity Collapse"
-    },
-    "1261289": {
-      "icon": "inv_cosmicvoid_buff",
-      "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "eb2a2d698153cb01",
-  "ingest_version": 1
+  "source_signature": "fc63e233c4db6312",
+  "ingest_version": 2
 }
