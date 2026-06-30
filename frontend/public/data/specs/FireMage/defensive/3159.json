@@ -6,21 +6,27 @@
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 121.7,
-      "stddev_first_cast_s": 60,
-      "avg_gap_s": 56.3,
-      "stddev_gap_s": 49,
+      "avg_first_cast_s": 113.4,
+      "stddev_first_cast_s": 64,
+      "avg_gap_s": 60.9,
+      "stddev_gap_s": 53.4,
       "hold_targets": {
         "1": {
-          "target_s": 268.8,
-          "stddev_s": 109.7,
-          "count": 6,
+          "target_s": 267.5,
+          "stddev_s": 100.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 353,
+          "stddev_s": 135.8,
+          "count": 4,
           "total_samples": 10
         },
         "3": {
-          "target_s": 196.6,
-          "stddev_s": 118.3,
-          "count": 4,
+          "target_s": 202.4,
+          "stddev_s": 128.7,
+          "count": 5,
           "total_samples": 10
         },
         "4": {
@@ -30,11 +36,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 4.8,
-      "avg_uses_per_min": 0.64,
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.64,
-        "stddev": 0.564,
+        "avg": 0.677,
+        "stddev": 0.541,
         "min": 0.141,
         "max": 1.772
       },
@@ -42,8 +48,8 @@
     },
     "Alter Time": {
       "sample_count": 9,
-      "avg_first_cast_s": 161.3,
-      "stddev_first_cast_s": 69.1,
+      "avg_first_cast_s": 161.5,
+      "stddev_first_cast_s": 69,
       "avg_gap_s": 146.6,
       "stddev_gap_s": 58.7,
       "hold_targets": {
@@ -57,8 +63,8 @@
       "avg_uses": 2,
       "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.293,
-        "stddev": 0.135,
+        "avg": 0.29,
+        "stddev": 0.138,
         "min": 0.118,
         "max": 0.493
       },
@@ -67,12 +73,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 133.4,
-      "dmg_avg": 281694,
-      "dmg_stddev": 108388,
+      "time_s": 133.5,
+      "dmg_avg": 290332,
+      "dmg_stddev": 109261,
       "dmg_min": 150565,
       "dmg_max": 468683,
-      "window_length_s": 3.2,
+      "window_length_s": 3.1,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -85,17 +91,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 162928,
+          "avg_damage": 165794,
           "min_damage": 49799,
           "max_damage": 405476,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 46861,
+          "avg_damage": 46877,
           "min_damage": 12747,
           "max_damage": 209856,
-          "count": 12
+          "count": 11
         }
       ]
     },
@@ -126,12 +132,12 @@
       ]
     },
     {
-      "time_s": 257.2,
-      "dmg_avg": 271040,
-      "dmg_stddev": 119645,
+      "time_s": 255.9,
+      "dmg_avg": 269332,
+      "dmg_stddev": 112035,
       "dmg_min": 159045,
       "dmg_max": 438056,
-      "window_length_s": 2.3,
+      "window_length_s": 2,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -144,27 +150,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 173566,
+          "avg_damage": 182051,
           "min_damage": 90601,
           "max_damage": 334410,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 75795,
-          "min_damage": 28265,
+          "avg_damage": 69897,
+          "min_damage": 22716,
           "max_damage": 161722,
-          "count": 8
+          "count": 9
         }
       ]
     },
     {
       "time_s": 406.9,
-      "dmg_avg": 239460,
-      "dmg_stddev": 76456,
+      "dmg_avg": 231263,
+      "dmg_stddev": 74484,
       "dmg_min": 172209,
       "dmg_max": 359126,
-      "window_length_s": 2.4,
+      "window_length_s": 2.2,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -177,17 +183,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 146400,
+          "avg_damage": 137059,
           "min_damage": 79205,
           "max_damage": 298731,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 106340,
+          "avg_damage": 102322,
           "min_damage": 41709,
           "max_damage": 209771,
-          "count": 7
+          "count": 8
         }
       ]
     }
@@ -195,7 +201,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 4.8,
+      "avg_uses": 5.1,
       "min_uses": 1,
       "max_uses": 15
     },
@@ -285,6 +291,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "5b4d4bdf8d00e367",
+  "source_signature": "b89a8f9ba7bd92c5",
   "ingest_version": 1
 }

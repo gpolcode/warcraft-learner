@@ -5,19 +5,19 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
-      "sample_count": 9,
-      "avg_first_cast_s": 62,
-      "stddev_first_cast_s": 32.9,
-      "avg_gap_s": 48.7,
-      "stddev_gap_s": 35.6,
+      "sample_count": 8,
+      "avg_first_cast_s": 66.9,
+      "stddev_first_cast_s": 31.6,
+      "avg_gap_s": 77,
+      "stddev_gap_s": 44.8,
       "hold_targets": {},
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.6,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.595,
-        "stddev": 0.558,
+        "avg": 0.423,
+        "stddev": 0.226,
         "min": 0.244,
-        "max": 1.973
+        "max": 0.887
       },
       "majority_hold": false
     },
@@ -48,12 +48,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 33.4,
-      "dmg_avg": 242345,
-      "dmg_stddev": 93792,
-      "dmg_min": 173166,
-      "dmg_max": 401747,
-      "window_length_s": 10,
+      "time_s": 90.4,
+      "dmg_avg": 192714,
+      "dmg_stddev": 30366,
+      "dmg_min": 168204,
+      "dmg_max": 242521,
+      "window_length_s": 7.4,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -65,44 +65,11 @@
       "ref_game_id": 240434,
       "ability_breakdown": [
         {
-          "spell_id": 1272328,
-          "avg_damage": 101008,
-          "min_damage": 93739,
-          "max_damage": 106838,
-          "count": 4
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 68498,
-          "min_damage": 22240,
-          "max_damage": 111650,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 89,
-      "dmg_avg": 201637,
-      "dmg_stddev": 34862,
-      "dmg_min": 168204,
-      "dmg_max": 246250,
-      "window_length_s": 6.9,
-      "defensive_name": "Blazing Barrier",
-      "spell_id": 235313,
-      "common_defensives": [
-        "Blazing Barrier"
-      ],
-      "common_cds": [
-        "Blazing Barrier"
-      ],
-      "ref_game_id": 253475,
-      "ability_breakdown": [
-        {
           "spell_id": 1259186,
-          "avg_damage": 148484,
+          "avg_damage": 127303,
           "min_damage": 81600,
           "max_damage": 215280,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1280101,
@@ -113,10 +80,10 @@
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 48125,
+          "avg_damage": 50905,
           "min_damage": 24044,
           "max_damage": 83725,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -124,9 +91,9 @@
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 2.1,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 7
+      "max_uses": 3
     },
     {
       "spell_id": 342245,
@@ -209,10 +176,6 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -222,6 +185,6 @@
       "name": "Dark Energy"
     }
   },
-  "source_signature": "5186108b23adad56",
+  "source_signature": "3cd6ec90cbd30ea8",
   "ingest_version": 1
 }

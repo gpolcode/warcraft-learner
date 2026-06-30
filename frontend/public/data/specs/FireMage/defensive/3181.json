@@ -6,76 +6,70 @@
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 94.2,
-      "stddev_first_cast_s": 38.4,
-      "avg_gap_s": 73.1,
-      "stddev_gap_s": 64.6,
+      "avg_first_cast_s": 100.6,
+      "stddev_first_cast_s": 38.8,
+      "avg_gap_s": 75.5,
+      "stddev_gap_s": 66.1,
       "hold_targets": {
         "1": {
-          "target_s": 144.3,
-          "stddev_s": 91.2,
+          "target_s": 159.7,
+          "stddev_s": 91.6,
           "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 337.6,
-          "stddev_s": 147.6,
-          "count": 7,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 270.7,
-          "stddev_s": 111.5,
+          "target_s": 346.7,
+          "stddev_s": 148.5,
           "count": 6,
           "total_samples": 10
         },
-        "5": {
-          "target_s": 359.3,
-          "stddev_s": 84,
-          "count": 4,
+        "3": {
+          "target_s": 321.2,
+          "stddev_s": 90.5,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 0.67,
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.668,
-        "stddev": 0.346,
+        "avg": 0.627,
+        "stddev": 0.34,
         "min": 0.296,
         "max": 1.376
       },
       "majority_hold": true
     },
     "Alter Time": {
-      "sample_count": 5,
-      "avg_first_cast_s": 350.4,
-      "stddev_first_cast_s": 28.2,
+      "sample_count": 4,
+      "avg_first_cast_s": 349.7,
+      "stddev_first_cast_s": 32.6,
       "avg_gap_s": 63.2,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.15,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.16,
       "uses_per_min": {
-        "avg": 0.151,
-        "stddev": 0.049,
+        "avg": 0.158,
+        "stddev": 0.053,
         "min": 0.115,
         "max": 0.235
       },
       "majority_hold": false
     },
     "Greater Invisibility": {
-      "sample_count": 3,
-      "avg_first_cast_s": 217,
-      "stddev_first_cast_s": 111.8,
+      "sample_count": 4,
+      "avg_first_cast_s": 279.9,
+      "stddev_first_cast_s": 155.5,
       "avg_gap_s": 201.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.17,
+      "avg_uses_per_min": 0.16,
       "uses_per_min": {
-        "avg": 0.173,
-        "stddev": 0.054,
-        "min": 0.135,
+        "avg": 0.159,
+        "stddev": 0.052,
+        "min": 0.117,
         "max": 0.235
       },
       "majority_hold": false
@@ -83,12 +77,45 @@
   },
   "defensive_windows": [
     {
-      "time_s": 62.3,
-      "dmg_avg": 241408,
-      "dmg_stddev": 80154,
+      "time_s": 60.2,
+      "dmg_avg": 255944,
+      "dmg_stddev": 84603,
       "dmg_min": 168785,
       "dmg_max": 350412,
-      "window_length_s": 2.8,
+      "window_length_s": 2.5,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1233649,
+          "avg_damage": 263986,
+          "min_damage": 251143,
+          "max_damage": 276828,
+          "count": 2
+        },
+        {
+          "spell_id": 1281707,
+          "avg_damage": 95590,
+          "min_damage": 50770,
+          "max_damage": 202664,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 117.9,
+      "dmg_avg": 344031,
+      "dmg_stddev": 159041,
+      "dmg_min": 177337,
+      "dmg_max": 606776,
+      "window_length_s": 20.2,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -101,60 +128,41 @@
       "ability_breakdown": [
         {
           "spell_id": 1281707,
-          "avg_damage": 110971,
-          "min_damage": 50770,
-          "max_damage": 202664,
+          "avg_damage": 151552,
+          "min_damage": 31334,
+          "max_damage": 272495,
           "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 125,
-      "dmg_avg": 307589,
-      "dmg_stddev": 113402,
-      "dmg_min": 177337,
-      "dmg_max": 545405,
-      "window_length_s": 18.6,
-      "defensive_name": "Blazing Barrier",
-      "spell_id": 235313,
-      "common_defensives": [
-        "Blazing Barrier"
-      ],
-      "common_cds": [
-        "Blazing Barrier"
-      ],
-      "ref_game_id": 240430,
-      "ability_breakdown": [
+        },
         {
           "spell_id": 3,
-          "avg_damage": 135266,
+          "avg_damage": 147710,
           "min_damage": 76717,
           "max_damage": 171688,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1243981,
-          "avg_damage": 97013,
-          "min_damage": 95314,
-          "max_damage": 98943,
-          "count": 5
+          "avg_damage": 94657,
+          "min_damage": 87964,
+          "max_damage": 97944,
+          "count": 4
         },
         {
           "spell_id": 1234570,
-          "avg_damage": 87594,
+          "avg_damage": 81997,
           "min_damage": 67435,
-          "max_damage": 108706,
-          "count": 6
+          "max_damage": 107233,
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 158.9,
-      "dmg_avg": 213180,
-      "dmg_stddev": 44200,
+      "time_s": 153.6,
+      "dmg_avg": 201746,
+      "dmg_stddev": 34481,
       "dmg_min": 170936,
-      "dmg_max": 292923,
-      "window_length_s": 9.1,
+      "dmg_max": 278428,
+      "window_length_s": 8.6,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -167,20 +175,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1234570,
-          "avg_damage": 148103,
-          "min_damage": 39776,
-          "max_damage": 201863,
+          "avg_damage": 161728,
+          "min_damage": 103987,
+          "max_damage": 217752,
           "count": 9
         }
       ]
     },
     {
-      "time_s": 328.2,
-      "dmg_avg": 197680,
-      "dmg_stddev": 30924,
-      "dmg_min": 172574,
-      "dmg_max": 258175,
-      "window_length_s": 7.6,
+      "time_s": 262.7,
+      "dmg_avg": 219668,
+      "dmg_stddev": 54944,
+      "dmg_min": 183541,
+      "dmg_max": 300311,
+      "window_length_s": 6.7,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -192,11 +200,44 @@
       "ref_game_id": 240430,
       "ability_breakdown": [
         {
+          "spell_id": 1260019,
+          "avg_damage": 99117,
+          "min_damage": 31106,
+          "max_damage": 161761,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 71000,
+          "min_damage": 21780,
+          "max_damage": 97940,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 321.2,
+      "dmg_avg": 185581,
+      "dmg_stddev": 9872,
+      "dmg_min": 172574,
+      "dmg_max": 198204,
+      "window_length_s": 5.9,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 253742,
+      "ability_breakdown": [
+        {
           "spell_id": 1260771,
-          "avg_damage": 100286,
+          "avg_damage": 99774,
           "min_damage": 23193,
           "max_damage": 198204,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1260019,
@@ -215,12 +256,12 @@
       ]
     },
     {
-      "time_s": 473.9,
-      "dmg_avg": 239305,
-      "dmg_stddev": 96376,
-      "dmg_min": 170939,
-      "dmg_max": 427370,
-      "window_length_s": 2.1,
+      "time_s": 357.2,
+      "dmg_avg": 239021,
+      "dmg_stddev": 112668,
+      "dmg_min": 168724,
+      "dmg_max": 406034,
+      "window_length_s": 4.1,
       "defensive_name": "Blazing Barrier",
       "spell_id": 235313,
       "common_defensives": [
@@ -232,18 +273,91 @@
       "ref_game_id": 240430,
       "ability_breakdown": [
         {
-          "spell_id": 1237040,
-          "avg_damage": 66245,
-          "min_damage": 24904,
-          "max_damage": 99618,
-          "count": 6
+          "spell_id": 1239095,
+          "avg_damage": 190363,
+          "min_damage": 45568,
+          "max_damage": 406034,
+          "count": 3
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 49212,
-          "min_damage": 25404,
-          "max_damage": 71321,
+          "avg_damage": 69029,
+          "min_damage": 50910,
+          "max_damage": 87147,
+          "count": 2
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 45149,
+          "min_damage": 41060,
+          "max_damage": 49238,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 401.8,
+      "dmg_avg": 234553,
+      "dmg_stddev": 60990,
+      "dmg_min": 177273,
+      "dmg_max": 310920,
+      "window_length_s": 3.7,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 147237,
+          "min_damage": 132770,
+          "max_damage": 155287,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 112479,
+          "min_damage": 24420,
+          "max_damage": 185738,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 473.5,
+      "dmg_avg": 196905,
+      "dmg_stddev": 30616,
+      "dmg_min": 170939,
+      "dmg_max": 248478,
+      "window_length_s": 2.4,
+      "defensive_name": "Blazing Barrier",
+      "spell_id": 235313,
+      "common_defensives": [
+        "Blazing Barrier"
+      ],
+      "common_cds": [
+        "Blazing Barrier"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_damage": 117457,
+          "min_damage": 51811,
+          "max_damage": 151618,
           "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 74203,
+          "min_damage": 24904,
+          "max_damage": 102027,
+          "count": 6
         }
       ]
     }
@@ -251,13 +365,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 5.3,
+      "avg_uses": 5,
       "min_uses": 2,
       "max_uses": 12
     },
     {
       "spell_id": 342245,
-      "avg_uses": 1.2,
+      "avg_uses": 1.3,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -342,6 +456,10 @@
       "icon": "ability_racial_magicalresistance",
       "name": "Mass Barrier"
     },
+    "1233649": {
+      "icon": "inv_ammo_arrow_03",
+      "name": "Silverstrike Arrow"
+    },
     "1234570": {
       "icon": "spell_priest_divinestar_shadow",
       "name": "Stellar Emission"
@@ -350,6 +468,10 @@
       "icon": "ability_ironmaidens_convulsiveshadows",
       "name": "Voidstalker Sting"
     },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
     "1243981": {
       "icon": "ability_shootwand",
       "name": "Silverstrike Barrage"
@@ -357,6 +479,10 @@
     "1260019": {
       "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
       "name": "Simulacrum Backlash"
+    },
+    "1260027": {
+      "icon": "inv_shadowelementalmount",
+      "name": "Grasp of Emptiness"
     },
     "1260771": {
       "icon": "inv_cosmicvoid_buff",
@@ -371,6 +497,6 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "372803eb4498b53a",
+  "source_signature": "fe0f254f2356825e",
   "ingest_version": 1
 }

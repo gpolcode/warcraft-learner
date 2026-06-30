@@ -3,68 +3,87 @@
   "encounter_id": 3178,
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
-  "avg_duration_s": 376.2,
-  "downtime_threshold_ms": 1419,
-  "top_avg_efficiency": 75.9,
-  "top_efficiency_stddev": 7.8,
+  "avg_duration_s": 358.1,
+  "downtime_threshold_ms": 1391,
+  "top_avg_efficiency": 76.4,
+  "top_efficiency_stddev": 8.4,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 16.1,
-      "stddev_first_cast_s": 20.9,
-      "avg_gap_s": 123.2,
-      "stddev_gap_s": 20.4,
-      "avg_bl_offset_s": 21,
-      "stddev_bl_offset_s": 25,
+      "avg_first_cast_s": 15.3,
+      "stddev_first_cast_s": 21.5,
+      "avg_gap_s": 120.3,
+      "stddev_gap_s": 18.3,
+      "avg_bl_offset_s": 16.9,
+      "stddev_bl_offset_s": 23.6,
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.534,
-        "stddev": 0.172,
-        "min": 0.403,
+        "avg": 0.576,
+        "stddev": 0.164,
+        "min": 0.434,
         "max": 0.86
       },
-      "bl_pct": 40,
+      "bl_pct": 50,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Avenging Crusader": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.2,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 65.1,
-      "stddev_gap_s": 7.3,
-      "avg_bl_offset_s": 1.3,
-      "stddev_bl_offset_s": 0.5,
+      "avg_first_cast_s": 1.6,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 65.6,
+      "stddev_gap_s": 7.2,
+      "avg_bl_offset_s": 1,
+      "stddev_bl_offset_s": 0.7,
       "avg_uses": 2.6,
       "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 1,
+        "avg": 1.004,
         "stddev": 0.039,
         "min": 0.955,
         "max": 1.049
       },
-      "bl_pct": 30,
+      "bl_pct": 40,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "4": {
+          "target_s": 198.7,
+          "stddev_s": 14.8,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 259.5,
+          "stddev_s": 17.5,
+          "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 326.5,
+          "stddev_s": 16.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.7,
-      "stddev_first_cast_s": 10.2,
-      "avg_gap_s": 37.4,
-      "stddev_gap_s": 9.2,
-      "avg_bl_offset_s": 18.2,
-      "stddev_bl_offset_s": 10.9,
-      "avg_uses": 3.9,
-      "avg_uses_per_min": 0.64,
+      "avg_first_cast_s": 16.2,
+      "stddev_first_cast_s": 9.7,
+      "avg_gap_s": 37.8,
+      "stddev_gap_s": 9.4,
+      "avg_bl_offset_s": 16,
+      "stddev_bl_offset_s": 9.9,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 1.592,
-        "stddev": 0.181,
+        "avg": 1.628,
+        "stddev": 0.199,
         "min": 1.332,
-        "max": 1.735
+        "max": 1.754
       },
-      "bl_pct": 30,
+      "bl_pct": 40,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -90,72 +109,66 @@
     },
     "Holy Shock": {
       "sample_count": 10,
-      "avg_first_cast_s": 3,
-      "stddev_first_cast_s": 3.7,
+      "avg_first_cast_s": 4.5,
+      "stddev_first_cast_s": 4.9,
       "avg_gap_s": 4.9,
-      "stddev_gap_s": 4.1,
-      "avg_bl_offset_s": 2.8,
-      "stddev_bl_offset_s": 3.3,
-      "avg_uses": 75.4,
-      "avg_uses_per_min": 12.12,
+      "stddev_gap_s": 4.3,
+      "avg_bl_offset_s": 3.9,
+      "stddev_bl_offset_s": 4.4,
+      "avg_uses": 71,
+      "avg_uses_per_min": 12.17,
       "uses_per_min": {
-        "avg": 12.117,
-        "stddev": 3.509,
+        "avg": 12.169,
+        "stddev": 3.543,
         "min": 6.472,
         "max": 16.487
       },
-      "bl_pct": 70,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Holy Bulwark": {
       "sample_count": 10,
-      "avg_first_cast_s": 13.3,
-      "stddev_first_cast_s": 10.1,
-      "avg_gap_s": 59.8,
-      "stddev_gap_s": 15.5,
-      "avg_bl_offset_s": 13.9,
-      "stddev_bl_offset_s": 13.5,
+      "avg_first_cast_s": 12,
+      "stddev_first_cast_s": 11.2,
+      "avg_gap_s": 60,
+      "stddev_gap_s": 15.2,
+      "avg_bl_offset_s": 11.1,
+      "stddev_bl_offset_s": 13.3,
       "avg_uses": 3.7,
       "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.978,
-        "stddev": 0.076,
+        "avg": 0.981,
+        "stddev": 0.077,
         "min": 0.881,
         "max": 1.075
       },
-      "bl_pct": 40,
+      "bl_pct": 50,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Sacred Weapon": {
       "sample_count": 10,
-      "avg_first_cast_s": 18,
-      "stddev_first_cast_s": 4.3,
-      "avg_gap_s": 65.5,
-      "stddev_gap_s": 14.1,
-      "avg_bl_offset_s": 17.4,
-      "stddev_bl_offset_s": 5.3,
+      "avg_first_cast_s": 17.1,
+      "stddev_first_cast_s": 5.6,
+      "avg_gap_s": 65.4,
+      "stddev_gap_s": 14.3,
+      "avg_bl_offset_s": 15.5,
+      "stddev_bl_offset_s": 6.3,
       "avg_uses": 3.6,
       "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.953,
-        "stddev": 0.117,
+        "avg": 0.956,
+        "stddev": 0.118,
         "min": 0.76,
         "max": 1.075
       },
-      "bl_pct": 40,
+      "bl_pct": 50,
       "majority_hold": false,
       "hold_targets": {
-        "3": {
-          "target_s": 161.8,
-          "stddev_s": 7.9,
-          "count": 4,
-          "total_samples": 10
-        },
         "5": {
           "target_s": 289.3,
-          "stddev_s": 19.8,
+          "stddev_s": 19.7,
           "count": 5,
           "total_samples": 10
         }
@@ -163,30 +176,23 @@
     },
     "Aura Mastery": {
       "sample_count": 10,
-      "avg_first_cast_s": 165,
-      "stddev_first_cast_s": 77.6,
-      "avg_gap_s": 226.5,
-      "stddev_gap_s": 50.2,
+      "avg_first_cast_s": 156,
+      "stddev_first_cast_s": 52.1,
+      "avg_gap_s": 210.6,
+      "stddev_gap_s": 57.7,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.19,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.232,
-        "stddev": 0.071,
-        "min": 0.142,
+        "avg": 0.247,
+        "stddev": 0.067,
+        "min": 0.152,
         "max": 0.333
       },
       "bl_pct": 0,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 338.3,
-          "stddev_s": 33.6,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -382,6 +388,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "74bc3a8e7d7c6a09",
+  "source_signature": "3e2955dc4c3dbc69",
   "ingest_version": 1
 }

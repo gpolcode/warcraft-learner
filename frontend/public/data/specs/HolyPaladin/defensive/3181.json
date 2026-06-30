@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Lay on Hands": {
-      "sample_count": 8,
-      "avg_first_cast_s": 44.9,
-      "stddev_first_cast_s": 30.8,
+      "sample_count": 7,
+      "avg_first_cast_s": 38.8,
+      "stddev_first_cast_s": 27.6,
       "avg_gap_s": 406.1,
       "stddev_gap_s": 82.1,
       "hold_targets": {},
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.211,
-        "stddev": 0.055,
+        "avg": 0.223,
+        "stddev": 0.046,
         "min": 0.124,
         "max": 0.255
       },
@@ -23,23 +23,29 @@
     },
     "Blessing of Sacrifice": {
       "sample_count": 8,
-      "avg_first_cast_s": 85.7,
-      "stddev_first_cast_s": 56.6,
-      "avg_gap_s": 204.4,
-      "stddev_gap_s": 72.3,
+      "avg_first_cast_s": 81.3,
+      "stddev_first_cast_s": 61.4,
+      "avg_gap_s": 212,
+      "stddev_gap_s": 87.5,
       "hold_targets": {
         "1": {
-          "target_s": 279.7,
-          "stddev_s": 82.3,
-          "count": 6,
+          "target_s": 294.2,
+          "stddev_s": 82.1,
+          "count": 7,
+          "total_samples": 8
+        },
+        "2": {
+          "target_s": 477.2,
+          "stddev_s": 58.6,
+          "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.266,
-        "stddev": 0.118,
+        "avg": 0.293,
+        "stddev": 0.105,
         "min": 0.119,
         "max": 0.445
       },
@@ -47,21 +53,21 @@
     },
     "Divine Protection": {
       "sample_count": 10,
-      "avg_first_cast_s": 46.4,
-      "stddev_first_cast_s": 22.1,
-      "avg_gap_s": 88.5,
-      "stddev_gap_s": 58.8,
+      "avg_first_cast_s": 51.7,
+      "stddev_first_cast_s": 30.3,
+      "avg_gap_s": 86.5,
+      "stddev_gap_s": 57.7,
       "hold_targets": {
         "1": {
-          "target_s": 233.2,
-          "stddev_s": 90.6,
-          "count": 6,
+          "target_s": 244.5,
+          "stddev_s": 88.3,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 344.7,
-          "stddev_s": 79.5,
-          "count": 7,
+          "target_s": 287.2,
+          "stddev_s": 83.5,
+          "count": 6,
           "total_samples": 10
         },
         "3": {
@@ -71,20 +77,20 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 5.8,
+      "avg_uses": 5.9,
       "avg_uses_per_min": 0.7,
       "uses_per_min": {
-        "avg": 0.695,
-        "stddev": 0.168,
+        "avg": 0.702,
+        "stddev": 0.166,
         "min": 0.497,
         "max": 1.114
       },
       "majority_hold": true
     },
     "Divine Shield": {
-      "sample_count": 5,
-      "avg_first_cast_s": 414.3,
-      "stddev_first_cast_s": 184.8,
+      "sample_count": 6,
+      "avg_first_cast_s": 425.1,
+      "stddev_first_cast_s": 167.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -92,35 +98,42 @@
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
         "avg": 0.116,
-        "stddev": 0.006,
+        "stddev": 0.005,
         "min": 0.111,
         "max": 0.124
       },
       "majority_hold": false
     },
     "Blessing of Protection": {
-      "sample_count": 2,
-      "avg_first_cast_s": 93.4,
-      "stddev_first_cast_s": 9.4,
-      "avg_gap_s": 421.6,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.18,
+      "sample_count": 3,
+      "avg_first_cast_s": 65.2,
+      "stddev_first_cast_s": 49.2,
+      "avg_gap_s": 401,
+      "stddev_gap_s": 29.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 448.9,
+          "stddev_s": 84.1,
+          "count": 2,
+          "total_samples": 3
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.176,
-        "stddev": 0.08,
+        "avg": 0.193,
+        "stddev": 0.064,
         "min": 0.119,
         "max": 0.232
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 57.9,
-      "dmg_avg": 289759,
-      "dmg_stddev": 62641,
+      "time_s": 57,
+      "dmg_avg": 296109,
+      "dmg_stddev": 66106,
       "dmg_min": 224848,
       "dmg_max": 400871,
       "window_length_s": 8,
@@ -136,17 +149,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1281707,
-          "avg_damage": 215216,
+          "avg_damage": 214450,
           "min_damage": 169219,
           "max_damage": 257954,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1233826,
-          "avg_damage": 63808,
+          "avg_damage": 71798,
           "min_damage": 30995,
           "max_damage": 128158,
-          "count": 5
+          "count": 4
         }
       ]
     },
@@ -191,9 +204,9 @@
       ]
     },
     {
-      "time_s": 123,
-      "dmg_avg": 195853,
-      "dmg_stddev": 333058,
+      "time_s": 122.3,
+      "dmg_avg": 239548,
+      "dmg_stddev": 317879,
       "dmg_min": 0,
       "dmg_max": 694447,
       "window_length_s": 8,
@@ -205,14 +218,21 @@
       "common_cds": [
         "Divine Protection"
       ],
-      "ref_game_id": 243805,
+      "ref_game_id": 243811,
       "ability_breakdown": [
         {
           "spell_id": 1281707,
-          "avg_damage": 38589,
+          "avg_damage": 88591,
           "min_damage": 26805,
-          "max_damage": 45510,
+          "max_damage": 195515,
           "count": 3
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 16539,
+          "min_damage": 8303,
+          "max_damage": 24775,
+          "count": 2
         }
       ]
     },
@@ -278,10 +298,10 @@
       ]
     },
     {
-      "time_s": 349.2,
-      "dmg_avg": 515384,
-      "dmg_stddev": 80519,
-      "dmg_min": 411539,
+      "time_s": 355.8,
+      "dmg_avg": 480676,
+      "dmg_stddev": 80849,
+      "dmg_min": 404120,
       "dmg_max": 613406,
       "window_length_s": 8,
       "defensive_name": "Divine Protection",
@@ -296,25 +316,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 364235,
-          "min_damage": 266143,
+          "avg_damage": 334549,
+          "min_damage": 254465,
           "max_damage": 395635,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 124937,
+          "avg_damage": 125902,
           "min_damage": 74472,
           "max_damage": 158772,
-          "count": 7
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 405.2,
-      "dmg_avg": 622263,
-      "dmg_stddev": 153882,
-      "dmg_min": 460390,
+      "time_s": 406.2,
+      "dmg_avg": 592211,
+      "dmg_stddev": 173668,
+      "dmg_min": 325064,
       "dmg_max": 960149,
       "window_length_s": 8,
       "defensive_name": "Divine Protection",
@@ -329,32 +349,25 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 332960,
-          "min_damage": 235506,
+          "avg_damage": 292271,
+          "min_damage": 134306,
           "max_damage": 386447,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 132719,
-          "min_damage": 22464,
-          "max_damage": 179227,
-          "count": 8
-        },
-        {
-          "spell_id": 1261289,
-          "avg_damage": 107906,
-          "min_damage": 78805,
-          "max_damage": 118526,
-          "count": 5
+          "avg_damage": 153471,
+          "min_damage": 24646,
+          "max_damage": 183507,
+          "count": 9
         }
       ]
     },
     {
       "time_s": 450.3,
-      "dmg_avg": 385065,
-      "dmg_stddev": 162384,
-      "dmg_min": 176464,
+      "dmg_avg": 414482,
+      "dmg_stddev": 134565,
+      "dmg_min": 203439,
       "dmg_max": 568978,
       "window_length_s": 8,
       "defensive_name": "Divine Protection",
@@ -369,24 +382,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1239095,
-          "avg_damage": 223034,
+          "avg_damage": 208703,
           "min_damage": 130648,
           "max_damage": 278332,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1237040,
-          "avg_damage": 159514,
+          "avg_damage": 160681,
           "min_damage": 112691,
-          "max_damage": 180708,
+          "max_damage": 184636,
           "count": 7
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 79121,
+          "min_damage": 35972,
+          "max_damage": 136580,
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 483.8,
-      "dmg_avg": 489352,
-      "dmg_stddev": 192373,
+      "time_s": 490.5,
+      "dmg_avg": 455938,
+      "dmg_stddev": 182587,
       "dmg_min": 320452,
       "dmg_max": 748335,
       "window_length_s": 8,
@@ -401,25 +421,18 @@
       "ref_game_id": 240430,
       "ability_breakdown": [
         {
-          "spell_id": 1239095,
-          "avg_damage": 240588,
-          "min_damage": 240183,
-          "max_damage": 240993,
-          "count": 2
-        },
-        {
           "spell_id": 1237040,
-          "avg_damage": 212110,
-          "min_damage": 141027,
+          "avg_damage": 191553,
+          "min_damage": 109325,
           "max_damage": 346064,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1261289,
-          "avg_damage": 136184,
+          "avg_damage": 143298,
           "min_damage": 96391,
           "max_damage": 172926,
-          "count": 3
+          "count": 4
         }
       ]
     }
@@ -433,25 +446,25 @@
     },
     {
       "spell_id": 633,
-      "avg_uses": 1.8,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 1022,
-      "avg_uses": 1.5,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 6940,
-      "avg_uses": 2.3,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 498,
-      "avg_uses": 5.8,
+      "avg_uses": 5.9,
       "min_uses": 4,
       "max_uses": 9
     }
@@ -563,6 +576,6 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "dbb486d43a68ed41",
+  "source_signature": "9c253977af7a9c39",
   "ingest_version": 1
 }

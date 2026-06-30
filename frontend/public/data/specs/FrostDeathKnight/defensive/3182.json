@@ -6,69 +6,86 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 9,
-      "avg_first_cast_s": 112.2,
-      "stddev_first_cast_s": 109.4,
+      "avg_first_cast_s": 103.2,
+      "stddev_first_cast_s": 94.3,
       "avg_gap_s": 61.6,
       "stddev_gap_s": 20.7,
       "hold_targets": {},
       "avg_uses": 3.3,
-      "avg_uses_per_min": 0.67,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.671,
-        "stddev": 0.422,
-        "min": 0.184,
+        "avg": 0.679,
+        "stddev": 0.411,
+        "min": 0.192,
         "max": 1.19
       },
       "majority_hold": true
     },
     "Icebound Fortitude": {
-      "sample_count": 8,
-      "avg_first_cast_s": 229.5,
-      "stddev_first_cast_s": 72.7,
-      "avg_gap_s": 144.4,
-      "stddev_gap_s": 17.7,
+      "sample_count": 9,
+      "avg_first_cast_s": 210.2,
+      "stddev_first_cast_s": 84.2,
+      "avg_gap_s": 149.4,
+      "stddev_gap_s": 15.2,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.256,
-        "stddev": 0.101,
+        "avg": 0.284,
+        "stddev": 0.121,
         "min": 0.184,
-        "max": 0.445
+        "max": 0.489
       },
       "majority_hold": false
     },
     "Lichborne": {
       "sample_count": 4,
-      "avg_first_cast_s": 124.7,
-      "stddev_first_cast_s": 123.5,
+      "avg_first_cast_s": 117.1,
+      "stddev_first_cast_s": 113,
       "avg_gap_s": 92.9,
       "stddev_gap_s": 8.6,
       "hold_targets": {},
       "avg_uses": 2.3,
       "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.455,
-        "stddev": 0.272,
-        "min": 0.224,
+        "avg": 0.459,
+        "stddev": 0.267,
+        "min": 0.232,
         "max": 0.769
       },
       "majority_hold": false
     },
     "Anti-Magic Zone": {
-      "sample_count": 6,
-      "avg_first_cast_s": 210.9,
-      "stddev_first_cast_s": 56.7,
+      "sample_count": 5,
+      "avg_first_cast_s": 205.9,
+      "stddev_first_cast_s": 61.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.209,
-        "stddev": 0.02,
+        "avg": 0.206,
+        "stddev": 0.021,
         "min": 0.184,
         "max": 0.232
+      },
+      "majority_hold": false
+    },
+    "Death Strike": {
+      "sample_count": 1,
+      "avg_first_cast_s": 54.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.244,
+        "stddev": 0,
+        "min": 0.244,
+        "max": 0.244
       },
       "majority_hold": false
     }
@@ -134,12 +151,12 @@
       ]
     },
     {
-      "time_s": 248.3,
-      "dmg_avg": 277208,
-      "dmg_stddev": 181954,
+      "time_s": 245.3,
+      "dmg_avg": 271792,
+      "dmg_stddev": 168082,
       "dmg_min": 56693,
       "dmg_max": 472878,
-      "window_length_s": 7,
+      "window_length_s": 6.7,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -152,10 +169,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1264650,
-          "avg_damage": 62425,
-          "min_damage": 51510,
+          "avg_damage": 59009,
+          "min_damage": 43903,
           "max_damage": 77661,
-          "count": 7
+          "count": 8
         }
       ]
     },
@@ -191,39 +208,6 @@
           "count": 6
         }
       ]
-    },
-    {
-      "time_s": 299,
-      "dmg_avg": 368712,
-      "dmg_stddev": 124047,
-      "dmg_min": 183354,
-      "dmg_max": 444749,
-      "window_length_s": 6.1,
-      "defensive_name": "Anti-Magic Shell",
-      "spell_id": 48707,
-      "common_defensives": [
-        "Anti-Magic Shell"
-      ],
-      "common_cds": [
-        "Anti-Magic Shell"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1242803,
-          "avg_damage": 319169,
-          "min_damage": 158593,
-          "max_damage": 386514,
-          "count": 4
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 49543,
-          "min_damage": 24761,
-          "max_damage": 59603,
-          "count": 4
-        }
-      ]
     }
   ],
   "top_defensives_summary": [
@@ -244,6 +228,12 @@
       "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
+    },
+    {
+      "spell_id": 49998,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     },
     {
       "spell_id": 51052,
@@ -335,6 +325,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "24b150cf5d101440",
+  "source_signature": "67c183575f6617da",
   "ingest_version": 1
 }

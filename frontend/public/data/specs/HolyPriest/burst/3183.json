@@ -5,60 +5,69 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 464.4,
-      "dmg_avg": 5506939,
-      "dmg_stddev": 1993220,
-      "dmg_min": 3561066,
-      "dmg_max": 9473644,
+      "time_s": 454.6,
+      "dmg_avg": 6104127,
+      "dmg_stddev": 2591562,
+      "dmg_min": 4000451,
+      "dmg_max": 11110900,
       "common_cds": [
-        "Divine Hymn",
-        "Halo"
+        "Halo",
+        "Divine Hymn"
       ],
       "avg_targets": 1,
-      "window_length_s": 11.4,
+      "window_length_s": 12,
       "ability_breakdown": [
         {
           "spell_id": 1292446,
-          "avg_damage": 5087235,
+          "avg_damage": 5341597,
           "min_damage": 3561064,
           "max_damage": 8902661,
-          "count": 7,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
-          "spell_id": 120696,
-          "avg_damage": 171178,
-          "min_damage": 129371,
-          "max_damage": 221617,
+          "spell_id": 14914,
+          "avg_damage": 292167,
+          "min_damage": 41204,
+          "max_damage": 940284,
           "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 120696,
+          "avg_damage": 238854,
+          "min_damage": 129371,
+          "max_damage": 509561,
+          "count": 5,
           "avg_casts": 1,
           "is_passive": false
         },
         {
           "spell_id": 132157,
-          "avg_damage": 164395,
+          "avg_damage": 154889,
           "min_damage": 79846,
           "max_damage": 203974,
-          "count": 4,
+          "count": 3,
           "avg_casts": 1,
           "is_passive": false
         },
         {
-          "spell_id": 14914,
-          "avg_damage": 91581,
-          "min_damage": 41204,
-          "max_damage": 137943,
-          "count": 4,
-          "avg_casts": 1,
-          "is_passive": false
+          "spell_id": 1286970,
+          "avg_damage": 13508,
+          "min_damage": 9970,
+          "max_damage": 20375,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     },
     {
       "time_s": 486.9,
-      "dmg_avg": 11814092,
-      "dmg_stddev": 4865421,
+      "dmg_avg": 11095641,
+      "dmg_stddev": 4712383,
       "dmg_min": 3906426,
       "dmg_max": 16633673,
       "common_cds": [
@@ -66,38 +75,38 @@
         "Halo"
       ],
       "avg_targets": 1,
-      "window_length_s": 24.2,
+      "window_length_s": 22.6,
       "ability_breakdown": [
         {
           "spell_id": 1292446,
-          "avg_damage": 10558946,
+          "avg_damage": 9891247,
           "min_damage": 3457344,
-          "max_damage": 14244259,
+          "max_damage": 13799129,
           "count": 8,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 14914,
-          "avg_damage": 463932,
+          "avg_damage": 423515,
           "min_damage": 49153,
           "max_damage": 1374013,
           "count": 4,
-          "avg_casts": 3,
+          "avg_casts": 2,
           "is_passive": false
         },
         {
           "spell_id": 120696,
-          "avg_damage": 310846,
+          "avg_damage": 310694,
           "min_damage": 80755,
           "max_damage": 505171,
-          "count": 6,
+          "count": 5,
           "avg_casts": 1,
           "is_passive": false
         },
         {
           "spell_id": 196811,
-          "avg_damage": 259029,
+          "avg_damage": 267395,
           "min_damage": 23941,
           "max_damage": 1026505,
           "count": 7,
@@ -106,16 +115,16 @@
         },
         {
           "spell_id": 585,
-          "avg_damage": 219397,
+          "avg_damage": 232562,
           "min_damage": 138207,
           "max_damage": 314875,
-          "count": 6,
+          "count": 5,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 132157,
-          "avg_damage": 124784,
+          "avg_damage": 147485,
           "min_damage": 91693,
           "max_damage": 199563,
           "count": 4,
@@ -193,11 +202,16 @@
       "icon": "spell_priest_chakra",
       "name": "Divine Word"
     },
+    "1286970": {
+      "icon": "inv_summerfest_firespirit",
+      "name": "Rune of Unleashed Fire"
+    },
     "1292446": {
       "icon": "spell_holy_aspiration",
       "name": "The Last Light"
     }
   },
-  "source_signature": "94bdfb80e0a6250f",
-  "ingest_version": 1
+  "source_signature": "55ba4cf0c1ef8a79",
+  "ingest_version": 1,
+  "inaccessible_parses": []
 }

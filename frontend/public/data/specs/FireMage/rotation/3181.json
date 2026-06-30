@@ -3,26 +3,26 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 469.8,
-  "downtime_threshold_ms": 1744,
-  "top_avg_efficiency": 66.3,
-  "top_efficiency_stddev": 2.6,
+  "avg_duration_s": 469.9,
+  "downtime_threshold_ms": 1790,
+  "top_avg_efficiency": 66.9,
+  "top_efficiency_stddev": 4.1,
   "per_cd_benchmarks": {
     "Combustion": {
       "sample_count": 10,
-      "avg_first_cast_s": 11.8,
+      "avg_first_cast_s": 11.6,
       "stddev_first_cast_s": 3.3,
-      "avg_gap_s": 68.8,
-      "stddev_gap_s": 12.6,
-      "avg_bl_offset_s": 3,
-      "stddev_bl_offset_s": 6.5,
+      "avg_gap_s": 69,
+      "stddev_gap_s": 13.1,
+      "avg_bl_offset_s": 4.4,
+      "stddev_bl_offset_s": 6.6,
       "avg_uses": 7.2,
       "avg_uses_per_min": 0.92,
       "uses_per_min": {
-        "avg": 0.918,
-        "stddev": 0.053,
+        "avg": 0.919,
+        "stddev": 0.05,
         "min": 0.812,
-        "max": 0.989
+        "max": 0.969
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -30,57 +30,63 @@
     },
     "Meteor": {
       "sample_count": 10,
-      "avg_first_cast_s": 18.4,
-      "stddev_first_cast_s": 7.6,
-      "avg_gap_s": 68.7,
-      "stddev_gap_s": 13.7,
-      "avg_bl_offset_s": 10.4,
-      "stddev_bl_offset_s": 7.6,
-      "avg_uses": 6.4,
-      "avg_uses_per_min": 0.82,
+      "avg_first_cast_s": 17.8,
+      "stddev_first_cast_s": 7.2,
+      "avg_gap_s": 68.8,
+      "stddev_gap_s": 14.4,
+      "avg_bl_offset_s": 11.3,
+      "stddev_bl_offset_s": 8.3,
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 0.83,
       "uses_per_min": {
-        "avg": 0.911,
+        "avg": 0.925,
         "stddev": 0.049,
         "min": 0.812,
-        "max": 0.965
+        "max": 0.969
       },
       "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 90,
-          "stddev_s": 12.5,
+          "target_s": 88,
+          "stddev_s": 10.6,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 183.9,
-          "stddev_s": 5,
+          "target_s": 185,
+          "stddev_s": 6.6,
           "count": 9,
           "total_samples": 10
         },
         "4": {
-          "target_s": 241.9,
-          "stddev_s": 5.1,
+          "target_s": 244.1,
+          "stddev_s": 7.6,
           "count": 9,
           "total_samples": 10
         },
         "5": {
-          "target_s": 303.1,
-          "stddev_s": 11.5,
+          "target_s": 306.3,
+          "stddev_s": 11.8,
           "count": 9,
           "total_samples": 10
         },
         "6": {
-          "target_s": 367.2,
-          "stddev_s": 10.3,
+          "target_s": 369.2,
+          "stddev_s": 10.6,
           "count": 9,
           "total_samples": 10
         },
         "7": {
           "target_s": 424.5,
-          "stddev_s": 5.6,
+          "stddev_s": 8.3,
           "count": 7,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 487.9,
+          "stddev_s": 8.5,
+          "count": 4,
           "total_samples": 10
         }
       }
@@ -107,21 +113,21 @@
     },
     "Mirror Image": {
       "sample_count": 10,
-      "avg_first_cast_s": 325.7,
-      "stddev_first_cast_s": 0,
+      "avg_first_cast_s": 247.3,
+      "stddev_first_cast_s": 110.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 0.1,
-      "avg_uses_per_min": 0.01,
+      "avg_bl_offset_s": -8.2,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 0.2,
+      "avg_uses_per_min": 0.02,
       "uses_per_min": {
-        "avg": 0.115,
-        "stddev": 0,
+        "avg": 0.116,
+        "stddev": 0.001,
         "min": 0.115,
-        "max": 0.115
+        "max": 0.117
       },
-      "bl_pct": 0,
+      "bl_pct": 10,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -271,6 +277,6 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "372803eb4498b53a",
+  "source_signature": "fe0f254f2356825e",
   "ingest_version": 1
 }

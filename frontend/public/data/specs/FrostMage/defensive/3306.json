@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Ice Barrier": {
       "sample_count": 6,
-      "avg_first_cast_s": 61,
-      "stddev_first_cast_s": 13.8,
+      "avg_first_cast_s": 60.7,
+      "stddev_first_cast_s": 13.3,
       "avg_gap_s": 32.7,
       "stddev_gap_s": 15.3,
       "hold_targets": {},
@@ -22,17 +22,17 @@
       "majority_hold": false
     },
     "Ice Cold": {
-      "sample_count": 8,
-      "avg_first_cast_s": 69.1,
-      "stddev_first_cast_s": 34.1,
-      "avg_gap_s": 47.3,
-      "stddev_gap_s": 25.8,
+      "sample_count": 9,
+      "avg_first_cast_s": 68.8,
+      "stddev_first_cast_s": 31.9,
+      "avg_gap_s": 52.2,
+      "stddev_gap_s": 26.1,
       "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.68,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.7,
       "uses_per_min": {
-        "avg": 0.678,
-        "stddev": 0.218,
+        "avg": 0.695,
+        "stddev": 0.21,
         "min": 0.408,
         "max": 0.864
       },
@@ -56,17 +56,24 @@
       "majority_hold": false
     },
     "Alter Time": {
-      "sample_count": 6,
-      "avg_first_cast_s": 36.6,
-      "stddev_first_cast_s": 34.2,
-      "avg_gap_s": 95.2,
-      "stddev_gap_s": 35.8,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.63,
+      "sample_count": 5,
+      "avg_first_cast_s": 40.8,
+      "stddev_first_cast_s": 36.5,
+      "avg_gap_s": 115.2,
+      "stddev_gap_s": 13.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 130.9,
+          "stddev_s": 12,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.628,
-        "stddev": 0.222,
+        "avg": 0.587,
+        "stddev": 0.221,
         "min": 0.421,
         "max": 0.838
       },
@@ -141,9 +148,9 @@
       ]
     },
     {
-      "time_s": 74.3,
-      "dmg_avg": 94427,
-      "dmg_stddev": 24851,
+      "time_s": 74.2,
+      "dmg_avg": 94636,
+      "dmg_stddev": 22693,
       "dmg_min": 72786,
       "dmg_max": 131220,
       "window_length_s": 6,
@@ -159,20 +166,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 90890,
-          "min_damage": 72786,
+          "avg_damage": 83240,
+          "min_damage": 44988,
           "max_damage": 124269,
-          "count": 5
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 77.5,
-      "dmg_avg": 307169,
-      "dmg_stddev": 20611,
+      "time_s": 77.2,
+      "dmg_avg": 303702,
+      "dmg_stddev": 20289,
       "dmg_min": 281836,
       "dmg_max": 330907,
-      "window_length_s": 11.8,
+      "window_length_s": 10.8,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -185,16 +192,49 @@
       "ability_breakdown": [
         {
           "spell_id": 1258610,
-          "avg_damage": 170694,
+          "avg_damage": 172242,
           "min_damage": 159933,
           "max_damage": 180197,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1273112,
-          "avg_damage": 116031,
+          "avg_damage": 154076,
           "min_damage": 40128,
-          "max_damage": 150710,
+          "max_damage": 299922,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 138.6,
+      "dmg_avg": 94614,
+      "dmg_stddev": 35376,
+      "dmg_min": 53471,
+      "dmg_max": 139901,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 58547,
+          "min_damage": 41651,
+          "max_damage": 89003,
+          "count": 3
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 39394,
+          "min_damage": 8483,
+          "max_damage": 50898,
           "count": 4
         }
       ]
@@ -209,13 +249,13 @@
     },
     {
       "spell_id": 414658,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 342245,
-      "avg_uses": 1.5,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -317,6 +357,6 @@
       "name": "Rift Madness"
     }
   },
-  "source_signature": "e216d0ac3bdfc64d",
+  "source_signature": "3afb6fb86f5a28a4",
   "ingest_version": 1
 }

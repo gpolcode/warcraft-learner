@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Ice Barrier": {
       "sample_count": 9,
-      "avg_first_cast_s": 180.5,
-      "stddev_first_cast_s": 136.7,
-      "avg_gap_s": 60.8,
-      "stddev_gap_s": 48.7,
+      "avg_first_cast_s": 202.8,
+      "stddev_first_cast_s": 141.7,
+      "avg_gap_s": 59.6,
+      "stddev_gap_s": 48,
       "hold_targets": {
         "1": {
           "target_s": 254.8,
@@ -18,11 +18,11 @@
           "total_samples": 9
         }
       },
-      "avg_uses": 4.1,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.54,
-        "stddev": 0.352,
+        "avg": 0.476,
+        "stddev": 0.365,
         "min": 0.127,
         "max": 1.213
       },
@@ -30,57 +30,57 @@
     },
     "Ice Cold": {
       "sample_count": 9,
-      "avg_first_cast_s": 221.5,
-      "stddev_first_cast_s": 98,
-      "avg_gap_s": 118.1,
-      "stddev_gap_s": 43,
+      "avg_first_cast_s": 191,
+      "stddev_first_cast_s": 72.7,
+      "avg_gap_s": 119.3,
+      "stddev_gap_s": 41.8,
       "hold_targets": {},
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.362,
-        "stddev": 0.1,
-        "min": 0.147,
+        "avg": 0.38,
+        "stddev": 0.065,
+        "min": 0.263,
         "max": 0.442
       },
       "majority_hold": false
     },
     "Alter Time": {
-      "sample_count": 6,
-      "avg_first_cast_s": 139.1,
-      "stddev_first_cast_s": 92.3,
-      "avg_gap_s": 157.2,
-      "stddev_gap_s": 57.9,
+      "sample_count": 7,
+      "avg_first_cast_s": 136.1,
+      "stddev_first_cast_s": 84.6,
+      "avg_gap_s": 145.1,
+      "stddev_gap_s": 57.8,
       "hold_targets": {
         "1": {
-          "target_s": 253.7,
-          "stddev_s": 77.3,
-          "count": 4,
-          "total_samples": 6
+          "target_s": 252.5,
+          "stddev_s": 69,
+          "count": 5,
+          "total_samples": 7
         },
         "2": {
-          "target_s": 388.1,
-          "stddev_s": 2.2,
-          "count": 3,
-          "total_samples": 6
+          "target_s": 387.6,
+          "stddev_s": 32.6,
+          "count": 4,
+          "total_samples": 7
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.29,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.291,
-        "stddev": 0.133,
+        "avg": 0.316,
+        "stddev": 0.138,
         "min": 0.116,
-        "max": 0.433
+        "max": 0.467
       },
       "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 131.4,
-      "dmg_avg": 168620,
-      "dmg_stddev": 35540,
+      "time_s": 132.2,
+      "dmg_avg": 172975,
+      "dmg_stddev": 32282,
       "dmg_min": 116779,
       "dmg_max": 197239,
       "window_length_s": 6,
@@ -96,34 +96,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 107683,
+          "avg_damage": 97764,
           "min_damage": 65125,
           "max_damage": 169791,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1221965,
-          "avg_damage": 83713,
+          "avg_damage": 86909,
           "min_damage": 72444,
-          "max_damage": 91405,
-          "count": 3
+          "max_damage": 96494,
+          "count": 4
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 25073,
+          "avg_damage": 25237,
           "min_damage": 22208,
           "max_damage": 27448,
-          "count": 4
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 135.5,
-      "dmg_avg": 328722,
-      "dmg_stddev": 120302,
+      "time_s": 139.8,
+      "dmg_avg": 319913,
+      "dmg_stddev": 137038,
       "dmg_min": 199601,
       "dmg_max": 446510,
-      "window_length_s": 3.5,
+      "window_length_s": 4.2,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -136,31 +136,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1221965,
-          "avg_damage": 269217,
+          "avg_damage": 256533,
           "min_damage": 245282,
-          "max_damage": 294586,
-          "count": 3
+          "max_damage": 267783,
+          "count": 2
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 114972,
-          "min_damage": 55235,
+          "avg_damage": 144841,
+          "min_damage": 142302,
           "max_damage": 147379,
-          "count": 3
+          "count": 2
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 60963,
-          "min_damage": 14139,
+          "avg_damage": 72670,
+          "min_damage": 16928,
           "max_damage": 199601,
-          "count": 5
+          "count": 4
         }
       ]
     },
     {
-      "time_s": 269.9,
-      "dmg_avg": 181323,
-      "dmg_stddev": 30451,
+      "time_s": 269.5,
+      "dmg_avg": 182412,
+      "dmg_stddev": 28671,
       "dmg_min": 148165,
       "dmg_max": 224692,
       "window_length_s": 6,
@@ -176,34 +176,34 @@
       "ability_breakdown": [
         {
           "spell_id": 1221965,
-          "avg_damage": 89644,
+          "avg_damage": 89796,
           "min_damage": 80115,
           "max_damage": 105013,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1221637,
-          "avg_damage": 63342,
+          "avg_damage": 61794,
           "min_damage": 16521,
           "max_damage": 169792,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 50748,
+          "avg_damage": 50778,
           "min_damage": 43588,
           "max_damage": 58304,
-          "count": 8
+          "count": 9
         }
       ]
     },
     {
-      "time_s": 304.2,
-      "dmg_avg": 269772,
-      "dmg_stddev": 64869,
+      "time_s": 304.7,
+      "dmg_avg": 272142,
+      "dmg_stddev": 59548,
       "dmg_min": 206147,
       "dmg_max": 395905,
-      "window_length_s": 4.4,
+      "window_length_s": 4.2,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -216,20 +216,20 @@
       "ability_breakdown": [
         {
           "spell_id": 1222284,
-          "avg_damage": 184595,
+          "avg_damage": 174665,
           "min_damage": 80525,
           "max_damage": 262392,
-          "count": 6
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 389.2,
-      "dmg_avg": 361467,
-      "dmg_stddev": 105261,
+      "time_s": 388.5,
+      "dmg_avg": 337173,
+      "dmg_stddev": 97073,
       "dmg_min": 231855,
       "dmg_max": 486995,
-      "window_length_s": 3.2,
+      "window_length_s": 3.4,
       "defensive_name": "Ice Barrier",
       "spell_id": 11426,
       "common_defensives": [
@@ -242,24 +242,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1221637,
-          "avg_damage": 269366,
+          "avg_damage": 245328,
           "min_damage": 131147,
-          "max_damage": 341480,
-          "count": 4
+          "max_damage": 312480,
+          "count": 3
         },
         {
           "spell_id": 1222284,
-          "avg_damage": 162394,
+          "avg_damage": 166581,
           "min_damage": 77556,
           "max_damage": 291516,
-          "count": 6
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 406.2,
-      "dmg_avg": 147510,
-      "dmg_stddev": 102561,
+      "time_s": 406,
+      "dmg_avg": 167111,
+      "dmg_stddev": 96930,
       "dmg_min": 0,
       "dmg_max": 270067,
       "window_length_s": 6,
@@ -274,25 +274,25 @@
       "ref_game_id": 238693,
       "ability_breakdown": [
         {
+          "spell_id": 1221637,
+          "avg_damage": 80594,
+          "min_damage": 27024,
+          "max_damage": 151918,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 77823,
+          "min_damage": 58467,
+          "max_damage": 104338,
+          "count": 5
+        },
+        {
           "spell_id": 1221965,
           "avg_damage": 72793,
           "min_damage": 61810,
           "max_damage": 87291,
           "count": 4
-        },
-        {
-          "spell_id": 1221637,
-          "avg_damage": 67859,
-          "min_damage": 16917,
-          "max_damage": 151918,
-          "count": 5
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 67018,
-          "min_damage": 12991,
-          "max_damage": 104338,
-          "count": 6
         }
       ]
     }
@@ -300,19 +300,19 @@
   "top_defensives_summary": [
     {
       "spell_id": 11426,
-      "avg_uses": 4.1,
+      "avg_uses": 3.7,
       "min_uses": 1,
       "max_uses": 10
     },
     {
       "spell_id": 414658,
-      "avg_uses": 2.7,
-      "min_uses": 1,
+      "avg_uses": 2.8,
+      "min_uses": 2,
       "max_uses": 3
     },
     {
       "spell_id": 342245,
-      "avg_uses": 2.2,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -400,6 +400,6 @@
       "name": "Rotting Pustules"
     }
   },
-  "source_signature": "7f7f12ae5ecc88ff",
+  "source_signature": "c4f497fcad125d3c",
   "ingest_version": 1
 }

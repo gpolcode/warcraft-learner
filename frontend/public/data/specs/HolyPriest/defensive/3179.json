@@ -6,46 +6,47 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 8,
-      "avg_first_cast_s": 105.4,
-      "stddev_first_cast_s": 85.7,
-      "avg_gap_s": 120.3,
-      "stddev_gap_s": 14.6,
-      "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.34,
+      "avg_first_cast_s": 73.7,
+      "stddev_first_cast_s": 55.5,
+      "avg_gap_s": 120.1,
+      "stddev_gap_s": 12.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 159.1,
+          "stddev_s": 43.8,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.344,
-        "stddev": 0.143,
-        "min": 0.198,
+        "avg": 0.378,
+        "stddev": 0.136,
+        "min": 0.228,
         "max": 0.55
       },
       "majority_hold": false
     },
     "Fade": {
       "sample_count": 7,
-      "avg_first_cast_s": 95.5,
-      "stddev_first_cast_s": 68.2,
-      "avg_gap_s": 48.6,
-      "stddev_gap_s": 15.4,
+      "avg_first_cast_s": 84.6,
+      "stddev_first_cast_s": 73.6,
+      "avg_gap_s": 56.2,
+      "stddev_gap_s": 28.5,
       "hold_targets": {
         "1": {
-          "target_s": 160.6,
-          "stddev_s": 89.6,
+          "target_s": 153.5,
+          "stddev_s": 91,
           "count": 4,
-          "total_samples": 7
-        },
-        "2": {
-          "target_s": 154.6,
-          "stddev_s": 25.4,
-          "count": 3,
           "total_samples": 7
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.6,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.596,
-        "stddev": 0.376,
+        "avg": 0.578,
+        "stddev": 0.379,
         "min": 0.228,
         "max": 1.213
       },
@@ -71,11 +72,58 @@
   },
   "defensive_windows": [
     {
-      "time_s": 155,
-      "dmg_avg": 518002,
-      "dmg_stddev": 156271,
-      "dmg_min": 407163,
-      "dmg_max": 749591,
+      "time_s": 28.3,
+      "dmg_avg": 698256,
+      "dmg_stddev": 282645,
+      "dmg_min": 393147,
+      "dmg_max": 978371,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 278235,
+          "min_damage": 131665,
+          "max_damage": 365155,
+          "count": 4
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 220872,
+          "min_damage": 203732,
+          "max_damage": 234964,
+          "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 197370,
+          "min_damage": 57750,
+          "max_damage": 319883,
+          "count": 3
+        },
+        {
+          "spell_id": 1245592,
+          "avg_damage": 102245,
+          "min_damage": 96145,
+          "max_damage": 108344,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 154,
+      "dmg_avg": 377379,
+      "dmg_stddev": 129132,
+      "dmg_min": 187100,
+      "dmg_max": 462763,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -89,14 +137,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 269403,
+          "avg_damage": 254984,
           "min_damage": 232665,
-          "max_damage": 312658,
-          "count": 4
+          "max_damage": 269575,
+          "count": 3
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 186264,
+          "avg_damage": 186141,
           "min_damage": 174498,
           "max_damage": 200050,
           "count": 4
@@ -113,13 +161,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 586,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -168,15 +216,23 @@
       "icon": "spell_holy_guardianspirit",
       "name": "Guardian Spirit"
     },
+    "1245592": {
+      "icon": "inv_cosmicvoid_groundsate",
+      "name": "Torturous Extract"
+    },
     "1250686": {
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
+    },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
     },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "345910310fdfedd4",
+  "source_signature": "ae7cd319ff07c8f5",
   "ingest_version": 1
 }
