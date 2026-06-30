@@ -5,60 +5,60 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 10,
-      "avg_first_cast_s": 104.8,
-      "stddev_first_cast_s": 100.5,
+      "sample_count": 9,
+      "avg_first_cast_s": 80,
+      "stddev_first_cast_s": 66.6,
       "avg_gap_s": 122.2,
       "stddev_gap_s": 67.3,
       "hold_targets": {
         "1": {
           "target_s": 248.7,
-          "stddev_s": 59.1,
+          "stddev_s": 59.2,
           "count": 5,
-          "total_samples": 10
+          "total_samples": 9
         },
         "2": {
           "target_s": 329.7,
           "stddev_s": 137.5,
           "count": 7,
-          "total_samples": 10
+          "total_samples": 9
         },
         "3": {
           "target_s": 379,
           "stddev_s": 112.8,
           "count": 6,
-          "total_samples": 10
+          "total_samples": 9
         }
       },
-      "avg_uses": 3.9,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.418,
-        "stddev": 0.18,
-        "min": 0.115,
+        "avg": 0.452,
+        "stddev": 0.154,
+        "min": 0.218,
         "max": 0.728
       },
       "majority_hold": true
     },
     "Ironbark": {
       "sample_count": 9,
-      "avg_first_cast_s": 253.4,
-      "stddev_first_cast_s": 203.9,
-      "avg_gap_s": 152.6,
+      "avg_first_cast_s": 236.3,
+      "stddev_first_cast_s": 199.5,
+      "avg_gap_s": 156.1,
       "stddev_gap_s": 48.4,
       "hold_targets": {
         "1": {
-          "target_s": 327,
-          "stddev_s": 126.9,
-          "count": 7,
+          "target_s": 271.6,
+          "stddev_s": 119.4,
+          "count": 6,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.274,
-        "stddev": 0.128,
+        "avg": 0.26,
+        "stddev": 0.139,
         "min": 0.104,
         "max": 0.423
       },
@@ -107,9 +107,9 @@
       ]
     },
     {
-      "time_s": 328.8,
-      "dmg_avg": 651130,
-      "dmg_stddev": 120744,
+      "time_s": 329.2,
+      "dmg_avg": 666337,
+      "dmg_stddev": 124710,
       "dmg_min": 493791,
       "dmg_max": 790486,
       "window_length_s": 12,
@@ -125,17 +125,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 230092,
+          "avg_damage": 230083,
           "min_damage": 161037,
           "max_damage": 273937,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1281123,
-          "avg_damage": 133619,
+          "avg_damage": 134055,
           "min_damage": 107531,
           "max_damage": 145423,
-          "count": 7
+          "count": 6
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 124854,
+          "min_damage": 86025,
+          "max_damage": 217982,
+          "count": 6
         },
         {
           "spell_id": 1254398,
@@ -145,33 +152,26 @@
           "count": 5
         },
         {
-          "spell_id": 1281178,
-          "avg_damage": 121990,
-          "min_damage": 86025,
-          "max_damage": 217982,
-          "count": 7
-        },
-        {
           "spell_id": 1254257,
-          "avg_damage": 57370,
+          "avg_damage": 58067,
           "min_damage": 54458,
           "max_damage": 61253,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1254644,
-          "avg_damage": 35910,
+          "avg_damage": 35409,
           "min_damage": 22873,
           "max_damage": 42623,
-          "count": 7
+          "count": 6
         }
       ]
     },
     {
       "time_s": 561.4,
-      "dmg_avg": 848814,
-      "dmg_stddev": 525359,
-      "dmg_min": 118853,
+      "dmg_avg": 969929,
+      "dmg_stddev": 314515,
+      "dmg_min": 603313,
       "dmg_max": 1347771,
       "window_length_s": 8.9,
       "defensive_name": "Barkskin",
@@ -186,8 +186,8 @@
       "ability_breakdown": [
         {
           "spell_id": 1249797,
-          "avg_damage": 821464,
-          "min_damage": 118853,
+          "avg_damage": 942579,
+          "min_damage": 603313,
           "max_damage": 1347771,
           "count": 4
         }
@@ -197,13 +197,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 3.9,
-      "min_uses": 1,
+      "avg_uses": 4.2,
+      "min_uses": 2,
       "max_uses": 7
     },
     {
       "spell_id": 102342,
-      "avg_uses": 2.6,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -294,6 +294,6 @@
       "name": "Starsplinter"
     }
   },
-  "source_signature": "ef97c34a4177f1b2",
+  "source_signature": "6af9e9e949147739",
   "ingest_version": 1
 }

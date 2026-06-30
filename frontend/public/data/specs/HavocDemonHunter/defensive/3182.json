@@ -6,20 +6,27 @@
   "per_defensive_benchmarks": {
     "Blur": {
       "sample_count": 10,
-      "avg_first_cast_s": 90.2,
-      "stddev_first_cast_s": 56.6,
-      "avg_gap_s": 61,
-      "stddev_gap_s": 39.2,
-      "hold_targets": {},
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.6,
+      "avg_first_cast_s": 93.5,
+      "stddev_first_cast_s": 56.5,
+      "avg_gap_s": 64.5,
+      "stddev_gap_s": 40.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 171,
+          "stddev_s": 29.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.596,
-        "stddev": 0.409,
+        "avg": 0.563,
+        "stddev": 0.375,
         "min": 0.183,
         "max": 1.18
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Darkness": {
       "sample_count": 5,
@@ -43,7 +50,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 198589,
-      "avg_uses": 2.8,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 5
     },
@@ -99,6 +106,6 @@
       "name": "Blur"
     }
   },
-  "source_signature": "cc567978e5254fd3",
+  "source_signature": "13c11ddc7d91fb2d",
   "ingest_version": 1
 }

@@ -4,87 +4,134 @@
   "encounter_name": "Vorasius",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Feint": {
-      "sample_count": 6,
-      "avg_first_cast_s": 56.2,
-      "stddev_first_cast_s": 40.3,
-      "avg_gap_s": 42.3,
-      "stddev_gap_s": 38.9,
+    "Crimson Vial": {
+      "sample_count": 2,
+      "avg_first_cast_s": 62.9,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 71.4,
+      "stddev_gap_s": 39.2,
       "hold_targets": {
         "1": {
-          "target_s": 92.5,
-          "stddev_s": 74.1,
-          "count": 3,
-          "total_samples": 6
+          "target_s": 149.5,
+          "stddev_s": 42,
+          "count": 2,
+          "total_samples": 2
         }
       },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 1.05,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.71,
       "uses_per_min": {
-        "avg": 1.055,
-        "stddev": 0.909,
+        "avg": 0.709,
+        "stddev": 0.211,
+        "min": 0.559,
+        "max": 0.858
+      },
+      "majority_hold": true
+    },
+    "Feint": {
+      "sample_count": 8,
+      "avg_first_cast_s": 52.8,
+      "stddev_first_cast_s": 36.6,
+      "avg_gap_s": 48.3,
+      "stddev_gap_s": 44.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 131.5,
+          "stddev_s": 68.7,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.94,
+      "uses_per_min": {
+        "avg": 0.935,
+        "stddev": 0.814,
         "min": 0.272,
         "max": 2.682
       },
       "majority_hold": true
     },
     "Cloak of Shadows": {
-      "sample_count": 3,
-      "avg_first_cast_s": 165.4,
-      "stddev_first_cast_s": 69.7,
+      "sample_count": 4,
+      "avg_first_cast_s": 169.8,
+      "stddev_first_cast_s": 57.6,
       "avg_gap_s": 125.6,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.3,
-      "avg_uses_per_min": 0.37,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.37,
-        "stddev": 0.164,
+        "avg": 0.351,
+        "stddev": 0.139,
         "min": 0.272,
         "max": 0.559
       },
       "majority_hold": false
     },
     "Evasion": {
-      "sample_count": 1,
-      "avg_first_cast_s": 205.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 148.3,
+      "stddev_first_cast_s": 80.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.279,
-        "stddev": 0,
+        "avg": 0.286,
+        "stddev": 0.01,
         "min": 0.279,
-        "max": 0.279
+        "max": 0.293
       },
       "majority_hold": false
-    },
-    "Crimson Vial": {
-      "sample_count": 1,
-      "avg_first_cast_s": 63.5,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": 115.7,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.56,
-      "uses_per_min": {
-        "avg": 0.559,
-        "stddev": 0,
-        "min": 0.559,
-        "max": 0.559
-      },
-      "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 60.3,
-      "dmg_avg": 135007,
-      "dmg_stddev": 115741,
+      "time_s": 15,
+      "dmg_avg": 136850,
+      "dmg_stddev": 6976,
+      "dmg_min": 126983,
+      "dmg_max": 143233,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260052,
+          "avg_damage": 124102,
+          "min_damage": 119730,
+          "max_damage": 128474,
+          "count": 2
+        },
+        {
+          "spell_id": 1241808,
+          "avg_damage": 114990,
+          "min_damage": 113301,
+          "max_damage": 116678,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 17305,
+          "min_damage": 7253,
+          "max_damage": 24334,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 61.4,
+      "dmg_avg": 116554,
+      "dmg_stddev": 112960,
       "dmg_min": 23779,
       "dmg_max": 320795,
       "window_length_s": 6,
@@ -107,10 +154,10 @@
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 25038,
+          "avg_damage": 24913,
           "min_damage": 23779,
           "max_damage": 26022,
-          "count": 5
+          "count": 6
         }
       ]
     },
@@ -139,6 +186,64 @@
           "count": 5
         }
       ]
+    },
+    {
+      "time_s": 205.7,
+      "dmg_avg": 14095,
+      "dmg_stddev": 28191,
+      "dmg_min": 0,
+      "dmg_max": 56381,
+      "window_length_s": 5.5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 208.1,
+      "dmg_avg": 108703,
+      "dmg_stddev": 98442,
+      "dmg_min": 14502,
+      "dmg_max": 201429,
+      "window_length_s": 5.5,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 100303,
+          "min_damage": 47333,
+          "max_damage": 153273,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 26268,
+          "min_damage": 14502,
+          "max_damage": 46145,
+          "count": 4
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 2816,
+          "min_damage": 2011,
+          "max_damage": 3620,
+          "count": 2
+        }
+      ]
     }
   ],
   "top_defensives_summary": [
@@ -156,13 +261,13 @@
     },
     {
       "spell_id": 185311,
-      "avg_uses": 2,
+      "avg_uses": 2.5,
       "min_uses": 2,
-      "max_uses": 2
+      "max_uses": 3
     },
     {
       "spell_id": 1966,
-      "avg_uses": 3.5,
+      "avg_uses": 3.1,
       "min_uses": 1,
       "max_uses": 8
     }
@@ -224,6 +329,18 @@
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
     },
+    "1241808": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1260052": {
+      "icon": "spell_fire_twilightflamebreath",
+      "name": "Primordial Roar"
+    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -231,8 +348,12 @@
     "1275558": {
       "icon": "inv_voidcreepermount_blue",
       "name": "Parasite Expulsion"
+    },
+    "1287955": {
+      "icon": "ability_rhyolith_magmaflow_wave",
+      "name": "Rune of Void-Tainted Shell"
     }
   },
-  "source_signature": "64d1c9ad86655297",
+  "source_signature": "700d128552a03177",
   "ingest_version": 1
 }
