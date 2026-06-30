@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Shield Wall": {
       "sample_count": 10,
-      "avg_first_cast_s": 53.5,
+      "avg_first_cast_s": 58.7,
       "stddev_first_cast_s": 38.4,
-      "avg_gap_s": 71.8,
-      "stddev_gap_s": 57,
+      "avg_gap_s": 64.5,
+      "stddev_gap_s": 34.1,
       "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.695,
-        "stddev": 0.229,
+        "avg": 0.682,
+        "stddev": 0.236,
         "min": 0.265,
         "max": 0.954
       },
@@ -40,29 +40,29 @@
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 71.4,
-      "stddev_first_cast_s": 76,
-      "avg_gap_s": 58.2,
-      "stddev_gap_s": 44.5,
+      "avg_first_cast_s": 75.6,
+      "stddev_first_cast_s": 74.6,
+      "avg_gap_s": 55.2,
+      "stddev_gap_s": 43.3,
       "hold_targets": {
         "1": {
-          "target_s": 160.8,
-          "stddev_s": 54.5,
+          "target_s": 140.2,
+          "stddev_s": 53.4,
           "count": 5,
           "total_samples": 10
         },
         "2": {
-          "target_s": 140.9,
-          "stddev_s": 27.5,
-          "count": 5,
+          "target_s": 140.7,
+          "stddev_s": 5,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.84,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.837,
-        "stddev": 0.447,
+        "avg": 0.802,
+        "stddev": 0.459,
         "min": 0.245,
         "max": 1.869
       },
@@ -70,76 +70,76 @@
     },
     "Shield Block": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.4,
-      "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 10,
-      "stddev_gap_s": 3.9,
+      "avg_first_cast_s": 3.2,
+      "stddev_first_cast_s": 3,
+      "avg_gap_s": 10.1,
+      "stddev_gap_s": 3.8,
       "hold_targets": {},
-      "avg_uses": 21.3,
+      "avg_uses": 20.9,
       "avg_uses_per_min": 5.95,
       "uses_per_min": {
-        "avg": 5.946,
-        "stddev": 0.339,
-        "min": 5.342,
+        "avg": 5.948,
+        "stddev": 0.335,
+        "min": 5.361,
         "max": 6.36
       },
       "majority_hold": false
     },
     "Ignore Pain": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.6,
+      "avg_first_cast_s": 4.3,
       "stddev_first_cast_s": 1.7,
-      "avg_gap_s": 31.9,
-      "stddev_gap_s": 26,
+      "avg_gap_s": 33.4,
+      "stddev_gap_s": 26.6,
       "hold_targets": {
         "1": {
-          "target_s": 33.2,
-          "stddev_s": 20.3,
+          "target_s": 43.1,
+          "stddev_s": 19.5,
           "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 86.7,
-          "stddev_s": 23.4,
-          "count": 8,
+          "target_s": 89.2,
+          "stddev_s": 23.5,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 142.5,
-          "stddev_s": 35,
+          "target_s": 142.9,
+          "stddev_s": 30.6,
           "count": 8,
           "total_samples": 10
         },
         "4": {
-          "target_s": 175.4,
-          "stddev_s": 14.9,
+          "target_s": 182.7,
+          "stddev_s": 23.7,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 6.6,
-      "avg_uses_per_min": 1.81,
+      "avg_uses": 6.2,
+      "avg_uses_per_min": 1.76,
       "uses_per_min": {
-        "avg": 1.813,
-        "stddev": 0.639,
+        "avg": 1.756,
+        "stddev": 0.611,
         "min": 1.034,
         "max": 2.912
       },
       "majority_hold": true
     },
     "Impending Victory": {
-      "sample_count": 2,
-      "avg_first_cast_s": 49,
-      "stddev_first_cast_s": 37.6,
+      "sample_count": 3,
+      "avg_first_cast_s": 104.3,
+      "stddev_first_cast_s": 99.5,
       "avg_gap_s": 76,
       "stddev_gap_s": 11.8,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.497,
-        "stddev": 0.337,
-        "min": 0.259,
+        "avg": 0.416,
+        "stddev": 0.276,
+        "min": 0.255,
         "max": 0.735
       },
       "majority_hold": false
@@ -147,12 +147,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 5.9,
-      "dmg_avg": 1418107,
-      "dmg_stddev": 675327,
+      "time_s": 4.3,
+      "dmg_avg": 1419761,
+      "dmg_stddev": 708890,
       "dmg_min": 606129,
       "dmg_max": 3003649,
-      "window_length_s": 41,
+      "dmg_pct_avg": 0.182,
+      "window_length_s": 40.6,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -165,47 +166,55 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 430215,
+          "avg_damage": 481818,
           "min_damage": 164775,
           "max_damage": 1197766,
-          "count": 15
-        },
-        {
-          "spell_id": 1272328,
-          "avg_damage": 211958,
-          "min_damage": 76628,
-          "max_damage": 376078,
-          "count": 10
+          "count": 12
         },
         {
           "spell_id": 1241808,
-          "avg_damage": 197851,
-          "min_damage": 66767,
+          "avg_damage": 233116,
+          "min_damage": 125698,
           "max_damage": 327585,
-          "count": 12
+          "count": 10
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 226369,
+          "min_damage": 150707,
+          "max_damage": 487238,
+          "count": 7
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 183296,
+          "min_damage": 76628,
+          "max_damage": 376078,
+          "count": 8
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 172339,
+          "avg_damage": 158259,
           "min_damage": 39649,
           "max_damage": 348609,
-          "count": 15
+          "count": 12
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 114867,
-          "min_damage": 91374,
+          "avg_damage": 104049,
+          "min_damage": 30120,
           "max_damage": 178079,
-          "count": 12
+          "count": 9
         }
       ]
     },
     {
       "time_s": 29.3,
-      "dmg_avg": 429104,
-      "dmg_stddev": 85963,
+      "dmg_avg": 435391,
+      "dmg_stddev": 92388,
       "dmg_min": 365858,
       "dmg_max": 618623,
+      "dmg_pct_avg": 0.056,
       "window_length_s": 8,
       "defensive_name": "Shield Wall",
       "spell_id": 871,
@@ -219,88 +228,42 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 217938,
+          "avg_damage": 225356,
           "min_damage": 164775,
           "max_damage": 315797,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 103753,
+          "avg_damage": 99395,
           "min_damage": 63810,
-          "max_damage": 129901,
-          "count": 7
+          "max_damage": 122785,
+          "count": 6
         },
         {
           "spell_id": 1241808,
-          "avg_damage": 71012,
+          "avg_damage": 72073,
           "min_damage": 60857,
           "max_damage": 80286,
-          "count": 5
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 23364,
-          "min_damage": 17441,
-          "max_damage": 40357,
-          "count": 7
-        }
-      ]
-    },
-    {
-      "time_s": 29.6,
-      "dmg_avg": 481807,
-      "dmg_stddev": 117891,
-      "dmg_min": 358768,
-      "dmg_max": 644530,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1281954,
-          "avg_damage": 283567,
-          "min_damage": 164775,
-          "max_damage": 406955,
-          "count": 7
-        },
-        {
-          "spell_id": 1281906,
-          "avg_damage": 100559,
-          "min_damage": 23976,
-          "max_damage": 132976,
-          "count": 7
-        },
-        {
-          "spell_id": 1241808,
-          "avg_damage": 94904,
-          "min_damage": 60857,
-          "max_damage": 126295,
           "count": 4
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 16529,
-          "min_damage": 8474,
-          "max_damage": 27971,
-          "count": 7
+          "avg_damage": 23711,
+          "min_damage": 17441,
+          "max_damage": 40357,
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 51.2,
-      "dmg_avg": 1722682,
-      "dmg_stddev": 1450562,
+      "time_s": 44.8,
+      "dmg_avg": 2011906,
+      "dmg_stddev": 1575031,
       "dmg_min": 510189,
-      "dmg_max": 4455264,
-      "window_length_s": 31.8,
+      "dmg_max": 4727677,
+      "dmg_pct_avg": 0.226,
+      "window_length_s": 44.1,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -313,54 +276,48 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 608778,
-          "min_damage": 310412,
-          "max_damage": 997153,
-          "count": 5
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 509846,
-          "min_damage": 91295,
-          "max_damage": 1155649,
-          "count": 3
+          "avg_damage": 562471,
+          "min_damage": 193934,
+          "max_damage": 1166083,
+          "count": 9
         },
         {
           "spell_id": 1275558,
-          "avg_damage": 325213,
+          "avg_damage": 333305,
           "min_damage": 244288,
           "max_damage": 401472,
-          "count": 4
+          "count": 7
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 166916,
+          "avg_damage": 231364,
           "min_damage": 41967,
-          "max_damage": 527769,
-          "count": 6
+          "max_damage": 556594,
+          "count": 9
         },
         {
           "spell_id": 1272328,
-          "avg_damage": 103634,
+          "avg_damage": 149405,
           "min_damage": 59456,
-          "max_damage": 187757,
-          "count": 5
+          "max_damage": 368118,
+          "count": 7
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 103463,
-          "min_damage": 32539,
+          "avg_damage": 95770,
+          "min_damage": 30213,
           "max_damage": 194203,
-          "count": 4
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 81,
-      "dmg_avg": 527605,
-      "dmg_stddev": 174465,
+      "time_s": 81.2,
+      "dmg_avg": 510402,
+      "dmg_stddev": 161636,
       "dmg_min": 270046,
       "dmg_max": 717139,
+      "dmg_pct_avg": 0.058,
       "window_length_s": 8,
       "defensive_name": "Shield Wall",
       "spell_id": 871,
@@ -374,47 +331,48 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 254497,
+          "avg_damage": 258262,
           "min_damage": 198753,
           "max_damage": 322242,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1259186,
-          "avg_damage": 238577,
-          "min_damage": 103790,
+          "avg_damage": 201544,
+          "min_damage": 53414,
           "max_damage": 478978,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272328,
-          "avg_damage": 51986,
+          "avg_damage": 51824,
           "min_damage": 36925,
           "max_damage": 70265,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 51679,
+          "avg_damage": 44962,
           "min_damage": 13150,
           "max_damage": 80794,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 32281,
+          "avg_damage": 31659,
           "min_damage": 19072,
           "max_damage": 62418,
-          "count": 5
+          "count": 6
         }
       ]
     },
     {
-      "time_s": 82.3,
-      "dmg_avg": 553778,
-      "dmg_stddev": 186444,
+      "time_s": 81.9,
+      "dmg_avg": 543748,
+      "dmg_stddev": 172256,
       "dmg_min": 293549,
       "dmg_max": 801507,
+      "dmg_pct_avg": 0.07,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -428,10 +386,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 336640,
+          "avg_damage": 341577,
           "min_damage": 269695,
           "max_damage": 403594,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1259186,
@@ -442,34 +400,35 @@
         },
         {
           "spell_id": 1272328,
-          "avg_damage": 63336,
+          "avg_damage": 64155,
           "min_damage": 50061,
           "max_damage": 77304,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 62921,
-          "min_damage": 34231,
+          "avg_damage": 56693,
+          "min_damage": 31780,
           "max_damage": 99595,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 22508,
+          "avg_damage": 22583,
           "min_damage": 14205,
           "max_damage": 29379,
-          "count": 6
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 89.3,
-      "dmg_avg": 1375144,
-      "dmg_stddev": 1149092,
+      "time_s": 89.4,
+      "dmg_avg": 1538248,
+      "dmg_stddev": 1423165,
       "dmg_min": 161032,
-      "dmg_max": 3732564,
-      "window_length_s": 32.2,
+      "dmg_max": 5286910,
+      "dmg_pct_avg": 0.195,
+      "window_length_s": 36,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -482,40 +441,41 @@
       "ability_breakdown": [
         {
           "spell_id": 1280101,
-          "avg_damage": 548163,
+          "avg_damage": 558746,
           "min_damage": 14615,
           "max_damage": 736406,
-          "count": 10
+          "count": 9
         },
         {
           "spell_id": 1281954,
-          "avg_damage": 468981,
+          "avg_damage": 479579,
           "min_damage": 305749,
-          "max_damage": 761810,
+          "max_damage": 846595,
           "count": 8
         },
         {
           "spell_id": 1259186,
-          "avg_damage": 313791,
-          "min_damage": 60615,
+          "avg_damage": 307754,
+          "min_damage": 76630,
           "max_damage": 819194,
-          "count": 12
+          "count": 10
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 223654,
+          "avg_damage": 244596,
           "min_damage": 7470,
-          "max_damage": 737442,
-          "count": 15
+          "max_damage": 855396,
+          "count": 14
         }
       ]
     },
     {
-      "time_s": 140.7,
-      "dmg_avg": 453604,
-      "dmg_stddev": 211339,
+      "time_s": 140.4,
+      "dmg_avg": 456678,
+      "dmg_stddev": 193097,
       "dmg_min": 109193,
       "dmg_max": 685127,
+      "dmg_pct_avg": 0.056,
       "window_length_s": 5,
       "defensive_name": "Spell Reflection",
       "spell_id": 23920,
@@ -529,40 +489,41 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 277603,
+          "avg_damage": 275586,
           "min_damage": 150409,
           "max_damage": 382533,
-          "count": 5
-        },
-        {
-          "spell_id": 1281906,
-          "avg_damage": 105370,
-          "min_damage": 17524,
-          "max_damage": 266279,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1241808,
-          "avg_damage": 104916,
+          "avg_damage": 103946,
           "min_damage": 58493,
           "max_damage": 144192,
-          "count": 5
+          "count": 6
+        },
+        {
+          "spell_id": 1281906,
+          "avg_damage": 102068,
+          "min_damage": 17524,
+          "max_damage": 266279,
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 36813,
+          "avg_damage": 35120,
           "min_damage": 15220,
           "max_damage": 55638,
-          "count": 6
+          "count": 7
         }
       ]
     },
     {
       "time_s": 148.8,
-      "dmg_avg": 486778,
-      "dmg_stddev": 143297,
+      "dmg_avg": 497544,
+      "dmg_stddev": 136117,
       "dmg_min": 272999,
       "dmg_max": 644411,
+      "dmg_pct_avg": 0.062,
       "window_length_s": 8,
       "defensive_name": "Shield Wall",
       "spell_id": 871,
@@ -576,41 +537,42 @@
       "ability_breakdown": [
         {
           "spell_id": 1281954,
-          "avg_damage": 230836,
+          "avg_damage": 235224,
           "min_damage": 150409,
           "max_damage": 305749,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1281906,
-          "avg_damage": 123514,
+          "avg_damage": 127476,
           "min_damage": 17524,
           "max_damage": 266279,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1241808,
-          "avg_damage": 88057,
+          "avg_damage": 89457,
           "min_damage": 57923,
           "max_damage": 118903,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 43996,
+          "avg_damage": 45058,
           "min_damage": 33552,
           "max_damage": 55520,
-          "count": 7
+          "count": 8
         }
       ]
     },
     {
-      "time_s": 151.9,
-      "dmg_avg": 728448,
-      "dmg_stddev": 483147,
+      "time_s": 151.8,
+      "dmg_avg": 937767,
+      "dmg_stddev": 609223,
       "dmg_min": 251535,
-      "dmg_max": 1901256,
-      "window_length_s": 19.2,
+      "dmg_max": 2173560,
+      "dmg_pct_avg": 0.109,
+      "window_length_s": 25.7,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -630,137 +592,17 @@
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 178933,
+          "avg_damage": 251466,
           "min_damage": 37638,
-          "max_damage": 494770,
-          "count": 12
-        },
-        {
-          "spell_id": 1281906,
-          "avg_damage": 140160,
-          "min_damage": 27822,
-          "max_damage": 266279,
-          "count": 7
+          "max_damage": 599975,
+          "count": 13
         },
         {
           "spell_id": 1272328,
-          "avg_damage": 139515,
+          "avg_damage": 180460,
           "min_damage": 53524,
-          "max_damage": 291158,
-          "count": 7
-        }
-      ]
-    },
-    {
-      "time_s": 187.9,
-      "dmg_avg": 527773,
-      "dmg_stddev": 361807,
-      "dmg_min": 0,
-      "dmg_max": 1187536,
-      "window_length_s": 10.4,
-      "defensive_name": "Ignore Pain",
-      "spell_id": 190456,
-      "common_defensives": [
-        "Ignore Pain"
-      ],
-      "common_cds": [
-        "Ignore Pain"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272950,
-          "avg_damage": 131476,
-          "min_damage": 101895,
-          "max_damage": 201892,
-          "count": 7
-        },
-        {
-          "spell_id": 1272328,
-          "avg_damage": 83417,
-          "min_damage": 71120,
-          "max_damage": 99728,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 203.5,
-      "dmg_avg": 338872,
-      "dmg_stddev": 287517,
-      "dmg_min": 34670,
-      "dmg_max": 678290,
-      "window_length_s": 5,
-      "defensive_name": "Spell Reflection",
-      "spell_id": 23920,
-      "common_defensives": [
-        "Spell Reflection"
-      ],
-      "common_cds": [
-        "Spell Reflection"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272950,
-          "avg_damage": 43816,
-          "min_damage": 23870,
-          "max_damage": 63030,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 212.1,
-      "dmg_avg": 997209,
-      "dmg_stddev": 1155323,
-      "dmg_min": 294696,
-      "dmg_max": 2724365,
-      "window_length_s": 16.9,
-      "defensive_name": "Ignore Pain",
-      "spell_id": 190456,
-      "common_defensives": [
-        "Ignore Pain"
-      ],
-      "common_cds": [
-        "Ignore Pain"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1280101,
-          "avg_damage": 543914,
-          "min_damage": 370230,
-          "max_damage": 717597,
-          "count": 2
-        },
-        {
-          "spell_id": 1,
-          "avg_damage": 353747,
-          "min_damage": 203115,
-          "max_damage": 504379,
-          "count": 2
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 254173,
-          "min_damage": 40366,
-          "max_damage": 609566,
-          "count": 3
-        },
-        {
-          "spell_id": 1259186,
-          "avg_damage": 198874,
-          "min_damage": 91581,
-          "max_damage": 255035,
-          "count": 3
-        },
-        {
-          "spell_id": 1243270,
-          "avg_damage": 110241,
-          "min_damage": 39317,
-          "max_damage": 157270,
-          "count": 3
+          "max_damage": 321874,
+          "count": 9
         }
       ]
     }
@@ -768,7 +610,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 871,
-      "avg_uses": 2.5,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -780,25 +622,25 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 3,
+      "avg_uses": 2.8,
       "min_uses": 1,
       "max_uses": 7
     },
     {
       "spell_id": 2565,
-      "avg_uses": 21.3,
+      "avg_uses": 20.9,
       "min_uses": 18,
-      "max_uses": 25
+      "max_uses": 24
     },
     {
       "spell_id": 190456,
-      "avg_uses": 6.6,
+      "avg_uses": 6.2,
       "min_uses": 4,
-      "max_uses": 11
+      "max_uses": 10
     },
     {
       "spell_id": 202168,
-      "avg_uses": 2,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -907,10 +749,6 @@
       "icon": "inv_misc_rylakclaw",
       "name": "Shadowclaw Slam"
     },
-    "1243270": {
-      "icon": "inv_cosmicvoid_nova",
-      "name": "Dark Goo"
-    },
     "1259186": {
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
@@ -940,6 +778,6 @@
       "name": "Shadowclaw Slam"
     }
   },
-  "source_signature": "bf67c5c8cbb2fbdb",
-  "ingest_version": 1
+  "source_signature": "6a673ed410adf7b6",
+  "ingest_version": 2
 }

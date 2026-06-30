@@ -39,26 +39,26 @@
       "majority_hold": false
     },
     "Feint": {
-      "sample_count": 5,
-      "avg_first_cast_s": 93,
-      "stddev_first_cast_s": 51.8,
-      "avg_gap_s": 88,
-      "stddev_gap_s": 54.9,
+      "sample_count": 4,
+      "avg_first_cast_s": 98.6,
+      "stddev_first_cast_s": 58.1,
+      "avg_gap_s": 115.6,
+      "stddev_gap_s": 40.2,
       "hold_targets": {
         "1": {
           "target_s": 224.4,
           "stddev_s": 70.9,
           "count": 3,
-          "total_samples": 5
+          "total_samples": 4
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.542,
-        "stddev": 0.208,
+        "avg": 0.462,
+        "stddev": 0.124,
         "min": 0.305,
-        "max": 0.861
+        "max": 0.6
       },
       "majority_hold": true
     },
@@ -80,26 +80,7 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 205.5,
-      "dmg_avg": 173584,
-      "dmg_stddev": 166123,
-      "dmg_min": 0,
-      "dmg_max": 331756,
-      "window_length_s": 5,
-      "defensive_name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "common_defensives": [
-        "Cloak of Shadows"
-      ],
-      "common_cds": [
-        "Cloak of Shadows"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": []
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -115,9 +96,9 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 2,
+      "avg_uses": 1.8,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 2
     },
     {
       "spell_id": 185311,
@@ -184,6 +165,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "9afacc28191faa52",
-  "ingest_version": 1
+  "source_signature": "4725d4d93cfdc9c7",
+  "ingest_version": 2
 }

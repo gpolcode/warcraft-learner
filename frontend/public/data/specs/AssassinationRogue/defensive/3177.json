@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 9,
-      "avg_first_cast_s": 130.7,
-      "stddev_first_cast_s": 56.6,
+      "avg_first_cast_s": 130.8,
+      "stddev_first_cast_s": 56.8,
       "avg_gap_s": 125.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.324,
-        "stddev": 0.079,
+        "avg": 0.323,
+        "stddev": 0.08,
         "min": 0.278,
         "max": 0.534
       },
@@ -69,100 +69,7 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 62.4,
-      "dmg_avg": 149358,
-      "dmg_stddev": 130889,
-      "dmg_min": 25931,
-      "dmg_max": 323023,
-      "window_length_s": 6,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1275558,
-          "avg_damage": 165026,
-          "min_damage": 49809,
-          "max_damage": 297401,
-          "count": 3
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 25589,
-          "min_damage": 25055,
-          "max_damage": 25931,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 81.1,
-      "dmg_avg": 76208,
-      "dmg_stddev": 70219,
-      "dmg_min": 0,
-      "dmg_max": 142482,
-      "window_length_s": 5,
-      "defensive_name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "common_defensives": [
-        "Cloak of Shadows"
-      ],
-      "common_cds": [
-        "Cloak of Shadows"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272328,
-          "avg_damage": 115914,
-          "min_damage": 109187,
-          "max_damage": 120907,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 184.8,
-      "dmg_avg": 120659,
-      "dmg_stddev": 124095,
-      "dmg_min": 0,
-      "dmg_max": 283675,
-      "window_length_s": 7,
-      "defensive_name": "Feint",
-      "spell_id": 1966,
-      "common_defensives": [
-        "Feint"
-      ],
-      "common_cds": [
-        "Feint"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1275558,
-          "avg_damage": 146289,
-          "min_damage": 94310,
-          "max_damage": 198267,
-          "count": 2
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 63353,
-          "min_damage": 50826,
-          "max_damage": 85408,
-          "count": 3
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -239,20 +146,8 @@
     "185311": {
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
-    },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
-    "1272950": {
-      "icon": "inv_elemental_primal_shadow",
-      "name": "Primordial Power"
-    },
-    "1275558": {
-      "icon": "inv_voidcreepermount_blue",
-      "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "dfa61fe138363e0f",
-  "ingest_version": 1
+  "source_signature": "e5f097ec9d53cf5d",
+  "ingest_version": 2
 }
