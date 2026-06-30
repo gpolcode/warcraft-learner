@@ -3,24 +3,24 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 209,
-  "downtime_threshold_ms": 1368,
-  "top_avg_efficiency": 78.5,
-  "top_efficiency_stddev": 4.6,
+  "avg_duration_s": 217.3,
+  "downtime_threshold_ms": 1404,
+  "top_avg_efficiency": 79,
+  "top_efficiency_stddev": 7.2,
   "per_cd_benchmarks": {
     "Eye Beam": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.4,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 27.6,
-      "stddev_gap_s": 9.2,
-      "avg_bl_offset_s": 1.7,
+      "avg_first_cast_s": 2.2,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 27.4,
+      "stddev_gap_s": 9.1,
+      "avg_bl_offset_s": 1.5,
       "stddev_bl_offset_s": 1.3,
-      "avg_uses": 7.9,
-      "avg_uses_per_min": 2.27,
+      "avg_uses": 8.2,
+      "avg_uses_per_min": 2.26,
       "uses_per_min": {
-        "avg": 2.269,
-        "stddev": 0.213,
+        "avg": 2.256,
+        "stddev": 0.195,
         "min": 1.969,
         "max": 2.586
       },
@@ -50,17 +50,17 @@
     },
     "The Hunt": {
       "sample_count": 10,
-      "avg_first_cast_s": 3.7,
-      "stddev_first_cast_s": 2,
-      "avg_gap_s": 67.2,
-      "stddev_gap_s": 10.3,
-      "avg_bl_offset_s": 3,
-      "stddev_bl_offset_s": 1.9,
-      "avg_uses": 3.5,
+      "avg_first_cast_s": 3.8,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 68.6,
+      "stddev_gap_s": 12.5,
+      "avg_bl_offset_s": 3.1,
+      "stddev_bl_offset_s": 1.8,
+      "avg_uses": 3.6,
       "avg_uses_per_min": 1.01,
       "uses_per_min": {
-        "avg": 1.015,
-        "stddev": 0.131,
+        "avg": 1.007,
+        "stddev": 0.136,
         "min": 0.793,
         "max": 1.209
       },
@@ -90,50 +90,37 @@
     },
     "Immolation Aura": {
       "sample_count": 10,
-      "avg_first_cast_s": 42.5,
-      "stddev_first_cast_s": 17.3,
-      "avg_gap_s": 30.5,
-      "stddev_gap_s": 13.8,
-      "avg_bl_offset_s": 36,
-      "stddev_bl_offset_s": 18,
-      "avg_uses": 5.7,
-      "avg_uses_per_min": 1.63,
+      "avg_first_cast_s": 40.5,
+      "stddev_first_cast_s": 16.9,
+      "avg_gap_s": 29.5,
+      "stddev_gap_s": 13.3,
+      "avg_bl_offset_s": 35.9,
+      "stddev_bl_offset_s": 16.7,
+      "avg_uses": 6.2,
+      "avg_uses_per_min": 1.7,
       "uses_per_min": {
-        "avg": 1.629,
-        "stddev": 0.313,
+        "avg": 1.701,
+        "stddev": 0.31,
         "min": 1.11,
         "max": 2.209
       },
-      "bl_pct": 70,
+      "bl_pct": 80,
       "majority_hold": true,
-      "hold_targets": {
-        "4": {
-          "target_s": 155.2,
-          "stddev_s": 32.2,
-          "count": 4,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 180.5,
-          "stddev_s": 23.6,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Vengeful Retreat": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.4,
+      "avg_first_cast_s": 6.3,
       "stddev_first_cast_s": 1.3,
-      "avg_gap_s": 25.6,
-      "stddev_gap_s": 5.1,
-      "avg_bl_offset_s": 5.7,
+      "avg_gap_s": 25.5,
+      "stddev_gap_s": 5.2,
+      "avg_bl_offset_s": 5.6,
       "stddev_bl_offset_s": 1.4,
-      "avg_uses": 8.5,
-      "avg_uses_per_min": 2.43,
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 2.45,
       "uses_per_min": {
-        "avg": 2.431,
-        "stddev": 0.168,
+        "avg": 2.45,
+        "stddev": 0.157,
         "min": 2.099,
         "max": 2.589
       },
@@ -142,44 +129,12 @@
       "hold_targets": {
         "2": {
           "target_s": 37.4,
-          "stddev_s": 1.5,
+          "stddev_s": 1.2,
+          "delay_s": 11.3,
+          "delay_stddev_s": 2,
+          "band_s": 5,
+          "effective_cd_s": 20,
           "count": 10,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 61.5,
-          "stddev_s": 8.1,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 86.3,
-          "stddev_s": 6.9,
-          "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 107.6,
-          "stddev_s": 12.3,
-          "count": 10,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 135.3,
-          "stddev_s": 10.8,
-          "count": 10,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 162.7,
-          "stddev_s": 9,
-          "count": 10,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 183,
-          "stddev_s": 3.6,
-          "count": 6,
           "total_samples": 10
         }
       }
@@ -344,6 +299,6 @@
       "name": "The Hunt"
     }
   },
-  "source_signature": "8f50176325aea16e",
-  "ingest_version": 1
+  "source_signature": "c298a1c10d3c9daf",
+  "ingest_version": 2
 }

@@ -25,7 +25,7 @@
         "max": 2.279
       },
       "bl_pct": 90,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {}
     },
     "Metamorphosis": {
@@ -106,26 +106,7 @@
       },
       "bl_pct": 90,
       "majority_hold": true,
-      "hold_targets": {
-        "4": {
-          "target_s": 177.1,
-          "stddev_s": 31.9,
-          "count": 5,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 196.4,
-          "stddev_s": 29.7,
-          "count": 6,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 215.9,
-          "stddev_s": 23.2,
-          "count": 7,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Vengeful Retreat": {
       "sample_count": 10,
@@ -149,61 +130,31 @@
         "2": {
           "target_s": 36.8,
           "stddev_s": 3.6,
+          "delay_s": 11.5,
+          "delay_stddev_s": 1.7,
+          "band_s": 5,
+          "effective_cd_s": 20,
           "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 62.5,
-          "stddev_s": 8.1,
-          "count": 9,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 92.5,
-          "stddev_s": 8.4,
-          "count": 9,
+          "target_s": 66.6,
+          "stddev_s": 10.5,
+          "delay_s": 8.5,
+          "delay_stddev_s": 8.1,
+          "band_s": 8.1,
+          "effective_cd_s": 20,
+          "count": 5,
           "total_samples": 10
         },
         "5": {
-          "target_s": 125.3,
-          "stddev_s": 6.5,
-          "count": 9,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 149.6,
-          "stddev_s": 10,
-          "count": 9,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 175.8,
-          "stddev_s": 14.2,
-          "count": 10,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 198,
-          "stddev_s": 14.7,
-          "count": 10,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 221.2,
-          "stddev_s": 13.7,
-          "count": 10,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 242.3,
-          "stddev_s": 10.9,
-          "count": 9,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 266.3,
-          "stddev_s": 7.7,
-          "count": 6,
+          "target_s": 126.6,
+          "stddev_s": 1.4,
+          "delay_s": 20.2,
+          "delay_stddev_s": 2.7,
+          "band_s": 5,
+          "effective_cd_s": 20,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -368,6 +319,6 @@
       "name": "The Hunt"
     }
   },
-  "source_signature": "13c11ddc7d91fb2d",
-  "ingest_version": 1
+  "source_signature": "f807d47a632324d7",
+  "ingest_version": 2
 }

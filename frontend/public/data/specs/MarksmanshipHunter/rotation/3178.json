@@ -30,13 +30,21 @@
         "2": {
           "target_s": 166.6,
           "stddev_s": 2.2,
+          "delay_s": 18.7,
+          "delay_stddev_s": 12.2,
+          "band_s": 12.2,
+          "effective_cd_s": 120,
           "count": 9,
           "total_samples": 10
         },
         "3": {
           "target_s": 366,
-          "stddev_s": 42.8,
-          "count": 7,
+          "stddev_s": 1.6,
+          "delay_s": 78.9,
+          "delay_stddev_s": 2,
+          "band_s": 5,
+          "effective_cd_s": 120,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -60,33 +68,43 @@
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
-        "2": {
-          "target_s": 77.6,
-          "stddev_s": 0.9,
-          "count": 4,
-          "total_samples": 10
-        },
         "3": {
           "target_s": 170.6,
           "stddev_s": 0.5,
+          "delay_s": 45.6,
+          "delay_stddev_s": 1.4,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 246,
           "stddev_s": 3.2,
+          "delay_s": 30.6,
+          "delay_stddev_s": 3.1,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 306.8,
-          "stddev_s": 0.4,
-          "count": 7,
+          "target_s": 306.9,
+          "stddev_s": 0.5,
+          "delay_s": 16,
+          "delay_stddev_s": 0.9,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 6,
           "total_samples": 10
         },
         "6": {
           "target_s": 373.5,
           "stddev_s": 1.7,
+          "delay_s": 21.6,
+          "delay_stddev_s": 1.8,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 7,
           "total_samples": 10
         }
@@ -206,6 +224,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "41068d481ad79fc9",
-  "ingest_version": 1
+  "source_signature": "c4263878cc82e3c2",
+  "ingest_version": 2
 }
