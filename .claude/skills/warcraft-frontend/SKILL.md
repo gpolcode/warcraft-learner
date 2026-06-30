@@ -32,7 +32,7 @@ These are hard rules for all Angular code. The `angular-developer` skill (`.clau
 
 ## Angular/TypeScript conventions
 
-These are the general Angular/TypeScript best practices for the app. The mechanizable ones are **enforced by ESLint** (`frontend/eslint.config.js`, run via `npm run lint`): no `any` (use `unknown`); native control flow (`@if`/`@for`/`@switch`) over `*ngIf`/`*ngFor`; standalone components with no explicit `standalone: true`; host bindings in the `host` object, never `@HostBinding`/`@HostListener`; `inject()` over constructor injection; and the `wl` component/directive selector prefix. The remaining guidance is **not lintable** but still expected:
+These are the general Angular/TypeScript best practices for the app. The mechanizable ones are **enforced by ESLint** (`frontend/eslint.config.js`, run via `npm run lint`); the rest is **not lintable** but still expected:
 
 - **Prefer type inference** when the type is obvious; use strict type checking.
 - **Signals for state**: `signal()` for local state, `computed()` for derived state, `set`/`update` never `mutate`. Keep state transformations pure and predictable.
@@ -42,6 +42,4 @@ These are the general Angular/TypeScript best practices for the app. The mechani
 
 ## Linting
 
-ESLint enforces the Angular/TypeScript conventions (run via `npm run lint` - see CLAUDE.md commands). Flat config lives in `frontend/eslint.config.js` (typescript-eslint + angular-eslint, recommended + stylistic sets) and runs through the Angular CLI lint target (`src/**/*.ts` + `src/**/*.html`; the Node `scripts/**` are not linted).
-
-On top of the recommended sets the config pins the convention rules: `@typescript-eslint/no-explicit-any` (ban `any`), `@angular-eslint/prefer-standalone`, `@angular-eslint/prefer-host-metadata-property`, `@angular-eslint/prefer-inject`, and `@angular-eslint/template/prefer-control-flow`, plus the `wl` selector prefix. A few recommended rules carry deliberate option tweaks documented inline: template `eqeqeq` allows the `x != null` idiom, `no-unused-vars` allows the `_`-prefix convention, and `no-empty-function` allows empty private constructors (the static-factory guard).
+`npm run lint` (see CLAUDE.md) runs ESLint over `src/**` only - the Node `scripts/**` are not linted. `frontend/eslint.config.js` is the source of truth for the pinned convention rules and their deliberate option tweaks (each explained in an inline comment) - read it there rather than duplicating the list here.
