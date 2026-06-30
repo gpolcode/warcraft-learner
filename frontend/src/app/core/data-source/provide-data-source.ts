@@ -5,6 +5,14 @@ import { DataSource } from './data-source';
 import { FileDataSource } from './file-data-source';
 
 /**
+ * The on-disk data directory a slice reads under `data/specs/{spec}/`. Naming one of
+ * these literals is the only thing that varies across slices at the `provideDataSource`
+ * call site, so the union keeps a typo from silently binding a token to a directory that
+ * does not exist (which would read `null` and render an empty card with no error).
+ */
+export type SliceDir = 'burst' | 'rotation' | 'defensive' | 'gear' | 'positions';
+
+/**
  * Bind a per-use-case `*_DATA_SOURCE` token to one of its two adapters, chosen by the
  * build-time dev flag:
  *
@@ -21,7 +29,7 @@ import { FileDataSource } from './file-data-source';
  */
 export function provideDataSource<T>(
   token: InjectionToken<DataSource<T>>,
-  slice: string,
+  slice: SliceDir,
   liveImpl: Type<DataSource<T>>,
 ): Provider {
   return environment.useLiveTransform
