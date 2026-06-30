@@ -25,8 +25,19 @@
         "max": 1.505
       },
       "bl_pct": 90,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "4": {
+          "target_s": 178.2,
+          "stddev_s": 1.2,
+          "delay_s": 28.2,
+          "delay_stddev_s": 5.4,
+          "band_s": 5.4,
+          "effective_cd_s": 75,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Comet Storm": {
       "sample_count": 10,
@@ -65,8 +76,19 @@
         "max": 1.822
       },
       "bl_pct": 90,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "5": {
+          "target_s": 175.6,
+          "stddev_s": 3.3,
+          "delay_s": 17.1,
+          "delay_stddev_s": 4,
+          "band_s": 5,
+          "effective_cd_s": 60,
+          "count": 8,
+          "total_samples": 10
+        }
+      }
     },
     "Time Warp": {
       "sample_count": 10,
@@ -295,6 +317,6 @@
       "name": "Ice Cold"
     }
   },
-  "source_signature": "aaa02391c8e4c94c",
-  "ingest_version": 1
+  "source_signature": "dc6f602a5a98d4f1",
+  "ingest_version": 2
 }

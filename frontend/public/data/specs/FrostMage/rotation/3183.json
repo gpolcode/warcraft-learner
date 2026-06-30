@@ -25,8 +25,19 @@
         "max": 1.48
       },
       "bl_pct": 100,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "9": {
+          "target_s": 370.8,
+          "stddev_s": 2.8,
+          "delay_s": 13.3,
+          "delay_stddev_s": 2.3,
+          "band_s": 5,
+          "effective_cd_s": 75,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Comet Storm": {
       "sample_count": 10,
@@ -295,6 +306,6 @@
       "name": "Ice Cold"
     }
   },
-  "source_signature": "b71de226a19f1703",
-  "ingest_version": 1
+  "source_signature": "318dedf9f5a7eda8",
+  "ingest_version": 2
 }
