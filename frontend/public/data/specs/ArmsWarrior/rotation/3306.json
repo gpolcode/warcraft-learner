@@ -65,8 +65,19 @@
         "max": 1.208
       },
       "bl_pct": 80,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "4": {
+          "target_s": 279.7,
+          "stddev_s": 2.6,
+          "delay_s": 12.6,
+          "delay_stddev_s": 1.9,
+          "band_s": 5,
+          "effective_cd_s": 90,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Bladestorm": {
       "sample_count": 10,
@@ -110,13 +121,21 @@
         "2": {
           "target_s": 178.8,
           "stddev_s": 0.9,
+          "delay_s": 62.4,
+          "delay_stddev_s": 1.3,
+          "band_s": 5,
+          "effective_cd_s": 90,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 277.8,
-          "stddev_s": 21,
-          "count": 9,
+          "target_s": 280.4,
+          "stddev_s": 24.9,
+          "delay_s": 12.6,
+          "delay_stddev_s": 24.4,
+          "band_s": 24.4,
+          "effective_cd_s": 90,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -183,13 +202,21 @@
         "2": {
           "target_s": 172.1,
           "stddev_s": 15.4,
+          "delay_s": 14.8,
+          "delay_stddev_s": 15,
+          "band_s": 15,
+          "effective_cd_s": 30,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 206.3,
-          "stddev_s": 38.1,
-          "count": 8,
+          "target_s": 235.4,
+          "stddev_s": 42.3,
+          "delay_s": 37.4,
+          "delay_stddev_s": 38.9,
+          "band_s": 38.9,
+          "effective_cd_s": 30,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -407,6 +434,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "c39a7ee1c19ef05f",
-  "ingest_version": 1
+  "source_signature": "2ac581e0b6193904",
+  "ingest_version": 2
 }

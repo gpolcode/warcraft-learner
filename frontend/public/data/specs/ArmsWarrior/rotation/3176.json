@@ -106,14 +106,7 @@
       },
       "bl_pct": 0,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 249.3,
-          "stddev_s": 0.7,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Demolish": {
       "sample_count": 10,
@@ -177,13 +170,11 @@
         "2": {
           "target_s": 115,
           "stddev_s": 9.3,
+          "delay_s": 41.2,
+          "delay_stddev_s": 6.3,
+          "band_s": 6.3,
+          "effective_cd_s": 30,
           "count": 7,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 221.8,
-          "stddev_s": 1.7,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -401,6 +392,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "e458a10237d444d0",
-  "ingest_version": 1
+  "source_signature": "8b4967d11fae0026",
+  "ingest_version": 2
 }

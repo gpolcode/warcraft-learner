@@ -47,76 +47,34 @@
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
-        "3": {
-          "target_s": 78.1,
-          "stddev_s": 7.3,
-          "count": 4,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 113.6,
-          "stddev_s": 32.5,
-          "count": 6,
-          "total_samples": 10
-        },
         "5": {
-          "target_s": 169.6,
-          "stddev_s": 25.4,
-          "count": 8,
+          "target_s": 165.5,
+          "stddev_s": 31.2,
+          "delay_s": 26.6,
+          "delay_stddev_s": 9.6,
+          "band_s": 9.6,
+          "effective_cd_s": 30,
+          "count": 9,
           "total_samples": 10
         },
         "6": {
           "target_s": 206.5,
-          "stddev_s": 30.3,
-          "count": 10,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 248.5,
-          "stddev_s": 32.7,
-          "count": 10,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 277.7,
-          "stddev_s": 41.3,
-          "count": 10,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 308.9,
-          "stddev_s": 30.6,
-          "count": 9,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 350,
-          "stddev_s": 23.7,
-          "count": 9,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 379.3,
-          "stddev_s": 19.5,
-          "count": 8,
-          "total_samples": 10
-        },
-        "12": {
-          "target_s": 408.6,
-          "stddev_s": 11.3,
-          "count": 7,
-          "total_samples": 10
-        },
-        "13": {
-          "target_s": 438.2,
-          "stddev_s": 10.7,
+          "stddev_s": 34.1,
+          "delay_s": 12.2,
+          "delay_stddev_s": 6.3,
+          "band_s": 6.3,
+          "effective_cd_s": 30,
           "count": 6,
           "total_samples": 10
         },
-        "14": {
-          "target_s": 464.7,
-          "stddev_s": 12.6,
-          "count": 4,
+        "10": {
+          "target_s": 348.7,
+          "stddev_s": 14.3,
+          "delay_s": 15,
+          "delay_stddev_s": 6.2,
+          "band_s": 6.2,
+          "effective_cd_s": 30,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -143,19 +101,11 @@
         "2": {
           "target_s": 181.7,
           "stddev_s": 3.4,
+          "delay_s": 56.4,
+          "delay_stddev_s": 4.6,
+          "band_s": 5,
+          "effective_cd_s": 120,
           "count": 8,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 309.3,
-          "stddev_s": 35.1,
-          "count": 8,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 433.1,
-          "stddev_s": 7.6,
-          "count": 5,
           "total_samples": 10
         }
       }
@@ -200,27 +150,13 @@
       "majority_hold": true,
       "hold_targets": {
         "6": {
-          "target_s": 179.6,
-          "stddev_s": 5.6,
-          "count": 8,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 206.8,
-          "stddev_s": 1.5,
-          "count": 6,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 232.4,
-          "stddev_s": 2.4,
-          "count": 6,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 259.5,
-          "stddev_s": 2.8,
-          "count": 4,
+          "target_s": 178.8,
+          "stddev_s": 10.2,
+          "delay_s": 39.4,
+          "delay_stddev_s": 11,
+          "band_s": 11,
+          "effective_cd_s": 30,
+          "count": 9,
           "total_samples": 10
         }
       }
@@ -242,8 +178,19 @@
         "max": 2.518
       },
       "bl_pct": 100,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "7": {
+          "target_s": 179.8,
+          "stddev_s": 2.6,
+          "delay_s": 18,
+          "delay_stddev_s": 4.4,
+          "band_s": 5,
+          "effective_cd_s": 40,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
     }
   },
   "major_cooldowns": [
@@ -410,6 +357,6 @@
       "name": "Breath of Eons"
     }
   },
-  "source_signature": "fe815214f3833880",
-  "ingest_version": 1
+  "source_signature": "6b25ef4022a7e447",
+  "ingest_version": 2
 }
