@@ -25,7 +25,7 @@
         "max": 1.353
       },
       "bl_pct": 100,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {}
     },
     "Void Eruption": {
@@ -50,12 +50,20 @@
         "2": {
           "target_s": 128.2,
           "stddev_s": 41.9,
+          "delay_s": 63.7,
+          "delay_stddev_s": 4.6,
+          "band_s": 5,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 267.6,
           "stddev_s": 17.9,
+          "delay_s": 83.6,
+          "delay_stddev_s": 18.3,
+          "band_s": 18.3,
+          "effective_cd_s": 60,
           "count": 7,
           "total_samples": 10
         }
@@ -249,6 +257,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "0a2fbd06d115a969",
-  "ingest_version": 1
+  "source_signature": "6d8f5c8f9630de05",
+  "ingest_version": 2
 }

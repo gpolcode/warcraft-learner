@@ -50,12 +50,20 @@
         "2": {
           "target_s": 130,
           "stddev_s": 12.1,
+          "delay_s": 63.6,
+          "delay_stddev_s": 12.4,
+          "band_s": 12.4,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 255.3,
           "stddev_s": 19.9,
+          "delay_s": 65.7,
+          "delay_stddev_s": 8.1,
+          "band_s": 8.1,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         }
@@ -98,27 +106,8 @@
         "max": 2.028
       },
       "bl_pct": 90,
-      "majority_hold": true,
-      "hold_targets": {
-        "9": {
-          "target_s": 263.6,
-          "stddev_s": 3.4,
-          "count": 5,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 294,
-          "stddev_s": 11.7,
-          "count": 6,
-          "total_samples": 10
-        },
-        "11": {
-          "target_s": 321.2,
-          "stddev_s": 5.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -268,6 +257,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "e5784ec9d952eb59",
-  "ingest_version": 1
+  "source_signature": "0656aa3448d043ea",
+  "ingest_version": 2
 }

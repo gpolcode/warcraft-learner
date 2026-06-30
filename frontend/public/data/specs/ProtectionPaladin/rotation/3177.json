@@ -3,112 +3,68 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 246.6,
-  "downtime_threshold_ms": 1240,
-  "top_avg_efficiency": 75.8,
-  "top_efficiency_stddev": 11.5,
+  "avg_duration_s": 240,
+  "downtime_threshold_ms": 1241,
+  "top_avg_efficiency": 75.9,
+  "top_efficiency_stddev": 11.3,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
       "avg_first_cast_s": 7.2,
       "stddev_first_cast_s": 19.7,
-      "avg_gap_s": 63.4,
-      "stddev_gap_s": 3.3,
-      "avg_bl_offset_s": 0.5,
-      "stddev_bl_offset_s": 0.9,
-      "avg_uses": 4.4,
+      "avg_gap_s": 63.5,
+      "stddev_gap_s": 3.4,
+      "avg_bl_offset_s": 0.6,
+      "stddev_bl_offset_s": 1,
+      "avg_uses": 4.3,
       "avg_uses_per_min": 1.08,
       "uses_per_min": {
-        "avg": 1.076,
-        "stddev": 0.075,
+        "avg": 1.081,
+        "stddev": 0.076,
         "min": 0.917,
         "max": 1.151
       },
-      "bl_pct": 80,
-      "majority_hold": true,
-      "hold_targets": {
-        "2": {
-          "target_s": 70.7,
-          "stddev_s": 1.1,
-          "count": 5,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 131.8,
-          "stddev_s": 1.4,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 193.2,
-          "stddev_s": 1.3,
-          "count": 8,
-          "total_samples": 10
-        }
-      }
+      "bl_pct": 70,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Divine Toll": {
       "sample_count": 10,
       "avg_first_cast_s": 1.5,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 63.4,
-      "stddev_gap_s": 3.1,
-      "avg_bl_offset_s": 1,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 63.5,
+      "stddev_gap_s": 3.4,
+      "avg_bl_offset_s": 1.1,
       "stddev_bl_offset_s": 1.2,
-      "avg_uses": 4.5,
+      "avg_uses": 4.4,
       "avg_uses_per_min": 1.1,
       "uses_per_min": {
-        "avg": 1.099,
-        "stddev": 0.053,
+        "avg": 1.104,
+        "stddev": 0.052,
         "min": 0.99,
         "max": 1.151
       },
-      "bl_pct": 90,
-      "majority_hold": true,
-      "hold_targets": {
-        "2": {
-          "target_s": 70.7,
-          "stddev_s": 1.1,
-          "count": 5,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 131.6,
-          "stddev_s": 1.5,
-          "count": 6,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 193.3,
-          "stddev_s": 1.4,
-          "count": 9,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 253.3,
-          "stddev_s": 2.9,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "bl_pct": 80,
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Hammer of Light": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.5,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 22.9,
-      "stddev_gap_s": 13.8,
-      "avg_bl_offset_s": 2,
-      "stddev_bl_offset_s": 1.1,
-      "avg_uses": 11.2,
-      "avg_uses_per_min": 2.72,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 23.3,
+      "stddev_gap_s": 14.9,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 1.2,
+      "avg_uses": 10.7,
+      "avg_uses_per_min": 2.67,
       "uses_per_min": {
-        "avg": 2.717,
-        "stddev": 0.245,
+        "avg": 2.67,
+        "stddev": 0.233,
         "min": 2.156,
-        "max": 2.985
+        "max": 2.887
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -322,6 +278,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "a29f86ae8fd57f50",
-  "ingest_version": 1
+  "source_signature": "da285930219f5fc3",
+  "ingest_version": 2
 }

@@ -41,37 +41,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 5.3,
-      "dmg_avg": 130638,
-      "dmg_stddev": 88031,
-      "dmg_min": 0,
-      "dmg_max": 189366,
-      "window_length_s": 12,
-      "defensive_name": "Vampiric Embrace",
-      "spell_id": 15286,
-      "common_defensives": [
-        "Vampiric Embrace"
-      ],
-      "common_cds": [
-        "Vampiric Embrace"
-      ],
-      "ref_game_id": 245569,
-      "ability_breakdown": [
-        {
-          "spell_id": 1258610,
-          "avg_damage": 174184,
-          "min_damage": 157995,
-          "max_damage": 189366,
-          "count": 3
-        }
-      ]
-    },
-    {
       "time_s": 73,
       "dmg_avg": 488769,
       "dmg_stddev": 107124,
       "dmg_min": 377818,
       "dmg_max": 675404,
+      "dmg_pct_avg": 0.134,
       "window_length_s": 10,
       "defensive_name": "Desperate Prayer",
       "spell_id": 19236,
@@ -112,7 +87,8 @@
       "dmg_stddev": 103686,
       "dmg_min": 275068,
       "dmg_max": 548107,
-      "window_length_s": 11.9,
+      "dmg_pct_avg": 0.106,
+      "window_length_s": 11,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
       "common_defensives": [
@@ -206,15 +182,11 @@
       "icon": "inv_ability_poison_orb",
       "name": "Caustic Phlegm"
     },
-    "1258610": {
-      "icon": "inv_azeritefireball",
-      "name": "Rift Emergence"
-    },
     "1273112": {
       "icon": "spell_deathknight_gnaw_ghoul",
       "name": "Consume"
     }
   },
-  "source_signature": "e2797c5e19db522d",
-  "ingest_version": 1
+  "source_signature": "6f7dc16f9ab21b32",
+  "ingest_version": 2
 }

@@ -25,8 +25,29 @@
         "max": 1.248
       },
       "bl_pct": 90,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 169,
+          "stddev_s": 63.7,
+          "delay_s": 41,
+          "delay_stddev_s": 15.3,
+          "band_s": 15.3,
+          "effective_cd_s": 120,
+          "count": 10,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 309.1,
+          "stddev_s": 27.4,
+          "delay_s": 21.5,
+          "delay_stddev_s": 28.5,
+          "band_s": 28.5,
+          "effective_cd_s": 120,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Void Eruption": {
       "sample_count": 10,
@@ -50,12 +71,20 @@
         "2": {
           "target_s": 168.6,
           "stddev_s": 14.5,
+          "delay_s": 102.9,
+          "delay_stddev_s": 14.4,
+          "band_s": 14.4,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 307.2,
           "stddev_s": 30.2,
+          "delay_s": 76.4,
+          "delay_stddev_s": 22.2,
+          "band_s": 22.2,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         }
@@ -249,6 +278,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "3d462ba25d1a696f",
-  "ingest_version": 1
+  "source_signature": "47fd495091a4d36b",
+  "ingest_version": 2
 }
