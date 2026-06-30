@@ -214,6 +214,8 @@ Ingestion runs these very `*TransformService`s headlessly, so the only specs und
 
 **Conventions: tests as documentation.** Colocate specs next to the unit (`burst.service.spec.ts` beside `burst.service.ts`). `describe` names the unit (`'burstWindowStatus'`); `it` is a behavior sentence with no "should" (`it('flags a value more than 2 sigma above the mean')`). For rule/threshold tests, pair every "triggers" case with a "does not trigger at the boundary" case - boundary comparisons are strict (a value exactly at `mean + 2*stddev` is **not** an outlier).
 
+**Use readable named constants, never magic numbers or raw ids (hard requirement).** Import spell/item ids from `src/testing/spell-ids.ts` (`SHADOW_BLADES`, `CLOAK_OF_SHADOWS`, `SHADOW_BLADES_DAMAGE`, ...) and give every computed threshold/timing/damage value its own named `const` with a one-line derivation comment. A bare `279043`/`31224` spell id, or an unexplained `48`/`0.5` in a spec, is a defect - name it so the test reads as documentation.
+
 **Fluent builders (`src/testing/`).** WCL event data is massive and quirky, so never load a JSON blob - build a minimal, readable event stream:
 
 ```ts
@@ -325,7 +327,7 @@ The legacy monolith (`AnalysisService`/`AnalysisEngineService`, the `computeAnal
 2. Each `*FeatureService` reads its prepared bench via its `*DataSource` (the tailored file in prod, or the live `*TransformService` under `useLiveTransform`) and fetches the player's own log (`Casts`/`Buffs`/`DamageDone`/`DamageTaken`) via the cached `WclApiService`, then computes its slice with its colocated pure functions:
    - **Rotation** (`rotation.service.ts`) - per offensive cooldown: lost casts (`expected` from top-parse `uses_per_min`), bloodlust alignment (gated by measured `bl_pct >= 50`, not the rulebook flag), first-cast delay (>2σ), held-past-reset (>2σ above `avg_gap_s`, skipped when null), hold suggestions (a majority of top parsers hold past the prior cast + cooldown; flagged when the player's own prior-relative gap falls below the consensus band), cast efficiency (downtime vs p90), and success. Plus the **rule engine** (`cast_without_prior`, `hold_cooldown_for_anchor`) and the per-cooldown comparison table. Findings split into **Needs Improvement** / **Timing Suggestions** / **Doing Well**.
    - **Defensive** (`defensive.service.ts`) - lost/held/hold-suggestion findings per defensive plus **Defensive Windows**: the consensus high-mitigation windows where most top parses use a rulebook defensive on a big incoming-damage hit, scoring whether the player covered each (and mitigated well) plus a window-miss finding for uncovered windows.
-   - **Burst** (`burst.service.ts`) - **Burst Windows**: the recurring damage-density clumps (measured from DamageDone, not cooldown durations) that most top parses share, with the player's window damage computed from their own log.
+   - **Burst** (`burst.service.ts`) - **Burst Windows**: the recurring damage-density bursts (measured from DamageDone, not cooldown durations) that most top parses share, with the player's window damage computed from their own log.
    - **Gear** (`gear.service.ts`) - the player's combatant-info gear (talents/trinkets/enchants) vs the bench; bench-only on `/pre`.
    - **Map** (`map.service.ts`) - `MapFeatureService` owns the positioning panel state (replacing the old global `PositioningPanelService`); other cards emit an `openMap` output the page forwards to it.
 3. Ability art is resolved from the report's `masterData.abilities` (and seeded into the small `IconCacheService` for the shared `wl-finding-table`), since WCL removed `gameData.spell()`.
@@ -495,34 +497,39 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 
 ## Analysis thresholds
 
+> **Reference the code constant by name, never copy its literal value (hard requirement).** Each
+> threshold below names the `const` it comes from (`HOLD_CONSENSUS_FRAC`, `CLUSTER_MIN_FRAC`,
+> `WINDOW_MIN_DMG_PCT`, ...); the number lives in code so the doc stays correct when the constant is
+> tuned. Applies to the existing rows and every future one - cite the name, not the magic value.
+
 | Threshold | Derived from | Condition |
 |---|---|---|
 | First-cast delay | `avg_first_cast_s + 2σ` across top parses | Always runs when a bench entry exists (field is required, never null) |
 | Gap between CD uses | `avg_gap_s + 2σ` across top parses | Skipped when null - legitimately absent for single-cast CDs (cooldown > fight length) |
-| Hold suggestion trigger | Cast index where a majority (≥50%) of samples delay >8s past the **prior actual cast + cooldown**; fires only when the player's own prior-relative gap is below `delay_s - band_s` (band = max(σ, 5s)). Over-holding is not flagged | None emitted when `hold_targets` is empty (no parsers held at that index) |
-| Downtime gap floor | p90 of pooled `cast_gap_list_ms` | Always runs when bench exists (`downtime_threshold_ms` is required, defaults to 1500ms) |
+| Hold suggestion trigger | Cast index where at least `HOLD_CONSENSUS_FRAC` of samples delay more than `HOLD_THRESHOLD_S` past the **prior actual cast + cooldown**; fires only when the player's own prior-relative gap is below `delay_s - band_s` (`band_s = max(σ, HOLD_BAND_MIN_S)`). Over-holding is not flagged | None emitted when `hold_targets` is empty (no parsers held at that index) |
+| Downtime gap floor | `DOWNTIME_PERCENTILE` of pooled `cast_gap_list_ms` | Always runs when bench exists (`downtime_threshold_ms` is required, defaults to `DEFAULT_DOWNTIME_THRESHOLD_MS`) |
 | Efficiency warning band | <1σ below Top average → warning; deeper → critical | Always runs when bench exists (`top_avg_efficiency` / `top_efficiency_stddev` are required) |
 | BL timing | `avg_bl_offset_s ± 2σ` | Skipped when null - legitimately absent when a CD is never BL-aligned |
 
 > **Stddev is always emitted by ingestion alongside its mean** (`stdev()` returns 0 for a single sample), so all required `stddev_*` fields are always a number when the bench entry exists. The gap and BL-offset fields (`avg_gap_s`, `stddev_gap_s`, `avg_bl_offset_s`, `stddev_bl_offset_s`) are the only nullable bench fields - they are legitimately null when the statistic does not apply (single-cast CD or CD never aligned with BL). All other bench fields are required; if they are absent that is an ingestion problem, not an analysis problem.
-| Burst window clustering | damage-density clumps within 15s merged; present in a majority (≥50%) of parses | n/a |
-| Defensive window clustering | per-defensive grouping within 20s; present in a majority (≥50%) of distinct parses AND median damage-taken share ≥5% of the parse total | n/a |
+| Burst window clustering | damage-density bursts within `CLUSTER_MERGE_S` merged; present in at least `CLUSTER_MIN_FRAC` of parses | n/a |
+| Defensive window clustering | per-defensive grouping within `CLUSTER_MERGE_S`; present in at least `CONSENSUS_FRAC` of distinct parses AND median damage-taken share at least `WINDOW_MIN_DMG_PCT` of the parse total | n/a |
 | Comparison table (uses/min) | `top_stddev_uses_per_min` per CD | ±0.05 |
 | Comparison table (first cast) | `top_stddev_first_cast_s` per CD | ±3s |
 
 ### Burst window definition (`burst-windows/burst-transform.service.ts` → `findParseWindows` / `clusterParseWindows`)
 
 **Per-parse** (measured from DamageDone density, NOT cooldown durations):
-1. Bucket DamageDone into 1s bins over the fight; take a 3-bin (3s) forward rolling rate.
-2. Mark bins dense when the rolling rate clears `max(1.6 × mean rolling rate, 0.66-quantile of the rate distribution)`.
-3. Contiguous dense bins (bridging ≤2 sub-threshold bins) form a run; trim each run to the bins that actually carry damage so the window snaps to the real clump.
-4. Compute `window_damage` over the measured half-open `[start, end)`; discard windows below the ≥3% significance threshold.
+1. Bucket DamageDone into `BIN_MS` bins over the fight; take a `ROLL_BINS`-bin forward rolling damage.
+2. Mark bins dense when the rolling damage clears `max(THRESHOLD_MULT × mean rolling damage, RATE_QUANTILE-quantile of the rolling-damage distribution)`.
+3. Contiguous dense bins (bridging up to `MERGE_GAP_BINS` sub-threshold bins) form a run; trim each run to the bins that actually carry damage so the window snaps to the real burst.
+4. Compute `window_damage` over the measured half-open `[start, end)`; discard windows below the `SIGNIFICANCE_PCT` significance threshold.
 5. Each window: `time_s`, `window_length_s` (measured extent), `window_damage`, `active_cds` (cooldowns cast *inside* the window - attribution only, never a boundary), ability breakdown (top 6, each with absolute `damage`).
 
 **Across parses** (`clusterParseWindows`):
-1. `groupByTime(windows, 15s)` - greedy: windows within 15s of cluster median go in same group.
-2. Discard clusters present in fewer than max(2, 50% of samples) - a majority ("most parses share it").
-3. Surface CDs and abilities in ≥50% of member parses.
+1. `groupByTime(windows, CLUSTER_MERGE_S)` - greedy: windows within `CLUSTER_MERGE_S` of the cluster median go in the same group.
+2. Discard clusters present in fewer than max(2, `CLUSTER_MIN_FRAC` × samples) - a majority ("most parses share it").
+3. Surface CDs and abilities present in at least `MEMBER_MAJORITY_FRAC` of member parses.
 4. `window_length_s` = mean of member (measured) window lengths.
 5. Emits **absolute damage** stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`, per-ability `avg_damage`/`min_damage`/`max_damage`) - **not** percentages. The player vs top-parse comparison and the Burst/Defensive Windows cards compare raw damage so the numbers stay meaningful on progression (a wipe's short fight-total would otherwise inflate every window's share).
 
@@ -533,8 +540,8 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 2. `time_s` = apply; `window_length_s` = measured span; `window_damage` = damage taken (`amount + absorbed`) during it; `pct_of_total` = that / the parse's total damage taken; carries `parse_index` so clustering counts distinct parses.
 
 **Across parses** (`clusterDefensiveWindows`):
-1. Group by defensive name, then `groupByTime(group, 20s)`.
-2. Keep a window only where a majority of **distinct** parses defended (≥ max(2, 50% of samples)) AND the cluster's median `pct_of_total` ≥5% (the "mitigate a lot" gate - drops habitual zero-damage presses).
+1. Group by defensive name, then `groupByTime(group, CLUSTER_MERGE_S)`.
+2. Keep a window only where at least `CONSENSUS_FRAC` of **distinct** parses defended (max(2, `CONSENSUS_FRAC` × samples)) AND the cluster's median `pct_of_total` is at least `WINDOW_MIN_DMG_PCT` (the "mitigate a lot" gate - drops habitual zero-damage presses).
 3. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), `dmg_pct_avg`, ability breakdown of damage sources, and `ref_game_id` (the gameID of the enemy dealing the window's main damage). The runtime then scores the player on covering each window (and mitigating well) and emits a window-miss finding for uncovered windows.
 
 Both cluster functions share the `groupByTime()` helper.

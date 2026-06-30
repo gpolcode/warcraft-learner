@@ -5,7 +5,7 @@
  * NOT reference the ingest analysis). Bound by `environment.useLiveTransform`.
  *
  * It fetches the encounter's top parses, refetches each parse's Casts + DamageDone,
- * finds each parse's measured damage-density clumps (the stretches where the player's
+ * finds each parse's measured damage-density bursts (the stretches where the player's
  * DamageDone rate runs well above its fight-average), and clusters them across parses.
  * Windows are derived from where the damage actually lands, not from cooldown-cast x
  * rulebook-`duration` spans; cooldowns are only attributed onto a window after the
@@ -121,7 +121,7 @@ export interface ParseWindow {
 }
 
 /**
- * One parse's burst windows, measured as damage-density clumps: bucket DamageDone
+ * One parse's burst windows, measured as damage-density bursts: bucket DamageDone
  * into 1s bins, take a 3s rolling rate, and mark the bins whose rate runs well above
  * the parse mean as "dense". Contiguous dense bins (bridging up to MERGE_GAP_BINS
  * sub-threshold bins) form a window. Keep windows above the significance threshold,
@@ -144,48 +144,48 @@ export function findParseWindows(
   // Bucket damage into fixed 1s bins spanning the fight.
   const binCount = Math.ceil(fightLenMs / BIN_MS);
   if (binCount < 2) return [];
-  const bucketDmg = new Array<number>(binCount).fill(0);
-  for (const [ts, dmg] of hits) {
-    const bin = Math.min(Math.max(Math.floor((ts - fightStartMs) / BIN_MS), 0), binCount - 1);
-    bucketDmg[bin] += dmg;
+  const damagePerBin = new Array<number>(binCount).fill(0);
+  for (const [timestamp, hitDamage] of hits) {
+    const binIndex = Math.min(Math.max(Math.floor((timestamp - fightStartMs) / BIN_MS), 0), binCount - 1);
+    damagePerBin[binIndex] += hitDamage;
   }
 
-  // Rolling forward rate over ROLL_BINS bins, computed for every bin index.
-  const rate = new Array<number>(binCount).fill(0);
-  for (let i = 0; i < binCount; i++) {
-    let sum = 0;
-    for (let j = i; j <= Math.min(i + ROLL_BINS - 1, binCount - 1); j++) sum += bucketDmg[j];
-    rate[i] = sum;
+  // Each bin's forward rolling damage: itself + the next ROLL_BINS-1 bins.
+  const rollingDamage = new Array<number>(binCount).fill(0);
+  for (let binIndex = 0; binIndex < binCount; binIndex++) {
+    let rollingSum = 0;
+    for (let ahead = binIndex; ahead <= Math.min(binIndex + ROLL_BINS - 1, binCount - 1); ahead++) rollingSum += damagePerBin[ahead];
+    rollingDamage[binIndex] = rollingSum;
   }
 
-  // A bin is dense when its rolling rate clears THRESHOLD_MULT x the mean rolling
-  // rate, floored at the RATE_QUANTILE of the rate distribution (so a spiky parse
-  // still has to beat its own typical bin, not just its mean).
-  const meanRollRate = (total / binCount) * ROLL_BINS;
-  const threshold = Math.max(THRESHOLD_MULT * meanRollRate, quantile(rate, RATE_QUANTILE) ?? 0);
+  // A bin is dense when its rolling damage clears THRESHOLD_MULT x the mean rolling
+  // damage, floored at the RATE_QUANTILE of the rolling-damage distribution (so a spiky
+  // parse still has to beat its own typical bin, not just its mean).
+  const meanRollingDamage = (total / binCount) * ROLL_BINS;
+  const densityThreshold = Math.max(THRESHOLD_MULT * meanRollingDamage, quantile(rollingDamage, RATE_QUANTILE) ?? 0);
 
-  // Contiguous dense runs of bin indices. A sub-threshold stretch of at most
-  // MERGE_GAP_BINS bins does not close the open run (it bridges two dense runs);
-  // a longer gap finalizes the run at its last dense bin (`hi`).
-  const runs: { lo: number; hi: number }[] = [];
-  let lo = -1;
-  let hi = -1;
-  let gap = 0;
-  for (let i = 0; i < binCount; i++) {
-    if (rate[i] >= threshold) {
-      if (lo < 0) lo = i;
-      hi = i;
-      gap = 0;
-    } else if (lo >= 0) {
-      gap += 1;
-      if (gap > MERGE_GAP_BINS) {
-        runs.push({ lo, hi });
-        lo = -1;
+  // Open a dense run at the first dense bin and extend it while bins stay dense or fall
+  // short by at most MERGE_GAP_BINS sub-threshold bins (which bridge two dense stretches);
+  // a longer gap finalizes the run at its last dense bin.
+  const denseRuns: { startBin: number; endBin: number }[] = [];
+  let runStartBin = -1;
+  let runEndBin = -1;
+  let subThresholdBins = 0;
+  for (let binIndex = 0; binIndex < binCount; binIndex++) {
+    if (rollingDamage[binIndex] >= densityThreshold) {
+      if (runStartBin < 0) runStartBin = binIndex;
+      runEndBin = binIndex;
+      subThresholdBins = 0;
+    } else if (runStartBin >= 0) {
+      subThresholdBins += 1;
+      if (subThresholdBins > MERGE_GAP_BINS) {
+        denseRuns.push({ startBin: runStartBin, endBin: runEndBin });
+        runStartBin = -1;
       }
     }
   }
-  if (lo >= 0) runs.push({ lo, hi });
-  if (!runs.length) return [];
+  if (runStartBin >= 0) denseRuns.push({ startBin: runStartBin, endBin: runEndBin });
+  if (!denseRuns.length) return [];
 
   const castRows = casts
     .filter(event => event.type === 'cast' && event.abilityGameID)
@@ -197,19 +197,19 @@ export function findParseWindows(
   const castNamesInParse = new Set(castRows.map(([, abilityId]) => nameOf(abilityId)));
 
   const windows: ParseWindow[] = [];
-  for (const run of runs) {
-    // Trim leading/trailing damage-free bins: the forward rolling rate can mark up to
-    // ROLL_BINS-1 empty bins before a clump as dense, which would start the window
-    // early. Snap the window to the bins that actually carry damage.
-    let runLo = run.lo;
-    let runHi = run.hi;
-    while (runLo <= runHi && bucketDmg[runLo] === 0) runLo++;
-    while (runHi >= runLo && bucketDmg[runHi] === 0) runHi--;
-    if (runLo > runHi) continue;
-    const startS = runLo * BIN_S;
-    const endS = (runHi + 1) * BIN_S;
-    const startMs = fightStartMs + startS * 1000;
-    const endMs = fightStartMs + endS * 1000;
+  for (const run of denseRuns) {
+    // Snap the window to the bins that actually carry damage: the forward rolling rate
+    // can flag up to ROLL_BINS-1 damage-free bins before a burst, which would otherwise
+    // start the window early.
+    let windowStartBin = run.startBin;
+    let windowEndBin = run.endBin;
+    while (windowStartBin <= windowEndBin && damagePerBin[windowStartBin] === 0) windowStartBin++;
+    while (windowEndBin >= windowStartBin && damagePerBin[windowEndBin] === 0) windowEndBin--;
+    if (windowStartBin > windowEndBin) continue;
+    const windowStartS = windowStartBin * BIN_S;
+    const windowEndS = (windowEndBin + 1) * BIN_S;
+    const startMs = fightStartMs + windowStartS * 1000;
+    const endMs = fightStartMs + windowEndS * 1000;
     // Half-open window end (< endMs) to match findPlayerBurstWindows, so a hit/cast
     // exactly on the boundary is attributed identically on the bench and player sides.
     const windowHits = hits.filter(hit => hit[0] >= startMs && hit[0] < endMs);
@@ -235,12 +235,12 @@ export function findParseWindows(
 
     // Attribute (never bound by) the cooldowns whose cast lands inside the window.
     const active_cds = timings
-      .filter(timing => timing.castTimesS.some(castS => castS >= startS && castS < endS))
+      .filter(timing => timing.castTimesS.some(castS => castS >= windowStartS && castS < windowEndS))
       .map(timing => timing.name);
 
     windows.push({
-      time_s: round(startS),
-      window_length_s: round(endS - startS),
+      time_s: round(windowStartS),
+      window_length_s: round(windowEndS - windowStartS),
       window_damage: windowDmg,
       active_cds,
       ability_breakdown,
@@ -252,7 +252,7 @@ export function findParseWindows(
 /**
  * Cluster per-parse damage-density windows across parses into the bench
  * `BurstWindow[]`: group windows whose start is within CLUSTER_MERGE_S, keep only a
- * clump a majority of parses share, and emit absolute-damage + mean-length stats.
+ * burst a majority of parses share, and emit absolute-damage + mean-length stats.
  */
 export function clusterParseWindows(windows: ParseWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
   const result: BurstWindow[] = [];
