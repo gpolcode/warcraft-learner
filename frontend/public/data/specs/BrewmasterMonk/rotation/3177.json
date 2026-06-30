@@ -46,32 +46,7 @@
       },
       "bl_pct": 90,
       "majority_hold": true,
-      "hold_targets": {
-        "2": {
-          "target_s": 89.4,
-          "stddev_s": 16.7,
-          "count": 4,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 157.9,
-          "stddev_s": 14.2,
-          "count": 6,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 217.8,
-          "stddev_s": 15.2,
-          "count": 7,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 288.1,
-          "stddev_s": 21.3,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Touch of Death": {
       "sample_count": 10,
@@ -95,6 +70,10 @@
         "2": {
           "target_s": 318,
           "stddev_s": 61.3,
+          "delay_s": 142.5,
+          "delay_stddev_s": 59.4,
+          "band_s": 59.4,
+          "effective_cd_s": 90,
           "count": 5,
           "total_samples": 10
         }
@@ -240,6 +219,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "8e45949aaa0a72d3",
-  "ingest_version": 1
+  "source_signature": "7a5bf8a0d98ffe11",
+  "ingest_version": 2
 }

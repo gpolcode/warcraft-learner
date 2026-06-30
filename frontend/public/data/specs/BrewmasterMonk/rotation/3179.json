@@ -50,19 +50,21 @@
         "2": {
           "target_s": 106.1,
           "stddev_s": 23.2,
+          "delay_s": 17.9,
+          "delay_stddev_s": 9.7,
+          "band_s": 9.7,
+          "effective_cd_s": 60,
           "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 160.6,
-          "stddev_s": 20,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 226,
-          "stddev_s": 23.1,
-          "count": 4,
+          "target_s": 156.2,
+          "stddev_s": 17.3,
+          "delay_s": 11,
+          "delay_stddev_s": 5.7,
+          "band_s": 5.7,
+          "effective_cd_s": 60,
+          "count": 7,
           "total_samples": 10
         }
       }
@@ -85,14 +87,7 @@
       },
       "bl_pct": 10,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 188.3,
-          "stddev_s": 80.8,
-          "count": 4,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -234,6 +229,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "dda7b47d537ceee7",
-  "ingest_version": 1
+  "source_signature": "415bb32c62446062",
+  "ingest_version": 2
 }

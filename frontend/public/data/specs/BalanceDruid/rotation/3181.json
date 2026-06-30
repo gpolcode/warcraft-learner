@@ -45,8 +45,19 @@
         "max": 0.677
       },
       "bl_pct": 0,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "5": {
+          "target_s": 484.1,
+          "stddev_s": 8.1,
+          "delay_s": 17.7,
+          "delay_stddev_s": 7.8,
+          "band_s": 7.8,
+          "effective_cd_s": 180,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
     },
     "Eclipse": {
       "sample_count": 10,
@@ -90,36 +101,20 @@
         "3": {
           "target_s": 178.2,
           "stddev_s": 2.2,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 234,
-          "stddev_s": 2.5,
-          "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 286.2,
-          "stddev_s": 1.9,
+          "delay_s": 47.8,
+          "delay_stddev_s": 2.7,
+          "band_s": 5,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "6": {
           "target_s": 369,
           "stddev_s": 8.7,
-          "count": 10,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 429.8,
-          "stddev_s": 8.8,
-          "count": 10,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 484.7,
-          "stddev_s": 8.2,
+          "delay_s": 23.5,
+          "delay_stddev_s": 8.8,
+          "band_s": 8.8,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         }
@@ -147,36 +142,10 @@
         "3": {
           "target_s": 177.6,
           "stddev_s": 2.4,
-          "count": 8,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 238.3,
-          "stddev_s": 3,
-          "count": 8,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 299.5,
-          "stddev_s": 2.9,
-          "count": 8,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 366.6,
-          "stddev_s": 9.1,
-          "count": 8,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 428.5,
-          "stddev_s": 9.1,
-          "count": 8,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 489.8,
-          "stddev_s": 8.9,
+          "delay_s": 30.8,
+          "delay_stddev_s": 6.9,
+          "band_s": 6.9,
+          "effective_cd_s": 60,
           "count": 8,
           "total_samples": 10
         }
@@ -365,6 +334,6 @@
       "name": "Convoke the Spirits"
     }
   },
-  "source_signature": "e0a923a6cfee17a0",
-  "ingest_version": 1
+  "source_signature": "97bfcac65bdf00aa",
+  "ingest_version": 2
 }

@@ -4,9 +4,9 @@
   "encounter_name": "Vaelgor & Ezzorak",
   "sample_count": 10,
   "avg_duration_s": 380.6,
-  "downtime_threshold_ms": 1061,
-  "top_avg_efficiency": 78.8,
-  "top_efficiency_stddev": 4.8,
+  "downtime_threshold_ms": 1060,
+  "top_avg_efficiency": 78.9,
+  "top_efficiency_stddev": 5,
   "per_cd_benchmarks": {
     "Invoke Niuzao, the Black Ox": {
       "sample_count": 10,
@@ -30,8 +30,8 @@
     },
     "Exploding Keg": {
       "sample_count": 10,
-      "avg_first_cast_s": 16.4,
-      "stddev_first_cast_s": 12.6,
+      "avg_first_cast_s": 16.5,
+      "stddev_first_cast_s": 12.5,
       "avg_gap_s": 75.1,
       "stddev_gap_s": 19,
       "avg_bl_offset_s": 15.4,
@@ -50,30 +50,30 @@
         "2": {
           "target_s": 80.5,
           "stddev_s": 37.7,
+          "delay_s": 12.4,
+          "delay_stddev_s": 24.9,
+          "band_s": 24.9,
+          "effective_cd_s": 60,
           "count": 6,
           "total_samples": 10
         },
         "3": {
           "target_s": 173.2,
           "stddev_s": 45,
+          "delay_s": 32.7,
+          "delay_stddev_s": 21.3,
+          "band_s": 21.3,
+          "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
         },
         "4": {
           "target_s": 246.5,
-          "stddev_s": 44.5,
-          "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 308.5,
-          "stddev_s": 19.8,
-          "count": 8,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 370,
-          "stddev_s": 3.3,
+          "stddev_s": 0.8,
+          "delay_s": 14.7,
+          "delay_stddev_s": 2,
+          "band_s": 5,
+          "effective_cd_s": 60,
           "count": 5,
           "total_samples": 10
         }
@@ -83,7 +83,7 @@
       "sample_count": 10,
       "avg_first_cast_s": 144.8,
       "stddev_first_cast_s": 78.8,
-      "avg_gap_s": 138.6,
+      "avg_gap_s": 138.7,
       "stddev_gap_s": 43.3,
       "avg_bl_offset_s": 45.5,
       "stddev_bl_offset_s": 1.5,
@@ -101,13 +101,11 @@
         "2": {
           "target_s": 296.5,
           "stddev_s": 70.7,
+          "delay_s": 45.5,
+          "delay_stddev_s": 49.8,
+          "band_s": 49.8,
+          "effective_cd_s": 90,
           "count": 6,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 377.1,
-          "stddev_s": 62.4,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -252,6 +250,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "fd4d23df5de00b48",
-  "ingest_version": 1
+  "source_signature": "7f9d58a5164ad3f6",
+  "ingest_version": 2
 }
