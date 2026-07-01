@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Life Cocoon": {
-      "sample_count": 9,
-      "avg_first_cast_s": 107.9,
-      "stddev_first_cast_s": 76.2,
-      "avg_gap_s": 67.6,
-      "stddev_gap_s": 11,
+      "sample_count": 8,
+      "avg_first_cast_s": 116.7,
+      "stddev_first_cast_s": 76.5,
+      "avg_gap_s": 68.6,
+      "stddev_gap_s": 13.3,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.502,
-        "stddev": 0.309,
+        "avg": 0.458,
+        "stddev": 0.3,
         "min": 0.215,
         "max": 1.08
       },
@@ -23,40 +23,40 @@
     },
     "Fortifying Brew": {
       "sample_count": 8,
-      "avg_first_cast_s": 81.1,
-      "stddev_first_cast_s": 66.4,
-      "avg_gap_s": 119.5,
-      "stddev_gap_s": 12.3,
+      "avg_first_cast_s": 77.6,
+      "stddev_first_cast_s": 65.6,
+      "avg_gap_s": 117.8,
+      "stddev_gap_s": 12.9,
       "hold_targets": {
         "1": {
-          "target_s": 173,
-          "stddev_s": 39.6,
-          "count": 5,
+          "target_s": 164.1,
+          "stddev_s": 34.6,
+          "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.46,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.456,
-        "stddev": 0.162,
+        "avg": 0.432,
+        "stddev": 0.18,
         "min": 0.215,
         "max": 0.614
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 2,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 115203,
-      "avg_uses": 1.8,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -145,6 +145,6 @@
       "name": "Diffuse Magic"
     }
   },
-  "source_signature": "7aa4fbab0d4c3b96",
-  "ingest_version": 2
+  "source_signature": "3be5863e1d5e641a",
+  "ingest_version": 3
 }

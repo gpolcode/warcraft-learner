@@ -3,26 +3,26 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 217,
-  "downtime_threshold_ms": 1402,
-  "top_avg_efficiency": 66.1,
-  "top_efficiency_stddev": 4.7,
+  "avg_duration_s": 213.6,
+  "downtime_threshold_ms": 1424,
+  "top_avg_efficiency": 65.7,
+  "top_efficiency_stddev": 4.2,
   "per_cd_benchmarks": {
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.7,
-      "stddev_first_cast_s": 1.1,
-      "avg_gap_s": 52.3,
-      "stddev_gap_s": 69.2,
-      "avg_bl_offset_s": 3.9,
-      "stddev_bl_offset_s": 1.2,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 54.5,
+      "stddev_gap_s": 72.3,
+      "avg_bl_offset_s": 3.6,
+      "stddev_bl_offset_s": 0.7,
       "avg_uses": 3.6,
-      "avg_uses_per_min": 1,
+      "avg_uses_per_min": 1.01,
       "uses_per_min": {
-        "avg": 0.998,
-        "stddev": 0.239,
+        "avg": 1.015,
+        "stddev": 0.246,
         "min": 0.524,
-        "max": 1.169
+        "max": 1.182
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -30,29 +30,29 @@
     },
     "Void Eruption": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.2,
+      "avg_first_cast_s": 4.1,
       "stddev_first_cast_s": 0.6,
-      "avg_gap_s": 136,
-      "stddev_gap_s": 25.6,
+      "avg_gap_s": 141,
+      "stddev_gap_s": 27.8,
       "avg_bl_offset_s": 3.4,
       "stddev_bl_offset_s": 0.7,
       "avg_uses": 2,
-      "avg_uses_per_min": 0.55,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.554,
-        "stddev": 0.029,
-        "min": 0.507,
-        "max": 0.587
+        "avg": 0.563,
+        "stddev": 0.026,
+        "min": 0.524,
+        "max": 0.591
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 128.7,
-          "stddev_s": 25.4,
-          "delay_s": 64.2,
-          "delay_stddev_s": 25.6,
-          "band_s": 25.6,
+          "target_s": 129,
+          "stddev_s": 27.6,
+          "delay_s": 64.9,
+          "delay_stddev_s": 27.8,
+          "band_s": 27.8,
           "effective_cd_s": 60,
           "count": 10,
           "total_samples": 10
@@ -247,6 +247,6 @@
       "name": "Void Torrent"
     }
   },
-  "source_signature": "031bdc2249984682",
-  "ingest_version": 2
+  "source_signature": "014c928e02c809e6",
+  "ingest_version": 3
 }

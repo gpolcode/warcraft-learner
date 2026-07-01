@@ -46,7 +46,42 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 314.4,
+      "dmg_avg": 357880,
+      "dmg_stddev": 191109,
+      "dmg_min": 43800,
+      "dmg_max": 606974,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 10.8,
+      "defensive_name": "Life Cocoon",
+      "spell_id": 116849,
+      "common_defensives": [
+        "Life Cocoon"
+      ],
+      "common_cds": [
+        "Life Cocoon"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246749,
+          "avg_damage": 147200,
+          "min_damage": 102469,
+          "max_damage": 185331,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 143584,
+          "min_damage": 31532,
+          "max_damage": 186815,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 116849,
@@ -143,8 +178,16 @@
     "122783": {
       "icon": "spell_monk_diffusemagic",
       "name": "Diffuse Magic"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
     }
   },
-  "source_signature": "7f0da12d26c94de8",
-  "ingest_version": 2
+  "source_signature": "824a488f884298be",
+  "ingest_version": 3
 }

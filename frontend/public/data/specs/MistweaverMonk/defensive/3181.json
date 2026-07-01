@@ -6,49 +6,55 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 132.6,
-      "stddev_first_cast_s": 152.4,
-      "avg_gap_s": 104.4,
-      "stddev_gap_s": 58.5,
+      "avg_first_cast_s": 133.9,
+      "stddev_first_cast_s": 148.5,
+      "avg_gap_s": 120.1,
+      "stddev_gap_s": 74.2,
       "hold_targets": {
         "1": {
-          "target_s": 243.4,
-          "stddev_s": 109,
-          "count": 5,
+          "target_s": 306.9,
+          "stddev_s": 84.6,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.8,
-      "avg_uses_per_min": 0.49,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.49,
-        "stddev": 0.247,
+        "avg": 0.437,
+        "stddev": 0.231,
         "min": 0.116,
-        "max": 0.83
+        "max": 0.831
       },
       "majority_hold": true
     },
     "Fortifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 193.2,
-      "stddev_first_cast_s": 137.6,
-      "avg_gap_s": 185.2,
-      "stddev_gap_s": 76.6,
+      "avg_first_cast_s": 141.5,
+      "stddev_first_cast_s": 137.7,
+      "avg_gap_s": 197.2,
+      "stddev_gap_s": 83.6,
       "hold_targets": {
         "1": {
-          "target_s": 372.2,
-          "stddev_s": 68.9,
-          "count": 8,
+          "target_s": 361.9,
+          "stddev_s": 78.3,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 417.1,
+          "stddev_s": 20.8,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.268,
-        "stddev": 0.091,
+        "avg": 0.302,
+        "stddev": 0.098,
         "min": 0.118,
-        "max": 0.401
+        "max": 0.451
       },
       "majority_hold": true
     }
@@ -57,15 +63,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 3.8,
+      "avg_uses": 3.4,
       "min_uses": 1,
-      "max_uses": 7
+      "max_uses": 6
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2.1,
+      "avg_uses": 2.4,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -152,6 +158,6 @@
       "name": "Diffuse Magic"
     }
   },
-  "source_signature": "005f2eece53a1bcd",
-  "ingest_version": 2
+  "source_signature": "0791c3403967be9e",
+  "ingest_version": 3
 }

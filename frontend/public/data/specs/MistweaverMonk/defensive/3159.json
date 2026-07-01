@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 186.5,
-      "stddev_first_cast_s": 164.8,
-      "avg_gap_s": 112,
-      "stddev_gap_s": 54.9,
+      "avg_first_cast_s": 195.7,
+      "stddev_first_cast_s": 157.7,
+      "avg_gap_s": 112.8,
+      "stddev_gap_s": 56,
       "hold_targets": {
         "1": {
           "target_s": 221.6,
@@ -18,27 +18,27 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.407,
-        "stddev": 0.206,
+        "avg": 0.4,
+        "stddev": 0.192,
         "min": 0.129,
-        "max": 0.752
+        "max": 0.674
       },
       "majority_hold": false
     },
     "Fortifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 255.9,
-      "stddev_first_cast_s": 145.2,
-      "avg_gap_s": 139.8,
-      "stddev_gap_s": 27.8,
+      "avg_first_cast_s": 227.2,
+      "stddev_first_cast_s": 137.6,
+      "avg_gap_s": 139.1,
+      "stddev_gap_s": 26.4,
       "hold_targets": {
         "1": {
-          "target_s": 267.3,
-          "stddev_s": 64.7,
-          "count": 5,
+          "target_s": 265.4,
+          "stddev_s": 59,
+          "count": 6,
           "total_samples": 10
         },
         "2": {
@@ -48,28 +48,28 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.274,
-        "stddev": 0.157,
+        "avg": 0.295,
+        "stddev": 0.149,
         "min": 0.117,
         "max": 0.473
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 116849,
-      "avg_uses": 3,
+      "avg_uses": 2.8,
       "min_uses": 1,
-      "max_uses": 6
+      "max_uses": 4
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -158,6 +158,6 @@
       "name": "Diffuse Magic"
     }
   },
-  "source_signature": "952e0988a631283b",
-  "ingest_version": 2
+  "source_signature": "6469d30d6931a5a0",
+  "ingest_version": 3
 }

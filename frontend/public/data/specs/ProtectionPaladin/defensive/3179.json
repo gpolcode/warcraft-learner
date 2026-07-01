@@ -6,18 +6,18 @@
   "per_defensive_benchmarks": {
     "Ardent Defender": {
       "sample_count": 10,
-      "avg_first_cast_s": 62.6,
-      "stddev_first_cast_s": 39.3,
-      "avg_gap_s": 111,
-      "stddev_gap_s": 21.2,
+      "avg_first_cast_s": 62.9,
+      "stddev_first_cast_s": 39.2,
+      "avg_gap_s": 102.5,
+      "stddev_gap_s": 26.9,
       "hold_targets": {},
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.515,
-        "stddev": 0.117,
+        "avg": 0.566,
+        "stddev": 0.156,
         "min": 0.362,
-        "max": 0.757
+        "max": 0.778
       },
       "majority_hold": false
     },
@@ -25,25 +25,25 @@
       "sample_count": 10,
       "avg_first_cast_s": 3,
       "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 2.8,
+      "avg_gap_s": 2.9,
       "stddev_gap_s": 2.2,
       "hold_targets": {},
-      "avg_uses": 92.8,
-      "avg_uses_per_min": 21.44,
+      "avg_uses": 92.7,
+      "avg_uses_per_min": 20.79,
       "uses_per_min": {
-        "avg": 21.439,
-        "stddev": 2.019,
+        "avg": 20.787,
+        "stddev": 1.604,
         "min": 19.109,
-        "max": 24.934
+        "max": 23.462
       },
       "majority_hold": false
     },
     "Word of Glory": {
       "sample_count": 10,
-      "avg_first_cast_s": 24.8,
-      "stddev_first_cast_s": 18.7,
-      "avg_gap_s": 16.1,
-      "stddev_gap_s": 15.6,
+      "avg_first_cast_s": 24.7,
+      "stddev_first_cast_s": 18.6,
+      "avg_gap_s": 16.8,
+      "stddev_gap_s": 15.9,
       "hold_targets": {
         "2": {
           "target_s": 68.5,
@@ -51,66 +51,66 @@
           "count": 4,
           "total_samples": 10
         },
-        "5": {
-          "target_s": 162.2,
-          "stddev_s": 46.6,
+        "3": {
+          "target_s": 88.4,
+          "stddev_s": 37.5,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 13.6,
-      "avg_uses_per_min": 2.99,
+      "avg_uses": 13.5,
+      "avg_uses_per_min": 2.88,
       "uses_per_min": {
-        "avg": 2.986,
-        "stddev": 1.531,
+        "avg": 2.876,
+        "stddev": 1.377,
         "min": 0.67,
-        "max": 5.226
+        "max": 4.706
       },
       "majority_hold": true
     },
     "Guardian of Ancient Kings": {
       "sample_count": 6,
-      "avg_first_cast_s": 119.8,
-      "stddev_first_cast_s": 75.5,
-      "avg_gap_s": 63,
-      "stddev_gap_s": 39.1,
+      "avg_first_cast_s": 99,
+      "stddev_first_cast_s": 60.2,
+      "avg_gap_s": 73.4,
+      "stddev_gap_s": 40.3,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.43,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.49,
       "uses_per_min": {
-        "avg": 0.435,
-        "stddev": 0.345,
+        "avg": 0.495,
+        "stddev": 0.333,
         "min": 0.181,
         "max": 1.074
       },
       "majority_hold": false
     },
     "Lay on Hands": {
-      "sample_count": 1,
-      "avg_first_cast_s": 216.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 222.2,
+      "stddev_first_cast_s": 8.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.252,
-        "stddev": 0,
+        "avg": 0.253,
+        "stddev": 0.001,
         "min": 0.252,
-        "max": 0.252
+        "max": 0.254
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 47.4,
-      "dmg_avg": 1303666,
-      "dmg_stddev": 257915,
+      "time_s": 46.8,
+      "dmg_avg": 1311121,
+      "dmg_stddev": 230830,
       "dmg_min": 956219,
       "dmg_max": 1783727,
-      "dmg_pct_avg": 0.064,
+      "dmg_pct_avg": 0.061,
       "window_length_s": 12,
       "defensive_name": "Ardent Defender",
       "spell_id": 31850,
@@ -124,35 +124,35 @@
       "ability_breakdown": [
         {
           "spell_id": 1284963,
-          "avg_damage": 558649,
-          "min_damage": 403326,
+          "avg_damage": 520659,
+          "min_damage": 387704,
           "max_damage": 847774,
           "count": 8
         },
         {
           "spell_id": 1250803,
-          "avg_damage": 471266,
+          "avg_damage": 472244,
           "min_damage": 427416,
           "max_damage": 539498,
           "count": 8
         },
         {
           "spell_id": 1,
-          "avg_damage": 244998,
+          "avg_damage": 219611,
           "min_damage": 54771,
-          "max_damage": 420680,
-          "count": 4
+          "max_damage": 320808,
+          "count": 5
         },
         {
           "spell_id": 1285504,
-          "avg_damage": 155050,
+          "avg_damage": 145992,
           "min_damage": 88971,
           "max_damage": 296857,
-          "count": 4
+          "count": 6
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 73728,
+          "avg_damage": 71466,
           "min_damage": 32644,
           "max_damage": 131318,
           "count": 8
@@ -160,12 +160,12 @@
       ]
     },
     {
-      "time_s": 167.1,
-      "dmg_avg": 1329428,
-      "dmg_stddev": 210144,
-      "dmg_min": 978647,
+      "time_s": 168.2,
+      "dmg_avg": 1317885,
+      "dmg_stddev": 204531,
+      "dmg_min": 1005394,
       "dmg_max": 1623044,
-      "dmg_pct_avg": 0.063,
+      "dmg_pct_avg": 0.06,
       "window_length_s": 12,
       "defensive_name": "Ardent Defender",
       "spell_id": 31850,
@@ -179,36 +179,36 @@
       "ability_breakdown": [
         {
           "spell_id": 1284963,
-          "avg_damage": 546937,
-          "min_damage": 430599,
+          "avg_damage": 522447,
+          "min_damage": 339041,
           "max_damage": 754889,
           "count": 10
         },
         {
           "spell_id": 1250803,
-          "avg_damage": 456037,
+          "avg_damage": 448879,
           "min_damage": 253888,
           "max_damage": 539498,
           "count": 8
         },
         {
           "spell_id": 1,
-          "avg_damage": 224782,
+          "avg_damage": 246328,
           "min_damage": 61344,
-          "max_damage": 331060,
+          "max_damage": 423813,
           "count": 8
         },
         {
           "spell_id": 1285504,
-          "avg_damage": 162103,
-          "min_damage": 106495,
+          "avg_damage": 154096,
+          "min_damage": 89426,
           "max_damage": 195948,
-          "count": 8
+          "count": 9
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 104985,
-          "min_damage": 65282,
+          "avg_damage": 100587,
+          "min_damage": 62066,
           "max_damage": 163500,
           "count": 10
         }
@@ -218,25 +218,25 @@
   "top_defensives_summary": [
     {
       "spell_id": 31850,
-      "avg_uses": 2.2,
+      "avg_uses": 2.5,
       "min_uses": 2,
-      "max_uses": 3
+      "max_uses": 4
     },
     {
       "spell_id": 86659,
-      "avg_uses": 2,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 5
     },
     {
       "spell_id": 53600,
-      "avg_uses": 92.8,
+      "avg_uses": 92.7,
       "min_uses": 73,
       "max_uses": 114
     },
     {
       "spell_id": 85673,
-      "avg_uses": 13.6,
+      "avg_uses": 13.5,
       "min_uses": 3,
       "max_uses": 26
     },
@@ -351,6 +351,6 @@
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "47e7b9bf3b4f1be5",
-  "ingest_version": 2
+  "source_signature": "8cdddd0a51ba1a67",
+  "ingest_version": 3
 }
