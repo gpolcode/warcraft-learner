@@ -5,17 +5,24 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
-      "sample_count": 9,
-      "avg_first_cast_s": 387.7,
-      "stddev_first_cast_s": 118.1,
-      "avg_gap_s": 155.5,
-      "stddev_gap_s": 24.7,
-      "hold_targets": {},
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.18,
+      "sample_count": 10,
+      "avg_first_cast_s": 375.2,
+      "stddev_first_cast_s": 128.3,
+      "avg_gap_s": 175.4,
+      "stddev_gap_s": 54.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 489.5,
+          "stddev_s": 68.2,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.177,
-        "stddev": 0.099,
+        "avg": 0.194,
+        "stddev": 0.092,
         "min": 0.11,
         "max": 0.347
       },
@@ -23,44 +30,44 @@
     },
     "Feint": {
       "sample_count": 10,
-      "avg_first_cast_s": 184.4,
-      "stddev_first_cast_s": 96.5,
-      "avg_gap_s": 34.1,
-      "stddev_gap_s": 29.1,
+      "avg_first_cast_s": 240.4,
+      "stddev_first_cast_s": 88,
+      "avg_gap_s": 36.8,
+      "stddev_gap_s": 30,
       "hold_targets": {
         "1": {
-          "target_s": 234.1,
-          "stddev_s": 70.4,
-          "count": 8,
+          "target_s": 250.6,
+          "stddev_s": 74.5,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 280.5,
-          "stddev_s": 40.8,
-          "count": 6,
+          "target_s": 279.9,
+          "stddev_s": 30.5,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 310.6,
-          "stddev_s": 62.9,
-          "count": 6,
+          "target_s": 310.9,
+          "stddev_s": 23.7,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 7.2,
-      "avg_uses_per_min": 0.82,
+      "avg_uses": 5.3,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.824,
-        "stddev": 0.642,
-        "min": 0.22,
-        "max": 2.181
+        "avg": 0.61,
+        "stddev": 0.445,
+        "min": 0.116,
+        "max": 1.62
       },
       "majority_hold": true
     },
     "Evasion": {
-      "sample_count": 1,
-      "avg_first_cast_s": 516.8,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 515.3,
+      "stddev_first_cast_s": 2.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -68,24 +75,24 @@
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
         "avg": 0.116,
-        "stddev": 0,
-        "min": 0.116,
+        "stddev": 0.001,
+        "min": 0.115,
         "max": 0.116
       },
       "majority_hold": false
     },
     "Crimson Vial": {
-      "sample_count": 8,
-      "avg_first_cast_s": 269.3,
-      "stddev_first_cast_s": 74.4,
-      "avg_gap_s": 79,
-      "stddev_gap_s": 55.7,
+      "sample_count": 6,
+      "avg_first_cast_s": 272.5,
+      "stddev_first_cast_s": 83.9,
+      "avg_gap_s": 78.4,
+      "stddev_gap_s": 63.8,
       "hold_targets": {},
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.2,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.201,
-        "stddev": 0.12,
+        "avg": 0.192,
+        "stddev": 0.141,
         "min": 0.11,
         "max": 0.464
       },
@@ -96,7 +103,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 31224,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -108,13 +115,13 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 7.2,
-      "min_uses": 2,
-      "max_uses": 19
+      "avg_uses": 5.3,
+      "min_uses": 1,
+      "max_uses": 14
     },
     {
       "spell_id": 185311,
-      "avg_uses": 1.8,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -177,6 +184,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "c62511fa847d937c",
+  "source_signature": "53e3652729d03634",
   "ingest_version": 2
 }

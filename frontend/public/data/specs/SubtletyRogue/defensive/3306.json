@@ -4,46 +4,46 @@
   "encounter_name": "Chimaerus, the Undreamt God",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 8,
+      "avg_first_cast_s": 56.2,
+      "stddev_first_cast_s": 43.3,
+      "avg_gap_s": 53.4,
+      "stddev_gap_s": 19.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 75.4,
+          "stddev_s": 37.4,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.84,
+      "uses_per_min": {
+        "avg": 0.839,
+        "stddev": 0.428,
+        "min": 0.409,
+        "max": 1.62
+      },
+      "majority_hold": true
+    },
     "Cloak of Shadows": {
-      "sample_count": 3,
-      "avg_first_cast_s": 106.1,
-      "stddev_first_cast_s": 52.9,
+      "sample_count": 2,
+      "avg_first_cast_s": 136.5,
+      "stddev_first_cast_s": 9.1,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.408,
-        "stddev": 0.005,
+        "avg": 0.41,
+        "stddev": 0.006,
         "min": 0.405,
         "max": 0.414
       },
       "majority_hold": false
-    },
-    "Feint": {
-      "sample_count": 6,
-      "avg_first_cast_s": 59.9,
-      "stddev_first_cast_s": 47.9,
-      "avg_gap_s": 51.1,
-      "stddev_gap_s": 19.8,
-      "hold_targets": {
-        "1": {
-          "target_s": 74,
-          "stddev_s": 34.8,
-          "count": 4,
-          "total_samples": 6
-        }
-      },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.91,
-      "uses_per_min": {
-        "avg": 0.908,
-        "stddev": 0.467,
-        "min": 0.409,
-        "max": 1.62
-      },
-      "majority_hold": true
     },
     "Evasion": {
       "sample_count": 1,
@@ -82,13 +82,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 73,
-      "dmg_avg": 226952,
-      "dmg_stddev": 131942,
+      "time_s": 72.5,
+      "dmg_avg": 245975,
+      "dmg_stddev": 130539,
       "dmg_min": 0,
       "dmg_max": 360205,
-      "dmg_pct_avg": 0.073,
-      "window_length_s": 6.9,
+      "dmg_pct_avg": 0.078,
+      "window_length_s": 6.8,
       "defensive_name": "Feint",
       "spell_id": 1966,
       "common_defensives": [
@@ -101,16 +101,50 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 236021,
+          "avg_damage": 243147,
           "min_damage": 158197,
           "max_damage": 292340,
-          "count": 5
+          "count": 6
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 45403,
+          "avg_damage": 52588,
           "min_damage": 21819,
-          "max_damage": 69123,
+          "max_damage": 81331,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 142.7,
+      "dmg_avg": 151250,
+      "dmg_stddev": 104457,
+      "dmg_min": 0,
+      "dmg_max": 277863,
+      "dmg_pct_avg": 0.046,
+      "window_length_s": 3.6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 126387,
+          "min_damage": 66958,
+          "max_damage": 171874,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 62676,
+          "min_damage": 41661,
+          "max_damage": 105989,
           "count": 4
         }
       ]
@@ -137,7 +171,7 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 2.2,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -208,6 +242,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "01cc6e05b8e4b001",
+  "source_signature": "8a663d95d53a969f",
   "ingest_version": 2
 }

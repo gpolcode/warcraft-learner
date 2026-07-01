@@ -5,19 +5,26 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Feint": {
-      "sample_count": 3,
-      "avg_first_cast_s": 74.5,
-      "stddev_first_cast_s": 45,
-      "avg_gap_s": 40.2,
-      "stddev_gap_s": 16.8,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.51,
+      "sample_count": 4,
+      "avg_first_cast_s": 64.4,
+      "stddev_first_cast_s": 41.9,
+      "avg_gap_s": 41.1,
+      "stddev_gap_s": 29.2,
+      "hold_targets": {
+        "2": {
+          "target_s": 116.9,
+          "stddev_s": 1.6,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.506,
-        "stddev": 0.35,
+        "avg": 0.61,
+        "stddev": 0.353,
         "min": 0.292,
-        "max": 0.909
+        "max": 0.921
       },
       "majority_hold": false
     },
@@ -39,18 +46,18 @@
       "majority_hold": false
     },
     "Cloak of Shadows": {
-      "sample_count": 4,
-      "avg_first_cast_s": 93.3,
-      "stddev_first_cast_s": 50,
+      "sample_count": 3,
+      "avg_first_cast_s": 103.5,
+      "stddev_first_cast_s": 56,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.301,
-        "stddev": 0.01,
-        "min": 0.291,
+        "avg": 0.304,
+        "stddev": 0.009,
+        "min": 0.295,
         "max": 0.313
       },
       "majority_hold": false
@@ -66,7 +73,7 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 1.7,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -135,6 +142,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "713022960729b372",
+  "source_signature": "b034bf504088acbe",
   "ingest_version": 2
 }

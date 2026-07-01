@@ -3,45 +3,56 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 357,
-  "downtime_threshold_ms": 1372,
-  "top_avg_efficiency": 78.7,
+  "avg_duration_s": 348.2,
+  "downtime_threshold_ms": 1386,
+  "top_avg_efficiency": 78.8,
   "top_efficiency_stddev": 5.7,
   "per_cd_benchmarks": {
     "Deathmark": {
       "sample_count": 10,
       "avg_first_cast_s": 8.9,
       "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 126.4,
+      "avg_gap_s": 126.7,
       "stddev_gap_s": 3.7,
       "avg_bl_offset_s": 8,
       "stddev_bl_offset_s": 0.7,
-      "avg_uses": 3.3,
+      "avg_uses": 3.2,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.554,
-        "stddev": 0.043,
+        "avg": 0.552,
+        "stddev": 0.04,
         "min": 0.507,
         "max": 0.617
       },
       "bl_pct": 60,
       "majority_hold": true,
-      "hold_targets": {}
+      "hold_targets": {
+        "3": {
+          "target_s": 262.4,
+          "stddev_s": 4.6,
+          "delay_s": 8.8,
+          "delay_stddev_s": 2.8,
+          "band_s": 5,
+          "effective_cd_s": 120,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Kingsbane": {
       "sample_count": 10,
       "avg_first_cast_s": 9.9,
       "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 63.5,
-      "stddev_gap_s": 3.9,
+      "avg_gap_s": 63.6,
+      "stddev_gap_s": 4,
       "avg_bl_offset_s": 9,
       "stddev_bl_offset_s": 0.7,
-      "avg_uses": 6.2,
-      "avg_uses_per_min": 1.04,
+      "avg_uses": 6,
+      "avg_uses_per_min": 1.03,
       "uses_per_min": {
-        "avg": 1.043,
-        "stddev": 0.036,
-        "min": 1.006,
+        "avg": 1.035,
+        "stddev": 0.038,
+        "min": 0.991,
         "max": 1.126
       },
       "bl_pct": 60,
@@ -50,17 +61,17 @@
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 35.5,
-      "stddev_first_cast_s": 44.6,
+      "avg_first_cast_s": 24.5,
+      "stddev_first_cast_s": 32.9,
       "avg_gap_s": 124.3,
-      "stddev_gap_s": 2.9,
+      "stddev_gap_s": 3,
       "avg_bl_offset_s": 13.1,
       "stddev_bl_offset_s": 3.3,
       "avg_uses": 3.1,
-      "avg_uses_per_min": 0.52,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.522,
-        "stddev": 0.079,
+        "avg": 0.535,
+        "stddev": 0.078,
         "min": 0.338,
         "max": 0.617
       },
@@ -185,6 +196,6 @@
       "name": "Kingsbane"
     }
   },
-  "source_signature": "fa424f5dbb0ffd8b",
+  "source_signature": "01a66f5533f4abb9",
   "ingest_version": 2
 }

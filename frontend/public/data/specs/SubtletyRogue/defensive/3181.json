@@ -6,59 +6,65 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 10,
-      "avg_first_cast_s": 212.6,
-      "stddev_first_cast_s": 161.3,
-      "avg_gap_s": 287,
-      "stddev_gap_s": 82.6,
+      "avg_first_cast_s": 190.1,
+      "stddev_first_cast_s": 157.4,
+      "avg_gap_s": 284.8,
+      "stddev_gap_s": 75.6,
       "hold_targets": {
         "1": {
-          "target_s": 398.1,
-          "stddev_s": 57.1,
-          "count": 5,
+          "target_s": 391.7,
+          "stddev_s": 51.4,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.195,
-        "stddev": 0.082,
+        "avg": 0.203,
+        "stddev": 0.081,
         "min": 0.114,
         "max": 0.364
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Crimson Vial": {
       "sample_count": 10,
-      "avg_first_cast_s": 158.5,
-      "stddev_first_cast_s": 150.6,
-      "avg_gap_s": 89.9,
-      "stddev_gap_s": 71,
+      "avg_first_cast_s": 161.1,
+      "stddev_first_cast_s": 149.1,
+      "avg_gap_s": 86,
+      "stddev_gap_s": 69.3,
       "hold_targets": {
         "1": {
           "target_s": 155.5,
-          "stddev_s": 134.8,
+          "stddev_s": 139.2,
           "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 266.6,
-          "stddev_s": 38.5,
-          "count": 4,
+          "target_s": 270.8,
+          "stddev_s": 58.2,
+          "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 342.2,
-          "stddev_s": 25.8,
-          "count": 5,
+          "target_s": 351.9,
+          "stddev_s": 43.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 445.4,
+          "stddev_s": 43.4,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.43,
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.426,
-        "stddev": 0.244,
+        "avg": 0.454,
+        "stddev": 0.243,
         "min": 0.121,
         "max": 0.747
       },
@@ -66,45 +72,45 @@
     },
     "Feint": {
       "sample_count": 10,
-      "avg_first_cast_s": 69.2,
-      "stddev_first_cast_s": 109.8,
-      "avg_gap_s": 34.9,
-      "stddev_gap_s": 31.5,
+      "avg_first_cast_s": 39.1,
+      "stddev_first_cast_s": 38.8,
+      "avg_gap_s": 34.8,
+      "stddev_gap_s": 30.7,
       "hold_targets": {
         "1": {
-          "target_s": 83.1,
-          "stddev_s": 117.9,
-          "count": 6,
-          "total_samples": 10
-        },
-        "2": {
-          "target_s": 113.3,
-          "stddev_s": 116,
+          "target_s": 85.2,
+          "stddev_s": 108.5,
           "count": 7,
           "total_samples": 10
         },
-        "3": {
-          "target_s": 154.9,
-          "stddev_s": 28.5,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 230.1,
-          "stddev_s": 104.4,
+        "2": {
+          "target_s": 113.8,
+          "stddev_s": 107.5,
           "count": 8,
           "total_samples": 10
         },
-        "5": {
-          "target_s": 268.8,
-          "stddev_s": 54,
+        "3": {
+          "target_s": 174.4,
+          "stddev_s": 30.4,
           "count": 6,
           "total_samples": 10
         },
+        "4": {
+          "target_s": 241.1,
+          "stddev_s": 98.9,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 270,
+          "stddev_s": 64.5,
+          "count": 7,
+          "total_samples": 10
+        },
         "6": {
-          "target_s": 317.2,
-          "stddev_s": 71.5,
-          "count": 6,
+          "target_s": 322.3,
+          "stddev_s": 73.5,
+          "count": 7,
           "total_samples": 10
         },
         "7": {
@@ -120,12 +126,12 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 11.8,
-      "avg_uses_per_min": 1.44,
+      "avg_uses": 13.1,
+      "avg_uses_per_min": 1.58,
       "uses_per_min": {
-        "avg": 1.437,
-        "stddev": 0.773,
-        "min": 0.296,
+        "avg": 1.578,
+        "stddev": 0.662,
+        "min": 0.687,
         "max": 2.75
       },
       "majority_hold": true
@@ -152,7 +158,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 31224,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -164,14 +170,14 @@
     },
     {
       "spell_id": 185311,
-      "avg_uses": 3.5,
+      "avg_uses": 3.8,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 1966,
-      "avg_uses": 11.8,
-      "min_uses": 2,
+      "avg_uses": 13.1,
+      "min_uses": 6,
       "max_uses": 24
     }
   ],
@@ -233,6 +239,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "628f2ee3d0cbb006",
+  "source_signature": "b1ab5644ce241753",
   "ingest_version": 2
 }
