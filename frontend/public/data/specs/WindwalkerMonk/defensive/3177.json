@@ -6,22 +6,22 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 41.1,
-      "stddev_first_cast_s": 25.7,
-      "avg_gap_s": 108.4,
-      "stddev_gap_s": 13.7,
+      "avg_first_cast_s": 36.5,
+      "stddev_first_cast_s": 26,
+      "avg_gap_s": 105.9,
+      "stddev_gap_s": 14.1,
       "hold_targets": {
         "1": {
-          "target_s": 172.8,
-          "stddev_s": 22.5,
-          "count": 8,
+          "target_s": 164.6,
+          "stddev_s": 23.1,
+          "count": 7,
           "total_samples": 10
         }
       },
       "avg_uses": 2.2,
       "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.64,
+        "avg": 0.641,
         "stddev": 0.11,
         "min": 0.546,
         "max": 0.847
@@ -31,12 +31,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 60.7,
-      "dmg_avg": 402157,
-      "dmg_stddev": 76501,
+      "time_s": 60.8,
+      "dmg_avg": 390149,
+      "dmg_stddev": 78955,
       "dmg_min": 270850,
       "dmg_max": 468462,
-      "dmg_pct_avg": 0.074,
+      "dmg_pct_avg": 0.07,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -50,27 +50,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 343534,
+          "avg_damage": 331847,
           "min_damage": 208462,
           "max_damage": 412468,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 58624,
+          "avg_damage": 58302,
           "min_damage": 52066,
           "max_damage": 63973,
-          "count": 6
+          "count": 5
         }
       ]
     },
     {
-      "time_s": 181.1,
-      "dmg_avg": 453605,
-      "dmg_stddev": 135585,
+      "time_s": 181.4,
+      "dmg_avg": 435891,
+      "dmg_stddev": 139370,
       "dmg_min": 227235,
       "dmg_max": 578479,
-      "dmg_pct_avg": 0.084,
+      "dmg_pct_avg": 0.079,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -84,17 +84,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 417954,
+          "avg_damage": 411301,
           "min_damage": 356513,
           "max_damage": 450828,
-          "count": 4
+          "count": 3
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 120802,
+          "avg_damage": 120606,
           "min_damage": 107932,
           "max_damage": 127651,
-          "count": 7
+          "count": 6
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 99052,
+          "min_damage": 98463,
+          "max_damage": 100227,
+          "count": 3
         }
       ]
     }
@@ -164,6 +171,10 @@
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
     },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -173,6 +184,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "e9569e0d7966ad60",
+  "source_signature": "bae6968d41f8b0d0",
   "ingest_version": 2
 }

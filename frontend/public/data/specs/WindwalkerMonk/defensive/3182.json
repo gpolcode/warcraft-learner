@@ -6,29 +6,29 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 60.5,
-      "stddev_first_cast_s": 78.7,
-      "avg_gap_s": 114.3,
-      "stddev_gap_s": 14.2,
+      "avg_first_cast_s": 46.9,
+      "stddev_first_cast_s": 75.6,
+      "avg_gap_s": 115,
+      "stddev_gap_s": 12.1,
       "hold_targets": {
         "1": {
-          "target_s": 121.8,
-          "stddev_s": 69.2,
-          "count": 8,
+          "target_s": 120.6,
+          "stddev_s": 66.1,
+          "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 225.7,
-          "stddev_s": 25.7,
-          "count": 5,
+          "target_s": 228.3,
+          "stddev_s": 20.2,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.534,
-        "stddev": 0.173,
+        "avg": 0.574,
+        "stddev": 0.176,
         "min": 0.242,
         "max": 0.768
       },
@@ -37,9 +37,9 @@
   },
   "defensive_windows": [
     {
-      "time_s": 1.2,
-      "dmg_avg": 570582,
-      "dmg_stddev": 68774,
+      "time_s": 1.1,
+      "dmg_avg": 573515,
+      "dmg_stddev": 62310,
       "dmg_min": 496079,
       "dmg_max": 648091,
       "dmg_pct_avg": 0.063,
@@ -56,27 +56,27 @@
       "ability_breakdown": [
         {
           "spell_id": 1241932,
-          "avg_damage": 485674,
+          "avg_damage": 489013,
           "min_damage": 409739,
           "max_damage": 559024,
-          "count": 6
+          "count": 7
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 84909,
+          "avg_damage": 84502,
           "min_damage": 62526,
-          "max_damage": 92958,
-          "count": 6
+          "max_damage": 90826,
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 112.1,
-      "dmg_avg": 759776,
-      "dmg_stddev": 173987,
+      "time_s": 118.2,
+      "dmg_avg": 735046,
+      "dmg_stddev": 154791,
       "dmg_min": 609524,
       "dmg_max": 1095000,
-      "dmg_pct_avg": 0.079,
+      "dmg_pct_avg": 0.077,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -90,17 +90,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1242803,
-          "avg_damage": 532208,
+          "avg_damage": 546061,
           "min_damage": 312804,
           "max_damage": 628065,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 102077,
+          "avg_damage": 101881,
           "min_damage": 72788,
           "max_damage": 128559,
-          "count": 6
+          "count": 8
         }
       ]
     }
@@ -108,7 +108,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 122470,
-      "avg_uses": 2.4,
+      "avg_uses": 2.5,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -183,6 +183,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "9d91c39c3c32803b",
+  "source_signature": "aaa89d84c2a59f01",
   "ingest_version": 2
 }

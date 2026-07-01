@@ -6,93 +6,93 @@
   "per_defensive_benchmarks": {
     "Ice Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 91.8,
-      "stddev_first_cast_s": 31.5,
-      "avg_gap_s": 43.9,
-      "stddev_gap_s": 35.5,
+      "avg_first_cast_s": 89.3,
+      "stddev_first_cast_s": 30.5,
+      "avg_gap_s": 47.2,
+      "stddev_gap_s": 42.4,
       "hold_targets": {
         "1": {
-          "target_s": 157.1,
-          "stddev_s": 62.8,
+          "target_s": 211.5,
+          "stddev_s": 70.2,
           "count": 5,
           "total_samples": 10
         },
         "2": {
-          "target_s": 198,
-          "stddev_s": 48.7,
-          "count": 5,
+          "target_s": 195.4,
+          "stddev_s": 64.9,
+          "count": 4,
           "total_samples": 10
         }
       },
       "avg_uses": 3.6,
-      "avg_uses_per_min": 0.79,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.794,
-        "stddev": 0.633,
+        "avg": 0.795,
+        "stddev": 0.727,
         "min": 0.183,
         "max": 2.046
       },
       "majority_hold": true
     },
-    "Mirror Image": {
-      "sample_count": 1,
-      "avg_first_cast_s": 88.3,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": 132,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.46,
-      "uses_per_min": {
-        "avg": 0.455,
-        "stddev": 0,
-        "min": 0.455,
-        "max": 0.455
-      },
-      "majority_hold": true
-    },
     "Ice Cold": {
-      "sample_count": 8,
-      "avg_first_cast_s": 158.7,
-      "stddev_first_cast_s": 110.9,
-      "avg_gap_s": 92,
-      "stddev_gap_s": 51.3,
+      "sample_count": 9,
+      "avg_first_cast_s": 176.6,
+      "stddev_first_cast_s": 107.4,
+      "avg_gap_s": 99.2,
+      "stddev_gap_s": 52.2,
       "hold_targets": {},
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.407,
+        "avg": 0.357,
         "stddev": 0.192,
         "min": 0.183,
         "max": 0.635
       },
       "majority_hold": false
     },
+    "Mirror Image": {
+      "sample_count": 1,
+      "avg_first_cast_s": 205.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.245,
+        "stddev": 0,
+        "min": 0.245,
+        "max": 0.245
+      },
+      "majority_hold": false
+    },
     "Alter Time": {
       "sample_count": 5,
-      "avg_first_cast_s": 52.1,
-      "stddev_first_cast_s": 48.9,
-      "avg_gap_s": 76.5,
-      "stddev_gap_s": 24.1,
+      "avg_first_cast_s": 28.5,
+      "stddev_first_cast_s": 20.4,
+      "avg_gap_s": 83.1,
+      "stddev_gap_s": 23.6,
       "hold_targets": {
         "1": {
-          "target_s": 137.2,
-          "stddev_s": 2.9,
-          "count": 3,
+          "target_s": 136.1,
+          "stddev_s": 4.8,
+          "count": 4,
           "total_samples": 5
         },
         "2": {
-          "target_s": 195.4,
-          "stddev_s": 67.5,
-          "count": 2,
+          "target_s": 214.8,
+          "stddev_s": 49.1,
+          "count": 3,
           "total_samples": 5
         }
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.71,
       "uses_per_min": {
-        "avg": 0.688,
-        "stddev": 0.239,
+        "avg": 0.711,
+        "stddev": 0.221,
         "min": 0.424,
         "max": 1.023
       },
@@ -109,21 +109,21 @@
     },
     {
       "spell_id": 414658,
-      "avg_uses": 1.9,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 342245,
-      "avg_uses": 3,
+      "avg_uses": 3.2,
       "min_uses": 2,
       "max_uses": 4
     },
     {
       "spell_id": 55342,
-      "avg_uses": 2,
-      "min_uses": 2,
-      "max_uses": 2
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -197,6 +197,6 @@
       "name": "Ice Cold"
     }
   },
-  "source_signature": "47bf4b07443f1ddf",
+  "source_signature": "55fd24df5bfa9864",
   "ingest_version": 2
 }

@@ -6,27 +6,27 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 7,
-      "avg_first_cast_s": 163,
-      "stddev_first_cast_s": 65.9,
+      "avg_first_cast_s": 135.9,
+      "stddev_first_cast_s": 71.8,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.28,
-        "stddev": 0.04,
-        "min": 0.224,
+        "avg": 0.287,
+        "stddev": 0.032,
+        "min": 0.228,
         "max": 0.327
       },
       "majority_hold": false
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 63.3,
-      "stddev_first_cast_s": 43.3,
-      "avg_gap_s": 70,
-      "stddev_gap_s": 28.1,
+      "avg_first_cast_s": 73.7,
+      "stddev_first_cast_s": 50.2,
+      "avg_gap_s": 72.6,
+      "stddev_gap_s": 30.2,
       "hold_targets": {
         "1": {
           "target_s": 158,
@@ -35,12 +35,12 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.74,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.67,
       "uses_per_min": {
-        "avg": 0.735,
-        "stddev": 0.168,
-        "min": 0.457,
+        "avg": 0.673,
+        "stddev": 0.211,
+        "min": 0.275,
         "max": 0.911
       },
       "majority_hold": true
@@ -65,54 +65,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 98.2,
-      "dmg_avg": 437474,
-      "dmg_stddev": 169371,
-      "dmg_min": 187713,
-      "dmg_max": 645331,
-      "dmg_pct_avg": 0.05,
-      "window_length_s": 7.6,
-      "defensive_name": "Dark Pact",
-      "spell_id": 108416,
-      "common_defensives": [
-        "Dark Pact"
-      ],
-      "common_cds": [
-        "Dark Pact"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1254018,
-          "avg_damage": 281697,
-          "min_damage": 124611,
-          "max_damage": 511953,
-          "count": 5
-        },
-        {
-          "spell_id": 1285504,
-          "avg_damage": 183230,
-          "min_damage": 76754,
-          "max_damage": 237975,
-          "count": 3
-        },
-        {
-          "spell_id": 387846,
-          "avg_damage": 4874,
-          "min_damage": 992,
-          "max_damage": 7138,
-          "count": 5
-        }
-      ]
-    },
-    {
-      "time_s": 168.8,
-      "dmg_avg": 457923,
-      "dmg_stddev": 143034,
+      "time_s": 163.6,
+      "dmg_avg": 425208,
+      "dmg_stddev": 68514,
       "dmg_min": 315851,
-      "dmg_max": 821986,
+      "dmg_max": 524611,
       "dmg_pct_avg": 0.052,
-      "window_length_s": 10,
+      "window_length_s": 8.5,
       "defensive_name": "Dark Pact",
       "spell_id": 108416,
       "common_defensives": [
@@ -125,23 +84,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1285504,
-          "avg_damage": 183976,
+          "avg_damage": 187637,
           "min_damage": 82582,
           "max_damage": 313281,
-          "count": 9
+          "count": 8
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 171319,
+          "avg_damage": 157363,
           "min_damage": 94964,
-          "max_damage": 260821,
+          "max_damage": 217527,
           "count": 10
         },
         {
           "spell_id": 387846,
-          "avg_damage": 5158,
-          "min_damage": 2541,
-          "max_damage": 10729,
+          "avg_damage": 4333,
+          "min_damage": 2477,
+          "max_damage": 8354,
           "count": 10
         }
       ]
@@ -156,9 +115,9 @@
     },
     {
       "spell_id": 108416,
-      "avg_uses": 2.6,
-      "min_uses": 2,
-      "max_uses": 4
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 3
     },
     {
       "spell_id": 6789,
@@ -232,15 +191,11 @@
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
     },
-    "1254018": {
-      "icon": "inv_112_etherealwraps_empowered_blue",
-      "name": "Entropic Unraveling"
-    },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "b9c8515d94e110de",
+  "source_signature": "6760c71ea49f1939",
   "ingest_version": 2
 }
