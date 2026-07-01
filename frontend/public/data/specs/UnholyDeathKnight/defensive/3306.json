@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 8,
-      "avg_first_cast_s": 37.6,
-      "stddev_first_cast_s": 27.6,
-      "avg_gap_s": 54.3,
-      "stddev_gap_s": 14.2,
+      "avg_first_cast_s": 35.8,
+      "stddev_first_cast_s": 28.4,
+      "avg_gap_s": 55.9,
+      "stddev_gap_s": 13.5,
       "hold_targets": {},
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.98,
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 1.09,
       "uses_per_min": {
-        "avg": 0.976,
-        "stddev": 0.363,
+        "avg": 1.093,
+        "stddev": 0.373,
         "min": 0.442,
         "max": 1.632
       },
@@ -23,33 +23,33 @@
     },
     "Icebound Fortitude": {
       "sample_count": 5,
-      "avg_first_cast_s": 66.5,
-      "stddev_first_cast_s": 44.2,
+      "avg_first_cast_s": 52.4,
+      "stddev_first_cast_s": 19.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.41,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.411,
-        "stddev": 0.016,
+        "avg": 0.419,
+        "stddev": 0.021,
         "min": 0.401,
-        "max": 0.438
+        "max": 0.445
       },
       "majority_hold": false
     },
     "Lichborne": {
-      "sample_count": 2,
-      "avg_first_cast_s": 73,
-      "stddev_first_cast_s": 98.1,
+      "sample_count": 3,
+      "avg_first_cast_s": 84.2,
+      "stddev_first_cast_s": 72,
       "avg_gap_s": 92.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.63,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.627,
-        "stddev": 0.315,
+        "avg": 0.566,
+        "stddev": 0.246,
         "min": 0.404,
         "max": 0.849
       },
@@ -57,18 +57,18 @@
     },
     "Anti-Magic Zone": {
       "sample_count": 4,
-      "avg_first_cast_s": 88.8,
-      "stddev_first_cast_s": 35.3,
+      "avg_first_cast_s": 88.2,
+      "stddev_first_cast_s": 35.7,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.409,
-        "stddev": 0.01,
+        "avg": 0.415,
+        "stddev": 0.021,
         "min": 0.401,
-        "max": 0.424
+        "max": 0.445
       },
       "majority_hold": false
     },
@@ -92,13 +92,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 70.2,
-      "dmg_avg": 362691,
-      "dmg_stddev": 91646,
-      "dmg_min": 248577,
+      "time_s": 67.7,
+      "dmg_avg": 374656,
+      "dmg_stddev": 79070,
+      "dmg_min": 239863,
       "dmg_max": 474202,
-      "dmg_pct_avg": 0.122,
-      "window_length_s": 6.2,
+      "dmg_pct_avg": 0.126,
+      "window_length_s": 6,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -111,15 +111,15 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 296653,
+          "avg_damage": 316415,
           "min_damage": 246523,
           "max_damage": 411927,
           "count": 6
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 79247,
-          "min_damage": 21054,
+          "avg_damage": 96848,
+          "min_damage": 36826,
           "max_damage": 128881,
           "count": 5
         }
@@ -127,12 +127,12 @@
     },
     {
       "time_s": 141,
-      "dmg_avg": 270053,
-      "dmg_stddev": 177623,
+      "dmg_avg": 217708,
+      "dmg_stddev": 177592,
       "dmg_min": 0,
       "dmg_max": 440700,
-      "dmg_pct_avg": 0.09,
-      "window_length_s": 5.6,
+      "dmg_pct_avg": 0.072,
+      "window_length_s": 5.3,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -145,17 +145,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 278304,
-          "min_damage": 215670,
+          "avg_damage": 241053,
+          "min_damage": 129300,
           "max_damage": 348446,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 128838,
-          "min_damage": 92254,
+          "avg_damage": 111948,
+          "min_damage": 44389,
           "max_damage": 186469,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -163,7 +163,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 2.4,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -175,7 +175,7 @@
     },
     {
       "spell_id": 49039,
-      "avg_uses": 1.5,
+      "avg_uses": 1.3,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -271,6 +271,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "0df54705cb9df755",
+  "source_signature": "df949ddf6e8305d7",
   "ingest_version": 2
 }

@@ -6,14 +6,14 @@
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 89.9,
-      "stddev_first_cast_s": 33.8,
-      "avg_gap_s": 56.3,
-      "stddev_gap_s": 29.5,
+      "avg_first_cast_s": 84.7,
+      "stddev_first_cast_s": 34.3,
+      "avg_gap_s": 56,
+      "stddev_gap_s": 29,
       "hold_targets": {
         "1": {
-          "target_s": 151.1,
-          "stddev_s": 44.1,
+          "target_s": 150.3,
+          "stddev_s": 46.8,
           "count": 9,
           "total_samples": 10
         },
@@ -25,31 +25,31 @@
         }
       },
       "avg_uses": 3.5,
-      "avg_uses_per_min": 0.74,
+      "avg_uses_per_min": 0.76,
       "uses_per_min": {
-        "avg": 0.739,
-        "stddev": 0.21,
+        "avg": 0.765,
+        "stddev": 0.253,
         "min": 0.407,
-        "max": 1.024
+        "max": 1.231
       },
       "majority_hold": true
     },
     "Alter Time": {
-      "sample_count": 1,
-      "avg_first_cast_s": 14.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 98.1,
+      "stddev_first_cast_s": 118.7,
       "avg_gap_s": 66.4,
       "stddev_gap_s": 23.9,
       "hold_targets": {},
-      "avg_uses": 4,
-      "avg_uses_per_min": 0.87,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.56,
       "uses_per_min": {
-        "avg": 0.87,
-        "stddev": 0,
-        "min": 0.87,
+        "avg": 0.558,
+        "stddev": 0.441,
+        "min": 0.246,
         "max": 0.87
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [],
@@ -62,8 +62,8 @@
     },
     {
       "spell_id": 342245,
-      "avg_uses": 4,
-      "min_uses": 4,
+      "avg_uses": 2.5,
+      "min_uses": 1,
       "max_uses": 4
     }
   ],
@@ -138,6 +138,6 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "74779763ffb51d95",
+  "source_signature": "ac92ac83d4a5bfc7",
   "ingest_version": 2
 }

@@ -6,57 +6,52 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 9,
-      "avg_first_cast_s": 67.2,
-      "stddev_first_cast_s": 33.2,
-      "avg_gap_s": 21.2,
-      "stddev_gap_s": 23.6,
+      "avg_first_cast_s": 68.6,
+      "stddev_first_cast_s": 32.6,
+      "avg_gap_s": 25.5,
+      "stddev_gap_s": 27.7,
       "hold_targets": {},
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 1.21,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 1.16,
       "uses_per_min": {
-        "avg": 1.209,
-        "stddev": 0.66,
+        "avg": 1.16,
+        "stddev": 0.637,
         "min": 0.408,
         "max": 2.443
       },
       "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 1,
+      "avg_first_cast_s": 140.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.41,
+        "stddev": 0,
+        "min": 0.41,
+        "max": 0.41
+      },
+      "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 139.6,
-      "dmg_avg": 184527,
-      "dmg_stddev": 135369,
-      "dmg_min": 0,
-      "dmg_max": 353470,
-      "dmg_pct_avg": 0.051,
-      "window_length_s": 5.6,
-      "defensive_name": "Obsidian Scales",
-      "spell_id": 363916,
-      "common_defensives": [
-        "Obsidian Scales"
-      ],
-      "common_cds": [
-        "Obsidian Scales"
-      ],
-      "ref_game_id": 245569,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246653,
-          "avg_damage": 87018,
-          "min_damage": 26569,
-          "max_damage": 188150,
-          "count": 6
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 2.9,
+      "avg_uses": 2.8,
       "min_uses": 1,
       "max_uses": 6
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -102,12 +97,8 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
-    },
-    "1246653": {
-      "icon": "inv_ability_poison_orb",
-      "name": "Caustic Phlegm"
     }
   },
-  "source_signature": "967d4d0439598b84",
+  "source_signature": "5d90dce8ef1e76b6",
   "ingest_version": 2
 }

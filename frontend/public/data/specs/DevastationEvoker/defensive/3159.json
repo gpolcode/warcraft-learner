@@ -6,23 +6,29 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 165.7,
-      "stddev_first_cast_s": 116.2,
-      "avg_gap_s": 58,
-      "stddev_gap_s": 68.2,
+      "avg_first_cast_s": 151.6,
+      "stddev_first_cast_s": 110.4,
+      "avg_gap_s": 60.6,
+      "stddev_gap_s": 69,
       "hold_targets": {
         "1": {
-          "target_s": 334.4,
-          "stddev_s": 78.4,
+          "target_s": 268.4,
+          "stddev_s": 65.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 322.6,
+          "stddev_s": 84.9,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.5,
-      "avg_uses_per_min": 0.72,
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.71,
       "uses_per_min": {
-        "avg": 0.719,
-        "stddev": 0.333,
+        "avg": 0.712,
+        "stddev": 0.337,
         "min": 0.121,
         "max": 1.129
       },
@@ -50,7 +56,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 5.5,
+      "avg_uses": 5.4,
       "min_uses": 1,
       "max_uses": 9
     },
@@ -106,6 +112,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "c8941d2da006c7e3",
+  "source_signature": "96f38c8ce445ae86",
   "ingest_version": 2
 }

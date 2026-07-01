@@ -3,26 +3,26 @@
   "encounter_id": 3182,
   "encounter_name": "Belo'ren, Child of Al'ar",
   "sample_count": 10,
-  "avg_duration_s": 273.9,
-  "downtime_threshold_ms": 1137,
-  "top_avg_efficiency": 68.2,
-  "top_efficiency_stddev": 5.9,
+  "avg_duration_s": 275,
+  "downtime_threshold_ms": 1160,
+  "top_avg_efficiency": 69.2,
+  "top_efficiency_stddev": 5.8,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
-      "avg_first_cast_s": 1.5,
-      "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 67.8,
+      "avg_first_cast_s": 1.6,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 67.9,
       "stddev_gap_s": 10.9,
-      "avg_bl_offset_s": 1.2,
-      "stddev_bl_offset_s": 2.9,
+      "avg_bl_offset_s": 2,
+      "stddev_bl_offset_s": 2.8,
       "avg_uses": 4.7,
       "avg_uses_per_min": 1.02,
       "uses_per_min": {
-        "avg": 1.024,
-        "stddev": 0.087,
+        "avg": 1.02,
+        "stddev": 0.081,
         "min": 0.926,
-        "max": 1.164
+        "max": 1.133
       },
       "bl_pct": 100,
       "majority_hold": true,
@@ -51,26 +51,26 @@
     },
     "Execution Sentence": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.3,
-      "stddev_first_cast_s": 1.6,
-      "avg_gap_s": 67.8,
-      "stddev_gap_s": 11.2,
-      "avg_bl_offset_s": 2.8,
-      "stddev_bl_offset_s": 4.1,
+      "avg_first_cast_s": 2.9,
+      "stddev_first_cast_s": 2.3,
+      "avg_gap_s": 67.9,
+      "stddev_gap_s": 11.1,
+      "avg_bl_offset_s": 4.1,
+      "stddev_bl_offset_s": 4.3,
       "avg_uses": 4.7,
       "avg_uses_per_min": 1.02,
       "uses_per_min": {
-        "avg": 1.024,
-        "stddev": 0.087,
+        "avg": 1.02,
+        "stddev": 0.081,
         "min": 0.926,
-        "max": 1.164
+        "max": 1.133
       },
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "2": {
           "target_s": 72.5,
-          "stddev_s": 14,
+          "stddev_s": 13.5,
           "delay_s": 40.8,
           "delay_stddev_s": 14.4,
           "band_s": 14.4,
@@ -80,7 +80,7 @@
         },
         "3": {
           "target_s": 136.8,
-          "stddev_s": 14.1,
+          "stddev_s": 13.6,
           "delay_s": 32.2,
           "delay_stddev_s": 1.6,
           "band_s": 5,
@@ -90,10 +90,10 @@
         },
         "4": {
           "target_s": 206.3,
-          "stddev_s": 19,
+          "stddev_s": 18.2,
           "delay_s": 36.6,
-          "delay_stddev_s": 6.3,
-          "band_s": 6.3,
+          "delay_stddev_s": 6.1,
+          "band_s": 6.1,
           "effective_cd_s": 30,
           "count": 10,
           "total_samples": 10
@@ -102,19 +102,19 @@
     },
     "Wake of Ashes": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.7,
+      "avg_first_cast_s": 2.6,
       "stddev_first_cast_s": 0.6,
-      "avg_gap_s": 33.1,
-      "stddev_gap_s": 6,
-      "avg_bl_offset_s": 3.4,
-      "stddev_bl_offset_s": 3.2,
-      "avg_uses": 8.9,
-      "avg_uses_per_min": 1.94,
+      "avg_gap_s": 33.3,
+      "stddev_gap_s": 6.1,
+      "avg_bl_offset_s": 4.1,
+      "stddev_bl_offset_s": 2.6,
+      "avg_uses": 8.8,
+      "avg_uses_per_min": 1.91,
       "uses_per_min": {
-        "avg": 1.936,
-        "stddev": 0.172,
+        "avg": 1.91,
+        "stddev": 0.157,
         "min": 1.639,
-        "max": 2.134
+        "max": 2.076
       },
       "bl_pct": 100,
       "majority_hold": true,
@@ -133,17 +133,17 @@
     },
     "Divine Toll": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.4,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 36.1,
-      "stddev_gap_s": 12.2,
-      "avg_bl_offset_s": 5.6,
+      "avg_first_cast_s": 5.7,
+      "stddev_first_cast_s": 1.3,
+      "avg_gap_s": 38.5,
+      "stddev_gap_s": 14,
+      "avg_bl_offset_s": 6.7,
       "stddev_bl_offset_s": 3.4,
-      "avg_uses": 7.9,
-      "avg_uses_per_min": 1.74,
+      "avg_uses": 7.4,
+      "avg_uses_per_min": 1.64,
       "uses_per_min": {
-        "avg": 1.742,
-        "stddev": 0.309,
+        "avg": 1.642,
+        "stddev": 0.389,
         "min": 0.926,
         "max": 1.997
       },
@@ -383,6 +383,6 @@
       "name": "Divine Toll"
     }
   },
-  "source_signature": "1d5d18195dd84979",
+  "source_signature": "48e6082cd75b9dbd",
   "ingest_version": 2
 }
