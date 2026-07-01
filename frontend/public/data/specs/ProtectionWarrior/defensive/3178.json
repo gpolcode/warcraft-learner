@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Shield Wall": {
       "sample_count": 10,
-      "avg_first_cast_s": 160,
-      "stddev_first_cast_s": 100.7,
-      "avg_gap_s": 63,
-      "stddev_gap_s": 42.4,
+      "avg_first_cast_s": 168.1,
+      "stddev_first_cast_s": 97.7,
+      "avg_gap_s": 59.1,
+      "stddev_gap_s": 39.4,
       "hold_targets": {},
-      "avg_uses": 2.7,
+      "avg_uses": 2.8,
       "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.479,
-        "stddev": 0.323,
+        "avg": 0.483,
+        "stddev": 0.328,
         "min": 0.143,
         "max": 1.065
       },
@@ -23,16 +23,16 @@
     },
     "Rallying Cry": {
       "sample_count": 7,
-      "avg_first_cast_s": 245.6,
-      "stddev_first_cast_s": 64.3,
+      "avg_first_cast_s": 257.7,
+      "stddev_first_cast_s": 67.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.183,
-        "stddev": 0.023,
+        "avg": 0.178,
+        "stddev": 0.022,
         "min": 0.15,
         "max": 0.213
       },
@@ -40,17 +40,17 @@
     },
     "Shield Block": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.9,
+      "avg_first_cast_s": 3,
       "stddev_first_cast_s": 1.2,
       "avg_gap_s": 10.6,
       "stddev_gap_s": 3.5,
       "hold_targets": {},
-      "avg_uses": 33.5,
-      "avg_uses_per_min": 5.67,
+      "avg_uses": 33.9,
+      "avg_uses_per_min": 5.65,
       "uses_per_min": {
-        "avg": 5.667,
-        "stddev": 0.133,
-        "min": 5.489,
+        "avg": 5.645,
+        "stddev": 0.148,
+        "min": 5.462,
         "max": 5.873
       },
       "majority_hold": false
@@ -59,25 +59,25 @@
       "sample_count": 10,
       "avg_first_cast_s": 6.5,
       "stddev_first_cast_s": 2.5,
-      "avg_gap_s": 13.5,
-      "stddev_gap_s": 17.3,
+      "avg_gap_s": 14.1,
+      "stddev_gap_s": 17.6,
       "hold_targets": {
         "1": {
           "target_s": 43.8,
-          "stddev_s": 14.4,
+          "stddev_s": 14.5,
           "count": 10,
           "total_samples": 10
         },
-        "9": {
-          "target_s": 118.5,
-          "stddev_s": 27.2,
+        "2": {
+          "target_s": 86.1,
+          "stddev_s": 20.4,
           "count": 4,
           "total_samples": 10
         },
         "10": {
-          "target_s": 153.4,
-          "stddev_s": 22.9,
-          "count": 5,
+          "target_s": 159,
+          "stddev_s": 24.9,
+          "count": 4,
           "total_samples": 10
         },
         "11": {
@@ -87,9 +87,9 @@
           "total_samples": 10
         },
         "12": {
-          "target_s": 198.2,
-          "stddev_s": 48.2,
-          "count": 7,
+          "target_s": 167.4,
+          "stddev_s": 47.3,
+          "count": 8,
           "total_samples": 10
         },
         "16": {
@@ -98,80 +98,92 @@
           "count": 5,
           "total_samples": 10
         },
-        "18": {
-          "target_s": 269.4,
-          "stddev_s": 41,
+        "17": {
+          "target_s": 239,
+          "stddev_s": 13.1,
           "count": 4,
+          "total_samples": 10
+        },
+        "18": {
+          "target_s": 269.2,
+          "stddev_s": 36.9,
+          "count": 5,
           "total_samples": 10
         },
         "21": {
           "target_s": 293.1,
-          "stddev_s": 61.6,
+          "stddev_s": 49,
           "count": 5,
+          "total_samples": 10
+        },
+        "22": {
+          "target_s": 298.3,
+          "stddev_s": 58.8,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 24.8,
-      "avg_uses_per_min": 4.18,
+      "avg_uses": 24.2,
+      "avg_uses_per_min": 3.97,
       "uses_per_min": {
-        "avg": 4.178,
-        "stddev": 1.691,
+        "avg": 3.969,
+        "stddev": 1.459,
         "min": 1.547,
-        "max": 6.694
+        "max": 6.68
       },
       "majority_hold": true
     },
     "Spell Reflection": {
       "sample_count": 9,
-      "avg_first_cast_s": 80.6,
-      "stddev_first_cast_s": 72.9,
-      "avg_gap_s": 56.2,
-      "stddev_gap_s": 41.1,
+      "avg_first_cast_s": 99.9,
+      "stddev_first_cast_s": 75.6,
+      "avg_gap_s": 52.4,
+      "stddev_gap_s": 36.5,
       "hold_targets": {
         "1": {
           "target_s": 145.3,
-          "stddev_s": 50.7,
+          "stddev_s": 66,
           "count": 5,
           "total_samples": 9
         },
         "2": {
-          "target_s": 232.5,
-          "stddev_s": 31,
-          "count": 6,
+          "target_s": 231.9,
+          "stddev_s": 29.7,
+          "count": 5,
           "total_samples": 9
         }
       },
-      "avg_uses": 5,
-      "avg_uses_per_min": 0.83,
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.829,
-        "stddev": 0.417,
+        "avg": 0.796,
+        "stddev": 0.43,
         "min": 0.152,
         "max": 1.547
       },
       "majority_hold": true
     },
     "Impending Victory": {
-      "sample_count": 5,
-      "avg_first_cast_s": 84.2,
-      "stddev_first_cast_s": 48.1,
-      "avg_gap_s": 73.5,
-      "stddev_gap_s": 52.4,
+      "sample_count": 4,
+      "avg_first_cast_s": 94.6,
+      "stddev_first_cast_s": 48.7,
+      "avg_gap_s": 121.5,
+      "stddev_gap_s": 54.2,
       "hold_targets": {
         "1": {
-          "target_s": 167.1,
-          "stddev_s": 92.5,
-          "count": 4,
-          "total_samples": 5
+          "target_s": 241.6,
+          "stddev_s": 93.2,
+          "count": 3,
+          "total_samples": 4
         }
       },
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.545,
-        "stddev": 0.5,
+        "avg": 0.326,
+        "stddev": 0.122,
         "min": 0.172,
-        "max": 1.42
+        "max": 0.442
       },
       "majority_hold": true
     }
@@ -179,12 +191,12 @@
   "defensive_windows": [
     {
       "time_s": 5.3,
-      "dmg_avg": 2509162,
-      "dmg_stddev": 828363,
+      "dmg_avg": 2419051,
+      "dmg_stddev": 862588,
       "dmg_min": 1659547,
       "dmg_max": 4259604,
-      "dmg_pct_avg": 0.098,
-      "window_length_s": 40.8,
+      "dmg_pct_avg": 0.095,
+      "window_length_s": 40.6,
       "defensive_name": "Ignore Pain",
       "spell_id": 190456,
       "common_defensives": [
@@ -197,23 +209,23 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 585069,
+          "avg_damage": 579961,
           "min_damage": 152050,
           "max_damage": 1320537,
           "count": 10
         },
         {
           "spell_id": 1280434,
-          "avg_damage": 427982,
-          "min_damage": 286250,
+          "avg_damage": 373532,
+          "min_damage": 99353,
           "max_damage": 521810,
           "count": 7
         },
         {
           "spell_id": 1283856,
-          "avg_damage": 361966,
+          "avg_damage": 353746,
           "min_damage": 229696,
-          "max_damage": 450090,
+          "max_damage": 428913,
           "count": 7
         },
         {
@@ -224,18 +236,18 @@
           "count": 5
         },
         {
-          "spell_id": 1283712,
-          "avg_damage": 215163,
-          "min_damage": 124772,
-          "max_damage": 396347,
-          "count": 5
-        },
-        {
           "spell_id": 1245302,
-          "avg_damage": 200890,
+          "avg_damage": 203978,
           "min_damage": 139229,
           "max_damage": 307768,
-          "count": 8
+          "count": 7
+        },
+        {
+          "spell_id": 1245500,
+          "avg_damage": 195923,
+          "min_damage": 95580,
+          "max_damage": 348657,
+          "count": 5
         }
       ]
     }
@@ -243,7 +255,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 871,
-      "avg_uses": 2.7,
+      "avg_uses": 2.8,
       "min_uses": 1,
       "max_uses": 5
     },
@@ -255,27 +267,27 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 5,
+      "avg_uses": 4.9,
       "min_uses": 1,
       "max_uses": 9
     },
     {
       "spell_id": 2565,
-      "avg_uses": 33.5,
+      "avg_uses": 33.9,
       "min_uses": 26,
       "max_uses": 39
     },
     {
       "spell_id": 190456,
-      "avg_uses": 24.8,
+      "avg_uses": 24.2,
       "min_uses": 9,
       "max_uses": 41
     },
     {
       "spell_id": 202168,
-      "avg_uses": 3,
+      "avg_uses": 2,
       "min_uses": 1,
-      "max_uses": 7
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -382,6 +394,10 @@
       "icon": "inv_cosmicvoid_orb",
       "name": "Void Howl"
     },
+    "1245500": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Gloom"
+    },
     "1245652": {
       "icon": "inv_misc_rubysanctum4",
       "name": "Rakfang"
@@ -390,15 +406,11 @@
       "icon": "inv_icon_wing07c",
       "name": "Vaelwing"
     },
-    "1283712": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Gloomtouched"
-    },
     "1283856": {
       "icon": "ability_ironmaidens_convulsiveshadows",
       "name": "Nullbeam"
     }
   },
-  "source_signature": "fab0187db3d1ba2c",
+  "source_signature": "fbfaf5f22de6954f",
   "ingest_version": 2
 }

@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 55.8,
-      "stddev_first_cast_s": 43.1,
+      "avg_first_cast_s": 74.2,
+      "stddev_first_cast_s": 83,
       "avg_gap_s": 109.7,
       "stddev_gap_s": 19.3,
       "hold_targets": {
@@ -19,11 +19,11 @@
         }
       },
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.55,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.549,
-        "stddev": 0.207,
-        "min": 0.297,
+        "avg": 0.535,
+        "stddev": 0.228,
+        "min": 0.169,
         "max": 0.956
       },
       "majority_hold": false
@@ -31,44 +31,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 34.9,
-      "dmg_avg": 566882,
-      "dmg_stddev": 321076,
-      "dmg_min": 210439,
-      "dmg_max": 990912,
-      "window_length_s": 10,
-      "defensive_name": "Touch of Karma",
-      "spell_id": 122470,
-      "common_defensives": [
-        "Touch of Karma"
-      ],
-      "common_cds": [
-        "Touch of Karma"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1285504,
-          "avg_damage": 362536,
-          "min_damage": 75157,
-          "max_damage": 764433,
-          "count": 4
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 204346,
-          "min_damage": 135282,
-          "max_damage": 231279,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 102.5,
-      "dmg_avg": 433143,
-      "dmg_stddev": 142992,
+      "time_s": 102.9,
+      "dmg_avg": 421817,
+      "dmg_stddev": 153162,
       "dmg_min": 163696,
       "dmg_max": 556037,
+      "dmg_pct_avg": 0.068,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -82,50 +50,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 336185,
+          "avg_damage": 369780,
           "min_damage": 54032,
           "max_damage": 556037,
-          "count": 6
-        }
-      ]
-    },
-    {
-      "time_s": 172.5,
-      "dmg_avg": 337947,
-      "dmg_stddev": 231070,
-      "dmg_min": 109148,
-      "dmg_max": 644075,
-      "window_length_s": 10,
-      "defensive_name": "Touch of Karma",
-      "spell_id": 122470,
-      "common_defensives": [
-        "Touch of Karma"
-      ],
-      "common_cds": [
-        "Touch of Karma"
-      ],
-      "ref_game_id": 240432,
-      "ability_breakdown": [
-        {
-          "spell_id": 1285504,
-          "avg_damage": 229977,
-          "min_damage": 153382,
-          "max_damage": 311853,
-          "count": 3
-        },
-        {
-          "spell_id": 1250686,
-          "avg_damage": 151521,
-          "min_damage": 109148,
-          "max_damage": 230381,
-          "count": 3
-        },
-        {
-          "spell_id": 1245592,
-          "avg_damage": 103646,
-          "min_damage": 101841,
-          "max_damage": 105451,
-          "count": 2
+          "count": 5
         }
       ]
     }
@@ -195,23 +123,11 @@
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
     },
-    "1245592": {
-      "icon": "inv_cosmicvoid_groundsate",
-      "name": "Torturous Extract"
-    },
-    "1250686": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Twisting Obscurity"
-    },
     "1254018": {
       "icon": "inv_112_etherealwraps_empowered_blue",
       "name": "Entropic Unraveling"
-    },
-    "1285504": {
-      "icon": "inv_enchant_essencecosmicgreater",
-      "name": "Dark Radiation"
     }
   },
-  "source_signature": "505f680bc99ee6fd",
-  "ingest_version": 1
+  "source_signature": "b5b935650dc99c8d",
+  "ingest_version": 2
 }

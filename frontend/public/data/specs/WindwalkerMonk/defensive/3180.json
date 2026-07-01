@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Touch of Karma": {
       "sample_count": 10,
-      "avg_first_cast_s": 68.4,
-      "stddev_first_cast_s": 44.9,
-      "avg_gap_s": 114.3,
-      "stddev_gap_s": 23.9,
+      "avg_first_cast_s": 65,
+      "stddev_first_cast_s": 44.5,
+      "avg_gap_s": 114.1,
+      "stddev_gap_s": 24.7,
       "hold_targets": {
         "1": {
           "target_s": 192.9,
@@ -18,17 +18,17 @@
           "total_samples": 10
         },
         "2": {
-          "target_s": 301.6,
-          "stddev_s": 69.6,
+          "target_s": 297.3,
+          "stddev_s": 81.4,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.51,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.506,
-        "stddev": 0.131,
+        "avg": 0.502,
+        "stddev": 0.13,
         "min": 0.383,
         "max": 0.76
       },
@@ -37,44 +37,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 88.7,
-      "dmg_avg": 539900,
-      "dmg_stddev": 236615,
-      "dmg_min": 376653,
-      "dmg_max": 1091427,
-      "window_length_s": 10,
-      "defensive_name": "Touch of Karma",
-      "spell_id": 122470,
-      "common_defensives": [
-        "Touch of Karma"
-      ],
-      "common_cds": [
-        "Touch of Karma"
-      ],
-      "ref_game_id": 240431,
-      "ability_breakdown": [
-        {
-          "spell_id": 1246502,
-          "avg_damage": 312983,
-          "min_damage": 128262,
-          "max_damage": 666988,
-          "count": 4
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 105112,
-          "min_damage": 101701,
-          "max_damage": 109998,
-          "count": 8
-        }
-      ]
-    },
-    {
-      "time_s": 191,
-      "dmg_avg": 799148,
-      "dmg_stddev": 104282,
+      "time_s": 191.4,
+      "dmg_avg": 799136,
+      "dmg_stddev": 116591,
       "dmg_min": 685782,
       "dmg_max": 957450,
+      "dmg_pct_avg": 0.058,
       "window_length_s": 10,
       "defensive_name": "Touch of Karma",
       "spell_id": 122470,
@@ -88,71 +56,24 @@
       "ability_breakdown": [
         {
           "spell_id": 1255739,
-          "avg_damage": 475371,
+          "avg_damage": 457913,
           "min_damage": 402155,
           "max_damage": 572756,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 135180,
+          "avg_damage": 136512,
           "min_damage": 114475,
           "max_damage": 151931,
-          "count": 6
+          "count": 5
         },
         {
           "spell_id": 1246765,
-          "avg_damage": 126397,
+          "avg_damage": 130071,
           "min_damage": 104195,
           "max_damage": 140155,
-          "count": 6
-        }
-      ]
-    },
-    {
-      "time_s": 297.3,
-      "dmg_avg": 510540,
-      "dmg_stddev": 222243,
-      "dmg_min": 170254,
-      "dmg_max": 800290,
-      "window_length_s": 10,
-      "defensive_name": "Touch of Karma",
-      "spell_id": 122470,
-      "common_defensives": [
-        "Touch of Karma"
-      ],
-      "common_cds": [
-        "Touch of Karma"
-      ],
-      "ref_game_id": 240431,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249024,
-          "avg_damage": 224604,
-          "min_damage": 167105,
-          "max_damage": 255013,
-          "count": 3
-        },
-        {
-          "spell_id": 1246502,
-          "avg_damage": 186232,
-          "min_damage": 56554,
-          "max_damage": 309994,
-          "count": 3
-        },
-        {
-          "spell_id": 1246749,
-          "avg_damage": 178601,
-          "min_damage": 168038,
-          "max_damage": 182572,
-          "count": 4
-        },
-        {
-          "spell_id": 1258661,
-          "avg_damage": 164998,
-          "min_damage": 155153,
-          "max_damage": 173339,
-          "count": 6
+          "count": 5
         }
       ]
     }
@@ -160,7 +81,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 122470,
-      "avg_uses": 3.1,
+      "avg_uses": 3,
       "min_uses": 2,
       "max_uses": 5
     }
@@ -222,21 +143,9 @@
       "icon": "ability_monk_fortifyingale_new",
       "name": "Fortifying Brew"
     },
-    "1246502": {
-      "icon": "spell_holy_avengersshield",
-      "name": "Avenger's Shield"
-    },
-    "1246749": {
-      "icon": "ability_bastion_paladin",
-      "name": "Sacred Toll"
-    },
     "1246765": {
       "icon": "ability_paladin_divinestorm",
       "name": "Divine Storm"
-    },
-    "1249024": {
-      "icon": "spell_paladin_executionsentence",
-      "name": "Execution Sentence"
     },
     "1255739": {
       "icon": "inv_ability_holyfire_buff",
@@ -247,6 +156,6 @@
       "name": "Light Infusion"
     }
   },
-  "source_signature": "9414a969087aa05a",
-  "ingest_version": 1
+  "source_signature": "562f5825e8bbe191",
+  "ingest_version": 2
 }

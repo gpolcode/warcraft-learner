@@ -3,10 +3,10 @@
   "encounter_id": 3179,
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
-  "avg_duration_s": 209.3,
-  "downtime_threshold_ms": 2579,
-  "top_avg_efficiency": 74.1,
-  "top_efficiency_stddev": 4.2,
+  "avg_duration_s": 225,
+  "downtime_threshold_ms": 2645,
+  "top_avg_efficiency": 74.6,
+  "top_efficiency_stddev": 4.3,
   "per_cd_benchmarks": {
     "Invoke Xuen, the White Tiger": {
       "sample_count": 10,
@@ -31,20 +31,20 @@
     "Zenith": {
       "sample_count": 10,
       "avg_first_cast_s": 2.9,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 45.9,
-      "stddev_gap_s": 19.4,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 47.1,
+      "stddev_gap_s": 19.7,
       "avg_bl_offset_s": 2.3,
       "stddev_bl_offset_s": 0.8,
-      "avg_uses": 5.1,
-      "avg_uses_per_min": 1.47,
+      "avg_uses": 5.3,
+      "avg_uses_per_min": 1.44,
       "uses_per_min": {
-        "avg": 1.475,
-        "stddev": 0.096,
-        "min": 1.312,
+        "avg": 1.441,
+        "stddev": 0.131,
+        "min": 1.183,
         "max": 1.593
       },
-      "bl_pct": 100,
+      "bl_pct": 90,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -90,26 +90,30 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 84.4,
-      "stddev_first_cast_s": 54.7,
-      "avg_gap_s": 128.5,
-      "stddev_gap_s": 39.2,
-      "avg_bl_offset_s": 31.5,
-      "stddev_bl_offset_s": 6.1,
+      "avg_first_cast_s": 89.8,
+      "stddev_first_cast_s": 52.4,
+      "avg_gap_s": 137.4,
+      "stddev_gap_s": 46.3,
+      "avg_bl_offset_s": 29.2,
+      "stddev_bl_offset_s": 5,
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.49,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.493,
-        "stddev": 0.141,
+        "avg": 0.466,
+        "stddev": 0.142,
         "min": 0.282,
         "max": 0.637
       },
-      "bl_pct": 40,
+      "bl_pct": 30,
       "majority_hold": false,
       "hold_targets": {
         "2": {
           "target_s": 155.1,
-          "stddev_s": 57.8,
+          "stddev_s": 73,
+          "delay_s": 40.1,
+          "delay_stddev_s": 43.6,
+          "band_s": 43.6,
+          "effective_cd_s": 90,
           "count": 5,
           "total_samples": 10
         }
@@ -275,6 +279,6 @@
       "name": "Zenith"
     }
   },
-  "source_signature": "505f680bc99ee6fd",
-  "ingest_version": 1
+  "source_signature": "b5b935650dc99c8d",
+  "ingest_version": 2
 }
