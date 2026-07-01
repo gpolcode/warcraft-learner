@@ -6,47 +6,41 @@
   "per_defensive_benchmarks": {
     "Prismatic Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 46.5,
-      "stddev_first_cast_s": 19.8,
-      "avg_gap_s": 43,
-      "stddev_gap_s": 16.8,
+      "avg_first_cast_s": 46,
+      "stddev_first_cast_s": 20,
+      "avg_gap_s": 43.7,
+      "stddev_gap_s": 17.3,
       "hold_targets": {
         "1": {
-          "target_s": 126.2,
-          "stddev_s": 24.6,
-          "count": 6,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 201.3,
-          "stddev_s": 42.9,
-          "count": 5,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 224.1,
-          "stddev_s": 40.8,
+          "target_s": 126.3,
+          "stddev_s": 23,
           "count": 7,
           "total_samples": 10
         },
-        "5": {
-          "target_s": 263.6,
-          "stddev_s": 42.9,
+        "3": {
+          "target_s": 201.1,
+          "stddev_s": 38.5,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 233.3,
+          "stddev_s": 38,
           "count": 8,
           "total_samples": 10
         },
-        "6": {
-          "target_s": 283,
-          "stddev_s": 56.5,
-          "count": 4,
+        "5": {
+          "target_s": 282.4,
+          "stddev_s": 43.8,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 7.8,
-      "avg_uses_per_min": 1.24,
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 1.22,
       "uses_per_min": {
-        "avg": 1.241,
-        "stddev": 0.24,
+        "avg": 1.218,
+        "stddev": 0.244,
         "min": 0.997,
         "max": 1.629
       },
@@ -71,8 +65,8 @@
     },
     "Alter Time": {
       "sample_count": 7,
-      "avg_first_cast_s": 67.6,
-      "stddev_first_cast_s": 46.8,
+      "avg_first_cast_s": 74.5,
+      "stddev_first_cast_s": 62.4,
       "avg_gap_s": 166.7,
       "stddev_gap_s": 57.7,
       "hold_targets": {
@@ -84,45 +78,45 @@
         }
       },
       "avg_uses": 2,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.323,
-        "stddev": 0.122,
+        "avg": 0.33,
+        "stddev": 0.111,
         "min": 0.163,
         "max": 0.444
       },
       "majority_hold": true
     },
     "Greater Invisibility": {
-      "sample_count": 3,
-      "avg_first_cast_s": 229.2,
-      "stddev_first_cast_s": 71.6,
+      "sample_count": 2,
+      "avg_first_cast_s": 221.6,
+      "stddev_first_cast_s": 99.6,
       "avg_gap_s": 168,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.213,
-        "stddev": 0.099,
+        "avg": 0.238,
+        "stddev": 0.127,
         "min": 0.148,
         "max": 0.327
       },
       "majority_hold": false
     },
     "Mirror Image": {
-      "sample_count": 3,
-      "avg_first_cast_s": 128.4,
-      "stddev_first_cast_s": 0.3,
+      "sample_count": 2,
+      "avg_first_cast_s": 128.3,
+      "stddev_first_cast_s": 0.4,
       "avg_gap_s": 171.1,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.231,
-        "stddev": 0.085,
-        "min": 0.163,
+        "avg": 0.266,
+        "stddev": 0.087,
+        "min": 0.204,
         "max": 0.327
       },
       "majority_hold": false
@@ -144,19 +138,19 @@
     },
     {
       "spell_id": 110959,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 55342,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 235450,
-      "avg_uses": 7.8,
+      "avg_uses": 7.5,
       "min_uses": 5,
       "max_uses": 11
     }
@@ -232,6 +226,6 @@
       "name": "Alter Time"
     }
   },
-  "source_signature": "482e46eb3d9783c8",
+  "source_signature": "5866e670edcac115",
   "ingest_version": 2
 }

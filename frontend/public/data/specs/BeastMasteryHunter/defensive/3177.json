@@ -6,35 +6,35 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 95.4,
-      "stddev_first_cast_s": 48.6,
+      "avg_first_cast_s": 84.9,
+      "stddev_first_cast_s": 37.6,
       "avg_gap_s": 84.1,
       "stddev_gap_s": 44,
       "hold_targets": {},
       "avg_uses": 2,
       "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.577,
-        "stddev": 0.226,
+        "avg": 0.579,
+        "stddev": 0.223,
         "min": 0.277,
         "max": 0.866
       },
       "majority_hold": false
     },
     "Aspect of the Turtle": {
-      "sample_count": 1,
-      "avg_first_cast_s": 161.2,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 125.2,
+      "stddev_first_cast_s": 51,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.283,
-        "stddev": 0,
+        "avg": 0.296,
+        "stddev": 0.018,
         "min": 0.283,
-        "max": 0.283
+        "max": 0.309
       },
       "majority_hold": false
     },
@@ -56,7 +56,42 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 59.2,
+      "dmg_avg": 238336,
+      "dmg_stddev": 88862,
+      "dmg_min": 105217,
+      "dmg_max": 313743,
+      "dmg_pct_avg": 0.043,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 268047,
+          "min_damage": 254157,
+          "max_damage": 281415,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 30270,
+          "min_damage": 27033,
+          "max_damage": 32328,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 186265,
@@ -120,8 +155,16 @@
     "264735": {
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "007006074897ab18",
+  "source_signature": "23f072ac7b3c7670",
   "ingest_version": 2
 }

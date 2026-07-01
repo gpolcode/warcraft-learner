@@ -3,24 +3,24 @@
   "encounter_id": 3159,
   "encounter_name": "Rotmire",
   "sample_count": 10,
-  "avg_duration_s": 438.5,
-  "downtime_threshold_ms": 3285,
+  "avg_duration_s": 439.4,
+  "downtime_threshold_ms": 3242,
   "top_avg_efficiency": 76.7,
-  "top_efficiency_stddev": 4.2,
+  "top_efficiency_stddev": 4.6,
   "per_cd_benchmarks": {
     "Trueshot": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.1,
-      "stddev_first_cast_s": 8.3,
-      "avg_gap_s": 129.8,
-      "stddev_gap_s": 8.1,
-      "avg_bl_offset_s": 0.4,
-      "stddev_bl_offset_s": 0.9,
+      "avg_first_cast_s": 4.2,
+      "stddev_first_cast_s": 8.2,
+      "avg_gap_s": 129.9,
+      "stddev_gap_s": 7,
+      "avg_bl_offset_s": 0.3,
+      "stddev_bl_offset_s": 1,
       "avg_uses": 4,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.549,
-        "stddev": 0.033,
+        "avg": 0.548,
+        "stddev": 0.035,
         "min": 0.491,
         "max": 0.589
       },
@@ -28,40 +28,40 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 256.3,
-          "stddev_s": 16,
-          "delay_s": 12.7,
-          "delay_stddev_s": 3,
+          "target_s": 256.5,
+          "stddev_s": 14.8,
+          "delay_s": 13.9,
+          "delay_stddev_s": 2.7,
           "band_s": 5,
           "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
         },
         "4": {
-          "target_s": 392.4,
-          "stddev_s": 16.7,
+          "target_s": 392.7,
+          "stddev_s": 16.6,
           "delay_s": 16.1,
-          "delay_stddev_s": 2.4,
+          "delay_stddev_s": 2.2,
           "band_s": 5,
           "effective_cd_s": 120,
-          "count": 10,
+          "count": 9,
           "total_samples": 10
         }
       }
     },
     "Volley": {
       "sample_count": 10,
-      "avg_first_cast_s": 18.9,
-      "stddev_first_cast_s": 12.3,
-      "avg_gap_s": 56,
-      "stddev_gap_s": 16.3,
-      "avg_bl_offset_s": 17.6,
-      "stddev_bl_offset_s": 12.4,
-      "avg_uses": 8.1,
-      "avg_uses_per_min": 1.11,
+      "avg_first_cast_s": 19.9,
+      "stddev_first_cast_s": 10.6,
+      "avg_gap_s": 55.4,
+      "stddev_gap_s": 15.7,
+      "avg_bl_offset_s": 18.7,
+      "stddev_bl_offset_s": 10,
+      "avg_uses": 8.2,
+      "avg_uses_per_min": 1.12,
       "uses_per_min": {
-        "avg": 1.108,
-        "stddev": 0.119,
+        "avg": 1.121,
+        "stddev": 0.117,
         "min": 0.983,
         "max": 1.337
       },
@@ -70,32 +70,22 @@
       "hold_targets": {
         "2": {
           "target_s": 77.4,
-          "stddev_s": 22.8,
+          "stddev_s": 20.1,
           "delay_s": 30.2,
-          "delay_stddev_s": 14.5,
-          "band_s": 14.5,
+          "delay_stddev_s": 14.1,
+          "band_s": 14.1,
           "effective_cd_s": 45,
           "count": 5,
           "total_samples": 10
         },
         "5": {
-          "target_s": 256.2,
-          "stddev_s": 21.1,
-          "delay_s": 41.6,
-          "delay_stddev_s": 2.7,
+          "target_s": 257.7,
+          "stddev_s": 19.3,
+          "delay_s": 41.7,
+          "delay_stddev_s": 2.4,
           "band_s": 5,
           "effective_cd_s": 45,
           "count": 6,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 393.4,
-          "stddev_s": 5.7,
-          "delay_s": 43.3,
-          "delay_stddev_s": 3.9,
-          "band_s": 5,
-          "effective_cd_s": 45,
-          "count": 5,
           "total_samples": 10
         }
       }
@@ -214,6 +204,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "acb94ee79a9570bd",
+  "source_signature": "a21c05a393183ba6",
   "ingest_version": 2
 }

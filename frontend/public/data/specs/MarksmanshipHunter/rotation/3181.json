@@ -3,119 +3,119 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 497.7,
-  "downtime_threshold_ms": 3455,
-  "top_avg_efficiency": 72,
-  "top_efficiency_stddev": 6,
+  "avg_duration_s": 495,
+  "downtime_threshold_ms": 3421,
+  "top_avg_efficiency": 71.4,
+  "top_efficiency_stddev": 7.8,
   "per_cd_benchmarks": {
     "Trueshot": {
       "sample_count": 10,
-      "avg_first_cast_s": 25.3,
-      "stddev_first_cast_s": 7.3,
-      "avg_gap_s": 147,
-      "stddev_gap_s": 24.1,
-      "avg_bl_offset_s": 3.5,
-      "stddev_bl_offset_s": 2.8,
-      "avg_uses": 3.9,
-      "avg_uses_per_min": 0.47,
+      "avg_first_cast_s": 20.7,
+      "stddev_first_cast_s": 5,
+      "avg_gap_s": 152,
+      "stddev_gap_s": 24.6,
+      "avg_bl_offset_s": 5.4,
+      "stddev_bl_offset_s": 2.3,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.47,
-        "stddev": 0.024,
-        "min": 0.424,
-        "max": 0.503
+        "avg": 0.459,
+        "stddev": 0.049,
+        "min": 0.377,
+        "max": 0.514
       },
-      "bl_pct": 90,
+      "bl_pct": 60,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 180.1,
-          "stddev_s": 3.1,
-          "delay_s": 37,
-          "delay_stddev_s": 6.4,
-          "band_s": 6.4,
+          "target_s": 181.7,
+          "stddev_s": 2.7,
+          "delay_s": 38.6,
+          "delay_stddev_s": 4.6,
+          "band_s": 5,
           "effective_cd_s": 120,
-          "count": 10,
+          "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 366.8,
-          "stddev_s": 5,
-          "delay_s": 63.6,
-          "delay_stddev_s": 4.7,
-          "band_s": 5,
+          "target_s": 363.7,
+          "stddev_s": 8.1,
+          "delay_s": 61.8,
+          "delay_stddev_s": 9.7,
+          "band_s": 9.7,
           "effective_cd_s": 120,
-          "count": 6,
+          "count": 7,
           "total_samples": 10
         }
       }
     },
     "Volley": {
       "sample_count": 10,
-      "avg_first_cast_s": 22.6,
-      "stddev_first_cast_s": 12,
-      "avg_gap_s": 61.6,
-      "stddev_gap_s": 17.4,
-      "avg_bl_offset_s": 6.2,
-      "stddev_bl_offset_s": 2.2,
-      "avg_uses": 8.4,
-      "avg_uses_per_min": 1.01,
+      "avg_first_cast_s": 18.7,
+      "stddev_first_cast_s": 4.2,
+      "avg_gap_s": 59.2,
+      "stddev_gap_s": 14.5,
+      "avg_bl_offset_s": 5.4,
+      "stddev_bl_offset_s": 5,
+      "avg_uses": 7.9,
+      "avg_uses_per_min": 0.96,
       "uses_per_min": {
-        "avg": 1.014,
-        "stddev": 0.076,
+        "avg": 1.068,
+        "stddev": 0.086,
         "min": 0.922,
-        "max": 1.132
+        "max": 1.175
       },
-      "bl_pct": 100,
+      "bl_pct": 60,
       "majority_hold": true,
       "hold_targets": {
-        "3": {
-          "target_s": 183.1,
-          "stddev_s": 0.9,
-          "delay_s": 62.8,
-          "delay_stddev_s": 17,
-          "band_s": 17,
+        "4": {
+          "target_s": 182.2,
+          "stddev_s": 29.2,
+          "delay_s": 22.6,
+          "delay_stddev_s": 6.6,
+          "band_s": 6.6,
           "effective_cd_s": 45,
-          "count": 5,
+          "count": 9,
           "total_samples": 10
         },
-        "4": {
-          "target_s": 183.7,
-          "stddev_s": 23.1,
-          "delay_s": 23.7,
-          "delay_stddev_s": 11.4,
-          "band_s": 11.4,
+        "5": {
+          "target_s": 237.5,
+          "stddev_s": 23.5,
+          "delay_s": 12.8,
+          "delay_stddev_s": 1.3,
+          "band_s": 5,
           "effective_cd_s": 45,
           "count": 6,
           "total_samples": 10
         },
         "6": {
-          "target_s": 373.9,
-          "stddev_s": 43,
-          "delay_s": 33.2,
-          "delay_stddev_s": 19.3,
-          "band_s": 19.3,
-          "effective_cd_s": 45,
-          "count": 7,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 369,
-          "stddev_s": 27.1,
-          "delay_s": 30.7,
-          "delay_stddev_s": 11.9,
-          "band_s": 11.9,
+          "target_s": 324.1,
+          "stddev_s": 43.8,
+          "delay_s": 13.5,
+          "delay_stddev_s": 16.3,
+          "band_s": 16.3,
           "effective_cd_s": 45,
           "count": 6,
           "total_samples": 10
         },
-        "8": {
-          "target_s": 429.4,
-          "stddev_s": 33.8,
-          "delay_s": 13.9,
-          "delay_stddev_s": 3.4,
-          "band_s": 5,
+        "7": {
+          "target_s": 364.4,
+          "stddev_s": 28.3,
+          "delay_s": 26.1,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
           "effective_cd_s": 45,
-          "count": 7,
+          "count": 8,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 427,
+          "stddev_s": 30,
+          "delay_s": 14.5,
+          "delay_stddev_s": 5.5,
+          "band_s": 5.5,
+          "effective_cd_s": 45,
+          "count": 6,
           "total_samples": 10
         }
       }
@@ -234,6 +234,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "40163f07ad038060",
+  "source_signature": "ecae5d3c229c4873",
   "ingest_version": 2
 }

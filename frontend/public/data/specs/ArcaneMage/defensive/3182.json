@@ -5,9 +5,9 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Alter Time": {
-      "sample_count": 7,
-      "avg_first_cast_s": 75.7,
-      "stddev_first_cast_s": 54.5,
+      "sample_count": 8,
+      "avg_first_cast_s": 74.5,
+      "stddev_first_cast_s": 50.5,
       "avg_gap_s": 97.1,
       "stddev_gap_s": 40,
       "hold_targets": {
@@ -15,20 +15,14 @@
           "target_s": 230.9,
           "stddev_s": 77.7,
           "count": 4,
-          "total_samples": 7
-        },
-        "2": {
-          "target_s": 212,
-          "stddev_s": 48.8,
-          "count": 3,
-          "total_samples": 7
+          "total_samples": 8
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.52,
-        "stddev": 0.23,
+        "avg": 0.482,
+        "stddev": 0.238,
         "min": 0.204,
         "max": 0.855
       },
@@ -36,59 +30,52 @@
     },
     "Prismatic Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 59.8,
-      "stddev_first_cast_s": 30.2,
-      "avg_gap_s": 47.4,
-      "stddev_gap_s": 24.4,
+      "avg_first_cast_s": 70,
+      "stddev_first_cast_s": 42.9,
+      "avg_gap_s": 48,
+      "stddev_gap_s": 25.7,
       "hold_targets": {
         "1": {
-          "target_s": 103.4,
-          "stddev_s": 35.8,
-          "count": 8,
+          "target_s": 102.6,
+          "stddev_s": 38.3,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 180,
-          "stddev_s": 36.5,
-          "count": 8,
+          "target_s": 198.5,
+          "stddev_s": 37.6,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 223.5,
-          "stddev_s": 42.6,
-          "count": 8,
+          "target_s": 240.7,
+          "stddev_s": 45.1,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.4,
-      "avg_uses_per_min": 1.09,
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 0.99,
       "uses_per_min": {
-        "avg": 1.086,
-        "stddev": 0.385,
-        "min": 0.611,
+        "avg": 0.991,
+        "stddev": 0.47,
+        "min": 0.218,
         "max": 1.764
       },
       "majority_hold": true
     },
     "Mirror Image": {
       "sample_count": 5,
-      "avg_first_cast_s": 123.8,
-      "stddev_first_cast_s": 91,
-      "avg_gap_s": 138.6,
-      "stddev_gap_s": 35.3,
-      "hold_targets": {
-        "1": {
-          "target_s": 271.1,
-          "stddev_s": 1.5,
-          "count": 2,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.32,
+      "avg_first_cast_s": 149.9,
+      "stddev_first_cast_s": 104.1,
+      "avg_gap_s": 127.1,
+      "stddev_gap_s": 41.2,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.315,
-        "stddev": 0.116,
+        "avg": 0.281,
+        "stddev": 0.114,
         "min": 0.183,
         "max": 0.428
       },
@@ -116,7 +103,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 342245,
-      "avg_uses": 2.6,
+      "avg_uses": 2.4,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -128,14 +115,14 @@
     },
     {
       "spell_id": 55342,
-      "avg_uses": 1.6,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 235450,
-      "avg_uses": 5.4,
-      "min_uses": 3,
+      "avg_uses": 4.9,
+      "min_uses": 1,
       "max_uses": 9
     }
   ],
@@ -210,6 +197,6 @@
       "name": "Alter Time"
     }
   },
-  "source_signature": "62647220c28ccdb3",
+  "source_signature": "4c3621a72f4d26af",
   "ingest_version": 2
 }

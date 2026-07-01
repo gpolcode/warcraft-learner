@@ -3,65 +3,76 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 543.8,
-  "downtime_threshold_ms": 2915,
-  "top_avg_efficiency": 73,
-  "top_efficiency_stddev": 3.7,
+  "avg_duration_s": 549.5,
+  "downtime_threshold_ms": 2926,
+  "top_avg_efficiency": 73.3,
+  "top_efficiency_stddev": 3.3,
   "per_cd_benchmarks": {
     "Trueshot": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.9,
-      "stddev_first_cast_s": 1.8,
-      "avg_gap_s": 126,
-      "stddev_gap_s": 6.2,
-      "avg_bl_offset_s": 14.4,
-      "stddev_bl_offset_s": 6.3,
+      "avg_first_cast_s": 7,
+      "stddev_first_cast_s": 2.4,
+      "avg_gap_s": 127.3,
+      "stddev_gap_s": 7,
+      "avg_bl_offset_s": 16.1,
+      "stddev_bl_offset_s": 10.4,
       "avg_uses": 5,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.552,
-        "stddev": 0.022,
-        "min": 0.516,
+        "avg": 0.547,
+        "stddev": 0.02,
+        "min": 0.527,
         "max": 0.587
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": true,
-      "hold_targets": {}
+      "hold_targets": {
+        "5": {
+          "target_s": 520.7,
+          "stddev_s": 14.3,
+          "delay_s": 18.2,
+          "delay_stddev_s": 7.7,
+          "band_s": 7.7,
+          "effective_cd_s": 120,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
     },
     "Volley": {
       "sample_count": 10,
-      "avg_first_cast_s": 12.5,
-      "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 60.1,
-      "stddev_gap_s": 14.2,
-      "avg_bl_offset_s": 11.6,
-      "stddev_bl_offset_s": 8.1,
+      "avg_first_cast_s": 12.6,
+      "stddev_first_cast_s": 0.8,
+      "avg_gap_s": 59.5,
+      "stddev_gap_s": 14,
+      "avg_bl_offset_s": 8.1,
+      "stddev_bl_offset_s": 10.6,
       "avg_uses": 9.5,
-      "avg_uses_per_min": 1.05,
+      "avg_uses_per_min": 1.04,
       "uses_per_min": {
-        "avg": 1.047,
-        "stddev": 0.044,
-        "min": 0.997,
-        "max": 1.136
+        "avg": 1.037,
+        "stddev": 0.041,
+        "min": 0.954,
+        "max": 1.082
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 74.3,
+          "target_s": 74.4,
           "stddev_s": 1.1,
-          "delay_s": 17.1,
-          "delay_stddev_s": 1.6,
+          "delay_s": 16.9,
+          "delay_stddev_s": 1.5,
           "band_s": 5,
           "effective_cd_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "3": {
-          "target_s": 136.5,
-          "stddev_s": 1,
-          "delay_s": 17.2,
-          "delay_stddev_s": 1.5,
+          "target_s": 136.2,
+          "stddev_s": 0.8,
+          "delay_s": 16.5,
+          "delay_stddev_s": 1.4,
           "band_s": 5,
           "effective_cd_s": 45,
           "count": 10,
@@ -69,22 +80,22 @@
         },
         "5": {
           "target_s": 251.7,
-          "stddev_s": 4.2,
-          "delay_s": 21.8,
-          "delay_stddev_s": 6.4,
-          "band_s": 6.4,
+          "stddev_s": 3.6,
+          "delay_s": 22.7,
+          "delay_stddev_s": 6.2,
+          "band_s": 6.2,
           "effective_cd_s": 45,
           "count": 6,
           "total_samples": 10
         },
         "7": {
-          "target_s": 376.7,
-          "stddev_s": 13.3,
-          "delay_s": 35.8,
-          "delay_stddev_s": 9.3,
-          "band_s": 9.3,
+          "target_s": 373,
+          "stddev_s": 14.7,
+          "delay_s": 32,
+          "delay_stddev_s": 11.7,
+          "band_s": 11.7,
           "effective_cd_s": 45,
-          "count": 10,
+          "count": 9,
           "total_samples": 10
         }
       }
@@ -203,6 +214,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "1ade75cd41a5171c",
+  "source_signature": "a1e7c626795d49f3",
   "ingest_version": 2
 }

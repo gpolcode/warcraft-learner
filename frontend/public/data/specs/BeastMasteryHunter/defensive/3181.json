@@ -6,49 +6,59 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 185,
-      "stddev_first_cast_s": 173.7,
-      "avg_gap_s": 128,
-      "stddev_gap_s": 114,
+      "avg_first_cast_s": 214.5,
+      "stddev_first_cast_s": 177.1,
+      "avg_gap_s": 120.2,
+      "stddev_gap_s": 126.5,
       "hold_targets": {
         "1": {
-          "target_s": 358.2,
-          "stddev_s": 77.8,
-          "count": 6,
+          "target_s": 393.9,
+          "stddev_s": 42.1,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.38,
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.378,
-        "stddev": 0.174,
-        "min": 0.123,
-        "max": 0.635
+        "avg": 0.373,
+        "stddev": 0.098,
+        "min": 0.236,
+        "max": 0.571
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 5,
-      "avg_first_cast_s": 214.4,
-      "stddev_first_cast_s": 145.2,
-      "avg_gap_s": 124.1,
-      "stddev_gap_s": 75.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 372.6,
-          "stddev_s": 8.4,
-          "count": 2,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.28,
+      "sample_count": 9,
+      "avg_first_cast_s": 352.6,
+      "stddev_first_cast_s": 132.3,
+      "avg_gap_s": 126.5,
+      "stddev_gap_s": 37.6,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.28,
-        "stddev": 0.151,
-        "min": 0.116,
-        "max": 0.459
+        "avg": 0.214,
+        "stddev": 0.114,
+        "min": 0.114,
+        "max": 0.457
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 4,
+      "avg_first_cast_s": 422.2,
+      "stddev_first_cast_s": 39.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.118,
+        "stddev": 0.003,
+        "min": 0.114,
+        "max": 0.122
       },
       "majority_hold": false
     }
@@ -56,14 +66,20 @@
   "defensive_windows": [],
   "top_defensives_summary": [
     {
-      "spell_id": 264735,
-      "avg_uses": 3.2,
+      "spell_id": 186265,
+      "avg_uses": 1,
       "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.1,
+      "min_uses": 2,
       "max_uses": 5
     },
     {
       "spell_id": 109304,
-      "avg_uses": 2.4,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -113,6 +129,6 @@
       "name": "Survival of the Fittest"
     }
   },
-  "source_signature": "9416b681ccf31f72",
+  "source_signature": "7f81ed1bacd77d07",
   "ingest_version": 2
 }

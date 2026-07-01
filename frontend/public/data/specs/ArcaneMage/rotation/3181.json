@@ -3,23 +3,23 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 496.5,
+  "avg_duration_s": 494.9,
   "downtime_threshold_ms": 2590,
-  "top_avg_efficiency": 69.9,
-  "top_efficiency_stddev": 4.8,
+  "top_avg_efficiency": 70.2,
+  "top_efficiency_stddev": 4.9,
   "per_cd_benchmarks": {
     "Arcane Surge": {
       "sample_count": 10,
-      "avg_first_cast_s": 7.8,
-      "stddev_first_cast_s": 3.7,
+      "avg_first_cast_s": 7.6,
+      "stddev_first_cast_s": 3.1,
       "avg_gap_s": 105.6,
-      "stddev_gap_s": 25.4,
-      "avg_bl_offset_s": 3.5,
-      "stddev_bl_offset_s": 2.8,
+      "stddev_gap_s": 25.6,
+      "avg_bl_offset_s": 9.3,
+      "stddev_bl_offset_s": 10.8,
       "avg_uses": 5.3,
       "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.64,
+        "avg": 0.642,
         "stddev": 0.063,
         "min": 0.542,
         "max": 0.727
@@ -31,8 +31,18 @@
           "target_s": 177.4,
           "stddev_s": 9.9,
           "delay_s": 79.5,
-          "delay_stddev_s": 11.1,
-          "band_s": 11.1,
+          "delay_stddev_s": 10.5,
+          "band_s": 10.5,
+          "effective_cd_s": 90,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 370.5,
+          "stddev_s": 55.9,
+          "delay_s": 10.4,
+          "delay_stddev_s": 3.6,
+          "band_s": 5,
           "effective_cd_s": 90,
           "count": 5,
           "total_samples": 10
@@ -41,19 +51,19 @@
     },
     "Touch of the Magi": {
       "sample_count": 10,
-      "avg_first_cast_s": 8,
-      "stddev_first_cast_s": 3.7,
-      "avg_gap_s": 54.6,
-      "stddev_gap_s": 16.6,
-      "avg_bl_offset_s": 3.9,
-      "stddev_bl_offset_s": 3,
-      "avg_uses": 9.5,
-      "avg_uses_per_min": 1.15,
+      "avg_first_cast_s": 7.7,
+      "stddev_first_cast_s": 3.2,
+      "avg_gap_s": 53.9,
+      "stddev_gap_s": 16.1,
+      "avg_bl_offset_s": -1.7,
+      "stddev_bl_offset_s": 12.5,
+      "avg_uses": 9.6,
+      "avg_uses_per_min": 1.16,
       "uses_per_min": {
-        "avg": 1.148,
-        "stddev": 0.044,
+        "avg": 1.165,
+        "stddev": 0.057,
         "min": 1.084,
-        "max": 1.222
+        "max": 1.276
       },
       "bl_pct": 40,
       "majority_hold": true,
@@ -62,8 +72,8 @@
           "target_s": 191.4,
           "stddev_s": 7.4,
           "delay_s": 46.3,
-          "delay_stddev_s": 10,
-          "band_s": 10,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
           "effective_cd_s": 45,
           "count": 8,
           "total_samples": 10
@@ -92,17 +102,17 @@
     },
     "Presence of Mind": {
       "sample_count": 10,
-      "avg_first_cast_s": 40.7,
-      "stddev_first_cast_s": 59.8,
-      "avg_gap_s": 94.4,
-      "stddev_gap_s": 87.2,
-      "avg_bl_offset_s": 11.2,
-      "stddev_bl_offset_s": 4.9,
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 0.66,
+      "avg_first_cast_s": 40.4,
+      "stddev_first_cast_s": 59.9,
+      "avg_gap_s": 96,
+      "stddev_gap_s": 87.7,
+      "avg_bl_offset_s": 10.4,
+      "stddev_bl_offset_s": 4.8,
+      "avg_uses": 5.2,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.66,
-        "stddev": 0.366,
+        "avg": 0.65,
+        "stddev": 0.358,
         "min": 0.234,
         "max": 1.222
       },
@@ -120,11 +130,11 @@
           "total_samples": 10
         },
         "3": {
-          "target_s": 303.8,
-          "stddev_s": 142.9,
+          "target_s": 303.2,
+          "stddev_s": 143.7,
           "delay_s": 78.8,
-          "delay_stddev_s": 45.3,
-          "band_s": 45.3,
+          "delay_stddev_s": 46.3,
+          "band_s": 46.3,
           "effective_cd_s": 60,
           "count": 6,
           "total_samples": 10
@@ -283,6 +293,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "8871c2860302e166",
+  "source_signature": "b579d4bdea4b5df2",
   "ingest_version": 2
 }

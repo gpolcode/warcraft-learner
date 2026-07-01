@@ -4,68 +4,61 @@
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Aspect of the Turtle": {
-      "sample_count": 3,
-      "avg_first_cast_s": 247.4,
-      "stddev_first_cast_s": 148.3,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+    "Survival of the Fittest": {
+      "sample_count": 9,
+      "avg_first_cast_s": 196.6,
+      "stddev_first_cast_s": 174.2,
+      "avg_gap_s": 99.8,
+      "stddev_gap_s": 90.8,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.12,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.12,
-        "stddev": 0.006,
-        "min": 0.115,
-        "max": 0.126
+        "avg": 0.442,
+        "stddev": 0.244,
+        "min": 0.126,
+        "max": 0.922
       },
       "majority_hold": false
     },
-    "Survival of the Fittest": {
-      "sample_count": 10,
-      "avg_first_cast_s": 133.1,
-      "stddev_first_cast_s": 146.1,
-      "avg_gap_s": 127.2,
-      "stddev_gap_s": 116.1,
-      "hold_targets": {
-        "1": {
-          "target_s": 409.9,
-          "stddev_s": 47.3,
-          "count": 5,
-          "total_samples": 10
-        }
-      },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.42,
-      "uses_per_min": {
-        "avg": 0.42,
-        "stddev": 0.216,
-        "min": 0.226,
-        "max": 0.922
-      },
-      "majority_hold": true
-    },
     "Exhilaration": {
-      "sample_count": 4,
-      "avg_first_cast_s": 279.7,
-      "stddev_first_cast_s": 184,
-      "avg_gap_s": 254.4,
-      "stddev_gap_s": 93.7,
+      "sample_count": 5,
+      "avg_first_cast_s": 258.6,
+      "stddev_first_cast_s": 104.3,
+      "avg_gap_s": 139.9,
+      "stddev_gap_s": 90.9,
       "hold_targets": {
         "1": {
-          "target_s": 377.9,
-          "stddev_s": 43.6,
+          "target_s": 437.8,
+          "stddev_s": 41.1,
           "count": 2,
-          "total_samples": 4
+          "total_samples": 5
         }
       },
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.18,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.179,
-        "stddev": 0.072,
+        "avg": 0.271,
+        "stddev": 0.11,
+        "min": 0.122,
+        "max": 0.386
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 6,
+      "avg_first_cast_s": 318.5,
+      "stddev_first_cast_s": 122.4,
+      "avg_gap_s": 237.2,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.142,
+        "stddev": 0.046,
         "min": 0.115,
-        "max": 0.252
+        "max": 0.235
       },
       "majority_hold": false
     }
@@ -74,21 +67,21 @@
   "top_defensives_summary": [
     {
       "spell_id": 186265,
-      "avg_uses": 1,
+      "avg_uses": 1.2,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     },
     {
       "spell_id": 264735,
-      "avg_uses": 3.5,
-      "min_uses": 2,
+      "avg_uses": 3.7,
+      "min_uses": 1,
       "max_uses": 8
     },
     {
       "spell_id": 109304,
-      "avg_uses": 1.5,
+      "avg_uses": 2.2,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -136,6 +129,6 @@
       "name": "Survival of the Fittest"
     }
   },
-  "source_signature": "40163f07ad038060",
+  "source_signature": "ecae5d3c229c4873",
   "ingest_version": 2
 }
