@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Rallying Cry": {
       "sample_count": 7,
-      "avg_first_cast_s": 312.5,
-      "stddev_first_cast_s": 177,
-      "avg_gap_s": 371,
-      "stddev_gap_s": 19,
+      "avg_first_cast_s": 371.5,
+      "stddev_first_cast_s": 158.5,
+      "avg_gap_s": 357.5,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.16,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.14,
       "uses_per_min": {
-        "avg": 0.162,
-        "stddev": 0.058,
+        "avg": 0.143,
+        "stddev": 0.051,
         "min": 0.114,
         "max": 0.256
       },
@@ -23,75 +23,75 @@
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 83.1,
-      "stddev_first_cast_s": 115.5,
-      "avg_gap_s": 76.8,
-      "stddev_gap_s": 62.9,
+      "avg_first_cast_s": 114.4,
+      "stddev_first_cast_s": 136.3,
+      "avg_gap_s": 82.3,
+      "stddev_gap_s": 74.4,
       "hold_targets": {
         "1": {
-          "target_s": 161.5,
-          "stddev_s": 115.5,
+          "target_s": 246.3,
+          "stddev_s": 146.2,
           "count": 9,
           "total_samples": 10
         },
         "2": {
           "target_s": 272.8,
-          "stddev_s": 101,
-          "count": 9,
+          "stddev_s": 107,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 393.3,
-          "stddev_s": 78.3,
-          "count": 7,
+          "target_s": 380.7,
+          "stddev_s": 77.3,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.7,
-      "avg_uses_per_min": 0.72,
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.72,
-        "stddev": 0.289,
-        "min": 0.245,
+        "avg": 0.631,
+        "stddev": 0.303,
+        "min": 0.237,
         "max": 1.258
       },
       "majority_hold": true
     },
     "Enraged Regeneration": {
-      "sample_count": 2,
-      "avg_first_cast_s": 242.4,
-      "stddev_first_cast_s": 324.2,
+      "sample_count": 1,
+      "avg_first_cast_s": 13.1,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": 425,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.17,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.173,
-        "stddev": 0.079,
-        "min": 0.117,
+        "avg": 0.229,
+        "stddev": 0,
+        "min": 0.229,
         "max": 0.229
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 184364,
-      "avg_uses": 1.5,
-      "min_uses": 1,
+      "avg_uses": 2,
+      "min_uses": 2,
       "max_uses": 2
     },
     {
       "spell_id": 97462,
-      "avg_uses": 1.3,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 23920,
-      "avg_uses": 5.7,
+      "avg_uses": 5,
       "min_uses": 2,
       "max_uses": 11
     }
@@ -141,6 +141,6 @@
       "name": "Enraged Regeneration"
     }
   },
-  "source_signature": "4af5c67f23cfdb16",
+  "source_signature": "bac9871214309224",
   "ingest_version": 2
 }

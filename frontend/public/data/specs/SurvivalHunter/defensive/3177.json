@@ -5,35 +5,35 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
-      "sample_count": 10,
-      "avg_first_cast_s": 77.9,
-      "stddev_first_cast_s": 38.7,
-      "avg_gap_s": 78.5,
-      "stddev_gap_s": 41,
+      "sample_count": 9,
+      "avg_first_cast_s": 79.5,
+      "stddev_first_cast_s": 46.7,
+      "avg_gap_s": 81.5,
+      "stddev_gap_s": 40.1,
       "hold_targets": {},
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.691,
-        "stddev": 0.193,
-        "min": 0.288,
+        "avg": 0.675,
+        "stddev": 0.199,
+        "min": 0.287,
         "max": 0.897
       },
       "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 2,
-      "avg_first_cast_s": 106.1,
-      "stddev_first_cast_s": 58.1,
+      "sample_count": 1,
+      "avg_first_cast_s": 147.1,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.278,
-        "stddev": 0.003,
-        "min": 0.276,
+        "avg": 0.28,
+        "stddev": 0,
+        "min": 0.28,
         "max": 0.28
       },
       "majority_hold": false
@@ -73,12 +73,46 @@
           "count": 7
         }
       ]
+    },
+    {
+      "time_s": 183.6,
+      "dmg_avg": 247633,
+      "dmg_stddev": 104418,
+      "dmg_min": 60794,
+      "dmg_max": 350736,
+      "dmg_pct_avg": 0.045,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 213106,
+          "min_damage": 42153,
+          "max_damage": 285210,
+          "count": 6
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 57696,
+          "min_damage": 49477,
+          "max_damage": 65526,
+          "count": 8
+        }
+      ]
     }
   ],
   "top_defensives_summary": [
     {
       "spell_id": 264735,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -142,6 +176,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "e98a5e0402d66a19",
+  "source_signature": "5d2cf021daed60ba",
   "ingest_version": 2
 }

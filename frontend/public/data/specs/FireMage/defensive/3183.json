@@ -6,90 +6,90 @@
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 157,
-      "stddev_first_cast_s": 100.4,
-      "avg_gap_s": 82.2,
-      "stddev_gap_s": 44.6,
+      "avg_first_cast_s": 169.8,
+      "stddev_first_cast_s": 92.5,
+      "avg_gap_s": 81.7,
+      "stddev_gap_s": 46,
       "hold_targets": {
         "1": {
           "target_s": 246.5,
-          "stddev_s": 87.8,
+          "stddev_s": 74.7,
           "count": 8,
           "total_samples": 10
         },
         "2": {
           "target_s": 330.8,
-          "stddev_s": 129.7,
+          "stddev_s": 119.9,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 284,
-          "stddev_s": 93.7,
+          "target_s": 329.1,
+          "stddev_s": 86.9,
           "count": 5,
           "total_samples": 10
         },
         "4": {
-          "target_s": 399.1,
-          "stddev_s": 96.9,
+          "target_s": 450.8,
+          "stddev_s": 91.5,
           "count": 6,
           "total_samples": 10
         },
         "5": {
-          "target_s": 450.9,
-          "stddev_s": 75.5,
+          "target_s": 494.5,
+          "stddev_s": 76.5,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.9,
-      "avg_uses_per_min": 0.55,
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.545,
-        "stddev": 0.242,
+        "avg": 0.535,
+        "stddev": 0.232,
         "min": 0.112,
         "max": 0.878
       },
       "majority_hold": true
     },
     "Alter Time": {
-      "sample_count": 5,
-      "avg_first_cast_s": 154.6,
-      "stddev_first_cast_s": 55.5,
-      "avg_gap_s": 94.5,
-      "stddev_gap_s": 57.1,
+      "sample_count": 6,
+      "avg_first_cast_s": 161,
+      "stddev_first_cast_s": 52.1,
+      "avg_gap_s": 95.6,
+      "stddev_gap_s": 49.6,
       "hold_targets": {
         "1": {
-          "target_s": 240.3,
-          "stddev_s": 71.1,
-          "count": 3,
-          "total_samples": 5
+          "target_s": 269.4,
+          "stddev_s": 61.4,
+          "count": 4,
+          "total_samples": 6
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.267,
-        "stddev": 0.063,
+        "avg": 0.281,
+        "stddev": 0.065,
         "min": 0.219,
-        "max": 0.339
+        "max": 0.35
       },
       "majority_hold": true
     },
     "Greater Invisibility": {
       "sample_count": 9,
-      "avg_first_cast_s": 375.6,
-      "stddev_first_cast_s": 86.2,
-      "avg_gap_s": 194.9,
-      "stddev_gap_s": 8.8,
+      "avg_first_cast_s": 324.9,
+      "stddev_first_cast_s": 121.5,
+      "avg_gap_s": 138.6,
+      "stddev_gap_s": 51.9,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.14,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.136,
-        "stddev": 0.049,
+        "avg": 0.188,
+        "stddev": 0.156,
         "min": 0.109,
-        "max": 0.226
+        "max": 0.583
       },
       "majority_hold": false
     }
@@ -98,21 +98,21 @@
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 4.9,
+      "avg_uses": 4.8,
       "min_uses": 1,
       "max_uses": 8
     },
     {
       "spell_id": 342245,
-      "avg_uses": 2.4,
+      "avg_uses": 2.5,
       "min_uses": 2,
       "max_uses": 3
     },
     {
       "spell_id": 110959,
-      "avg_uses": 1.2,
+      "avg_uses": 1.7,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 5
     }
   ],
   "defensives": [
@@ -186,6 +186,6 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "9f40d4165ef2bda0",
+  "source_signature": "dd744c197949d353",
   "ingest_version": 2
 }

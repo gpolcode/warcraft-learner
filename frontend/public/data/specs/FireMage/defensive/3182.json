@@ -6,88 +6,65 @@
   "per_defensive_benchmarks": {
     "Blazing Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 88.6,
-      "stddev_first_cast_s": 33.4,
-      "avg_gap_s": 59.9,
-      "stddev_gap_s": 37.9,
+      "avg_first_cast_s": 89.9,
+      "stddev_first_cast_s": 33.8,
+      "avg_gap_s": 56.3,
+      "stddev_gap_s": 29.5,
       "hold_targets": {
         "1": {
           "target_s": 151.1,
-          "stddev_s": 55.4,
+          "stddev_s": 44.1,
           "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 187.6,
-          "stddev_s": 28.4,
-          "count": 5,
+          "target_s": 198.9,
+          "stddev_s": 32.6,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.4,
-      "avg_uses_per_min": 0.72,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.74,
       "uses_per_min": {
-        "avg": 0.718,
-        "stddev": 0.233,
-        "min": 0.404,
+        "avg": 0.739,
+        "stddev": 0.21,
+        "min": 0.407,
         "max": 1.024
       },
       "majority_hold": true
     },
     "Alter Time": {
-      "sample_count": 2,
-      "avg_first_cast_s": 140.6,
-      "stddev_first_cast_s": 178.8,
+      "sample_count": 1,
+      "avg_first_cast_s": 14.2,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": 66.4,
       "stddev_gap_s": 23.9,
       "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.87,
       "uses_per_min": {
-        "avg": 0.536,
-        "stddev": 0.472,
-        "min": 0.202,
+        "avg": 0.87,
+        "stddev": 0,
+        "min": 0.87,
         "max": 0.87
       },
-      "majority_hold": false
-    },
-    "Greater Invisibility": {
-      "sample_count": 1,
-      "avg_first_cast_s": 169.6,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.2,
-      "uses_per_min": {
-        "avg": 0.202,
-        "stddev": 0,
-        "min": 0.202,
-        "max": 0.202
-      },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 235313,
-      "avg_uses": 3.4,
+      "avg_uses": 3.5,
       "min_uses": 2,
       "max_uses": 5
     },
     {
       "spell_id": 342245,
-      "avg_uses": 2.5,
-      "min_uses": 1,
+      "avg_uses": 4,
+      "min_uses": 4,
       "max_uses": 4
-    },
-    {
-      "spell_id": 110959,
-      "avg_uses": 1,
-      "min_uses": 1,
-      "max_uses": 1
     }
   ],
   "defensives": [
@@ -161,6 +138,6 @@
       "name": "Mass Barrier"
     }
   },
-  "source_signature": "ff527f2399b5ad24",
+  "source_signature": "74779763ffb51d95",
   "ingest_version": 2
 }

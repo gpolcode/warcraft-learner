@@ -6,62 +6,68 @@
   "per_defensive_benchmarks": {
     "Rallying Cry": {
       "sample_count": 9,
-      "avg_first_cast_s": 211.5,
-      "stddev_first_cast_s": 111.2,
-      "avg_gap_s": 206.4,
-      "stddev_gap_s": 18.5,
+      "avg_first_cast_s": 245.1,
+      "stddev_first_cast_s": 128.3,
+      "avg_gap_s": 207.6,
+      "stddev_gap_s": 19.6,
       "hold_targets": {
         "1": {
           "target_s": 325.9,
-          "stddev_s": 11.8,
-          "count": 5,
+          "stddev_s": 13,
+          "count": 4,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.19,
       "uses_per_min": {
-        "avg": 0.208,
-        "stddev": 0.096,
-        "min": 0.11,
+        "avg": 0.194,
+        "stddev": 0.101,
+        "min": 0.109,
         "max": 0.336
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 76.6,
-      "stddev_first_cast_s": 74,
-      "avg_gap_s": 49.8,
-      "stddev_gap_s": 26.7,
+      "avg_first_cast_s": 87.2,
+      "stddev_first_cast_s": 85,
+      "avg_gap_s": 49.9,
+      "stddev_gap_s": 28.4,
       "hold_targets": {
         "1": {
-          "target_s": 113.5,
-          "stddev_s": 72.6,
-          "count": 10,
+          "target_s": 112.9,
+          "stddev_s": 79.5,
+          "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 174.1,
-          "stddev_s": 102.3,
-          "count": 9,
+          "target_s": 174,
+          "stddev_s": 110.9,
+          "count": 8,
           "total_samples": 10
         },
         "3": {
           "target_s": 217.4,
-          "stddev_s": 16.8,
+          "stddev_s": 17.6,
           "count": 6,
           "total_samples": 10
         },
         "4": {
-          "target_s": 280.4,
-          "stddev_s": 48.2,
-          "count": 6,
+          "target_s": 311,
+          "stddev_s": 45.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 397.3,
+          "stddev_s": 42.8,
+          "count": 4,
           "total_samples": 10
         },
         "7": {
           "target_s": 511.3,
-          "stddev_s": 80.4,
+          "stddev_s": 58.5,
           "count": 5,
           "total_samples": 10
         },
@@ -72,13 +78,13 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 8.6,
-      "avg_uses_per_min": 0.95,
+      "avg_uses": 8.5,
+      "avg_uses_per_min": 0.93,
       "uses_per_min": {
-        "avg": 0.954,
-        "stddev": 0.276,
+        "avg": 0.934,
+        "stddev": 0.245,
         "min": 0.336,
-        "max": 1.399
+        "max": 1.267
       },
       "majority_hold": true
     }
@@ -87,15 +93,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 97462,
-      "avg_uses": 1.9,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 23920,
-      "avg_uses": 8.6,
+      "avg_uses": 8.5,
       "min_uses": 3,
-      "max_uses": 12
+      "max_uses": 11
     }
   ],
   "defensives": [
@@ -143,6 +149,6 @@
       "name": "Enraged Regeneration"
     }
   },
-  "source_signature": "46cc76790649fb71",
+  "source_signature": "947cab5193c55216",
   "ingest_version": 2
 }

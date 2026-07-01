@@ -6,18 +6,18 @@
   "windows": [
     {
       "time_s": 2,
-      "dmg_avg": 9840154,
-      "dmg_stddev": 696404,
-      "dmg_min": 8485319,
+      "dmg_avg": 9598568,
+      "dmg_stddev": 1042336,
+      "dmg_min": 7391049,
       "dmg_max": 10939631,
       "common_cds": [
         "Odyn's Fury"
       ],
-      "window_length_s": 17.6,
+      "window_length_s": 17.2,
       "ability_breakdown": [
         {
           "spell_id": 335096,
-          "avg_damage": 2216267,
+          "avg_damage": 2234110,
           "min_damage": 1565350,
           "max_damage": 3450888,
           "count": 10,
@@ -26,7 +26,7 @@
         },
         {
           "spell_id": 435222,
-          "avg_damage": 1806666,
+          "avg_damage": 1861393,
           "min_damage": 1070258,
           "max_damage": 2521920,
           "count": 10,
@@ -34,18 +34,9 @@
           "is_passive": false
         },
         {
-          "spell_id": 6343,
-          "avg_damage": 957995,
-          "min_damage": 567155,
-          "max_damage": 1474816,
-          "count": 5,
-          "avg_casts": 3,
-          "is_passive": false
-        },
-        {
           "spell_id": 201363,
-          "avg_damage": 775954,
-          "min_damage": 648988,
+          "avg_damage": 760066,
+          "min_damage": 501009,
           "max_damage": 901243,
           "count": 10,
           "avg_casts": 9,
@@ -53,20 +44,29 @@
         },
         {
           "spell_id": 201364,
-          "avg_damage": 718797,
+          "avg_damage": 730850,
           "min_damage": 574521,
           "max_damage": 828685,
-          "count": 10,
+          "count": 9,
           "avg_casts": 9,
           "is_passive": false
         },
         {
           "spell_id": 184709,
-          "avg_damage": 638563,
-          "min_damage": 561993,
+          "avg_damage": 616861,
+          "min_damage": 421541,
           "max_damage": 730248,
-          "count": 9,
+          "count": 10,
           "avg_casts": 9,
+          "is_passive": false
+        },
+        {
+          "spell_id": 184707,
+          "avg_damage": 477684,
+          "min_damage": 380951,
+          "max_damage": 585406,
+          "count": 5,
+          "avg_casts": 8,
           "is_passive": false
         }
       ]
@@ -85,10 +85,6 @@
     "1719": {
       "icon": "warrior_talent_icon_innerrage",
       "name": "Recklessness"
-    },
-    "6343": {
-      "icon": "spell_nature_thunderclap",
-      "name": "Thunder Clap"
     },
     "23920": {
       "icon": "ability_warrior_shieldreflection",
@@ -109,6 +105,10 @@
     "184364": {
       "icon": "ability_warrior_focusedrage",
       "name": "Enraged Regeneration"
+    },
+    "184707": {
+      "icon": "ability_warrior_rampage",
+      "name": "Rampage"
     },
     "184709": {
       "icon": "ability_warrior_rampage",
@@ -135,7 +135,7 @@
       "name": "Thunder Blast"
     }
   },
-  "source_signature": "364444273f0ebd3c",
+  "source_signature": "26eadca475116eaa",
   "ingest_version": 2,
   "inaccessible_parses": []
 }
