@@ -93,7 +93,110 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 266.7,
+      "dmg_avg": 554466,
+      "dmg_stddev": 136134,
+      "dmg_min": 380998,
+      "dmg_max": 756053,
+      "dmg_pct_avg": 0.028,
+      "window_length_s": 11.9,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 261694,
+          "min_damage": 60240,
+          "max_damage": 537593,
+          "count": 8
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 192413,
+          "min_damage": 137856,
+          "max_damage": 218460,
+          "count": 8
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 153016,
+          "min_damage": 112559,
+          "max_damage": 169048,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 306.6,
+      "dmg_avg": 590516,
+      "dmg_stddev": 202180,
+      "dmg_min": 297818,
+      "dmg_max": 907564,
+      "dmg_pct_avg": 0.028,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 285031,
+          "min_damage": 230417,
+          "max_damage": 316807,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 393.6,
+      "dmg_avg": 610458,
+      "dmg_stddev": 116794,
+      "dmg_min": 461116,
+      "dmg_max": 727184,
+      "dmg_pct_avg": 0.03,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 315372,
+          "min_damage": 47365,
+          "max_damage": 438587,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 291564,
+          "min_damage": 200290,
+          "max_damage": 330093,
+          "count": 8
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -189,8 +292,20 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "9f75016e3789b16c",
-  "ingest_version": 2
+  "source_signature": "3604a342f916da05",
+  "ingest_version": 3
 }

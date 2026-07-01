@@ -70,7 +70,56 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 127.3,
+      "dmg_avg": 481309,
+      "dmg_stddev": 175587,
+      "dmg_min": 289521,
+      "dmg_max": 798637,
+      "dmg_pct_avg": 0.031,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 275219,
+          "min_damage": 45297,
+          "max_damage": 694209,
+          "count": 6
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 153610,
+          "min_damage": 125301,
+          "max_damage": 201839,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 92742,
+          "min_damage": 68988,
+          "max_damage": 105849,
+          "count": 6
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 73086,
+          "min_damage": 49935,
+          "max_damage": 86612,
+          "count": 3
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -134,8 +183,24 @@
     "108280": {
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "44b4386c7b06e632",
-  "ingest_version": 2
+  "source_signature": "12c667998a38a7ac",
+  "ingest_version": 3
 }

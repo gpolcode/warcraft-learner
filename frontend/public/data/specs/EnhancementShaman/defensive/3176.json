@@ -39,7 +39,35 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 156,
+      "dmg_avg": 191479,
+      "dmg_stddev": 7944,
+      "dmg_min": 177943,
+      "dmg_max": 200412,
+      "dmg_pct_avg": 0.031,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 191479,
+          "min_damage": 177943,
+          "max_damage": 200412,
+          "count": 6
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -123,8 +151,12 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
     }
   },
-  "source_signature": "467d0d83201e9ab4",
-  "ingest_version": 2
+  "source_signature": "9648ba8095975901",
+  "ingest_version": 3
 }

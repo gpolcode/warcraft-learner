@@ -6,85 +6,140 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 192.9,
-      "stddev_first_cast_s": 161.9,
-      "avg_gap_s": 198.7,
-      "stddev_gap_s": 117.2,
+      "avg_first_cast_s": 254.2,
+      "stddev_first_cast_s": 136.7,
+      "avg_gap_s": 133.5,
+      "stddev_gap_s": 47.9,
       "hold_targets": {
         "1": {
-          "target_s": 374.8,
-          "stddev_s": 70.3,
-          "count": 6,
+          "target_s": 379.3,
+          "stddev_s": 65.8,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.274,
-        "stddev": 0.105,
-        "min": 0.121,
-        "max": 0.445
+        "avg": 0.254,
+        "stddev": 0.125,
+        "min": 0.12,
+        "max": 0.487
+      },
+      "majority_hold": false
+    },
+    "Spirit Walk": {
+      "sample_count": 2,
+      "avg_first_cast_s": 29.1,
+      "stddev_first_cast_s": 11,
+      "avg_gap_s": 129.6,
+      "stddev_gap_s": 114.9,
+      "hold_targets": {},
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.46,
+      "uses_per_min": {
+        "avg": 0.455,
+        "stddev": 0.064,
+        "min": 0.41,
+        "max": 0.5
+      },
+      "majority_hold": true
+    },
+    "Healing Surge": {
+      "sample_count": 6,
+      "avg_first_cast_s": 124.1,
+      "stddev_first_cast_s": 70.7,
+      "avg_gap_s": 78.7,
+      "stddev_gap_s": 103.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 357,
+          "stddev_s": 33.7,
+          "count": 3,
+          "total_samples": 6
+        },
+        "2": {
+          "target_s": 397.9,
+          "stddev_s": 87.4,
+          "count": 5,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.586,
+        "stddev": 0.329,
+        "min": 0.274,
+        "max": 1.204
       },
       "majority_hold": true
     },
     "Earth Elemental": {
-      "sample_count": 6,
-      "avg_first_cast_s": 290.8,
-      "stddev_first_cast_s": 148.4,
+      "sample_count": 5,
+      "avg_first_cast_s": 412.5,
+      "stddev_first_cast_s": 27.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.12,
       "uses_per_min": {
-        "avg": 0.116,
-        "stddev": 0.003,
-        "min": 0.111,
-        "max": 0.121
+        "avg": 0.122,
+        "stddev": 0.004,
+        "min": 0.116,
+        "max": 0.126
       },
       "majority_hold": false
-    },
-    "Healing Surge": {
-      "sample_count": 3,
-      "avg_first_cast_s": 81.5,
-      "stddev_first_cast_s": 34.8,
-      "avg_gap_s": 35.9,
-      "stddev_gap_s": 49.4,
-      "hold_targets": {},
-      "avg_uses": 9.3,
-      "avg_uses_per_min": 1.07,
-      "uses_per_min": {
-        "avg": 1.066,
-        "stddev": 0.816,
-        "min": 0.124,
-        "max": 1.556
-      },
-      "majority_hold": true
-    },
-    "Spirit Walk": {
-      "sample_count": 1,
-      "avg_first_cast_s": 39.2,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": 84.5,
-      "stddev_gap_s": 54.2,
-      "hold_targets": {},
-      "avg_uses": 6,
-      "avg_uses_per_min": 0.69,
-      "uses_per_min": {
-        "avg": 0.688,
-        "stddev": 0,
-        "min": 0.688,
-        "max": 0.688
-      },
-      "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 375.9,
+      "dmg_avg": 516711,
+      "dmg_stddev": 277444,
+      "dmg_min": 250137,
+      "dmg_max": 959348,
+      "dmg_pct_avg": 0.028,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 228876,
+          "min_damage": 125782,
+          "max_damage": 284817,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 178871,
+          "min_damage": 124355,
+          "max_damage": 209172,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 155475,
+          "min_damage": 133444,
+          "max_damage": 180161,
+          "count": 4
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 2.3,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -96,15 +151,15 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 6,
-      "min_uses": 6,
-      "max_uses": 6
+      "avg_uses": 3.5,
+      "min_uses": 3,
+      "max_uses": 4
     },
     {
       "spell_id": 8004,
-      "avg_uses": 9.3,
-      "min_uses": 1,
-      "max_uses": 14
+      "avg_uses": 4.7,
+      "min_uses": 2,
+      "max_uses": 10
     }
   ],
   "defensives": [
@@ -176,8 +231,20 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "15c98860f5af041b",
-  "ingest_version": 2
+  "source_signature": "ecbc36cb12441787",
+  "ingest_version": 3
 }

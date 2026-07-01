@@ -86,7 +86,145 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 133.7,
+      "dmg_avg": 448014,
+      "dmg_stddev": 105772,
+      "dmg_min": 288162,
+      "dmg_max": 578542,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 238853,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221965,
+          "avg_damage": 206043,
+          "min_damage": 176300,
+          "max_damage": 228697,
+          "count": 4
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 185978,
+          "min_damage": 33057,
+          "max_damage": 453916,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 82500,
+          "min_damage": 68009,
+          "max_damage": 91125,
+          "count": 6
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 25009,
+          "min_damage": 10796,
+          "max_damage": 49888,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 253.7,
+      "dmg_avg": 680724,
+      "dmg_stddev": 66313,
+      "dmg_min": 599585,
+      "dmg_max": 774331,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 415999,
+          "min_damage": 94463,
+          "max_damage": 550232,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 184870,
+          "min_damage": 157487,
+          "max_damage": 199826,
+          "count": 7
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 43332,
+          "min_damage": 24273,
+          "max_damage": 50568,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 401.9,
+      "dmg_avg": 671940,
+      "dmg_stddev": 136184,
+      "dmg_min": 448766,
+      "dmg_max": 817471,
+      "dmg_pct_avg": 0.034,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 277019,
+          "min_damage": 35037,
+          "max_damage": 496397,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 259938,
+          "min_damage": 209397,
+          "max_damage": 301715,
+          "count": 7
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 206666,
+          "min_damage": 186643,
+          "max_damage": 260262,
+          "count": 4
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 29555,
+          "min_damage": 6471,
+          "max_damage": 51974,
+          "count": 4
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 642,
@@ -182,8 +320,24 @@
     "6940": {
       "icon": "spell_holy_sealofsacrifice",
       "name": "Blessing of Sacrifice"
+    },
+    "210380": {
+      "icon": "ability_deathwing_bloodcorruption_earth",
+      "name": "Blessing of Dawn"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "e55d9f31c6b2e236",
-  "ingest_version": 2
+  "source_signature": "455fc96366c49fba",
+  "ingest_version": 3
 }

@@ -87,7 +87,49 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 244.5,
+      "dmg_avg": 409398,
+      "dmg_stddev": 95137,
+      "dmg_min": 233951,
+      "dmg_max": 486142,
+      "dmg_pct_avg": 0.03,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 152910,
+          "min_damage": 118328,
+          "max_damage": 171591,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 116394,
+          "min_damage": 107864,
+          "max_damage": 126927,
+          "count": 6
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 113802,
+          "min_damage": 35973,
+          "max_damage": 206687,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -183,8 +225,20 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
     }
   },
-  "source_signature": "22aec1e57d460c7e",
-  "ingest_version": 2
+  "source_signature": "750c824227e655b7",
+  "ingest_version": 3
 }

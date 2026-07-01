@@ -80,7 +80,42 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 183.8,
+      "dmg_avg": 359801,
+      "dmg_stddev": 99085,
+      "dmg_min": 200133,
+      "dmg_max": 453934,
+      "dmg_pct_avg": 0.044,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 307183,
+          "min_damage": 250267,
+          "max_damage": 337141,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 82474,
+          "min_damage": 76254,
+          "max_damage": 85820,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 642,
@@ -176,8 +211,16 @@
     "6940": {
       "icon": "spell_holy_sealofsacrifice",
       "name": "Blessing of Sacrifice"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "0ef19fca7c22580a",
-  "ingest_version": 2
+  "source_signature": "e03e5d9cb3d939da",
+  "ingest_version": 3
 }

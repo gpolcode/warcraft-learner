@@ -6,91 +6,68 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 10,
-      "avg_first_cast_s": 161.6,
-      "stddev_first_cast_s": 70.9,
-      "avg_gap_s": 139.2,
-      "stddev_gap_s": 39.9,
+      "avg_first_cast_s": 175.7,
+      "stddev_first_cast_s": 66.1,
+      "avg_gap_s": 136.7,
+      "stddev_gap_s": 31.4,
       "hold_targets": {
         "1": {
-          "target_s": 327.7,
-          "stddev_s": 41.1,
-          "count": 7,
+          "target_s": 326.9,
+          "stddev_s": 47.8,
+          "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 511.7,
-          "stddev_s": 94.3,
-          "count": 4,
+          "target_s": 491.1,
+          "stddev_s": 96.4,
+          "count": 5,
           "total_samples": 10
         }
       },
       "avg_uses": 2.5,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.28,
-        "stddev": 0.13,
-        "min": 0.109,
-        "max": 0.553
+        "avg": 0.285,
+        "stddev": 0.061,
+        "min": 0.22,
+        "max": 0.353
       },
       "majority_hold": true
     },
     "Spirit Walk": {
-      "sample_count": 9,
-      "avg_first_cast_s": 106.9,
-      "stddev_first_cast_s": 96.3,
-      "avg_gap_s": 78.9,
-      "stddev_gap_s": 52.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 128.1,
+      "stddev_first_cast_s": 52.4,
+      "avg_gap_s": 72.8,
+      "stddev_gap_s": 51.2,
       "hold_targets": {
         "1": {
-          "target_s": 257.1,
-          "stddev_s": 86,
-          "count": 4,
-          "total_samples": 9
+          "target_s": 327.5,
+          "stddev_s": 64.1,
+          "count": 5,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 351.4,
-          "stddev_s": 124.3,
-          "count": 6,
-          "total_samples": 9
-        },
-        "3": {
-          "target_s": 352.5,
-          "stddev_s": 110.3,
-          "count": 4,
-          "total_samples": 9
+          "target_s": 331.5,
+          "stddev_s": 96.8,
+          "count": 7,
+          "total_samples": 10
         }
       },
-      "avg_uses": 5.9,
+      "avg_uses": 5.8,
       "avg_uses_per_min": 0.67,
       "uses_per_min": {
         "avg": 0.666,
-        "stddev": 0.307,
+        "stddev": 0.312,
         "min": 0.326,
-        "max": 1.107
+        "max": 1.173
       },
       "majority_hold": true
     },
     "Earth Elemental": {
       "sample_count": 6,
-      "avg_first_cast_s": 235.6,
-      "stddev_first_cast_s": 61,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.11,
-      "uses_per_min": {
-        "avg": 0.112,
-        "stddev": 0.003,
-        "min": 0.109,
-        "max": 0.115
-      },
-      "majority_hold": false
-    },
-    "Healing Surge": {
-      "sample_count": 2,
-      "avg_first_cast_s": 333.8,
-      "stddev_first_cast_s": 0.7,
+      "avg_first_cast_s": 296,
+      "stddev_first_cast_s": 107.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -98,20 +75,270 @@
       "avg_uses_per_min": 0.11,
       "uses_per_min": {
         "avg": 0.114,
-        "stddev": 0.001,
-        "min": 0.113,
-        "max": 0.115
+        "stddev": 0.003,
+        "min": 0.109,
+        "max": 0.117
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 2,
+      "avg_first_cast_s": 341.3,
+      "stddev_first_cast_s": 10.5,
+      "avg_gap_s": 1.2,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.175,
+        "stddev": 0.082,
+        "min": 0.117,
+        "max": 0.233
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 181.2,
+      "dmg_avg": 172075,
+      "dmg_stddev": 89030,
+      "dmg_min": 26567,
+      "dmg_max": 234417,
+      "dmg_pct_avg": 0.007,
+      "window_length_s": 6.4,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 172075,
+          "min_damage": 26567,
+          "max_damage": 234417,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 214.6,
+      "dmg_avg": 314969,
+      "dmg_stddev": 82667,
+      "dmg_min": 239111,
+      "dmg_max": 515992,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 11,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 166348,
+          "min_damage": 34982,
+          "max_damage": 226174,
+          "count": 9
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 103066,
+          "min_damage": 77811,
+          "max_damage": 177392,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 327,
+      "dmg_avg": 409972,
+      "dmg_stddev": 44991,
+      "dmg_min": 346191,
+      "dmg_max": 518948,
+      "dmg_pct_avg": 0.017,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 158886,
+          "min_damage": 123630,
+          "max_damage": 213733,
+          "count": 10
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 105577,
+          "min_damage": 87242,
+          "max_damage": 111317,
+          "count": 8
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 84462,
+          "min_damage": 69793,
+          "max_damage": 89053,
+          "count": 8
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 42417,
+          "min_damage": 36696,
+          "max_damage": 46856,
+          "count": 9
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 26065,
+          "min_damage": 16916,
+          "max_damage": 39766,
+          "count": 10
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 740,
+          "min_damage": 645,
+          "max_damage": 870,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 330.8,
+      "dmg_avg": 308374,
+      "dmg_stddev": 138676,
+      "dmg_min": 187499,
+      "dmg_max": 625941,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 8.2,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 148776,
+          "min_damage": 91651,
+          "max_damage": 210935,
+          "count": 9
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 43374,
+          "min_damage": 39926,
+          "max_damage": 46856,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 24329,
+          "min_damage": 11027,
+          "max_damage": 32764,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 396.3,
+      "dmg_avg": 342280,
+      "dmg_stddev": 87204,
+      "dmg_min": 272911,
+      "dmg_max": 454467,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 235271,
+          "min_damage": 227092,
+          "max_damage": 243458,
+          "count": 5
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 43220,
+          "min_damage": 41248,
+          "max_damage": 45087,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 507,
+      "dmg_avg": 646501,
+      "dmg_stddev": 297191,
+      "dmg_min": 0,
+      "dmg_max": 880530,
+      "dmg_pct_avg": 0.028,
+      "window_length_s": 6.7,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 642666,
+          "min_damage": 568752,
+          "max_damage": 734542,
+          "count": 6
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 133903,
+          "min_damage": 96184,
+          "max_damage": 148832,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
       "avg_uses": 2.5,
-      "min_uses": 1,
-      "max_uses": 5
+      "min_uses": 2,
+      "max_uses": 3
     },
     {
       "spell_id": 198103,
@@ -121,15 +348,15 @@
     },
     {
       "spell_id": 58875,
-      "avg_uses": 5.9,
+      "avg_uses": 5.8,
       "min_uses": 3,
       "max_uses": 10
     },
     {
       "spell_id": 8004,
-      "avg_uses": 1,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -201,8 +428,40 @@
     "198103": {
       "icon": "spell_nature_earthelemental_totem",
       "name": "Earth Elemental"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    },
+    "1287445": {
+      "icon": "inv_112_raiddimensius_darkenedsky",
+      "name": "Heaven & Hell"
     }
   },
-  "source_signature": "199409fb06ecffab",
-  "ingest_version": 2
+  "source_signature": "9b7adddf5980a5ad",
+  "ingest_version": 3
 }

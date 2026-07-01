@@ -53,7 +53,83 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 143.5,
+      "dmg_avg": 329952,
+      "dmg_stddev": 66127,
+      "dmg_min": 259957,
+      "dmg_max": 444667,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 204028,
+          "min_damage": 134398,
+          "max_damage": 295997,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 92437,
+          "min_damage": 80874,
+          "max_damage": 97434,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 246.3,
+      "dmg_avg": 375078,
+      "dmg_stddev": 31154,
+      "dmg_min": 339944,
+      "dmg_max": 422786,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 209200,
+          "min_damage": 174386,
+          "max_damage": 223185,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 119899,
+          "min_damage": 113753,
+          "max_damage": 125474,
+          "count": 6
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 55175,
+          "min_damage": 19173,
+          "max_damage": 81221,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
@@ -111,8 +187,20 @@
     "108280": {
       "icon": "ability_shaman_healingtide",
       "name": "Healing Tide Totem"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
     }
   },
-  "source_signature": "c4b415ae30787285",
-  "ingest_version": 2
+  "source_signature": "c3f11792a4051bcf",
+  "ingest_version": 3
 }

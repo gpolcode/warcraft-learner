@@ -4,16 +4,40 @@
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
   "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 8,
+      "avg_first_cast_s": 185.2,
+      "stddev_first_cast_s": 132.2,
+      "avg_gap_s": 244.8,
+      "stddev_gap_s": 94.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 403.4,
+          "stddev_s": 29.2,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.215,
+        "stddev": 0.08,
+        "min": 0.131,
+        "max": 0.368
+      },
+      "majority_hold": true
+    },
     "Spirit Link Totem": {
       "sample_count": 10,
-      "avg_first_cast_s": 71.8,
+      "avg_first_cast_s": 70,
       "stddev_first_cast_s": 124.7,
-      "avg_gap_s": 288,
-      "stddev_gap_s": 97.5,
+      "avg_gap_s": 287.7,
+      "stddev_gap_s": 99.3,
       "hold_targets": {
         "1": {
           "target_s": 416.3,
-          "stddev_s": 25.8,
+          "stddev_s": 30.3,
           "count": 6,
           "total_samples": 10
         }
@@ -21,43 +45,19 @@
       "avg_uses": 2.2,
       "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.272,
-        "stddev": 0.071,
+        "avg": 0.271,
+        "stddev": 0.07,
         "min": 0.137,
         "max": 0.37
       },
       "majority_hold": true
-    },
-    "Astral Shift": {
-      "sample_count": 9,
-      "avg_first_cast_s": 213,
-      "stddev_first_cast_s": 148.3,
-      "avg_gap_s": 237.4,
-      "stddev_gap_s": 104,
-      "hold_targets": {
-        "1": {
-          "target_s": 391.7,
-          "stddev_s": 32.4,
-          "count": 4,
-          "total_samples": 9
-        }
-      },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.19,
-      "uses_per_min": {
-        "avg": 0.193,
-        "stddev": 0.084,
-        "min": 0.118,
-        "max": 0.368
-      },
-      "majority_hold": false
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.6,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -113,6 +113,6 @@
       "name": "Healing Tide Totem"
     }
   },
-  "source_signature": "05f8e9e8da80ec4e",
-  "ingest_version": 2
+  "source_signature": "e94f1333fd32d69d",
+  "ingest_version": 3
 }
