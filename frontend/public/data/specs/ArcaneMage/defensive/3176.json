@@ -4,67 +4,90 @@
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Alter Time": {
-      "sample_count": 4,
-      "avg_first_cast_s": 115.9,
-      "stddev_first_cast_s": 54.3,
-      "avg_gap_s": 125.8,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.31,
-      "uses_per_min": {
-        "avg": 0.306,
-        "stddev": 0.172,
-        "min": 0.207,
-        "max": 0.563
-      },
-      "majority_hold": false
-    },
     "Prismatic Barrier": {
       "sample_count": 7,
-      "avg_first_cast_s": 100.9,
-      "stddev_first_cast_s": 46.3,
-      "avg_gap_s": 57.6,
-      "stddev_gap_s": 30.2,
+      "avg_first_cast_s": 106.4,
+      "stddev_first_cast_s": 70.6,
+      "avg_gap_s": 54.7,
+      "stddev_gap_s": 26.3,
       "hold_targets": {
         "1": {
-          "target_s": 182.7,
-          "stddev_s": 27.6,
+          "target_s": 201.8,
+          "stddev_s": 47.3,
           "count": 4,
           "total_samples": 7
         },
         "2": {
-          "target_s": 196.8,
-          "stddev_s": 41,
+          "target_s": 169.7,
+          "stddev_s": 50.5,
           "count": 4,
           "total_samples": 7
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.65,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.648,
-        "stddev": 0.248,
+        "avg": 0.677,
+        "stddev": 0.325,
         "min": 0.318,
-        "max": 1.04
+        "max": 1.17
       },
       "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 3,
+      "avg_first_cast_s": 137.3,
+      "stddev_first_cast_s": 41,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.221,
+        "stddev": 0.021,
+        "min": 0.207,
+        "max": 0.245
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 1,
+      "avg_first_cast_s": 127,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.219,
+        "stddev": 0,
+        "min": 0.219,
+        "max": 0.219
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 342245,
-      "avg_uses": 1.3,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     },
     {
       "spell_id": 235450,
-      "avg_uses": 2.6,
+      "avg_uses": 2.9,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 5
     }
   ],
   "defensives": [
@@ -138,6 +161,6 @@
       "name": "Alter Time"
     }
   },
-  "source_signature": "ea2bd148a00f2a2a",
+  "source_signature": "8c08cd2202591b4d",
   "ingest_version": 2
 }

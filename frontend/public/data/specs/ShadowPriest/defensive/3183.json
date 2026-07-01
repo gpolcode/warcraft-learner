@@ -5,17 +5,17 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Dispersion": {
-      "sample_count": 7,
-      "avg_first_cast_s": 322.9,
-      "stddev_first_cast_s": 155.3,
+      "sample_count": 8,
+      "avg_first_cast_s": 323.8,
+      "stddev_first_cast_s": 143.8,
       "avg_gap_s": 271.5,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
       "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.13,
-        "stddev": 0.046,
+        "avg": 0.128,
+        "stddev": 0.043,
         "min": 0.109,
         "max": 0.234
       },
@@ -23,35 +23,42 @@
     },
     "Desperate Prayer": {
       "sample_count": 9,
-      "avg_first_cast_s": 170.5,
-      "stddev_first_cast_s": 104.9,
-      "avg_gap_s": 101.9,
-      "stddev_gap_s": 30.8,
-      "hold_targets": {},
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.31,
+      "avg_first_cast_s": 147.2,
+      "stddev_first_cast_s": 115.2,
+      "avg_gap_s": 98.5,
+      "stddev_gap_s": 31.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 205.5,
+          "stddev_s": 90.4,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.315,
-        "stddev": 0.179,
+        "avg": 0.329,
+        "stddev": 0.202,
         "min": 0.11,
-        "max": 0.575
+        "max": 0.673
       },
       "majority_hold": true
     },
     "Vampiric Embrace": {
       "sample_count": 10,
-      "avg_first_cast_s": 19.5,
+      "avg_first_cast_s": 19.4,
       "stddev_first_cast_s": 40.8,
-      "avg_gap_s": 123.8,
-      "stddev_gap_s": 2,
+      "avg_gap_s": 124.1,
+      "stddev_gap_s": 2.5,
       "hold_targets": {},
       "avg_uses": 4.7,
       "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.531,
-        "stddev": 0.071,
+        "avg": 0.533,
+        "stddev": 0.072,
         "min": 0.352,
-        "max": 0.583
+        "max": 0.585
       },
       "majority_hold": false
     }
@@ -66,9 +73,9 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.8,
+      "avg_uses": 2.9,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 6
     },
     {
       "spell_id": 15286,
@@ -122,6 +129,6 @@
       "name": "Dispersion"
     }
   },
-  "source_signature": "210022d4cf9d67d2",
+  "source_signature": "af1e9aab18dc298e",
   "ingest_version": 2
 }

@@ -6,17 +6,17 @@
   "per_defensive_benchmarks": {
     "Ardent Defender": {
       "sample_count": 10,
-      "avg_first_cast_s": 59.9,
-      "stddev_first_cast_s": 44.4,
-      "avg_gap_s": 85.4,
-      "stddev_gap_s": 35.5,
+      "avg_first_cast_s": 69.7,
+      "stddev_first_cast_s": 67.9,
+      "avg_gap_s": 82.1,
+      "stddev_gap_s": 24.7,
       "hold_targets": {},
       "avg_uses": 5.4,
       "avg_uses_per_min": 0.69,
       "uses_per_min": {
         "avg": 0.693,
         "stddev": 0.191,
-        "min": 0.293,
+        "min": 0.295,
         "max": 0.932
       },
       "majority_hold": false
@@ -57,58 +57,64 @@
     },
     "Shield of the Righteous": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.9,
-      "stddev_first_cast_s": 0.7,
+      "avg_first_cast_s": 2.7,
+      "stddev_first_cast_s": 0.8,
       "avg_gap_s": 2.8,
       "stddev_gap_s": 2.2,
       "hold_targets": {},
-      "avg_uses": 163.3,
-      "avg_uses_per_min": 21.09,
+      "avg_uses": 165.4,
+      "avg_uses_per_min": 21.41,
       "uses_per_min": {
-        "avg": 21.086,
-        "stddev": 1.661,
+        "avg": 21.409,
+        "stddev": 2.183,
         "min": 18.253,
-        "max": 23.494
+        "max": 25.663
       },
       "majority_hold": false
     },
     "Word of Glory": {
-      "sample_count": 9,
-      "avg_first_cast_s": 28.3,
-      "stddev_first_cast_s": 19.4,
-      "avg_gap_s": 19.2,
-      "stddev_gap_s": 28.4,
+      "sample_count": 10,
+      "avg_first_cast_s": 30.6,
+      "stddev_first_cast_s": 19.7,
+      "avg_gap_s": 20.1,
+      "stddev_gap_s": 30.1,
       "hold_targets": {
         "1": {
-          "target_s": 100,
-          "stddev_s": 99.9,
-          "count": 5,
-          "total_samples": 9
+          "target_s": 99.9,
+          "stddev_s": 91.3,
+          "count": 6,
+          "total_samples": 10
         },
         "2": {
-          "target_s": 137.1,
-          "stddev_s": 127.9,
-          "count": 5,
-          "total_samples": 9
+          "target_s": 204.2,
+          "stddev_s": 120.6,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 280,
+          "stddev_s": 117.4,
+          "count": 4,
+          "total_samples": 10
         },
         "5": {
           "target_s": 354.8,
           "stddev_s": 183.5,
           "count": 4,
-          "total_samples": 9
+          "total_samples": 10
         },
         "8": {
           "target_s": 144.9,
           "stddev_s": 102.7,
           "count": 4,
-          "total_samples": 9
+          "total_samples": 10
         }
       },
-      "avg_uses": 23.1,
-      "avg_uses_per_min": 3.01,
+      "avg_uses": 21.7,
+      "avg_uses_per_min": 2.84,
       "uses_per_min": {
-        "avg": 3.006,
-        "stddev": 1.918,
+        "avg": 2.838,
+        "stddev": 1.885,
         "min": 0.679,
         "max": 5.186
       },
@@ -154,13 +160,13 @@
     },
     {
       "spell_id": 53600,
-      "avg_uses": 163.3,
+      "avg_uses": 165.4,
       "min_uses": 142,
       "max_uses": 188
     },
     {
       "spell_id": 85673,
-      "avg_uses": 23.1,
+      "avg_uses": 21.7,
       "min_uses": 5,
       "max_uses": 38
     },
@@ -255,6 +261,6 @@
       "name": "Guardian of Ancient Kings"
     }
   },
-  "source_signature": "3c7721c6252131f8",
+  "source_signature": "e5d6b7d28ec69423",
   "ingest_version": 2
 }

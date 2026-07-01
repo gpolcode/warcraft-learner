@@ -6,40 +6,40 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 197.2,
-      "stddev_first_cast_s": 110.2,
-      "avg_gap_s": 126.8,
-      "stddev_gap_s": 34.5,
+      "avg_first_cast_s": 165.1,
+      "stddev_first_cast_s": 64.2,
+      "avg_gap_s": 127.9,
+      "stddev_gap_s": 32.7,
       "hold_targets": {
         "1": {
-          "target_s": 270,
-          "stddev_s": 88.5,
-          "count": 8,
+          "target_s": 269.9,
+          "stddev_s": 83.9,
+          "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 401,
-          "stddev_s": 5.5,
-          "count": 4,
+          "target_s": 401.7,
+          "stddev_s": 5.9,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.34,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.37,
       "uses_per_min": {
-        "avg": 0.339,
-        "stddev": 0.119,
-        "min": 0.126,
+        "avg": 0.369,
+        "stddev": 0.095,
+        "min": 0.235,
         "max": 0.477
       },
       "majority_hold": true
     },
     "Vampiric Embrace": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.8,
-      "stddev_first_cast_s": 1,
-      "avg_gap_s": 128.7,
-      "stddev_gap_s": 6,
+      "avg_first_cast_s": 3.4,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 128.8,
+      "stddev_gap_s": 5.9,
       "hold_targets": {
         "2": {
           "target_s": 255.6,
@@ -48,52 +48,71 @@
           "total_samples": 10
         },
         "3": {
-          "target_s": 390.2,
-          "stddev_s": 3.9,
+          "target_s": 390.5,
+          "stddev_s": 3.4,
           "count": 10,
           "total_samples": 10
         }
       },
       "avg_uses": 4.1,
-      "avg_uses_per_min": 0.51,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.514,
-        "stddev": 0.048,
+        "avg": 0.521,
+        "stddev": 0.051,
         "min": 0.469,
         "max": 0.592
       },
       "majority_hold": true
-    },
-    "Dispersion": {
-      "sample_count": 1,
-      "avg_first_cast_s": 455.2,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.13,
-      "uses_per_min": {
-        "avg": 0.126,
-        "stddev": 0,
-        "min": 0.126,
-        "max": 0.126
-      },
-      "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 390.5,
+      "dmg_avg": 1281189,
+      "dmg_stddev": 186264,
+      "dmg_min": 979873,
+      "dmg_max": 1582031,
+      "dmg_pct_avg": 0.055,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 745423,
+          "min_damage": 468622,
+          "max_damage": 986831,
+          "count": 10
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 529466,
+          "min_damage": 474862,
+          "max_damage": 583573,
+          "count": 10
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11028,
+          "min_damage": 10307,
+          "max_damage": 11627,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
-      "spell_id": 47585,
-      "avg_uses": 1,
-      "min_uses": 1,
-      "max_uses": 1
-    },
-    {
       "spell_id": 19236,
-      "avg_uses": 2.7,
-      "min_uses": 1,
+      "avg_uses": 2.9,
+      "min_uses": 2,
       "max_uses": 4
     },
     {
@@ -143,11 +162,23 @@
       "icon": "spell_holy_testoffaith",
       "name": "Desperate Prayer"
     },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
     "47585": {
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "9ade6564bf1e1f4e",
+  "source_signature": "af2f29a09a7248e9",
   "ingest_version": 2
 }

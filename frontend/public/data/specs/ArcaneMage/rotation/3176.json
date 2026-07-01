@@ -3,61 +3,72 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 233.6,
-  "downtime_threshold_ms": 2536,
+  "avg_duration_s": 243.9,
+  "downtime_threshold_ms": 2532,
   "top_avg_efficiency": 77.1,
-  "top_efficiency_stddev": 8.6,
+  "top_efficiency_stddev": 9.2,
   "per_cd_benchmarks": {
     "Arcane Surge": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.8,
-      "stddev_first_cast_s": 14.6,
-      "avg_gap_s": 101.7,
-      "stddev_gap_s": 12.7,
-      "avg_bl_offset_s": 9.7,
-      "stddev_bl_offset_s": 2.7,
+      "avg_first_cast_s": 15.5,
+      "stddev_first_cast_s": 14.3,
+      "avg_gap_s": 106.6,
+      "stddev_gap_s": 14,
+      "avg_bl_offset_s": 10.3,
+      "stddev_bl_offset_s": 0.7,
       "avg_uses": 2.8,
-      "avg_uses_per_min": 0.72,
+      "avg_uses_per_min": 0.69,
       "uses_per_min": {
-        "avg": 0.724,
-        "stddev": 0.088,
+        "avg": 0.691,
+        "stddev": 0.064,
         "min": 0.62,
-        "max": 0.844
+        "max": 0.807
       },
       "bl_pct": 70,
-      "majority_hold": false,
+      "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 133.6,
-          "stddev_s": 13.5,
-          "delay_s": 31.9,
-          "delay_stddev_s": 10.8,
-          "band_s": 10.8,
+          "target_s": 134.2,
+          "stddev_s": 2.3,
+          "delay_s": 33.9,
+          "delay_stddev_s": 2.8,
+          "band_s": 5,
           "effective_cd_s": 90,
-          "count": 5,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Touch of the Magi": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.6,
-      "stddev_first_cast_s": 3.5,
-      "avg_gap_s": 50.7,
-      "stddev_gap_s": 9.9,
-      "avg_bl_offset_s": 8.9,
-      "stddev_bl_offset_s": 4.1,
+      "avg_first_cast_s": 10.1,
+      "stddev_first_cast_s": 3.4,
+      "avg_gap_s": 53,
+      "stddev_gap_s": 11.9,
+      "avg_bl_offset_s": 9.1,
+      "stddev_bl_offset_s": 3.8,
       "avg_uses": 4.9,
-      "avg_uses_per_min": 1.27,
+      "avg_uses_per_min": 1.22,
       "uses_per_min": {
-        "avg": 1.273,
-        "stddev": 0.133,
+        "avg": 1.218,
+        "stddev": 0.124,
         "min": 1.034,
-        "max": 1.407
+        "max": 1.358
       },
       "bl_pct": 80,
-      "majority_hold": false,
-      "hold_targets": {}
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 134.6,
+          "stddev_s": 3.2,
+          "delay_s": 33.6,
+          "delay_stddev_s": 2.9,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
     },
     "Evocation": {
       "sample_count": 10,
@@ -81,23 +92,34 @@
     },
     "Presence of Mind": {
       "sample_count": 10,
-      "avg_first_cast_s": 13.1,
-      "stddev_first_cast_s": 7.5,
-      "avg_gap_s": 70.8,
-      "stddev_gap_s": 28.5,
-      "avg_bl_offset_s": 11.7,
-      "stddev_bl_offset_s": 8.2,
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.81,
+      "avg_first_cast_s": 20,
+      "stddev_first_cast_s": 12.4,
+      "avg_gap_s": 73.7,
+      "stddev_gap_s": 28.1,
+      "avg_bl_offset_s": 20.7,
+      "stddev_bl_offset_s": 13.1,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.74,
       "uses_per_min": {
-        "avg": 1.018,
-        "stddev": 0.33,
+        "avg": 0.927,
+        "stddev": 0.302,
         "min": 0.62,
-        "max": 1.407
+        "max": 1.344
       },
       "bl_pct": 60,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "3": {
+          "target_s": 228.4,
+          "stddev_s": 46.4,
+          "delay_s": 33,
+          "delay_stddev_s": 13.1,
+          "band_s": 13.1,
+          "effective_cd_s": 60,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     }
   },
   "major_cooldowns": [
@@ -251,6 +273,6 @@
       "name": "Arcane Surge"
     }
   },
-  "source_signature": "ea2bd148a00f2a2a",
+  "source_signature": "8c08cd2202591b4d",
   "ingest_version": 2
 }

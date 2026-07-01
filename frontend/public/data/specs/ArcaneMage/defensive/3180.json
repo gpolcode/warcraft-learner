@@ -6,23 +6,29 @@
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 8,
-      "avg_first_cast_s": 103.4,
-      "stddev_first_cast_s": 31.6,
-      "avg_gap_s": 89.8,
-      "stddev_gap_s": 46.8,
+      "avg_first_cast_s": 102.8,
+      "stddev_first_cast_s": 32.3,
+      "avg_gap_s": 89.1,
+      "stddev_gap_s": 46.5,
       "hold_targets": {
         "1": {
           "target_s": 218.3,
-          "stddev_s": 96.1,
+          "stddev_s": 102.8,
           "count": 5,
+          "total_samples": 8
+        },
+        "2": {
+          "target_s": 266.4,
+          "stddev_s": 25.7,
+          "count": 4,
           "total_samples": 8
         }
       },
-      "avg_uses": 3.3,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.5,
-        "stddev": 0.227,
+        "avg": 0.546,
+        "stddev": 0.225,
         "min": 0.177,
         "max": 0.844
       },
@@ -30,64 +36,87 @@
     },
     "Prismatic Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 67.9,
-      "stddev_first_cast_s": 19.7,
-      "avg_gap_s": 46.7,
-      "stddev_gap_s": 18.3,
+      "avg_first_cast_s": 76.2,
+      "stddev_first_cast_s": 26.4,
+      "avg_gap_s": 48.7,
+      "stddev_gap_s": 20.6,
       "hold_targets": {
         "1": {
-          "target_s": 133.1,
-          "stddev_s": 35.8,
+          "target_s": 137.3,
+          "stddev_s": 38.5,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 143,
-          "stddev_s": 47.3,
+          "target_s": 167.8,
+          "stddev_s": 59.9,
           "count": 9,
           "total_samples": 10
         },
         "3": {
-          "target_s": 195,
-          "stddev_s": 42.8,
-          "count": 8,
+          "target_s": 201.6,
+          "stddev_s": 44.3,
+          "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 247.7,
-          "stddev_s": 37.3,
-          "count": 9,
+          "target_s": 247.4,
+          "stddev_s": 39.5,
+          "count": 8,
           "total_samples": 10
         },
         "5": {
-          "target_s": 285.6,
-          "stddev_s": 30,
-          "count": 7,
+          "target_s": 285,
+          "stddev_s": 32.6,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 6.5,
-      "avg_uses_per_min": 1.04,
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.96,
       "uses_per_min": {
-        "avg": 1.039,
-        "stddev": 0.269,
-        "min": 0.532,
+        "avg": 0.96,
+        "stddev": 0.295,
+        "min": 0.522,
         "max": 1.309
       },
       "majority_hold": true
+    },
+    "Mirror Image": {
+      "sample_count": 1,
+      "avg_first_cast_s": 188.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.174,
+        "stddev": 0,
+        "min": 0.174,
+        "max": 0.174
+      },
+      "majority_hold": false
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 342245,
-      "avg_uses": 3.3,
+      "avg_uses": 3.5,
       "min_uses": 1,
       "max_uses": 5
     },
     {
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
       "spell_id": 235450,
-      "avg_uses": 6.5,
+      "avg_uses": 6,
       "min_uses": 3,
       "max_uses": 9
     }
@@ -163,6 +192,6 @@
       "name": "Alter Time"
     }
   },
-  "source_signature": "621516ac97c5a28f",
+  "source_signature": "f7bd21c2ed59eb29",
   "ingest_version": 2
 }

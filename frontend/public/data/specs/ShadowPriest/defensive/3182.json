@@ -6,51 +6,51 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 132.4,
-      "stddev_first_cast_s": 91,
-      "avg_gap_s": 97.3,
-      "stddev_gap_s": 47.7,
+      "avg_first_cast_s": 130,
+      "stddev_first_cast_s": 100.7,
+      "avg_gap_s": 100.9,
+      "stddev_gap_s": 49.5,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.43,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.434,
-        "stddev": 0.201,
+        "avg": 0.422,
+        "stddev": 0.22,
         "min": 0.186,
         "max": 0.849
       },
       "majority_hold": false
     },
     "Vampiric Embrace": {
-      "sample_count": 9,
-      "avg_first_cast_s": 31.9,
-      "stddev_first_cast_s": 38.9,
-      "avg_gap_s": 131.5,
-      "stddev_gap_s": 14.5,
+      "sample_count": 10,
+      "avg_first_cast_s": 28.9,
+      "stddev_first_cast_s": 37.8,
+      "avg_gap_s": 130.8,
+      "stddev_gap_s": 14.2,
       "hold_targets": {},
       "avg_uses": 2.7,
-      "avg_uses_per_min": 0.57,
+      "avg_uses_per_min": 0.59,
       "uses_per_min": {
-        "avg": 0.574,
-        "stddev": 0.067,
+        "avg": 0.59,
+        "stddev": 0.076,
         "min": 0.489,
-        "max": 0.677
+        "max": 0.679
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Dispersion": {
       "sample_count": 2,
-      "avg_first_cast_s": 196.3,
-      "stddev_first_cast_s": 93,
+      "avg_first_cast_s": 190.5,
+      "stddev_first_cast_s": 84.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.23,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.227,
-        "stddev": 0.026,
-        "min": 0.209,
+        "avg": 0.236,
+        "stddev": 0.015,
+        "min": 0.225,
         "max": 0.246
       },
       "majority_hold": false
@@ -58,11 +58,11 @@
   },
   "defensive_windows": [
     {
-      "time_s": 127.4,
-      "dmg_avg": 883400,
-      "dmg_stddev": 339148,
+      "time_s": 128,
+      "dmg_avg": 784787,
+      "dmg_stddev": 82950,
       "dmg_min": 667484,
-      "dmg_max": 1561213,
+      "dmg_max": 882200,
       "dmg_pct_avg": 0.07,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
@@ -77,24 +77,51 @@
       "ability_breakdown": [
         {
           "spell_id": 1242803,
-          "avg_damage": 664675,
-          "min_damage": 407798,
-          "max_damage": 903392,
+          "avg_damage": 536881,
+          "min_damage": 392216,
+          "max_damage": 756744,
           "count": 4
         },
         {
+          "spell_id": 1264650,
+          "avg_damage": 121521,
+          "min_damage": 111749,
+          "max_damage": 133524,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 254.5,
+      "dmg_avg": 747126,
+      "dmg_stddev": 334586,
+      "dmg_min": 210577,
+      "dmg_max": 1051481,
+      "dmg_pct_avg": 0.069,
+      "window_length_s": 10.4,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
           "spell_id": 1242815,
-          "avg_damage": 475447,
-          "min_damage": 203432,
-          "max_damage": 619378,
+          "avg_damage": 508215,
+          "min_damage": 183089,
+          "max_damage": 807274,
           "count": 3
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 122106,
-          "min_damage": 115239,
-          "max_damage": 133524,
-          "count": 6
+          "avg_damage": 107276,
+          "min_damage": 27488,
+          "max_damage": 153886,
+          "count": 5
         }
       ]
     }
@@ -108,7 +135,7 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -176,6 +203,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "6d8f5c8f9630de05",
+  "source_signature": "c2b3c0e33a3d7aae",
   "ingest_version": 2
 }

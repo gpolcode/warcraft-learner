@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 9,
-      "avg_first_cast_s": 186.1,
-      "stddev_first_cast_s": 95.4,
-      "avg_gap_s": 89.3,
-      "stddev_gap_s": 29.2,
+      "avg_first_cast_s": 202.6,
+      "stddev_first_cast_s": 86.7,
+      "avg_gap_s": 81.2,
+      "stddev_gap_s": 11.4,
       "hold_targets": {},
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.359,
-        "stddev": 0.23,
+        "avg": 0.324,
+        "stddev": 0.226,
         "min": 0.159,
         "max": 0.832
       },
@@ -24,121 +24,52 @@
     "Vampiric Embrace": {
       "sample_count": 10,
       "avg_first_cast_s": 91.2,
-      "stddev_first_cast_s": 123.9,
-      "avg_gap_s": 149.3,
-      "stddev_gap_s": 21.7,
+      "stddev_first_cast_s": 124,
+      "avg_gap_s": 150.1,
+      "stddev_gap_s": 22.2,
       "hold_targets": {
         "1": {
-          "target_s": 169.1,
-          "stddev_s": 80.9,
+          "target_s": 167.1,
+          "stddev_s": 81,
           "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 308.8,
-          "stddev_s": 27.8,
-          "count": 5,
+          "target_s": 309,
+          "stddev_s": 30.8,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.4,
-      "avg_uses_per_min": 0.41,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.405,
-        "stddev": 0.152,
+        "avg": 0.396,
+        "stddev": 0.147,
         "min": 0.146,
         "max": 0.532
       },
       "majority_hold": true
     },
     "Dispersion": {
-      "sample_count": 2,
-      "avg_first_cast_s": 143.1,
-      "stddev_first_cast_s": 3.2,
+      "sample_count": 3,
+      "avg_first_cast_s": 185,
+      "stddev_first_cast_s": 72.7,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.16,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.163,
-        "stddev": 0.006,
+        "avg": 0.179,
+        "stddev": 0.028,
         "min": 0.159,
-        "max": 0.167
+        "max": 0.211
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 307.3,
-      "dmg_avg": 956877,
-      "dmg_stddev": 72868,
-      "dmg_min": 840290,
-      "dmg_max": 1040214,
-      "dmg_pct_avg": 0.057,
-      "window_length_s": 10,
-      "defensive_name": "Desperate Prayer",
-      "spell_id": 19236,
-      "common_defensives": [
-        "Desperate Prayer"
-      ],
-      "common_cds": [
-        "Desperate Prayer"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250071,
-          "avg_damage": 476590,
-          "min_damage": 290501,
-          "max_damage": 537762,
-          "count": 5
-        },
-        {
-          "spell_id": 1245302,
-          "avg_damage": 213331,
-          "min_damage": 142448,
-          "max_damage": 325206,
-          "count": 3
-        }
-      ]
-    },
-    {
-      "time_s": 308.8,
-      "dmg_avg": 1055737,
-      "dmg_stddev": 393101,
-      "dmg_min": 788481,
-      "dmg_max": 1747295,
-      "dmg_pct_avg": 0.064,
-      "window_length_s": 12,
-      "defensive_name": "Vampiric Embrace",
-      "spell_id": 15286,
-      "common_defensives": [
-        "Vampiric Embrace"
-      ],
-      "common_cds": [
-        "Vampiric Embrace"
-      ],
-      "ref_game_id": 244552,
-      "ability_breakdown": [
-        {
-          "spell_id": 1250071,
-          "avg_damage": 694860,
-          "min_damage": 647709,
-          "max_damage": 750058,
-          "count": 5
-        },
-        {
-          "spell_id": 1245175,
-          "avg_damage": 226315,
-          "min_damage": 81530,
-          "max_damage": 497214,
-          "count": 4
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 47585,
@@ -148,13 +79,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.1,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 15286,
-      "avg_uses": 2.4,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -202,20 +133,8 @@
     "47585": {
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
-    },
-    "1245175": {
-      "icon": "inv_cosmicvoid_missile",
-      "name": "Voidbolt"
-    },
-    "1245302": {
-      "icon": "inv_cosmicvoid_orb",
-      "name": "Void Howl"
-    },
-    "1250071": {
-      "icon": "inv_cosmicdragonmount",
-      "name": "Midnight Flames"
     }
   },
-  "source_signature": "47fd495091a4d36b",
+  "source_signature": "9f8f11fda0e2ae44",
   "ingest_version": 2
 }
