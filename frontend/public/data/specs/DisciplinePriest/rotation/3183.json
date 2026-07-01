@@ -3,8 +3,8 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 556.7,
-  "downtime_threshold_ms": 2309,
+  "avg_duration_s": 552.2,
+  "downtime_threshold_ms": 2306,
   "top_avg_efficiency": 75.2,
   "top_efficiency_stddev": 2.1,
   "per_cd_benchmarks": {
@@ -30,19 +30,19 @@
     },
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.9,
-      "stddev_first_cast_s": 1.6,
+      "avg_first_cast_s": 5.3,
+      "stddev_first_cast_s": 1.7,
       "avg_gap_s": 63.3,
       "stddev_gap_s": 66,
-      "avg_bl_offset_s": 6.1,
-      "stddev_bl_offset_s": 4.5,
+      "avg_bl_offset_s": 6.2,
+      "stddev_bl_offset_s": 4.7,
       "avg_uses": 9.2,
-      "avg_uses_per_min": 0.99,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 0.992,
-        "stddev": 0.049,
+        "avg": 1.001,
+        "stddev": 0.066,
         "min": 0.919,
-        "max": 1.094
+        "max": 1.137
       },
       "bl_pct": 100,
       "majority_hold": true,
@@ -61,29 +61,29 @@
     },
     "Ultimate Penitence": {
       "sample_count": 10,
-      "avg_first_cast_s": 72.1,
-      "stddev_first_cast_s": 1.9,
-      "avg_gap_s": 243.6,
-      "stddev_gap_s": 5.6,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.23,
+      "avg_first_cast_s": 76.2,
+      "stddev_first_cast_s": 12.2,
+      "avg_gap_s": 247.4,
+      "stddev_gap_s": 17.6,
+      "avg_bl_offset_s": 40.8,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.226,
-        "stddev": 0.031,
+        "avg": 0.218,
+        "stddev": 0.006,
         "min": 0.204,
-        "max": 0.314
+        "max": 0.227
       },
-      "bl_pct": 0,
+      "bl_pct": 10,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 313.2,
-          "stddev_s": 2.5,
+          "target_s": 313.4,
+          "stddev_s": 29.7,
           "delay_s": 121.8,
-          "delay_stddev_s": 1,
-          "band_s": 5,
+          "delay_stddev_s": 17.6,
+          "band_s": 17.6,
           "effective_cd_s": 120,
           "count": 10,
           "total_samples": 10
@@ -94,16 +94,16 @@
       "sample_count": 10,
       "avg_first_cast_s": 4.2,
       "stddev_first_cast_s": 1,
-      "avg_gap_s": 16.7,
-      "stddev_gap_s": 13,
-      "avg_bl_offset_s": -2.2,
-      "stddev_bl_offset_s": 6.7,
-      "avg_uses": 33.5,
-      "avg_uses_per_min": 3.61,
+      "avg_gap_s": 16.6,
+      "stddev_gap_s": 12.3,
+      "avg_bl_offset_s": 0,
+      "stddev_bl_offset_s": 5.9,
+      "avg_uses": 33.4,
+      "avg_uses_per_min": 3.63,
       "uses_per_min": {
-        "avg": 3.613,
-        "stddev": 0.159,
-        "min": 3.244,
+        "avg": 3.629,
+        "stddev": 0.121,
+        "min": 3.41,
         "max": 3.831
       },
       "bl_pct": 100,
@@ -149,24 +149,14 @@
           "count": 5,
           "total_samples": 10
         },
-        "17": {
-          "target_s": 274.9,
-          "stddev_s": 16.6,
-          "delay_s": 9,
-          "delay_stddev_s": 7,
-          "band_s": 7,
-          "effective_cd_s": 20,
-          "count": 5,
-          "total_samples": 10
-        },
         "18": {
-          "target_s": 304.8,
-          "stddev_s": 11.4,
-          "delay_s": 11,
-          "delay_stddev_s": 1.6,
+          "target_s": 304.7,
+          "stddev_s": 10.7,
+          "delay_s": 10.9,
+          "delay_stddev_s": 1.7,
           "band_s": 5,
           "effective_cd_s": 20,
-          "count": 8,
+          "count": 9,
           "total_samples": 10
         },
         "20": {
@@ -392,6 +382,6 @@
       "name": "Ultimate Penitence"
     }
   },
-  "source_signature": "1fc9c074bbc6d065",
+  "source_signature": "a7033f4a64ca08bf",
   "ingest_version": 2
 }

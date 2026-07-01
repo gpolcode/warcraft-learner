@@ -3,10 +3,10 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 251.5,
-  "downtime_threshold_ms": 2262,
-  "top_avg_efficiency": 76.1,
-  "top_efficiency_stddev": 8.9,
+  "avg_duration_s": 249.2,
+  "downtime_threshold_ms": 2236,
+  "top_avg_efficiency": 76.5,
+  "top_efficiency_stddev": 8.8,
   "per_cd_benchmarks": {
     "Evangelism": {
       "sample_count": 10,
@@ -30,38 +30,38 @@
     },
     "Power Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.8,
-      "stddev_first_cast_s": 1.9,
-      "avg_gap_s": 55.1,
-      "stddev_gap_s": 63,
-      "avg_bl_offset_s": 1.8,
-      "stddev_bl_offset_s": 2.4,
-      "avg_uses": 4.4,
-      "avg_uses_per_min": 1.06,
+      "avg_first_cast_s": 15.4,
+      "stddev_first_cast_s": 37.1,
+      "avg_gap_s": 54.5,
+      "stddev_gap_s": 62.9,
+      "avg_bl_offset_s": 3,
+      "stddev_bl_offset_s": 2.9,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 1.03,
       "uses_per_min": {
-        "avg": 1.057,
-        "stddev": 0.241,
+        "avg": 1.028,
+        "stddev": 0.244,
         "min": 0.636,
-        "max": 1.269
+        "max": 1.259
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Ultimate Penitence": {
       "sample_count": 10,
-      "avg_first_cast_s": 98,
-      "stddev_first_cast_s": 76.4,
+      "avg_first_cast_s": 88.8,
+      "stddev_first_cast_s": 91.5,
       "avg_gap_s": 253.3,
       "stddev_gap_s": 0,
       "avg_bl_offset_s": 22.6,
       "stddev_bl_offset_s": 21.6,
-      "avg_uses": 0.8,
-      "avg_uses_per_min": 0.19,
+      "avg_uses": 0.6,
+      "avg_uses_per_min": 0.14,
       "uses_per_min": {
-        "avg": 0.274,
-        "stddev": 0.072,
-        "min": 0.212,
+        "avg": 0.288,
+        "stddev": 0.081,
+        "min": 0.215,
         "max": 0.424
       },
       "bl_pct": 30,
@@ -70,23 +70,34 @@
     },
     "Power Word: Radiance": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.2,
-      "stddev_first_cast_s": 10.6,
-      "avg_gap_s": 16.1,
-      "stddev_gap_s": 10.7,
-      "avg_bl_offset_s": 5.7,
-      "stddev_bl_offset_s": 10.5,
-      "avg_uses": 15.5,
-      "avg_uses_per_min": 3.65,
+      "avg_first_cast_s": 8.6,
+      "stddev_first_cast_s": 12.2,
+      "avg_gap_s": 17.5,
+      "stddev_gap_s": 12.6,
+      "avg_bl_offset_s": 9.3,
+      "stddev_bl_offset_s": 12.8,
+      "avg_uses": 13.8,
+      "avg_uses_per_min": 3.23,
       "uses_per_min": {
-        "avg": 3.651,
-        "stddev": 0.734,
-        "min": 2.028,
-        "max": 4.527
+        "avg": 3.231,
+        "stddev": 0.968,
+        "min": 1.202,
+        "max": 4.082
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": true,
-      "hold_targets": {}
+      "hold_targets": {
+        "4": {
+          "target_s": 88.3,
+          "stddev_s": 44.2,
+          "delay_s": 18.6,
+          "delay_stddev_s": 6.5,
+          "band_s": 6.5,
+          "effective_cd_s": 20,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Shadowfiend": {
       "sample_count": 10,
@@ -299,6 +310,6 @@
       "name": "Ultimate Penitence"
     }
   },
-  "source_signature": "aa0725ff6d245db7",
+  "source_signature": "d28c57dee552f169",
   "ingest_version": 2
 }

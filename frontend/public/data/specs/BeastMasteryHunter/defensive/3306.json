@@ -6,47 +6,47 @@
   "per_defensive_benchmarks": {
     "Survival of the Fittest": {
       "sample_count": 10,
-      "avg_first_cast_s": 68.4,
-      "stddev_first_cast_s": 50.1,
-      "avg_gap_s": 49.8,
-      "stddev_gap_s": 16.7,
+      "avg_first_cast_s": 72.8,
+      "stddev_first_cast_s": 49.4,
+      "avg_gap_s": 52.4,
+      "stddev_gap_s": 15.4,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.7,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.66,
       "uses_per_min": {
-        "avg": 0.705,
-        "stddev": 0.282,
+        "avg": 0.661,
+        "stddev": 0.293,
         "min": 0.31,
         "max": 1.213
       },
       "majority_hold": false
     },
     "Exhilaration": {
-      "sample_count": 3,
-      "avg_first_cast_s": 122.2,
-      "stddev_first_cast_s": 151.5,
-      "avg_gap_s": 71.2,
-      "stddev_gap_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 172.9,
+      "stddev_first_cast_s": 174.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.472,
-        "stddev": 0.34,
+        "avg": 0.288,
+        "stddev": 0.164,
         "min": 0.172,
-        "max": 0.841
+        "max": 0.404
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 72.5,
-      "dmg_avg": 282345,
-      "dmg_stddev": 75060,
+      "time_s": 73.4,
+      "dmg_avg": 253805,
+      "dmg_stddev": 76000,
       "dmg_min": 161079,
       "dmg_max": 350162,
-      "dmg_pct_avg": 0.08,
+      "dmg_pct_avg": 0.07,
       "window_length_s": 8,
       "defensive_name": "Survival of the Fittest",
       "spell_id": 264735,
@@ -60,17 +60,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 238941,
+          "avg_damage": 241735,
           "min_damage": 161079,
           "max_damage": 319478,
-          "count": 5
+          "count": 4
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 54255,
+          "avg_damage": 35783,
           "min_damage": 30684,
-          "max_damage": 109670,
-          "count": 4
+          "max_damage": 43230,
+          "count": 3
         }
       ]
     }
@@ -78,15 +78,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 264735,
-      "avg_uses": 2,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 109304,
-      "avg_uses": 1.3,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -142,6 +142,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "ad4e8008d6379587",
+  "source_signature": "466a37fe604e6d43",
   "ingest_version": 2
 }
