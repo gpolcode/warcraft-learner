@@ -5,59 +5,59 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Die by the Sword": {
-      "sample_count": 7,
-      "avg_first_cast_s": 133,
-      "stddev_first_cast_s": 68.3,
+      "sample_count": 6,
+      "avg_first_cast_s": 142.1,
+      "stddev_first_cast_s": 70,
       "avg_gap_s": 125.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.1,
+      "avg_uses": 1.2,
       "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.318,
-        "stddev": 0.098,
+        "avg": 0.317,
+        "stddev": 0.107,
         "min": 0.222,
         "max": 0.521
       },
       "majority_hold": false
     },
     "Rallying Cry": {
-      "sample_count": 2,
-      "avg_first_cast_s": 68.5,
-      "stddev_first_cast_s": 14.5,
+      "sample_count": 1,
+      "avg_first_cast_s": 78.7,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.29,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.292,
-        "stddev": 0.045,
+        "avg": 0.26,
+        "stddev": 0,
         "min": 0.26,
-        "max": 0.323
+        "max": 0.26
       },
       "majority_hold": false
     },
     "Spell Reflection": {
       "sample_count": 8,
-      "avg_first_cast_s": 68.3,
-      "stddev_first_cast_s": 27.9,
-      "avg_gap_s": 51.1,
-      "stddev_gap_s": 29.2,
+      "avg_first_cast_s": 66.3,
+      "stddev_first_cast_s": 27.7,
+      "avg_gap_s": 54.6,
+      "stddev_gap_s": 32.6,
       "hold_targets": {
         "1": {
-          "target_s": 171.2,
-          "stddev_s": 15.5,
+          "target_s": 182.6,
+          "stddev_s": 15.7,
           "count": 6,
           "total_samples": 8
         }
       },
-      "avg_uses": 3.5,
-      "avg_uses_per_min": 0.99,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.93,
       "uses_per_min": {
-        "avg": 0.99,
-        "stddev": 0.489,
-        "min": 0.611,
+        "avg": 0.934,
+        "stddev": 0.516,
+        "min": 0.525,
         "max": 2.122
       },
       "majority_hold": true
@@ -80,11 +80,46 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 183.2,
+      "dmg_avg": 345563,
+      "dmg_stddev": 81909,
+      "dmg_min": 183220,
+      "dmg_max": 427812,
+      "dmg_pct_avg": 0.054,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 262917,
+          "min_damage": 120784,
+          "max_damage": 363992,
+          "count": 7
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 57316,
+          "min_damage": 27786,
+          "max_damage": 64165,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 118038,
-      "avg_uses": 1.1,
+      "avg_uses": 1.2,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -96,7 +131,7 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 3.5,
+      "avg_uses": 3.4,
       "min_uses": 2,
       "max_uses": 7
     },
@@ -176,8 +211,16 @@
     "202168": {
       "icon": "spell_impending_victory",
       "name": "Impending Victory"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "ae56166a84d21157",
+  "source_signature": "518bbbfd8fa44c04",
   "ingest_version": 2
 }

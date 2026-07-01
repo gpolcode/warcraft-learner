@@ -6,15 +6,15 @@
   "per_defensive_benchmarks": {
     "Guardian Spirit": {
       "sample_count": 9,
-      "avg_first_cast_s": 308.1,
-      "stddev_first_cast_s": 62.8,
+      "avg_first_cast_s": 313.1,
+      "stddev_first_cast_s": 66,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.14,
       "uses_per_min": {
-        "avg": 0.144,
+        "avg": 0.143,
         "stddev": 0.007,
         "min": 0.137,
         "max": 0.16
@@ -23,29 +23,29 @@
     },
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 141,
-      "stddev_first_cast_s": 71.9,
-      "avg_gap_s": 124.6,
-      "stddev_gap_s": 42.1,
+      "avg_first_cast_s": 142.7,
+      "stddev_first_cast_s": 71.5,
+      "avg_gap_s": 117.8,
+      "stddev_gap_s": 22.7,
       "hold_targets": {
         "1": {
-          "target_s": 262.3,
-          "stddev_s": 72,
+          "target_s": 261.3,
+          "stddev_s": 59.5,
           "count": 6,
           "total_samples": 10
         },
         "2": {
-          "target_s": 370.9,
-          "stddev_s": 60.7,
-          "count": 6,
+          "target_s": 389.6,
+          "stddev_s": 57.9,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.418,
-        "stddev": 0.121,
+        "avg": 0.431,
+        "stddev": 0.111,
         "min": 0.28,
         "max": 0.639
       },
@@ -53,10 +53,10 @@
     },
     "Fade": {
       "sample_count": 9,
-      "avg_first_cast_s": 94.8,
-      "stddev_first_cast_s": 25.4,
-      "avg_gap_s": 53.5,
-      "stddev_gap_s": 36.4,
+      "avg_first_cast_s": 111.7,
+      "stddev_first_cast_s": 51.8,
+      "avg_gap_s": 53,
+      "stddev_gap_s": 36.5,
       "hold_targets": {
         "1": {
           "target_s": 211.3,
@@ -65,14 +65,14 @@
           "total_samples": 9
         },
         "2": {
-          "target_s": 254.6,
-          "stddev_s": 87.5,
+          "target_s": 321.9,
+          "stddev_s": 76.9,
           "count": 5,
           "total_samples": 9
         },
         "3": {
-          "target_s": 295.6,
-          "stddev_s": 55.1,
+          "target_s": 338.6,
+          "stddev_s": 74.9,
           "count": 5,
           "total_samples": 9
         },
@@ -83,53 +83,18 @@
           "total_samples": 9
         }
       },
-      "avg_uses": 6.6,
-      "avg_uses_per_min": 0.94,
+      "avg_uses": 6.3,
+      "avg_uses_per_min": 0.91,
       "uses_per_min": {
-        "avg": 0.942,
-        "stddev": 0.432,
+        "avg": 0.909,
+        "stddev": 0.452,
         "min": 0.411,
         "max": 1.783
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 254.7,
-      "dmg_avg": 914862,
-      "dmg_stddev": 253394,
-      "dmg_min": 539435,
-      "dmg_max": 1315600,
-      "dmg_pct_avg": 0.051,
-      "window_length_s": 11.4,
-      "defensive_name": "Desperate Prayer",
-      "spell_id": 19236,
-      "common_defensives": [
-        "Desperate Prayer"
-      ],
-      "common_cds": [
-        "Desperate Prayer"
-      ],
-      "ref_game_id": 238693,
-      "ability_breakdown": [
-        {
-          "spell_id": 1221637,
-          "avg_damage": 458212,
-          "min_damage": 116341,
-          "max_damage": 784513,
-          "count": 7
-        },
-        {
-          "spell_id": 1222284,
-          "avg_damage": 310379,
-          "min_damage": 227757,
-          "max_damage": 577483,
-          "count": 7
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 47788,
@@ -139,13 +104,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.9,
+      "avg_uses": 3,
       "min_uses": 2,
       "max_uses": 4
     },
     {
       "spell_id": 586,
-      "avg_uses": 6.6,
+      "avg_uses": 6.3,
       "min_uses": 3,
       "max_uses": 13
     }
@@ -193,16 +158,8 @@
     "47788": {
       "icon": "spell_holy_guardianspirit",
       "name": "Guardian Spirit"
-    },
-    "1221637": {
-      "icon": "inv_misc_herb_plaguebloom",
-      "name": "Fungal Bloom"
-    },
-    "1222284": {
-      "icon": "ability_creature_poison_06",
-      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "c02034f7a9c1635b",
+  "source_signature": "31871b35a3f6d8f1",
   "ingest_version": 2
 }

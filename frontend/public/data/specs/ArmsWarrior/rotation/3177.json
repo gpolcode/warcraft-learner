@@ -3,24 +3,24 @@
   "encounter_id": 3177,
   "encounter_name": "Vorasius",
   "sample_count": 10,
-  "avg_duration_s": 216.6,
+  "avg_duration_s": 220.9,
   "downtime_threshold_ms": 1200,
-  "top_avg_efficiency": 88.2,
-  "top_efficiency_stddev": 12.4,
+  "top_avg_efficiency": 88,
+  "top_efficiency_stddev": 12.2,
   "per_cd_benchmarks": {
     "Colossus Smash": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.5,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 28.6,
-      "stddev_gap_s": 3.6,
-      "avg_bl_offset_s": 1.3,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 28.5,
+      "stddev_gap_s": 3.4,
+      "avg_bl_offset_s": 1.5,
       "stddev_bl_offset_s": 1.8,
-      "avg_uses": 7.9,
-      "avg_uses_per_min": 2.2,
+      "avg_uses": 8.1,
+      "avg_uses_per_min": 2.21,
       "uses_per_min": {
-        "avg": 2.196,
-        "stddev": 0.134,
+        "avg": 2.206,
+        "stddev": 0.143,
         "min": 1.998,
         "max": 2.477
       },
@@ -50,19 +50,19 @@
     },
     "Avatar": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.1,
-      "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 56.6,
-      "stddev_gap_s": 5.2,
-      "avg_bl_offset_s": 1,
+      "avg_first_cast_s": 2.2,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 56.5,
+      "stddev_gap_s": 4.8,
+      "avg_bl_offset_s": 1.1,
       "stddev_bl_offset_s": 1.8,
-      "avg_uses": 4.4,
+      "avg_uses": 4.5,
       "avg_uses_per_min": 1.22,
       "uses_per_min": {
-        "avg": 1.222,
-        "stddev": 0.065,
+        "avg": 1.224,
+        "stddev": 0.067,
         "min": 1.11,
-        "max": 1.302
+        "max": 1.312
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -150,23 +150,34 @@
     },
     "Sweeping Strikes": {
       "sample_count": 10,
-      "avg_first_cast_s": 88.3,
-      "stddev_first_cast_s": 50.3,
-      "avg_gap_s": 120.8,
-      "stddev_gap_s": 5.6,
+      "avg_first_cast_s": 85.4,
+      "stddev_first_cast_s": 47.3,
+      "avg_gap_s": 120.7,
+      "stddev_gap_s": 4.9,
       "avg_bl_offset_s": null,
       "stddev_bl_offset_s": null,
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.31,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.438,
-        "stddev": 0.171,
+        "avg": 0.449,
+        "stddev": 0.162,
         "min": 0.222,
         "max": 0.623
       },
       "bl_pct": 0,
       "majority_hold": false,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 190.3,
+          "stddev_s": 8.7,
+          "delay_s": 90,
+          "delay_stddev_s": 4.9,
+          "band_s": 5,
+          "effective_cd_s": 30,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     }
   },
   "major_cooldowns": [
@@ -381,6 +392,6 @@
       "name": "Demolish"
     }
   },
-  "source_signature": "ae56166a84d21157",
+  "source_signature": "518bbbfd8fa44c04",
   "ingest_version": 2
 }

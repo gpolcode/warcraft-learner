@@ -6,24 +6,36 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 87.9,
-      "stddev_first_cast_s": 86,
-      "avg_gap_s": 97,
-      "stddev_gap_s": 49.2,
+      "avg_first_cast_s": 78.4,
+      "stddev_first_cast_s": 77.4,
+      "avg_gap_s": 105.2,
+      "stddev_gap_s": 53.9,
       "hold_targets": {
         "2": {
-          "target_s": 324.2,
-          "stddev_s": 145,
-          "count": 7,
+          "target_s": 313.6,
+          "stddev_s": 135.4,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 273.3,
+          "stddev_s": 125.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 356.9,
+          "stddev_s": 66.2,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.8,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.539,
-        "stddev": 0.206,
-        "min": 0.337,
+        "avg": 0.526,
+        "stddev": 0.177,
+        "min": 0.338,
         "max": 0.811
       },
       "majority_hold": true
@@ -33,7 +45,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 4.8,
+      "avg_uses": 4.7,
       "min_uses": 3,
       "max_uses": 7
     }
@@ -83,6 +95,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "e877bd8092693745",
+  "source_signature": "a13169bbf6adae7c",
   "ingest_version": 2
 }

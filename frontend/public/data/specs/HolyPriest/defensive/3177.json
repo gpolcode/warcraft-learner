@@ -5,9 +5,9 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
-      "sample_count": 8,
-      "avg_first_cast_s": 85.3,
-      "stddev_first_cast_s": 43.8,
+      "sample_count": 7,
+      "avg_first_cast_s": 71,
+      "stddev_first_cast_s": 18.6,
       "avg_gap_s": 114.5,
       "stddev_gap_s": 10.7,
       "hold_targets": {
@@ -15,44 +15,38 @@
           "target_s": 185,
           "stddev_s": 18.5,
           "count": 4,
-          "total_samples": 8
+          "total_samples": 7
         }
       },
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.39,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.387,
-        "stddev": 0.144,
+        "avg": 0.402,
+        "stddev": 0.148,
         "min": 0.228,
         "max": 0.59
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Fade": {
-      "sample_count": 7,
-      "avg_first_cast_s": 49.5,
-      "stddev_first_cast_s": 30.4,
+      "sample_count": 8,
+      "avg_first_cast_s": 44.8,
+      "stddev_first_cast_s": 31.1,
       "avg_gap_s": 52.9,
       "stddev_gap_s": 28,
       "hold_targets": {
-        "1": {
-          "target_s": 59.1,
-          "stddev_s": 44.5,
-          "count": 3,
-          "total_samples": 7
-        },
         "2": {
           "target_s": 160.6,
           "stddev_s": 20.6,
           "count": 4,
-          "total_samples": 7
+          "total_samples": 8
         }
       },
-      "avg_uses": 3.3,
-      "avg_uses_per_min": 0.8,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.73,
       "uses_per_min": {
-        "avg": 0.801,
-        "stddev": 0.506,
+        "avg": 0.731,
+        "stddev": 0.509,
         "min": 0.23,
         "max": 1.585
       },
@@ -60,16 +54,16 @@
     },
     "Guardian Spirit": {
       "sample_count": 4,
-      "avg_first_cast_s": 163.9,
-      "stddev_first_cast_s": 51.6,
+      "avg_first_cast_s": 175.7,
+      "stddev_first_cast_s": 57.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.27,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.269,
-        "stddev": 0.029,
+        "avg": 0.26,
+        "stddev": 0.032,
         "min": 0.226,
         "max": 0.293
       },
@@ -86,13 +80,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 586,
-      "avg_uses": 3.3,
+      "avg_uses": 3,
       "min_uses": 1,
       "max_uses": 7
     }
@@ -142,6 +136,6 @@
       "name": "Guardian Spirit"
     }
   },
-  "source_signature": "0ae5fec494b684e6",
+  "source_signature": "2cb03cfa26bb6d02",
   "ingest_version": 2
 }

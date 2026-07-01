@@ -6,23 +6,29 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 84.4,
-      "stddev_first_cast_s": 2.1,
-      "avg_gap_s": 83.4,
-      "stddev_gap_s": 28.7,
+      "avg_first_cast_s": 85.3,
+      "stddev_first_cast_s": 3.2,
+      "avg_gap_s": 85.9,
+      "stddev_gap_s": 28.8,
       "hold_targets": {
+        "1": {
+          "target_s": 222.6,
+          "stddev_s": 26,
+          "count": 4,
+          "total_samples": 10
+        },
         "2": {
           "target_s": 243.2,
-          "stddev_s": 39.9,
+          "stddev_s": 41.6,
           "count": 8,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 0.58,
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.579,
-        "stddev": 0.123,
+        "avg": 0.572,
+        "stddev": 0.124,
         "min": 0.403,
         "max": 0.758
       },
@@ -33,7 +39,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 3.7,
+      "avg_uses": 3.6,
       "min_uses": 2,
       "max_uses": 5
     }
@@ -83,6 +89,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "a5a42f4f92808ec9",
+  "source_signature": "3fba8b572c2513a8",
   "ingest_version": 2
 }

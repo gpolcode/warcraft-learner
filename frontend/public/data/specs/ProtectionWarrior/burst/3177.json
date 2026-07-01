@@ -5,29 +5,94 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 197.5,
-      "dmg_avg": 2253635,
-      "dmg_stddev": 2157132,
+      "time_s": 5,
+      "dmg_avg": 1509578,
+      "dmg_stddev": 629609,
+      "dmg_min": 760148,
+      "dmg_max": 2189912,
+      "common_cds": [],
+      "window_length_s": 8.4,
+      "ability_breakdown": [
+        {
+          "spell_id": 23922,
+          "avg_damage": 444606,
+          "min_damage": 260599,
+          "max_damage": 586857,
+          "count": 5,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 435222,
+          "avg_damage": 438220,
+          "min_damage": 76614,
+          "max_damage": 723316,
+          "count": 5,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 6343,
+          "avg_damage": 139407,
+          "min_damage": 72546,
+          "max_damage": 189085,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 435791,
+          "avg_damage": 130784,
+          "min_damage": 49062,
+          "max_damage": 257161,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 236282,
+          "avg_damage": 122599,
+          "min_damage": 60618,
+          "max_damage": 178530,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 6572,
+          "avg_damage": 108764,
+          "min_damage": 51952,
+          "max_damage": 144986,
+          "count": 3,
+          "avg_casts": 2,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 197,
+      "dmg_avg": 2339544,
+      "dmg_stddev": 1982258,
       "dmg_min": 720186,
       "dmg_max": 6548038,
       "common_cds": [],
-      "window_length_s": 8.7,
+      "window_length_s": 9.3,
       "ability_breakdown": [
         {
           "spell_id": 435222,
-          "avg_damage": 1171250,
+          "avg_damage": 1226591,
           "min_damage": 422164,
           "max_damage": 3095698,
-          "count": 6,
+          "count": 7,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 23922,
-          "avg_damage": 275843,
+          "avg_damage": 260626,
           "min_damage": 96883,
           "max_damage": 532243,
-          "count": 6,
+          "count": 7,
           "avg_casts": 3,
           "is_passive": false
         },
@@ -42,28 +107,19 @@
         },
         {
           "spell_id": 435791,
-          "avg_damage": 91779,
+          "avg_damage": 92353,
           "min_damage": 51148,
           "max_damage": 192574,
-          "count": 4,
+          "count": 5,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 236282,
-          "avg_damage": 52663,
+          "avg_damage": 61664,
           "min_damage": 19292,
-          "max_damage": 79620,
-          "count": 4,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
-          "spell_id": 1270116,
-          "avg_damage": 31443,
-          "min_damage": 10340,
-          "max_damage": 50784,
-          "count": 3,
+          "max_damage": 97667,
+          "count": 5,
           "avg_casts": 0,
           "is_passive": true
         }
@@ -97,6 +153,14 @@
     "2565": {
       "icon": "ability_defend",
       "name": "Shield Block"
+    },
+    "6343": {
+      "icon": "spell_nature_thunderclap",
+      "name": "Thunder Clap"
+    },
+    "6572": {
+      "icon": "ability_warrior_revenge",
+      "name": "Revenge"
     },
     "12975": {
       "icon": "spell_holy_ashestoashes",
@@ -157,13 +221,9 @@
     "460670": {
       "icon": "ability_vehicle_electrocharge",
       "name": "Lightning Strike Ground Current"
-    },
-    "1270116": {
-      "icon": "inv12_apextalent_warrior_phalanx",
-      "name": "Phalanx"
     }
   },
-  "source_signature": "6a673ed410adf7b6",
+  "source_signature": "a781433f65acbb13",
   "ingest_version": 2,
   "inaccessible_parses": []
 }
