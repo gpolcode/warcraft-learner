@@ -6,47 +6,30 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 5,
-      "avg_first_cast_s": 65.8,
-      "stddev_first_cast_s": 10.8,
+      "avg_first_cast_s": 69.9,
+      "stddev_first_cast_s": 3.3,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.41,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.413,
-        "stddev": 0.009,
+        "avg": 0.419,
+        "stddev": 0.013,
         "min": 0.404,
-        "max": 0.424
-      },
-      "majority_hold": false
-    },
-    "Earth Elemental": {
-      "sample_count": 1,
-      "avg_first_cast_s": 72.4,
-      "stddev_first_cast_s": 0,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.41,
-      "uses_per_min": {
-        "avg": 0.409,
-        "stddev": 0,
-        "min": 0.409,
-        "max": 0.409
+        "max": 0.436
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 67.5,
-      "dmg_avg": 389611,
-      "dmg_stddev": 142176,
+      "time_s": 67.6,
+      "dmg_avg": 446020,
+      "dmg_stddev": 138055,
       "dmg_min": 240867,
-      "dmg_max": 548173,
-      "dmg_pct_avg": 0.116,
+      "dmg_max": 550650,
+      "dmg_pct_avg": 0.144,
       "window_length_s": 12,
       "defensive_name": "Astral Shift",
       "spell_id": 108271,
@@ -60,16 +43,16 @@
       "ability_breakdown": [
         {
           "spell_id": 1273112,
-          "avg_damage": 306865,
+          "avg_damage": 331870,
           "min_damage": 139627,
           "max_damage": 433689,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1246653,
-          "avg_damage": 83122,
+          "avg_damage": 92637,
           "min_damage": 26312,
-          "max_damage": 114484,
+          "max_damage": 118761,
           "count": 4
         }
       ]
@@ -78,12 +61,6 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1,
-      "min_uses": 1,
-      "max_uses": 1
-    },
-    {
-      "spell_id": 198103,
       "avg_uses": 1,
       "min_uses": 1,
       "max_uses": 1
@@ -155,6 +132,6 @@
       "name": "Consume"
     }
   },
-  "source_signature": "5c8aede16e08a85c",
+  "source_signature": "91716890eb3f6e06",
   "ingest_version": 2
 }

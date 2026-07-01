@@ -6,18 +6,25 @@
   "per_defensive_benchmarks": {
     "Astral Shift": {
       "sample_count": 9,
-      "avg_first_cast_s": 120.6,
-      "stddev_first_cast_s": 53.1,
-      "avg_gap_s": 104.1,
-      "stddev_gap_s": 11.9,
-      "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.42,
+      "avg_first_cast_s": 113.5,
+      "stddev_first_cast_s": 60,
+      "avg_gap_s": 106.5,
+      "stddev_gap_s": 11.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 193.3,
+          "stddev_s": 22.6,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.416,
-        "stddev": 0.146,
+        "avg": 0.45,
+        "stddev": 0.149,
         "min": 0.272,
-        "max": 0.577
+        "max": 0.601
       },
       "majority_hold": false
     },
@@ -40,47 +47,6 @@
     }
   },
   "defensive_windows": [
-    {
-      "time_s": 89.9,
-      "dmg_avg": 368549,
-      "dmg_stddev": 144336,
-      "dmg_min": 159961,
-      "dmg_max": 546501,
-      "dmg_pct_avg": 0.054,
-      "window_length_s": 12,
-      "defensive_name": "Astral Shift",
-      "spell_id": 108271,
-      "common_defensives": [
-        "Astral Shift"
-      ],
-      "common_cds": [
-        "Astral Shift"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1259186,
-          "avg_damage": 200332,
-          "min_damage": 98853,
-          "max_damage": 341803,
-          "count": 5
-        },
-        {
-          "spell_id": 1280101,
-          "avg_damage": 122188,
-          "min_damage": 29754,
-          "max_damage": 288753,
-          "count": 3
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 47648,
-          "min_damage": 45471,
-          "max_damage": 49876,
-          "count": 6
-        }
-      ]
-    },
     {
       "time_s": 193.1,
       "dmg_avg": 469883,
@@ -126,7 +92,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 108271,
-      "avg_uses": 1.4,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -205,12 +171,8 @@
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
-    },
-    "1280101": {
-      "icon": "inv_cosmicvoid_debuff",
-      "name": "Dark Energy"
     }
   },
-  "source_signature": "375564071e64facc",
+  "source_signature": "5e81f764f22c0797",
   "ingest_version": 2
 }

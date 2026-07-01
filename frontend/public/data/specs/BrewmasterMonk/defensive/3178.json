@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Purifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 10,
-      "stddev_first_cast_s": 7.5,
-      "avg_gap_s": 7.8,
+      "avg_first_cast_s": 8.6,
+      "stddev_first_cast_s": 4.7,
+      "avg_gap_s": 7.6,
       "stddev_gap_s": 4.4,
       "hold_targets": {},
-      "avg_uses": 47.7,
-      "avg_uses_per_min": 7.59,
+      "avg_uses": 48.2,
+      "avg_uses_per_min": 7.82,
       "uses_per_min": {
-        "avg": 7.586,
-        "stddev": 1.19,
+        "avg": 7.823,
+        "stddev": 1.127,
         "min": 4.983,
         "max": 8.852
       },
@@ -23,16 +23,16 @@
     },
     "Celestial Infusion": {
       "sample_count": 10,
-      "avg_first_cast_s": 14.3,
-      "stddev_first_cast_s": 9.9,
-      "avg_gap_s": 23.1,
-      "stddev_gap_s": 8.5,
+      "avg_first_cast_s": 13.1,
+      "stddev_first_cast_s": 10.7,
+      "avg_gap_s": 23.9,
+      "stddev_gap_s": 8.6,
       "hold_targets": {},
-      "avg_uses": 16.4,
-      "avg_uses_per_min": 2.58,
+      "avg_uses": 15.6,
+      "avg_uses_per_min": 2.52,
       "uses_per_min": {
-        "avg": 2.583,
-        "stddev": 0.356,
+        "avg": 2.524,
+        "stddev": 0.342,
         "min": 1.793,
         "max": 3.051
       },
@@ -40,69 +40,69 @@
     },
     "Fortifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 120.1,
-      "stddev_first_cast_s": 142.8,
-      "avg_gap_s": 145.6,
-      "stddev_gap_s": 42.2,
+      "avg_first_cast_s": 67.5,
+      "stddev_first_cast_s": 122.1,
+      "avg_gap_s": 140.6,
+      "stddev_gap_s": 42.1,
       "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.402,
-        "stddev": 0.156,
-        "min": 0.14,
-        "max": 0.567
+        "avg": 0.471,
+        "stddev": 0.134,
+        "min": 0.147,
+        "max": 0.671
       },
       "majority_hold": false
     },
     "Black Ox Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.6,
-      "stddev_first_cast_s": 19.8,
-      "avg_gap_s": 73.8,
-      "stddev_gap_s": 25,
+      "avg_first_cast_s": 19.1,
+      "stddev_first_cast_s": 19,
+      "avg_gap_s": 78.4,
+      "stddev_gap_s": 28.5,
       "hold_targets": {
         "2": {
-          "target_s": 205.3,
-          "stddev_s": 48.5,
-          "count": 5,
+          "target_s": 217.8,
+          "stddev_s": 40.4,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.5,
-      "avg_uses_per_min": 0.86,
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.81,
       "uses_per_min": {
-        "avg": 0.865,
-        "stddev": 0.147,
+        "avg": 0.807,
+        "stddev": 0.168,
         "min": 0.586,
         "max": 1.068
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 119582,
-      "avg_uses": 47.7,
+      "avg_uses": 48.2,
       "min_uses": 34,
       "max_uses": 58
     },
     {
       "spell_id": 1241059,
-      "avg_uses": 16.4,
+      "avg_uses": 15.6,
       "min_uses": 10,
-      "max_uses": 21
+      "max_uses": 18
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2.5,
+      "avg_uses": 2.9,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 115399,
-      "avg_uses": 5.5,
+      "avg_uses": 5,
       "min_uses": 4,
       "max_uses": 7
     }
@@ -204,6 +204,6 @@
       "name": "Celestial Infusion"
     }
   },
-  "source_signature": "7f9d58a5164ad3f6",
+  "source_signature": "1333b5b9fb9fb60f",
   "ingest_version": 2
 }

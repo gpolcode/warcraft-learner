@@ -6,49 +6,42 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 221.5,
-      "stddev_first_cast_s": 129.1,
-      "avg_gap_s": 113.2,
-      "stddev_gap_s": 91.2,
+      "avg_first_cast_s": 187.4,
+      "stddev_first_cast_s": 134.4,
+      "avg_gap_s": 120,
+      "stddev_gap_s": 94.1,
       "hold_targets": {
         "1": {
-          "target_s": 390.5,
-          "stddev_s": 113.7,
+          "target_s": 309.8,
+          "stddev_s": 104,
           "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.31,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.309,
-        "stddev": 0.187,
+        "avg": 0.34,
+        "stddev": 0.196,
         "min": 0.128,
         "max": 0.733
       },
       "majority_hold": true
     },
     "Ironbark": {
-      "sample_count": 9,
-      "avg_first_cast_s": 192,
-      "stddev_first_cast_s": 113.7,
-      "avg_gap_s": 242,
-      "stddev_gap_s": 108,
-      "hold_targets": {
-        "1": {
-          "target_s": 362.3,
-          "stddev_s": 92.5,
-          "count": 4,
-          "total_samples": 9
-        }
-      },
-      "avg_uses": 1.7,
+      "sample_count": 8,
+      "avg_first_cast_s": 197.9,
+      "stddev_first_cast_s": 122.1,
+      "avg_gap_s": 221.6,
+      "stddev_gap_s": 137.4,
+      "hold_targets": {},
+      "avg_uses": 1.6,
       "avg_uses_per_min": 0.21,
       "uses_per_min": {
         "avg": 0.207,
-        "stddev": 0.099,
+        "stddev": 0.133,
         "min": 0.122,
-        "max": 0.363
+        "max": 0.511
       },
       "majority_hold": false
     }
@@ -57,15 +50,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.5,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -126,6 +119,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "38c801d78c915048",
+  "source_signature": "55f9228ed206c6c7",
   "ingest_version": 2
 }

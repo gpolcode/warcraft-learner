@@ -6,25 +6,25 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 8,
-      "avg_first_cast_s": 122.1,
-      "stddev_first_cast_s": 58.8,
-      "avg_gap_s": 123.4,
-      "stddev_gap_s": 3.5,
+      "avg_first_cast_s": 106.6,
+      "stddev_first_cast_s": 56.2,
+      "avg_gap_s": 122.8,
+      "stddev_gap_s": 2.2,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.4,
       "uses_per_min": {
-        "avg": 0.364,
-        "stddev": 0.133,
+        "avg": 0.395,
+        "stddev": 0.143,
         "min": 0.278,
         "max": 0.618
       },
       "majority_hold": false
     },
     "Feint": {
-      "sample_count": 6,
-      "avg_first_cast_s": 94.2,
-      "stddev_first_cast_s": 72.8,
+      "sample_count": 5,
+      "avg_first_cast_s": 100.4,
+      "stddev_first_cast_s": 79.6,
       "avg_gap_s": 84.9,
       "stddev_gap_s": 39.9,
       "hold_targets": {
@@ -32,32 +32,49 @@
           "target_s": 103.5,
           "stddev_s": 52.4,
           "count": 3,
-          "total_samples": 6
+          "total_samples": 5
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.49,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.493,
-        "stddev": 0.252,
+        "avg": 0.533,
+        "stddev": 0.26,
         "min": 0.278,
         "max": 0.903
       },
-      "majority_hold": false
+      "majority_hold": true
     },
-    "Crimson Vial": {
+    "Evasion": {
       "sample_count": 1,
-      "avg_first_cast_s": 105.8,
+      "avg_first_cast_s": 231,
       "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.278,
+        "avg": 0.181,
         "stddev": 0,
-        "min": 0.278,
+        "min": 0.181,
+        "max": 0.181
+      },
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 2,
+      "avg_first_cast_s": 185.3,
+      "stddev_first_cast_s": 112.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.23,
+        "stddev": 0.069,
+        "min": 0.181,
         "max": 0.278
       },
       "majority_hold": false
@@ -67,13 +84,19 @@
   "top_defensives_summary": [
     {
       "spell_id": 31224,
-      "avg_uses": 1.3,
+      "avg_uses": 1.5,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 3
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     },
     {
       "spell_id": 1966,
-      "avg_uses": 1.7,
+      "avg_uses": 1.8,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -142,6 +165,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "8224cd94dc31c594",
+  "source_signature": "15d80276daa446a1",
   "ingest_version": 2
 }

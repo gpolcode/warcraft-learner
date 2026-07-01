@@ -6,46 +6,52 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 10,
-      "avg_first_cast_s": 171.5,
-      "stddev_first_cast_s": 27.4,
-      "avg_gap_s": 125.2,
+      "avg_first_cast_s": 172.2,
+      "stddev_first_cast_s": 27.1,
+      "avg_gap_s": 135.1,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.1,
-      "avg_uses_per_min": 0.22,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.22,
-        "stddev": 0.062,
+        "avg": 0.215,
+        "stddev": 0.051,
         "min": 0.189,
-        "max": 0.394
+        "max": 0.358
       },
       "majority_hold": false
     },
     "Feint": {
       "sample_count": 10,
-      "avg_first_cast_s": 130.3,
-      "stddev_first_cast_s": 86.6,
-      "avg_gap_s": 38.7,
-      "stddev_gap_s": 36.4,
+      "avg_first_cast_s": 149.6,
+      "stddev_first_cast_s": 87.1,
+      "avg_gap_s": 39.7,
+      "stddev_gap_s": 35.6,
       "hold_targets": {
         "1": {
-          "target_s": 166.3,
-          "stddev_s": 73.2,
-          "count": 8,
+          "target_s": 179.5,
+          "stddev_s": 77.6,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 213.9,
+          "stddev_s": 52.1,
+          "count": 4,
           "total_samples": 10
         },
         "3": {
-          "target_s": 227.2,
-          "stddev_s": 37,
+          "target_s": 246.3,
+          "stddev_s": 44.6,
           "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.5,
-      "avg_uses_per_min": 0.91,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.905,
-        "stddev": 0.572,
+        "avg": 0.796,
+        "stddev": 0.546,
         "min": 0.189,
         "max": 1.85
       },
@@ -115,7 +121,7 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 4.5,
+      "avg_uses": 4,
       "min_uses": 1,
       "max_uses": 9
     },
@@ -184,6 +190,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "5cd4b126d2849568",
+  "source_signature": "37ab80f746d021db",
   "ingest_version": 2
 }

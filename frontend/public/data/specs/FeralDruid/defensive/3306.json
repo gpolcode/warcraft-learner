@@ -6,42 +6,8 @@
   "per_defensive_benchmarks": {
     "Survival Instincts": {
       "sample_count": 4,
-      "avg_first_cast_s": 89.8,
-      "stddev_first_cast_s": 39,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.42,
-      "uses_per_min": {
-        "avg": 0.425,
-        "stddev": 0.014,
-        "min": 0.405,
-        "max": 0.439
-      },
-      "majority_hold": false
-    },
-    "Barkskin": {
-      "sample_count": 9,
-      "avg_first_cast_s": 52.3,
-      "stddev_first_cast_s": 22.4,
-      "avg_gap_s": 69.2,
-      "stddev_gap_s": 3.2,
-      "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.56,
-      "uses_per_min": {
-        "avg": 0.556,
-        "stddev": 0.196,
-        "min": 0.417,
-        "max": 0.825
-      },
-      "majority_hold": false
-    },
-    "Frenzied Regeneration": {
-      "sample_count": 7,
-      "avg_first_cast_s": 57.8,
-      "stddev_first_cast_s": 11.6,
+      "avg_first_cast_s": 92.9,
+      "stddev_first_cast_s": 35.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
@@ -49,21 +15,55 @@
       "avg_uses_per_min": 0.42,
       "uses_per_min": {
         "avg": 0.421,
-        "stddev": 0.013,
+        "stddev": 0.011,
         "min": 0.405,
-        "max": 0.439
+        "max": 0.43
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 51.2,
+      "stddev_first_cast_s": 19.1,
+      "avg_gap_s": 73.5,
+      "stddev_gap_s": 10.5,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.555,
+        "stddev": 0.203,
+        "min": 0.406,
+        "max": 0.848
+      },
+      "majority_hold": false
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 7,
+      "avg_first_cast_s": 58.2,
+      "stddev_first_cast_s": 11.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.416,
+        "stddev": 0.011,
+        "min": 0.405,
+        "max": 0.434
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 72.9,
-      "dmg_avg": 423645,
-      "dmg_stddev": 99067,
-      "dmg_min": 263616,
-      "dmg_max": 532173,
-      "dmg_pct_avg": 0.121,
+      "time_s": 42.4,
+      "dmg_avg": 313136,
+      "dmg_stddev": 203111,
+      "dmg_min": 106233,
+      "dmg_max": 668958,
+      "dmg_pct_avg": 0.078,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -76,18 +76,11 @@
       "ref_game_id": 245569,
       "ability_breakdown": [
         {
-          "spell_id": 1273112,
-          "avg_damage": 357446,
-          "min_damage": 268976,
-          "max_damage": 445576,
-          "count": 4
-        },
-        {
           "spell_id": 1246653,
-          "avg_damage": 58561,
-          "min_damage": 33962,
-          "max_damage": 86597,
-          "count": 3
+          "avg_damage": 151050,
+          "min_damage": 51476,
+          "max_damage": 234699,
+          "count": 6
         }
       ]
     }
@@ -172,12 +165,8 @@
     "1246653": {
       "icon": "inv_ability_poison_orb",
       "name": "Caustic Phlegm"
-    },
-    "1273112": {
-      "icon": "spell_deathknight_gnaw_ghoul",
-      "name": "Consume"
     }
   },
-  "source_signature": "fd30f6c940649c44",
+  "source_signature": "1d04bf17dab89329",
   "ingest_version": 2
 }

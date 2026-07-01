@@ -71,18 +71,18 @@
     },
     {
       "time_s": 61,
-      "dmg_avg": 1716605,
-      "dmg_stddev": 970646,
+      "dmg_avg": 1883917,
+      "dmg_stddev": 1047139,
       "dmg_min": 534225,
       "dmg_max": 3876264,
       "common_cds": [
         "Exploding Keg"
       ],
-      "window_length_s": 7.3,
+      "window_length_s": 8,
       "ability_breakdown": [
         {
           "spell_id": 121253,
-          "avg_damage": 406773,
+          "avg_damage": 405988,
           "min_damage": 223424,
           "max_damage": 951754,
           "count": 6,
@@ -90,11 +90,20 @@
           "is_passive": false
         },
         {
+          "spell_id": 148135,
+          "avg_damage": 319037,
+          "min_damage": 199832,
+          "max_damage": 425713,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
           "spell_id": 451250,
-          "avg_damage": 234178,
+          "avg_damage": 237536,
           "min_damage": 90342,
           "max_damage": 397952,
-          "count": 7,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
@@ -108,38 +117,20 @@
           "is_passive": false
         },
         {
-          "spell_id": 1242373,
-          "avg_damage": 207027,
-          "min_damage": 127498,
-          "max_damage": 385070,
-          "count": 5,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
           "spell_id": 1265133,
-          "avg_damage": 173083,
-          "min_damage": 84977,
+          "avg_damage": 190704,
+          "min_damage": 137040,
           "max_damage": 293526,
-          "count": 6,
+          "count": 5,
           "avg_casts": 0,
           "is_passive": true
-        },
-        {
-          "spell_id": 325153,
-          "avg_damage": 163390,
-          "min_damage": 82995,
-          "max_damage": 233618,
-          "count": 5,
-          "avg_casts": 1,
-          "is_passive": false
         }
       ]
     },
     {
       "time_s": 141,
-      "dmg_avg": 2170343,
-      "dmg_stddev": 1328234,
+      "dmg_avg": 2201591,
+      "dmg_stddev": 1320347,
       "dmg_min": 727794,
       "dmg_max": 5053215,
       "common_cds": [
@@ -149,35 +140,35 @@
       "ability_breakdown": [
         {
           "spell_id": 451250,
-          "avg_damage": 544251,
+          "avg_damage": 548607,
           "min_damage": 34039,
           "max_damage": 1531186,
-          "count": 10,
+          "count": 9,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 121253,
-          "avg_damage": 418156,
+          "avg_damage": 447983,
           "min_damage": 100479,
           "max_damage": 864870,
-          "count": 9,
+          "count": 8,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 115181,
-          "avg_damage": 231209,
+          "avg_damage": 247024,
           "min_damage": 40452,
           "max_damage": 565030,
-          "count": 10,
+          "count": 9,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 1262159,
-          "avg_damage": 187675,
-          "min_damage": 131515,
+          "avg_damage": 181462,
+          "min_damage": 127965,
           "max_damage": 258804,
           "count": 8,
           "avg_casts": 0,
@@ -185,10 +176,10 @@
         },
         {
           "spell_id": 1265133,
-          "avg_damage": 179784,
+          "avg_damage": 174494,
           "min_damage": 83654,
           "max_damage": 418488,
-          "count": 8,
+          "count": 9,
           "avg_casts": 0,
           "is_passive": true
         }
@@ -244,6 +235,10 @@
       "icon": "spell_monk_brewmaster_spec",
       "name": "Invoke Niuzao, the Black Ox"
     },
+    "148135": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Chi Burst"
+    },
     "322109": {
       "icon": "ability_monk_touchofdeath",
       "name": "Touch of Death"
@@ -268,10 +263,6 @@
       "icon": "ability_monk_tigereyebrandy",
       "name": "Celestial Infusion"
     },
-    "1242373": {
-      "icon": "ability_warstomp",
-      "name": "Stomp"
-    },
     "1262159": {
       "icon": "spell_shaman_stormearthfire",
       "name": "Fuel on the Fire"
@@ -281,7 +272,7 @@
       "name": "Empty Barrel"
     }
   },
-  "source_signature": "f88e9420f70a3ddb",
+  "source_signature": "a6765e2be1966e70",
   "ingest_version": 2,
   "inaccessible_parses": []
 }
