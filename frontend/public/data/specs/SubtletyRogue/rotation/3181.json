@@ -3,119 +3,130 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 501,
-  "downtime_threshold_ms": 1844,
-  "top_avg_efficiency": 67.1,
-  "top_efficiency_stddev": 3.5,
+  "avg_duration_s": 455.3,
+  "downtime_threshold_ms": 1802,
+  "top_avg_efficiency": 64.8,
+  "top_efficiency_stddev": 4.4,
   "per_cd_benchmarks": {
     "Shadow Blades": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.4,
-      "stddev_first_cast_s": 5.7,
-      "avg_gap_s": 98.8,
-      "stddev_gap_s": 17.4,
-      "avg_bl_offset_s": 18.3,
-      "stddev_bl_offset_s": 7.3,
-      "avg_uses": 5.7,
-      "avg_uses_per_min": 0.68,
+      "avg_first_cast_s": 8.4,
+      "stddev_first_cast_s": 8,
+      "avg_gap_s": 108.8,
+      "stddev_gap_s": 29.7,
+      "avg_bl_offset_s": 10.2,
+      "stddev_bl_offset_s": 8.5,
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.62,
       "uses_per_min": {
-        "avg": 0.683,
-        "stddev": 0.053,
-        "min": 0.576,
-        "max": 0.742
+        "avg": 0.618,
+        "stddev": 0.058,
+        "min": 0.557,
+        "max": 0.726
       },
-      "bl_pct": 80,
+      "bl_pct": 90,
       "majority_hold": true,
-      "hold_targets": {}
+      "hold_targets": {
+        "2": {
+          "target_s": 177.8,
+          "stddev_s": 3.7,
+          "delay_s": 81.7,
+          "delay_stddev_s": 10.8,
+          "band_s": 10.8,
+          "effective_cd_s": 90,
+          "count": 7,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 276.1,
+          "stddev_s": 38.7,
+          "delay_s": 11,
+          "delay_stddev_s": 1.1,
+          "band_s": 5,
+          "effective_cd_s": 90,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
     },
     "Shadow Dance": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.2,
-      "stddev_first_cast_s": 3.7,
-      "avg_gap_s": 20.7,
-      "stddev_gap_s": 9.8,
-      "avg_bl_offset_s": 2.1,
-      "stddev_bl_offset_s": 3.1,
-      "avg_uses": 24.5,
-      "avg_uses_per_min": 2.94,
+      "avg_first_cast_s": 4.4,
+      "stddev_first_cast_s": 3.5,
+      "avg_gap_s": 21.1,
+      "stddev_gap_s": 11.1,
+      "avg_bl_offset_s": 3.7,
+      "stddev_bl_offset_s": 3,
+      "avg_uses": 22.1,
+      "avg_uses_per_min": 2.91,
       "uses_per_min": {
-        "avg": 2.937,
-        "stddev": 0.162,
-        "min": 2.686,
-        "max": 3.137
+        "avg": 2.913,
+        "stddev": 0.139,
+        "min": 2.658,
+        "max": 3.09
       },
-      "bl_pct": 80,
+      "bl_pct": 100,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Secret Technique": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.2,
-      "stddev_first_cast_s": 3.7,
-      "avg_gap_s": 22.9,
-      "stddev_gap_s": 12.3,
-      "avg_bl_offset_s": 2.2,
+      "avg_first_cast_s": 4.5,
+      "stddev_first_cast_s": 3.5,
+      "avg_gap_s": 23.2,
+      "stddev_gap_s": 14.1,
+      "avg_bl_offset_s": 3.9,
       "stddev_bl_offset_s": 3.1,
-      "avg_uses": 22.2,
-      "avg_uses_per_min": 2.66,
+      "avg_uses": 20.1,
+      "avg_uses_per_min": 2.65,
       "uses_per_min": {
-        "avg": 2.655,
-        "stddev": 0.159,
-        "min": 2.365,
-        "max": 2.865
+        "avg": 2.649,
+        "stddev": 0.238,
+        "min": 2.088,
+        "max": 2.905
       },
-      "bl_pct": 80,
+      "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
         "7": {
-          "target_s": 174.3,
-          "stddev_s": 2.1,
-          "delay_s": 16.4,
-          "delay_stddev_s": 4.1,
-          "band_s": 5,
+          "target_s": 177.5,
+          "stddev_s": 3.4,
+          "delay_s": 30,
+          "delay_stddev_s": 6.6,
+          "band_s": 6.6,
           "effective_cd_s": 45,
-          "count": 5,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 81.8,
-      "stddev_first_cast_s": 134,
-      "avg_gap_s": 157.3,
-      "stddev_gap_s": 34.3,
-      "avg_bl_offset_s": 14.2,
-      "stddev_bl_offset_s": 20.7,
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.38,
+      "avg_first_cast_s": 126,
+      "stddev_first_cast_s": 116.3,
+      "avg_gap_s": 177.8,
+      "stddev_gap_s": 64.1,
+      "avg_bl_offset_s": 20.6,
+      "stddev_bl_offset_s": 18.3,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.383,
-        "stddev": 0.119,
-        "min": 0.115,
-        "max": 0.485
+        "avg": 0.33,
+        "stddev": 0.09,
+        "min": 0.239,
+        "max": 0.484
       },
-      "bl_pct": 60,
+      "bl_pct": 90,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 186.2,
-          "stddev_s": 57.6,
-          "delay_s": 49.9,
-          "delay_stddev_s": 34.1,
-          "band_s": 34.1,
+          "target_s": 364.2,
+          "stddev_s": 112.5,
+          "delay_s": 39.4,
+          "delay_stddev_s": 74.6,
+          "band_s": 74.6,
           "effective_cd_s": 120,
-          "count": 8,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 365.7,
-          "stddev_s": 35.1,
-          "delay_s": 45.8,
-          "delay_stddev_s": 29.5,
-          "band_s": 29.5,
-          "effective_cd_s": 120,
-          "count": 6,
+          "count": 9,
           "total_samples": 10
         }
       }
@@ -279,6 +290,6 @@
       "name": "Secret Technique"
     }
   },
-  "source_signature": "b1ab5644ce241753",
-  "ingest_version": 2
+  "source_signature": "2311e8abcd30601c",
+  "ingest_version": 3
 }

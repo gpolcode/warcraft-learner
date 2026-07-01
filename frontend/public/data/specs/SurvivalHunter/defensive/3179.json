@@ -56,7 +56,35 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 104.4,
+      "dmg_avg": 314278,
+      "dmg_stddev": 132817,
+      "dmg_min": 217897,
+      "dmg_max": 542371,
+      "dmg_pct_avg": 0.042,
+      "window_length_s": 9.6,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 285076,
+          "min_damage": 211987,
+          "max_damage": 499182,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 186265,
@@ -120,8 +148,12 @@
     "264735": {
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
     }
   },
-  "source_signature": "227b44aa372a97a1",
-  "ingest_version": 2
+  "source_signature": "1f10032d716a515f",
+  "ingest_version": 3
 }

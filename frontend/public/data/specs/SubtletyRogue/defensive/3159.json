@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Cloak of Shadows": {
       "sample_count": 7,
-      "avg_first_cast_s": 206.2,
-      "stddev_first_cast_s": 144.5,
+      "avg_first_cast_s": 206,
+      "stddev_first_cast_s": 144.7,
       "avg_gap_s": 135.9,
       "stddev_gap_s": 2.8,
       "hold_targets": {
@@ -19,72 +19,78 @@
         },
         "2": {
           "target_s": 391,
-          "stddev_s": 6.2,
+          "stddev_s": 6.3,
           "count": 5,
           "total_samples": 7
         }
       },
       "avg_uses": 2.4,
-      "avg_uses_per_min": 0.31,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.315,
-        "stddev": 0.129,
+        "avg": 0.325,
+        "stddev": 0.136,
         "min": 0.131,
         "max": 0.445
       },
       "majority_hold": true
     },
     "Feint": {
-      "sample_count": 8,
-      "avg_first_cast_s": 182.3,
-      "stddev_first_cast_s": 128.2,
-      "avg_gap_s": 43.2,
-      "stddev_gap_s": 35.9,
+      "sample_count": 7,
+      "avg_first_cast_s": 162.8,
+      "stddev_first_cast_s": 125,
+      "avg_gap_s": 41.2,
+      "stddev_gap_s": 34.6,
       "hold_targets": {
         "1": {
-          "target_s": 295,
-          "stddev_s": 126.7,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 268.5,
+          "stddev_s": 122.1,
+          "count": 5,
+          "total_samples": 7
         },
         "2": {
           "target_s": 202,
           "stddev_s": 137.5,
           "count": 4,
-          "total_samples": 8
+          "total_samples": 7
+        },
+        "3": {
+          "target_s": 254.1,
+          "stddev_s": 91.5,
+          "count": 3,
+          "total_samples": 7
         }
       },
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 0.66,
+      "avg_uses": 5.7,
+      "avg_uses_per_min": 0.72,
       "uses_per_min": {
-        "avg": 0.659,
-        "stddev": 0.699,
-        "min": 0.244,
+        "avg": 0.718,
+        "stddev": 0.733,
+        "min": 0.252,
         "max": 2.314
       },
       "majority_hold": true
     },
     "Evasion": {
-      "sample_count": 3,
-      "avg_first_cast_s": 368.1,
-      "stddev_first_cast_s": 56.1,
+      "sample_count": 2,
+      "avg_first_cast_s": 374,
+      "stddev_first_cast_s": 78,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.129,
-        "stddev": 0.007,
-        "min": 0.122,
+        "avg": 0.133,
+        "stddev": 0.003,
+        "min": 0.131,
         "max": 0.135
       },
       "majority_hold": false
     },
     "Crimson Vial": {
-      "sample_count": 4,
-      "avg_first_cast_s": 342.3,
-      "stddev_first_cast_s": 61.2,
+      "sample_count": 3,
+      "avg_first_cast_s": 314.1,
+      "stddev_first_cast_s": 29.3,
       "avg_gap_s": 50.8,
       "stddev_gap_s": 29.4,
       "hold_targets": {
@@ -92,21 +98,120 @@
           "target_s": 383.5,
           "stddev_s": 2.5,
           "count": 2,
-          "total_samples": 4
+          "total_samples": 3
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.28,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.278,
-        "stddev": 0.175,
-        "min": 0.122,
+        "avg": 0.33,
+        "stddev": 0.173,
+        "min": 0.135,
         "max": 0.463
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 119.3,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "dmg_pct_avg": 0,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 255.6,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "dmg_pct_avg": 0,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 268.5,
+      "dmg_avg": 314326,
+      "dmg_stddev": 69350,
+      "dmg_min": 248915,
+      "dmg_max": 416882,
+      "dmg_pct_avg": 0.019,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 198073,
+          "min_damage": 46828,
+          "max_damage": 317584,
+          "count": 4
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 149136,
+          "min_damage": 126087,
+          "max_damage": 171572,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 92929,
+          "min_damage": 74461,
+          "max_damage": 125362,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 391.3,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "dmg_pct_avg": 0,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -122,13 +227,13 @@
     },
     {
       "spell_id": 185311,
-      "avg_uses": 2.3,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 1966,
-      "avg_uses": 5.3,
+      "avg_uses": 5.7,
       "min_uses": 2,
       "max_uses": 20
     }
@@ -189,8 +294,20 @@
     "185311": {
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "d9e7f0b4112b8c7c",
-  "ingest_version": 2
+  "source_signature": "37dc4498f123a0bd",
+  "ingest_version": 3
 }

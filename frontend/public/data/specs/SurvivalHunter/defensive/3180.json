@@ -56,7 +56,144 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 90.3,
+      "dmg_avg": 183186,
+      "dmg_stddev": 81643,
+      "dmg_min": 45612,
+      "dmg_max": 274422,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 46879,
+          "min_damage": 41571,
+          "max_damage": 49904,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 143.6,
+      "dmg_avg": 277722,
+      "dmg_stddev": 139827,
+      "dmg_min": 57864,
+      "dmg_max": 378478,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 160350,
+          "min_damage": 131061,
+          "max_damage": 185177,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 57422,
+          "min_damage": 54408,
+          "max_damage": 58710,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 249,
+      "dmg_avg": 249121,
+      "dmg_stddev": 97299,
+      "dmg_min": 76369,
+      "dmg_max": 405524,
+      "dmg_pct_avg": 0.019,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 155516,
+          "min_damage": 102553,
+          "max_damage": 205182,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 71516,
+          "min_damage": 58006,
+          "max_damage": 77969,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 305.2,
+      "dmg_avg": 291653,
+      "dmg_stddev": 150286,
+      "dmg_min": 50866,
+      "dmg_max": 493879,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 7.6,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 139676,
+          "min_damage": 128622,
+          "max_damage": 158916,
+          "count": 4
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 96458,
+          "min_damage": 84878,
+          "max_damage": 108519,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 73872,
+          "min_damage": 50866,
+          "max_damage": 86632,
+          "count": 8
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 186265,
@@ -120,8 +257,20 @@
     "264735": {
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
     }
   },
-  "source_signature": "66b5ecb7f177af12",
-  "ingest_version": 2
+  "source_signature": "e65c36f0405ee944",
+  "ingest_version": 3
 }

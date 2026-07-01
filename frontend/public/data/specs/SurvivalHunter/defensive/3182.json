@@ -56,7 +56,62 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 138,
+      "dmg_avg": 209109,
+      "dmg_stddev": 128226,
+      "dmg_min": 32096,
+      "dmg_max": 362643,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 41508,
+          "min_damage": 30932,
+          "max_damage": 52046,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 225.1,
+      "dmg_avg": 281015,
+      "dmg_stddev": 96137,
+      "dmg_min": 122218,
+      "dmg_max": 414201,
+      "dmg_pct_avg": 0.032,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 41619,
+          "min_damage": 31539,
+          "max_damage": 56027,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 186265,
@@ -120,8 +175,12 @@
     "264735": {
       "icon": "spell_nature_spiritarmor",
       "name": "Survival of the Fittest"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "a383a5c2ebbdd7a0",
-  "ingest_version": 2
+  "source_signature": "5c21aac59797ff9e",
+  "ingest_version": 3
 }

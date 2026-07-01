@@ -192,6 +192,47 @@
           "count": 12
         }
       ]
+    },
+    {
+      "time_s": 138.9,
+      "dmg_avg": 445122,
+      "dmg_stddev": 176514,
+      "dmg_min": 270666,
+      "dmg_max": 774736,
+      "dmg_pct_avg": 0.052,
+      "window_length_s": 9.1,
+      "defensive_name": "Shield Wall",
+      "spell_id": 871,
+      "common_defensives": [
+        "Shield Wall"
+      ],
+      "common_cds": [
+        "Shield Wall"
+      ],
+      "ref_game_id": 252918,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 282656,
+          "min_damage": 173740,
+          "max_damage": 399123,
+          "count": 6
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 119289,
+          "min_damage": 95376,
+          "max_damage": 205604,
+          "count": 6
+        },
+        {
+          "spell_id": 1255683,
+          "avg_damage": 31022,
+          "min_damage": 19178,
+          "max_damage": 51828,
+          "count": 3
+        }
+      ]
     }
   ],
   "top_defensives_summary": [
@@ -334,11 +375,15 @@
       "icon": "spell_arcane_arcanetorrent",
       "name": "Umbral Collapse"
     },
+    "1255683": {
+      "icon": "sha_ability_rogue_envelopingshadows_nightborne",
+      "name": "Gnashing Void"
+    },
     "1259903": {
       "icon": "ability_priest_voidentropy",
       "name": "Dark Upheaval"
     }
   },
-  "source_signature": "368c7bb0d1888bcb",
-  "ingest_version": 2
+  "source_signature": "8a8aa076e9162bd0",
+  "ingest_version": 3
 }
