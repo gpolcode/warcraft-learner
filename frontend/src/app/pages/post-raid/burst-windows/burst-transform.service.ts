@@ -69,6 +69,20 @@ export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanki
     }));
 }
 
+/**
+ * WCL `filterExpression` scoping DamageDone to hits on the encounter boss (matched by
+ * name, which is the fight name across every report of the encounter). WCL's ranked DPS
+ * metric excludes add-cleave and other off-boss "padding"; measuring the raw stream
+ * would count it, inflating the bench. Applied identically to the player fetch (see
+ * `burst.service.ts`) so both sides stay comparable. Returns null for an empty name
+ * (no filter -> all targets). The name is embedded in a double-quoted string literal,
+ * so any embedded double quote is escaped.
+ */
+export function bossDamageFilter(bossName: string): string | null {
+  if (!bossName) return null;
+  return `target.name = "${bossName.replace(/"/g, '\\"')}"`;
+}
+
 /** Cooldown name -> spell id, for the burst window header icons. */
 export function cdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDefensive[]): Record<string, number> {
   const map: Record<string, number> = {};
@@ -421,9 +435,12 @@ export class BurstTransformService implements DataSource<BurstBench> {
       const abilityNames = new Map<number, string>(
         (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
       );
+      // Scope DamageDone to the boss so add-cleave WCL excludes from the ranked parse
+      // does not inflate the bench; casts are not target-scoped, so they stay unfiltered.
+      const damageFilter = bossDamageFilter(fight.name ?? '') ?? undefined;
       const [casts, damage] = await Promise.all([
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
-        this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
+        this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id, false, undefined, damageFilter),
       ]);
 
       const timings = cdTimings(casts, cooldowns, fight.startTime);

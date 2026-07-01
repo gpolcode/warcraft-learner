@@ -22,6 +22,9 @@ export interface EventsQueryVars {
   sourceID?: number;
   includeResources?: boolean;
   hostilityType?: 'Friendlies' | 'Enemies';
+  // A WCL filter-expression (e.g. `target.name = "Boss"`), applied server-side so
+  // the event stream can be scoped to specific targets/abilities. Left off by default.
+  filterExpression?: string;
 }
 export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
 export interface RankingsQueryVars { encounterID: number; className: string; specName: string }
@@ -50,10 +53,10 @@ query($code:String!,$fightIDs:[Int]!){
 }`;
 
 export const EVENTS_Q = `
-query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$startTime:Float,$endTime:Float,$includeResources:Boolean,$hostilityType:HostilityType){
+query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$startTime:Float,$endTime:Float,$includeResources:Boolean,$hostilityType:HostilityType,$filterExpression:String){
   reportData{report(code:$code){
     events(fightIDs:$fightIDs,dataType:$dataType,sourceID:$sourceID,
-           startTime:$startTime,endTime:$endTime,includeResources:$includeResources,hostilityType:$hostilityType,limit:10000){data nextPageTimestamp}
+           startTime:$startTime,endTime:$endTime,includeResources:$includeResources,hostilityType:$hostilityType,filterExpression:$filterExpression,limit:10000){data nextPageTimestamp}
   }}
 }`;
 

@@ -6,7 +6,7 @@ import { WclEvent } from '../../../core/models/wcl.models';
 import {
   BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, cdSpellIds, ParseWindow,
   toParseRankings, bucketDamagePerBin, forwardRollingDamage, detectDenseRuns, trimRunToDamage,
-  windowAbilityBreakdown, BinRun,
+  windowAbilityBreakdown, BinRun, bossDamageFilter,
 } from './burst-transform.service';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER } from '../../../../testing/spell-ids';
 
@@ -69,6 +69,20 @@ describe('toParseRankings', () => {
       { name: 'Keep', report: { code: 'r3', fightID: 3 } },
     ];
     expect(toParseRankings(raw, 10)).toEqual([{ player: 'Keep', report_code: 'r3', fight_id: 3 }]);
+  });
+});
+
+describe('bossDamageFilter', () => {
+  it('builds a target-name filter expression for the boss', () => {
+    expect(bossDamageFilter('Ulgrax the Devourer')).toBe('target.name = "Ulgrax the Devourer"');
+  });
+
+  it('escapes an embedded double quote so the expression stays well-formed', () => {
+    expect(bossDamageFilter('The "Boss"')).toBe('target.name = "The \\"Boss\\""');
+  });
+
+  it('returns null for an empty boss name (no filter -> all targets)', () => {
+    expect(bossDamageFilter('')).toBeNull();
   });
 });
 
@@ -430,6 +444,33 @@ describe('BurstTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
     // 11 candidates, one private: the 11th backfills the skipped parse to a full 10.
     expect(bench!.sample_count).toBe(10);
+  });
+
+  it('scopes the DamageDone fetch to the boss name, leaving Casts unfiltered', async () => {
+    const damageFilters: (string | undefined)[] = [];
+    const castFilters: (string | undefined)[] = [];
+    const recordingWcl = {
+      ...wclFake,
+      getAllEvents: async (
+        _code: string, _fightId: number, dataType: string,
+        _startTime: number, _endTime: number, _sourceId?: number,
+        _includeResources?: boolean, _hostilityType?: string, filterExpression?: string,
+      ) => {
+        if (dataType === 'Casts') castFilters.push(filterExpression);
+        else damageFilters.push(filterExpression);
+        return dataType === 'Casts' ? [cast(SHADOW_BLADES, 10)] : burstDamage;
+      },
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: WclApiService, useValue: recordingWcl as unknown as WclApiService },
+        { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
+      ],
+    });
+    await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+    // The reportFor fixtures name the fight "Boss", so every parse filters to it.
+    expect(damageFilters.every(filter => filter === 'target.name = "Boss"')).toBe(true);
+    expect(castFilters.every(filter => filter === undefined)).toBe(true);
   });
 
   it('returns null when the spec has no rulebook cooldowns', async () => {

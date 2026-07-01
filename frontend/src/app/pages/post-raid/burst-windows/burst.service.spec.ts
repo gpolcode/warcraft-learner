@@ -7,7 +7,7 @@ import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import {
   BurstFeatureService,
-  burstWindowStatus, splitCommonCds, burstMapAnchor, buildBurstView, findPlayerBurstWindows,
+  burstWindowStatus, splitCommonCds, burstMapAnchor, buildBurstView, findPlayerBurstWindows, bossDamageFilter,
 } from './burst.service';
 
 /* ----------------------------- pure functions ----------------------------- */
@@ -28,6 +28,20 @@ describe('burstWindowStatus', () => {
     // Even with no player data and "not reached", benchOnly forces the neutral info glyph.
     expect(burstWindowStatus(null, 1000, 800, 100, true, true)).toEqual({ status: 'info', icon: 'insights' });
     expect(burstWindowStatus(650, 1000, 800, 100, false, true)).toEqual({ status: 'info', icon: 'insights' });
+  });
+});
+
+describe('bossDamageFilter', () => {
+  it('builds a target-name filter expression for the boss', () => {
+    expect(bossDamageFilter('Ulgrax the Devourer')).toBe('target.name = "Ulgrax the Devourer"');
+  });
+
+  it('escapes an embedded double quote', () => {
+    expect(bossDamageFilter('The "Boss"')).toBe('target.name = "The \\"Boss\\""');
+  });
+
+  it('returns null for an empty boss name', () => {
+    expect(bossDamageFilter('')).toBeNull();
   });
 });
 
@@ -189,5 +203,33 @@ describe('BurstFeatureService', () => {
     expect(view.windows[0].overview.playerPct).toBe(950);
     expect(view.windows[0].detailRows[0].label).toBe('Eviscerate');
     expect(view.anchors[0]).toEqual({ timeS: 10, label: 'Shadow Blades', spells: [{ id: 121471, icon: 'sb', name: 'Shadow Blades' }] });
+  });
+
+  it('player view: scopes the DamageDone fetch to the boss name, leaving Casts unfiltered', async () => {
+    let damageFilter: string | undefined = 'unset';
+    let castFilter: string | undefined = 'unset';
+    const recordingWcl = {
+      getReport: wclFake.getReport,
+      getAllEvents: async (
+        _code: string, _fightId: number, dataType: string,
+        _startTime: number, _endTime: number, _sourceId?: number,
+        _includeResources?: boolean, _hostilityType?: string, filterExpression?: string,
+      ) => {
+        if (dataType === 'Casts') { castFilter = filterExpression; return [{ type: 'cast', timestamp: 11_000, abilityGameID: 121471 } as WclEvent]; }
+        damageFilter = filterExpression;
+        return [{ type: 'damage', timestamp: 12_000, abilityGameID: 279043, amount: 950 } as WclEvent];
+      },
+    };
+    const source: DataSource<BurstBench> = { getBench: () => Promise.resolve(benchFixture) };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: BURST_DATA_SOURCE, useValue: source },
+        { provide: WclApiService, useValue: recordingWcl as unknown as WclApiService },
+      ],
+    });
+    await TestBed.inject(BurstFeatureService).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
+    // The fake report names the fight "Boss", so the player is scoped to it too.
+    expect(damageFilter).toBe('target.name = "Boss"');
+    expect(castFilter).toBeUndefined();
   });
 });

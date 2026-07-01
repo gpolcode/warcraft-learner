@@ -87,6 +87,7 @@ export class WclApiService {
     code: string, fightId: number, dataType: string,
     startTime: number, endTime: number, sourceId?: number,
     includeResources = false, hostilityType?: 'Friendlies' | 'Enemies',
+    filterExpression?: string,
   ): Promise<WclEvent[]> {
     const events: WclEvent[] = [];
     let currentStart = startTime;
@@ -95,6 +96,7 @@ export class WclApiService {
       if (sourceId != null) vars.sourceID = sourceId;
       if (includeResources) vars.includeResources = true;
       if (hostilityType) vars.hostilityType = hostilityType;
+      if (filterExpression) vars.filterExpression = filterExpression;
       // Event pages for a saved report are immutable, so the read is cache-first (see
       // livePolicy) - re-analysis is served from cache; only while live-syncing does it go
       // network-only, so the still-recording fight's events are always fresh.

@@ -143,6 +143,18 @@ export function buildBurstView(
   return { windows, anchors };
 }
 
+/**
+ * WCL `filterExpression` scoping the player's DamageDone to hits on the encounter boss
+ * (by name). Kept byte-for-byte identical to the bench-side filter in
+ * `burst-transform.service.ts` (self-contained per the slice rule) so the player and
+ * top parses are measured the same way - add-cleave WCL excludes from the ranked parse
+ * inflates neither side. Returns null for an empty name (no filter -> all targets).
+ */
+export function bossDamageFilter(bossName: string): string | null {
+  if (!bossName) return null;
+  return `target.name = "${bossName.replace(/"/g, '\\"')}"`;
+}
+
 /** Total damage on a WCL event (raw amount + absorbed). */
 function eventDamage(event: WclEvent): number {
   return (event.amount || 0) + (event.absorbed || 0);
@@ -237,9 +249,12 @@ export class BurstFeatureService {
       const abilityNames = new Map<number, string>();
       for (const ability of report.masterData?.abilities ?? []) abilityNames.set(ability.gameID, ability.name);
 
+      // Scope DamageDone to the boss so the player is measured the same way the bench is
+      // (see bossDamageFilter); casts are not target-scoped, so they stay unfiltered.
+      const damageFilter = bossDamageFilter(fight.name ?? '') ?? undefined;
       const [casts, damage] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
-        this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId, false, undefined, damageFilter),
       ]);
       const playerWindows = findPlayerBurstWindows(bench.windows, damage, casts, fight.startTime, abilityNames);
       const fightDurationS = (fight.endTime - fight.startTime) / 1000;
