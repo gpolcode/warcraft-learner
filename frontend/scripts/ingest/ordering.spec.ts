@@ -54,6 +54,32 @@ describe('orderSpecsByVersionThenTime', () => {
     expect(order).toEqual(['Alpha', 'Bravo', 'Charlie']);
   });
 
+  it('pins SubtletyRogue first within its bracket, then alphabetical for the rest', () => {
+    const order = orderSpecsByVersionThenTime([
+      entry({ spec: 'OutlawRogue', lastChange: 200 }),
+      entry({ spec: 'SubtletyRogue', lastChange: 200 }),
+      entry({ spec: 'AssassinationRogue', lastChange: 200 }),
+    ]);
+    expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue', 'OutlawRogue']);
+  });
+
+  it('pins SubtletyRogue ahead of an older spec within the same bracket (priority beats time)', () => {
+    const order = orderSpecsByVersionThenTime([
+      entry({ spec: 'AssassinationRogue', lastChange: 100 }),
+      entry({ spec: 'SubtletyRogue', lastChange: 900 }),
+    ]);
+    expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue']);
+  });
+
+  it('does not pull SubtletyRogue ahead of an earlier (emptier/older-version) bracket', () => {
+    const order = orderSpecsByVersionThenTime([
+      entry({ spec: 'SubtletyRogue', onCurrentVersion: true }),
+      entry({ spec: 'EmptySpec', dataCount: 0, onCurrentVersion: false, lastChange: null }),
+      entry({ spec: 'OldSpec', onCurrentVersion: false }),
+    ]);
+    expect(order).toEqual(['EmptySpec', 'OldSpec', 'SubtletyRogue']);
+  });
+
   it('does not mutate the input', () => {
     const entries = [entry({ spec: 'B', lastChange: 2 }), entry({ spec: 'A', lastChange: 1 })];
     const snapshot = entries.map(item => item.spec);
