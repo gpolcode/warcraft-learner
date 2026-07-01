@@ -6,47 +6,41 @@
   "per_defensive_benchmarks": {
     "Blur": {
       "sample_count": 10,
-      "avg_first_cast_s": 168.1,
-      "stddev_first_cast_s": 158.6,
-      "avg_gap_s": 85.1,
-      "stddev_gap_s": 85.8,
+      "avg_first_cast_s": 215.7,
+      "stddev_first_cast_s": 157.1,
+      "avg_gap_s": 88.4,
+      "stddev_gap_s": 95.5,
       "hold_targets": {
         "1": {
-          "target_s": 211.6,
-          "stddev_s": 160.2,
-          "count": 6,
-          "total_samples": 10
-        },
-        "2": {
-          "target_s": 376.2,
-          "stddev_s": 95.1,
-          "count": 4,
+          "target_s": 356.4,
+          "stddev_s": 137,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.6,
-      "avg_uses_per_min": 0.54,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.542,
-        "stddev": 0.189,
+        "avg": 0.478,
+        "stddev": 0.131,
         "min": 0.242,
-        "max": 0.938
+        "max": 0.677
       },
       "majority_hold": true
     },
     "Darkness": {
-      "sample_count": 6,
-      "avg_first_cast_s": 355.2,
-      "stddev_first_cast_s": 100.3,
+      "sample_count": 9,
+      "avg_first_cast_s": 362,
+      "stddev_first_cast_s": 81.7,
       "avg_gap_s": 193,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.14,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.137,
-        "stddev": 0.05,
-        "min": 0.111,
+        "avg": 0.13,
+        "stddev": 0.041,
+        "min": 0.11,
         "max": 0.238
       },
       "majority_hold": false
@@ -56,13 +50,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 198589,
-      "avg_uses": 4.6,
+      "avg_uses": 4.1,
       "min_uses": 2,
-      "max_uses": 8
+      "max_uses": 6
     },
     {
       "spell_id": 196718,
-      "avg_uses": 1.2,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -112,6 +106,6 @@
       "name": "Blur"
     }
   },
-  "source_signature": "24752038366bcffc",
+  "source_signature": "976a00e08a5ecf62",
   "ingest_version": 2
 }

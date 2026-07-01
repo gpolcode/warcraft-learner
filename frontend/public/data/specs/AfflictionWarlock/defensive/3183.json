@@ -5,46 +5,46 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Unending Resolve": {
-      "sample_count": 9,
-      "avg_first_cast_s": 194.5,
-      "stddev_first_cast_s": 115.1,
-      "avg_gap_s": 251.6,
-      "stddev_gap_s": 34.1,
+      "sample_count": 8,
+      "avg_first_cast_s": 191.7,
+      "stddev_first_cast_s": 122.8,
+      "avg_gap_s": 242,
+      "stddev_gap_s": 30.6,
       "hold_targets": {
         "1": {
-          "target_s": 326.9,
-          "stddev_s": 81.1,
-          "count": 5,
-          "total_samples": 9
+          "target_s": 325.8,
+          "stddev_s": 1.4,
+          "count": 4,
+          "total_samples": 8
         }
       },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.18,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.178,
-        "stddev": 0.062,
+        "avg": 0.171,
+        "stddev": 0.063,
         "min": 0.111,
         "max": 0.24
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 129.1,
-      "stddev_first_cast_s": 104.2,
-      "avg_gap_s": 77.4,
-      "stddev_gap_s": 36.6,
+      "avg_first_cast_s": 115,
+      "stddev_first_cast_s": 81.6,
+      "avg_gap_s": 76.8,
+      "stddev_gap_s": 35.4,
       "hold_targets": {
         "1": {
           "target_s": 327.7,
-          "stddev_s": 132.7,
+          "stddev_s": 89.9,
           "count": 5,
           "total_samples": 10
         },
         "2": {
-          "target_s": 305.4,
-          "stddev_s": 114.2,
-          "count": 6,
+          "target_s": 309.9,
+          "stddev_s": 110,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
@@ -54,35 +54,41 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 5.3,
-      "avg_uses_per_min": 0.6,
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.6,
-        "stddev": 0.333,
+        "avg": 0.612,
+        "stddev": 0.321,
         "min": 0.232,
         "max": 1.15
       },
       "majority_hold": true
     },
     "Mortal Coil": {
-      "sample_count": 6,
-      "avg_first_cast_s": 243.2,
-      "stddev_first_cast_s": 106,
-      "avg_gap_s": 96.2,
-      "stddev_gap_s": 66.4,
+      "sample_count": 7,
+      "avg_first_cast_s": 235,
+      "stddev_first_cast_s": 99.2,
+      "avg_gap_s": 107.8,
+      "stddev_gap_s": 68.6,
       "hold_targets": {
         "1": {
-          "target_s": 295.6,
-          "stddev_s": 45.4,
-          "count": 4,
-          "total_samples": 6
+          "target_s": 309.6,
+          "stddev_s": 54.9,
+          "count": 5,
+          "total_samples": 7
+        },
+        "2": {
+          "target_s": 339.3,
+          "stddev_s": 96.8,
+          "count": 3,
+          "total_samples": 7
         }
       },
-      "avg_uses": 2.5,
+      "avg_uses": 2.6,
       "avg_uses_per_min": 0.29,
       "uses_per_min": {
-        "avg": 0.285,
-        "stddev": 0.195,
+        "avg": 0.294,
+        "stddev": 0.179,
         "min": 0.112,
         "max": 0.6
       },
@@ -93,19 +99,19 @@
   "top_defensives_summary": [
     {
       "spell_id": 104773,
-      "avg_uses": 1.6,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 108416,
-      "avg_uses": 5.3,
+      "avg_uses": 5.4,
       "min_uses": 2,
       "max_uses": 10
     },
     {
       "spell_id": 6789,
-      "avg_uses": 2.5,
+      "avg_uses": 2.6,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -168,6 +174,6 @@
       "name": "Dark Pact"
     }
   },
-  "source_signature": "df4eb34f13d012ab",
+  "source_signature": "edde3c7ee2b1ca1f",
   "ingest_version": 2
 }

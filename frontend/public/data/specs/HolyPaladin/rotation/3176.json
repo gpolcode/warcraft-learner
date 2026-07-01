@@ -3,10 +3,10 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 242.8,
-  "downtime_threshold_ms": 1262,
-  "top_avg_efficiency": 82.2,
-  "top_efficiency_stddev": 16.7,
+  "avg_duration_s": 242.6,
+  "downtime_threshold_ms": 1264,
+  "top_avg_efficiency": 82.5,
+  "top_efficiency_stddev": 14.8,
   "per_cd_benchmarks": {
     "Avenging Wrath": {
       "sample_count": 10,
@@ -30,17 +30,17 @@
     },
     "Avenging Crusader": {
       "sample_count": 10,
-      "avg_first_cast_s": 2.9,
+      "avg_first_cast_s": 2.7,
       "stddev_first_cast_s": 2.4,
-      "avg_gap_s": 62.4,
+      "avg_gap_s": 62.3,
       "stddev_gap_s": 2.9,
-      "avg_bl_offset_s": -0.5,
-      "stddev_bl_offset_s": 6.2,
+      "avg_bl_offset_s": -0.7,
+      "stddev_bl_offset_s": 6.1,
       "avg_uses": 3.6,
       "avg_uses_per_min": 0.87,
       "uses_per_min": {
         "avg": 1.09,
-        "stddev": 0.085,
+        "stddev": 0.084,
         "min": 1.016,
         "max": 1.228
       },
@@ -90,17 +90,17 @@
     },
     "Holy Shock": {
       "sample_count": 10,
-      "avg_first_cast_s": 13.9,
-      "stddev_first_cast_s": 12.1,
+      "avg_first_cast_s": 13.4,
+      "stddev_first_cast_s": 12.3,
       "avg_gap_s": 5.4,
       "stddev_gap_s": 4.4,
-      "avg_bl_offset_s": 11.3,
-      "stddev_bl_offset_s": 11.1,
+      "avg_bl_offset_s": 10.7,
+      "stddev_bl_offset_s": 11.3,
       "avg_uses": 42.7,
       "avg_uses_per_min": 10.6,
       "uses_per_min": {
-        "avg": 10.596,
-        "stddev": 2.301,
+        "avg": 10.601,
+        "stddev": 2.302,
         "min": 8.097,
         "max": 16.086
       },
@@ -110,16 +110,16 @@
     },
     "Holy Bulwark": {
       "sample_count": 10,
-      "avg_first_cast_s": 11.3,
-      "stddev_first_cast_s": 16.4,
+      "avg_first_cast_s": 11.2,
+      "stddev_first_cast_s": 16.5,
       "avg_gap_s": 58.8,
       "stddev_gap_s": 12,
-      "avg_bl_offset_s": 9.3,
+      "avg_bl_offset_s": 9.1,
       "stddev_bl_offset_s": 17.2,
       "avg_uses": 4.3,
       "avg_uses_per_min": 1.07,
       "uses_per_min": {
-        "avg": 1.068,
+        "avg": 1.069,
         "stddev": 0.163,
         "min": 0.766,
         "max": 1.241
@@ -130,12 +130,12 @@
     },
     "Sacred Weapon": {
       "sample_count": 10,
-      "avg_first_cast_s": 16.7,
-      "stddev_first_cast_s": 21.3,
-      "avg_gap_s": 61.3,
-      "stddev_gap_s": 9.2,
-      "avg_bl_offset_s": 8.2,
-      "stddev_bl_offset_s": 11.1,
+      "avg_first_cast_s": 16.6,
+      "stddev_first_cast_s": 21.4,
+      "avg_gap_s": 61.4,
+      "stddev_gap_s": 9.5,
+      "avg_bl_offset_s": 8,
+      "stddev_bl_offset_s": 11.2,
       "avg_uses": 4.2,
       "avg_uses_per_min": 1.04,
       "uses_per_min": {
@@ -148,34 +148,34 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 151,
-          "stddev_s": 30.9,
-          "delay_s": 13.5,
-          "delay_stddev_s": 2.9,
+          "target_s": 144.9,
+          "stddev_s": 28.7,
+          "delay_s": 13.9,
+          "delay_stddev_s": 2.8,
           "band_s": 5,
           "effective_cd_s": 60,
-          "count": 5,
+          "count": 6,
           "total_samples": 10
         }
       }
     },
     "Aura Mastery": {
       "sample_count": 10,
-      "avg_first_cast_s": 126.2,
-      "stddev_first_cast_s": 83.4,
-      "avg_gap_s": 174.1,
-      "stddev_gap_s": 17.3,
-      "avg_bl_offset_s": 36.1,
-      "stddev_bl_offset_s": 0,
-      "avg_uses": 0.9,
-      "avg_uses_per_min": 0.2,
+      "avg_first_cast_s": 139.9,
+      "stddev_first_cast_s": 71.7,
+      "avg_gap_s": 183,
+      "stddev_gap_s": 10.6,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0.8,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.341,
-        "stddev": 0.083,
-        "min": 0.241,
-        "max": 0.421
+        "avg": 0.306,
+        "stddev": 0.086,
+        "min": 0.212,
+        "max": 0.414
       },
-      "bl_pct": 10,
+      "bl_pct": 0,
       "majority_hold": false,
       "hold_targets": {}
     }
@@ -373,6 +373,6 @@
       "name": "Sacred Weapon"
     }
   },
-  "source_signature": "5e7f63b38c8c6141",
+  "source_signature": "e7870f036582cbe6",
   "ingest_version": 2
 }

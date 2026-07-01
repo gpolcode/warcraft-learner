@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Unending Resolve": {
       "sample_count": 7,
-      "avg_first_cast_s": 163.9,
-      "stddev_first_cast_s": 59.7,
-      "avg_gap_s": 161,
-      "stddev_gap_s": 17.3,
+      "avg_first_cast_s": 217.2,
+      "stddev_first_cast_s": 64.7,
+      "avg_gap_s": 180.7,
+      "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.28,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.282,
-        "stddev": 0.102,
+        "avg": 0.239,
+        "stddev": 0.08,
         "min": 0.194,
         "max": 0.418
       },
@@ -23,35 +23,49 @@
     },
     "Dark Pact": {
       "sample_count": 10,
-      "avg_first_cast_s": 72.4,
-      "stddev_first_cast_s": 62.6,
-      "avg_gap_s": 67.6,
-      "stddev_gap_s": 38.8,
-      "hold_targets": {},
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 0.74,
+      "avg_first_cast_s": 71.4,
+      "stddev_first_cast_s": 66.7,
+      "avg_gap_s": 69,
+      "stddev_gap_s": 25.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 134.5,
+          "stddev_s": 26.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.738,
-        "stddev": 0.373,
+        "avg": 0.655,
+        "stddev": 0.352,
         "min": 0.194,
         "max": 1.189
       },
       "majority_hold": false
     },
     "Mortal Coil": {
-      "sample_count": 7,
-      "avg_first_cast_s": 179.1,
-      "stddev_first_cast_s": 27,
-      "avg_gap_s": 61.7,
-      "stddev_gap_s": 20.2,
-      "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.34,
+      "sample_count": 5,
+      "avg_first_cast_s": 175.2,
+      "stddev_first_cast_s": 28,
+      "avg_gap_s": 70.8,
+      "stddev_gap_s": 21.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 263.7,
+          "stddev_s": 40.6,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.33,
       "uses_per_min": {
-        "avg": 0.337,
-        "stddev": 0.144,
-        "min": 0.188,
-        "max": 0.567
+        "avg": 0.327,
+        "stddev": 0.119,
+        "min": 0.198,
+        "max": 0.451
       },
       "majority_hold": false
     }
@@ -60,21 +74,21 @@
   "top_defensives_summary": [
     {
       "spell_id": 104773,
-      "avg_uses": 1.4,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 108416,
-      "avg_uses": 3.7,
+      "avg_uses": 3.2,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 6789,
-      "avg_uses": 1.7,
+      "avg_uses": 1.6,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 2
     }
   ],
   "defensives": [
@@ -135,6 +149,6 @@
       "name": "Dark Pact"
     }
   },
-  "source_signature": "50684d1a45492c95",
+  "source_signature": "9ae6a830f06036e5",
   "ingest_version": 2
 }

@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Survival Instincts": {
       "sample_count": 9,
-      "avg_first_cast_s": 155.8,
-      "stddev_first_cast_s": 87.1,
-      "avg_gap_s": 91.7,
-      "stddev_gap_s": 46.4,
+      "avg_first_cast_s": 152.7,
+      "stddev_first_cast_s": 89.2,
+      "avg_gap_s": 98.2,
+      "stddev_gap_s": 44.6,
       "hold_targets": {},
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.397,
-        "stddev": 0.158,
+        "avg": 0.42,
+        "stddev": 0.166,
         "min": 0.168,
         "max": 0.612
       },
@@ -23,23 +23,16 @@
     },
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 40.9,
+      "avg_first_cast_s": 36.7,
       "stddev_first_cast_s": 26.2,
-      "avg_gap_s": 47.9,
-      "stddev_gap_s": 11,
-      "hold_targets": {
-        "3": {
-          "target_s": 221.1,
-          "stddev_s": 0.6,
-          "count": 4,
-          "total_samples": 10
-        }
-      },
-      "avg_uses": 6.7,
-      "avg_uses_per_min": 1.19,
+      "avg_gap_s": 47.2,
+      "stddev_gap_s": 10.8,
+      "hold_targets": {},
+      "avg_uses": 6.8,
+      "avg_uses_per_min": 1.22,
       "uses_per_min": {
-        "avg": 1.193,
-        "stddev": 0.211,
+        "avg": 1.217,
+        "stddev": 0.208,
         "min": 0.993,
         "max": 1.632
       },
@@ -49,13 +42,13 @@
       "sample_count": 10,
       "avg_first_cast_s": 90.3,
       "stddev_first_cast_s": 93.4,
-      "avg_gap_s": 36,
-      "stddev_gap_s": 33.3,
+      "avg_gap_s": 34.6,
+      "stddev_gap_s": 33.5,
       "hold_targets": {},
       "avg_uses": 5.9,
       "avg_uses_per_min": 1.06,
       "uses_per_min": {
-        "avg": 1.058,
+        "avg": 1.063,
         "stddev": 0.829,
         "min": 0.169,
         "max": 2.617
@@ -64,10 +57,10 @@
     },
     "Ironfur": {
       "sample_count": 10,
-      "avg_first_cast_s": 28.6,
-      "stddev_first_cast_s": 22.1,
-      "avg_gap_s": 22.9,
-      "stddev_gap_s": 15.9,
+      "avg_first_cast_s": 40.3,
+      "stddev_first_cast_s": 35.5,
+      "avg_gap_s": 22,
+      "stddev_gap_s": 14.3,
       "hold_targets": {
         "2": {
           "target_s": 78.4,
@@ -75,34 +68,16 @@
           "count": 4,
           "total_samples": 10
         },
-        "3": {
-          "target_s": 113.7,
-          "stddev_s": 17.4,
-          "count": 4,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 188.6,
-          "stddev_s": 32.7,
-          "count": 4,
-          "total_samples": 10
-        },
         "7": {
-          "target_s": 233.9,
-          "stddev_s": 42.2,
-          "count": 5,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 267.6,
-          "stddev_s": 33,
+          "target_s": 212.5,
+          "stddev_s": 46.4,
           "count": 4,
           "total_samples": 10
         },
         "9": {
-          "target_s": 260.5,
-          "stddev_s": 67.2,
-          "count": 5,
+          "target_s": 255.5,
+          "stddev_s": 63.9,
+          "count": 4,
           "total_samples": 10
         },
         "12": {
@@ -112,12 +87,12 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 13.5,
-      "avg_uses_per_min": 2.37,
+      "avg_uses": 12.6,
+      "avg_uses_per_min": 2.21,
       "uses_per_min": {
-        "avg": 2.373,
-        "stddev": 0.619,
-        "min": 1.588,
+        "avg": 2.215,
+        "stddev": 0.92,
+        "min": 0.186,
         "max": 3.209
       },
       "majority_hold": true
@@ -125,13 +100,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 217.4,
-      "dmg_avg": 1818849,
-      "dmg_stddev": 882414,
-      "dmg_min": 184838,
+      "time_s": 217.9,
+      "dmg_avg": 1866186,
+      "dmg_stddev": 797370,
+      "dmg_min": 612704,
       "dmg_max": 3371203,
       "dmg_pct_avg": 0.053,
-      "window_length_s": 15.9,
+      "window_length_s": 15.1,
       "defensive_name": "Ironfur",
       "spell_id": 192081,
       "common_defensives": [
@@ -144,10 +119,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 712108,
+          "avg_damage": 718213,
           "min_damage": 211319,
           "max_damage": 1359101,
-          "count": 16
+          "count": 15
         },
         {
           "spell_id": 1246745,
@@ -158,10 +133,65 @@
         },
         {
           "spell_id": 1258661,
-          "avg_damage": 197323,
+          "avg_damage": 188057,
           "min_damage": 32796,
-          "max_damage": 447768,
-          "count": 17
+          "max_damage": 411111,
+          "count": 15
+        }
+      ]
+    },
+    {
+      "time_s": 219.3,
+      "dmg_avg": 1846939,
+      "dmg_stddev": 340902,
+      "dmg_min": 1329957,
+      "dmg_max": 2624242,
+      "dmg_pct_avg": 0.054,
+      "window_length_s": 13.8,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 741309,
+          "min_damage": 309797,
+          "max_damage": 1688088,
+          "count": 10
+        },
+        {
+          "spell_id": 1251859,
+          "avg_damage": 459938,
+          "min_damage": 389253,
+          "max_damage": 508957,
+          "count": 8
+        },
+        {
+          "spell_id": 1246745,
+          "avg_damage": 312304,
+          "min_damage": 102688,
+          "max_damage": 445992,
+          "count": 9
+        },
+        {
+          "spell_id": 1246736,
+          "avg_damage": 200495,
+          "min_damage": 175992,
+          "max_damage": 209616,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 141645,
+          "min_damage": 78915,
+          "max_damage": 167461,
+          "count": 10
         }
       ]
     }
@@ -169,13 +199,13 @@
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 2.2,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 22812,
-      "avg_uses": 6.7,
+      "avg_uses": 6.8,
       "min_uses": 5,
       "max_uses": 8
     },
@@ -187,8 +217,8 @@
     },
     {
       "spell_id": 192081,
-      "avg_uses": 13.5,
-      "min_uses": 8,
+      "avg_uses": 12.6,
+      "min_uses": 1,
       "max_uses": 19
     }
   ],
@@ -253,15 +283,23 @@
       "icon": "ability_druid_ironfur",
       "name": "Ironfur"
     },
+    "1246736": {
+      "icon": "ability_paladin_judgementred",
+      "name": "Judgment"
+    },
     "1246745": {
       "icon": "spell_holy_searinglight",
       "name": "Exorcism"
+    },
+    "1251859": {
+      "icon": "ability_paladin_shieldofvengeance",
+      "name": "Shield of the Righteous"
     },
     "1258661": {
       "icon": "spell_holy_auramastery",
       "name": "Light Infusion"
     }
   },
-  "source_signature": "b18d5933f811b1dc",
+  "source_signature": "21550fc691d9f404",
   "ingest_version": 2
 }
