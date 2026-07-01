@@ -6,79 +6,90 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 193.8,
-      "stddev_first_cast_s": 118.8,
-      "avg_gap_s": 98.2,
-      "stddev_gap_s": 33.5,
+      "avg_first_cast_s": 147.4,
+      "stddev_first_cast_s": 99.8,
+      "avg_gap_s": 96.8,
+      "stddev_gap_s": 30,
       "hold_targets": {
         "1": {
-          "target_s": 312.7,
-          "stddev_s": 98.8,
+          "target_s": 303.8,
+          "stddev_s": 99.1,
           "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 323.5,
+          "stddev_s": 94.7,
+          "count": 6,
           "total_samples": 10
         },
         "3": {
           "target_s": 341.4,
-          "stddev_s": 126.4,
-          "count": 5,
+          "stddev_s": 106.6,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 412.7,
+          "stddev_s": 70.4,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.36,
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.46,
       "uses_per_min": {
-        "avg": 0.358,
-        "stddev": 0.199,
-        "min": 0.114,
+        "avg": 0.461,
+        "stddev": 0.155,
+        "min": 0.231,
         "max": 0.693
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
       "sample_count": 10,
-      "avg_first_cast_s": 236,
-      "stddev_first_cast_s": 102.7,
-      "avg_gap_s": 118.9,
-      "stddev_gap_s": 54.7,
+      "avg_first_cast_s": 208,
+      "stddev_first_cast_s": 127.5,
+      "avg_gap_s": 143.2,
+      "stddev_gap_s": 61.1,
       "hold_targets": {
         "1": {
-          "target_s": 339.5,
-          "stddev_s": 50.5,
+          "target_s": 330.2,
+          "stddev_s": 63.3,
           "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 423.7,
+          "stddev_s": 69.5,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.254,
-        "stddev": 0.103,
+        "avg": 0.264,
+        "stddev": 0.108,
         "min": 0.115,
         "max": 0.461
       },
       "majority_hold": true
     },
     "Survival Instincts": {
-      "sample_count": 5,
-      "avg_first_cast_s": 302.3,
-      "stddev_first_cast_s": 84,
-      "avg_gap_s": 269,
-      "stddev_gap_s": 14.2,
-      "hold_targets": {
-        "1": {
-          "target_s": 488.1,
-          "stddev_s": 13.2,
-          "count": 2,
-          "total_samples": 5
-        }
-      },
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.16,
+      "sample_count": 7,
+      "avg_first_cast_s": 310,
+      "stddev_first_cast_s": 69.6,
+      "avg_gap_s": 259,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.163,
-        "stddev": 0.067,
+        "avg": 0.131,
+        "stddev": 0.044,
         "min": 0.11,
-        "max": 0.24
+        "max": 0.231
       },
       "majority_hold": false
     }
@@ -87,19 +98,19 @@
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 1.4,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 22812,
-      "avg_uses": 3.1,
-      "min_uses": 1,
+      "avg_uses": 4,
+      "min_uses": 2,
       "max_uses": 6
     },
     {
       "spell_id": 22842,
-      "avg_uses": 2.2,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -162,6 +173,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "0891e3cc0cc815eb",
+  "source_signature": "de3f40e6b52f0752",
   "ingest_version": 2
 }

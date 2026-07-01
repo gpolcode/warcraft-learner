@@ -6,29 +6,23 @@
   "per_defensive_benchmarks": {
     "Fiery Brand": {
       "sample_count": 10,
-      "avg_first_cast_s": 6.7,
-      "stddev_first_cast_s": 12,
-      "avg_gap_s": 47.3,
-      "stddev_gap_s": 20.2,
+      "avg_first_cast_s": 8.7,
+      "stddev_first_cast_s": 12.7,
+      "avg_gap_s": 48.3,
+      "stddev_gap_s": 20.9,
       "hold_targets": {
         "5": {
-          "target_s": 242,
+          "target_s": 242.7,
           "stddev_s": 5.8,
-          "count": 5,
-          "total_samples": 10
-        },
-        "7": {
-          "target_s": 364.9,
-          "stddev_s": 3.2,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 11.8,
-      "avg_uses_per_min": 1.29,
+      "avg_uses": 11.7,
+      "avg_uses_per_min": 1.27,
       "uses_per_min": {
-        "avg": 1.294,
-        "stddev": 0.072,
+        "avg": 1.273,
+        "stddev": 0.075,
         "min": 1.168,
         "max": 1.394
       },
@@ -38,49 +32,49 @@
       "sample_count": 10,
       "avg_first_cast_s": 3.2,
       "stddev_first_cast_s": 5.2,
-      "avg_gap_s": 10.8,
-      "stddev_gap_s": 5.4,
+      "avg_gap_s": 10,
+      "stddev_gap_s": 5,
       "hold_targets": {},
-      "avg_uses": 51,
-      "avg_uses_per_min": 5.58,
+      "avg_uses": 55.6,
+      "avg_uses_per_min": 6.03,
       "uses_per_min": {
-        "avg": 5.579,
-        "stddev": 1.006,
+        "avg": 6.031,
+        "stddev": 1.134,
         "min": 3.82,
-        "max": 6.627
+        "max": 7.366
       },
       "majority_hold": false
     },
     "Metamorphosis": {
       "sample_count": 10,
-      "avg_first_cast_s": 8.2,
+      "avg_first_cast_s": 8.8,
       "stddev_first_cast_s": 4.3,
-      "avg_gap_s": 41.9,
-      "stddev_gap_s": 19.3,
+      "avg_gap_s": 40.4,
+      "stddev_gap_s": 17.5,
       "hold_targets": {},
-      "avg_uses": 13.3,
-      "avg_uses_per_min": 1.46,
+      "avg_uses": 13.9,
+      "avg_uses_per_min": 1.51,
       "uses_per_min": {
-        "avg": 1.462,
-        "stddev": 0.186,
-        "min": 1.146,
+        "avg": 1.513,
+        "stddev": 0.153,
+        "min": 1.168,
         "max": 1.637
       },
       "majority_hold": false
     },
     "Darkness": {
       "sample_count": 5,
-      "avg_first_cast_s": 234.8,
-      "stddev_first_cast_s": 94.7,
-      "avg_gap_s": 233.9,
-      "stddev_gap_s": 0,
+      "avg_first_cast_s": 200.5,
+      "stddev_first_cast_s": 108.9,
+      "avg_gap_s": 220.5,
+      "stddev_gap_s": 19,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.13,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.15,
       "uses_per_min": {
-        "avg": 0.129,
-        "stddev": 0.052,
-        "min": 0.104,
+        "avg": 0.15,
+        "stddev": 0.059,
+        "min": 0.105,
         "max": 0.222
       },
       "majority_hold": false
@@ -88,13 +82,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 249.1,
-      "dmg_avg": 2225134,
-      "dmg_stddev": 1377354,
+      "time_s": 250.5,
+      "dmg_avg": 2083545,
+      "dmg_stddev": 1112278,
       "dmg_min": 759487,
-      "dmg_max": 5189843,
-      "dmg_pct_avg": 0.056,
-      "window_length_s": 25.1,
+      "dmg_max": 4057097,
+      "dmg_pct_avg": 0.052,
+      "window_length_s": 23.8,
       "defensive_name": "Metamorphosis",
       "spell_id": 187827,
       "common_defensives": [
@@ -107,45 +101,45 @@
       "ability_breakdown": [
         {
           "spell_id": 1253879,
-          "avg_damage": 859829,
+          "avg_damage": 800088,
           "min_damage": 164745,
-          "max_damage": 1487224,
+          "max_damage": 1366058,
           "count": 8
         },
         {
+          "spell_id": 1253878,
+          "avg_damage": 691231,
+          "min_damage": 474414,
+          "max_damage": 872734,
+          "count": 5
+        },
+        {
           "spell_id": 1249797,
-          "avg_damage": 382127,
-          "min_damage": 160960,
-          "max_damage": 813328,
+          "avg_damage": 340997,
+          "min_damage": 84287,
+          "max_damage": 568687,
           "count": 9
         },
         {
           "spell_id": 1253873,
-          "avg_damage": 255237,
+          "avg_damage": 290938,
           "min_damage": 56263,
-          "max_damage": 497089,
-          "count": 7
+          "max_damage": 570342,
+          "count": 6
         },
         {
           "spell_id": 1281178,
-          "avg_damage": 174252,
-          "min_damage": 111687,
-          "max_damage": 308529,
-          "count": 7
-        },
-        {
-          "spell_id": 1282425,
-          "avg_damage": 162886,
-          "min_damage": 133625,
-          "max_damage": 269927,
+          "avg_damage": 159910,
+          "min_damage": 114702,
+          "max_damage": 231755,
           "count": 5
         },
         {
           "spell_id": 1285827,
-          "avg_damage": 115696,
+          "avg_damage": 135482,
           "min_damage": 71470,
-          "max_damage": 144134,
-          "count": 5
+          "max_damage": 266571,
+          "count": 7
         }
       ]
     }
@@ -153,25 +147,25 @@
   "top_defensives_summary": [
     {
       "spell_id": 204021,
-      "avg_uses": 11.8,
+      "avg_uses": 11.7,
       "min_uses": 11,
       "max_uses": 13
     },
     {
       "spell_id": 203720,
-      "avg_uses": 51,
+      "avg_uses": 55.6,
       "min_uses": 35,
-      "max_uses": 61
+      "max_uses": 71
     },
     {
       "spell_id": 196718,
-      "avg_uses": 1.2,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 187827,
-      "avg_uses": 13.3,
+      "avg_uses": 13.9,
       "min_uses": 11,
       "max_uses": 15
     }
@@ -241,6 +235,10 @@
       "icon": "inv_polearm_2h_voidscythe_d_01",
       "name": "Melee"
     },
+    "1253878": {
+      "icon": "inv_chest_armor_voidelf_d_01",
+      "name": "Heaven's Lance"
+    },
     "1253879": {
       "icon": "spell_shadow_focusedpower",
       "name": "Impaled"
@@ -249,15 +247,11 @@
       "icon": "ability_thunderking_thunderstruck",
       "name": "Criticality"
     },
-    "1282425": {
-      "icon": "inv_112_raiddimensius_crushinggravity",
-      "name": "Core Harvest"
-    },
     "1285827": {
       "icon": "ability_thunderking_lightningwhip",
       "name": "Overkill Current"
     }
   },
-  "source_signature": "ac0e6cc1fcf6fb8e",
+  "source_signature": "55e362b8c7b82d84",
   "ingest_version": 2
 }

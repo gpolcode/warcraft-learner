@@ -4,66 +4,66 @@
   "encounter_name": "Fallen-King Salhadaar",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Survival Instincts": {
-      "sample_count": 6,
-      "avg_first_cast_s": 136.4,
-      "stddev_first_cast_s": 47.3,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 87.4,
+      "stddev_first_cast_s": 31.6,
+      "avg_gap_s": 94.1,
+      "stddev_gap_s": 42.3,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.27,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.53,
       "uses_per_min": {
-        "avg": 0.271,
-        "stddev": 0.055,
-        "min": 0.218,
-        "max": 0.365
+        "avg": 0.526,
+        "stddev": 0.209,
+        "min": 0.245,
+        "max": 0.937
       },
       "majority_hold": false
     },
     "Frenzied Regeneration": {
-      "sample_count": 6,
-      "avg_first_cast_s": 112,
-      "stddev_first_cast_s": 59.7,
-      "avg_gap_s": 12.8,
-      "stddev_gap_s": 0,
+      "sample_count": 7,
+      "avg_first_cast_s": 84.9,
+      "stddev_first_cast_s": 33.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.32,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.316,
-        "stddev": 0.074,
+        "avg": 0.3,
+        "stddev": 0.04,
         "min": 0.218,
-        "max": 0.443
+        "max": 0.337
       },
       "majority_hold": false
     },
-    "Barkskin": {
-      "sample_count": 8,
-      "avg_first_cast_s": 93.4,
-      "stddev_first_cast_s": 27.4,
-      "avg_gap_s": 97.3,
-      "stddev_gap_s": 44.7,
+    "Survival Instincts": {
+      "sample_count": 4,
+      "avg_first_cast_s": 107.6,
+      "stddev_first_cast_s": 11.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.475,
-        "stddev": 0.151,
-        "min": 0.245,
-        "max": 0.665
+        "avg": 0.28,
+        "stddev": 0.064,
+        "min": 0.218,
+        "max": 0.365
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 108.1,
-      "dmg_avg": 422729,
-      "dmg_stddev": 199672,
-      "dmg_min": 76264,
-      "dmg_max": 591803,
-      "dmg_pct_avg": 0.068,
+      "time_s": 102.1,
+      "dmg_avg": 513219,
+      "dmg_stddev": 149121,
+      "dmg_min": 360462,
+      "dmg_max": 805245,
+      "dmg_pct_avg": 0.082,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -77,10 +77,10 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 458979,
-          "min_damage": 347728,
+          "avg_damage": 428425,
+          "min_damage": 306209,
           "max_damage": 538003,
-          "count": 4
+          "count": 5
         }
       ]
     }
@@ -100,9 +100,9 @@
     },
     {
       "spell_id": 22842,
-      "avg_uses": 1.2,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     }
   ],
   "defensives": [
@@ -167,6 +167,6 @@
       "name": "Entropic Unraveling"
     }
   },
-  "source_signature": "4fc755918c5d672e",
+  "source_signature": "e9a153f3efd6864e",
   "ingest_version": 2
 }

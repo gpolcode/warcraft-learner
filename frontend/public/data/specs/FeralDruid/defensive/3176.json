@@ -5,52 +5,59 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 6,
-      "avg_first_cast_s": 94.7,
-      "stddev_first_cast_s": 57.7,
-      "avg_gap_s": 81.4,
-      "stddev_gap_s": 0,
-      "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.35,
+      "sample_count": 5,
+      "avg_first_cast_s": 89,
+      "stddev_first_cast_s": 64.7,
+      "avg_gap_s": 84.1,
+      "stddev_gap_s": 3.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 119.1,
+          "stddev_s": 4.4,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.349,
-        "stddev": 0.103,
-        "min": 0.293,
-        "max": 0.559
+        "avg": 0.434,
+        "stddev": 0.175,
+        "min": 0.299,
+        "max": 0.681
       },
       "majority_hold": false
     },
     "Frenzied Regeneration": {
-      "sample_count": 6,
-      "avg_first_cast_s": 104.6,
-      "stddev_first_cast_s": 24,
+      "sample_count": 5,
+      "avg_first_cast_s": 80,
+      "stddev_first_cast_s": 28.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.275,
-        "stddev": 0.048,
-        "min": 0.211,
-        "max": 0.317
+        "avg": 0.312,
+        "stddev": 0.019,
+        "min": 0.292,
+        "max": 0.341
       },
       "majority_hold": false
     },
     "Survival Instincts": {
-      "sample_count": 2,
-      "avg_first_cast_s": 184.6,
-      "stddev_first_cast_s": 132.3,
+      "sample_count": 1,
+      "avg_first_cast_s": 91.1,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.264,
-        "stddev": 0.075,
-        "min": 0.211,
+        "avg": 0.317,
+        "stddev": 0,
+        "min": 0.317,
         "max": 0.317
       },
       "majority_hold": false
@@ -66,7 +73,7 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 1.2,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -135,6 +142,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "96371672ff1cd1ff",
+  "source_signature": "3b2f8f8a2f6bfa69",
   "ingest_version": 2
 }

@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 152.2,
-      "stddev_first_cast_s": 152.8,
-      "avg_gap_s": 66,
-      "stddev_gap_s": 80.7,
+      "avg_first_cast_s": 148.5,
+      "stddev_first_cast_s": 155.6,
+      "avg_gap_s": 72.5,
+      "stddev_gap_s": 89.1,
       "hold_targets": {
         "2": {
           "target_s": 312.9,
@@ -18,69 +18,69 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 4.9,
-      "avg_uses_per_min": 0.62,
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 0.57,
       "uses_per_min": {
-        "avg": 0.618,
-        "stddev": 0.396,
+        "avg": 0.568,
+        "stddev": 0.332,
         "min": 0.122,
-        "max": 1.262
+        "max": 1.084
       },
       "majority_hold": true
     },
     "Zephyr": {
       "sample_count": 9,
-      "avg_first_cast_s": 247,
-      "stddev_first_cast_s": 162.8,
-      "avg_gap_s": 194.7,
-      "stddev_gap_s": 125.9,
+      "avg_first_cast_s": 280.9,
+      "stddev_first_cast_s": 157.7,
+      "avg_gap_s": 230.9,
+      "stddev_gap_s": 144.4,
       "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.21,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.17,
       "uses_per_min": {
-        "avg": 0.207,
-        "stddev": 0.112,
+        "avg": 0.175,
+        "stddev": 0.08,
         "min": 0.117,
-        "max": 0.421
+        "max": 0.345
       },
       "majority_hold": false
     },
     "Time Dilation": {
       "sample_count": 9,
-      "avg_first_cast_s": 228.8,
-      "stddev_first_cast_s": 150.4,
-      "avg_gap_s": 134.2,
-      "stddev_gap_s": 82.7,
+      "avg_first_cast_s": 262.3,
+      "stddev_first_cast_s": 156.2,
+      "avg_gap_s": 105.9,
+      "stddev_gap_s": 72.6,
       "hold_targets": {
         "1": {
-          "target_s": 366.5,
-          "stddev_s": 164.5,
-          "count": 5,
+          "target_s": 241.5,
+          "stddev_s": 173.9,
+          "count": 4,
           "total_samples": 9
         }
       },
       "avg_uses": 2.1,
       "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.264,
+        "avg": 0.261,
         "stddev": 0.176,
         "min": 0.117,
         "max": 0.575
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 4.9,
+      "avg_uses": 4.6,
       "min_uses": 1,
       "max_uses": 9
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.7,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -162,6 +162,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "92ed791609b0c7c0",
+  "source_signature": "ebe8edffa9ac0310",
   "ingest_version": 2
 }

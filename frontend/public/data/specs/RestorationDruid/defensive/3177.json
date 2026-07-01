@@ -6,58 +6,58 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 86.5,
-      "stddev_first_cast_s": 72.6,
-      "avg_gap_s": 101.6,
-      "stddev_gap_s": 43.5,
+      "avg_first_cast_s": 52.2,
+      "stddev_first_cast_s": 56.9,
+      "avg_gap_s": 92.1,
+      "stddev_gap_s": 38.4,
       "hold_targets": {
         "1": {
-          "target_s": 158.4,
-          "stddev_s": 60.5,
-          "count": 6,
+          "target_s": 131.1,
+          "stddev_s": 56,
+          "count": 7,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.49,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.62,
       "uses_per_min": {
-        "avg": 0.487,
-        "stddev": 0.232,
-        "min": 0.224,
-        "max": 0.877
+        "avg": 0.625,
+        "stddev": 0.225,
+        "min": 0.298,
+        "max": 0.94
       },
       "majority_hold": true
     },
     "Ironbark": {
-      "sample_count": 2,
-      "avg_first_cast_s": 144.9,
-      "stddev_first_cast_s": 83.7,
+      "sample_count": 1,
+      "avg_first_cast_s": 85.7,
+      "stddev_first_cast_s": 0,
       "avg_gap_s": 98.8,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.403,
-        "stddev": 0.254,
-        "min": 0.224,
+        "avg": 0.583,
+        "stddev": 0,
+        "min": 0.583,
         "max": 0.583
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 1.9,
+      "avg_uses": 2.4,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 4
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.5,
-      "min_uses": 1,
+      "avg_uses": 2,
+      "min_uses": 2,
       "max_uses": 2
     }
   ],
@@ -119,6 +119,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "a13b99d082b088d1",
+  "source_signature": "8b94d1d73a1d821e",
   "ingest_version": 2
 }

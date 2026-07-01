@@ -6,42 +6,42 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 7,
-      "avg_first_cast_s": 131.9,
-      "stddev_first_cast_s": 63.6,
-      "avg_gap_s": 85.3,
-      "stddev_gap_s": 21.9,
+      "avg_first_cast_s": 100.1,
+      "stddev_first_cast_s": 63.1,
+      "avg_gap_s": 79.3,
+      "stddev_gap_s": 25.3,
       "hold_targets": {
         "1": {
           "target_s": 153.7,
-          "stddev_s": 46.8,
+          "stddev_s": 47.4,
           "count": 3,
           "total_samples": 7
         }
       },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.51,
       "uses_per_min": {
-        "avg": 0.403,
-        "stddev": 0.165,
-        "min": 0.192,
-        "max": 0.619
+        "avg": 0.514,
+        "stddev": 0.218,
+        "min": 0.259,
+        "max": 0.891
       },
       "majority_hold": false
     },
     "Ironbark": {
-      "sample_count": 6,
-      "avg_first_cast_s": 184.2,
-      "stddev_first_cast_s": 44.5,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
+      "sample_count": 5,
+      "avg_first_cast_s": 147.2,
+      "stddev_first_cast_s": 76.5,
+      "avg_gap_s": 113.7,
+      "stddev_gap_s": 3.7,
       "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.23,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.3,
       "uses_per_min": {
-        "avg": 0.234,
-        "stddev": 0.032,
-        "min": 0.192,
-        "max": 0.276
+        "avg": 0.304,
+        "stddev": 0.131,
+        "min": 0.207,
+        "max": 0.534
       },
       "majority_hold": false
     }
@@ -50,15 +50,15 @@
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 1.7,
+      "avg_uses": 2.3,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 5
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1,
+      "avg_uses": 1.4,
       "min_uses": 1,
-      "max_uses": 1
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -119,6 +119,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "52acad015f072828",
+  "source_signature": "c7cfc2f31216e997",
   "ingest_version": 2
 }

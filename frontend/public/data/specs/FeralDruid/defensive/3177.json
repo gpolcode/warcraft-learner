@@ -4,51 +4,34 @@
   "encounter_name": "Vorasius",
   "sample_count": 10,
   "per_defensive_benchmarks": {
-    "Survival Instincts": {
-      "sample_count": 7,
-      "avg_first_cast_s": 134.9,
-      "stddev_first_cast_s": 54.3,
-      "avg_gap_s": null,
-      "stddev_gap_s": null,
-      "hold_targets": {},
-      "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
-      "uses_per_min": {
-        "avg": 0.28,
-        "stddev": 0.03,
-        "min": 0.225,
-        "max": 0.314
-      },
-      "majority_hold": false
-    },
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 62.8,
-      "stddev_first_cast_s": 27.8,
-      "avg_gap_s": 114.9,
-      "stddev_gap_s": 28.3,
+      "avg_first_cast_s": 84.8,
+      "stddev_first_cast_s": 55.1,
+      "avg_gap_s": 114.7,
+      "stddev_gap_s": 20.7,
       "hold_targets": {
         "1": {
-          "target_s": 183.4,
-          "stddev_s": 35.9,
+          "target_s": 183.9,
+          "stddev_s": 6,
           "count": 7,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.49,
       "uses_per_min": {
-        "avg": 0.521,
-        "stddev": 0.127,
-        "min": 0.304,
-        "max": 0.676
+        "avg": 0.493,
+        "stddev": 0.13,
+        "min": 0.26,
+        "max": 0.638
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
-      "sample_count": 9,
-      "avg_first_cast_s": 131.6,
-      "stddev_first_cast_s": 64.9,
+      "sample_count": 8,
+      "avg_first_cast_s": 129.1,
+      "stddev_first_cast_s": 63.5,
       "avg_gap_s": 124.9,
       "stddev_gap_s": 0,
       "hold_targets": {},
@@ -56,9 +39,26 @@
       "avg_uses_per_min": 0.3,
       "uses_per_min": {
         "avg": 0.304,
-        "stddev": 0.092,
+        "stddev": 0.098,
         "min": 0.211,
         "max": 0.529
+      },
+      "majority_hold": false
+    },
+    "Survival Instincts": {
+      "sample_count": 5,
+      "avg_first_cast_s": 137.4,
+      "stddev_first_cast_s": 62,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.276,
+        "stddev": 0.017,
+        "min": 0.26,
+        "max": 0.304
       },
       "majority_hold": false
     }
@@ -73,9 +73,9 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 1.9,
+      "avg_uses": 1.8,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 2
     },
     {
       "spell_id": 22842,
@@ -142,6 +142,6 @@
       "name": "Renewal"
     }
   },
-  "source_signature": "b18d917aff4723f5",
+  "source_signature": "f6b8b03444b82b70",
   "ingest_version": 2
 }
