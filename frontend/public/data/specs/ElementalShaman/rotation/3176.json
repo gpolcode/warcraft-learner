@@ -3,26 +3,26 @@
   "encounter_id": 3176,
   "encounter_name": "Imperator Averzian",
   "sample_count": 10,
-  "avg_duration_s": 211.9,
-  "downtime_threshold_ms": 2350,
-  "top_avg_efficiency": 76.1,
-  "top_efficiency_stddev": 4.4,
+  "avg_duration_s": 198.2,
+  "downtime_threshold_ms": 2320,
+  "top_avg_efficiency": 75.7,
+  "top_efficiency_stddev": 4.1,
   "per_cd_benchmarks": {
     "Ascendance": {
       "sample_count": 10,
-      "avg_first_cast_s": 0.9,
-      "stddev_first_cast_s": 0.7,
-      "avg_gap_s": 136,
-      "stddev_gap_s": 7.3,
+      "avg_first_cast_s": 1.1,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 137.2,
+      "stddev_gap_s": 6,
       "avg_bl_offset_s": 0.2,
       "stddev_bl_offset_s": 0.8,
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.62,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.64,
       "uses_per_min": {
-        "avg": 0.623,
-        "stddev": 0.04,
+        "avg": 0.638,
+        "stddev": 0.055,
         "min": 0.573,
-        "max": 0.698
+        "max": 0.749
       },
       "bl_pct": 90,
       "majority_hold": false,
@@ -30,52 +30,41 @@
     },
     "Stormkeeper": {
       "sample_count": 10,
-      "avg_first_cast_s": 34.5,
-      "stddev_first_cast_s": 29.1,
-      "avg_gap_s": 58.6,
-      "stddev_gap_s": 14.7,
-      "avg_bl_offset_s": 20.3,
-      "stddev_bl_offset_s": 28.1,
-      "avg_uses": 3.7,
-      "avg_uses_per_min": 1.05,
+      "avg_first_cast_s": 29.1,
+      "stddev_first_cast_s": 29.6,
+      "avg_gap_s": 59.4,
+      "stddev_gap_s": 14.1,
+      "avg_bl_offset_s": 17.1,
+      "stddev_bl_offset_s": 26.3,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 1.06,
       "uses_per_min": {
-        "avg": 1.051,
-        "stddev": 0.237,
+        "avg": 1.056,
+        "stddev": 0.259,
         "min": 0.665,
         "max": 1.522
       },
-      "bl_pct": 50,
+      "bl_pct": 60,
       "majority_hold": true,
-      "hold_targets": {
-        "2": {
-          "target_s": 137.9,
-          "stddev_s": 3.6,
-          "delay_s": 20.8,
-          "delay_stddev_s": 4.2,
-          "band_s": 5,
-          "effective_cd_s": 60,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Ancestral Swiftness": {
       "sample_count": 10,
-      "avg_first_cast_s": 0.8,
-      "stddev_first_cast_s": 0.5,
-      "avg_gap_s": 35.5,
-      "stddev_gap_s": 6.4,
-      "avg_bl_offset_s": 0.5,
-      "stddev_bl_offset_s": 0.6,
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.36,
+      "avg_first_cast_s": 0.4,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 35.9,
+      "stddev_gap_s": 8,
+      "avg_bl_offset_s": 0,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 0.8,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 1.823,
-        "stddev": 0.052,
+        "avg": 1.786,
+        "stddev": 0,
         "min": 1.786,
-        "max": 1.859
+        "max": 1.786
       },
-      "bl_pct": 20,
+      "bl_pct": 10,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -285,6 +274,6 @@
       "name": "Ancestral Swiftness"
     }
   },
-  "source_signature": "57832a72350a6828",
-  "ingest_version": 2
+  "source_signature": "072c15bf0865d02d",
+  "ingest_version": 3
 }

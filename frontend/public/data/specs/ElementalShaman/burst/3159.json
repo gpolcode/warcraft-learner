@@ -5,82 +5,207 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 1.5,
-      "dmg_avg": 3960986,
-      "dmg_stddev": 582540,
-      "dmg_min": 3196668,
+      "time_s": 1,
+      "dmg_avg": 3277886,
+      "dmg_stddev": 1011228,
+      "dmg_min": 1655514,
       "dmg_max": 4650678,
       "common_cds": [],
-      "window_length_s": 8.2,
+      "window_length_s": 6.8,
       "ability_breakdown": [
         {
           "spell_id": 45284,
-          "avg_damage": 692736,
-          "min_damage": 422075,
+          "avg_damage": 584259,
+          "min_damage": 255436,
           "max_damage": 976541,
+          "count": 10,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 285466,
+          "avg_damage": 491975,
+          "min_damage": 226846,
+          "max_damage": 657317,
+          "count": 9,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 447419,
+          "avg_damage": 484366,
+          "min_damage": 165369,
+          "max_damage": 1049139,
+          "count": 9,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 427420,
+          "min_damage": 263903,
+          "max_damage": 549532,
+          "count": 9,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 319810,
+          "min_damage": 107714,
+          "max_damage": 507508,
+          "count": 8,
+          "avg_casts": 3,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 30.5,
+      "dmg_avg": 2615507,
+      "dmg_stddev": 454067,
+      "dmg_min": 2196121,
+      "dmg_max": 3120676,
+      "common_cds": [
+        "Ancestral Swiftness"
+      ],
+      "window_length_s": 6,
+      "ability_breakdown": [
+        {
+          "spell_id": 447425,
+          "avg_damage": 772239,
+          "min_damage": 234590,
+          "max_damage": 1338140,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 447419,
+          "avg_damage": 450864,
+          "min_damage": 324832,
+          "max_damage": 576896,
+          "count": 2,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 77478,
+          "avg_damage": 372600,
+          "min_damage": 329419,
+          "max_damage": 465686,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 319414,
+          "min_damage": 223313,
+          "max_damage": 482231,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 289412,
+          "min_damage": 183080,
+          "max_damage": 458930,
+          "count": 3,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 285782,
+          "min_damage": 251784,
+          "max_damage": 320688,
+          "count": 3,
+          "avg_casts": 3,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 77,
+      "dmg_avg": 3714599,
+      "dmg_stddev": 1214728,
+      "dmg_min": 2594605,
+      "dmg_max": 5550662,
+      "common_cds": [
+        "Stormkeeper"
+      ],
+      "window_length_s": 7.8,
+      "ability_breakdown": [
+        {
+          "spell_id": 447425,
+          "avg_damage": 1139646,
+          "min_damage": 545647,
+          "max_damage": 1636795,
+          "count": 6,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 505609,
+          "min_damage": 188985,
+          "max_damage": 682027,
           "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 447419,
-          "avg_damage": 605789,
-          "min_damage": 385038,
-          "max_damage": 1049139,
-          "count": 5,
-          "avg_casts": 4,
+          "avg_damage": 491506,
+          "min_damage": 358832,
+          "max_damage": 668211,
+          "count": 4,
+          "avg_casts": 1,
           "is_passive": false
         },
         {
-          "spell_id": 285466,
-          "avg_damage": 568307,
-          "min_damage": 458143,
-          "max_damage": 657317,
-          "count": 5,
+          "spell_id": 269005,
+          "avg_damage": 491251,
+          "min_damage": 400607,
+          "max_damage": 707147,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
-          "spell_id": 188196,
-          "avg_damage": 435594,
-          "min_damage": 271095,
-          "max_damage": 546875,
+          "spell_id": 77478,
+          "avg_damage": 384156,
+          "min_damage": 176064,
+          "max_damage": 631250,
+          "count": 5,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 305335,
+          "min_damage": 217547,
+          "max_damage": 422257,
           "count": 5,
           "avg_casts": 4,
-          "is_passive": false
-        },
-        {
-          "spell_id": 285452,
-          "avg_damage": 435078,
-          "min_damage": 364244,
-          "max_damage": 507508,
-          "count": 4,
-          "avg_casts": 4,
-          "is_passive": false
-        },
-        {
-          "spell_id": 117014,
-          "avg_damage": 425583,
-          "min_damage": 382937,
-          "max_damage": 464675,
-          "count": 4,
-          "avg_casts": 1,
           "is_passive": false
         }
       ]
     },
     {
-      "time_s": 119.5,
-      "dmg_avg": 8999606,
-      "dmg_stddev": 2338336,
-      "dmg_min": 3295196,
+      "time_s": 119,
+      "dmg_avg": 8327227,
+      "dmg_stddev": 3145482,
+      "dmg_min": 1603443,
       "dmg_max": 12311225,
       "common_cds": [
         "Ascendance",
         "Stormkeeper",
         "Ancestral Swiftness"
       ],
-      "window_length_s": 10.9,
+      "window_length_s": 10.2,
       "ability_breakdown": [
         {
           "spell_id": 45297,
@@ -93,30 +218,21 @@
         },
         {
           "spell_id": 447425,
-          "avg_damage": 1312412,
-          "min_damage": 836759,
+          "avg_damage": 1192818,
+          "min_damage": 116470,
           "max_damage": 1950676,
-          "count": 9,
+          "count": 10,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 285466,
-          "avg_damage": 1221833,
-          "min_damage": 932349,
+          "avg_damage": 1114511,
+          "min_damage": 363258,
           "max_damage": 1615992,
-          "count": 7,
+          "count": 8,
           "avg_casts": 0,
           "is_passive": true
-        },
-        {
-          "spell_id": 447419,
-          "avg_damage": 1062050,
-          "min_damage": 779068,
-          "max_damage": 1392606,
-          "count": 6,
-          "avg_casts": 2,
-          "is_passive": false
         },
         {
           "spell_id": 269005,
@@ -128,10 +244,84 @@
           "is_passive": true
         },
         {
+          "spell_id": 447419,
+          "avg_damage": 930609,
+          "min_damage": 141963,
+          "max_damage": 1392606,
+          "count": 7,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
           "spell_id": 285452,
-          "avg_damage": 982303,
-          "min_damage": 761490,
+          "avg_damage": 919822,
+          "min_damage": 482452,
           "max_damage": 1224225,
+          "count": 8,
+          "avg_casts": 2,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 167,
+      "dmg_avg": 3573074,
+      "dmg_stddev": 1417495,
+      "dmg_min": 1505396,
+      "dmg_max": 6580880,
+      "common_cds": [],
+      "window_length_s": 6.9,
+      "ability_breakdown": [
+        {
+          "spell_id": 447425,
+          "avg_damage": 808249,
+          "min_damage": 235730,
+          "max_damage": 2006135,
+          "count": 8,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 269005,
+          "avg_damage": 681445,
+          "min_damage": 295450,
+          "max_damage": 989549,
+          "count": 9,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 538654,
+          "min_damage": 329648,
+          "max_damage": 643189,
+          "count": 8,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 447419,
+          "avg_damage": 438474,
+          "min_damage": 341183,
+          "max_damage": 677832,
+          "count": 6,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 77478,
+          "avg_damage": 413412,
+          "min_damage": 190630,
+          "max_damage": 601922,
+          "count": 6,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 344500,
+          "min_damage": 43872,
+          "max_damage": 636590,
           "count": 7,
           "avg_casts": 2,
           "is_passive": false
@@ -139,135 +329,67 @@
       ]
     },
     {
-      "time_s": 165.5,
-      "dmg_avg": 4231032,
-      "dmg_stddev": 1218402,
-      "dmg_min": 3272919,
-      "dmg_max": 6580880,
-      "common_cds": [
-        "Stormkeeper",
-        "Ancestral Swiftness"
-      ],
-      "window_length_s": 8.2,
-      "ability_breakdown": [
-        {
-          "spell_id": 447425,
-          "avg_damage": 980656,
-          "min_damage": 550858,
-          "max_damage": 2006135,
-          "count": 6,
-          "avg_casts": 3,
-          "is_passive": false
-        },
-        {
-          "spell_id": 269005,
-          "avg_damage": 697729,
-          "min_damage": 458539,
-          "max_damage": 989549,
-          "count": 6,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
-          "spell_id": 77478,
-          "avg_damage": 511670,
-          "min_damage": 338540,
-          "max_damage": 601922,
-          "count": 4,
-          "avg_casts": 3,
-          "is_passive": false
-        },
-        {
-          "spell_id": 45297,
-          "avg_damage": 510163,
-          "min_damage": 329648,
-          "max_damage": 624085,
-          "count": 6,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
-          "spell_id": 447419,
-          "avg_damage": 457932,
-          "min_damage": 360235,
-          "max_damage": 677832,
-          "count": 5,
-          "avg_casts": 2,
-          "is_passive": false
-        },
-        {
-          "spell_id": 285452,
-          "avg_damage": 421398,
-          "min_damage": 280541,
-          "max_damage": 636590,
-          "count": 5,
-          "avg_casts": 2,
-          "is_passive": false
-        }
-      ]
-    },
-    {
       "time_s": 213,
-      "dmg_avg": 4132404,
-      "dmg_stddev": 802103,
-      "dmg_min": 2875675,
+      "dmg_avg": 3531817,
+      "dmg_stddev": 1303383,
+      "dmg_min": 1635510,
       "dmg_max": 5027879,
       "common_cds": [
         "Ancestral Swiftness"
       ],
-      "window_length_s": 9,
+      "window_length_s": 7.8,
       "ability_breakdown": [
         {
           "spell_id": 447425,
-          "avg_damage": 1016727,
-          "min_damage": 701050,
+          "avg_damage": 824482,
+          "min_damage": 224306,
           "max_damage": 1235529,
-          "count": 6,
-          "avg_casts": 4,
-          "is_passive": false
-        },
-        {
-          "spell_id": 447419,
-          "avg_damage": 549297,
-          "min_damage": 281918,
-          "max_damage": 700096,
-          "count": 4,
-          "avg_casts": 2,
+          "count": 8,
+          "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 45297,
-          "avg_damage": 529225,
+          "avg_damage": 474354,
           "min_damage": 193708,
           "max_damage": 771705,
-          "count": 6,
+          "count": 8,
           "avg_casts": 0,
           "is_passive": true
         },
         {
+          "spell_id": 447419,
+          "avg_damage": 465627,
+          "min_damage": 130950,
+          "max_damage": 700096,
+          "count": 5,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
           "spell_id": 269005,
-          "avg_damage": 435784,
+          "avg_damage": 455077,
           "min_damage": 306328,
           "max_damage": 681677,
-          "count": 6,
+          "count": 8,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 285452,
-          "avg_damage": 419622,
-          "min_damage": 199415,
+          "avg_damage": 367512,
+          "min_damage": 106961,
           "max_damage": 765623,
-          "count": 5,
+          "count": 6,
           "avg_casts": 2,
           "is_passive": false
         },
         {
           "spell_id": 188443,
-          "avg_damage": 412851,
-          "min_damage": 351643,
+          "avg_damage": 345507,
+          "min_damage": 191530,
           "max_damage": 509727,
-          "count": 4,
+          "count": 6,
           "avg_casts": 4,
           "is_passive": false
         }
@@ -343,65 +465,130 @@
       ]
     },
     {
-      "time_s": 350,
-      "dmg_avg": 4861626,
-      "dmg_stddev": 1752181,
-      "dmg_min": 3355324,
-      "dmg_max": 7876177,
+      "time_s": 305,
+      "dmg_avg": 3324921,
+      "dmg_stddev": 1529290,
+      "dmg_min": 1556489,
+      "dmg_max": 5656783,
       "common_cds": [],
-      "window_length_s": 9.6,
+      "window_length_s": 6.3,
       "ability_breakdown": [
         {
           "spell_id": 447425,
-          "avg_damage": 1456888,
-          "min_damage": 872805,
-          "max_damage": 1921369,
+          "avg_damage": 808609,
+          "min_damage": 141280,
+          "max_damage": 1897388,
+          "count": 8,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 269005,
+          "avg_damage": 609736,
+          "min_damage": 292403,
+          "max_damage": 821959,
+          "count": 7,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 538919,
+          "min_damage": 399774,
+          "max_damage": 795661,
+          "count": 8,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 77478,
+          "avg_damage": 405755,
+          "min_damage": 171522,
+          "max_damage": 645140,
+          "count": 7,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 300847,
+          "min_damage": 150882,
+          "max_damage": 636942,
           "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 188443,
+          "avg_damage": 273270,
+          "min_damage": 157764,
+          "max_damage": 420779,
+          "count": 8,
+          "avg_casts": 3,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 349,
+      "dmg_avg": 4143967,
+      "dmg_stddev": 1883967,
+      "dmg_min": 2315731,
+      "dmg_max": 7876177,
+      "common_cds": [],
+      "window_length_s": 8.6,
+      "ability_breakdown": [
+        {
+          "spell_id": 447425,
+          "avg_damage": 1345732,
+          "min_damage": 789950,
+          "max_damage": 1921369,
+          "count": 6,
           "avg_casts": 4,
           "is_passive": false
         },
         {
+          "spell_id": 269005,
+          "avg_damage": 467461,
+          "min_damage": 371079,
+          "max_damage": 608106,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 45297,
+          "avg_damage": 465992,
+          "min_damage": 221367,
+          "max_damage": 700210,
+          "count": 7,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
           "spell_id": 447419,
-          "avg_damage": 616583,
-          "min_damage": 298417,
+          "avg_damage": 463724,
+          "min_damage": 46777,
           "max_damage": 892516,
-          "count": 4,
+          "count": 6,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 285452,
+          "avg_damage": 432403,
+          "min_damage": 212304,
+          "max_damage": 770001,
+          "count": 5,
           "avg_casts": 2,
           "is_passive": false
         },
         {
           "spell_id": 77478,
-          "avg_damage": 530122,
-          "min_damage": 192520,
+          "avg_damage": 417082,
+          "min_damage": 107112,
           "max_damage": 1256175,
-          "count": 4,
-          "avg_casts": 3,
-          "is_passive": false
-        },
-        {
-          "spell_id": 45297,
-          "avg_damage": 508315,
-          "min_damage": 329759,
-          "max_damage": 700210,
-          "count": 5,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
-          "spell_id": 269005,
-          "avg_damage": 498969,
-          "min_damage": 392118,
-          "max_damage": 608106,
-          "count": 3,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
-          "spell_id": 285452,
-          "avg_damage": 446107,
-          "min_damage": 212304,
-          "max_damage": 770001,
-          "count": 4,
+          "count": 6,
           "avg_casts": 2,
           "is_passive": false
         }
@@ -517,10 +704,6 @@
       "icon": "8026697",
       "name": "Ascendance"
     },
-    "117014": {
-      "icon": "shaman_talent_elementalblast",
-      "name": "Elemental Blast"
-    },
     "188196": {
       "icon": "spell_nature_lightning",
       "name": "Lightning Bolt"
@@ -570,7 +753,7 @@
       "name": "Chain Lightning"
     }
   },
-  "source_signature": "c36f2fc50e8ec3ff",
-  "ingest_version": 2,
+  "source_signature": "35a7c23b114ab934",
+  "ingest_version": 3,
   "inaccessible_parses": []
 }

@@ -46,7 +46,97 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 142.7,
+      "dmg_avg": 293392,
+      "dmg_stddev": 70930,
+      "dmg_min": 166319,
+      "dmg_max": 356898,
+      "dmg_pct_avg": 0.019,
+      "window_length_s": 3.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 186979,
+          "min_damage": 71637,
+          "max_damage": 274036,
+          "count": 5
+        },
+        {
+          "spell_id": 1270513,
+          "avg_damage": 73549,
+          "min_damage": 47635,
+          "max_damage": 96567,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 872,
+          "min_damage": 78,
+          "max_damage": 1682,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 305.8,
+      "dmg_avg": 359471,
+      "dmg_stddev": 94812,
+      "dmg_min": 292670,
+      "dmg_max": 523068,
+      "dmg_pct_avg": 0.02,
+      "window_length_s": 1.8,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 186761,
+          "min_damage": 169199,
+          "max_damage": 197130,
+          "count": 4
+        },
+        {
+          "spell_id": 1250071,
+          "avg_damage": 103341,
+          "min_damage": 63635,
+          "max_damage": 125686,
+          "count": 4
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 59699,
+          "min_damage": 21266,
+          "max_damage": 97272,
+          "count": 3
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 478,
+          "min_damage": 148,
+          "max_damage": 1135,
+          "count": 3
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 104773,
@@ -104,8 +194,28 @@
     "108416": {
       "icon": "spell_shadow_deathpact",
       "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1270513": {
+      "icon": "spell_nzinsanity_chasedbyshadows",
+      "name": "Shadowmark"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "32172fa72ec40aac",
-  "ingest_version": 2
+  "source_signature": "3d2517e37d4747e7",
+  "ingest_version": 3
 }

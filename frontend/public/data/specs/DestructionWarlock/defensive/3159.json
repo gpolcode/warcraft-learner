@@ -46,7 +46,90 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 118.3,
+      "dmg_avg": 364468,
+      "dmg_stddev": 105358,
+      "dmg_min": 208891,
+      "dmg_max": 469789,
+      "dmg_pct_avg": 0.017,
+      "window_length_s": 3.2,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 258025,
+          "min_damage": 124182,
+          "max_damage": 356588,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 46663,
+          "min_damage": 16596,
+          "max_damage": 114814,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 1381,
+          "min_damage": 536,
+          "max_damage": 2546,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 403.6,
+      "dmg_avg": 204461,
+      "dmg_stddev": 49911,
+      "dmg_min": 148565,
+      "dmg_max": 275105,
+      "dmg_pct_avg": 0.01,
+      "window_length_s": 2,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 97112,
+          "min_damage": 54860,
+          "max_damage": 145050,
+          "count": 5
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 94665,
+          "min_damage": 64764,
+          "max_damage": 123670,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 1806,
+          "min_damage": 588,
+          "max_damage": 3515,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 104773,
@@ -104,8 +187,20 @@
     "108416": {
       "icon": "spell_shadow_deathpact",
       "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "13461a0efa92cfa7",
-  "ingest_version": 2
+  "source_signature": "91c84ddcb310e7ec",
+  "ingest_version": 3
 }
