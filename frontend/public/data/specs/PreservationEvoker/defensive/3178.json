@@ -8,71 +8,147 @@
       "sample_count": 8,
       "avg_first_cast_s": 123.5,
       "stddev_first_cast_s": 88,
-      "avg_gap_s": 44.5,
-      "stddev_gap_s": 41.9,
+      "avg_gap_s": 44.3,
+      "stddev_gap_s": 42.2,
       "hold_targets": {},
-      "avg_uses": 5.6,
-      "avg_uses_per_min": 0.82,
+      "avg_uses": 6.1,
+      "avg_uses_per_min": 0.93,
       "uses_per_min": {
-        "avg": 0.821,
-        "stddev": 0.415,
-        "min": 0.216,
+        "avg": 0.932,
+        "stddev": 0.342,
+        "min": 0.326,
         "max": 1.435
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Time Dilation": {
-      "sample_count": 7,
-      "avg_first_cast_s": 176.5,
-      "stddev_first_cast_s": 116.3,
-      "avg_gap_s": 59.1,
-      "stddev_gap_s": 62.7,
+      "sample_count": 6,
+      "avg_first_cast_s": 205.3,
+      "stddev_first_cast_s": 96.3,
+      "avg_gap_s": 46.1,
+      "stddev_gap_s": 47.8,
       "hold_targets": {},
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.399,
-        "stddev": 0.304,
+        "avg": 0.394,
+        "stddev": 0.333,
         "min": 0.138,
         "max": 1.004
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 6,
-      "avg_first_cast_s": 149.8,
-      "stddev_first_cast_s": 102.8,
+      "sample_count": 5,
+      "avg_first_cast_s": 155,
+      "stddev_first_cast_s": 114,
       "avg_gap_s": 231.7,
       "stddev_gap_s": 100.3,
-      "hold_targets": {},
-      "avg_uses": 1.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 422,
+          "stddev_s": 15.6,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.6,
       "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.23,
-        "stddev": 0.067,
+        "avg": 0.233,
+        "stddev": 0.074,
         "min": 0.138,
         "max": 0.298
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 77.5,
+      "dmg_avg": 289129,
+      "dmg_stddev": 206868,
+      "dmg_min": 25122,
+      "dmg_max": 595350,
+      "dmg_pct_avg": 0.019,
+      "window_length_s": 8.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 256679,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 152933,
+          "min_damage": 112145,
+          "max_damage": 251262,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 106127,
+          "min_damage": 25122,
+          "max_damage": 166206,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 202.4,
+      "dmg_avg": 244749,
+      "dmg_stddev": 123501,
+      "dmg_min": 71028,
+      "dmg_max": 461846,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 6.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 131654,
+          "min_damage": 126031,
+          "max_damage": 134786,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 47024,
+          "min_damage": 13701,
+          "max_damage": 85491,
+          "count": 8
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 5.6,
-      "min_uses": 1,
+      "avg_uses": 6.1,
+      "min_uses": 2,
       "max_uses": 10
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.5,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 357170,
-      "avg_uses": 2.6,
+      "avg_uses": 2.7,
       "min_uses": 1,
       "max_uses": 7
     }
@@ -146,8 +222,16 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
     }
   },
-  "source_signature": "33d0f0cc053feb65",
-  "ingest_version": 2
+  "source_signature": "1aa230e24b079266",
+  "ingest_version": 3
 }

@@ -6,70 +6,98 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 145.2,
-      "stddev_first_cast_s": 62.9,
-      "avg_gap_s": 84.4,
-      "stddev_gap_s": 14.7,
+      "avg_first_cast_s": 149,
+      "stddev_first_cast_s": 52.9,
+      "avg_gap_s": 90.8,
+      "stddev_gap_s": 25.3,
       "hold_targets": {
         "1": {
-          "target_s": 205.7,
-          "stddev_s": 50.8,
-          "count": 8,
+          "target_s": 220.2,
+          "stddev_s": 50.9,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
-          "target_s": 267.8,
-          "stddev_s": 30.5,
-          "count": 5,
+          "target_s": 278.8,
+          "stddev_s": 20.9,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.47,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.43,
       "uses_per_min": {
-        "avg": 0.466,
-        "stddev": 0.167,
+        "avg": 0.428,
+        "stddev": 0.165,
         "min": 0.192,
-        "max": 0.668
+        "max": 0.595
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
-      "sample_count": 8,
-      "avg_first_cast_s": 151.8,
-      "stddev_first_cast_s": 104.6,
-      "avg_gap_s": 101.5,
-      "stddev_gap_s": 61.2,
+      "sample_count": 7,
+      "avg_first_cast_s": 136.1,
+      "stddev_first_cast_s": 101.1,
+      "avg_gap_s": 94.9,
+      "stddev_gap_s": 64.4,
       "hold_targets": {},
       "avg_uses": 1.9,
       "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.379,
-        "stddev": 0.19,
+        "avg": 0.376,
+        "stddev": 0.198,
         "min": 0.198,
         "max": 0.593
       },
       "majority_hold": false
     },
     "Survival Instincts": {
-      "sample_count": 6,
-      "avg_first_cast_s": 203.9,
-      "stddev_first_cast_s": 49.6,
+      "sample_count": 4,
+      "avg_first_cast_s": 182.9,
+      "stddev_first_cast_s": 42.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.206,
-        "stddev": 0.014,
+        "avg": 0.2,
+        "stddev": 0.01,
         "min": 0.192,
-        "max": 0.224
+        "max": 0.214
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 276,
+      "dmg_avg": 307627,
+      "dmg_stddev": 225952,
+      "dmg_min": 0,
+      "dmg_max": 627196,
+      "dmg_pct_avg": 0.029,
+      "window_length_s": 9.6,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 83730,
+          "min_damage": 21896,
+          "max_damage": 112574,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 61336,
@@ -79,7 +107,7 @@
     },
     {
       "spell_id": 22812,
-      "avg_uses": 2.3,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 3
     },
@@ -146,8 +174,12 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "f947766413b76ed1",
-  "ingest_version": 2
+  "source_signature": "29a4e2f201e9dfa4",
+  "ingest_version": 3
 }

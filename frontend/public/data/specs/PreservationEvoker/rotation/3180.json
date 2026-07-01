@@ -3,26 +3,26 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 424.8,
-  "downtime_threshold_ms": 2634,
+  "avg_duration_s": 419.1,
+  "downtime_threshold_ms": 2645,
   "top_avg_efficiency": 74.5,
   "top_efficiency_stddev": 7,
   "per_cd_benchmarks": {
     "Rewind": {
       "sample_count": 10,
-      "avg_first_cast_s": 127.1,
+      "avg_first_cast_s": 127.2,
       "stddev_first_cast_s": 77.1,
-      "avg_gap_s": 249.6,
-      "stddev_gap_s": 44.1,
+      "avg_gap_s": 255.1,
+      "stddev_gap_s": 43.8,
       "avg_bl_offset_s": 23.3,
       "stddev_bl_offset_s": 0,
       "avg_uses": 1.6,
       "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.228,
-        "stddev": 0.076,
+        "avg": 0.232,
+        "stddev": 0.082,
         "min": 0.129,
-        "max": 0.307
+        "max": 0.347
       },
       "bl_pct": 10,
       "majority_hold": false,
@@ -30,72 +30,61 @@
     },
     "Dream Flight": {
       "sample_count": 10,
-      "avg_first_cast_s": 109.1,
-      "stddev_first_cast_s": 46.4,
-      "avg_gap_s": 126.1,
-      "stddev_gap_s": 13.1,
-      "avg_bl_offset_s": null,
-      "stddev_bl_offset_s": null,
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.16,
+      "avg_first_cast_s": 89.3,
+      "stddev_first_cast_s": 59.7,
+      "avg_gap_s": 133.9,
+      "stddev_gap_s": 22.7,
+      "avg_bl_offset_s": 10,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.21,
       "uses_per_min": {
-        "avg": 0.402,
+        "avg": 0.426,
         "stddev": 0.105,
         "min": 0.258,
-        "max": 0.507
+        "max": 0.52
       },
-      "bl_pct": 0,
+      "bl_pct": 10,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Stasis": {
       "sample_count": 10,
-      "avg_first_cast_s": 81.6,
-      "stddev_first_cast_s": 79.1,
-      "avg_gap_s": 112.8,
-      "stddev_gap_s": 30.9,
+      "avg_first_cast_s": 55.4,
+      "stddev_first_cast_s": 61.5,
+      "avg_gap_s": 105.1,
+      "stddev_gap_s": 13.8,
       "avg_bl_offset_s": 9.4,
       "stddev_bl_offset_s": 5.3,
-      "avg_uses": 1.8,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.492,
-        "stddev": 0.156,
-        "min": 0.298,
+        "avg": 0.541,
+        "stddev": 0.129,
+        "min": 0.402,
         "max": 0.668
       },
       "bl_pct": 20,
       "majority_hold": false,
-      "hold_targets": {
-        "2": {
-          "target_s": 179.3,
-          "stddev_s": 108,
-          "delay_s": 27,
-          "delay_stddev_s": 40.7,
-          "band_s": 40.7,
-          "effective_cd_s": 90,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Tip the Scales": {
       "sample_count": 10,
       "avg_first_cast_s": 21.2,
       "stddev_first_cast_s": 32.9,
-      "avg_gap_s": 104.9,
-      "stddev_gap_s": 19.5,
-      "avg_bl_offset_s": 8.7,
-      "stddev_bl_offset_s": 18.4,
-      "avg_uses": 4.2,
-      "avg_uses_per_min": 0.59,
+      "avg_gap_s": 100.1,
+      "stddev_gap_s": 15.8,
+      "avg_bl_offset_s": 7.5,
+      "stddev_bl_offset_s": 17,
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 0.63,
       "uses_per_min": {
-        "avg": 0.593,
-        "stddev": 0.07,
-        "min": 0.447,
-        "max": 0.676
+        "avg": 0.635,
+        "stddev": 0.094,
+        "min": 0.536,
+        "max": 0.867
       },
-      "bl_pct": 60,
+      "bl_pct": 70,
       "majority_hold": false,
       "hold_targets": {}
     },
@@ -273,6 +262,6 @@
       "name": "Renewing Blaze"
     }
   },
-  "source_signature": "d14e2aa583910e75",
-  "ingest_version": 2
+  "source_signature": "2d914fa1b892aaec",
+  "ingest_version": 3
 }

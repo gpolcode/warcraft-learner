@@ -56,7 +56,69 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 90.8,
+      "dmg_avg": 204859,
+      "dmg_stddev": 113479,
+      "dmg_min": 28883,
+      "dmg_max": 401741,
+      "dmg_pct_avg": 0.024,
+      "window_length_s": 6.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 187567,
+          "min_damage": 54812,
+          "max_damage": 353410,
+          "count": 8
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 29341,
+          "min_damage": 9412,
+          "max_damage": 60590,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 189.3,
+      "dmg_avg": 255266,
+      "dmg_stddev": 196408,
+      "dmg_min": 0,
+      "dmg_max": 680780,
+      "dmg_pct_avg": 0.031,
+      "window_length_s": 7.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 75056,
+          "min_damage": 38279,
+          "max_damage": 118256,
+          "count": 12
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
@@ -146,8 +208,16 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
     }
   },
-  "source_signature": "422fa50ee16527c6",
-  "ingest_version": 2
+  "source_signature": "5e98b2a7e9609291",
+  "ingest_version": 3
 }

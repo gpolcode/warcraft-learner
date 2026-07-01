@@ -5,6 +5,129 @@
   "sample_count": 10,
   "windows": [
     {
+      "time_s": 376,
+      "dmg_avg": 1997298,
+      "dmg_stddev": 1210664,
+      "dmg_min": 951525,
+      "dmg_max": 3492977,
+      "common_cds": [],
+      "window_length_s": 11.8,
+      "ability_breakdown": [
+        {
+          "spell_id": 356995,
+          "avg_damage": 1313483,
+          "min_damage": 674800,
+          "max_damage": 1704442,
+          "count": 3,
+          "avg_casts": 4,
+          "is_passive": false
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 326099,
+          "min_damage": 131567,
+          "max_damage": 515943,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 309368,
+          "min_damage": 38891,
+          "max_damage": 815931,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1263725,
+          "avg_damage": 261363,
+          "min_damage": 160993,
+          "max_damage": 361732,
+          "count": 2,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 431583,
+          "avg_damage": 40605,
+          "min_damage": 16301,
+          "max_damage": 65138,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 1285163,
+          "avg_damage": 38425,
+          "min_damage": 13063,
+          "max_damage": 63786,
+          "count": 2,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
+      "time_s": 438,
+      "dmg_avg": 20026907,
+      "dmg_stddev": 17428921,
+      "dmg_min": 803804,
+      "dmg_max": 33810693,
+      "common_cds": [
+        "Tip the Scales"
+      ],
+      "window_length_s": 40.4,
+      "ability_breakdown": [
+        {
+          "spell_id": 1292446,
+          "avg_damage": 28013511,
+          "min_damage": 24456771,
+          "max_damage": 30230530,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 361500,
+          "avg_damage": 1769888,
+          "min_damage": 127552,
+          "max_damage": 5429607,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 356995,
+          "avg_damage": 932010,
+          "min_damage": 316933,
+          "max_damage": 1759811,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 357209,
+          "avg_damage": 788425,
+          "min_damage": 124617,
+          "max_damage": 1334981,
+          "count": 5,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 431583,
+          "avg_damage": 151867,
+          "min_damage": 22601,
+          "max_damage": 353551,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
+    },
+    {
       "time_s": 498.5,
       "dmg_avg": 37729282,
       "dmg_stddev": 4701724,
@@ -139,20 +262,32 @@
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
     },
+    "431583": {
+      "icon": "inv_ability_chronowardenevoker_chronoflame",
+      "name": "Chrono Flame"
+    },
     "444017": {
       "icon": "inv_10_elementalcombinedfoozles_purifiedshadowflame",
       "name": "Enkindle"
     },
+    "1263725": {
+      "icon": "inv_12_trinket_raid_voidspire_healer2_litanyoflightblindwrath",
+      "name": "Beacon of Lightblind Wrath"
+    },
     "1265980": {
       "icon": "ability_evoker_infernosblessing",
       "name": "Twin Flame"
+    },
+    "1285163": {
+      "icon": "inv_green_sporecreature2",
+      "name": "Bursting Toadstools"
     },
     "1292446": {
       "icon": "spell_holy_aspiration",
       "name": "The Last Light"
     }
   },
-  "source_signature": "dcc0ae155af10fed",
-  "ingest_version": 2,
+  "source_signature": "a14b0a49190e1b9b",
+  "ingest_version": 3,
   "inaccessible_parses": []
 }

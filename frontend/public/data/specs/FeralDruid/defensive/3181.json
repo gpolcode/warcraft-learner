@@ -5,107 +5,212 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Survival Instincts": {
-      "sample_count": 9,
-      "avg_first_cast_s": 329.9,
-      "stddev_first_cast_s": 117.5,
-      "avg_gap_s": 210.9,
-      "stddev_gap_s": 53.2,
+      "sample_count": 8,
+      "avg_first_cast_s": 310.8,
+      "stddev_first_cast_s": 126.1,
+      "avg_gap_s": 250.1,
+      "stddev_gap_s": 121,
       "hold_targets": {},
-      "avg_uses": 1.3,
-      "avg_uses_per_min": 0.17,
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.18,
       "uses_per_min": {
-        "avg": 0.166,
-        "stddev": 0.063,
-        "min": 0.115,
-        "max": 0.258
+        "avg": 0.18,
+        "stddev": 0.064,
+        "min": 0.127,
+        "max": 0.264
       },
       "majority_hold": false
     },
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 90.5,
-      "stddev_first_cast_s": 93.6,
-      "avg_gap_s": 112.4,
-      "stddev_gap_s": 71.4,
+      "avg_first_cast_s": 179.8,
+      "stddev_first_cast_s": 158.3,
+      "avg_gap_s": 106.2,
+      "stddev_gap_s": 45.7,
       "hold_targets": {
         "1": {
-          "target_s": 262.9,
-          "stddev_s": 93.6,
-          "count": 10,
+          "target_s": 230.1,
+          "stddev_s": 76,
+          "count": 7,
           "total_samples": 10
         },
         "2": {
           "target_s": 327.3,
-          "stddev_s": 55.9,
-          "count": 7,
-          "total_samples": 10
-        },
-        "3": {
-          "target_s": 405.5,
-          "stddev_s": 28.5,
+          "stddev_s": 33.5,
           "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.3,
-      "avg_uses_per_min": 0.53,
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.531,
-        "stddev": 0.129,
-        "min": 0.35,
-        "max": 0.689
+        "avg": 0.421,
+        "stddev": 0.203,
+        "min": 0.137,
+        "max": 0.646
       },
       "majority_hold": true
     },
     "Frenzied Regeneration": {
       "sample_count": 10,
-      "avg_first_cast_s": 125.3,
-      "stddev_first_cast_s": 124.5,
-      "avg_gap_s": 124.3,
-      "stddev_gap_s": 67.7,
+      "avg_first_cast_s": 174.9,
+      "stddev_first_cast_s": 128.3,
+      "avg_gap_s": 137.5,
+      "stddev_gap_s": 65.1,
       "hold_targets": {
         "1": {
-          "target_s": 222.2,
-          "stddev_s": 99.8,
-          "count": 9,
-          "total_samples": 10
-        },
-        "2": {
-          "target_s": 348.6,
-          "stddev_s": 80.6,
-          "count": 5,
+          "target_s": 309.1,
+          "stddev_s": 122.5,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.2,
-      "avg_uses_per_min": 0.4,
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.396,
-        "stddev": 0.144,
-        "min": 0.233,
+        "avg": 0.314,
+        "stddev": 0.185,
+        "min": 0.137,
         "max": 0.647
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 299.8,
+      "dmg_avg": 199305,
+      "dmg_stddev": 125065,
+      "dmg_min": 59420,
+      "dmg_max": 425760,
+      "dmg_pct_avg": 0.01,
+      "window_length_s": 3,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 253742,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_damage": 87735,
+          "min_damage": 15910,
+          "max_damage": 202389,
+          "count": 3
+        },
+        {
+          "spell_id": 1260019,
+          "avg_damage": 80612,
+          "min_damage": 23760,
+          "max_damage": 148642,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 61117,
+          "min_damage": 33160,
+          "max_damage": 82400,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 407.7,
+      "dmg_avg": 656048,
+      "dmg_stddev": 283903,
+      "dmg_min": 321981,
+      "dmg_max": 1028148,
+      "dmg_pct_avg": 0.032,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1237040,
+          "avg_damage": 201400,
+          "min_damage": 126211,
+          "max_damage": 303520,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 170245,
+          "min_damage": 73550,
+          "max_damage": 229160,
+          "count": 6
+        },
+        {
+          "spell_id": 1243743,
+          "avg_damage": 89760,
+          "min_damage": 85750,
+          "max_damage": 94800,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 425,
+      "dmg_avg": 172993,
+      "dmg_stddev": 63762,
+      "dmg_min": 85334,
+      "dmg_max": 236044,
+      "dmg_pct_avg": 0.009,
+      "window_length_s": 6,
+      "defensive_name": "Survival Instincts",
+      "spell_id": 61336,
+      "common_defensives": [
+        "Survival Instincts"
+      ],
+      "common_cds": [
+        "Survival Instincts"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 65074,
+          "min_damage": 61273,
+          "max_damage": 69056,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 56499,
+          "min_damage": 42876,
+          "max_damage": 65044,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 1.3,
+      "avg_uses": 1.4,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 22812,
-      "avg_uses": 4.3,
-      "min_uses": 3,
-      "max_uses": 6
+      "avg_uses": 3.2,
+      "min_uses": 1,
+      "max_uses": 5
     },
     {
       "spell_id": 22842,
-      "avg_uses": 3.2,
-      "min_uses": 2,
+      "avg_uses": 2.4,
+      "min_uses": 1,
       "max_uses": 5
     }
   ],
@@ -165,8 +270,32 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1243743": {
+      "icon": "ability_priest_surgeofdarkness",
+      "name": "Interrupting Tremor"
+    },
+    "1260019": {
+      "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
+      "name": "Simulacrum Backlash"
+    },
+    "1260027": {
+      "icon": "inv_shadowelementalmount",
+      "name": "Grasp of Emptiness"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
     }
   },
-  "source_signature": "abad794d63db515e",
-  "ingest_version": 2
+  "source_signature": "651e84e45495021a",
+  "ingest_version": 3
 }

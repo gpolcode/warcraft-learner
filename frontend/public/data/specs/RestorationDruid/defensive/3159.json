@@ -6,70 +6,139 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 170,
-      "stddev_first_cast_s": 105.2,
+      "avg_first_cast_s": 147.3,
+      "stddev_first_cast_s": 73.3,
       "avg_gap_s": 103.3,
-      "stddev_gap_s": 35.6,
+      "stddev_gap_s": 35.4,
       "hold_targets": {
         "1": {
-          "target_s": 268.2,
-          "stddev_s": 67.2,
+          "target_s": 269.2,
+          "stddev_s": 67.5,
           "count": 8,
           "total_samples": 10
         },
         "2": {
-          "target_s": 402.8,
-          "stddev_s": 66.8,
-          "count": 5,
+          "target_s": 403.1,
+          "stddev_s": 62.1,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.45,
       "uses_per_min": {
-        "avg": 0.416,
-        "stddev": 0.174,
-        "min": 0.134,
+        "avg": 0.449,
+        "stddev": 0.142,
+        "min": 0.281,
         "max": 0.676
       },
       "majority_hold": true
     },
     "Ironbark": {
-      "sample_count": 7,
-      "avg_first_cast_s": 213.5,
-      "stddev_first_cast_s": 123.3,
-      "avg_gap_s": 145.9,
-      "stddev_gap_s": 40.4,
-      "hold_targets": {
-        "1": {
-          "target_s": 385.6,
-          "stddev_s": 126.8,
-          "count": 3,
-          "total_samples": 7
-        }
-      },
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.22,
+      "sample_count": 8,
+      "avg_first_cast_s": 272.3,
+      "stddev_first_cast_s": 119.7,
+      "avg_gap_s": 148.2,
+      "stddev_gap_s": 46.3,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.223,
+        "avg": 0.198,
         "stddev": 0.086,
         "min": 0.127,
         "max": 0.37
       },
-      "majority_hold": true
+      "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 136.3,
+      "dmg_avg": 381131,
+      "dmg_stddev": 96899,
+      "dmg_min": 302963,
+      "dmg_max": 497677,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222278,
+          "avg_damage": 153354,
+          "min_damage": 44186,
+          "max_damage": 190193,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 123490,
+          "min_damage": 115285,
+          "max_damage": 132118,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 269.2,
+      "dmg_avg": 617081,
+      "dmg_stddev": 105558,
+      "dmg_min": 483662,
+      "dmg_max": 805022,
+      "dmg_pct_avg": 0.03,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 234578,
+          "min_damage": 208072,
+          "max_damage": 258712,
+          "count": 8
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 208223,
+          "min_damage": 38121,
+          "max_damage": 565834,
+          "count": 8
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 196902,
+          "min_damage": 167931,
+          "max_damage": 228094,
+          "count": 6
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 3.1,
-      "min_uses": 1,
+      "avg_uses": 3.3,
+      "min_uses": 2,
       "max_uses": 5
     },
     {
       "spell_id": 102342,
-      "avg_uses": 1.7,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 3
     }
@@ -130,8 +199,24 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "669a89ca0c9ffa15",
-  "ingest_version": 2
+  "source_signature": "f343d8e588fef358",
+  "ingest_version": 3
 }

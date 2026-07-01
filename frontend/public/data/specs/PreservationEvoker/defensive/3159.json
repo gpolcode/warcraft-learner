@@ -70,7 +70,76 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 265,
+      "dmg_avg": 527362,
+      "dmg_stddev": 297378,
+      "dmg_min": 0,
+      "dmg_max": 1006771,
+      "dmg_pct_avg": 0.028,
+      "window_length_s": 8.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 277176,
+          "min_damage": 93533,
+          "max_damage": 574529,
+          "count": 10
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 182050,
+          "min_damage": 74078,
+          "max_damage": 259398,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 390.3,
+      "dmg_avg": 725490,
+      "dmg_stddev": 310192,
+      "dmg_min": 190661,
+      "dmg_max": 1046232,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 10.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 396937,
+          "min_damage": 80422,
+          "max_damage": 652825,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 303810,
+          "min_damage": 116331,
+          "max_damage": 387824,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
@@ -160,8 +229,16 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
     }
   },
-  "source_signature": "383f9dab353d549d",
-  "ingest_version": 2
+  "source_signature": "7273ed3b543ab8f5",
+  "ingest_version": 3
 }
