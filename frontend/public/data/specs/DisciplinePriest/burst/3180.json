@@ -6,8 +6,8 @@
   "windows": [
     {
       "time_s": 10.5,
-      "dmg_avg": 2332998,
-      "dmg_stddev": 784284,
+      "dmg_avg": 2353914,
+      "dmg_stddev": 770590,
       "dmg_min": 1417519,
       "dmg_max": 3758794,
       "common_cds": [
@@ -17,7 +17,7 @@
       "ability_breakdown": [
         {
           "spell_id": 373442,
-          "avg_damage": 787589,
+          "avg_damage": 803818,
           "min_damage": 358813,
           "max_damage": 1167549,
           "count": 10,
@@ -26,7 +26,7 @@
         },
         {
           "spell_id": 589,
-          "avg_damage": 318028,
+          "avg_damage": 318980,
           "min_damage": 175759,
           "max_damage": 522754,
           "count": 10,
@@ -44,9 +44,9 @@
         },
         {
           "spell_id": 1253828,
-          "avg_damage": 230773,
+          "avg_damage": 239034,
           "min_damage": 84822,
-          "max_damage": 405551,
+          "max_damage": 441056,
           "count": 7,
           "avg_casts": 1,
           "is_passive": false
@@ -62,11 +62,60 @@
         },
         {
           "spell_id": 47666,
-          "avg_damage": 214351,
+          "avg_damage": 218276,
           "min_damage": 89559,
           "max_damage": 319666,
           "count": 7,
           "avg_casts": 3,
+          "is_passive": false
+        }
+      ]
+    },
+    {
+      "time_s": 343,
+      "dmg_avg": 1323250,
+      "dmg_stddev": 694481,
+      "dmg_min": 855152,
+      "dmg_max": 2515379,
+      "common_cds": [
+        "Ultimate Penitence"
+      ],
+      "window_length_s": 10,
+      "ability_breakdown": [
+        {
+          "spell_id": 421543,
+          "avg_damage": 485361,
+          "min_damage": 239471,
+          "max_damage": 688186,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 373442,
+          "avg_damage": 443057,
+          "min_damage": 64960,
+          "max_damage": 1137365,
+          "count": 5,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 32379,
+          "avg_damage": 126290,
+          "min_damage": 56194,
+          "max_damage": 206986,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 589,
+          "avg_damage": 122763,
+          "min_damage": 44307,
+          "max_damage": 208302,
+          "count": 4,
+          "avg_casts": 0,
           "is_passive": false
         }
       ]
@@ -101,6 +150,10 @@
     "19236": {
       "icon": "spell_holy_testoffaith",
       "name": "Desperate Prayer"
+    },
+    "32379": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
     },
     "33206": {
       "icon": "spell_holy_painsupression",
@@ -146,6 +199,10 @@
       "icon": "ability_priest_ascendance",
       "name": "Ultimate Penitence"
     },
+    "421543": {
+      "icon": "ability_priest_ascendance",
+      "name": "Ultimate Penitence"
+    },
     "447448": {
       "icon": "inv_ability_voidweaverpriest_entropicrift",
       "name": "Entropic Rift"
@@ -155,7 +212,7 @@
       "name": "Void Shield"
     }
   },
-  "source_signature": "f68ed5be75380f14",
+  "source_signature": "05088c3cf398183d",
   "ingest_version": 2,
   "inaccessible_parses": []
 }

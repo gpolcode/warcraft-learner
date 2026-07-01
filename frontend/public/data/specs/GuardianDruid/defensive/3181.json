@@ -6,27 +6,27 @@
   "per_defensive_benchmarks": {
     "Survival Instincts": {
       "sample_count": 10,
-      "avg_first_cast_s": 292.6,
-      "stddev_first_cast_s": 182.6,
-      "avg_gap_s": 123.5,
-      "stddev_gap_s": 92.6,
+      "avg_first_cast_s": 259.2,
+      "stddev_first_cast_s": 186.9,
+      "avg_gap_s": 119.6,
+      "stddev_gap_s": 106.3,
       "hold_targets": {},
-      "avg_uses": 1.9,
-      "avg_uses_per_min": 0.24,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.243,
-        "stddev": 0.153,
+        "avg": 0.285,
+        "stddev": 0.175,
         "min": 0.125,
-        "max": 0.52
+        "max": 0.551
       },
       "majority_hold": false
     },
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 17.1,
-      "stddev_first_cast_s": 18.7,
-      "avg_gap_s": 57,
-      "stddev_gap_s": 43.8,
+      "avg_first_cast_s": 16.8,
+      "stddev_first_cast_s": 18.9,
+      "avg_gap_s": 59.4,
+      "stddev_gap_s": 45.2,
       "hold_targets": {
         "2": {
           "target_s": 202.8,
@@ -35,17 +35,17 @@
           "total_samples": 10
         },
         "3": {
-          "target_s": 181.4,
-          "stddev_s": 49.1,
+          "target_s": 215.8,
+          "stddev_s": 45.8,
           "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 8.5,
-      "avg_uses_per_min": 1.08,
+      "avg_uses": 8.1,
+      "avg_uses_per_min": 1.04,
       "uses_per_min": {
-        "avg": 1.082,
-        "stddev": 0.364,
+        "avg": 1.036,
+        "stddev": 0.345,
         "min": 0.381,
         "max": 1.518
       },
@@ -53,17 +53,11 @@
     },
     "Frenzied Regeneration": {
       "sample_count": 10,
-      "avg_first_cast_s": 35.4,
-      "stddev_first_cast_s": 23.8,
-      "avg_gap_s": 46.4,
-      "stddev_gap_s": 60.6,
+      "avg_first_cast_s": 41.2,
+      "stddev_first_cast_s": 27.5,
+      "avg_gap_s": 47.2,
+      "stddev_gap_s": 64.1,
       "hold_targets": {
-        "4": {
-          "target_s": 271.6,
-          "stddev_s": 98.5,
-          "count": 4,
-          "total_samples": 10
-        },
         "5": {
           "target_s": 251.2,
           "stddev_s": 112.3,
@@ -71,11 +65,11 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 9.6,
-      "avg_uses_per_min": 1.22,
+      "avg_uses": 9.4,
+      "avg_uses_per_min": 1.19,
       "uses_per_min": {
-        "avg": 1.217,
-        "stddev": 0.587,
+        "avg": 1.193,
+        "stddev": 0.616,
         "min": 0.404,
         "max": 1.95
       },
@@ -83,53 +77,53 @@
     },
     "Ironfur": {
       "sample_count": 10,
-      "avg_first_cast_s": 8.1,
-      "stddev_first_cast_s": 4.8,
-      "avg_gap_s": 31.6,
-      "stddev_gap_s": 38.9,
+      "avg_first_cast_s": 7.7,
+      "stddev_first_cast_s": 4.2,
+      "avg_gap_s": 30.1,
+      "stddev_gap_s": 38.1,
       "hold_targets": {
         "2": {
           "target_s": 96.9,
-          "stddev_s": 144.5,
+          "stddev_s": 145.1,
           "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 121.6,
-          "stddev_s": 142.8,
+          "target_s": 119.5,
+          "stddev_s": 145,
           "count": 6,
           "total_samples": 10
         },
         "4": {
           "target_s": 173.8,
-          "stddev_s": 40.7,
+          "stddev_s": 39.3,
           "count": 6,
           "total_samples": 10
         },
         "5": {
-          "target_s": 207.1,
-          "stddev_s": 72,
-          "count": 5,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 234.6,
-          "stddev_s": 51.4,
+          "target_s": 205.4,
+          "stddev_s": 77.6,
           "count": 4,
           "total_samples": 10
         },
         "7": {
-          "target_s": 274,
-          "stddev_s": 84.5,
-          "count": 6,
+          "target_s": 261,
+          "stddev_s": 87.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "12": {
+          "target_s": 352,
+          "stddev_s": 77.3,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 14.7,
-      "avg_uses_per_min": 1.89,
+      "avg_uses": 15.3,
+      "avg_uses_per_min": 1.98,
       "uses_per_min": {
-        "avg": 1.888,
-        "stddev": 0.832,
+        "avg": 1.98,
+        "stddev": 0.825,
         "min": 0.499,
         "max": 3.277
       },
@@ -138,13 +132,13 @@
   },
   "defensive_windows": [
     {
-      "time_s": 39.4,
-      "dmg_avg": 3212008,
-      "dmg_stddev": 2241787,
+      "time_s": 42.1,
+      "dmg_avg": 3084252,
+      "dmg_stddev": 2083170,
       "dmg_min": 1028730,
       "dmg_max": 6210064,
-      "dmg_pct_avg": 0.106,
-      "window_length_s": 30.9,
+      "dmg_pct_avg": 0.102,
+      "window_length_s": 29.9,
       "defensive_name": "Ironfur",
       "spell_id": 192081,
       "common_defensives": [
@@ -157,31 +151,31 @@
       "ability_breakdown": [
         {
           "spell_id": 1,
-          "avg_damage": 2114199,
+          "avg_damage": 2083506,
           "min_damage": 405830,
           "max_damage": 4594981,
-          "count": 6
+          "count": 8
         },
         {
           "spell_id": 1281707,
-          "avg_damage": 713992,
-          "min_damage": 272347,
+          "avg_damage": 646874,
+          "min_damage": 175791,
           "max_damage": 1236210,
-          "count": 6
+          "count": 8
         },
         {
           "spell_id": 1233789,
-          "avg_damage": 186522,
+          "avg_damage": 175410,
           "min_damage": 132441,
           "max_damage": 268947,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1233826,
-          "avg_damage": 124955,
+          "avg_damage": 147637,
           "min_damage": 40530,
-          "max_damage": 213843,
-          "count": 4
+          "max_damage": 234320,
+          "count": 6
         }
       ]
     }
@@ -189,25 +183,25 @@
   "top_defensives_summary": [
     {
       "spell_id": 61336,
-      "avg_uses": 1.9,
+      "avg_uses": 2.2,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 22812,
-      "avg_uses": 8.5,
+      "avg_uses": 8.1,
       "min_uses": 3,
       "max_uses": 12
     },
     {
       "spell_id": 22842,
-      "avg_uses": 9.6,
+      "avg_uses": 9.4,
       "min_uses": 3,
       "max_uses": 15
     },
     {
       "spell_id": 192081,
-      "avg_uses": 14.7,
+      "avg_uses": 15.3,
       "min_uses": 4,
       "max_uses": 24
     }
@@ -286,6 +280,6 @@
       "name": "Echoing Darkness"
     }
   },
-  "source_signature": "e0fdddb782e5a183",
+  "source_signature": "80cf0313ad259797",
   "ingest_version": 2
 }

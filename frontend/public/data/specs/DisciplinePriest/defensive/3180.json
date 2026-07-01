@@ -6,47 +6,59 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 180.9,
-      "stddev_first_cast_s": 56.9,
-      "avg_gap_s": 120.2,
-      "stddev_gap_s": 25.5,
+      "avg_first_cast_s": 165,
+      "stddev_first_cast_s": 58.9,
+      "avg_gap_s": 126.8,
+      "stddev_gap_s": 32.6,
       "hold_targets": {
         "1": {
-          "target_s": 299.5,
-          "stddev_s": 42.1,
-          "count": 6,
+          "target_s": 296.1,
+          "stddev_s": 38.5,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 402,
+          "stddev_s": 51.2,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.31,
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.311,
-        "stddev": 0.111,
-        "min": 0.148,
+        "avg": 0.338,
+        "stddev": 0.099,
+        "min": 0.151,
         "max": 0.493
       },
       "majority_hold": true
     },
     "Fade": {
       "sample_count": 10,
-      "avg_first_cast_s": 155.8,
-      "stddev_first_cast_s": 115,
-      "avg_gap_s": 42.7,
-      "stddev_gap_s": 30.8,
+      "avg_first_cast_s": 139.9,
+      "stddev_first_cast_s": 112.2,
+      "avg_gap_s": 45.8,
+      "stddev_gap_s": 32.3,
       "hold_targets": {
         "1": {
-          "target_s": 212.2,
-          "stddev_s": 86,
-          "count": 7,
+          "target_s": 205.6,
+          "stddev_s": 85,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 306.9,
+          "stddev_s": 44.4,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.6,
-      "avg_uses_per_min": 0.83,
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.88,
       "uses_per_min": {
-        "avg": 0.83,
-        "stddev": 0.809,
+        "avg": 0.884,
+        "stddev": 0.776,
         "min": 0.138,
         "max": 2.731
       },
@@ -103,13 +115,13 @@
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.1,
+      "avg_uses": 2.3,
       "min_uses": 1,
       "max_uses": 3
     },
     {
       "spell_id": 586,
-      "avg_uses": 5.6,
+      "avg_uses": 6,
       "min_uses": 1,
       "max_uses": 19
     }
@@ -185,6 +197,6 @@
       "name": "Power Word: Barrier"
     }
   },
-  "source_signature": "f68ed5be75380f14",
+  "source_signature": "05088c3cf398183d",
   "ingest_version": 2
 }

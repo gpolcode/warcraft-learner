@@ -6,35 +6,35 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 10,
-      "avg_first_cast_s": 58.2,
-      "stddev_first_cast_s": 106.7,
-      "avg_gap_s": 78,
-      "stddev_gap_s": 53,
+      "avg_first_cast_s": 58,
+      "stddev_first_cast_s": 106.8,
+      "avg_gap_s": 74.2,
+      "stddev_gap_s": 37.8,
       "hold_targets": {
         "1": {
-          "target_s": 97,
-          "stddev_s": 72,
-          "count": 6,
+          "target_s": 100.7,
+          "stddev_s": 76.4,
+          "count": 5,
           "total_samples": 10
         },
         "2": {
-          "target_s": 297.7,
-          "stddev_s": 106.9,
+          "target_s": 220.1,
+          "stddev_s": 104.4,
           "count": 5,
           "total_samples": 10
         },
         "3": {
-          "target_s": 284.5,
-          "stddev_s": 27.1,
-          "count": 4,
+          "target_s": 271.5,
+          "stddev_s": 24,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 5.9,
-      "avg_uses_per_min": 0.75,
+      "avg_uses": 6.2,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.75,
-        "stddev": 0.351,
+        "avg": 0.786,
+        "stddev": 0.324,
         "min": 0.134,
         "max": 1.179
       },
@@ -42,8 +42,8 @@
     },
     "Icebound Fortitude": {
       "sample_count": 9,
-      "avg_first_cast_s": 238.9,
-      "stddev_first_cast_s": 172.2,
+      "avg_first_cast_s": 270.8,
+      "stddev_first_cast_s": 150.2,
       "avg_gap_s": 320.3,
       "stddev_gap_s": 15.5,
       "hold_targets": {},
@@ -58,17 +58,17 @@
       "majority_hold": false
     },
     "Lichborne": {
-      "sample_count": 7,
-      "avg_first_cast_s": 298.7,
-      "stddev_first_cast_s": 200.9,
+      "sample_count": 8,
+      "avg_first_cast_s": 298.9,
+      "stddev_first_cast_s": 186,
       "avg_gap_s": 140.2,
       "stddev_gap_s": 109.2,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.255,
-        "stddev": 0.221,
+        "avg": 0.238,
+        "stddev": 0.21,
         "min": 0.121,
         "max": 0.733
       },
@@ -113,7 +113,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 5.9,
+      "avg_uses": 6.2,
       "min_uses": 1,
       "max_uses": 9
     },
@@ -125,7 +125,7 @@
     },
     {
       "spell_id": 49039,
-      "avg_uses": 2,
+      "avg_uses": 1.9,
       "min_uses": 1,
       "max_uses": 6
     },
@@ -213,6 +213,6 @@
       "name": "Anti-Magic Zone"
     }
   },
-  "source_signature": "caf5990e5b438012",
+  "source_signature": "8b5c12122a4e7f58",
   "ingest_version": 2
 }

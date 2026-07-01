@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 8,
-      "avg_first_cast_s": 62.3,
-      "stddev_first_cast_s": 32.1,
-      "avg_gap_s": 16.2,
-      "stddev_gap_s": 23.8,
+      "avg_first_cast_s": 59.1,
+      "stddev_first_cast_s": 32.5,
+      "avg_gap_s": 16.7,
+      "stddev_gap_s": 23.9,
       "hold_targets": {},
       "avg_uses": 3.4,
       "avg_uses_per_min": 1.45,
       "uses_per_min": {
-        "avg": 1.449,
-        "stddev": 0.343,
+        "avg": 1.455,
+        "stddev": 0.348,
         "min": 0.852,
         "max": 1.908
       },
@@ -39,7 +39,35 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 76.7,
+      "dmg_avg": 221217,
+      "dmg_stddev": 93146,
+      "dmg_min": 91595,
+      "dmg_max": 409182,
+      "dmg_pct_avg": 0.061,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 184989,
+          "min_damage": 93249,
+          "max_damage": 311239,
+          "count": 9
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
@@ -110,8 +138,12 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
     }
   },
-  "source_signature": "f486197f92df5c5d",
+  "source_signature": "92d223cce0ca2c83",
   "ingest_version": 2
 }

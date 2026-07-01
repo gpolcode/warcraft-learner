@@ -3,23 +3,23 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 506.4,
-  "downtime_threshold_ms": 2491,
-  "top_avg_efficiency": 73.9,
-  "top_efficiency_stddev": 4.7,
+  "avg_duration_s": 506.1,
+  "downtime_threshold_ms": 2436,
+  "top_avg_efficiency": 73.5,
+  "top_efficiency_stddev": 5.3,
   "per_cd_benchmarks": {
     "Summon Darkglare": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.7,
-      "stddev_first_cast_s": 5.2,
-      "avg_gap_s": 145.6,
-      "stddev_gap_s": 25.3,
-      "avg_bl_offset_s": 6,
+      "avg_first_cast_s": 9,
+      "stddev_first_cast_s": 4.9,
+      "avg_gap_s": 147.5,
+      "stddev_gap_s": 25.9,
+      "avg_bl_offset_s": 6.1,
       "stddev_bl_offset_s": 15.4,
       "avg_uses": 4,
       "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.474,
+        "avg": 0.475,
         "stddev": 0.014,
         "min": 0.447,
         "max": 0.495
@@ -28,13 +28,23 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 179.2,
-          "stddev_s": 3,
-          "delay_s": 49.8,
-          "delay_stddev_s": 5.2,
-          "band_s": 5.2,
+          "target_s": 179.8,
+          "stddev_s": 2.9,
+          "delay_s": 50.2,
+          "delay_stddev_s": 4.5,
+          "band_s": 5,
           "effective_cd_s": 120,
           "count": 10,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 356.9,
+          "stddev_s": 14.8,
+          "delay_s": 56.1,
+          "delay_stddev_s": 15.2,
+          "band_s": 15.2,
+          "effective_cd_s": 120,
+          "count": 5,
           "total_samples": 10
         }
       }
@@ -207,6 +217,6 @@
       "name": "Malevolence"
     }
   },
-  "source_signature": "a35c7a775f706512",
+  "source_signature": "7364097f244da537",
   "ingest_version": 2
 }
