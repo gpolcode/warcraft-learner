@@ -6,33 +6,33 @@
   "per_defensive_benchmarks": {
     "Vampiric Blood": {
       "sample_count": 8,
-      "avg_first_cast_s": 90.2,
-      "stddev_first_cast_s": 101,
-      "avg_gap_s": 69,
-      "stddev_gap_s": 43.5,
+      "avg_first_cast_s": 87.1,
+      "stddev_first_cast_s": 102.5,
+      "avg_gap_s": 66.1,
+      "stddev_gap_s": 41.1,
       "hold_targets": {},
-      "avg_uses": 2.8,
-      "avg_uses_per_min": 0.61,
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.73,
       "uses_per_min": {
-        "avg": 0.615,
-        "stddev": 0.457,
+        "avg": 0.728,
+        "stddev": 0.455,
         "min": 0.172,
         "max": 1.562
       },
       "majority_hold": false
     },
     "Icebound Fortitude": {
-      "sample_count": 3,
-      "avg_first_cast_s": 205.9,
-      "stddev_first_cast_s": 36.8,
+      "sample_count": 4,
+      "avg_first_cast_s": 220.4,
+      "stddev_first_cast_s": 41.7,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.28,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.285,
-        "stddev": 0.056,
+        "avg": 0.269,
+        "stddev": 0.055,
         "min": 0.223,
         "max": 0.333
       },
@@ -40,23 +40,23 @@
     },
     "Anti-Magic Shell": {
       "sample_count": 9,
-      "avg_first_cast_s": 130.4,
-      "stddev_first_cast_s": 79.7,
-      "avg_gap_s": 73.8,
-      "stddev_gap_s": 24.8,
+      "avg_first_cast_s": 121.5,
+      "stddev_first_cast_s": 86.1,
+      "avg_gap_s": 78.5,
+      "stddev_gap_s": 23.7,
       "hold_targets": {
         "1": {
-          "target_s": 144.6,
-          "stddev_s": 69.5,
-          "count": 5,
+          "target_s": 130.6,
+          "stddev_s": 67,
+          "count": 6,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.52,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.5,
       "uses_per_min": {
-        "avg": 0.516,
-        "stddev": 0.201,
+        "avg": 0.496,
+        "stddev": 0.197,
         "min": 0.286,
         "max": 0.892
       },
@@ -87,11 +87,46 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 252.8,
+      "dmg_avg": 1458280,
+      "dmg_stddev": 478429,
+      "dmg_min": 815419,
+      "dmg_max": 2031642,
+      "dmg_pct_avg": 0.07,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 257950,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 1084356,
+          "min_damage": 516685,
+          "max_damage": 1757489,
+          "count": 5
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 259875,
+          "min_damage": 218152,
+          "max_damage": 298734,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 55233,
-      "avg_uses": 2.8,
+      "avg_uses": 3.3,
       "min_uses": 1,
       "max_uses": 7
     },
@@ -103,7 +138,7 @@
     },
     {
       "spell_id": 48707,
-      "avg_uses": 2.2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -173,6 +208,10 @@
     "Anti-Magic Zone": 51052
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "48707": {
       "icon": "spell_shadow_antimagicshell",
       "name": "Anti-Magic Shell"
@@ -196,8 +235,12 @@
     "194679": {
       "icon": "spell_deathknight_runetap",
       "name": "Rune Tap"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
     }
   },
-  "source_signature": "718af9a92ae91eea",
+  "source_signature": "fe31f07cfb474aaa",
   "ingest_version": 2
 }

@@ -6,23 +6,16 @@
   "per_defensive_benchmarks": {
     "Life Cocoon": {
       "sample_count": 10,
-      "avg_first_cast_s": 138.3,
-      "stddev_first_cast_s": 91.7,
-      "avg_gap_s": 104.8,
-      "stddev_gap_s": 58.3,
-      "hold_targets": {
-        "1": {
-          "target_s": 278.1,
-          "stddev_s": 35.6,
-          "count": 4,
-          "total_samples": 10
-        }
-      },
+      "avg_first_cast_s": 138.1,
+      "stddev_first_cast_s": 91.8,
+      "avg_gap_s": 103.7,
+      "stddev_gap_s": 58.1,
+      "hold_targets": {},
       "avg_uses": 2.8,
-      "avg_uses_per_min": 0.42,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.416,
-        "stddev": 0.22,
+        "avg": 0.41,
+        "stddev": 0.214,
         "min": 0.137,
         "max": 0.84
       },
@@ -30,27 +23,27 @@
     },
     "Fortifying Brew": {
       "sample_count": 10,
-      "avg_first_cast_s": 175.4,
-      "stddev_first_cast_s": 120.5,
-      "avg_gap_s": 128,
-      "stddev_gap_s": 35,
+      "avg_first_cast_s": 182,
+      "stddev_first_cast_s": 117,
+      "avg_gap_s": 129.6,
+      "stddev_gap_s": 33.7,
       "hold_targets": {
         "1": {
-          "target_s": 283.7,
-          "stddev_s": 27.5,
-          "count": 4,
+          "target_s": 300.2,
+          "stddev_s": 25.6,
+          "count": 5,
           "total_samples": 10
         }
       },
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.3,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.32,
       "uses_per_min": {
-        "avg": 0.304,
-        "stddev": 0.146,
+        "avg": 0.317,
+        "stddev": 0.137,
         "min": 0.127,
         "max": 0.547
       },
-      "majority_hold": false
+      "majority_hold": true
     }
   },
   "defensive_windows": [],
@@ -63,7 +56,7 @@
     },
     {
       "spell_id": 115203,
-      "avg_uses": 2,
+      "avg_uses": 2.1,
       "min_uses": 1,
       "max_uses": 4
     }
@@ -152,6 +145,6 @@
       "name": "Diffuse Magic"
     }
   },
-  "source_signature": "f9c583e45705b741",
+  "source_signature": "7f0da12d26c94de8",
   "ingest_version": 2
 }

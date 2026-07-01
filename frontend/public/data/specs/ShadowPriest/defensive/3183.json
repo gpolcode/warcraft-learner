@@ -6,27 +6,27 @@
   "per_defensive_benchmarks": {
     "Dispersion": {
       "sample_count": 8,
-      "avg_first_cast_s": 323.8,
-      "stddev_first_cast_s": 143.8,
-      "avg_gap_s": 271.5,
-      "stddev_gap_s": 0,
+      "avg_first_cast_s": 357.7,
+      "stddev_first_cast_s": 96.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
       "hold_targets": {},
-      "avg_uses": 1.1,
-      "avg_uses_per_min": 0.13,
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
       "uses_per_min": {
-        "avg": 0.128,
-        "stddev": 0.043,
+        "avg": 0.113,
+        "stddev": 0.004,
         "min": 0.109,
-        "max": 0.234
+        "max": 0.117
       },
       "majority_hold": false
     },
     "Desperate Prayer": {
       "sample_count": 9,
-      "avg_first_cast_s": 147.2,
-      "stddev_first_cast_s": 115.2,
-      "avg_gap_s": 98.5,
-      "stddev_gap_s": 31.2,
+      "avg_first_cast_s": 148.4,
+      "stddev_first_cast_s": 116,
+      "avg_gap_s": 98.6,
+      "stddev_gap_s": 32.2,
       "hold_targets": {
         "1": {
           "target_s": 205.5,
@@ -35,29 +35,36 @@
           "total_samples": 9
         }
       },
-      "avg_uses": 2.9,
-      "avg_uses_per_min": 0.33,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.329,
-        "stddev": 0.202,
-        "min": 0.11,
+        "avg": 0.315,
+        "stddev": 0.213,
+        "min": 0.109,
         "max": 0.673
       },
       "majority_hold": true
     },
     "Vampiric Embrace": {
       "sample_count": 10,
-      "avg_first_cast_s": 19.4,
-      "stddev_first_cast_s": 40.8,
-      "avg_gap_s": 124.1,
-      "stddev_gap_s": 2.5,
-      "hold_targets": {},
-      "avg_uses": 4.7,
-      "avg_uses_per_min": 0.53,
+      "avg_first_cast_s": 6.3,
+      "stddev_first_cast_s": 1.8,
+      "avg_gap_s": 124.3,
+      "stddev_gap_s": 2.7,
+      "hold_targets": {
+        "4": {
+          "target_s": 507.3,
+          "stddev_s": 2.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 0.55,
       "uses_per_min": {
-        "avg": 0.533,
-        "stddev": 0.072,
-        "min": 0.352,
+        "avg": 0.553,
+        "stddev": 0.034,
+        "min": 0.465,
         "max": 0.585
       },
       "majority_hold": false
@@ -67,20 +74,20 @@
   "top_defensives_summary": [
     {
       "spell_id": 47585,
-      "avg_uses": 1.1,
+      "avg_uses": 1,
       "min_uses": 1,
-      "max_uses": 2
+      "max_uses": 1
     },
     {
       "spell_id": 19236,
-      "avg_uses": 2.9,
+      "avg_uses": 2.8,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 15286,
-      "avg_uses": 4.7,
-      "min_uses": 3,
+      "avg_uses": 4.9,
+      "min_uses": 4,
       "max_uses": 5
     }
   ],
@@ -129,6 +136,6 @@
       "name": "Dispersion"
     }
   },
-  "source_signature": "af1e9aab18dc298e",
+  "source_signature": "fcab640436ed93d9",
   "ingest_version": 2
 }

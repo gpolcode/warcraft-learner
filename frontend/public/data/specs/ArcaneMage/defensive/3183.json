@@ -6,99 +6,106 @@
   "per_defensive_benchmarks": {
     "Alter Time": {
       "sample_count": 8,
-      "avg_first_cast_s": 162.5,
-      "stddev_first_cast_s": 120.7,
-      "avg_gap_s": 81.5,
-      "stddev_gap_s": 32.3,
-      "hold_targets": {},
-      "avg_uses": 2.5,
-      "avg_uses_per_min": 0.28,
+      "avg_first_cast_s": 141.8,
+      "stddev_first_cast_s": 125,
+      "avg_gap_s": 86.5,
+      "stddev_gap_s": 37.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 212,
+          "stddev_s": 9.1,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.285,
-        "stddev": 0.154,
-        "min": 0.11,
+        "avg": 0.314,
+        "stddev": 0.138,
+        "min": 0.113,
         "max": 0.476
       },
       "majority_hold": true
     },
     "Greater Invisibility": {
       "sample_count": 6,
-      "avg_first_cast_s": 464.4,
-      "stddev_first_cast_s": 78.2,
+      "avg_first_cast_s": 455.8,
+      "stddev_first_cast_s": 74,
       "avg_gap_s": 116.4,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.2,
       "avg_uses_per_min": 0.13,
       "uses_per_min": {
-        "avg": 0.129,
-        "stddev": 0.042,
-        "min": 0.11,
+        "avg": 0.13,
+        "stddev": 0.041,
+        "min": 0.112,
         "max": 0.214
       },
       "majority_hold": false
     },
     "Prismatic Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 94.4,
-      "stddev_first_cast_s": 70.4,
-      "avg_gap_s": 49.9,
-      "stddev_gap_s": 25.6,
+      "avg_first_cast_s": 101.1,
+      "stddev_first_cast_s": 69,
+      "avg_gap_s": 50.9,
+      "stddev_gap_s": 25.9,
       "hold_targets": {
         "1": {
-          "target_s": 160.9,
-          "stddev_s": 93.1,
+          "target_s": 194.9,
+          "stddev_s": 89.2,
           "count": 9,
           "total_samples": 10
         },
         "2": {
-          "target_s": 218,
-          "stddev_s": 92.5,
+          "target_s": 243.6,
+          "stddev_s": 89.6,
           "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 259.4,
-          "stddev_s": 128.4,
+          "target_s": 328.5,
+          "stddev_s": 127,
           "count": 7,
           "total_samples": 10
         },
         "4": {
-          "target_s": 302.4,
-          "stddev_s": 107.3,
-          "count": 6,
+          "target_s": 308.8,
+          "stddev_s": 119.2,
+          "count": 5,
           "total_samples": 10
         },
         "5": {
-          "target_s": 324.9,
-          "stddev_s": 106.2,
-          "count": 4,
+          "target_s": 374.8,
+          "stddev_s": 93.6,
+          "count": 5,
           "total_samples": 10
         },
         "6": {
-          "target_s": 366.2,
-          "stddev_s": 43.4,
+          "target_s": 389.3,
+          "stddev_s": 55.4,
           "count": 4,
           "total_samples": 10
         },
         "7": {
-          "target_s": 395.3,
-          "stddev_s": 38,
-          "count": 4,
+          "target_s": 404.1,
+          "stddev_s": 46.1,
+          "count": 5,
           "total_samples": 10
         },
         "9": {
-          "target_s": 451.4,
-          "stddev_s": 45.9,
-          "count": 5,
+          "target_s": 445.3,
+          "stddev_s": 52.7,
+          "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 8.9,
-      "avg_uses_per_min": 1.01,
+      "avg_uses": 8.5,
+      "avg_uses_per_min": 0.97,
       "uses_per_min": {
-        "avg": 1.007,
-        "stddev": 0.344,
+        "avg": 0.968,
+        "stddev": 0.327,
         "min": 0.454,
         "max": 1.404
       },
@@ -126,7 +133,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 342245,
-      "avg_uses": 2.5,
+      "avg_uses": 2.8,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -144,7 +151,7 @@
     },
     {
       "spell_id": 235450,
-      "avg_uses": 8.9,
+      "avg_uses": 8.5,
       "min_uses": 4,
       "max_uses": 12
     }
@@ -220,6 +227,6 @@
       "name": "Alter Time"
     }
   },
-  "source_signature": "0613512f44905f5c",
+  "source_signature": "3e9e73aaf2521b2a",
   "ingest_version": 2
 }

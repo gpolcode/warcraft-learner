@@ -6,15 +6,15 @@
   "windows": [
     {
       "time_s": 2,
-      "dmg_avg": 1267925,
-      "dmg_stddev": 886560,
+      "dmg_avg": 1268554,
+      "dmg_stddev": 885840,
       "dmg_min": 262073,
       "dmg_max": 3231981,
       "common_cds": [
         "Holy Shock",
         "Sacred Weapon"
       ],
-      "window_length_s": 17.7,
+      "window_length_s": 17.4,
       "ability_breakdown": [
         {
           "spell_id": 447258,
@@ -31,6 +31,15 @@
           "min_damage": 16361,
           "max_damage": 661899,
           "count": 7,
+          "avg_casts": 6,
+          "is_passive": false
+        },
+        {
+          "spell_id": 25912,
+          "avg_damage": 195562,
+          "min_damage": 34827,
+          "max_damage": 431805,
+          "count": 5,
           "avg_casts": 6,
           "is_passive": false
         },
@@ -53,15 +62,6 @@
           "is_passive": true
         },
         {
-          "spell_id": 1,
-          "avg_damage": 125755,
-          "min_damage": 4638,
-          "max_damage": 246462,
-          "count": 5,
-          "avg_casts": 0,
-          "is_passive": true
-        },
-        {
           "spell_id": 414448,
           "avg_damage": 123749,
           "min_damage": 19539,
@@ -73,74 +73,100 @@
       ]
     },
     {
-      "time_s": 78,
-      "dmg_avg": 513234,
-      "dmg_stddev": 336483,
+      "time_s": 77.5,
+      "dmg_avg": 594305,
+      "dmg_stddev": 391841,
       "dmg_min": 249783,
       "dmg_max": 1321248,
-      "common_cds": [],
-      "window_length_s": 7.3,
+      "common_cds": [
+        "Holy Shock"
+      ],
+      "window_length_s": 7.8,
       "ability_breakdown": [
         {
+          "spell_id": 415091,
+          "avg_damage": 420212,
+          "min_damage": 28894,
+          "max_damage": 1152200,
+          "count": 3,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
           "spell_id": 433808,
-          "avg_damage": 100124,
+          "avg_damage": 102502,
           "min_damage": 58855,
           "max_damage": 134484,
-          "count": 5,
+          "count": 3,
           "avg_casts": 0,
           "is_passive": true
         },
         {
+          "spell_id": 81297,
+          "avg_damage": 63693,
+          "min_damage": 28691,
+          "max_damage": 83856,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        },
+        {
+          "spell_id": 275773,
+          "avg_damage": 41211,
+          "min_damage": 35167,
+          "max_damage": 51908,
+          "count": 3,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
           "spell_id": 1,
-          "avg_damage": 29901,
+          "avg_damage": 26257,
           "min_damage": 1121,
           "max_damage": 73622,
-          "count": 5,
+          "count": 3,
           "avg_casts": 0,
           "is_passive": true
         }
       ]
     },
     {
-      "time_s": 203,
-      "dmg_avg": 458025,
-      "dmg_stddev": 175049,
+      "time_s": 204,
+      "dmg_avg": 498341,
+      "dmg_stddev": 172867,
       "dmg_min": 192335,
       "dmg_max": 683403,
       "common_cds": [
         "Holy Shock"
       ],
-      "window_length_s": 7.1,
-      "ability_breakdown": []
-    },
-    {
-      "time_s": 273,
-      "dmg_avg": 380699,
-      "dmg_stddev": 118542,
-      "dmg_min": 268285,
-      "dmg_max": 564572,
-      "common_cds": [
-        "Holy Shock"
-      ],
-      "window_length_s": 7,
+      "window_length_s": 7.6,
       "ability_breakdown": [
         {
-          "spell_id": 433808,
-          "avg_damage": 93130,
-          "min_damage": 43361,
-          "max_damage": 138266,
-          "count": 3,
+          "spell_id": 415091,
+          "avg_damage": 117476,
+          "min_damage": 72684,
+          "max_damage": 138449,
+          "count": 4,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 414448,
+          "avg_damage": 58617,
+          "min_damage": 47826,
+          "max_damage": 69411,
+          "count": 4,
           "avg_casts": 0,
           "is_passive": true
         },
         {
-          "spell_id": 1239282,
-          "avg_damage": 26180,
-          "min_damage": 8275,
-          "max_damage": 61256,
-          "count": 3,
+          "spell_id": 81297,
+          "avg_damage": 25743,
+          "min_damage": 2127,
+          "max_damage": 50919,
+          "count": 4,
           "avg_casts": 0,
-          "is_passive": true
+          "is_passive": false
         }
       ]
     }
@@ -189,6 +215,10 @@
       "icon": "spell_holy_searinglight",
       "name": "Holy Shock"
     },
+    "25912": {
+      "icon": "spell_holy_searinglight",
+      "name": "Holy Shock"
+    },
     "31821": {
       "icon": "spell_holy_auramastery",
       "name": "Aura Mastery"
@@ -197,6 +227,10 @@
       "icon": "spell_holy_avenginewrath",
       "name": "Avenging Wrath"
     },
+    "81297": {
+      "icon": "spell_holy_innerfire",
+      "name": "Consecration"
+    },
     "114165": {
       "icon": "spell_paladin_holyprism",
       "name": "Holy Prism"
@@ -204,6 +238,10 @@
     "216331": {
       "icon": "ability_paladin_veneration",
       "name": "Avenging Crusader"
+    },
+    "275773": {
+      "icon": "spell_holy_righteousfury",
+      "name": "Judgment"
     },
     "375576": {
       "icon": "inv_ability_paladin_divinetoll",
@@ -238,7 +276,7 @@
       "name": "Lesser Weapon"
     }
   },
-  "source_signature": "ea0fcb9827de5537",
+  "source_signature": "262187af109ea660",
   "ingest_version": 2,
   "inaccessible_parses": []
 }

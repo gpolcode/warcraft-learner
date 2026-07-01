@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 130,
-      "stddev_first_cast_s": 100.7,
+      "avg_first_cast_s": 116.1,
+      "stddev_first_cast_s": 88,
       "avg_gap_s": 100.9,
       "stddev_gap_s": 49.5,
       "hold_targets": {},
       "avg_uses": 1.9,
       "avg_uses_per_min": 0.42,
       "uses_per_min": {
-        "avg": 0.422,
-        "stddev": 0.22,
+        "avg": 0.425,
+        "stddev": 0.218,
         "min": 0.186,
         "max": 0.849
       },
@@ -25,14 +25,14 @@
       "sample_count": 10,
       "avg_first_cast_s": 28.9,
       "stddev_first_cast_s": 37.8,
-      "avg_gap_s": 130.8,
-      "stddev_gap_s": 14.2,
+      "avg_gap_s": 129.6,
+      "stddev_gap_s": 13.4,
       "hold_targets": {},
       "avg_uses": 2.7,
-      "avg_uses_per_min": 0.59,
+      "avg_uses_per_min": 0.6,
       "uses_per_min": {
-        "avg": 0.59,
-        "stddev": 0.076,
+        "avg": 0.597,
+        "stddev": 0.081,
         "min": 0.489,
         "max": 0.679
       },
@@ -58,12 +58,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 128,
-      "dmg_avg": 784787,
-      "dmg_stddev": 82950,
+      "time_s": 128.3,
+      "dmg_avg": 759739,
+      "dmg_stddev": 74693,
       "dmg_min": 667484,
-      "dmg_max": 882200,
-      "dmg_pct_avg": 0.07,
+      "dmg_max": 873978,
+      "dmg_pct_avg": 0.069,
       "window_length_s": 12,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
@@ -84,20 +84,54 @@
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 121521,
-          "min_damage": 111749,
+          "avg_damage": 119193,
+          "min_damage": 108250,
           "max_damage": 133524,
           "count": 7
         }
       ]
     },
     {
-      "time_s": 254.5,
-      "dmg_avg": 747126,
-      "dmg_stddev": 334586,
+      "time_s": 128.3,
+      "dmg_avg": 479004,
+      "dmg_stddev": 190891,
+      "dmg_min": 190544,
+      "dmg_max": 674010,
+      "dmg_pct_avg": 0.046,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 322669,
+          "min_damage": 101113,
+          "max_damage": 506903,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 77182,
+          "min_damage": 40562,
+          "max_damage": 90508,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 252.6,
+      "dmg_avg": 669499,
+      "dmg_stddev": 288118,
       "dmg_min": 210577,
-      "dmg_max": 1051481,
-      "dmg_pct_avg": 0.069,
+      "dmg_max": 937771,
+      "dmg_pct_avg": 0.064,
       "window_length_s": 10.4,
       "defensive_name": "Vampiric Embrace",
       "spell_id": 15286,
@@ -118,10 +152,17 @@
         },
         {
           "spell_id": 1264650,
-          "avg_damage": 107276,
+          "avg_damage": 99958,
           "min_damage": 27488,
-          "max_damage": 153886,
+          "max_damage": 124547,
           "count": 5
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 8838,
+          "min_damage": 5950,
+          "max_damage": 10739,
+          "count": 3
         }
       ]
     }
@@ -186,9 +227,17 @@
       "icon": "spell_holy_testoffaith",
       "name": "Desperate Prayer"
     },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
     "47585": {
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
     },
     "1242803": {
       "icon": "inv_ability_holyfire_wave",
@@ -203,6 +252,6 @@
       "name": "Burning Heart"
     }
   },
-  "source_signature": "c2b3c0e33a3d7aae",
+  "source_signature": "08c523eedfc36ce5",
   "ingest_version": 2
 }

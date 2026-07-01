@@ -6,8 +6,8 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 10,
-      "avg_first_cast_s": 93.2,
-      "stddev_first_cast_s": 44.2,
+      "avg_first_cast_s": 103.6,
+      "stddev_first_cast_s": 52.6,
       "avg_gap_s": 119.5,
       "stddev_gap_s": 7,
       "hold_targets": {
@@ -19,29 +19,29 @@
         }
       },
       "avg_uses": 1.6,
-      "avg_uses_per_min": 0.45,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.451,
-        "stddev": 0.135,
-        "min": 0.277,
+        "avg": 0.443,
+        "stddev": 0.145,
+        "min": 0.254,
         "max": 0.587
       },
       "majority_hold": true
     },
     "Vampiric Embrace": {
-      "sample_count": 10,
-      "avg_first_cast_s": 77.7,
-      "stddev_first_cast_s": 86.1,
-      "avg_gap_s": 133.2,
-      "stddev_gap_s": 25.2,
+      "sample_count": 9,
+      "avg_first_cast_s": 85.8,
+      "stddev_first_cast_s": 87.1,
+      "avg_gap_s": 134.9,
+      "stddev_gap_s": 27.7,
       "hold_targets": {},
       "avg_uses": 1.6,
-      "avg_uses_per_min": 0.46,
+      "avg_uses_per_min": 0.44,
       "uses_per_min": {
-        "avg": 0.46,
-        "stddev": 0.164,
+        "avg": 0.438,
+        "stddev": 0.157,
         "min": 0.262,
-        "max": 0.662
+        "max": 0.587
       },
       "majority_hold": false
     },
@@ -63,42 +63,7 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 65.3,
-      "dmg_avg": 383624,
-      "dmg_stddev": 174926,
-      "dmg_min": 176549,
-      "dmg_max": 552365,
-      "dmg_pct_avg": 0.054,
-      "window_length_s": 10,
-      "defensive_name": "Desperate Prayer",
-      "spell_id": 19236,
-      "common_defensives": [
-        "Desperate Prayer"
-      ],
-      "common_cds": [
-        "Desperate Prayer"
-      ],
-      "ref_game_id": 240434,
-      "ability_breakdown": [
-        {
-          "spell_id": 1272328,
-          "avg_damage": 107317,
-          "min_damage": 95845,
-          "max_damage": 114528,
-          "count": 4
-        },
-        {
-          "spell_id": 1272950,
-          "avg_damage": 64613,
-          "min_damage": 51485,
-          "max_damage": 71830,
-          "count": 6
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 47585,
@@ -162,16 +127,8 @@
     "47585": {
       "icon": "spell_shadow_dispersion",
       "name": "Dispersion"
-    },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
-    "1272950": {
-      "icon": "inv_elemental_primal_shadow",
-      "name": "Primordial Power"
     }
   },
-  "source_signature": "7409591d1bebad22",
+  "source_signature": "031bdc2249984682",
   "ingest_version": 2
 }
