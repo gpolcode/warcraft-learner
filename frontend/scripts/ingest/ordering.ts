@@ -9,7 +9,7 @@
  */
 
 /** Spec pinned to the front of its bracket, ahead of the time/alphabetical order. */
-const PRIORITY_SPEC = 'SubtletyRogue';
+export const PRIORITY_SPEC = 'SubtletyRogue';
 
 /** One spec's ordering inputs - all derived from cheap disk + git reads. */
 export interface SpecOrderEntry {
