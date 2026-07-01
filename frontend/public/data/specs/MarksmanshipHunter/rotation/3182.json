@@ -28,9 +28,13 @@
       "majority_hold": true,
       "hold_targets": {
         "3": {
-          "target_s": 293.5,
-          "stddev_s": 7.5,
-          "count": 10,
+          "target_s": 294.5,
+          "stddev_s": 4.5,
+          "delay_s": 50.2,
+          "delay_stddev_s": 5.2,
+          "band_s": 5.2,
+          "effective_cd_s": 120,
+          "count": 9,
           "total_samples": 10
         }
       }
@@ -54,27 +58,23 @@
       "bl_pct": 100,
       "majority_hold": true,
       "hold_targets": {
-        "3": {
-          "target_s": 136.1,
-          "stddev_s": 10.4,
-          "count": 6,
-          "total_samples": 10
-        },
         "4": {
-          "target_s": 183.6,
-          "stddev_s": 6.7,
-          "count": 10,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 234.2,
-          "stddev_s": 7.5,
-          "count": 10,
+          "target_s": 182,
+          "stddev_s": 3.1,
+          "delay_s": 17.1,
+          "delay_stddev_s": 2.2,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 6,
           "total_samples": 10
         },
         "6": {
           "target_s": 298.5,
           "stddev_s": 4.6,
+          "delay_s": 20.6,
+          "delay_stddev_s": 5.5,
+          "band_s": 5.5,
+          "effective_cd_s": 45,
           "count": 9,
           "total_samples": 10
         }
@@ -194,6 +194,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "44e501b0d3f69a16",
-  "ingest_version": 1
+  "source_signature": "279182c9608bd846",
+  "ingest_version": 2
 }

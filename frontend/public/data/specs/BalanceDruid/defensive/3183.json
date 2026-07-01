@@ -6,203 +6,34 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 97.6,
-      "stddev_first_cast_s": 81.2,
-      "avg_gap_s": 99.2,
-      "stddev_gap_s": 46.6,
+      "avg_first_cast_s": 87.9,
+      "stddev_first_cast_s": 86,
+      "avg_gap_s": 97,
+      "stddev_gap_s": 49.2,
       "hold_targets": {
-        "1": {
-          "target_s": 213.3,
-          "stddev_s": 82.1,
-          "count": 4,
-          "total_samples": 10
-        },
         "2": {
-          "target_s": 326,
-          "stddev_s": 134.2,
-          "count": 8,
+          "target_s": 324.2,
+          "stddev_s": 145,
+          "count": 7,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.4,
-      "avg_uses_per_min": 0.5,
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 0.54,
       "uses_per_min": {
-        "avg": 0.498,
-        "stddev": 0.2,
+        "avg": 0.539,
+        "stddev": 0.206,
         "min": 0.337,
         "max": 0.811
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 210,
-      "dmg_avg": 465009,
-      "dmg_stddev": 154339,
-      "dmg_min": 166016,
-      "dmg_max": 712258,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1281473,
-          "avg_damage": 210116,
-          "min_damage": 114731,
-          "max_damage": 335680,
-          "count": 7
-        },
-        {
-          "spell_id": 1249797,
-          "avg_damage": 195657,
-          "min_damage": 146281,
-          "max_damage": 248041,
-          "count": 8
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 92316,
-          "min_damage": 74447,
-          "max_damage": 112792,
-          "count": 6
-        }
-      ]
-    },
-    {
-      "time_s": 272.8,
-      "dmg_avg": 617271,
-      "dmg_stddev": 122186,
-      "dmg_min": 470099,
-      "dmg_max": 798788,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 207729,
-          "min_damage": 129942,
-          "max_damage": 254331,
-          "count": 6
-        },
-        {
-          "spell_id": 1285827,
-          "avg_damage": 109388,
-          "min_damage": 78220,
-          "max_damage": 167671,
-          "count": 6
-        },
-        {
-          "spell_id": 1281178,
-          "avg_damage": 97868,
-          "min_damage": 95859,
-          "max_damage": 99179,
-          "count": 4
-        },
-        {
-          "spell_id": 1282372,
-          "avg_damage": 95829,
-          "min_damage": 42968,
-          "max_damage": 116789,
-          "count": 6
-        },
-        {
-          "spell_id": 1284530,
-          "avg_damage": 89625,
-          "min_damage": 73330,
-          "max_damage": 100601,
-          "count": 6
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 70705,
-          "min_damage": 54505,
-          "max_damage": 99380,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 328.7,
-      "dmg_avg": 569983,
-      "dmg_stddev": 63780,
-      "dmg_min": 491791,
-      "dmg_max": 656906,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240391,
-      "ability_breakdown": [
-        {
-          "spell_id": 1249797,
-          "avg_damage": 199038,
-          "min_damage": 139872,
-          "max_damage": 235835,
-          "count": 7
-        },
-        {
-          "spell_id": 1281123,
-          "avg_damage": 122440,
-          "min_damage": 104769,
-          "max_damage": 136738,
-          "count": 6
-        },
-        {
-          "spell_id": 1254398,
-          "avg_damage": 115326,
-          "min_damage": 100005,
-          "max_damage": 128635,
-          "count": 5
-        },
-        {
-          "spell_id": 1281178,
-          "avg_damage": 97953,
-          "min_damage": 83816,
-          "max_damage": 109391,
-          "count": 6
-        },
-        {
-          "spell_id": 1254257,
-          "avg_damage": 50895,
-          "min_damage": 43654,
-          "max_damage": 54297,
-          "count": 7
-        },
-        {
-          "spell_id": 1254644,
-          "avg_damage": 31764,
-          "min_damage": 18348,
-          "max_damage": 43756,
-          "count": 7
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 4.4,
+      "avg_uses": 4.8,
       "min_uses": 3,
       "max_uses": 7
     }
@@ -250,48 +81,8 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
-    },
-    "1249797": {
-      "icon": "spell_holy_elunesgrace",
-      "name": "Shattered Sky"
-    },
-    "1254257": {
-      "icon": "spell_holy_purifyingpower",
-      "name": "Tears of L'ura"
-    },
-    "1254398": {
-      "icon": "inv_jewelcrafting_dawnstone_02",
-      "name": "Glimmering"
-    },
-    "1254644": {
-      "icon": "ability_bossgorefiend_touchofdoom",
-      "name": "Thunderous Well"
-    },
-    "1281123": {
-      "icon": "inv_112_raiddimensius_blackhole",
-      "name": "Dark Meltdown"
-    },
-    "1281178": {
-      "icon": "ability_thunderking_thunderstruck",
-      "name": "Criticality"
-    },
-    "1281473": {
-      "icon": "inv_12_profession_enchanting_spellboundshatterer",
-      "name": "Starsplinter"
-    },
-    "1282372": {
-      "icon": "ability_evoker_unravel",
-      "name": "Cosmic Fission"
-    },
-    "1284530": {
-      "icon": "spell_mage_supernova",
-      "name": "Galvanize"
-    },
-    "1285827": {
-      "icon": "ability_thunderking_lightningwhip",
-      "name": "Overkill Current"
     }
   },
-  "source_signature": "8a045e418ff7beb5",
-  "ingest_version": 1
+  "source_signature": "e877bd8092693745",
+  "ingest_version": 2
 }

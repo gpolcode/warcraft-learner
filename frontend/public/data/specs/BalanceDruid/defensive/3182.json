@@ -6,142 +6,42 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 9,
-      "avg_first_cast_s": 76.3,
-      "stddev_first_cast_s": 42.8,
-      "avg_gap_s": 86.7,
-      "stddev_gap_s": 17.5,
+      "avg_first_cast_s": 79.1,
+      "stddev_first_cast_s": 39.8,
+      "avg_gap_s": 80.9,
+      "stddev_gap_s": 17.2,
       "hold_targets": {
         "1": {
-          "target_s": 137.2,
-          "stddev_s": 50.1,
-          "count": 7,
+          "target_s": 143.6,
+          "stddev_s": 52.7,
+          "count": 6,
           "total_samples": 9
         },
         "2": {
-          "target_s": 228.4,
-          "stddev_s": 17.1,
+          "target_s": 210.2,
+          "stddev_s": 24.8,
           "count": 5,
           "total_samples": 9
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.59,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.61,
       "uses_per_min": {
-        "avg": 0.591,
-        "stddev": 0.176,
+        "avg": 0.607,
+        "stddev": 0.191,
         "min": 0.232,
-        "max": 0.768
+        "max": 0.822
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [
-    {
-      "time_s": 65.6,
-      "dmg_avg": 288731,
-      "dmg_stddev": 86514,
-      "dmg_min": 194444,
-      "dmg_max": 390926,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1264650,
-          "avg_damage": 82772,
-          "min_damage": 80483,
-          "max_damage": 83945,
-          "count": 4
-        },
-        {
-          "spell_id": 1241340,
-          "avg_damage": 79676,
-          "min_damage": 42528,
-          "max_damage": 160900,
-          "count": 4
-        },
-        {
-          "spell_id": 1241291,
-          "avg_damage": 73991,
-          "min_damage": 50232,
-          "max_damage": 109997,
-          "count": 4
-        }
-      ]
-    },
-    {
-      "time_s": 136.5,
-      "dmg_avg": 406638,
-      "dmg_stddev": 118868,
-      "dmg_min": 259426,
-      "dmg_max": 608236,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1241932,
-          "avg_damage": 287439,
-          "min_damage": 181735,
-          "max_damage": 371130,
-          "count": 8
-        },
-        {
-          "spell_id": 1264650,
-          "avg_damage": 81103,
-          "min_damage": 73445,
-          "max_damage": 88257,
-          "count": 9
-        }
-      ]
-    },
-    {
-      "time_s": 210.2,
-      "dmg_avg": 392819,
-      "dmg_stddev": 253394,
-      "dmg_min": 78992,
-      "dmg_max": 642303,
-      "window_length_s": 12,
-      "defensive_name": "Barkskin",
-      "spell_id": 22812,
-      "common_defensives": [
-        "Barkskin"
-      ],
-      "common_cds": [
-        "Barkskin"
-      ],
-      "ref_game_id": 240387,
-      "ability_breakdown": [
-        {
-          "spell_id": 1264650,
-          "avg_damage": 80884,
-          "min_damage": 78122,
-          "max_damage": 84649,
-          "count": 5
-        }
-      ]
-    }
-  ],
+  "defensive_windows": [],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.6,
+      "avg_uses": 2.7,
       "min_uses": 1,
-      "max_uses": 3
+      "max_uses": 4
     }
   ],
   "defensives": [
@@ -187,24 +87,8 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
-    },
-    "1241291": {
-      "icon": "inv_phoenix2pet_yellow",
-      "name": "Light Dive"
-    },
-    "1241340": {
-      "icon": "inv_phoenix2pet",
-      "name": "Void Dive"
-    },
-    "1241932": {
-      "icon": "inv_12_dualityphoenix_lightvoid_channel",
-      "name": "Voidlight Convergence"
-    },
-    "1264650": {
-      "icon": "inv_ragnaros_heart",
-      "name": "Burning Heart"
     }
   },
-  "source_signature": "d81c19d289384435",
-  "ingest_version": 1
+  "source_signature": "be257df07f9446e0",
+  "ingest_version": 2
 }

@@ -3,10 +3,10 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 532.2,
-  "downtime_threshold_ms": 2594,
+  "avg_duration_s": 529.8,
+  "downtime_threshold_ms": 2597,
   "top_avg_efficiency": 71.7,
-  "top_efficiency_stddev": 2.1,
+  "top_efficiency_stddev": 2,
   "per_cd_benchmarks": {
     "Invoke Xuen, the White Tiger": {
       "sample_count": 10,
@@ -30,17 +30,17 @@
     },
     "Zenith": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.1,
+      "avg_first_cast_s": 4.3,
       "stddev_first_cast_s": 3.6,
-      "avg_gap_s": 55.4,
-      "stddev_gap_s": 22.4,
-      "avg_bl_offset_s": 5.7,
-      "stddev_bl_offset_s": 13.5,
+      "avg_gap_s": 55.3,
+      "stddev_gap_s": 23.3,
+      "avg_bl_offset_s": 9.4,
+      "stddev_bl_offset_s": 9.8,
       "avg_uses": 10.1,
       "avg_uses_per_min": 1.14,
       "uses_per_min": {
-        "avg": 1.139,
-        "stddev": 0.031,
+        "avg": 1.144,
+        "stddev": 0.035,
         "min": 1.096,
         "max": 1.203
       },
@@ -90,17 +90,17 @@
     },
     "Touch of Death": {
       "sample_count": 10,
-      "avg_first_cast_s": 318.3,
-      "stddev_first_cast_s": 148.8,
-      "avg_gap_s": 169.4,
-      "stddev_gap_s": 89.9,
-      "avg_bl_offset_s": 42,
-      "stddev_bl_offset_s": 6.4,
-      "avg_uses": 2.1,
-      "avg_uses_per_min": 0.24,
+      "avg_first_cast_s": 319,
+      "stddev_first_cast_s": 149.3,
+      "avg_gap_s": 174.6,
+      "stddev_gap_s": 93,
+      "avg_bl_offset_s": 43.2,
+      "stddev_bl_offset_s": 6.2,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.236,
-        "stddev": 0.06,
+        "avg": 0.225,
+        "stddev": 0.071,
         "min": 0.116,
         "max": 0.332
       },
@@ -108,9 +108,13 @@
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 514.7,
-          "stddev_s": 55.6,
-          "count": 9,
+          "target_s": 512.5,
+          "stddev_s": 57.9,
+          "delay_s": 35.4,
+          "delay_stddev_s": 100.7,
+          "band_s": 100.7,
+          "effective_cd_s": 90,
+          "count": 8,
           "total_samples": 10
         }
       }
@@ -275,6 +279,6 @@
       "name": "Zenith"
     }
   },
-  "source_signature": "f7ab9f1bce14dd50",
-  "ingest_version": 1
+  "source_signature": "b573600dbcfc2a62",
+  "ingest_version": 2
 }

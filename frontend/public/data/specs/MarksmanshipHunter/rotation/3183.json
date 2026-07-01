@@ -26,26 +26,7 @@
       },
       "bl_pct": 90,
       "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 258,
-          "stddev_s": 2.1,
-          "count": 8,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 382,
-          "stddev_s": 5.1,
-          "count": 9,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 510,
-          "stddev_s": 10.7,
-          "count": 10,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Volley": {
       "sample_count": 10,
@@ -69,55 +50,41 @@
         "2": {
           "target_s": 74.3,
           "stddev_s": 1.1,
+          "delay_s": 17.1,
+          "delay_stddev_s": 1.6,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "3": {
           "target_s": 136.5,
           "stddev_s": 1,
-          "count": 10,
-          "total_samples": 10
-        },
-        "4": {
-          "target_s": 185.5,
-          "stddev_s": 5.6,
+          "delay_s": 17.2,
+          "delay_stddev_s": 1.5,
+          "band_s": 5,
+          "effective_cd_s": 45,
           "count": 10,
           "total_samples": 10
         },
         "5": {
-          "target_s": 249.9,
-          "stddev_s": 7.9,
-          "count": 10,
-          "total_samples": 10
-        },
-        "6": {
-          "target_s": 296.8,
-          "stddev_s": 8.4,
-          "count": 10,
+          "target_s": 251.7,
+          "stddev_s": 4.2,
+          "delay_s": 21.8,
+          "delay_stddev_s": 6.4,
+          "band_s": 6.4,
+          "effective_cd_s": 45,
+          "count": 6,
           "total_samples": 10
         },
         "7": {
           "target_s": 376.7,
           "stddev_s": 13.3,
+          "delay_s": 35.8,
+          "delay_stddev_s": 9.3,
+          "band_s": 9.3,
+          "effective_cd_s": 45,
           "count": 10,
-          "total_samples": 10
-        },
-        "8": {
-          "target_s": 427.9,
-          "stddev_s": 26.6,
-          "count": 10,
-          "total_samples": 10
-        },
-        "9": {
-          "target_s": 499,
-          "stddev_s": 25.4,
-          "count": 10,
-          "total_samples": 10
-        },
-        "10": {
-          "target_s": 530.2,
-          "stddev_s": 15.9,
-          "count": 4,
           "total_samples": 10
         }
       }
@@ -236,6 +203,6 @@
       "name": "Trueshot"
     }
   },
-  "source_signature": "b8124da5bbb5f9fe",
-  "ingest_version": 1
+  "source_signature": "1ade75cd41a5171c",
+  "ingest_version": 2
 }

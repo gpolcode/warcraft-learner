@@ -6,24 +6,24 @@
   "per_defensive_benchmarks": {
     "Die by the Sword": {
       "sample_count": 9,
-      "avg_first_cast_s": 136.3,
-      "stddev_first_cast_s": 55,
-      "avg_gap_s": 172.2,
-      "stddev_gap_s": 36.3,
+      "avg_first_cast_s": 136,
+      "stddev_first_cast_s": 55.2,
+      "avg_gap_s": 177,
+      "stddev_gap_s": 34.6,
       "hold_targets": {
         "1": {
-          "target_s": 301.1,
-          "stddev_s": 25.5,
-          "count": 5,
+          "target_s": 301.6,
+          "stddev_s": 24.5,
+          "count": 6,
           "total_samples": 9
         }
       },
-      "avg_uses": 1.6,
-      "avg_uses_per_min": 0.24,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.243,
-        "stddev": 0.083,
-        "min": 0.138,
+        "avg": 0.263,
+        "stddev": 0.075,
+        "min": 0.144,
         "max": 0.354
       },
       "majority_hold": true
@@ -47,47 +47,41 @@
     },
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 94.5,
-      "stddev_first_cast_s": 36.2,
-      "avg_gap_s": 65.7,
-      "stddev_gap_s": 23.8,
+      "avg_first_cast_s": 96.1,
+      "stddev_first_cast_s": 36.3,
+      "avg_gap_s": 68.2,
+      "stddev_gap_s": 27.8,
       "hold_targets": {
         "1": {
-          "target_s": 143.4,
-          "stddev_s": 55.7,
+          "target_s": 144.9,
+          "stddev_s": 60.9,
           "count": 10,
           "total_samples": 10
         },
         "2": {
-          "target_s": 239.5,
-          "stddev_s": 49.3,
+          "target_s": 246.9,
+          "stddev_s": 50.6,
           "count": 8,
           "total_samples": 10
         },
         "3": {
-          "target_s": 267.6,
-          "stddev_s": 47.7,
-          "count": 5,
+          "target_s": 285.4,
+          "stddev_s": 54.2,
+          "count": 4,
           "total_samples": 10
         },
         "4": {
-          "target_s": 301.9,
-          "stddev_s": 57.6,
-          "count": 5,
-          "total_samples": 10
-        },
-        "5": {
-          "target_s": 392.1,
-          "stddev_s": 50.6,
+          "target_s": 301.8,
+          "stddev_s": 66.5,
           "count": 4,
           "total_samples": 10
         }
       },
-      "avg_uses": 4.4,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.689,
-        "stddev": 0.287,
+        "avg": 0.654,
+        "stddev": 0.289,
         "min": 0.306,
         "max": 1.24
       },
@@ -122,7 +116,7 @@
   "top_defensives_summary": [
     {
       "spell_id": 118038,
-      "avg_uses": 1.6,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -134,7 +128,7 @@
     },
     {
       "spell_id": 23920,
-      "avg_uses": 4.4,
+      "avg_uses": 4.1,
       "min_uses": 2,
       "max_uses": 7
     },
@@ -216,6 +210,6 @@
       "name": "Impending Victory"
     }
   },
-  "source_signature": "2391f8899b402ced",
+  "source_signature": "8a635db59720b336",
   "ingest_version": 2
 }
