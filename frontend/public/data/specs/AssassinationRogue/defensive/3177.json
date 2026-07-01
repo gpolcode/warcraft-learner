@@ -80,7 +80,27 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 80.9,
+      "dmg_avg": 43355,
+      "dmg_stddev": 67623,
+      "dmg_min": 0,
+      "dmg_max": 142482,
+      "dmg_pct_avg": 0.005,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": []
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -165,6 +185,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "15d80276daa446a1",
-  "ingest_version": 2
+  "source_signature": "44750f133433c3cb",
+  "ingest_version": 3
 }

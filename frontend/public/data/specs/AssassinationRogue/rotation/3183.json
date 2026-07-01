@@ -3,86 +3,64 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 524,
-  "downtime_threshold_ms": 1266,
-  "top_avg_efficiency": 68,
-  "top_efficiency_stddev": 3.1,
+  "avg_duration_s": 523.7,
+  "downtime_threshold_ms": 1273,
+  "top_avg_efficiency": 68.5,
+  "top_efficiency_stddev": 5,
   "per_cd_benchmarks": {
     "Deathmark": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.4,
-      "stddev_first_cast_s": 2.5,
-      "avg_gap_s": 125.5,
-      "stddev_gap_s": 7.1,
-      "avg_bl_offset_s": 10.9,
-      "stddev_bl_offset_s": 4.2,
+      "avg_first_cast_s": 10,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 124.6,
+      "stddev_gap_s": 5,
+      "avg_bl_offset_s": 10.3,
+      "stddev_bl_offset_s": 3.7,
       "avg_uses": 4.8,
       "avg_uses_per_min": 0.55,
       "uses_per_min": {
         "avg": 0.55,
         "stddev": 0.046,
         "min": 0.463,
-        "max": 0.58
+        "max": 0.592
       },
       "bl_pct": 100,
-      "majority_hold": true,
-      "hold_targets": {
-        "5": {
-          "target_s": 512,
-          "stddev_s": 13.1,
-          "delay_s": 11.7,
-          "delay_stddev_s": 14.1,
-          "band_s": 14.1,
-          "effective_cd_s": 120,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Kingsbane": {
       "sample_count": 10,
-      "avg_first_cast_s": 10.4,
-      "stddev_first_cast_s": 2.5,
-      "avg_gap_s": 64.9,
-      "stddev_gap_s": 11.4,
-      "avg_bl_offset_s": 12.4,
-      "stddev_bl_offset_s": 4.4,
-      "avg_uses": 8.6,
-      "avg_uses_per_min": 0.98,
+      "avg_first_cast_s": 11,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 63.4,
+      "stddev_gap_s": 8,
+      "avg_bl_offset_s": 11.7,
+      "stddev_bl_offset_s": 3.9,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 1,
       "uses_per_min": {
-        "avg": 0.985,
-        "stddev": 0.054,
+        "avg": 0.997,
+        "stddev": 0.053,
         "min": 0.919,
-        "max": 1.044
+        "max": 1.065
       },
       "bl_pct": 100,
       "majority_hold": true,
-      "hold_targets": {
-        "8": {
-          "target_s": 456.1,
-          "stddev_s": 28.1,
-          "delay_s": 16.4,
-          "delay_stddev_s": 26.4,
-          "band_s": 26.4,
-          "effective_cd_s": 60,
-          "count": 6,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Vanish": {
       "sample_count": 10,
-      "avg_first_cast_s": 24,
-      "stddev_first_cast_s": 36.3,
-      "avg_gap_s": 125.8,
-      "stddev_gap_s": 6.3,
-      "avg_bl_offset_s": 14.8,
-      "stddev_bl_offset_s": 10.9,
-      "avg_uses": 4.6,
-      "avg_uses_per_min": 0.53,
+      "avg_first_cast_s": 33.5,
+      "stddev_first_cast_s": 48.4,
+      "avg_gap_s": 125.6,
+      "stddev_gap_s": 5.7,
+      "avg_bl_offset_s": 11.3,
+      "stddev_bl_offset_s": 7.4,
+      "avg_uses": 4.5,
+      "avg_uses_per_min": 0.52,
       "uses_per_min": {
-        "avg": 0.527,
-        "stddev": 0.06,
+        "avg": 0.515,
+        "stddev": 0.057,
         "min": 0.44,
         "max": 0.58
       },
@@ -207,6 +185,6 @@
       "name": "Kingsbane"
     }
   },
-  "source_signature": "53e3652729d03634",
-  "ingest_version": 2
+  "source_signature": "28fd67008d647213",
+  "ingest_version": 3
 }

@@ -6,8 +6,8 @@
   "windows": [
     {
       "time_s": 7,
-      "dmg_avg": 6514083,
-      "dmg_stddev": 723106,
+      "dmg_avg": 6513324,
+      "dmg_stddev": 722633,
       "dmg_min": 5412788,
       "dmg_max": 8059451,
       "common_cds": [
@@ -55,7 +55,7 @@
         },
         {
           "spell_id": 113780,
-          "avg_damage": 619531,
+          "avg_damage": 619241,
           "min_damage": 448698,
           "max_damage": 705384,
           "count": 10,
@@ -74,9 +74,74 @@
       ]
     },
     {
+      "time_s": 75.5,
+      "dmg_avg": 805400,
+      "dmg_stddev": 331294,
+      "dmg_min": 549543,
+      "dmg_max": 1264128,
+      "common_cds": [],
+      "window_length_s": 3,
+      "ability_breakdown": [
+        {
+          "spell_id": 703,
+          "avg_damage": 189526,
+          "min_damage": 59955,
+          "max_damage": 285073,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 385627,
+          "avg_damage": 172239,
+          "min_damage": 71589,
+          "max_damage": 238931,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 154180,
+          "min_damage": 55382,
+          "max_damage": 255537,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 32645,
+          "avg_damage": 116531,
+          "min_damage": 91056,
+          "max_damage": 130191,
+          "count": 4,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1247227,
+          "avg_damage": 63362,
+          "min_damage": 30697,
+          "max_damage": 85166,
+          "count": 3,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 452538,
+          "avg_damage": 55516,
+          "min_damage": 27571,
+          "max_damage": 83461,
+          "count": 2,
+          "avg_casts": 1,
+          "is_passive": false
+        }
+      ]
+    },
+    {
       "time_s": 135,
-      "dmg_avg": 4981978,
-      "dmg_stddev": 622705,
+      "dmg_avg": 4983558,
+      "dmg_stddev": 621360,
       "dmg_min": 4141337,
       "dmg_max": 6147372,
       "common_cds": [
@@ -141,6 +206,64 @@
           "is_passive": false
         }
       ]
+    },
+    {
+      "time_s": 199,
+      "dmg_avg": 1312194,
+      "dmg_stddev": 1162772,
+      "dmg_min": 463982,
+      "dmg_max": 3297128,
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "window_length_s": 4,
+      "ability_breakdown": [
+        {
+          "spell_id": 452538,
+          "avg_damage": 269665,
+          "min_damage": 51794,
+          "max_damage": 395455,
+          "count": 3,
+          "avg_casts": 3,
+          "is_passive": false
+        },
+        {
+          "spell_id": 32645,
+          "avg_damage": 243202,
+          "min_damage": 89301,
+          "max_damage": 553441,
+          "count": 5,
+          "avg_casts": 2,
+          "is_passive": false
+        },
+        {
+          "spell_id": 385627,
+          "avg_damage": 187887,
+          "min_damage": 53487,
+          "max_damage": 414323,
+          "count": 5,
+          "avg_casts": 1,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 129350,
+          "min_damage": 26668,
+          "max_damage": 298022,
+          "count": 4,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 31312,
+          "min_damage": 28371,
+          "max_damage": 36420,
+          "count": 3,
+          "avg_casts": 0,
+          "is_passive": true
+        }
+      ]
     }
   ],
   "cd_spell_ids": {
@@ -153,6 +276,10 @@
     "Crimson Vial": 185311
   },
   "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
     "703": {
       "icon": "ability_rogue_garrote",
       "name": "Garrote"
@@ -200,9 +327,17 @@
     "385627": {
       "icon": "inv_knife_1h_artifactgarona_d_01",
       "name": "Kingsbane"
+    },
+    "452538": {
+      "icon": "inv_ability_fateboundrogue_handoffatetails",
+      "name": "Fatebound Coin (Tails)"
+    },
+    "1247227": {
+      "icon": "inv12_ability_rogue_crimsontempest",
+      "name": "Crimson Tempest"
     }
   },
-  "source_signature": "15d80276daa446a1",
-  "ingest_version": 2,
+  "source_signature": "44750f133433c3cb",
+  "ingest_version": 3,
   "inaccessible_parses": []
 }

@@ -5,38 +5,38 @@
   "sample_count": 10,
   "windows": [
     {
-      "time_s": 9,
-      "dmg_avg": 4769319,
-      "dmg_stddev": 3140012,
-      "dmg_min": 862230,
-      "dmg_max": 10759367,
+      "time_s": 8.5,
+      "dmg_avg": 4970825,
+      "dmg_stddev": 3611232,
+      "dmg_min": 700711,
+      "dmg_max": 11033174,
       "common_cds": [
         "Kingsbane",
         "Deathmark"
       ],
-      "window_length_s": 13.2,
+      "window_length_s": 14,
       "ability_breakdown": [
         {
           "spell_id": 703,
-          "avg_damage": 985776,
+          "avg_damage": 1063664,
           "min_damage": 103609,
-          "max_damage": 2413486,
+          "max_damage": 2971266,
           "count": 14,
-          "avg_casts": 0,
+          "avg_casts": 1,
           "is_passive": false
         },
         {
           "spell_id": 1943,
-          "avg_damage": 774639,
-          "min_damage": 200873,
-          "max_damage": 1622612,
+          "avg_damage": 811726,
+          "min_damage": 103550,
+          "max_damage": 1651497,
           "count": 11,
           "avg_casts": 1,
           "is_passive": false
         },
         {
           "spell_id": 385627,
-          "avg_damage": 597497,
+          "avg_damage": 652281,
           "min_damage": 123287,
           "max_damage": 1078203,
           "count": 11,
@@ -45,12 +45,21 @@
         },
         {
           "spell_id": 32645,
-          "avg_damage": 551143,
-          "min_damage": 107360,
+          "avg_damage": 567218,
+          "min_damage": 86935,
           "max_damage": 1301822,
-          "count": 11,
-          "avg_casts": 4,
+          "count": 12,
+          "avg_casts": 5,
           "is_passive": false
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 480707,
+          "min_damage": 311538,
+          "max_damage": 784069,
+          "count": 7,
+          "avg_casts": 0,
+          "is_passive": true
         },
         {
           "spell_id": 383414,
@@ -129,47 +138,38 @@
       ]
     },
     {
-      "time_s": 131,
-      "dmg_avg": 3302584,
-      "dmg_stddev": 1828560,
-      "dmg_min": 1146723,
+      "time_s": 132,
+      "dmg_avg": 2829132,
+      "dmg_stddev": 1993994,
+      "dmg_min": 496158,
       "dmg_max": 6105708,
       "common_cds": [
         "Kingsbane",
         "Deathmark"
       ],
-      "window_length_s": 10,
+      "window_length_s": 8.4,
       "ability_breakdown": [
         {
           "spell_id": 32645,
-          "avg_damage": 563896,
+          "avg_damage": 521173,
           "min_damage": 90273,
           "max_damage": 1349920,
-          "count": 11,
+          "count": 12,
           "avg_casts": 3,
           "is_passive": false
         },
         {
           "spell_id": 385627,
-          "avg_damage": 549644,
-          "min_damage": 179235,
+          "avg_damage": 493378,
+          "min_damage": 149640,
           "max_damage": 1037850,
-          "count": 11,
+          "count": 12,
           "avg_casts": 1,
           "is_passive": false
         },
         {
-          "spell_id": 703,
-          "avg_damage": 368369,
-          "min_damage": 106842,
-          "max_damage": 806390,
-          "count": 10,
-          "avg_casts": 0,
-          "is_passive": false
-        },
-        {
           "spell_id": 452538,
-          "avg_damage": 356595,
+          "avg_damage": 379533,
           "min_damage": 73856,
           "max_damage": 919795,
           "count": 8,
@@ -177,20 +177,29 @@
           "is_passive": false
         },
         {
-          "spell_id": 1943,
-          "avg_damage": 343266,
-          "min_damage": 118922,
-          "max_damage": 498563,
-          "count": 9,
+          "spell_id": 703,
+          "avg_damage": 334369,
+          "min_damage": 57293,
+          "max_damage": 806390,
+          "count": 11,
           "avg_casts": 0,
           "is_passive": false
         },
         {
-          "spell_id": 113780,
-          "avg_damage": 275562,
-          "min_damage": 71170,
-          "max_damage": 560532,
-          "count": 8,
+          "spell_id": 1943,
+          "avg_damage": 289234,
+          "min_damage": 33090,
+          "max_damage": 498563,
+          "count": 11,
+          "avg_casts": 0,
+          "is_passive": false
+        },
+        {
+          "spell_id": 383414,
+          "avg_damage": 282038,
+          "min_damage": 35956,
+          "max_damage": 568617,
+          "count": 7,
           "avg_casts": 0,
           "is_passive": true
         }
@@ -239,10 +248,6 @@
       "icon": "ability_rogue_disembowel",
       "name": "Envenom"
     },
-    "113780": {
-      "icon": "ability_poisons",
-      "name": "Deadly Poison"
-    },
     "185311": {
       "icon": "ability_rogue_crimsonvial",
       "name": "Crimson Vial"
@@ -272,7 +277,7 @@
       "name": "Fatebound Coin (Tails)"
     }
   },
-  "source_signature": "9934a4d99d2df23c",
-  "ingest_version": 2,
+  "source_signature": "53e154fce64c0d78",
+  "ingest_version": 3,
   "inaccessible_parses": []
 }

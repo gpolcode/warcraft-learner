@@ -5,33 +5,33 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Crimson Vial": {
-      "sample_count": 4,
-      "avg_first_cast_s": 53.3,
-      "stddev_first_cast_s": 31.1,
+      "sample_count": 3,
+      "avg_first_cast_s": 39.8,
+      "stddev_first_cast_s": 19.1,
       "avg_gap_s": 33.2,
       "stddev_gap_s": 4.4,
       "hold_targets": {},
-      "avg_uses": 1.5,
-      "avg_uses_per_min": 0.61,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.68,
       "uses_per_min": {
-        "avg": 0.613,
-        "stddev": 0.233,
+        "avg": 0.679,
+        "stddev": 0.235,
         "min": 0.408,
         "max": 0.816
       },
       "majority_hold": false
     },
     "Cloak of Shadows": {
-      "sample_count": 6,
-      "avg_first_cast_s": 143.2,
-      "stddev_first_cast_s": 2.5,
+      "sample_count": 5,
+      "avg_first_cast_s": 143.9,
+      "stddev_first_cast_s": 2.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.411,
+        "avg": 0.41,
         "stddev": 0.006,
         "min": 0.404,
         "max": 0.417
@@ -42,45 +42,65 @@
       "sample_count": 6,
       "avg_first_cast_s": 52.6,
       "stddev_first_cast_s": 52.4,
-      "avg_gap_s": 28,
-      "stddev_gap_s": 20.5,
+      "avg_gap_s": 27.9,
+      "stddev_gap_s": 22.5,
       "hold_targets": {
         "1": {
-          "target_s": 43.4,
-          "stddev_s": 52.6,
-          "count": 4,
+          "target_s": 43.7,
+          "stddev_s": 60.7,
+          "count": 3,
           "total_samples": 6
         }
       },
-      "avg_uses": 2.2,
-      "avg_uses_per_min": 0.88,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.82,
       "uses_per_min": {
-        "avg": 0.885,
-        "stddev": 0.475,
+        "avg": 0.816,
+        "stddev": 0.512,
         "min": 0.404,
         "max": 1.628
       },
-      "majority_hold": true
+      "majority_hold": false
     },
     "Evasion": {
       "sample_count": 3,
-      "avg_first_cast_s": 120.7,
-      "stddev_first_cast_s": 41.9,
+      "avg_first_cast_s": 120.3,
+      "stddev_first_cast_s": 42.5,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.409,
-        "stddev": 0.006,
+        "avg": 0.41,
+        "stddev": 0.008,
         "min": 0.404,
-        "max": 0.416
+        "max": 0.419
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 143.4,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "dmg_pct_avg": 0,
+      "window_length_s": 2.5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 31224,
@@ -96,13 +116,13 @@
     },
     {
       "spell_id": 1966,
-      "avg_uses": 2.2,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     },
     {
       "spell_id": 185311,
-      "avg_uses": 1.5,
+      "avg_uses": 1.7,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -165,6 +185,6 @@
       "name": "Crimson Vial"
     }
   },
-  "source_signature": "9934a4d99d2df23c",
-  "ingest_version": 2
+  "source_signature": "53e154fce64c0d78",
+  "ingest_version": 3
 }
