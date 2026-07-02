@@ -99,6 +99,9 @@
 
     <!-- Burst windows (bench-only) -->
     <wl-burst-windows [spec]="selectedSpec()" [encounterId]="selectedEncId()" [showMap]="mapReady()" (openMap)="onOpenMap($event)"></wl-burst-windows>
+
+    <!-- Sources: credits the logs + guides this study drew from (collapsed, at the bottom) -->
+    <wl-credits [spec]="selectedSpec()" [encounterId]="selectedEncId()"></wl-credits>
   }
 
   <wl-map-panel></wl-map-panel>

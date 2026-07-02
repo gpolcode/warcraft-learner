@@ -18,6 +18,7 @@ import { RotationCdPlanComponent } from '../post-raid/rotation/rotation-cd-plan'
 import { DefensivePlanComponent } from '../post-raid/defensive/defensive-plan';
 import { BurstWindowsComponent } from '../post-raid/burst-windows/burst-windows';
 import { GearComponent } from '../post-raid/gear/gear';
+import { CreditsComponent } from '../post-raid/credits/credits';
 import { MapPanelComponent } from '../post-raid/map/map-panel';
 import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
 
@@ -39,7 +40,7 @@ import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
     LoadingSpinnerComponent, ArtIconComponent,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
-    GearComponent, MapPanelComponent,
+    GearComponent, CreditsComponent, MapPanelComponent,
   ],
   templateUrl: './pre-fight.html',
 })

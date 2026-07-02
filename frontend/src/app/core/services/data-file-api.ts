@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Rulebook } from '../models/rulebook.models';
 import { EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { EncounterPositions } from '../models/positioning.models';
+import { GuideRef } from '../models/guides.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
 
 /**
@@ -28,6 +29,11 @@ export class DataFileApiService {
   /** Raw read of a spec's rulebook (`{spec}/rulebook.json`). */
   getRulebook(spec: string): Promise<Rulebook | null> {
     return this.io.readJson<Rulebook>(`${spec}/rulebook.json`);
+  }
+
+  /** Raw read of a spec's scraped guide list (`{spec}/guides.json`). Empty when absent. */
+  async getGuides(spec: string): Promise<GuideRef[]> {
+    return (await this.io.readJson<GuideRef[]>(`${spec}/guides.json`)) ?? [];
   }
 
   /** Raw read of the spec manifest (`index.json`). Empty when not yet generated. */

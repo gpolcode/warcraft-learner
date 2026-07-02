@@ -55,7 +55,7 @@ const SLICE_CONCURRENCY = 3;   // max transforms run concurrently per encounter
 // The tailored slice files the transforms write (directory name under {spec}/).
 // `burst` is the canonical carrier of the encounter's source_signature for the skip
 // check (every slice for an encounter shares the same parse set, so any one would do).
-const SLICES = ['burst', 'rotation', 'defensive', 'gear'] as const;
+const SLICES = ['burst', 'rotation', 'defensive', 'gear', 'credits'] as const;
 
 /**
  * A `WclQueryClient` adapter over the runtime `WclApiService`, so the pure
@@ -123,12 +123,13 @@ async function ingestEncounter(
   const encId = encounter.id;
   const limit = pLimit(SLICE_CONCURRENCY);
 
-  const [burst, rotation, defensive, gear, map] = await Promise.all([
+  const [burst, rotation, defensive, gear, map, credits] = await Promise.all([
     limit(() => transforms.burst.getBench(spec, encId)),
     limit(() => transforms.rotation.getBench(spec, encId)),
     limit(() => transforms.defensive.getBench(spec, encId)),
     limit(() => transforms.gear.getBench(spec, encId)),
     limit(() => transforms.map.getBench(spec, encId)),
+    limit(() => transforms.credits.getBench(spec, encId)),
   ]);
 
   // Parses a transform found inaccessible (permission-denied) this run. signatureAfterFetch
@@ -160,6 +161,11 @@ async function ingestEncounter(
   if (map) {
     writes.push(dataFile.writePositions(spec, encId, stampSignature(map, signature, INGEST_VERSION)));
   } else { console.log(`    [${encounter.name}] positions: no data, skipped`); }
+  // Attribution only (like positions): credits an encounter's source parses + guides, but
+  // never on its own defines that the encounter "has data" (that stays the burst carrier).
+  if (credits) {
+    writes.push(dataFile.writeSlice(spec, encId, 'credits', stampSignature(credits, signature, INGEST_VERSION)));
+  } else { console.log(`    [${encounter.name}] credits: no data, skipped`); }
 
   await Promise.all(writes);
   return wroteAny;

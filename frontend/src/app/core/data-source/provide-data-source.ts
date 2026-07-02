@@ -10,7 +10,7 @@ import { FileDataSource } from './file-data-source';
  * call site, so the union keeps a typo from silently binding a token to a directory that
  * does not exist (which would read `null` and render an empty card with no error).
  */
-export type SliceDir = 'burst' | 'rotation' | 'defensive' | 'gear' | 'positions';
+export type SliceDir = 'burst' | 'rotation' | 'defensive' | 'gear' | 'positions' | 'credits';
 
 /**
  * Bind a per-use-case `*_DATA_SOURCE` token to one of its two adapters, chosen by the

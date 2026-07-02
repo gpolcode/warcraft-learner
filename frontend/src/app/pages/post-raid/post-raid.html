@@ -134,6 +134,10 @@
           [player]="selectedPlayerId()!"
           (busyChange)="gearBusy.set($event)">
         </wl-gear>
+
+        <!-- Attribution, deliberately at the bottom and collapsed: credits the logs + guides
+             this analysis drew from. Loads independently, so it does not gate the reveal. -->
+        <wl-credits [spec]="spec()" [encounterId]="selectedEncounterId()"></wl-credits>
       </div>
     }
 

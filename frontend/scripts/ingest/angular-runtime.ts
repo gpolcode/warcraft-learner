@@ -22,6 +22,7 @@ import type { RotationTransformService } from '../../src/app/pages/post-raid/rot
 import type { DefensiveTransformService } from '../../src/app/pages/post-raid/defensive/defensive-transform.service.ts';
 import type { GearTransformService } from '../../src/app/pages/post-raid/gear/gear-transform.service.ts';
 import type { MapTransformService } from '../../src/app/pages/post-raid/map/map-transform.service.ts';
+import type { CreditsTransformService } from '../../src/app/pages/post-raid/credits/credits-transform.service.ts';
 
 const __dirname_ = path.dirname(fileURLToPath(import.meta.url));
 /** `frontend/public/data/specs` - the data root the runtime serves and ingestion writes. */
@@ -36,6 +37,7 @@ export interface IngestRuntime {
     defensive: DefensiveTransformService;
     gear: GearTransformService;
     map: MapTransformService;
+    credits: CreditsTransformService;
   };
   /** Drop the WCL in-process read cache (call between encounters to bound memory). */
   clearWclCache(): void;
@@ -79,6 +81,7 @@ export async function bootstrapIngestRuntime(dataDir: string = DATA_SPECS_DIR): 
   const { DefensiveTransformService: Defensive } = await import('../../src/app/pages/post-raid/defensive/defensive-transform.service.ts');
   const { GearTransformService: Gear } = await import('../../src/app/pages/post-raid/gear/gear-transform.service.ts');
   const { MapTransformService: MapT } = await import('../../src/app/pages/post-raid/map/map-transform.service.ts');
+  const { CreditsTransformService: Credits } = await import('../../src/app/pages/post-raid/credits/credits-transform.service.ts');
 
   if (!(getTestBed() as { platform?: unknown }).platform) {
     getTestBed().initTestEnvironment(BrowserTestingModule, platformBrowserTesting());
@@ -104,6 +107,7 @@ export async function bootstrapIngestRuntime(dataDir: string = DATA_SPECS_DIR): 
       defensive: env.get(Defensive),
       gear: env.get(Gear),
       map: env.get(MapT),
+      credits: env.get(Credits),
     },
     clearWclCache: () => wclTransport.clearCache(),
     takeInaccessibleReportCodes: () => wclTransport.takeInaccessibleCodes(),

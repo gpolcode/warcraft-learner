@@ -27,6 +27,8 @@ import { GEAR_DATA_SOURCE } from './pages/post-raid/gear/gear-data-source';
 import { GearTransformService } from './pages/post-raid/gear/gear-transform.service';
 import { MAP_DATA_SOURCE } from './pages/post-raid/map/map-data-source';
 import { MapTransformService } from './pages/post-raid/map/map-transform.service';
+import { CREDITS_DATA_SOURCE } from './pages/post-raid/credits/credits-data-source';
+import { CreditsTransformService } from './pages/post-raid/credits/credits-transform.service';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
   <path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577
@@ -69,5 +71,6 @@ export const appConfig: ApplicationConfig = {
     provideDataSource(DEFENSIVE_DATA_SOURCE, 'defensive', DefensiveTransformService),
     provideDataSource(GEAR_DATA_SOURCE, 'gear', GearTransformService),
     provideDataSource(MAP_DATA_SOURCE, 'positions', MapTransformService),
+    provideDataSource(CREDITS_DATA_SOURCE, 'credits', CreditsTransformService),
   ],
 };

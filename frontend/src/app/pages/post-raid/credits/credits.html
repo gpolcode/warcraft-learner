@@ -1,0 +1,43 @@
+<!-- Contextual attribution, deliberately low-key: a collapsed-by-default "Sources" panel at
+     the bottom of an analysis page. Credits the top parses the benchmarks drew from and the
+     guides the rulebook was built from, each linking out. Renders nothing with no credits. -->
+@if (parses().length || sources().length) {
+  <details class="rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+    <summary class="cursor-pointer select-none text-[10px] uppercase tracking-widest text-[var(--muted)]">
+      Sources
+    </summary>
+
+    <div class="mt-3 flex flex-col gap-4">
+      @if (parses().length) {
+        <div>
+          <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Top parses</div>
+          <p class="text-[11px] text-[var(--muted)] mb-2">Benchmarks drawn from these logs.</p>
+          <ul class="flex flex-col gap-1">
+            @for (parse of parses(); track parse.link) {
+              <li class="flex items-baseline gap-2 text-[13px]">
+                <span class="w-5 shrink-0 text-right tabular-nums text-[var(--border)]">{{ parse.rank }}</span>
+                <a class="text-[var(--gold)] no-underline hover:brightness-125"
+                   [href]="parse.link" target="_blank" rel="noopener">{{ parse.player }} &#8599;</a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (sources().length) {
+        <div>
+          <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Rulebook guides</div>
+          <p class="text-[11px] text-[var(--muted)] mb-2">Coaching rules built from these guides.</p>
+          <ul class="flex flex-col gap-1">
+            @for (source of sources(); track source.url) {
+              <li class="text-[13px]">
+                <a class="text-[var(--accent)] no-underline hover:brightness-125"
+                   [href]="source.url" target="_blank" rel="noopener">{{ source.label }} &#8599;</a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  </details>
+}

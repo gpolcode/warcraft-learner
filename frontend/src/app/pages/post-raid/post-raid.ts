@@ -22,6 +22,7 @@ import { BurstWindowsComponent } from './burst-windows/burst-windows';
 import { DefensiveComponent } from './defensive/defensive';
 import { DefensiveMapAnchor } from './defensive/defensive.service';
 import { GearComponent } from './gear/gear';
+import { CreditsComponent } from './credits/credits';
 import { MapPanelComponent } from './map/map-panel';
 import { MapFeatureService, MapAnchor } from './map/map.service';
 import { FormatDurationPipe } from '../../shared/pipes/format-duration-pipe';
@@ -168,7 +169,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule, MatSlideToggleModule,
     LoadingSpinnerComponent, ArtIconComponent, RotationComponent, BurstWindowsComponent,
-    DefensiveComponent, GearComponent, MapPanelComponent,
+    DefensiveComponent, GearComponent, CreditsComponent, MapPanelComponent,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   templateUrl: './post-raid.html',
