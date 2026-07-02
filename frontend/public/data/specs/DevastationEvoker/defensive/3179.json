@@ -6,29 +6,57 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 9,
-      "avg_first_cast_s": 130.4,
-      "stddev_first_cast_s": 60.5,
-      "avg_gap_s": 22.5,
-      "stddev_gap_s": 25.4,
+      "avg_first_cast_s": 114.4,
+      "stddev_first_cast_s": 56.4,
+      "avg_gap_s": 22.1,
+      "stddev_gap_s": 37,
       "hold_targets": {},
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.8,
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 1.08,
       "uses_per_min": {
-        "avg": 0.795,
-        "stddev": 0.504,
-        "min": 0.186,
-        "max": 1.46
+        "avg": 1.077,
+        "stddev": 0.655,
+        "min": 0.306,
+        "max": 2.445
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 173.6,
+      "dmg_avg": 164192,
+      "dmg_stddev": 185037,
+      "dmg_min": 0,
+      "dmg_max": 618992,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 6.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 46893,
+          "min_damage": 13377,
+          "max_damage": 164014,
+          "count": 11
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 2.7,
+      "avg_uses": 3.7,
       "min_uses": 1,
-      "max_uses": 5
+      "max_uses": 8
     }
   ],
   "defensives": [
@@ -74,8 +102,12 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
     }
   },
-  "source_signature": "b6fc89ceb72541b3",
-  "ingest_version": 2
+  "source_signature": "916a52beb49d1a13",
+  "ingest_version": 3
 }

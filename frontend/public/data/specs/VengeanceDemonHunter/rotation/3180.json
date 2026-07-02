@@ -3,61 +3,50 @@
   "encounter_id": 3180,
   "encounter_name": "Lightblinded Vanguard",
   "sample_count": 10,
-  "avg_duration_s": 379.7,
-  "downtime_threshold_ms": 999,
-  "top_avg_efficiency": 66.2,
-  "top_efficiency_stddev": 5.2,
+  "avg_duration_s": 390.2,
+  "downtime_threshold_ms": 1013,
+  "top_avg_efficiency": 66,
+  "top_efficiency_stddev": 4.5,
   "per_cd_benchmarks": {
     "Metamorphosis": {
       "sample_count": 10,
-      "avg_first_cast_s": 5.4,
-      "stddev_first_cast_s": 2,
-      "avg_gap_s": 25.6,
-      "stddev_gap_s": 15.6,
-      "avg_bl_offset_s": 5.1,
-      "stddev_bl_offset_s": 2.3,
-      "avg_uses": 15,
-      "avg_uses_per_min": 2.37,
+      "avg_first_cast_s": 6,
+      "stddev_first_cast_s": 1.5,
+      "avg_gap_s": 25.8,
+      "stddev_gap_s": 15.2,
+      "avg_bl_offset_s": 5.8,
+      "stddev_bl_offset_s": 1.9,
+      "avg_uses": 15.1,
+      "avg_uses_per_min": 2.32,
       "uses_per_min": {
-        "avg": 2.369,
-        "stddev": 0.304,
+        "avg": 2.317,
+        "stddev": 0.278,
         "min": 1.902,
-        "max": 2.889
+        "max": 2.653
       },
-      "bl_pct": 90,
+      "bl_pct": 80,
       "majority_hold": false,
       "hold_targets": {}
     },
     "Fel Devastation": {
       "sample_count": 10,
-      "avg_first_cast_s": 40.7,
-      "stddev_first_cast_s": 110.9,
-      "avg_gap_s": 48.4,
-      "stddev_gap_s": 11.3,
-      "avg_bl_offset_s": 5.4,
-      "stddev_bl_offset_s": 1.2,
-      "avg_uses": 7.4,
-      "avg_uses_per_min": 1.2,
+      "avg_first_cast_s": 67.8,
+      "stddev_first_cast_s": 130.9,
+      "avg_gap_s": 49.1,
+      "stddev_gap_s": 11.7,
+      "avg_bl_offset_s": 6,
+      "stddev_bl_offset_s": 2.6,
+      "avg_uses": 6.8,
+      "avg_uses_per_min": 1.06,
       "uses_per_min": {
-        "avg": 1.202,
-        "stddev": 0.409,
+        "avg": 1.062,
+        "stddev": 0.503,
         "min": 0.126,
-        "max": 1.451
+        "max": 1.446
       },
-      "bl_pct": 80,
+      "bl_pct": 60,
       "majority_hold": true,
-      "hold_targets": {
-        "3": {
-          "target_s": 99,
-          "stddev_s": 22.9,
-          "delay_s": 9.9,
-          "delay_stddev_s": 20.5,
-          "band_s": 20.5,
-          "effective_cd_s": 40,
-          "count": 6,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     },
     "Soul Carver": {
       "sample_count": 10,
@@ -81,19 +70,19 @@
     },
     "Sigil of Spite": {
       "sample_count": 10,
-      "avg_first_cast_s": 25.2,
-      "stddev_first_cast_s": 29,
-      "avg_gap_s": 66.2,
-      "stddev_gap_s": 9.8,
-      "avg_bl_offset_s": 7,
-      "stddev_bl_offset_s": 2.9,
-      "avg_uses": 5.9,
-      "avg_uses_per_min": 0.93,
+      "avg_first_cast_s": 18.2,
+      "stddev_first_cast_s": 27.5,
+      "avg_gap_s": 65.8,
+      "stddev_gap_s": 9.4,
+      "avg_bl_offset_s": 5.1,
+      "stddev_bl_offset_s": 3.7,
+      "avg_uses": 6.2,
+      "avg_uses_per_min": 0.95,
       "uses_per_min": {
-        "avg": 0.933,
-        "stddev": 0.12,
+        "avg": 0.951,
+        "stddev": 0.121,
         "min": 0.681,
-        "max": 1.083
+        "max": 1.052
       },
       "bl_pct": 70,
       "majority_hold": true,
@@ -224,6 +213,6 @@
       "name": "Sigil of Spite"
     }
   },
-  "source_signature": "b4359ac7a634fec1",
-  "ingest_version": 2
+  "source_signature": "4a227eb1eb942901",
+  "ingest_version": 3
 }

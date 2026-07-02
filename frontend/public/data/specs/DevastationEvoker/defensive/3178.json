@@ -6,50 +6,105 @@
   "per_defensive_benchmarks": {
     "Obsidian Scales": {
       "sample_count": 10,
-      "avg_first_cast_s": 162.1,
-      "stddev_first_cast_s": 100.5,
-      "avg_gap_s": 29,
-      "stddev_gap_s": 41,
+      "avg_first_cast_s": 132.8,
+      "stddev_first_cast_s": 65.7,
+      "avg_gap_s": 30.8,
+      "stddev_gap_s": 44.3,
       "hold_targets": {},
-      "avg_uses": 6.6,
-      "avg_uses_per_min": 1.08,
+      "avg_uses": 7.1,
+      "avg_uses_per_min": 1.16,
       "uses_per_min": {
-        "avg": 1.084,
-        "stddev": 0.448,
-        "min": 0.278,
+        "avg": 1.161,
+        "stddev": 0.365,
+        "min": 0.675,
         "max": 1.691
       },
       "majority_hold": false
     },
     "Zephyr": {
-      "sample_count": 3,
-      "avg_first_cast_s": 186.5,
-      "stddev_first_cast_s": 142.4,
+      "sample_count": 4,
+      "avg_first_cast_s": 210.4,
+      "stddev_first_cast_s": 125.7,
       "avg_gap_s": 5.5,
       "stddev_gap_s": 2.5,
       "hold_targets": {},
-      "avg_uses": 1.7,
-      "avg_uses_per_min": 0.25,
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.23,
       "uses_per_min": {
-        "avg": 0.254,
-        "stddev": 0.073,
-        "min": 0.172,
+        "avg": 0.231,
+        "stddev": 0.076,
+        "min": 0.161,
         "max": 0.312
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 148.3,
+      "dmg_avg": 287963,
+      "dmg_stddev": 226786,
+      "dmg_min": 28704,
+      "dmg_max": 660112,
+      "dmg_pct_avg": 0.017,
+      "window_length_s": 5.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 188218,
+          "min_damage": 14187,
+          "max_damage": 383964,
+          "count": 18
+        }
+      ]
+    },
+    {
+      "time_s": 311.8,
+      "dmg_avg": 258468,
+      "dmg_stddev": 211803,
+      "dmg_min": 12021,
+      "dmg_max": 628742,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 5.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 143140,
+          "min_damage": 18793,
+          "max_damage": 303425,
+          "count": 16
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
-      "avg_uses": 6.6,
-      "min_uses": 2,
+      "avg_uses": 7.1,
+      "min_uses": 4,
       "max_uses": 11
     },
     {
       "spell_id": 374227,
-      "avg_uses": 1.7,
+      "avg_uses": 1.5,
       "min_uses": 1,
       "max_uses": 2
     }
@@ -97,8 +152,12 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
     }
   },
-  "source_signature": "9dbf100f25f3eeef",
-  "ingest_version": 2
+  "source_signature": "4f5e57482d85d3a5",
+  "ingest_version": 3
 }

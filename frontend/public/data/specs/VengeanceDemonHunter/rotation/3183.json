@@ -3,26 +3,26 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 549.8,
-  "downtime_threshold_ms": 1015,
-  "top_avg_efficiency": 64.5,
-  "top_efficiency_stddev": 4.9,
+  "avg_duration_s": 536.8,
+  "downtime_threshold_ms": 1008,
+  "top_avg_efficiency": 64.4,
+  "top_efficiency_stddev": 5.5,
   "per_cd_benchmarks": {
     "Metamorphosis": {
       "sample_count": 10,
-      "avg_first_cast_s": 9.8,
-      "stddev_first_cast_s": 3.4,
-      "avg_gap_s": 29.8,
-      "stddev_gap_s": 18,
-      "avg_bl_offset_s": 0.5,
-      "stddev_bl_offset_s": 8.1,
-      "avg_uses": 18.5,
-      "avg_uses_per_min": 2.02,
+      "avg_first_cast_s": 10.5,
+      "stddev_first_cast_s": 4.3,
+      "avg_gap_s": 29.2,
+      "stddev_gap_s": 18.3,
+      "avg_bl_offset_s": -1.2,
+      "stddev_bl_offset_s": 7.8,
+      "avg_uses": 18.4,
+      "avg_uses_per_min": 2.06,
       "uses_per_min": {
-        "avg": 2.021,
-        "stddev": 0.281,
+        "avg": 2.064,
+        "stddev": 0.308,
         "min": 1.487,
-        "max": 2.331
+        "max": 2.531
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -30,49 +30,69 @@
     },
     "Fel Devastation": {
       "sample_count": 10,
-      "avg_first_cast_s": 40.1,
-      "stddev_first_cast_s": 80.8,
-      "avg_gap_s": 54.8,
-      "stddev_gap_s": 26.1,
-      "avg_bl_offset_s": -6.6,
-      "stddev_bl_offset_s": 16.1,
-      "avg_uses": 8.6,
-      "avg_uses_per_min": 0.95,
+      "avg_first_cast_s": 15,
+      "stddev_first_cast_s": 4.5,
+      "avg_gap_s": 56.9,
+      "stddev_gap_s": 20.1,
+      "avg_bl_offset_s": -7.2,
+      "stddev_bl_offset_s": 15.5,
+      "avg_uses": 8.8,
+      "avg_uses_per_min": 0.98,
       "uses_per_min": {
-        "avg": 0.947,
-        "stddev": 0.467,
-        "min": 0.104,
-        "max": 1.516
+        "avg": 0.982,
+        "stddev": 0.364,
+        "min": 0.35,
+        "max": 1.472
       },
       "bl_pct": 80,
       "majority_hold": true,
       "hold_targets": {
         "2": {
-          "target_s": 79.4,
-          "stddev_s": 10.6,
-          "delay_s": 23.2,
-          "delay_stddev_s": 11.6,
-          "band_s": 11.6,
+          "target_s": 78.6,
+          "stddev_s": 10.7,
+          "delay_s": 20.2,
+          "delay_stddev_s": 11.3,
+          "band_s": 11.3,
           "effective_cd_s": 40,
-          "count": 6,
+          "count": 7,
           "total_samples": 10
         },
         "3": {
-          "target_s": 140.3,
-          "stddev_s": 8.6,
-          "delay_s": 20.9,
-          "delay_stddev_s": 4.1,
-          "band_s": 5,
+          "target_s": 140.2,
+          "stddev_s": 7.9,
+          "delay_s": 21,
+          "delay_stddev_s": 5.6,
+          "band_s": 5.6,
           "effective_cd_s": 40,
-          "count": 6,
+          "count": 7,
           "total_samples": 10
         },
         "4": {
           "target_s": 251.7,
-          "stddev_s": 70.9,
+          "stddev_s": 42.5,
           "delay_s": 56.6,
-          "delay_stddev_s": 71.8,
-          "band_s": 71.8,
+          "delay_stddev_s": 42.7,
+          "band_s": 42.7,
+          "effective_cd_s": 40,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 291.5,
+          "stddev_s": 75.2,
+          "delay_s": 16,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
+          "effective_cd_s": 40,
+          "count": 6,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 384.5,
+          "stddev_s": 58.9,
+          "delay_s": 26.9,
+          "delay_stddev_s": 23.2,
+          "band_s": 23.2,
           "effective_cd_s": 40,
           "count": 5,
           "total_samples": 10
@@ -101,34 +121,23 @@
     },
     "Sigil of Spite": {
       "sample_count": 10,
-      "avg_first_cast_s": 15.3,
-      "stddev_first_cast_s": 16.9,
-      "avg_gap_s": 65.4,
-      "stddev_gap_s": 7.3,
-      "avg_bl_offset_s": 7.3,
-      "stddev_bl_offset_s": 25,
-      "avg_uses": 8.8,
-      "avg_uses_per_min": 0.96,
+      "avg_first_cast_s": 16.1,
+      "stddev_first_cast_s": 17.7,
+      "avg_gap_s": 67.5,
+      "stddev_gap_s": 12.2,
+      "avg_bl_offset_s": 11.6,
+      "stddev_bl_offset_s": 19.7,
+      "avg_uses": 8,
+      "avg_uses_per_min": 0.89,
       "uses_per_min": {
-        "avg": 0.961,
-        "stddev": 0.033,
-        "min": 0.913,
-        "max": 1.02
+        "avg": 0.891,
+        "stddev": 0.128,
+        "min": 0.584,
+        "max": 1.009
       },
       "bl_pct": 100,
       "majority_hold": true,
-      "hold_targets": {
-        "8": {
-          "target_s": 471.7,
-          "stddev_s": 18.8,
-          "delay_s": 23.5,
-          "delay_stddev_s": 9.6,
-          "band_s": 9.6,
-          "effective_cd_s": 60,
-          "count": 6,
-          "total_samples": 10
-        }
-      }
+      "hold_targets": {}
     }
   },
   "major_cooldowns": [
@@ -255,6 +264,6 @@
       "name": "Sigil of Spite"
     }
   },
-  "source_signature": "9d21d97ad8b48e3a",
-  "ingest_version": 2
+  "source_signature": "241db0026d9b268e",
+  "ingest_version": 3
 }

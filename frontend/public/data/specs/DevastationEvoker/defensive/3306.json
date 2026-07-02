@@ -39,7 +39,76 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 69.8,
+      "dmg_avg": 225758,
+      "dmg_stddev": 188593,
+      "dmg_min": 0,
+      "dmg_max": 605684,
+      "dmg_pct_avg": 0.065,
+      "window_length_s": 6.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 232330,
+          "min_damage": 93000,
+          "max_damage": 495038,
+          "count": 9
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 88894,
+          "min_damage": 17815,
+          "max_damage": 170527,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 140.1,
+      "dmg_avg": 175630,
+      "dmg_stddev": 127829,
+      "dmg_min": 0,
+      "dmg_max": 353470,
+      "dmg_pct_avg": 0.048,
+      "window_length_s": 5.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 133511,
+          "min_damage": 70454,
+          "max_damage": 245648,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 79774,
+          "min_damage": 26569,
+          "max_damage": 188150,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
@@ -97,8 +166,16 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
     }
   },
-  "source_signature": "5d90dce8ef1e76b6",
-  "ingest_version": 2
+  "source_signature": "d8c2c286230348ae",
+  "ingest_version": 3
 }
