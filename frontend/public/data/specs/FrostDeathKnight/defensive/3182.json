@@ -5,17 +5,24 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
-      "sample_count": 9,
-      "avg_first_cast_s": 130.8,
-      "stddev_first_cast_s": 112.5,
-      "avg_gap_s": 60.4,
-      "stddev_gap_s": 19.6,
-      "hold_targets": {},
-      "avg_uses": 3,
-      "avg_uses_per_min": 0.62,
+      "sample_count": 10,
+      "avg_first_cast_s": 123,
+      "stddev_first_cast_s": 108.9,
+      "avg_gap_s": 61.1,
+      "stddev_gap_s": 18.4,
+      "hold_targets": {
+        "2": {
+          "target_s": 167,
+          "stddev_s": 52.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.65,
       "uses_per_min": {
-        "avg": 0.62,
-        "stddev": 0.434,
+        "avg": 0.648,
+        "stddev": 0.419,
         "min": 0.184,
         "max": 1.19
       },
@@ -23,17 +30,17 @@
     },
     "Icebound Fortitude": {
       "sample_count": 9,
-      "avg_first_cast_s": 186.9,
-      "stddev_first_cast_s": 87.7,
-      "avg_gap_s": 144.5,
-      "stddev_gap_s": 15.8,
+      "avg_first_cast_s": 164.6,
+      "stddev_first_cast_s": 84.8,
+      "avg_gap_s": 143.4,
+      "stddev_gap_s": 13.9,
       "hold_targets": {},
-      "avg_uses": 1.4,
-      "avg_uses_per_min": 0.32,
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.35,
       "uses_per_min": {
-        "avg": 0.317,
-        "stddev": 0.134,
-        "min": 0.184,
+        "avg": 0.346,
+        "stddev": 0.13,
+        "min": 0.185,
         "max": 0.492
       },
       "majority_hold": false
@@ -56,18 +63,18 @@
       "majority_hold": false
     },
     "Anti-Magic Zone": {
-      "sample_count": 6,
-      "avg_first_cast_s": 196.4,
-      "stddev_first_cast_s": 60.2,
+      "sample_count": 5,
+      "avg_first_cast_s": 180.3,
+      "stddev_first_cast_s": 50.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.22,
       "uses_per_min": {
-        "avg": 0.213,
-        "stddev": 0.025,
-        "min": 0.184,
+        "avg": 0.218,
+        "stddev": 0.023,
+        "min": 0.192,
         "max": 0.246
       },
       "majority_hold": false
@@ -90,17 +97,79 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 222,
+      "dmg_avg": 312972,
+      "dmg_stddev": 153567,
+      "dmg_min": 54740,
+      "dmg_max": 453850,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 8,
+      "defensive_name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "common_defensives": [
+        "Icebound Fortitude"
+      ],
+      "common_cds": [
+        "Icebound Fortitude"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241333,
+          "avg_damage": 244968,
+          "min_damage": 196075,
+          "max_damage": 281769,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 61296,
+          "min_damage": 54740,
+          "max_damage": 64721,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 245.3,
+      "dmg_avg": 316074,
+      "dmg_stddev": 148887,
+      "dmg_min": 58235,
+      "dmg_max": 472878,
+      "dmg_pct_avg": 0.034,
+      "window_length_s": 6.4,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 55743,
+          "min_damage": 30559,
+          "max_damage": 77661,
+          "count": 8
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 3,
+      "avg_uses": 3.1,
       "min_uses": 1,
       "max_uses": 6
     },
     {
       "spell_id": 48792,
-      "avg_uses": 1.4,
+      "avg_uses": 1.6,
       "min_uses": 1,
       "max_uses": 2
     },
@@ -192,8 +261,16 @@
     "51052": {
       "icon": "spell_deathknight_antimagiczone",
       "name": "Anti-Magic Zone"
+    },
+    "1241333": {
+      "icon": "inv_phoenix2mount_blue",
+      "name": "Death Drop"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "62a75287c031c4b6",
-  "ingest_version": 2
+  "source_signature": "816eaca390eddbda",
+  "ingest_version": 3
 }

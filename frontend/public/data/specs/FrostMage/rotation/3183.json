@@ -3,41 +3,30 @@
   "encounter_id": 3183,
   "encounter_name": "Midnight Falls",
   "sample_count": 10,
-  "avg_duration_s": 569.1,
-  "downtime_threshold_ms": 2668,
+  "avg_duration_s": 570.5,
+  "downtime_threshold_ms": 2670,
   "top_avg_efficiency": 74.1,
-  "top_efficiency_stddev": 9.9,
+  "top_efficiency_stddev": 9.7,
   "per_cd_benchmarks": {
     "Ray of Frost": {
       "sample_count": 10,
-      "avg_first_cast_s": 4.5,
+      "avg_first_cast_s": 4.4,
       "stddev_first_cast_s": 1.5,
-      "avg_gap_s": 43.1,
-      "stddev_gap_s": 19.8,
-      "avg_bl_offset_s": 3.6,
+      "avg_gap_s": 43,
+      "stddev_gap_s": 19.6,
+      "avg_bl_offset_s": 3.7,
       "stddev_bl_offset_s": 3,
       "avg_uses": 13.7,
       "avg_uses_per_min": 1.44,
       "uses_per_min": {
-        "avg": 1.444,
-        "stddev": 0.039,
+        "avg": 1.441,
+        "stddev": 0.037,
         "min": 1.382,
-        "max": 1.48
+        "max": 1.478
       },
       "bl_pct": 100,
-      "majority_hold": true,
-      "hold_targets": {
-        "9": {
-          "target_s": 370.8,
-          "stddev_s": 2.8,
-          "delay_s": 13.3,
-          "delay_stddev_s": 2.3,
-          "band_s": 5,
-          "effective_cd_s": 75,
-          "count": 5,
-          "total_samples": 10
-        }
-      }
+      "majority_hold": false,
+      "hold_targets": {}
     },
     "Comet Storm": {
       "sample_count": 10,
@@ -63,17 +52,17 @@
       "sample_count": 10,
       "avg_first_cast_s": 10.9,
       "stddev_first_cast_s": 0.8,
-      "avg_gap_s": 32.8,
-      "stddev_gap_s": 6.5,
-      "avg_bl_offset_s": 6.5,
+      "avg_gap_s": 32.7,
+      "stddev_gap_s": 6.4,
+      "avg_bl_offset_s": 6.7,
       "stddev_bl_offset_s": 8.4,
-      "avg_uses": 17.5,
-      "avg_uses_per_min": 1.85,
+      "avg_uses": 17.7,
+      "avg_uses_per_min": 1.86,
       "uses_per_min": {
-        "avg": 1.845,
-        "stddev": 0.066,
+        "avg": 1.862,
+        "stddev": 0.072,
         "min": 1.764,
-        "max": 1.928
+        "max": 1.96
       },
       "bl_pct": 100,
       "majority_hold": false,
@@ -81,7 +70,7 @@
     },
     "Time Warp": {
       "sample_count": 10,
-      "avg_first_cast_s": 367.6,
+      "avg_first_cast_s": 367.5,
       "stddev_first_cast_s": 2.8,
       "avg_gap_s": null,
       "stddev_gap_s": null,
@@ -90,9 +79,9 @@
       "avg_uses": 1,
       "avg_uses_per_min": 0.11,
       "uses_per_min": {
-        "avg": 0.106,
+        "avg": 0.105,
         "stddev": 0.001,
-        "min": 0.104,
+        "min": 0.103,
         "max": 0.107
       },
       "bl_pct": 100,
@@ -306,6 +295,6 @@
       "name": "Ice Cold"
     }
   },
-  "source_signature": "318dedf9f5a7eda8",
-  "ingest_version": 2
+  "source_signature": "b3fab3dad9a4e82b",
+  "ingest_version": 3
 }

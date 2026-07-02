@@ -6,44 +6,44 @@
   "per_defensive_benchmarks": {
     "Ice Cold": {
       "sample_count": 10,
-      "avg_first_cast_s": 80.9,
-      "stddev_first_cast_s": 14.5,
+      "avg_first_cast_s": 91.2,
+      "stddev_first_cast_s": 41.2,
       "avg_gap_s": 123.1,
       "stddev_gap_s": 5.5,
       "hold_targets": {},
       "avg_uses": 1.7,
       "avg_uses_per_min": 0.48,
       "uses_per_min": {
-        "avg": 0.484,
-        "stddev": 0.139,
-        "min": 0.286,
+        "avg": 0.482,
+        "stddev": 0.142,
+        "min": 0.27,
         "max": 0.613
       },
       "majority_hold": false
     },
     "Alter Time": {
       "sample_count": 8,
-      "avg_first_cast_s": 60.5,
-      "stddev_first_cast_s": 59.3,
-      "avg_gap_s": 102.8,
-      "stddev_gap_s": 26,
+      "avg_first_cast_s": 54.2,
+      "stddev_first_cast_s": 62.3,
+      "avg_gap_s": 111.8,
+      "stddev_gap_s": 20.2,
       "hold_targets": {
         "1": {
-          "target_s": 128.9,
-          "stddev_s": 23.7,
-          "count": 4,
+          "target_s": 129,
+          "stddev_s": 21.2,
+          "count": 5,
           "total_samples": 8
         }
       },
       "avg_uses": 1.8,
       "avg_uses_per_min": 0.49,
       "uses_per_min": {
-        "avg": 0.492,
-        "stddev": 0.202,
+        "avg": 0.488,
+        "stddev": 0.201,
         "min": 0.278,
         "max": 0.863
       },
-      "majority_hold": false
+      "majority_hold": true
     },
     "Ice Barrier": {
       "sample_count": 4,
@@ -63,7 +63,76 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 86.8,
+      "dmg_avg": 118723,
+      "dmg_stddev": 30352,
+      "dmg_min": 84993,
+      "dmg_max": 146380,
+      "dmg_pct_avg": 0.017,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 95621,
+          "min_damage": 73010,
+          "max_damage": 132774,
+          "count": 5
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 12147,
+          "min_damage": 10549,
+          "max_damage": 12874,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 200.5,
+      "dmg_avg": 82666,
+      "dmg_stddev": 44775,
+      "dmg_min": 24205,
+      "dmg_max": 165822,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 5.6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 41494,
+          "min_damage": 20195,
+          "max_damage": 73923,
+          "count": 5
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 22760,
+          "min_damage": 13615,
+          "max_damage": 25586,
+          "count": 8
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 11426,
@@ -153,8 +222,16 @@
     "414658": {
       "icon": "spell_fire_bluefire",
       "name": "Ice Cold"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
     }
   },
-  "source_signature": "81aba9550eefa64b",
-  "ingest_version": 2
+  "source_signature": "2ba0ed1dd0244572",
+  "ingest_version": 3
 }

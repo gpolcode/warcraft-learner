@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Ice Barrier": {
       "sample_count": 10,
-      "avg_first_cast_s": 107.2,
-      "stddev_first_cast_s": 57.8,
-      "avg_gap_s": 59,
-      "stddev_gap_s": 51.3,
+      "avg_first_cast_s": 99.3,
+      "stddev_first_cast_s": 47.7,
+      "avg_gap_s": 59.9,
+      "stddev_gap_s": 52.8,
       "hold_targets": {
         "1": {
           "target_s": 126.9,
@@ -18,17 +18,17 @@
           "total_samples": 10
         },
         "2": {
-          "target_s": 252.7,
-          "stddev_s": 72.8,
-          "count": 5,
+          "target_s": 249.7,
+          "stddev_s": 65.5,
+          "count": 6,
           "total_samples": 10
         }
       },
-      "avg_uses": 3.6,
-      "avg_uses_per_min": 0.69,
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.7,
       "uses_per_min": {
-        "avg": 0.692,
-        "stddev": 0.316,
+        "avg": 0.705,
+        "stddev": 0.314,
         "min": 0.346,
         "max": 1.224
       },
@@ -36,68 +36,185 @@
     },
     "Ice Cold": {
       "sample_count": 8,
-      "avg_first_cast_s": 180.1,
-      "stddev_first_cast_s": 99.1,
-      "avg_gap_s": 125.4,
-      "stddev_gap_s": 81.7,
+      "avg_first_cast_s": 166.4,
+      "stddev_first_cast_s": 71.9,
+      "avg_gap_s": 114.1,
+      "stddev_gap_s": 80,
       "hold_targets": {},
       "avg_uses": 1.9,
-      "avg_uses_per_min": 0.34,
+      "avg_uses_per_min": 0.36,
       "uses_per_min": {
-        "avg": 0.34,
-        "stddev": 0.112,
+        "avg": 0.363,
+        "stddev": 0.121,
         "min": 0.162,
         "max": 0.519
       },
       "majority_hold": false
     },
     "Alter Time": {
-      "sample_count": 8,
-      "avg_first_cast_s": 29.1,
-      "stddev_first_cast_s": 49.3,
-      "avg_gap_s": 158.8,
-      "stddev_gap_s": 68,
+      "sample_count": 9,
+      "avg_first_cast_s": 49.3,
+      "stddev_first_cast_s": 60.4,
+      "avg_gap_s": 149.4,
+      "stddev_gap_s": 64.9,
       "hold_targets": {
         "1": {
-          "target_s": 214.3,
-          "stddev_s": 46.4,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 212.3,
+          "stddev_s": 46.5,
+          "count": 5,
+          "total_samples": 9
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.42,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.38,
       "uses_per_min": {
-        "avg": 0.422,
-        "stddev": 0.143,
+        "avg": 0.38,
+        "stddev": 0.159,
         "min": 0.21,
         "max": 0.692
       },
       "majority_hold": true
     },
     "Mirror Image": {
-      "sample_count": 1,
-      "avg_first_cast_s": 126.5,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 127,
+      "stddev_first_cast_s": 0.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.17,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.173,
-        "stddev": 0,
+        "avg": 0.2,
+        "stddev": 0.038,
         "min": 0.173,
-        "max": 0.173
+        "max": 0.227
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 74.5,
+      "dmg_avg": 250726,
+      "dmg_stddev": 34322,
+      "dmg_min": 206773,
+      "dmg_max": 291519,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 4,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
+      "common_defensives": [
+        "Ice Barrier"
+      ],
+      "common_cds": [
+        "Ice Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 170318,
+          "min_damage": 150476,
+          "max_damage": 188774,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 68571,
+          "min_damage": 39855,
+          "max_damage": 128515,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 126.5,
+      "dmg_avg": 345597,
+      "dmg_stddev": 125210,
+      "dmg_min": 209887,
+      "dmg_max": 548806,
+      "dmg_pct_avg": 0.032,
+      "window_length_s": 5,
+      "defensive_name": "Ice Barrier",
+      "spell_id": 11426,
+      "common_defensives": [
+        "Ice Barrier"
+      ],
+      "common_cds": [
+        "Ice Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 146823,
+          "min_damage": 59521,
+          "max_damage": 215771,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 53754,
+          "min_damage": 39759,
+          "max_damage": 120483,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 243.8,
+      "dmg_avg": 182385,
+      "dmg_stddev": 53850,
+      "dmg_min": 139541,
+      "dmg_max": 276127,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 5,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 60015,
+          "min_damage": 41816,
+          "max_damage": 72670,
+          "count": 4
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 56756,
+          "min_damage": 54636,
+          "max_damage": 58643,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 27294,
+          "min_damage": 18072,
+          "max_damage": 36763,
+          "count": 4
+        },
+        {
+          "spell_id": 1252157,
+          "avg_damage": 16544,
+          "min_damage": 16093,
+          "max_damage": 17117,
+          "count": 3
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 11426,
-      "avg_uses": 3.6,
+      "avg_uses": 3.5,
       "min_uses": 2,
       "max_uses": 7
     },
@@ -109,7 +226,7 @@
     },
     {
       "spell_id": 342245,
-      "avg_uses": 2.3,
+      "avg_uses": 2,
       "min_uses": 1,
       "max_uses": 4
     },
@@ -189,8 +306,28 @@
     "414658": {
       "icon": "spell_fire_bluefire",
       "name": "Ice Cold"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1252157": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "3cba6847446240e6",
-  "ingest_version": 2
+  "source_signature": "08b446c7e03849d3",
+  "ingest_version": 3
 }

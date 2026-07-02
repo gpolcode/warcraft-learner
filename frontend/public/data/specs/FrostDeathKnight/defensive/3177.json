@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 10,
-      "avg_first_cast_s": 67.3,
-      "stddev_first_cast_s": 22.3,
+      "avg_first_cast_s": 65.3,
+      "stddev_first_cast_s": 22,
       "avg_gap_s": 70.9,
-      "stddev_gap_s": 26.8,
+      "stddev_gap_s": 25.8,
       "hold_targets": {
         "1": {
           "target_s": 182.3,
@@ -18,28 +18,28 @@
           "total_samples": 10
         }
       },
-      "avg_uses": 2.6,
-      "avg_uses_per_min": 0.78,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.8,
       "uses_per_min": {
-        "avg": 0.785,
-        "stddev": 0.25,
+        "avg": 0.805,
+        "stddev": 0.247,
         "min": 0.57,
         "max": 1.239
       },
       "majority_hold": true
     },
     "Icebound Fortitude": {
-      "sample_count": 6,
-      "avg_first_cast_s": 78.9,
-      "stddev_first_cast_s": 9.7,
+      "sample_count": 7,
+      "avg_first_cast_s": 81.1,
+      "stddev_first_cast_s": 10.7,
       "avg_gap_s": 121.4,
       "stddev_gap_s": 0,
       "hold_targets": {},
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.35,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.346,
-        "stddev": 0.116,
+        "avg": 0.338,
+        "stddev": 0.108,
         "min": 0.285,
         "max": 0.582
       },
@@ -63,32 +63,49 @@
       "majority_hold": false
     },
     "Lichborne": {
-      "sample_count": 3,
-      "avg_first_cast_s": 63.5,
-      "stddev_first_cast_s": 47.5,
+      "sample_count": 2,
+      "avg_first_cast_s": 44.5,
+      "stddev_first_cast_s": 48.5,
       "avg_gap_s": 94.7,
       "stddev_gap_s": 7.5,
       "hold_targets": {},
-      "avg_uses": 2,
-      "avg_uses_per_min": 0.6,
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.74,
       "uses_per_min": {
-        "avg": 0.605,
-        "stddev": 0.275,
-        "min": 0.328,
+        "avg": 0.744,
+        "stddev": 0.189,
+        "min": 0.61,
         "max": 0.877
+      },
+      "majority_hold": false
+    },
+    "Death Strike": {
+      "sample_count": 1,
+      "avg_first_cast_s": 87.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.285,
+        "stddev": 0,
+        "min": 0.285,
+        "max": 0.285
       },
       "majority_hold": false
     }
   },
   "defensive_windows": [
     {
-      "time_s": 62.5,
-      "dmg_avg": 407120,
-      "dmg_stddev": 91198,
+      "time_s": 60.4,
+      "dmg_avg": 383677,
+      "dmg_stddev": 68206,
       "dmg_min": 275348,
-      "dmg_max": 530870,
-      "dmg_pct_avg": 0.069,
-      "window_length_s": 5.8,
+      "dmg_max": 471312,
+      "dmg_pct_avg": 0.062,
+      "window_length_s": 5.3,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -101,14 +118,14 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 367750,
+          "avg_damage": 367169,
           "min_damage": 292452,
           "max_damage": 433926,
-          "count": 3
+          "count": 4
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 43006,
+          "avg_damage": 38587,
           "min_damage": 13144,
           "max_damage": 53865,
           "count": 6
@@ -116,12 +133,12 @@
       ]
     },
     {
-      "time_s": 79.7,
-      "dmg_avg": 448573,
-      "dmg_stddev": 196453,
-      "dmg_min": 186439,
+      "time_s": 79.8,
+      "dmg_avg": 389513,
+      "dmg_stddev": 237860,
+      "dmg_min": 35158,
       "dmg_max": 732836,
-      "dmg_pct_avg": 0.073,
+      "dmg_pct_avg": 0.064,
       "window_length_s": 8,
       "defensive_name": "Icebound Fortitude",
       "spell_id": 48792,
@@ -141,28 +158,21 @@
           "count": 5
         },
         {
-          "spell_id": 1272328,
-          "avg_damage": 85174,
-          "min_damage": 66463,
-          "max_damage": 119048,
-          "count": 3
-        },
-        {
           "spell_id": 1272950,
-          "avg_damage": 38929,
+          "avg_damage": 38390,
           "min_damage": 34030,
           "max_damage": 54540,
-          "count": 6
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 106.5,
-      "dmg_avg": 272375,
-      "dmg_stddev": 170818,
+      "time_s": 109.3,
+      "dmg_avg": 260196,
+      "dmg_stddev": 159229,
       "dmg_min": 51152,
       "dmg_max": 428976,
-      "dmg_pct_avg": 0.046,
+      "dmg_pct_avg": 0.044,
       "window_length_s": 6.8,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
@@ -176,28 +186,28 @@
       "ability_breakdown": [
         {
           "spell_id": 1280101,
-          "avg_damage": 224995,
+          "avg_damage": 208914,
           "min_damage": 25308,
           "max_damage": 353076,
-          "count": 4
+          "count": 5
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 42393,
+          "avg_damage": 42413,
           "min_damage": 36762,
           "max_damage": 51420,
-          "count": 6
+          "count": 7
         }
       ]
     },
     {
-      "time_s": 182.7,
-      "dmg_avg": 356859,
-      "dmg_stddev": 144055,
+      "time_s": 182.3,
+      "dmg_avg": 362671,
+      "dmg_stddev": 135874,
       "dmg_min": 23428,
       "dmg_max": 459177,
-      "dmg_pct_avg": 0.059,
-      "window_length_s": 5,
+      "dmg_pct_avg": 0.061,
+      "window_length_s": 4.8,
       "defensive_name": "Anti-Magic Shell",
       "spell_id": 48707,
       "common_defensives": [
@@ -210,17 +220,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 334238,
+          "avg_damage": 337407,
           "min_damage": 237123,
           "max_damage": 381841,
-          "count": 7
+          "count": 8
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 64402,
+          "avg_damage": 62754,
           "min_damage": 23428,
           "max_damage": 80049,
-          "count": 8
+          "count": 9
         }
       ]
     }
@@ -228,21 +238,27 @@
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 2.6,
+      "avg_uses": 2.7,
       "min_uses": 2,
       "max_uses": 4
     },
     {
       "spell_id": 48792,
-      "avg_uses": 1.2,
+      "avg_uses": 1.1,
       "min_uses": 1,
       "max_uses": 2
     },
     {
       "spell_id": 49039,
-      "avg_uses": 2,
-      "min_uses": 1,
+      "avg_uses": 2.5,
+      "min_uses": 2,
       "max_uses": 3
+    },
+    {
+      "spell_id": 49998,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
     },
     {
       "spell_id": 51052,
@@ -325,10 +341,6 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
-    "1272328": {
-      "icon": "inv_misc_rylakclaw",
-      "name": "Shadowclaw Slam"
-    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
@@ -342,6 +354,6 @@
       "name": "Dark Energy"
     }
   },
-  "source_signature": "75d742969ba41fe6",
-  "ingest_version": 2
+  "source_signature": "baf75224836430bf",
+  "ingest_version": 3
 }

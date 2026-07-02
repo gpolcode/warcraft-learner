@@ -23,42 +23,42 @@
     },
     "Ice Cold": {
       "sample_count": 9,
-      "avg_first_cast_s": 68.8,
-      "stddev_first_cast_s": 31.9,
-      "avg_gap_s": 52.2,
-      "stddev_gap_s": 26.1,
+      "avg_first_cast_s": 71.8,
+      "stddev_first_cast_s": 30.3,
+      "avg_gap_s": 59,
+      "stddev_gap_s": 24.8,
       "hold_targets": {},
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.7,
+      "avg_uses_per_min": 0.69,
       "uses_per_min": {
-        "avg": 0.695,
-        "stddev": 0.21,
+        "avg": 0.689,
+        "stddev": 0.205,
         "min": 0.408,
-        "max": 0.864
+        "max": 0.849
       },
       "majority_hold": false
     },
     "Mirror Image": {
-      "sample_count": 1,
-      "avg_first_cast_s": 20,
-      "stddev_first_cast_s": 0,
+      "sample_count": 2,
+      "avg_first_cast_s": 21.2,
+      "stddev_first_cast_s": 1.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.42,
+      "avg_uses_per_min": 0.41,
       "uses_per_min": {
-        "avg": 0.419,
-        "stddev": 0,
-        "min": 0.419,
+        "avg": 0.412,
+        "stddev": 0.011,
+        "min": 0.404,
         "max": 0.419
       },
       "majority_hold": false
     },
     "Alter Time": {
       "sample_count": 5,
-      "avg_first_cast_s": 40.8,
-      "stddev_first_cast_s": 36.5,
+      "avg_first_cast_s": 41.1,
+      "stddev_first_cast_s": 36.1,
       "avg_gap_s": 115.2,
       "stddev_gap_s": 13.4,
       "hold_targets": {
@@ -70,17 +70,79 @@
         }
       },
       "avg_uses": 1.4,
-      "avg_uses_per_min": 0.59,
+      "avg_uses_per_min": 0.58,
       "uses_per_min": {
-        "avg": 0.587,
-        "stddev": 0.221,
-        "min": 0.421,
+        "avg": 0.581,
+        "stddev": 0.226,
+        "min": 0.404,
         "max": 0.838
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 74.2,
+      "dmg_avg": 100436,
+      "dmg_stddev": 35293,
+      "dmg_min": 72786,
+      "dmg_max": 171822,
+      "dmg_pct_avg": 0.029,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 83354,
+          "min_damage": 44988,
+          "max_damage": 124953,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 139.7,
+      "dmg_avg": 106357,
+      "dmg_stddev": 40349,
+      "dmg_min": 53471,
+      "dmg_max": 153329,
+      "dmg_pct_avg": 0.029,
+      "window_length_s": 5,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 74511,
+          "min_damage": 41651,
+          "max_damage": 122402,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 37701,
+          "min_damage": 8483,
+          "max_damage": 50898,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 11426,
@@ -176,8 +238,16 @@
     "414658": {
       "icon": "spell_fire_bluefire",
       "name": "Ice Cold"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
     }
   },
-  "source_signature": "71f98b6674e778a4",
-  "ingest_version": 2
+  "source_signature": "c1e936c5d44b18aa",
+  "ingest_version": 3
 }
