@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Desperate Prayer": {
       "sample_count": 8,
-      "avg_first_cast_s": 65.6,
-      "stddev_first_cast_s": 35.6,
-      "avg_gap_s": 112.7,
-      "stddev_gap_s": 14.1,
+      "avg_first_cast_s": 60.5,
+      "stddev_first_cast_s": 33.9,
+      "avg_gap_s": 123.5,
+      "stddev_gap_s": 29.9,
       "hold_targets": {},
       "avg_uses": 1.5,
       "avg_uses_per_min": 0.39,
       "uses_per_min": {
-        "avg": 0.385,
-        "stddev": 0.159,
+        "avg": 0.39,
+        "stddev": 0.163,
         "min": 0.231,
         "max": 0.673
       },
@@ -23,28 +23,22 @@
     },
     "Fade": {
       "sample_count": 9,
-      "avg_first_cast_s": 64.7,
-      "stddev_first_cast_s": 64.7,
-      "avg_gap_s": 53.7,
-      "stddev_gap_s": 39.6,
+      "avg_first_cast_s": 74.2,
+      "stddev_first_cast_s": 63.1,
+      "avg_gap_s": 54.7,
+      "stddev_gap_s": 43.5,
       "hold_targets": {
         "1": {
-          "target_s": 106.6,
-          "stddev_s": 47.2,
-          "count": 4,
-          "total_samples": 9
-        },
-        "3": {
-          "target_s": 170.2,
-          "stddev_s": 31,
+          "target_s": 152.5,
+          "stddev_s": 61.6,
           "count": 4,
           "total_samples": 9
         }
       },
-      "avg_uses": 3.1,
-      "avg_uses_per_min": 0.83,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.79,
       "uses_per_min": {
-        "avg": 0.833,
+        "avg": 0.786,
         "stddev": 0.403,
         "min": 0.225,
         "max": 1.515
@@ -52,18 +46,18 @@
       "majority_hold": true
     },
     "Pain Suppression": {
-      "sample_count": 3,
-      "avg_first_cast_s": 140.4,
-      "stddev_first_cast_s": 39.2,
+      "sample_count": 2,
+      "avg_first_cast_s": 162.1,
+      "stddev_first_cast_s": 15.9,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.27,
       "uses_per_min": {
-        "avg": 0.265,
-        "stddev": 0.018,
-        "min": 0.254,
+        "avg": 0.27,
+        "stddev": 0.021,
+        "min": 0.255,
         "max": 0.285
       },
       "majority_hold": false
@@ -71,12 +65,12 @@
   },
   "defensive_windows": [
     {
-      "time_s": 70.3,
-      "dmg_avg": 446724,
-      "dmg_stddev": 202506,
-      "dmg_min": 65971,
+      "time_s": 70.7,
+      "dmg_avg": 539007,
+      "dmg_stddev": 114009,
+      "dmg_min": 386506,
       "dmg_max": 695418,
-      "dmg_pct_avg": 0.058,
+      "dmg_pct_avg": 0.068,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -97,20 +91,20 @@
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 177987,
-          "min_damage": 65971,
+          "avg_damage": 201308,
+          "min_damage": 183018,
           "max_damage": 216483,
-          "count": 7
+          "count": 5
         }
       ]
     },
     {
       "time_s": 103.6,
-      "dmg_avg": 427019,
-      "dmg_stddev": 155958,
+      "dmg_avg": 464071,
+      "dmg_stddev": 160341,
       "dmg_min": 230326,
-      "dmg_max": 586493,
-      "dmg_pct_avg": 0.054,
+      "dmg_max": 591263,
+      "dmg_pct_avg": 0.056,
       "window_length_s": 10,
       "defensive_name": "Fade",
       "spell_id": 586,
@@ -124,8 +118,8 @@
       "ability_breakdown": [
         {
           "spell_id": 1254018,
-          "avg_damage": 363584,
-          "min_damage": 20567,
+          "avg_damage": 463488,
+          "min_damage": 207608,
           "max_damage": 546859,
           "count": 5
         },
@@ -154,7 +148,7 @@
     },
     {
       "spell_id": 586,
-      "avg_uses": 3.1,
+      "avg_uses": 3,
       "min_uses": 1,
       "max_uses": 5
     }
@@ -246,6 +240,6 @@
       "name": "Despotic Command"
     }
   },
-  "source_signature": "58a1c067172d4ad4",
-  "ingest_version": 2
+  "source_signature": "a82791a804a2bfb8",
+  "ingest_version": 3
 }

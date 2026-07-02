@@ -5,37 +5,79 @@
   "sample_count": 10,
   "per_defensive_benchmarks": {
     "Barkskin": {
-      "sample_count": 8,
-      "avg_first_cast_s": 166.6,
-      "stddev_first_cast_s": 108.6,
-      "avg_gap_s": 152.9,
-      "stddev_gap_s": 75.9,
+      "sample_count": 9,
+      "avg_first_cast_s": 182.2,
+      "stddev_first_cast_s": 111.8,
+      "avg_gap_s": 147.7,
+      "stddev_gap_s": 78.1,
       "hold_targets": {
         "1": {
-          "target_s": 308.9,
-          "stddev_s": 94.2,
-          "count": 6,
-          "total_samples": 8
+          "target_s": 373,
+          "stddev_s": 100.6,
+          "count": 7,
+          "total_samples": 9
         }
       },
-      "avg_uses": 2.3,
-      "avg_uses_per_min": 0.33,
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.34,
       "uses_per_min": {
-        "avg": 0.334,
-        "stddev": 0.138,
+        "avg": 0.336,
+        "stddev": 0.143,
         "min": 0.155,
-        "max": 0.569
+        "max": 0.625
       },
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 373.4,
+      "dmg_avg": 467996,
+      "dmg_stddev": 125689,
+      "dmg_min": 325456,
+      "dmg_max": 631433,
+      "dmg_pct_avg": 0.026,
+      "window_length_s": 11.8,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 248143,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245175,
+          "avg_damage": 204722,
+          "min_damage": 129553,
+          "max_damage": 345562,
+          "count": 5
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 135373,
+          "min_damage": 130055,
+          "max_damage": 140423,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 132244,
+          "min_damage": 73692,
+          "max_damage": 182337,
+          "count": 7
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 22812,
-      "avg_uses": 2.3,
+      "avg_uses": 2.1,
       "min_uses": 1,
-      "max_uses": 4
+      "max_uses": 3
     }
   ],
   "defensives": [
@@ -81,8 +123,20 @@
     "108238": {
       "icon": "spell_nature_natureblessing",
       "name": "Renewal"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
     }
   },
-  "source_signature": "4f60eebf5940e6cd",
-  "ingest_version": 2
+  "source_signature": "a89ce4ef02c0285b",
+  "ingest_version": 3
 }

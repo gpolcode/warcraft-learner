@@ -3,25 +3,25 @@
   "encounter_id": 3181,
   "encounter_name": "Crown of the Cosmos",
   "sample_count": 10,
-  "avg_duration_s": 511.1,
-  "downtime_threshold_ms": 2486,
-  "top_avg_efficiency": 73.7,
-  "top_efficiency_stddev": 5.3,
+  "avg_duration_s": 488.9,
+  "downtime_threshold_ms": 2493,
+  "top_avg_efficiency": 73,
+  "top_efficiency_stddev": 5.5,
   "per_cd_benchmarks": {
     "Summon Demonic Tyrant": {
       "sample_count": 10,
-      "avg_first_cast_s": 20,
-      "stddev_first_cast_s": 5.9,
-      "avg_gap_s": 67.1,
-      "stddev_gap_s": 11,
-      "avg_bl_offset_s": 2.5,
-      "stddev_bl_offset_s": 1,
-      "avg_uses": 8,
-      "avg_uses_per_min": 0.94,
+      "avg_first_cast_s": 18.3,
+      "stddev_first_cast_s": 7.2,
+      "avg_gap_s": 68.2,
+      "stddev_gap_s": 12.2,
+      "avg_bl_offset_s": 3.1,
+      "stddev_bl_offset_s": 1.8,
+      "avg_uses": 7.5,
+      "avg_uses_per_min": 0.92,
       "uses_per_min": {
-        "avg": 0.94,
-        "stddev": 0.022,
-        "min": 0.905,
+        "avg": 0.918,
+        "stddev": 0.048,
+        "min": 0.818,
         "max": 0.981
       },
       "bl_pct": 100,
@@ -30,23 +30,34 @@
     },
     "Grimoire: Imp Lord": {
       "sample_count": 10,
-      "avg_first_cast_s": 19.1,
-      "stddev_first_cast_s": 0.9,
-      "avg_gap_s": 134.5,
-      "stddev_gap_s": 15.1,
-      "avg_bl_offset_s": -1.7,
-      "stddev_bl_offset_s": 2.5,
-      "avg_uses": 1.2,
-      "avg_uses_per_min": 0.14,
+      "avg_first_cast_s": 13.1,
+      "stddev_first_cast_s": 9.6,
+      "avg_gap_s": 143,
+      "stddev_gap_s": 22.6,
+      "avg_bl_offset_s": -0.6,
+      "stddev_bl_offset_s": 2.7,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.28,
       "uses_per_min": {
-        "avg": 0.463,
-        "stddev": 0.014,
-        "min": 0.453,
-        "max": 0.479
+        "avg": 0.46,
+        "stddev": 0.053,
+        "min": 0.384,
+        "max": 0.545
       },
-      "bl_pct": 30,
-      "majority_hold": false,
-      "hold_targets": {}
+      "bl_pct": 60,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 173.4,
+          "stddev_s": 1.8,
+          "delay_s": 37.2,
+          "delay_stddev_s": 8.6,
+          "band_s": 8.6,
+          "effective_cd_s": 120,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
     },
     "Grimoire: Fel Ravager": {
       "sample_count": 10,
@@ -325,6 +336,6 @@
       "name": "Grimoire: Fel Ravager"
     }
   },
-  "source_signature": "3227c7c1541b3525",
-  "ingest_version": 2
+  "source_signature": "73b127f3808d89b8",
+  "ingest_version": 3
 }

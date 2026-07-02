@@ -61,13 +61,13 @@
       ]
     },
     {
-      "time_s": 63,
-      "dmg_avg": 2213433,
-      "dmg_stddev": 346583,
-      "dmg_min": 1580979,
+      "time_s": 63.5,
+      "dmg_avg": 1907185,
+      "dmg_stddev": 639318,
+      "dmg_min": 919227,
       "dmg_max": 2502893,
       "common_cds": [],
-      "window_length_s": 4,
+      "window_length_s": 3.8,
       "ability_breakdown": [
         {
           "spell_id": 434636,
@@ -80,48 +80,48 @@
         },
         {
           "spell_id": 434404,
-          "avg_damage": 770786,
-          "min_damage": 677168,
+          "avg_damage": 654627,
+          "min_damage": 73831,
           "max_damage": 901240,
-          "count": 5,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
-          "spell_id": 196278,
-          "avg_damage": 323196,
-          "min_damage": 200274,
-          "max_damage": 466516,
-          "count": 3,
-          "avg_casts": 1,
-          "is_passive": false
-        },
-        {
           "spell_id": 1269800,
-          "avg_damage": 260852,
+          "avg_damage": 238322,
           "min_damage": 62333,
           "max_damage": 377694,
-          "count": 5,
+          "count": 6,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 104318,
-          "avg_damage": 231120,
+          "avg_damage": 217102,
           "min_damage": 168477,
           "max_damage": 352004,
-          "count": 3,
+          "count": 4,
           "avg_casts": 0,
           "is_passive": true
         },
         {
           "spell_id": 86040,
-          "avg_damage": 169703,
-          "min_damage": 92185,
-          "max_damage": 259456,
-          "count": 5,
+          "avg_damage": 171577,
+          "min_damage": 34900,
+          "max_damage": 317628,
+          "count": 7,
           "avg_casts": 1,
           "is_passive": false
+        },
+        {
+          "spell_id": 89753,
+          "avg_damage": 94236,
+          "min_damage": 62110,
+          "max_damage": 122871,
+          "count": 6,
+          "avg_casts": 0,
+          "is_passive": true
         }
       ]
     },
@@ -260,6 +260,10 @@
       "icon": "ability_warlock_handofguldan",
       "name": "Hand of Gul'dan"
     },
+    "89753": {
+      "icon": "ability_warrior_bladestorm",
+      "name": "Felstorm"
+    },
     "104318": {
       "icon": "spell_fel_firebolt",
       "name": "Fel Firebolt"
@@ -271,10 +275,6 @@
     "108416": {
       "icon": "spell_shadow_deathpact",
       "name": "Dark Pact"
-    },
-    "196278": {
-      "icon": "spell_shadow_shadowandflame",
-      "name": "Implosion"
     },
     "264130": {
       "icon": "ability_warlock_backdraft",
@@ -329,7 +329,7 @@
       "name": "Shadow Nova"
     }
   },
-  "source_signature": "7cf95826f3491e97",
-  "ingest_version": 2,
+  "source_signature": "8486936893a734b0",
+  "ingest_version": 3,
   "inaccessible_parses": []
 }

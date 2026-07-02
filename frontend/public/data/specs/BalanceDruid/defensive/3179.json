@@ -6,37 +6,37 @@
   "per_defensive_benchmarks": {
     "Barkskin": {
       "sample_count": 10,
-      "avg_first_cast_s": 66.1,
-      "stddev_first_cast_s": 26.5,
-      "avg_gap_s": 117.1,
-      "stddev_gap_s": 59.3,
+      "avg_first_cast_s": 65.2,
+      "stddev_first_cast_s": 24.1,
+      "avg_gap_s": 116.7,
+      "stddev_gap_s": 59.7,
       "hold_targets": {
         "1": {
           "target_s": 172.3,
-          "stddev_s": 44.8,
+          "stddev_s": 55.3,
           "count": 6,
           "total_samples": 10
         }
       },
       "avg_uses": 1.7,
-      "avg_uses_per_min": 0.42,
+      "avg_uses_per_min": 0.47,
       "uses_per_min": {
-        "avg": 0.425,
-        "stddev": 0.151,
-        "min": 0.186,
-        "max": 0.615
+        "avg": 0.474,
+        "stddev": 0.144,
+        "min": 0.309,
+        "max": 0.649
       },
       "majority_hold": true
     }
   },
   "defensive_windows": [
     {
-      "time_s": 95.3,
-      "dmg_avg": 508322,
-      "dmg_stddev": 103283,
-      "dmg_min": 380722,
-      "dmg_max": 622069,
-      "dmg_pct_avg": 0.072,
+      "time_s": 42.3,
+      "dmg_avg": 382449,
+      "dmg_stddev": 250896,
+      "dmg_min": 96942,
+      "dmg_max": 696657,
+      "dmg_pct_avg": 0.051,
       "window_length_s": 12,
       "defensive_name": "Barkskin",
       "spell_id": 22812,
@@ -49,25 +49,18 @@
       "ref_game_id": 240432,
       "ability_breakdown": [
         {
-          "spell_id": 1254018,
-          "avg_damage": 293476,
-          "min_damage": 207674,
-          "max_damage": 420586,
-          "count": 3
-        },
-        {
           "spell_id": 1285504,
-          "avg_damage": 144498,
-          "min_damage": 43318,
-          "max_damage": 222154,
+          "avg_damage": 327604,
+          "min_damage": 215964,
+          "max_damage": 535890,
           "count": 3
         },
         {
           "spell_id": 1250686,
-          "avg_damage": 115496,
-          "min_damage": 12996,
-          "max_damage": 201624,
-          "count": 4
+          "avg_damage": 140625,
+          "min_damage": 43193,
+          "max_damage": 207860,
+          "count": 5
         }
       ]
     }
@@ -128,15 +121,11 @@
       "icon": "inv_cosmicvoid_missile",
       "name": "Twisting Obscurity"
     },
-    "1254018": {
-      "icon": "inv_112_etherealwraps_empowered_blue",
-      "name": "Entropic Unraveling"
-    },
     "1285504": {
       "icon": "inv_enchant_essencecosmicgreater",
       "name": "Dark Radiation"
     }
   },
-  "source_signature": "bffc2cf993ab9731",
-  "ingest_version": 2
+  "source_signature": "e5e7d6683ec1a48b",
+  "ingest_version": 3
 }

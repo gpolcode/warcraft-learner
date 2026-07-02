@@ -63,7 +63,56 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 162.2,
+      "dmg_avg": 446673,
+      "dmg_stddev": 164662,
+      "dmg_min": 223753,
+      "dmg_max": 658930,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 6.6,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 213635,
+          "min_damage": 195231,
+          "max_damage": 228871,
+          "count": 3
+        },
+        {
+          "spell_id": 111400,
+          "avg_damage": 87954,
+          "min_damage": 44022,
+          "max_damage": 119495,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 85672,
+          "min_damage": 27028,
+          "max_damage": 228876,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5659,
+          "min_damage": 1202,
+          "max_damage": 18906,
+          "count": 6
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 104773,
@@ -127,8 +176,24 @@
     "108416": {
       "icon": "spell_shadow_deathpact",
       "name": "Dark Pact"
+    },
+    "111400": {
+      "icon": "ability_deathwing_sealarmorbreachtga",
+      "name": "Burning Rush"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "b5602a981bc5557b",
-  "ingest_version": 2
+  "source_signature": "91f4896b46b5b66f",
+  "ingest_version": 3
 }
