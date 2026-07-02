@@ -6,16 +6,16 @@
   "per_defensive_benchmarks": {
     "Die by the Sword": {
       "sample_count": 6,
-      "avg_first_cast_s": 142.1,
-      "stddev_first_cast_s": 70,
+      "avg_first_cast_s": 142,
+      "stddev_first_cast_s": 69.9,
       "avg_gap_s": 125.3,
       "stddev_gap_s": 0,
       "hold_targets": {},
       "avg_uses": 1.2,
-      "avg_uses_per_min": 0.32,
+      "avg_uses_per_min": 0.31,
       "uses_per_min": {
-        "avg": 0.317,
-        "stddev": 0.107,
+        "avg": 0.313,
+        "stddev": 0.108,
         "min": 0.222,
         "max": 0.521
       },
@@ -40,14 +40,14 @@
     },
     "Spell Reflection": {
       "sample_count": 8,
-      "avg_first_cast_s": 66.3,
-      "stddev_first_cast_s": 27.7,
-      "avg_gap_s": 54.6,
-      "stddev_gap_s": 32.6,
+      "avg_first_cast_s": 64.5,
+      "stddev_first_cast_s": 27.2,
+      "avg_gap_s": 52.5,
+      "stddev_gap_s": 30.4,
       "hold_targets": {
         "1": {
-          "target_s": 182.6,
-          "stddev_s": 15.7,
+          "target_s": 169,
+          "stddev_s": 22.4,
           "count": 6,
           "total_samples": 8
         }
@@ -55,8 +55,8 @@
       "avg_uses": 3.4,
       "avg_uses_per_min": 0.93,
       "uses_per_min": {
-        "avg": 0.934,
-        "stddev": 0.516,
+        "avg": 0.929,
+        "stddev": 0.521,
         "min": 0.525,
         "max": 2.122
       },
@@ -82,9 +82,70 @@
   },
   "defensive_windows": [
     {
-      "time_s": 183.2,
-      "dmg_avg": 345563,
-      "dmg_stddev": 81909,
+      "time_s": 61.6,
+      "dmg_avg": 238480,
+      "dmg_stddev": 119959,
+      "dmg_min": 20078,
+      "dmg_max": 334754,
+      "dmg_pct_avg": 0.037,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 279493,
+          "min_damage": 242661,
+          "max_damage": 303389,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 27051,
+          "min_damage": 19855,
+          "max_damage": 31365,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 150,
+      "dmg_avg": 173539,
+      "dmg_stddev": 77558,
+      "dmg_min": 62702,
+      "dmg_max": 237996,
+      "dmg_pct_avg": 0.029,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 55283,
+          "min_damage": 40158,
+          "max_damage": 66034,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 182.6,
+      "dmg_avg": 351897,
+      "dmg_stddev": 87828,
       "dmg_min": 183220,
       "dmg_max": 427812,
       "dmg_pct_avg": 0.054,
@@ -101,17 +162,17 @@
       "ability_breakdown": [
         {
           "spell_id": 1275558,
-          "avg_damage": 262917,
+          "avg_damage": 279860,
           "min_damage": 120784,
           "max_damage": 363992,
-          "count": 7
+          "count": 6
         },
         {
           "spell_id": 1272950,
-          "avg_damage": 57316,
-          "min_damage": 27786,
+          "avg_damage": 62237,
+          "min_damage": 59566,
           "max_damage": 64165,
-          "count": 7
+          "count": 6
         }
       ]
     }
@@ -221,6 +282,6 @@
       "name": "Parasite Expulsion"
     }
   },
-  "source_signature": "518bbbfd8fa44c04",
-  "ingest_version": 2
+  "source_signature": "706c8d1d3b8d8952",
+  "ingest_version": 3
 }

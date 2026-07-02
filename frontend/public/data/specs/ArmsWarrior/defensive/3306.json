@@ -63,7 +63,89 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 56,
+      "dmg_avg": 148488,
+      "dmg_stddev": 68321,
+      "dmg_min": 114687,
+      "dmg_max": 270626,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 117577,
+          "min_damage": 114687,
+          "max_damage": 121230,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 226.1,
+      "dmg_avg": 110026,
+      "dmg_stddev": 42256,
+      "dmg_min": 46170,
+      "dmg_max": 180003,
+      "dmg_pct_avg": 0.01,
+      "window_length_s": 4.5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 97246,
+          "min_damage": 46170,
+          "max_damage": 119670,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 303.6,
+      "dmg_avg": 190985,
+      "dmg_stddev": 121145,
+      "dmg_min": 107839,
+      "dmg_max": 391445,
+      "dmg_pct_avg": 0.017,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 116388,
+          "min_damage": 107839,
+          "max_damage": 120045,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 118038,
@@ -153,8 +235,12 @@
     "202168": {
       "icon": "spell_impending_victory",
       "name": "Impending Victory"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
     }
   },
-  "source_signature": "2ac581e0b6193904",
-  "ingest_version": 2
+  "source_signature": "52f335ca32a96e0f",
+  "ingest_version": 3
 }

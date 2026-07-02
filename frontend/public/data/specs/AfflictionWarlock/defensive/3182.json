@@ -70,7 +70,165 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 24.7,
+      "dmg_avg": 480811,
+      "dmg_stddev": 188470,
+      "dmg_min": 247057,
+      "dmg_max": 741902,
+      "dmg_pct_avg": 0.034,
+      "window_length_s": 16.8,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 190821,
+          "min_damage": 110920,
+          "max_damage": 343906,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 181346,
+          "min_damage": 132248,
+          "max_damage": 229364,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 15234,
+          "min_damage": 7553,
+          "max_damage": 21334,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 150.2,
+      "dmg_avg": 500672,
+      "dmg_stddev": 131529,
+      "dmg_min": 376848,
+      "dmg_max": 750201,
+      "dmg_pct_avg": 0.039,
+      "window_length_s": 6.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 259087,
+          "min_damage": 104300,
+          "max_damage": 398409,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 68045,
+          "min_damage": 30866,
+          "max_damage": 164213,
+          "count": 7
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5418,
+          "min_damage": 963,
+          "max_damage": 15327,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 201.8,
+      "dmg_avg": 485959,
+      "dmg_stddev": 98495,
+      "dmg_min": 355264,
+      "dmg_max": 620188,
+      "dmg_pct_avg": 0.038,
+      "window_length_s": 7.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 330670,
+          "min_damage": 114968,
+          "max_damage": 475755,
+          "count": 6
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 81137,
+          "min_damage": 31493,
+          "max_damage": 134444,
+          "count": 6
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5618,
+          "min_damage": 1728,
+          "max_damage": 9093,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 242.6,
+      "dmg_avg": 448819,
+      "dmg_stddev": 369235,
+      "dmg_min": 36852,
+      "dmg_max": 1024168,
+      "dmg_pct_avg": 0.031,
+      "window_length_s": 10.1,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 114142,
+          "min_damage": 34866,
+          "max_damage": 236178,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 8483,
+          "min_damage": 1986,
+          "max_damage": 20845,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 104773,
@@ -147,8 +305,20 @@
     "108416": {
       "icon": "spell_shadow_deathpact",
       "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "9ae6a830f06036e5",
-  "ingest_version": 2
+  "source_signature": "ee3a0fa3c0a257a1",
+  "ingest_version": 3
 }

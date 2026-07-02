@@ -39,7 +39,110 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 79.4,
+      "dmg_avg": 223924,
+      "dmg_stddev": 194323,
+      "dmg_min": 0,
+      "dmg_max": 697840,
+      "dmg_pct_avg": 0.018,
+      "window_length_s": 6.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 248143,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245175,
+          "avg_damage": 132264,
+          "min_damage": 39671,
+          "max_damage": 567532,
+          "count": 9
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 81288,
+          "min_damage": 11328,
+          "max_damage": 168760,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 170.2,
+      "dmg_avg": 275328,
+      "dmg_stddev": 270782,
+      "dmg_min": 0,
+      "dmg_max": 675749,
+      "dmg_pct_avg": 0.02,
+      "window_length_s": 8.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 217676,
+          "min_damage": 109697,
+          "max_damage": 408654,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 248.9,
+      "dmg_avg": 300912,
+      "dmg_stddev": 243537,
+      "dmg_min": 35596,
+      "dmg_max": 855963,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 6.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 100700,
+          "min_damage": 11799,
+          "max_damage": 200585,
+          "count": 10
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 78453,
+          "min_damage": 26005,
+          "max_damage": 117926,
+          "count": 8
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 72163,
+          "min_damage": 12482,
+          "max_damage": 172789,
+          "count": 13
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 363916,
@@ -110,8 +213,24 @@
     "374348": {
       "icon": "ability_evoker_masterylifebinder_red",
       "name": "Renewing Blaze"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
     }
   },
-  "source_signature": "4923eb8405b2424a",
-  "ingest_version": 2
+  "source_signature": "2a8b26cf857c7c53",
+  "ingest_version": 3
 }
