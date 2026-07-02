@@ -6,40 +6,109 @@
   "per_defensive_benchmarks": {
     "Spell Reflection": {
       "sample_count": 10,
-      "avg_first_cast_s": 133.1,
-      "stddev_first_cast_s": 92.2,
-      "avg_gap_s": 50.9,
-      "stddev_gap_s": 33.2,
-      "hold_targets": {},
-      "avg_uses": 2.7,
-      "avg_uses_per_min": 0.55,
-      "uses_per_min": {
-        "avg": 0.548,
-        "stddev": 0.608,
-        "min": 0.172,
-        "max": 2.023
+      "avg_first_cast_s": 122.6,
+      "stddev_first_cast_s": 89.4,
+      "avg_gap_s": 56.7,
+      "stddev_gap_s": 31.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 181.9,
+          "stddev_s": 100.8,
+          "count": 4,
+          "total_samples": 10
+        }
       },
-      "majority_hold": false
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.574,
+        "stddev": 0.474,
+        "min": 0.172,
+        "max": 1.427
+      },
+      "majority_hold": true
     },
     "Rallying Cry": {
-      "sample_count": 6,
-      "avg_first_cast_s": 121.1,
-      "stddev_first_cast_s": 50.7,
+      "sample_count": 5,
+      "avg_first_cast_s": 149.9,
+      "stddev_first_cast_s": 66.6,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.19,
+      "avg_uses_per_min": 0.2,
       "uses_per_min": {
-        "avg": 0.192,
-        "stddev": 0.03,
+        "avg": 0.196,
+        "stddev": 0.036,
         "min": 0.175,
-        "max": 0.253
+        "max": 0.26
       },
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 80.7,
+      "dmg_avg": 88602,
+      "dmg_stddev": 71783,
+      "dmg_min": 0,
+      "dmg_max": 177388,
+      "dmg_pct_avg": 0.01,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 88728,
+          "min_damage": 84127,
+          "max_damage": 90886,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 202.6,
+      "dmg_avg": 103940,
+      "dmg_stddev": 23518,
+      "dmg_min": 72874,
+      "dmg_max": 135847,
+      "dmg_pct_avg": 0.011,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 85250,
+          "min_damage": 72874,
+          "max_damage": 92165,
+          "count": 5
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 31150,
+          "min_damage": 21834,
+          "max_damage": 47352,
+          "count": 3
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 97462,
@@ -51,7 +120,7 @@
       "spell_id": 23920,
       "avg_uses": 2.7,
       "min_uses": 1,
-      "max_uses": 8
+      "max_uses": 7
     }
   ],
   "defensives": [
@@ -97,8 +166,16 @@
     "184364": {
       "icon": "ability_warrior_focusedrage",
       "name": "Enraged Regeneration"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
     }
   },
-  "source_signature": "8ecfc1737126f690",
-  "ingest_version": 2
+  "source_signature": "a8f58cb35bd0e09a",
+  "ingest_version": 3
 }

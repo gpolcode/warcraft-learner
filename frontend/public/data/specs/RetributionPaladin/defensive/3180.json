@@ -56,7 +56,158 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 20.6,
+      "dmg_avg": 205960,
+      "dmg_stddev": 92086,
+      "dmg_min": 55215,
+      "dmg_max": 293101,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 4.8,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246765,
+          "avg_damage": 106762,
+          "min_damage": 98179,
+          "max_damage": 121379,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 40647,
+          "min_damage": 10466,
+          "max_damage": 70325,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 88.9,
+      "dmg_avg": 228864,
+      "dmg_stddev": 90284,
+      "dmg_min": 83153,
+      "dmg_max": 350108,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 3.3,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 230733,
+          "min_damage": 190548,
+          "max_damage": 334232,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 29502,
+          "min_damage": 14686,
+          "max_damage": 83153,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 183.2,
+      "dmg_avg": 244441,
+      "dmg_stddev": 59348,
+      "dmg_min": 190383,
+      "dmg_max": 333150,
+      "dmg_pct_avg": 0.018,
+      "window_length_s": 4.8,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 130500,
+          "min_damage": 31958,
+          "max_damage": 169148,
+          "count": 4
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 125149,
+          "min_damage": 122132,
+          "max_damage": 130523,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 54300,
+          "min_damage": 36866,
+          "max_damage": 100902,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 247.3,
+      "dmg_avg": 303876,
+      "dmg_stddev": 110221,
+      "dmg_min": 195527,
+      "dmg_max": 455555,
+      "dmg_pct_avg": 0.019,
+      "window_length_s": 5,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 195599,
+          "min_damage": 188643,
+          "max_damage": 205721,
+          "count": 3
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 76911,
+          "min_damage": 26903,
+          "max_damage": 153835,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 64899,
+          "min_damage": 21953,
+          "max_damage": 122289,
+          "count": 6
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 184662,
@@ -159,8 +310,28 @@
     "204018": {
       "icon": "spell_holy_blessingofprotection",
       "name": "Blessing of Spellwarding"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1246765": {
+      "icon": "ability_paladin_divinestorm",
+      "name": "Divine Storm"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
     }
   },
-  "source_signature": "02792c13f9f2a239",
-  "ingest_version": 2
+  "source_signature": "cf0d9526c7423e27",
+  "ingest_version": 3
 }

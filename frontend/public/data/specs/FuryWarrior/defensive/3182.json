@@ -58,7 +58,76 @@
       "majority_hold": true
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 159.6,
+      "dmg_avg": 253955,
+      "dmg_stddev": 76634,
+      "dmg_min": 136542,
+      "dmg_max": 346754,
+      "dmg_pct_avg": 0.025,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 262316,
+          "min_damage": 225144,
+          "max_damage": 323883,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 30638,
+          "min_damage": 22757,
+          "max_damage": 50537,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 211.7,
+      "dmg_avg": 223713,
+      "dmg_stddev": 94150,
+      "dmg_min": 116152,
+      "dmg_max": 369625,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 269487,
+          "min_damage": 236454,
+          "max_damage": 323883,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 34295,
+          "min_damage": 20937,
+          "max_damage": 48923,
+          "count": 6
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 97462,
@@ -116,8 +185,16 @@
     "184364": {
       "icon": "ability_warrior_focusedrage",
       "name": "Enraged Regeneration"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
     }
   },
-  "source_signature": "4e1e2dd0a42874c1",
-  "ingest_version": 2
+  "source_signature": "8cfeaea5a6e2b2d9",
+  "ingest_version": 3
 }

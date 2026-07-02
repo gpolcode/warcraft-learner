@@ -63,7 +63,35 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 103.9,
+      "dmg_avg": 214888,
+      "dmg_stddev": 22130,
+      "dmg_min": 189972,
+      "dmg_max": 246040,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 4.7,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 192575,
+          "min_damage": 78405,
+          "max_damage": 246040,
+          "count": 5
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 184662,
@@ -166,8 +194,12 @@
     "204018": {
       "icon": "spell_holy_blessingofprotection",
       "name": "Blessing of Spellwarding"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
     }
   },
-  "source_signature": "e8075a4d2b038c8d",
-  "ingest_version": 2
+  "source_signature": "8ac799b17d43ba63",
+  "ingest_version": 3
 }

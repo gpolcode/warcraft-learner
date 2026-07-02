@@ -6,10 +6,10 @@
   "per_defensive_benchmarks": {
     "Anti-Magic Shell": {
       "sample_count": 8,
-      "avg_first_cast_s": 31.5,
-      "stddev_first_cast_s": 22,
-      "avg_gap_s": 73.8,
-      "stddev_gap_s": 43.1,
+      "avg_first_cast_s": 42,
+      "stddev_first_cast_s": 27.2,
+      "avg_gap_s": 78.9,
+      "stddev_gap_s": 45.4,
       "hold_targets": {
         "1": {
           "target_s": 116.8,
@@ -18,62 +18,62 @@
           "total_samples": 8
         }
       },
-      "avg_uses": 3.4,
-      "avg_uses_per_min": 0.79,
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.71,
       "uses_per_min": {
-        "avg": 0.795,
-        "stddev": 0.32,
+        "avg": 0.707,
+        "stddev": 0.227,
         "min": 0.357,
-        "max": 1.355
+        "max": 1.007
       },
       "majority_hold": true
     },
     "Icebound Fortitude": {
-      "sample_count": 4,
-      "avg_first_cast_s": 231.7,
-      "stddev_first_cast_s": 66.2,
+      "sample_count": 5,
+      "avg_first_cast_s": 209.8,
+      "stddev_first_cast_s": 75.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.21,
+      "avg_uses_per_min": 0.24,
       "uses_per_min": {
-        "avg": 0.214,
-        "stddev": 0.071,
+        "avg": 0.236,
+        "stddev": 0.079,
         "min": 0.168,
-        "max": 0.318
+        "max": 0.325
       },
       "majority_hold": false
     },
     "Lichborne": {
-      "sample_count": 3,
-      "avg_first_cast_s": 169.8,
-      "stddev_first_cast_s": 75.8,
+      "sample_count": 2,
+      "avg_first_cast_s": 197.8,
+      "stddev_first_cast_s": 82.4,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
       "avg_uses_per_min": 0.26,
       "uses_per_min": {
-        "avg": 0.263,
-        "stddev": 0.059,
+        "avg": 0.26,
+        "stddev": 0.083,
         "min": 0.201,
         "max": 0.318
       },
       "majority_hold": false
     },
     "Death Pact": {
-      "sample_count": 4,
-      "avg_first_cast_s": 174.6,
-      "stddev_first_cast_s": 89.9,
+      "sample_count": 3,
+      "avg_first_cast_s": 194.9,
+      "stddev_first_cast_s": 98.2,
       "avg_gap_s": null,
       "stddev_gap_s": null,
       "hold_targets": {},
       "avg_uses": 1,
-      "avg_uses_per_min": 0.26,
+      "avg_uses_per_min": 0.25,
       "uses_per_min": {
-        "avg": 0.258,
-        "stddev": 0.062,
+        "avg": 0.253,
+        "stddev": 0.076,
         "min": 0.17,
         "max": 0.318
       },
@@ -97,11 +97,46 @@
       "majority_hold": false
     }
   },
-  "defensive_windows": [],
+  "defensive_windows": [
+    {
+      "time_s": 116.8,
+      "dmg_avg": 265870,
+      "dmg_stddev": 80588,
+      "dmg_min": 162851,
+      "dmg_max": 379879,
+      "dmg_pct_avg": 0.041,
+      "window_length_s": 6.2,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 158010,
+          "min_damage": 70572,
+          "max_damage": 250136,
+          "count": 5
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 100626,
+          "min_damage": 31179,
+          "max_damage": 172512,
+          "count": 4
+        }
+      ]
+    }
+  ],
   "top_defensives_summary": [
     {
       "spell_id": 48707,
-      "avg_uses": 3.4,
+      "avg_uses": 3,
       "min_uses": 1,
       "max_uses": 6
     },
@@ -199,8 +234,16 @@
     "51052": {
       "icon": "spell_deathknight_antimagiczone",
       "name": "Anti-Magic Zone"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
     }
   },
-  "source_signature": "48737f7efee4d5e9",
-  "ingest_version": 2
+  "source_signature": "b3cd6d82d5185f55",
+  "ingest_version": 3
 }

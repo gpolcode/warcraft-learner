@@ -82,6 +82,108 @@
   },
   "defensive_windows": [
     {
+      "time_s": 12.1,
+      "dmg_avg": 263022,
+      "dmg_stddev": 113087,
+      "dmg_min": 180411,
+      "dmg_max": 461591,
+      "dmg_pct_avg": 0.04,
+      "window_length_s": 7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260052,
+          "avg_damage": 179264,
+          "min_damage": 168763,
+          "max_damage": 193102,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 30106,
+          "min_damage": 11648,
+          "max_damage": 38745,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 62,
+      "dmg_avg": 269124,
+      "dmg_stddev": 127509,
+      "dmg_min": 37375,
+      "dmg_max": 419558,
+      "dmg_pct_avg": 0.041,
+      "window_length_s": 6.1,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 282700,
+          "min_damage": 152391,
+          "max_damage": 392506,
+          "count": 5
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 35638,
+          "min_damage": 13398,
+          "max_damage": 49756,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 88.7,
+      "dmg_avg": 235289,
+      "dmg_stddev": 84648,
+      "dmg_min": 145566,
+      "dmg_max": 336180,
+      "dmg_pct_avg": 0.036,
+      "window_length_s": 8,
+      "defensive_name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "common_defensives": [
+        "Icebound Fortitude"
+      ],
+      "common_cds": [
+        "Icebound Fortitude"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 124616,
+          "min_damage": 57144,
+          "max_damage": 171431,
+          "count": 5
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 34883,
+          "min_damage": 31340,
+          "max_damage": 37419,
+          "count": 5
+        }
+      ]
+    },
+    {
       "time_s": 104.3,
       "dmg_avg": 332924,
       "dmg_stddev": 44555,
@@ -112,6 +214,40 @@
           "min_damage": 32153,
           "max_damage": 53590,
           "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 185.5,
+      "dmg_avg": 277380,
+      "dmg_stddev": 115346,
+      "dmg_min": 76320,
+      "dmg_max": 436261,
+      "dmg_pct_avg": 0.043,
+      "window_length_s": 5.8,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 211960,
+          "min_damage": 76202,
+          "max_damage": 361512,
+          "count": 7
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 69416,
+          "min_damage": 34366,
+          "max_damage": 103404,
+          "count": 9
         }
       ]
     },
@@ -250,15 +386,23 @@
       "icon": "ability_argus_soulburst",
       "name": "Blisterburst"
     },
+    "1260052": {
+      "icon": "spell_fire_twilightflamebreath",
+      "name": "Primordial Roar"
+    },
     "1272950": {
       "icon": "inv_elemental_primal_shadow",
       "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
     },
     "1280101": {
       "icon": "inv_cosmicvoid_debuff",
       "name": "Dark Energy"
     }
   },
-  "source_signature": "2dcbf6854da8cf40",
-  "ingest_version": 2
+  "source_signature": "862d079217319333",
+  "ingest_version": 3
 }
