@@ -122,39 +122,61 @@ describe('gapDelayFindings', () => {
 });
 
 describe('holdSuggestionFindings', () => {
-  // Prior-relative band (mirrors rotation): cast index 2 (the second use) holds ~40s past the
-  // 60s reset, band 5 -> flag when the player's OWN gap from their prior cast is below
-  // 40 - 5 = 35s past reset. Over-holding is tolerated.
+  const NAME = 'Cloak of Shadows';
+  // Prior-relative band (mirrors rotation): the top parses hold this cast HOLD_DELAY_S past the
+  // reset, and the runtime flags an under-hold only when the player's own gap from their prior
+  // cast is more than HOLD_BAND_S below that. Over-holding is tolerated.
+  const HELD_CAST_INDEX = 2;      // the second use (1-based key)
+  const EFFECTIVE_CD_S = 60;      // the defensive's cooldown (cadence zero-point)
+  const HOLD_DELAY_S = 40;        // top parses hold ~40s past the reset
+  const HOLD_BAND_S = 5;          // tolerance half-width -> flag below HOLD_DELAY_S - HOLD_BAND_S
+  const TARGET_CLOCK_S = 130;     // display-only median clock target ("hold to 2:10")
+  const HELD_COUNT = 6;           // "6 of 10 top parses hold" copy
+  const TOTAL_SAMPLED = 10;
+  const PRIOR_CAST_S = 10;
+  // A gap of exactly EFFECTIVE_CD_S + HOLD_DELAY_S - HOLD_BAND_S past the prior cast sits on the
+  // band edge; below it flags, at/above it does not.
+  const BAND_EDGE_S = PRIOR_CAST_S + EFFECTIVE_CD_S + (HOLD_DELAY_S - HOLD_BAND_S);
+  const UNDER_HELD_S = BAND_EDGE_S - 5;  // clearly below the band edge
+  const OVER_HELD_S = PRIOR_CAST_S + EFFECTIVE_CD_S + HOLD_DELAY_S + 20; // past the band (tolerated)
+
   const holdTargets: PerDefensiveBenchmark['hold_targets'] = {
-    2: { target_s: 130, stddev_s: 5, delay_s: 40, delay_stddev_s: 3, band_s: 5, effective_cd_s: 60, count: 6, total_samples: 10 },
+    [HELD_CAST_INDEX]: {
+      target_s: TARGET_CLOCK_S, stddev_s: HOLD_BAND_S,
+      delay_s: HOLD_DELAY_S, delay_stddev_s: 3, band_s: HOLD_BAND_S, effective_cd_s: EFFECTIVE_CD_S,
+      count: HELD_COUNT, total_samples: TOTAL_SAMPLED,
+    },
   };
 
   it('suggests a hold when the player under-held vs the prior-relative band', () => {
-    // casts at 10 and 100 -> gap 90 -> 30s past the 60s reset, below the 35s band edge.
-    const out = holdSuggestionFindings('Cloak of Shadows', [10, 100], holdTargets);
+    const out = holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ severity: 'info', category: 'hold_suggestion' });
   });
 
   it('does not suggest at the band edge (strict boundary)', () => {
-    // casts at 10 and 105 -> gap 95 -> exactly 35s past reset, not strictly below.
-    expect(holdSuggestionFindings('Cloak of Shadows', [10, 105], holdTargets)).toEqual([]);
+    expect(holdSuggestionFindings(NAME, [PRIOR_CAST_S, BAND_EDGE_S], holdTargets)).toEqual([]);
   });
 
   it('tolerates over-holding (a later-than-band press is fine)', () => {
-    // casts at 10 and 130 -> 60s past reset, above the band.
-    expect(holdSuggestionFindings('Cloak of Shadows', [10, 130], holdTargets)).toEqual([]);
+    expect(holdSuggestionFindings(NAME, [PRIOR_CAST_S, OVER_HELD_S], holdTargets)).toEqual([]);
   });
 
   it('skips index 0 - no prior cast to measure a gap against', () => {
+    const FIRST_CAST_INDEX = 1;
+    const PLAYER_FIRST_S = 80;
     const firstOnly: PerDefensiveBenchmark['hold_targets'] = {
-      1: { target_s: 100, stddev_s: 5, delay_s: 40, delay_stddev_s: 3, band_s: 5, effective_cd_s: 60, count: 6, total_samples: 10 },
+      [FIRST_CAST_INDEX]: {
+        target_s: TARGET_CLOCK_S, stddev_s: HOLD_BAND_S,
+        delay_s: HOLD_DELAY_S, delay_stddev_s: 3, band_s: HOLD_BAND_S, effective_cd_s: EFFECTIVE_CD_S,
+        count: HELD_COUNT, total_samples: TOTAL_SAMPLED,
+      },
     };
-    expect(holdSuggestionFindings('Cloak of Shadows', [80], firstOnly)).toEqual([]);
+    expect(holdSuggestionFindings(NAME, [PLAYER_FIRST_S], firstOnly)).toEqual([]);
   });
 
   it('skips a cast index the player never reached', () => {
-    expect(holdSuggestionFindings('Cloak of Shadows', [10], holdTargets)).toEqual([]);
+    expect(holdSuggestionFindings(NAME, [PRIOR_CAST_S], holdTargets)).toEqual([]);
   });
 });
 
@@ -166,22 +188,27 @@ describe('analyzeOneDefensive', () => {
   };
   const player = (overrides: Partial<PlayerDefensive>): PlayerDefensive =>
     ({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_s: [], windows: [], ...overrides });
+  const FIGHT_DUR_S = 300;
 
   it('flags a never-used defensive as a critical lost cooldown', () => {
     const out = analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), bench, 300);
     expect(out[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
   });
 
+  // used_sample_count / sample_count below MIN_USE_SHARE_FRAC (0.5) -> a situational defensive.
+  const TOTAL_SAMPLED = 10;
+  const MINORITY_USERS = 3;       // 3/10 = 30% < 50%
+  const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS };
+
   it('does not flag an unused defensive that only a minority of top parses use (use-share gate)', () => {
-    // 3 of 10 top parses used it (< 50%): the player matching them by not pressing it is fine.
-    const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: 10, used_sample_count: 3 };
-    expect(analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), minorityUse, 300)).toEqual([]);
+    // The player matching the top parses by not pressing it is not a lost cast.
+    expect(analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), minorityUse, FIGHT_DUR_S)).toEqual([]);
   });
 
   it('does not flag a late first use of a minority-use defensive (use-share gate)', () => {
-    const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: 10, used_sample_count: 3 };
-    // First use at 40s is > avg 10 + 2*2, but the first-cast check is gated off by low use-share.
-    const out = analyzeOneDefensive(player({ uses: 1, cast_times_s: [40] }), minorityUse, 300);
+    // First use is well past avg 10 + 2*stddev 2 = 14s, but the first-cast check is gated off.
+    const LATE_FIRST_S = 40;
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_s: [LATE_FIRST_S] }), minorityUse, FIGHT_DUR_S);
     expect(out.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 

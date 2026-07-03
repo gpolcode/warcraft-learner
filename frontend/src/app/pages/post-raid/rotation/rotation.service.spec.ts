@@ -237,9 +237,11 @@ describe('analyzeRotationFindings', () => {
   });
 
   it('gives the cast-efficiency finding a label and a remedy so the row is not blank', () => {
-    // 6s -> 30s is a 24s idle gap on a 120s fight = 80% efficiency, below the 87% (top avg 90
-    // minus 1 sigma) warn threshold.
-    const casts = [cast(SHADOW_BLADES, 6), cast(SHADOW_BLADES, 30)];
+    // A 24s idle gap on the 120s scan fight = 80% efficiency, below the 87% (top avg 90 minus
+    // 1 sigma) warn threshold.
+    const FIRST_CAST_S = 6;
+    const LATE_CAST_S = 30;
+    const casts = [cast(SHADOW_BLADES, FIRST_CAST_S), cast(SHADOW_BLADES, LATE_CAST_S)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: bench() }));
     const efficiency = findings.find(f => f.category === 'cast_efficiency');
     expect(efficiency).toBeDefined();
@@ -393,40 +395,53 @@ describe('checkHoldSuggestions', () => {
 
 describe('checkCastEfficiency', () => {
   const ONE_SEC_MS = 1000;
+  const FIGHT_DUR_S = 120;
+  // bench(): top_avg_efficiency 90%, top_efficiency_stddev 3% -> the warn threshold is 1 sigma
+  // under, i.e. below 87%. efficiency% = (1 - idleS / FIGHT_DUR_S) * 100.
+  const TOP_AVG_PCT = 90;
+  const WARN_THRESHOLD_PCT = TOP_AVG_PCT - 3;  // top avg minus 1 sigma
+  // Idle spans chosen relative to the threshold. Each is a single gap > the 1.5s downtime floor.
+  const IDLE_BELOW_BAND_S = 20;   // -> 83.3%, below WARN_THRESHOLD_PCT
+  const IDLE_FAR_BELOW_S = 60;    // -> 50%, far below the band
+  const IDLE_AT_TOP_AVG_S = 12;   // -> 90% == top avg, inside the band
+  const IDLE_ABOVE_AVG_MS = 1600; // just over the 1.5s downtime floor -> 98.7%, above top avg
 
-  // bench(): top_avg_efficiency 90, top_efficiency_stddev 3 -> warn below 87% (1 sigma under).
   it('flags low cast efficiency more than 1 sigma below the top parses', () => {
-    // 20s idle on a 120s fight = 83.3% efficiency, below the 87% threshold.
-    const finding = checkCastEfficiency([0, 20 * ONE_SEC_MS], 120, bench());
+    const finding = checkCastEfficiency([0, IDLE_BELOW_BAND_S * ONE_SEC_MS], FIGHT_DUR_S, bench());
     expect(finding?.category).toBe('cast_efficiency');
     expect(finding?.severity).toBe('warning');
     expect(finding?.details?.remedy).toBeTruthy();
   });
 
   it('never escalates to critical, however far below', () => {
-    // 60s idle on a 120s fight = 50% efficiency, far below the band, still only a warning.
-    expect(checkCastEfficiency([0, 60 * ONE_SEC_MS], 120, bench())?.severity).toBe('warning');
+    expect(checkCastEfficiency([0, IDLE_FAR_BELOW_S * ONE_SEC_MS], FIGHT_DUR_S, bench())?.severity).toBe('warning');
   });
 
   it('does not flag efficiency within 1 sigma of the top average', () => {
-    // 12s idle = 90% == top avg, inside the band -> no finding (no fixed idle floor anymore).
-    expect(checkCastEfficiency([0, 12 * ONE_SEC_MS], 120, bench())).toBeNull();
+    // At the top average, inside the band -> no finding (no fixed idle floor anymore).
+    expect(WARN_THRESHOLD_PCT).toBeLessThan(TOP_AVG_PCT); // the band has width, so the top avg is inside it
+    expect(checkCastEfficiency([0, IDLE_AT_TOP_AVG_S * ONE_SEC_MS], FIGHT_DUR_S, bench())).toBeNull();
   });
 
   it('does not flag when the player beats the top parses', () => {
-    // 1.6s gap (just over the 1.5s downtime floor) = 98.7% efficiency, above the top average.
-    expect(checkCastEfficiency([0, 1600], 120, bench())).toBeNull();
+    expect(checkCastEfficiency([0, IDLE_ABOVE_AVG_MS], FIGHT_DUR_S, bench())).toBeNull();
   });
 
   it('returns null with fewer than two casts', () => {
-    expect(checkCastEfficiency([0], 120, bench())).toBeNull();
+    expect(checkCastEfficiency([0], FIGHT_DUR_S, bench())).toBeNull();
   });
 });
 
 describe('analyzeOneCooldown', () => {
   const ONE_SEC_MS = 1000;
+  const FIGHT_DUR_S = 120;
+  const UPM = { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 };  // top-parse uses-per-minute
   const cd = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, align_with_bloodlust: true };
-  const single = cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } });
+  const single = cdBench({ uses_per_min: UPM });
+  // A cooldown a minority of top parses use: used/sample below MIN_USE_SHARE_FRAC (0.5).
+  const TOTAL_SAMPLED = 10;
+  const MINORITY_USERS = 2;  // 2/10 = 20%
+  const rareUse = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, uses_per_min: UPM });
 
   it('skips a talent-gated cooldown that was never used', () => {
     expect(analyzeOneCooldown({ ...cd, talent_gated: true }, [], single, 120, null)).toBeNull();
@@ -446,17 +461,16 @@ describe('analyzeOneCooldown', () => {
   });
 
   it('does not flag an unused cooldown that only a minority of top parses use (use-share gate)', () => {
-    // 2 of 10 top parses used it (< 50%): matching them by not pressing it is not a lost cast.
-    const rareUse = cdBench({ sample_count: 10, used_sample_count: 2, uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } });
-    const result = analyzeOneCooldown(cd, [], rareUse, 120, null);
+    // Matching the top parses by not pressing it is not a lost cast.
+    const result = analyzeOneCooldown(cd, [], rareUse, FIGHT_DUR_S, null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success).toBeNull();
   });
 
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
-    const rareUse = cdBench({ sample_count: 10, used_sample_count: 2, uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } });
-    // Opened at 40s (>2 sigma past the 5s top first cast), but the first-cast check is gated off.
-    const result = analyzeOneCooldown(cd, [40 * ONE_SEC_MS], rareUse, 120, null);
+    // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
+    const LATE_OPENER_S = 40;
+    const result = analyzeOneCooldown(cd, [LATE_OPENER_S * ONE_SEC_MS], rareUse, FIGHT_DUR_S, null);
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 });

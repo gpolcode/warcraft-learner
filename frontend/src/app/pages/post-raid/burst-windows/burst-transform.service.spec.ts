@@ -358,21 +358,30 @@ describe('clusterParseWindows', () => {
 
   // Fix 6: consensus counts DISTINCT parses, not windows. A parse can land two dense runs
   // within CLUSTER_MERGE_S of one cluster; those must not double-count toward the gate.
+  const PARSE_A = 0;
+  const PARSE_B = 1;
+
   it('counts distinct parses, not windows, at the consensus gate', () => {
-    // 3 windows but only 2 distinct parses (parse 0 contributes two). Floor at sampleCount 6
-    // is max(2, 0.4 * 6) = 2.4: window-count 3 would survive, distinct-parse count 2 does not.
-    const cluster = [window(10, false, 0), window(11, false, 0), window(12, false, 1)];
-    expect(clusterParseWindows(cluster, 6)).toHaveLength(0);
+    // sampleCount 6 -> consensus floor max(2, CLUSTER_MIN_FRAC 0.4 * 6) = 2.4. The cluster has
+    // 3 windows but only 2 distinct parses (PARSE_A contributes two): window-count 3 would
+    // survive the old gate, distinct-parse count 2 does not.
+    const SAMPLE_COUNT = 6;
+    const cluster = [window(10, false, PARSE_A), window(11, false, PARSE_A), window(12, false, PARSE_B)];
+    expect(clusterParseWindows(cluster, SAMPLE_COUNT)).toHaveLength(0);
   });
 
   it('keeps each parse\'s biggest window when a parse contributes two to a cluster', () => {
-    const small = { ...window(10, false, 0), window_damage: 500 };
-    const big = { ...window(11, false, 0), window_damage: 900 };
-    const other = { ...window(12, false, 1), window_damage: 700 };
-    const out = clusterParseWindows([small, big, other], 2);
+    const SAMPLE_COUNT = 2;
+    const PARSE_A_SMALLER_DMG = 500;
+    const PARSE_A_BIGGER_DMG = 900;  // PARSE_A's window that survives the dedupe
+    const PARSE_B_DMG = 700;
+    const EXPECTED_AVG = (PARSE_A_BIGGER_DMG + PARSE_B_DMG) / 2; // PARSE_A's 500 window is dropped
+    const small = { ...window(10, false, PARSE_A), window_damage: PARSE_A_SMALLER_DMG };
+    const big = { ...window(11, false, PARSE_A), window_damage: PARSE_A_BIGGER_DMG };
+    const other = { ...window(12, false, PARSE_B), window_damage: PARSE_B_DMG };
+    const out = clusterParseWindows([small, big, other], SAMPLE_COUNT);
     expect(out).toHaveLength(1);
-    // 2 distinct parses; parse 0's smaller 500 window is dropped, so dmg_avg = mean(900, 700).
-    expect(out[0].dmg_avg).toBe(800);
+    expect(out[0].dmg_avg).toBe(EXPECTED_AVG);
   });
 });
 

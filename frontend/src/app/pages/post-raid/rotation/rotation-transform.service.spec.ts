@@ -125,13 +125,16 @@ describe('buildCdBenchmark', () => {
   });
 
   it('counts used_sample_count as the parses with at least one use (use-share gate)', () => {
-    const unused: CdSummary = {
+    const TOTAL_PARSES = 2;
+    const USERS = 1;  // one parse used it, one never did
+    const usedParse = entry(5, 2, 120, 2, true, [5, 95]);
+    const unusedParse: CdSummary = {
       name: 'Shadow Blades', total_uses: 0, first_cast_s: null, bl_aligned: false, bl_offset_s: null,
       cast_times_s: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     };
-    const bench = buildCdBenchmark([entry(5, 2, 120, 2, true, [5, 95]), unused], 90);
-    expect(bench.sample_count).toBe(2); // total parses
-    expect(bench.used_sample_count).toBe(1); // only one used it
+    const bench = buildCdBenchmark([usedParse, unusedParse], 90);
+    expect(bench.sample_count).toBe(TOTAL_PARSES);
+    expect(bench.used_sample_count).toBe(USERS);
   });
 
   it('leaves gap + BL fields null when not applicable', () => {
