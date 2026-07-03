@@ -146,10 +146,9 @@ export function summarizeDefensiveCasts(
     }
 
     castTimes.sort((a, b) => a - b);
-    // cast_index is 1-BASED (the ordinal of the held cast), matching the rotation slice and
-    // the runtime's `parseInt(idx) - 1` decode - the previous 0-based index was off by one, so
-    // the runtime compared the player's FIRST use against the bench's SECOND-use target.
-    // delay_s is the prior-relative hold past the natural reset, for the cascade-free runtime band.
+    // cast_index is 1-based (the ordinal of the held cast), matching the rotation slice and the
+    // runtime's `parseInt(idx) - 1` decode. delay_s is the prior-relative hold past the natural
+    // reset, so the runtime compares the player's own gap (cascade-free).
     const holdWindows: { cast_index: number; actual_s: number; delay_s: number }[] = [];
     for (let castIndex = 1; castIndex < castTimes.length; castIndex++) {
       const expectedS = castTimes[castIndex - 1] + cooldownS;

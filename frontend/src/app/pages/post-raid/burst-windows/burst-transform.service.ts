@@ -308,10 +308,9 @@ export function dedupeByParse(cluster: ParseWindow[]): ParseWindow[] {
 export function clusterParseWindows(windows: ParseWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
   const result: BurstWindow[] = [];
   for (const cluster of groupByTime(windows, mergeS)) {
-    // One window per parse (its biggest): a parse can land two dense runs within
-    // CLUSTER_MERGE_S of the cluster, which would double-count it in both the consensus gate
-    // and the damage stats. Dedupe so consensus counts DISTINCT parses "most parses share it"
-    // (mirrors the defensive slice's parse_index dedupe).
+    // Reduce to one window per parse (its biggest) so the consensus gate and the damage stats
+    // count DISTINCT parses - a parse that lands two dense runs within CLUSTER_MERGE_S of the
+    // cluster counts once ("most parses share it"), like the defensive slice's parse_index dedupe.
     const members = dedupeByParse(cluster);
     if (members.length < Math.max(2, sampleCount * CLUSTER_MIN_FRAC)) continue;
     const damages = members.map(member => member.window_damage);

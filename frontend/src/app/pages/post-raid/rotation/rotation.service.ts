@@ -222,14 +222,9 @@ export function rulesFollowed(rules: RulebookRule[], casts: WclEvent[], fStart: 
 /** A cooldown's lost/unused + first-cast checks run only when at least this share of top parses used it. */
 const MIN_USE_SHARE_FRAC = 0.5;
 
-/**
- * Fraction of sampled top parses that used a cooldown at least once. Rollout-compat: a
- * pre-v4 bench without `used_sample_count` reads as fully used (1), preserving the old
- * always-on behavior until the file is re-baked.
- */
+/** Fraction of sampled top parses that used a cooldown at least once. */
 function usedShare(bench: PerCdBenchmark): number {
-  const total = bench.sample_count || 0;
-  return total ? (bench.used_sample_count ?? total) / total : 1;
+  return bench.sample_count ? bench.used_sample_count / bench.sample_count : 0;
 }
 
 /** The named inputs `analyzeRotationFindings` scans (replaces 7 positional args). */
@@ -366,9 +361,8 @@ export function checkCastEfficiency(
   const topSD = bench.top_efficiency_stddev;
   const effPct = castEfficiencyPct(totalDtS, fightDurS);
   // Flag only when the player sits more than 1 sigma BELOW the top-parse efficiency; within
-  // the +/-1 sigma band, or above it, is fine - so beating the top parses never trips a
-  // warning (the old code fired on any idle past a fixed 5s floor, even above the top avg).
-  // Low cast efficiency is a nudge, always a warning, never critical.
+  // the +/-1 sigma band, or above it, is fine, so beating the top parses never trips a
+  // warning. Low cast efficiency is a nudge, always a warning, never critical.
   if (!isCriticallyBelow(effPct, topE, topSD)) return null;
   return {
     severity: 'warning', category: 'cast_efficiency',

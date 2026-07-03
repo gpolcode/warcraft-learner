@@ -73,14 +73,9 @@ const dmgOf = (event: WclEvent): number => (event.amount || 0) + (event.absorbed
 /** A defensive's lost/unused + first-cast checks run only when at least this share of top parses used it. */
 const MIN_USE_SHARE_FRAC = 0.5;
 
-/**
- * Fraction of sampled top parses that used a defensive at least once. Rollout-compat: a
- * pre-v4 bench without `used_sample_count` reads as fully used (1), preserving the old
- * always-on behavior until the file is re-baked.
- */
+/** Fraction of sampled top parses that used a defensive at least once. */
 function defensiveUsedShare(bench: PerDefensiveBenchmark): number {
-  const total = bench.sample_count || 0;
-  return total ? (bench.used_sample_count ?? total) / total : 1;
+  return bench.sample_count ? bench.used_sample_count / bench.sample_count : 0;
 }
 
 /* ----------------------------- player defensives ----------------------------- */
@@ -181,9 +176,9 @@ export function gapDelayFindings(
 
 /**
  * Hold suggestions where the player pressed a cast earlier than the top-parse consensus.
- * PRIOR-RELATIVE (mirrors the rotation slice, cascade-free): compare the player's own gap
- * from their previous cast against the band, not an absolute clock target. Flags only an
- * under-hold clearly below the band; over-holding is tolerated.
+ * Prior-relative (cascade-free, like the rotation slice): compare the player's own gap from
+ * their previous cast against the band. Flags only an under-hold clearly below the band;
+ * over-holding is tolerated.
  */
 export function holdSuggestionFindings(
   name: string, castTimesS: number[], holdTargets: PerDefensiveBenchmark['hold_targets'],
