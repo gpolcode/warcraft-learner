@@ -1,0 +1,159 @@
+{
+  "spec": "FeralDruid",
+  "major_cooldowns": [
+    {
+      "name": "Berserk",
+      "spell_id": 106951,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Cast on cooldown synced with Tiger's Fury and Convoke the Spirits, only once your Rip and Rake bleeds are already rolling so the free combo points and bonus generation are spent on direct damage."
+    },
+    {
+      "name": "Incarnation: Avatar of Ashamane",
+      "spell_id": 102543,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "talent_gated": true,
+      "usage_rule": "Replaces Berserk when talented; cast on cooldown with Tiger's Fury and Convoke active and exploit the in-combat Prowl to land an empowered stealth Rake during the window."
+    },
+    {
+      "name": "Tiger's Fury",
+      "spell_id": 5217,
+      "cooldown": 30,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press on cooldown when below roughly 50 energy so none is wasted, and apply or refresh Rip and Rake during the buff to snapshot the damage bonus into the full bleed duration."
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "talent_gated": true,
+      "usage_rule": "Cast at low combo points with all debuffs already applied and synced inside the Berserk and Tiger's Fury window so its random casts are spent on direct damage rather than re-applying bleeds."
+    },
+    {
+      "name": "Feral Frenzy",
+      "spell_id": 274837,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "talent_gated": true,
+      "usage_rule": "Cast on cooldown at 0-2 combo points (up to 4 inside Berserk) to avoid overcapping the combo points it generates; this is the Feral Frenzy talent variant, not the Frantic Frenzy haste passive."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events."
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight."
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "talent_gated": true,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form."
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "talent_gated": true,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Sync Berserk with Tiger's Fury",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 106951,
+        "spell_name": "Berserk",
+        "required_spell_id": 5217,
+        "required_spell_name": "Tiger's Fury",
+        "window_s": 5
+      },
+      "action": "Always activate Tiger's Fury immediately before Berserk so the two damage windows overlap; never open a Berserk window without Tiger's Fury active."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Convoke the Spirits inside Berserk",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 391528,
+        "spell_name": "Convoke the Spirits",
+        "required_spell_id": 106951,
+        "required_spell_name": "Berserk",
+        "window_s": 20
+      },
+      "action": "Line up Convoke the Spirits with each Berserk window; cast it at low combo points with your bleeds already applied so its random casts roll into direct damage."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Rake, build, Rip, then cooldowns",
+      "condition": null,
+      "action": "Open with a stealthed Rake, Shred to 5 combo points, fire Tiger's Fury and Berserk, apply Rip, then cast Convoke the Spirits and Feral Frenzy and spend with Ferocious Bite at 5 combo points and 50 energy."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Rip and Rake up at all times",
+      "condition": null,
+      "action": "Maintain Rip and Rake on the target without letting them drop; refresh inside the pandemic window and prefer refreshing during Tiger's Fury to snapshot the damage bonus into the full bleed."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Ferocious Bite at 5 CP and 50 energy",
+      "condition": null,
+      "action": "Only cast Ferocious Bite at 5 combo points with at least 50 energy so it spends the full 25 bonus energy for maximum damage, and never bite while Rip needs applying."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Avoid wasting energy and Tiger's Fury",
+      "condition": null,
+      "action": "Pool below 50 energy as Tiger's Fury approaches so no energy is wasted on its regen burst, and dump energy if Tiger's Fury is more than 3 seconds out and you are above 80 percent energy."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Primal Wrath and Swipe at 2+ targets",
+      "condition": null,
+      "action": "On 2 or more targets, spend combo points with Primal Wrath to spread Rip and build with Swipe instead of Shred; keep Rake applied across targets and use Ferocious Bite on Apex Predator's Craving procs."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stay behind the target for Shred",
+      "condition": null,
+      "action": "Remain behind the boss so Shred deals its full bonus damage and cannot be parried; ask the tank to face the boss away from the raid if you cannot reach the rear."
+    }
+  ],
+  "source_summary": "Feral Druid damage is built on continuously rolling Rip and Rake bleeds while stacking offensive cooldowns into tight windows. Tiger's Fury anchors the rotation on a short cooldown and should be used to snapshot bleeds, while Berserk (or Incarnation), Convoke the Spirits, and Feral Frenzy are synced together so their windows overlap. Between windows, pool energy and preserve combo points so each Berserk begins with bleeds active and cooldowns ready to chain."
+,
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:05:14"
+}

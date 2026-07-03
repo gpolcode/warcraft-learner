@@ -1,0 +1,111 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 8,
+      "avg_first_cast_s": 325.8,
+      "stddev_first_cast_s": 110.7,
+      "avg_gap_s": 137.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.16,
+        "stddev": 0.069,
+        "min": 0.116,
+        "max": 0.329
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 191.9,
+      "stddev_first_cast_s": 104.4,
+      "avg_gap_s": 109.7,
+      "stddev_gap_s": 61.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 269.8,
+          "stddev_s": 115.8,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.356,
+        "stddev": 0.153,
+        "min": 0.149,
+        "max": 0.721
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    }
+  },
+  "source_signature": "13461a0efa92cfa7",
+  "ingest_version": 2
+}

@@ -1,0 +1,197 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Rallying Cry": {
+      "sample_count": 2,
+      "avg_first_cast_s": 188.7,
+      "stddev_first_cast_s": 8.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.292,
+        "stddev": 0.004,
+        "min": 0.289,
+        "max": 0.294
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 71.4,
+      "stddev_first_cast_s": 50.6,
+      "avg_gap_s": 83.6,
+      "stddev_gap_s": 34.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 183.6,
+          "stddev_s": 67.9,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.523,
+        "stddev": 0.299,
+        "min": 0.281,
+        "max": 1.156
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 59.8,
+      "dmg_avg": 189820,
+      "dmg_stddev": 125885,
+      "dmg_min": 20404,
+      "dmg_max": 315116,
+      "window_length_s": 4.7,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 250243,
+          "min_damage": 186459,
+          "max_damage": 294792,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 22614,
+          "min_damage": 20324,
+          "max_damage": 29084,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 185.8,
+      "dmg_avg": 258793,
+      "dmg_stddev": 133612,
+      "dmg_min": 84680,
+      "dmg_max": 376931,
+      "window_length_s": 4.9,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 247562,
+          "min_damage": 186461,
+          "max_damage": 312001,
+          "count": 3
+        },
+        {
+          "spell_id": 1243270,
+          "avg_damage": 69021,
+          "min_damage": 49481,
+          "max_damage": 104412,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 42819,
+          "min_damage": 21509,
+          "max_damage": 64930,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "184364": {
+      "icon": "ability_warrior_focusedrage",
+      "name": "Enraged Regeneration"
+    },
+    "1243270": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Dark Goo"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
+    }
+  },
+  "source_signature": "3659293bb83ee202",
+  "ingest_version": 1
+}

@@ -1,0 +1,382 @@
+{
+  "spec": "AfflictionWarlock",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 8,
+      "avg_first_cast_s": 165.7,
+      "stddev_first_cast_s": 107.9,
+      "avg_gap_s": 164.8,
+      "stddev_gap_s": 36.4,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.253,
+        "stddev": 0.146,
+        "min": 0.143,
+        "max": 0.511
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 90.1,
+      "stddev_first_cast_s": 39.6,
+      "avg_gap_s": 68,
+      "stddev_gap_s": 27.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 210,
+          "stddev_s": 52.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 244.9,
+          "stddev_s": 6.7,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.9,
+      "avg_uses_per_min": 0.76,
+      "uses_per_min": {
+        "avg": 0.757,
+        "stddev": 0.234,
+        "min": 0.522,
+        "max": 1.328
+      },
+      "majority_hold": true
+    },
+    "Mortal Coil": {
+      "sample_count": 5,
+      "avg_first_cast_s": 256.4,
+      "stddev_first_cast_s": 99.8,
+      "avg_gap_s": 60.6,
+      "stddev_gap_s": 7,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.251,
+        "stddev": 0.241,
+        "min": 0.128,
+        "max": 0.682
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 88.2,
+      "dmg_avg": 545763,
+      "dmg_stddev": 111224,
+      "dmg_min": 393235,
+      "dmg_max": 713640,
+      "dmg_pct_avg": 0.029,
+      "window_length_s": 9.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 321034,
+          "min_damage": 280648,
+          "max_damage": 368622,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 112386,
+          "min_damage": 22506,
+          "max_damage": 247714,
+          "count": 7
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 7240,
+          "min_damage": 2107,
+          "max_damage": 15062,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 143.1,
+      "dmg_avg": 542563,
+      "dmg_stddev": 124428,
+      "dmg_min": 328666,
+      "dmg_max": 705154,
+      "dmg_pct_avg": 0.031,
+      "window_length_s": 4.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 331468,
+          "min_damage": 163546,
+          "max_damage": 503229,
+          "count": 9
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 69942,
+          "min_damage": 23688,
+          "max_damage": 114287,
+          "count": 8
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4917,
+          "min_damage": 635,
+          "max_damage": 9659,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 244.1,
+      "dmg_avg": 453965,
+      "dmg_stddev": 116570,
+      "dmg_min": 333472,
+      "dmg_max": 706487,
+      "dmg_pct_avg": 0.025,
+      "window_length_s": 6.2,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 301881,
+          "min_damage": 226667,
+          "max_damage": 407398,
+          "count": 6
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 129222,
+          "min_damage": 35856,
+          "max_damage": 183275,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 114207,
+          "min_damage": 20758,
+          "max_damage": 311079,
+          "count": 10
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 5571,
+          "min_damage": 1286,
+          "max_damage": 22393,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 299,
+      "dmg_avg": 506764,
+      "dmg_stddev": 210495,
+      "dmg_min": 58987,
+      "dmg_max": 816990,
+      "dmg_pct_avg": 0.027,
+      "window_length_s": 8.3,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 325943,
+          "min_damage": 244439,
+          "max_damage": 389201,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 160840,
+          "min_damage": 58776,
+          "max_damage": 369814,
+          "count": 9
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 7143,
+          "min_damage": 211,
+          "max_damage": 19453,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 392.4,
+      "dmg_avg": 290437,
+      "dmg_stddev": 119860,
+      "dmg_min": 124220,
+      "dmg_max": 447228,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 3.8,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 140071,
+          "min_damage": 78143,
+          "max_damage": 175722,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 109081,
+          "min_damage": 67348,
+          "max_damage": 141526,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 3524,
+          "min_damage": 1551,
+          "max_damage": 5368,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 4.9,
+      "min_uses": 3,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 6789,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a heavy spike of incoming damage to reduce damage taken by 40% and prevent spell pushback for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Use proactively ahead of a damage event to sacrifice Soul Shards for a large absorb shield; talented choice, so absence is expected if not selected.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal yourself for a percentage of health while horrifying the target; talented choice on the same row as Howl of Terror.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Consume when your health drops low to instantly restore a chunk of health; create one before the pull and use it freely on its own cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "7ce98e5592b142ab",
+  "ingest_version": 3
+}

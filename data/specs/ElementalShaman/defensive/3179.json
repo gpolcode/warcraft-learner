@@ -1,0 +1,94 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 4,
+      "avg_first_cast_s": 130.9,
+      "stddev_first_cast_s": 65.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.275,
+        "stddev": 0.036,
+        "min": 0.222,
+        "max": 0.298
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "Drop ahead of incoming damage to absorb a large initial hit plus periodic shields; talent_gated since not every build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate during a high-output window to convert a portion of your damage into raid healing; talent_gated and best used when you are already bursting.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a hit or pull threat off the group as an emergency tank-swap or damage-soak tool when no offensive use is needed.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Stone Bulwark Totem": 108270,
+    "Ancestral Guidance": 108281,
+    "Earth Elemental": 198103
+  },
+  "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    }
+  },
+  "source_signature": "3afe92e73aed72c3",
+  "ingest_version": 3
+}

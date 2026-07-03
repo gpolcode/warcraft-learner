@@ -1,0 +1,213 @@
+{
+  "spec": "WindwalkerMonk",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Touch of Karma": {
+      "sample_count": 10,
+      "avg_first_cast_s": 35.9,
+      "stddev_first_cast_s": 26.9,
+      "avg_gap_s": 106.1,
+      "stddev_gap_s": 14.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 178.8,
+          "stddev_s": 24,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.681,
+        "stddev": 0.124,
+        "min": 0.546,
+        "max": 0.884
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 8.2,
+      "dmg_avg": 101604,
+      "dmg_stddev": 104296,
+      "dmg_min": 45538,
+      "dmg_max": 287908,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 42533,
+          "min_damage": 26118,
+          "max_damage": 69795,
+          "count": 5
+        },
+        {
+          "spell_id": 1260052,
+          "avg_damage": 19311,
+          "min_damage": 18734,
+          "max_damage": 19668,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 61.1,
+      "dmg_avg": 344293,
+      "dmg_stddev": 111015,
+      "dmg_min": 246458,
+      "dmg_max": 468462,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 286489,
+          "min_damage": 197068,
+          "max_damage": 412468,
+          "count": 5
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 57804,
+          "min_damage": 49390,
+          "max_damage": 62388,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 181.6,
+      "dmg_avg": 505140,
+      "dmg_stddev": 107231,
+      "dmg_min": 306916,
+      "dmg_max": 640577,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 412177,
+          "min_damage": 357854,
+          "max_damage": 437910,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 115728,
+          "min_damage": 74507,
+          "max_damage": 129818,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 122470,
+      "avg_uses": 2.3,
+      "min_uses": 2,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use first and foremost to absorb a known incoming damage spike; the absorbed damage is redirected to the target, so press it on cooldown into damage whenever the defensive value is not strictly needed.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 243435,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Press before heavy incoming damage; because it raises maximum health it also boosts Touch of Death and Touch of Karma, so cast it before either when you can to gain both the defensive and offensive benefit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of large hits to reduce high-damage attacks by up to 50%; best against big single blows rather than steady chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press proactively before a burst of magic damage to cut it by 60% and clear harmful magical debuffs back to their caster.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Touch of Karma": 122470,
+    "Fortifying Brew": 243435,
+    "Dampen Harm": 122278,
+    "Diffuse Magic": 122783
+  },
+  "ability_icons": {
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122470": {
+      "icon": "ability_monk_touchofkarma",
+      "name": "Touch of Karma"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "243435": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "1260052": {
+      "icon": "spell_fire_twilightflamebreath",
+      "name": "Primordial Roar"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
+    }
+  },
+  "source_signature": "07bf45932c41ef69",
+  "ingest_version": 1
+}

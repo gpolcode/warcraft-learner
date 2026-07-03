@@ -1,0 +1,343 @@
+{
+  "spec": "PreservationEvoker",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 84,
+      "stddev_first_cast_s": 67.6,
+      "avg_gap_s": 38.5,
+      "stddev_gap_s": 48.4,
+      "hold_targets": {
+        "2": {
+          "target_s": 196.2,
+          "stddev_s": 49.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 1.08,
+      "uses_per_min": {
+        "avg": 1.081,
+        "stddev": 0.388,
+        "min": 0.387,
+        "max": 1.619
+      },
+      "majority_hold": true
+    },
+    "Time Dilation": {
+      "sample_count": 9,
+      "avg_first_cast_s": 82.8,
+      "stddev_first_cast_s": 79.8,
+      "avg_gap_s": 54.2,
+      "stddev_gap_s": 49.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 164.4,
+          "stddev_s": 0.6,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.615,
+        "stddev": 0.269,
+        "min": 0.193,
+        "max": 0.982
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 7,
+      "avg_first_cast_s": 144.2,
+      "stddev_first_cast_s": 74.3,
+      "avg_gap_s": 94.7,
+      "stddev_gap_s": 69.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 323.9,
+          "stddev_s": 87.7,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.401,
+        "stddev": 0.206,
+        "min": 0.18,
+        "max": 0.749
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 52.7,
+      "dmg_avg": 391963,
+      "dmg_stddev": 388215,
+      "dmg_min": 0,
+      "dmg_max": 1348265,
+      "dmg_pct_avg": 0.03,
+      "window_length_s": 6.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 287183,
+          "min_damage": 78711,
+          "max_damage": 404078,
+          "count": 7
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 51534,
+          "min_damage": 18249,
+          "max_damage": 90335,
+          "count": 12
+        }
+      ]
+    },
+    {
+      "time_s": 163.1,
+      "dmg_avg": 306599,
+      "dmg_stddev": 220250,
+      "dmg_min": 0,
+      "dmg_max": 715762,
+      "dmg_pct_avg": 0.025,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 46203,
+          "min_damage": 21052,
+          "max_damage": 90415,
+          "count": 11
+        }
+      ]
+    },
+    {
+      "time_s": 167.6,
+      "dmg_avg": 292377,
+      "dmg_stddev": 277652,
+      "dmg_min": 0,
+      "dmg_max": 786844,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 4.2,
+      "defensive_name": "Time Dilation",
+      "spell_id": 357170,
+      "common_defensives": [
+        "Time Dilation"
+      ],
+      "common_cds": [
+        "Time Dilation"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 214998,
+          "min_damage": 188158,
+          "max_damage": 249344,
+          "count": 5
+        },
+        {
+          "spell_id": 361029,
+          "avg_damage": 79496,
+          "min_damage": 28844,
+          "max_damage": 175985,
+          "count": 8
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 40299,
+          "min_damage": 22637,
+          "max_damage": 58207,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 175.4,
+      "dmg_avg": 279194,
+      "dmg_stddev": 229230,
+      "dmg_min": 0,
+      "dmg_max": 605051,
+      "dmg_pct_avg": 0.021,
+      "window_length_s": 7,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 62152,
+          "min_damage": 35162,
+          "max_damage": 73899,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 262.6,
+      "dmg_avg": 174679,
+      "dmg_stddev": 132680,
+      "dmg_min": 18826,
+      "dmg_max": 372629,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 7.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 56471,
+          "min_damage": 18826,
+          "max_damage": 100973,
+          "count": 10
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 5.8,
+      "min_uses": 2,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 357170,
+      "avg_uses": 3.3,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable burst damage to gain a flat damage reduction for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use ahead of a damage spike to recoup a large portion of the damage you take over the following window as healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast just before a telegraphed raid-wide AoE to reduce incoming area damage for yourself and nearby allies; scout useful spots when learning a fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Apply to a single endangered target as a superb damage-reduction cooldown; its short cooldown means you can use it regularly rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use to remove a dispellable Bleed, Poison, Curse, or Disease and heal the target; it does not trigger its cooldown when nothing is removed, so it can be pre-stored in Stasis for a mass cleanse.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Time Dilation": 357170,
+    "Cauterizing Flame": 374251
+  },
+  "ability_icons": {
+    "357170": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "361029": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374251": {
+      "icon": "ability_evoker_fontofmagic_red",
+      "name": "Cauterizing Flame"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "948e7e1db7cb8bd1",
+  "ingest_version": 3
+}

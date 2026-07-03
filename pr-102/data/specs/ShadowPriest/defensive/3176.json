@@ -1,0 +1,178 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Vampiric Embrace": {
+      "sample_count": 8,
+      "avg_first_cast_s": 36.7,
+      "stddev_first_cast_s": 89.4,
+      "avg_gap_s": 129.3,
+      "stddev_gap_s": 3.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 135.9,
+          "stddev_s": 1.8,
+          "count": 6,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.58,
+      "uses_per_min": {
+        "avg": 0.576,
+        "stddev": 0.164,
+        "min": 0.2,
+        "max": 0.716
+      },
+      "majority_hold": true
+    },
+    "Desperate Prayer": {
+      "sample_count": 2,
+      "avg_first_cast_s": 41.9,
+      "stddev_first_cast_s": 57.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.339,
+        "stddev": 0.026,
+        "min": 0.32,
+        "max": 0.357
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 4.5,
+      "dmg_avg": 340167,
+      "dmg_stddev": 36751,
+      "dmg_min": 287787,
+      "dmg_max": 396519,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 253411,
+          "min_damage": 219189,
+          "max_damage": 302429,
+          "count": 7
+        },
+        {
+          "spell_id": 1249251,
+          "avg_damage": 117858,
+          "min_damage": 106626,
+          "max_damage": 125945,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 135.7,
+      "dmg_avg": 315114,
+      "dmg_stddev": 44618,
+      "dmg_min": 284456,
+      "dmg_max": 411044,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 290549,
+          "min_damage": 281821,
+          "max_damage": 303278,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 19236,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 15286,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press to reduce all damage taken by 75% during heavy raid hits or unavoidable burst, accepting the brief loss of offensive casts.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use to instantly heal and raise your maximum health when you drop below ~75%, especially after Shadow Word: Death self-damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Activate during periods of sustained raid damage to convert your Shadow damage into self and raid healing.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "1249251": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "7b41fbd95b3968bb"
+}

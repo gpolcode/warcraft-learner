@@ -1,0 +1,260 @@
+{
+  "spec": "ProtectionPaladin",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Ardent Defender": {
+      "sample_count": 10,
+      "avg_first_cast_s": 59.9,
+      "stddev_first_cast_s": 44.4,
+      "avg_gap_s": 85.4,
+      "stddev_gap_s": 35.5,
+      "hold_targets": {},
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.69,
+      "uses_per_min": {
+        "avg": 0.693,
+        "stddev": 0.191,
+        "min": 0.293,
+        "max": 0.932
+      },
+      "majority_hold": false
+    },
+    "Guardian of Ancient Kings": {
+      "sample_count": 9,
+      "avg_first_cast_s": 137.3,
+      "stddev_first_cast_s": 148.2,
+      "avg_gap_s": 131.8,
+      "stddev_gap_s": 85.3,
+      "hold_targets": {},
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.39,
+      "uses_per_min": {
+        "avg": 0.387,
+        "stddev": 0.176,
+        "min": 0.116,
+        "max": 0.593
+      },
+      "majority_hold": false
+    },
+    "Divine Shield": {
+      "sample_count": 6,
+      "avg_first_cast_s": 158.6,
+      "stddev_first_cast_s": 103,
+      "avg_gap_s": 272.2,
+      "stddev_gap_s": 1.5,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.213,
+        "stddev": 0.069,
+        "min": 0.116,
+        "max": 0.283
+      },
+      "majority_hold": false
+    },
+    "Shield of the Righteous": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.9,
+      "stddev_first_cast_s": 0.7,
+      "avg_gap_s": 2.8,
+      "stddev_gap_s": 2.2,
+      "hold_targets": {},
+      "avg_uses": 163.3,
+      "avg_uses_per_min": 21.09,
+      "uses_per_min": {
+        "avg": 21.086,
+        "stddev": 1.661,
+        "min": 18.253,
+        "max": 23.494
+      },
+      "majority_hold": false
+    },
+    "Word of Glory": {
+      "sample_count": 9,
+      "avg_first_cast_s": 28.3,
+      "stddev_first_cast_s": 19.4,
+      "avg_gap_s": 19.2,
+      "stddev_gap_s": 28.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 100,
+          "stddev_s": 99.9,
+          "count": 5,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 137.1,
+          "stddev_s": 127.9,
+          "count": 5,
+          "total_samples": 9
+        },
+        "5": {
+          "target_s": 354.8,
+          "stddev_s": 183.5,
+          "count": 4,
+          "total_samples": 9
+        },
+        "8": {
+          "target_s": 144.9,
+          "stddev_s": 102.7,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 23.1,
+      "avg_uses_per_min": 3.01,
+      "uses_per_min": {
+        "avg": 3.006,
+        "stddev": 1.918,
+        "min": 0.679,
+        "max": 5.186
+      },
+      "majority_hold": true
+    },
+    "Lay on Hands": {
+      "sample_count": 1,
+      "avg_first_cast_s": 410.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.136,
+        "stddev": 0,
+        "min": 0.136,
+        "max": 0.136
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31850,
+      "avg_uses": 5.4,
+      "min_uses": 2,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 86659,
+      "avg_uses": 3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 642,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 53600,
+      "avg_uses": 163.3,
+      "min_uses": 142,
+      "max_uses": 188
+    },
+    {
+      "spell_id": 85673,
+      "avg_uses": 23.1,
+      "min_uses": 5,
+      "max_uses": 38
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ardent Defender",
+      "spell_id": 31850,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Your largest damage reduction at 50%; reserve it for the most dangerous tankbusters or high-damage windows of the pull rather than pressing it on cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "A strong damage reduction on a long cooldown; save it for the single deadliest moment of the encounter or to cover a gap when Ardent Defender is down.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Your get-out-of-jail immunity; use it to negate a lethal hit or clear a dangerous debuff when no other defensive can survive the moment.",
+      "talent_gated": false
+    },
+    {
+      "name": "Shield of the Righteous",
+      "spell_id": 53600,
+      "cooldown": 16,
+      "duration": 4.5,
+      "usage_rule": "Spend 3-5 Holy Power to keep this active armor and block buff up across tankbusters and melee swings; never sit at Holy Power cap, but pool a charge so it covers the next big physical hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Word of Glory",
+      "spell_id": 85673,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend Holy Power to self-heal when your health drops below 50% or to top off before a known burst; cast it for free whenever the Shining Light proc is active.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Emergency full heal; press it when you are about to die and Word of Glory plus your healers cannot recover you in time.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ardent Defender": 31850,
+    "Guardian of Ancient Kings": 86659,
+    "Divine Shield": 642,
+    "Shield of the Righteous": 53600,
+    "Word of Glory": 85673,
+    "Lay on Hands": 633
+  },
+  "ability_icons": {
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "31850": {
+      "icon": "spell_holy_ardentdefender",
+      "name": "Ardent Defender"
+    },
+    "53600": {
+      "icon": "ability_paladin_shieldofvengeance",
+      "name": "Shield of the Righteous"
+    },
+    "85673": {
+      "icon": "inv_helmet_96",
+      "name": "Word of Glory"
+    },
+    "86659": {
+      "icon": "spell_holy_heroism",
+      "name": "Guardian of Ancient Kings"
+    }
+  },
+  "source_signature": "3c7721c6252131f8",
+  "ingest_version": 2
+}

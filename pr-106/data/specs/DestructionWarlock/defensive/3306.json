@@ -1,0 +1,157 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 8,
+      "avg_first_cast_s": 123.6,
+      "stddev_first_cast_s": 80.1,
+      "avg_gap_s": 74.2,
+      "stddev_gap_s": 18.7,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.506,
+        "stddev": 0.2,
+        "min": 0.334,
+        "max": 0.831
+      },
+      "majority_hold": false
+    },
+    "Unending Resolve": {
+      "sample_count": 4,
+      "avg_first_cast_s": 110.6,
+      "stddev_first_cast_s": 38.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.404,
+        "stddev": 0.004,
+        "min": 0.401,
+        "max": 0.41
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 70,
+      "dmg_avg": 286399,
+      "dmg_stddev": 72841,
+      "dmg_min": 225613,
+      "dmg_max": 395437,
+      "window_length_s": 4.3,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 165820,
+          "min_damage": 107578,
+          "max_damage": 280880,
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 112588,
+          "min_damage": 80703,
+          "max_damage": 172438,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 3141,
+          "min_damage": 1464,
+          "max_damage": 7027,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "22612830367e646a",
+  "ingest_version": 1
+}

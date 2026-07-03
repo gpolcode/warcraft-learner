@@ -1,0 +1,248 @@
+{
+  "spec": "HolyPaladin",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blessing of Sacrifice": {
+      "sample_count": 5,
+      "avg_first_cast_s": 153.2,
+      "stddev_first_cast_s": 151.2,
+      "avg_gap_s": 223.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.267,
+        "stddev": 0.137,
+        "min": 0.151,
+        "max": 0.424
+      },
+      "majority_hold": false
+    },
+    "Divine Protection": {
+      "sample_count": 7,
+      "avg_first_cast_s": 69.2,
+      "stddev_first_cast_s": 50.1,
+      "avg_gap_s": 80.7,
+      "stddev_gap_s": 49.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 181.7,
+          "stddev_s": 85.5,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.522,
+        "stddev": 0.437,
+        "min": 0.157,
+        "max": 1.227
+      },
+      "majority_hold": true
+    },
+    "Divine Shield": {
+      "sample_count": 4,
+      "avg_first_cast_s": 215.9,
+      "stddev_first_cast_s": 76.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.188,
+        "stddev": 0.024,
+        "min": 0.151,
+        "max": 0.202
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 5,
+      "avg_first_cast_s": 186.2,
+      "stddev_first_cast_s": 104.4,
+      "avg_gap_s": 299.1,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.216,
+        "stddev": 0.063,
+        "min": 0.157,
+        "max": 0.324
+      },
+      "majority_hold": false
+    },
+    "Blessing of Protection": {
+      "sample_count": 1,
+      "avg_first_cast_s": 292.4,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.193,
+        "stddev": 0,
+        "min": 0.193,
+        "max": 0.193
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 119.1,
+      "dmg_avg": 283230,
+      "dmg_stddev": 84897,
+      "dmg_min": 205836,
+      "dmg_max": 368869,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 155192,
+          "min_damage": 84812,
+          "max_damage": 189913,
+          "count": 4
+        },
+        {
+          "spell_id": 210380,
+          "avg_damage": 24582,
+          "min_damage": 23729,
+          "max_damage": 25107,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 1022,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 6940,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 498,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to save yourself in an emergency or after a mistake, or in Mythic+ as a pseudo healing cooldown since removing yourself from the heal load is roughly a 20% group damage reduction; it also fully immunes Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Use to instantly fully heal a player who would otherwise die; treat it as a last-resort emergency button given its very long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on an ally to immune physical damage or remove a deadly physical debuff like a bleed; remember it wipes the target's aggro, so do not use it on the tank unless asked, and with Echoing Blessings it also grants 15% magic reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use it often as your main external on a player taking heavy damage; it transfers a share of their damage to you, so watch your own health and avoid using it on tanks taking giant hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before a predictable burst of incoming damage to reduce magic damage taken; note it does not reduce Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Divine Shield": 642,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Sacrifice": 6940,
+    "Divine Protection": 498
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "210380": {
+      "icon": "ability_deathwing_bloodcorruption_earth",
+      "name": "Blessing of Dawn"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    }
+  },
+  "source_signature": "c4c41a42ecbd678b",
+  "ingest_version": 1
+}

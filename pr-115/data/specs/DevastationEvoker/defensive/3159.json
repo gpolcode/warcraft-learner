@@ -1,0 +1,117 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 151.6,
+      "stddev_first_cast_s": 110.4,
+      "avg_gap_s": 60.6,
+      "stddev_gap_s": 69,
+      "hold_targets": {
+        "1": {
+          "target_s": 268.4,
+          "stddev_s": 65.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 322.6,
+          "stddev_s": 84.9,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.4,
+      "avg_uses_per_min": 0.71,
+      "uses_per_min": {
+        "avg": 0.712,
+        "stddev": 0.337,
+        "min": 0.121,
+        "max": 1.129
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 4,
+      "avg_first_cast_s": 333.1,
+      "stddev_first_cast_s": 132.3,
+      "avg_gap_s": 136.4,
+      "stddev_gap_s": 3.7,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.195,
+        "stddev": 0.136,
+        "min": 0.116,
+        "max": 0.398
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 5.4,
+      "min_uses": 1,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "96f38c8ce445ae86",
+  "ingest_version": 2
+}

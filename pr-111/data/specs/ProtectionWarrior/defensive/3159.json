@@ -1,0 +1,565 @@
+{
+  "spec": "ProtectionWarrior",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Shield Wall": {
+      "sample_count": 9,
+      "avg_first_cast_s": 250.1,
+      "stddev_first_cast_s": 113.8,
+      "avg_gap_s": 76.5,
+      "stddev_gap_s": 69.6,
+      "hold_targets": {},
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.39,
+      "uses_per_min": {
+        "avg": 0.392,
+        "stddev": 0.261,
+        "min": 0.13,
+        "max": 0.897
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 9,
+      "avg_first_cast_s": 238.4,
+      "stddev_first_cast_s": 111.8,
+      "avg_gap_s": 250.2,
+      "stddev_gap_s": 42.7,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.187,
+        "stddev": 0.074,
+        "min": 0.114,
+        "max": 0.29
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 92.7,
+      "stddev_first_cast_s": 52.3,
+      "avg_gap_s": 49.4,
+      "stddev_gap_s": 38.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 185.5,
+          "stddev_s": 105.8,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 190.2,
+          "stddev_s": 120.9,
+          "count": 6,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 321.2,
+          "stddev_s": 28.3,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 382.8,
+          "stddev_s": 54.6,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.3,
+      "avg_uses_per_min": 0.94,
+      "uses_per_min": {
+        "avg": 0.943,
+        "stddev": 0.506,
+        "min": 0.228,
+        "max": 1.563
+      },
+      "majority_hold": true
+    },
+    "Shield Block": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.8,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 10.6,
+      "stddev_gap_s": 3.6,
+      "hold_targets": {},
+      "avg_uses": 44.1,
+      "avg_uses_per_min": 5.71,
+      "uses_per_min": {
+        "avg": 5.706,
+        "stddev": 0.249,
+        "min": 5.382,
+        "max": 6.226
+      },
+      "majority_hold": false
+    },
+    "Ignore Pain": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.7,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 24.8,
+      "stddev_gap_s": 36.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 88.1,
+          "stddev_s": 91.6,
+          "count": 10,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 122.7,
+          "stddev_s": 114.2,
+          "count": 9,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 140.3,
+          "stddev_s": 112.3,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 269.3,
+          "stddev_s": 135.5,
+          "count": 6,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 165.3,
+          "stddev_s": 85.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 197.3,
+          "stddev_s": 80.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 221.7,
+          "stddev_s": 68.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 235.2,
+          "stddev_s": 96.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 276.3,
+          "stddev_s": 60.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "10": {
+          "target_s": 295.4,
+          "stddev_s": 96.2,
+          "count": 6,
+          "total_samples": 10
+        },
+        "11": {
+          "target_s": 342.7,
+          "stddev_s": 79.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "12": {
+          "target_s": 375.2,
+          "stddev_s": 79.9,
+          "count": 5,
+          "total_samples": 10
+        },
+        "14": {
+          "target_s": 315,
+          "stddev_s": 93,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 18.9,
+      "avg_uses_per_min": 2.39,
+      "uses_per_min": {
+        "avg": 2.391,
+        "stddev": 1.149,
+        "min": 0.652,
+        "max": 4.207
+      },
+      "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 7,
+      "avg_first_cast_s": 326.2,
+      "stddev_first_cast_s": 113.9,
+      "avg_gap_s": 85.4,
+      "stddev_gap_s": 53.4,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.26,
+        "stddev": 0.193,
+        "min": 0.114,
+        "max": 0.628
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 3.8,
+      "dmg_avg": 4263079,
+      "dmg_stddev": 3466394,
+      "dmg_min": 874285,
+      "dmg_max": 10069188,
+      "dmg_pct_avg": 0.185,
+      "window_length_s": 107.8,
+      "defensive_name": "Ignore Pain",
+      "spell_id": 190456,
+      "common_defensives": [
+        "Ignore Pain"
+      ],
+      "common_cds": [
+        "Ignore Pain"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 1154153,
+          "min_damage": 116908,
+          "max_damage": 3349574,
+          "count": 10
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 1078722,
+          "min_damage": 538062,
+          "max_damage": 1717739,
+          "count": 10
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 976538,
+          "min_damage": 60639,
+          "max_damage": 2787686,
+          "count": 10
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 560670,
+          "min_damage": 158676,
+          "max_damage": 1126349,
+          "count": 10
+        },
+        {
+          "spell_id": 1221717,
+          "avg_damage": 65233,
+          "min_damage": 38632,
+          "max_damage": 163515,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 41.6,
+      "dmg_avg": 1576338,
+      "dmg_stddev": 1013717,
+      "dmg_min": 143377,
+      "dmg_max": 2818347,
+      "dmg_pct_avg": 0.059,
+      "window_length_s": 43.2,
+      "defensive_name": "Ignore Pain",
+      "spell_id": 190456,
+      "common_defensives": [
+        "Ignore Pain"
+      ],
+      "common_cds": [
+        "Ignore Pain"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 682854,
+          "min_damage": 415027,
+          "max_damage": 1239979,
+          "count": 5
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 607846,
+          "min_damage": 365687,
+          "max_damage": 909516,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 361506,
+          "min_damage": 126649,
+          "max_damage": 833213,
+          "count": 6
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 196164,
+          "min_damage": 31156,
+          "max_damage": 414281,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 309.3,
+      "dmg_avg": 1507943,
+      "dmg_stddev": 917600,
+      "dmg_min": 144580,
+      "dmg_max": 3043277,
+      "dmg_pct_avg": 0.06,
+      "window_length_s": 26.4,
+      "defensive_name": "Ignore Pain",
+      "spell_id": 190456,
+      "common_defensives": [
+        "Ignore Pain"
+      ],
+      "common_cds": [
+        "Ignore Pain"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 904027,
+          "min_damage": 27988,
+          "max_damage": 1623059,
+          "count": 9
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 438477,
+          "min_damage": 183610,
+          "max_damage": 766063,
+          "count": 8
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 317807,
+          "min_damage": 116592,
+          "max_damage": 600953,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 345.8,
+      "dmg_avg": 2046681,
+      "dmg_stddev": 1557032,
+      "dmg_min": 735615,
+      "dmg_max": 5599018,
+      "dmg_pct_avg": 0.083,
+      "window_length_s": 32,
+      "defensive_name": "Ignore Pain",
+      "spell_id": 190456,
+      "common_defensives": [
+        "Ignore Pain"
+      ],
+      "common_cds": [
+        "Ignore Pain"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 1034005,
+          "min_damage": 353134,
+          "max_damage": 2771690,
+          "count": 8
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 518682,
+          "min_damage": 206654,
+          "max_damage": 888280,
+          "count": 6
+        },
+        {
+          "spell_id": 1221781,
+          "avg_damage": 358948,
+          "min_damage": 113581,
+          "max_damage": 717137,
+          "count": 8
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 235989,
+          "min_damage": 203416,
+          "max_damage": 299064,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 871,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 97462,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 7.3,
+      "min_uses": 2,
+      "max_uses": 13
+    },
+    {
+      "spell_id": 2565,
+      "avg_uses": 44.1,
+      "min_uses": 40,
+      "max_uses": 49
+    },
+    {
+      "spell_id": 190456,
+      "avg_uses": 18.9,
+      "min_uses": 5,
+      "max_uses": 35
+    },
+    {
+      "spell_id": 202168,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press proactively to smooth out a large spike of incoming damage or a tankbuster; its long cooldown means plan its use around the heaviest damage events of the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Last Stand",
+      "spell_id": 12975,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Use to instantly gain a large block of temporary health when you are about to drop dangerously low; pairs well with a heal landing inside the window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid cooldown to grant the whole group temporary health before an unavoidable burst of raid-wide damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a reflectable magic cast or tankbuster to reduce magic damage taken and bounce single-target spells back at the caster.",
+      "talent_gated": false
+    },
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Keep close to 100% uptime by refreshing whenever it has 10 seconds or less remaining to block incoming physical melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ignore Pain",
+      "spell_id": 190456,
+      "cooldown": 1,
+      "duration": 12,
+      "usage_rule": "Dump excess rage into this absorb to avoid wasting rage and to soften physical and magic spikes; keep rage below the cap by spending into it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "duration": null,
+      "usage_rule": "Use when your health is low to deal damage and instantly heal a chunk of your maximum health; talent-gated, replacing the passive Victory Rush.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Shield Wall": 871,
+    "Last Stand": 12975,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920,
+    "Shield Block": 2565,
+    "Ignore Pain": 190456,
+    "Impending Victory": 202168
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "871": {
+      "icon": "ability_warrior_shieldwall",
+      "name": "Shield Wall"
+    },
+    "2565": {
+      "icon": "ability_defend",
+      "name": "Shield Block"
+    },
+    "12975": {
+      "icon": "spell_holy_ashestoashes",
+      "name": "Last Stand"
+    },
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "190456": {
+      "icon": "ability_warrior_renewedvigor",
+      "name": "Ignore Pain"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    },
+    "1221717": {
+      "icon": "inv_ability_poison_missile",
+      "name": "Blightshot"
+    },
+    "1221781": {
+      "icon": "inv_misc_herb_ancientlichen",
+      "name": "Putrid Fist"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "89b54511f5a0a115",
+  "ingest_version": 2
+}

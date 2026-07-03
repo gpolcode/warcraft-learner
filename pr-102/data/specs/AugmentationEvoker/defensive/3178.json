@@ -1,0 +1,280 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 8,
+      "avg_first_cast_s": 101.2,
+      "stddev_first_cast_s": 81.3,
+      "avg_gap_s": 38.8,
+      "stddev_gap_s": 39.8,
+      "hold_targets": {},
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 1.07,
+      "uses_per_min": {
+        "avg": 1.068,
+        "stddev": 0.411,
+        "min": 0.604,
+        "max": 1.77
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 3,
+      "avg_first_cast_s": 230.5,
+      "stddev_first_cast_s": 24.1,
+      "avg_gap_s": 68.2,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.286,
+        "stddev": 0.101,
+        "min": 0.227,
+        "max": 0.403
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 78.3,
+      "dmg_avg": 201186,
+      "dmg_stddev": 165272,
+      "dmg_min": 11328,
+      "dmg_max": 417640,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245175,
+          "avg_damage": 78533,
+          "min_damage": 43687,
+          "max_damage": 163565,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 72714,
+          "min_damage": 11328,
+          "max_damage": 125842,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 160.7,
+      "dmg_avg": 337175,
+      "dmg_stddev": 224103,
+      "dmg_min": 57626,
+      "dmg_max": 675749,
+      "window_length_s": 11.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 176221,
+          "min_damage": 108632,
+          "max_damage": 408654,
+          "count": 5
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 115347,
+          "min_damage": 64022,
+          "max_damage": 163979,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 204.1,
+      "dmg_avg": 217515,
+      "dmg_stddev": 202187,
+      "dmg_min": 5813,
+      "dmg_max": 473751,
+      "window_length_s": 5.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 51762,
+          "min_damage": 12451,
+          "max_damage": 72849,
+          "count": 4
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 22553,
+          "min_damage": 5813,
+          "max_damage": 44406,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 242.6,
+      "dmg_avg": 323184,
+      "dmg_stddev": 293273,
+      "dmg_min": 9696,
+      "dmg_max": 912187,
+      "window_length_s": 7.8,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 123952,
+          "min_damage": 11799,
+          "max_damage": 235074,
+          "count": 8
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 87756,
+          "min_damage": 12482,
+          "max_damage": 172789,
+          "count": 9
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 37922,
+          "min_damage": 9696,
+          "max_damage": 67584,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 5.1,
+      "min_uses": 3,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "65fea377275f6d18"
+}

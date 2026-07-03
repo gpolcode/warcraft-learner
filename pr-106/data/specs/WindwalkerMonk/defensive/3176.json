@@ -1,0 +1,169 @@
+{
+  "spec": "WindwalkerMonk",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Touch of Karma": {
+      "sample_count": 10,
+      "avg_first_cast_s": 59,
+      "stddev_first_cast_s": 36.4,
+      "avg_gap_s": 126,
+      "stddev_gap_s": 34.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 175.1,
+          "stddev_s": 24.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.48,
+      "uses_per_min": {
+        "avg": 0.483,
+        "stddev": 0.16,
+        "min": 0.292,
+        "max": 0.706
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 35.5,
+      "dmg_avg": 333652,
+      "dmg_stddev": 70687,
+      "dmg_min": 246228,
+      "dmg_max": 415338,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 236788,
+          "min_damage": 226757,
+          "max_damage": 242935,
+          "count": 5
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 118402,
+          "min_damage": 44538,
+          "max_damage": 175514,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 113.9,
+      "dmg_avg": 297587,
+      "dmg_stddev": 64297,
+      "dmg_min": 227305,
+      "dmg_max": 361661,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 232031,
+          "min_damage": 227305,
+          "max_damage": 235499,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 122470,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use first and foremost to absorb a known incoming damage spike; the absorbed damage is redirected to the target, so press it on cooldown into damage whenever the defensive value is not strictly needed.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 243435,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Press before heavy incoming damage; because it raises maximum health it also boosts Touch of Death and Touch of Karma, so cast it before either when you can to gain both the defensive and offensive benefit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of large hits to reduce high-damage attacks by up to 50%; best against big single blows rather than steady chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press proactively before a burst of magic damage to cut it by 60% and clear harmful magical debuffs back to their caster.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Touch of Karma": 122470,
+    "Fortifying Brew": 243435,
+    "Dampen Harm": 122278,
+    "Diffuse Magic": 122783
+  },
+  "ability_icons": {
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122470": {
+      "icon": "ability_monk_touchofkarma",
+      "name": "Touch of Karma"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "243435": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "719407a48fa2290c",
+  "ingest_version": 1
+}

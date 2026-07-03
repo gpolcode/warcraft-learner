@@ -1,0 +1,150 @@
+{
+  "spec": "MistweaverMonk",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Life Cocoon": {
+      "sample_count": 9,
+      "avg_first_cast_s": 134.2,
+      "stddev_first_cast_s": 72.2,
+      "avg_gap_s": 68.6,
+      "stddev_gap_s": 13.3,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.426,
+        "stddev": 0.294,
+        "min": 0.215,
+        "max": 1.08
+      },
+      "majority_hold": false
+    },
+    "Fortifying Brew": {
+      "sample_count": 7,
+      "avg_first_cast_s": 70.7,
+      "stddev_first_cast_s": 72.4,
+      "avg_gap_s": 123.4,
+      "stddev_gap_s": 3.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 164.1,
+          "stddev_s": 34.6,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.408,
+        "stddev": 0.177,
+        "min": 0.215,
+        "max": 0.614
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 116849,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 115203,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Life Cocoon",
+      "spell_id": 116849,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Apply the large absorb shield to a low-health ally taking sustained damage, to solo-soak a mechanic, or as a proactive external; its value scales up the lower the target's current health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Press before a large hit on yourself to gain bonus health and reduce all incoming damage; use proactively for telegraphed self-damage rather than holding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Use ahead of heavy magic damage to reduce it for 6 seconds and to transfer harmful magical debuffs back to their caster.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use before large physical or burst hits to reduce high-percentage incoming damage for 10 seconds; strongest against single big hits rather than chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healing Elixir",
+      "spell_id": 122281,
+      "cooldown": 30,
+      "duration": null,
+      "usage_rule": "Press when your own health drops to restore a chunk of HP; with two charges and a short cooldown it can be used freely as self-sustain.",
+      "talent_gated": true
+    },
+    {
+      "name": "Zen Meditation",
+      "spell_id": 115176,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Channel to massively reduce incoming damage as a panic button when no other defensive is available; note it breaks if you take a melee hit, so use it against ranged or magic bursts.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Life Cocoon": 116849,
+    "Fortifying Brew": 115203,
+    "Diffuse Magic": 122783,
+    "Dampen Harm": 122278,
+    "Healing Elixir": 122281,
+    "Zen Meditation": 115176
+  },
+  "ability_icons": {
+    "115176": {
+      "icon": "ability_monk_zenmeditation",
+      "name": "Zen Meditation"
+    },
+    "115203": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "116849": {
+      "icon": "ability_monk_chicocoon",
+      "name": "Life Cocoon"
+    },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122281": {
+      "icon": "ability_monk_jasmineforcetea",
+      "name": "Healing Elixir"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    }
+  },
+  "source_signature": "8dd9fe32af627357",
+  "ingest_version": 2
+}

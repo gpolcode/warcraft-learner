@@ -1,0 +1,215 @@
+{
+  "spec": "BrewmasterMonk",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Purifying Brew": {
+      "sample_count": 10,
+      "avg_first_cast_s": 10.9,
+      "stddev_first_cast_s": 15.3,
+      "avg_gap_s": 9.9,
+      "stddev_gap_s": 10.8,
+      "hold_targets": {},
+      "avg_uses": 48.4,
+      "avg_uses_per_min": 5.89,
+      "uses_per_min": {
+        "avg": 5.892,
+        "stddev": 1.687,
+        "min": 2.594,
+        "max": 7.741
+      },
+      "majority_hold": true
+    },
+    "Celestial Infusion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.6,
+      "stddev_first_cast_s": 11.3,
+      "avg_gap_s": 27.6,
+      "stddev_gap_s": 13.5,
+      "hold_targets": {},
+      "avg_uses": 17.8,
+      "avg_uses_per_min": 2.17,
+      "uses_per_min": {
+        "avg": 2.172,
+        "stddev": 0.377,
+        "min": 1.468,
+        "max": 2.747
+      },
+      "majority_hold": false
+    },
+    "Fortifying Brew": {
+      "sample_count": 9,
+      "avg_first_cast_s": 104.6,
+      "stddev_first_cast_s": 109.6,
+      "avg_gap_s": 260.3,
+      "stddev_gap_s": 103.9,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.249,
+        "stddev": 0.075,
+        "min": 0.111,
+        "max": 0.4
+      },
+      "majority_hold": false
+    },
+    "Black Ox Brew": {
+      "sample_count": 8,
+      "avg_first_cast_s": 69.9,
+      "stddev_first_cast_s": 94.1,
+      "avg_gap_s": 114.9,
+      "stddev_gap_s": 91.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 324.8,
+          "stddev_s": 149.8,
+          "count": 4,
+          "total_samples": 8
+        },
+        "2": {
+          "target_s": 216.5,
+          "stddev_s": 93.5,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.524,
+        "stddev": 0.281,
+        "min": 0.223,
+        "max": 0.968
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 119582,
+      "avg_uses": 48.4,
+      "min_uses": 19,
+      "max_uses": 66
+    },
+    {
+      "spell_id": 1241059,
+      "avg_uses": 17.8,
+      "min_uses": 11,
+      "max_uses": 24
+    },
+    {
+      "spell_id": 115203,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 115399,
+      "avg_uses": 4.4,
+      "min_uses": 2,
+      "max_uses": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Purifying Brew",
+      "spell_id": 119582,
+      "cooldown": 20,
+      "duration": null,
+      "usage_rule": "Spend a charge right after taking a large damage spike to purify 50% of your Stagger pool, and avoid sitting on both charges so you never waste cooldown reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Celestial Brew",
+      "spell_id": 322507,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use the absorb shield to soak a known incoming hit; choose this over Celestial Infusion when you face overwhelming spiky damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "cooldown": 60,
+      "duration": 16,
+      "usage_rule": "The default smoother alternative to Celestial Brew, granting a partial absorb over 16 seconds; use it often to reduce the spikiness of your damage intake.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Your strongest defensive: press it proactively before predictable heavy damage, noting its real cooldown is roughly halved by Keg Smash and Tiger Palm cooldown reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Black Ox Brew",
+      "spell_id": 115399,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "When talented, use to instantly refill Energy and recharge both Purifying Brew and Celestial Brew or Celestial Infusion, ideally when those Brews are on cooldown and you are at low Energy.",
+      "talent_gated": true
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "When talented, use before a window of large incoming hits to reduce their damage; scales best against big attacks rather than chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "When talented, press before heavy magical damage to cut it by 60% and clear harmful magical debuffs.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Purifying Brew": 119582,
+    "Celestial Brew": 322507,
+    "Celestial Infusion": 1241059,
+    "Fortifying Brew": 115203,
+    "Black Ox Brew": 115399,
+    "Dampen Harm": 122278,
+    "Diffuse Magic": 122783
+  },
+  "ability_icons": {
+    "115203": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "115399": {
+      "icon": "ability_monk_chibrew",
+      "name": "Black Ox Brew"
+    },
+    "119582": {
+      "icon": "inv_misc_beer_06",
+      "name": "Purifying Brew"
+    },
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "322507": {
+      "icon": "ability_monk_ironskinbrew",
+      "name": "Celestial Brew"
+    },
+    "1241059": {
+      "icon": "ability_monk_tigereyebrandy",
+      "name": "Celestial Infusion"
+    }
+  },
+  "source_signature": "6f34a438d88bda0f",
+  "ingest_version": 2
+}

@@ -1,0 +1,134 @@
+{
+  "spec": "DemonologyWarlock",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 9,
+      "avg_first_cast_s": 189.1,
+      "stddev_first_cast_s": 126.7,
+      "avg_gap_s": 202.5,
+      "stddev_gap_s": 29.6,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.225,
+        "stddev": 0.085,
+        "min": 0.144,
+        "max": 0.341
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 83.9,
+      "stddev_first_cast_s": 36.6,
+      "avg_gap_s": 78.2,
+      "stddev_gap_s": 37.6,
+      "hold_targets": {
+        "2": {
+          "target_s": 246.3,
+          "stddev_s": 93.9,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.64,
+      "uses_per_min": {
+        "avg": 0.638,
+        "stddev": 0.309,
+        "min": 0.136,
+        "max": 1.193
+      },
+      "majority_hold": true
+    },
+    "Mortal Coil": {
+      "sample_count": 1,
+      "avg_first_cast_s": 309.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.136,
+        "stddev": 0,
+        "min": 0.136,
+        "max": 0.136
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 4.1,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 6789,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789
+  },
+  "ability_icons": {
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    }
+  },
+  "source_signature": "c04a8a42bdf280a4",
+  "ingest_version": 2
+}

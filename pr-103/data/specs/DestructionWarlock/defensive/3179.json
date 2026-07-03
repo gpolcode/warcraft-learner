@@ -1,0 +1,214 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 8,
+      "avg_first_cast_s": 154.2,
+      "stddev_first_cast_s": 65.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.291,
+        "stddev": 0.035,
+        "min": 0.253,
+        "max": 0.366
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 9,
+      "avg_first_cast_s": 98.1,
+      "stddev_first_cast_s": 41.4,
+      "avg_gap_s": 66.7,
+      "stddev_gap_s": 17,
+      "hold_targets": {
+        "1": {
+          "target_s": 171.3,
+          "stddev_s": 7.7,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.647,
+        "stddev": 0.255,
+        "min": 0.284,
+        "max": 1.099
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 80.9,
+      "dmg_avg": 320141,
+      "dmg_stddev": 81243,
+      "dmg_min": 261560,
+      "dmg_max": 462066,
+      "window_length_s": 4.4,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 131709,
+          "min_damage": 71567,
+          "max_damage": 174095,
+          "count": 4
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 130759,
+          "min_damage": 80126,
+          "max_damage": 157652,
+          "count": 3
+        },
+        {
+          "spell_id": 111400,
+          "avg_damage": 72511,
+          "min_damage": 19753,
+          "max_damage": 138277,
+          "count": 3
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 3930,
+          "min_damage": 428,
+          "max_damage": 6352,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 165.2,
+      "dmg_avg": 291278,
+      "dmg_stddev": 100432,
+      "dmg_min": 187097,
+      "dmg_max": 479694,
+      "window_length_s": 5.4,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 167559,
+          "min_damage": 121902,
+          "max_damage": 243891,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 106049,
+          "min_damage": 24343,
+          "max_damage": 247780,
+          "count": 9
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4336,
+          "min_damage": 472,
+          "max_damage": 10293,
+          "count": 9
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "111400": {
+      "icon": "ability_deathwing_sealarmorbreachtga",
+      "name": "Burning Rush"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "ddf379611e2e6881"
+}

@@ -1,0 +1,239 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 8,
+      "avg_first_cast_s": 44.7,
+      "stddev_first_cast_s": 30.5,
+      "avg_gap_s": 63,
+      "stddev_gap_s": 4.6,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.71,
+      "uses_per_min": {
+        "avg": 0.712,
+        "stddev": 0.357,
+        "min": 0.409,
+        "max": 1.231
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 8,
+      "avg_first_cast_s": 20.9,
+      "stddev_first_cast_s": 2.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.408,
+        "stddev": 0.005,
+        "min": 0.401,
+        "max": 0.418
+      },
+      "majority_hold": false
+    },
+    "Prismatic Barrier": {
+      "sample_count": 9,
+      "avg_first_cast_s": 54,
+      "stddev_first_cast_s": 36.1,
+      "avg_gap_s": 49,
+      "stddev_gap_s": 17.5,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.678,
+        "stddev": 0.351,
+        "min": 0.401,
+        "max": 1.229
+      },
+      "majority_hold": false
+    },
+    "Greater Invisibility": {
+      "sample_count": 1,
+      "avg_first_cast_s": 25,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.41,
+        "stddev": 0,
+        "min": 0.41,
+        "max": 0.41
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 20.9,
+      "dmg_avg": 236756,
+      "dmg_stddev": 49445,
+      "dmg_min": 171186,
+      "dmg_max": 315402,
+      "window_length_s": 15,
+      "defensive_name": "Mirror Image",
+      "spell_id": 55342,
+      "common_defensives": [
+        "Mirror Image"
+      ],
+      "common_cds": [
+        "Mirror Image"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 193878,
+          "min_damage": 114795,
+          "max_damage": 276274,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 59.7,
+      "dmg_avg": 263794,
+      "dmg_stddev": 65852,
+      "dmg_min": 199552,
+      "dmg_max": 392472,
+      "window_length_s": 10.4,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 219425,
+          "min_damage": 151310,
+          "max_damage": 302130,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 119979,
+          "min_damage": 20721,
+          "max_damage": 237158,
+          "count": 8
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 342245,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 110959,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 235450,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235450": {
+      "icon": "spell_magearmor",
+      "name": "Prismatic Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "6e00fc5784082eb6"
+}

@@ -1,0 +1,328 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "avg_duration_s": 296.4,
+  "downtime_threshold_ms": 1705,
+  "top_avg_efficiency": 74,
+  "top_efficiency_stddev": 3.2,
+  "per_cd_benchmarks": {
+    "Berserk": {
+      "sample_count": 10,
+      "avg_first_cast_s": 22.2,
+      "stddev_first_cast_s": 38.3,
+      "avg_gap_s": 137.7,
+      "stddev_gap_s": 16.4,
+      "avg_bl_offset_s": 9.7,
+      "stddev_bl_offset_s": 9.5,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.564,
+        "stddev": 0.059,
+        "min": 0.445,
+        "max": 0.613
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Incarnation: Avatar of Ashamane": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Tiger's Fury": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 33.8,
+      "stddev_gap_s": 7.9,
+      "avg_bl_offset_s": 5.6,
+      "stddev_bl_offset_s": 10.9,
+      "avg_uses": 9.2,
+      "avg_uses_per_min": 1.86,
+      "uses_per_min": {
+        "avg": 1.863,
+        "stddev": 0.143,
+        "min": 1.593,
+        "max": 2.004
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
+      "hold_targets": {
+        "4": {
+          "target_s": 122.9,
+          "stddev_s": 3,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 157.4,
+          "stddev_s": 6.3,
+          "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 189.3,
+          "stddev_s": 6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 220.4,
+          "stddev_s": 5.9,
+          "count": 4,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 246.6,
+          "stddev_s": 21.8,
+          "count": 7,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 272.4,
+          "stddev_s": 18.3,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
+    },
+    "Convoke the Spirits": {
+      "sample_count": 10,
+      "avg_first_cast_s": 26.8,
+      "stddev_first_cast_s": 39.8,
+      "avg_gap_s": 138,
+      "stddev_gap_s": 15.5,
+      "avg_bl_offset_s": 15.7,
+      "stddev_bl_offset_s": 8.7,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.564,
+        "stddev": 0.059,
+        "min": 0.445,
+        "max": 0.613
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 283.8,
+          "stddev_s": 11.8,
+          "count": 8,
+          "total_samples": 10
+        }
+      }
+    },
+    "Feral Frenzy": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.1,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 35.8,
+      "stddev_gap_s": 8.5,
+      "avg_bl_offset_s": 8.1,
+      "stddev_bl_offset_s": 11,
+      "avg_uses": 8.7,
+      "avg_uses_per_min": 1.76,
+      "uses_per_min": {
+        "avg": 1.761,
+        "stddev": 0.141,
+        "min": 1.581,
+        "max": 1.95
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Berserk",
+      "spell_id": 106951,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Cast on cooldown synced with Tiger's Fury and Convoke the Spirits, only once your Rip and Rake bleeds are already rolling so the free combo points and bonus generation are spent on direct damage."
+    },
+    {
+      "name": "Incarnation: Avatar of Ashamane",
+      "spell_id": 102543,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "talent_gated": true,
+      "usage_rule": "Replaces Berserk when talented; cast on cooldown with Tiger's Fury and Convoke active and exploit the in-combat Prowl to land an empowered stealth Rake during the window."
+    },
+    {
+      "name": "Tiger's Fury",
+      "spell_id": 5217,
+      "cooldown": 30,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press on cooldown when below roughly 50 energy so none is wasted, and apply or refresh Rip and Rake during the buff to snapshot the damage bonus into the full bleed duration."
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "talent_gated": true,
+      "usage_rule": "Cast at low combo points with all debuffs already applied and synced inside the Berserk and Tiger's Fury window so its random casts are spent on direct damage rather than re-applying bleeds."
+    },
+    {
+      "name": "Feral Frenzy",
+      "spell_id": 274837,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "talent_gated": true,
+      "usage_rule": "Cast on cooldown at 0-2 combo points (up to 4 inside Berserk) to avoid overcapping the combo points it generates; this is the Feral Frenzy talent variant, not the Frantic Frenzy haste passive."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Sync Berserk with Tiger's Fury",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 106951,
+        "spell_name": "Berserk",
+        "required_spell_id": 5217,
+        "required_spell_name": "Tiger's Fury",
+        "window_s": 5
+      },
+      "action": "Always activate Tiger's Fury immediately before Berserk so the two damage windows overlap; never open a Berserk window without Tiger's Fury active."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Convoke the Spirits inside Berserk",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 391528,
+        "spell_name": "Convoke the Spirits",
+        "required_spell_id": 106951,
+        "required_spell_name": "Berserk",
+        "window_s": 20
+      },
+      "action": "Line up Convoke the Spirits with each Berserk window; cast it at low combo points with your bleeds already applied so its random casts roll into direct damage."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Rake, build, Rip, then cooldowns",
+      "condition": null,
+      "action": "Open with a stealthed Rake, Shred to 5 combo points, fire Tiger's Fury and Berserk, apply Rip, then cast Convoke the Spirits and Feral Frenzy and spend with Ferocious Bite at 5 combo points and 50 energy."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Rip and Rake up at all times",
+      "condition": null,
+      "action": "Maintain Rip and Rake on the target without letting them drop; refresh inside the pandemic window and prefer refreshing during Tiger's Fury to snapshot the damage bonus into the full bleed."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Ferocious Bite at 5 CP and 50 energy",
+      "condition": null,
+      "action": "Only cast Ferocious Bite at 5 combo points with at least 50 energy so it spends the full 25 bonus energy for maximum damage, and never bite while Rip needs applying."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Avoid wasting energy and Tiger's Fury",
+      "condition": null,
+      "action": "Pool below 50 energy as Tiger's Fury approaches so no energy is wasted on its regen burst, and dump energy if Tiger's Fury is more than 3 seconds out and you are above 80 percent energy."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Primal Wrath and Swipe at 2+ targets",
+      "condition": null,
+      "action": "On 2 or more targets, spend combo points with Primal Wrath to spread Rip and build with Swipe instead of Shred; keep Rake applied across targets and use Ferocious Bite on Apex Predator's Craving procs."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stay behind the target for Shred",
+      "condition": null,
+      "action": "Remain behind the boss so Shred deals its full bonus damage and cannot be parried; ask the tank to face the boss away from the raid if you cannot reach the rear."
+    }
+  ],
+  "cd_spell_ids": {
+    "Berserk": 106951,
+    "Incarnation: Avatar of Ashamane": 102543,
+    "Tiger's Fury": 5217,
+    "Convoke the Spirits": 391528,
+    "Feral Frenzy": 274837,
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "5217": {
+      "icon": "ability_mount_jungletiger",
+      "name": "Tiger's Fury"
+    },
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102543": {
+      "icon": "spell_druid_incarnation",
+      "name": "Incarnation: Avatar of Ashamane"
+    },
+    "106951": {
+      "icon": "ability_druid_berserk",
+      "name": "Berserk"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "274837": {
+      "icon": "ability_druid_rake",
+      "name": "Feral Frenzy"
+    },
+    "391528": {
+      "icon": "inv_ability_druid_convokethespirits",
+      "name": "Convoke the Spirits"
+    }
+  },
+  "source_signature": "72ef13be06cba691",
+  "ingest_version": 1
+}

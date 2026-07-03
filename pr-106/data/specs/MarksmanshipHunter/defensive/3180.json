@@ -1,0 +1,249 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 116.6,
+      "stddev_first_cast_s": 53.4,
+      "avg_gap_s": 83,
+      "stddev_gap_s": 50.5,
+      "hold_targets": {},
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.53,
+      "uses_per_min": {
+        "avg": 0.526,
+        "stddev": 0.156,
+        "min": 0.189,
+        "max": 0.775
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 4,
+      "avg_first_cast_s": 251.7,
+      "stddev_first_cast_s": 62.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.181,
+        "stddev": 0.026,
+        "min": 0.146,
+        "max": 0.204
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 86.3,
+      "dmg_avg": 269742,
+      "dmg_stddev": 123727,
+      "dmg_min": 58095,
+      "dmg_max": 470315,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 201624,
+          "min_damage": 166157,
+          "max_damage": 241388,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 57617,
+          "min_damage": 50723,
+          "max_damage": 65545,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 142.2,
+      "dmg_avg": 444395,
+      "dmg_stddev": 207530,
+      "dmg_min": 306147,
+      "dmg_max": 850507,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 240556,
+          "min_damage": 222489,
+          "max_damage": 257708,
+          "count": 5
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 87610,
+          "min_damage": 47026,
+          "max_damage": 141453,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 69256,
+          "min_damage": 63054,
+          "max_damage": 76167,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 248.3,
+      "dmg_avg": 316151,
+      "dmg_stddev": 70024,
+      "dmg_min": 152524,
+      "dmg_max": 379510,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 211187,
+          "min_damage": 155375,
+          "max_damage": 257708,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 87993,
+          "min_damage": 71518,
+          "max_damage": 97928,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 301,
+      "dmg_avg": 352489,
+      "dmg_stddev": 236682,
+      "dmg_min": 39307,
+      "dmg_max": 653377,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 94633,
+          "min_damage": 39307,
+          "max_damage": 125816,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "355ed8c9aea164d7",
+  "ingest_version": 1
+}

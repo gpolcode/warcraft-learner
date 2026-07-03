@@ -1,0 +1,330 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Aspect of the Turtle": {
+      "sample_count": 9,
+      "avg_first_cast_s": 113.5,
+      "stddev_first_cast_s": 46.2,
+      "avg_gap_s": 128.5,
+      "stddev_gap_s": 4.5,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.336,
+        "stddev": 0.124,
+        "min": 0.211,
+        "max": 0.478
+      },
+      "majority_hold": false
+    },
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 80.1,
+      "stddev_first_cast_s": 41.2,
+      "avg_gap_s": 67,
+      "stddev_gap_s": 42.4,
+      "hold_targets": {},
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.71,
+      "uses_per_min": {
+        "avg": 0.708,
+        "stddev": 0.122,
+        "min": 0.459,
+        "max": 0.936
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 6,
+      "avg_first_cast_s": 163.2,
+      "stddev_first_cast_s": 55.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.234,
+        "stddev": 0.013,
+        "min": 0.211,
+        "max": 0.245
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 69.1,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 4.3,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 85.4,
+      "dmg_avg": 263418,
+      "dmg_stddev": 74059,
+      "dmg_min": 184908,
+      "dmg_max": 361887,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 171912,
+          "min_damage": 112553,
+          "max_damage": 231270,
+          "count": 2
+        },
+        {
+          "spell_id": 1241333,
+          "avg_damage": 137625,
+          "min_damage": 76916,
+          "max_damage": 203983,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 44062,
+          "min_damage": 36220,
+          "max_damage": 52932,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 135.4,
+      "dmg_avg": 219162,
+      "dmg_stddev": 93928,
+      "dmg_min": 88517,
+      "dmg_max": 362643,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 142354,
+          "min_damage": 57585,
+          "max_damage": 240984,
+          "count": 6
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 40579,
+          "min_damage": 27935,
+          "max_damage": 53610,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 137,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 4.2,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 196.5,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 5,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 221.2,
+      "dmg_avg": 358607,
+      "dmg_stddev": 202558,
+      "dmg_min": 122218,
+      "dmg_max": 777881,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 47622,
+          "min_damage": 33671,
+          "max_damage": 56027,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 254.8,
+      "dmg_avg": 356756,
+      "dmg_stddev": 146900,
+      "dmg_min": 145832,
+      "dmg_max": 486605,
+      "window_length_s": 7.5,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 334569,
+          "min_damage": 330930,
+          "max_damage": 338207,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 48484,
+          "min_damage": 33279,
+          "max_damage": 73515,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.1,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to immune all incoming damage during a lethal mechanic or tankbuster overlap; you cannot attack while it is active, so use it purely as a survival panic button.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use proactively for a flat damage reduction ahead of a predictable burst of raid or melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when your health drops below roughly 50% to recover a large chunk of health for yourself and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1241333": {
+      "icon": "inv_phoenix2mount_blue",
+      "name": "Death Drop"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1242803": {
+      "icon": "inv_ability_holyfire_wave",
+      "name": "Light Flames"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "56ea960f2947427e",
+  "ingest_version": 0
+}

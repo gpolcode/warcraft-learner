@@ -1,0 +1,226 @@
+{
+  "spec": "ArmsWarrior",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Die by the Sword": {
+      "sample_count": 10,
+      "avg_first_cast_s": 171.7,
+      "stddev_first_cast_s": 55.9,
+      "avg_gap_s": 184.4,
+      "stddev_gap_s": 83.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 321.7,
+          "stddev_s": 48.7,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.231,
+        "stddev": 0.098,
+        "min": 0.138,
+        "max": 0.411
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 2,
+      "avg_first_cast_s": 179.4,
+      "stddev_first_cast_s": 27.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.134,
+        "stddev": 0.004,
+        "min": 0.131,
+        "max": 0.137
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 72.3,
+      "stddev_first_cast_s": 84,
+      "avg_gap_s": 51.1,
+      "stddev_gap_s": 22.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 124,
+          "stddev_s": 101.8,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 169.7,
+          "stddev_s": 41.2,
+          "count": 9,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 224.7,
+          "stddev_s": 45.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 245,
+          "stddev_s": 57.1,
+          "count": 8,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 284.8,
+          "stddev_s": 60.4,
+          "count": 9,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 358.1,
+          "stddev_s": 47.9,
+          "count": 8,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 417.6,
+          "stddev_s": 52,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.2,
+      "avg_uses_per_min": 1.04,
+      "uses_per_min": {
+        "avg": 1.039,
+        "stddev": 0.302,
+        "min": 0.317,
+        "max": 1.384
+      },
+      "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 2,
+      "avg_first_cast_s": 216.5,
+      "stddev_first_cast_s": 78.3,
+      "avg_gap_s": 113.6,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.21,
+        "stddev": 0.076,
+        "min": 0.156,
+        "max": 0.263
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 118038,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 7.2,
+      "min_uses": 2,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 202168,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop proactively before heavy physical or parry-able melee damage; it grants a large parry chance plus damage reduction for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-wide emergency button before a large group-wide hit, granting you and nearby allies a temporary maximum-health and effective-health buffer.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a targeted magic cast or projectile to reflect it and reduce incoming magic damage during the short window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Defensive Stance",
+      "spell_id": 197690,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Toggle on during sustained heavy damage for a flat damage reduction, then toggle back to your damage stance once the danger passes.",
+      "talent_gated": false
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "duration": null,
+      "usage_rule": "Cast when below full health to deal damage and instantly heal a chunk of your maximum health; talent_gated as it replaces Victory Rush only when talented.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Die by the Sword": 118038,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920,
+    "Defensive Stance": 197690,
+    "Impending Victory": 202168
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "118038": {
+      "icon": "ability_warrior_challange",
+      "name": "Die by the Sword"
+    },
+    "197690": {
+      "icon": "ability_warrior_defensivestance",
+      "name": "Defensive Stance"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    }
+  },
+  "source_signature": "7df01c909c02f71a",
+  "ingest_version": 2
+}

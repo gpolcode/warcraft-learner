@@ -1,0 +1,417 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Vampiric Blood": {
+      "sample_count": 9,
+      "avg_first_cast_s": 87,
+      "stddev_first_cast_s": 94.9,
+      "avg_gap_s": 76.8,
+      "stddev_gap_s": 51.6,
+      "hold_targets": {},
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.6,
+      "uses_per_min": {
+        "avg": 0.598,
+        "stddev": 0.43,
+        "min": 0.172,
+        "max": 1.562
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 4,
+      "avg_first_cast_s": 219,
+      "stddev_first_cast_s": 39.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.272,
+        "stddev": 0.053,
+        "min": 0.223,
+        "max": 0.333
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Shell": {
+      "sample_count": 9,
+      "avg_first_cast_s": 113.8,
+      "stddev_first_cast_s": 82.9,
+      "avg_gap_s": 76.7,
+      "stddev_gap_s": 24,
+      "hold_targets": {
+        "1": {
+          "target_s": 130.6,
+          "stddev_s": 66.6,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.562,
+        "stddev": 0.188,
+        "min": 0.333,
+        "max": 0.892
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 4,
+      "avg_first_cast_s": 29.9,
+      "stddev_first_cast_s": 56,
+      "avg_gap_s": 117.3,
+      "stddev_gap_s": 19.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 140.6,
+          "stddev_s": 2.9,
+          "count": 3,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.555,
+        "stddev": 0.221,
+        "min": 0.223,
+        "max": 0.676
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 63.3,
+      "dmg_avg": 1073506,
+      "dmg_stddev": 211047,
+      "dmg_min": 785940,
+      "dmg_max": 1294248,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 251176,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 652898,
+          "min_damage": 299936,
+          "max_damage": 979288,
+          "count": 6
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 241144,
+          "min_damage": 217479,
+          "max_damage": 256158,
+          "count": 6
+        },
+        {
+          "spell_id": 1255683,
+          "avg_damage": 178863,
+          "min_damage": 15501,
+          "max_damage": 419333,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 115.7,
+      "dmg_avg": 544411,
+      "dmg_stddev": 260815,
+      "dmg_min": 268874,
+      "dmg_max": 967312,
+      "window_length_s": 7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 362722,
+          "min_damage": 201074,
+          "max_damage": 753876,
+          "count": 4
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 172694,
+          "min_damage": 154679,
+          "max_damage": 186519,
+          "count": 5
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 81539,
+          "min_damage": 44262,
+          "max_damage": 113879,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 162.5,
+      "dmg_avg": 632708,
+      "dmg_stddev": 193222,
+      "dmg_min": 411619,
+      "dmg_max": 804030,
+      "window_length_s": 5.9,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 251176,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258883,
+          "avg_damage": 382399,
+          "min_damage": 254621,
+          "max_damage": 510176,
+          "count": 2
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 360866,
+          "min_damage": 207906,
+          "max_damage": 634065,
+          "count": 3
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 144312,
+          "min_damage": 67052,
+          "max_damage": 183231,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 221.3,
+      "dmg_avg": 576916,
+      "dmg_stddev": 256302,
+      "dmg_min": 230583,
+      "dmg_max": 877578,
+      "window_length_s": 7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 407526,
+          "min_damage": 227342,
+          "max_damage": 675629,
+          "count": 4
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 166735,
+          "min_damage": 155940,
+          "max_damage": 173625,
+          "count": 5
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 83973,
+          "min_damage": 45073,
+          "max_damage": 131399,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 248.5,
+      "dmg_avg": 1483539,
+      "dmg_stddev": 777294,
+      "dmg_min": 579297,
+      "dmg_max": 2622028,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 257950,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 957024,
+          "min_damage": 256228,
+          "max_damage": 1757489,
+          "count": 6
+        },
+        {
+          "spell_id": 1259903,
+          "avg_damage": 265467,
+          "min_damage": 248098,
+          "max_damage": 298734,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 55233,
+      "avg_uses": 2.7,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 48707,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 2.8,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use proactively ahead of heavy incoming damage to boost your maximum health and the healing of your Death Strikes; it is your highest-impact defensive, so keep it close to on cooldown rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large physical or magical hit for a flat 30% damage reduction and stun immunity; reserve it for tankbusters or moments Vampiric Blood alone cannot cover.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Use to absorb a telegraphed burst of magic damage and to generate Runic Power from the absorbed damage; press it just before the magic hit lands rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rune Tap",
+      "spell_id": 194679,
+      "cooldown": 25,
+      "duration": 3,
+      "usage_rule": "Spend a charge for a 20% damage reduction on predictable melee swings or smaller hits; its short recharge lets you use it frequently to smooth out steady tank damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain immunity to charm, fear, and sleep effects, or as an extra layer of survivability when combined with Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a wide magic-damage event to reduce incoming magic damage for everyone standing inside; coordinate placement with your group so allies stack in it.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Vampiric Blood": 55233,
+    "Icebound Fortitude": 48792,
+    "Anti-Magic Shell": 48707,
+    "Rune Tap": 194679,
+    "Lichborne": 49039,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1255683": {
+      "icon": "sha_ability_rogue_envelopingshadows_nightborne",
+      "name": "Gnashing Void"
+    },
+    "1258883": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Fall"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "3d4e0d31ff133592",
+  "ingest_version": 1
+}

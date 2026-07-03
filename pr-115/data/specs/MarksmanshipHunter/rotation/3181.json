@@ -1,0 +1,239 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "avg_duration_s": 495,
+  "downtime_threshold_ms": 3421,
+  "top_avg_efficiency": 71.4,
+  "top_efficiency_stddev": 7.8,
+  "per_cd_benchmarks": {
+    "Trueshot": {
+      "sample_count": 10,
+      "avg_first_cast_s": 20.7,
+      "stddev_first_cast_s": 5,
+      "avg_gap_s": 152,
+      "stddev_gap_s": 24.6,
+      "avg_bl_offset_s": 5.4,
+      "stddev_bl_offset_s": 2.3,
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.459,
+        "stddev": 0.049,
+        "min": 0.377,
+        "max": 0.514
+      },
+      "bl_pct": 60,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 181.7,
+          "stddev_s": 2.7,
+          "delay_s": 38.6,
+          "delay_stddev_s": 4.6,
+          "band_s": 5,
+          "effective_cd_s": 120,
+          "count": 9,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 363.7,
+          "stddev_s": 8.1,
+          "delay_s": 61.8,
+          "delay_stddev_s": 9.7,
+          "band_s": 9.7,
+          "effective_cd_s": 120,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
+    },
+    "Volley": {
+      "sample_count": 10,
+      "avg_first_cast_s": 18.7,
+      "stddev_first_cast_s": 4.2,
+      "avg_gap_s": 59.2,
+      "stddev_gap_s": 14.5,
+      "avg_bl_offset_s": 5.4,
+      "stddev_bl_offset_s": 5,
+      "avg_uses": 7.9,
+      "avg_uses_per_min": 0.96,
+      "uses_per_min": {
+        "avg": 1.068,
+        "stddev": 0.086,
+        "min": 0.922,
+        "max": 1.175
+      },
+      "bl_pct": 60,
+      "majority_hold": true,
+      "hold_targets": {
+        "4": {
+          "target_s": 182.2,
+          "stddev_s": 29.2,
+          "delay_s": 22.6,
+          "delay_stddev_s": 6.6,
+          "band_s": 6.6,
+          "effective_cd_s": 45,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 237.5,
+          "stddev_s": 23.5,
+          "delay_s": 12.8,
+          "delay_stddev_s": 1.3,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 6,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 324.1,
+          "stddev_s": 43.8,
+          "delay_s": 13.5,
+          "delay_stddev_s": 16.3,
+          "band_s": 16.3,
+          "effective_cd_s": 45,
+          "count": 6,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 364.4,
+          "stddev_s": 28.3,
+          "delay_s": 26.1,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
+          "effective_cd_s": 45,
+          "count": 8,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 427,
+          "stddev_s": 30,
+          "delay_s": 14.5,
+          "delay_stddev_s": 5.5,
+          "band_s": 5.5,
+          "effective_cd_s": 45,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Trueshot",
+      "spell_id": 288613,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Activate right before an Aimed Shot naturally comes up and ideally just after a Rapid Fire so you carry a fresh Bulletstorm into the window; never cast it back-to-back with Volley or you waste Double Tap."
+    },
+    {
+      "name": "Volley",
+      "spell_id": 260243,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press on cooldown to activate Double Tap, but never directly before or after Trueshot since that wastes the Double Tap charge from either ability."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Pre-cast Aimed Shot ~2.5s before pull",
+      "condition": null,
+      "action": "Begin casting your first Aimed Shot about 2.5 seconds before combat starts so it lands the instant the fight begins, and pre-cast Algeth'ar Puzzle Box around 4.5 seconds out to line the buff up with Trueshot."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Ensure Hunter's Mark before pull",
+      "condition": null,
+      "action": "Confirm Hunter's Mark is active on the highest-health target, from you or another Hunter, before the pull so your damage amplification is up from the first shot."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Never cast Volley adjacent to Trueshot",
+      "condition": null,
+      "action": "Always fire an Aimed Shot between Trueshot and Volley; casting them back-to-back in either order wastes the Double Tap charge that one of them generates and is a large damage loss."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Rapid Fire just before Trueshot",
+      "condition": null,
+      "action": "Cast Rapid Fire right before activating Trueshot so you enter the window with a fresh, full-duration Bulletstorm buffing every Aimed Shot inside it."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend every Precise Shots proc",
+      "condition": null,
+      "action": "Follow every Aimed Shot and Rapid Fire with your Precise Shots spender (Black Arrow or Arcane Shot on single target, Multi-Shot on 2+ targets); never let a Precise Shots stack go unused."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Do not let Aimed Shot reach 2 charges",
+      "condition": null,
+      "action": "Cast Aimed Shot when it is about to reach 2 charges so its cooldown keeps ticking; sitting at full charges wastes recharge time, while leaving it at 1 charge is fine."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Always be casting (Steady Shot filler)",
+      "condition": null,
+      "action": "Never stand idle: when nothing else is available cast Steady Shot to generate Focus and reduce Aimed Shot's cooldown, since accumulated empty globals are the biggest single DPS leak for the spec."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Multi-Shot replaces Arcane Shot at 2+ targets",
+      "condition": null,
+      "action": "On 2 or more targets with Trick Shots talented, spend Precise Shots with Multi-Shot instead of Arcane Shot, and never cast Aimed Shot or Rapid Fire while the Trick Shots buff is down."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Reserve movement for non-Aimed Shot globals",
+      "condition": null,
+      "action": "Save your repositioning for moments when you are not casting Aimed Shot; you can move freely during Steady Shot, instants, and proc spenders without losing a single cast."
+    }
+  ],
+  "cd_spell_ids": {
+    "Trueshot": 288613,
+    "Volley": 260243,
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "260243": {
+      "icon": "ability_hunter_rapidkilling",
+      "name": "Volley"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "288613": {
+      "icon": "ability_trueshot",
+      "name": "Trueshot"
+    }
+  },
+  "source_signature": "ecae5d3c229c4873",
+  "ingest_version": 2
+}

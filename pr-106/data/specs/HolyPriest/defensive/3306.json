@@ -1,0 +1,195 @@
+{
+  "spec": "HolyPriest",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Guardian Spirit": {
+      "sample_count": 3,
+      "avg_first_cast_s": 111.5,
+      "stddev_first_cast_s": 66.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.247,
+        "stddev": 0.134,
+        "min": 0.157,
+        "max": 0.401
+      },
+      "majority_hold": false
+    },
+    "Desperate Prayer": {
+      "sample_count": 7,
+      "avg_first_cast_s": 126.6,
+      "stddev_first_cast_s": 105.1,
+      "avg_gap_s": 103.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.363,
+        "stddev": 0.227,
+        "min": 0.157,
+        "max": 0.802
+      },
+      "majority_hold": false
+    },
+    "Fade": {
+      "sample_count": 8,
+      "avg_first_cast_s": 52.8,
+      "stddev_first_cast_s": 42.8,
+      "avg_gap_s": 105.8,
+      "stddev_gap_s": 96.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 184.5,
+          "stddev_s": 111,
+          "count": 7,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.7,
+      "uses_per_min": {
+        "avg": 0.704,
+        "stddev": 0.476,
+        "min": 0.314,
+        "max": 1.604
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 23.6,
+      "dmg_avg": 202540,
+      "dmg_stddev": 174379,
+      "dmg_min": 72554,
+      "dmg_max": 508294,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 142194,
+          "min_damage": 72554,
+          "max_damage": 206565,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 69.4,
+      "dmg_avg": 587000,
+      "dmg_stddev": 192061,
+      "dmg_min": 376739,
+      "dmg_max": 851351,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 514707,
+          "min_damage": 236714,
+          "max_damage": 699121,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47788,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Guardian Spirit",
+      "spell_id": 47788,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as your main tank external to prevent a lethal hit (cheat death restoring the target to 40% health); coordinate with the tank, and self-cast it if no tank needs it since Priest is otherwise weak defensively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your health drops toward 75% or below, especially after self-damage like Shadow Word: Death, to instantly heal yourself and raise your maximum health for the window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Use to shed threat and, with the Greater Fade or damage-reduction talents, to mitigate an incoming hit or shrug off a mechanic; keep it available for emergencies.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Guardian Spirit": 47788,
+    "Desperate Prayer": 19236,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "85c58691b75be270",
+  "ingest_version": 1
+}

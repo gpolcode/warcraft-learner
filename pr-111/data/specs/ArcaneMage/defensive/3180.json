@@ -1,0 +1,168 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 8,
+      "avg_first_cast_s": 103.4,
+      "stddev_first_cast_s": 31.6,
+      "avg_gap_s": 89.8,
+      "stddev_gap_s": 46.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 218.3,
+          "stddev_s": 96.1,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 3.3,
+      "avg_uses_per_min": 0.5,
+      "uses_per_min": {
+        "avg": 0.5,
+        "stddev": 0.227,
+        "min": 0.177,
+        "max": 0.844
+      },
+      "majority_hold": true
+    },
+    "Prismatic Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 67.9,
+      "stddev_first_cast_s": 19.7,
+      "avg_gap_s": 46.7,
+      "stddev_gap_s": 18.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 133.1,
+          "stddev_s": 35.8,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 143,
+          "stddev_s": 47.3,
+          "count": 9,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 195,
+          "stddev_s": 42.8,
+          "count": 8,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 247.7,
+          "stddev_s": 37.3,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 285.6,
+          "stddev_s": 30,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6.5,
+      "avg_uses_per_min": 1.04,
+      "uses_per_min": {
+        "avg": 1.039,
+        "stddev": 0.269,
+        "min": 0.532,
+        "max": 1.309
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 342245,
+      "avg_uses": 3.3,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 235450,
+      "avg_uses": 6.5,
+      "min_uses": 3,
+      "max_uses": 9
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235450": {
+      "icon": "spell_magearmor",
+      "name": "Prismatic Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    }
+  },
+  "source_signature": "621516ac97c5a28f",
+  "ingest_version": 2
+}

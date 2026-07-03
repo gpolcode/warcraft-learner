@@ -1,0 +1,263 @@
+{
+  "spec": "VengeanceDemonHunter",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Fiery Brand": {
+      "sample_count": 10,
+      "avg_first_cast_s": 6.7,
+      "stddev_first_cast_s": 12,
+      "avg_gap_s": 47.3,
+      "stddev_gap_s": 20.2,
+      "hold_targets": {
+        "5": {
+          "target_s": 242,
+          "stddev_s": 5.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 364.9,
+          "stddev_s": 3.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 11.8,
+      "avg_uses_per_min": 1.29,
+      "uses_per_min": {
+        "avg": 1.294,
+        "stddev": 0.072,
+        "min": 1.168,
+        "max": 1.394
+      },
+      "majority_hold": true
+    },
+    "Demon Spikes": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.2,
+      "stddev_first_cast_s": 5.2,
+      "avg_gap_s": 10.8,
+      "stddev_gap_s": 5.4,
+      "hold_targets": {},
+      "avg_uses": 51,
+      "avg_uses_per_min": 5.58,
+      "uses_per_min": {
+        "avg": 5.579,
+        "stddev": 1.006,
+        "min": 3.82,
+        "max": 6.627
+      },
+      "majority_hold": false
+    },
+    "Metamorphosis": {
+      "sample_count": 10,
+      "avg_first_cast_s": 8.2,
+      "stddev_first_cast_s": 4.3,
+      "avg_gap_s": 41.9,
+      "stddev_gap_s": 19.3,
+      "hold_targets": {},
+      "avg_uses": 13.3,
+      "avg_uses_per_min": 1.46,
+      "uses_per_min": {
+        "avg": 1.462,
+        "stddev": 0.186,
+        "min": 1.146,
+        "max": 1.637
+      },
+      "majority_hold": false
+    },
+    "Darkness": {
+      "sample_count": 5,
+      "avg_first_cast_s": 234.8,
+      "stddev_first_cast_s": 94.7,
+      "avg_gap_s": 233.9,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.129,
+        "stddev": 0.052,
+        "min": 0.104,
+        "max": 0.222
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 249.1,
+      "dmg_avg": 2225134,
+      "dmg_stddev": 1377354,
+      "dmg_min": 759487,
+      "dmg_max": 5189843,
+      "dmg_pct_avg": 0.056,
+      "window_length_s": 25.1,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253879,
+          "avg_damage": 859829,
+          "min_damage": 164745,
+          "max_damage": 1487224,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 382127,
+          "min_damage": 160960,
+          "max_damage": 813328,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 255237,
+          "min_damage": 56263,
+          "max_damage": 497089,
+          "count": 7
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 174252,
+          "min_damage": 111687,
+          "max_damage": 308529,
+          "count": 7
+        },
+        {
+          "spell_id": 1282425,
+          "avg_damage": 162886,
+          "min_damage": 133625,
+          "max_damage": 269927,
+          "count": 5
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 115696,
+          "min_damage": 71470,
+          "max_damage": 144134,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 204021,
+      "avg_uses": 11.8,
+      "min_uses": 11,
+      "max_uses": 13
+    },
+    {
+      "spell_id": 203720,
+      "avg_uses": 51,
+      "min_uses": 35,
+      "max_uses": 61
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 187827,
+      "avg_uses": 13.3,
+      "min_uses": 11,
+      "max_uses": 15
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Fiery Brand",
+      "spell_id": 204021,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Use on cooldown to reduce incoming damage from the branded target; you can hold it up to 10 seconds for a known large tankbuster, and with Down in Flames sync one charge with offensive cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Demon Spikes",
+      "spell_id": 203720,
+      "cooldown": 20,
+      "duration": 6,
+      "usage_rule": "Press whenever you have no other defensive active to gain armor and physical damage reduction; its charges recharge with haste so use it freely to keep near-constant uptime while tanking.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use on cooldown for the raid's dodge chance, but hold it for heavy group damage phases or multi-hit pulls; cooldown drops to 3 minutes with Pitch Black talented.",
+      "talent_gated": false
+    },
+    {
+      "name": "Metamorphosis",
+      "spell_id": 187827,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Beyond its damage, Metamorphosis grants a large health increase and armor, so it doubles as an emergency survival cooldown when you are taking heavy damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Fiery Brand": 204021,
+    "Demon Spikes": 203720,
+    "Darkness": 196718,
+    "Metamorphosis": 187827
+  },
+  "ability_icons": {
+    "187827": {
+      "icon": "ability_demonhunter_metamorphasistank",
+      "name": "Metamorphosis"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "203720": {
+      "icon": "ability_demonhunter_demonspikes",
+      "name": "Demon Spikes"
+    },
+    "204021": {
+      "icon": "ability_demonhunter_fierybrand",
+      "name": "Fiery Brand"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1253873": {
+      "icon": "inv_polearm_2h_voidscythe_d_01",
+      "name": "Melee"
+    },
+    "1253879": {
+      "icon": "spell_shadow_focusedpower",
+      "name": "Impaled"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1282425": {
+      "icon": "inv_112_raiddimensius_crushinggravity",
+      "name": "Core Harvest"
+    },
+    "1285827": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Overkill Current"
+    }
+  },
+  "source_signature": "ac0e6cc1fcf6fb8e",
+  "ingest_version": 2
+}

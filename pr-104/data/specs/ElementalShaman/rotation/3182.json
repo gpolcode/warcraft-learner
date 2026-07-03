@@ -1,0 +1,286 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "avg_duration_s": 316.5,
+  "downtime_threshold_ms": 2472,
+  "top_avg_efficiency": 72.9,
+  "top_efficiency_stddev": 3.8,
+  "per_cd_benchmarks": {
+    "Ascendance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0.7,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 139.9,
+      "stddev_gap_s": 22.3,
+      "avg_bl_offset_s": 8.2,
+      "stddev_bl_offset_s": 3.4,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.57,
+        "stddev": 0.016,
+        "min": 0.552,
+        "max": 0.591
+      },
+      "bl_pct": 90,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Stormkeeper": {
+      "sample_count": 10,
+      "avg_first_cast_s": 15.8,
+      "stddev_first_cast_s": 29.8,
+      "avg_gap_s": 55.3,
+      "stddev_gap_s": 8.3,
+      "avg_bl_offset_s": 7.3,
+      "stddev_bl_offset_s": 4.2,
+      "avg_uses": 5.3,
+      "avg_uses_per_min": 1.01,
+      "uses_per_min": {
+        "avg": 1.117,
+        "stddev": 0.104,
+        "min": 0.937,
+        "max": 1.288
+      },
+      "bl_pct": 90,
+      "majority_hold": false,
+      "hold_targets": {
+        "2": {
+          "target_s": 71.7,
+          "stddev_s": 1.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
+    },
+    "Ancestral Swiftness": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.5,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 37,
+      "stddev_gap_s": 10.1,
+      "avg_bl_offset_s": 9.4,
+      "stddev_bl_offset_s": 5.9,
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.33,
+      "uses_per_min": {
+        "avg": 1.656,
+        "stddev": 0.261,
+        "min": 1.471,
+        "max": 1.84
+      },
+      "bl_pct": 20,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Storm Elemental": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Fire Elemental": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Ascendance",
+      "spell_id": 114050,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Use roughly on cooldown but always cast Stormkeeper first; buff your Overloads by pooling Maelstrom and Tempest procs going in, and sync it with Bloodlust and on-use trinkets for maximum burst."
+    },
+    {
+      "name": "Stormkeeper",
+      "spell_id": 191634,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Cast on cooldown to empower your next Lightning Bolt or Chain Lightning casts, but hold it briefly to fire it immediately before Ascendance so its overloads benefit from the Ascendance buff."
+    },
+    {
+      "name": "Ancestral Swiftness",
+      "spell_id": 443454,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Cast roughly on cooldown for the instant cast and stat buff; as Farseer it also spawns an Ancestor, so line it up right after Stormkeeper inside your burst window (talent_gated to builds that take it)."
+    },
+    {
+      "name": "Storm Elemental",
+      "spell_id": 192249,
+      "cooldown": 150,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "usage_rule": "Summon on cooldown and sync with your burst window and Bloodlust; this entry is talent_gated since it competes with the Ascendance/Primordial Wave node, so zero casts is normal on builds without it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fire Elemental",
+      "spell_id": 198067,
+      "cooldown": 150,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "usage_rule": "Summon on cooldown when specced into Call of Fire to extend Flame Shock duration and tick rate; talent_gated, so having zero casts is normal for builds that do not take it.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "cd_hold",
+      "priority": "critical",
+      "description": "Always cast Stormkeeper before Ascendance",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          114050
+        ],
+        "spell_names": [
+          "Ascendance"
+        ],
+        "anchor_spell_id": 191634,
+        "anchor_spell_name": "Stormkeeper",
+        "hold_window_s": 6
+      },
+      "action": "Always fire Stormkeeper immediately before pressing Ascendance so the empowered Lightning Bolt or Chain Lightning overloads are amplified by the Ascendance buff; never enter Ascendance with Stormkeeper still on cooldown."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Stormkeeper, Lava Burst, Ascendance",
+      "condition": null,
+      "action": "Open with Stormkeeper and a pre-pull Lava Burst, then press Ascendance, Ancestral Swiftness, and a second Lava Burst before settling into your filler priority; the goal is to stack every cooldown as early as possible."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never overcap Maelstrom",
+      "condition": null,
+      "action": "Spend Maelstrom on Earth Shock, Elemental Blast, or Earthquake before it caps; wasting Maelstrom directly loses spender casts and is one of the biggest single-target DPS losses for the spec."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Master of the Elements on highest-value spells",
+      "condition": null,
+      "action": "Consume Lava Surge procs to gain Master of the Elements, then immediately empower your highest-damage spell such as Tempest, Earth Shock, or Elemental Blast rather than a filler."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Stormkeeper rolling on cooldown",
+      "condition": null,
+      "action": "Use Stormkeeper on cooldown whenever Ascendance is more than ten seconds away; only hold it when Ascendance is about to come up so the two can be synced."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Chain Lightning and Earthquake at 3+ targets",
+      "condition": null,
+      "action": "At three or more targets replace Lightning Bolt with Chain Lightning and dump Maelstrom into Earthquake instead of Earth Shock; keep Flame Shock spread for Master of the Elements and Ancestor procs."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Maintain Flame Shock uptime",
+      "condition": null,
+      "action": "Refresh Flame Shock when it is about to fall off, using Voltaic Blaze when available, so Lava Surge procs and Farseer Ancestor Lava Bursts keep flowing."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Pre-plan movement with instant casts",
+      "condition": null,
+      "action": "Save Spiritwalker's Grace and Nature's Swiftness for forced movement and start moving early or not at all; Elemental lacks quiet mobility, so unplanned movement is a large cast loss."
+    }
+  ],
+  "cd_spell_ids": {
+    "Ascendance": 114050,
+    "Stormkeeper": 191634,
+    "Ancestral Swiftness": 443454,
+    "Storm Elemental": 192249,
+    "Fire Elemental": 198067,
+    "Astral Shift": 108271,
+    "Stone Bulwark Totem": 108270,
+    "Ancestral Guidance": 108281,
+    "Earth Elemental": 198103
+  },
+  "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
+    },
+    "114050": {
+      "icon": "8026697",
+      "name": "Ascendance"
+    },
+    "191634": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Stormkeeper"
+    },
+    "192249": {
+      "icon": "inv_stormelemental",
+      "name": "Storm Elemental"
+    },
+    "198067": {
+      "icon": "spell_fire_elemental_totem",
+      "name": "Fire Elemental"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "443454": {
+      "icon": "inv_ability_farseershaman_ancestralswiftness",
+      "name": "Ancestral Swiftness"
+    }
+  },
+  "source_signature": "d05992e06300e921",
+  "ingest_version": 1
+}

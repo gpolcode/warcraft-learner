@@ -1,0 +1,283 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Aspect of the Turtle": {
+      "sample_count": 8,
+      "avg_first_cast_s": 347.1,
+      "stddev_first_cast_s": 119.6,
+      "avg_gap_s": 201.1,
+      "stddev_gap_s": 104.9,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.194,
+        "stddev": 0.053,
+        "min": 0.108,
+        "max": 0.235
+      },
+      "majority_hold": false
+    },
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 121.4,
+      "stddev_first_cast_s": 72.2,
+      "avg_gap_s": 69.6,
+      "stddev_gap_s": 54.2,
+      "hold_targets": {},
+      "avg_uses": 4.5,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.494,
+        "stddev": 0.312,
+        "min": 0.114,
+        "max": 1.073
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 5,
+      "avg_first_cast_s": 139.1,
+      "stddev_first_cast_s": 69.9,
+      "avg_gap_s": 119.5,
+      "stddev_gap_s": 79.8,
+      "hold_targets": {},
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.263,
+        "stddev": 0.165,
+        "min": 0.103,
+        "max": 0.443
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 67.9,
+      "dmg_avg": 362652,
+      "dmg_stddev": 191281,
+      "dmg_min": 95550,
+      "dmg_max": 605334,
+      "window_length_s": 7.3,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 198556,
+          "min_damage": 59769,
+          "max_damage": 265382,
+          "count": 7
+        },
+        {
+          "spell_id": 1251649,
+          "avg_damage": 160433,
+          "min_damage": 127442,
+          "max_damage": 181488,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 215.6,
+      "dmg_avg": 240009,
+      "dmg_stddev": 83435,
+      "dmg_min": 36247,
+      "dmg_max": 355876,
+      "window_length_s": 6.8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281473,
+          "avg_damage": 119390,
+          "min_damage": 109473,
+          "max_damage": 123077,
+          "count": 14
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 110403,
+          "min_damage": 36247,
+          "max_damage": 164371,
+          "count": 16
+        }
+      ]
+    },
+    {
+      "time_s": 327,
+      "dmg_avg": 271761,
+      "dmg_stddev": 156283,
+      "dmg_min": 62126,
+      "dmg_max": 479685,
+      "window_length_s": 6.3,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281123,
+          "avg_damage": 118382,
+          "min_damage": 98641,
+          "max_damage": 128278,
+          "count": 5
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 94705,
+          "min_damage": 78912,
+          "max_damage": 102622,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 86996,
+          "min_damage": 55258,
+          "max_damage": 149364,
+          "count": 9
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 11944,
+          "min_damage": 6868,
+          "max_damage": 14966,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 329.2,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 6.7,
+      "defensive_name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "common_defensives": [
+        "Aspect of the Turtle"
+      ],
+      "common_cds": [
+        "Aspect of the Turtle"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 4.5,
+      "min_uses": 1,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1251649": {
+      "icon": "inv_pet_naaru",
+      "name": "Disintegration"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    }
+  },
+  "source_signature": "b8124da5bbb5f9fe",
+  "ingest_version": 1
+}

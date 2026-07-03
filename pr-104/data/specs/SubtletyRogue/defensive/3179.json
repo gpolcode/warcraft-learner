@@ -1,0 +1,207 @@
+{
+  "spec": "SubtletyRogue",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Crimson Vial": {
+      "sample_count": 4,
+      "avg_first_cast_s": 143.1,
+      "stddev_first_cast_s": 99.9,
+      "avg_gap_s": 144.3,
+      "stddev_gap_s": 96.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 235.6,
+          "stddev_s": 86.4,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.33,
+      "uses_per_min": {
+        "avg": 0.331,
+        "stddev": 0.182,
+        "min": 0.165,
+        "max": 0.586
+      },
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 5,
+      "avg_first_cast_s": 130.5,
+      "stddev_first_cast_s": 111.4,
+      "avg_gap_s": 40,
+      "stddev_gap_s": 40,
+      "hold_targets": {
+        "1": {
+          "target_s": 215.9,
+          "stddev_s": 117.7,
+          "count": 3,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.75,
+      "uses_per_min": {
+        "avg": 0.754,
+        "stddev": 0.581,
+        "min": 0.325,
+        "max": 1.759
+      },
+      "majority_hold": true
+    },
+    "Cloak of Shadows": {
+      "sample_count": 5,
+      "avg_first_cast_s": 213.4,
+      "stddev_first_cast_s": 134.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.213,
+        "stddev": 0.047,
+        "min": 0.162,
+        "max": 0.267
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 99.7,
+      "dmg_avg": 330570,
+      "dmg_stddev": 161626,
+      "dmg_min": 195704,
+      "dmg_max": 547620,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 207784,
+          "min_damage": 195704,
+          "max_damage": 219864,
+          "count": 2
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 198457,
+          "min_damage": 158516,
+          "max_damage": 238397,
+          "count": 2
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 117367,
+          "min_damage": 95108,
+          "max_damage": 139625,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31224,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 185311,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 3,
+      "min_uses": 2,
+      "max_uses": 6
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to purge a dangerous magical debuff or to immune a targeted magical ability; must be used proactively since the 5-second window is very short.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use proactively before a burst of physical damage or during a physical tankbuster cleave; grants near-100% dodge for 10 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use when health drops below 50% to restore a meaningful chunk of HP; short enough cooldown to use freely throughout the fight without holding for emergencies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 5,
+      "usage_rule": "Press proactively before any telegraphed AoE damage event; its 15-second cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Crimson Vial": 185311,
+    "Feint": 1966
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "1834d0d886072878",
+  "ingest_version": 0
+}

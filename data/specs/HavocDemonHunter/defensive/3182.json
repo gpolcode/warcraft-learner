@@ -1,0 +1,104 @@
+{
+  "spec": "HavocDemonHunter",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blur": {
+      "sample_count": 10,
+      "avg_first_cast_s": 122.2,
+      "stddev_first_cast_s": 47.9,
+      "avg_gap_s": 59.6,
+      "stddev_gap_s": 32.9,
+      "hold_targets": {},
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.6,
+      "uses_per_min": {
+        "avg": 0.595,
+        "stddev": 0.283,
+        "min": 0.183,
+        "max": 0.946
+      },
+      "majority_hold": true
+    },
+    "Darkness": {
+      "sample_count": 6,
+      "avg_first_cast_s": 174.1,
+      "stddev_first_cast_s": 33.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.198,
+        "stddev": 0.022,
+        "min": 0.18,
+        "max": 0.237
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 198589,
+      "avg_uses": 2.8,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before predictable physical or magical burst for a 20% damage reduction plus 50% dodge against physical attacks; its short cooldown lets you use it freely on incoming tankbuster-style hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a heavy AoE magical or avoidable damage event so allies inside gain a chance to fully avoid each hit; coordinate timing with other raid cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Netherwalk",
+      "spell_id": 196555,
+      "cooldown": 180,
+      "duration": 5,
+      "usage_rule": "Use as a 5-second full damage immunity to soak or survive a lethal mechanic; talent-gated, so it replaces Blur only on builds that take it.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Blur": 198589,
+    "Darkness": 196718,
+    "Netherwalk": 196555
+  },
+  "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    }
+  },
+  "source_signature": "b7c5b5828a15b1ad",
+  "ingest_version": 3
+}

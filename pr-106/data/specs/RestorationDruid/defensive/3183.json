@@ -1,0 +1,273 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 114.1,
+      "stddev_first_cast_s": 115.4,
+      "avg_gap_s": 123,
+      "stddev_gap_s": 71,
+      "hold_targets": {
+        "1": {
+          "target_s": 229.9,
+          "stddev_s": 54,
+          "count": 4,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 329.6,
+          "stddev_s": 143.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 328.8,
+          "stddev_s": 80.9,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.39,
+      "uses_per_min": {
+        "avg": 0.386,
+        "stddev": 0.205,
+        "min": 0.106,
+        "max": 0.728
+      },
+      "majority_hold": true
+    },
+    "Ironbark": {
+      "sample_count": 9,
+      "avg_first_cast_s": 256.5,
+      "stddev_first_cast_s": 201,
+      "avg_gap_s": 150.3,
+      "stddev_gap_s": 43.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 327,
+          "stddev_s": 118.6,
+          "count": 7,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.273,
+        "stddev": 0.127,
+        "min": 0.104,
+        "max": 0.423
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 210.3,
+      "dmg_avg": 531803,
+      "dmg_stddev": 119506,
+      "dmg_min": 392575,
+      "dmg_max": 668204,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 243065,
+          "min_damage": 198826,
+          "max_damage": 262421,
+          "count": 4
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 209797,
+          "min_damage": 118039,
+          "max_damage": 359035,
+          "count": 4
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 78942,
+          "min_damage": 46748,
+          "max_damage": 115505,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 327,
+      "dmg_avg": 635862,
+      "dmg_stddev": 125990,
+      "dmg_min": 493791,
+      "dmg_max": 790486,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 228295,
+          "min_damage": 161037,
+          "max_damage": 271627,
+          "count": 8
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 131651,
+          "min_damage": 107531,
+          "max_damage": 142596,
+          "count": 6
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 119053,
+          "min_damage": 86025,
+          "max_damage": 217982,
+          "count": 8
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 116186,
+          "min_damage": 87272,
+          "max_damage": 134092,
+          "count": 5
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 56564,
+          "min_damage": 54458,
+          "max_damage": 61253,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 34854,
+          "min_damage": 22873,
+          "max_damage": 42623,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.6,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254398": {
+      "icon": "inv_jewelcrafting_dawnstone_02",
+      "name": "Glimmering"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    }
+  },
+  "source_signature": "58e3b86f9f5f80bb",
+  "ingest_version": 1
+}

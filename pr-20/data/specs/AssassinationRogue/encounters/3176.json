@@ -1,0 +1,618 @@
+{
+  "spec": "AssassinationRogue",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "avg_duration_s": 218.8,
+  "last_ingested": "2026-06-14 09:11:48",
+  "downtime_threshold_ms": 1271,
+  "top_avg_efficiency": 73.3,
+  "top_efficiency_stddev": 9.4,
+  "per_cd_benchmarks": {
+    "Deathmark": {
+      "sample_count": 10,
+      "avg_first_cast_s": 7.9,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 125,
+      "stddev_gap_s": 2.8,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "hold_targets": {},
+      "uses_per_min": {
+        "avg": 0.604,
+        "stddev": 0.052,
+        "min": 0.525,
+        "max": 0.692
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.6,
+      "bl_pct": 0,
+      "majority_hold": false
+    },
+    "Kingsbane": {
+      "sample_count": 10,
+      "avg_first_cast_s": 9,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 62.2,
+      "stddev_gap_s": 2,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "hold_targets": {},
+      "uses_per_min": {
+        "avg": 1.037,
+        "stddev": 0.079,
+        "min": 0.926,
+        "max": 1.125
+      },
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 1.04,
+      "bl_pct": 0,
+      "majority_hold": false
+    },
+    "Vanish": {
+      "sample_count": 10,
+      "avg_first_cast_s": 24,
+      "stddev_first_cast_s": 37.4,
+      "avg_gap_s": 125.6,
+      "stddev_gap_s": 8.3,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "hold_targets": {},
+      "uses_per_min": {
+        "avg": 0.577,
+        "stddev": 0.119,
+        "min": 0.263,
+        "max": 0.692
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.58,
+      "bl_pct": 0,
+      "majority_hold": false
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 9.2,
+      "stddev_s": 1,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 4764247,
+      "dmg_stddev": 498956,
+      "dmg_min": 4052696,
+      "dmg_max": 5616726,
+      "ability_breakdown": [
+        {
+          "spell_id": 703,
+          "avg_damage": 740695,
+          "min_damage": 550856,
+          "max_damage": 981002,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_damage": 722073,
+          "min_damage": 545781,
+          "max_damage": 959762,
+          "count": 10
+        },
+        {
+          "spell_id": 32645,
+          "avg_damage": 708091,
+          "min_damage": 493492,
+          "max_damage": 844993,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 444836,
+          "min_damage": 384363,
+          "max_damage": 564637,
+          "count": 10
+        },
+        {
+          "spell_id": 383414,
+          "avg_damage": 435584,
+          "min_damage": 339501,
+          "max_damage": 601876,
+          "count": 7
+        },
+        {
+          "spell_id": 113780,
+          "avg_damage": 389642,
+          "min_damage": 321165,
+          "max_damage": 464780,
+          "count": 8
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 70.6,
+      "stddev_s": 1.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1802835,
+      "dmg_stddev": 304287,
+      "dmg_min": 1340501,
+      "dmg_max": 2224001,
+      "ability_breakdown": [
+        {
+          "spell_id": 32645,
+          "avg_damage": 360097,
+          "min_damage": 134381,
+          "max_damage": 585813,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_damage": 318202,
+          "min_damage": 237437,
+          "max_damage": 401935,
+          "count": 10
+        },
+        {
+          "spell_id": 452538,
+          "avg_damage": 230857,
+          "min_damage": 143133,
+          "max_damage": 399377,
+          "count": 6
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 158555,
+          "min_damage": 128960,
+          "max_damage": 191928,
+          "count": 9
+        },
+        {
+          "spell_id": 703,
+          "avg_damage": 143490,
+          "min_damage": 108277,
+          "max_damage": 173134,
+          "count": 6
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 138786,
+          "min_damage": 104126,
+          "max_damage": 177370,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 134.3,
+      "stddev_s": 2.7,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 5401506,
+      "dmg_stddev": 1273599,
+      "dmg_min": 3238304,
+      "dmg_max": 7124127,
+      "ability_breakdown": [
+        {
+          "spell_id": 421979,
+          "avg_damage": 983425,
+          "min_damage": 370019,
+          "max_damage": 1523766,
+          "count": 6
+        },
+        {
+          "spell_id": 703,
+          "avg_damage": 858339,
+          "min_damage": 395767,
+          "max_damage": 1738665,
+          "count": 10
+        },
+        {
+          "spell_id": 385627,
+          "avg_damage": 713056,
+          "min_damage": 393019,
+          "max_damage": 950041,
+          "count": 10
+        },
+        {
+          "spell_id": 32645,
+          "avg_damage": 638948,
+          "min_damage": 378177,
+          "max_damage": 803487,
+          "count": 10
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 567617,
+          "min_damage": 346717,
+          "max_damage": 879697,
+          "count": 10
+        },
+        {
+          "spell_id": 1247227,
+          "avg_damage": 413141,
+          "min_damage": 335143,
+          "max_damage": 607485,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    },
+    {
+      "time_s": 194,
+      "stddev_s": 2.9,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 2146384,
+      "dmg_stddev": 359225,
+      "dmg_min": 1801811,
+      "dmg_max": 2783670,
+      "ability_breakdown": [
+        {
+          "spell_id": 385627,
+          "avg_damage": 484764,
+          "min_damage": 351358,
+          "max_damage": 654703,
+          "count": 6
+        },
+        {
+          "spell_id": 32645,
+          "avg_damage": 399290,
+          "min_damage": 269349,
+          "max_damage": 483104,
+          "count": 6
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 189696,
+          "min_damage": 167483,
+          "max_damage": 204235,
+          "count": 5
+        },
+        {
+          "spell_id": 452538,
+          "avg_damage": 162260,
+          "min_damage": 117112,
+          "max_damage": 190077,
+          "count": 4
+        },
+        {
+          "spell_id": 1943,
+          "avg_damage": 155589,
+          "min_damage": 140663,
+          "max_damage": 169635,
+          "count": 4
+        },
+        {
+          "spell_id": 1265794,
+          "avg_damage": 154766,
+          "min_damage": 132009,
+          "max_damage": 168157,
+          "count": 5
+        }
+      ],
+      "common_cds": [
+        "Kingsbane"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 14
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:110433,110433,110433,90640,90692,90748,90749,90750,90751,90752,90756,90758,90759,90760,90766,90767,90768,90770,90771,90777,90784,90785,90786,94552,94553",
+        "count": 8,
+        "pct": 80,
+        "report_code": "7ZrRzyXfDQmYd6Tj",
+        "fight_id": 14,
+        "player_name": "폴리에"
+      },
+      {
+        "key": "v2:110433,110433,110433,90640,90692,90748,90749,90750,90751,90752,90756,90758,90759,90760,90766,90767,90768,90770,90775,90776,90777,90784,90785,94553",
+        "count": 2,
+        "pct": 20,
+        "report_code": "PGf8nAY7QWKyMw1H",
+        "fight_id": 23,
+        "player_name": "소매치기"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 193701,
+          "name": "Algeth'ar Puzzle Box",
+          "count": 3,
+          "pct": 30
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 7991,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7961,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7973,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 8031,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 8019,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7963,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7993,
+          "name": "",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 7981,
+          "name": "",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 8039,
+          "name": "",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 7983,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "16": [
+        {
+          "id": 8039,
+          "name": "",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7983,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 7981,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "gems": {
+      "avg_count": 5.2,
+      "max_count": 6,
+      "sample_count": 10
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 5
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 1
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 1
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 5,
+      "avg_first_cast_s": 103.4,
+      "stddev_first_cast_s": 76.6,
+      "avg_gap_s": 171.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.3,
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 1,
+      "avg_first_cast_s": 114.5,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.31,
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 1,
+      "avg_first_cast_s": 116.4,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.31,
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 71,
+      "stddev_s": 4.1,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "ability_breakdown": [],
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ]
+    }
+  ],
+  "top_dtk_comparison": [
+    {
+      "spell_id": 1259903,
+      "avg_pct": 0.8039,
+      "min_pct": 0.727,
+      "max_pct": 0.863,
+      "stddev_pct": 0.0437,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1280075,
+      "avg_pct": 0.0865,
+      "min_pct": 0.069,
+      "max_pct": 0.12,
+      "stddev_pct": 0.0207,
+      "sample_count": 6
+    },
+    {
+      "spell_id": 1249251,
+      "avg_pct": 0.0741,
+      "min_pct": 0.061,
+      "max_pct": 0.089,
+      "stddev_pct": 0.0084,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1249262,
+      "avg_pct": 0.0463,
+      "min_pct": 0.029,
+      "max_pct": 0.063,
+      "stddev_pct": 0.0117,
+      "sample_count": 10
+    }
+  ]
+}

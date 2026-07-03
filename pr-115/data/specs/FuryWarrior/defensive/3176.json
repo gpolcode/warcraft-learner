@@ -1,0 +1,111 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Spell Reflection": {
+      "sample_count": 6,
+      "avg_first_cast_s": 91.4,
+      "stddev_first_cast_s": 75.4,
+      "avg_gap_s": 66.6,
+      "stddev_gap_s": 27.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 119.4,
+          "stddev_s": 51.7,
+          "count": 4,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.558,
+        "stddev": 0.346,
+        "min": 0.206,
+        "max": 1.149
+      },
+      "majority_hold": true
+    },
+    "Enraged Regeneration": {
+      "sample_count": 2,
+      "avg_first_cast_s": 181.5,
+      "stddev_first_cast_s": 3.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.255,
+        "stddev": 0.069,
+        "min": 0.206,
+        "max": 0.304
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 184364,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "184364": {
+      "icon": "ability_warrior_focusedrage",
+      "name": "Enraged Regeneration"
+    }
+  },
+  "source_signature": "8f32b7dbf7ec0253",
+  "ingest_version": 2
+}

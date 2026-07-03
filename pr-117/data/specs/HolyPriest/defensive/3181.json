@@ -1,0 +1,165 @@
+{
+  "spec": "HolyPriest",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Guardian Spirit": {
+      "sample_count": 9,
+      "avg_first_cast_s": 302.8,
+      "stddev_first_cast_s": 163.9,
+      "avg_gap_s": 271.3,
+      "stddev_gap_s": 120,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.15,
+        "stddev": 0.056,
+        "min": 0.118,
+        "max": 0.248
+      },
+      "majority_hold": false
+    },
+    "Desperate Prayer": {
+      "sample_count": 9,
+      "avg_first_cast_s": 166.2,
+      "stddev_first_cast_s": 165.2,
+      "avg_gap_s": 193.2,
+      "stddev_gap_s": 122.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 393.8,
+          "stddev_s": 110.7,
+          "count": 7,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.3,
+        "stddev": 0.148,
+        "min": 0.12,
+        "max": 0.602
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 10,
+      "avg_first_cast_s": 89,
+      "stddev_first_cast_s": 114,
+      "avg_gap_s": 63.7,
+      "stddev_gap_s": 57.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 167.3,
+          "stddev_s": 78,
+          "count": 6,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 249.1,
+          "stddev_s": 124.8,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 283.8,
+          "stddev_s": 99.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 341.8,
+          "stddev_s": 87,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 386.1,
+          "stddev_s": 41,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6.8,
+      "avg_uses_per_min": 0.84,
+      "uses_per_min": {
+        "avg": 0.839,
+        "stddev": 0.31,
+        "min": 0.482,
+        "max": 1.355
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47788,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 6.8,
+      "min_uses": 4,
+      "max_uses": 10
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Guardian Spirit",
+      "spell_id": 47788,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as your main tank external to prevent a lethal hit (cheat death restoring the target to 40% health); coordinate with the tank, and self-cast it if no tank needs it since Priest is otherwise weak defensively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your health drops toward 75% or below, especially after self-damage like Shadow Word: Death, to instantly heal yourself and raise your maximum health for the window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Use to shed threat and, with the Greater Fade or damage-reduction talents, to mitigate an incoming hit or shrug off a mechanic; keep it available for emergencies.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Guardian Spirit": 47788,
+    "Desperate Prayer": 19236,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    }
+  },
+  "source_signature": "af8f6ea7a0f76beb",
+  "ingest_version": 2
+}

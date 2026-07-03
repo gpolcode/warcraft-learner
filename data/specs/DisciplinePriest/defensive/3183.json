@@ -1,0 +1,745 @@
+{
+  "spec": "DisciplinePriest",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 8,
+      "avg_first_cast_s": 169.2,
+      "stddev_first_cast_s": 98.4,
+      "avg_gap_s": 131.1,
+      "stddev_gap_s": 22.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 217.5,
+          "stddev_s": 69.4,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.191,
+        "stddev": 0.077,
+        "min": 0.108,
+        "max": 0.328
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 10,
+      "avg_first_cast_s": 53.5,
+      "stddev_first_cast_s": 58,
+      "avg_gap_s": 55.9,
+      "stddev_gap_s": 33.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 107.9,
+          "stddev_s": 71.6,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 158.5,
+          "stddev_s": 32.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 205,
+          "stddev_s": 90.3,
+          "count": 8,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 271.1,
+          "stddev_s": 40.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 327.6,
+          "stddev_s": 51.9,
+          "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 368.7,
+          "stddev_s": 83,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 445.9,
+          "stddev_s": 64.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 408.2,
+          "stddev_s": 91.7,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 8.9,
+      "avg_uses_per_min": 0.97,
+      "uses_per_min": {
+        "avg": 0.971,
+        "stddev": 0.251,
+        "min": 0.438,
+        "max": 1.387
+      },
+      "majority_hold": true
+    },
+    "Pain Suppression": {
+      "sample_count": 1,
+      "avg_first_cast_s": 212.9,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 185.8,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.231,
+        "stddev": 0,
+        "min": 0.231,
+        "max": 0.231
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 33.5,
+      "dmg_avg": 326977,
+      "dmg_stddev": 62680,
+      "dmg_min": 272953,
+      "dmg_max": 451763,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 262659,
+          "min_damage": 202262,
+          "max_damage": 280295,
+          "count": 7
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 52745,
+          "min_damage": 29548,
+          "max_damage": 107535,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 103.4,
+      "dmg_avg": 407180,
+      "dmg_stddev": 73519,
+      "dmg_min": 290834,
+      "dmg_max": 502213,
+      "dmg_pct_avg": 0.016,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 257292,
+          "min_damage": 163211,
+          "max_damage": 289604,
+          "count": 7
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 98836,
+          "min_damage": 15030,
+          "max_damage": 150988,
+          "count": 7
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 10689,
+          "min_damage": 1503,
+          "max_damage": 13029,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 156.5,
+      "dmg_avg": 335306,
+      "dmg_stddev": 101291,
+      "dmg_min": 226691,
+      "dmg_max": 588230,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 278332,
+          "min_damage": 226691,
+          "max_damage": 365877,
+          "count": 10
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 53891,
+          "min_damage": 28662,
+          "max_damage": 128370,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 199.6,
+      "dmg_avg": 369922,
+      "dmg_stddev": 112477,
+      "dmg_min": 170641,
+      "dmg_max": 588248,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 208996,
+          "min_damage": 141966,
+          "max_damage": 275806,
+          "count": 12
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 188270,
+          "min_damage": 131490,
+          "max_damage": 304401,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 215.8,
+      "dmg_avg": 339933,
+      "dmg_stddev": 120783,
+      "dmg_min": 127804,
+      "dmg_max": 452354,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 209018,
+          "min_damage": 113548,
+          "max_damage": 284998,
+          "count": 6
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 151557,
+          "min_damage": 131490,
+          "max_damage": 165662,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 242.7,
+      "dmg_avg": 597164,
+      "dmg_stddev": 177186,
+      "dmg_min": 338974,
+      "dmg_max": 825161,
+      "dmg_pct_avg": 0.024,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 223267,
+          "min_damage": 169042,
+          "max_damage": 255423,
+          "count": 6
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 164189,
+          "min_damage": 120332,
+          "max_damage": 187170,
+          "count": 4
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 126302,
+          "min_damage": 58855,
+          "max_damage": 145919,
+          "count": 5
+        },
+        {
+          "spell_id": 1284530,
+          "avg_damage": 117091,
+          "min_damage": 112811,
+          "max_damage": 121743,
+          "count": 4
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 2580,
+          "min_damage": 2390,
+          "max_damage": 2736,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 274.2,
+      "dmg_avg": 646026,
+      "dmg_stddev": 136887,
+      "dmg_min": 323320,
+      "dmg_max": 789887,
+      "dmg_pct_avg": 0.025,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 228212,
+          "min_damage": 149836,
+          "max_damage": 243984,
+          "count": 8
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 165272,
+          "min_damage": 144289,
+          "max_damage": 207699,
+          "count": 7
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 134906,
+          "min_damage": 126558,
+          "max_damage": 139069,
+          "count": 7
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 124929,
+          "min_damage": 122114,
+          "max_damage": 127355,
+          "count": 5
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11182,
+          "min_damage": 10265,
+          "max_damage": 11527,
+          "count": 6
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 2561,
+          "min_damage": 2433,
+          "max_damage": 2656,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 328.5,
+      "dmg_avg": 559326,
+      "dmg_stddev": 97020,
+      "dmg_min": 365880,
+      "dmg_max": 658057,
+      "dmg_pct_avg": 0.022,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 214502,
+          "min_damage": 151696,
+          "max_damage": 275803,
+          "count": 10
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 159743,
+          "min_damage": 152642,
+          "max_damage": 174722,
+          "count": 8
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 127795,
+          "min_damage": 122113,
+          "max_damage": 139778,
+          "count": 8
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 67339,
+          "min_damage": 64988,
+          "max_damage": 73872,
+          "count": 9
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 34195,
+          "min_damage": 18728,
+          "max_damage": 51592,
+          "count": 10
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 860,
+          "min_damage": 281,
+          "max_damage": 1635,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 369.3,
+      "dmg_avg": 378301,
+      "dmg_stddev": 135820,
+      "dmg_min": 152550,
+      "dmg_max": 534076,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 200545,
+          "min_damage": 111394,
+          "max_damage": 269332,
+          "count": 6
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 46803,
+          "min_damage": 41156,
+          "max_damage": 49341,
+          "count": 6
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 42791,
+          "min_damage": 30644,
+          "max_damage": 57281,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 448.5,
+      "dmg_avg": 496993,
+      "dmg_stddev": 141375,
+      "dmg_min": 333178,
+      "dmg_max": 709726,
+      "dmg_pct_avg": 0.02,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 282974,
+          "min_damage": 28670,
+          "max_damage": 709726,
+          "count": 5
+        },
+        {
+          "spell_id": 1251080,
+          "avg_damage": 255695,
+          "min_damage": 242725,
+          "max_damage": 270379,
+          "count": 3
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 36510,
+          "min_damage": 21237,
+          "max_damage": 51593,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 12639,
+          "min_damage": 11483,
+          "max_damage": 13593,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 499.2,
+      "dmg_avg": 850931,
+      "dmg_stddev": 44633,
+      "dmg_min": 777213,
+      "dmg_max": 898365,
+      "dmg_pct_avg": 0.033,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 794806,
+          "min_damage": 726859,
+          "max_damage": 842754,
+          "count": 5
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 64580,
+          "min_damage": 50158,
+          "max_damage": 85009,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 33206,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 8.9,
+      "min_uses": 4,
+      "max_uses": 12
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Pain Suppression",
+      "spell_id": 33206,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Cast on yourself or an ally to cut incoming damage by 40 percent during a tankbuster or burst, and use it as raid mitigation in Mythic+ when you lack a healing cooldown to top players up.",
+      "talent_gated": false
+    },
+    {
+      "name": "Power Word: Barrier",
+      "spell_id": 62618,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Drop on a stacked group ahead of a heavy raid-wide hit to reduce damage taken for everyone standing inside it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your own health drops below about 75 percent for an instant burst of self-healing and a temporary maximum-health increase, especially after a Shadow Word: Death backlash.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Press to drop threat and, with the Phantom Reach or damage-reduction talent, to soften incoming personal damage during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Pain Suppression": 33206,
+    "Power Word: Barrier": 62618,
+    "Desperate Prayer": 19236,
+    "Dispersion": 47585,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
+    "33206": {
+      "icon": "spell_holy_painsupression",
+      "name": "Pain Suppression"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "62618": {
+      "icon": "spell_holy_powerwordbarrier",
+      "name": "Power Word: Barrier"
+    },
+    "1249594": {
+      "icon": "inv_10_inscription_vantusrune_color1",
+      "name": "Dark Rune"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1251080": {
+      "icon": "ability_priest_darkarchangel",
+      "name": "The Dark Archangel"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    },
+    "1282372": {
+      "icon": "ability_evoker_unravel",
+      "name": "Cosmic Fission"
+    },
+    "1284530": {
+      "icon": "spell_mage_supernova",
+      "name": "Galvanize"
+    },
+    "1285827": {
+      "icon": "ability_thunderking_lightningwhip",
+      "name": "Overkill Current"
+    },
+    "1287445": {
+      "icon": "inv_112_raiddimensius_darkenedsky",
+      "name": "Heaven & Hell"
+    }
+  },
+  "source_signature": "147c65e4e146fd92",
+  "ingest_version": 3
+}

@@ -1,0 +1,117 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 140.9,
+      "stddev_first_cast_s": 56.5,
+      "avg_gap_s": 24.4,
+      "stddev_gap_s": 34,
+      "hold_targets": {},
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 1,
+      "uses_per_min": {
+        "avg": 1,
+        "stddev": 0.497,
+        "min": 0.396,
+        "max": 2.199
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 7,
+      "avg_first_cast_s": 126.1,
+      "stddev_first_cast_s": 85.8,
+      "avg_gap_s": 129,
+      "stddev_gap_s": 66.5,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.35,
+      "uses_per_min": {
+        "avg": 0.346,
+        "stddev": 0.135,
+        "min": 0.244,
+        "max": 0.579
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 4.4,
+      "min_uses": 2,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "c3571c9889be955f",
+  "ingest_version": 2
+}

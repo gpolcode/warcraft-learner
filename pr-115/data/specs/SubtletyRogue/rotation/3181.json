@@ -1,0 +1,284 @@
+{
+  "spec": "SubtletyRogue",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "avg_duration_s": 501,
+  "downtime_threshold_ms": 1844,
+  "top_avg_efficiency": 67.1,
+  "top_efficiency_stddev": 3.5,
+  "per_cd_benchmarks": {
+    "Shadow Blades": {
+      "sample_count": 10,
+      "avg_first_cast_s": 9.4,
+      "stddev_first_cast_s": 5.7,
+      "avg_gap_s": 98.8,
+      "stddev_gap_s": 17.4,
+      "avg_bl_offset_s": 18.3,
+      "stddev_bl_offset_s": 7.3,
+      "avg_uses": 5.7,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.683,
+        "stddev": 0.053,
+        "min": 0.576,
+        "max": 0.742
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
+      "hold_targets": {}
+    },
+    "Shadow Dance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 6.2,
+      "stddev_first_cast_s": 3.7,
+      "avg_gap_s": 20.7,
+      "stddev_gap_s": 9.8,
+      "avg_bl_offset_s": 2.1,
+      "stddev_bl_offset_s": 3.1,
+      "avg_uses": 24.5,
+      "avg_uses_per_min": 2.94,
+      "uses_per_min": {
+        "avg": 2.937,
+        "stddev": 0.162,
+        "min": 2.686,
+        "max": 3.137
+      },
+      "bl_pct": 80,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Secret Technique": {
+      "sample_count": 10,
+      "avg_first_cast_s": 6.2,
+      "stddev_first_cast_s": 3.7,
+      "avg_gap_s": 22.9,
+      "stddev_gap_s": 12.3,
+      "avg_bl_offset_s": 2.2,
+      "stddev_bl_offset_s": 3.1,
+      "avg_uses": 22.2,
+      "avg_uses_per_min": 2.66,
+      "uses_per_min": {
+        "avg": 2.655,
+        "stddev": 0.159,
+        "min": 2.365,
+        "max": 2.865
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
+      "hold_targets": {
+        "7": {
+          "target_s": 174.3,
+          "stddev_s": 2.1,
+          "delay_s": 16.4,
+          "delay_stddev_s": 4.1,
+          "band_s": 5,
+          "effective_cd_s": 45,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
+    },
+    "Vanish": {
+      "sample_count": 10,
+      "avg_first_cast_s": 81.8,
+      "stddev_first_cast_s": 134,
+      "avg_gap_s": 157.3,
+      "stddev_gap_s": 34.3,
+      "avg_bl_offset_s": 14.2,
+      "stddev_bl_offset_s": 20.7,
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.383,
+        "stddev": 0.119,
+        "min": 0.115,
+        "max": 0.485
+      },
+      "bl_pct": 60,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 186.2,
+          "stddev_s": 57.6,
+          "delay_s": 49.9,
+          "delay_stddev_s": 34.1,
+          "band_s": 34.1,
+          "effective_cd_s": 120,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 365.7,
+          "stddev_s": 35.1,
+          "delay_s": 45.8,
+          "delay_stddev_s": 29.5,
+          "band_s": 29.5,
+          "effective_cd_s": 120,
+          "count": 6,
+          "total_samples": 10
+        }
+      }
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Shadow Blades",
+      "spell_id": 121471,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Use at pull with Shadow Dance and Secret Technique ready; sync with on-use trinkets and potions for maximum burst overlap, and never use when Shadow Dance charges are depleted."
+    },
+    {
+      "name": "Shadow Dance",
+      "spell_id": 185313,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Use only when Secret Technique is ready (except the second charge during Shadow Blades); never press during a global cooldown, and enter at 6+ combo points as Trickster or 0-2 combo points as Deathstalker."
+    },
+    {
+      "name": "Secret Technique",
+      "spell_id": 280719,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Cast immediately as the first finisher inside Shadow Dance using a Dance + SecTech macro; its cooldown is haste-reduced so it naturally realigns with Shadow Dance over the course of a fight."
+    },
+    {
+      "name": "Vanish",
+      "spell_id": 1856,
+      "cooldown": 120,
+      "duration": 3,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown at 0-2 combo points to follow with a Premeditation-boosted Shadowstrike; defer to utility use (interrupting a cast, mechanic immunity) when a specific encounter benefit exists."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Secret Technique always inside Shadow Dance",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 280719,
+        "spell_name": "Secret Technique",
+        "required_spell_id": 185313,
+        "required_spell_name": "Shadow Dance",
+        "window_s": 8
+      },
+      "action": "Always cast Secret Technique immediately after activating Shadow Dance; using Secret Technique outside of a Shadow Dance window is a critical DPS loss."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Dance and SecTech charges for Shadow Blades",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          185313,
+          280719
+        ],
+        "spell_names": [
+          "Shadow Dance",
+          "Secret Technique"
+        ],
+        "anchor_spell_id": 121471,
+        "anchor_spell_name": "Shadow Blades",
+        "hold_window_s": 20
+      },
+      "action": "Stop spending Shadow Dance charges and Secret Technique when Shadow Blades is within 20 seconds of coming off cooldown; enter the Shadow Blades window with both cooldowns loaded and ready."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Blades → Dance → SecTech immediately",
+      "condition": null,
+      "action": "Open from Stealth with Shadowstrike, then immediately press Shadow Blades, Shadow Dance, and Secret Technique in sequence; use a combined Dance + SecTech macro to eliminate input delay and guarantee every global inside the first window."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Enter Shadow Dance at correct combo point count",
+      "condition": null,
+      "action": "As Trickster, enter Shadow Dance at 6 or 7 combo points to open with Secret Technique as your first finisher; as Deathstalker, enter at 0-2 combo points to get full Premeditation value on your first Shadowstrike inside Dance."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never press Shadow Dance during a GCD",
+      "condition": null,
+      "action": "Wait until your current global cooldown completes before pressing Shadow Dance; any mid-GCD activation shrinks the usable Dance window and can cost you a full cast due to how Deepening Shadows calculates duration."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Shuriken Storm and Black Powder at 2+ targets",
+      "condition": null,
+      "action": "Replace Backstab with Shuriken Storm and Eviscerate with Black Powder at 2 or more targets; Shadowstrike remains preferred on 3 or fewer targets when Deathstalker's Mark must be maintained on the priority target."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Always attack from behind for Backstab",
+      "condition": null,
+      "action": "Stay behind the boss at all times to deal full Backstab damage and avoid parries; ask your tank to face the boss away from the raid if you cannot safely reach the rear."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Use Vanish on cooldown at low combo points",
+      "condition": null,
+      "action": "Press Vanish on cooldown whenever you have 2 or fewer combo points to chain into a Premeditation-empowered Shadowstrike that fills your combo bar in a single cast; only defer if a mechanic or interrupt offers greater value."
+    }
+  ],
+  "cd_spell_ids": {
+    "Shadow Blades": 121471,
+    "Shadow Dance": 185313,
+    "Secret Technique": 280719,
+    "Vanish": 1856,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Crimson Vial": 185311,
+    "Feint": 1966
+  },
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "121471": {
+      "icon": "inv_knife_1h_grimbatolraid_d_03",
+      "name": "Shadow Blades"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "185313": {
+      "icon": "ability_rogue_shadowdance",
+      "name": "Shadow Dance"
+    },
+    "280719": {
+      "icon": "ability_rogue_sinistercalling",
+      "name": "Secret Technique"
+    }
+  },
+  "source_signature": "b1ab5644ce241753",
+  "ingest_version": 2
+}

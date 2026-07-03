@@ -1,0 +1,198 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 158.9,
+      "stddev_first_cast_s": 95.8,
+      "avg_gap_s": 88.2,
+      "stddev_gap_s": 46,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.383,
+        "stddev": 0.17,
+        "min": 0.171,
+        "max": 0.642
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 4,
+      "avg_first_cast_s": 192.5,
+      "stddev_first_cast_s": 56.5,
+      "avg_gap_s": 120,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.251,
+        "stddev": 0.12,
+        "min": 0.171,
+        "max": 0.428
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 1,
+      "avg_first_cast_s": 218.5,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.171,
+        "stddev": 0,
+        "min": 0.171,
+        "max": 0.171
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 104.6,
+      "dmg_avg": 320168,
+      "dmg_stddev": 128042,
+      "dmg_min": 232314,
+      "dmg_max": 542371,
+      "window_length_s": 9.6,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 290967,
+          "min_damage": 211987,
+          "max_damage": 499182,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 171.8,
+      "dmg_avg": 190844,
+      "dmg_stddev": 206797,
+      "dmg_min": 22750,
+      "dmg_max": 532991,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 191248,
+          "min_damage": 87332,
+          "max_damage": 353350,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 56067,
+          "min_damage": 22750,
+          "max_damage": 79836,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to immune all incoming damage during a lethal mechanic or tankbuster overlap; you cannot attack while it is active, so use it purely as a survival panic button.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use proactively for a flat damage reduction ahead of a predictable burst of raid or melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when your health drops below roughly 50% to recover a large chunk of health for yourself and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "bc9297b5d64dbe1c"
+}

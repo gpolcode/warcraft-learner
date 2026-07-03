@@ -1,0 +1,213 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 7,
+      "avg_first_cast_s": 74,
+      "stddev_first_cast_s": 5.2,
+      "avg_gap_s": 73.2,
+      "stddev_gap_s": 3.3,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.54,
+      "uses_per_min": {
+        "avg": 0.536,
+        "stddev": 0.201,
+        "min": 0.404,
+        "max": 0.836
+      },
+      "majority_hold": false
+    },
+    "Vampiric Embrace": {
+      "sample_count": 9,
+      "avg_first_cast_s": 44.2,
+      "stddev_first_cast_s": 48,
+      "avg_gap_s": 123.5,
+      "stddev_gap_s": 1,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.649,
+        "stddev": 0.215,
+        "min": 0.41,
+        "max": 0.857
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 5.6,
+      "dmg_avg": 140648,
+      "dmg_stddev": 79455,
+      "dmg_min": 0,
+      "dmg_max": 189366,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258610,
+          "avg_damage": 175810,
+          "min_damage": 157995,
+          "max_damage": 189366,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 72.9,
+      "dmg_avg": 479375,
+      "dmg_stddev": 100899,
+      "dmg_min": 377818,
+      "dmg_max": 675404,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 427428,
+          "min_damage": 359309,
+          "max_damage": 542583,
+          "count": 6
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 58685,
+          "min_damage": 24768,
+          "max_damage": 101716,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 129.5,
+      "dmg_avg": 390701,
+      "dmg_stddev": 104776,
+      "dmg_min": 275068,
+      "dmg_max": 548107,
+      "window_length_s": 11.9,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 311135,
+          "min_damage": 268726,
+          "max_damage": 342096,
+          "count": 6
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11504,
+          "min_damage": 10626,
+          "max_damage": 11900,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 19236,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 15286,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press to reduce all damage taken by 75% during heavy raid hits or unavoidable burst, accepting the brief loss of offensive casts.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use to instantly heal and raise your maximum health when you drop below ~75%, especially after Shadow Word: Death self-damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Activate during periods of sustained raid damage to convert your Shadow damage into self and raid healing.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1258610": {
+      "icon": "inv_azeritefireball",
+      "name": "Rift Emergence"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "9ec8fdf7aa18852b",
+  "ingest_version": 1
+}

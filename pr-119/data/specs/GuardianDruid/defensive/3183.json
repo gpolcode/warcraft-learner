@@ -1,0 +1,249 @@
+{
+  "spec": "GuardianDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival Instincts": {
+      "sample_count": 10,
+      "avg_first_cast_s": 346.3,
+      "stddev_first_cast_s": 78.2,
+      "avg_gap_s": 105.6,
+      "stddev_gap_s": 42.6,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.277,
+        "stddev": 0.054,
+        "min": 0.217,
+        "max": 0.354
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 18.9,
+      "stddev_first_cast_s": 11.4,
+      "avg_gap_s": 45.2,
+      "stddev_gap_s": 14.6,
+      "hold_targets": {},
+      "avg_uses": 12.2,
+      "avg_uses_per_min": 1.35,
+      "uses_per_min": {
+        "avg": 1.355,
+        "stddev": 0.198,
+        "min": 0.895,
+        "max": 1.534
+      },
+      "majority_hold": false
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 10,
+      "avg_first_cast_s": 66,
+      "stddev_first_cast_s": 27.5,
+      "avg_gap_s": 36.1,
+      "stddev_gap_s": 29.6,
+      "hold_targets": {
+        "2": {
+          "target_s": 215,
+          "stddev_s": 38,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 220.2,
+          "stddev_s": 86.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 306.6,
+          "stddev_s": 67.7,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 267.2,
+          "stddev_s": 80.8,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 13.2,
+      "avg_uses_per_min": 1.47,
+      "uses_per_min": {
+        "avg": 1.466,
+        "stddev": 0.325,
+        "min": 0.783,
+        "max": 1.836
+      },
+      "majority_hold": true
+    },
+    "Ironfur": {
+      "sample_count": 10,
+      "avg_first_cast_s": 37.9,
+      "stddev_first_cast_s": 36.2,
+      "avg_gap_s": 33.6,
+      "stddev_gap_s": 26.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 85.5,
+          "stddev_s": 31.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 122.4,
+          "stddev_s": 58.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 199.7,
+          "stddev_s": 67.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 247.8,
+          "stddev_s": 83.9,
+          "count": 8,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 284.9,
+          "stddev_s": 95.9,
+          "count": 8,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 306,
+          "stddev_s": 84.6,
+          "count": 7,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 342.8,
+          "stddev_s": 54.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 406.2,
+          "stddev_s": 103.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "10": {
+          "target_s": 452.2,
+          "stddev_s": 65.4,
+          "count": 5,
+          "total_samples": 10
+        },
+        "12": {
+          "target_s": 452.6,
+          "stddev_s": 83.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 14.2,
+      "avg_uses_per_min": 1.59,
+      "uses_per_min": {
+        "avg": 1.587,
+        "stddev": 0.481,
+        "min": 0.853,
+        "max": 2.524
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 2.5,
+      "min_uses": 2,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 12.2,
+      "min_uses": 8,
+      "max_uses": 14
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 13.2,
+      "min_uses": 7,
+      "max_uses": 17
+    },
+    {
+      "spell_id": 192081,
+      "avg_uses": 14.2,
+      "min_uses": 8,
+      "max_uses": 22
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Your biggest damage reduction at 50% on a long cooldown; save it for the most dangerous periods of a pull or encounter rather than using it on cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use frequently for its damage reduction during periods of incoming damage; it can be cast freely while in Bear Form and should rarely be held.",
+      "talent_gated": false
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press whenever your health dips low to recover a meaningful chunk of HP; its short cooldown lets you use it often throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ironfur",
+      "spell_id": 192081,
+      "cooldown": 15,
+      "duration": 7,
+      "usage_rule": "An extremely short cooldown Rage spender for physical mitigation; press it before large physical hits or heavy melee swings but avoid overusing it, since wasted Ironfur drains the Rage needed for damage and is a significant DPS loss (cooldown shown is its GCD/charge cadence rather than a fixed timer).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Frenzied Regeneration": 22842,
+    "Ironfur": 192081
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "192081": {
+      "icon": "ability_druid_ironfur",
+      "name": "Ironfur"
+    }
+  },
+  "source_signature": "e565bf7f9e79d371",
+  "ingest_version": 2
+}

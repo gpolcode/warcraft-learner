@@ -1,0 +1,396 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Vampiric Blood": {
+      "sample_count": 10,
+      "avg_first_cast_s": 75.2,
+      "stddev_first_cast_s": 27.6,
+      "avg_gap_s": 28.4,
+      "stddev_gap_s": 7.1,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.55,
+        "stddev": 0.201,
+        "min": 0.407,
+        "max": 0.896
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 7,
+      "avg_first_cast_s": 102.3,
+      "stddev_first_cast_s": 12.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.425,
+        "stddev": 0.016,
+        "min": 0.405,
+        "max": 0.448
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Shell": {
+      "sample_count": 9,
+      "avg_first_cast_s": 87.6,
+      "stddev_first_cast_s": 16.6,
+      "avg_gap_s": 52.1,
+      "stddev_gap_s": 15.9,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.523,
+        "stddev": 0.196,
+        "min": 0.405,
+        "max": 0.876
+      },
+      "majority_hold": false
+    },
+    "Lichborne": {
+      "sample_count": 6,
+      "avg_first_cast_s": 66.6,
+      "stddev_first_cast_s": 49.6,
+      "avg_gap_s": 109.2,
+      "stddev_gap_s": 18.3,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.562,
+        "stddev": 0.208,
+        "min": 0.405,
+        "max": 0.844
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 3,
+      "avg_first_cast_s": 46.3,
+      "stddev_first_cast_s": 22.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.431,
+        "stddev": 0.006,
+        "min": 0.428,
+        "max": 0.438
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 89.9,
+      "dmg_avg": 1452872,
+      "dmg_stddev": 1738275,
+      "dmg_min": 38018,
+      "dmg_max": 5094242,
+      "window_length_s": 4.3,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1262305,
+          "avg_damage": 2068312,
+          "min_damage": 883621,
+          "max_damage": 4884517,
+          "count": 4
+        },
+        {
+          "spell_id": 1246827,
+          "avg_damage": 307691,
+          "min_damage": 209725,
+          "max_damage": 397205,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 90,
+      "dmg_avg": 1958303,
+      "dmg_stddev": 2112114,
+      "dmg_min": 638261,
+      "dmg_max": 5097753,
+      "window_length_s": 8,
+      "defensive_name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "common_defensives": [
+        "Icebound Fortitude"
+      ],
+      "common_cds": [
+        "Icebound Fortitude"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1262305,
+          "avg_damage": 2094391,
+          "min_damage": 515035,
+          "max_damage": 4884517,
+          "count": 3
+        },
+        {
+          "spell_id": 1246827,
+          "avg_damage": 224763,
+          "min_damage": 207901,
+          "max_damage": 256663,
+          "count": 3
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 46473,
+          "min_damage": 3511,
+          "max_damage": 95817,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 91.3,
+      "dmg_avg": 1928398,
+      "dmg_stddev": 1570723,
+      "dmg_min": 139565,
+      "dmg_max": 5097753,
+      "window_length_s": 10.6,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1262305,
+          "avg_damage": 1903577,
+          "min_damage": 883621,
+          "max_damage": 4884517,
+          "count": 5
+        },
+        {
+          "spell_id": 1246827,
+          "avg_damage": 317240,
+          "min_damage": 209725,
+          "max_damage": 397205,
+          "count": 5
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 121419,
+          "min_damage": 3511,
+          "max_damage": 389042,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 99.2,
+      "dmg_avg": 2239653,
+      "dmg_stddev": 1751185,
+      "dmg_min": 1190974,
+      "dmg_max": 5326957,
+      "window_length_s": 12,
+      "defensive_name": "Lichborne",
+      "spell_id": 49039,
+      "common_defensives": [
+        "Lichborne"
+      ],
+      "common_cds": [
+        "Lichborne"
+      ],
+      "ref_game_id": 249341,
+      "ability_breakdown": [
+        {
+          "spell_id": 1262059,
+          "avg_damage": 379391,
+          "min_damage": 366435,
+          "max_damage": 389112,
+          "count": 3
+        },
+        {
+          "spell_id": 1262053,
+          "avg_damage": 303160,
+          "min_damage": 136921,
+          "max_damage": 428568,
+          "count": 3
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 271479,
+          "min_damage": 51346,
+          "max_damage": 566560,
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 220151,
+          "min_damage": 25416,
+          "max_damage": 318476,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 55233,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 48707,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use proactively ahead of heavy incoming damage to boost your maximum health and the healing of your Death Strikes; it is your highest-impact defensive, so keep it close to on cooldown rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large physical or magical hit for a flat 30% damage reduction and stun immunity; reserve it for tankbusters or moments Vampiric Blood alone cannot cover.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Use to absorb a telegraphed burst of magic damage and to generate Runic Power from the absorbed damage; press it just before the magic hit lands rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rune Tap",
+      "spell_id": 194679,
+      "cooldown": 25,
+      "duration": 3,
+      "usage_rule": "Spend a charge for a 20% damage reduction on predictable melee swings or smaller hits; its short recharge lets you use it frequently to smooth out steady tank damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain immunity to charm, fear, and sleep effects, or as an extra layer of survivability when combined with Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a wide magic-damage event to reduce incoming magic damage for everyone standing inside; coordinate placement with your group so allies stack in it.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Vampiric Blood": 55233,
+    "Icebound Fortitude": 48792,
+    "Anti-Magic Shell": 48707,
+    "Rune Tap": 194679,
+    "Lichborne": 49039,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1246827": {
+      "icon": "ability_earthen_azeritesurge",
+      "name": "Alndust Upheaval"
+    },
+    "1262053": {
+      "icon": "ability_golemthunderclap",
+      "name": "Colossal Strikes"
+    },
+    "1262059": {
+      "icon": "ability_golemthunderclap",
+      "name": "Colossal Strikes"
+    },
+    "1262305": {
+      "icon": "ability_earthen_azeritesurge",
+      "name": "Alndust Upheaval"
+    }
+  },
+  "source_signature": "a41f8ec1b0fea727"
+}

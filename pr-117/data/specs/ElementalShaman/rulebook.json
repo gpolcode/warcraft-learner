@@ -1,0 +1,150 @@
+{
+  "spec": "ElementalShaman",
+  "major_cooldowns": [
+    {
+      "name": "Ascendance",
+      "spell_id": 114050,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Use roughly on cooldown but always cast Stormkeeper first; buff your Overloads by pooling Maelstrom and Tempest procs going in, and sync it with Bloodlust and on-use trinkets for maximum burst."
+    },
+    {
+      "name": "Stormkeeper",
+      "spell_id": 191634,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Cast on cooldown to empower your next Lightning Bolt or Chain Lightning casts, but hold it briefly to fire it immediately before Ascendance so its overloads benefit from the Ascendance buff."
+    },
+    {
+      "name": "Ancestral Swiftness",
+      "spell_id": 443454,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Cast roughly on cooldown for the instant cast and stat buff; as Farseer it also spawns an Ancestor, so line it up right after Stormkeeper inside your burst window (talent_gated to builds that take it)."
+    },
+    {
+      "name": "Storm Elemental",
+      "spell_id": 192249,
+      "cooldown": 150,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "usage_rule": "Summon on cooldown and sync with your burst window and Bloodlust; this entry is talent_gated since it competes with the Ascendance/Primordial Wave node, so zero casts is normal on builds without it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fire Elemental",
+      "spell_id": 198067,
+      "cooldown": 150,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "usage_rule": "Summon on cooldown when specced into Call of Fire to extend Flame Shock duration and tick rate; talent_gated, so having zero casts is normal for builds that do not take it.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds."
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "Drop ahead of incoming damage to absorb a large initial hit plus periodic shields; talent_gated since not every build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate during a high-output window to convert a portion of your damage into raid healing; talent_gated and best used when you are already bursting.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a hit or pull threat off the group as an emergency tank-swap or damage-soak tool when no offensive use is needed."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cd_hold",
+      "priority": "critical",
+      "description": "Always cast Stormkeeper before Ascendance",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [114050],
+        "spell_names": ["Ascendance"],
+        "anchor_spell_id": 191634,
+        "anchor_spell_name": "Stormkeeper",
+        "hold_window_s": 6
+      },
+      "action": "Always fire Stormkeeper immediately before pressing Ascendance so the empowered Lightning Bolt or Chain Lightning overloads are amplified by the Ascendance buff; never enter Ascendance with Stormkeeper still on cooldown."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Stormkeeper, Lava Burst, Ascendance",
+      "condition": null,
+      "action": "Open with Stormkeeper and a pre-pull Lava Burst, then press Ascendance, Ancestral Swiftness, and a second Lava Burst before settling into your filler priority; the goal is to stack every cooldown as early as possible."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never overcap Maelstrom",
+      "condition": null,
+      "action": "Spend Maelstrom on Earth Shock, Elemental Blast, or Earthquake before it caps; wasting Maelstrom directly loses spender casts and is one of the biggest single-target DPS losses for the spec."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Master of the Elements on highest-value spells",
+      "condition": null,
+      "action": "Consume Lava Surge procs to gain Master of the Elements, then immediately empower your highest-damage spell such as Tempest, Earth Shock, or Elemental Blast rather than a filler."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Stormkeeper rolling on cooldown",
+      "condition": null,
+      "action": "Use Stormkeeper on cooldown whenever Ascendance is more than ten seconds away; only hold it when Ascendance is about to come up so the two can be synced."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Chain Lightning and Earthquake at 3+ targets",
+      "condition": null,
+      "action": "At three or more targets replace Lightning Bolt with Chain Lightning and dump Maelstrom into Earthquake instead of Earth Shock; keep Flame Shock spread for Master of the Elements and Ancestor procs."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Maintain Flame Shock uptime",
+      "condition": null,
+      "action": "Refresh Flame Shock when it is about to fall off, using Voltaic Blaze when available, so Lava Surge procs and Farseer Ancestor Lava Bursts keep flowing."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Pre-plan movement with instant casts",
+      "condition": null,
+      "action": "Save Spiritwalker's Grace and Nature's Swiftness for forced movement and start moving early or not at all; Elemental lacks quiet mobility, so unplanned movement is a large cast loss."
+    }
+  ],
+  "source_summary": "Elemental Shaman is a cooldown-stacking caster whose burst revolves around syncing Stormkeeper into Ascendance, with Bloodlust, trinkets, and a summoned Elemental layered on top. Pool Maelstrom and Tempest procs going into Ascendance, and always fire Stormkeeper first so its empowered overloads benefit from the window. Between cooldowns, avoid Maelstrom overcap, maintain Flame Shock, and spend Lava Surge-fueled Master of the Elements on your highest-value spells.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:04:23"
+}

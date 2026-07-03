@@ -1,0 +1,179 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 74.1,
+      "stddev_first_cast_s": 22.7,
+      "avg_gap_s": 55.9,
+      "stddev_gap_s": 29.2,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.67,
+      "uses_per_min": {
+        "avg": 0.667,
+        "stddev": 0.212,
+        "min": 0.41,
+        "max": 0.846
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 2,
+      "avg_first_cast_s": 78.5,
+      "stddev_first_cast_s": 6.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.422,
+        "stddev": 0.002,
+        "min": 0.42,
+        "max": 0.423
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 73.8,
+      "dmg_avg": 247776,
+      "dmg_stddev": 105237,
+      "dmg_min": 79240,
+      "dmg_max": 377671,
+      "window_length_s": 6.8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 228308,
+          "min_damage": 79240,
+          "max_damage": 331450,
+          "count": 7
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 30211,
+          "min_damage": 14095,
+          "max_damage": 46221,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 141.5,
+      "dmg_avg": 253387,
+      "dmg_stddev": 94367,
+      "dmg_min": 152508,
+      "dmg_max": 369354,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 190870,
+          "min_damage": 97408,
+          "max_damage": 277472,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 100691,
+          "min_damage": 55100,
+          "max_damage": 164577,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 264735,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "d90b01473d758155",
+  "ingest_version": 1
+}

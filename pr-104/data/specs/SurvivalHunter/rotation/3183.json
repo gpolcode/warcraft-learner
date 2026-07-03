@@ -1,0 +1,255 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "avg_duration_s": 521.9,
+  "downtime_threshold_ms": 1360,
+  "top_avg_efficiency": 78.3,
+  "top_efficiency_stddev": 4.3,
+  "per_cd_benchmarks": {
+    "Takedown": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Boomstick": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Wildfire Bomb": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.4,
+      "stddev_first_cast_s": 3.9,
+      "avg_gap_s": 9.2,
+      "stddev_gap_s": 4.7,
+      "avg_bl_offset_s": -1.6,
+      "stddev_bl_offset_s": 4.6,
+      "avg_uses": 56.8,
+      "avg_uses_per_min": 6.53,
+      "uses_per_min": {
+        "avg": 6.529,
+        "stddev": 0.395,
+        "min": 5.812,
+        "max": 7.031
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Flamefang Pitch": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Moonlight Chakram": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Takedown",
+      "spell_id": 1217803,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown as your primary burst window, always buffed with a Tip of the Spear stack and synced with Bloodlust, on-use trinkets, and your potion; note the spell_id is a best guess for the Midnight-era ability and may need verification."
+    },
+    {
+      "name": "Boomstick",
+      "spell_id": 1227033,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Spend a Tip of the Spear stack on this high-damage frontal cone whenever it is available, holding it for stacked packs in AoE since Lethal Calibration drops its cooldown as low as 15 seconds; the spell_id is a best guess and may need verification."
+    },
+    {
+      "name": "Wildfire Bomb",
+      "spell_id": 259495,
+      "cooldown": 18,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Pre-cast roughly one GCD before the pull and then keep both charges rolling, spending a Tip of the Spear stack on each and never letting it sit fully recharged."
+    },
+    {
+      "name": "Flamefang Pitch",
+      "spell_id": 1217788,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use during Takedown so it lines up naturally with Savagery, but avoid casting it if you cannot hold another Wildfire Bomb charge; the spell_id is a best guess for this Midnight talent and may need verification."
+    },
+    {
+      "name": "Moonlight Chakram",
+      "spell_id": 1227036,
+      "cooldown": 60,
+      "align_with_bloodlust": true,
+      "talent_gated": true,
+      "usage_rule": "On the Sentinel build this replaces Takedown on the same keybind; spend a Tip of the Spear stack on it on cooldown, delaying with Stalk and Strike to capture the 10s Wildfire Bomb cooldown reduction; the spell_id is a best guess and may need verification."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open Wildfire Bomb then Takedown burst",
+      "condition": null,
+      "action": "Pre-cast Hunter's Mark and a Wildfire Bomb about one GCD before the pull, then open with Takedown plus Harpoon, follow with Wildfire Bomb, Boomstick, and Kill Command to start fueling Tip of the Spear, and sync your potion and on-use trinkets into this window."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Spend Tip of the Spear on every empowered cast",
+      "condition": null,
+      "action": "Keep generating Tip of the Spear with Kill Command and spend a stack on Wildfire Bomb, Boomstick, Takedown, and Raptor Swipe so Strike as One procs as often as possible; never let stacks overcap and never spend Kill Command when you are already capped."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Use Kill Command without overcapping resources",
+      "condition": null,
+      "action": "Press Kill Command as often as charges allow to feed Focus and Tip of the Spear, but stop short of overcapping either resource; with the optimal build you should fit two other abilities between each Kill Command."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Buff Takedown with Tip of the Spear",
+      "condition": null,
+      "action": "Always enter Takedown with a Tip of the Spear stack ready to spend on it (or at zero stacks when talented into Twin Fangs) so its short window captures the 20% class-ability damage buff."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Hold Boomstick for stacked AoE packs",
+      "condition": null,
+      "action": "In AoE, hold Boomstick until mobs are stacked rather than dumping it on single target, since it only costs about a 2.5% single-target loss but gains far more value lined up with Lethal Calibration cooldown reduction across a pull."
+    },
+    {
+      "type": "positioning",
+      "priority": "high",
+      "description": "Aim Boomstick and Wildfire Bomb cones",
+      "condition": null,
+      "action": "Position so the Boomstick cone (from you) and Wildfire Bomb cone (from the target) cover as many enemies as possible; a quick Disengage can set ideal Boomstick range, and angle Stampede and Raptor Swipe to catch the pack."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Pool bombs and Boomstick until adds stack",
+      "condition": null,
+      "action": "When adds are inbound, cycle Kill Command, Raptor Strike, and Raptor Swipe to pool, then unload Boomstick, Wildfire Bomb, and Takedown once the pack is settled so Stampede and the cones hit the full group."
+    },
+    {
+      "type": "rotation",
+      "priority": "low",
+      "description": "Keep Hunter's Mark on the priority target",
+      "condition": null,
+      "action": "Apply Hunter's Mark before combat and re-apply it whenever it falls off or the priority target swaps; it does not pull and refreshing it costs almost nothing."
+    }
+  ],
+  "cd_spell_ids": {
+    "Takedown": 1217803,
+    "Boomstick": 1227033,
+    "Wildfire Bomb": 259495,
+    "Flamefang Pitch": 1217788,
+    "Moonlight Chakram": 1227036,
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "259495": {
+      "icon": "inv_wildfirebomb",
+      "name": "Wildfire Bomb"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1217788": {
+      "icon": "ability_hunter_improvedtracking",
+      "name": "Manhunter"
+    },
+    "1217803": {
+      "icon": "ability_warrior_endlessrage",
+      "name": "Angry"
+    },
+    "1227036": {
+      "icon": "inv_ability_web_groundstate",
+      "name": "Sticky Silk"
+    }
+  },
+  "source_signature": "a637bf2a02505036",
+  "ingest_version": 0
+}

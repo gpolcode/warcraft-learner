@@ -1,0 +1,202 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 78,
+      "stddev_first_cast_s": 25.3,
+      "avg_gap_s": 52.4,
+      "stddev_gap_s": 25.2,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.67,
+      "uses_per_min": {
+        "avg": 0.665,
+        "stddev": 0.212,
+        "min": 0.401,
+        "max": 0.846
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 1,
+      "avg_first_cast_s": 77.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.401,
+        "stddev": 0,
+        "min": 0.401,
+        "max": 0.401
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 2,
+      "avg_first_cast_s": 78.5,
+      "stddev_first_cast_s": 6.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.422,
+        "stddev": 0.002,
+        "min": 0.42,
+        "max": 0.423
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 73.7,
+      "dmg_avg": 232968,
+      "dmg_stddev": 119937,
+      "dmg_min": 36631,
+      "dmg_max": 379123,
+      "window_length_s": 7.1,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 224340,
+          "min_damage": 79240,
+          "max_damage": 331450,
+          "count": 9
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 44370,
+          "min_damage": 14095,
+          "max_damage": 122905,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 142.4,
+      "dmg_avg": 207030,
+      "dmg_stddev": 84002,
+      "dmg_min": 107777,
+      "dmg_max": 316622,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 154223,
+          "min_damage": 97408,
+          "max_damage": 200810,
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 66009,
+          "min_damage": 17040,
+          "max_damage": 115812,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "b575b036bd6c356b",
+  "ingest_version": 1
+}

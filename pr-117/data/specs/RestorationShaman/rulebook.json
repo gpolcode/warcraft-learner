@@ -1,0 +1,137 @@
+{
+  "spec": "RestorationShaman",
+  "major_cooldowns": [
+    {
+      "name": "Ascendance",
+      "spell_id": 114052,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Pre-cast Unleash Life and Surging Totem and reach two Tidal Waves stacks, then press Ascendance and spam Chain Heal (or Healing Wave for single-target) plus every available totem charge for the duration; align with major raid damage and Bloodlust when possible."
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Drop on your group for high raid-wide healing during the most dangerous damage windows; pre-plan its use in raids since it pulses over 10 seconds and heals best on five or fewer targets."
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "usage_rule": "Place proactively just before a large group damage hit for the 10 percent (15 percent with Spouting Spirits) damage reduction and health redistribution; it can also be a single-target emergency save when someone is about to die."
+    },
+    {
+      "name": "Nature's Swiftness",
+      "spell_id": 378081,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press on cooldown to make your next heal instant and free and to guarantee a Stormstream Totem proc; do not hold it long or you lose healing, and remember the cooldown only starts once you consume the buff so cast a spell immediately."
+    },
+    {
+      "name": "Ancestral Swiftness",
+      "spell_id": 443454,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Farseer replacement for Nature's Swiftness: press on cooldown to summon an ancestor and guarantee a Stormstream Totem proc, consuming it with Chain Heal (or Healing Rain in M+). Talent-gated to Farseer."
+    },
+    {
+      "name": "Spiritwalker's Grace",
+      "spell_id": 79206,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Activate during forced-movement phases when you still need to cast; you can start a cast on its final second and finish it while moving, or pop it mid-cast to keep healing on the move."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively."
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing."
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Prep Ascendance with Unleash Life and Surging Totem",
+      "condition": null,
+      "action": "Before pressing Ascendance, build two Tidal Waves stacks with Riptide and cast Unleash Life and Surging Totem; once inside, cast your filler twice to consume Unleash Life before using Swiftness so its instant cast is not wasted."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Save Healing Tide and Spirit Link for damage windows",
+      "condition": null,
+      "action": "Hold Healing Tide Totem and Spirit Link Totem for pre-planned high-damage moments rather than pressing them on cooldown into a calm fight; proactive placement before the hit is far stronger than a reactive save."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Use Swiftness on cooldown for Stormstream procs",
+      "condition": null,
+      "action": "Press Nature's Swiftness or Ancestral Swiftness on cooldown and consume it immediately, since each use guarantees a Stormstream Totem proc that is one of your biggest healing sources; never sit on the cooldown long enough to lose a use."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Stormstream Totem procs promptly",
+      "condition": null,
+      "action": "Cast Healing Stream Totem to spend your Stormstream procs early and often, holding at most briefly to line up with incoming damage; the buff caps at two stacks so a third proc is wasted."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Riptide on cooldown on fresh targets",
+      "condition": null,
+      "action": "Keep Riptide on cooldown and place it on allies who do not already have it to maximize Undercurrent, Deluge, Flow of the Tides, and Tidewaters, and to build Tidal Waves for your filler casts."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spam totems and Chain Heal during Ascendance",
+      "condition": null,
+      "action": "During Ascendance dump every Healing Stream and Stormstream charge and spam Chain Heal because totems have a lower GCD and their procced Chain Heals are empowered; switch to Healing Wave only for one or two target spot healing."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Chain Heal on 3+ injured, Healing Wave on 1-2",
+      "condition": null,
+      "action": "Default to Chain Heal whenever three or more allies are injured and mana allows, and fall back to the much cheaper Healing Wave for single or two target healing or when conserving mana."
+    },
+    {
+      "type": "rotation",
+      "priority": "low",
+      "description": "Keep Healing Rain or Surging Totem maintained",
+      "condition": null,
+      "action": "Maintain Healing Rain (or Surging Totem with Downpour, using Totemic Projection to keep it under five players) so passive ground healing and Deluge value are always running between cooldowns."
+    }
+  ],
+  "source_summary": "Restoration Shaman healing is built on pressing its short cooldowns on cooldown and feeding the Stormstream Totem engine: Nature's Swiftness or Ancestral Swiftness is used on cooldown to guarantee Stormstream procs that are then spent through Healing Stream Totem. The three-minute cooldowns (Ascendance, Healing Tide Totem, Spirit Link Totem) are saved and pre-planned for the fight's heaviest damage windows, with Ascendance set up by pre-casting Unleash Life and Surging Totem and entering at two Tidal Waves stacks. Between cooldowns the player keeps Riptide rolling on fresh targets and balances Chain Heal against the cheaper Healing Wave based on injured-target count and mana.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:13:38"
+}

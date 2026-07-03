@@ -1,0 +1,304 @@
+{
+  "spec": "DisciplinePriest",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "avg_duration_s": 267,
+  "downtime_threshold_ms": 2279,
+  "top_avg_efficiency": 76.9,
+  "top_efficiency_stddev": 7.8,
+  "per_cd_benchmarks": {
+    "Evangelism": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Power Infusion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 28.8,
+      "stddev_first_cast_s": 53.8,
+      "avg_gap_s": 59.1,
+      "stddev_gap_s": 64,
+      "avg_bl_offset_s": 2.4,
+      "stddev_bl_offset_s": 3.1,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 1.07,
+      "uses_per_min": {
+        "avg": 1.067,
+        "stddev": 0.452,
+        "min": 0.469,
+        "max": 1.659
+      },
+      "bl_pct": 80,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Ultimate Penitence": {
+      "sample_count": 10,
+      "avg_first_cast_s": 66.8,
+      "stddev_first_cast_s": 15.8,
+      "avg_gap_s": 272.5,
+      "stddev_gap_s": 25.8,
+      "avg_bl_offset_s": 27.3,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.359,
+        "stddev": 0.075,
+        "min": 0.2,
+        "max": 0.42
+      },
+      "bl_pct": 10,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Power Word: Radiance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 3.4,
+      "avg_gap_s": 15.3,
+      "stddev_gap_s": 10.6,
+      "avg_bl_offset_s": 3.1,
+      "stddev_bl_offset_s": 3.3,
+      "avg_uses": 17.7,
+      "avg_uses_per_min": 3.99,
+      "uses_per_min": {
+        "avg": 3.989,
+        "stddev": 0.527,
+        "min": 2.991,
+        "max": 4.692
+      },
+      "bl_pct": 90,
+      "majority_hold": true,
+      "hold_targets": {}
+    },
+    "Shadowfiend": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Mindbender": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Evangelism",
+      "spell_id": 246287,
+      "cooldown": 90,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown just before a high-damage period to extend all active Atonements and fire an instant Power Word: Radiance, beginning your ramp roughly 8 seconds ahead of the incoming damage."
+    },
+    {
+      "name": "Power Infusion",
+      "spell_id": 10060,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use during your biggest ramp or damage window to amplify haste-fueled Atonement output, syncing with potions and on-use trinkets and ideally lining up with Bloodlust when possible."
+    },
+    {
+      "name": "Ultimate Penitence",
+      "spell_id": 421453,
+      "cooldown": 120,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast separately from your Evangelism ramp during heavy raid-wide damage; it doubles as a strong personal damage reduction so use it when you and your team are taking sustained hits."
+    },
+    {
+      "name": "Power Word: Radiance",
+      "spell_id": 194509,
+      "cooldown": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Spend both charges back to back during your ramp to apply Atonement to up to 10 allies, preferring one cast on the melee group and one on ranged when allies are spread out."
+    },
+    {
+      "name": "Shadowfiend",
+      "spell_id": 34433,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Summon during a damage window to regenerate mana and feed extra Atonement, and pair Shadow Word: Death with it to trigger high Inescapable Torment damage; replaced by Mindbender if that talent is taken so zero casts may simply mean the Mindbender build."
+    },
+    {
+      "name": "Mindbender",
+      "spell_id": 123040,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "When talented over Shadowfiend, use on cooldown inside damage windows for stronger mana return and Atonement contribution, sniping Shadow Word: Death while it is active for Inescapable Torment value."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Always be casting through Atonement",
+      "condition": null,
+      "action": "Never sit idle: keep Shadow Word: Pain or Purge the Wicked up, and during downtime spam Smite, Penance, and Mind Blast so your active Atonements are constantly converting damage into healing."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Ramp: Evangelism then both Radiance charges",
+      "condition": null,
+      "action": "Begin your ramp roughly 8 seconds before incoming damage by applying Atonement with Power Word: Shield, Plea, and Flash Heal, then cast Evangelism and fire both instant Power Word: Radiance casts to cover up to 20 allies before the hit lands."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Evangelism for the next damage event",
+      "condition": null,
+      "action": "Do not waste Evangelism on cooldown into a quiet moment; time it so its window lands just before a known raid-wide damage event using boss timers or raid landmarks, then unleash damage to heal through the spike."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Power Infusion with your biggest ramp",
+      "condition": null,
+      "action": "Stack Power Infusion onto your largest Evangelism ramp alongside your potion and on-use trinkets so the haste boost maximizes Atonement throughput during peak damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Snipe Shadow Word: Death on execute targets",
+      "condition": null,
+      "action": "Cast Shadow Word: Death on any enemy below 20 percent health, and press it whenever your Shadowfiend or Mindbender is active to trigger Inescapable Torment for a large burst of Atonement healing."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Mind Blast empowers the next Penance",
+      "condition": null,
+      "action": "Cast Mind Blast on cooldown before Penance so Dark Indulgence empowers that Penance, increasing both its damage and the Atonement healing it generates."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Keep Ultimate Penitence off your ramp",
+      "condition": null,
+      "action": "Use Ultimate Penitence as a standalone cooldown during a separate damage window rather than overlapping it with Evangelism, so your two large cooldowns cover two distinct spikes for maximum efficiency."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Spread Pain offensively on multiple targets",
+      "condition": null,
+      "action": "On trash and multi-target pulls use Penance offensively to spread Shadow Word: Pain or Purge the Wicked across enemies, switching Penance back to defensive single-target use on bosses."
+    }
+  ],
+  "cd_spell_ids": {
+    "Evangelism": 246287,
+    "Power Infusion": 10060,
+    "Ultimate Penitence": 421453,
+    "Power Word: Radiance": 194509,
+    "Shadowfiend": 34433,
+    "Mindbender": 123040,
+    "Pain Suppression": 33206,
+    "Power Word: Barrier": 62618,
+    "Desperate Prayer": 19236,
+    "Dispersion": 47585,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "10060": {
+      "icon": "spell_holy_powerinfusion",
+      "name": "Power Infusion"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "33206": {
+      "icon": "spell_holy_painsupression",
+      "name": "Pain Suppression"
+    },
+    "34433": {
+      "icon": "spell_shadow_shadowfiend",
+      "name": "Shadowfiend"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "62618": {
+      "icon": "spell_holy_powerwordbarrier",
+      "name": "Power Word: Barrier"
+    },
+    "123040": {
+      "icon": "spell_shadow_soulleech_3",
+      "name": "Mindbender"
+    },
+    "194509": {
+      "icon": "spell_priest_power-word",
+      "name": "Power Word: Radiance"
+    },
+    "246287": {
+      "icon": "spell_holy_divineillumination",
+      "name": "Evangelism"
+    },
+    "421453": {
+      "icon": "ability_priest_ascendance",
+      "name": "Ultimate Penitence"
+    }
+  },
+  "source_signature": "db0ddc37f56b9731",
+  "ingest_version": 2
+}

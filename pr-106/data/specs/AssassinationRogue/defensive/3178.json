@@ -1,0 +1,682 @@
+{
+  "spec": "AssassinationRogue",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 9,
+      "avg_first_cast_s": 132.4,
+      "stddev_first_cast_s": 87.7,
+      "avg_gap_s": 174.5,
+      "stddev_gap_s": 63.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 310.8,
+          "stddev_s": 64.3,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.304,
+        "stddev": 0.105,
+        "min": 0.142,
+        "max": 0.456
+      },
+      "majority_hold": true
+    },
+    "Feint": {
+      "sample_count": 10,
+      "avg_first_cast_s": 104.9,
+      "stddev_first_cast_s": 99.5,
+      "avg_gap_s": 41.1,
+      "stddev_gap_s": 32.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 114.3,
+          "stddev_s": 115.5,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 154,
+          "stddev_s": 72.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 211.5,
+          "stddev_s": 74.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 307.7,
+          "stddev_s": 69,
+          "count": 4,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 307,
+          "stddev_s": 74.9,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7,
+      "avg_uses_per_min": 1.08,
+      "uses_per_min": {
+        "avg": 1.079,
+        "stddev": 0.597,
+        "min": 0.293,
+        "max": 2.269
+      },
+      "majority_hold": true
+    },
+    "Crimson Vial": {
+      "sample_count": 7,
+      "avg_first_cast_s": 181.9,
+      "stddev_first_cast_s": 102,
+      "avg_gap_s": 81.1,
+      "stddev_gap_s": 52.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 302.3,
+          "stddev_s": 91.4,
+          "count": 6,
+          "total_samples": 7
+        },
+        "2": {
+          "target_s": 314.4,
+          "stddev_s": 52.9,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.424,
+        "stddev": 0.197,
+        "min": 0.172,
+        "max": 0.77
+      },
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 4,
+      "avg_first_cast_s": 316.1,
+      "stddev_first_cast_s": 11.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.149,
+        "stddev": 0.005,
+        "min": 0.142,
+        "max": 0.154
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 74.8,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    },
+    {
+      "time_s": 76.2,
+      "dmg_avg": 319650,
+      "dmg_stddev": 142895,
+      "dmg_min": 129973,
+      "dmg_max": 562839,
+      "window_length_s": 7.1,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 185945,
+          "min_damage": 126554,
+          "max_damage": 218359,
+          "count": 3
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 121409,
+          "min_damage": 21972,
+          "max_damage": 219310,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 113.8,
+      "dmg_avg": 408420,
+      "dmg_stddev": 136800,
+      "dmg_min": 276021,
+      "dmg_max": 607031,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1283711,
+          "avg_damage": 187236,
+          "min_damage": 143072,
+          "max_damage": 294725,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 129164,
+          "min_damage": 125162,
+          "max_damage": 131534,
+          "count": 4
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 66564,
+          "min_damage": 60952,
+          "max_damage": 73614,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 139.1,
+      "dmg_avg": 269673,
+      "dmg_stddev": 26467,
+      "dmg_min": 235407,
+      "dmg_max": 299858,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 242847,
+          "min_damage": 228669,
+          "max_damage": 268793,
+          "count": 4
+        },
+        {
+          "spell_id": 1270513,
+          "avg_damage": 31136,
+          "min_damage": 31065,
+          "max_damage": 31207,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 170,
+      "dmg_avg": 291415,
+      "dmg_stddev": 186838,
+      "dmg_min": 119130,
+      "dmg_max": 547266,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 186124,
+          "min_damage": 119130,
+          "max_damage": 272971,
+          "count": 4
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 73435,
+          "min_damage": 72031,
+          "max_damage": 74838,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 205.6,
+      "dmg_avg": 270840,
+      "dmg_stddev": 131162,
+      "dmg_min": 90673,
+      "dmg_max": 424199,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245175,
+          "avg_damage": 113213,
+          "min_damage": 95450,
+          "max_damage": 135825,
+          "count": 3
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 100151,
+          "min_damage": 65574,
+          "max_damage": 128904,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 244.5,
+      "dmg_avg": 495317,
+      "dmg_stddev": 77297,
+      "dmg_min": 395732,
+      "dmg_max": 585769,
+      "window_length_s": 6.2,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 223910,
+          "min_damage": 160675,
+          "max_damage": 250746,
+          "count": 6
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 118397,
+          "min_damage": 67532,
+          "max_damage": 190047,
+          "count": 5
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 116303,
+          "min_damage": 110505,
+          "max_damage": 120741,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 100323,
+          "min_damage": 64597,
+          "max_damage": 177220,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 283.1,
+      "dmg_avg": 277757,
+      "dmg_stddev": 124603,
+      "dmg_min": 80735,
+      "dmg_max": 384184,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 80187,
+          "min_damage": 44306,
+          "max_damage": 132917,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 306.2,
+      "dmg_avg": 495937,
+      "dmg_stddev": 119813,
+      "dmg_min": 234645,
+      "dmg_max": 659486,
+      "window_length_s": 6.2,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 240192,
+          "min_damage": 170651,
+          "max_damage": 279970,
+          "count": 11
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 139406,
+          "min_damage": 82807,
+          "max_damage": 285289,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 306.6,
+      "dmg_avg": 450538,
+      "dmg_stddev": 128328,
+      "dmg_min": 349578,
+      "dmg_max": 628864,
+      "window_length_s": 4,
+      "defensive_name": "Crimson Vial",
+      "spell_id": 185311,
+      "common_defensives": [
+        "Crimson Vial"
+      ],
+      "common_cds": [
+        "Crimson Vial"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 163030,
+          "min_damage": 138086,
+          "max_damage": 213376,
+          "count": 4
+        },
+        {
+          "spell_id": 1245302,
+          "avg_damage": 149914,
+          "min_damage": 118637,
+          "max_damage": 211492,
+          "count": 3
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 112329,
+          "min_damage": 91352,
+          "max_damage": 129383,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 329.2,
+      "dmg_avg": 117301,
+      "dmg_stddev": 109655,
+      "dmg_min": 0,
+      "dmg_max": 286544,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1270513,
+          "avg_damage": 56085,
+          "min_damage": 31607,
+          "max_damage": 64394,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 365.9,
+      "dmg_avg": 195401,
+      "dmg_stddev": 37706,
+      "dmg_min": 150805,
+      "dmg_max": 242594,
+      "window_length_s": 4,
+      "defensive_name": "Crimson Vial",
+      "spell_id": 185311,
+      "common_defensives": [
+        "Crimson Vial"
+      ],
+      "common_cds": [
+        "Crimson Vial"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 158766,
+          "min_damage": 114283,
+          "max_damage": 203248,
+          "count": 2
+        },
+        {
+          "spell_id": 1283711,
+          "avg_damage": 152013,
+          "min_damage": 147218,
+          "max_damage": 156807,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 40012,
+          "min_damage": 36522,
+          "max_damage": 42089,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 372.8,
+      "dmg_avg": 235290,
+      "dmg_stddev": 63187,
+      "dmg_min": 169439,
+      "dmg_max": 317005,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 116336,
+          "min_damage": 114283,
+          "max_damage": 118858,
+          "count": 3
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 68493,
+          "min_damage": 55156,
+          "max_damage": 109293,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31224,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 7,
+      "min_uses": 2,
+      "max_uses": 16
+    },
+    {
+      "spell_id": 185311,
+      "avg_uses": 2.9,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to clear magical debuffs and gain immunity to incoming magical damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain a 100% dodge chance against physical melee attacks.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Use proactively when anticipating heavy, unavoidable area-of-effect damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use to restore a significant portion of your health when dropping low.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Feint": 1966,
+    "Crimson Vial": 185311
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1270513": {
+      "icon": "spell_nzinsanity_chasedbyshadows",
+      "name": "Shadowmark"
+    },
+    "1283711": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    },
+    "1283712": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "fab85cd81c3a1cc8",
+  "ingest_version": 1
+}

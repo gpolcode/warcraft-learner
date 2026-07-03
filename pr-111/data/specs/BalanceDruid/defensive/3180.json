@@ -1,0 +1,251 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 84.4,
+      "stddev_first_cast_s": 2.1,
+      "avg_gap_s": 83.4,
+      "stddev_gap_s": 28.7,
+      "hold_targets": {
+        "2": {
+          "target_s": 243.2,
+          "stddev_s": 39.9,
+          "count": 8,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.58,
+      "uses_per_min": {
+        "avg": 0.579,
+        "stddev": 0.123,
+        "min": 0.403,
+        "max": 0.758
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 83.3,
+      "dmg_avg": 376468,
+      "dmg_stddev": 106161,
+      "dmg_min": 281074,
+      "dmg_max": 653528,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 223088,
+          "min_damage": 154781,
+          "max_damage": 318349,
+          "count": 10
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 90186,
+          "min_damage": 76586,
+          "max_damage": 97242,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 144.2,
+      "dmg_avg": 384633,
+      "dmg_stddev": 95444,
+      "dmg_min": 264399,
+      "dmg_max": 509236,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 223571,
+          "min_damage": 158798,
+          "max_damage": 335104,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 107386,
+          "min_damage": 105075,
+          "max_damage": 112313,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 242.8,
+      "dmg_avg": 483879,
+      "dmg_stddev": 56254,
+      "dmg_min": 418145,
+      "dmg_max": 586203,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 200269,
+          "min_damage": 136113,
+          "max_damage": 304013,
+          "count": 9
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 145354,
+          "min_damage": 121885,
+          "max_damage": 180550,
+          "count": 9
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 138256,
+          "min_damage": 134397,
+          "max_damage": 145862,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 303.3,
+      "dmg_avg": 584331,
+      "dmg_stddev": 94021,
+      "dmg_min": 435636,
+      "dmg_max": 725470,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 200556,
+          "min_damage": 158798,
+          "max_damage": 251329,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 152388,
+          "min_damage": 145745,
+          "max_damage": 162068,
+          "count": 7
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 125567,
+          "min_damage": 113317,
+          "max_damage": 135342,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.7,
+      "min_uses": 2,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable raid damage or a tankbuster cleave for a 20% damage reduction; its short cooldown allows frequent use, so do not save it for emergencies that may never come.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Use when your health drops below roughly 50% to instantly restore a large chunk of HP without interrupting your casting. Talent-gated to builds that take Renewal.",
+      "talent_gated": true
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Reserve for the heaviest spike damage events for its strong damage reduction; pair it with Barkskin on lethal hits when one defensive is not enough.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Survival Instincts": 61336
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "53fd3e194a9d6a33",
+  "ingest_version": 1
+}

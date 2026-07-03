@@ -1,0 +1,188 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 7,
+      "avg_first_cast_s": 131.9,
+      "stddev_first_cast_s": 63.6,
+      "avg_gap_s": 85.3,
+      "stddev_gap_s": 21.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 153.7,
+          "stddev_s": 46.8,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.403,
+        "stddev": 0.165,
+        "min": 0.192,
+        "max": 0.619
+      },
+      "majority_hold": false
+    },
+    "Ironbark": {
+      "sample_count": 6,
+      "avg_first_cast_s": 184.2,
+      "stddev_first_cast_s": 44.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.234,
+        "stddev": 0.032,
+        "min": 0.192,
+        "max": 0.276
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 161.6,
+      "dmg_avg": 375163,
+      "dmg_stddev": 270741,
+      "dmg_min": 84358,
+      "dmg_max": 651246,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 145993,
+          "min_damage": 52724,
+          "max_damage": 211644,
+          "count": 4
+        },
+        {
+          "spell_id": 1260835,
+          "avg_damage": 131223,
+          "min_damage": 86075,
+          "max_damage": 176370,
+          "count": 2
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 127438,
+          "min_damage": 31634,
+          "max_damage": 190479,
+          "count": 4
+        },
+        {
+          "spell_id": 1245592,
+          "avg_damage": 72243,
+          "min_damage": 71733,
+          "max_damage": 72753,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1245592": {
+      "icon": "inv_cosmicvoid_groundsate",
+      "name": "Torturous Extract"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1260835": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Despotic Command"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "60d0d79556f050b0",
+  "ingest_version": 1
+}

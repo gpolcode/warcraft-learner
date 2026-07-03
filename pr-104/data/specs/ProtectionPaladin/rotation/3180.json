@@ -1,0 +1,297 @@
+{
+  "spec": "ProtectionPaladin",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "avg_duration_s": 368.5,
+  "downtime_threshold_ms": 1177,
+  "top_avg_efficiency": 76,
+  "top_efficiency_stddev": 13.6,
+  "per_cd_benchmarks": {
+    "Avenging Wrath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 13.1,
+      "stddev_first_cast_s": 24.9,
+      "avg_gap_s": 62.6,
+      "stddev_gap_s": 4.1,
+      "avg_bl_offset_s": 1,
+      "stddev_bl_offset_s": 0.7,
+      "avg_uses": 6.2,
+      "avg_uses_per_min": 1.01,
+      "uses_per_min": {
+        "avg": 1.008,
+        "stddev": 0.065,
+        "min": 0.843,
+        "max": 1.074
+      },
+      "bl_pct": 50,
+      "majority_hold": false,
+      "hold_targets": {
+        "5": {
+          "target_s": 262.5,
+          "stddev_s": 5.8,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
+    },
+    "Divine Toll": {
+      "sample_count": 10,
+      "avg_first_cast_s": 7.9,
+      "stddev_first_cast_s": 18.6,
+      "avg_gap_s": 62.5,
+      "stddev_gap_s": 3.9,
+      "avg_bl_offset_s": 2.3,
+      "stddev_bl_offset_s": 1.2,
+      "avg_uses": 6.3,
+      "avg_uses_per_min": 1.03,
+      "uses_per_min": {
+        "avg": 1.025,
+        "stddev": 0.028,
+        "min": 0.982,
+        "max": 1.074
+      },
+      "bl_pct": 50,
+      "majority_hold": false,
+      "hold_targets": {
+        "5": {
+          "target_s": 263.5,
+          "stddev_s": 6.3,
+          "count": 4,
+          "total_samples": 10
+        }
+      }
+    },
+    "Hammer of Light": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.2,
+      "stddev_first_cast_s": 1.4,
+      "avg_gap_s": 24.3,
+      "stddev_gap_s": 15.6,
+      "avg_bl_offset_s": 3.4,
+      "stddev_bl_offset_s": 1.1,
+      "avg_uses": 15.5,
+      "avg_uses_per_min": 2.52,
+      "uses_per_min": {
+        "avg": 2.516,
+        "stddev": 0.187,
+        "min": 2.195,
+        "max": 2.795
+      },
+      "bl_pct": 60,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Holy Bulwark": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Sacred Weapon": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Use on cooldown after Avenger's Shield in the opener; it boosts damage, healing, and crit and turns Judgment into a Hammer of Wrath proc, so try to overlap it with Bloodlust, potions, and on-use trinkets."
+    },
+    {
+      "name": "Divine Toll",
+      "spell_id": 375576,
+      "cooldown": 60,
+      "align_with_bloodlust": true,
+      "opener_priority": 4,
+      "usage_rule": "Use on cooldown, ideally inside Avenging Wrath and when you are at 0 Holy Power, to fire Avenger's Shield at up to five targets and generate a large burst of Holy Power."
+    },
+    {
+      "name": "Hammer of Light",
+      "spell_id": 427453,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "As Templar, cast immediately after Divine Toll once the Hammer of Light proc is active to spend the empowered finisher; treated as talent-gated since it only exists on the Templar hero build (best-guess spell_id, verify on Wowhead)."
+    },
+    {
+      "name": "Holy Bulwark",
+      "spell_id": 432459,
+      "cooldown": 60,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "As Lightsmith, summon via Holy Armaments and use charges proactively before Avenging Wrath windows or incoming damage for the absorb shield; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "talent_gated": true
+    },
+    {
+      "name": "Sacred Weapon",
+      "spell_id": 432472,
+      "cooldown": 60,
+      "duration": 25,
+      "align_with_bloodlust": false,
+      "usage_rule": "As Lightsmith, apply via Holy Armaments while you are NOT inside Avenging Wrath to keep the weapon-empower buff active for extra damage; talent-gated to the Lightsmith hero build (best-guess spell_id, verify on Wowhead).",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Avenger's Shield into Wrath into Toll",
+      "condition": null,
+      "action": "Pre-cast Consecration next to the boss, taunt with Hand of Reckoning on the pull, then chain Avenger's Shield, Avenging Wrath, and Divine Toll before settling into your normal builder-spender rotation."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Sync Avenging Wrath with Divine Toll",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "required_spell_id": 31884,
+        "required_spell_name": "Avenging Wrath",
+        "window_s": 12
+      },
+      "action": "Press Avenging Wrath when Divine Toll is within about ten seconds of being ready so the two land together, then fire Divine Toll inside the Avenging Wrath window for maximum Holy Power and damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Never overcap Holy Power",
+      "condition": null,
+      "action": "Spend Holy Power on Shield of the Righteous at 3-5 charges before it caps; sitting at maximum Holy Power wastes every builder you cast afterward and drops your active mitigation uptime."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Judgment and Blessed Hammer rolling",
+      "condition": null,
+      "action": "Keep Judgment and Blessed Hammer (or Hammer of the Righteous) on cooldown as your primary Holy Power generators, filling remaining globals with Avenger's Shield and Consecration."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Always Be Casting",
+      "condition": null,
+      "action": "Never let a global cooldown go to waste; missing 10-20% of your casts starves Holy Power generation, cooldown reduction, and mitigation, so always hit something that is off cooldown."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Use Divine Toll at 0 Holy Power",
+      "condition": null,
+      "action": "Fire Divine Toll on cooldown, ideally when you are at 0 Holy Power, so none of the Holy Power it generates is wasted to overcapping."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Keep Consecration under the boss",
+      "condition": null,
+      "action": "Stand in your own Consecration on the boss to gain its damage reduction and Holy Power synergy; reapply it as a filler whenever you move out of the patch."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Save Ardent Defender for big damage",
+      "condition": null,
+      "action": "Hold Ardent Defender for telegraphed tankbusters or high-damage phases rather than pressing it on cooldown; it is your biggest 50% damage reduction and should cover the scariest moment available."
+    }
+  ],
+  "cd_spell_ids": {
+    "Avenging Wrath": 31884,
+    "Divine Toll": 375576,
+    "Hammer of Light": 427453,
+    "Holy Bulwark": 432459,
+    "Sacred Weapon": 432472,
+    "Ardent Defender": 31850,
+    "Guardian of Ancient Kings": 86659,
+    "Divine Shield": 642,
+    "Shield of the Righteous": 53600,
+    "Word of Glory": 85673,
+    "Lay on Hands": 633
+  },
+  "ability_icons": {
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "31850": {
+      "icon": "spell_holy_ardentdefender",
+      "name": "Ardent Defender"
+    },
+    "31884": {
+      "icon": "spell_holy_avenginewrath",
+      "name": "Avenging Wrath"
+    },
+    "53600": {
+      "icon": "ability_paladin_shieldofvengeance",
+      "name": "Shield of the Righteous"
+    },
+    "85673": {
+      "icon": "inv_helmet_96",
+      "name": "Word of Glory"
+    },
+    "86659": {
+      "icon": "spell_holy_heroism",
+      "name": "Guardian of Ancient Kings"
+    },
+    "375576": {
+      "icon": "inv_ability_paladin_divinetoll",
+      "name": "Divine Toll"
+    },
+    "427453": {
+      "icon": "inv_mace_1h_gryphonrider_d_02_silver",
+      "name": "Hammer of Light"
+    },
+    "432459": {
+      "icon": "inv_ability_lightsmithpaladin_holybulwark",
+      "name": "Holy Bulwark"
+    },
+    "432472": {
+      "icon": "inv_ability_lightsmithpaladin_sacredweapon",
+      "name": "Sacred Weapon"
+    }
+  },
+  "source_signature": "1527568f76098472",
+  "ingest_version": 0
+}

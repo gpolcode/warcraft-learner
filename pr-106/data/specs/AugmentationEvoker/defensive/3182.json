@@ -1,0 +1,248 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 145.4,
+      "stddev_first_cast_s": 57.2,
+      "avg_gap_s": 29.1,
+      "stddev_gap_s": 36.1,
+      "hold_targets": {},
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 0.84,
+      "uses_per_min": {
+        "avg": 0.836,
+        "stddev": 0.28,
+        "min": 0.396,
+        "max": 1.365
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 7,
+      "avg_first_cast_s": 111,
+      "stddev_first_cast_s": 95.7,
+      "avg_gap_s": 103.7,
+      "stddev_gap_s": 59.5,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.419,
+        "stddev": 0.194,
+        "min": 0.245,
+        "max": 0.752
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 136.1,
+      "dmg_avg": 604281,
+      "dmg_stddev": 501399,
+      "dmg_min": 78995,
+      "dmg_max": 1350019,
+      "window_length_s": 9.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 209670,
+          "min_damage": 61560,
+          "max_damage": 395693,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 69197,
+          "min_damage": 23234,
+          "max_damage": 88773,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 184.7,
+      "dmg_avg": 259212,
+      "dmg_stddev": 229271,
+      "dmg_min": 17381,
+      "dmg_max": 794902,
+      "window_length_s": 7.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 53533,
+          "min_damage": 17381,
+          "max_damage": 131925,
+          "count": 15
+        }
+      ]
+    },
+    {
+      "time_s": 225.5,
+      "dmg_avg": 248919,
+      "dmg_stddev": 263571,
+      "dmg_min": 0,
+      "dmg_max": 814375,
+      "window_length_s": 5.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 47321,
+          "min_damage": 28537,
+          "max_damage": 92973,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 226.2,
+      "dmg_avg": 536986,
+      "dmg_stddev": 133546,
+      "dmg_min": 378694,
+      "dmg_max": 698821,
+      "window_length_s": 8.5,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 566595,
+          "min_damage": 511213,
+          "max_damage": 621976,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 58528,
+          "min_damage": 35123,
+          "max_damage": 76845,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 3.8,
+      "min_uses": 2,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1242803": {
+      "icon": "inv_ability_holyfire_wave",
+      "name": "Light Flames"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "5f76b0f9c26c490e",
+  "ingest_version": 1
+}

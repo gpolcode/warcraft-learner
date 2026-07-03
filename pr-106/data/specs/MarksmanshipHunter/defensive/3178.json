@@ -1,0 +1,242 @@
+{
+  "spec": "MarksmanshipHunter",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 9,
+      "avg_first_cast_s": 168.6,
+      "stddev_first_cast_s": 130.8,
+      "avg_gap_s": 115,
+      "stddev_gap_s": 78.7,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.37,
+      "uses_per_min": {
+        "avg": 0.368,
+        "stddev": 0.225,
+        "min": 0.146,
+        "max": 0.664
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 3,
+      "avg_first_cast_s": 107.5,
+      "stddev_first_cast_s": 46.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.195,
+        "stddev": 0.037,
+        "min": 0.152,
+        "max": 0.219
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 2,
+      "avg_first_cast_s": 144.4,
+      "stddev_first_cast_s": 8.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.183,
+        "stddev": 0.045,
+        "min": 0.151,
+        "max": 0.214
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 66.2,
+      "dmg_avg": 414108,
+      "dmg_stddev": 78595,
+      "dmg_min": 336517,
+      "dmg_max": 546768,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245500,
+          "avg_damage": 107306,
+          "min_damage": 104504,
+          "max_damage": 112784,
+          "count": 4
+        },
+        {
+          "spell_id": 1283711,
+          "avg_damage": 96596,
+          "min_damage": 91221,
+          "max_damage": 100471,
+          "count": 3
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 85898,
+          "min_damage": 45228,
+          "max_damage": 125226,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 78845,
+          "min_damage": 53572,
+          "max_damage": 116097,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 262.3,
+      "dmg_avg": 348135,
+      "dmg_stddev": 142335,
+      "dmg_min": 244065,
+      "dmg_max": 546717,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245175,
+          "avg_damage": 106506,
+          "min_damage": 101824,
+          "max_damage": 111187,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 100726,
+          "min_damage": 57764,
+          "max_damage": 177697,
+          "count": 4
+        },
+        {
+          "spell_id": 1283711,
+          "avg_damage": 97846,
+          "min_damage": 94083,
+          "max_damage": 102646,
+          "count": 4
+        },
+        {
+          "spell_id": 1283712,
+          "avg_damage": 66712,
+          "min_damage": 41741,
+          "max_damage": 90018,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to gain full immunity to all damage and crowd control during a lethal mechanic; note that it disarms you so it stops your own casting for its duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use proactively ahead of a predictable damage spike for a strong flat damage reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when health drops below roughly 50% to instantly restore a meaningful chunk of your maximum health between damage events.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245500": {
+      "icon": "inv_cosmicvoid_nova",
+      "name": "Gloom"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1283711": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    },
+    "1283712": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    }
+  },
+  "source_signature": "41068d481ad79fc9",
+  "ingest_version": 1
+}

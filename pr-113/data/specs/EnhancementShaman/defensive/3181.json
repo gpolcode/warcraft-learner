@@ -1,0 +1,183 @@
+{
+  "spec": "EnhancementShaman",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 10,
+      "avg_first_cast_s": 192,
+      "stddev_first_cast_s": 160.6,
+      "avg_gap_s": 198.7,
+      "stddev_gap_s": 117.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 374.8,
+          "stddev_s": 70.3,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.274,
+        "stddev": 0.104,
+        "min": 0.127,
+        "max": 0.445
+      },
+      "majority_hold": true
+    },
+    "Earth Elemental": {
+      "sample_count": 5,
+      "avg_first_cast_s": 266.9,
+      "stddev_first_cast_s": 152.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.115,
+        "stddev": 0.002,
+        "min": 0.111,
+        "max": 0.117
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 3,
+      "avg_first_cast_s": 81.5,
+      "stddev_first_cast_s": 34.8,
+      "avg_gap_s": 35.9,
+      "stddev_gap_s": 49.4,
+      "hold_targets": {},
+      "avg_uses": 9.3,
+      "avg_uses_per_min": 1.07,
+      "uses_per_min": {
+        "avg": 1.066,
+        "stddev": 0.816,
+        "min": 0.124,
+        "max": 1.556
+      },
+      "majority_hold": true
+    },
+    "Spirit Walk": {
+      "sample_count": 1,
+      "avg_first_cast_s": 39.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 84.5,
+      "stddev_gap_s": 54.2,
+      "hold_targets": {},
+      "avg_uses": 6,
+      "avg_uses_per_min": 0.69,
+      "uses_per_min": {
+        "avg": 0.688,
+        "stddev": 0,
+        "min": 0.688,
+        "max": 0.688
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 58875,
+      "avg_uses": 6,
+      "min_uses": 6,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 8004,
+      "avg_uses": 9.3,
+      "min_uses": 1,
+      "max_uses": 14
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a major hit or off-tank an add; it also grants you a sizeable health buffer and can be used defensively on a long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "When talented, drop before incoming damage to gain a recurring physical and magical absorb shield; use it on cooldown during damage-heavy phases.",
+      "talent_gated": true
+    },
+    {
+      "name": "Spirit Walk",
+      "spell_id": 58875,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use to remove movement-impairing effects and gain a burst of speed to reach mechanics or close back into melee range quickly.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Surge",
+      "spell_id": 8004,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend 5 or more Maelstrom Weapon stacks to cast an instant self-heal when you drop low; the cooldown listed is a soft pacing value since this is gated by Maelstrom rather than a real cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Earth Elemental": 198103,
+    "Stone Bulwark Totem": 108270,
+    "Spirit Walk": 58875,
+    "Healing Surge": 8004
+  },
+  "ability_icons": {
+    "8004": {
+      "icon": "spell_nature_healingway",
+      "name": "Healing Surge"
+    },
+    "58875": {
+      "icon": "ability_tracking",
+      "name": "Spirit Walk"
+    },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    }
+  },
+  "source_signature": "fc63e233c4db6312",
+  "ingest_version": 2
+}

@@ -1,0 +1,146 @@
+{
+  "spec": "OutlawRogue",
+  "major_cooldowns": [
+    {
+      "name": "Adrenaline Rush",
+      "spell_id": 13750,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Cast on cooldown at 2 or fewer combo points and keep it as close to 100% uptime as possible since Restless Blades reduces its cooldown; pre-pot and align with Bloodlust for the strongest window."
+    },
+    {
+      "name": "Roll the Bones",
+      "spell_id": 315508,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast on cooldown whenever Roll the Bones is at stage 1 or lower, rerolling weak results to chase a higher-stage buff; never let the buff drop."
+    },
+    {
+      "name": "Keep It Rolling",
+      "spell_id": 381989,
+      "cooldown": 360,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use whenever Roll the Bones is at stage 2 or higher to lock in a strong combination; its effective cooldown is far shorter than 6 minutes thanks to Restless Blades, so do not hold it long."
+    },
+    {
+      "name": "Blade Rush",
+      "spell_id": 271877,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast on cooldown for single target unless it would overcap energy within the next global, and always use it in AoE."
+    },
+    {
+      "name": "Killing Spree",
+      "spell_id": 51690,
+      "cooldown": 120,
+      "duration": 2,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast at 5 or more combo points on the Trickster build, cancelling early if you are about to overcap energy; avoid casting when the animation lock would put you in danger of a mechanic."
+    },
+    {
+      "name": "Vanish",
+      "spell_id": 1856,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "On Hidden Opportunity builds, use on cooldown when you have no Audacity or Opportunity proc to gain a free empowered Ambush; on other builds reserve it for utility or mechanic immunity."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight."
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases."
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds."
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Adrenaline Rush on cooldown",
+      "condition": null,
+      "action": "Cast Adrenaline Rush every time it is available at 2 or fewer combo points; maximizing its uptime is the single biggest driver of Outlaw damage because Restless Blades shortens its own cooldown."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Maintain Roll the Bones, reroll weak buffs",
+      "condition": null,
+      "action": "Never let Roll the Bones expire; recast it on cooldown when you are at stage 1 or lower and reroll until you reach a higher stage."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Adrenaline Rush into Roll the Bones",
+      "condition": null,
+      "action": "Open with Adrenaline Rush, then Roll the Bones and Slice and Dice, fire Keep It Rolling if you land stage 3 or higher, use Blade Rush, build to 6 combo points with Sinister Strike and Pistol Shot, then cast Between the Eyes and resume the normal priority."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Keep It Rolling for a strong Roll the Bones",
+      "condition": null,
+      "action": "Do not press Keep It Rolling until Roll the Bones is at stage 2 or higher so you duplicate a strong buff set rather than a single weak buff."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend combo points without overcapping",
+      "condition": null,
+      "action": "Cast Between the Eyes at 6 or more combo points and Dispatch as your filler finisher; never sit at max combo points where Sinister Strike or Pistol Shot would overcap and waste resources."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "React to Opportunity and Audacity procs",
+      "condition": null,
+      "action": "Spend Opportunity with Pistol Shot when it reaches high stacks or is about to expire, and immediately use Ambush when Audacity is active; weave these procs in without dropping your action-per-second pace."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Activate Blade Flurry at 2 or more targets",
+      "condition": null,
+      "action": "Turn on Blade Flurry as soon as there are 2 or more targets and it is not active, and refresh it at 4 or fewer combo points when 4 or more targets are in range so cleave damage never lapses."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stay in melee range of the target",
+      "condition": null,
+      "action": "Remain in melee range so your generators and finishers connect every global; Outlaw has no rear-positioning requirement but loses heavy uptime when forced out of range."
+    }
+  ],
+  "source_summary": "Outlaw Rogue has no single burst window and instead relies on keeping Adrenaline Rush and Roll the Bones at maximum uptime, since Restless Blades continuously shortens their cooldowns through finisher spending. The core loop is to use every offensive cooldown on cooldown, maintain a strong Roll the Bones buff (rerolling weak results and duplicating good ones with Keep It Rolling), and spend combo points on Between the Eyes and Dispatch without overcapping. In AoE, the only change is adding Blade Flurry to the on-cooldown list to spread cleave damage.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:11:33"
+}

@@ -1,0 +1,214 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 125,
+      "stddev_first_cast_s": 63.8,
+      "avg_gap_s": 97.7,
+      "stddev_gap_s": 30.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 236.3,
+          "stddev_s": 48,
+          "count": 9,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.451,
+        "stddev": 0.085,
+        "min": 0.385,
+        "max": 0.595
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 9,
+      "avg_first_cast_s": 164.5,
+      "stddev_first_cast_s": 99.4,
+      "avg_gap_s": 80.6,
+      "stddev_gap_s": 70.2,
+      "hold_targets": {},
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.384,
+        "stddev": 0.199,
+        "min": 0.195,
+        "max": 0.702
+      },
+      "majority_hold": false
+    },
+    "Survival Instincts": {
+      "sample_count": 6,
+      "avg_first_cast_s": 250.1,
+      "stddev_first_cast_s": 22.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.206,
+        "stddev": 0.015,
+        "min": 0.192,
+        "max": 0.234
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 159.5,
+      "dmg_avg": 459804,
+      "dmg_stddev": 120238,
+      "dmg_min": 283141,
+      "dmg_max": 594392,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 305455,
+          "min_damage": 247917,
+          "max_damage": 357651,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 86271,
+          "min_damage": 81039,
+          "max_damage": 93482,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 273.8,
+      "dmg_avg": 98780,
+      "dmg_stddev": 156304,
+      "dmg_min": 0,
+      "dmg_max": 464457,
+      "window_length_s": 2.8,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 28885,
+          "min_damage": 15298,
+          "max_damage": 32548,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.2,
+      "min_uses": 2,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "b91bd4c382ed6958"
+}

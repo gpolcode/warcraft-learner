@@ -1,0 +1,464 @@
+{
+  "spec": "FrostDeathKnight",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Anti-Magic Shell": {
+      "sample_count": 10,
+      "avg_first_cast_s": 82.2,
+      "stddev_first_cast_s": 65.7,
+      "avg_gap_s": 73.6,
+      "stddev_gap_s": 40.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 262.1,
+          "stddev_s": 72.7,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 0.7,
+      "uses_per_min": {
+        "avg": 0.7,
+        "stddev": 0.299,
+        "min": 0.204,
+        "max": 1.129
+      },
+      "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 6,
+      "avg_first_cast_s": 189.9,
+      "stddev_first_cast_s": 126.1,
+      "avg_gap_s": 240,
+      "stddev_gap_s": 100.9,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.245,
+        "stddev": 0.103,
+        "min": 0.149,
+        "max": 0.399
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 3,
+      "avg_first_cast_s": 302.9,
+      "stddev_first_cast_s": 1.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.168,
+        "stddev": 0.005,
+        "min": 0.164,
+        "max": 0.173
+      },
+      "majority_hold": false
+    },
+    "Lichborne": {
+      "sample_count": 3,
+      "avg_first_cast_s": 267.2,
+      "stddev_first_cast_s": 64.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.17,
+        "stddev": 0.026,
+        "min": 0.15,
+        "max": 0.199
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 37,
+      "dmg_avg": 414147,
+      "dmg_stddev": 59066,
+      "dmg_min": 368357,
+      "dmg_max": 498831,
+      "window_length_s": 5.3,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 253747,
+          "min_damage": 174541,
+          "max_damage": 348786,
+          "count": 4
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 84014,
+          "min_damage": 62221,
+          "max_damage": 104265,
+          "count": 3
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 64400,
+          "min_damage": 19571,
+          "max_damage": 101031,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 76.9,
+      "dmg_avg": 332557,
+      "dmg_stddev": 29209,
+      "dmg_min": 286145,
+      "dmg_max": 365427,
+      "window_length_s": 5.9,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 206629,
+          "min_damage": 157164,
+          "max_damage": 330198,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 79688,
+          "min_damage": 35229,
+          "max_damage": 157693,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 144.3,
+      "dmg_avg": 394601,
+      "dmg_stddev": 54049,
+      "dmg_min": 346247,
+      "dmg_max": 483579,
+      "window_length_s": 5.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 322440,
+          "min_damage": 216090,
+          "max_damage": 400044,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 244.9,
+      "dmg_avg": 396724,
+      "dmg_stddev": 78420,
+      "dmg_min": 305963,
+      "dmg_max": 525294,
+      "window_length_s": 4.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 170292,
+          "min_damage": 160330,
+          "max_damage": 179165,
+          "count": 6
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 142628,
+          "min_damage": 93547,
+          "max_damage": 234222,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 86008,
+          "min_damage": 61569,
+          "max_damage": 156873,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 285,
+      "dmg_avg": 414883,
+      "dmg_stddev": 44186,
+      "dmg_min": 358593,
+      "dmg_max": 455298,
+      "window_length_s": 5.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 160690,
+          "min_damage": 147992,
+          "max_damage": 174262,
+          "count": 3
+        },
+        {
+          "spell_id": 1245175,
+          "avg_damage": 126874,
+          "min_damage": 119262,
+          "max_damage": 137041,
+          "count": 3
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 86197,
+          "min_damage": 45734,
+          "max_damage": 124673,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 74926,
+          "min_damage": 55190,
+          "max_damage": 109600,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 306.4,
+      "dmg_avg": 404236,
+      "dmg_stddev": 45567,
+      "dmg_min": 348901,
+      "dmg_max": 468987,
+      "window_length_s": 3.2,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 268981,
+          "min_damage": 150568,
+          "max_damage": 337990,
+          "count": 3
+        },
+        {
+          "spell_id": 1250071,
+          "avg_damage": 184291,
+          "min_damage": 75266,
+          "max_damage": 338134,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 360.9,
+      "dmg_avg": 178251,
+      "dmg_stddev": 125492,
+      "dmg_min": 0,
+      "dmg_max": 289637,
+      "window_length_s": 7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1283712,
+          "avg_damage": 140211,
+          "min_damage": 61662,
+          "max_damage": 218759,
+          "count": 2
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 66985,
+          "min_damage": 63092,
+          "max_damage": 70878,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 48707,
+      "avg_uses": 4.3,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press before incoming magic damage to absorb it and generate Runic Power; use it proactively on telegraphed magic hits since the shield only lasts 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use for heavy physical hits or tankbusters to reduce all damage taken and gain stun immunity for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate to become immune to Charm, Fear, and Sleep effects, and to enable Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Death Strike",
+      "spell_id": 49998,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend Runic Power on it as an on-demand self-heal when you dip low; its heal scales with recent damage taken so press it after a hit rather than before.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop it for the group ahead of a raid-wide magic burst to reduce magic damage taken for everyone standing inside (talent choice in some builds).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Anti-Magic Shell": 48707,
+    "Icebound Fortitude": 48792,
+    "Lichborne": 49039,
+    "Death Strike": 49998,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "49998": {
+      "icon": "spell_deathknight_butcher2",
+      "name": "Death Strike"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
+    "1245175": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Voidbolt"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1283712": {
+      "icon": "inv_cosmicvoid_debuff",
+      "name": "Gloomtouched"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "78a92791e4747b1c",
+  "ingest_version": 1
+}

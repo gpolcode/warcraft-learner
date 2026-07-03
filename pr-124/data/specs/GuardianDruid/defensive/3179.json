@@ -1,0 +1,431 @@
+{
+  "spec": "GuardianDruid",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival Instincts": {
+      "sample_count": 4,
+      "avg_first_cast_s": 138.5,
+      "stddev_first_cast_s": 60,
+      "avg_gap_s": 77.4,
+      "stddev_gap_s": 64.5,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.455,
+        "stddev": 0.168,
+        "min": 0.296,
+        "max": 0.641
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 45.1,
+      "stddev_first_cast_s": 49.1,
+      "avg_gap_s": 43.8,
+      "stddev_gap_s": 13.6,
+      "hold_targets": {},
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 1.18,
+      "uses_per_min": {
+        "avg": 1.176,
+        "stddev": 0.572,
+        "min": 0.303,
+        "max": 1.979
+      },
+      "majority_hold": false
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 9,
+      "avg_first_cast_s": 73.5,
+      "stddev_first_cast_s": 22.5,
+      "avg_gap_s": 59.5,
+      "stddev_gap_s": 39.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 171.3,
+          "stddev_s": 21.6,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.73,
+      "uses_per_min": {
+        "avg": 0.731,
+        "stddev": 0.373,
+        "min": 0.306,
+        "max": 1.404
+      },
+      "majority_hold": true
+    },
+    "Ironfur": {
+      "sample_count": 9,
+      "avg_first_cast_s": 53.4,
+      "stddev_first_cast_s": 61.1,
+      "avg_gap_s": 24.3,
+      "stddev_gap_s": 25.2,
+      "hold_targets": {},
+      "avg_uses": 5.3,
+      "avg_uses_per_min": 1.7,
+      "uses_per_min": {
+        "avg": 1.7,
+        "stddev": 1.462,
+        "min": 0.276,
+        "max": 3.668
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 40,
+      "dmg_avg": 1216772,
+      "dmg_stddev": 266877,
+      "dmg_min": 827080,
+      "dmg_max": 1532024,
+      "dmg_pct_avg": 0.094,
+      "window_length_s": 13.7,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1284963,
+          "avg_damage": 463464,
+          "min_damage": 59491,
+          "max_damage": 808732,
+          "count": 6
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 378666,
+          "min_damage": 95330,
+          "max_damage": 658134,
+          "count": 4
+        },
+        {
+          "spell_id": 1250803,
+          "avg_damage": 338689,
+          "min_damage": 153645,
+          "max_damage": 435444,
+          "count": 4
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 137909,
+          "min_damage": 109299,
+          "max_damage": 155129,
+          "count": 5
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 120085,
+          "min_damage": 59106,
+          "max_damage": 145691,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 47.6,
+      "dmg_avg": 843675,
+      "dmg_stddev": 484881,
+      "dmg_min": 265853,
+      "dmg_max": 2002346,
+      "dmg_pct_avg": 0.071,
+      "window_length_s": 11.4,
+      "defensive_name": "Ironfur",
+      "spell_id": 192081,
+      "common_defensives": [
+        "Ironfur"
+      ],
+      "common_cds": [
+        "Ironfur"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1284963,
+          "avg_damage": 415414,
+          "min_damage": 59491,
+          "max_damage": 1056041,
+          "count": 11
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 287398,
+          "min_damage": 95330,
+          "max_damage": 606060,
+          "count": 7
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 129102,
+          "min_damage": 19702,
+          "max_damage": 248047,
+          "count": 12
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 107029,
+          "min_damage": 38782,
+          "max_damage": 203254,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 73.8,
+      "dmg_avg": 1309785,
+      "dmg_stddev": 377558,
+      "dmg_min": 801142,
+      "dmg_max": 1849785,
+      "dmg_pct_avg": 0.101,
+      "window_length_s": 13.8,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1284963,
+          "avg_damage": 576662,
+          "min_damage": 335315,
+          "max_damage": 737754,
+          "count": 8
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 389252,
+          "min_damage": 107394,
+          "max_damage": 695718,
+          "count": 8
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 135545,
+          "min_damage": 104711,
+          "max_damage": 159568,
+          "count": 8
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 100275,
+          "min_damage": 37939,
+          "max_damage": 149310,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 85,
+      "dmg_avg": 963433,
+      "dmg_stddev": 593687,
+      "dmg_min": 250497,
+      "dmg_max": 1998783,
+      "dmg_pct_avg": 0.081,
+      "window_length_s": 11.6,
+      "defensive_name": "Ironfur",
+      "spell_id": 192081,
+      "common_defensives": [
+        "Ironfur"
+      ],
+      "common_cds": [
+        "Ironfur"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1284963,
+          "avg_damage": 500924,
+          "min_damage": 189969,
+          "max_damage": 1048246,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 168615,
+          "min_damage": 94431,
+          "max_damage": 244148,
+          "count": 5
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 154185,
+          "min_damage": 110807,
+          "max_damage": 200532,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 167.2,
+      "dmg_avg": 937296,
+      "dmg_stddev": 484874,
+      "dmg_min": 120774,
+      "dmg_max": 1590714,
+      "dmg_pct_avg": 0.069,
+      "window_length_s": 11.2,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 421345,
+          "min_damage": 213035,
+          "max_damage": 816848,
+          "count": 6
+        },
+        {
+          "spell_id": 1284963,
+          "avg_damage": 377454,
+          "min_damage": 120774,
+          "max_damage": 552609,
+          "count": 8
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 144258,
+          "min_damage": 65672,
+          "max_damage": 286735,
+          "count": 4
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 110424,
+          "min_damage": 49253,
+          "max_damage": 161071,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.8,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 192081,
+      "avg_uses": 5.3,
+      "min_uses": 1,
+      "max_uses": 12
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Your biggest damage reduction at 50% on a long cooldown; save it for the most dangerous periods of a pull or encounter rather than using it on cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use frequently for its damage reduction during periods of incoming damage; it can be cast freely while in Bear Form and should rarely be held.",
+      "talent_gated": false
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press whenever your health dips low to recover a meaningful chunk of HP; its short cooldown lets you use it often throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ironfur",
+      "spell_id": 192081,
+      "cooldown": 15,
+      "duration": 7,
+      "usage_rule": "An extremely short cooldown Rage spender for physical mitigation; press it before large physical hits or heavy melee swings but avoid overusing it, since wasted Ironfur drains the Rage needed for damage and is a significant DPS loss (cooldown shown is its GCD/charge cadence rather than a fixed timer).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Frenzied Regeneration": 22842,
+    "Ironfur": 192081
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "192081": {
+      "icon": "ability_druid_ironfur",
+      "name": "Ironfur"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1250803": {
+      "icon": "inv_mace_2h_etherealking_d_01",
+      "name": "Shattering Twilight"
+    },
+    "1284963": {
+      "icon": "spell_shadow_twistedfaith",
+      "name": "Destabilizing Strikes"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "9e260e78870652c8",
+  "ingest_version": 2
+}

@@ -1,0 +1,447 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 10,
+      "avg_first_cast_s": 196.5,
+      "stddev_first_cast_s": 115,
+      "avg_gap_s": 124.9,
+      "stddev_gap_s": 29.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 269.8,
+          "stddev_s": 50.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 401.4,
+          "stddev_s": 7.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.319,
+        "stddev": 0.113,
+        "min": 0.126,
+        "max": 0.477
+      },
+      "majority_hold": true
+    },
+    "Vampiric Embrace": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.8,
+      "stddev_first_cast_s": 4.2,
+      "avg_gap_s": 129.1,
+      "stddev_gap_s": 6.4,
+      "hold_targets": {
+        "2": {
+          "target_s": 255.2,
+          "stddev_s": 8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 391,
+          "stddev_s": 5.8,
+          "count": 10,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.1,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.506,
+        "stddev": 0.034,
+        "min": 0.469,
+        "max": 0.58
+      },
+      "majority_hold": true
+    },
+    "Dispersion": {
+      "sample_count": 2,
+      "avg_first_cast_s": 345.6,
+      "stddev_first_cast_s": 155,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.131,
+        "stddev": 0.007,
+        "min": 0.126,
+        "max": 0.136
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 2.6,
+      "dmg_avg": 268496,
+      "dmg_stddev": 74730,
+      "dmg_min": 61791,
+      "dmg_max": 319788,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222278,
+          "avg_damage": 272843,
+          "min_damage": 237736,
+          "max_damage": 299684,
+          "count": 9
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 22937,
+          "min_damage": 14050,
+          "max_damage": 61791,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 125.6,
+      "dmg_avg": 891064,
+      "dmg_stddev": 185000,
+      "dmg_min": 449016,
+      "dmg_max": 1072605,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 598136,
+          "min_damage": 521124,
+          "max_damage": 682999,
+          "count": 9
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 261763,
+          "min_damage": 238361,
+          "max_damage": 310229,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 167013,
+          "min_damage": 156245,
+          "max_damage": 179085,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 134.4,
+      "dmg_avg": 475590,
+      "dmg_stddev": 164097,
+      "dmg_min": 267035,
+      "dmg_max": 760056,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221965,
+          "avg_damage": 250254,
+          "min_damage": 225360,
+          "max_damage": 268634,
+          "count": 5
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 165556,
+          "min_damage": 48498,
+          "max_damage": 387719,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 127848,
+          "min_damage": 114794,
+          "max_damage": 147370,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 254,
+      "dmg_avg": 1154878,
+      "dmg_stddev": 109487,
+      "dmg_min": 1019424,
+      "dmg_max": 1321871,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 803635,
+          "min_damage": 689248,
+          "max_damage": 946158,
+          "count": 9
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 350545,
+          "min_damage": 289699,
+          "max_damage": 378658,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 269.8,
+      "dmg_avg": 679445,
+      "dmg_stddev": 147190,
+      "dmg_min": 524244,
+      "dmg_max": 928089,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 260458,
+          "min_damage": 243358,
+          "max_damage": 303452,
+          "count": 6
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 258854,
+          "min_damage": 223653,
+          "max_damage": 331254,
+          "count": 5
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 192923,
+          "min_damage": 98187,
+          "max_damage": 293383,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 391,
+      "dmg_avg": 1219825,
+      "dmg_stddev": 184075,
+      "dmg_min": 852944,
+      "dmg_max": 1470798,
+      "window_length_s": 12,
+      "defensive_name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "common_defensives": [
+        "Vampiric Embrace"
+      ],
+      "common_cds": [
+        "Vampiric Embrace"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 673333,
+          "min_damage": 151304,
+          "max_damage": 919068,
+          "count": 10
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 514629,
+          "min_damage": 442255,
+          "max_damage": 588637,
+          "count": 10
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11253,
+          "min_damage": 10087,
+          "max_damage": 13190,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 402.4,
+      "dmg_avg": 863472,
+      "dmg_stddev": 165066,
+      "dmg_min": 675883,
+      "dmg_max": 1102405,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 382180,
+          "min_damage": 177072,
+          "max_damage": 704983,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 366675,
+          "min_damage": 334932,
+          "max_damage": 397422,
+          "count": 5
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 212549,
+          "min_damage": 193174,
+          "max_damage": 239745,
+          "count": 3
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 11085,
+          "min_damage": 9960,
+          "max_damage": 11819,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47585,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 15286,
+      "avg_uses": 4.1,
+      "min_uses": 4,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press to reduce all damage taken by 75% during heavy raid hits or unavoidable burst, accepting the brief loss of offensive casts.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use to instantly heal and raise your maximum health when you drop below ~75%, especially after Shadow Word: Death self-damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Activate during periods of sustained raid damage to convert your Shadow damage into self and raid healing.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "358f434bb819b217",
+  "ingest_version": 0
+}

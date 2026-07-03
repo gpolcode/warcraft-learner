@@ -1,0 +1,263 @@
+{
+  "spec": "WindwalkerMonk",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Touch of Karma": {
+      "sample_count": 10,
+      "avg_first_cast_s": 104.8,
+      "stddev_first_cast_s": 150.6,
+      "avg_gap_s": 166,
+      "stddev_gap_s": 91.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 288.9,
+          "stddev_s": 130,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 333.2,
+          "stddev_s": 71.7,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.358,
+        "stddev": 0.142,
+        "min": 0.121,
+        "max": 0.581
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 23.2,
+      "dmg_avg": 763322,
+      "dmg_stddev": 133516,
+      "dmg_min": 602224,
+      "dmg_max": 966718,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281707,
+          "avg_damage": 317975,
+          "min_damage": 248913,
+          "max_damage": 344546,
+          "count": 6
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 271473,
+          "min_damage": 144473,
+          "max_damage": 392087,
+          "count": 3
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 151017,
+          "min_damage": 51681,
+          "max_damage": 212491,
+          "count": 4
+        },
+        {
+          "spell_id": 1243743,
+          "avg_damage": 118764,
+          "min_damage": 114697,
+          "max_damage": 121388,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 359,
+      "dmg_avg": 643781,
+      "dmg_stddev": 379637,
+      "dmg_min": 155871,
+      "dmg_max": 982092,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_damage": 463118,
+          "min_damage": 409774,
+          "max_damage": 516462,
+          "count": 2
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 172482,
+          "min_damage": 75144,
+          "max_damage": 233827,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 171746,
+          "min_damage": 77226,
+          "max_damage": 268753,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 414.3,
+      "dmg_avg": 779777,
+      "dmg_stddev": 324894,
+      "dmg_min": 335210,
+      "dmg_max": 1231116,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 341504,
+          "min_damage": 249540,
+          "max_damage": 444312,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 229212,
+          "min_damage": 152182,
+          "max_damage": 272103,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 196513,
+          "min_damage": 154804,
+          "max_damage": 226912,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 122470,
+      "avg_uses": 2.9,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use first and foremost to absorb a known incoming damage spike; the absorbed damage is redirected to the target, so press it on cooldown into damage whenever the defensive value is not strictly needed.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 243435,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Press before heavy incoming damage; because it raises maximum health it also boosts Touch of Death and Touch of Karma, so cast it before either when you can to gain both the defensive and offensive benefit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of large hits to reduce high-damage attacks by up to 50%; best against big single blows rather than steady chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press proactively before a burst of magic damage to cut it by 60% and clear harmful magical debuffs back to their caster.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Touch of Karma": 122470,
+    "Fortifying Brew": 243435,
+    "Dampen Harm": 122278,
+    "Diffuse Magic": 122783
+  },
+  "ability_icons": {
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122470": {
+      "icon": "ability_monk_touchofkarma",
+      "name": "Touch of Karma"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "243435": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1243743": {
+      "icon": "ability_priest_surgeofdarkness",
+      "name": "Interrupting Tremor"
+    },
+    "1260027": {
+      "icon": "inv_shadowelementalmount",
+      "name": "Grasp of Emptiness"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    },
+    "1281707": {
+      "icon": "spell_priest_burningwill_shadow",
+      "name": "Echoing Darkness"
+    }
+  },
+  "source_signature": "ab69da8d783848bf",
+  "ingest_version": 0
+}

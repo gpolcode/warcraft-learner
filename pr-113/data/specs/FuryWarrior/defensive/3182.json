@@ -1,0 +1,279 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Rallying Cry": {
+      "sample_count": 6,
+      "avg_first_cast_s": 172.5,
+      "stddev_first_cast_s": 55.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.207,
+        "stddev": 0.015,
+        "min": 0.193,
+        "max": 0.235
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 7,
+      "avg_first_cast_s": 62.3,
+      "stddev_first_cast_s": 85.2,
+      "avg_gap_s": 68.7,
+      "stddev_gap_s": 37.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 132.2,
+          "stddev_s": 50.3,
+          "count": 6,
+          "total_samples": 7
+        },
+        "2": {
+          "target_s": 187.2,
+          "stddev_s": 51.4,
+          "count": 6,
+          "total_samples": 7
+        },
+        "3": {
+          "target_s": 210.3,
+          "stddev_s": 57.7,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.73,
+      "uses_per_min": {
+        "avg": 0.727,
+        "stddev": 0.299,
+        "min": 0.21,
+        "max": 1.156
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 9.5,
+      "dmg_avg": 388169,
+      "dmg_stddev": 246299,
+      "dmg_min": 201937,
+      "dmg_max": 750275,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 268042,
+          "min_damage": 256777,
+          "max_damage": 279307,
+          "count": 2
+        },
+        {
+          "spell_id": 1241291,
+          "avg_damage": 249104,
+          "min_damage": 96722,
+          "max_damage": 401485,
+          "count": 2
+        },
+        {
+          "spell_id": 1241340,
+          "avg_damage": 143364,
+          "min_damage": 77533,
+          "max_damage": 209195,
+          "count": 2
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 28298,
+          "min_damage": 21131,
+          "max_damage": 39902,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 159.6,
+      "dmg_avg": 257939,
+      "dmg_stddev": 69608,
+      "dmg_min": 160447,
+      "dmg_max": 346754,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 262316,
+          "min_damage": 225144,
+          "max_damage": 323883,
+          "count": 4
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 34485,
+          "min_damage": 22871,
+          "max_damage": 50537,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 211.7,
+      "dmg_avg": 262142,
+      "dmg_stddev": 90764,
+      "dmg_min": 147893,
+      "dmg_max": 369625,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 269487,
+          "min_damage": 236454,
+          "max_damage": 323883,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 35284,
+          "min_damage": 22520,
+          "max_damage": 48923,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 246.7,
+      "dmg_avg": 160076,
+      "dmg_stddev": 173165,
+      "dmg_min": 23471,
+      "dmg_max": 401228,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 38266,
+          "min_damage": 23471,
+          "max_damage": 45843,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 3.6,
+      "min_uses": 1,
+      "max_uses": 6
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "184364": {
+      "icon": "ability_warrior_focusedrage",
+      "name": "Enraged Regeneration"
+    },
+    "1241291": {
+      "icon": "inv_phoenix2pet_yellow",
+      "name": "Light Dive"
+    },
+    "1241340": {
+      "icon": "inv_phoenix2pet",
+      "name": "Void Dive"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "90b736cab9fe849b",
+  "ingest_version": 1
+}

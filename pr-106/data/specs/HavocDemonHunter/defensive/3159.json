@@ -1,0 +1,123 @@
+{
+  "spec": "HavocDemonHunter",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blur": {
+      "sample_count": 10,
+      "avg_first_cast_s": 182,
+      "stddev_first_cast_s": 108,
+      "avg_gap_s": 75.9,
+      "stddev_gap_s": 58.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 267,
+          "stddev_s": 70.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 304.9,
+          "stddev_s": 66.5,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 399.5,
+          "stddev_s": 7,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.54,
+      "uses_per_min": {
+        "avg": 0.535,
+        "stddev": 0.188,
+        "min": 0.13,
+        "max": 0.777
+      },
+      "majority_hold": true
+    },
+    "Darkness": {
+      "sample_count": 1,
+      "avg_first_cast_s": 405.6,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.126,
+        "stddev": 0,
+        "min": 0.126,
+        "max": 0.126
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 198589,
+      "avg_uses": 4,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before predictable physical or magical burst for a 20% damage reduction plus 50% dodge against physical attacks; its short cooldown lets you use it freely on incoming tankbuster-style hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a heavy AoE magical or avoidable damage event so allies inside gain a chance to fully avoid each hit; coordinate timing with other raid cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Netherwalk",
+      "spell_id": 196555,
+      "cooldown": 180,
+      "duration": 5,
+      "usage_rule": "Use as a 5-second full damage immunity to soak or survive a lethal mechanic; talent-gated, so it replaces Blur only on builds that take it.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Blur": 198589,
+    "Darkness": 196718,
+    "Netherwalk": 196555
+  },
+  "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    }
+  },
+  "source_signature": "3d48c50f8d51dedc",
+  "ingest_version": 1
+}

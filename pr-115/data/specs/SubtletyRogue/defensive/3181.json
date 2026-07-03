@@ -1,0 +1,244 @@
+{
+  "spec": "SubtletyRogue",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 10,
+      "avg_first_cast_s": 190.1,
+      "stddev_first_cast_s": 157.4,
+      "avg_gap_s": 284.8,
+      "stddev_gap_s": 75.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 391.7,
+          "stddev_s": 51.4,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.203,
+        "stddev": 0.081,
+        "min": 0.114,
+        "max": 0.364
+      },
+      "majority_hold": true
+    },
+    "Crimson Vial": {
+      "sample_count": 10,
+      "avg_first_cast_s": 161.1,
+      "stddev_first_cast_s": 149.1,
+      "avg_gap_s": 86,
+      "stddev_gap_s": 69.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 155.5,
+          "stddev_s": 139.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 270.8,
+          "stddev_s": 58.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 351.9,
+          "stddev_s": 43.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 445.4,
+          "stddev_s": 43.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.454,
+        "stddev": 0.243,
+        "min": 0.121,
+        "max": 0.747
+      },
+      "majority_hold": true
+    },
+    "Feint": {
+      "sample_count": 10,
+      "avg_first_cast_s": 39.1,
+      "stddev_first_cast_s": 38.8,
+      "avg_gap_s": 34.8,
+      "stddev_gap_s": 30.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 85.2,
+          "stddev_s": 108.5,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 113.8,
+          "stddev_s": 107.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 174.4,
+          "stddev_s": 30.4,
+          "count": 6,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 241.1,
+          "stddev_s": 98.9,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 270,
+          "stddev_s": 64.5,
+          "count": 7,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 322.3,
+          "stddev_s": 73.5,
+          "count": 7,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 364.1,
+          "stddev_s": 87.6,
+          "count": 5,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 439.6,
+          "stddev_s": 91.6,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 13.1,
+      "avg_uses_per_min": 1.58,
+      "uses_per_min": {
+        "avg": 1.578,
+        "stddev": 0.662,
+        "min": 0.687,
+        "max": 2.75
+      },
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 4,
+      "avg_first_cast_s": 415.7,
+      "stddev_first_cast_s": 43,
+      "avg_gap_s": 132.8,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.152,
+        "stddev": 0.052,
+        "min": 0.122,
+        "max": 0.229
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31224,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 185311,
+      "avg_uses": 3.8,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 13.1,
+      "min_uses": 6,
+      "max_uses": 24
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to purge a dangerous magical debuff or to immune a targeted magical ability; must be used proactively since the 5-second window is very short.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use proactively before a burst of physical damage or during a physical tankbuster cleave; grants near-100% dodge for 10 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use when health drops below 50% to restore a meaningful chunk of HP; short enough cooldown to use freely throughout the fight without holding for emergencies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 5,
+      "usage_rule": "Press proactively before any telegraphed AoE damage event; its 15-second cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Crimson Vial": 185311,
+    "Feint": 1966
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    }
+  },
+  "source_signature": "b1ab5644ce241753",
+  "ingest_version": 2
+}

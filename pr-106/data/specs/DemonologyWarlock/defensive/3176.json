@@ -1,0 +1,153 @@
+{
+  "spec": "DemonologyWarlock",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 6,
+      "avg_first_cast_s": 105.9,
+      "stddev_first_cast_s": 77.2,
+      "avg_gap_s": 104.4,
+      "stddev_gap_s": 56.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 177.1,
+          "stddev_s": 81.2,
+          "count": 3,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.437,
+        "stddev": 0.263,
+        "min": 0.202,
+        "max": 0.882
+      },
+      "majority_hold": false
+    },
+    "Unending Resolve": {
+      "sample_count": 1,
+      "avg_first_cast_s": 229.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.22,
+        "stddev": 0,
+        "min": 0.22,
+        "max": 0.22
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 175.3,
+      "dmg_avg": 333676,
+      "dmg_stddev": 34719,
+      "dmg_min": 309126,
+      "dmg_max": 384652,
+      "window_length_s": 8.3,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 225040,
+          "min_damage": 25935,
+          "max_damage": 310445,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 3027,
+          "min_damage": 313,
+          "max_damage": 4280,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789
+  },
+  "ability_icons": {
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    }
+  },
+  "source_signature": "66748c1d96866b40",
+  "ingest_version": 1
+}

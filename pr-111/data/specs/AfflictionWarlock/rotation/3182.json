@@ -1,0 +1,212 @@
+{
+  "spec": "AfflictionWarlock",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "avg_duration_s": 303.1,
+  "downtime_threshold_ms": 2502,
+  "top_avg_efficiency": 72.8,
+  "top_efficiency_stddev": 7.9,
+  "per_cd_benchmarks": {
+    "Summon Darkglare": {
+      "sample_count": 10,
+      "avg_first_cast_s": 15.5,
+      "stddev_first_cast_s": 37.3,
+      "avg_gap_s": 136.9,
+      "stddev_gap_s": 17.3,
+      "avg_bl_offset_s": 9.3,
+      "stddev_bl_offset_s": 5.8,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.58,
+      "uses_per_min": {
+        "avg": 0.576,
+        "stddev": 0.072,
+        "min": 0.378,
+        "max": 0.628
+      },
+      "bl_pct": 90,
+      "majority_hold": true,
+      "hold_targets": {
+        "3": {
+          "target_s": 276.1,
+          "stddev_s": 7.2,
+          "delay_s": 31.1,
+          "delay_stddev_s": 8.5,
+          "band_s": 8.5,
+          "effective_cd_s": 120,
+          "count": 9,
+          "total_samples": 10
+        }
+      }
+    },
+    "Malevolence": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Dark Harvest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Summon Darkglare",
+      "spell_id": 205180,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 5,
+      "usage_rule": "Cast on cooldown after pooling Soul Shards and applying all DoTs, syncing with potion, on-use trinkets, and Bloodlust so the Darkglare window captures every active DoT extension."
+    },
+    {
+      "name": "Malevolence",
+      "spell_id": 442726,
+      "cooldown": 60,
+      "duration": 14,
+      "align_with_bloodlust": false,
+      "opener_priority": 6,
+      "talent_gated": true,
+      "usage_rule": "As Hellcaller, cast every minute and pair it with every Summon Darkglare so the buffed Wither stacks and bonus damage land inside your burst window; not available to Soul Harvester builds."
+    },
+    {
+      "name": "Dark Harvest",
+      "spell_id": 387016,
+      "id_note": "Dark Harvest (387016) is the canonical Affliction talent of that name and is a passive; if the Soul Harvester active this entry describes does not exist as a tracked cast, ingestion will simply find no casts for it.",
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Cast on cooldown without overcapping Soul Shards, syncing it into the Darkglare window as Soul Harvester to refill the 3 shards consumed."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open by applying all DoTs before Darkglare",
+      "condition": null,
+      "action": "Precast Haunt, then apply Agony, Wither or Corruption, and Unstable Affliction, build Soul Shards, and only cast Summon Darkglare once every DoT is active so the window extends all of them."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Pair Malevolence with Summon Darkglare",
+      "condition": null,
+      "action": "As Hellcaller, cast Malevolence inside every Summon Darkglare window; Malevolence comes up every minute and should re-pair with Darkglare every two minutes for maximum overlap."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Pool Soul Shards before Darkglare",
+      "condition": null,
+      "action": "Stop spending Soul Shards a few globals before Summon Darkglare so you enter the window near 5 shards and can dump Unstable Affliction casts under the Darkglare buff, but never overcap before then."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Never overcap Soul Shards",
+      "condition": null,
+      "action": "Keep Soul Shards below the cap of 5 outside of pooling for Darkglare; spend with Unstable Affliction (or Seed of Corruption in AoE) before generating another shard, since overcapping is a direct DPS loss."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Maintain Agony, Corruption/Wither and UA",
+      "condition": null,
+      "action": "Refresh Agony, your Corruption or Wither, and Unstable Affliction inside their Pandemic windows so they never fall off, and prioritize re-applying any DoT that drops before resuming filler."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "React to Nightfall and Shard Instability",
+      "condition": null,
+      "action": "Spend Nightfall procs with Malefic Grasp or Drain Soul and consume Shard Instability with Unstable Affliction promptly so neither effect is wasted by overcapping."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Spread Seed of Corruption at 3+ targets",
+      "condition": null,
+      "action": "On 3 or more targets, swap your single-target spender for Seed of Corruption, keep Agony on roughly 5 to 8 targets for shard generation, and continue casting Dark Harvest and Summon Darkglare on cooldown."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Sync Dark Harvest into Darkglare",
+      "condition": null,
+      "action": "As Soul Harvester, time Dark Harvest into the Summon Darkglare window after your pre-pooled shards are spent so its 3-shard refund keeps Unstable Affliction flowing through the burst."
+    }
+  ],
+  "cd_spell_ids": {
+    "Summon Darkglare": 205180,
+    "Malevolence": 442726,
+    "Dark Harvest": 387016,
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "205180": {
+      "icon": "inv_beholderwarlock",
+      "name": "Summon Darkglare"
+    },
+    "387016": {
+      "icon": "ability_creature_disease_02",
+      "name": "Dark Harvest"
+    },
+    "442726": {
+      "icon": "inv_ability_hellcallerwarlock_malevolence",
+      "name": "Malevolence"
+    }
+  },
+  "source_signature": "50684d1a45492c95",
+  "ingest_version": 2
+}

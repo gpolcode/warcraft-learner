@@ -1,0 +1,502 @@
+{
+  "spec": "ArmsWarrior",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Die by the Sword": {
+      "sample_count": 9,
+      "avg_first_cast_s": 377.9,
+      "stddev_first_cast_s": 86.3,
+      "avg_gap_s": 159.1,
+      "stddev_gap_s": 32.2,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.169,
+        "stddev": 0.081,
+        "min": 0.115,
+        "max": 0.338
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 9,
+      "avg_first_cast_s": 413.1,
+      "stddev_first_cast_s": 125.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.118,
+        "stddev": 0.004,
+        "min": 0.113,
+        "max": 0.125
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 119,
+      "stddev_first_cast_s": 104.9,
+      "avg_gap_s": 75,
+      "stddev_gap_s": 59.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 219.3,
+          "stddev_s": 125.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 333,
+          "stddev_s": 109.4,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 410.7,
+          "stddev_s": 83.2,
+          "count": 9,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 415.4,
+          "stddev_s": 78.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 469.7,
+          "stddev_s": 75.6,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.68,
+        "stddev": 0.217,
+        "min": 0.351,
+        "max": 1.126
+      },
+      "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 3,
+      "avg_first_cast_s": 436.8,
+      "stddev_first_cast_s": 47.1,
+      "avg_gap_s": 124.2,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.156,
+        "stddev": 0.065,
+        "min": 0.115,
+        "max": 0.231
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 62.5,
+      "dmg_avg": 272574,
+      "dmg_stddev": 147882,
+      "dmg_min": 65803,
+      "dmg_max": 479600,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281707,
+          "avg_damage": 114979,
+          "min_damage": 65803,
+          "max_damage": 175007,
+          "count": 6
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 62221,
+          "min_damage": 33305,
+          "max_damage": 135206,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 247.3,
+      "dmg_avg": 290940,
+      "dmg_stddev": 121036,
+      "dmg_min": 162509,
+      "dmg_max": 414236,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260027,
+          "avg_damage": 128289,
+          "min_damage": 64681,
+          "max_damage": 182014,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 95426,
+          "min_damage": 80411,
+          "max_damage": 112007,
+          "count": 3
+        },
+        {
+          "spell_id": 1260019,
+          "avg_damage": 49701,
+          "min_damage": 17417,
+          "max_damage": 81643,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 352.2,
+      "dmg_avg": 314774,
+      "dmg_stddev": 86069,
+      "dmg_min": 212213,
+      "dmg_max": 455088,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 207264,
+          "min_damage": 130025,
+          "max_damage": 395074,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 79230,
+          "min_damage": 55865,
+          "max_damage": 104673,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 415.1,
+      "dmg_avg": 533344,
+      "dmg_stddev": 128014,
+      "dmg_min": 388428,
+      "dmg_max": 696283,
+      "window_length_s": 8,
+      "defensive_name": "Die by the Sword",
+      "spell_id": 118038,
+      "common_defensives": [
+        "Die by the Sword"
+      ],
+      "common_cds": [
+        "Die by the Sword"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 242393,
+          "min_damage": 151657,
+          "max_damage": 321108,
+          "count": 5
+        },
+        {
+          "spell_id": 1260027,
+          "avg_damage": 239018,
+          "min_damage": 208285,
+          "max_damage": 265192,
+          "count": 3
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 112793,
+          "min_damage": 90927,
+          "max_damage": 135208,
+          "count": 5
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 110938,
+          "min_damage": 63471,
+          "max_damage": 149754,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 415.9,
+      "dmg_avg": 366602,
+      "dmg_stddev": 147643,
+      "dmg_min": 116764,
+      "dmg_max": 534229,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 211535,
+          "min_damage": 151657,
+          "max_damage": 250385,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 74649,
+          "min_damage": 38063,
+          "max_damage": 108855,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 62865,
+          "min_damage": 28923,
+          "max_damage": 116764,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 453.2,
+      "dmg_avg": 272181,
+      "dmg_stddev": 99302,
+      "dmg_min": 102659,
+      "dmg_max": 388060,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 142737,
+          "min_damage": 86194,
+          "max_damage": 249788,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 104135,
+          "min_damage": 85837,
+          "max_damage": 115052,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 504.7,
+      "dmg_avg": 293899,
+      "dmg_stddev": 140274,
+      "dmg_min": 205534,
+      "dmg_max": 502771,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 193722,
+          "min_damage": 132595,
+          "max_damage": 254848,
+          "count": 2
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 113353,
+          "min_damage": 110124,
+          "max_damage": 117327,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 99412,
+          "min_damage": 95410,
+          "max_damage": 103414,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 118038,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 5.8,
+      "min_uses": 3,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 202168,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop proactively before heavy physical or parry-able melee damage; it grants a large parry chance plus damage reduction for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-wide emergency button before a large group-wide hit, granting you and nearby allies a temporary maximum-health and effective-health buffer.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a targeted magic cast or projectile to reflect it and reduce incoming magic damage during the short window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Defensive Stance",
+      "spell_id": 197690,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Toggle on during sustained heavy damage for a flat damage reduction, then toggle back to your damage stance once the danger passes.",
+      "talent_gated": false
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "duration": null,
+      "usage_rule": "Cast when below full health to deal damage and instantly heal a chunk of your maximum health; talent_gated as it replaces Victory Rush only when talented.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Die by the Sword": 118038,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920,
+    "Defensive Stance": 197690,
+    "Impending Victory": 202168
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "118038": {
+      "icon": "ability_warrior_challange",
+      "name": "Die by the Sword"
+    },
+    "197690": {
+      "icon": "ability_warrior_defensivestance",
+      "name": "Defensive Stance"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1260019": {
+      "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
+      "name": "Simulacrum Backlash"
+    },
+    "1260027": {
+      "icon": "inv_shadowelementalmount",
+      "name": "Grasp of Emptiness"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    },
+    "1281707": {
+      "icon": "spell_priest_burningwill_shadow",
+      "name": "Echoing Darkness"
+    }
+  },
+  "source_signature": "a79118475881a8d0",
+  "ingest_version": 1
+}

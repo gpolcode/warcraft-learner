@@ -1,0 +1,210 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 76.3,
+      "stddev_first_cast_s": 42.8,
+      "avg_gap_s": 86.7,
+      "stddev_gap_s": 17.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 137.2,
+          "stddev_s": 50.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 228.4,
+          "stddev_s": 17.1,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.591,
+        "stddev": 0.176,
+        "min": 0.232,
+        "max": 0.768
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 65.6,
+      "dmg_avg": 288731,
+      "dmg_stddev": 86514,
+      "dmg_min": 194444,
+      "dmg_max": 390926,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 82772,
+          "min_damage": 80483,
+          "max_damage": 83945,
+          "count": 4
+        },
+        {
+          "spell_id": 1241340,
+          "avg_damage": 79676,
+          "min_damage": 42528,
+          "max_damage": 160900,
+          "count": 4
+        },
+        {
+          "spell_id": 1241291,
+          "avg_damage": 73991,
+          "min_damage": 50232,
+          "max_damage": 109997,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 136.5,
+      "dmg_avg": 406638,
+      "dmg_stddev": 118868,
+      "dmg_min": 259426,
+      "dmg_max": 608236,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 287439,
+          "min_damage": 181735,
+          "max_damage": 371130,
+          "count": 8
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 81103,
+          "min_damage": 73445,
+          "max_damage": 88257,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 210.2,
+      "dmg_avg": 392819,
+      "dmg_stddev": 253394,
+      "dmg_min": 78992,
+      "dmg_max": 642303,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 80884,
+          "min_damage": 78122,
+          "max_damage": 84649,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable raid damage or a tankbuster cleave for a 20% damage reduction; its short cooldown allows frequent use, so do not save it for emergencies that may never come.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Use when your health drops below roughly 50% to instantly restore a large chunk of HP without interrupting your casting. Talent-gated to builds that take Renewal.",
+      "talent_gated": true
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Reserve for the heaviest spike damage events for its strong damage reduction; pair it with Barkskin on lethal hits when one defensive is not enough.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Survival Instincts": 61336
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1241291": {
+      "icon": "inv_phoenix2pet_yellow",
+      "name": "Light Dive"
+    },
+    "1241340": {
+      "icon": "inv_phoenix2pet",
+      "name": "Void Dive"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "d81c19d289384435",
+  "ingest_version": 1
+}

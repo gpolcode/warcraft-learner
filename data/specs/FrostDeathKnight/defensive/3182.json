@@ -1,0 +1,276 @@
+{
+  "spec": "FrostDeathKnight",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Anti-Magic Shell": {
+      "sample_count": 10,
+      "avg_first_cast_s": 123,
+      "stddev_first_cast_s": 108.9,
+      "avg_gap_s": 61.1,
+      "stddev_gap_s": 18.4,
+      "hold_targets": {
+        "2": {
+          "target_s": 167,
+          "stddev_s": 52.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.65,
+      "uses_per_min": {
+        "avg": 0.648,
+        "stddev": 0.419,
+        "min": 0.184,
+        "max": 1.19
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 9,
+      "avg_first_cast_s": 164.6,
+      "stddev_first_cast_s": 84.8,
+      "avg_gap_s": 143.4,
+      "stddev_gap_s": 13.9,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.35,
+      "uses_per_min": {
+        "avg": 0.346,
+        "stddev": 0.13,
+        "min": 0.185,
+        "max": 0.492
+      },
+      "majority_hold": false
+    },
+    "Lichborne": {
+      "sample_count": 4,
+      "avg_first_cast_s": 117.1,
+      "stddev_first_cast_s": 113,
+      "avg_gap_s": 92.9,
+      "stddev_gap_s": 8.6,
+      "hold_targets": {},
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.46,
+      "uses_per_min": {
+        "avg": 0.459,
+        "stddev": 0.267,
+        "min": 0.232,
+        "max": 0.769
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 5,
+      "avg_first_cast_s": 180.3,
+      "stddev_first_cast_s": 50.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.218,
+        "stddev": 0.023,
+        "min": 0.192,
+        "max": 0.246
+      },
+      "majority_hold": false
+    },
+    "Death Strike": {
+      "sample_count": 1,
+      "avg_first_cast_s": 54.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.244,
+        "stddev": 0,
+        "min": 0.244,
+        "max": 0.244
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 222,
+      "dmg_avg": 312972,
+      "dmg_stddev": 153567,
+      "dmg_min": 54740,
+      "dmg_max": 453850,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 8,
+      "defensive_name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "common_defensives": [
+        "Icebound Fortitude"
+      ],
+      "common_cds": [
+        "Icebound Fortitude"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241333,
+          "avg_damage": 244968,
+          "min_damage": 196075,
+          "max_damage": 281769,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 61296,
+          "min_damage": 54740,
+          "max_damage": 64721,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 245.3,
+      "dmg_avg": 316074,
+      "dmg_stddev": 148887,
+      "dmg_min": 58235,
+      "dmg_max": 472878,
+      "dmg_pct_avg": 0.034,
+      "window_length_s": 6.4,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 55743,
+          "min_damage": 30559,
+          "max_damage": 77661,
+          "count": 8
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 48707,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 49998,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press before incoming magic damage to absorb it and generate Runic Power; use it proactively on telegraphed magic hits since the shield only lasts 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use for heavy physical hits or tankbusters to reduce all damage taken and gain stun immunity for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate to become immune to Charm, Fear, and Sleep effects, and to enable Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Death Strike",
+      "spell_id": 49998,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend Runic Power on it as an on-demand self-heal when you dip low; its heal scales with recent damage taken so press it after a hit rather than before.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop it for the group ahead of a raid-wide magic burst to reduce magic damage taken for everyone standing inside (talent choice in some builds).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Anti-Magic Shell": 48707,
+    "Icebound Fortitude": 48792,
+    "Lichborne": 49039,
+    "Death Strike": 49998,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "49998": {
+      "icon": "spell_deathknight_butcher2",
+      "name": "Death Strike"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "1241333": {
+      "icon": "inv_phoenix2mount_blue",
+      "name": "Death Drop"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "816eaca390eddbda",
+  "ingest_version": 3
+}

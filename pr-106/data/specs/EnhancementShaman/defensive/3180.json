@@ -1,0 +1,332 @@
+{
+  "spec": "EnhancementShaman",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 10,
+      "avg_first_cast_s": 138.2,
+      "stddev_first_cast_s": 71.6,
+      "avg_gap_s": 125,
+      "stddev_gap_s": 27.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 245.1,
+          "stddev_s": 53.2,
+          "count": 8,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.361,
+        "stddev": 0.107,
+        "min": 0.166,
+        "max": 0.491
+      },
+      "majority_hold": true
+    },
+    "Spirit Walk": {
+      "sample_count": 9,
+      "avg_first_cast_s": 85.9,
+      "stddev_first_cast_s": 89.2,
+      "avg_gap_s": 86.5,
+      "stddev_gap_s": 61.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 136.2,
+          "stddev_s": 92.4,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.546,
+        "stddev": 0.287,
+        "min": 0.164,
+        "max": 1.013
+      },
+      "majority_hold": true
+    },
+    "Earth Elemental": {
+      "sample_count": 6,
+      "avg_first_cast_s": 212.4,
+      "stddev_first_cast_s": 61.8,
+      "avg_gap_s": 197,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.19,
+        "stddev": 0.062,
+        "min": 0.145,
+        "max": 0.31
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 3,
+      "avg_first_cast_s": 237.5,
+      "stddev_first_cast_s": 101.2,
+      "avg_gap_s": 71.9,
+      "stddev_gap_s": 100.3,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.28,
+        "stddev": 0.074,
+        "min": 0.196,
+        "max": 0.332
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 95.9,
+      "dmg_avg": 307782,
+      "dmg_stddev": 149131,
+      "dmg_min": 87015,
+      "dmg_max": 454941,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 0,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249047,
+          "avg_damage": 258988,
+          "min_damage": 171673,
+          "max_damage": 302645,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 78662,
+          "min_damage": 55087,
+          "max_damage": 87302,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 131.5,
+      "dmg_avg": 394499,
+      "dmg_stddev": 286060,
+      "dmg_min": 92884,
+      "dmg_max": 853672,
+      "window_length_s": 8.5,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 99596,
+          "min_damage": 84552,
+          "max_damage": 119749,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 244.2,
+      "dmg_avg": 416443,
+      "dmg_stddev": 104601,
+      "dmg_min": 233951,
+      "dmg_max": 486142,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 148306,
+          "min_damage": 118328,
+          "max_damage": 171591,
+          "count": 4
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 121550,
+          "min_damage": 35973,
+          "max_damage": 206687,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 115665,
+          "min_damage": 107864,
+          "max_damage": 126927,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 295.4,
+      "dmg_avg": 301257,
+      "dmg_stddev": 118922,
+      "dmg_min": 159634,
+      "dmg_max": 447941,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 183337,
+          "min_damage": 139725,
+          "max_damage": 278215,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 198103,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 58875,
+      "avg_uses": 3,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 8004,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a major hit or off-tank an add; it also grants you a sizeable health buffer and can be used defensively on a long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "When talented, drop before incoming damage to gain a recurring physical and magical absorb shield; use it on cooldown during damage-heavy phases.",
+      "talent_gated": true
+    },
+    {
+      "name": "Spirit Walk",
+      "spell_id": 58875,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use to remove movement-impairing effects and gain a burst of speed to reach mechanics or close back into melee range quickly.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Surge",
+      "spell_id": 8004,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend 5 or more Maelstrom Weapon stacks to cast an instant self-heal when you drop low; the cooldown listed is a soft pacing value since this is gated by Maelstrom rather than a real cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Earth Elemental": 198103,
+    "Stone Bulwark Totem": 108270,
+    "Spirit Walk": 58875,
+    "Healing Surge": 8004
+  },
+  "ability_icons": {
+    "8004": {
+      "icon": "spell_nature_healingway",
+      "name": "Healing Surge"
+    },
+    "58875": {
+      "icon": "ability_tracking",
+      "name": "Spirit Walk"
+    },
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1249047": {
+      "icon": "ability_paladin_hammeroftherighteous",
+      "name": "Divine Hammer"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "80b6306656f60c3e",
+  "ingest_version": 1
+}

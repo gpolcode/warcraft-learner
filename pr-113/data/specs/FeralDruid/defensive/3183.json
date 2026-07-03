@@ -1,0 +1,167 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 193.8,
+      "stddev_first_cast_s": 118.8,
+      "avg_gap_s": 98.2,
+      "stddev_gap_s": 33.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 312.7,
+          "stddev_s": 98.8,
+          "count": 5,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 341.4,
+          "stddev_s": 126.4,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.358,
+        "stddev": 0.199,
+        "min": 0.114,
+        "max": 0.693
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 10,
+      "avg_first_cast_s": 236,
+      "stddev_first_cast_s": 102.7,
+      "avg_gap_s": 118.9,
+      "stddev_gap_s": 54.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 339.5,
+          "stddev_s": 50.5,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.254,
+        "stddev": 0.103,
+        "min": 0.115,
+        "max": 0.461
+      },
+      "majority_hold": true
+    },
+    "Survival Instincts": {
+      "sample_count": 5,
+      "avg_first_cast_s": 302.3,
+      "stddev_first_cast_s": 84,
+      "avg_gap_s": 269,
+      "stddev_gap_s": 14.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 488.1,
+          "stddev_s": 13.2,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.163,
+        "stddev": 0.067,
+        "min": 0.11,
+        "max": 0.24
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    }
+  },
+  "source_signature": "0891e3cc0cc815eb",
+  "ingest_version": 2
+}

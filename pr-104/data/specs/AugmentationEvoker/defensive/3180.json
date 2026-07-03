@@ -1,0 +1,325 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 90.3,
+      "stddev_first_cast_s": 22.7,
+      "avg_gap_s": 28.3,
+      "stddev_gap_s": 40.3,
+      "hold_targets": {},
+      "avg_uses": 6.8,
+      "avg_uses_per_min": 1.33,
+      "uses_per_min": {
+        "avg": 1.334,
+        "stddev": 0.409,
+        "min": 0.533,
+        "max": 1.925
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 8,
+      "avg_first_cast_s": 160.7,
+      "stddev_first_cast_s": 69.5,
+      "avg_gap_s": 81.8,
+      "stddev_gap_s": 56.5,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.33,
+      "uses_per_min": {
+        "avg": 0.328,
+        "stddev": 0.19,
+        "min": 0.192,
+        "max": 0.617
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 87.1,
+      "dmg_avg": 228766,
+      "dmg_stddev": 174837,
+      "dmg_min": 36238,
+      "dmg_max": 451177,
+      "window_length_s": 7.1,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 199153,
+          "min_damage": 118907,
+          "max_damage": 289711,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 55265,
+          "min_damage": 36238,
+          "max_damage": 73584,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 93.3,
+      "dmg_avg": 192802,
+      "dmg_stddev": 166250,
+      "dmg_min": 0,
+      "dmg_max": 553107,
+      "window_length_s": 5.9,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 118767,
+          "min_damage": 35152,
+          "max_damage": 383699,
+          "count": 15
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 47170,
+          "min_damage": 11009,
+          "max_damage": 101342,
+          "count": 21
+        }
+      ]
+    },
+    {
+      "time_s": 145.3,
+      "dmg_avg": 255867,
+      "dmg_stddev": 177478,
+      "dmg_min": 0,
+      "dmg_max": 634438,
+      "window_length_s": 7.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 61432,
+          "min_damage": 29090,
+          "max_damage": 109248,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 197.4,
+      "dmg_avg": 174186,
+      "dmg_stddev": 190216,
+      "dmg_min": 0,
+      "dmg_max": 584565,
+      "window_length_s": 5.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240438,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 178426,
+          "min_damage": 40113,
+          "max_damage": 402020,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 51407,
+          "min_damage": 7606,
+          "max_damage": 111291,
+          "count": 11
+        }
+      ]
+    },
+    {
+      "time_s": 245,
+      "dmg_avg": 478517,
+      "dmg_stddev": 54964,
+      "dmg_min": 417750,
+      "dmg_max": 544560,
+      "window_length_s": 8.8,
+      "defensive_name": "Zephyr",
+      "spell_id": 374227,
+      "common_defensives": [
+        "Zephyr"
+      ],
+      "common_cds": [
+        "Zephyr"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 204484,
+          "min_damage": 173144,
+          "max_damage": 227246,
+          "count": 4
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 155250,
+          "min_damage": 110113,
+          "max_damage": 187265,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 118784,
+          "min_damage": 93594,
+          "max_damage": 143242,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 249.2,
+      "dmg_avg": 195123,
+      "dmg_stddev": 175468,
+      "dmg_min": 16172,
+      "dmg_max": 567284,
+      "window_length_s": 6.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 64658,
+          "min_damage": 16172,
+          "max_damage": 130737,
+          "count": 16
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.8,
+      "min_uses": 3,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "1cb8c115b673651f",
+  "ingest_version": 1
+}

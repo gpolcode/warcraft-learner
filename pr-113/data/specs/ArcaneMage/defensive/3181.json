@@ -1,0 +1,226 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Alter Time": {
+      "sample_count": 4,
+      "avg_first_cast_s": 278.1,
+      "stddev_first_cast_s": 51.1,
+      "avg_gap_s": 113.7,
+      "stddev_gap_s": 49.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 420.7,
+          "stddev_s": 64.3,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.219,
+        "stddev": 0.116,
+        "min": 0.121,
+        "max": 0.372
+      },
+      "majority_hold": false
+    },
+    "Greater Invisibility": {
+      "sample_count": 9,
+      "avg_first_cast_s": 347.2,
+      "stddev_first_cast_s": 74.4,
+      "avg_gap_s": 113.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.133,
+        "stddev": 0.044,
+        "min": 0.113,
+        "max": 0.248
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 5,
+      "avg_first_cast_s": 376.7,
+      "stddev_first_cast_s": 65.4,
+      "avg_gap_s": 194.3,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.14,
+        "stddev": 0.05,
+        "min": 0.113,
+        "max": 0.229
+      },
+      "majority_hold": false
+    },
+    "Prismatic Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 66.8,
+      "stddev_first_cast_s": 38.7,
+      "avg_gap_s": 62.6,
+      "stddev_gap_s": 41.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 147.7,
+          "stddev_s": 105.6,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 189.2,
+          "stddev_s": 111.3,
+          "count": 10,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 295.3,
+          "stddev_s": 93.8,
+          "count": 8,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 323.4,
+          "stddev_s": 96.1,
+          "count": 7,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 403.5,
+          "stddev_s": 84,
+          "count": 6,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 369.5,
+          "stddev_s": 74.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 422.9,
+          "stddev_s": 62.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.4,
+      "avg_uses_per_min": 0.89,
+      "uses_per_min": {
+        "avg": 0.886,
+        "stddev": 0.286,
+        "min": 0.494,
+        "max": 1.365
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 342245,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 110959,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 235450,
+      "avg_uses": 7.4,
+      "min_uses": 4,
+      "max_uses": 11
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235450": {
+      "icon": "spell_magearmor",
+      "name": "Prismatic Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    }
+  },
+  "source_signature": "d7aa352b385db04a",
+  "ingest_version": 2
+}

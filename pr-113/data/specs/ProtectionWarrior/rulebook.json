@@ -1,0 +1,168 @@
+{
+  "spec": "ProtectionWarrior",
+  "major_cooldowns": [
+    {
+      "name": "Avatar",
+      "spell_id": 401150,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 2,
+      "usage_rule": "Cast on cooldown roughly every 90 seconds to boost all damage done and accelerate Thunder Clap; sync the first cast with Bloodlust and on-use trinkets for maximum burst overlap."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown to reduce incoming damage and, with the Booming Voice talent, generate a burst of rage and deal damage; treat it as a frequent offensive cooldown rather than only a defensive."
+    },
+    {
+      "name": "Shield Charge",
+      "spell_id": 385952,
+      "cooldown": 35,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Use on cooldown to charge the target, granting Shield Block and a stun while dealing burst damage; this is talent-gated, so a missing cast may be normal if Shield Charge was not taken.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Drop on the boss on cooldown when talented for a strong burst of AoE damage and rage generation; talent-gated, so do not flag missing casts for builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Demolish",
+      "spell_id": 436358,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "As a Colossus build, cast on cooldown at 3 or more stacks of Colossal Might for a large burst of single-target damage; talent-gated to the Colossus hero tree.",
+      "talent_gated": true
+    },
+    {
+      "name": "Champion's Spear",
+      "spell_id": 376079,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Throw on cooldown when talented to tether and damage the target; talent-gated, so only flag missed casts for builds that selected it.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press proactively to smooth out a large spike of incoming damage or a tankbuster; its long cooldown means plan its use around the heaviest damage events of the fight."
+    },
+    {
+      "name": "Last Stand",
+      "spell_id": 12975,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Use to instantly gain a large block of temporary health when you are about to drop dangerously low; pairs well with a heal landing inside the window."
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid cooldown to grant the whole group temporary health before an unavoidable burst of raid-wide damage."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a reflectable magic cast or tankbuster to reduce magic damage taken and bounce single-target spells back at the caster."
+    },
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Keep close to 100% uptime by refreshing whenever it has 10 seconds or less remaining to block incoming physical melee damage."
+    },
+    {
+      "name": "Ignore Pain",
+      "spell_id": 190456,
+      "cooldown": 1,
+      "duration": 12,
+      "usage_rule": "Dump excess rage into this absorb to avoid wasting rage and to soften physical and magic spikes; keep rage below the cap by spending into it."
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "usage_rule": "Use when your health is low to deal damage and instantly heal a chunk of your maximum health; talent-gated, replacing the passive Victory Rush.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open with Charge into Avatar and cooldowns",
+      "condition": null,
+      "action": "Always Charge into combat to enter melee with rage, then immediately begin cycling Avatar, Demolish or Shield Slam, and Thunder Clap so your cooldowns start chaining as early as possible."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Press Shield Slam on every cooldown",
+      "condition": null,
+      "action": "Cast Shield Slam the instant it is available; it is your highest-value button for rage, threat, and damage, and any delay stalls your entire rotation."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Use Avatar on cooldown every 90 seconds",
+      "condition": null,
+      "action": "Cast Avatar on cooldown roughly every 90 seconds rather than holding it; banking it past its cooldown loses damage and Thunder Clap cooldown reduction over the fight."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Maintain Rend with Thunder Clap",
+      "condition": null,
+      "action": "Cast Thunder Clap on cooldown to apply and refresh the Rend damage-over-time bleed; never let Rend fall off the boss while it is active."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend excess rage on Ignore Pain",
+      "condition": null,
+      "action": "Dump spare rage into Ignore Pain whenever you approach the rage cap so you never waste generation; capping rage is a direct loss of survivability and damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Always be casting every GCD",
+      "condition": null,
+      "action": "Keep a button pressed on every global cooldown; missing 10 to 20 percent of your casts compounds into lost rage, less cooldown reduction, and significantly lower damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Execute targets below 20 percent health",
+      "condition": null,
+      "action": "Start weaving Execute on targets at or below 20 percent health, or 35 percent if you took the Massacre talent, prioritizing it over filler spenders."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Use Revenge as your AoE filler",
+      "condition": null,
+      "action": "On three or more targets, use Revenge as your rage spender between Shield Slam and Thunder Clap; the core rotation already cleaves, so no major rotational change is needed."
+    }
+  ],
+  "source_summary": "Protection Warrior plays a fast, rage-driven priority rotation built around pressing Shield Slam and Thunder Clap on cooldown while dumping excess rage into Ignore Pain. The major offensive cooldowns - Avatar, Demoralizing Shout, and the talented Shield Charge, Ravager, or Demolish - are used on cooldown rather than pooled, with Avatar synced to Bloodlust for the strongest burst. Survivability is layered: keep Shield Block near 100 percent uptime and save Shield Wall, Last Stand, and Rallying Cry for the fight's heaviest damage spikes.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:12:37"
+}

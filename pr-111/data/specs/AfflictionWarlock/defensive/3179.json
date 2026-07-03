@@ -1,0 +1,201 @@
+{
+  "spec": "AfflictionWarlock",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 6,
+      "avg_first_cast_s": 151.6,
+      "stddev_first_cast_s": 64.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.289,
+        "stddev": 0.035,
+        "min": 0.228,
+        "max": 0.327
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 9,
+      "avg_first_cast_s": 65.4,
+      "stddev_first_cast_s": 45.3,
+      "avg_gap_s": 72.6,
+      "stddev_gap_s": 30.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 158,
+          "stddev_s": 8.2,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.72,
+      "uses_per_min": {
+        "avg": 0.717,
+        "stddev": 0.167,
+        "min": 0.457,
+        "max": 0.911
+      },
+      "majority_hold": true
+    },
+    "Mortal Coil": {
+      "sample_count": 4,
+      "avg_first_cast_s": 88.4,
+      "stddev_first_cast_s": 34,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.29,
+        "stddev": 0.043,
+        "min": 0.228,
+        "max": 0.327
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 165.8,
+      "dmg_avg": 417471,
+      "dmg_stddev": 67879,
+      "dmg_min": 315851,
+      "dmg_max": 524611,
+      "dmg_pct_avg": 0.052,
+      "window_length_s": 8.9,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 187637,
+          "min_damage": 82582,
+          "max_damage": 313281,
+          "count": 8
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 161374,
+          "min_damage": 94964,
+          "max_damage": 217527,
+          "count": 9
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4539,
+          "min_damage": 2541,
+          "max_damage": 8354,
+          "count": 9
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 2.4,
+      "min_uses": 2,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 6789,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a heavy spike of incoming damage to reduce damage taken by 40% and prevent spell pushback for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Use proactively ahead of a damage event to sacrifice Soul Shards for a large absorb shield; talented choice, so absence is expected if not selected.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal yourself for a percentage of health while horrifying the target; talented choice on the same row as Howl of Terror.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Consume when your health drops low to instantly restore a chunk of health; create one before the pull and use it freely on its own cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "7c7591d82480e4a2",
+  "ingest_version": 2
+}

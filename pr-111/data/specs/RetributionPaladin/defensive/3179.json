@@ -1,0 +1,241 @@
+{
+  "spec": "RetributionPaladin",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Shield of Vengeance": {
+      "sample_count": 9,
+      "avg_first_cast_s": 85.1,
+      "stddev_first_cast_s": 82.9,
+      "avg_gap_s": 93.7,
+      "stddev_gap_s": 25.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 224.7,
+          "stddev_s": 41.6,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.63,
+      "uses_per_min": {
+        "avg": 0.626,
+        "stddev": 0.264,
+        "min": 0.18,
+        "max": 1.022
+      },
+      "majority_hold": true
+    },
+    "Divine Shield": {
+      "sample_count": 2,
+      "avg_first_cast_s": 272.1,
+      "stddev_first_cast_s": 77.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.216,
+        "stddev": 0.05,
+        "min": 0.18,
+        "max": 0.251
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 2,
+      "avg_first_cast_s": 149.6,
+      "stddev_first_cast_s": 83.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.28,
+        "stddev": 0.087,
+        "min": 0.218,
+        "max": 0.341
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 103.5,
+      "dmg_avg": 212555,
+      "dmg_stddev": 20602,
+      "dmg_min": 189972,
+      "dmg_max": 246040,
+      "window_length_s": 4.9,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 193961,
+          "min_damage": 78405,
+          "max_damage": 246040,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 225.3,
+      "dmg_avg": 207555,
+      "dmg_stddev": 15973,
+      "dmg_min": 186666,
+      "dmg_max": 225491,
+      "window_length_s": 4.4,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 196195,
+          "min_damage": 155289,
+          "max_damage": 225491,
+          "count": 3
+        },
+        {
+          "spell_id": 1285504,
+          "avg_damage": 85277,
+          "min_damage": 54970,
+          "max_damage": 115584,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 184662,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Press proactively before incoming damage to absorb a large amount and release a burst of damage when it expires, so it doubles as a near free DPS cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to fully immune unavoidable lethal damage or to drop a deadly debuff; cancel it early once the threat passes to minimize the Forbearance lockout on Lay on Hands and Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before predictable magic or mixed damage events for a 20% damage reduction; its short cooldown means you can use it on most repeating raid hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Reserve for an emergency when you or an ally is about to die, fully restoring their health; it triggers Forbearance, so it cannot be chained with Divine Shield or Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on yourself or an ally to immune all physical damage during a heavy melee hit; it does not block magic and triggers Forbearance on the target.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Spellwarding",
+      "spell_id": 204018,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "If talented in place of Blessing of Protection, cast to immune a dangerous magical hit on yourself or an ally; it shares Forbearance and does not block physical damage.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Shield of Vengeance": 184662,
+    "Divine Shield": 642,
+    "Divine Protection": 498,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Spellwarding": 204018
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "184662": {
+      "icon": "ability_paladin_shieldofthetemplar",
+      "name": "Shield of Vengeance"
+    },
+    "204018": {
+      "icon": "spell_holy_blessingofprotection",
+      "name": "Blessing of Spellwarding"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "b816f256a8726c5a",
+  "ingest_version": 1
+}

@@ -1,0 +1,127 @@
+{
+  "spec": "BeastMasteryHunter",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 143.2,
+      "stddev_first_cast_s": 108.3,
+      "avg_gap_s": 86.4,
+      "stddev_gap_s": 42.5,
+      "hold_targets": {},
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.517,
+        "stddev": 0.191,
+        "min": 0.143,
+        "max": 0.933
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 6,
+      "avg_first_cast_s": 178.8,
+      "stddev_first_cast_s": 104.8,
+      "avg_gap_s": 130.3,
+      "stddev_gap_s": 38.1,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.264,
+        "stddev": 0.135,
+        "min": 0.142,
+        "max": 0.428
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 2,
+      "avg_first_cast_s": 152.3,
+      "stddev_first_cast_s": 114.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.165,
+        "stddev": 0.031,
+        "min": 0.143,
+        "max": 0.187
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.2,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use to fully immune a lethal hit or unavoidable burst; it cancels your attacks for 8 seconds so press it only when survival outweighs the lost damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press proactively before predictable raid or tankbuster damage for a flat damage reduction; its short window means you must time it to overlap the incoming hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Use to recover a large chunk of health when you drop below roughly half, healing both you and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    }
+  },
+  "source_signature": "4eab0e04997a8ee9",
+  "ingest_version": 2
+}

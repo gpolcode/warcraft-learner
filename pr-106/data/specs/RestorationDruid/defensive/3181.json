@@ -1,0 +1,224 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 230.1,
+      "stddev_first_cast_s": 130.2,
+      "avg_gap_s": 120.8,
+      "stddev_gap_s": 71.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 359.2,
+          "stddev_s": 85.3,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.288,
+        "stddev": 0.153,
+        "min": 0.128,
+        "max": 0.535
+      },
+      "majority_hold": false
+    },
+    "Ironbark": {
+      "sample_count": 8,
+      "avg_first_cast_s": 193,
+      "stddev_first_cast_s": 145.6,
+      "avg_gap_s": 253.1,
+      "stddev_gap_s": 112.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 362.3,
+          "stddev_s": 104.8,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.205,
+        "stddev": 0.088,
+        "min": 0.122,
+        "max": 0.363
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 358.2,
+      "dmg_avg": 507979,
+      "dmg_stddev": 98308,
+      "dmg_min": 418732,
+      "dmg_max": 609004,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 272555,
+          "min_damage": 223222,
+          "max_damage": 364322,
+          "count": 3
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 196277,
+          "min_damage": 165852,
+          "max_damage": 219549,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 181060,
+          "min_damage": 166233,
+          "max_damage": 195887,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 410.3,
+      "dmg_avg": 680890,
+      "dmg_stddev": 63436,
+      "dmg_min": 639967,
+      "dmg_max": 773874,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 309739,
+          "min_damage": 208184,
+          "max_damage": 379118,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 197001,
+          "min_damage": 171874,
+          "max_damage": 220088,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 174150,
+          "min_damage": 117947,
+          "max_damage": 232047,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    }
+  },
+  "source_signature": "2bc13fdf848992b0",
+  "ingest_version": 1
+}

@@ -1,0 +1,233 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Vampiric Blood": {
+      "sample_count": 10,
+      "avg_first_cast_s": 41.5,
+      "stddev_first_cast_s": 21.4,
+      "avg_gap_s": 48,
+      "stddev_gap_s": 31.2,
+      "hold_targets": {},
+      "avg_uses": 11.1,
+      "avg_uses_per_min": 1.19,
+      "uses_per_min": {
+        "avg": 1.189,
+        "stddev": 0.316,
+        "min": 0.462,
+        "max": 1.565
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 10,
+      "avg_first_cast_s": 296.1,
+      "stddev_first_cast_s": 146.3,
+      "avg_gap_s": 241.3,
+      "stddev_gap_s": 51.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 500.9,
+          "stddev_s": 110.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.151,
+        "stddev": 0.056,
+        "min": 0.102,
+        "max": 0.231
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Shell": {
+      "sample_count": 10,
+      "avg_first_cast_s": 34,
+      "stddev_first_cast_s": 8.5,
+      "avg_gap_s": 54.6,
+      "stddev_gap_s": 20.3,
+      "hold_targets": {
+        "4": {
+          "target_s": 245.1,
+          "stddev_s": 7.6,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 9.8,
+      "avg_uses_per_min": 1.06,
+      "uses_per_min": {
+        "avg": 1.055,
+        "stddev": 0.096,
+        "min": 0.838,
+        "max": 1.217
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 9,
+      "avg_first_cast_s": 141.7,
+      "stddev_first_cast_s": 161.7,
+      "avg_gap_s": 108.3,
+      "stddev_gap_s": 26.9,
+      "hold_targets": {},
+      "avg_uses": 3.8,
+      "avg_uses_per_min": 0.39,
+      "uses_per_min": {
+        "avg": 0.394,
+        "stddev": 0.228,
+        "min": 0.115,
+        "max": 0.7
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 10,
+      "avg_first_cast_s": 241.2,
+      "stddev_first_cast_s": 63.5,
+      "avg_gap_s": 295.8,
+      "stddev_gap_s": 44.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 586.7,
+          "stddev_s": 145.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.149,
+        "stddev": 0.049,
+        "min": 0.105,
+        "max": 0.224
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 55233,
+      "avg_uses": 11.1,
+      "min_uses": 4,
+      "max_uses": 14
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 48707,
+      "avg_uses": 9.8,
+      "min_uses": 8,
+      "max_uses": 11
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 3.8,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use proactively ahead of heavy incoming damage to boost your maximum health and the healing of your Death Strikes; it is your highest-impact defensive, so keep it close to on cooldown rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large physical or magical hit for a flat 30% damage reduction and stun immunity; reserve it for tankbusters or moments Vampiric Blood alone cannot cover.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Use to absorb a telegraphed burst of magic damage and to generate Runic Power from the absorbed damage; press it just before the magic hit lands rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rune Tap",
+      "spell_id": 194679,
+      "cooldown": 25,
+      "duration": 3,
+      "usage_rule": "Spend a charge for a 20% damage reduction on predictable melee swings or smaller hits; its short recharge lets you use it frequently to smooth out steady tank damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain immunity to charm, fear, and sleep effects, or as an extra layer of survivability when combined with Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a wide magic-damage event to reduce incoming magic damage for everyone standing inside; coordinate placement with your group so allies stack in it.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Vampiric Blood": 55233,
+    "Icebound Fortitude": 48792,
+    "Anti-Magic Shell": 48707,
+    "Rune Tap": 194679,
+    "Lichborne": 49039,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    }
+  },
+  "source_signature": "b265493f9225be1c",
+  "ingest_version": 2
+}

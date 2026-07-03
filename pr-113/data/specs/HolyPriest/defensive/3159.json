@@ -1,0 +1,208 @@
+{
+  "spec": "HolyPriest",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Guardian Spirit": {
+      "sample_count": 9,
+      "avg_first_cast_s": 308.1,
+      "stddev_first_cast_s": 62.8,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.144,
+        "stddev": 0.007,
+        "min": 0.137,
+        "max": 0.16
+      },
+      "majority_hold": false
+    },
+    "Desperate Prayer": {
+      "sample_count": 10,
+      "avg_first_cast_s": 141,
+      "stddev_first_cast_s": 71.9,
+      "avg_gap_s": 124.6,
+      "stddev_gap_s": 42.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 262.3,
+          "stddev_s": 72,
+          "count": 6,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 370.9,
+          "stddev_s": 60.7,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.418,
+        "stddev": 0.121,
+        "min": 0.28,
+        "max": 0.639
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 9,
+      "avg_first_cast_s": 94.8,
+      "stddev_first_cast_s": 25.4,
+      "avg_gap_s": 53.5,
+      "stddev_gap_s": 36.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 211.3,
+          "stddev_s": 68,
+          "count": 6,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 254.6,
+          "stddev_s": 87.5,
+          "count": 5,
+          "total_samples": 9
+        },
+        "3": {
+          "target_s": 295.6,
+          "stddev_s": 55.1,
+          "count": 5,
+          "total_samples": 9
+        },
+        "4": {
+          "target_s": 302.4,
+          "stddev_s": 82.6,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 6.6,
+      "avg_uses_per_min": 0.94,
+      "uses_per_min": {
+        "avg": 0.942,
+        "stddev": 0.432,
+        "min": 0.411,
+        "max": 1.783
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 254.7,
+      "dmg_avg": 914862,
+      "dmg_stddev": 253394,
+      "dmg_min": 539435,
+      "dmg_max": 1315600,
+      "dmg_pct_avg": 0.051,
+      "window_length_s": 11.4,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 458212,
+          "min_damage": 116341,
+          "max_damage": 784513,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 310379,
+          "min_damage": 227757,
+          "max_damage": 577483,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47788,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.9,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 6.6,
+      "min_uses": 3,
+      "max_uses": 13
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Guardian Spirit",
+      "spell_id": 47788,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as your main tank external to prevent a lethal hit (cheat death restoring the target to 40% health); coordinate with the tank, and self-cast it if no tank needs it since Priest is otherwise weak defensively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your health drops toward 75% or below, especially after self-damage like Shadow Word: Death, to instantly heal yourself and raise your maximum health for the window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Use to shed threat and, with the Greater Fade or damage-reduction talents, to mitigate an incoming hit or shrug off a mechanic; keep it available for emergencies.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Guardian Spirit": 47788,
+    "Desperate Prayer": 19236,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "c02034f7a9c1635b",
+  "ingest_version": 2
+}

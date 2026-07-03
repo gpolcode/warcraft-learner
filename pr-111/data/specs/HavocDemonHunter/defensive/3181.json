@@ -1,0 +1,117 @@
+{
+  "spec": "HavocDemonHunter",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blur": {
+      "sample_count": 10,
+      "avg_first_cast_s": 168.1,
+      "stddev_first_cast_s": 158.6,
+      "avg_gap_s": 85.1,
+      "stddev_gap_s": 85.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 211.6,
+          "stddev_s": 160.2,
+          "count": 6,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 376.2,
+          "stddev_s": 95.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 0.54,
+      "uses_per_min": {
+        "avg": 0.542,
+        "stddev": 0.189,
+        "min": 0.242,
+        "max": 0.938
+      },
+      "majority_hold": true
+    },
+    "Darkness": {
+      "sample_count": 6,
+      "avg_first_cast_s": 355.2,
+      "stddev_first_cast_s": 100.3,
+      "avg_gap_s": 193,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.137,
+        "stddev": 0.05,
+        "min": 0.111,
+        "max": 0.238
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 198589,
+      "avg_uses": 4.6,
+      "min_uses": 2,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before predictable physical or magical burst for a 20% damage reduction plus 50% dodge against physical attacks; its short cooldown lets you use it freely on incoming tankbuster-style hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a heavy AoE magical or avoidable damage event so allies inside gain a chance to fully avoid each hit; coordinate timing with other raid cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Netherwalk",
+      "spell_id": 196555,
+      "cooldown": 180,
+      "duration": 5,
+      "usage_rule": "Use as a 5-second full damage immunity to soak or survive a lethal mechanic; talent-gated, so it replaces Blur only on builds that take it.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Blur": 198589,
+    "Darkness": 196718,
+    "Netherwalk": 196555
+  },
+  "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    }
+  },
+  "source_signature": "24752038366bcffc",
+  "ingest_version": 2
+}

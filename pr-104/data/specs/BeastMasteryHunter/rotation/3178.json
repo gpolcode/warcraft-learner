@@ -1,0 +1,195 @@
+{
+  "spec": "BeastMasteryHunter",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "avg_duration_s": 407.9,
+  "downtime_threshold_ms": 1567,
+  "top_avg_efficiency": 79,
+  "top_efficiency_stddev": 5,
+  "per_cd_benchmarks": {
+    "Bestial Wrath": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.6,
+      "stddev_first_cast_s": 1.1,
+      "avg_gap_s": 34.8,
+      "stddev_gap_s": 4.7,
+      "avg_bl_offset_s": 2.7,
+      "stddev_bl_offset_s": 1.9,
+      "avg_uses": 12.3,
+      "avg_uses_per_min": 1.81,
+      "uses_per_min": {
+        "avg": 1.815,
+        "stddev": 0.086,
+        "min": 1.661,
+        "max": 1.921
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Wailing Arrow": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Algeth'ar Puzzle Box": {
+      "sample_count": 10,
+      "avg_first_cast_s": 55.7,
+      "stddev_first_cast_s": 85.8,
+      "avg_gap_s": 155.6,
+      "stddev_gap_s": 29.4,
+      "avg_bl_offset_s": 0,
+      "stddev_bl_offset_s": 0.1,
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.424,
+        "stddev": 0.104,
+        "min": 0.279,
+        "max": 0.524
+      },
+      "bl_pct": 40,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Bestial Wrath",
+      "spell_id": 19574,
+      "cooldown": 90,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Press on cooldown as your single defining damage window with your pet attacking the target, having banked two Kill Command charges, and line up stat trinkets, potions and stat racials to be active before its initial hit lands; its cooldown is reduced by Barbed Shot so feed it Barbed Shots to bring it back faster."
+    },
+    {
+      "name": "Wailing Arrow",
+      "spell_id": 392060,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "talent_gated": true,
+      "usage_rule": "Dark Ranger only: granted by Wailing Dead from Bestial Wrath and usable for 15 seconds, so fire it somewhere inside your Bestial Wrath window without wasting resources such as letting Kill Command cap at two charges, and always release it before the buff expires."
+    },
+    {
+      "name": "Algeth'ar Puzzle Box",
+      "spell_id": 383781,
+      "cooldown": 180,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "On-use stat trinket with a two second cast time: pre-cast it two seconds before the pull and thereafter two seconds before Bestial Wrath comes off cooldown so its stat buff is active for the entire window (trinket item spell_id, only relevant when equipped)."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Bestial Wrath on cooldown",
+      "condition": null,
+      "action": "Press Bestial Wrath the moment it is available throughout the fight; because it is your only true cooldown, every missed use is a large damage loss, and feed it Barbed Shots to reduce its cooldown."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open Barbed Shot before Bestial Wrath",
+      "condition": null,
+      "action": "Apply Hunter's Mark before the pull, open with Barbed Shot so your pet reaches melee range, fire stat trinkets, potion and racials, then cast Bestial Wrath only once your pet is attacking the target followed by Kill Command and Barbed Shot."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Sync stat trinkets and potion with Bestial Wrath",
+      "condition": null,
+      "action": "Activate stat-boosting trinkets, your potion and any stat racial so they are live before Bestial Wrath's initial hit lands; macro the potion to Bestial Wrath and pre-cast Algeth'ar Puzzle Box two seconds early so its buff covers the window."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Bank two Kill Command charges for the window",
+      "condition": null,
+      "action": "As Bestial Wrath approaches, stop spending so you enter the window with two Kill Command charges, then spend as many Nature's Ally buffed Kill Commands as possible inside it without ever letting the charges sit capped."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never Barbed Shot when Bestial Wrath is ready",
+      "condition": null,
+      "action": "Do not cast Barbed Shot while Bestial Wrath is available; pressing Barbed Shot first wastes the cooldown reduction it would otherwise grant, so always fire Bestial Wrath the instant it comes up."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Keep your pet on the priority target",
+      "condition": null,
+      "action": "Ensure your pet is actively attacking your priority target before Bestial Wrath so Bloodshed applies and lasts its full duration; if the pet is idle you get no bleed at all."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Add Wild Thrash and Beast Cleave on AoE",
+      "condition": null,
+      "action": "On two or more targets weave Wild Thrash to trigger Beast Cleave and make sure Beast Cleave is active when you press Bestial Wrath; keep your pet centered in the pack and do not multi-dot Barbed Shot."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stand level and close for Stampede",
+      "condition": null,
+      "action": "As Pack Leader, position at a similar height to and not too far from the enemy before your cooldown window so Stampede's ground animals connect, since they ignore terrain curves and miss easily otherwise."
+    }
+  ],
+  "cd_spell_ids": {
+    "Bestial Wrath": 19574,
+    "Wailing Arrow": 392060,
+    "Algeth'ar Puzzle Box": 383781,
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "19574": {
+      "icon": "ability_druid_ferociousbite",
+      "name": "Bestial Wrath"
+    },
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "383781": {
+      "icon": "inv_misc_enggizmos_18",
+      "name": "Algeth'ar Puzzle"
+    },
+    "392060": {
+      "icon": "ability_theblackarrow",
+      "name": "Wailing Arrow"
+    }
+  },
+  "source_signature": "8b9c07b29a54fcd6",
+  "ingest_version": 1
+}

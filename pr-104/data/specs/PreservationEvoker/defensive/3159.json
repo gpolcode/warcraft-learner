@@ -1,0 +1,379 @@
+{
+  "spec": "PreservationEvoker",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 175.2,
+      "stddev_first_cast_s": 103,
+      "avg_gap_s": 56.2,
+      "stddev_gap_s": 58.8,
+      "hold_targets": {
+        "2": {
+          "target_s": 310.7,
+          "stddev_s": 63.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.7,
+      "avg_uses_per_min": 0.62,
+      "uses_per_min": {
+        "avg": 0.619,
+        "stddev": 0.296,
+        "min": 0.258,
+        "max": 1.316
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 7,
+      "avg_first_cast_s": 282.3,
+      "stddev_first_cast_s": 148.9,
+      "avg_gap_s": 117.8,
+      "stddev_gap_s": 24.5,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.205,
+        "stddev": 0.131,
+        "min": 0.119,
+        "max": 0.472
+      },
+      "majority_hold": false
+    },
+    "Time Dilation": {
+      "sample_count": 6,
+      "avg_first_cast_s": 269.2,
+      "stddev_first_cast_s": 143.2,
+      "avg_gap_s": 116.7,
+      "stddev_gap_s": 53.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 336.3,
+          "stddev_s": 51.4,
+          "count": 4,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.289,
+        "stddev": 0.17,
+        "min": 0.119,
+        "max": 0.577
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 52.3,
+      "dmg_avg": 183191,
+      "dmg_stddev": 210260,
+      "dmg_min": 18421,
+      "dmg_max": 482592,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222088,
+          "avg_damage": 149190,
+          "min_damage": 49772,
+          "max_damage": 248607,
+          "count": 2
+        },
+        {
+          "spell_id": 1222122,
+          "avg_damage": 91975,
+          "min_damage": 84801,
+          "max_damage": 99148,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 39620,
+          "min_damage": 18421,
+          "max_damage": 57674,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 265.6,
+      "dmg_avg": 496237,
+      "dmg_stddev": 293971,
+      "dmg_min": 0,
+      "dmg_max": 1006771,
+      "window_length_s": 8.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 244137,
+          "min_damage": 93533,
+          "max_damage": 541760,
+          "count": 9
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 184201,
+          "min_damage": 168896,
+          "max_damage": 209119,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 173456,
+          "min_damage": 74078,
+          "max_damage": 239355,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 310.3,
+      "dmg_avg": 301221,
+      "dmg_stddev": 305619,
+      "dmg_min": 130649,
+      "dmg_max": 845859,
+      "window_length_s": 7.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 190990,
+          "min_damage": 130649,
+          "max_damage": 339062,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 362.3,
+      "dmg_avg": 351858,
+      "dmg_stddev": 211962,
+      "dmg_min": 60861,
+      "dmg_max": 726034,
+      "window_length_s": 7.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 215898,
+          "min_damage": 60861,
+          "max_damage": 357096,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 389.2,
+      "dmg_avg": 768307,
+      "dmg_stddev": 211678,
+      "dmg_min": 417112,
+      "dmg_max": 973801,
+      "window_length_s": 10.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 345759,
+          "min_damage": 80422,
+          "max_damage": 529981,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 309711,
+          "min_damage": 116331,
+          "max_damage": 387824,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 425.4,
+      "dmg_avg": 358253,
+      "dmg_stddev": 223403,
+      "dmg_min": 190661,
+      "dmg_max": 644334,
+      "window_length_s": 8.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 282825,
+          "min_damage": 190661,
+          "max_damage": 422254,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 4.7,
+      "min_uses": 2,
+      "max_uses": 11
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 357170,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable burst damage to gain a flat damage reduction for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use ahead of a damage spike to recoup a large portion of the damage you take over the following window as healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast just before a telegraphed raid-wide AoE to reduce incoming area damage for yourself and nearby allies; scout useful spots when learning a fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Apply to a single endangered target as a superb damage-reduction cooldown; its short cooldown means you can use it regularly rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use to remove a dispellable Bleed, Poison, Curse, or Disease and heal the target; it does not trigger its cooldown when nothing is removed, so it can be pre-stored in Stasis for a mass cleanse.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Time Dilation": 357170,
+    "Cauterizing Flame": 374251
+  },
+  "ability_icons": {
+    "357170": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374251": {
+      "icon": "ability_evoker_fontofmagic_red",
+      "name": "Cauterizing Flame"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222088": {
+      "icon": "ability_creature_poison_04",
+      "name": "Festering Vines"
+    },
+    "1222122": {
+      "icon": "ability_creature_poison_04",
+      "name": "Festering Vines"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "3ea3537ad3f30320",
+  "ingest_version": 0
+}

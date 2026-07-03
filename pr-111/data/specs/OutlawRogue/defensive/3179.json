@@ -1,0 +1,140 @@
+{
+  "spec": "OutlawRogue",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 6,
+      "avg_first_cast_s": 114.9,
+      "stddev_first_cast_s": 51.5,
+      "avg_gap_s": 48.7,
+      "stddev_gap_s": 42.4,
+      "hold_targets": {},
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.56,
+      "uses_per_min": {
+        "avg": 0.561,
+        "stddev": 0.375,
+        "min": 0.235,
+        "max": 1.276
+      },
+      "majority_hold": false
+    },
+    "Cloak of Shadows": {
+      "sample_count": 2,
+      "avg_first_cast_s": 165.9,
+      "stddev_first_cast_s": 6.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.263,
+        "stddev": 0.011,
+        "min": 0.255,
+        "max": 0.27
+      },
+      "majority_hold": false
+    },
+    "Evasion": {
+      "sample_count": 1,
+      "avg_first_cast_s": 194.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.255,
+        "stddev": 0,
+        "min": 0.255,
+        "max": 0.255
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 1966,
+      "avg_uses": 2.2,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 31224,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Crimson Vial": 185311,
+    "Feint": 1966,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    }
+  },
+  "source_signature": "598622c437cc3866",
+  "ingest_version": 2
+}

@@ -1,0 +1,149 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 96.1,
+      "stddev_first_cast_s": 80.3,
+      "avg_gap_s": 130.8,
+      "stddev_gap_s": 81.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 286.8,
+          "stddev_s": 135.7,
+          "count": 6,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 344.2,
+          "stddev_s": 114.7,
+          "count": 6,
+          "total_samples": 9
+        },
+        "3": {
+          "target_s": 429.1,
+          "stddev_s": 121.6,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.427,
+        "stddev": 0.178,
+        "min": 0.209,
+        "max": 0.746
+      },
+      "majority_hold": true
+    },
+    "Ironbark": {
+      "sample_count": 9,
+      "avg_first_cast_s": 202.1,
+      "stddev_first_cast_s": 172.7,
+      "avg_gap_s": 154.7,
+      "stddev_gap_s": 50.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 216.2,
+          "stddev_s": 116.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 328.2,
+          "stddev_s": 108.8,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.272,
+        "stddev": 0.118,
+        "min": 0.104,
+        "max": 0.423
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 4,
+      "min_uses": 2,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    }
+  },
+  "source_signature": "4734f8aa3eb81019",
+  "ingest_version": 2
+}

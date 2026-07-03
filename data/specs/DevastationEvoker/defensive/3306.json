@@ -1,0 +1,181 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 9,
+      "avg_first_cast_s": 68.6,
+      "stddev_first_cast_s": 32.6,
+      "avg_gap_s": 25.5,
+      "stddev_gap_s": 27.7,
+      "hold_targets": {},
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 1.16,
+      "uses_per_min": {
+        "avg": 1.16,
+        "stddev": 0.637,
+        "min": 0.408,
+        "max": 2.443
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 1,
+      "avg_first_cast_s": 140.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.41,
+        "stddev": 0,
+        "min": 0.41,
+        "max": 0.41
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 69.8,
+      "dmg_avg": 225758,
+      "dmg_stddev": 188593,
+      "dmg_min": 0,
+      "dmg_max": 605684,
+      "dmg_pct_avg": 0.065,
+      "window_length_s": 6.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 232330,
+          "min_damage": 93000,
+          "max_damage": 495038,
+          "count": 9
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 88894,
+          "min_damage": 17815,
+          "max_damage": 170527,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 140.1,
+      "dmg_avg": 175630,
+      "dmg_stddev": 127829,
+      "dmg_min": 0,
+      "dmg_max": 353470,
+      "dmg_pct_avg": 0.048,
+      "window_length_s": 5.2,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 133511,
+          "min_damage": 70454,
+          "max_damage": 245648,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 79774,
+          "min_damage": 26569,
+          "max_damage": 188150,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 2.8,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "d8c2c286230348ae",
+  "ingest_version": 3
+}

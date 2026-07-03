@@ -1,0 +1,203 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 52.7,
+      "stddev_first_cast_s": 40.5,
+      "avg_gap_s": 51,
+      "stddev_gap_s": 34.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 81.2,
+          "stddev_s": 76.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 139.2,
+          "stddev_s": 87.3,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 1.08,
+      "uses_per_min": {
+        "avg": 1.083,
+        "stddev": 0.711,
+        "min": 0.405,
+        "max": 2.416
+      },
+      "majority_hold": true
+    },
+    "Enraged Regeneration": {
+      "sample_count": 2,
+      "avg_first_cast_s": 84.7,
+      "stddev_first_cast_s": 78.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.409,
+        "stddev": 0.006,
+        "min": 0.405,
+        "max": 0.413
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 3,
+      "avg_first_cast_s": 119.9,
+      "stddev_first_cast_s": 108,
+      "avg_gap_s": 200,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.305,
+        "stddev": 0.121,
+        "min": 0.173,
+        "max": 0.409
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 74.9,
+      "dmg_avg": 195241,
+      "dmg_stddev": 93558,
+      "dmg_min": 100735,
+      "dmg_max": 396113,
+      "dmg_pct_avg": 0.041,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 189758,
+          "min_damage": 100735,
+          "max_damage": 353673,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 123.1,
+      "dmg_avg": 141022,
+      "dmg_stddev": 102429,
+      "dmg_min": 21008,
+      "dmg_max": 341884,
+      "dmg_pct_avg": 0.035,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 73689,
+          "min_damage": 20928,
+          "max_damage": 106103,
+          "count": 8
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 184364,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 97462,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 3.2,
+      "min_uses": 1,
+      "max_uses": 6
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "184364": {
+      "icon": "ability_warrior_focusedrage",
+      "name": "Enraged Regeneration"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "f83fed5c75840450",
+  "ingest_version": 3
+}

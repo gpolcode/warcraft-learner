@@ -1,0 +1,505 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Vampiric Blood": {
+      "sample_count": 9,
+      "avg_first_cast_s": 93.4,
+      "stddev_first_cast_s": 116.8,
+      "avg_gap_s": 72.7,
+      "stddev_gap_s": 51.6,
+      "hold_targets": {},
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.595,
+        "stddev": 0.46,
+        "min": 0.133,
+        "max": 1.337
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 9,
+      "avg_first_cast_s": 163.8,
+      "stddev_first_cast_s": 94.6,
+      "avg_gap_s": 273,
+      "stddev_gap_s": 11,
+      "hold_targets": {
+        "1": {
+          "target_s": 405.5,
+          "stddev_s": 15,
+          "count": 7,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.23,
+        "stddev": 0.059,
+        "min": 0.116,
+        "max": 0.29
+      },
+      "majority_hold": true
+    },
+    "Anti-Magic Shell": {
+      "sample_count": 3,
+      "avg_first_cast_s": 132.7,
+      "stddev_first_cast_s": 130.5,
+      "avg_gap_s": 105.9,
+      "stddev_gap_s": 53.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 256.5,
+          "stddev_s": 201.7,
+          "count": 3,
+          "total_samples": 3
+        }
+      },
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.493,
+        "stddev": 0.264,
+        "min": 0.233,
+        "max": 0.76
+      },
+      "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 3,
+      "avg_first_cast_s": 233.8,
+      "stddev_first_cast_s": 245.1,
+      "avg_gap_s": 205.5,
+      "stddev_gap_s": 63.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 333.2,
+          "stddev_s": 0.4,
+          "count": 2,
+          "total_samples": 3
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.262,
+        "stddev": 0.135,
+        "min": 0.115,
+        "max": 0.38
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 1,
+      "avg_first_cast_s": 31.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 103,
+      "stddev_gap_s": 12.6,
+      "hold_targets": {},
+      "avg_uses": 5,
+      "avg_uses_per_min": 0.63,
+      "uses_per_min": {
+        "avg": 0.633,
+        "stddev": 0,
+        "min": 0.633,
+        "max": 0.633
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 53,
+      "dmg_avg": 1063841,
+      "dmg_stddev": 487899,
+      "dmg_min": 651148,
+      "dmg_max": 1681352,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 868342,
+          "min_damage": 547054,
+          "max_damage": 1172447,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 89979,
+          "min_damage": 78161,
+          "max_damage": 99375,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 98.8,
+      "dmg_avg": 1151582,
+      "dmg_stddev": 442113,
+      "dmg_min": 742506,
+      "dmg_max": 1870354,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 713342,
+          "min_damage": 640684,
+          "max_damage": 743659,
+          "count": 5
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 637673,
+          "min_damage": 313540,
+          "max_damage": 999637,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 138345,
+          "min_damage": 127058,
+          "max_damage": 155145,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 201.3,
+      "dmg_avg": 1768520,
+      "dmg_stddev": 411117,
+      "dmg_min": 1271775,
+      "dmg_max": 2278361,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 845510,
+          "min_damage": 619998,
+          "max_damage": 1069541,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 710194,
+          "min_damage": 554020,
+          "max_damage": 995325,
+          "count": 3
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 289484,
+          "min_damage": 285285,
+          "max_damage": 293682,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 241893,
+          "min_damage": 197998,
+          "max_damage": 284671,
+          "count": 4
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 7459,
+          "min_damage": 7290,
+          "max_damage": 7628,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 239.2,
+      "dmg_avg": 1403292,
+      "dmg_stddev": 445930,
+      "dmg_min": 1021765,
+      "dmg_max": 2045956,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 901777,
+          "min_damage": 737010,
+          "max_damage": 1225598,
+          "count": 3
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 730322,
+          "min_damage": 540170,
+          "max_damage": 920474,
+          "count": 2
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 284985,
+          "min_damage": 275854,
+          "max_damage": 304858,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 309.3,
+      "dmg_avg": 1852379,
+      "dmg_stddev": 499318,
+      "dmg_min": 1358669,
+      "dmg_max": 2546756,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221781,
+          "avg_damage": 842691,
+          "min_damage": 703330,
+          "max_damage": 1150361,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 736928,
+          "min_damage": 579920,
+          "max_damage": 1038768,
+          "count": 3
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 382448,
+          "min_damage": 341626,
+          "max_damage": 415888,
+          "count": 4
+        },
+        {
+          "spell_id": 1287955,
+          "avg_damage": 4203,
+          "min_damage": 893,
+          "max_damage": 7513,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 389.2,
+      "dmg_avg": 1201969,
+      "dmg_stddev": 167869,
+      "dmg_min": 995703,
+      "dmg_max": 1387746,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 545771,
+          "min_damage": 273693,
+          "max_damage": 668317,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 418376,
+          "min_damage": 361966,
+          "max_damage": 470638,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 55233,
+      "avg_uses": 4.8,
+      "min_uses": 1,
+      "max_uses": 11
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 48707,
+      "avg_uses": 3.7,
+      "min_uses": 2,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 5,
+      "min_uses": 5,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use proactively ahead of heavy incoming damage to boost your maximum health and the healing of your Death Strikes; it is your highest-impact defensive, so keep it close to on cooldown rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large physical or magical hit for a flat 30% damage reduction and stun immunity; reserve it for tankbusters or moments Vampiric Blood alone cannot cover.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Use to absorb a telegraphed burst of magic damage and to generate Runic Power from the absorbed damage; press it just before the magic hit lands rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rune Tap",
+      "spell_id": 194679,
+      "cooldown": 25,
+      "duration": 3,
+      "usage_rule": "Spend a charge for a 20% damage reduction on predictable melee swings or smaller hits; its short recharge lets you use it frequently to smooth out steady tank damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain immunity to charm, fear, and sleep effects, or as an extra layer of survivability when combined with Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a wide magic-damage event to reduce incoming magic damage for everyone standing inside; coordinate placement with your group so allies stack in it.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Vampiric Blood": 55233,
+    "Icebound Fortitude": 48792,
+    "Anti-Magic Shell": 48707,
+    "Rune Tap": 194679,
+    "Lichborne": 49039,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "55233": {
+      "icon": "spell_shadow_lifedrain",
+      "name": "Vampiric Blood"
+    },
+    "194679": {
+      "icon": "spell_deathknight_runetap",
+      "name": "Rune Tap"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221781": {
+      "icon": "inv_misc_herb_ancientlichen",
+      "name": "Putrid Fist"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    },
+    "1287955": {
+      "icon": "ability_rhyolith_magmaflow_wave",
+      "name": "Rune of Void-Tainted Shell"
+    }
+  },
+  "source_signature": "8e71178a36db20ea",
+  "ingest_version": 1
+}

@@ -1,0 +1,147 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival Instincts": {
+      "sample_count": 7,
+      "avg_first_cast_s": 134.9,
+      "stddev_first_cast_s": 54.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.28,
+        "stddev": 0.03,
+        "min": 0.225,
+        "max": 0.314
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 62.8,
+      "stddev_first_cast_s": 27.8,
+      "avg_gap_s": 114.9,
+      "stddev_gap_s": 28.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 183.4,
+          "stddev_s": 35.9,
+          "count": 7,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.52,
+      "uses_per_min": {
+        "avg": 0.521,
+        "stddev": 0.127,
+        "min": 0.304,
+        "max": 0.676
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 9,
+      "avg_first_cast_s": 131.6,
+      "stddev_first_cast_s": 64.9,
+      "avg_gap_s": 124.9,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.304,
+        "stddev": 0.092,
+        "min": 0.211,
+        "max": 0.529
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    }
+  },
+  "source_signature": "b18d917aff4723f5",
+  "ingest_version": 2
+}

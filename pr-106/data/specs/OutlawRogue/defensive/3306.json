@@ -1,0 +1,264 @@
+{
+  "spec": "OutlawRogue",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Cloak of Shadows": {
+      "sample_count": 7,
+      "avg_first_cast_s": 81.9,
+      "stddev_first_cast_s": 48.4,
+      "avg_gap_s": 128.6,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.47,
+      "uses_per_min": {
+        "avg": 0.467,
+        "stddev": 0.152,
+        "min": 0.403,
+        "max": 0.811
+      },
+      "majority_hold": false
+    },
+    "Evasion": {
+      "sample_count": 4,
+      "avg_first_cast_s": 49.2,
+      "stddev_first_cast_s": 29.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.408,
+        "stddev": 0.004,
+        "min": 0.404,
+        "max": 0.413
+      },
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 8,
+      "avg_first_cast_s": 47.3,
+      "stddev_first_cast_s": 25.5,
+      "avg_gap_s": 29.1,
+      "stddev_gap_s": 21.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 72.2,
+          "stddev_s": 35,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 1.28,
+      "uses_per_min": {
+        "avg": 1.28,
+        "stddev": 1.077,
+        "min": 0.406,
+        "max": 3.741
+      },
+      "majority_hold": true
+    },
+    "Crimson Vial": {
+      "sample_count": 1,
+      "avg_first_cast_s": 76.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 66.4,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.83,
+      "uses_per_min": {
+        "avg": 0.831,
+        "stddev": 0,
+        "min": 0.831,
+        "max": 0.831
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 43.5,
+      "dmg_avg": 241852,
+      "dmg_stddev": 153354,
+      "dmg_min": 109042,
+      "dmg_max": 374862,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 130225,
+          "min_damage": 109042,
+          "max_damage": 154296,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 72.8,
+      "dmg_avg": 176623,
+      "dmg_stddev": 120665,
+      "dmg_min": 0,
+      "dmg_max": 354331,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 178942,
+          "min_damage": 81564,
+          "max_damage": 242847,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 141.1,
+      "dmg_avg": 258884,
+      "dmg_stddev": 60747,
+      "dmg_min": 163565,
+      "dmg_max": 327794,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 177525,
+          "min_damage": 147509,
+          "max_damage": 215121,
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 110947,
+          "min_damage": 69534,
+          "max_damage": 163565,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 185311,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 3.1,
+      "min_uses": 1,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 31224,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Crimson Vial": 185311,
+    "Feint": 1966,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "6aa57d71791fe07d",
+  "ingest_version": 1
+}

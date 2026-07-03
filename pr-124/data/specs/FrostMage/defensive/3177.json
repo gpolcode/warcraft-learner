@@ -1,0 +1,160 @@
+{
+  "spec": "FrostMage",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Ice Cold": {
+      "sample_count": 10,
+      "avg_first_cast_s": 80.9,
+      "stddev_first_cast_s": 14.5,
+      "avg_gap_s": 123.1,
+      "stddev_gap_s": 5.5,
+      "hold_targets": {},
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.48,
+      "uses_per_min": {
+        "avg": 0.484,
+        "stddev": 0.139,
+        "min": 0.286,
+        "max": 0.613
+      },
+      "majority_hold": false
+    },
+    "Alter Time": {
+      "sample_count": 8,
+      "avg_first_cast_s": 60.5,
+      "stddev_first_cast_s": 59.3,
+      "avg_gap_s": 102.8,
+      "stddev_gap_s": 26,
+      "hold_targets": {
+        "1": {
+          "target_s": 128.9,
+          "stddev_s": 23.7,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.49,
+      "uses_per_min": {
+        "avg": 0.492,
+        "stddev": 0.202,
+        "min": 0.278,
+        "max": 0.863
+      },
+      "majority_hold": false
+    },
+    "Ice Barrier": {
+      "sample_count": 4,
+      "avg_first_cast_s": 76.1,
+      "stddev_first_cast_s": 9.8,
+      "avg_gap_s": 42.7,
+      "stddev_gap_s": 40.2,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.72,
+      "uses_per_min": {
+        "avg": 0.717,
+        "stddev": 0.294,
+        "min": 0.557,
+        "max": 1.158
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 11426,
+      "avg_uses": 2.5,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 414658,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 342245,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Use to fully immune a lethal hit or to drop a deadly debuff; Glacial Bulwark grants two charges, so script its usage across the fight's biggest damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Barrier",
+      "spell_id": 11426,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep an absorb shield up before incoming damage and refresh it on cooldown; Glacial Bulwark grants two charges so you can pre-shield consecutive damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Cold",
+      "spell_id": 414658,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Use as a movement-friendly damage reduction when you need to keep dealing damage through a hit instead of going fully immune; talent-gated alternative to the standard Ice Block.",
+      "talent_gated": true
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate before a burst of damage to snapshot your health and position, then let it return you to safety; talent-gated, so zero casts is normal if not taken.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Use to reduce incoming damage and pull threat off yourself during a dangerous window; talent-gated and not part of the standard damage rotation.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Ice Barrier": 11426,
+    "Ice Cold": 414658,
+    "Alter Time": 342245,
+    "Mirror Image": 55342
+  },
+  "ability_icons": {
+    "11426": {
+      "icon": "spell_ice_lament",
+      "name": "Ice Barrier"
+    },
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "414658": {
+      "icon": "spell_fire_bluefire",
+      "name": "Ice Cold"
+    }
+  },
+  "source_signature": "81aba9550eefa64b",
+  "ingest_version": 2
+}

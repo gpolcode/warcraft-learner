@@ -1,0 +1,111 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 177.1,
+      "stddev_first_cast_s": 140.1,
+      "avg_gap_s": 52.7,
+      "stddev_gap_s": 73,
+      "hold_targets": {
+        "2": {
+          "target_s": 347.4,
+          "stddev_s": 132.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6.1,
+      "avg_uses_per_min": 0.77,
+      "uses_per_min": {
+        "avg": 0.774,
+        "stddev": 0.224,
+        "min": 0.486,
+        "max": 1.13
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 9,
+      "avg_first_cast_s": 275.5,
+      "stddev_first_cast_s": 171.1,
+      "avg_gap_s": 152.6,
+      "stddev_gap_s": 62.8,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.198,
+        "stddev": 0.121,
+        "min": 0.117,
+        "max": 0.444
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.1,
+      "min_uses": 4,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "7f96e1eabc524081",
+  "ingest_version": 2
+}

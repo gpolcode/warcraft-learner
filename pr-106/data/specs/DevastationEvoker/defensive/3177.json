@@ -1,0 +1,231 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 80.9,
+      "stddev_first_cast_s": 47.8,
+      "avg_gap_s": 31,
+      "stddev_gap_s": 39.8,
+      "hold_targets": {},
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 1.28,
+      "uses_per_min": {
+        "avg": 1.277,
+        "stddev": 0.514,
+        "min": 0.558,
+        "max": 2.101
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 5,
+      "avg_first_cast_s": 144.2,
+      "stddev_first_cast_s": 49.8,
+      "avg_gap_s": 0.4,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.359,
+        "stddev": 0.15,
+        "min": 0.278,
+        "max": 0.626
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 65.6,
+      "dmg_avg": 159278,
+      "dmg_stddev": 140569,
+      "dmg_min": 0,
+      "dmg_max": 486485,
+      "window_length_s": 6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 32934,
+          "min_damage": 9166,
+          "max_damage": 61175,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 92.2,
+      "dmg_avg": 262716,
+      "dmg_stddev": 191917,
+      "dmg_min": 0,
+      "dmg_max": 511701,
+      "window_length_s": 7.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 196905,
+          "min_damage": 47902,
+          "max_damage": 359344,
+          "count": 7
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 37359,
+          "min_damage": 15723,
+          "max_damage": 56156,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 186.7,
+      "dmg_avg": 208993,
+      "dmg_stddev": 168354,
+      "dmg_min": 36917,
+      "dmg_max": 539389,
+      "window_length_s": 7.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 62453,
+          "min_damage": 20391,
+          "max_damage": 117919,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 208.6,
+      "dmg_avg": 188268,
+      "dmg_stddev": 130973,
+      "dmg_min": 0,
+      "dmg_max": 291029,
+      "window_length_s": 9.4,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 253475,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 123407,
+          "min_damage": 93504,
+          "max_damage": 179634,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 58055,
+          "min_damage": 47753,
+          "max_damage": 78615,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 4.3,
+      "min_uses": 2,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    }
+  },
+  "source_signature": "17bf5868daac5627",
+  "ingest_version": 1
+}

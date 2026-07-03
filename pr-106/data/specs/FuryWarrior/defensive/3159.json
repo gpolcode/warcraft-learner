@@ -1,0 +1,280 @@
+{
+  "spec": "FuryWarrior",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Spell Reflection": {
+      "sample_count": 9,
+      "avg_first_cast_s": 110.4,
+      "stddev_first_cast_s": 40.3,
+      "avg_gap_s": 68,
+      "stddev_gap_s": 40.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 225.5,
+          "stddev_s": 58.5,
+          "count": 8,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 276.6,
+          "stddev_s": 67.3,
+          "count": 8,
+          "total_samples": 9
+        },
+        "3": {
+          "target_s": 340.5,
+          "stddev_s": 121.4,
+          "count": 4,
+          "total_samples": 9
+        },
+        "4": {
+          "target_s": 362.2,
+          "stddev_s": 56.2,
+          "count": 4,
+          "total_samples": 9
+        },
+        "6": {
+          "target_s": 460.2,
+          "stddev_s": 61.5,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 5.8,
+      "avg_uses_per_min": 0.74,
+      "uses_per_min": {
+        "avg": 0.739,
+        "stddev": 0.267,
+        "min": 0.429,
+        "max": 1.257
+      },
+      "majority_hold": true
+    },
+    "Rallying Cry": {
+      "sample_count": 7,
+      "avg_first_cast_s": 273.8,
+      "stddev_first_cast_s": 122.6,
+      "avg_gap_s": 272.3,
+      "stddev_gap_s": 0.8,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.165,
+        "stddev": 0.064,
+        "min": 0.114,
+        "max": 0.263
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 120,
+      "dmg_avg": 347377,
+      "dmg_stddev": 136936,
+      "dmg_min": 60282,
+      "dmg_max": 483838,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 223245,
+          "min_damage": 40174,
+          "max_damage": 392978,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 55963,
+          "min_damage": 49652,
+          "max_damage": 60282,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 254.8,
+      "dmg_avg": 414864,
+      "dmg_stddev": 38035,
+      "dmg_min": 377198,
+      "dmg_max": 488662,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 211376,
+          "min_damage": 42903,
+          "max_damage": 373495,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 108794,
+          "min_damage": 94230,
+          "max_damage": 118754,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 283.6,
+      "dmg_avg": 210644,
+      "dmg_stddev": 112012,
+      "dmg_min": 138331,
+      "dmg_max": 375508,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 141582,
+          "min_damage": 133630,
+          "max_damage": 151763,
+          "count": 4
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 138124,
+          "min_damage": 52503,
+          "max_damage": 223745,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 390.3,
+      "dmg_avg": 422021,
+      "dmg_stddev": 131516,
+      "dmg_min": 162611,
+      "dmg_max": 541220,
+      "window_length_s": 5,
+      "defensive_name": "Spell Reflection",
+      "spell_id": 23920,
+      "common_defensives": [
+        "Spell Reflection"
+      ],
+      "common_cds": [
+        "Spell Reflection"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 253972,
+          "min_damage": 44960,
+          "max_damage": 378502,
+          "count": 7
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 165356,
+          "min_damage": 147167,
+          "max_damage": 180394,
+          "count": 10
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 97462,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 5.8,
+      "min_uses": 3,
+      "max_uses": 10
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Enraged Regeneration",
+      "spell_id": 184364,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use reactively when dropping below 50% health to restore a significant amount of HP over 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use proactively before predictable raid-wide damage spikes to grant your group 15% max health.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Use proactively before targeted magical casts from bosses to reflect or halve incoming spell damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Enraged Regeneration": 184364,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920
+  },
+  "ability_icons": {
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "184364": {
+      "icon": "ability_warrior_focusedrage",
+      "name": "Enraged Regeneration"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "67c2b1239d1ae128",
+  "ingest_version": 1
+}

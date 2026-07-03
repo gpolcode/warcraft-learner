@@ -1,0 +1,153 @@
+{
+  "spec": "RestorationShaman",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 10,
+      "avg_first_cast_s": 176.5,
+      "stddev_first_cast_s": 124.7,
+      "avg_gap_s": 147.3,
+      "stddev_gap_s": 50.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 327,
+          "stddev_s": 57,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 329.5,
+          "stddev_s": 127.9,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.28,
+        "stddev": 0.072,
+        "min": 0.116,
+        "max": 0.332
+      },
+      "majority_hold": true
+    },
+    "Spirit Link Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 92.6,
+      "stddev_first_cast_s": 27.1,
+      "avg_gap_s": 244.6,
+      "stddev_gap_s": 58,
+      "hold_targets": {
+        "1": {
+          "target_s": 303.1,
+          "stddev_s": 96.6,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 547.1,
+          "stddev_s": 27.6,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.261,
+        "stddev": 0.093,
+        "min": 0.107,
+        "max": 0.348
+      },
+      "majority_hold": true
+    },
+    "Healing Tide Totem": {
+      "sample_count": 1,
+      "avg_first_cast_s": 7.2,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 139.8,
+      "stddev_gap_s": 30.1,
+      "hold_targets": {},
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.443,
+        "stddev": 0,
+        "min": 0.443,
+        "max": 0.443
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 98008,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 108280,
+      "avg_uses": 4,
+      "min_uses": 4,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Spirit Link Totem": 98008,
+    "Healing Tide Totem": 108280
+  },
+  "ability_icons": {
+    "98008": {
+      "icon": "spell_shaman_spiritlink",
+      "name": "Spirit Link Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108280": {
+      "icon": "ability_shaman_healingtide",
+      "name": "Healing Tide Totem"
+    }
+  },
+  "source_signature": "0e680d94a4ae5235",
+  "ingest_version": 2
+}

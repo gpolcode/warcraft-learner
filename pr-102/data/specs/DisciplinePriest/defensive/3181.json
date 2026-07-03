@@ -1,0 +1,392 @@
+{
+  "spec": "DisciplinePriest",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 9,
+      "avg_first_cast_s": 186,
+      "stddev_first_cast_s": 148.7,
+      "avg_gap_s": 164.9,
+      "stddev_gap_s": 78.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 410.5,
+          "stddev_s": 117.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 387.5,
+          "stddev_s": 98.2,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.29,
+        "stddev": 0.101,
+        "min": 0.121,
+        "max": 0.467
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 9,
+      "avg_first_cast_s": 108.7,
+      "stddev_first_cast_s": 102.1,
+      "avg_gap_s": 90.9,
+      "stddev_gap_s": 88.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 186.2,
+          "stddev_s": 149.1,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 355.4,
+          "stddev_s": 106.9,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.5,
+      "uses_per_min": {
+        "avg": 0.502,
+        "stddev": 0.3,
+        "min": 0.117,
+        "max": 0.966
+      },
+      "majority_hold": true
+    },
+    "Pain Suppression": {
+      "sample_count": 1,
+      "avg_first_cast_s": 312.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.121,
+        "stddev": 0,
+        "min": 0.121,
+        "max": 0.121
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 77.7,
+      "dmg_avg": 421686,
+      "dmg_stddev": 192602,
+      "dmg_min": 208117,
+      "dmg_max": 611409,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 243811,
+      "ability_breakdown": [
+        {
+          "spell_id": 1233649,
+          "avg_damage": 249157,
+          "min_damage": 236295,
+          "max_damage": 262019,
+          "count": 2
+        },
+        {
+          "spell_id": 1281707,
+          "avg_damage": 240947,
+          "min_damage": 197600,
+          "max_damage": 285603,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 19495,
+          "min_damage": 10517,
+          "max_damage": 26772,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 270.3,
+      "dmg_avg": 565086,
+      "dmg_stddev": 189952,
+      "dmg_min": 442308,
+      "dmg_max": 844204,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1260019,
+          "avg_damage": 234187,
+          "min_damage": 106891,
+          "max_damage": 423701,
+          "count": 4
+        },
+        {
+          "spell_id": 1233826,
+          "avg_damage": 184028,
+          "min_damage": 134764,
+          "max_damage": 224916,
+          "count": 3
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 94763,
+          "min_damage": 24211,
+          "max_damage": 168172,
+          "count": 4
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 26453,
+          "min_damage": 15724,
+          "max_damage": 37182,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 414.4,
+      "dmg_avg": 780593,
+      "dmg_stddev": 303696,
+      "dmg_min": 466996,
+      "dmg_max": 1383497,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 367619,
+          "min_damage": 275760,
+          "max_damage": 474345,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 225183,
+          "min_damage": 83200,
+          "max_damage": 495879,
+          "count": 7
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 199133,
+          "min_damage": 165885,
+          "max_damage": 225906,
+          "count": 5
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 22346,
+          "min_damage": 14425,
+          "max_damage": 30118,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 414.4,
+      "dmg_avg": 643834,
+      "dmg_stddev": 132016,
+      "dmg_min": 388139,
+      "dmg_max": 827824,
+      "window_length_s": 10,
+      "defensive_name": "Fade",
+      "spell_id": 586,
+      "common_defensives": [
+        "Fade"
+      ],
+      "common_cds": [
+        "Fade"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 328952,
+          "min_damage": 229571,
+          "max_damage": 427777,
+          "count": 8
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 208618,
+          "min_damage": 83200,
+          "max_damage": 454693,
+          "count": 11
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 188726,
+          "min_damage": 165885,
+          "max_damage": 225906,
+          "count": 8
+        },
+        {
+          "spell_id": 32409,
+          "avg_damage": 16759,
+          "min_damage": 11137,
+          "max_damage": 25805,
+          "count": 8
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 33206,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 4.2,
+      "min_uses": 1,
+      "max_uses": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Pain Suppression",
+      "spell_id": 33206,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Cast on yourself or an ally to cut incoming damage by 40 percent during a tankbuster or burst, and use it as raid mitigation in Mythic+ when you lack a healing cooldown to top players up.",
+      "talent_gated": false
+    },
+    {
+      "name": "Power Word: Barrier",
+      "spell_id": 62618,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Drop on a stacked group ahead of a heavy raid-wide hit to reduce damage taken for everyone standing inside it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your own health drops below about 75 percent for an instant burst of self-healing and a temporary maximum-health increase, especially after a Shadow Word: Death backlash.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit. Spell ID is best guess for the Discipline-available version.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Press to drop threat and, with the Phantom Reach or damage-reduction talent, to soften incoming personal damage during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Pain Suppression": 33206,
+    "Power Word: Barrier": 62618,
+    "Desperate Prayer": 19236,
+    "Dispersion": 47585,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "32409": {
+      "icon": "spell_shadow_demonicfortitude",
+      "name": "Shadow Word: Death"
+    },
+    "33206": {
+      "icon": "spell_holy_painsupression",
+      "name": "Pain Suppression"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "62618": {
+      "icon": "spell_holy_powerwordbarrier",
+      "name": "Power Word: Barrier"
+    },
+    "1233649": {
+      "icon": "inv_ammo_arrow_03",
+      "name": "Silverstrike Arrow"
+    },
+    "1233826": {
+      "icon": "inv_nullstone_void",
+      "name": "Void Expulsion"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1260019": {
+      "icon": "inv_112_raidtrinkets_blobofswirlingvoid_purple",
+      "name": "Simulacrum Backlash"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    },
+    "1281707": {
+      "icon": "spell_priest_burningwill_shadow",
+      "name": "Echoing Darkness"
+    }
+  },
+  "source_signature": "86fd4e7931570e5b"
+}

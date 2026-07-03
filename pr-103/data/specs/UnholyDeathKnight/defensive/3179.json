@@ -1,0 +1,287 @@
+{
+  "spec": "UnholyDeathKnight",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 9,
+  "per_defensive_benchmarks": {
+    "Anti-Magic Shell": {
+      "sample_count": 9,
+      "avg_first_cast_s": 43.6,
+      "stddev_first_cast_s": 35.3,
+      "avg_gap_s": 69.8,
+      "stddev_gap_s": 17.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 105.8,
+          "stddev_s": 44.4,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.84,
+      "uses_per_min": {
+        "avg": 0.841,
+        "stddev": 0.231,
+        "min": 0.498,
+        "max": 1.143
+      },
+      "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 5,
+      "avg_first_cast_s": 138.8,
+      "stddev_first_cast_s": 55.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.308,
+        "stddev": 0.054,
+        "min": 0.249,
+        "max": 0.381
+      },
+      "majority_hold": false
+    },
+    "Lichborne": {
+      "sample_count": 2,
+      "avg_first_cast_s": 53.9,
+      "stddev_first_cast_s": 71.3,
+      "avg_gap_s": 91.6,
+      "stddev_gap_s": 2.1,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.571,
+        "stddev": 0.389,
+        "min": 0.296,
+        "max": 0.846
+      },
+      "majority_hold": false
+    },
+    "Death Pact": {
+      "sample_count": 2,
+      "avg_first_cast_s": 145.5,
+      "stddev_first_cast_s": 33.4,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.362,
+        "stddev": 0.028,
+        "min": 0.342,
+        "max": 0.381
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 29.1,
+      "dmg_avg": 295879,
+      "dmg_stddev": 139880,
+      "dmg_min": 0,
+      "dmg_max": 430743,
+      "window_length_s": 5.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 191187,
+          "min_damage": 131500,
+          "max_damage": 298866,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 122350,
+          "min_damage": 67244,
+          "max_damage": 154392,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 102.7,
+      "dmg_avg": 381046,
+      "dmg_stddev": 37601,
+      "dmg_min": 317775,
+      "dmg_max": 427390,
+      "window_length_s": 6.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 366268,
+          "min_damage": 329675,
+          "max_damage": 403880,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 162.5,
+      "dmg_avg": 261773,
+      "dmg_stddev": 119353,
+      "dmg_min": 44830,
+      "dmg_max": 366110,
+      "window_length_s": 6,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 144273,
+          "min_damage": 74692,
+          "max_damage": 298866,
+          "count": 5
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 108367,
+          "min_damage": 44830,
+          "max_damage": 156902,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 48707,
+      "avg_uses": 2.8,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 48743,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press proactively before incoming magic damage to absorb it and generate Runic Power; use it on cooldown as a damage filler when no big magic hit is expected.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use for a major 30% damage reduction and stun immunity ahead of heavy physical tankbusters or unavoidable raid damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate to become immune to charm, fear, and sleep effects and to enable Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Death Pact",
+      "spell_id": 48743,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Press as an emergency heal for a large instant chunk of health when you drop low; only available when talented.",
+      "talent_gated": true
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop on the group before a heavy raid-wide magic hit to reduce magic damage taken for everyone standing inside; only available when talented.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Anti-Magic Shell": 48707,
+    "Icebound Fortitude": 48792,
+    "Lichborne": 49039,
+    "Death Pact": 48743,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48743": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Death Pact"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "3b64c9fb49afaac9"
+}

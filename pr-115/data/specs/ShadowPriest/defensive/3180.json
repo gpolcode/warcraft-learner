@@ -1,0 +1,134 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 10,
+      "avg_first_cast_s": 152.4,
+      "stddev_first_cast_s": 104.4,
+      "avg_gap_s": 118.6,
+      "stddev_gap_s": 46.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 247.3,
+          "stddev_s": 50.1,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.363,
+        "stddev": 0.142,
+        "min": 0.145,
+        "max": 0.531
+      },
+      "majority_hold": true
+    },
+    "Vampiric Embrace": {
+      "sample_count": 10,
+      "avg_first_cast_s": 22.5,
+      "stddev_first_cast_s": 39.6,
+      "avg_gap_s": 128.7,
+      "stddev_gap_s": 14.1,
+      "hold_targets": {},
+      "avg_uses": 3.2,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.552,
+        "stddev": 0.08,
+        "min": 0.351,
+        "max": 0.612
+      },
+      "majority_hold": false
+    },
+    "Dispersion": {
+      "sample_count": 3,
+      "avg_first_cast_s": 268.5,
+      "stddev_first_cast_s": 58.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.175,
+        "stddev": 0.026,
+        "min": 0.151,
+        "max": 0.203
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47585,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 15286,
+      "avg_uses": 3.2,
+      "min_uses": 2,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press to reduce all damage taken by 75% during heavy raid hits or unavoidable burst, accepting the brief loss of offensive casts.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use to instantly heal and raise your maximum health when you drop below ~75%, especially after Shadow Word: Death self-damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Activate during periods of sustained raid damage to convert your Shadow damage into self and raid healing.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    }
+  },
+  "source_signature": "ac887c9611937a4b",
+  "ingest_version": 2
+}

@@ -1,0 +1,127 @@
+{
+  "spec": "RestorationShaman",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Spirit Link Totem": {
+      "sample_count": 5,
+      "avg_first_cast_s": 86.6,
+      "stddev_first_cast_s": 70.5,
+      "avg_gap_s": 187.4,
+      "stddev_gap_s": 1.8,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.355,
+        "stddev": 0.103,
+        "min": 0.265,
+        "max": 0.506
+      },
+      "majority_hold": false
+    },
+    "Astral Shift": {
+      "sample_count": 2,
+      "avg_first_cast_s": 143.3,
+      "stddev_first_cast_s": 108.5,
+      "avg_gap_s": 127.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.336,
+        "stddev": 0.117,
+        "min": 0.253,
+        "max": 0.418
+      },
+      "majority_hold": false
+    },
+    "Healing Tide Totem": {
+      "sample_count": 2,
+      "avg_first_cast_s": 140.4,
+      "stddev_first_cast_s": 117.9,
+      "avg_gap_s": 120.9,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.342,
+        "stddev": 0.108,
+        "min": 0.265,
+        "max": 0.418
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 98008,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108280,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Spirit Link Totem": 98008,
+    "Healing Tide Totem": 108280
+  },
+  "ability_icons": {
+    "98008": {
+      "icon": "spell_shaman_spiritlink",
+      "name": "Spirit Link Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108280": {
+      "icon": "ability_shaman_healingtide",
+      "name": "Healing Tide Totem"
+    }
+  },
+  "source_signature": "b59f816dd8bdb040",
+  "ingest_version": 2
+}

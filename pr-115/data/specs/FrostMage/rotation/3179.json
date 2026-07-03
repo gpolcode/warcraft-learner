@@ -1,0 +1,300 @@
+{
+  "spec": "FrostMage",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "avg_duration_s": 260.6,
+  "downtime_threshold_ms": 2664,
+  "top_avg_efficiency": 77.4,
+  "top_efficiency_stddev": 6.9,
+  "per_cd_benchmarks": {
+    "Ray of Frost": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.6,
+      "stddev_first_cast_s": 4,
+      "avg_gap_s": 37.5,
+      "stddev_gap_s": 14.3,
+      "avg_bl_offset_s": 2.8,
+      "stddev_bl_offset_s": 4.3,
+      "avg_uses": 7.3,
+      "avg_uses_per_min": 1.68,
+      "uses_per_min": {
+        "avg": 1.678,
+        "stddev": 0.116,
+        "min": 1.404,
+        "max": 1.793
+      },
+      "bl_pct": 70,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Comet Storm": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Frozen Orb": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.8,
+      "stddev_first_cast_s": 1.7,
+      "avg_gap_s": 33.8,
+      "stddev_gap_s": 7.2,
+      "avg_bl_offset_s": 2.8,
+      "stddev_bl_offset_s": 1.9,
+      "avg_uses": 8.1,
+      "avg_uses_per_min": 1.89,
+      "uses_per_min": {
+        "avg": 1.892,
+        "stddev": 0.148,
+        "min": 1.714,
+        "max": 2.105
+      },
+      "bl_pct": 70,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Time Warp": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0.4,
+      "stddev_first_cast_s": 0.2,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": 0,
+      "stddev_bl_offset_s": 0,
+      "avg_uses": 0.5,
+      "avg_uses_per_min": 0.1,
+      "uses_per_min": {
+        "avg": 0.195,
+        "stddev": 0.027,
+        "min": 0.173,
+        "max": 0.24
+      },
+      "bl_pct": 50,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Icy Veins": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Shifting Power": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Ray of Frost",
+      "spell_id": 205021,
+      "cooldown": 75,
+      "duration": 8,
+      "align_with_bloodlust": true,
+      "opener_priority": 2,
+      "usage_rule": "Use early in the opener to get its cooldown rolling and on cooldown thereafter, but only when you can safely complete the full channel; Shimmer to safety rather than canceling it, and save a charge for vulnerability phases or priority adds when Hand of Frost grants a second charge."
+    },
+    {
+      "name": "Comet Storm",
+      "spell_id": 153595,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast on cooldown after Ray of Frost converts it, spending built Freezing stacks; in AoE it Shatters stacks on multiple targets at once, so prioritize Frostfire Empowerment first so Comet Storm consumes more stacks (talent-gated to builds that take it - some Spellslinger builds do not, so zero casts may be normal)."
+    },
+    {
+      "name": "Frozen Orb",
+      "spell_id": 84714,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown for its damage and Fingers of Frost generation; in AoE position it to hit as many targets as possible and pair it with Blizzard during Freezing Rain."
+    },
+    {
+      "name": "Time Warp",
+      "spell_id": 80353,
+      "cooldown": 300,
+      "duration": 40,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use before Ray of Frost at the start of the burst window or when your group needs the haste, typically only once per boss fight; coordinate so it is not wasted on top of another Bloodlust effect."
+    },
+    {
+      "name": "Icy Veins",
+      "spell_id": 12472,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Sync with Time Warp and on-use trinkets at the opener and on cooldown for maximum burst; the Midnight rework deemphasizes it for Frost, so it may not always be on your bars."
+    },
+    {
+      "name": "Shifting Power",
+      "spell_id": 382440,
+      "cooldown": 60,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "usage_rule": "Channel to reduce your cooldowns when you have nothing higher-priority to cast or are otherwise targetless during an intermission; in AoE only channel it when 3 or more targets are present."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open by getting Ray of Frost rolling early",
+      "condition": null,
+      "action": "Open with Blizzard for AoE or a Frostbolt/Frostfire Bolt for single target, then cast Ray of Frost as soon as possible so its cooldown starts cycling; the whole opener is built around getting Ray of Frost online early."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Always be casting - never stand idle",
+      "condition": null,
+      "action": "Never stop casting while waiting to decide; if no proc or cooldown is up, cast Frostbolt or Frostfire Bolt as filler, using Ice Lance only when moving, because a suboptimal cast always beats casting nothing."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Brain Freeze with the Flurry Shatter combo",
+      "condition": null,
+      "action": "When Brain Freeze is active, cast Flurry so its Winter's Chill lands before your in-flight Frostbolt, then immediately follow with Ice Lance to Shatter; do not hold the proc unless Thermal Void uptime is at risk."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Empty Fingers of Frost before Brain Freeze",
+      "condition": null,
+      "action": "Spend your Fingers of Frost charges with Ice Lance before starting a Brain Freeze Flurry combo so a single Ice Lance does not waste both a Fingers of Frost charge and a Winter's Chill stack at once."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Burst with Time Warp into Ray of Frost",
+      "condition": null,
+      "action": "Pop Time Warp and on-use trinkets just before Ray of Frost so your highest-damage channel and Comet Storm conversion all land inside the haste window."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Add Blizzard and spread Frozen Orb at 3+ targets",
+      "condition": null,
+      "action": "At 3 or more targets, weave Blizzard into the rotation (especially during Freezing Rain) and position Frozen Orb to clip the whole pack; Comet Storm and Cone of Cold then Shatter multiple targets at once."
+    },
+    {
+      "type": "positioning",
+      "priority": "high",
+      "description": "Only channel Ray of Frost when safe to finish",
+      "condition": null,
+      "action": "Plan ahead so you can complete the full Ray of Frost channel without moving; if a mechanic forces you out, Shimmer to safety mid-channel rather than canceling and losing the cast."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Hold a Ray of Frost charge for priority windows",
+      "condition": null,
+      "action": "With Hand of Frost granting a second Ray of Frost charge, keep it on cooldown but bank the extra charge for boss vulnerability phases or priority adds instead of dumping both charges back to back."
+    }
+  ],
+  "cd_spell_ids": {
+    "Ray of Frost": 205021,
+    "Comet Storm": 153595,
+    "Frozen Orb": 84714,
+    "Time Warp": 80353,
+    "Icy Veins": 12472,
+    "Shifting Power": 382440,
+    "Ice Block": 45438,
+    "Ice Barrier": 11426,
+    "Ice Cold": 414658,
+    "Alter Time": 342245,
+    "Mirror Image": 55342
+  },
+  "ability_icons": {
+    "11426": {
+      "icon": "spell_ice_lament",
+      "name": "Ice Barrier"
+    },
+    "12472": {
+      "icon": "spell_frost_coldhearted",
+      "name": "Icy Veins"
+    },
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "80353": {
+      "icon": "ability_mage_timewarp",
+      "name": "Time Warp"
+    },
+    "84714": {
+      "icon": "spell_frost_frozenorb",
+      "name": "Frozen Orb"
+    },
+    "153595": {
+      "icon": "spell_mage_cometstorm2",
+      "name": "Comet Storm"
+    },
+    "205021": {
+      "icon": "ability_mage_rayoffrost",
+      "name": "Ray of Frost"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "382440": {
+      "icon": "inv_ability_mage_shiftingpower",
+      "name": "Shifting Power"
+    },
+    "414658": {
+      "icon": "spell_fire_bluefire",
+      "name": "Ice Cold"
+    }
+  },
+  "source_signature": "4c0b5588927197a0",
+  "ingest_version": 2
+}

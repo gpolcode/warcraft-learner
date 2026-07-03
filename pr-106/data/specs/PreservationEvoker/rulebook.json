@@ -1,0 +1,141 @@
+{
+  "spec": "PreservationEvoker",
+  "major_cooldowns": [
+    {
+      "name": "Rewind",
+      "spell_id": 363534,
+      "cooldown": 240,
+      "align_with_bloodlust": false,
+      "usage_rule": "Line up with the most dangerous damage moment of each fight, ideally right after a large raid hit so the 5-second retroactive heal-over-time refunds 33% of the damage just taken."
+    },
+    {
+      "name": "Dream Flight",
+      "spell_id": 359816,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fly through a stacked group on a recurring damage event to deliver a large area heal plus a lengthy heal-over-time, fitting in as many uses as the fight allows."
+    },
+    {
+      "name": "Stasis",
+      "spell_id": 370537,
+      "cooldown": 90,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Pre-store three high-value spells (for example Dream Breath and Temporal Anomaly) in advance, then release the stored burst right before a known heavy damage event, optionally pairing with Tip the Scales and Temporal Burst haste."
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use to make your next empowered spell instant at maximum rank, commonly paired with Stasis and the Temporal Burst haste window for a large instant healing payoff."
+    },
+    {
+      "name": "Emerald Communion",
+      "spell_id": 370960,
+      "cooldown": 180,
+      "duration": 5,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable burst damage to gain a flat damage reduction for the duration."
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use ahead of a damage spike to recoup a large portion of the damage you take over the following window as healing."
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast just before a telegraphed raid-wide AoE to reduce incoming area damage for yourself and nearby allies; scout useful spots when learning a fight."
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Apply to a single endangered target as a superb damage-reduction cooldown; its short cooldown means you can use it regularly rather than hoarding it."
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "usage_rule": "Use to remove a dispellable Bleed, Poison, Curse, or Disease and heal the target; it does not trigger its cooldown when nothing is removed, so it can be pre-stored in Stasis for a mass cleanse."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Cast Temporal Anomaly on cooldown",
+      "condition": null,
+      "action": "Press Temporal Anomaly the moment it comes off cooldown to generate Echo buffs across the group and refresh its absorb; this is your most powerful spell and the core of your throughput."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Consume Echo buffs with the right spell",
+      "condition": null,
+      "action": "Consume your Echo buffs with Merithra's Blessing (or Reversion as a backup) as Chronowarden, or Reversion as Flameshaper; reserve Verdant Embrace for moments that need a large per-target absorb or heal."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Cast Dream Breath after consuming Echoes",
+      "condition": null,
+      "action": "Cast Dream Breath regularly but only after you have consumed your Echo buffs, so the buffs are spent on a stronger spell rather than wasted on Dream Breath."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Pre-pull Temporal Anomaly and Stasis ramp",
+      "condition": null,
+      "action": "Cast Temporal Anomaly a few seconds before the pull to enter with Echo buffs, and pre-store a Stasis ramp so you can release a large heal at the first major damage event."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Pre-plan major cooldowns over danger",
+      "condition": null,
+      "action": "Layer Rewind, Dream Flight, and Stasis over the most dangerous moments of each fight rather than holding them just in case; banked cooldowns cost mana and risk avoidable deaths."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spend Essence Bursts without overcapping",
+      "condition": null,
+      "action": "Cast Echo whenever you have Essence available and spend Essence Bursts on Emerald Blossom so you never waste either resource; with Twin Echoes, weave Emerald Blossom to empower your next Echo casts."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Manage mana around the damage pattern",
+      "condition": null,
+      "action": "Avoid dumping half your mana in the opening Bloodlust minute; align Temporal Anomaly with real damage and skip casts during quiet windows to keep mana for the whole fight."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stand central to cover the 30 yard range",
+      "condition": null,
+      "action": "Position centrally to offset your reduced 30-yard healing range, and use Hover, Verdant Embrace, Rescue, and Zephyr to reposition or pre-place a heal-over-time on targets drifting out of range."
+    }
+  ],
+  "source_summary": "Preservation Evoker concentrates its throughput in short cooldowns and pre-planned ramps: Temporal Anomaly is pressed on cooldown to seed Echo buffs that are then consumed by a stronger spell, while Dream Breath fills the gaps. Major cooldowns like Stasis, Dream Flight, and Rewind are pre-planned and layered over the fight's most dangerous moments rather than held in reserve, and Stasis can bank an entire burst before a known damage event. Mana discipline and central positioning to cover the spec's reduced 30-yard range are the defining constraints on optimal play.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:12:32"
+}

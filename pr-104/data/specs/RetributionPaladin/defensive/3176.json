@@ -1,0 +1,222 @@
+{
+  "spec": "RetributionPaladin",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Shield of Vengeance": {
+      "sample_count": 8,
+      "avg_first_cast_s": 74.9,
+      "stddev_first_cast_s": 57.7,
+      "avg_gap_s": 78.3,
+      "stddev_gap_s": 19.2,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.71,
+      "uses_per_min": {
+        "avg": 0.715,
+        "stddev": 0.262,
+        "min": 0.29,
+        "max": 1.015
+      },
+      "majority_hold": false
+    },
+    "Divine Shield": {
+      "sample_count": 1,
+      "avg_first_cast_s": 154.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.319,
+        "stddev": 0,
+        "min": 0.319,
+        "max": 0.319
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 115.8,
+      "dmg_avg": 208117,
+      "dmg_stddev": 27227,
+      "dmg_min": 182851,
+      "dmg_max": 238924,
+      "window_length_s": 6.8,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 117742,
+          "min_damage": 31166,
+          "max_damage": 162400,
+          "count": 4
+        },
+        {
+          "spell_id": 1280075,
+          "avg_damage": 65129,
+          "min_damage": 30840,
+          "max_damage": 99418,
+          "count": 2
+        },
+        {
+          "spell_id": 1249262,
+          "avg_damage": 57811,
+          "min_damage": 28719,
+          "max_damage": 76524,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 177.8,
+      "dmg_avg": 197519,
+      "dmg_stddev": 22919,
+      "dmg_min": 167367,
+      "dmg_max": 238228,
+      "window_length_s": 6.6,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240435,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259903,
+          "avg_damage": 138035,
+          "min_damage": 15665,
+          "max_damage": 196765,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 184662,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Press proactively before incoming damage to absorb a large amount and release a burst of damage when it expires, so it doubles as a near free DPS cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to fully immune unavoidable lethal damage or to drop a deadly debuff; cancel it early once the threat passes to minimize the Forbearance lockout on Lay on Hands and Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before predictable magic or mixed damage events for a 20% damage reduction; its short cooldown means you can use it on most repeating raid hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Reserve for an emergency when you or an ally is about to die, fully restoring their health; it triggers Forbearance, so it cannot be chained with Divine Shield or Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on yourself or an ally to immune all physical damage during a heavy melee hit; it does not block magic and triggers Forbearance on the target.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Spellwarding",
+      "spell_id": 204018,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "If talented in place of Blessing of Protection, cast to immune a dangerous magical hit on yourself or an ally; it shares Forbearance and does not block physical damage.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Shield of Vengeance": 184662,
+    "Divine Shield": 642,
+    "Divine Protection": 498,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Spellwarding": 204018
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "184662": {
+      "icon": "ability_paladin_shieldofthetemplar",
+      "name": "Shield of Vengeance"
+    },
+    "204018": {
+      "icon": "spell_holy_blessingofprotection",
+      "name": "Blessing of Spellwarding"
+    },
+    "1249262": {
+      "icon": "spell_arcane_arcanetorrent",
+      "name": "Umbral Collapse"
+    },
+    "1259903": {
+      "icon": "ability_priest_voidentropy",
+      "name": "Dark Upheaval"
+    },
+    "1280075": {
+      "icon": "spell_warlock_soulburn",
+      "name": "Lingering Darkness"
+    }
+  },
+  "source_signature": "7713d17d12fe1642",
+  "ingest_version": 0
+}

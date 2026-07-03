@@ -1,0 +1,244 @@
+{
+  "spec": "BeastMasteryHunter",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 152.6,
+      "stddev_first_cast_s": 148.3,
+      "avg_gap_s": 129.1,
+      "stddev_gap_s": 115.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 376,
+          "stddev_s": 75.7,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.414,
+        "stddev": 0.128,
+        "min": 0.227,
+        "max": 0.635
+      },
+      "majority_hold": true
+    },
+    "Exhilaration": {
+      "sample_count": 5,
+      "avg_first_cast_s": 195.4,
+      "stddev_first_cast_s": 109.5,
+      "avg_gap_s": 124.1,
+      "stddev_gap_s": 75.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 372.6,
+          "stddev_s": 8.4,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.279,
+        "stddev": 0.152,
+        "min": 0.116,
+        "max": 0.459
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 412.5,
+      "dmg_avg": 469847,
+      "dmg_stddev": 212031,
+      "dmg_min": 326817,
+      "dmg_max": 875682,
+      "window_length_s": 9,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 177248,
+          "min_damage": 152183,
+          "max_damage": 211295,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 129611,
+          "min_damage": 94414,
+          "max_damage": 226897,
+          "count": 5
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 94958,
+          "min_damage": 32321,
+          "max_damage": 164008,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 452.9,
+      "dmg_avg": 427522,
+      "dmg_stddev": 105225,
+      "dmg_min": 281275,
+      "dmg_max": 551376,
+      "window_length_s": 8,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 167150,
+          "min_damage": 92746,
+          "max_damage": 218427,
+          "count": 7
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 127571,
+          "min_damage": 48482,
+          "max_damage": 265585,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 485.7,
+      "dmg_avg": 222874,
+      "dmg_stddev": 125379,
+      "dmg_min": 61670,
+      "dmg_max": 335369,
+      "window_length_s": 7,
+      "defensive_name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "common_defensives": [
+        "Survival of the Fittest"
+      ],
+      "common_cds": [
+        "Survival of the Fittest"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 140540,
+          "min_damage": 94968,
+          "max_damage": 186112,
+          "count": 2
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 96659,
+          "min_damage": 32516,
+          "max_damage": 135046,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 74593,
+          "min_damage": 29154,
+          "max_damage": 105355,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.5,
+      "min_uses": 2,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use to fully immune a lethal hit or unavoidable burst; it cancels your attacks for 8 seconds so press it only when survival outweighs the lost damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press proactively before predictable raid or tankbuster damage for a flat damage reduction; its short window means you must time it to overlap the incoming hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Use to recover a large chunk of health when you drop below roughly half, healing both you and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    }
+  },
+  "source_signature": "f88c4ba47f6dd8a9",
+  "ingest_version": 1
+}

@@ -1,0 +1,160 @@
+{
+  "spec": "PreservationEvoker",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 9,
+      "avg_first_cast_s": 109.9,
+      "stddev_first_cast_s": 66.2,
+      "avg_gap_s": 24.7,
+      "stddev_gap_s": 28.7,
+      "hold_targets": {},
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 1.1,
+      "uses_per_min": {
+        "avg": 1.101,
+        "stddev": 0.467,
+        "min": 0.455,
+        "max": 2.02
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 4,
+      "avg_first_cast_s": 133.2,
+      "stddev_first_cast_s": 55.7,
+      "avg_gap_s": 123.7,
+      "stddev_gap_s": 7.2,
+      "hold_targets": {},
+      "avg_uses": 1.8,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.376,
+        "stddev": 0.1,
+        "min": 0.253,
+        "max": 0.459
+      },
+      "majority_hold": false
+    },
+    "Time Dilation": {
+      "sample_count": 5,
+      "avg_first_cast_s": 119.9,
+      "stddev_first_cast_s": 87.5,
+      "avg_gap_s": 43.7,
+      "stddev_gap_s": 51.3,
+      "hold_targets": {
+        "2": {
+          "target_s": 200,
+          "stddev_s": 34.7,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.445,
+        "stddev": 0.284,
+        "min": 0.253,
+        "max": 0.918
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 4.6,
+      "min_uses": 2,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.8,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 357170,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable burst damage to gain a flat damage reduction for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use ahead of a damage spike to recoup a large portion of the damage you take over the following window as healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast just before a telegraphed raid-wide AoE to reduce incoming area damage for yourself and nearby allies; scout useful spots when learning a fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Apply to a single endangered target as a superb damage-reduction cooldown; its short cooldown means you can use it regularly rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use to remove a dispellable Bleed, Poison, Curse, or Disease and heal the target; it does not trigger its cooldown when nothing is removed, so it can be pre-stored in Stasis for a mass cleanse.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Time Dilation": 357170,
+    "Cauterizing Flame": 374251
+  },
+  "ability_icons": {
+    "357170": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374251": {
+      "icon": "ability_evoker_fontofmagic_red",
+      "name": "Cauterizing Flame"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "9eaf2a5be7fb9a03",
+  "ingest_version": 2
+}

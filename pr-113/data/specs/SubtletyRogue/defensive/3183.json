@@ -1,0 +1,225 @@
+{
+  "spec": "SubtletyRogue",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 10,
+      "avg_first_cast_s": 83.8,
+      "stddev_first_cast_s": 68.1,
+      "avg_gap_s": 37.6,
+      "stddev_gap_s": 26.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 132.7,
+          "stddev_s": 42.9,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 199.3,
+          "stddev_s": 52.5,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 242.4,
+          "stddev_s": 68.7,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 302.6,
+          "stddev_s": 52.4,
+          "count": 7,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 327.4,
+          "stddev_s": 49,
+          "count": 7,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 327.9,
+          "stddev_s": 70.1,
+          "count": 9,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 432.3,
+          "stddev_s": 54.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 451,
+          "stddev_s": 85.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 11.5,
+      "avg_uses_per_min": 1.23,
+      "uses_per_min": {
+        "avg": 1.228,
+        "stddev": 0.619,
+        "min": 0.642,
+        "max": 2.301
+      },
+      "majority_hold": true
+    },
+    "Cloak of Shadows": {
+      "sample_count": 9,
+      "avg_first_cast_s": 272.6,
+      "stddev_first_cast_s": 119.4,
+      "avg_gap_s": 272.1,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.119,
+        "stddev": 0.04,
+        "min": 0.104,
+        "max": 0.227
+      },
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 8,
+      "avg_first_cast_s": 212,
+      "stddev_first_cast_s": 136.5,
+      "avg_gap_s": 89.4,
+      "stddev_gap_s": 37.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 334.6,
+          "stddev_s": 106.1,
+          "count": 5,
+          "total_samples": 8
+        },
+        "2": {
+          "target_s": 353.6,
+          "stddev_s": 143.3,
+          "count": 4,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.36,
+        "stddev": 0.292,
+        "min": 0.105,
+        "max": 0.941
+      },
+      "majority_hold": true
+    },
+    "Evasion": {
+      "sample_count": 2,
+      "avg_first_cast_s": 390.4,
+      "stddev_first_cast_s": 254,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.109,
+        "stddev": 0.006,
+        "min": 0.105,
+        "max": 0.113
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31224,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 185311,
+      "avg_uses": 3.4,
+      "min_uses": 1,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 11.5,
+      "min_uses": 6,
+      "max_uses": 22
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to purge a dangerous magical debuff or to immune a targeted magical ability; must be used proactively since the 5-second window is very short.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use proactively before a burst of physical damage or during a physical tankbuster cleave; grants near-100% dodge for 10 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use when health drops below 50% to restore a meaningful chunk of HP; short enough cooldown to use freely throughout the fight without holding for emergencies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 5,
+      "usage_rule": "Press proactively before any telegraphed AoE damage event; its 15-second cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Crimson Vial": 185311,
+    "Feint": 1966
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    }
+  },
+  "source_signature": "85918b6d09586b34",
+  "ingest_version": 2
+}

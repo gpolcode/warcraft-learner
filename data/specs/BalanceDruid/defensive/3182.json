@@ -1,0 +1,164 @@
+{
+  "spec": "BalanceDruid",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 83.3,
+      "stddev_first_cast_s": 51.1,
+      "avg_gap_s": 89.1,
+      "stddev_gap_s": 29.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 218.8,
+          "stddev_s": 78.9,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 198.1,
+          "stddev_s": 32.4,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.62,
+      "uses_per_min": {
+        "avg": 0.62,
+        "stddev": 0.184,
+        "min": 0.391,
+        "max": 0.828
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 130.9,
+      "dmg_avg": 504851,
+      "dmg_stddev": 265975,
+      "dmg_min": 259426,
+      "dmg_max": 1072581,
+      "dmg_pct_avg": 0.048,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 258476,
+          "min_damage": 181735,
+          "max_damage": 371130,
+          "count": 6
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 82820,
+          "min_damage": 77691,
+          "max_damage": 88257,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 251.7,
+      "dmg_avg": 467475,
+      "dmg_stddev": 214513,
+      "dmg_min": 113648,
+      "dmg_max": 687945,
+      "dmg_pct_avg": 0.046,
+      "window_length_s": 11,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1264650,
+          "avg_damage": 78085,
+          "min_damage": 61692,
+          "max_damage": 96563,
+          "count": 5
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.8,
+      "min_uses": 2,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable raid damage or a tankbuster cleave for a 20% damage reduction; its short cooldown allows frequent use, so do not save it for emergencies that may never come.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Use when your health drops below roughly 50% to instantly restore a large chunk of HP without interrupting your casting. Talent-gated to builds that take Renewal.",
+      "talent_gated": true
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Reserve for the heaviest spike damage events for its strong damage reduction; pair it with Barkskin on lethal hits when one defensive is not enough.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Survival Instincts": 61336
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "bb80df4402343119",
+  "ingest_version": 3
+}

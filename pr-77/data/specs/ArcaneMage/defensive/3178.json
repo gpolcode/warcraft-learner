@@ -1,0 +1,510 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Prismatic Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 59.8,
+      "stddev_first_cast_s": 43.4,
+      "avg_gap_s": 41.8,
+      "stddev_gap_s": 15.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 126.5,
+          "stddev_s": 43.8,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 201.3,
+          "stddev_s": 45,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 224.1,
+          "stddev_s": 40.4,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 244.8,
+          "stddev_s": 37.8,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 7.1,
+      "avg_uses_per_min": 1.18,
+      "uses_per_min": {
+        "avg": 1.179,
+        "stddev": 0.351,
+        "min": 0.418,
+        "max": 1.629
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 7,
+      "avg_first_cast_s": 75.1,
+      "stddev_first_cast_s": 40.5,
+      "avg_gap_s": 127.4,
+      "stddev_gap_s": 70.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 253.4,
+          "stddev_s": 45.3,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.399,
+        "stddev": 0.242,
+        "min": 0.163,
+        "max": 0.874
+      },
+      "majority_hold": true
+    },
+    "Greater Invisibility": {
+      "sample_count": 3,
+      "avg_first_cast_s": 229.2,
+      "stddev_first_cast_s": 71.6,
+      "avg_gap_s": 168,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.21,
+      "uses_per_min": {
+        "avg": 0.213,
+        "stddev": 0.099,
+        "min": 0.148,
+        "max": 0.327
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 3,
+      "avg_first_cast_s": 128.4,
+      "stddev_first_cast_s": 0.3,
+      "avg_gap_s": 171.1,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.231,
+        "stddev": 0.085,
+        "min": 0.163,
+        "max": 0.327
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 37.9,
+      "dmg_avg": 206693,
+      "dmg_stddev": 36069,
+      "dmg_min": 160204,
+      "dmg_max": 270130,
+      "window_length_s": 4.1,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1244413,
+          "avg_damage": 43619,
+          "min_damage": 18264,
+          "max_damage": 69199,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 38736,
+          "min_damage": 14375,
+          "max_damage": 59258,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 74.6,
+      "dmg_avg": 237120,
+      "dmg_stddev": 39668,
+      "dmg_min": 188093,
+      "dmg_max": 320820,
+      "window_length_s": 5.6,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 133245,
+          "min_damage": 121956,
+          "max_damage": 137949,
+          "count": 5
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 73134,
+          "min_damage": 15368,
+          "max_damage": 184020,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 126.3,
+      "dmg_avg": 303301,
+      "dmg_stddev": 76813,
+      "dmg_min": 179441,
+      "dmg_max": 437565,
+      "window_length_s": 6.8,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249748,
+          "avg_damage": 231428,
+          "min_damage": 210238,
+          "max_damage": 245974,
+          "count": 8
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 27829,
+          "min_damage": 12876,
+          "max_damage": 62168,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 156.6,
+      "dmg_avg": 247603,
+      "dmg_stddev": 43820,
+      "dmg_min": 180153,
+      "dmg_max": 326951,
+      "window_length_s": 9.7,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250071,
+          "avg_damage": 137463,
+          "min_damage": 89633,
+          "max_damage": 179657,
+          "count": 5
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 67236,
+          "min_damage": 11871,
+          "max_damage": 115667,
+          "count": 7
+        },
+        {
+          "spell_id": 1244672,
+          "avg_damage": 10677,
+          "min_damage": 6673,
+          "max_damage": 13762,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 194,
+      "dmg_avg": 219800,
+      "dmg_stddev": 24405,
+      "dmg_min": 179823,
+      "dmg_max": 253689,
+      "window_length_s": 8.2,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285954,
+          "avg_damage": 109052,
+          "min_damage": 4330,
+          "max_damage": 169535,
+          "count": 4
+        },
+        {
+          "spell_id": 1259275,
+          "avg_damage": 74619,
+          "min_damage": 45180,
+          "max_damage": 98889,
+          "count": 5
+        },
+        {
+          "spell_id": 1252157,
+          "avg_damage": 30262,
+          "min_damage": 12023,
+          "max_damage": 40731,
+          "count": 3
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 28088,
+          "min_damage": 12424,
+          "max_damage": 53137,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 240.6,
+      "dmg_avg": 257034,
+      "dmg_stddev": 59982,
+      "dmg_min": 190000,
+      "dmg_max": 372969,
+      "window_length_s": 5.6,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 77166,
+          "min_damage": 28254,
+          "max_damage": 207232,
+          "count": 11
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 63596,
+          "min_damage": 15239,
+          "max_damage": 105728,
+          "count": 7
+        },
+        {
+          "spell_id": 1244413,
+          "avg_damage": 36312,
+          "min_damage": 6157,
+          "max_damage": 103759,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 285.1,
+      "dmg_avg": 223897,
+      "dmg_stddev": 77182,
+      "dmg_min": 96820,
+      "dmg_max": 391224,
+      "window_length_s": 11.5,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 51232,
+          "min_damage": 29629,
+          "max_damage": 61471,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 329.5,
+      "dmg_avg": 191320,
+      "dmg_stddev": 30629,
+      "dmg_min": 141795,
+      "dmg_max": 226044,
+      "window_length_s": 25.6,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": []
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 342245,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 110959,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 235450,
+      "avg_uses": 7.1,
+      "min_uses": 2,
+      "max_uses": 11
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235450": {
+      "icon": "spell_magearmor",
+      "name": "Prismatic Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "1244413": {
+      "icon": "warlock_curse_shadow_aura",
+      "name": "Nullsnap"
+    },
+    "1244672": {
+      "icon": "warlock_curse_shadow",
+      "name": "Nullzone"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1249748": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1252157": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "2d9f9572a03bab9b"
+}

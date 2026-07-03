@@ -1,0 +1,298 @@
+{
+  "spec": "OutlawRogue",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "avg_duration_s": 146.8,
+  "downtime_threshold_ms": 1009,
+  "top_avg_efficiency": 80,
+  "top_efficiency_stddev": 5.3,
+  "per_cd_benchmarks": {
+    "Adrenaline Rush": {
+      "sample_count": 10,
+      "avg_first_cast_s": 4.3,
+      "stddev_first_cast_s": 7.7,
+      "avg_gap_s": 32.5,
+      "stddev_gap_s": 7.5,
+      "avg_bl_offset_s": 2.5,
+      "stddev_bl_offset_s": 8.3,
+      "avg_uses": 4.8,
+      "avg_uses_per_min": 1.96,
+      "uses_per_min": {
+        "avg": 1.961,
+        "stddev": 0.163,
+        "min": 1.652,
+        "max": 2.078
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Roll the Bones": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Keep It Rolling": {
+      "sample_count": 10,
+      "avg_first_cast_s": 16.9,
+      "stddev_first_cast_s": 11,
+      "avg_gap_s": 72.3,
+      "stddev_gap_s": 13.6,
+      "avg_bl_offset_s": 15,
+      "stddev_bl_offset_s": 10.9,
+      "avg_uses": 2.2,
+      "avg_uses_per_min": 0.9,
+      "uses_per_min": {
+        "avg": 0.899,
+        "stddev": 0.174,
+        "min": 0.806,
+        "max": 1.239
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Blade Rush": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.4,
+      "stddev_first_cast_s": 0.6,
+      "avg_gap_s": 11.1,
+      "stddev_gap_s": 2.9,
+      "avg_bl_offset_s": -0.5,
+      "stddev_bl_offset_s": 1.9,
+      "avg_uses": 13.6,
+      "avg_uses_per_min": 5.56,
+      "uses_per_min": {
+        "avg": 5.558,
+        "stddev": 0.344,
+        "min": 4.868,
+        "max": 6.197
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Killing Spree": {
+      "sample_count": 10,
+      "avg_first_cast_s": 10.5,
+      "stddev_first_cast_s": 5.8,
+      "avg_gap_s": 31.6,
+      "stddev_gap_s": 7.7,
+      "avg_bl_offset_s": 8.5,
+      "stddev_bl_offset_s": 5.8,
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 1.71,
+      "uses_per_min": {
+        "avg": 1.905,
+        "stddev": 0.195,
+        "min": 1.634,
+        "max": 2.078
+      },
+      "bl_pct": 90,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Vanish": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Adrenaline Rush",
+      "spell_id": 13750,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Cast on cooldown at 2 or fewer combo points and keep it as close to 100% uptime as possible since Restless Blades reduces its cooldown; pre-pot and align with Bloodlust for the strongest window."
+    },
+    {
+      "name": "Roll the Bones",
+      "spell_id": 315508,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast on cooldown whenever Roll the Bones is at stage 1 or lower, rerolling weak results to chase a higher-stage buff; never let the buff drop."
+    },
+    {
+      "name": "Keep It Rolling",
+      "spell_id": 381989,
+      "cooldown": 360,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use whenever Roll the Bones is at stage 2 or higher to lock in a strong combination; its effective cooldown is far shorter than 6 minutes thanks to Restless Blades, so do not hold it long."
+    },
+    {
+      "name": "Blade Rush",
+      "spell_id": 271877,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast on cooldown for single target unless it would overcap energy within the next global, and always use it in AoE."
+    },
+    {
+      "name": "Killing Spree",
+      "spell_id": 51690,
+      "cooldown": 120,
+      "duration": 2,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast at 5 or more combo points on the Trickster build, cancelling early if you are about to overcap energy; avoid casting when the animation lock would put you in danger of a mechanic."
+    },
+    {
+      "name": "Vanish",
+      "spell_id": 1856,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "On Hidden Opportunity builds, use on cooldown when you have no Audacity or Opportunity proc to gain a free empowered Ambush; on other builds reserve it for utility or mechanic immunity."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Adrenaline Rush on cooldown",
+      "condition": null,
+      "action": "Cast Adrenaline Rush every time it is available at 2 or fewer combo points; maximizing its uptime is the single biggest driver of Outlaw damage because Restless Blades shortens its own cooldown."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Maintain Roll the Bones, reroll weak buffs",
+      "condition": null,
+      "action": "Never let Roll the Bones expire; recast it on cooldown when you are at stage 1 or lower and reroll until you reach a higher stage."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: Adrenaline Rush into Roll the Bones",
+      "condition": null,
+      "action": "Open with Adrenaline Rush, then Roll the Bones and Slice and Dice, fire Keep It Rolling if you land stage 3 or higher, use Blade Rush, build to 6 combo points with Sinister Strike and Pistol Shot, then cast Between the Eyes and resume the normal priority."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Hold Keep It Rolling for a strong Roll the Bones",
+      "condition": null,
+      "action": "Do not press Keep It Rolling until Roll the Bones is at stage 2 or higher so you duplicate a strong buff set rather than a single weak buff."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend combo points without overcapping",
+      "condition": null,
+      "action": "Cast Between the Eyes at 6 or more combo points and Dispatch as your filler finisher; never sit at max combo points where Sinister Strike or Pistol Shot would overcap and waste resources."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "React to Opportunity and Audacity procs",
+      "condition": null,
+      "action": "Spend Opportunity with Pistol Shot when it reaches high stacks or is about to expire, and immediately use Ambush when Audacity is active; weave these procs in without dropping your action-per-second pace."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Activate Blade Flurry at 2 or more targets",
+      "condition": null,
+      "action": "Turn on Blade Flurry as soon as there are 2 or more targets and it is not active, and refresh it at 4 or fewer combo points when 4 or more targets are in range so cleave damage never lapses."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stay in melee range of the target",
+      "condition": null,
+      "action": "Remain in melee range so your generators and finishers connect every global; Outlaw has no rear-positioning requirement but loses heavy uptime when forced out of range."
+    }
+  ],
+  "cd_spell_ids": {
+    "Adrenaline Rush": 13750,
+    "Roll the Bones": 315508,
+    "Keep It Rolling": 381989,
+    "Blade Rush": 271877,
+    "Killing Spree": 51690,
+    "Vanish": 1856,
+    "Crimson Vial": 185311,
+    "Feint": 1966,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277
+  },
+  "ability_icons": {
+    "1856": {
+      "icon": "ability_vanish",
+      "name": "Vanish"
+    },
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "13750": {
+      "icon": "spell_shadow_shadowworddominate",
+      "name": "Adrenaline Rush"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "51690": {
+      "icon": "inv_112_rogue_betweentheeyes",
+      "name": "Killing Spree"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "271877": {
+      "icon": "ability_arakkoa_spinning_blade",
+      "name": "Blade Rush"
+    },
+    "315508": {
+      "icon": "ability_rogue_rollthebones",
+      "name": "Roll the Bones"
+    },
+    "381989": {
+      "icon": "ability_rogue_keepitrolling",
+      "name": "Keep It Rolling"
+    }
+  },
+  "source_signature": "6aa57d71791fe07d",
+  "ingest_version": 1
+}

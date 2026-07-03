@@ -1,0 +1,537 @@
+{
+  "spec": "RetributionPaladin",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Shield of Vengeance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 32.3,
+      "stddev_first_cast_s": 66,
+      "avg_gap_s": 89,
+      "stddev_gap_s": 31.9,
+      "hold_targets": {
+        "4": {
+          "target_s": 328.8,
+          "stddev_s": 50.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 455.6,
+          "stddev_s": 7.6,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 6.6,
+      "avg_uses_per_min": 0.71,
+      "uses_per_min": {
+        "avg": 0.713,
+        "stddev": 0.153,
+        "min": 0.308,
+        "max": 0.867
+      },
+      "majority_hold": true
+    },
+    "Divine Shield": {
+      "sample_count": 9,
+      "avg_first_cast_s": 535,
+      "stddev_first_cast_s": 24.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.108,
+        "stddev": 0.003,
+        "min": 0.103,
+        "max": 0.112
+      },
+      "majority_hold": false
+    },
+    "Lay on Hands": {
+      "sample_count": 1,
+      "avg_first_cast_s": 306.1,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.11,
+        "stddev": 0,
+        "min": 0.11,
+        "max": 0.11
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 7.2,
+      "dmg_avg": 284735,
+      "dmg_stddev": 76981,
+      "dmg_min": 188678,
+      "dmg_max": 398027,
+      "window_length_s": 4.7,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 162711,
+          "min_damage": 38063,
+          "max_damage": 230462,
+          "count": 8
+        },
+        {
+          "spell_id": 1251649,
+          "avg_damage": 162698,
+          "min_damage": 146230,
+          "max_damage": 172038,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 70.9,
+      "dmg_avg": 271665,
+      "dmg_stddev": 56000,
+      "dmg_min": 207662,
+      "dmg_max": 356302,
+      "window_length_s": 4,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1251649,
+          "avg_damage": 172798,
+          "min_damage": 164576,
+          "max_damage": 180645,
+          "count": 7
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 120466,
+          "min_damage": 37675,
+          "max_damage": 207662,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 135,
+      "dmg_avg": 202765,
+      "dmg_stddev": 26814,
+      "dmg_min": 153406,
+      "dmg_max": 232836,
+      "window_length_s": 2.8,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1251649,
+          "avg_damage": 176328,
+          "min_damage": 172654,
+          "max_damage": 181741,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 55825,
+          "min_damage": 20206,
+          "max_damage": 153406,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 218.1,
+      "dmg_avg": 195657,
+      "dmg_stddev": 19186,
+      "dmg_min": 146168,
+      "dmg_max": 215929,
+      "window_length_s": 5,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281473,
+          "avg_damage": 120514,
+          "min_damage": 116962,
+          "max_damage": 122691,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 99246,
+          "min_damage": 73266,
+          "max_damage": 197143,
+          "count": 10
+        }
+      ]
+    },
+    {
+      "time_s": 328.4,
+      "dmg_avg": 256684,
+      "dmg_stddev": 77043,
+      "dmg_min": 208428,
+      "dmg_max": 437732,
+      "window_length_s": 3.9,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281123,
+          "avg_damage": 123219,
+          "min_damage": 121415,
+          "max_damage": 130376,
+          "count": 6
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 98575,
+          "min_damage": 97132,
+          "max_damage": 104301,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 75474,
+          "min_damage": 19268,
+          "max_damage": 142593,
+          "count": 5
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 16881,
+          "min_damage": 7085,
+          "max_damage": 24375,
+          "count": 4
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 585,
+          "min_damage": 406,
+          "max_damage": 1017,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 393.3,
+      "dmg_avg": 235454,
+      "dmg_stddev": 48951,
+      "dmg_min": 192608,
+      "dmg_max": 282585,
+      "window_length_s": 4.4,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 257959,
+      "ability_breakdown": [
+        {
+          "spell_id": 1251080,
+          "avg_damage": 183767,
+          "min_damage": 181728,
+          "max_damage": 185806,
+          "count": 2
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 65866,
+          "min_damage": 390,
+          "max_damage": 94189,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 14126,
+          "min_damage": 7605,
+          "max_damage": 20746,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 455.6,
+      "dmg_avg": 240932,
+      "dmg_stddev": 72959,
+      "dmg_min": 130014,
+      "dmg_max": 336293,
+      "window_length_s": 6.2,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 6940,
+          "avg_damage": 139465,
+          "min_damage": 90343,
+          "max_damage": 214823,
+          "count": 4
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 98505,
+          "min_damage": 40260,
+          "max_damage": 206576,
+          "count": 7
+        },
+        {
+          "spell_id": 1266810,
+          "avg_damage": 28821,
+          "min_damage": 17722,
+          "max_damage": 41533,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 19742,
+          "min_damage": 13784,
+          "max_damage": 38219,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 528.8,
+      "dmg_avg": 256282,
+      "dmg_stddev": 55869,
+      "dmg_min": 184616,
+      "dmg_max": 346716,
+      "window_length_s": 3.1,
+      "defensive_name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "common_defensives": [
+        "Shield of Vengeance"
+      ],
+      "common_cds": [
+        "Shield of Vengeance"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 190266,
+          "min_damage": 114760,
+          "max_damage": 269284,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 549.4,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 8,
+      "defensive_name": "Divine Shield",
+      "spell_id": 642,
+      "common_defensives": [
+        "Divine Shield"
+      ],
+      "common_cds": [
+        "Divine Shield"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 184662,
+      "avg_uses": 6.6,
+      "min_uses": 3,
+      "max_uses": 8
+    },
+    {
+      "spell_id": 642,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield of Vengeance",
+      "spell_id": 184662,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Press proactively before incoming damage to absorb a large amount and release a burst of damage when it expires, so it doubles as a near free DPS cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to fully immune unavoidable lethal damage or to drop a deadly debuff; cancel it early once the threat passes to minimize the Forbearance lockout on Lay on Hands and Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before predictable magic or mixed damage events for a 20% damage reduction; its short cooldown means you can use it on most repeating raid hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Reserve for an emergency when you or an ally is about to die, fully restoring their health; it triggers Forbearance, so it cannot be chained with Divine Shield or Blessing of Protection.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on yourself or an ally to immune all physical damage during a heavy melee hit; it does not block magic and triggers Forbearance on the target.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Spellwarding",
+      "spell_id": 204018,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "If talented in place of Blessing of Protection, cast to immune a dangerous magical hit on yourself or an ally; it shares Forbearance and does not block physical damage.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Shield of Vengeance": 184662,
+    "Divine Shield": 642,
+    "Divine Protection": 498,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Spellwarding": 204018
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "184662": {
+      "icon": "ability_paladin_shieldofthetemplar",
+      "name": "Shield of Vengeance"
+    },
+    "204018": {
+      "icon": "spell_holy_blessingofprotection",
+      "name": "Blessing of Spellwarding"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1251080": {
+      "icon": "ability_priest_darkarchangel",
+      "name": "The Dark Archangel"
+    },
+    "1251649": {
+      "icon": "inv_pet_naaru",
+      "name": "Disintegration"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1266810": {
+      "icon": "inv_112_raiddimensius_devour",
+      "name": "Light Siphon"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    }
+  },
+  "source_signature": "747587934d58d3a8",
+  "ingest_version": 0
+}

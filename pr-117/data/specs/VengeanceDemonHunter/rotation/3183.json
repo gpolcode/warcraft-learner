@@ -1,0 +1,269 @@
+{
+  "spec": "VengeanceDemonHunter",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "avg_duration_s": 536.8,
+  "downtime_threshold_ms": 1008,
+  "top_avg_efficiency": 64.4,
+  "top_efficiency_stddev": 5.5,
+  "per_cd_benchmarks": {
+    "Metamorphosis": {
+      "sample_count": 10,
+      "avg_first_cast_s": 10.5,
+      "stddev_first_cast_s": 4.3,
+      "avg_gap_s": 29.2,
+      "stddev_gap_s": 18.3,
+      "avg_bl_offset_s": -1.2,
+      "stddev_bl_offset_s": 7.8,
+      "avg_uses": 18.4,
+      "avg_uses_per_min": 2.06,
+      "uses_per_min": {
+        "avg": 2.064,
+        "stddev": 0.308,
+        "min": 1.487,
+        "max": 2.531
+      },
+      "bl_pct": 100,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Fel Devastation": {
+      "sample_count": 10,
+      "avg_first_cast_s": 15,
+      "stddev_first_cast_s": 4.5,
+      "avg_gap_s": 56.9,
+      "stddev_gap_s": 20.1,
+      "avg_bl_offset_s": -7.2,
+      "stddev_bl_offset_s": 15.5,
+      "avg_uses": 8.8,
+      "avg_uses_per_min": 0.98,
+      "uses_per_min": {
+        "avg": 0.982,
+        "stddev": 0.364,
+        "min": 0.35,
+        "max": 1.472
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 78.6,
+          "stddev_s": 10.7,
+          "delay_s": 20.2,
+          "delay_stddev_s": 11.3,
+          "band_s": 11.3,
+          "effective_cd_s": 40,
+          "count": 7,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 140.2,
+          "stddev_s": 7.9,
+          "delay_s": 21,
+          "delay_stddev_s": 5.6,
+          "band_s": 5.6,
+          "effective_cd_s": 40,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 251.7,
+          "stddev_s": 42.5,
+          "delay_s": 56.6,
+          "delay_stddev_s": 42.7,
+          "band_s": 42.7,
+          "effective_cd_s": 40,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 291.5,
+          "stddev_s": 75.2,
+          "delay_s": 16,
+          "delay_stddev_s": 8.9,
+          "band_s": 8.9,
+          "effective_cd_s": 40,
+          "count": 6,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 384.5,
+          "stddev_s": 58.9,
+          "delay_s": 26.9,
+          "delay_stddev_s": 23.2,
+          "band_s": 23.2,
+          "effective_cd_s": 40,
+          "count": 5,
+          "total_samples": 10
+        }
+      }
+    },
+    "Soul Carver": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Sigil of Spite": {
+      "sample_count": 10,
+      "avg_first_cast_s": 16.1,
+      "stddev_first_cast_s": 17.7,
+      "avg_gap_s": 67.5,
+      "stddev_gap_s": 12.2,
+      "avg_bl_offset_s": 11.6,
+      "stddev_bl_offset_s": 19.7,
+      "avg_uses": 8,
+      "avg_uses_per_min": 0.89,
+      "uses_per_min": {
+        "avg": 0.891,
+        "stddev": 0.128,
+        "min": 0.584,
+        "max": 1.009
+      },
+      "bl_pct": 100,
+      "majority_hold": true,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Metamorphosis",
+      "spell_id": 187827,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Use on cooldown once enemies are grouped, but never reapply while already in Metamorphosis with more than 5 seconds remaining since it overwrites rather than extends the duration."
+    },
+    {
+      "name": "Fel Devastation",
+      "spell_id": 212084,
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use generally on cooldown when you have at least 50 Fury; if running Fiery Demise with Down in Flames, sync it with a Fiery Brand cast for the bonus fire damage."
+    },
+    {
+      "name": "Soul Carver",
+      "spell_id": 207407,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use on cooldown with fewer than 3 Souls so the generated fragments are not wasted, and sync it with Fiery Brand if you are talented into Fiery Demise."
+    },
+    {
+      "name": "Sigil of Spite",
+      "spell_id": 390163,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Use on cooldown to generate Soul Fragments, ideally synced with Fiery Brand if talented into Fiery Demise; as Aldrachi Reaver use it to activate Art of the Glaive when no Reaver's Glaive is available."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep generators on cooldown",
+      "condition": null,
+      "action": "Prioritize Fracture and your other generators on cooldown when a priority conflict arises, since Soul Fragment and Fury generation feed the Hero tree procs that drive your damage."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Spend Spirit Bomb at high Soul count",
+      "condition": null,
+      "action": "Always cast Spirit Bomb with 5 or more Souls rather than spending them piecemeal; spending spenders at maximum Soul count gives the most efficiency per global cooldown."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Avoid overcapping Fury and Souls",
+      "condition": null,
+      "action": "Build and spend in waves so you do not overcap either resource; weave in Soul Cleave and Spirit Bomb to bleed off Souls and Fury before your generators come back up."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Sync fire cooldowns with Fiery Brand",
+      "condition": null,
+      "action": "If you are talented into Fiery Demise, cast Fiery Brand first and then fire Soul Carver, Sigil of Spite, and Fel Devastation into the Fiery Brand window to amplify their fire damage."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Do not overwrite active Metamorphosis",
+      "condition": null,
+      "action": "Hold Metamorphosis if you are already in a Metamorphosis from a proc with more than 5 seconds left, because recasting overwrites the duration instead of extending it and wastes the cooldown."
+    },
+    {
+      "type": "opener",
+      "priority": "medium",
+      "description": "Open by getting all cooldowns rolling",
+      "condition": null,
+      "action": "Open with Infernal Strike into the pack, then chain Fracture, Immolation Aura, and your sigils to build Souls, reaching a Spirit Bomb and Metamorphosis once enemies are grouped to get every cooldown rolling early."
+    },
+    {
+      "type": "rotation",
+      "priority": "low",
+      "description": "Pause Fracture at full Voidfall stacks",
+      "condition": null,
+      "action": "As Annihilator, avoid pressing Fracture while at full Voidfall stacks or while spending them since you cannot generate; instead lean on Fracture when you are about to proc the third stack."
+    }
+  ],
+  "cd_spell_ids": {
+    "Metamorphosis": 187827,
+    "Fel Devastation": 212084,
+    "Soul Carver": 207407,
+    "Sigil of Spite": 390163,
+    "Fiery Brand": 204021,
+    "Demon Spikes": 203720,
+    "Darkness": 196718
+  },
+  "ability_icons": {
+    "187827": {
+      "icon": "ability_demonhunter_metamorphasistank",
+      "name": "Metamorphosis"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "203720": {
+      "icon": "ability_demonhunter_demonspikes",
+      "name": "Demon Spikes"
+    },
+    "204021": {
+      "icon": "ability_demonhunter_fierybrand",
+      "name": "Fiery Brand"
+    },
+    "207407": {
+      "icon": "inv_glaive_1h_artifactaldrochi_d_01",
+      "name": "Soul Carver"
+    },
+    "212084": {
+      "icon": "ability_demonhunter_feldevastation",
+      "name": "Fel Devastation"
+    },
+    "390163": {
+      "icon": "inv_ability_demonhunter_elysiandecree",
+      "name": "Sigil of Spite"
+    }
+  },
+  "source_signature": "241db0026d9b268e",
+  "ingest_version": 3
+}

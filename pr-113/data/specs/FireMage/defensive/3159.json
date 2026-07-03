@@ -1,0 +1,162 @@
+{
+  "spec": "FireMage",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blazing Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 113.4,
+      "stddev_first_cast_s": 64,
+      "avg_gap_s": 60.9,
+      "stddev_gap_s": 53.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 267.5,
+          "stddev_s": 100.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 353,
+          "stddev_s": 135.8,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 202.4,
+          "stddev_s": 128.7,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 252,
+          "stddev_s": 128.7,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.677,
+        "stddev": 0.541,
+        "min": 0.141,
+        "max": 1.772
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 9,
+      "avg_first_cast_s": 161.5,
+      "stddev_first_cast_s": 69,
+      "avg_gap_s": 146.6,
+      "stddev_gap_s": 58.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 253.5,
+          "stddev_s": 82.6,
+          "count": 6,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.29,
+        "stddev": 0.138,
+        "min": 0.118,
+        "max": 0.493
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 235313,
+      "avg_uses": 5.1,
+      "min_uses": 1,
+      "max_uses": 15
+    },
+    {
+      "spell_id": 342245,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Use as a full immunity to survive an otherwise lethal hit or to clear a deadly debuff; with the Ice Cold talent it also briefly boosts damage, so it can be worked into a defensive-into-burst plan.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blazing Barrier",
+      "spell_id": 235313,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep this absorb shield up before predictable damage and refresh it on cooldown during damage-heavy phases since the short cooldown allows near-constant uptime.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mass Barrier",
+      "spell_id": 414660,
+      "cooldown": 90,
+      "duration": 60,
+      "usage_rule": "Use before a raid-wide damage event to shield yourself and nearby allies; talent-gated, so only expected when the build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before taking a large hit or moving to a dangerous spot, then let it expire to snap your health and position back to where they were when you cast it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 90,
+      "duration": 3,
+      "usage_rule": "Use to drop threat and gain a strong damage reduction while invisible, ideal for surviving a targeted mechanic; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Blazing Barrier": 235313,
+    "Mass Barrier": 414660,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235313": {
+      "icon": "ability_mage_moltenarmor",
+      "name": "Blazing Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "414660": {
+      "icon": "ability_racial_magicalresistance",
+      "name": "Mass Barrier"
+    }
+  },
+  "source_signature": "51424ce9dbcd40f3",
+  "ingest_version": 2
+}

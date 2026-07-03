@@ -1,0 +1,137 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 5,
+      "avg_first_cast_s": 69.9,
+      "stddev_first_cast_s": 3.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.419,
+        "stddev": 0.013,
+        "min": 0.404,
+        "max": 0.436
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 67.6,
+      "dmg_avg": 446020,
+      "dmg_stddev": 138055,
+      "dmg_min": 240867,
+      "dmg_max": 550650,
+      "dmg_pct_avg": 0.144,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 331870,
+          "min_damage": 139627,
+          "max_damage": 433689,
+          "count": 5
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 92637,
+          "min_damage": 26312,
+          "max_damage": 118761,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "Drop ahead of incoming damage to absorb a large initial hit plus periodic shields; talent_gated since not every build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate during a high-output window to convert a portion of your damage into raid healing; talent_gated and best used when you are already bursting.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a hit or pull threat off the group as an emergency tank-swap or damage-soak tool when no offensive use is needed.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Stone Bulwark Totem": 108270,
+    "Ancestral Guidance": 108281,
+    "Earth Elemental": 198103
+  },
+  "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "0fec37f0711e799a",
+  "ingest_version": 3
+}

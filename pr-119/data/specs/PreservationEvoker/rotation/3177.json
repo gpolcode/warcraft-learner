@@ -1,0 +1,267 @@
+{
+  "spec": "PreservationEvoker",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "avg_duration_s": 239.3,
+  "downtime_threshold_ms": 2644,
+  "top_avg_efficiency": 72.6,
+  "top_efficiency_stddev": 15.1,
+  "per_cd_benchmarks": {
+    "Rewind": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.1,
+      "stddev_first_cast_s": 53.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0.7,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.247,
+        "stddev": 0.032,
+        "min": 0.21,
+        "max": 0.292
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Dream Flight": {
+      "sample_count": 10,
+      "avg_first_cast_s": 101.2,
+      "stddev_first_cast_s": 1.9,
+      "avg_gap_s": 118.3,
+      "stddev_gap_s": 0,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0.4,
+      "avg_uses_per_min": 0.1,
+      "uses_per_min": {
+        "avg": 0.347,
+        "stddev": 0.137,
+        "min": 0.249,
+        "max": 0.504
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Stasis": {
+      "sample_count": 10,
+      "avg_first_cast_s": 44.4,
+      "stddev_first_cast_s": 45.9,
+      "avg_gap_s": 115.8,
+      "stddev_gap_s": 38,
+      "avg_bl_offset_s": 8.5,
+      "stddev_bl_offset_s": 14.5,
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.522,
+        "stddev": 0.153,
+        "min": 0.292,
+        "max": 0.694
+      },
+      "bl_pct": 30,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Tip the Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 57.4,
+      "stddev_first_cast_s": 75.3,
+      "avg_gap_s": 109,
+      "stddev_gap_s": 29.9,
+      "avg_bl_offset_s": 3,
+      "stddev_bl_offset_s": 4.7,
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.566,
+        "stddev": 0.238,
+        "min": 0.21,
+        "max": 0.925
+      },
+      "bl_pct": 40,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Emerald Communion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Rewind",
+      "spell_id": 363534,
+      "cooldown": 240,
+      "align_with_bloodlust": false,
+      "usage_rule": "Line up with the most dangerous damage moment of each fight, ideally right after a large raid hit so the 5-second retroactive heal-over-time refunds 33% of the damage just taken."
+    },
+    {
+      "name": "Dream Flight",
+      "spell_id": 359816,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fly through a stacked group on a recurring damage event to deliver a large area heal plus a lengthy heal-over-time, fitting in as many uses as the fight allows."
+    },
+    {
+      "name": "Stasis",
+      "spell_id": 370537,
+      "cooldown": 90,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Pre-store three high-value spells (for example Dream Breath and Temporal Anomaly) in advance, then release the stored burst right before a known heavy damage event, optionally pairing with Tip the Scales and Temporal Burst haste."
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use to make your next empowered spell instant at maximum rank, commonly paired with Stasis and the Temporal Burst haste window for a large instant healing payoff."
+    },
+    {
+      "name": "Emerald Communion",
+      "spell_id": 370960,
+      "cooldown": 180,
+      "duration": 5,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Channel during a lull when you can stand still to restore mana and deliver sustained group healing; this is a talent choice so absent casts are not necessarily an error."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Cast Temporal Anomaly on cooldown",
+      "condition": null,
+      "action": "Press Temporal Anomaly the moment it comes off cooldown to generate Echo buffs across the group and refresh its absorb; this is your most powerful spell and the core of your throughput."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Consume Echo buffs with the right spell",
+      "condition": null,
+      "action": "Consume your Echo buffs with Merithra's Blessing (or Reversion as a backup) as Chronowarden, or Reversion as Flameshaper; reserve Verdant Embrace for moments that need a large per-target absorb or heal."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Cast Dream Breath after consuming Echoes",
+      "condition": null,
+      "action": "Cast Dream Breath regularly but only after you have consumed your Echo buffs, so the buffs are spent on a stronger spell rather than wasted on Dream Breath."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Pre-pull Temporal Anomaly and Stasis ramp",
+      "condition": null,
+      "action": "Cast Temporal Anomaly a few seconds before the pull to enter with Echo buffs, and pre-store a Stasis ramp so you can release a large heal at the first major damage event."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Pre-plan major cooldowns over danger",
+      "condition": null,
+      "action": "Layer Rewind, Dream Flight, and Stasis over the most dangerous moments of each fight rather than holding them just in case; banked cooldowns cost mana and risk avoidable deaths."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spend Essence Bursts without overcapping",
+      "condition": null,
+      "action": "Cast Echo whenever you have Essence available and spend Essence Bursts on Emerald Blossom so you never waste either resource; with Twin Echoes, weave Emerald Blossom to empower your next Echo casts."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Manage mana around the damage pattern",
+      "condition": null,
+      "action": "Avoid dumping half your mana in the opening Bloodlust minute; align Temporal Anomaly with real damage and skip casts during quiet windows to keep mana for the whole fight."
+    },
+    {
+      "type": "positioning",
+      "priority": "medium",
+      "description": "Stand central to cover the 30 yard range",
+      "condition": null,
+      "action": "Position centrally to offset your reduced 30-yard healing range, and use Hover, Verdant Embrace, Rescue, and Zephyr to reposition or pre-place a heal-over-time on targets drifting out of range."
+    }
+  ],
+  "cd_spell_ids": {
+    "Rewind": 363534,
+    "Dream Flight": 359816,
+    "Stasis": 370537,
+    "Tip the Scales": 370553,
+    "Emerald Communion": 370960,
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Time Dilation": 357170,
+    "Cauterizing Flame": 374251
+  },
+  "ability_icons": {
+    "357170": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "359816": {
+      "icon": "ability_evoker_dreamflight",
+      "name": "Dream Flight"
+    },
+    "363534": {
+      "icon": "ability_evoker_rewind",
+      "name": "Rewind"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370537": {
+      "icon": "ability_evoker_stasis",
+      "name": "Stasis (Store)"
+    },
+    "370553": {
+      "icon": "ability_evoker_tipthescales",
+      "name": "Tip the Scales"
+    },
+    "370960": {
+      "icon": "ability_evoker_green_01",
+      "name": "Emerald Communion"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374251": {
+      "icon": "ability_evoker_fontofmagic_red",
+      "name": "Cauterizing Flame"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "5e98b2a7e9609291",
+  "ingest_version": 3
+}

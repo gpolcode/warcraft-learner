@@ -1,0 +1,438 @@
+{
+  "spec": "HolyPaladin",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Divine Shield": {
+      "sample_count": 9,
+      "avg_first_cast_s": 474.8,
+      "stddev_first_cast_s": 127.5,
+      "avg_gap_s": 247.7,
+      "stddev_gap_s": 44.1,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.135,
+        "stddev": 0.053,
+        "min": 0.105,
+        "max": 0.23
+      },
+      "majority_hold": false
+    },
+    "Blessing of Sacrifice": {
+      "sample_count": 7,
+      "avg_first_cast_s": 353.8,
+      "stddev_first_cast_s": 125.9,
+      "avg_gap_s": 182.2,
+      "stddev_gap_s": 55.2,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.14,
+      "uses_per_min": {
+        "avg": 0.14,
+        "stddev": 0.09,
+        "min": 0.105,
+        "max": 0.344
+      },
+      "majority_hold": false
+    },
+    "Divine Protection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 203.3,
+      "stddev_first_cast_s": 135.6,
+      "avg_gap_s": 79,
+      "stddev_gap_s": 39.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 365.4,
+          "stddev_s": 51.2,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.39,
+      "uses_per_min": {
+        "avg": 0.389,
+        "stddev": 0.324,
+        "min": 0.105,
+        "max": 0.918
+      },
+      "majority_hold": true
+    },
+    "Lay on Hands": {
+      "sample_count": 7,
+      "avg_first_cast_s": 24.7,
+      "stddev_first_cast_s": 25.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.107,
+        "stddev": 0.003,
+        "min": 0.105,
+        "max": 0.113
+      },
+      "majority_hold": false
+    },
+    "Blessing of Protection": {
+      "sample_count": 1,
+      "avg_first_cast_s": 219.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.115,
+        "stddev": 0,
+        "min": 0.115,
+        "max": 0.115
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 219.4,
+      "dmg_avg": 313302,
+      "dmg_stddev": 74686,
+      "dmg_min": 257310,
+      "dmg_max": 442694,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281473,
+          "avg_damage": 163219,
+          "min_damage": 132105,
+          "max_damage": 267725,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 150084,
+          "min_damage": 118533,
+          "max_damage": 177370,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 328.7,
+      "dmg_avg": 512816,
+      "dmg_stddev": 30802,
+      "dmg_min": 454119,
+      "dmg_max": 550986,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 147263,
+          "min_damage": 94111,
+          "max_damage": 166167,
+          "count": 8
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 141366,
+          "min_damage": 111515,
+          "max_damage": 154003,
+          "count": 8
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 117388,
+          "min_damage": 99125,
+          "max_damage": 124486,
+          "count": 8
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 60658,
+          "min_damage": 48811,
+          "max_damage": 65664,
+          "count": 8
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 23418,
+          "min_damage": 17608,
+          "max_damage": 26233,
+          "count": 7
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 543,
+          "min_damage": 214,
+          "max_damage": 1031,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 397.3,
+      "dmg_avg": 448519,
+      "dmg_stddev": 126208,
+      "dmg_min": 331496,
+      "dmg_max": 670211,
+      "window_length_s": 8,
+      "defensive_name": "Divine Protection",
+      "spell_id": 498,
+      "common_defensives": [
+        "Divine Protection"
+      ],
+      "common_cds": [
+        "Divine Protection"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 6940,
+          "avg_damage": 276467,
+          "min_damage": 133076,
+          "max_damage": 426566,
+          "count": 3
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 148615,
+          "min_damage": 92210,
+          "max_damage": 193726,
+          "count": 6
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 32034,
+          "min_damage": 26503,
+          "max_damage": 35968,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 401.1,
+      "dmg_avg": 998929,
+      "dmg_stddev": 98417,
+      "dmg_min": 829635,
+      "dmg_max": 1122997,
+      "window_length_s": 12,
+      "defensive_name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "common_defensives": [
+        "Blessing of Sacrifice"
+      ],
+      "common_cds": [
+        "Blessing of Sacrifice"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 6940,
+          "avg_damage": 472422,
+          "min_damage": 324121,
+          "max_damage": 590536,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 334401,
+          "min_damage": 311451,
+          "max_damage": 357391,
+          "count": 6
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 75735,
+          "min_damage": 35029,
+          "max_damage": 117874,
+          "count": 5
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 61908,
+          "min_damage": 57476,
+          "max_damage": 66502,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 553.4,
+      "dmg_avg": 0,
+      "dmg_stddev": 0,
+      "dmg_min": 0,
+      "dmg_max": 0,
+      "window_length_s": 8,
+      "defensive_name": "Divine Shield",
+      "spell_id": 642,
+      "common_defensives": [
+        "Divine Shield"
+      ],
+      "common_cds": [
+        "Divine Shield"
+      ],
+      "ref_game_id": null,
+      "ability_breakdown": []
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 642,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 633,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 1022,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 6940,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 498,
+      "avg_uses": 3.5,
+      "min_uses": 1,
+      "max_uses": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use to save yourself in an emergency or after a mistake, or in Mythic+ as a pseudo healing cooldown since removing yourself from the heal load is roughly a 20% group damage reduction; it also fully immunes Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "duration": null,
+      "usage_rule": "Use to instantly fully heal a player who would otherwise die; treat it as a last-resort emergency button given its very long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Cast on an ally to immune physical damage or remove a deadly physical debuff like a bleed; remember it wipes the target's aggro, so do not use it on the tank unless asked, and with Echoing Blessings it also grants 15% magic reduction.",
+      "talent_gated": false
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use it often as your main external on a player taking heavy damage; it transfers a share of their damage to you, so watch your own health and avoid using it on tanks taking giant hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press before a predictable burst of incoming damage to reduce magic damage taken; note it does not reduce Blessing of Sacrifice transfer damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Divine Shield": 642,
+    "Lay on Hands": 633,
+    "Blessing of Protection": 1022,
+    "Blessing of Sacrifice": 6940,
+    "Divine Protection": 498
+  },
+  "ability_icons": {
+    "498": {
+      "icon": "spell_holy_divineprotection",
+      "name": "Divine Protection"
+    },
+    "633": {
+      "icon": "spell_holy_layonhands",
+      "name": "Lay on Hands"
+    },
+    "642": {
+      "icon": "spell_holy_divineshield",
+      "name": "Divine Shield"
+    },
+    "1022": {
+      "icon": "spell_holy_sealofprotection",
+      "name": "Blessing of Protection"
+    },
+    "6940": {
+      "icon": "spell_holy_sealofsacrifice",
+      "name": "Blessing of Sacrifice"
+    },
+    "1249594": {
+      "icon": "inv_10_inscription_vantusrune_color1",
+      "name": "Dark Rune"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    }
+  },
+  "source_signature": "6c898ad17980501b",
+  "ingest_version": 1
+}

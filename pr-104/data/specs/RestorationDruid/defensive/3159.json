@@ -1,0 +1,216 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 194.2,
+      "stddev_first_cast_s": 121.3,
+      "avg_gap_s": 88.2,
+      "stddev_gap_s": 26.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 234.1,
+          "stddev_s": 96.8,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 389.1,
+          "stddev_s": 104.7,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.455,
+        "stddev": 0.21,
+        "min": 0.134,
+        "max": 0.783
+      },
+      "majority_hold": true
+    },
+    "Ironbark": {
+      "sample_count": 7,
+      "avg_first_cast_s": 191.6,
+      "stddev_first_cast_s": 117.5,
+      "avg_gap_s": 130.7,
+      "stddev_gap_s": 35.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 302.4,
+          "stddev_s": 123.3,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.247,
+        "stddev": 0.133,
+        "min": 0.14,
+        "max": 0.522
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 269.3,
+      "dmg_avg": 564372,
+      "dmg_stddev": 174695,
+      "dmg_min": 341312,
+      "dmg_max": 805022,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 238893,
+          "min_damage": 38121,
+          "max_damage": 565834,
+          "count": 5
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 236081,
+          "min_damage": 193831,
+          "max_damage": 292384,
+          "count": 6
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 171175,
+          "min_damage": 154483,
+          "max_damage": 191110,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 367.8,
+      "dmg_avg": 664932,
+      "dmg_stddev": 232130,
+      "dmg_min": 366709,
+      "dmg_max": 960759,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 358551,
+          "min_damage": 325018,
+          "max_damage": 387657,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.4,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "5cd3187a598d65e0",
+  "ingest_version": 0
+}

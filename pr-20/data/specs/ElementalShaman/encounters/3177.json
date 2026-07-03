@@ -1,0 +1,607 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "avg_duration_s": 213.2,
+  "last_ingested": "2026-06-14 10:20:05",
+  "downtime_threshold_ms": 2317,
+  "top_avg_efficiency": 75.1,
+  "top_efficiency_stddev": 4.2,
+  "per_cd_benchmarks": {
+    "Stormkeeper": {
+      "sample_count": 10,
+      "avg_first_cast_s": 14.1,
+      "stddev_first_cast_s": 21.9,
+      "avg_gap_s": 48.7,
+      "stddev_gap_s": 4.6,
+      "avg_bl_offset_s": 22.4,
+      "stddev_bl_offset_s": 26.3,
+      "hold_targets": {},
+      "uses_per_min": {
+        "avg": 1.298,
+        "stddev": 0.156,
+        "min": 1.072,
+        "max": 1.474
+      },
+      "avg_uses": 4.6,
+      "avg_uses_per_min": 1.3,
+      "bl_pct": 40,
+      "majority_hold": false
+    },
+    "Ancestral Swiftness": {
+      "sample_count": 10,
+      "avg_first_cast_s": null,
+      "stddev_first_cast_s": null,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "hold_targets": {},
+      "uses_per_min": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "bl_pct": 0,
+      "majority_hold": false
+    },
+    "Ascendance": {
+      "sample_count": 10,
+      "avg_first_cast_s": 1.2,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 183.8,
+      "stddev_gap_s": 21.9,
+      "avg_bl_offset_s": 0.2,
+      "stddev_bl_offset_s": 0.2,
+      "hold_targets": {
+        "2": {
+          "target_s": 192.5,
+          "stddev_s": 1.7,
+          "count": 9,
+          "total_samples": 10
+        }
+      },
+      "uses_per_min": {
+        "avg": 0.565,
+        "stddev": 0.035,
+        "min": 0.507,
+        "max": 0.636
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.56,
+      "bl_pct": 40,
+      "majority_hold": true
+    },
+    "On-use Trinket": {
+      "sample_count": 10,
+      "avg_first_cast_s": null,
+      "stddev_first_cast_s": null,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "hold_targets": {},
+      "uses_per_min": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "bl_pct": 0,
+      "majority_hold": false
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 0.9,
+      "stddev_s": 0.9,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 8126139,
+      "dmg_stddev": 756421,
+      "dmg_min": 6951211,
+      "dmg_max": 9236461,
+      "ability_breakdown": [
+        {
+          "spell_id": 45284,
+          "avg_damage": 1784629,
+          "min_damage": 1402910,
+          "max_damage": 2259623,
+          "count": 10
+        },
+        {
+          "spell_id": 463351,
+          "avg_damage": 1033237,
+          "min_damage": 485358,
+          "max_damage": 1640127,
+          "count": 9
+        },
+        {
+          "spell_id": 188196,
+          "avg_damage": 1001589,
+          "min_damage": 794030,
+          "max_damage": 1196695,
+          "count": 10
+        },
+        {
+          "spell_id": 57984,
+          "avg_damage": 706834,
+          "min_damage": 551317,
+          "max_damage": 850293,
+          "count": 9
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 611094,
+          "min_damage": 548375,
+          "max_damage": 633044,
+          "count": 5
+        },
+        {
+          "spell_id": 120588,
+          "avg_damage": 579316,
+          "min_damage": 442842,
+          "max_damage": 662912,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    },
+    {
+      "time_s": 192.5,
+      "stddev_s": 1.7,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 9757291,
+      "dmg_stddev": 1248604,
+      "dmg_min": 7413800,
+      "dmg_max": 11217146,
+      "ability_breakdown": [
+        {
+          "spell_id": 45297,
+          "avg_damage": 2971381,
+          "min_damage": 2094445,
+          "max_damage": 3799027,
+          "count": 6
+        },
+        {
+          "spell_id": 463351,
+          "avg_damage": 1106434,
+          "min_damage": 715124,
+          "max_damage": 1677686,
+          "count": 8
+        },
+        {
+          "spell_id": 120588,
+          "avg_damage": 852643,
+          "min_damage": 522209,
+          "max_damage": 1159051,
+          "count": 5
+        },
+        {
+          "spell_id": 117014,
+          "avg_damage": 821036,
+          "min_damage": 562230,
+          "max_damage": 1225167,
+          "count": 9
+        },
+        {
+          "spell_id": 285466,
+          "avg_damage": 818252,
+          "min_damage": 672058,
+          "max_damage": 1119972,
+          "count": 6
+        },
+        {
+          "spell_id": 452201,
+          "avg_damage": 782136,
+          "min_damage": 555662,
+          "max_damage": 886528,
+          "count": 6
+        }
+      ],
+      "common_cds": [
+        "Ascendance"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 15
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:103584,103586,103593,103599,103607,103612,103617,103620,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+        "count": 2,
+        "pct": 20,
+        "report_code": "JjLvXkp6P9RNh27G",
+        "fight_id": 28,
+        "player_name": "느긋한쿠키"
+      },
+      {
+        "key": "v2:103584,103586,103587,103593,103607,103612,103617,103620,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+        "count": 1,
+        "pct": 10,
+        "report_code": "RmyQWM7abLrdVPwC",
+        "fight_id": 38,
+        "player_name": "Zorthar"
+      },
+      {
+        "key": "v2:103584,103586,103593,103607,103612,103617,103620,103624,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+        "count": 1,
+        "pct": 10,
+        "report_code": "GCbKFQ6cvfpzkBAa",
+        "fight_id": 31,
+        "player_name": "今晚吃什么呢"
+      },
+      {
+        "key": "v2:103584,103586,103593,103599,103607,103612,103617,103620,103625,103626,103634,103640,109386,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+        "count": 1,
+        "pct": 10,
+        "report_code": "tpfhbzZ8d2gaKxjm",
+        "fight_id": 11,
+        "player_name": "安和昴"
+      },
+      {
+        "key": "v2:103584,103586,103593,103599,103607,103612,103617,103620,103624,103625,103626,103634,103640,109387,110402,110402,110402,80978,80989,80991,80992,80993,80995,80996,81002,81008,81012,81015",
+        "count": 1,
+        "pct": 10,
+        "report_code": "NxkA498f6HGhXyDg",
+        "fight_id": 8,
+        "player_name": "Fizzlle"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "13": [
+        {
+          "id": 249346,
+          "name": "Vaelgor's Final Stare",
+          "count": 5,
+          "pct": 50
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 249809,
+          "name": "Locus-Walker's Ribbon",
+          "count": 2,
+          "pct": 20
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 8017,
+          "name": "",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7961,
+          "name": "",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "2": [
+        {
+          "id": 8001,
+          "name": "",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7973,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "6": [
+        {
+          "id": 7935,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 7963,
+          "name": "",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 8019,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "15": [
+        {
+          "id": 7981,
+          "name": "",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8039,
+          "name": "",
+          "count": 2,
+          "pct": 20
+        },
+        {
+          "id": 8041,
+          "name": "",
+          "count": 1,
+          "pct": 10
+        }
+      ]
+    },
+    "gems": {
+      "avg_count": 6.7,
+      "max_count": 8,
+      "sample_count": 10
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 9
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1,
+      "sample_count": 1
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 9,
+      "avg_first_cast_s": 111.7,
+      "stddev_first_cast_s": 53.8,
+      "avg_gap_s": 115.9,
+      "stddev_gap_s": 16.6,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.38,
+      "majority_hold": false
+    },
+    "Earth Elemental": {
+      "sample_count": 1,
+      "avg_first_cast_s": 63.9,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.28,
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 83.3,
+      "stddev_s": 5.8,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 327927,
+      "dmg_stddev": 86938,
+      "dmg_min": 223718,
+      "dmg_max": 454846,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 144201,
+          "min_damage": 44689,
+          "max_damage": 235629,
+          "count": 7
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 45721,
+          "min_damage": 44620,
+          "max_damage": 47807,
+          "count": 7
+        }
+      ],
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ]
+    },
+    {
+      "time_s": 208.6,
+      "stddev_s": 6.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 373718,
+      "dmg_stddev": 322043,
+      "dmg_min": 74237,
+      "dmg_max": 806543,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 182574,
+          "min_damage": 96826,
+          "max_damage": 313328,
+          "count": 3
+        },
+        {
+          "spell_id": 1276824,
+          "avg_damage": 169950,
+          "min_damage": 165960,
+          "max_damage": 173940,
+          "count": 2
+        },
+        {
+          "spell_id": 1272328,
+          "avg_damage": 59107,
+          "min_damage": 57226,
+          "max_damage": 60988,
+          "count": 2
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 57482,
+          "min_damage": 29546,
+          "max_damage": 87606,
+          "count": 4
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 32128,
+          "min_damage": 19701,
+          "max_damage": 44691,
+          "count": 3
+        }
+      ],
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ]
+    }
+  ],
+  "top_dtk_comparison": [
+    {
+      "spell_id": 1272950,
+      "avg_pct": 0.2487,
+      "min_pct": 0.175,
+      "max_pct": 0.288,
+      "stddev_pct": 0.0389,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1275558,
+      "avg_pct": 0.1243,
+      "min_pct": 0.098,
+      "max_pct": 0.154,
+      "stddev_pct": 0.0186,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1241808,
+      "avg_pct": 0.1143,
+      "min_pct": 0.089,
+      "max_pct": 0.137,
+      "stddev_pct": 0.0164,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1280101,
+      "avg_pct": 0.1143,
+      "min_pct": 0.086,
+      "max_pct": 0.188,
+      "stddev_pct": 0.0282,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1272328,
+      "avg_pct": 0.1062,
+      "min_pct": 0.073,
+      "max_pct": 0.127,
+      "stddev_pct": 0.0191,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1259186,
+      "avg_pct": 0.1061,
+      "min_pct": 0.06,
+      "max_pct": 0.142,
+      "stddev_pct": 0.0208,
+      "sample_count": 10
+    },
+    {
+      "spell_id": 1260052,
+      "avg_pct": 0.0619,
+      "min_pct": 0.052,
+      "max_pct": 0.074,
+      "stddev_pct": 0.0072,
+      "sample_count": 8
+    },
+    {
+      "spell_id": 1276824,
+      "avg_pct": 0.0605,
+      "min_pct": 0.022,
+      "max_pct": 0.082,
+      "stddev_pct": 0.0264,
+      "sample_count": 4
+    }
+  ]
+}

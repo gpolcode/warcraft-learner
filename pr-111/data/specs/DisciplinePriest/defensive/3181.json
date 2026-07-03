@@ -1,0 +1,185 @@
+{
+  "spec": "DisciplinePriest",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 9,
+      "avg_first_cast_s": 180.7,
+      "stddev_first_cast_s": 156.3,
+      "avg_gap_s": 176.7,
+      "stddev_gap_s": 84.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 410.5,
+          "stddev_s": 132.8,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 392.6,
+          "stddev_s": 99.1,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.277,
+        "stddev": 0.114,
+        "min": 0.121,
+        "max": 0.467
+      },
+      "majority_hold": true
+    },
+    "Fade": {
+      "sample_count": 9,
+      "avg_first_cast_s": 97.2,
+      "stddev_first_cast_s": 103.6,
+      "avg_gap_s": 86.7,
+      "stddev_gap_s": 81.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 151.1,
+          "stddev_s": 126.8,
+          "count": 8,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 355.4,
+          "stddev_s": 98.1,
+          "count": 8,
+          "total_samples": 9
+        },
+        "3": {
+          "target_s": 373,
+          "stddev_s": 85.8,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 5.1,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.614,
+        "stddev": 0.262,
+        "min": 0.343,
+        "max": 0.966
+      },
+      "majority_hold": true
+    },
+    "Pain Suppression": {
+      "sample_count": 2,
+      "avg_first_cast_s": 233.2,
+      "stddev_first_cast_s": 111.9,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.119,
+        "stddev": 0.003,
+        "min": 0.117,
+        "max": 0.121
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 33206,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 586,
+      "avg_uses": 5.1,
+      "min_uses": 3,
+      "max_uses": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Pain Suppression",
+      "spell_id": 33206,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Cast on yourself or an ally to cut incoming damage by 40 percent during a tankbuster or burst, and use it as raid mitigation in Mythic+ when you lack a healing cooldown to top players up.",
+      "talent_gated": false
+    },
+    {
+      "name": "Power Word: Barrier",
+      "spell_id": 62618,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Drop on a stacked group ahead of a heavy raid-wide hit to reduce damage taken for everyone standing inside it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press when your own health drops below about 75 percent for an instant burst of self-healing and a temporary maximum-health increase, especially after a Shadow Word: Death backlash.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Use to survive a lethal spike of magic damage; it reduces all damage taken by 75 percent but locks you out of casting, so reserve it for emergencies where you cannot heal through the hit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Press to drop threat and, with the Phantom Reach or damage-reduction talent, to soften incoming personal damage during AoE-heavy phases.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Pain Suppression": 33206,
+    "Power Word: Barrier": 62618,
+    "Desperate Prayer": 19236,
+    "Dispersion": 47585,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "33206": {
+      "icon": "spell_holy_painsupression",
+      "name": "Pain Suppression"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "62618": {
+      "icon": "spell_holy_powerwordbarrier",
+      "name": "Power Word: Barrier"
+    }
+  },
+  "source_signature": "0ff53744d681f115",
+  "ingest_version": 2
+}

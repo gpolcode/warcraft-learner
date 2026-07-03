@@ -1,0 +1,524 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 92.7,
+      "stddev_first_cast_s": 37.9,
+      "avg_gap_s": 90.7,
+      "stddev_gap_s": 29.9,
+      "hold_targets": {
+        "1": {
+          "target_s": 232.6,
+          "stddev_s": 57.1,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 248.7,
+          "stddev_s": 38.7,
+          "count": 8,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 304.3,
+          "stddev_s": 40.8,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.6,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.574,
+        "stddev": 0.099,
+        "min": 0.443,
+        "max": 0.687
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 10,
+      "avg_first_cast_s": 98.2,
+      "stddev_first_cast_s": 76.2,
+      "avg_gap_s": 118.8,
+      "stddev_gap_s": 55.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 238,
+          "stddev_s": 54.3,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 346.2,
+          "stddev_s": 18.2,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.46,
+      "uses_per_min": {
+        "avg": 0.456,
+        "stddev": 0.166,
+        "min": 0.204,
+        "max": 0.774
+      },
+      "majority_hold": true
+    },
+    "Survival Instincts": {
+      "sample_count": 7,
+      "avg_first_cast_s": 203.7,
+      "stddev_first_cast_s": 98.8,
+      "avg_gap_s": 212.5,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.19,
+      "uses_per_min": {
+        "avg": 0.188,
+        "stddev": 0.064,
+        "min": 0.148,
+        "max": 0.326
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 22.5,
+      "dmg_avg": 253885,
+      "dmg_stddev": 42951,
+      "dmg_min": 212147,
+      "dmg_max": 291737,
+      "window_length_s": 3,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240438,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 234013,
+          "min_damage": 197009,
+          "max_damage": 275281,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 19137,
+          "min_damage": 14840,
+          "max_damage": 31044,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 69.9,
+      "dmg_avg": 536358,
+      "dmg_stddev": 169387,
+      "dmg_min": 308336,
+      "dmg_max": 734458,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 184190,
+          "min_damage": 127114,
+          "max_damage": 257017,
+          "count": 6
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 137809,
+          "min_damage": 101074,
+          "max_damage": 232000,
+          "count": 5
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 137136,
+          "min_damage": 124860,
+          "max_damage": 148824,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 100946,
+          "min_damage": 89700,
+          "max_damage": 112134,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 143.1,
+      "dmg_avg": 351121,
+      "dmg_stddev": 130985,
+      "dmg_min": 115368,
+      "dmg_max": 499618,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 107865,
+          "min_damage": 68249,
+          "max_damage": 124750,
+          "count": 7
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 94352,
+          "min_damage": 46768,
+          "max_damage": 149205,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 195.7,
+      "dmg_avg": 151704,
+      "dmg_stddev": 141903,
+      "dmg_min": 27502,
+      "dmg_max": 373242,
+      "window_length_s": 3,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240438,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 153632,
+          "min_damage": 87225,
+          "max_damage": 213008,
+          "count": 3
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 33064,
+          "min_damage": 27502,
+          "max_damage": 46182,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 233.8,
+      "dmg_avg": 552455,
+      "dmg_stddev": 223858,
+      "dmg_min": 387016,
+      "dmg_max": 1113531,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 206007,
+          "min_damage": 94428,
+          "max_damage": 679638,
+          "count": 6
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 175473,
+          "min_damage": 26263,
+          "max_damage": 282288,
+          "count": 8
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 144888,
+          "min_damage": 108662,
+          "max_damage": 155672,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 241.6,
+      "dmg_avg": 135456,
+      "dmg_stddev": 80344,
+      "dmg_min": 41643,
+      "dmg_max": 224244,
+      "window_length_s": 2.6,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240438,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 101501,
+          "min_damage": 76988,
+          "max_damage": 126013,
+          "count": 2
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 37632,
+          "min_damage": 24452,
+          "max_damage": 46800,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 301.5,
+      "dmg_avg": 564248,
+      "dmg_stddev": 241357,
+      "dmg_min": 254265,
+      "dmg_max": 849219,
+      "window_length_s": 12,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 221940,
+          "min_damage": 166990,
+          "max_damage": 265536,
+          "count": 5
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 152167,
+          "min_damage": 123409,
+          "max_damage": 172567,
+          "count": 7
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 127039,
+          "min_damage": 108907,
+          "max_damage": 144109,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 305.1,
+      "dmg_avg": 206665,
+      "dmg_stddev": 127036,
+      "dmg_min": 84864,
+      "dmg_max": 320755,
+      "window_length_s": 2,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 242609,
+          "min_damage": 201850,
+          "max_damage": 283367,
+          "count": 2
+        },
+        {
+          "spell_id": 1246502,
+          "avg_damage": 84015,
+          "min_damage": 83709,
+          "max_damage": 84320,
+          "count": 2
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 43354,
+          "min_damage": 25489,
+          "max_damage": 84864,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 346.4,
+      "dmg_avg": 254104,
+      "dmg_stddev": 137093,
+      "dmg_min": 55766,
+      "dmg_max": 513964,
+      "window_length_s": 2.9,
+      "defensive_name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "common_defensives": [
+        "Frenzied Regeneration"
+      ],
+      "common_cds": [
+        "Frenzied Regeneration"
+      ],
+      "ref_game_id": 240438,
+      "ability_breakdown": [
+        {
+          "spell_id": 1255739,
+          "avg_damage": 247262,
+          "min_damage": 166997,
+          "max_damage": 513964,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 48584,
+          "min_damage": 38237,
+          "max_damage": 72582,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 3.6,
+      "min_uses": 3,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2.9,
+      "min_uses": 1,
+      "max_uses": 5
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "faf8c88bf23a530e"
+}

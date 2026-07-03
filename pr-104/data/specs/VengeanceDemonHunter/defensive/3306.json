@@ -1,0 +1,319 @@
+{
+  "spec": "VengeanceDemonHunter",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Fiery Brand": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.7,
+      "stddev_first_cast_s": 2.7,
+      "avg_gap_s": 36.9,
+      "stddev_gap_s": 14.3,
+      "hold_targets": {},
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 1.65,
+      "uses_per_min": {
+        "avg": 1.654,
+        "stddev": 0.232,
+        "min": 1.253,
+        "max": 2.027
+      },
+      "majority_hold": false
+    },
+    "Demon Spikes": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.8,
+      "stddev_first_cast_s": 2.5,
+      "avg_gap_s": 10.3,
+      "stddev_gap_s": 5.8,
+      "hold_targets": {},
+      "avg_uses": 15.6,
+      "avg_uses_per_min": 5.98,
+      "uses_per_min": {
+        "avg": 5.98,
+        "stddev": 1.432,
+        "min": 3.895,
+        "max": 8.033
+      },
+      "majority_hold": false
+    },
+    "Metamorphosis": {
+      "sample_count": 10,
+      "avg_first_cast_s": 11.4,
+      "stddev_first_cast_s": 10.8,
+      "avg_gap_s": 40.9,
+      "stddev_gap_s": 18.4,
+      "hold_targets": {},
+      "avg_uses": 3.9,
+      "avg_uses_per_min": 1.43,
+      "uses_per_min": {
+        "avg": 1.432,
+        "stddev": 0.298,
+        "min": 1.205,
+        "max": 2.088
+      },
+      "majority_hold": false
+    },
+    "Darkness": {
+      "sample_count": 4,
+      "avg_first_cast_s": 91.2,
+      "stddev_first_cast_s": 32.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.408,
+        "stddev": 0.009,
+        "min": 0.403,
+        "max": 0.421
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 4.3,
+      "dmg_avg": 718291,
+      "dmg_stddev": 356775,
+      "dmg_min": 81620,
+      "dmg_max": 1378502,
+      "window_length_s": 32,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 331232,
+          "min_damage": 58112,
+          "max_damage": 500222,
+          "count": 8
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 265201,
+          "min_damage": 124253,
+          "max_damage": 400936,
+          "count": 7
+        },
+        {
+          "spell_id": 1258610,
+          "avg_damage": 73428,
+          "min_damage": 63429,
+          "max_damage": 81620,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 30.2,
+      "dmg_avg": 600385,
+      "dmg_stddev": 735254,
+      "dmg_min": 145182,
+      "dmg_max": 1900962,
+      "window_length_s": 18.6,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 181953,
+          "min_damage": 60498,
+          "max_damage": 493921,
+          "count": 5
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 124054,
+          "min_damage": 46120,
+          "max_damage": 248939,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 91.9,
+      "dmg_avg": 1375362,
+      "dmg_stddev": 1559556,
+      "dmg_min": 136034,
+      "dmg_max": 5022063,
+      "window_length_s": 22.5,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 275118,
+          "min_damage": 61951,
+          "max_damage": 522881,
+          "count": 13
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 263316,
+          "min_damage": 11211,
+          "max_damage": 565322,
+          "count": 14
+        }
+      ]
+    },
+    {
+      "time_s": 136.7,
+      "dmg_avg": 354551,
+      "dmg_stddev": 156616,
+      "dmg_min": 89707,
+      "dmg_max": 474378,
+      "window_length_s": 13,
+      "defensive_name": "Metamorphosis",
+      "spell_id": 187827,
+      "common_defensives": [
+        "Metamorphosis"
+      ],
+      "common_cds": [
+        "Metamorphosis"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246653,
+          "avg_damage": 198755,
+          "min_damage": 157201,
+          "max_damage": 269653,
+          "count": 4
+        },
+        {
+          "spell_id": 1273112,
+          "avg_damage": 181962,
+          "min_damage": 89707,
+          "max_damage": 288133,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 204021,
+      "avg_uses": 4.4,
+      "min_uses": 3,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 203720,
+      "avg_uses": 15.6,
+      "min_uses": 11,
+      "max_uses": 20
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 187827,
+      "avg_uses": 3.9,
+      "min_uses": 3,
+      "max_uses": 8
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Fiery Brand",
+      "spell_id": 204021,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Use on cooldown to reduce incoming damage from the branded target; you can hold it up to 10 seconds for a known large tankbuster, and with Down in Flames sync one charge with offensive cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Demon Spikes",
+      "spell_id": 203720,
+      "cooldown": 20,
+      "duration": 6,
+      "usage_rule": "Press whenever you have no other defensive active to gain armor and physical damage reduction; its charges recharge with haste so use it freely to keep near-constant uptime while tanking.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Use on cooldown for the raid's dodge chance, but hold it for heavy group damage phases or multi-hit pulls; cooldown drops to 3 minutes with Pitch Black talented.",
+      "talent_gated": false
+    },
+    {
+      "name": "Metamorphosis",
+      "spell_id": 187827,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Beyond its damage, Metamorphosis grants a large health increase and armor, so it doubles as an emergency survival cooldown when you are taking heavy damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Fiery Brand": 204021,
+    "Demon Spikes": 203720,
+    "Darkness": 196718,
+    "Metamorphosis": 187827
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "187827": {
+      "icon": "ability_demonhunter_metamorphasistank",
+      "name": "Metamorphosis"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "203720": {
+      "icon": "ability_demonhunter_demonspikes",
+      "name": "Demon Spikes"
+    },
+    "204021": {
+      "icon": "ability_demonhunter_fierybrand",
+      "name": "Fiery Brand"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1258610": {
+      "icon": "inv_azeritefireball",
+      "name": "Rift Emergence"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "27de066b99259163",
+  "ingest_version": 0
+}

@@ -1,0 +1,241 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 7,
+      "avg_first_cast_s": 73.7,
+      "stddev_first_cast_s": 52.5,
+      "avg_gap_s": 26.4,
+      "stddev_gap_s": 25.7,
+      "hold_targets": {},
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 1.12,
+      "uses_per_min": {
+        "avg": 1.123,
+        "stddev": 0.262,
+        "min": 0.762,
+        "max": 1.524
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 2,
+      "avg_first_cast_s": 104.8,
+      "stddev_first_cast_s": 2.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.37,
+      "uses_per_min": {
+        "avg": 0.366,
+        "stddev": 0.012,
+        "min": 0.357,
+        "max": 0.374
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 49.4,
+      "dmg_avg": 288742,
+      "dmg_stddev": 324894,
+      "dmg_min": 27310,
+      "dmg_max": 924399,
+      "window_length_s": 7.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 91936,
+          "min_damage": 27310,
+          "max_damage": 247797,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 88.4,
+      "dmg_avg": 270218,
+      "dmg_stddev": 258940,
+      "dmg_min": 0,
+      "dmg_max": 694686,
+      "window_length_s": 6.5,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 185577,
+          "min_damage": 113318,
+          "max_damage": 277864,
+          "count": 3
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 118404,
+          "min_damage": 16893,
+          "max_damage": 192604,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 117.2,
+      "dmg_avg": 232569,
+      "dmg_stddev": 252258,
+      "dmg_min": 0,
+      "dmg_max": 584509,
+      "window_length_s": 10.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 310092,
+          "min_damage": 118905,
+          "max_damage": 584509,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 169.3,
+      "dmg_avg": 110997,
+      "dmg_stddev": 173481,
+      "dmg_min": 0,
+      "dmg_max": 408318,
+      "window_length_s": 8.3,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 64154,
+          "min_damage": 25871,
+          "max_damage": 100702,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 3.1,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "ec4b2c5a7c17460d",
+  "ingest_version": 1
+}

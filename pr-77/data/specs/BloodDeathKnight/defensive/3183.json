@@ -1,0 +1,1981 @@
+{
+  "spec": "BloodDeathKnight",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "avg_duration_s": 539.7,
+  "downtime_threshold_ms": 1049,
+  "top_avg_efficiency": 80.8,
+  "top_efficiency_stddev": 14.3,
+  "per_cd_benchmarks": {
+    "Dancing Rune Weapon": {
+      "sample_count": 10,
+      "avg_first_cast_s": 6.1,
+      "stddev_first_cast_s": 3,
+      "avg_gap_s": 98,
+      "stddev_gap_s": 11.3,
+      "hold_targets": {},
+      "avg_uses": 6.1,
+      "avg_uses_per_min": 0.68,
+      "uses_per_min": {
+        "avg": 0.678,
+        "stddev": 0.047,
+        "min": 0.577,
+        "max": 0.733
+      },
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Reaper's Mark": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    },
+    "Consumption": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {},
+      "majority_hold": false,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "bl_pct": 0
+    }
+  },
+  "burst_windows": [
+    {
+      "time_s": 7,
+      "stddev_s": 1.6,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 4105139,
+      "dmg_stddev": 920237,
+      "dmg_min": 3353473,
+      "dmg_max": 6011634,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2177466,
+          "min_damage": 1663564,
+          "max_damage": 3139056,
+          "count": 7,
+          "avg_casts": 4
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 657246,
+          "min_damage": 327622,
+          "max_damage": 1317736,
+          "count": 6,
+          "avg_casts": 1
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 348418,
+          "min_damage": 176000,
+          "max_damage": 544274,
+          "count": 6,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 317290,
+          "min_damage": 170053,
+          "max_damage": 534418,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 218113,
+          "min_damage": 157262,
+          "max_damage": 287505,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 179136,
+          "min_damage": 156823,
+          "max_damage": 191773,
+          "count": 6,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 132.7,
+      "stddev_s": 1.5,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 5339399,
+      "dmg_stddev": 861331,
+      "dmg_min": 4358219,
+      "dmg_max": 6382111,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 2654117,
+          "min_damage": 2278280,
+          "max_damage": 3242756,
+          "count": 4,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 1075844,
+          "min_damage": 446788,
+          "max_damage": 1615941,
+          "count": 4,
+          "avg_casts": 2
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 375186,
+          "min_damage": 357262,
+          "max_damage": 396451,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 367594,
+          "min_damage": 239743,
+          "max_damage": 556042,
+          "count": 4,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 1263752,
+          "avg_damage": 315039,
+          "min_damage": 190619,
+          "max_damage": 383226,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 197664,
+          "min_damage": 175688,
+          "max_damage": 221264,
+          "count": 3,
+          "avg_casts": 0
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 372.4,
+      "stddev_s": 4.6,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 6522815,
+      "dmg_stddev": 455726,
+      "dmg_min": 5701632,
+      "dmg_max": 7116004,
+      "ability_breakdown": [
+        {
+          "spell_id": 49998,
+          "avg_damage": 4274570,
+          "min_damage": 3745010,
+          "max_damage": 4854475,
+          "count": 7,
+          "avg_casts": 6
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 580474,
+          "min_damage": 430714,
+          "max_damage": 682302,
+          "count": 7,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 542360,
+          "min_damage": 470147,
+          "max_damage": 601302,
+          "count": 7,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 1263786,
+          "avg_damage": 245812,
+          "min_damage": 163362,
+          "max_damage": 366823,
+          "count": 4,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 55078,
+          "avg_damage": 196749,
+          "min_damage": 132741,
+          "max_damage": 243387,
+          "count": 5,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 434144,
+          "avg_damage": 176162,
+          "min_damage": 129548,
+          "max_damage": 244657,
+          "count": 5,
+          "avg_casts": 7
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    },
+    {
+      "time_s": 463.2,
+      "stddev_s": 5.5,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 7291916,
+      "dmg_stddev": 4148672,
+      "dmg_min": 3403363,
+      "dmg_max": 12356138,
+      "ability_breakdown": [
+        {
+          "spell_id": 1292446,
+          "avg_damage": 5332954,
+          "min_damage": 5315667,
+          "max_damage": 5341599,
+          "count": 3,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 49998,
+          "avg_damage": 2690799,
+          "min_damage": 1282470,
+          "max_damage": 4130666,
+          "count": 6,
+          "avg_casts": 5
+        },
+        {
+          "spell_id": 433895,
+          "avg_damage": 491143,
+          "min_damage": 300590,
+          "max_damage": 811876,
+          "count": 6,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 1,
+          "avg_damage": 393924,
+          "min_damage": 261784,
+          "max_damage": 530497,
+          "count": 6,
+          "avg_casts": 0
+        },
+        {
+          "spell_id": 434144,
+          "avg_damage": 256923,
+          "min_damage": 105762,
+          "max_damage": 547983,
+          "count": 5,
+          "avg_casts": 7
+        },
+        {
+          "spell_id": 50842,
+          "avg_damage": 227050,
+          "min_damage": 135484,
+          "max_damage": 334188,
+          "count": 4,
+          "avg_casts": 1
+        }
+      ],
+      "ref_game_id": null,
+      "common_cds": [
+        "Dancing Rune Weapon"
+      ],
+      "avg_targets": 1,
+      "window_length_s": 12
+    }
+  ],
+  "gear": {
+    "sample_count": 10,
+    "talent_builds": [
+      {
+        "key": "v2:102007,102008,102242,102243,109736,109737,109738,110030,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76084,76085,76087,76088,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 2,
+        "pct": 20,
+        "report_code": "dTxnfLqXg7aBcW2r",
+        "fight_id": 54,
+        "player_name": "천사혜오니"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110029,110030,110353,110353,110353,76039,76041,76042,76043,76045,76046,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 2,
+        "pct": 20,
+        "report_code": "kjGxpFLYHK1t9h8R",
+        "fight_id": 1,
+        "player_name": "特浓乌龙茶"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110031,110353,110353,110353,76039,76041,76042,76043,76045,76046,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76075,76076,76078,76079,76081,76083,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 10,
+        "report_code": "fXp3kZJWN1yYMC7c",
+        "fight_id": 1,
+        "player_name": "不屈之傲"
+      },
+      {
+        "key": "v2:102007,102008,102243,109736,109737,109738,110029,110353,110353,110353,76039,76041,76042,76043,76045,76046,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76083,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76132,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 10,
+        "report_code": "VN7yXfBGA6RWQPav",
+        "fight_id": 20,
+        "player_name": "Свиножук"
+      },
+      {
+        "key": "v2:102007,102008,102242,102243,109736,109737,109738,110029,110353,110353,110353,76039,76041,76042,76043,76045,76046,76048,76051,76052,76054,76055,76056,76058,76061,76064,76065,76066,76067,76068,76069,76071,76072,76073,76074,76076,76078,76079,76081,76084,76085,76087,76088,76124,76125,76126,76127,76128,76129,76130,76131,76133,76135,76137,76138,76141,76142,76144,76146,76166,76168,76169,76170,76171,76172,76173,95033,95040,95045,95046,95048,95051,95053,95055,95056,95064,95065,99822",
+        "count": 1,
+        "pct": 10,
+        "report_code": "R6jm17G2XD4WFAMp",
+        "fight_id": 23,
+        "player_name": "Фэксорка"
+      }
+    ],
+    "trinkets": {
+      "12": [
+        {
+          "id": 249344,
+          "name": "Light Company Guidon",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 4,
+          "pct": 40
+        },
+        {
+          "id": 250256,
+          "name": "Heart of Wind",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 249342,
+          "name": "Heart of Ancient Hunger",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "13": [
+        {
+          "id": 249343,
+          "name": "Gaze of the Alnseer",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 249344,
+          "name": "Light Company Guidon",
+          "count": 4,
+          "pct": 40
+        }
+      ]
+    },
+    "enchants": {
+      "0": [
+        {
+          "id": 7991,
+          "name": "Enchant Helm - Empowered Blessing of Speed",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7961,
+          "name": "Enchant Helm - Empowered Hex of Leeching",
+          "count": 3,
+          "pct": 30
+        },
+        {
+          "id": 7989,
+          "name": "Enchant Helm - Blessing of Speed",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "2": [
+        {
+          "id": 7973,
+          "name": "Enchant Shoulders - Akil'zon's Swiftness",
+          "count": 7,
+          "pct": 70
+        },
+        {
+          "id": 8031,
+          "name": "Enchant Shoulders - Silvermoon's Mending",
+          "count": 3,
+          "pct": 30
+        }
+      ],
+      "4": [
+        {
+          "id": 7987,
+          "name": "Enchant Chest - Mark of the Worldsoul",
+          "count": 9,
+          "pct": 90
+        },
+        {
+          "id": 7957,
+          "name": "Enchant Chest - Mark of Nalorakk",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "6": [
+        {
+          "id": 8159,
+          "name": "+41 Agility/Strength & +115 Stamina",
+          "count": 10,
+          "pct": 100
+        }
+      ],
+      "7": [
+        {
+          "id": 8019,
+          "name": "Enchant Boots - Farstrider's Hunt",
+          "count": 6,
+          "pct": 60
+        },
+        {
+          "id": 7993,
+          "name": "Enchant Boots - Shaladrassil's Roots",
+          "count": 4,
+          "pct": 40
+        }
+      ],
+      "9": [
+        {
+          "id": 2841,
+          "name": "+3 Stamina",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "10": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 1,
+          "pct": 10
+        },
+        {
+          "id": 8027,
+          "name": "Enchant Ring - Silvermoon's Tenacity",
+          "count": 1,
+          "pct": 10
+        }
+      ],
+      "11": [
+        {
+          "id": 7967,
+          "name": "Enchant Ring - Eyes of the Eagle",
+          "count": 8,
+          "pct": 80
+        },
+        {
+          "id": 7997,
+          "name": "Enchant Ring - Nature's Fury",
+          "count": 2,
+          "pct": 20
+        }
+      ],
+      "15": [
+        {
+          "id": 6241,
+          "name": "Rune of Sanguination",
+          "count": 10,
+          "pct": 100
+        }
+      ]
+    }
+  },
+  "top_defensives_summary": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "avg_uses": 10.9,
+      "min_uses": 4,
+      "max_uses": 14,
+      "sample_count": 10
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 10
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "avg_uses": 9.1,
+      "min_uses": 7,
+      "max_uses": 11,
+      "sample_count": 10
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4,
+      "sample_count": 6
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2,
+      "sample_count": 9
+    }
+  ],
+  "per_defensive_benchmarks": {
+    "Vampiric Blood": {
+      "sample_count": 10,
+      "avg_first_cast_s": 29.3,
+      "stddev_first_cast_s": 12,
+      "avg_gap_s": 49,
+      "stddev_gap_s": 31.4,
+      "hold_targets": {},
+      "avg_uses": 10.9,
+      "avg_uses_per_min": 1.21,
+      "uses_per_min": {
+        "avg": 1.208,
+        "stddev": 0.32,
+        "min": 0.462,
+        "max": 1.477
+      },
+      "majority_hold": false
+    },
+    "Icebound Fortitude": {
+      "sample_count": 10,
+      "avg_first_cast_s": 262.4,
+      "stddev_first_cast_s": 159.2,
+      "avg_gap_s": 285.9,
+      "stddev_gap_s": 4.1,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.135,
+        "stddev": 0.051,
+        "min": 0.104,
+        "max": 0.231
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Shell": {
+      "sample_count": 10,
+      "avg_first_cast_s": 33,
+      "stddev_first_cast_s": 9.4,
+      "avg_gap_s": 53.9,
+      "stddev_gap_s": 18.1,
+      "hold_targets": {},
+      "avg_uses": 9.1,
+      "avg_uses_per_min": 1.01,
+      "uses_per_min": {
+        "avg": 1.014,
+        "stddev": 0.133,
+        "min": 0.815,
+        "max": 1.25
+      },
+      "majority_hold": true
+    },
+    "Lichborne": {
+      "sample_count": 6,
+      "avg_first_cast_s": 167.1,
+      "stddev_first_cast_s": 185,
+      "avg_gap_s": 137.3,
+      "stddev_gap_s": 36.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 219.2,
+          "stddev_s": 45.9,
+          "count": 4,
+          "total_samples": 6
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.258,
+        "stddev": 0.125,
+        "min": 0.115,
+        "max": 0.419
+      },
+      "majority_hold": true
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 9,
+      "avg_first_cast_s": 248.8,
+      "stddev_first_cast_s": 70.9,
+      "avg_gap_s": 228,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.123,
+        "stddev": 0.038,
+        "min": 0.104,
+        "max": 0.223
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 16.1,
+      "stddev_s": 4.7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1671248,
+      "dmg_stddev": 699225,
+      "dmg_min": 635016,
+      "dmg_max": 2137114,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1208918,
+          "min_damage": 1076665,
+          "max_damage": 1288231,
+          "count": 3
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 429785,
+          "min_damage": 242755,
+          "max_damage": 645541,
+          "count": 3
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 267431,
+          "min_damage": 152740,
+          "max_damage": 360050,
+          "count": 4
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 212095,
+          "min_damage": 208199,
+          "max_damage": 215991,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 37.9,
+      "stddev_s": 9.4,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1008701,
+      "dmg_stddev": 217749,
+      "dmg_min": 622011,
+      "dmg_max": 1234161,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 800312,
+          "min_damage": 565253,
+          "max_damage": 1076665,
+          "count": 10
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 179094,
+          "min_damage": 64918,
+          "max_damage": 260772,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 95620,
+          "min_damage": 24002,
+          "max_damage": 142711,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 3.2,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 38.4,
+      "stddev_s": 1.5,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 2013103,
+      "dmg_stddev": 459882,
+      "dmg_min": 1153351,
+      "dmg_max": 2529835,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1259089,
+          "min_damage": 1111971,
+          "max_damage": 1398998,
+          "count": 7
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 562695,
+          "min_damage": 367543,
+          "max_damage": 749823,
+          "count": 9
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 287103,
+          "min_damage": 269408,
+          "max_damage": 310502,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 236589,
+          "min_damage": 134120,
+          "max_damage": 365065,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 79.7,
+      "stddev_s": 10.8,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 2233197,
+      "dmg_stddev": 182875,
+      "dmg_min": 1959565,
+      "dmg_max": 2544820,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1265074,
+          "min_damage": 1215003,
+          "max_damage": 1345837,
+          "count": 9
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 537150,
+          "min_damage": 385337,
+          "max_damage": 739704,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 235239,
+          "min_damage": 134361,
+          "max_damage": 348144,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 221871,
+          "min_damage": 167061,
+          "max_damage": 331763,
+          "count": 9
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 81.2,
+      "stddev_s": 8.9,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 992339,
+      "dmg_stddev": 208027,
+      "dmg_min": 633482,
+      "dmg_max": 1298460,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 902465,
+          "min_damage": 574925,
+          "max_damage": 1242650,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 71090,
+          "min_damage": 55686,
+          "max_damage": 110536,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 3.1,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 118.3,
+      "stddev_s": 7.2,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 2310298,
+      "dmg_stddev": 300746,
+      "dmg_min": 1732208,
+      "dmg_max": 2556759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1140311,
+          "min_damage": 943982,
+          "max_damage": 1278951,
+          "count": 6
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 604181,
+          "min_damage": 278372,
+          "max_damage": 976815,
+          "count": 6
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 314576,
+          "min_damage": 218107,
+          "max_damage": 476611,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 262265,
+          "min_damage": 139620,
+          "max_damage": 353804,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 122,
+      "stddev_s": 9.9,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 981461,
+      "dmg_stddev": 222508,
+      "dmg_min": 476194,
+      "dmg_max": 1290100,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 977687,
+          "min_damage": 849901,
+          "max_damage": 1178098,
+          "count": 8
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 115432,
+          "min_damage": 48257,
+          "max_damage": 350242,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 54312,
+          "min_damage": 21560,
+          "max_damage": 125952,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 2,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 159,
+      "stddev_s": 9,
+      "count": 12,
+      "total_samples": 10,
+      "dmg_avg": 2171215,
+      "dmg_stddev": 395549,
+      "dmg_min": 1277337,
+      "dmg_max": 2536048,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1240580,
+          "min_damage": 1030121,
+          "max_damage": 1416613,
+          "count": 10
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 600056,
+          "min_damage": 414959,
+          "max_damage": 751729,
+          "count": 12
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 321138,
+          "min_damage": 151576,
+          "max_damage": 615073,
+          "count": 10
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 254002,
+          "min_damage": 149813,
+          "max_damage": 301456,
+          "count": 12
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 161.7,
+      "stddev_s": 2.5,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 893215,
+      "dmg_stddev": 126725,
+      "dmg_min": 757375,
+      "dmg_max": 1032934,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 778061,
+          "min_damage": 569413,
+          "max_damage": 926220,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 83110,
+          "min_damage": 26407,
+          "max_damage": 162439,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 2.4,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 208.3,
+      "stddev_s": 14.4,
+      "count": 5,
+      "total_samples": 10,
+      "dmg_avg": 357002,
+      "dmg_stddev": 53881,
+      "dmg_min": 299439,
+      "dmg_max": 433481,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 166052,
+          "min_damage": 133254,
+          "max_damage": 207145,
+          "count": 5
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 158213,
+          "min_damage": 148353,
+          "max_damage": 170208,
+          "count": 4
+        },
+        {
+          "spell_id": 1254398,
+          "avg_damage": 80474,
+          "min_damage": 59870,
+          "max_damage": 114971,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 245.1,
+      "stddev_s": 9.8,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 2444380,
+      "dmg_stddev": 655169,
+      "dmg_min": 1271237,
+      "dmg_max": 3118308,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1263192,
+          "min_damage": 1072330,
+          "max_damage": 1384721,
+          "count": 6
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 531863,
+          "min_damage": 379961,
+          "max_damage": 740246,
+          "count": 7
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 379920,
+          "min_damage": 220467,
+          "max_damage": 530346,
+          "count": 4
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 247890,
+          "min_damage": 163413,
+          "max_damage": 298123,
+          "count": 7
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 163812,
+          "min_damage": 141866,
+          "max_damage": 175815,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 245.5,
+      "stddev_s": 8.6,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 922611,
+      "dmg_stddev": 169384,
+      "dmg_min": 643609,
+      "dmg_max": 1071484,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 734238,
+          "min_damage": 343211,
+          "max_damage": 969304,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 68961,
+          "min_damage": 30972,
+          "max_damage": 124030,
+          "count": 8
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 60155,
+          "min_damage": 48897,
+          "max_damage": 74966,
+          "count": 6
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 921,
+          "min_damage": 566,
+          "max_damage": 1300,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 2.7,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 285,
+      "stddev_s": 13,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 2383097,
+      "dmg_stddev": 175340,
+      "dmg_min": 2109655,
+      "dmg_max": 2593713,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1259218,
+          "min_damage": 1159249,
+          "max_damage": 1352506,
+          "count": 10
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 430674,
+          "min_damage": 151074,
+          "max_damage": 751779,
+          "count": 10
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 256444,
+          "min_damage": 143021,
+          "max_damage": 320760,
+          "count": 10
+        },
+        {
+          "spell_id": 1285827,
+          "avg_damage": 203430,
+          "min_damage": 147420,
+          "max_damage": 274003,
+          "count": 5
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 77570,
+          "min_damage": 13523,
+          "max_damage": 163997,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 286.4,
+      "stddev_s": 13.8,
+      "count": 11,
+      "total_samples": 10,
+      "dmg_avg": 965136,
+      "dmg_stddev": 198752,
+      "dmg_min": 747942,
+      "dmg_max": 1379908,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 863226,
+          "min_damage": 552815,
+          "max_damage": 1244850,
+          "count": 10
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 67970,
+          "min_damage": 26948,
+          "max_damage": 184381,
+          "count": 9
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 642,
+          "min_damage": 286,
+          "max_damage": 1955,
+          "count": 11
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 2.1,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 310.2,
+      "stddev_s": 6.7,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 1597181,
+      "dmg_stddev": 155884,
+      "dmg_min": 1399630,
+      "dmg_max": 1762838,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253873,
+          "avg_damage": 588343,
+          "min_damage": 473087,
+          "max_damage": 715044,
+          "count": 3
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 395652,
+          "min_damage": 230649,
+          "max_damage": 807843,
+          "count": 4
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 306020,
+          "min_damage": 215990,
+          "max_damage": 348600,
+          "count": 4
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 286221,
+          "min_damage": 274969,
+          "max_damage": 301438,
+          "count": 3
+        },
+        {
+          "spell_id": 1282425,
+          "avg_damage": 190623,
+          "min_damage": 187052,
+          "max_damage": 195696,
+          "count": 3
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 3444,
+          "min_damage": 3097,
+          "max_damage": 3692,
+          "count": 4
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 12,
+      "defensive_name": "Lichborne",
+      "spell_id": 49039,
+      "common_defensives": [
+        "Lichborne"
+      ],
+      "common_cds": [
+        "Lichborne"
+      ]
+    },
+    {
+      "time_s": 311,
+      "stddev_s": 9.3,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 1316015,
+      "dmg_stddev": 292795,
+      "dmg_min": 960038,
+      "dmg_max": 1771063,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253873,
+          "avg_damage": 594585,
+          "min_damage": 473087,
+          "max_damage": 831199,
+          "count": 4
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 375786,
+          "min_damage": 226005,
+          "max_damage": 789722,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 282655,
+          "min_damage": 265251,
+          "max_damage": 294766,
+          "count": 7
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 226397,
+          "min_damage": 134355,
+          "max_damage": 301438,
+          "count": 7
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 3013,
+          "min_damage": 2845,
+          "max_damage": 3123,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 327.3,
+      "stddev_s": 0.3,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 585627,
+      "dmg_stddev": 18933,
+      "dmg_min": 563542,
+      "dmg_max": 604354,
+      "ability_breakdown": [
+        {
+          "spell_id": 1281178,
+          "avg_damage": 238667,
+          "min_damage": 140290,
+          "max_damage": 295408,
+          "count": 4
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 171087,
+          "min_damage": 141127,
+          "max_damage": 184629,
+          "count": 4
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 117066,
+          "min_damage": 84930,
+          "max_damage": 138100,
+          "count": 4
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 77230,
+          "min_damage": 73067,
+          "max_damage": 81393,
+          "count": 2
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 15343,
+          "min_damage": 10342,
+          "max_damage": 20459,
+          "count": 4
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 1046,
+          "min_damage": 944,
+          "max_damage": 1242,
+          "count": 3
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 6.3,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 369,
+      "stddev_s": 2.1,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 2865881,
+      "dmg_stddev": 484592,
+      "dmg_min": 2055651,
+      "dmg_max": 3771741,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1320122,
+          "min_damage": 1167385,
+          "max_damage": 1435707,
+          "count": 8
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 564994,
+          "min_damage": 405851,
+          "max_damage": 794936,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 550619,
+          "min_damage": 380777,
+          "max_damage": 755464,
+          "count": 9
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 297330,
+          "min_damage": 275527,
+          "max_damage": 320147,
+          "count": 9
+        },
+        {
+          "spell_id": 1266810,
+          "avg_damage": 122319,
+          "min_damage": 78912,
+          "max_damage": 164316,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 56752,
+          "min_damage": 51243,
+          "max_damage": 62242,
+          "count": 8
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 369.5,
+      "stddev_s": 3.8,
+      "count": 10,
+      "total_samples": 10,
+      "dmg_avg": 1098653,
+      "dmg_stddev": 557653,
+      "dmg_min": 639700,
+      "dmg_max": 2628755,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 777438,
+          "min_damage": 565155,
+          "max_damage": 1380712,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 306994,
+          "min_damage": 56076,
+          "max_damage": 625752,
+          "count": 5
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 104000,
+          "min_damage": 27620,
+          "max_damage": 188278,
+          "count": 10
+        },
+        {
+          "spell_id": 1266810,
+          "avg_damage": 37001,
+          "min_damage": 18538,
+          "max_damage": 58538,
+          "count": 5
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 21494,
+          "min_damage": 9450,
+          "max_damage": 35072,
+          "count": 10
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 3.4,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 399.1,
+      "stddev_s": 1.6,
+      "count": 9,
+      "total_samples": 10,
+      "dmg_avg": 2315191,
+      "dmg_stddev": 638599,
+      "dmg_min": 1365554,
+      "dmg_max": 3240329,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 938774,
+          "min_damage": 641797,
+          "max_damage": 1331463,
+          "count": 9
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 520654,
+          "min_damage": 189903,
+          "max_damage": 771949,
+          "count": 9
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 457152,
+          "min_damage": 299047,
+          "max_damage": 660316,
+          "count": 9
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 234064,
+          "min_damage": 181034,
+          "max_damage": 303018,
+          "count": 9
+        },
+        {
+          "spell_id": 1266810,
+          "avg_damage": 51419,
+          "min_damage": 18732,
+          "max_damage": 87416,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 46028,
+          "min_damage": 35041,
+          "max_damage": 56682,
+          "count": 9
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 399.4,
+      "stddev_s": 4.5,
+      "count": 6,
+      "total_samples": 10,
+      "dmg_avg": 1421726,
+      "dmg_stddev": 257174,
+      "dmg_min": 949823,
+      "dmg_max": 1693693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 804694,
+          "min_damage": 641797,
+          "max_damage": 883501,
+          "count": 5
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 312850,
+          "min_damage": 228767,
+          "max_damage": 444232,
+          "count": 6
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 231256,
+          "min_damage": 107454,
+          "max_damage": 413467,
+          "count": 6
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 143060,
+          "min_damage": 103983,
+          "max_damage": 163290,
+          "count": 6
+        },
+        {
+          "spell_id": 1266810,
+          "avg_damage": 50569,
+          "min_damage": 25828,
+          "max_damage": 96319,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 29402,
+          "min_damage": 25930,
+          "max_damage": 32095,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 8,
+      "defensive_name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "common_defensives": [
+        "Icebound Fortitude"
+      ],
+      "common_cds": [
+        "Icebound Fortitude"
+      ]
+    },
+    {
+      "time_s": 428,
+      "stddev_s": 1.6,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 2506707,
+      "dmg_stddev": 897894,
+      "dmg_min": 552417,
+      "dmg_max": 3375721,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1240198,
+          "min_damage": 840988,
+          "max_damage": 1374172,
+          "count": 7
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 496816,
+          "min_damage": 413929,
+          "max_damage": 561221,
+          "count": 7
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 477262,
+          "min_damage": 200690,
+          "max_damage": 842204,
+          "count": 8
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 233009,
+          "min_damage": 26802,
+          "max_damage": 303691,
+          "count": 8
+        },
+        {
+          "spell_id": 1249582,
+          "avg_damage": 198923,
+          "min_damage": 150577,
+          "max_damage": 221064,
+          "count": 4
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 105997,
+          "min_damage": 84297,
+          "max_damage": 143218,
+          "count": 5
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 430.9,
+      "stddev_s": 1.7,
+      "count": 7,
+      "total_samples": 10,
+      "dmg_avg": 1036058,
+      "dmg_stddev": 214974,
+      "dmg_min": 670860,
+      "dmg_max": 1287748,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 823384,
+          "min_damage": 612149,
+          "max_damage": 961920,
+          "count": 7
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 77236,
+          "min_damage": 28966,
+          "max_damage": 157684,
+          "count": 7
+        },
+        {
+          "spell_id": 1249594,
+          "avg_damage": 39903,
+          "min_damage": 17004,
+          "max_damage": 68805,
+          "count": 5
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 17741,
+          "min_damage": 10204,
+          "max_damage": 36351,
+          "count": 7
+        }
+      ],
+      "ref_game_id": 257959,
+      "window_length_s": 2.2,
+      "defensive_name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "common_defensives": [
+        "Anti-Magic Shell"
+      ],
+      "common_cds": [
+        "Anti-Magic Shell"
+      ]
+    },
+    {
+      "time_s": 458.8,
+      "stddev_s": 5.4,
+      "count": 4,
+      "total_samples": 10,
+      "dmg_avg": 2535150,
+      "dmg_stddev": 1150229,
+      "dmg_min": 928356,
+      "dmg_max": 3421245,
+      "ability_breakdown": [
+        {
+          "spell_id": 1253878,
+          "avg_damage": 1161989,
+          "min_damage": 1103508,
+          "max_damage": 1241108,
+          "count": 3
+        },
+        {
+          "spell_id": 361029,
+          "avg_damage": 646284,
+          "min_damage": 539428,
+          "max_damage": 753139,
+          "count": 2
+        },
+        {
+          "spell_id": 1253879,
+          "avg_damage": 527672,
+          "min_damage": 459551,
+          "max_damage": 607506,
+          "count": 3
+        },
+        {
+          "spell_id": 1253873,
+          "avg_damage": 497455,
+          "min_damage": 361019,
+          "max_damage": 694461,
+          "count": 3
+        },
+        {
+          "spell_id": 1249797,
+          "avg_damage": 427217,
+          "min_damage": 263269,
+          "max_damage": 895894,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 51561,
+          "min_damage": 50587,
+          "max_damage": 52534,
+          "count": 2
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    },
+    {
+      "time_s": 509.2,
+      "stddev_s": 12,
+      "count": 8,
+      "total_samples": 10,
+      "dmg_avg": 1395681,
+      "dmg_stddev": 793683,
+      "dmg_min": 851246,
+      "dmg_max": 3200458,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 823288,
+          "min_damage": 603695,
+          "max_damage": 903909,
+          "count": 8
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 111544,
+          "min_damage": 6958,
+          "max_damage": 161146,
+          "count": 6
+        }
+      ],
+      "ref_game_id": 240391,
+      "window_length_s": 10,
+      "defensive_name": "Vampiric Blood",
+      "spell_id": 55233,
+      "common_defensives": [
+        "Vampiric Blood"
+      ],
+      "common_cds": [
+        "Vampiric Blood"
+      ]
+    }
+  ]
+}

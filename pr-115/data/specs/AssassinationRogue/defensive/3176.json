@@ -1,0 +1,147 @@
+{
+  "spec": "AssassinationRogue",
+  "encounter_id": 3176,
+  "encounter_name": "Imperator Averzian",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Feint": {
+      "sample_count": 4,
+      "avg_first_cast_s": 64.4,
+      "stddev_first_cast_s": 41.9,
+      "avg_gap_s": 41.1,
+      "stddev_gap_s": 29.2,
+      "hold_targets": {
+        "2": {
+          "target_s": 116.9,
+          "stddev_s": 1.6,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.61,
+        "stddev": 0.353,
+        "min": 0.292,
+        "max": 0.921
+      },
+      "majority_hold": false
+    },
+    "Crimson Vial": {
+      "sample_count": 1,
+      "avg_first_cast_s": 90.3,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.316,
+        "stddev": 0,
+        "min": 0.316,
+        "max": 0.316
+      },
+      "majority_hold": false
+    },
+    "Cloak of Shadows": {
+      "sample_count": 3,
+      "avg_first_cast_s": 103.5,
+      "stddev_first_cast_s": 56,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.3,
+      "uses_per_min": {
+        "avg": 0.304,
+        "stddev": 0.009,
+        "min": 0.295,
+        "max": 0.313
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 31224,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 185311,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to clear magical debuffs and gain immunity to incoming magical damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use to gain a 100% dodge chance against physical melee attacks.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Use proactively when anticipating heavy, unavoidable area-of-effect damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Use to restore a significant portion of your health when dropping low.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277,
+    "Feint": 1966,
+    "Crimson Vial": 185311
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    }
+  },
+  "source_signature": "b034bf504088acbe",
+  "ingest_version": 2
+}

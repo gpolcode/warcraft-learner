@@ -1,0 +1,260 @@
+{
+  "spec": "OutlawRogue",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Crimson Vial": {
+      "sample_count": 2,
+      "avg_first_cast_s": 85.9,
+      "stddev_first_cast_s": 3.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.262,
+        "stddev": 0.035,
+        "min": 0.237,
+        "max": 0.287
+      },
+      "majority_hold": false
+    },
+    "Feint": {
+      "sample_count": 7,
+      "avg_first_cast_s": 74.5,
+      "stddev_first_cast_s": 12.5,
+      "avg_gap_s": 45.5,
+      "stddev_gap_s": 45.8,
+      "hold_targets": {},
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.61,
+      "uses_per_min": {
+        "avg": 0.61,
+        "stddev": 0.509,
+        "min": 0.285,
+        "max": 1.625
+      },
+      "majority_hold": false
+    },
+    "Cloak of Shadows": {
+      "sample_count": 6,
+      "avg_first_cast_s": 138.2,
+      "stddev_first_cast_s": 66.3,
+      "avg_gap_s": 123.2,
+      "stddev_gap_s": 1.2,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.417,
+        "stddev": 0.14,
+        "min": 0.287,
+        "max": 0.577
+      },
+      "majority_hold": false
+    },
+    "Evasion": {
+      "sample_count": 3,
+      "avg_first_cast_s": 155.9,
+      "stddev_first_cast_s": 63.6,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.272,
+        "stddev": 0.03,
+        "min": 0.237,
+        "max": 0.289
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 81.5,
+      "dmg_avg": 235173,
+      "dmg_stddev": 132613,
+      "dmg_min": 115112,
+      "dmg_max": 478335,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259186,
+          "avg_damage": 110029,
+          "min_damage": 50293,
+          "max_damage": 154391,
+          "count": 6
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 24042,
+          "min_damage": 23012,
+          "max_damage": 26285,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 184.6,
+      "dmg_avg": 218659,
+      "dmg_stddev": 91464,
+      "dmg_min": 109877,
+      "dmg_max": 321571,
+      "window_length_s": 6,
+      "defensive_name": "Feint",
+      "spell_id": 1966,
+      "common_defensives": [
+        "Feint"
+      ],
+      "common_cds": [
+        "Feint"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1275558,
+          "avg_damage": 209166,
+          "min_damage": 138302,
+          "max_damage": 274576,
+          "count": 3
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 43582,
+          "min_damage": 37067,
+          "max_damage": 46995,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 204,
+      "dmg_avg": 35289,
+      "dmg_stddev": 54858,
+      "dmg_min": 0,
+      "dmg_max": 113046,
+      "window_length_s": 5,
+      "defensive_name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "common_defensives": [
+        "Cloak of Shadows"
+      ],
+      "common_cds": [
+        "Cloak of Shadows"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": []
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 185311,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 1966,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 31224,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 5277,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Crimson Vial": 185311,
+    "Feint": 1966,
+    "Cloak of Shadows": 31224,
+    "Evasion": 5277
+  },
+  "ability_icons": {
+    "1966": {
+      "icon": "ability_rogue_feint",
+      "name": "Feint"
+    },
+    "5277": {
+      "icon": "spell_shadow_shadowward",
+      "name": "Evasion"
+    },
+    "31224": {
+      "icon": "spell_shadow_nethercloak",
+      "name": "Cloak of Shadows"
+    },
+    "185311": {
+      "icon": "ability_rogue_crimsonvial",
+      "name": "Crimson Vial"
+    },
+    "1259186": {
+      "icon": "ability_argus_soulburst",
+      "name": "Blisterburst"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    },
+    "1275558": {
+      "icon": "inv_voidcreepermount_blue",
+      "name": "Parasite Expulsion"
+    }
+  },
+  "source_signature": "ce8b6ffde2ec31cb",
+  "ingest_version": 1
+}

@@ -1,0 +1,238 @@
+{
+  "spec": "DestructionWarlock",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Dark Pact": {
+      "sample_count": 10,
+      "avg_first_cast_s": 163.8,
+      "stddev_first_cast_s": 97.4,
+      "avg_gap_s": 77.6,
+      "stddev_gap_s": 45.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 251.3,
+          "stddev_s": 75.6,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.48,
+      "uses_per_min": {
+        "avg": 0.479,
+        "stddev": 0.334,
+        "min": 0.155,
+        "max": 1.225
+      },
+      "majority_hold": true
+    },
+    "Unending Resolve": {
+      "sample_count": 5,
+      "avg_first_cast_s": 165.8,
+      "stddev_first_cast_s": 87.3,
+      "avg_gap_s": 180,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.2,
+      "uses_per_min": {
+        "avg": 0.202,
+        "stddev": 0.087,
+        "min": 0.131,
+        "max": 0.348
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 127.6,
+      "dmg_avg": 398473,
+      "dmg_stddev": 136659,
+      "dmg_min": 281279,
+      "dmg_max": 630558,
+      "window_length_s": 8.2,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 242056,
+      "ability_breakdown": [
+        {
+          "spell_id": 387846,
+          "avg_damage": 7103,
+          "min_damage": 914,
+          "max_damage": 19782,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 261,
+      "dmg_avg": 364818,
+      "dmg_stddev": 160582,
+      "dmg_min": 178083,
+      "dmg_max": 584351,
+      "window_length_s": 12.5,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 256679,
+      "ability_breakdown": [
+        {
+          "spell_id": 1259275,
+          "avg_damage": 143474,
+          "min_damage": 85118,
+          "max_damage": 309136,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 11421,
+          "min_damage": 1651,
+          "max_damage": 19169,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 305.9,
+      "dmg_avg": 349572,
+      "dmg_stddev": 88201,
+      "dmg_min": 292670,
+      "dmg_max": 523068,
+      "window_length_s": 1.6,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 244552,
+      "ability_breakdown": [
+        {
+          "spell_id": 1245302,
+          "avg_damage": 188560,
+          "min_damage": 169199,
+          "max_damage": 197130,
+          "count": 5
+        },
+        {
+          "spell_id": 1250071,
+          "avg_damage": 95138,
+          "min_damage": 62327,
+          "max_damage": 125686,
+          "count": 5
+        },
+        {
+          "spell_id": 1285954,
+          "avg_damage": 55272,
+          "min_damage": 21266,
+          "max_damage": 97272,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 478,
+          "min_damage": 148,
+          "max_damage": 1135,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 2.7,
+      "min_uses": 1,
+      "max_uses": 7
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Healthstone": 6262
+  },
+  "ability_icons": {
+    "6262": {
+      "icon": "warlock_-healthstone",
+      "name": "Healthstone"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1245302": {
+      "icon": "inv_cosmicvoid_orb",
+      "name": "Void Howl"
+    },
+    "1250071": {
+      "icon": "inv_cosmicdragonmount",
+      "name": "Midnight Flames"
+    },
+    "1259275": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Midnight Manifestation"
+    },
+    "1285954": {
+      "icon": "spell_priest_void-blast",
+      "name": "Nullzone Implosion"
+    }
+  },
+  "source_signature": "53a10eb35800aaba",
+  "ingest_version": 1
+}

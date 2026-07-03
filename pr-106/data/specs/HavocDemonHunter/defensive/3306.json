@@ -1,0 +1,104 @@
+{
+  "spec": "HavocDemonHunter",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Blur": {
+      "sample_count": 8,
+      "avg_first_cast_s": 88.6,
+      "stddev_first_cast_s": 100.7,
+      "avg_gap_s": 41.6,
+      "stddev_gap_s": 24,
+      "hold_targets": {},
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.76,
+      "uses_per_min": {
+        "avg": 0.761,
+        "stddev": 0.426,
+        "min": 0.157,
+        "max": 1.337
+      },
+      "majority_hold": false
+    },
+    "Darkness": {
+      "sample_count": 1,
+      "avg_first_cast_s": 88.5,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.446,
+        "stddev": 0,
+        "min": 0.446,
+        "max": 0.446
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 198589,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 196718,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press before predictable physical or magical burst for a 20% damage reduction plus 50% dodge against physical attacks; its short cooldown lets you use it freely on incoming tankbuster-style hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop on the raid before a heavy AoE magical or avoidable damage event so allies inside gain a chance to fully avoid each hit; coordinate timing with other raid cooldowns.",
+      "talent_gated": false
+    },
+    {
+      "name": "Netherwalk",
+      "spell_id": 196555,
+      "cooldown": 180,
+      "duration": 5,
+      "usage_rule": "Use as a 5-second full damage immunity to soak or survive a lethal mechanic; talent-gated, so it replaces Blur only on builds that take it.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Blur": 198589,
+    "Darkness": 196718,
+    "Netherwalk": 196555
+  },
+  "ability_icons": {
+    "196555": {
+      "icon": "spell_warlock_demonsoul",
+      "name": "Netherwalk"
+    },
+    "196718": {
+      "icon": "ability_demonhunter_darkness",
+      "name": "Darkness"
+    },
+    "198589": {
+      "icon": "ability_demonhunter_blur",
+      "name": "Blur"
+    }
+  },
+  "source_signature": "b393cad95a19354b",
+  "ingest_version": 1
+}

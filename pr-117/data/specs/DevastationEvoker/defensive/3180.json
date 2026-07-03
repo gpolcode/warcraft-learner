@@ -1,0 +1,253 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 88.7,
+      "stddev_first_cast_s": 38.1,
+      "avg_gap_s": 37,
+      "stddev_gap_s": 43,
+      "hold_targets": {},
+      "avg_uses": 6.8,
+      "avg_uses_per_min": 1.18,
+      "uses_per_min": {
+        "avg": 1.177,
+        "stddev": 0.356,
+        "min": 0.42,
+        "max": 1.608
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 7,
+      "avg_first_cast_s": 141.5,
+      "stddev_first_cast_s": 110.5,
+      "avg_gap_s": 144.3,
+      "stddev_gap_s": 69.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 301.1,
+          "stddev_s": 39.9,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.32,
+      "uses_per_min": {
+        "avg": 0.317,
+        "stddev": 0.095,
+        "min": 0.173,
+        "max": 0.42
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 93.7,
+      "dmg_avg": 203007,
+      "dmg_stddev": 202033,
+      "dmg_min": 0,
+      "dmg_max": 614301,
+      "dmg_pct_avg": 0.012,
+      "window_length_s": 5.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 42629,
+          "min_damage": 12680,
+          "max_damage": 71295,
+          "count": 13
+        }
+      ]
+    },
+    {
+      "time_s": 142.8,
+      "dmg_avg": 239066,
+      "dmg_stddev": 229793,
+      "dmg_min": 16620,
+      "dmg_max": 672576,
+      "dmg_pct_avg": 0.015,
+      "window_length_s": 7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 54700,
+          "min_damage": 12679,
+          "max_damage": 95373,
+          "count": 12
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 23594,
+          "min_damage": 4824,
+          "max_damage": 45374,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 250.2,
+      "dmg_avg": 181632,
+      "dmg_stddev": 168262,
+      "dmg_min": 17986,
+      "dmg_max": 514797,
+      "dmg_pct_avg": 0.011,
+      "window_length_s": 5.6,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1258661,
+          "avg_damage": 64027,
+          "min_damage": 19186,
+          "max_damage": 124053,
+          "count": 15
+        },
+        {
+          "spell_id": 413924,
+          "avg_damage": 39583,
+          "min_damage": 13643,
+          "max_damage": 69060,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 302.7,
+      "dmg_avg": 358460,
+      "dmg_stddev": 258799,
+      "dmg_min": 22987,
+      "dmg_max": 847095,
+      "dmg_pct_avg": 0.023,
+      "window_length_s": 6.7,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240431,
+      "ability_breakdown": [
+        {
+          "spell_id": 1246502,
+          "avg_damage": 157928,
+          "min_damage": 40840,
+          "max_damage": 275639,
+          "count": 7
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 75292,
+          "min_damage": 21098,
+          "max_damage": 134365,
+          "count": 13
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.8,
+      "min_uses": 3,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "413924": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Stretch Time"
+    },
+    "1246502": {
+      "icon": "spell_holy_avengersshield",
+      "name": "Avenger's Shield"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "932431fe0cf49f6c",
+  "ingest_version": 3
+}

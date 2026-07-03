@@ -1,0 +1,436 @@
+{
+  "spec": "ProtectionWarrior",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Shield Wall": {
+      "sample_count": 10,
+      "avg_first_cast_s": 159.9,
+      "stddev_first_cast_s": 125.5,
+      "avg_gap_s": 106.1,
+      "stddev_gap_s": 68.5,
+      "hold_targets": {},
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.43,
+      "uses_per_min": {
+        "avg": 0.426,
+        "stddev": 0.21,
+        "min": 0.152,
+        "max": 0.839
+      },
+      "majority_hold": false
+    },
+    "Rallying Cry": {
+      "sample_count": 7,
+      "avg_first_cast_s": 248.4,
+      "stddev_first_cast_s": 53.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.157,
+        "stddev": 0.016,
+        "min": 0.134,
+        "max": 0.177
+      },
+      "majority_hold": false
+    },
+    "Spell Reflection": {
+      "sample_count": 10,
+      "avg_first_cast_s": 37,
+      "stddev_first_cast_s": 22.4,
+      "avg_gap_s": 34.4,
+      "stddev_gap_s": 14.3,
+      "hold_targets": {
+        "2": {
+          "target_s": 135,
+          "stddev_s": 19.7,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 151.6,
+          "stddev_s": 44.1,
+          "count": 5,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 149.9,
+          "stddev_s": 62.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 223.8,
+          "stddev_s": 69,
+          "count": 5,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 279.1,
+          "stddev_s": 74.8,
+          "count": 4,
+          "total_samples": 10
+        },
+        "8": {
+          "target_s": 279.5,
+          "stddev_s": 35.2,
+          "count": 5,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 312.8,
+          "stddev_s": 36.8,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 10.7,
+      "avg_uses_per_min": 1.68,
+      "uses_per_min": {
+        "avg": 1.678,
+        "stddev": 0.347,
+        "min": 1.075,
+        "max": 2.122
+      },
+      "majority_hold": true
+    },
+    "Shield Block": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3,
+      "stddev_first_cast_s": 1.6,
+      "avg_gap_s": 10.4,
+      "stddev_gap_s": 3.1,
+      "hold_targets": {},
+      "avg_uses": 36.9,
+      "avg_uses_per_min": 5.75,
+      "uses_per_min": {
+        "avg": 5.753,
+        "stddev": 0.199,
+        "min": 5.375,
+        "max": 6.014
+      },
+      "majority_hold": false
+    },
+    "Ignore Pain": {
+      "sample_count": 10,
+      "avg_first_cast_s": 5.1,
+      "stddev_first_cast_s": 2,
+      "avg_gap_s": 12.3,
+      "stddev_gap_s": 14.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 26.5,
+          "stddev_s": 23.2,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 44.5,
+          "stddev_s": 26.3,
+          "count": 4,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 79,
+          "stddev_s": 33.7,
+          "count": 5,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 82.1,
+          "stddev_s": 47.5,
+          "count": 4,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 117.5,
+          "stddev_s": 47.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "7": {
+          "target_s": 173,
+          "stddev_s": 53.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "9": {
+          "target_s": 143.3,
+          "stddev_s": 56.8,
+          "count": 7,
+          "total_samples": 10
+        },
+        "10": {
+          "target_s": 138.5,
+          "stddev_s": 27.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "11": {
+          "target_s": 151.7,
+          "stddev_s": 34,
+          "count": 6,
+          "total_samples": 10
+        },
+        "12": {
+          "target_s": 207.6,
+          "stddev_s": 94.6,
+          "count": 4,
+          "total_samples": 10
+        },
+        "14": {
+          "target_s": 200.6,
+          "stddev_s": 99.6,
+          "count": 6,
+          "total_samples": 10
+        },
+        "15": {
+          "target_s": 235.7,
+          "stddev_s": 40.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "16": {
+          "target_s": 215.2,
+          "stddev_s": 49.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "18": {
+          "target_s": 267.5,
+          "stddev_s": 57.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "19": {
+          "target_s": 235.5,
+          "stddev_s": 80.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "20": {
+          "target_s": 279.5,
+          "stddev_s": 56.1,
+          "count": 4,
+          "total_samples": 10
+        },
+        "21": {
+          "target_s": 281,
+          "stddev_s": 62.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "28": {
+          "target_s": 308.9,
+          "stddev_s": 42.1,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 31.2,
+      "avg_uses_per_min": 4.88,
+      "uses_per_min": {
+        "avg": 4.878,
+        "stddev": 1.327,
+        "min": 2.231,
+        "max": 6.5
+      },
+      "majority_hold": true
+    },
+    "Impending Victory": {
+      "sample_count": 7,
+      "avg_first_cast_s": 167.9,
+      "stddev_first_cast_s": 82.9,
+      "avg_gap_s": 83.3,
+      "stddev_gap_s": 62.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 240.9,
+          "stddev_s": 51.2,
+          "count": 5,
+          "total_samples": 7
+        },
+        "2": {
+          "target_s": 313.2,
+          "stddev_s": 54.5,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.377,
+        "stddev": 0.119,
+        "min": 0.168,
+        "max": 0.531
+      },
+      "majority_hold": true
+    },
+    "Last Stand": {
+      "sample_count": 1,
+      "avg_first_cast_s": 145.4,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 120.1,
+      "stddev_gap_s": 62.4,
+      "hold_targets": {},
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.44,
+      "uses_per_min": {
+        "avg": 0.436,
+        "stddev": 0,
+        "min": 0.436,
+        "max": 0.436
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 871,
+      "avg_uses": 2.7,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 12975,
+      "avg_uses": 3,
+      "min_uses": 3,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 97462,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 23920,
+      "avg_uses": 10.7,
+      "min_uses": 7,
+      "max_uses": 13
+    },
+    {
+      "spell_id": 2565,
+      "avg_uses": 36.9,
+      "min_uses": 32,
+      "max_uses": 44
+    },
+    {
+      "spell_id": 190456,
+      "avg_uses": 31.2,
+      "min_uses": 15,
+      "max_uses": 43
+    },
+    {
+      "spell_id": 202168,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press proactively to smooth out a large spike of incoming damage or a tankbuster; its long cooldown means plan its use around the heaviest damage events of the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Last Stand",
+      "spell_id": 12975,
+      "cooldown": 120,
+      "duration": 15,
+      "usage_rule": "Use to instantly gain a large block of temporary health when you are about to drop dangerously low; pairs well with a heal landing inside the window.",
+      "talent_gated": false
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid cooldown to grant the whole group temporary health before an unavoidable burst of raid-wide damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press just before a reflectable magic cast or tankbuster to reduce magic damage taken and bounce single-target spells back at the caster.",
+      "talent_gated": false
+    },
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Keep close to 100% uptime by refreshing whenever it has 10 seconds or less remaining to block incoming physical melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ignore Pain",
+      "spell_id": 190456,
+      "cooldown": 1,
+      "duration": 12,
+      "usage_rule": "Dump excess rage into this absorb to avoid wasting rage and to soften physical and magic spikes; keep rage below the cap by spending into it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "duration": null,
+      "usage_rule": "Use when your health is low to deal damage and instantly heal a chunk of your maximum health; talent-gated, replacing the passive Victory Rush.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Shield Wall": 871,
+    "Last Stand": 12975,
+    "Rallying Cry": 97462,
+    "Spell Reflection": 23920,
+    "Shield Block": 2565,
+    "Ignore Pain": 190456,
+    "Impending Victory": 202168
+  },
+  "ability_icons": {
+    "871": {
+      "icon": "ability_warrior_shieldwall",
+      "name": "Shield Wall"
+    },
+    "2565": {
+      "icon": "ability_defend",
+      "name": "Shield Block"
+    },
+    "12975": {
+      "icon": "spell_holy_ashestoashes",
+      "name": "Last Stand"
+    },
+    "23920": {
+      "icon": "ability_warrior_shieldreflection",
+      "name": "Spell Reflection"
+    },
+    "97462": {
+      "icon": "ability_warrior_rallyingcry",
+      "name": "Rallying Cry"
+    },
+    "190456": {
+      "icon": "ability_warrior_renewedvigor",
+      "name": "Ignore Pain"
+    },
+    "202168": {
+      "icon": "spell_impending_victory",
+      "name": "Impending Victory"
+    }
+  },
+  "source_signature": "65a1f019f542b2fc",
+  "ingest_version": 2
+}

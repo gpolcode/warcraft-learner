@@ -1,0 +1,254 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "avg_duration_s": 310.2,
+  "downtime_threshold_ms": 1298,
+  "top_avg_efficiency": 68.6,
+  "top_efficiency_stddev": 7.8,
+  "per_cd_benchmarks": {
+    "Power Infusion": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.4,
+      "stddev_first_cast_s": 0.9,
+      "avg_gap_s": 55.2,
+      "stddev_gap_s": 65.5,
+      "avg_bl_offset_s": 2.2,
+      "stddev_bl_offset_s": 2.5,
+      "avg_uses": 5.5,
+      "avg_uses_per_min": 1.07,
+      "uses_per_min": {
+        "avg": 1.072,
+        "stddev": 0.187,
+        "min": 0.61,
+        "max": 1.273
+      },
+      "bl_pct": 80,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Void Eruption": {
+      "sample_count": 10,
+      "avg_first_cast_s": 2.9,
+      "stddev_first_cast_s": 1.2,
+      "avg_gap_s": 126.2,
+      "stddev_gap_s": 3.5,
+      "avg_bl_offset_s": 1.7,
+      "stddev_bl_offset_s": 2.4,
+      "avg_uses": 2.9,
+      "avg_uses_per_min": 0.57,
+      "uses_per_min": {
+        "avg": 0.567,
+        "stddev": 0.049,
+        "min": 0.495,
+        "max": 0.636
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 127,
+          "stddev_s": 5.3,
+          "count": 10,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 254.4,
+          "stddev_s": 5.3,
+          "count": 9,
+          "total_samples": 10
+        }
+      }
+    },
+    "Halo": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Void Torrent": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Power Infusion",
+      "spell_id": 10060,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Press on cooldown every 2 minutes inside your Voidform/Dark Ascension burst, syncing it with your on-use trinkets, potion and (where possible) Bloodlust."
+    },
+    {
+      "name": "Void Eruption",
+      "spell_id": 228260,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": true,
+      "usage_rule": "Cast to enter Voidform and gain access to Void Volley; use it as consistently as possible so it keeps lining up with Power Infusion, Halo and Void Torrent."
+    },
+    {
+      "name": "Halo",
+      "spell_id": 120517,
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Archon keystone - cast early in the opener and each burst window because its damage and proc generation ramp up slowly."
+    },
+    {
+      "name": "Void Torrent",
+      "spell_id": 263165,
+      "cooldown": 30,
+      "duration": 3,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Voidweaver tool - channel it to open Entropic Rift, then spend Void Blast inside the Rift window."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Sync Power Infusion with Voidform",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 10060,
+        "spell_name": "Power Infusion",
+        "required_spell_id": 228260,
+        "required_spell_name": "Void Eruption",
+        "window_s": 8
+      },
+      "action": "Press Power Infusion together with Void Eruption so your haste buff and Voidform burst overlap every 2 minutes."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open with Tentacle Slam then burst cooldowns",
+      "condition": null,
+      "action": "Pre-cast Tentacle Slam, then on pull fire Halo (Archon) or Void Torrent (Voidweaver) alongside Power Infusion and your on-use trinkets and potion."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Keep Vampiric Touch active",
+      "condition": null,
+      "action": "Maintain Vampiric Touch on the primary target at all times to keep Mastery: Shadow Weaving ramped, refreshing it with Tentacle Slam or a hardcast before it expires."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Use Voidform on cooldown",
+      "condition": null,
+      "action": "Cast Void Eruption as soon as it is available so it stays aligned with Power Infusion, Halo and Void Torrent across the fight."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Cast Halo early in each window (Archon)",
+      "condition": null,
+      "action": "As Archon, use Halo at the start of your opener and every burst window so its slow-ramping damage and proc generation have time to pay off."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Void Torrent before Void Blast (Voidweaver)",
+      "condition": null,
+      "action": "As Voidweaver, cast Void Torrent to open Entropic Rift, then spend Void Blast and Shadow Word: Madness inside the Rift window."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Do not overcap Insanity",
+      "condition": null,
+      "action": "Spend Insanity on Shadow Word: Madness before you hit 100 so you never waste resource generation."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Sync trinkets and potion with Power Infusion",
+      "condition": null,
+      "action": "Hold your on-use trinkets and damage potion for the Power Infusion / Voidform window so their value overlaps your haste burst."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "low",
+      "description": "Drop Mind Blast and Void Bolt at high target counts",
+      "condition": null,
+      "action": "At 5 or more targets stop hardcasting Mind Blast, and at 10 or more targets stop using Void Bolt except for movement, since both become a damage and Insanity loss."
+    }
+  ],
+  "cd_spell_ids": {
+    "Power Infusion": 10060,
+    "Void Eruption": 228260,
+    "Halo": 120517,
+    "Void Torrent": 263165,
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "10060": {
+      "icon": "spell_holy_powerinfusion",
+      "name": "Power Infusion"
+    },
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "120517": {
+      "icon": "ability_priest_halo",
+      "name": "Halo"
+    },
+    "228260": {
+      "icon": "spell_priest_void-blast",
+      "name": "Voidform"
+    },
+    "263165": {
+      "icon": "spell_priest_voidsear",
+      "name": "Void Torrent"
+    }
+  },
+  "source_signature": "79433d792b0d83f3",
+  "ingest_version": 1
+}

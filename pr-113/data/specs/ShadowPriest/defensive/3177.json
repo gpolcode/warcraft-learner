@@ -1,0 +1,177 @@
+{
+  "spec": "ShadowPriest",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Desperate Prayer": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.2,
+      "stddev_first_cast_s": 44.2,
+      "avg_gap_s": 119.5,
+      "stddev_gap_s": 7,
+      "hold_targets": {
+        "1": {
+          "target_s": 185.5,
+          "stddev_s": 8.9,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.451,
+        "stddev": 0.135,
+        "min": 0.277,
+        "max": 0.587
+      },
+      "majority_hold": true
+    },
+    "Vampiric Embrace": {
+      "sample_count": 10,
+      "avg_first_cast_s": 77.7,
+      "stddev_first_cast_s": 86.1,
+      "avg_gap_s": 133.2,
+      "stddev_gap_s": 25.2,
+      "hold_targets": {},
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.46,
+      "uses_per_min": {
+        "avg": 0.46,
+        "stddev": 0.164,
+        "min": 0.262,
+        "max": 0.662
+      },
+      "majority_hold": false
+    },
+    "Dispersion": {
+      "sample_count": 2,
+      "avg_first_cast_s": 147.3,
+      "stddev_first_cast_s": 95.3,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.273,
+        "stddev": 0.014,
+        "min": 0.263,
+        "max": 0.283
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 65.3,
+      "dmg_avg": 383624,
+      "dmg_stddev": 174926,
+      "dmg_min": 176549,
+      "dmg_max": 552365,
+      "dmg_pct_avg": 0.054,
+      "window_length_s": 10,
+      "defensive_name": "Desperate Prayer",
+      "spell_id": 19236,
+      "common_defensives": [
+        "Desperate Prayer"
+      ],
+      "common_cds": [
+        "Desperate Prayer"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272328,
+          "avg_damage": 107317,
+          "min_damage": 95845,
+          "max_damage": 114528,
+          "count": 4
+        },
+        {
+          "spell_id": 1272950,
+          "avg_damage": 64613,
+          "min_damage": 51485,
+          "max_damage": 71830,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 47585,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 19236,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 15286,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Dispersion",
+      "spell_id": 47585,
+      "cooldown": 120,
+      "duration": 6,
+      "usage_rule": "Press to reduce all damage taken by 75% during heavy raid hits or unavoidable burst, accepting the brief loss of offensive casts.",
+      "talent_gated": false
+    },
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use to instantly heal and raise your maximum health when you drop below ~75%, especially after Shadow Word: Death self-damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Vampiric Embrace",
+      "spell_id": 15286,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Activate during periods of sustained raid damage to convert your Shadow damage into self and raid healing.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Dispersion": 47585,
+    "Desperate Prayer": 19236,
+    "Vampiric Embrace": 15286
+  },
+  "ability_icons": {
+    "15286": {
+      "icon": "spell_shadow_unsummonbuilding",
+      "name": "Vampiric Embrace"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47585": {
+      "icon": "spell_shadow_dispersion",
+      "name": "Dispersion"
+    },
+    "1272328": {
+      "icon": "inv_misc_rylakclaw",
+      "name": "Shadowclaw Slam"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    }
+  },
+  "source_signature": "7409591d1bebad22",
+  "ingest_version": 2
+}

@@ -1,0 +1,248 @@
+{
+  "spec": "RestorationShaman",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 10,
+      "avg_first_cast_s": 158.5,
+      "stddev_first_cast_s": 65.5,
+      "avg_gap_s": 144.3,
+      "stddev_gap_s": 34.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 299.8,
+          "stddev_s": 53.8,
+          "count": 9,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.1,
+      "avg_uses_per_min": 0.33,
+      "uses_per_min": {
+        "avg": 0.329,
+        "stddev": 0.086,
+        "min": 0.148,
+        "max": 0.446
+      },
+      "majority_hold": true
+    },
+    "Spirit Link Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 81.6,
+      "stddev_first_cast_s": 108.4,
+      "avg_gap_s": 201.1,
+      "stddev_gap_s": 30.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 332.6,
+          "stddev_s": 31.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.4,
+      "avg_uses_per_min": 0.37,
+      "uses_per_min": {
+        "avg": 0.374,
+        "stddev": 0.105,
+        "min": 0.154,
+        "max": 0.469
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 142.9,
+      "dmg_avg": 353494,
+      "dmg_stddev": 83197,
+      "dmg_min": 259957,
+      "dmg_max": 444667,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 193906,
+          "min_damage": 134398,
+          "max_damage": 295997,
+          "count": 6
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 91393,
+          "min_damage": 80874,
+          "max_damage": 97434,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 247.6,
+      "dmg_avg": 351410,
+      "dmg_stddev": 52328,
+      "dmg_min": 279328,
+      "dmg_max": 422786,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240437,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 205376,
+          "min_damage": 174386,
+          "max_damage": 222541,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 118799,
+          "min_damage": 113753,
+          "max_damage": 124007,
+          "count": 5
+        },
+        {
+          "spell_id": 1255739,
+          "avg_damage": 59614,
+          "min_damage": 19173,
+          "max_damage": 81221,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 301.5,
+      "dmg_avg": 441751,
+      "dmg_stddev": 132404,
+      "dmg_min": 318963,
+      "dmg_max": 638919,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 257759,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249024,
+          "avg_damage": 195657,
+          "min_damage": 169674,
+          "max_damage": 222410,
+          "count": 4
+        },
+        {
+          "spell_id": 1258661,
+          "avg_damage": 136407,
+          "min_damage": 129489,
+          "max_damage": 145970,
+          "count": 5
+        },
+        {
+          "spell_id": 1246749,
+          "avg_damage": 109896,
+          "min_damage": 108135,
+          "max_damage": 113396,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2.1,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 98008,
+      "avg_uses": 2.4,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Spirit Link Totem": 98008,
+    "Healing Tide Totem": 108280
+  },
+  "ability_icons": {
+    "98008": {
+      "icon": "spell_shaman_spiritlink",
+      "name": "Spirit Link Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108280": {
+      "icon": "ability_shaman_healingtide",
+      "name": "Healing Tide Totem"
+    },
+    "1246749": {
+      "icon": "ability_bastion_paladin",
+      "name": "Sacred Toll"
+    },
+    "1249024": {
+      "icon": "spell_paladin_executionsentence",
+      "name": "Execution Sentence"
+    },
+    "1255739": {
+      "icon": "inv_ability_holyfire_buff",
+      "name": "Searing Radiance"
+    },
+    "1258661": {
+      "icon": "spell_holy_auramastery",
+      "name": "Light Infusion"
+    }
+  },
+  "source_signature": "87f35f003dbfedea",
+  "ingest_version": 0
+}

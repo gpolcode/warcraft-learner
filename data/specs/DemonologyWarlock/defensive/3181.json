@@ -1,0 +1,360 @@
+{
+  "spec": "DemonologyWarlock",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Unending Resolve": {
+      "sample_count": 9,
+      "avg_first_cast_s": 330.5,
+      "stddev_first_cast_s": 164.4,
+      "avg_gap_s": 337.7,
+      "stddev_gap_s": 38.7,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.15,
+      "uses_per_min": {
+        "avg": 0.153,
+        "stddev": 0.06,
+        "min": 0.113,
+        "max": 0.273
+      },
+      "majority_hold": false
+    },
+    "Dark Pact": {
+      "sample_count": 9,
+      "avg_first_cast_s": 138.1,
+      "stddev_first_cast_s": 103.8,
+      "avg_gap_s": 118.9,
+      "stddev_gap_s": 82.2,
+      "hold_targets": {
+        "1": {
+          "target_s": 317.5,
+          "stddev_s": 119.3,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 396,
+          "stddev_s": 92.9,
+          "count": 5,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 3.7,
+      "avg_uses_per_min": 0.45,
+      "uses_per_min": {
+        "avg": 0.447,
+        "stddev": 0.116,
+        "min": 0.256,
+        "max": 0.599
+      },
+      "majority_hold": true
+    },
+    "Mortal Coil": {
+      "sample_count": 7,
+      "avg_first_cast_s": 336.5,
+      "stddev_first_cast_s": 103.7,
+      "avg_gap_s": 61,
+      "stddev_gap_s": 15.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 437.5,
+          "stddev_s": 50.4,
+          "count": 4,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.241,
+        "stddev": 0.089,
+        "min": 0.128,
+        "max": 0.368
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 358,
+      "dmg_avg": 329444,
+      "dmg_stddev": 99470,
+      "dmg_min": 217665,
+      "dmg_max": 442985,
+      "dmg_pct_avg": 0.014,
+      "window_length_s": 3.2,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 296842,
+          "min_damage": 138457,
+          "max_damage": 441513,
+          "count": 4
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 60977,
+          "min_damage": 43759,
+          "max_damage": 86413,
+          "count": 3
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 1752,
+          "min_damage": 817,
+          "max_damage": 2986,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 415.8,
+      "dmg_avg": 328984,
+      "dmg_stddev": 95548,
+      "dmg_min": 148553,
+      "dmg_max": 411865,
+      "dmg_pct_avg": 0.013,
+      "window_length_s": 4.4,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 222590,
+          "min_damage": 157862,
+          "max_damage": 276608,
+          "count": 4
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 105753,
+          "min_damage": 38797,
+          "max_damage": 225660,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 51675,
+          "min_damage": 29695,
+          "max_damage": 74204,
+          "count": 5
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 2008,
+          "min_damage": 920,
+          "max_damage": 5257,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 420.4,
+      "dmg_avg": 685602,
+      "dmg_stddev": 90151,
+      "dmg_min": 589242,
+      "dmg_max": 796340,
+      "dmg_pct_avg": 0.027,
+      "window_length_s": 8,
+      "defensive_name": "Unending Resolve",
+      "spell_id": 104773,
+      "common_defensives": [
+        "Unending Resolve"
+      ],
+      "common_cds": [
+        "Unending Resolve"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 339433,
+          "min_damage": 198680,
+          "max_damage": 434670,
+          "count": 5
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 144093,
+          "min_damage": 125268,
+          "max_damage": 160115,
+          "count": 5
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 133860,
+          "min_damage": 37910,
+          "max_damage": 181794,
+          "count": 5
+        },
+        {
+          "spell_id": 111400,
+          "avg_damage": 78796,
+          "min_damage": 19653,
+          "max_damage": 157978,
+          "count": 3
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 4027,
+          "min_damage": 2665,
+          "max_damage": 8562,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 476.5,
+      "dmg_avg": 312504,
+      "dmg_stddev": 130988,
+      "dmg_min": 167645,
+      "dmg_max": 524899,
+      "dmg_pct_avg": 0.012,
+      "window_length_s": 2.7,
+      "defensive_name": "Dark Pact",
+      "spell_id": 108416,
+      "common_defensives": [
+        "Dark Pact"
+      ],
+      "common_cds": [
+        "Dark Pact"
+      ],
+      "ref_game_id": 240430,
+      "ability_breakdown": [
+        {
+          "spell_id": 1239095,
+          "avg_damage": 197270,
+          "min_damage": 158061,
+          "max_damage": 346285,
+          "count": 6
+        },
+        {
+          "spell_id": 1237040,
+          "avg_damage": 54592,
+          "min_damage": 27010,
+          "max_damage": 106561,
+          "count": 6
+        },
+        {
+          "spell_id": 1261289,
+          "avg_damage": 51847,
+          "min_damage": 26380,
+          "max_damage": 103695,
+          "count": 4
+        },
+        {
+          "spell_id": 387846,
+          "avg_damage": 1067,
+          "min_damage": 588,
+          "max_damage": 1794,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 104773,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108416,
+      "avg_uses": 3.7,
+      "min_uses": 2,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 6789,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "duration": null,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Unending Resolve": 104773,
+    "Dark Pact": 108416,
+    "Mortal Coil": 6789
+  },
+  "ability_icons": {
+    "6789": {
+      "icon": "ability_warlock_mortalcoil",
+      "name": "Mortal Coil"
+    },
+    "104773": {
+      "icon": "spell_shadow_demonictactics",
+      "name": "Unending Resolve"
+    },
+    "108416": {
+      "icon": "spell_shadow_deathpact",
+      "name": "Dark Pact"
+    },
+    "111400": {
+      "icon": "ability_deathwing_sealarmorbreachtga",
+      "name": "Burning Rush"
+    },
+    "387846": {
+      "icon": "spell_shadow_felarmour",
+      "name": "Fel Armor"
+    },
+    "1237040": {
+      "icon": "ability_ironmaidens_convulsiveshadows",
+      "name": "Voidstalker Sting"
+    },
+    "1239095": {
+      "icon": "spell_holy_circleofrenewal_shadow",
+      "name": "Gravity Collapse"
+    },
+    "1261289": {
+      "icon": "inv_cosmicvoid_buff",
+      "name": "Cosmic Barrier"
+    }
+  },
+  "source_signature": "73b127f3808d89b8",
+  "ingest_version": 3
+}

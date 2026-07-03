@@ -1,0 +1,386 @@
+{
+  "spec": "HolyPriest",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "avg_duration_s": 409.1,
+  "downtime_threshold_ms": 2553,
+  "top_avg_efficiency": 75.8,
+  "top_efficiency_stddev": 9.9,
+  "per_cd_benchmarks": {
+    "Apotheosis": {
+      "sample_count": 10,
+      "avg_first_cast_s": 80.2,
+      "stddev_first_cast_s": 95.6,
+      "avg_gap_s": 149.2,
+      "stddev_gap_s": 26,
+      "avg_bl_offset_s": 33.7,
+      "stddev_bl_offset_s": 18.2,
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.397,
+        "stddev": 0.103,
+        "min": 0.16,
+        "max": 0.516
+      },
+      "bl_pct": 50,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 195,
+          "stddev_s": 45.9,
+          "delay_s": 28,
+          "delay_stddev_s": 21.2,
+          "band_s": 21.2,
+          "effective_cd_s": 120,
+          "count": 7,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 341.7,
+          "stddev_s": 36,
+          "delay_s": 30.4,
+          "delay_stddev_s": 30.3,
+          "band_s": 30.3,
+          "effective_cd_s": 120,
+          "count": 7,
+          "total_samples": 10
+        }
+      }
+    },
+    "Halo": {
+      "sample_count": 10,
+      "avg_first_cast_s": 25.8,
+      "stddev_first_cast_s": 10.2,
+      "avg_gap_s": 70.8,
+      "stddev_gap_s": 19.2,
+      "avg_bl_offset_s": 23,
+      "stddev_bl_offset_s": 9.6,
+      "avg_uses": 5.5,
+      "avg_uses_per_min": 0.82,
+      "uses_per_min": {
+        "avg": 0.908,
+        "stddev": 0.149,
+        "min": 0.562,
+        "max": 1.048
+      },
+      "bl_pct": 80,
+      "majority_hold": true,
+      "hold_targets": {
+        "2": {
+          "target_s": 95.2,
+          "stddev_s": 21.9,
+          "delay_s": 21.9,
+          "delay_stddev_s": 14.8,
+          "band_s": 14.8,
+          "effective_cd_s": 40,
+          "count": 9,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 162.2,
+          "stddev_s": 39,
+          "delay_s": 22.6,
+          "delay_stddev_s": 23.5,
+          "band_s": 23.5,
+          "effective_cd_s": 40,
+          "count": 9,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 234.3,
+          "stddev_s": 66.4,
+          "delay_s": 24,
+          "delay_stddev_s": 33.2,
+          "band_s": 33.2,
+          "effective_cd_s": 40,
+          "count": 9,
+          "total_samples": 10
+        },
+        "5": {
+          "target_s": 290.3,
+          "stddev_s": 32.5,
+          "delay_s": 28.9,
+          "delay_stddev_s": 6.3,
+          "band_s": 6.3,
+          "effective_cd_s": 40,
+          "count": 8,
+          "total_samples": 10
+        },
+        "6": {
+          "target_s": 358.9,
+          "stddev_s": 31.9,
+          "delay_s": 24,
+          "delay_stddev_s": 3.2,
+          "band_s": 5,
+          "effective_cd_s": 40,
+          "count": 8,
+          "total_samples": 10
+        }
+      }
+    },
+    "Divine Hymn": {
+      "sample_count": 10,
+      "avg_first_cast_s": 89.7,
+      "stddev_first_cast_s": 77.9,
+      "avg_gap_s": 136.8,
+      "stddev_gap_s": 23.4,
+      "avg_bl_offset_s": 39.7,
+      "stddev_bl_offset_s": 11.4,
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.411,
+        "stddev": 0.115,
+        "min": 0.16,
+        "max": 0.558
+      },
+      "bl_pct": 40,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Divine Word": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Holy Word: Chastise": {
+      "sample_count": 10,
+      "avg_first_cast_s": 3.1,
+      "stddev_first_cast_s": 2.3,
+      "avg_gap_s": 20.4,
+      "stddev_gap_s": 22.8,
+      "avg_bl_offset_s": 1.7,
+      "stddev_bl_offset_s": 2.2,
+      "avg_uses": 9.8,
+      "avg_uses_per_min": 1.44,
+      "uses_per_min": {
+        "avg": 2.881,
+        "stddev": 1.204,
+        "min": 0.75,
+        "max": 3.624
+      },
+      "bl_pct": 40,
+      "majority_hold": false,
+      "hold_targets": {}
+    },
+    "Empyreal Blaze": {
+      "sample_count": 10,
+      "avg_first_cast_s": 0,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "avg_bl_offset_s": null,
+      "stddev_bl_offset_s": null,
+      "avg_uses": 0,
+      "avg_uses_per_min": 0,
+      "uses_per_min": {
+        "avg": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "bl_pct": 0,
+      "majority_hold": false,
+      "hold_targets": {}
+    }
+  },
+  "major_cooldowns": [
+    {
+      "name": "Apotheosis",
+      "spell_id": 200183,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown to reset and cheapen your Holy Words; as Archon always pair it with Halo, and enter with at least one Holy Word: Serenity and one Holy Word: Sanctify charge ready so every global during the window casts or reduces a Holy Word."
+    },
+    {
+      "name": "Halo",
+      "spell_id": 120517,
+      "cooldown": 40,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "As Archon use Halo early as raid damage lands, ideally inside the Apotheosis window, to apply the 10-second amplified-healing buff to your allies; pool Holy Words to benefit from the bonus healing without capping charges."
+    },
+    {
+      "name": "Divine Hymn",
+      "spell_id": 64843,
+      "cooldown": 180,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Save for heavy raid-wide damage spikes; it can be channeled while line-of-sight of allies and deals bonus healing in Mythic+, so use it freely as a throughput cooldown in dungeons."
+    },
+    {
+      "name": "Divine Word",
+      "spell_id": 372760,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast immediately before the matching Holy Word to empower it; the Chastise build syncs Divine Word with Holy Word: Chastise (and Empyreal Blaze if talented) to enter Divine Favor: Chastise for a damage window."
+    },
+    {
+      "name": "Holy Word: Chastise",
+      "spell_id": 88625,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Keep on cooldown for damage and to trigger Divine Favor: Chastise when buffed by Divine Word; Apotheosis can reset it for back-to-back Divine Word windows."
+    },
+    {
+      "name": "Empyreal Blaze",
+      "spell_id": 372616,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast just before Divine Word so you spend no global on a non-damage cast inside the buff window; it also extends Holy Fire, so weave it on cooldown when talented."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Pair Halo with Apotheosis as Archon",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 120517,
+        "spell_name": "Halo",
+        "required_spell_id": 200183,
+        "required_spell_name": "Apotheosis",
+        "window_s": 20
+      },
+      "action": "As Archon, cast Halo inside the Apotheosis window so both spells benefit from the bonus healing; using Halo outside Apotheosis sacrifices a large chunk of your focused output."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Holy Words on cooldown",
+      "condition": null,
+      "action": "Cast Holy Word: Serenity and Holy Word: Sanctify as they come up rather than sitting on charges; only pool a single Serenity charge when you know predictable burst damage is about to hit."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Enter Apotheosis with Holy Words ready",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          2050,
+          34861
+        ],
+        "spell_names": [
+          "Holy Word: Serenity",
+          "Holy Word: Sanctify"
+        ],
+        "anchor_spell_id": 200183,
+        "anchor_spell_name": "Apotheosis",
+        "hold_window_s": 15
+      },
+      "action": "Hold a Holy Word: Serenity charge and a Holy Word: Sanctify charge as Apotheosis approaches so you enter the window with both ready, then spend and regenerate Holy Words aggressively for its full duration."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Sync Divine Word with Holy Word: Chastise",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 372760,
+        "spell_name": "Divine Word",
+        "required_spell_id": 88625,
+        "required_spell_name": "Holy Word: Chastise",
+        "window_s": 5
+      },
+      "action": "On the Chastise build, cast Divine Word immediately before Holy Word: Chastise (with Empyreal Blaze pre-cast if talented) to enter Divine Favor: Chastise; a Divine Word that does not feed a Holy Word is wasted."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Maximize Holy Word casts in Apotheosis",
+      "condition": null,
+      "action": "During Apotheosis, make every global cast a spell that either casts a Holy Word or reduces one (Flash Heal, Prayer of Healing, Smite); pre-pool Surge of Light procs so you can chain new Holy Words instead of idling."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spend Surge of Light on Prayer of Healing",
+      "condition": null,
+      "action": "Consume Surge of Light procs with Prayer of Healing whenever possible for extra cooldown reduction; you may hold up to two stacks but avoid overcapping and wasting the free casts."
+    },
+    {
+      "type": "positioning",
+      "priority": "low",
+      "description": "Cast Divine Hymn while line-of-sight",
+      "condition": null,
+      "action": "When a mechanic forces you behind a wall, keep channeling Divine Hymn since it heals allies even while you are line-of-sight of dangerous mobs; do not cancel it just to reposition."
+    }
+  ],
+  "cd_spell_ids": {
+    "Apotheosis": 200183,
+    "Halo": 120517,
+    "Divine Hymn": 64843,
+    "Divine Word": 372760,
+    "Holy Word: Chastise": 88625,
+    "Empyreal Blaze": 372616,
+    "Guardian Spirit": 47788,
+    "Desperate Prayer": 19236,
+    "Fade": 586
+  },
+  "ability_icons": {
+    "586": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Fade"
+    },
+    "19236": {
+      "icon": "spell_holy_testoffaith",
+      "name": "Desperate Prayer"
+    },
+    "47788": {
+      "icon": "spell_holy_guardianspirit",
+      "name": "Guardian Spirit"
+    },
+    "64843": {
+      "icon": "spell_holy_divinehymn",
+      "name": "Divine Hymn"
+    },
+    "88625": {
+      "icon": "spell_holy_chastise",
+      "name": "Holy Word: Chastise"
+    },
+    "120517": {
+      "icon": "ability_priest_halo",
+      "name": "Halo"
+    },
+    "200183": {
+      "icon": "ability_priest_ascension",
+      "name": "Apotheosis"
+    },
+    "372616": {
+      "icon": "ability_priest_empyrealblaze",
+      "name": "Empyreal Blaze"
+    },
+    "372760": {
+      "icon": "spell_priest_chakra",
+      "name": "Divine Word"
+    }
+  },
+  "source_signature": "46290b7048e97407",
+  "ingest_version": 2
+}

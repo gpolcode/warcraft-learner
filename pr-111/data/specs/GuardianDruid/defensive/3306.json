@@ -1,0 +1,345 @@
+{
+  "spec": "GuardianDruid",
+  "encounter_id": 3306,
+  "encounter_name": "Chimaerus, the Undreamt God",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 25.1,
+      "stddev_first_cast_s": 29.4,
+      "avg_gap_s": 51.5,
+      "stddev_gap_s": 18.7,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 1.04,
+      "uses_per_min": {
+        "avg": 1.04,
+        "stddev": 0.442,
+        "min": 0.423,
+        "max": 1.662
+      },
+      "majority_hold": false
+    },
+    "Ironfur": {
+      "sample_count": 8,
+      "avg_first_cast_s": 26.3,
+      "stddev_first_cast_s": 41.8,
+      "avg_gap_s": 23.5,
+      "stddev_gap_s": 19.5,
+      "hold_targets": {},
+      "avg_uses": 4.3,
+      "avg_uses_per_min": 1.78,
+      "uses_per_min": {
+        "avg": 1.783,
+        "stddev": 0.994,
+        "min": 0.409,
+        "max": 2.881
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 4,
+      "avg_first_cast_s": 60.1,
+      "stddev_first_cast_s": 39.2,
+      "avg_gap_s": 19.1,
+      "stddev_gap_s": 1.7,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.63,
+      "uses_per_min": {
+        "avg": 0.628,
+        "stddev": 0.243,
+        "min": 0.413,
+        "max": 0.846
+      },
+      "majority_hold": false
+    },
+    "Survival Instincts": {
+      "sample_count": 6,
+      "avg_first_cast_s": 95.1,
+      "stddev_first_cast_s": 41.7,
+      "avg_gap_s": 65.3,
+      "stddev_gap_s": 65.7,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.55,
+      "uses_per_min": {
+        "avg": 0.548,
+        "stddev": 0.211,
+        "min": 0.404,
+        "max": 0.823
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 17.1,
+      "dmg_avg": 669978,
+      "dmg_stddev": 260113,
+      "dmg_min": 410208,
+      "dmg_max": 1177236,
+      "dmg_pct_avg": 0.099,
+      "window_length_s": 13.5,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 362917,
+          "min_damage": 146200,
+          "max_damage": 1085408,
+          "count": 8
+        },
+        {
+          "spell_id": 1246827,
+          "avg_damage": 216878,
+          "min_damage": 113217,
+          "max_damage": 264917,
+          "count": 4
+        },
+        {
+          "spell_id": 1262305,
+          "avg_damage": 98694,
+          "min_damage": 62543,
+          "max_damage": 120687,
+          "count": 4
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 65551,
+          "min_damage": 23387,
+          "max_damage": 193616,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 77.8,
+      "dmg_avg": 362642,
+      "dmg_stddev": 105317,
+      "dmg_min": 248564,
+      "dmg_max": 529305,
+      "dmg_pct_avg": 0.053,
+      "window_length_s": 13.6,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1273112,
+          "avg_damage": 149567,
+          "min_damage": 61918,
+          "max_damage": 230048,
+          "count": 3
+        },
+        {
+          "spell_id": 1258610,
+          "avg_damage": 87088,
+          "min_damage": 82338,
+          "max_damage": 91828,
+          "count": 3
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 45870,
+          "min_damage": 10690,
+          "max_damage": 77718,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 109.9,
+      "dmg_avg": 573210,
+      "dmg_stddev": 413488,
+      "dmg_min": 71708,
+      "dmg_max": 1409916,
+      "dmg_pct_avg": 0.083,
+      "window_length_s": 8.3,
+      "defensive_name": "Ironfur",
+      "spell_id": 192081,
+      "common_defensives": [
+        "Ironfur"
+      ],
+      "common_cds": [
+        "Ironfur"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 309166,
+          "min_damage": 53074,
+          "max_damage": 498256,
+          "count": 7
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 143599,
+          "min_damage": 18634,
+          "max_damage": 260293,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 111.6,
+      "dmg_avg": 601576,
+      "dmg_stddev": 209758,
+      "dmg_min": 373745,
+      "dmg_max": 990408,
+      "dmg_pct_avg": 0.083,
+      "window_length_s": 13.7,
+      "defensive_name": "Barkskin",
+      "spell_id": 22812,
+      "common_defensives": [
+        "Barkskin"
+      ],
+      "common_cds": [
+        "Barkskin"
+      ],
+      "ref_game_id": 245569,
+      "ability_breakdown": [
+        {
+          "spell_id": 1,
+          "avg_damage": 383406,
+          "min_damage": 245337,
+          "max_damage": 518451,
+          "count": 6
+        },
+        {
+          "spell_id": 1246653,
+          "avg_damage": 150369,
+          "min_damage": 113640,
+          "max_damage": 230202,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 192081,
+      "avg_uses": 4.3,
+      "min_uses": 1,
+      "max_uses": 7
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Your biggest damage reduction at 50% on a long cooldown; save it for the most dangerous periods of a pull or encounter rather than using it on cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Use frequently for its damage reduction during periods of incoming damage; it can be cast freely while in Bear Form and should rarely be held.",
+      "talent_gated": false
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press whenever your health dips low to recover a meaningful chunk of HP; its short cooldown lets you use it often throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ironfur",
+      "spell_id": 192081,
+      "cooldown": 15,
+      "duration": 7,
+      "usage_rule": "An extremely short cooldown Rage spender for physical mitigation; press it before large physical hits or heavy melee swings but avoid overusing it, since wasted Ironfur drains the Rage needed for damage and is a significant DPS loss (cooldown shown is its GCD/charge cadence rather than a fixed timer).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Frenzied Regeneration": 22842,
+    "Ironfur": 192081
+  },
+  "ability_icons": {
+    "1": {
+      "icon": "trade_engineering",
+      "name": "Word of Recall (OLD)"
+    },
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "192081": {
+      "icon": "ability_druid_ironfur",
+      "name": "Ironfur"
+    },
+    "1246653": {
+      "icon": "inv_ability_poison_orb",
+      "name": "Caustic Phlegm"
+    },
+    "1246827": {
+      "icon": "ability_earthen_azeritesurge",
+      "name": "Alndust Upheaval"
+    },
+    "1258610": {
+      "icon": "inv_azeritefireball",
+      "name": "Rift Emergence"
+    },
+    "1262305": {
+      "icon": "ability_earthen_azeritesurge",
+      "name": "Alndust Upheaval"
+    },
+    "1273112": {
+      "icon": "spell_deathknight_gnaw_ghoul",
+      "name": "Consume"
+    }
+  },
+  "source_signature": "40da13f9b90b3d1d",
+  "ingest_version": 2
+}

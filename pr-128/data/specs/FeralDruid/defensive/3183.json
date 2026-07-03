@@ -1,0 +1,178 @@
+{
+  "spec": "FeralDruid",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Barkskin": {
+      "sample_count": 10,
+      "avg_first_cast_s": 131,
+      "stddev_first_cast_s": 101.5,
+      "avg_gap_s": 99.3,
+      "stddev_gap_s": 33,
+      "hold_targets": {
+        "1": {
+          "target_s": 284.7,
+          "stddev_s": 108.5,
+          "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 298.5,
+          "stddev_s": 83.7,
+          "count": 6,
+          "total_samples": 10
+        },
+        "3": {
+          "target_s": 341.4,
+          "stddev_s": 106.6,
+          "count": 7,
+          "total_samples": 10
+        },
+        "4": {
+          "target_s": 412.7,
+          "stddev_s": 70.4,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4,
+      "avg_uses_per_min": 0.46,
+      "uses_per_min": {
+        "avg": 0.461,
+        "stddev": 0.156,
+        "min": 0.231,
+        "max": 0.693
+      },
+      "majority_hold": true
+    },
+    "Frenzied Regeneration": {
+      "sample_count": 10,
+      "avg_first_cast_s": 225.7,
+      "stddev_first_cast_s": 113.8,
+      "avg_gap_s": 142,
+      "stddev_gap_s": 59.3,
+      "hold_targets": {
+        "1": {
+          "target_s": 342.2,
+          "stddev_s": 68.7,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 423.7,
+          "stddev_s": 69.5,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.26,
+      "uses_per_min": {
+        "avg": 0.264,
+        "stddev": 0.108,
+        "min": 0.115,
+        "max": 0.461
+      },
+      "majority_hold": true
+    },
+    "Survival Instincts": {
+      "sample_count": 6,
+      "avg_first_cast_s": 306.9,
+      "stddev_first_cast_s": 75.7,
+      "avg_gap_s": 259,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.13,
+      "uses_per_min": {
+        "avg": 0.134,
+        "stddev": 0.048,
+        "min": 0.11,
+        "max": 0.231
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 61336,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 22812,
+      "avg_uses": 4,
+      "min_uses": 2,
+      "max_uses": 6
+    },
+    {
+      "spell_id": 22842,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use before a large telegraphed hit or tankbuster overlap to reduce damage taken by 50 percent; two charges let you cover back-to-back damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press proactively into any incoming raid or melee damage for a 20 percent reduction; its short cooldown means it should be used freely throughout the fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": null,
+      "usage_rule": "Talented instant self-heal; press when your health drops below roughly 50 percent to restore a large chunk of HP without leaving Cat Form.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Available with the cross-form talent; shift to Bear Form and press to heal over 3 seconds when sustained damage threatens, then shift back to Cat to resume DPS.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Survival Instincts": 61336,
+    "Barkskin": 22812,
+    "Renewal": 108238,
+    "Frenzied Regeneration": 22842
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "22842": {
+      "icon": "ability_bullrush",
+      "name": "Frenzied Regeneration"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    }
+  },
+  "source_signature": "4cd3cd1b16f0c373",
+  "ingest_version": 2
+}

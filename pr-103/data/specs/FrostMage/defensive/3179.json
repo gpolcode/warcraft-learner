@@ -1,0 +1,199 @@
+{
+  "spec": "FrostMage",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 9,
+  "per_defensive_benchmarks": {
+    "Ice Cold": {
+      "sample_count": 7,
+      "avg_first_cast_s": 184,
+      "stddev_first_cast_s": 80.2,
+      "avg_gap_s": 88.6,
+      "stddev_gap_s": 53.2,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.31,
+      "uses_per_min": {
+        "avg": 0.314,
+        "stddev": 0.093,
+        "min": 0.175,
+        "max": 0.484
+      },
+      "majority_hold": false
+    },
+    "Alter Time": {
+      "sample_count": 4,
+      "avg_first_cast_s": 101.6,
+      "stddev_first_cast_s": 49.6,
+      "avg_gap_s": 122.6,
+      "stddev_gap_s": 31.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 231.7,
+          "stddev_s": 104,
+          "count": 3,
+          "total_samples": 4
+        },
+        "2": {
+          "target_s": 294.3,
+          "stddev_s": 85.2,
+          "count": 2,
+          "total_samples": 4
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.41,
+      "uses_per_min": {
+        "avg": 0.413,
+        "stddev": 0.121,
+        "min": 0.276,
+        "max": 0.525
+      },
+      "majority_hold": true
+    },
+    "Ice Barrier": {
+      "sample_count": 5,
+      "avg_first_cast_s": 142.1,
+      "stddev_first_cast_s": 75.2,
+      "avg_gap_s": 81.8,
+      "stddev_gap_s": 27.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 181,
+          "stddev_s": 137.1,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.375,
+        "stddev": 0.262,
+        "min": 0.168,
+        "max": 0.829
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 227.3,
+      "dmg_avg": 102508,
+      "dmg_stddev": 65294,
+      "dmg_min": 0,
+      "dmg_max": 182196,
+      "window_length_s": 6,
+      "defensive_name": "Ice Cold",
+      "spell_id": 414658,
+      "common_defensives": [
+        "Ice Cold"
+      ],
+      "common_cds": [
+        "Ice Cold"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1254018,
+          "avg_damage": 110115,
+          "min_damage": 107479,
+          "max_damage": 113794,
+          "count": 3
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 11426,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 414658,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 342245,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Use to fully immune a lethal hit or to drop a deadly debuff; Glacial Bulwark grants two charges, so script its usage across the fight's biggest damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Barrier",
+      "spell_id": 11426,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep an absorb shield up before incoming damage and refresh it on cooldown; Glacial Bulwark grants two charges so you can pre-shield consecutive damage events.",
+      "talent_gated": false
+    },
+    {
+      "name": "Ice Cold",
+      "spell_id": 414658,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Use as a movement-friendly damage reduction when you need to keep dealing damage through a hit instead of going fully immune; talent-gated alternative to the standard Ice Block.",
+      "talent_gated": true
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate before a burst of damage to snapshot your health and position, then let it return you to safety; talent-gated, so zero casts is normal if not taken.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Use to reduce incoming damage and pull threat off yourself during a dangerous window; talent-gated and not part of the standard damage rotation.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Ice Barrier": 11426,
+    "Ice Cold": 414658,
+    "Alter Time": 342245,
+    "Mirror Image": 55342
+  },
+  "ability_icons": {
+    "11426": {
+      "icon": "spell_ice_lament",
+      "name": "Ice Barrier"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "414658": {
+      "icon": "spell_fire_bluefire",
+      "name": "Ice Cold"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    }
+  },
+  "source_signature": "f5ea918afaecd8f4"
+}

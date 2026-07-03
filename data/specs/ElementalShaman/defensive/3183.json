@@ -1,0 +1,238 @@
+{
+  "spec": "ElementalShaman",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 9,
+      "avg_first_cast_s": 210,
+      "stddev_first_cast_s": 7.5,
+      "avg_gap_s": 147.9,
+      "stddev_gap_s": 59.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 328.2,
+          "stddev_s": 45,
+          "count": 8,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.22,
+        "stddev": 0.05,
+        "min": 0.112,
+        "max": 0.306
+      },
+      "majority_hold": true
+    },
+    "Earth Elemental": {
+      "sample_count": 3,
+      "avg_first_cast_s": 190.1,
+      "stddev_first_cast_s": 7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.109,
+        "stddev": 0.007,
+        "min": 0.102,
+        "max": 0.115
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 212.8,
+      "dmg_avg": 309384,
+      "dmg_stddev": 74789,
+      "dmg_min": 165544,
+      "dmg_max": 407651,
+      "dmg_pct_avg": 0.012,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 173541,
+          "min_damage": 117792,
+          "max_damage": 214215,
+          "count": 9
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 122691,
+          "min_damage": 47752,
+          "max_damage": 193436,
+          "count": 9
+        }
+      ]
+    },
+    {
+      "time_s": 327.6,
+      "dmg_avg": 477873,
+      "dmg_stddev": 109466,
+      "dmg_min": 368764,
+      "dmg_max": 686094,
+      "dmg_pct_avg": 0.018,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 159788,
+          "min_damage": 112272,
+          "max_damage": 186816,
+          "count": 7
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 99201,
+          "min_damage": 85574,
+          "max_damage": 109021,
+          "count": 7
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 79361,
+          "min_damage": 68459,
+          "max_damage": 87217,
+          "count": 7
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 43774,
+          "min_damage": 36758,
+          "max_damage": 46502,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 25249,
+          "min_damage": 10138,
+          "max_damage": 31416,
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "Drop ahead of incoming damage to absorb a large initial hit plus periodic shields; talent_gated since not every build takes it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate during a high-output window to convert a portion of your damage into raid healing; talent_gated and best used when you are already bursting.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a hit or pull threat off the group as an emergency tank-swap or damage-soak tool when no offensive use is needed.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Stone Bulwark Totem": 108270,
+    "Ancestral Guidance": 108281,
+    "Earth Elemental": 198103
+  },
+  "ability_icons": {
+    "108270": {
+      "icon": "ability_shaman_stonebulwark",
+      "name": "Stone Bulwark Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108281": {
+      "icon": "ability_shaman_ancestralguidance",
+      "name": "Ancestral Guidance"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    }
+  },
+  "source_signature": "65fc5c4779e5726f",
+  "ingest_version": 3
+}

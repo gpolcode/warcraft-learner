@@ -1,0 +1,127 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 121.5,
+      "stddev_first_cast_s": 56.4,
+      "avg_gap_s": 74,
+      "stddev_gap_s": 30.3,
+      "hold_targets": {},
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 0.6,
+      "uses_per_min": {
+        "avg": 0.601,
+        "stddev": 0.159,
+        "min": 0.361,
+        "max": 0.823
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 8,
+      "avg_first_cast_s": 192.2,
+      "stddev_first_cast_s": 89.5,
+      "avg_gap_s": 115,
+      "stddev_gap_s": 45.9,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.27,
+      "uses_per_min": {
+        "avg": 0.268,
+        "stddev": 0.136,
+        "min": 0.171,
+        "max": 0.531
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 4,
+      "avg_first_cast_s": 235.5,
+      "stddev_first_cast_s": 70,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.18,
+      "uses_per_min": {
+        "avg": 0.179,
+        "stddev": 0.011,
+        "min": 0.17,
+        "max": 0.195
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.4,
+      "min_uses": 2,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to immune all incoming damage during a lethal mechanic or tankbuster overlap; you cannot attack while it is active, so use it purely as a survival panic button.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use proactively for a flat damage reduction ahead of a predictable burst of raid or melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when your health drops below roughly 50% to recover a large chunk of health for yourself and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    }
+  },
+  "source_signature": "66b5ecb7f177af12",
+  "ingest_version": 2
+}

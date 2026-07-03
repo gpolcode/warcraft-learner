@@ -1,0 +1,144 @@
+{
+  "spec": "BrewmasterMonk",
+  "major_cooldowns": [
+    {
+      "name": "Invoke Niuzao, the Black Ox",
+      "spell_id": 132578,
+      "cooldown": 120,
+      "duration": 25,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press on cooldown only when you will be fighting for the full 25 second duration, and fit as many Blackout Kicks as possible inside the window to trigger Stomps; cooldown is reduced by Efficient Training if you run Shado-Pan."
+    },
+    {
+      "name": "Exploding Keg",
+      "spell_id": 325153,
+      "cooldown": 60,
+      "duration": 3,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Use on cooldown for its burst Fire damage and Keg Smash reset, ideally with Rushing Jade Wind already active beforehand."
+    },
+    {
+      "name": "Touch of Death",
+      "spell_id": 322109,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Execute any enemy below the threshold whenever available; with Improved Touch of Death it fires under 15% health, otherwise snipe targets whose current health is below your maximum health."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Purifying Brew",
+      "spell_id": 119582,
+      "cooldown": 20,
+      "usage_rule": "Spend a charge right after taking a large damage spike to purify 50% of your Stagger pool, and avoid sitting on both charges so you never waste cooldown reduction."
+    },
+    {
+      "name": "Celestial Brew",
+      "spell_id": 322507,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use the absorb shield to soak a known incoming hit; choose this over Celestial Infusion when you face overwhelming spiky damage."
+    },
+    {
+      "name": "Celestial Infusion",
+      "spell_id": 1241059,
+      "cooldown": 60,
+      "duration": 16,
+      "talent_gated": true,
+      "usage_rule": "The default smoother alternative to Celestial Brew, granting a partial absorb over 16 seconds; use it often to reduce the spikiness of your damage intake (spell_id is best-guess for the Midnight Celestial Infusion choice node, verify on Wowhead)."
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Your strongest defensive: press it proactively before predictable heavy damage, noting its real cooldown is roughly halved by Keg Smash and Tiger Palm cooldown reduction."
+    },
+    {
+      "name": "Black Ox Brew",
+      "spell_id": 115399,
+      "cooldown": 90,
+      "talent_gated": true,
+      "usage_rule": "When talented, use to instantly refill Energy and recharge both Purifying Brew and Celestial Brew or Celestial Infusion, ideally when those Brews are on cooldown and you are at low Energy."
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "talent_gated": true,
+      "usage_rule": "When talented, use before a window of large incoming hits to reduce their damage; scales best against big attacks rather than chip damage."
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "talent_gated": true,
+      "usage_rule": "When talented, press before heavy magical damage to cut it by 60% and clear harmful magical debuffs."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Maintain Shuffle at all times",
+      "condition": null,
+      "action": "Cast Blackout Kick and Keg Smash on cooldown to keep Shuffle active for the entire fight; never let Shuffle drop, since previously staggered damage will spike you when it falls off."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keg Smash on cooldown for CDR and Shuffle",
+      "condition": null,
+      "action": "Press Keg Smash whenever it is available and you have the Energy; it grants Shuffle, applies your damage debuff, and provides 3 seconds of Brew cooldown reduction per cast."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Consume Blackout Combo with Tiger Palm",
+      "condition": null,
+      "action": "When running Blackout Combo, always spend the buff on Tiger Palm before your next Blackout Kick, and never dump it into Keg Smash, so you keep the larger damage gain."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Do not waste Purifying Brew charges",
+      "condition": null,
+      "action": "Play as if Purifying Brew has one charge: use a charge after a big hit or when the second charge is about to refill, so you never cap charges and lose cooldown reduction."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Exploding Keg after Rushing Jade Wind",
+      "condition": null,
+      "action": "If you run Rushing Jade Wind, refresh it just before pressing Exploding Keg so its ticks benefit from the Exploding Keg bonus Fire damage window."
+    },
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Opener: build Shuffle, delay Niuzao",
+      "condition": null,
+      "action": "Open with Keg Smash, Blackout Kick, Breath of Fire, Tiger Palm, Exploding Keg, Keg Smash, Blackout Kick, then Invoke Niuzao; establish Shuffle first and space your cooldowns out rather than stacking them."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Only summon Niuzao for 25s+ fights",
+      "condition": null,
+      "action": "Hold Invoke Niuzao unless the current target will live at least 25 more seconds, so you do not waste the bulk of its duration and damage."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Prioritize Breath of Fire and Keg Smash in AoE",
+      "condition": null,
+      "action": "In AoE, raise the priority of Breath of Fire and Keg Smash (especially while Niuzao is active) and use Spinning Crane Kick only as filler when no higher-priority button is available."
+    }
+  ],
+  "source_summary": "Brewmaster Monk's gameplay centers on maintaining 100% Shuffle uptime by pressing Blackout Kick and Keg Smash on cooldown, then layering Purifying Brew and Celestial Brew or Celestial Infusion to manage the Stagger pool. Offensive cooldowns (Exploding Keg, Invoke Niuzao, Touch of Death) are largely used on cooldown, spaced out between core casts rather than stacked together, with brief delays only to line up with upcoming AoE. Brews benefit from heavy cooldown reduction via Keg Smash and Tiger Palm, so the priority is to keep them cycling rather than hoarding charges.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 19:55:05"
+}

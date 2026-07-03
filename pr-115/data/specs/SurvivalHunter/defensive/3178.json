@@ -1,0 +1,127 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Aspect of the Turtle": {
+      "sample_count": 4,
+      "avg_first_cast_s": 150,
+      "stddev_first_cast_s": 136.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.16,
+      "uses_per_min": {
+        "avg": 0.157,
+        "stddev": 0.009,
+        "min": 0.148,
+        "max": 0.17
+      },
+      "majority_hold": false
+    },
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 80.9,
+      "stddev_first_cast_s": 105.2,
+      "avg_gap_s": 83.9,
+      "stddev_gap_s": 52.8,
+      "hold_targets": {},
+      "avg_uses": 3.5,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.59,
+        "stddev": 0.233,
+        "min": 0.176,
+        "max": 0.85
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 5,
+      "avg_first_cast_s": 259.8,
+      "stddev_first_cast_s": 59,
+      "avg_gap_s": 94.2,
+      "stddev_gap_s": 18.6,
+      "hold_targets": {},
+      "avg_uses": 1.4,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.228,
+        "stddev": 0.07,
+        "min": 0.154,
+        "max": 0.307
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 3.5,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1.4,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to immune all incoming damage during a lethal mechanic or tankbuster overlap; you cannot attack while it is active, so use it purely as a survival panic button.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use proactively for a flat damage reduction ahead of a predictable burst of raid or melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when your health drops below roughly 50% to recover a large chunk of health for yourself and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    }
+  },
+  "source_signature": "9a23165c0a786704",
+  "ingest_version": 2
+}

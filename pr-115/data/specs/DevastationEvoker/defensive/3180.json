@@ -1,0 +1,111 @@
+{
+  "spec": "DevastationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.1,
+      "stddev_first_cast_s": 35.1,
+      "avg_gap_s": 40.5,
+      "stddev_gap_s": 41.9,
+      "hold_targets": {},
+      "avg_uses": 6.4,
+      "avg_uses_per_min": 1.09,
+      "uses_per_min": {
+        "avg": 1.086,
+        "stddev": 0.343,
+        "min": 0.42,
+        "max": 1.608
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 5,
+      "avg_first_cast_s": 91.2,
+      "stddev_first_cast_s": 64.2,
+      "avg_gap_s": 146.5,
+      "stddev_gap_s": 77.7,
+      "hold_targets": {
+        "1": {
+          "target_s": 272.8,
+          "stddev_s": 40.1,
+          "count": 2,
+          "total_samples": 5
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.338,
+        "stddev": 0.086,
+        "min": 0.192,
+        "max": 0.42
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.4,
+      "min_uses": 3,
+      "max_uses": 9
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "0d898b351fd9d816",
+  "ingest_version": 2
+}

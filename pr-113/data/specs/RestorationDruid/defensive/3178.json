@@ -1,0 +1,137 @@
+{
+  "spec": "RestorationDruid",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Ironbark": {
+      "sample_count": 7,
+      "avg_first_cast_s": 172.3,
+      "stddev_first_cast_s": 100,
+      "avg_gap_s": 138.1,
+      "stddev_gap_s": 34.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 237.5,
+          "stddev_s": 65.8,
+          "count": 3,
+          "total_samples": 7
+        }
+      },
+      "avg_uses": 1.6,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.247,
+        "stddev": 0.116,
+        "min": 0.14,
+        "max": 0.423
+      },
+      "majority_hold": false
+    },
+    "Barkskin": {
+      "sample_count": 9,
+      "avg_first_cast_s": 141.4,
+      "stddev_first_cast_s": 77.4,
+      "avg_gap_s": 108.1,
+      "stddev_gap_s": 47,
+      "hold_targets": {
+        "1": {
+          "target_s": 284.4,
+          "stddev_s": 63.6,
+          "count": 7,
+          "total_samples": 9
+        },
+        "2": {
+          "target_s": 316.9,
+          "stddev_s": 93.5,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 2.7,
+      "avg_uses_per_min": 0.42,
+      "uses_per_min": {
+        "avg": 0.418,
+        "stddev": 0.172,
+        "min": 0.216,
+        "max": 0.711
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 22812,
+      "avg_uses": 2.7,
+      "min_uses": 1,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 102342,
+      "avg_uses": 1.6,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Barkskin": 22812,
+    "Survival Instincts": 61336,
+    "Renewal": 108238,
+    "Ironbark": 102342
+  },
+  "ability_icons": {
+    "22812": {
+      "icon": "spell_nature_stoneclawtotem",
+      "name": "Barkskin"
+    },
+    "61336": {
+      "icon": "ability_druid_tigersroar",
+      "name": "Survival Instincts"
+    },
+    "102342": {
+      "icon": "spell_druid_ironbark",
+      "name": "Ironbark"
+    },
+    "108238": {
+      "icon": "spell_nature_natureblessing",
+      "name": "Renewal"
+    }
+  },
+  "source_signature": "ed45aaf1cdb25d42",
+  "ingest_version": 2
+}

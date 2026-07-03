@@ -1,0 +1,278 @@
+{
+  "spec": "ArcaneMage",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Prismatic Barrier": {
+      "sample_count": 10,
+      "avg_first_cast_s": 93.3,
+      "stddev_first_cast_s": 31.9,
+      "avg_gap_s": 51,
+      "stddev_gap_s": 23.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 171.7,
+          "stddev_s": 48.7,
+          "count": 7,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 169.9,
+          "stddev_s": 39.2,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.8,
+      "avg_uses_per_min": 0.76,
+      "uses_per_min": {
+        "avg": 0.76,
+        "stddev": 0.284,
+        "min": 0.306,
+        "max": 1.178
+      },
+      "majority_hold": true
+    },
+    "Alter Time": {
+      "sample_count": 5,
+      "avg_first_cast_s": 87.7,
+      "stddev_first_cast_s": 57,
+      "avg_gap_s": 54,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.2,
+      "avg_uses_per_min": 0.36,
+      "uses_per_min": {
+        "avg": 0.355,
+        "stddev": 0.124,
+        "min": 0.288,
+        "max": 0.577
+      },
+      "majority_hold": false
+    },
+    "Mirror Image": {
+      "sample_count": 1,
+      "avg_first_cast_s": 101.7,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.288,
+        "stddev": 0,
+        "min": 0.288,
+        "max": 0.288
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 92.7,
+      "dmg_avg": 266084,
+      "dmg_stddev": 53780,
+      "dmg_min": 179596,
+      "dmg_max": 343717,
+      "window_length_s": 7.5,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 156208,
+          "min_damage": 111317,
+          "max_damage": 227499,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 92095,
+          "min_damage": 16934,
+          "max_damage": 179596,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 119.6,
+      "dmg_avg": 225165,
+      "dmg_stddev": 23801,
+      "dmg_min": 193863,
+      "dmg_max": 249167,
+      "window_length_s": 23.4,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1250686,
+          "avg_damage": 124465,
+          "min_damage": 28451,
+          "max_damage": 249167,
+          "count": 5
+        },
+        {
+          "spell_id": 1254018,
+          "avg_damage": 108254,
+          "min_damage": 13458,
+          "max_damage": 178400,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 171,
+      "dmg_avg": 229644,
+      "dmg_stddev": 40590,
+      "dmg_min": 177525,
+      "dmg_max": 325016,
+      "window_length_s": 7.9,
+      "defensive_name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "common_defensives": [
+        "Prismatic Barrier"
+      ],
+      "common_cds": [
+        "Prismatic Barrier"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 121268,
+          "min_damage": 51648,
+          "max_damage": 170623,
+          "count": 6
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 101258,
+          "min_damage": 33458,
+          "max_damage": 177525,
+          "count": 9
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 342245,
+      "avg_uses": 1.2,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 55342,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 235450,
+      "avg_uses": 2.8,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting.",
+      "talent_gated": false
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink.",
+      "talent_gated": false
+    },
+    {
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade.",
+      "talent_gated": false
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 25,
+      "duration": 60,
+      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Ice Block": 45438,
+    "Alter Time": 342245,
+    "Greater Invisibility": 110959,
+    "Mirror Image": 55342,
+    "Prismatic Barrier": 235450
+  },
+  "ability_icons": {
+    "45438": {
+      "icon": "spell_frost_frost",
+      "name": "Ice Block"
+    },
+    "55342": {
+      "icon": "spell_magic_lesserinvisibilty",
+      "name": "Mirror Image"
+    },
+    "110959": {
+      "icon": "ability_mage_greaterinvisibility",
+      "name": "Greater Invisibility"
+    },
+    "235450": {
+      "icon": "spell_magearmor",
+      "name": "Prismatic Barrier"
+    },
+    "342245": {
+      "icon": "spell_mage_altertime",
+      "name": "Alter Time"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1254018": {
+      "icon": "inv_112_etherealwraps_empowered_blue",
+      "name": "Entropic Unraveling"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "ab3fc594569b5c2b",
+  "ingest_version": 1
+}

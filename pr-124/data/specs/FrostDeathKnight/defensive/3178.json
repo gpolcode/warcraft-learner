@@ -1,0 +1,189 @@
+{
+  "spec": "FrostDeathKnight",
+  "encounter_id": 3178,
+  "encounter_name": "Vaelgor & Ezzorak",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Anti-Magic Shell": {
+      "sample_count": 10,
+      "avg_first_cast_s": 82.1,
+      "stddev_first_cast_s": 65.8,
+      "avg_gap_s": 72.6,
+      "stddev_gap_s": 36.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 262.1,
+          "stddev_s": 93.3,
+          "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 209,
+          "stddev_s": 42.1,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 4.4,
+      "avg_uses_per_min": 0.72,
+      "uses_per_min": {
+        "avg": 0.718,
+        "stddev": 0.31,
+        "min": 0.204,
+        "max": 1.129
+      },
+      "majority_hold": true
+    },
+    "Icebound Fortitude": {
+      "sample_count": 6,
+      "avg_first_cast_s": 182,
+      "stddev_first_cast_s": 128.2,
+      "avg_gap_s": 235.4,
+      "stddev_gap_s": 105.5,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.25,
+      "uses_per_min": {
+        "avg": 0.252,
+        "stddev": 0.113,
+        "min": 0.149,
+        "max": 0.399
+      },
+      "majority_hold": false
+    },
+    "Lichborne": {
+      "sample_count": 4,
+      "avg_first_cast_s": 230.6,
+      "stddev_first_cast_s": 152.9,
+      "avg_gap_s": 91,
+      "stddev_gap_s": 15.5,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.341,
+        "stddev": 0.25,
+        "min": 0.161,
+        "max": 0.705
+      },
+      "majority_hold": false
+    },
+    "Anti-Magic Zone": {
+      "sample_count": 4,
+      "avg_first_cast_s": 271.9,
+      "stddev_first_cast_s": 64.5,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.17,
+      "uses_per_min": {
+        "avg": 0.166,
+        "stddev": 0.012,
+        "min": 0.149,
+        "max": 0.176
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 48707,
+      "avg_uses": 4.4,
+      "min_uses": 1,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 48792,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 49039,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 51052,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press before incoming magic damage to absorb it and generate Runic Power; use it proactively on telegraphed magic hits since the shield only lasts 5 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use for heavy physical hits or tankbusters to reduce all damage taken and gain stun immunity for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Activate to become immune to Charm, Fear, and Sleep effects, and to enable Death Coil self-healing during dangerous windows.",
+      "talent_gated": false
+    },
+    {
+      "name": "Death Strike",
+      "spell_id": 49998,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend Runic Power on it as an on-demand self-heal when you dip low; its heal scales with recent damage taken so press it after a hit rather than before.",
+      "talent_gated": false
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Drop it for the group ahead of a raid-wide magic burst to reduce magic damage taken for everyone standing inside (talent choice in some builds).",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Anti-Magic Shell": 48707,
+    "Icebound Fortitude": 48792,
+    "Lichborne": 49039,
+    "Death Strike": 49998,
+    "Anti-Magic Zone": 51052
+  },
+  "ability_icons": {
+    "48707": {
+      "icon": "spell_shadow_antimagicshell",
+      "name": "Anti-Magic Shell"
+    },
+    "48792": {
+      "icon": "spell_deathknight_iceboundfortitude",
+      "name": "Icebound Fortitude"
+    },
+    "49039": {
+      "icon": "spell_shadow_raisedead",
+      "name": "Lichborne"
+    },
+    "49998": {
+      "icon": "spell_deathknight_butcher2",
+      "name": "Death Strike"
+    },
+    "51052": {
+      "icon": "spell_deathknight_antimagiczone",
+      "name": "Anti-Magic Zone"
+    }
+  },
+  "source_signature": "62ab907b299916b6",
+  "ingest_version": 2
+}

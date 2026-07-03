@@ -1,0 +1,223 @@
+{
+  "spec": "WindwalkerMonk",
+  "encounter_id": 3182,
+  "encounter_name": "Belo'ren, Child of Al'ar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Touch of Karma": {
+      "sample_count": 10,
+      "avg_first_cast_s": 71.3,
+      "stddev_first_cast_s": 77.2,
+      "avg_gap_s": 118.3,
+      "stddev_gap_s": 13.8,
+      "hold_targets": {
+        "1": {
+          "target_s": 128.6,
+          "stddev_s": 70.3,
+          "count": 8,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 232,
+          "stddev_s": 18.7,
+          "count": 4,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 2.3,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.508,
+        "stddev": 0.157,
+        "min": 0.242,
+        "max": 0.768
+      },
+      "majority_hold": true
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 0.8,
+      "dmg_avg": 583281,
+      "dmg_stddev": 68459,
+      "dmg_min": 496079,
+      "dmg_max": 647860,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1241932,
+          "avg_damage": 498108,
+          "min_damage": 409739,
+          "max_damage": 554402,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 85172,
+          "min_damage": 62526,
+          "max_damage": 93458,
+          "count": 5
+        }
+      ]
+    },
+    {
+      "time_s": 121.2,
+      "dmg_avg": 695226,
+      "dmg_stddev": 175918,
+      "dmg_min": 515046,
+      "dmg_max": 1095000,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242803,
+          "avg_damage": 495430,
+          "min_damage": 312804,
+          "max_damage": 628065,
+          "count": 5
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 93075,
+          "min_damage": 72788,
+          "max_damage": 128559,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 232,
+      "dmg_avg": 510338,
+      "dmg_stddev": 256941,
+      "dmg_min": 128559,
+      "dmg_max": 703767,
+      "window_length_s": 10,
+      "defensive_name": "Touch of Karma",
+      "spell_id": 122470,
+      "common_defensives": [
+        "Touch of Karma"
+      ],
+      "common_cds": [
+        "Touch of Karma"
+      ],
+      "ref_game_id": 240387,
+      "ability_breakdown": [
+        {
+          "spell_id": 1242815,
+          "avg_damage": 474502,
+          "min_damage": 208060,
+          "max_damage": 615505,
+          "count": 3
+        },
+        {
+          "spell_id": 1264650,
+          "avg_damage": 87315,
+          "min_damage": 31959,
+          "max_damage": 128559,
+          "count": 6
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 122470,
+      "avg_uses": 2.3,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Use first and foremost to absorb a known incoming damage spike; the absorbed damage is redirected to the target, so press it on cooldown into damage whenever the defensive value is not strictly needed.",
+      "talent_gated": false
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 243435,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Press before heavy incoming damage; because it raises maximum health it also boosts Touch of Death and Touch of Karma, so cast it before either when you can to gain both the defensive and offensive benefit.",
+      "talent_gated": false
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use ahead of large hits to reduce high-damage attacks by up to 50%; best against big single blows rather than steady chip damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press proactively before a burst of magic damage to cut it by 60% and clear harmful magical debuffs back to their caster.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Touch of Karma": 122470,
+    "Fortifying Brew": 243435,
+    "Dampen Harm": 122278,
+    "Diffuse Magic": 122783
+  },
+  "ability_icons": {
+    "122278": {
+      "icon": "ability_monk_dampenharm",
+      "name": "Dampen Harm"
+    },
+    "122470": {
+      "icon": "ability_monk_touchofkarma",
+      "name": "Touch of Karma"
+    },
+    "122783": {
+      "icon": "spell_monk_diffusemagic",
+      "name": "Diffuse Magic"
+    },
+    "243435": {
+      "icon": "ability_monk_fortifyingale_new",
+      "name": "Fortifying Brew"
+    },
+    "1241932": {
+      "icon": "inv_12_dualityphoenix_lightvoid_channel",
+      "name": "Voidlight Convergence"
+    },
+    "1242803": {
+      "icon": "inv_ability_holyfire_wave",
+      "name": "Light Flames"
+    },
+    "1242815": {
+      "icon": "inv_cosmicvoid_wave",
+      "name": "Void Flames"
+    },
+    "1264650": {
+      "icon": "inv_ragnaros_heart",
+      "name": "Burning Heart"
+    }
+  },
+  "source_signature": "c522e5739e9dc04b",
+  "ingest_version": 0
+}

@@ -1,0 +1,127 @@
+{
+  "spec": "SurvivalHunter",
+  "encounter_id": 3181,
+  "encounter_name": "Crown of the Cosmos",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Survival of the Fittest": {
+      "sample_count": 10,
+      "avg_first_cast_s": 148.2,
+      "stddev_first_cast_s": 126.1,
+      "avg_gap_s": 95,
+      "stddev_gap_s": 69.6,
+      "hold_targets": {},
+      "avg_uses": 4.2,
+      "avg_uses_per_min": 0.51,
+      "uses_per_min": {
+        "avg": 0.509,
+        "stddev": 0.179,
+        "min": 0.269,
+        "max": 0.801
+      },
+      "majority_hold": false
+    },
+    "Exhilaration": {
+      "sample_count": 7,
+      "avg_first_cast_s": 306.5,
+      "stddev_first_cast_s": 153.4,
+      "avg_gap_s": 138,
+      "stddev_gap_s": 105.3,
+      "hold_targets": {},
+      "avg_uses": 1.9,
+      "avg_uses_per_min": 0.22,
+      "uses_per_min": {
+        "avg": 0.221,
+        "stddev": 0.082,
+        "min": 0.112,
+        "max": 0.343
+      },
+      "majority_hold": false
+    },
+    "Aspect of the Turtle": {
+      "sample_count": 4,
+      "avg_first_cast_s": 274.2,
+      "stddev_first_cast_s": 192.7,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.12,
+      "uses_per_min": {
+        "avg": 0.122,
+        "stddev": 0.01,
+        "min": 0.112,
+        "max": 0.135
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 186265,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 264735,
+      "avg_uses": 4.2,
+      "min_uses": 2,
+      "max_uses": 7
+    },
+    {
+      "spell_id": 109304,
+      "avg_uses": 1.9,
+      "min_uses": 1,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press to immune all incoming damage during a lethal mechanic or tankbuster overlap; you cannot attack while it is active, so use it purely as a survival panic button.",
+      "talent_gated": false
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Use proactively for a flat damage reduction ahead of a predictable burst of raid or melee damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "duration": null,
+      "usage_rule": "Press when your health drops below roughly 50% to recover a large chunk of health for yourself and your pet.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Aspect of the Turtle": 186265,
+    "Survival of the Fittest": 264735,
+    "Exhilaration": 109304
+  },
+  "ability_icons": {
+    "109304": {
+      "icon": "ability_hunter_onewithnature",
+      "name": "Exhilaration"
+    },
+    "186265": {
+      "icon": "ability_hunter_pet_turtle",
+      "name": "Aspect of the Turtle"
+    },
+    "264735": {
+      "icon": "spell_nature_spiritarmor",
+      "name": "Survival of the Fittest"
+    }
+  },
+  "source_signature": "9115519eba5763ed",
+  "ingest_version": 2
+}

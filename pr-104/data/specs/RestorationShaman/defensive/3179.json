@@ -1,0 +1,169 @@
+{
+  "spec": "RestorationShaman",
+  "encounter_id": 3179,
+  "encounter_name": "Fallen-King Salhadaar",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 6,
+      "avg_first_cast_s": 156.6,
+      "stddev_first_cast_s": 58.4,
+      "avg_gap_s": 134.9,
+      "stddev_gap_s": 12.3,
+      "hold_targets": {},
+      "avg_uses": 1.3,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.336,
+        "stddev": 0.119,
+        "min": 0.216,
+        "max": 0.507
+      },
+      "majority_hold": false
+    },
+    "Spirit Link Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 106.6,
+      "stddev_first_cast_s": 27.8,
+      "avg_gap_s": 181.6,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.1,
+      "avg_uses_per_min": 0.29,
+      "uses_per_min": {
+        "avg": 0.288,
+        "stddev": 0.081,
+        "min": 0.216,
+        "max": 0.502
+      },
+      "majority_hold": false
+    },
+    "Healing Tide Totem": {
+      "sample_count": 2,
+      "avg_first_cast_s": 71.2,
+      "stddev_first_cast_s": 61.9,
+      "avg_gap_s": 125.1,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.38,
+      "uses_per_min": {
+        "avg": 0.377,
+        "stddev": 0.117,
+        "min": 0.294,
+        "max": 0.46
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 211.3,
+      "dmg_avg": 361233,
+      "dmg_stddev": 194335,
+      "dmg_min": 150311,
+      "dmg_max": 608849,
+      "window_length_s": 9.6,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240432,
+      "ability_breakdown": [
+        {
+          "spell_id": 1285504,
+          "avg_damage": 202753,
+          "min_damage": 129032,
+          "max_damage": 332508,
+          "count": 4
+        },
+        {
+          "spell_id": 1250686,
+          "avg_damage": 83679,
+          "min_damage": 40533,
+          "max_damage": 126989,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 1.3,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 98008,
+      "avg_uses": 1.1,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108280,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Spirit Link Totem": 98008,
+    "Healing Tide Totem": 108280
+  },
+  "ability_icons": {
+    "98008": {
+      "icon": "spell_shaman_spiritlink",
+      "name": "Spirit Link Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108280": {
+      "icon": "ability_shaman_healingtide",
+      "name": "Healing Tide Totem"
+    },
+    "1250686": {
+      "icon": "inv_cosmicvoid_missile",
+      "name": "Twisting Obscurity"
+    },
+    "1285504": {
+      "icon": "inv_enchant_essencecosmicgreater",
+      "name": "Dark Radiation"
+    }
+  },
+  "source_signature": "e6c7c28c99be47e3",
+  "ingest_version": 0
+}

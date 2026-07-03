@@ -1,0 +1,278 @@
+{
+  "spec": "RestorationShaman",
+  "encounter_id": 3159,
+  "encounter_name": "Rotmire",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 9,
+      "avg_first_cast_s": 185.5,
+      "stddev_first_cast_s": 99.6,
+      "avg_gap_s": 189.3,
+      "stddev_gap_s": 67.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 331,
+          "stddev_s": 78.1,
+          "count": 4,
+          "total_samples": 9
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.23,
+      "uses_per_min": {
+        "avg": 0.229,
+        "stddev": 0.105,
+        "min": 0.129,
+        "max": 0.386
+      },
+      "majority_hold": false
+    },
+    "Spirit Link Totem": {
+      "sample_count": 10,
+      "avg_first_cast_s": 206,
+      "stddev_first_cast_s": 83,
+      "avg_gap_s": 246.6,
+      "stddev_gap_s": 34.1,
+      "hold_targets": {
+        "1": {
+          "target_s": 403.4,
+          "stddev_s": 36,
+          "count": 7,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 1.7,
+      "avg_uses_per_min": 0.24,
+      "uses_per_min": {
+        "avg": 0.236,
+        "stddev": 0.063,
+        "min": 0.129,
+        "max": 0.295
+      },
+      "majority_hold": true
+    },
+    "Healing Tide Totem": {
+      "sample_count": 4,
+      "avg_first_cast_s": 98.7,
+      "stddev_first_cast_s": 44.6,
+      "avg_gap_s": 141.1,
+      "stddev_gap_s": 17,
+      "hold_targets": {},
+      "avg_uses": 3,
+      "avg_uses_per_min": 0.4,
+      "uses_per_min": {
+        "avg": 0.402,
+        "stddev": 0.023,
+        "min": 0.386,
+        "max": 0.435
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 119.4,
+      "dmg_avg": 536240,
+      "dmg_stddev": 153790,
+      "dmg_min": 362400,
+      "dmg_max": 798637,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 353726,
+          "min_damage": 50134,
+          "max_damage": 694209,
+          "count": 6
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 98373,
+          "min_damage": 86360,
+          "max_damage": 105849,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 269.3,
+      "dmg_avg": 506313,
+      "dmg_stddev": 150909,
+      "dmg_min": 311417,
+      "dmg_max": 676486,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1222284,
+          "avg_damage": 181434,
+          "min_damage": 135953,
+          "max_damage": 209035,
+          "count": 4
+        },
+        {
+          "spell_id": 1221637,
+          "avg_damage": 164211,
+          "min_damage": 30471,
+          "max_damage": 481744,
+          "count": 4
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 146691,
+          "min_damage": 96346,
+          "max_damage": 181216,
+          "count": 3
+        },
+        {
+          "spell_id": 1222278,
+          "avg_damage": 101301,
+          "min_damage": 39770,
+          "max_damage": 162832,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "time_s": 397.5,
+      "dmg_avg": 610015,
+      "dmg_stddev": 130517,
+      "dmg_min": 475162,
+      "dmg_max": 784013,
+      "window_length_s": 11,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 238693,
+      "ability_breakdown": [
+        {
+          "spell_id": 1221637,
+          "avg_damage": 262258,
+          "min_damage": 58981,
+          "max_damage": 489939,
+          "count": 4
+        },
+        {
+          "spell_id": 1222284,
+          "avg_damage": 252890,
+          "min_damage": 170825,
+          "max_damage": 300237,
+          "count": 4
+        },
+        {
+          "spell_id": 1221965,
+          "avg_damage": 168083,
+          "min_damage": 157282,
+          "max_damage": 178884,
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 98008,
+      "avg_uses": 1.7,
+      "min_uses": 1,
+      "max_uses": 2
+    },
+    {
+      "spell_id": 108280,
+      "avg_uses": 3,
+      "min_uses": 3,
+      "max_uses": 3
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press before predictable spikes of personal damage to reduce damage taken by 40 percent for 8 seconds; use it proactively for tankbusters and unavoidable raid hits rather than reactively.",
+      "talent_gated": false
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop on the group ahead of a heavy damage window to cut everyone's damage by 10 percent (15 percent with Spouting Spirits) and redistribute health, keeping low players alive without spending direct healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Use as a raid-saving cooldown during sustained group damage; its pulsing heal over 10 seconds stabilizes the whole party and is strongest on five or fewer targets.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Spirit Link Totem": 98008,
+    "Healing Tide Totem": 108280
+  },
+  "ability_icons": {
+    "98008": {
+      "icon": "spell_shaman_spiritlink",
+      "name": "Spirit Link Totem"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "108280": {
+      "icon": "ability_shaman_healingtide",
+      "name": "Healing Tide Totem"
+    },
+    "1221637": {
+      "icon": "inv_misc_herb_plaguebloom",
+      "name": "Fungal Bloom"
+    },
+    "1221965": {
+      "icon": "inv_misc_starspecklemushroom",
+      "name": "Bursting Shroom"
+    },
+    "1222278": {
+      "icon": "inv_misc_herb_zoanthid",
+      "name": "Bursting Pustules"
+    },
+    "1222284": {
+      "icon": "ability_creature_poison_06",
+      "name": "Rotting Pustules"
+    }
+  },
+  "source_signature": "38e78e17849d11bf",
+  "ingest_version": 0
+}

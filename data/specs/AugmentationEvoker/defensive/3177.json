@@ -1,0 +1,149 @@
+{
+  "spec": "AugmentationEvoker",
+  "encounter_id": 3177,
+  "encounter_name": "Vorasius",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 9,
+      "avg_first_cast_s": 80.3,
+      "stddev_first_cast_s": 14.4,
+      "avg_gap_s": 20.3,
+      "stddev_gap_s": 24.2,
+      "hold_targets": {},
+      "avg_uses": 3.4,
+      "avg_uses_per_min": 1.12,
+      "uses_per_min": {
+        "avg": 1.125,
+        "stddev": 0.409,
+        "min": 0.634,
+        "max": 1.683
+      },
+      "majority_hold": false
+    },
+    "Zephyr": {
+      "sample_count": 4,
+      "avg_first_cast_s": 73.8,
+      "stddev_first_cast_s": 26.7,
+      "avg_gap_s": 89.3,
+      "stddev_gap_s": 71.6,
+      "hold_targets": {},
+      "avg_uses": 1.5,
+      "avg_uses_per_min": 0.47,
+      "uses_per_min": {
+        "avg": 0.467,
+        "stddev": 0.174,
+        "min": 0.317,
+        "max": 0.653
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 87.2,
+      "dmg_avg": 184012,
+      "dmg_stddev": 168966,
+      "dmg_min": 0,
+      "dmg_max": 534781,
+      "dmg_pct_avg": 0.033,
+      "window_length_s": 7.1,
+      "defensive_name": "Obsidian Scales",
+      "spell_id": 363916,
+      "common_defensives": [
+        "Obsidian Scales"
+      ],
+      "common_cds": [
+        "Obsidian Scales"
+      ],
+      "ref_game_id": 240434,
+      "ability_breakdown": [
+        {
+          "spell_id": 1272950,
+          "avg_damage": 35682,
+          "min_damage": 7837,
+          "max_damage": 67123,
+          "count": 19
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 3.4,
+      "min_uses": 2,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 1.5,
+      "min_uses": 1,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press before a large incoming magical or physical hit to halve damage taken for the duration; it carries two charges, so spend one freely on telegraphed busters.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use when health is dropping to recover a large portion of damage taken over the next several seconds; best paired with another defensive during sustained damage.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press ahead of a raid-wide AoE pulse to reduce magic damage for yourself and nearby allies.",
+      "talent_gated": false
+    },
+    {
+      "name": "Twin Guardian",
+      "spell_id": 370888,
+      "cooldown": 90,
+      "duration": 5,
+      "usage_rule": "Talented upgrade to Rescue; cast on a threatened ally to shield both of you for a portion of your max health before a spike.",
+      "talent_gated": true
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Twin Guardian": 370888
+  },
+  "ability_icons": {
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "370888": {
+      "icon": "inv_misc_volatileair",
+      "name": "Twin Guardian"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    },
+    "1272950": {
+      "icon": "inv_elemental_primal_shadow",
+      "name": "Primordial Power"
+    }
+  },
+  "source_signature": "45db2a6a44990e75",
+  "ingest_version": 3
+}

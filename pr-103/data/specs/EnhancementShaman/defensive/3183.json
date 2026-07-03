@@ -1,0 +1,639 @@
+{
+  "spec": "EnhancementShaman",
+  "encounter_id": 3183,
+  "encounter_name": "Midnight Falls",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Astral Shift": {
+      "sample_count": 10,
+      "avg_first_cast_s": 137.9,
+      "stddev_first_cast_s": 73.2,
+      "avg_gap_s": 141.2,
+      "stddev_gap_s": 39.4,
+      "hold_targets": {
+        "1": {
+          "target_s": 325.8,
+          "stddev_s": 57.5,
+          "count": 9,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 417.9,
+          "stddev_s": 106.8,
+          "count": 6,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 3.1,
+      "avg_uses_per_min": 0.35,
+      "uses_per_min": {
+        "avg": 0.348,
+        "stddev": 0.109,
+        "min": 0.221,
+        "max": 0.553
+      },
+      "majority_hold": true
+    },
+    "Spirit Walk": {
+      "sample_count": 10,
+      "avg_first_cast_s": 131.4,
+      "stddev_first_cast_s": 125.7,
+      "avg_gap_s": 79.3,
+      "stddev_gap_s": 51.5,
+      "hold_targets": {
+        "1": {
+          "target_s": 328,
+          "stddev_s": 79,
+          "count": 5,
+          "total_samples": 10
+        },
+        "2": {
+          "target_s": 331.3,
+          "stddev_s": 100.8,
+          "count": 5,
+          "total_samples": 10
+        }
+      },
+      "avg_uses": 5.2,
+      "avg_uses_per_min": 0.59,
+      "uses_per_min": {
+        "avg": 0.59,
+        "stddev": 0.354,
+        "min": 0.108,
+        "max": 1.107
+      },
+      "majority_hold": true
+    },
+    "Earth Elemental": {
+      "sample_count": 5,
+      "avg_first_cast_s": 185.7,
+      "stddev_first_cast_s": 107.1,
+      "avg_gap_s": null,
+      "stddev_gap_s": null,
+      "hold_targets": {},
+      "avg_uses": 1,
+      "avg_uses_per_min": 0.11,
+      "uses_per_min": {
+        "avg": 0.112,
+        "stddev": 0.002,
+        "min": 0.109,
+        "max": 0.114
+      },
+      "majority_hold": false
+    },
+    "Healing Surge": {
+      "sample_count": 2,
+      "avg_first_cast_s": 333.6,
+      "stddev_first_cast_s": 1,
+      "avg_gap_s": 36.9,
+      "stddev_gap_s": 52.6,
+      "hold_targets": {},
+      "avg_uses": 2.5,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.284,
+        "stddev": 0.243,
+        "min": 0.112,
+        "max": 0.456
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [
+    {
+      "time_s": 59.1,
+      "dmg_avg": 274792,
+      "dmg_stddev": 208929,
+      "dmg_min": 0,
+      "dmg_max": 573456,
+      "window_length_s": 7,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 250028,
+          "min_damage": 164884,
+          "max_damage": 363762,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 120.1,
+      "dmg_avg": 277913,
+      "dmg_stddev": 71808,
+      "dmg_min": 200260,
+      "dmg_max": 356144,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 244993,
+          "min_damage": 200260,
+          "max_damage": 318359,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 181.4,
+      "dmg_avg": 195805,
+      "dmg_stddev": 74894,
+      "dmg_min": 26567,
+      "dmg_max": 233766,
+      "window_length_s": 7,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 195805,
+          "min_damage": 26567,
+          "max_damage": 233766,
+          "count": 7
+        }
+      ]
+    },
+    {
+      "time_s": 215,
+      "dmg_avg": 262478,
+      "dmg_stddev": 48380,
+      "dmg_min": 216568,
+      "dmg_max": 351431,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 153933,
+          "min_damage": 122473,
+          "max_damage": 182897,
+          "count": 8
+        },
+        {
+          "spell_id": 1281473,
+          "avg_damage": 104823,
+          "min_damage": 77811,
+          "max_damage": 177392,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "time_s": 276,
+      "dmg_avg": 566326,
+      "dmg_stddev": 123854,
+      "dmg_min": 454841,
+      "dmg_max": 725976,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 224608,
+          "min_damage": 221087,
+          "max_damage": 229071,
+          "count": 4
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 145245,
+          "min_damage": 140798,
+          "max_damage": 149940,
+          "count": 3
+        },
+        {
+          "spell_id": 1282372,
+          "avg_damage": 122387,
+          "min_damage": 73404,
+          "max_damage": 164609,
+          "count": 4
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 2381,
+          "min_damage": 2348,
+          "max_damage": 2426,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 326.9,
+      "dmg_avg": 417648,
+      "dmg_stddev": 51595,
+      "dmg_min": 336778,
+      "dmg_max": 518948,
+      "window_length_s": 12,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 156376,
+          "min_damage": 123630,
+          "max_damage": 213733,
+          "count": 10
+        },
+        {
+          "spell_id": 1281123,
+          "avg_damage": 109237,
+          "min_damage": 102465,
+          "max_damage": 118008,
+          "count": 9
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 87390,
+          "min_damage": 81972,
+          "max_damage": 94406,
+          "count": 9
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 42663,
+          "min_damage": 39208,
+          "max_damage": 47751,
+          "count": 9
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 23092,
+          "min_damage": 6286,
+          "max_damage": 39766,
+          "count": 10
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 883,
+          "min_damage": 370,
+          "max_damage": 1617,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 330.4,
+      "dmg_avg": 343505,
+      "dmg_stddev": 141790,
+      "dmg_min": 187499,
+      "dmg_max": 625941,
+      "window_length_s": 8.3,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 164004,
+          "min_damage": 122404,
+          "max_damage": 226283,
+          "count": 8
+        },
+        {
+          "spell_id": 1281178,
+          "avg_damage": 116907,
+          "min_damage": 85084,
+          "max_damage": 149940,
+          "count": 4
+        },
+        {
+          "spell_id": 1254257,
+          "avg_damage": 46804,
+          "min_damage": 39208,
+          "max_damage": 69428,
+          "count": 7
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 26053,
+          "min_damage": 16916,
+          "max_damage": 34494,
+          "count": 7
+        },
+        {
+          "spell_id": 1282004,
+          "avg_damage": 892,
+          "min_damage": 178,
+          "max_damage": 2398,
+          "count": 4
+        }
+      ]
+    },
+    {
+      "time_s": 396,
+      "dmg_avg": 330856,
+      "dmg_stddev": 82864,
+      "dmg_min": 272911,
+      "dmg_max": 454467,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 234530,
+          "min_damage": 227092,
+          "max_damage": 243458,
+          "count": 6
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 43169,
+          "min_damage": 41248,
+          "max_damage": 45087,
+          "count": 6
+        }
+      ]
+    },
+    {
+      "time_s": 449,
+      "dmg_avg": 320531,
+      "dmg_stddev": 345851,
+      "dmg_min": 0,
+      "dmg_max": 822489,
+      "window_length_s": 8,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 257959,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 316662,
+          "min_damage": 160940,
+          "max_damage": 672693,
+          "count": 4
+        },
+        {
+          "spell_id": 1254644,
+          "avg_damage": 37073,
+          "min_damage": 29943,
+          "max_damage": 42217,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 505.1,
+      "dmg_avg": 629093,
+      "dmg_stddev": 430924,
+      "dmg_min": 0,
+      "dmg_max": 1151834,
+      "window_length_s": 6.1,
+      "defensive_name": "Spirit Walk",
+      "spell_id": 58875,
+      "common_defensives": [
+        "Spirit Walk"
+      ],
+      "common_cds": [
+        "Spirit Walk"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 574276,
+          "min_damage": 422536,
+          "max_damage": 672693,
+          "count": 4
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 105480,
+          "min_damage": 35410,
+          "max_damage": 149795,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "time_s": 515.4,
+      "dmg_avg": 586216,
+      "dmg_stddev": 129236,
+      "dmg_min": 403116,
+      "dmg_max": 677906,
+      "window_length_s": 11,
+      "defensive_name": "Astral Shift",
+      "spell_id": 108271,
+      "common_defensives": [
+        "Astral Shift"
+      ],
+      "common_cds": [
+        "Astral Shift"
+      ],
+      "ref_game_id": 240391,
+      "ability_breakdown": [
+        {
+          "spell_id": 1249797,
+          "avg_damage": 542724,
+          "min_damage": 395116,
+          "max_damage": 630298,
+          "count": 4
+        },
+        {
+          "spell_id": 1287445,
+          "avg_damage": 43492,
+          "min_damage": 8000,
+          "max_damage": 69002,
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "top_defensives_summary": [
+    {
+      "spell_id": 108271,
+      "avg_uses": 3.1,
+      "min_uses": 2,
+      "max_uses": 5
+    },
+    {
+      "spell_id": 198103,
+      "avg_uses": 1,
+      "min_uses": 1,
+      "max_uses": 1
+    },
+    {
+      "spell_id": 58875,
+      "avg_uses": 5.2,
+      "min_uses": 1,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 8004,
+      "avg_uses": 2.5,
+      "min_uses": 1,
+      "max_uses": 4
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press proactively before a known burst of damage or a tankbuster cleave to reduce all damage taken by 40% for 8 seconds.",
+      "talent_gated": false
+    },
+    {
+      "name": "Earth Elemental",
+      "spell_id": 198103,
+      "cooldown": 300,
+      "duration": 60,
+      "usage_rule": "Summon to soak a major hit or off-tank an add; it also grants you a sizeable health buffer and can be used defensively on a long cooldown.",
+      "talent_gated": false
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 60,
+      "duration": 30,
+      "usage_rule": "When talented, drop before incoming damage to gain a recurring physical and magical absorb shield; use it on cooldown during damage-heavy phases.",
+      "talent_gated": true
+    },
+    {
+      "name": "Spirit Walk",
+      "spell_id": 58875,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Use to remove movement-impairing effects and gain a burst of speed to reach mechanics or close back into melee range quickly.",
+      "talent_gated": false
+    },
+    {
+      "name": "Healing Surge",
+      "spell_id": 8004,
+      "cooldown": 15,
+      "duration": null,
+      "usage_rule": "Spend 5 or more Maelstrom Weapon stacks to cast an instant self-heal when you drop low; the cooldown listed is a soft pacing value since this is gated by Maelstrom rather than a real cooldown.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Astral Shift": 108271,
+    "Earth Elemental": 198103,
+    "Stone Bulwark Totem": 108270,
+    "Spirit Walk": 58875,
+    "Healing Surge": 8004
+  },
+  "ability_icons": {
+    "8004": {
+      "icon": "spell_nature_healingway",
+      "name": "Healing Surge"
+    },
+    "58875": {
+      "icon": "ability_tracking",
+      "name": "Spirit Walk"
+    },
+    "108271": {
+      "icon": "ability_shaman_astralshift",
+      "name": "Astral Shift"
+    },
+    "198103": {
+      "icon": "spell_nature_earthelemental_totem",
+      "name": "Earth Elemental"
+    },
+    "1249797": {
+      "icon": "spell_holy_elunesgrace",
+      "name": "Shattered Sky"
+    },
+    "1254257": {
+      "icon": "spell_holy_purifyingpower",
+      "name": "Tears of L'ura"
+    },
+    "1254644": {
+      "icon": "ability_bossgorefiend_touchofdoom",
+      "name": "Thunderous Well"
+    },
+    "1281123": {
+      "icon": "inv_112_raiddimensius_blackhole",
+      "name": "Dark Meltdown"
+    },
+    "1281178": {
+      "icon": "ability_thunderking_thunderstruck",
+      "name": "Criticality"
+    },
+    "1281473": {
+      "icon": "inv_12_profession_enchanting_spellboundshatterer",
+      "name": "Starsplinter"
+    },
+    "1282004": {
+      "icon": "inv_cosmicvoid_groundstate",
+      "name": "Abyssal Pool"
+    },
+    "1282372": {
+      "icon": "ability_evoker_unravel",
+      "name": "Cosmic Fission"
+    },
+    "1287445": {
+      "icon": "inv_112_raiddimensius_darkenedsky",
+      "name": "Heaven & Hell"
+    }
+  },
+  "source_signature": "83c580ac1b972d5e"
+}

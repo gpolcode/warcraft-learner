@@ -1,0 +1,183 @@
+{
+  "spec": "PreservationEvoker",
+  "encounter_id": 3180,
+  "encounter_name": "Lightblinded Vanguard",
+  "sample_count": 10,
+  "per_defensive_benchmarks": {
+    "Obsidian Scales": {
+      "sample_count": 9,
+      "avg_first_cast_s": 97,
+      "stddev_first_cast_s": 34.4,
+      "avg_gap_s": 46.2,
+      "stddev_gap_s": 48.5,
+      "hold_targets": {},
+      "avg_uses": 6.9,
+      "avg_uses_per_min": 0.98,
+      "uses_per_min": {
+        "avg": 0.977,
+        "stddev": 0.377,
+        "min": 0.258,
+        "max": 1.352
+      },
+      "majority_hold": true
+    },
+    "Zephyr": {
+      "sample_count": 8,
+      "avg_first_cast_s": 133,
+      "stddev_first_cast_s": 86.8,
+      "avg_gap_s": 116.9,
+      "stddev_gap_s": 47.5,
+      "hold_targets": {},
+      "avg_uses": 2.6,
+      "avg_uses_per_min": 0.37,
+      "uses_per_min": {
+        "avg": 0.367,
+        "stddev": 0.167,
+        "min": 0.129,
+        "max": 0.551
+      },
+      "majority_hold": false
+    },
+    "Time Dilation": {
+      "sample_count": 8,
+      "avg_first_cast_s": 232.9,
+      "stddev_first_cast_s": 116.1,
+      "avg_gap_s": 135.9,
+      "stddev_gap_s": 120.6,
+      "hold_targets": {
+        "1": {
+          "target_s": 347.7,
+          "stddev_s": 73.7,
+          "count": 5,
+          "total_samples": 8
+        }
+      },
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.28,
+      "uses_per_min": {
+        "avg": 0.279,
+        "stddev": 0.1,
+        "min": 0.134,
+        "max": 0.402
+      },
+      "majority_hold": true
+    },
+    "Cauterizing Flame": {
+      "sample_count": 1,
+      "avg_first_cast_s": 98.8,
+      "stddev_first_cast_s": 0,
+      "avg_gap_s": 11.9,
+      "stddev_gap_s": 0,
+      "hold_targets": {},
+      "avg_uses": 2,
+      "avg_uses_per_min": 0.34,
+      "uses_per_min": {
+        "avg": 0.338,
+        "stddev": 0,
+        "min": 0.338,
+        "max": 0.338
+      },
+      "majority_hold": false
+    }
+  },
+  "defensive_windows": [],
+  "top_defensives_summary": [
+    {
+      "spell_id": 363916,
+      "avg_uses": 6.9,
+      "min_uses": 2,
+      "max_uses": 10
+    },
+    {
+      "spell_id": 374227,
+      "avg_uses": 2.6,
+      "min_uses": 1,
+      "max_uses": 4
+    },
+    {
+      "spell_id": 357170,
+      "avg_uses": 2,
+      "min_uses": 1,
+      "max_uses": 3
+    },
+    {
+      "spell_id": 374251,
+      "avg_uses": 2,
+      "min_uses": 2,
+      "max_uses": 2
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press proactively before predictable burst damage to gain a flat damage reduction for the duration.",
+      "talent_gated": false
+    },
+    {
+      "name": "Renewing Blaze",
+      "spell_id": 374348,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Use ahead of a damage spike to recoup a large portion of the damage you take over the following window as healing.",
+      "talent_gated": false
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast just before a telegraphed raid-wide AoE to reduce incoming area damage for yourself and nearby allies; scout useful spots when learning a fight.",
+      "talent_gated": false
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Apply to a single endangered target as a superb damage-reduction cooldown; its short cooldown means you can use it regularly rather than hoarding it.",
+      "talent_gated": false
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "duration": null,
+      "usage_rule": "Use to remove a dispellable Bleed, Poison, Curse, or Disease and heal the target; it does not trigger its cooldown when nothing is removed, so it can be pre-stored in Stasis for a mass cleanse.",
+      "talent_gated": false
+    }
+  ],
+  "cd_spell_ids": {
+    "Obsidian Scales": 363916,
+    "Renewing Blaze": 374348,
+    "Zephyr": 374227,
+    "Time Dilation": 357170,
+    "Cauterizing Flame": 374251
+  },
+  "ability_icons": {
+    "357170": {
+      "icon": "ability_evoker_timedilation",
+      "name": "Time Dilation"
+    },
+    "363916": {
+      "icon": "inv_artifact_dragonscales",
+      "name": "Obsidian Scales"
+    },
+    "374227": {
+      "icon": "ability_evoker_hoverblack",
+      "name": "Zephyr"
+    },
+    "374251": {
+      "icon": "ability_evoker_fontofmagic_red",
+      "name": "Cauterizing Flame"
+    },
+    "374348": {
+      "icon": "ability_evoker_masterylifebinder_red",
+      "name": "Renewing Blaze"
+    }
+  },
+  "source_signature": "d14e2aa583910e75",
+  "ingest_version": 2
+}
