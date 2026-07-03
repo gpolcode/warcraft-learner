@@ -259,7 +259,7 @@ async function ingestSpec(
     const unresolved = unresolvedSpellIds(spellIds, resolved);
     if (unresolved.length) {
       console.error(`[${spec}] rulebook references ${unresolved.length} spell id(s) WCL cannot resolve: ${unresolved.join(', ')} - skipping.`);
-      console.error('  Verify each on wowhead.com/spell=<id> and fix the rulebook (use id_note for uncertainty, never usage_rule).');
+      console.error('  Verify each on wowhead.com/spell=<id> and fix the rulebook.');
       return false;
     }
   }
