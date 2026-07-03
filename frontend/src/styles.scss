@@ -119,6 +119,10 @@ mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; 
 /* finding-table: faint critical wash behind a critical finding row. */
 .row-critical { background-color: color-mix(in srgb, var(--critical) 4%, transparent); }
 
+/* Active nav-drawer link (page-nav): a quiet selected state - surface tint + gold text -
+ * toggled by routerLinkActive on the plain drawer anchors that replaced mat-nav-list. */
+.nav-active { background-color: var(--surface-alt); color: var(--gold); }
+
 /* "On plan" markers: quiet neutral tags for cooldowns/gear that need no fix.
  * Deliberately understated - a plain surface tag in muted text, no success-green
  * fill and no check-circle glyph - so a clean result reads as calm rather than a

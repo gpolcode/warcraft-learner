@@ -19,35 +19,55 @@
 
   <span class="flex-1"></span>
 
-  <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="More options">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-  <mat-menu #userMenu="matMenu">
-    <a mat-menu-item [href]="githubUrl" target="_blank" rel="noopener noreferrer">
-      <mat-icon svgIcon="github"></mat-icon>
-      <span>View on GitHub</span>
-    </a>
-  </mat-menu>
+  <!-- Single overflow action, so it is a direct link rather than a dropdown menu
+       (dropping mat-menu keeps the CDK overlay out of the eager bundle). -->
+  <a mat-icon-button [href]="githubUrl" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
+    <mat-icon svgIcon="github"></mat-icon>
+  </a>
 </mat-toolbar>
 
-<mat-sidenav-container class="flex-1">
-  <mat-sidenav [mode]="sidenavMode()" [opened]="sidenavOpened()"
-               (openedChange)="onOpenedChange($event)">
-    <mat-nav-list>
-      <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
-         [activated]="pre.isActive" (click)="onNavigate()">
-        <mat-icon matListItemIcon>lightbulb</mat-icon>
-        <span matListItemTitle>Pre-Fight</span>
-      </a>
-      <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"
-         [routerLinkActiveOptions]="{exact:true}" [activated]="post.isActive" (click)="onNavigate()">
-        <mat-icon matListItemIcon>analytics</mat-icon>
-        <span matListItemTitle>Analyze</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+<!-- Drawer + content. The drawer is a plain flex child on desktop (persistent, pushes
+     the content) and an absolutely-positioned overlay on mobile (over the content, with a
+     scrim), replacing mat-sidenav/mat-nav-list so the CDK overlay and @angular/forms leave
+     the eager bundle. Positioning is absolute within this relative body, so the overlay
+     never has to know the toolbar height. -->
+<div class="relative flex flex-1 min-h-0">
+  @if (isMobile() && mobileOpen()) {
+    <button
+      type="button"
+      class="absolute inset-0 z-40 border-0 bg-[var(--bg)]/70 cursor-default"
+      aria-label="Close navigation"
+      (click)="closeMobile()"></button>
+  }
 
-  <mat-sidenav-content>
+  @if (drawerVisible()) {
+    <nav
+      class="w-[240px] shrink-0 overflow-y-auto border-r border-[var(--border)] bg-[var(--surface)] py-2"
+      [class.absolute]="isMobile()"
+      [class.inset-y-0]="isMobile()"
+      [class.left-0]="isMobile()"
+      [class.z-50]="isMobile()">
+      <a
+        routerLink="/pre"
+        routerLinkActive="nav-active"
+        class="flex items-center gap-3 px-4 py-3 no-underline text-[var(--text)] hover:bg-[var(--surface-alt)] transition-colors"
+        (click)="onNavigate()">
+        <mat-icon>lightbulb</mat-icon>
+        <span>Pre-Fight</span>
+      </a>
+      <a
+        routerLink="/"
+        routerLinkActive="nav-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 px-4 py-3 no-underline text-[var(--text)] hover:bg-[var(--surface-alt)] transition-colors"
+        (click)="onNavigate()">
+        <mat-icon>analytics</mat-icon>
+        <span>Analyze</span>
+      </a>
+    </nav>
+  }
+
+  <main class="flex-1 min-w-0 overflow-y-auto">
     <ng-content></ng-content>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </main>
+</div>
