@@ -7,7 +7,7 @@ import { RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition
 import { WclEvent } from '../../../core/models/wcl.models';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, VANISH, BLOODLUST } from '../../../../testing/spell-ids';
 import {
-  isOutlierAbove, isCriticallyBelow, benchExpectedUses, closestToZero, castEfficiencyPct,
+  isOutlierAbove, isOutlierBelow, benchExpectedUses, closestToZero, castEfficiencyPct,
   fmtClock, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
@@ -86,9 +86,9 @@ describe('statistical predicates', () => {
     expect(isOutlierAbove(value, mean, stddev)).toBe(out);
   });
 
-  it('isCriticallyBelow is true more than one stddev under', () => {
-    expect(isCriticallyBelow(80, 90, 5)).toBe(true);
-    expect(isCriticallyBelow(86, 90, 5)).toBe(false);
+  it('isOutlierBelow at one sigma is true more than one stddev under', () => {
+    expect(isOutlierBelow(80, 90, 5, 1)).toBe(true);
+    expect(isOutlierBelow(86, 90, 5, 1)).toBe(false);
   });
 
   it('benchExpectedUses scales uses/min to the fight length', () => {

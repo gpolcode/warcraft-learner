@@ -48,8 +48,6 @@ const HOLD_THRESHOLD_S = 8;
 const HOLD_BAND_MIN_S = 5.0;
 /** Keep only the top-N damage sources in a window's ability breakdown (UI row cap). */
 const ABILITY_BREAKDOWN_TOP_N = 6;
-/** Default defensive cooldown (s) when the rulebook entry omits one. */
-const DEFAULT_DEFENSIVE_COOLDOWN_S = 90;
 
 /* ----------------------------- pure helpers (own math) ----------------------------- */
 
@@ -132,7 +130,7 @@ export function summarizeDefensiveCasts(
   const summaries: ParseDefensiveSummary[] = [];
   for (const defensive of defensives) {
     const spellId = defensive.spell_id;
-    const cooldownS = defensive.cooldown ?? DEFAULT_DEFENSIVE_COOLDOWN_S;
+    const cooldownS = defensive.cooldown;
     const castTimes: number[] = [];
 
     for (const buffWindow of (buffWindows.get(spellId) ?? [])) castTimes.push(round(buffWindow[0]));
@@ -417,16 +415,13 @@ export function aggregateDefensiveBenchmarks(
   // Every sampled parse contributes one array (possibly empty for a defensive it never used),
   // so the array count is the total parse count - the use-share denominator for each defensive.
   const totalParses = perParseSummaries.length;
-  const cooldownByName = new Map(defensives.map(defensive => [defensive.name, defensive.cooldown ?? DEFAULT_DEFENSIVE_COOLDOWN_S]));
   const perDefensiveBenchmarks: Record<string, PerDefensiveBenchmark> = {};
-  for (const [name, summaries] of byName.entries()) {
-    perDefensiveBenchmarks[name] = buildDefensiveBenchmark(summaries, cooldownByName.get(name) ?? DEFAULT_DEFENSIVE_COOLDOWN_S, totalParses);
-  }
-
   const topDefensivesSummary: TopDefensiveSummary[] = [];
+  // Iterate the rulebook defensives so the name, cooldown, and spell id come from one source.
   for (const defensive of defensives) {
     const summaries = byName.get(defensive.name);
-    if (!summaries?.length) continue;
+    if (!summaries?.length) continue; // no sampled parse used this defensive
+    perDefensiveBenchmarks[defensive.name] = buildDefensiveBenchmark(summaries, defensive.cooldown, totalParses);
     const uses = summaries.map(summary => summary.uses);
     topDefensivesSummary.push({
       spell_id: defensive.spell_id,

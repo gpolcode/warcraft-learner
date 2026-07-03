@@ -30,7 +30,7 @@ import {
 import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
 import {
-  isOutlierAbove, isOutlierBeyond, isCriticallyBelow, castEfficiencyPct,
+  isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
@@ -224,7 +224,7 @@ const MIN_USE_SHARE_FRAC = 0.5;
 
 /** Fraction of sampled top parses that used a cooldown at least once. */
 function usedShare(bench: PerCdBenchmark): number {
-  return bench.sample_count ? bench.used_sample_count / bench.sample_count : 0;
+  return bench.used_sample_count / bench.sample_count;
 }
 
 /** The named inputs `analyzeRotationFindings` scans (replaces 7 positional args). */
@@ -363,7 +363,8 @@ export function checkCastEfficiency(
   // Flag only when the player sits more than 1 sigma BELOW the top-parse efficiency; within
   // the +/-1 sigma band, or above it, is fine, so beating the top parses never trips a
   // warning. Low cast efficiency is a nudge, always a warning, never critical.
-  if (!isCriticallyBelow(effPct, topE, topSD)) return null;
+  const WARN_SIGMAS_BELOW = 1;
+  if (!isOutlierBelow(effPct, topE, topSD, WARN_SIGMAS_BELOW)) return null;
   return {
     severity: 'warning', category: 'cast_efficiency',
     label: 'Low cast efficiency',

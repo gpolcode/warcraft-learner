@@ -75,7 +75,7 @@ const MIN_USE_SHARE_FRAC = 0.5;
 
 /** Fraction of sampled top parses that used a defensive at least once. */
 function defensiveUsedShare(bench: PerDefensiveBenchmark): number {
-  return bench.sample_count ? bench.used_sample_count / bench.sample_count : 0;
+  return bench.used_sample_count / bench.sample_count;
 }
 
 /* ----------------------------- player defensives ----------------------------- */
