@@ -68,9 +68,10 @@ describe('summarizeDefensiveCasts', () => {
     const windows = buildBuffWindows([applybuff(CLOAK_OF_SHADOWS, 10), removebuff(CLOAK_OF_SHADOWS, 15), applybuff(CLOAK_OF_SHADOWS, 200), removebuff(CLOAK_OF_SHADOWS, 205)], 0);
     const summaries = summarizeDefensiveCasts([CLOAK], windows, [], 0, 300);
     expect(summaries).toHaveLength(1);
-    // second cast at 200, expected = 10 + 120 = 130, hold = 70 > 8.
+    // second cast at 200, expected = 10 + 120 = 130, hold delay = 70 > 8.
     expect(summaries[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 2, first_cast_s: 10, cast_pattern: 'hold' });
-    expect(summaries[0].hold_windows).toEqual([{ cast_index: 1, actual_s: 200 }]);
+    // cast_index is 1-based (the 2nd use), matching rotation + the runtime's -1 decode; delay_s = 70.
+    expect(summaries[0].hold_windows).toEqual([{ cast_index: 2, actual_s: 200, delay_s: 70 }]);
   });
 
   it('falls back to explicit casts when no buff windows exist', () => {
@@ -179,24 +180,36 @@ describe('clusterDefensiveWindows', () => {
 });
 
 describe('buildHoldTargets', () => {
-  it('surfaces a cast index held by >= 40% of samples', () => {
+  it('surfaces a cast index a majority held, with the prior-relative band', () => {
     const summaries: ParseDefensiveSummary[] = [
-      { name: 'C', cast_times_s: [], first_cast_s: 0, uses: 2, fight_duration_s: 300, hold_windows: [{ cast_index: 1, actual_s: 100 }], cast_pattern: 'hold' },
-      { name: 'C', cast_times_s: [], first_cast_s: 0, uses: 2, fight_duration_s: 300, hold_windows: [{ cast_index: 1, actual_s: 110 }], cast_pattern: 'hold' },
+      { name: 'C', cast_times_s: [], first_cast_s: 0, uses: 2, fight_duration_s: 300, hold_windows: [{ cast_index: 2, actual_s: 100, delay_s: 40 }], cast_pattern: 'hold' },
+      { name: 'C', cast_times_s: [], first_cast_s: 0, uses: 2, fight_duration_s: 300, hold_windows: [{ cast_index: 2, actual_s: 110, delay_s: 50 }], cast_pattern: 'hold' },
     ];
-    const targets = buildHoldTargets(summaries);
-    expect(targets['1']).toMatchObject({ target_s: 105, count: 2, total_samples: 2 });
+    // effectiveCd 120, 2 total parses: both held at index 2 (2 >= max(2, 0.4 * 2)).
+    const targets = buildHoldTargets(summaries, 120, 2);
+    expect(targets['2']).toMatchObject({ target_s: 105, delay_s: 45, effective_cd_s: 120, count: 2, total_samples: 2 });
+    expect(targets['2'].band_s).toBeGreaterThanOrEqual(5); // HOLD_BAND_MIN_S floor
+  });
+
+  it('keys consensus on TOTAL parses, not users-only (1 of 3 does not surface)', () => {
+    const summaries: ParseDefensiveSummary[] = [
+      { name: 'C', cast_times_s: [], first_cast_s: 0, uses: 2, fight_duration_s: 300, hold_windows: [{ cast_index: 2, actual_s: 100, delay_s: 40 }], cast_pattern: 'hold' },
+    ];
+    // 1 hold of 3 total parses -> 1 < max(2, 0.4 * 3), so no target.
+    expect(buildHoldTargets(summaries, 120, 3)).toEqual({});
   });
 });
 
 describe('buildDefensiveBenchmark', () => {
-  it('derives first-cast / gap / uses-per-min from a defensive\'s parse summaries', () => {
+  it('derives first-cast / gap / uses-per-min and the total/used sample split', () => {
     const summaries: ParseDefensiveSummary[] = [
       { name: 'C', cast_times_s: [10, 140], first_cast_s: 10, uses: 2, fight_duration_s: 300, hold_windows: [], cast_pattern: 'on_cooldown' },
       { name: 'C', cast_times_s: [20, 160], first_cast_s: 20, uses: 2, fight_duration_s: 300, hold_windows: [], cast_pattern: 'on_cooldown' },
     ];
-    const benchmark = buildDefensiveBenchmark(summaries);
-    expect(benchmark.sample_count).toBe(2);
+    // 2 users, but 3 parses total: sample_count is total, used_sample_count is users-only.
+    const benchmark = buildDefensiveBenchmark(summaries, 120, 3);
+    expect(benchmark.sample_count).toBe(3);
+    expect(benchmark.used_sample_count).toBe(2);
     expect(benchmark.avg_first_cast_s).toBe(15);
     expect(benchmark.avg_gap_s).toBe(135); // gaps 130 and 140
     expect(benchmark.avg_uses).toBe(2);
@@ -205,11 +218,14 @@ describe('buildDefensiveBenchmark', () => {
 });
 
 describe('aggregateDefensiveBenchmarks', () => {
-  it('builds per-defensive benchmarks + the top-defensives summary', () => {
+  it('builds per-defensive benchmarks with total vs used sample counts + the summary', () => {
     const parseA: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_s: [10], first_cast_s: 10, uses: 1, fight_duration_s: 300, hold_windows: [], cast_pattern: 'on_cooldown' }];
     const parseB: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_s: [20], first_cast_s: 20, uses: 3, fight_duration_s: 300, hold_windows: [], cast_pattern: 'on_cooldown' }];
-    const out = aggregateDefensiveBenchmarks([parseA, parseB], [CLOAK]);
-    expect(out.perDefensiveBenchmarks['Cloak of Shadows'].sample_count).toBe(2);
+    const parseC: ParseDefensiveSummary[] = []; // this parse never used Cloak
+    const out = aggregateDefensiveBenchmarks([parseA, parseB, parseC], [CLOAK]);
+    // 3 parses sampled, 2 used it: sample_count total, used_sample_count users-only.
+    expect(out.perDefensiveBenchmarks['Cloak of Shadows'].sample_count).toBe(3);
+    expect(out.perDefensiveBenchmarks['Cloak of Shadows'].used_sample_count).toBe(2);
     expect(out.topDefensivesSummary).toEqual([{ spell_id: CLOAK_OF_SHADOWS, avg_uses: 2, min_uses: 1, max_uses: 3 }]);
   });
 });

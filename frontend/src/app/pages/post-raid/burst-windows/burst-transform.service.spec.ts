@@ -317,9 +317,12 @@ describe('findParseWindows', () => {
 
 describe('clusterParseWindows', () => {
   const ABILITY_DAMAGE = 600;
-  const window = (timeS: number, isPassive = false): ParseWindow => ({
+  // parse_index defaults to timeS so each window in a test is a distinct parse (the common
+  // case); pass it explicitly to model one parse contributing several windows to a cluster.
+  const window = (timeS: number, isPassive = false, parseIndex = timeS): ParseWindow => ({
     time_s: timeS, window_length_s: 6, window_damage: BIN_DAMAGE, active_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: ABILITY_DAMAGE, casts: 2, is_passive: isPassive }],
+    parse_index: parseIndex,
   });
 
   it('emits a cluster present in enough parses, with common cds + ability stats', () => {
@@ -351,6 +354,25 @@ describe('clusterParseWindows', () => {
     // One member did cast it -> the clustered ability is not passive.
     expect(clusterParseWindows([window(10, true), window(11, false)], 2)[0].ability_breakdown[0])
       .toMatchObject({ is_passive: false });
+  });
+
+  // Fix 6: consensus counts DISTINCT parses, not windows. A parse can land two dense runs
+  // within CLUSTER_MERGE_S of one cluster; those must not double-count toward the gate.
+  it('counts distinct parses, not windows, at the consensus gate', () => {
+    // 3 windows but only 2 distinct parses (parse 0 contributes two). Floor at sampleCount 6
+    // is max(2, 0.4 * 6) = 2.4: window-count 3 would survive, distinct-parse count 2 does not.
+    const cluster = [window(10, false, 0), window(11, false, 0), window(12, false, 1)];
+    expect(clusterParseWindows(cluster, 6)).toHaveLength(0);
+  });
+
+  it('keeps each parse\'s biggest window when a parse contributes two to a cluster', () => {
+    const small = { ...window(10, false, 0), window_damage: 500 };
+    const big = { ...window(11, false, 0), window_damage: 900 };
+    const other = { ...window(12, false, 1), window_damage: 700 };
+    const out = clusterParseWindows([small, big, other], 2);
+    expect(out).toHaveLength(1);
+    // 2 distinct parses; parse 0's smaller 500 window is dropped, so dmg_avg = mean(900, 700).
+    expect(out[0].dmg_avg).toBe(800);
   });
 });
 

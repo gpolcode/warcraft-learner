@@ -99,7 +99,7 @@ describe('gapDelayFindings', () => {
   const AVG_GAP_S = 60;
   const STDDEV_GAP_S = 5;
   const benchWithGap = (overrides: Partial<PerDefensiveBenchmark> = {}): PerDefensiveBenchmark => ({
-    sample_count: 5, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: AVG_GAP_S, stddev_gap_s: STDDEV_GAP_S,
+    sample_count: 5, used_sample_count: 5, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: AVG_GAP_S, stddev_gap_s: STDDEV_GAP_S,
     hold_targets: {}, avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
     majority_hold: false, ...overrides,
   });
@@ -122,33 +122,45 @@ describe('gapDelayFindings', () => {
 });
 
 describe('holdSuggestionFindings', () => {
-  // Cast index 1 held to 100s with stddev 5 -> suggest when player < 95.
-  const TARGET_S = 100;
-  const STDDEV_S = 5;
+  // Prior-relative band (mirrors rotation): cast index 2 (the second use) holds ~40s past the
+  // 60s reset, band 5 -> flag when the player's OWN gap from their prior cast is below
+  // 40 - 5 = 35s past reset. Over-holding is tolerated.
   const holdTargets: PerDefensiveBenchmark['hold_targets'] = {
-    1: { target_s: TARGET_S, stddev_s: STDDEV_S, count: 6, total_samples: 10 },
+    2: { target_s: 130, stddev_s: 5, delay_s: 40, delay_stddev_s: 3, band_s: 5, effective_cd_s: 60, count: 6, total_samples: 10 },
   };
 
-  it('suggests a hold when the player pressed before the band', () => {
-    const EARLY_S = 80; // < 95
-    const out = holdSuggestionFindings('Cloak of Shadows', [EARLY_S], holdTargets);
+  it('suggests a hold when the player under-held vs the prior-relative band', () => {
+    // casts at 10 and 100 -> gap 90 -> 30s past the 60s reset, below the 35s band edge.
+    const out = holdSuggestionFindings('Cloak of Shadows', [10, 100], holdTargets);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ severity: 'info', category: 'hold_suggestion' });
   });
 
   it('does not suggest at the band edge (strict boundary)', () => {
-    const AT_BAND_S = TARGET_S - STDDEV_S; // 95, not strictly below
-    expect(holdSuggestionFindings('Cloak of Shadows', [AT_BAND_S], holdTargets)).toEqual([]);
+    // casts at 10 and 105 -> gap 95 -> exactly 35s past reset, not strictly below.
+    expect(holdSuggestionFindings('Cloak of Shadows', [10, 105], holdTargets)).toEqual([]);
+  });
+
+  it('tolerates over-holding (a later-than-band press is fine)', () => {
+    // casts at 10 and 130 -> 60s past reset, above the band.
+    expect(holdSuggestionFindings('Cloak of Shadows', [10, 130], holdTargets)).toEqual([]);
+  });
+
+  it('skips index 0 - no prior cast to measure a gap against', () => {
+    const firstOnly: PerDefensiveBenchmark['hold_targets'] = {
+      1: { target_s: 100, stddev_s: 5, delay_s: 40, delay_stddev_s: 3, band_s: 5, effective_cd_s: 60, count: 6, total_samples: 10 },
+    };
+    expect(holdSuggestionFindings('Cloak of Shadows', [80], firstOnly)).toEqual([]);
   });
 
   it('skips a cast index the player never reached', () => {
-    expect(holdSuggestionFindings('Cloak of Shadows', [], holdTargets)).toEqual([]);
+    expect(holdSuggestionFindings('Cloak of Shadows', [10], holdTargets)).toEqual([]);
   });
 });
 
 describe('analyzeOneDefensive', () => {
   const bench: PerDefensiveBenchmark = {
-    sample_count: 10, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: 60, stddev_gap_s: 5,
+    sample_count: 10, used_sample_count: 10, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: 60, stddev_gap_s: 5,
     hold_targets: {}, avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
     majority_hold: false,
   };
@@ -158,6 +170,19 @@ describe('analyzeOneDefensive', () => {
   it('flags a never-used defensive as a critical lost cooldown', () => {
     const out = analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), bench, 300);
     expect(out[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
+  });
+
+  it('does not flag an unused defensive that only a minority of top parses use (use-share gate)', () => {
+    // 3 of 10 top parses used it (< 50%): the player matching them by not pressing it is fine.
+    const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: 10, used_sample_count: 3 };
+    expect(analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), minorityUse, 300)).toEqual([]);
+  });
+
+  it('does not flag a late first use of a minority-use defensive (use-share gate)', () => {
+    const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: 10, used_sample_count: 3 };
+    // First use at 40s is > avg 10 + 2*2, but the first-cast check is gated off by low use-share.
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_s: [40] }), minorityUse, 300);
+    expect(out.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 
   it('returns a success (no issues) when usage matches', () => {
@@ -178,7 +203,7 @@ describe('analyzeOneDefensive', () => {
 describe('analyzeDefensiveFindings', () => {
   const bench: Record<string, PerDefensiveBenchmark> = {
     'Cloak of Shadows': {
-      sample_count: 10, avg_first_cast_s: 10, stddev_first_cast_s: 2,
+      sample_count: 10, used_sample_count: 10, avg_first_cast_s: 10, stddev_first_cast_s: 2,
       avg_gap_s: 60, stddev_gap_s: 5, hold_targets: {},
       avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
       majority_hold: false,
@@ -377,7 +402,7 @@ describe('buildDefensivePlanRows', () => {
       ability_icons: { [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } },
       per_defensive_benchmarks: {
         'Cloak of Shadows': {
-          sample_count: 5, avg_first_cast_s: 12, stddev_first_cast_s: 2, avg_gap_s: null, stddev_gap_s: null,
+          sample_count: 5, used_sample_count: 5, avg_first_cast_s: 12, stddev_first_cast_s: 2, avg_gap_s: null, stddev_gap_s: null,
           hold_targets: {}, avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
           majority_hold: false,
         },
@@ -397,7 +422,7 @@ function fullBench(): DefensiveBench {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 5,
     per_defensive_benchmarks: {
       'Cloak of Shadows': {
-        sample_count: 5, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: 60, stddev_gap_s: 5,
+        sample_count: 5, used_sample_count: 5, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: 60, stddev_gap_s: 5,
         hold_targets: {}, avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
         majority_hold: false,
       },
