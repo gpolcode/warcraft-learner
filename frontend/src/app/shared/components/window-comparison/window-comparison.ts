@@ -171,6 +171,9 @@ export class WindowComparisonComponent {
     const delta = this.overviewDelta();
     if (delta == null) return '';
     const sign = delta > 0 ? '+' : '';
+    // Signed-delta badge microcopy ("+5%"): no dedicated signed-percent pipe exists,
+    // so this reads like the sanctioned finding-text gray area. Kept inline here only.
+    // eslint-disable-next-line no-restricted-properties -- see comment above
     return `${sign}${delta.toFixed(0)}%`;
   });
 
