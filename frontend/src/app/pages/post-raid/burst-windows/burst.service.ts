@@ -10,7 +10,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { ComparisonWindow, WindowStatus, RangeRow, WindowSpell } from '../../../core/models/window-comparison.models';
+import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
 import { logWarn } from '../../../core/log';
 import { windowSpells } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
@@ -22,7 +22,6 @@ export type AbilityIcons = Record<number, { icon: string; name: string }>;
 export interface BurstMapAnchor {
   timeS: number;
   label: string;
-  spells: WindowSpell[];
 }
 
 /** The burst card view-model: one ComparisonWindow + one map anchor per top window. */
@@ -92,14 +91,11 @@ export function burstDetailRows(
   }));
 }
 
-/** Map anchor for a window: when to seek and which cooldowns to highlight. */
-export function burstMapAnchor(window: BurstWindow, cdSpellIds: Record<string, number>, abilities: AbilityIcons): BurstMapAnchor {
-  const cds = window.common_cds;
-  const spellIds = cds.map(name => cdSpellIds[name]).filter((id): id is number => !!id);
+/** Map anchor for a window: when to seek and its label. */
+export function burstMapAnchor(window: BurstWindow): BurstMapAnchor {
   return {
     timeS: window.time_s,
-    label: cds.join(', ') || 'Burst window',
-    spells: windowSpells(spellIds, abilities),
+    label: window.common_cds.join(', ') || 'Burst window',
   };
 }
 
@@ -134,7 +130,7 @@ export function buildBurstView(
       overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
       detailRows: burstDetailRows(window.ability_breakdown, playerWindow, abilities),
     });
-    anchors.push(burstMapAnchor(window, cdSpellIds, abilities));
+    anchors.push(burstMapAnchor(window));
   });
   return { windows, anchors };
 }
