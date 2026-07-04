@@ -154,9 +154,11 @@ export class LiveCaptureFeatureService {
       track.addEventListener('ended', () => this.stopRecording());
       this.recording = true;
       this.isCapturing.set(true);
+      console.debug('[clip] startRecording: capturing', track.label, 'mime', this.mimeType, 'bitrate', profile.bitrateBps);
       this.cycleSegment();
     } catch (err) {
       // A user who dismisses the picker is not an error to surface loudly.
+      console.debug('[clip] startRecording: aborted (picker dismissed or error)', err);
       logWarn('LiveCaptureFeatureService.startRecording', err);
     } finally {
       this.isStarting.set(false);
@@ -188,9 +190,11 @@ export class LiveCaptureFeatureService {
     const start = Date.now();
     recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
     recorder.onstop = () => {
-      this.segments.push({ idx: this.segIdx++, start, end: Date.now(), blob: new Blob(chunks, { type: this.mimeType }) });
+      const blob = new Blob(chunks, { type: this.mimeType });
+      this.segments.push({ idx: this.segIdx++, start, end: Date.now(), blob });
       this.evictOlderThan(Date.now() - BUFFER_MS);
       this.refreshBufferSpan();
+      console.debug('[clip] segment', this.segIdx - 1, 'finalized', Math.round(blob.size / 1024), 'KB;', this.segments.length, 'in buffer, span', Math.round(this.bufferSpanMs() / 1000), 's');
       if (this.recording) this.cycleSegment();
     };
     recorder.start();
@@ -235,16 +239,20 @@ export class LiveCaptureFeatureService {
 
   /** Open the clip panel at an anchor emitted by a card: resolve the clip, then show it. */
   async openClip(anchor: ClipAnchor): Promise<void> {
+    console.debug('[clip] openClip', anchor, 'ctx?', !!this.ctx, 'capturing?', this.isCapturing(), 'segments', this.segments.length);
     this.currentAnchor = anchor;
     this.handle.set(null);
     this.open.set(true);
-    if (!this.ctx) return;
+    if (!this.ctx) { console.warn('[clip] openClip: no correlation context (report not resolved)'); return; }
     this.extracting.set(true);
     try {
       const window = this.clipWindowFor(anchor);
+      console.debug('[clip] openClip: window span', window, 'buffer covers?', this.bufferCovers(window.fromMs, window.toMs));
       const handle = await this.resolveHandle(this.ctx.reportCode, this.ctx.fight.id, window);
+      console.debug('[clip] openClip: resolved handle', handle ? `${handle.blobs.length} blobs, seek ${handle.startOffsetS}s` : 'null (no footage)');
       this.handle.set(handle);
     } catch (err) {
+      console.error('[clip] openClip failed', err);
       logWarn(`LiveCaptureFeatureService.openClip ${anchor.key}`, err);
     } finally {
       this.extracting.set(false);
@@ -283,31 +291,26 @@ export class LiveCaptureFeatureService {
   private async resolveHandle(reportCode: string, fightId: number, window: ClipWindow): Promise<ClipHandle | null> {
     const stored = await this.clipStore.get(this.storeKey(reportCode, fightId, window.key));
     if (stored?.blobs.length) {
-      const first = stored.segments[0];
-      const last = stored.segments[stored.segments.length - 1];
-      const durationS = (last.end - first.start) / 1000;
-      return this.assemble(stored.blobs, segmentSeekOffset(window, first), durationS);
+      console.debug('[clip] resolveHandle: served from ClipStore,', stored.blobs.length, 'blobs');
+      return { blobs: stored.blobs, startOffsetS: segmentSeekOffset(window, stored.segments[0]), mimeType: this.mimeType };
     }
     const segments = selectSegments(this.segments, window);
+    console.debug('[clip] resolveHandle: store miss;', segments.length, 'of', this.segments.length, 'buffer segments overlap the window');
     if (!segments.length) return null;
     await this.persist(reportCode, fightId, window, segments);
-    const startOffsetS = segmentSeekOffset(window, segments[0]);
-    const durationS = (segments[segments.length - 1].end - segments[0].start) / 1000;
-    return this.assemble(segments.map(segment => segment.blob), startOffsetS, durationS);
+    return { blobs: segments.map(segment => segment.blob), startOffsetS: segmentSeekOffset(window, segments[0]), mimeType: this.mimeType };
   }
 
-  /** Select the overlapping segments and assemble them into one seekable clip. */
-  async extractClip(window: ClipWindow): Promise<ClipHandle | null> {
+  /** Select the overlapping segments for a window's clip (ordered blobs + seek offset). */
+  extractClip(window: ClipWindow): ClipHandle | null {
     const segments = selectSegments(this.segments, window);
     if (!segments.length) return null;
-    const startOffsetS = segmentSeekOffset(window, segments[0]);
-    const durationS = (segments[segments.length - 1].end - segments[0].start) / 1000;
-    return this.assemble(segments.map(segment => segment.blob), startOffsetS, durationS);
+    return { blobs: segments.map(segment => segment.blob), startOffsetS: segmentSeekOffset(window, segments[0]), mimeType: this.mimeType };
   }
 
   /** Re-record the assembled clip in real time into one clean, downloadable WebM (spec 7.4). */
   async exportClip(window: ClipWindow): Promise<Blob | null> {
-    const handle = await this.extractClip(window);
+    const handle = this.extractClip(window);
     if (!handle) return null;
     return this.reRecord(handle);
   }
@@ -334,44 +337,25 @@ export class LiveCaptureFeatureService {
    * re-bases each segment's timecodes so the assembled timeline starts at 0 with a finite
    * duration. Falls back to a single-blob object URL if any append throws (spec 7.3).
    */
-  private async assemble(blobs: Blob[], startOffsetS: number, durationS: number): Promise<ClipHandle> {
-    try {
-      const source = new MediaSource();
-      const url = URL.createObjectURL(source);
-      await onceOpen(source);
-      const buffer = source.addSourceBuffer(this.mimeType);
-      buffer.mode = 'sequence';
-      for (const blob of blobs) await appendAndWait(buffer, await blob.arrayBuffer());
-      source.endOfStream();
-      return { url, startOffsetS, durationS, mode: 'mse' };
-    } catch (err) {
-      logWarn('LiveCaptureFeatureService.assemble', err);
-      const url = URL.createObjectURL(new Blob(blobs, { type: this.mimeType }));
-      return { url, startOffsetS, durationS, mode: 'playlist' };
-    }
-  }
-
-  private reRecord(handle: ClipHandle): Promise<Blob> {
+  private async reRecord(handle: ClipHandle): Promise<Blob> {
+    const video = document.createElement('video');
+    video.muted = true;
+    await pipeIntoElement(video, handle.blobs, handle.mimeType);
+    if (video.readyState < 1) await onceEvent(video, 'loadedmetadata');
     return new Promise((resolve, reject) => {
-      const video = document.createElement('video');
-      video.src = handle.url;
-      video.muted = true;
-      video.onerror = () => reject(new Error('clip playback failed'));
-      video.onloadedmetadata = () => {
-        try {
-          const stream = (video as unknown as CapturableMedia).captureStream();
-          const recorder = new MediaRecorder(stream, { mimeType: this.mimeType, videoBitsPerSecond: this.captureProfile().bitrateBps });
-          const out: Blob[] = [];
-          recorder.ondataavailable = event => { if (event.data.size) out.push(event.data); };
-          recorder.onstop = () => resolve(new Blob(out, { type: this.mimeType }));
-          video.currentTime = handle.startOffsetS;
-          recorder.start();
-          void video.play();
-          video.addEventListener('ended', () => recorder.stop(), { once: true });
-        } catch (err) {
-          reject(err instanceof Error ? err : new Error(String(err)));
-        }
-      };
+      try {
+        const stream = (video as unknown as CapturableMedia).captureStream();
+        const recorder = new MediaRecorder(stream, { mimeType: handle.mimeType, videoBitsPerSecond: this.captureProfile().bitrateBps });
+        const out: Blob[] = [];
+        recorder.ondataavailable = event => { if (event.data.size) out.push(event.data); };
+        recorder.onstop = () => resolve(new Blob(out, { type: handle.mimeType }));
+        video.currentTime = handle.startOffsetS;
+        recorder.start();
+        void video.play();
+        video.addEventListener('ended', () => recorder.stop(), { once: true });
+      } catch (err) {
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
     });
   }
 
@@ -383,6 +367,38 @@ export class LiveCaptureFeatureService {
     anchor.click();
     URL.revokeObjectURL(url);
   }
+}
+
+/**
+ * Stitch the ordered segment blobs into `video` via MSE in `sequence` mode, which re-bases
+ * each self-contained segment's timecodes so the assembled timeline starts at 0. The
+ * MediaSource only reaches `sourceopen` once attached to a real media element, so the URL is
+ * set on `video` FIRST, then the buffers are appended. Falls back to a concatenated single
+ * blob src if any append throws (plays the first segment in Chrome; opens fully in VLC).
+ */
+export async function pipeIntoElement(video: HTMLVideoElement, blobs: Blob[], mimeType: string): Promise<void> {
+  console.debug('[clip] pipeIntoElement: stitching', blobs.length, 'segments, mime', mimeType);
+  try {
+    const source = new MediaSource();
+    video.src = URL.createObjectURL(source);
+    await onceOpen(source);
+    const buffer = source.addSourceBuffer(mimeType);
+    buffer.mode = 'sequence';
+    for (let i = 0; i < blobs.length; i++) {
+      await appendAndWait(buffer, await blobs[i].arrayBuffer());
+      console.debug('[clip] pipeIntoElement: appended segment', i + 1, '/', blobs.length);
+    }
+    source.endOfStream();
+    console.debug('[clip] pipeIntoElement: endOfStream, duration', video.duration);
+  } catch (err) {
+    console.warn('[clip] pipeIntoElement: MSE failed, falling back to single-blob src', err);
+    video.src = URL.createObjectURL(new Blob(blobs, { type: mimeType }));
+  }
+}
+
+/** Resolve once a media element fires `event`. */
+function onceEvent(el: HTMLMediaElement, event: string): Promise<void> {
+  return new Promise(resolve => el.addEventListener(event, () => resolve(), { once: true }));
 }
 
 /** Resolve once a `MediaSource` reaches `sourceopen`. */

@@ -49,12 +49,16 @@ export interface ClipWindow {
   key: string;
 }
 
-/** A playable clip: an object URL, where to seek to reach the window start, its length, and how it was built. */
+/**
+ * A resolved clip ready to play: the ordered segment blobs to stitch (via MSE on the
+ * player's own `<video>`) plus where to seek so playback starts at the window. The
+ * MediaSource must be attached to the real media element to open, so assembly happens in
+ * the player, not here.
+ */
 export interface ClipHandle {
-  url: string;
+  blobs: Blob[];
   startOffsetS: number;
-  durationS: number;
-  mode: 'mse' | 'playlist';
+  mimeType: string;
 }
 
 /** Pre/post roll (ms) added around a window so the moment has lead-in and tail. */

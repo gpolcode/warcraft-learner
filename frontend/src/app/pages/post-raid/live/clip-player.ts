@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { LiveCaptureFeatureService } from './live-capture.service';
+import { ClipHandle } from '../../../core/models/capture.models';
+import { LiveCaptureFeatureService, pipeIntoElement } from './live-capture.service';
 
 /**
- * Inner leaf of the recording flyover (the video analogue of `map-canvas`). Injects only
- * the slice service and renders the assembled clip: a seekable `<video>` and a download
- * affordance. No inputs - it reads the current `ClipHandle` from the service.
+ * Inner leaf of the recording flyover. Injects only the slice service and renders the
+ * resolved clip: it stitches the ordered segment blobs into its own `<video>` via MSE (the
+ * MediaSource must attach to a real element to open, so assembly happens here, not in the
+ * service), then seeks to the window start. Plus a download affordance.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,10 +18,27 @@ import { LiveCaptureFeatureService } from './live-capture.service';
 })
 export class ClipPlayerComponent {
   protected readonly clip = inject(LiveCaptureFeatureService);
+  private readonly player = viewChild<ElementRef<HTMLVideoElement>>('player');
 
-  /** Seek to the window start once the clip's metadata (and duration) are known. */
+  /** The handle already piped into the element, so an effect re-fire never re-stitches it. */
+  private piped: ClipHandle | null = null;
+
+  constructor() {
+    effect(() => {
+      const handle = this.clip.handle();
+      const el = this.player()?.nativeElement;
+      if (!handle || !el || this.piped === handle) return;
+      this.piped = handle;
+      void pipeIntoElement(el, handle.blobs, handle.mimeType);
+    });
+  }
+
+  /** Seek to the window start once the stitched clip's metadata is known. */
   protected onLoaded(video: HTMLVideoElement): void {
     const handle = this.clip.handle();
-    if (handle) video.currentTime = handle.startOffsetS;
+    if (handle) {
+      console.debug('[clip] player loadedmetadata: duration', video.duration, 'seek to', handle.startOffsetS);
+      video.currentTime = handle.startOffsetS;
+    }
   }
 }
