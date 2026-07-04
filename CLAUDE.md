@@ -15,7 +15,7 @@ This file is the always-on **router**: the few rules that apply on every turn, p
 
 ## Architecture at a glance
 
-The app is built as **per-use-case vertical slices** (rotation / burst / defensive / gear / map / live), functional-core / imperative-shell, fed by exactly **two pass-through API services** at runtime (`WclApiService`, `DataFileApiService`). Two symmetric pipelines meet at the static data files in `frontend/public/data/specs/**`. The `live` slice (`pages/post-raid/live/`) is the exception to the data pipeline: it owns the live-sync + screen-recording toggles and the per-window clip replay (a `getDisplayMedia` rolling buffer + browser-only `ClipStore`), so it reads no bench data and writes nothing outside the browser.
+The app is built as **per-use-case vertical slices** (rotation / burst / defensive / gear / map / live), functional-core / imperative-shell, fed by exactly **two pass-through API services** at runtime (`WclApiService`, `DataFileApiService`). Two symmetric pipelines meet at the static data files in `frontend/public/data/specs/**`. The `live` slice (`pages/post-raid/live/`) is the exception to the data pipeline: it owns the live-sync + screen-recording toggles and the per-window clip replay (a `getDisplayMedia` rolling buffer; clips are cut from it and memoized in memory), so it reads no bench data and keeps all footage in the browser session.
 
 ```
 INGEST (Node, scripts/ingest)            RUNTIME (browser, Angular)

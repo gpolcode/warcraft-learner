@@ -1,106 +1,14 @@
 /**
- * Screen-capture / clip data shapes for the live recording slice.
- *
- * The recording logic lives in the `live` slice (`pages/post-raid/live/`), but its
- * data shapes belong here in `core/models` like every other view-model. A clip is a
- * presentational artifact keyed to a bench window the analysis already defines; none
- * of these types enter the analysis core.
- *
- * All wall-clock fields are unix-epoch milliseconds. The recorder and the WCL timeline
- * share one clock (same machine), so `report.startTime + fight.startTime` maps directly
- * onto a segment's `start`/`end` with no skew term.
+ * The clip anchor a feature card emits (and the page forwards) to open the recording
+ * flyover on a coaching moment. This is the live slice's cross-layer boundary shape;
+ * the recording machinery and its private types live in the slice
+ * (`pages/post-raid/live/live-capture.service.ts`).
  */
-
-/** The anchor a feature card emits (and the page forwards) to open a clip. */
 export interface ClipAnchor {
+  /** Fight-relative start of the moment, in seconds. */
   timeS: number;
+  /** Window length in seconds; 0 for a point-in-time cast, which gets pre/post roll instead. */
   windowLengthS: number;
-  /** Stable per-window key, so the same window resolves the same persisted clip. */
+  /** Stable per-window key, so the same window resolves the same memoized clip. */
   key: string;
 }
-
-/** A bench window reduced to what clip correlation needs. */
-export interface ClipWindowSpec {
-  timeS: number;
-  windowLengthS: number;
-  key: string;
-}
-
-/** Capture quality knobs passed to `getDisplayMedia` + `MediaRecorder`. */
-export interface CaptureProfile {
-  codec: 'vp9' | 'vp8';
-  maxHeight: number;
-  fps: number;
-  bitrateBps: number;
-}
-
-/** One finalized WebM segment of the rolling buffer, tagged with wall-clock bounds. */
-export interface Segment {
-  idx: number;
-  start: number;
-  end: number;
-  blob: Blob;
-}
-
-/** A wall-clock span to cut a clip for, plus a stable key for storage. */
-export interface ClipWindow {
-  fromMs: number;
-  toMs: number;
-  key: string;
-}
-
-/**
- * A resolved clip ready to play: the ordered segment blobs to stitch (via MSE on the
- * player's own `<video>`) plus the loop bounds within the assembled timeline. The
- * MediaSource must be attached to the real media element to open, so assembly happens in
- * the player, not here. Playback loops over `[startOffsetS, endOffsetS]`, which is the exact
- * requested window trimmed out of the whole-segment footage.
- */
-export interface ClipHandle {
-  blobs: Blob[];
-  startOffsetS: number;
-  endOffsetS: number;
-  mimeType: string;
-}
-
-/** Pre/post roll (ms) added around a window so the moment has lead-in and tail. */
-export interface ClipRoll {
-  preMs: number;
-  postMs: number;
-}
-
-/**
- * Default capture profile. VP9 with hardware encode where available (the same path
- * Discord screenshare uses); VP8 is the fallback codec. 1080p / 30 fps / ~4 Mbps was
- * the working profile on the tester's hardware. Tunable, not hardcoded at the use site.
- */
-export const DEFAULT_CAPTURE_PROFILE: CaptureProfile = {
-  codec: 'vp9',
-  maxHeight: 1080,
-  fps: 30,
-  bitrateBps: 4_000_000,
-};
-
-/**
- * Restart the recorder every `SEG_MS` so each segment is a complete, independently
- * decodable WebM (a single continuous recorder with `timeslice` cannot be assembled
- * via MSE). Larger favors fewer restarts; trim precision does not depend on it.
- */
-export const SEG_MS = 3_000;
-
-/**
- * Rolling-buffer retention. Must cover the longest fight plus WCL upload lag plus
- * pre-roll so a fight is still buffered when it finally appears in WCL.
- */
-export const BUFFER_MS = 12 * 60 * 1_000;
-
-/**
- * Roll around a point-in-time anchor (a single cast, e.g. a defensive finding), which has no
- * duration of its own. Bench WINDOWS (burst/defensive) use their exact bounds with no roll.
- */
-export const POINT_CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
-/** No roll: a window anchor plays exactly its own span. */
-export const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
-
-/** Total on-disk budget for persisted clips before oldest-fight-first eviction kicks in. */
-export const CLIP_STORE_CAP_BYTES = 2 * 1_024 * 1_024 * 1_024;

@@ -11,6 +11,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
+import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 import { windowSpells } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
@@ -24,10 +25,11 @@ export interface BurstMapAnchor {
   windowLengthS: number;
 }
 
-/** The burst card view-model: one ComparisonWindow + one map anchor per top window. */
+/** The burst card view-model: one ComparisonWindow + one map/clip anchor per top window. */
 export interface BurstView {
   windows: ComparisonWindow[];
   anchors: BurstMapAnchor[];
+  clipAnchors: ClipAnchor[];
 }
 
 /* ----------------------------- pure functions ----------------------------- */
@@ -96,6 +98,11 @@ export function burstMapAnchor(window: BurstWindow): BurstMapAnchor {
   return { timeS: window.time_s, windowLengthS: window.window_length_s };
 }
 
+/** Clip anchor for a window: its exact span plus the stable key clips are memoized under. */
+export function burstClipAnchor(window: BurstWindow, index: number): ClipAnchor {
+  return { timeS: window.time_s, windowLengthS: window.window_length_s, key: `burst-${index}` };
+}
+
 /**
  * Build the burst card view-model: each top-parse burst window paired with the
  * player's damage inside it (by index), plus a map anchor. A window whose start is
@@ -111,6 +118,7 @@ export function buildBurstView(
 ): BurstView {
   const windows: ComparisonWindow[] = [];
   const anchors: BurstMapAnchor[] = [];
+  const clipAnchors: ClipAnchor[] = [];
   topWindows.forEach((window, index) => {
     const notReached = window.time_s > fightDurationS;
     const playerWindow = notReached ? null : (playerWindows[index] ?? null);
@@ -128,8 +136,9 @@ export function buildBurstView(
       detailRows: burstDetailRows(window.ability_breakdown, playerWindow, abilities),
     });
     anchors.push(burstMapAnchor(window));
+    clipAnchors.push(burstClipAnchor(window, index));
   });
-  return { windows, anchors };
+  return { windows, anchors, clipAnchors };
 }
 
 /** Total damage on a WCL event (raw amount + absorbed). */
@@ -215,7 +224,7 @@ export class BurstFeatureService {
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
   ): Promise<BurstView> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return { windows: [], anchors: [] };
+    if (!bench) return { windows: [], anchors: [], clipAnchors: [] };
 
     try {
       const report = await this.wclApi.getReport(reportCode);
@@ -242,7 +251,7 @@ export class BurstFeatureService {
   /** Pre-fight: the top-parse burst windows with no player overlay (informational). */
   async loadBenchView(spec: string, encounterId: number): Promise<BurstView> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return { windows: [], anchors: [] };
+    if (!bench) return { windows: [], anchors: [], clipAnchors: [] };
     return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
   }
 }

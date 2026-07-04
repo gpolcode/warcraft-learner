@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
-  absoluteWindowStart, buildClipWindows, segmentSeekOffset, segmentsCover, selectSegments,
+  ClipRoll, ClipWindow, Segment,
+  absoluteWindowStart, buildClipWindows, interSegmentGapMs, segmentSeekOffset, segmentsCover, selectSegments,
 } from './live-capture.service';
-import { ClipRoll, ClipWindow, ClipWindowSpec, Segment } from '../../../core/models/capture.models';
+import { ClipAnchor } from '../../../core/models/capture.models';
 
 // A fixed report clock (unix epoch ms) and a fight starting one minute into the report,
 // so the absolute mapping report + fight + offset is easy to read by eye.
@@ -19,7 +20,7 @@ function seg(idx: number, startMs: number, endMs: number): Segment {
   return { idx, start: startMs, end: endMs, blob: new Blob([]) };
 }
 
-function spec(over: Partial<ClipWindowSpec> = {}): ClipWindowSpec {
+function anchor(over: Partial<ClipAnchor> = {}): ClipAnchor {
   return { timeS: WINDOW_TIME_S, windowLengthS: WINDOW_LENGTH_S, key: 'w0', ...over };
 }
 
@@ -37,18 +38,18 @@ describe('absoluteWindowStart', () => {
 describe('buildClipWindows', () => {
   it('widens each window by pre/post roll around its absolute span', () => {
     const absStart = REPORT_START_MS + FIGHT_START_MS + WINDOW_TIME_S * 1000;
-    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [spec()], ROLL);
+    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [anchor()], ROLL);
     expect(window.fromMs).toBe(absStart - ROLL.preMs);
     expect(window.toMs).toBe(absStart + WINDOW_LENGTH_S * 1000 + ROLL.postMs);
   });
 
   it('carries each window key through unchanged', () => {
-    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [spec({ key: 'def3' })], ROLL);
+    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [anchor({ key: 'def3' })], ROLL);
     expect(window.key).toBe('def3');
   });
 
   it('keeps one clip per window rather than merging them', () => {
-    const windows = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [spec({ key: 'a' }), spec({ key: 'b', timeS: 11 })], ROLL);
+    const windows = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [anchor({ key: 'a' }), anchor({ key: 'b', timeS: 11 })], ROLL);
     expect(windows.map(w => w.key)).toEqual(['a', 'b']);
   });
 
@@ -94,6 +95,22 @@ describe('segmentSeekOffset', () => {
 
   it('is 0 when there is no first segment', () => {
     expect(segmentSeekOffset(window, undefined)).toBe(0);
+  });
+});
+
+describe('interSegmentGapMs', () => {
+  it('sums the wall-clock gaps between consecutive segments (the recorder restarts)', () => {
+    // 100ms lost between segments 0 and 1, 50ms between 1 and 2.
+    expect(interSegmentGapMs([seg(0, 0, 3_000), seg(1, 3_100, 6_100), seg(2, 6_150, 9_150)])).toBe(150);
+  });
+
+  it('is 0 for back-to-back segments', () => {
+    expect(interSegmentGapMs([seg(0, 0, 3_000), seg(1, 3_000, 6_000)])).toBe(0);
+  });
+
+  it('is 0 for a single segment and for none', () => {
+    expect(interSegmentGapMs([seg(0, 0, 3_000)])).toBe(0);
+    expect(interSegmentGapMs([])).toBe(0);
   });
 });
 

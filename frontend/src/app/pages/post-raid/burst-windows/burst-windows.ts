@@ -32,7 +32,7 @@ export class BurstWindowsComponent {
   readonly player = input<number>(0);
   /** Map button is available once the page has loaded top-parse positions. */
   readonly showMap = input<boolean>(false);
-  /** Clip button is available once the page is recording and the buffer covers this fight. */
+  /** Clip button is available once the page's rolling buffer covers this fight. */
   readonly showClip = input<boolean>(false);
 
   readonly openMap = output<BurstMapAnchor>();
@@ -42,6 +42,7 @@ export class BurstWindowsComponent {
 
   private readonly _windows = signal<ComparisonWindow[]>([]);
   private readonly _anchors = signal<BurstMapAnchor[]>([]);
+  private readonly _clipAnchors = signal<ClipAnchor[]>([]);
   protected readonly windows = this._windows.asReadonly();
 
   private readonly loader = new LatestLoad();
@@ -61,6 +62,7 @@ export class BurstWindowsComponent {
         apply: view => {
           this._windows.set(view.windows);
           this._anchors.set(view.anchors);
+          this._clipAnchors.set(view.clipAnchors);
         },
         settled: () => this.busyChange.emit(false),
       });
@@ -73,12 +75,7 @@ export class BurstWindowsComponent {
   }
 
   protected onOpenClip(index: number): void {
-    const window = this._windows()[index];
-    if (!window) return;
-    this.openClip.emit({
-      timeS: window.timeStartS,
-      windowLengthS: window.timeEndS - window.timeStartS,
-      key: `burst-${index}`,
-    });
+    const anchor = this._clipAnchors()[index];
+    if (anchor) this.openClip.emit(anchor);
   }
 }

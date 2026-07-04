@@ -7,7 +7,7 @@ import {
 } from '../../../shared/components/finding-table/finding-table';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
 import { LatestLoad } from '../../../shared/latest-load';
-import { DefensiveFeatureService, DefensiveMapAnchor } from './defensive.service';
+import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from './defensive.service';
 
 /**
  * Defensive card. A feature component: it injects exactly one service
@@ -34,7 +34,7 @@ export class DefensiveComponent {
   readonly player = input.required<number>();
   /** Map button is available once the page has loaded top-parse positions. */
   readonly showMap = input<boolean>(false);
-  /** Clip button is available once the page is recording and the buffer covers this fight. */
+  /** Clip button is available once the page's rolling buffer covers this fight. */
   readonly showClip = input<boolean>(false);
   readonly fightDuration = input<number>(0);
 
@@ -48,6 +48,7 @@ export class DefensiveComponent {
   private readonly _iconByName = signal<Record<string, string>>({});
   private readonly _windows = signal<ComparisonWindow[]>([]);
   private readonly _anchors = signal<DefensiveMapAnchor[]>([]);
+  private readonly _clipAnchors = signal<ClipAnchor[]>([]);
   protected readonly windows = this._windows.asReadonly();
 
   private readonly loader = new LatestLoad();
@@ -67,6 +68,7 @@ export class DefensiveComponent {
           this._iconByName.set(view.iconByName);
           this._windows.set(view.windows);
           this._anchors.set(view.anchors);
+          this._clipAnchors.set(view.clipAnchors);
         },
         settled: () => this.busyChange.emit(false),
       });
@@ -91,13 +93,8 @@ export class DefensiveComponent {
   }
 
   protected onOpenClip(index: number): void {
-    const window = this._windows()[index];
-    if (!window) return;
-    this.openClip.emit({
-      timeS: window.timeStartS,
-      windowLengthS: window.timeEndS - window.timeStartS,
-      key: `defensive-${index}`,
-    });
+    const anchor = this._clipAnchors()[index];
+    if (anchor) this.openClip.emit(anchor);
   }
 
   /** A timed finding's map button: open the map at that cast time (boss reference). */
@@ -112,10 +109,6 @@ export class DefensiveComponent {
   /** A timed finding's clip button: a clip centered on that cast instant (roll on each side). */
   protected onFindingClip(row: FindingRow): void {
     if (row.timestampMs == null) return;
-    this.openClip.emit({
-      timeS: row.timestampMs / 1000,
-      windowLengthS: 0,
-      key: `defensive-find-${Math.round(row.timestampMs / 1000)}`,
-    });
+    this.openClip.emit(defensiveFindingClipAnchor(row.timestampMs));
   }
 }

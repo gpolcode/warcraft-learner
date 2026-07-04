@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ClipHandle } from '../../../core/models/capture.models';
-import { LiveCaptureFeatureService, pipeIntoElement } from './live-capture.service';
+import { ClipHandle, LiveCaptureFeatureService, pipeIntoElement, releaseElement } from './live-capture.service';
 
 /**
  * Inner leaf of the recording flyover. Injects only the slice service and renders the
@@ -22,6 +21,8 @@ export class ClipPlayerComponent {
 
   /** The handle already piped into the element, so an effect re-fire never re-stitches it. */
   private piped: ClipHandle | null = null;
+  /** The element last piped into, so its blob src can be released on destroy. */
+  private pipedEl: HTMLVideoElement | null = null;
 
   constructor() {
     effect(() => {
@@ -29,7 +30,12 @@ export class ClipPlayerComponent {
       const el = this.player()?.nativeElement;
       if (!handle || !el || this.piped === handle) return;
       this.piped = handle;
+      this.pipedEl = el;
       void pipeIntoElement(el, handle.blobs, handle.mimeType);
+    });
+    // pipeIntoElement releases the previous URL on each re-pipe; this releases the last one.
+    inject(DestroyRef).onDestroy(() => {
+      if (this.pipedEl) releaseElement(this.pipedEl);
     });
   }
 
@@ -37,7 +43,6 @@ export class ClipPlayerComponent {
   protected onLoaded(video: HTMLVideoElement): void {
     const handle = this.clip.handle();
     if (handle) {
-      console.debug('[clip] player loadedmetadata: duration', video.duration, 'window', handle.startOffsetS, '-', handle.endOffsetS);
       video.currentTime = handle.startOffsetS;
       void video.play();
     }

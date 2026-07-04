@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { WclApiService } from '../../core/services/wcl-api';
-import { POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
+import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
@@ -183,6 +183,7 @@ export class PostRaidComponent {
   private readonly wclApi = inject(WclApiService);
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
+  private readonly liveSync = inject(LiveReportSyncService);
   private readonly selectionStore = inject(SelectionStore);
 
   protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [reportCodeValidator] });
@@ -288,12 +289,12 @@ export class PostRaidComponent {
     });
   }
 
-  /** Clip is offered once recording is on and the rolling buffer covers this fight. */
+  /** Clip is offered once the rolling buffer covers this fight (recording on or already stopped). */
   protected clipReady(): boolean { return this.liveCapture.clipReady(); }
 
   /** A feature card asked to open a clip; the page forwards it to the live feature. */
   protected onOpenClip(anchor: ClipAnchor): void {
-    void this.liveCapture.openClip(anchor);
+    this.liveCapture.openClip(anchor);
   }
 
   // Declarative polling pipeline. Must live in a field initializer so that
@@ -310,7 +311,7 @@ export class PostRaidComponent {
     distinctUntilChanged(),
     switchMap(active =>
       active
-        ? merge(of(undefined as void), this.liveCapture.pollTriggers())
+        ? merge(of(undefined as void), this.liveSync.pollTriggers())
         : EMPTY,
     ),
     exhaustMap(() => from(this._pollOnce())),
