@@ -102,15 +102,31 @@ resulting few KB of text. While stripping, also capture from the raw HTML:
 
 ### 2c. `<spec>.abilities.tsv` - the WCL-verified ability-id table
 
-Build one `name <tab> spell_id <tab> icon` table per spec; the subagent picks **every** id it writes from
-this table, so grounding happens here, once, at prep time - ingestion does not re-check ids.
+Build one `name <tab> spell_id <tab> icon <tab> base_cd_s` table per spec; the subagent picks **every**
+id it writes from this table, so grounding happens here, once, at prep time - ingestion does not re-check
+ids.
 
-1. Collect candidate ids: the spell links extracted from the guide HTML (2b), plus a top parse's kit -
-   `masterData{abilities{gameID name icon}}` from a top `report.code` obtained via
-   `worldData{encounter(id:E){characterRankings(className:C specName:S metric:dps)}}` (metric `hps` for
-   healers). The parse kit matters most for healers, whose SimC profile does not exist.
+1. Collect candidate ids from three places:
+   - the spell links extracted from the guide HTML (2b) - exact name-to-id pairs;
+   - a top parse's kit filtered to **exact** APL action-name matches: `masterData{abilities{gameID name
+     icon}}` from a top `report.code` obtained via
+     `worldData{encounter(id:E){characterRankings(className:C specName:S metric:dps)}}` (metric `hps` for
+     healers), kept only when the normalized name (lowercase, underscores to spaces, apostrophes stripped)
+     equals an APL action token. Substring matching against guide prose is wrong - common ability names
+     ("Charge", "Judgment", "Execute") match ordinary sentences and drag other classes' spells into the
+     table. The parse kit matters most for healers, whose SimC profile does not exist;
+   - domain-knowledge candidates for the spec's cooldowns and defensives the rotation sources do not
+     mention (the rotation guide page typically covers no defensives at all): name plus best-guess id.
+     These are safe only because of the name gate in step 2.
 2. Verify the union with **one batched** `gameData` query per spec
-   (`query{ a<ID>: ability(id:<ID>){id name icon} ... }`); a `null` means the id does not exist - drop it.
+   (`query{gameData{ a<ID>: ability(id:<ID>){id name icon} ... }}` - `ability` lives under `gameData`);
+   a `null` means the id does not exist - drop it. For every memory-sourced candidate, also require the
+   returned name to equal the expected name - a real id attached to the wrong ability (a renamed or
+   reworked spell) fails the gate and is dropped.
+3. Fill `base_cd_s` from the Wowhead tooltip endpoint - `https://nether.wowhead.com/tooltip/spell/<id>`
+   returns JSON whose `tooltip` HTML carries "`N sec/min cooldown`" (parallel `curl` across ids; blank
+   when the tooltip has none). Tooltip cooldowns are **base, pre-talent** values; they anchor the
+   subagent's `cooldown` numbers, which otherwise have no source at all.
 
 ## Step 3 - fan out one isolated authoring subagent per spec
 
@@ -143,7 +159,10 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   "Use on cooldown" with no condition fails the bar whenever the source states one.
 - **`defensives` >= 15s is inclusive** - an ability with exactly a 15s cooldown belongs in the list.
 - **Numbers come from the sources, not from vibes**: windows, thresholds, and target counts in rule
-  conditions must trace to an APL line or a guide sentence.
+  conditions must trace to an APL line or a guide sentence, and comparators are copied exactly (an APL
+  `combo_points<=2` means 2, not 1). `cooldown` values come from a source sentence or the table's
+  `base_cd_s`; when the sources state an effective (talented) cooldown that differs from the base value,
+  the source wins and the base goes in `id_note`.
 - Prefer machine-checkable `condition`s (`cast_without_prior`, `hold_cooldown_for_anchor` - see the
   schema's `$defs`); use `condition: null` only when the advice is worth showing but not checkable from
   cast timing.
