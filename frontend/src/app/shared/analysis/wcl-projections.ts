@@ -17,6 +17,16 @@ import { WindowSpell } from '../../core/models/window-comparison.models';
 // is unfetchable. Drop these before mapping.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 
+// WCL reports the physical auto-attack as event ability id 1 (a report's masterData names it
+// "Melee"), so it legitimately appears in a burst/defensive damage breakdown. But the id-keyed
+// art comes from `gameData.ability(id)`, and `gameData.ability(1)` resolves the stale game spell
+// 1 - "Word of Recall (OLD)", icon `trade_engineering` - so a melee row would render as Word of
+// Recall. Relabel the sentinel to WCL's own Auto Attack art (game spell 6603's icon). A report's
+// masterData melee icon is the player's equipped weapon, which varies per parse, so this canonical
+// icon keeps the cross-parse bench consistent.
+const WCL_MELEE_ABILITY_ID = 1;
+const MELEE_ART = { icon: 'inv_sword_04', name: 'Melee' };
+
 /**
  * Unwrap WCL's `characterRankings` envelope into its ranking rows. WCL returns it
  * either as a JSON blob (string) or an already-parsed object; both forms (and an
@@ -32,7 +42,8 @@ export function unwrapRankings(blob: WclRankingsBlob | null | undefined): WclRaw
  * Project WCL's aliased `gameData.ability` map into an id-keyed `{ icon, name }`
  * record, stripping the trailing `.jpg` so the value is the bare zamimg filename
  * `wl-game-icon` expects. WCL returns `null` for any alias it could not resolve;
- * those are skipped.
+ * those are skipped. The melee auto-attack sentinel (id 1) is relabeled to its Auto
+ * Attack art, since `gameData` resolves that id to the unrelated "Word of Recall (OLD)".
  */
 export function abilityIcons(
   raw: Record<string, WclRawAbility | null>,
@@ -41,6 +52,7 @@ export function abilityIcons(
   for (const entry of Object.values(raw)) {
     if (entry) icons[entry.id] = { icon: entry.icon.replace(/\.jpg$/i, ''), name: entry.name };
   }
+  if (icons[WCL_MELEE_ABILITY_ID]) icons[WCL_MELEE_ABILITY_ID] = { ...MELEE_ART };
   return icons;
 }
 
