@@ -19,8 +19,6 @@ export { rowsFromEntries, onPlanFromEntries, bucketFindings, CAT_LABEL } from '.
   templateUrl: './finding-table.html',
 })
 export class FindingTableComponent {
-  // Named `heading` (not `title`) so the value never reflects to a native `title` attribute
-  // on the host element, which the browser would show as a tooltip over the whole card.
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
   readonly rows = input.required<FindingRow[]>();

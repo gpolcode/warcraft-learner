@@ -19,8 +19,8 @@ const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 
 // WCL reports the physical auto-attack as event ability id 1; the real spell is Auto Attack
 // (see the warcraft-wcl-data skill's "Melee auto-attack is event ability id 1" quirk).
-const WCL_MELEE_EVENT_ABILITY_ID = 1;
-const WOW_AUTO_ATTACK_SPELL_ID = 6603;
+export const WCL_MELEE_EVENT_ABILITY_ID = 1;
+export const WOW_AUTO_ATTACK_SPELL_ID = 6603;
 
 /** Map the WCL melee auto-attack event id to the real Auto Attack spell id; other ids pass through. */
 export function normalizeAbilityId(id: number): number {

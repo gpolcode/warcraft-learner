@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from './wcl-projections';
+import {
+  abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings,
+  WCL_MELEE_EVENT_ABILITY_ID, WOW_AUTO_ATTACK_SPELL_ID,
+} from './wcl-projections';
 
 // A raw ranking row as WCL surfaces it in the characterRankings blob.
 const rankingRow = (name: string, code: string, fightID: number) => ({ name, report: { code, fightID } });
@@ -75,11 +78,8 @@ describe('abilityIcons', () => {
 });
 
 describe('normalizeAbilityId', () => {
-  const WCL_MELEE_EVENT_ID = 1;
-  const AUTO_ATTACK_SPELL_ID = 6603;
-
   it('maps the WCL melee event id (which gameData resolves to "Word of Recall (OLD)") to Auto Attack', () => {
-    expect(normalizeAbilityId(WCL_MELEE_EVENT_ID)).toBe(AUTO_ATTACK_SPELL_ID);
+    expect(normalizeAbilityId(WCL_MELEE_EVENT_ABILITY_ID)).toBe(WOW_AUTO_ATTACK_SPELL_ID);
   });
 
   it('passes other ability ids through unchanged', () => {
