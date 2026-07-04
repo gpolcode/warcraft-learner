@@ -80,7 +80,7 @@ https://www.wowhead.com/guide/classes/<class-kebab>/<spec-kebab>/<subpage>-pve-<
 
 Fetch the raw HTML and strip tags to text (the guide body lives in a `guide-body` block). It is the source
 for the healer specs SimC omits and a useful cross-check for everyone. The page also carries the spec's
-**icon stem** (e.g. `ability_stealth`) - capture it for the rulebook's `spec_icon`.
+**icon stem** (e.g. `ability_stealth`) - capture it for the rulebook's `spec_icon`, which is **required**.
 
 ### C. Warcraft Logs - spell-id grounding
 
@@ -113,7 +113,7 @@ examples in the schema's `$defs`.
 ## Step 4 - write
 
 Write to `frontend/public/data/specs/{spec}/rulebook.json` (pretty-printed; set `spec` to the folder key
-and `spec_icon` to the captured stem; leave `guide_count`/`saved_at` out). Conform to the schema - it is
+and the **required** `spec_icon` to the captured stem - never leave it empty; leave `guide_count`/`saved_at` out). Conform to the schema - it is
 the only contract. Ingestion consumes the rulebook directly with no code-side check, so every id must be
 real; that is what the WCL grounding in Step 2 is for.
 
