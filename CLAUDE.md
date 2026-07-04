@@ -62,7 +62,8 @@ Load the matching skill(s) **before** you start that step. The `warcraft-*` skil
 | Writing user-facing copy, findings, microcopy, or anything branded (titles, nav, banners, READMEs, favicon) | **warcraft-copy** |
 | Working on a vertical slice, a transform, analysis math, or layer boundaries | **warcraft-architecture** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
-| Ingestion, rulebooks, scraping, `data/specs` file shapes, or `INGEST_VERSION` | **warcraft-ingestion** |
+| Generating or refreshing a spec's `rulebook.json` (one, some, or all specs) | **warcraft-rulebook** |
+| Ingestion, `data/specs` file shapes, rulebook consumption/schema, or `INGEST_VERSION` | **warcraft-ingestion** |
 | Writing or changing tests | **warcraft-testing** |
 | General refactor / code-quality cleanup | **solid** + `/simplify` (project rules win on conflict) |
 | Reviewing code, a diff, or a PR | `/code-review` + **solid** + the domain skill(s) for the changed area |
