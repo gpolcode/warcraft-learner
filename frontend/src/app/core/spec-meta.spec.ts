@@ -53,8 +53,19 @@ describe('classIconUrl', () => {
 });
 
 describe('specIconUrl', () => {
-  it('builds a spec icon URL from the baked stem', () => {
+  it('prefers the rulebook-baked stem when the spec meta carries one', () => {
+    hydrateSpecMeta([{ ...SUBTLETY, specIcon: 'inv_custom_stem' }]);
+    expect(specIconUrl('SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/inv_custom_stem.jpg');
+  });
+
+  it('falls back to the built-in table when the baked stem is empty', () => {
+    hydrateSpecMeta([{ ...SUBTLETY, specIcon: '' }]);
     expect(specIconUrl('SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg');
+  });
+
+  it('resolves from the built-in table even for a spec that was not hydrated', () => {
+    hydrateSpecMeta([]);
+    expect(specIconUrl('DevourerDemonHunter')).toBe('https://wow.zamimg.com/images/wow/icons/small/classicon_demonhunter_void.jpg');
   });
 
   it('returns empty for an unknown spec', () => {
