@@ -8,6 +8,7 @@ import { SelectionStore } from '../../core/services/selection-store';
 import { SpecEntry, EncounterEntry } from '../../core/models/encounter.models';
 import { EncounterSelectionService } from './encounter-selection.service';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
+import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
@@ -36,7 +37,7 @@ import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
-    LoadingSpinnerComponent, ArtIconComponent,
+    LoadingSpinnerComponent, BenchEmptyBannerComponent, ArtIconComponent,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
     GearComponent, MapPanelComponent,
@@ -76,6 +77,19 @@ export class PreFightComponent implements OnInit {
     this.encounters().find(entry => entry.id === this.selectedEncId()));
   protected readonly loading = signal(false);
   protected readonly error = signal('');
+
+  // Per-card bench availability. Each card emits `availableChange` with whether its
+  // top-parse bench exists; the page shows the no-benchmark banner when none do (a fresh
+  // tier with no ingested parses). Init true (optimistic): unlike the post-raid page, the
+  // pre-fight cards render as they load with no reveal gate, so starting true avoids a
+  // one-frame banner flash before the benched case reports in.
+  protected readonly gearAvailable = signal(true);
+  protected readonly cdPlanAvailable = signal(true);
+  protected readonly defensivePlanAvailable = signal(true);
+  protected readonly burstAvailable = signal(true);
+  protected readonly benchAvailable = computed(() =>
+    this.gearAvailable() || this.cdPlanAvailable() || this.defensivePlanAvailable() || this.burstAvailable());
+
   // The burst-window positioning button lights up once the top-parse trails have loaded.
   protected readonly mapReady = computed(() => this.mapFeature.ready());
 

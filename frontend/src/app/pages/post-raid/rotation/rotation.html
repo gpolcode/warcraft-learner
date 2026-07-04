@@ -9,11 +9,20 @@
     </wl-finding-table>
   }
 
-  <!-- Offensive cooldowns: always rendered (the table owns the empty state). -->
-  <wl-finding-table
-    heading="Offensives"
-    subtitle="Offensive cooldowns vs top parses."
-    [rows]="offensiveRows()"
-    [onPlan]="onPlan()">
-  </wl-finding-table>
+  <!-- Offensive cooldowns: bench-driven. When there is no top-parse bench yet the
+       comparison has nothing to grade against, so show the waiting state instead. -->
+  @if (available()) {
+    <wl-finding-table
+      heading="Offensives"
+      subtitle="Offensive cooldowns vs top parses."
+      [rows]="offensiveRows()"
+      [onPlan]="onPlan()">
+    </wl-finding-table>
+  } @else {
+    <wl-waiting-placeholder
+      heading="Offensives"
+      subtitle="Offensive cooldowns vs top parses."
+      caption="Your cooldown timing has nothing to be compared against yet.">
+    </wl-waiting-placeholder>
+  }
 </div>

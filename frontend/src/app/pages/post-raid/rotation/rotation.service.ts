@@ -21,6 +21,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
+import { DataFileApiService } from '../../../core/services/data-file-api';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import {
@@ -80,6 +81,13 @@ export interface CdPlanRow {
 
 /** Post-raid rotation view-model. */
 export interface RotationPlayerView {
+  /**
+   * Whether the top-parse bench exists for this encounter. Drives the Offensives
+   * section: true renders the comparison, false the "waiting for top parses" state.
+   * The Rotation Rules section is bench-independent (rulebook-driven) and renders
+   * regardless.
+   */
+  available: boolean;
   ruleRows: RotationFindingRow[];
   /** Labels of rotation rules the player followed cleanly this fight. */
   ruleOnPlan: string[];
@@ -609,18 +617,27 @@ export function buildCdPlan(
 export class RotationFeatureService {
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly dataFiles = inject(DataFileApiService);
 
   /**
-   * Post-raid: fetch the player's own log (report master abilities for icons +
-   * Casts/Buffs), read the prepared rotation bench, and produce the offensive
-   * findings. Returns an empty view when bench is absent.
+   * Post-raid: fetch the player's own log (Casts/Buffs), evaluate the rotation rules
+   * against it, and - when the top-parse bench exists - the offensive findings too.
+   *
+   * The Rotation Rules are read from the authored `{spec}/rulebook.json`, which is
+   * present regardless of ingest, so they still evaluate on a fresh tier with no bench.
+   * The offensive comparison is bench-driven: `available` is false when the bench is
+   * absent and the Offensives section shows its "waiting for top parses" state.
    */
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
   ): Promise<RotationPlayerView> {
-    const empty: RotationPlayerView = { ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] };
-    const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return empty;
+    const [rulebook, bench] = await Promise.all([
+      this.dataFiles.getRulebook(spec),
+      this.source.getBench(spec, encounterId),
+    ]);
+    const rules = rulebook?.rules ?? [];
+    const available = bench !== null;
+    const empty: RotationPlayerView = { available, ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] };
 
     try {
       const report = await this.wclApi.getReport(reportCode);
@@ -632,13 +649,21 @@ export class RotationFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       ]);
 
-      const findings = analyzeRotationFindings({
-        fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
-        cooldowns: bench.major_cooldowns, rules: bench.rules, bench,
-      });
-      const { ruleRows, offensiveRows, onPlan } = bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-      const ruleOnPlan = rulesFollowed(bench.rules, casts, fight.startTime);
-      return { ruleRows, ruleOnPlan, offensiveRows, onPlan };
+      // Rules come from the rulebook and are evaluated regardless of the bench. The
+      // offensive/comparison findings need the bench, so they run only when it exists.
+      const ruleFindings = evaluateRules(rules, casts, fight.startTime);
+      const offensiveFindings = bench
+        ? analyzeRotationFindings({
+            fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
+            cooldowns: bench.major_cooldowns, rules: [], bench,
+          })
+        : [];
+      const findings = [...offensiveFindings, ...ruleFindings];
+      sortBySeverity(findings);
+      const { ruleRows, offensiveRows, onPlan } =
+        bucketRotationFindings(findings, bench?.cd_spell_ids ?? {}, bench?.ability_icons ?? {});
+      const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
+      return { available, ruleRows, ruleOnPlan, offensiveRows, onPlan };
     } catch (err) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, err);
       return empty;
@@ -646,9 +671,9 @@ export class RotationFeatureService {
   }
 
   /** Pre-fight: bench-only cooldown plan rows (icons baked onto each row). */
-  async loadPlanView(spec: string, encounterId: number): Promise<CdPlanRow[]> {
+  async loadPlanView(spec: string, encounterId: number): Promise<{ available: boolean; rows: CdPlanRow[] }> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return [];
-    return buildCdPlan(bench.major_cooldowns, bench.per_cd_benchmarks, bench.ability_icons);
+    if (!bench) return { available: false, rows: [] };
+    return { available: true, rows: buildCdPlan(bench.major_cooldowns, bench.per_cd_benchmarks, bench.ability_icons) };
   }
 }
