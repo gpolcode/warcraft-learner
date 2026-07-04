@@ -283,6 +283,7 @@ export class PostRaidComponent {
   protected onDefensiveOpenMap(anchor: DefensiveMapAnchor): void {
     this.mapFeature.openAt({
       timeS: anchor.timeS,
+      windowLengthS: anchor.windowLengthS,
       reference: anchor.refGameId != null ? { kind: 'enemy', gameId: anchor.refGameId } : { kind: 'boss' },
     });
   }

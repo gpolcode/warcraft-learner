@@ -38,6 +38,8 @@ type AbilityIcons = Record<number, BakedAbility>;
 export interface DefensiveMapAnchor {
   timeS: number;
   refGameId: number | null;
+  /** Window length in seconds; 0/undefined for a point-in-time finding cast. */
+  windowLengthS?: number;
 }
 
 /** The defensive card view-model: findings + per-window comparison + map anchors. */
@@ -374,6 +376,7 @@ export function defensiveMapAnchor(window: BurstWindow): DefensiveMapAnchor {
   return {
     timeS: window.time_s,
     refGameId: window.ref_game_id ?? null,
+    windowLengthS: window.window_length_s,
   };
 }
 

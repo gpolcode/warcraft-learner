@@ -33,12 +33,27 @@ export class ClipPlayerComponent {
     });
   }
 
-  /** Seek to the window start once the stitched clip's metadata is known. */
+  /** Seek to the window start and begin looping once the stitched clip's metadata is known. */
   protected onLoaded(video: HTMLVideoElement): void {
     const handle = this.clip.handle();
     if (handle) {
-      console.debug('[clip] player loadedmetadata: duration', video.duration, 'seek to', handle.startOffsetS);
+      console.debug('[clip] player loadedmetadata: duration', video.duration, 'window', handle.startOffsetS, '-', handle.endOffsetS);
       video.currentTime = handle.startOffsetS;
+      void video.play();
     }
+  }
+
+  /** Loop over the exact window `[startOffsetS, endOffsetS]` forever. */
+  protected onTick(video: HTMLVideoElement): void {
+    const handle = this.clip.handle();
+    if (!handle) return;
+    const end = Math.min(handle.endOffsetS, video.duration || handle.endOffsetS);
+    if (video.currentTime >= end) video.currentTime = handle.startOffsetS;
+  }
+
+  /** Footage ended before the window end (window ran to the buffer edge): restart the loop. */
+  protected onEnded(video: HTMLVideoElement): void {
+    const handle = this.clip.handle();
+    if (handle) { video.currentTime = handle.startOffsetS; void video.play(); }
   }
 }

@@ -46,7 +46,7 @@ describe('splitCommonCds', () => {
 describe('burstMapAnchor', () => {
   it('carries the window seek time', () => {
     const window = { time_s: 12, window_length_s: 18, common_cds: ['Shadow Blades', 'Mystery'] } as BurstWindow;
-    expect(burstMapAnchor(window)).toEqual({ timeS: 12 });
+    expect(burstMapAnchor(window)).toEqual({ timeS: 12, windowLengthS: 18 });
   });
 });
 
@@ -69,7 +69,7 @@ describe('buildBurstView', () => {
     expect(view.windows[0].overview.playerPct).toBe(950);
     expect(view.windows[0].spells).toEqual([{ id: SHADOW_BLADES, icon: 'sb', name: 'Shadow Blades' }]);
     expect(view.windows[0].detailRows[0]).toMatchObject({ spellId: SHADOW_BLADES_DAMAGE, label: 'Eviscerate', icon: 'evis', playerPct: 550, topAvg: 600 });
-    expect(view.anchors[0]).toEqual({ timeS: 10 });
+    expect(view.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
   });
 
   it('flags a detail row passive when the bench ability is passive', () => {
@@ -168,7 +168,7 @@ describe('BurstFeatureService', () => {
     expect(view.windows[0].overview.playerPct).toBeNull();
     expect(view.windows[0].status).toBe('info');
     expect(view.windows[0].statusIcon).toBe('insights');
-    expect(view.anchors[0]).toEqual({ timeS: 10 });
+    expect(view.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
   });
 
   it('player view: fetches the log and compares the player damage against the bench', async () => {
@@ -176,6 +176,6 @@ describe('BurstFeatureService', () => {
     expect(view.windows).toHaveLength(1);
     expect(view.windows[0].overview.playerPct).toBe(950);
     expect(view.windows[0].detailRows[0].label).toBe('Eviscerate');
-    expect(view.anchors[0]).toEqual({ timeS: 10 });
+    expect(view.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
   });
 });

@@ -294,12 +294,12 @@ describe('playerUsefulTiming', () => {
 describe('defensiveMapAnchor', () => {
   it('carries seek time and the dominant enemy game id', () => {
     const window = { time_s: 30, window_length_s: 5, defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, ref_game_id: 6666 } as BurstWindow;
-    expect(defensiveMapAnchor(window)).toEqual({ timeS: 30, refGameId: 6666 });
+    expect(defensiveMapAnchor(window)).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
   });
 
   it('falls back to a null ref when absent', () => {
     const window = { time_s: 5, window_length_s: 5 } as BurstWindow;
-    expect(defensiveMapAnchor(window)).toEqual({ timeS: 5, refGameId: null });
+    expect(defensiveMapAnchor(window)).toEqual({ timeS: 5, refGameId: null, windowLengthS: 5 });
   });
 });
 
@@ -320,7 +320,7 @@ describe('buildDefensiveWindows', () => {
     expect(windows[0].status).toBe('warn');
     expect(windows[0].spells).toEqual([{ id: CLOAK_OF_SHADOWS, icon: 'cloak', name: 'Cloak of Shadows' }]);
     expect(windows[0].detailRows[0]).toMatchObject({ spellId: 700, label: 'Boss Hit', icon: 'hit', playerPct: 700, topAvg: 600 });
-    expect(anchors[0]).toEqual({ timeS: 30, refGameId: 6666 });
+    expect(anchors[0]).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
   });
 
   it('marks an uncovered window bad', () => {

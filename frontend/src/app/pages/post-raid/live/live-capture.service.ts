@@ -21,7 +21,7 @@ import { Observable } from 'rxjs';
 import { WclFight } from '../../../core/models/wcl.models';
 import {
   CaptureProfile, ClipAnchor, ClipHandle, ClipRoll, ClipWindow, ClipWindowSpec, Segment,
-  BUFFER_MS, DEFAULT_CAPTURE_PROFILE, DEFAULT_CLIP_ROLL, SEG_MS,
+  BUFFER_MS, DEFAULT_CAPTURE_PROFILE, NO_CLIP_ROLL, POINT_CLIP_ROLL, SEG_MS,
 } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 import { LiveModeState } from '../../../core/services/live-mode-state';
@@ -128,7 +128,6 @@ export class LiveCaptureFeatureService {
 
   private ctx: { reportCode: string; reportStartTime: number; fight: WclFight } | null = null;
   private currentAnchor: ClipAnchor | null = null;
-  private readonly roll: ClipRoll = DEFAULT_CLIP_ROLL;
 
   /* ----------------------- live-sync facade methods ----------------------- */
 
@@ -283,7 +282,10 @@ export class LiveCaptureFeatureService {
 
   private clipWindowFor(anchor: ClipAnchor): ClipWindow {
     const { reportStartTime, fight } = this.ctx!;
-    const [window] = buildClipWindows(reportStartTime, fight.startTime, [anchor], this.roll);
+    // A bench window plays its exact span; a point-in-time cast gets pre/post roll so it has
+    // context on either side.
+    const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
+    const [window] = buildClipWindows(reportStartTime, fight.startTime, [anchor], roll);
     return window;
   }
 
@@ -292,20 +294,35 @@ export class LiveCaptureFeatureService {
     const stored = await this.clipStore.get(this.storeKey(reportCode, fightId, window.key));
     if (stored?.blobs.length) {
       console.debug('[clip] resolveHandle: served from ClipStore,', stored.blobs.length, 'blobs');
-      return { blobs: stored.blobs, startOffsetS: segmentSeekOffset(window, stored.segments[0]), mimeType: this.mimeType };
+      return this.handleFor(window, stored.blobs, stored.segments[0]);
     }
     const segments = selectSegments(this.segments, window);
     console.debug('[clip] resolveHandle: store miss;', segments.length, 'of', this.segments.length, 'buffer segments overlap the window');
     if (!segments.length) return null;
     await this.persist(reportCode, fightId, window, segments);
-    return { blobs: segments.map(segment => segment.blob), startOffsetS: segmentSeekOffset(window, segments[0]), mimeType: this.mimeType };
+    return this.handleFor(window, segments.map(segment => segment.blob), segments[0]);
   }
 
-  /** Select the overlapping segments for a window's clip (ordered blobs + seek offset). */
+  /** Select the overlapping segments for a window's clip (ordered blobs + loop bounds). */
   extractClip(window: ClipWindow): ClipHandle | null {
     const segments = selectSegments(this.segments, window);
     if (!segments.length) return null;
-    return { blobs: segments.map(segment => segment.blob), startOffsetS: segmentSeekOffset(window, segments[0]), mimeType: this.mimeType };
+    return this.handleFor(window, segments.map(segment => segment.blob), segments[0]);
+  }
+
+  /**
+   * Build the playable handle: the loop starts where the window begins inside the first
+   * segment (`startOffsetS`) and ends one window-span later, so playback trims the
+   * whole-segment footage down to the exact requested window.
+   */
+  private handleFor(window: ClipWindow, blobs: Blob[], first: { start: number }): ClipHandle {
+    const startOffsetS = segmentSeekOffset(window, first);
+    return {
+      blobs,
+      startOffsetS,
+      endOffsetS: startOffsetS + (window.toMs - window.fromMs) / 1000,
+      mimeType: this.mimeType,
+    };
   }
 
   /** Re-record the assembled clip in real time into one clean, downloadable WebM (spec 7.4). */
@@ -333,9 +350,8 @@ export class LiveCaptureFeatureService {
   }
 
   /**
-   * Append whole self-contained segments to one `MediaSource` in `sequence` mode, which
-   * re-bases each segment's timecodes so the assembled timeline starts at 0 with a finite
-   * duration. Falls back to a single-blob object URL if any append throws (spec 7.3).
+   * Re-record the assembled clip in real time into one clean WebM, playing only the exact
+   * window `[startOffsetS, endOffsetS]` so the downloaded file matches the on-screen clip.
    */
   private async reRecord(handle: ClipHandle): Promise<Blob> {
     const video = document.createElement('video');
@@ -347,12 +363,16 @@ export class LiveCaptureFeatureService {
         const stream = (video as unknown as CapturableMedia).captureStream();
         const recorder = new MediaRecorder(stream, { mimeType: handle.mimeType, videoBitsPerSecond: this.captureProfile().bitrateBps });
         const out: Blob[] = [];
+        let stopped = false;
+        const stop = (): void => { if (!stopped && recorder.state !== 'inactive') { stopped = true; recorder.stop(); } };
         recorder.ondataavailable = event => { if (event.data.size) out.push(event.data); };
         recorder.onstop = () => resolve(new Blob(out, { type: handle.mimeType }));
+        // Stop at the window end (single pass, no loop for the downloaded file).
+        video.addEventListener('timeupdate', () => { if (video.currentTime >= handle.endOffsetS) stop(); });
+        video.addEventListener('ended', stop, { once: true });
         video.currentTime = handle.startOffsetS;
         recorder.start();
         void video.play();
-        video.addEventListener('ended', () => recorder.stop(), { once: true });
       } catch (err) {
         reject(err instanceof Error ? err : new Error(String(err)));
       }

@@ -51,13 +51,15 @@ export interface ClipWindow {
 
 /**
  * A resolved clip ready to play: the ordered segment blobs to stitch (via MSE on the
- * player's own `<video>`) plus where to seek so playback starts at the window. The
+ * player's own `<video>`) plus the loop bounds within the assembled timeline. The
  * MediaSource must be attached to the real media element to open, so assembly happens in
- * the player, not here.
+ * the player, not here. Playback loops over `[startOffsetS, endOffsetS]`, which is the exact
+ * requested window trimmed out of the whole-segment footage.
  */
 export interface ClipHandle {
   blobs: Blob[];
   startOffsetS: number;
+  endOffsetS: number;
   mimeType: string;
 }
 
@@ -92,8 +94,13 @@ export const SEG_MS = 3_000;
  */
 export const BUFFER_MS = 12 * 60 * 1_000;
 
-/** Pre/post roll around a bench window. */
-export const DEFAULT_CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
+/**
+ * Roll around a point-in-time anchor (a single cast, e.g. a defensive finding), which has no
+ * duration of its own. Bench WINDOWS (burst/defensive) use their exact bounds with no roll.
+ */
+export const POINT_CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
+/** No roll: a window anchor plays exactly its own span. */
+export const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
 
 /** Total on-disk budget for persisted clips before oldest-fight-first eviction kicks in. */
 export const CLIP_STORE_CAP_BYTES = 2 * 1_024 * 1_024 * 1_024;
