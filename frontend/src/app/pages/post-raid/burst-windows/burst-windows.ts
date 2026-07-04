@@ -74,13 +74,10 @@ export class BurstWindowsComponent {
 
   protected onOpenClip(index: number): void {
     const window = this._windows()[index];
-    const anchor = this._anchors()[index];
     if (!window) return;
     this.openClip.emit({
       timeS: window.timeStartS,
       windowLengthS: window.timeEndS - window.timeStartS,
-      label: anchor?.label ?? 'Burst window',
-      spells: window.spells,
       key: `burst-${index}`,
     });
   }

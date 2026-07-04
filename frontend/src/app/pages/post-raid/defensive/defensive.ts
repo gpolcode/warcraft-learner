@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
-import { ComparisonWindow, WindowSpell } from '../../../core/models/window-comparison.models';
+import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import {
   bucketFindings, CAT_LABEL, FindingRow, FindingTableComponent, onPlanFromEntries, rowsFromEntries,
@@ -92,13 +92,10 @@ export class DefensiveComponent {
 
   protected onOpenClip(index: number): void {
     const window = this._windows()[index];
-    const anchor = this._anchors()[index];
     if (!window) return;
     this.openClip.emit({
       timeS: window.timeStartS,
       windowLengthS: window.timeEndS - window.timeStartS,
-      label: anchor?.label ?? 'Defensive window',
-      spells: window.spells,
       key: `defensive-${index}`,
     });
   }
@@ -115,14 +112,9 @@ export class DefensiveComponent {
   /** A timed finding's clip button: a clip centered on that cast instant (roll on each side). */
   protected onFindingClip(row: FindingRow): void {
     if (row.timestampMs == null) return;
-    const spells: WindowSpell[] = row.spellId != null && row.name != null
-      ? [{ id: row.spellId, icon: row.icon, name: row.name }]
-      : [];
     this.openClip.emit({
       timeS: row.timestampMs / 1000,
       windowLengthS: 0,
-      label: row.name ?? 'Defensive',
-      spells,
       key: `defensive-find-${Math.round(row.timestampMs / 1000)}`,
     });
   }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { clipDirName, planEviction, StoredClipMeta } from './clip-store';
 import { ClipWindow } from '../../../core/models/capture.models';
 
-const WINDOW: ClipWindow = { fromMs: 0, toMs: 1_000, label: 'w', key: 'w0' };
+const WINDOW: ClipWindow = { fromMs: 0, toMs: 1_000, key: 'w0' };
 // A 1 GiB cap keeps the arithmetic legible: each fixture clip is a round fraction of it.
 const CAP_BYTES = 1_024 * 1_024 * 1_024;
 const HALF_GIB = CAP_BYTES / 2;

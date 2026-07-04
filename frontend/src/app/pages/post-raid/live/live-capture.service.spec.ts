@@ -20,7 +20,7 @@ function seg(idx: number, startMs: number, endMs: number): Segment {
 }
 
 function spec(over: Partial<ClipWindowSpec> = {}): ClipWindowSpec {
-  return { timeS: WINDOW_TIME_S, windowLengthS: WINDOW_LENGTH_S, label: 'Burst', key: 'w0', ...over };
+  return { timeS: WINDOW_TIME_S, windowLengthS: WINDOW_LENGTH_S, key: 'w0', ...over };
 }
 
 describe('absoluteWindowStart', () => {
@@ -42,10 +42,9 @@ describe('buildClipWindows', () => {
     expect(window.toMs).toBe(absStart + WINDOW_LENGTH_S * 1000 + ROLL.postMs);
   });
 
-  it('carries each window key and label through unchanged', () => {
-    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [spec({ key: 'def3', label: 'Cloak' })], ROLL);
+  it('carries each window key through unchanged', () => {
+    const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [spec({ key: 'def3' })], ROLL);
     expect(window.key).toBe('def3');
-    expect(window.label).toBe('Cloak');
   });
 
   it('keeps one clip per window rather than merging them', () => {
@@ -59,7 +58,7 @@ describe('buildClipWindows', () => {
 });
 
 describe('selectSegments', () => {
-  const window: ClipWindow = { fromMs: 100, toMs: 200, label: 'w', key: 'w0' };
+  const window: ClipWindow = { fromMs: 100, toMs: 200, key: 'w0' };
 
   it('returns only the segments overlapping the window, sorted by start', () => {
     const before = seg(0, 0, 90);
@@ -82,7 +81,7 @@ describe('selectSegments', () => {
 });
 
 describe('segmentSeekOffset', () => {
-  const window: ClipWindow = { fromMs: 12_000, toMs: 20_000, label: 'w', key: 'w0' };
+  const window: ClipWindow = { fromMs: 12_000, toMs: 20_000, key: 'w0' };
 
   it('is the seconds from the first segment start to the window start', () => {
     // window starts 2s into a segment that began at 10_000

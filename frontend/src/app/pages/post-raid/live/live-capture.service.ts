@@ -16,10 +16,9 @@
  * slice-local `ClipStore`, the models, and `logWarn`. Every derived value is a small,
  * exported, individually-tested pure function below - no separate vm file.
  */
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WclFight } from '../../../core/models/wcl.models';
-import { WindowSpell } from '../../../core/models/window-comparison.models';
 import {
   CaptureProfile, ClipAnchor, ClipHandle, ClipRoll, ClipWindow, ClipWindowSpec, Segment,
   BUFFER_MS, DEFAULT_CAPTURE_PROFILE, DEFAULT_CLIP_ROLL, SEG_MS,
@@ -52,7 +51,6 @@ export function buildClipWindows(
     return {
       fromMs: absStart - roll.preMs,
       toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
-      label: window.label,
       key: window.key,
     };
   });
@@ -105,6 +103,14 @@ export class LiveCaptureFeatureService {
   readonly bufferSpanMs = signal(0);
   readonly captureProfile = signal<CaptureProfile>(DEFAULT_CAPTURE_PROFILE);
 
+  /**
+   * Drives the record toggle's `checked`. Includes `isStarting` so a cancelled picker
+   * still moves the bound value (true while the picker is open, back to false on dismiss),
+   * forcing Material to reset the switch - a plain `isCapturing` binding stays false the
+   * whole time and never gets re-written after the user flips it.
+   */
+  readonly recordToggleOn = computed(() => this.isCapturing() || this.isStarting());
+
   private stream: MediaStream | null = null;
   private recording = false;
   private segments: Segment[] = [];
@@ -119,8 +125,6 @@ export class LiveCaptureFeatureService {
   readonly open = signal(false);
   readonly extracting = signal(false);
   readonly handle = signal<ClipHandle | null>(null);
-  readonly contextLabel = signal('');
-  readonly contextSpells = signal<WindowSpell[]>([]);
 
   private ctx: { reportCode: string; reportStartTime: number; fight: WclFight } | null = null;
   private currentAnchor: ClipAnchor | null = null;
@@ -232,8 +236,6 @@ export class LiveCaptureFeatureService {
   /** Open the clip panel at an anchor emitted by a card: resolve the clip, then show it. */
   async openClip(anchor: ClipAnchor): Promise<void> {
     this.currentAnchor = anchor;
-    this.contextLabel.set(anchor.label);
-    this.contextSpells.set(anchor.spells);
     this.handle.set(null);
     this.open.set(true);
     if (!this.ctx) return;

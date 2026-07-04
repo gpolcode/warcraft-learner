@@ -11,14 +11,10 @@
  * onto a segment's `start`/`end` with no skew term.
  */
 
-import { WindowSpell } from './window-comparison.models';
-
 /** The anchor a feature card emits (and the page forwards) to open a clip. */
 export interface ClipAnchor {
   timeS: number;
   windowLengthS: number;
-  label: string;
-  spells: WindowSpell[];
   /** Stable per-window key, so the same window resolves the same persisted clip. */
   key: string;
 }
@@ -27,7 +23,6 @@ export interface ClipAnchor {
 export interface ClipWindowSpec {
   timeS: number;
   windowLengthS: number;
-  label: string;
   key: string;
 }
 
@@ -47,11 +42,10 @@ export interface Segment {
   blob: Blob;
 }
 
-/** A wall-clock span to cut a clip for, plus a stable key + label for storage/UI. */
+/** A wall-clock span to cut a clip for, plus a stable key for storage. */
 export interface ClipWindow {
   fromMs: number;
   toMs: number;
-  label: string;
   key: string;
 }
 
