@@ -99,7 +99,15 @@ export class ClipStore {
   async get(key: string): Promise<StoredClip | null> {
     try {
       const root = await this.root();
-      const dir = await root.getDirectoryHandle(clipDirName(key));
+      // A clip not yet persisted (its first view, before extraction persists it) is a
+      // normal cache miss, not an error: getDirectoryHandle throws NotFoundError here, so
+      // return null quietly and let the caller fall back to the live buffer.
+      let dir: FileSystemDirectoryHandle;
+      try {
+        dir = await root.getDirectoryHandle(clipDirName(key));
+      } catch {
+        return null;
+      }
       const meta = await this.readManifest(dir);
       if (!meta) return null;
       const blobs: Blob[] = [];
