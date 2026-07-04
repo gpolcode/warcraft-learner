@@ -1,14 +1,15 @@
 {
   "spec": "FireMage",
+  "spec_icon": "spell_fire_firebolt",
   "major_cooldowns": [
     {
       "name": "Combustion",
       "spell_id": 190319,
       "cooldown": 120,
-      "duration": 12,
-      "align_with_bloodlust": true,
+      "duration": 10,
+      "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Activate during the last fraction of a hard-cast (Fireball, Scorch, or Frostfire Bolt) so the cast completes inside the window, and after the opener use it on cooldown unless a short delay nets a better overlap with Bloodlust or an AoE pull."
+      "usage_rule": "Hard-cast a spell and activate Combustion just before that cast completes, then use it on cooldown after the opener, delaying only for better overlaps."
     },
     {
       "name": "Meteor",
@@ -16,26 +17,16 @@
       "cooldown": 45,
       "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Pre-cast Meteor just before the hard-cast that enters Combustion so it lands as the window opens, and in single target use it within roughly 8 seconds of Combustion ending to maximize Burnout; talent-gated, so absent in some builds.",
+      "usage_rule": "Land Meteor during or near the Combustion window; in single target with Burnout, use it so it lands within about 8-10 seconds of Combustion ending to grow the Ignite bank.",
       "talent_gated": true
     },
     {
-      "name": "Shifting Power",
-      "spell_id": 382440,
-      "cooldown": 60,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "usage_rule": "Channel Shifting Power outside of Combustion when you have nothing higher priority to press, ideally during forced movement or downtime, to shave cooldown off Combustion and Fire Blast; talent-gated.",
-      "talent_gated": true
-    },
-    {
-      "name": "Mirror Image",
-      "spell_id": 55342,
-      "cooldown": 120,
+      "name": "Time Warp",
+      "spell_id": 80353,
+      "cooldown": 300,
       "duration": 40,
-      "align_with_bloodlust": false,
-      "usage_rule": "Talent-gated minor cooldown; summon the images on cooldown for the small sustained damage contribution, and note it doubles as a threat and damage-reduction tool.",
-      "talent_gated": true
+      "align_with_bloodlust": true,
+      "usage_rule": "Pop Time Warp together with Combustion so the extra haste accelerates your Hot Streak generation during the burst window."
     }
   ],
   "defensives": [
@@ -44,36 +35,41 @@
       "spell_id": 45438,
       "cooldown": 240,
       "duration": 10,
-      "usage_rule": "Use as a full immunity to survive an otherwise lethal hit or to clear a deadly debuff; with the Ice Cold talent it also briefly boosts damage, so it can be worked into a defensive-into-burst plan."
+      "usage_rule": "Full immunity: use it to survive an otherwise lethal hit or a mechanic you cannot outheal, and to clear most damage-over-time debuffs."
     },
     {
       "name": "Blazing Barrier",
       "spell_id": 235313,
-      "cooldown": 25,
+      "cooldown": 30,
       "duration": 60,
-      "usage_rule": "Keep this absorb shield up before predictable damage and refresh it on cooldown during damage-heavy phases since the short cooldown allows near-constant uptime."
+      "usage_rule": "Keep this absorb shield up ahead of predictable damage; it soaks a chunk of incoming damage and knocks back melee attackers."
     },
     {
-      "name": "Mass Barrier",
-      "spell_id": 414660,
-      "cooldown": 90,
-      "duration": 60,
-      "usage_rule": "Use before a raid-wide damage event to shield yourself and nearby allies; talent-gated, so only expected when the build takes it.",
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 40,
+      "usage_rule": "Summon your images before a damage spike to reduce the damage you take while they are active, and to shed threat.",
       "talent_gated": true
     },
     {
       "name": "Alter Time",
-      "spell_id": 342245,
+      "spell_id": 108978,
       "cooldown": 60,
-      "duration": 10,
-      "usage_rule": "Press before taking a large hit or moving to a dangerous spot, then let it expire to snap your health and position back to where they were when you cast it."
+      "usage_rule": "Cast it before taking a big hit, then let it return you to your earlier health and position when the effect expires."
     },
     {
       "name": "Greater Invisibility",
       "spell_id": 110959,
-      "cooldown": 90,
-      "duration": 3,
-      "usage_rule": "Use to drop threat and gain a strong damage reduction while invisible, ideal for surviving a targeted mechanic; talent-gated.",
+      "cooldown": 120,
+      "usage_rule": "Use it to survive a spike or drop aggro; it applies a strong damage reduction and wipes your threat.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mass Barrier",
+      "spell_id": 414660,
+      "cooldown": 180,
+      "usage_rule": "Apply Blazing Barrier to yourself and nearby allies just before raid-wide damage lands.",
       "talent_gated": true
     }
   ],
@@ -81,61 +77,80 @@
     {
       "type": "opener",
       "priority": "critical",
-      "description": "Delay Combustion to set up Double Pyroblast",
+      "description": "Double Pyroblast opener",
       "condition": null,
-      "action": "Pre-cast Pyroblast, then with Firestarter hold Combustion until the target drops below 90% health (about 18 seconds), or roughly 8-10 seconds into the pull without Firestarter, building Fire Blast charges and buffs before you enter the window."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Enter Combustion from a hard-cast",
-      "condition": null,
-      "action": "Always begin a hard-cast (Fireball, Scorch, or Frostfire Bolt) and activate Combustion right before that cast completes so the spell lands inside the window and you fit an extra cast into the cooldown."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Pair Meteor with Combustion entry",
-      "condition": null,
-      "action": "Pre-cast Meteor immediately before the hard-cast you use to enter Combustion so it impacts as the window opens, and in single target re-use it within 8 seconds of Combustion ending to drive Burnout damage."
-    },
-    {
-      "type": "rotation",
-      "priority": "critical",
-      "description": "Convert and spend Hot Streak every window",
-      "condition": null,
-      "action": "Use Fire Blast to turn Heating Up into Hot Streak!, then spend Hot Streak! on Pyroblast (single target) or Flamestrike (AoE) immediately rather than sitting on the proc or on capped Fire Blast charges."
+      "action": "Pre-cast a hard-cast Pyroblast before the pull, then cast Fireball with a Fire Blast mid-cast and spend Hot Streak on Pyroblast, running the Double Pyroblast pattern into your first Combustion."
     },
     {
       "type": "cd_hold",
       "priority": "high",
-      "description": "Pool Fire Blast and Pyroclasm for Combustion",
+      "description": "Delay Combustion on the pull",
       "condition": null,
-      "action": "Stop dumping Fire Blast charges and Pyroclasm procs when Combustion is about to come up so you enter the window with charges banked, and prioritize spending all Fire Blast charges over all Pyroclasm during the window."
+      "action": "With Firestarter, delay Combustion about 18 seconds until the target drops to 90% health; without Firestarter, still delay it around 8-10 seconds to pre-stack buffs and Fire Blast charges."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "critical",
+      "description": "Activate Combustion during a hardcast",
+      "condition": null,
+      "action": "Always hard-cast a spell into Combustion and activate Combustion before that cast completes so the cast lands as a guaranteed crit."
     },
     {
       "type": "rotation",
       "priority": "high",
-      "description": "Always be casting between windows",
+      "description": "Convert Heating Up with Fire Blast",
       "condition": null,
-      "action": "Minimize idle time outside Combustion by pre-casting before movement and using Scorch on the move; dead time between casts is the single largest damage loss for Fire Mage."
+      "action": "Use Fire Blast to turn Heating Up into Hot Streak while hardcasting; never sit on capped Fire Blast charges and never spend Fire Blast while Hot Streak is already up."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Land Meteor in the Combustion window",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 153561,
+        "spell_name": "Meteor",
+        "required_spell_id": 190319,
+        "required_spell_name": "Combustion",
+        "window_s": 20
+      },
+      "action": "Time Meteor so it lands during or right after Combustion; in single target with Burnout aim for it to land within about 8-10 seconds of Combustion ending."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Pool Fire Blast for Combustion",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [108853],
+        "spell_names": ["Fire Blast"],
+        "anchor_spell_id": 190319,
+        "anchor_spell_name": "Combustion",
+        "hold_window_s": 5
+      },
+      "action": "Stop spending Fire Blast charges and Pyroclasm stacks when Combustion is about to come up so they are available inside the window."
     },
     {
       "type": "aoe_switch",
       "priority": "high",
-      "description": "Swap Pyroblast for Flamestrike at 4+ targets",
+      "description": "Spend Hot Streak on the right spender",
       "condition": null,
-      "action": "Spend Hot Streak! on Flamestrike instead of Pyroblast at 4 or more targets, but never Flamestrike during Firestarter since Pyroblast is guaranteed to crit above 90% health."
+      "action": "Spend Hot Streak on Pyroblast in single target and on Flamestrike at 4 or more targets, but never Flamestrike while Firestarter is active."
     },
     {
-      "type": "rotation",
+      "type": "cooldown_pairing",
       "priority": "medium",
-      "description": "Use Scorch in execute below 30% health",
-      "condition": null,
-      "action": "Below 30% health (Scald) Scorch always crits, so use Fire Blast to generate Heating Up while casting Scorch and follow with a Hot Streak! spender; verify against current tuning, as some logs favor Fireball in execute."
+      "description": "Sync Time Warp with Combustion",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 80353,
+        "spell_name": "Time Warp",
+        "required_spell_id": 190319,
+        "required_spell_name": "Combustion",
+        "window_s": 6
+      },
+      "action": "If you provide the raid's lust, cast Time Warp together with Combustion so the haste boost lands inside your burst window."
     }
   ],
-  "source_summary": "Fire Mage funnels nearly all of its burst into the Combustion window, where every spell crits and Fire Blast feeds a rapid stream of instant Pyroblasts. The defining skills are delaying Combustion at the pull to set up a Double Pyroblast, entering it out of a hard-cast, and pooling Fire Blast charges and Pyroclasm procs so each window is fully loaded. Between windows, Meteor and Shifting Power are slotted in to align with Combustion and the goal is simply to never stop casting.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:06:40"
+  "source_summary": "Fire Mage has one true major cooldown, Combustion, which is activated at the end of a hardcast so every cast crits and machine-guns Hot Streak Pyroblasts; it is delayed on the pull (about 18 seconds with Firestarter, 8-10 otherwise) and then used on cooldown. Meteor is a minor cooldown paired with Combustion, landing during or just after the window to grow the Ignite bank for Burnout. Time Warp is synced to a Combustion window, and Fire Blast charges plus Pyroclasm stacks are pooled so they are available when Combustion goes out."
 }
