@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { abilityIcons, toParseRankings, unwrapRankings } from './wcl-projections';
+import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from './wcl-projections';
 
 // A raw ranking row as WCL surfaces it in the characterRankings blob.
 const rankingRow = (name: string, code: string, fightID: number) => ({ name, report: { code, fightID } });
@@ -72,9 +72,18 @@ describe('abilityIcons', () => {
     expect(abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' } });
   });
 
-  it('relabels the melee sentinel (id 1) that gameData resolves to "Word of Recall (OLD)"', () => {
-    const MELEE = 1;
-    const raw = { a1: { id: MELEE, name: 'Word of Recall (OLD)', icon: 'trade_engineering.jpg' } };
-    expect(abilityIcons(raw)).toEqual({ [MELEE]: { icon: 'inv_sword_04', name: 'Melee' } });
+});
+
+describe('normalizeAbilityId', () => {
+  const WCL_MELEE_EVENT_ID = 1;
+  const AUTO_ATTACK_SPELL_ID = 6603;
+
+  it('maps the WCL melee event id (which gameData resolves to "Word of Recall (OLD)") to Auto Attack', () => {
+    expect(normalizeAbilityId(WCL_MELEE_EVENT_ID)).toBe(AUTO_ATTACK_SPELL_ID);
+  });
+
+  it('passes other ability ids through unchanged', () => {
+    const SHADOW_BLADES = 121471;
+    expect(normalizeAbilityId(SHADOW_BLADES)).toBe(SHADOW_BLADES);
   });
 });

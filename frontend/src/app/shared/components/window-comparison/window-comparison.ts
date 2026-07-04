@@ -23,7 +23,9 @@ export class WindowComparisonComponent {
   readonly showMap = input<boolean>(false);
   // Casts column is meaningful for burst (offensive) windows only; hidden for defensives.
   readonly showCasts = input<boolean>(true);
-  readonly title = input<string>('');
+  // Named `heading` (not `title`) so the value never reflects to a native `title` attribute
+  // on the host element, which the browser would show as a tooltip over the whole card.
+  readonly heading = input<string>('');
   readonly subtitle = input<string>('');
   readonly openMap = output<number>();
 
