@@ -1,25 +1,16 @@
 /**
- * Live slice runtime shell + its pure clip-correlation functions, colocated.
- *
- * `LiveCaptureFeatureService` is the imperative shell for the whole live feature: the
- * components (`wl-live-controls`, `wl-clip-panel`, `wl-clip-player`) inject only it. It
- * owns the state the live feature needs so the core gains no new media infrastructure:
+ * Live slice runtime shell + its pure clip-correlation functions, colocated. The
+ * `wl-live-controls`, `wl-clip-panel`, and `wl-clip-player` components inject only it.
+ * It owns three concerns:
  *
  *  1. Recording engine - `getDisplayMedia` + a per-segment `MediaRecorder` rolling
- *     buffer, MSE clip assembly, and `captureStream` export (spec sections 6.1, 7.1-7.4).
- *  2. Live-sync toggle + status - the `LiveModeState` signal and the status line the
- *     controls strip renders; the polling pipeline itself lives on the page per the
- *     polling convention (`LiveReportSyncService` owns the timer machinery).
- *  3. Clip flyover state - the `MapFeatureService` analogue: panel open/close, the current
- *     `ClipHandle`, and the correlation context captured from `prepare`.
+ *     buffer, MSE clip assembly, and `captureStream` export.
+ *  2. Live-sync toggle + status the controls strip renders (the page owns the polling).
+ *  3. Clip flyover state - panel open/close, the current `ClipHandle`, and the
+ *     correlation context captured from `prepare`.
  *
- * Clips are session-scoped: a resolved clip is memoized in memory (so a window stays
- * openable after the rolling buffer moves past it) and nothing is written to disk,
- * matching the controls strip's "stays in this browser session" promise.
- *
- * Per the slice self-containment rule it imports only the core live-mode signal, the
- * models, and `logWarn`. Every derived value is a small, exported, individually-tested
- * pure function below - no separate vm file.
+ * Clips are session-scoped: a resolved clip is memoized in memory and nothing is
+ * written to disk.
  */
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { WclFight } from '../../../core/models/wcl.models';
@@ -28,12 +19,10 @@ import { logWarn } from '../../../core/log';
 import { LiveModeState } from '../../../core/services/live-mode-state';
 
 /* ------------------------- slice-private data shapes ----------------------- */
-/* Colocated like the other slices' anchor/view types (`BurstMapAnchor` in
- * burst.service.ts, `MapAnchor` in map.service.ts); only `ClipAnchor`, the shape the
- * cards emit across the layer boundary, lives in core/models. All wall-clock fields
- * are unix-epoch milliseconds: the recorder and the WCL timeline share one clock
- * (same machine), so `report.startTime + fight.startTime` maps directly onto a
- * segment's `start`/`end` with no skew term. */
+/* Only `ClipAnchor`, the shape cards emit across the layer boundary, lives in
+ * core/models. All wall-clock fields are unix-epoch milliseconds: recorder and WCL
+ * timeline share one clock, so `report.startTime + fight.startTime` maps directly onto
+ * a segment's `start`/`end` with no skew term. */
 
 /** Capture quality knobs passed to `getDisplayMedia` + `MediaRecorder`. */
 export interface CaptureProfile {
@@ -59,11 +48,9 @@ export interface ClipWindow {
 }
 
 /**
- * A resolved clip ready to play: the ordered segment blobs to stitch (via MSE on the
- * player's own `<video>`) plus the loop bounds within the assembled timeline. The
- * MediaSource must be attached to the real media element to open, so assembly happens in
- * the player, not here. Playback loops over `[startOffsetS, endOffsetS]`, which is the
- * exact requested window trimmed out of the whole-segment footage.
+ * A resolved clip ready to play: the ordered segment blobs to stitch (via MSE) plus the
+ * loop bounds within the assembled timeline. Playback loops over
+ * `[startOffsetS, endOffsetS]`, the requested window trimmed from the whole-segment footage.
  */
 export interface ClipHandle {
   blobs: Blob[];
@@ -78,11 +65,7 @@ export interface ClipRoll {
   postMs: number;
 }
 
-/**
- * Default capture profile. VP9 with hardware encode where available (the same path
- * Discord screenshare uses); VP8 is the fallback codec. 1080p / 30 fps / ~4 Mbps was
- * the working profile on the tester's hardware. Tunable, not hardcoded at the use site.
- */
+/** Default capture profile: VP9 (VP8 fallback), 1080p / 30 fps / ~4 Mbps. */
 export const DEFAULT_CAPTURE_PROFILE: CaptureProfile = {
   codec: 'vp9',
   maxHeight: 1080,
@@ -91,45 +74,30 @@ export const DEFAULT_CAPTURE_PROFILE: CaptureProfile = {
 };
 
 /**
- * Restart the recorder every `SEG_MS` so each segment is a complete, independently
- * decodable WebM (a single continuous recorder with `timeslice` cannot be assembled
- * via MSE). Larger favors fewer restarts; trim precision does not depend on it.
+ * Restart the recorder every `SEG_MS` so each segment is an independently decodable
+ * WebM (a single continuous recorder with `timeslice` cannot be assembled via MSE).
  */
 export const SEG_MS = 3_000;
 
-/**
- * Rolling-buffer retention. Must cover the longest fight plus WCL upload lag plus
- * pre-roll so a fight is still buffered when it finally appears in WCL.
- */
+/** Rolling-buffer retention: covers the longest fight plus WCL upload lag plus pre-roll. */
 export const BUFFER_MS = 12 * 60 * 1_000;
 
-/**
- * Roll around a point-in-time anchor (a single cast, e.g. a defensive finding), which
- * has no duration of its own. Bench WINDOWS (burst/defensive) use their exact bounds
- * with no roll.
- */
+/** Roll around a point-in-time anchor (a single cast). Window anchors use exact bounds. */
 export const POINT_CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
 /** No roll: a window anchor plays exactly its own span. */
 export const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
 
-/** Grace period before a downloaded clip's object URL is revoked, so the browser can open the blob stream. */
+/** Grace period before a downloaded clip's object URL is revoked, so the browser can read the blob. */
 const DOWNLOAD_URL_TTL_MS = 10_000;
 
 /* ----------------------------- pure functions ----------------------------- */
 
-/**
- * Absolute wall-clock start (unix epoch ms) of a bench offset. The recorder and the
- * WCL timeline share one clock, so this is an identity mapping with no skew term.
- */
+/** Absolute wall-clock start (unix epoch ms) of a bench offset. */
 export function absoluteWindowStart(reportStartTime: number, fightStartTime: number, timeS: number): number {
   return reportStartTime + fightStartTime + timeS * 1000;
 }
 
-/**
- * Map each bench window to an absolute wall-clock `ClipWindow`, widened by pre/post
- * roll. One clip per window (kept separate so each stays independently openable). Total
- * function - empty input yields `[]`.
- */
+/** Map each bench window to an absolute wall-clock `ClipWindow`, widened by pre/post roll. */
 export function buildClipWindows(
   reportStartTime: number, fightStartTime: number, windows: ClipAnchor[], roll: ClipRoll,
 ): ClipWindow[] {
@@ -151,9 +119,8 @@ export function selectSegments(segments: Segment[], window: ClipWindow): Segment
 }
 
 /**
- * Seconds to seek into an assembled (sequence-mode) clip so playback starts at the
- * window start. The assembled timeline re-bases to 0 at the first segment's start, so
- * the offset is how far into that first segment the window begins. Never negative.
+ * Seconds to seek into an assembled clip so playback starts at the window start. The
+ * assembled timeline re-bases to 0 at the first segment's start. Never negative.
  */
 export function segmentSeekOffset(window: ClipWindow, firstSegment: { start: number } | undefined): number {
   if (!firstSegment) return 0;
@@ -161,10 +128,9 @@ export function segmentSeekOffset(window: ClipWindow, firstSegment: { start: num
 }
 
 /**
- * Total wall-clock time lost between consecutive segments (the per-segment MediaRecorder
- * restart gaps). The MSE sequence-mode timeline is gapless, so a loop length computed
- * from a wall-clock span must shrink by this much to end on the same footage. Total
- * function - 0 for back-to-back, single, or no segments.
+ * Total wall-clock time lost to the recorder-restart gaps between consecutive segments.
+ * The assembled timeline is gapless, so a loop length from a wall-clock span shrinks by
+ * this much to end on the same footage.
  */
 export function interSegmentGapMs(segments: { start: number; end: number }[]): number {
   let gaps = 0;
@@ -183,9 +149,9 @@ export function segmentsCover(segments: Segment[], fromMs: number, toMs: number)
 interface CapturableMedia { captureStream(): MediaStream }
 
 /**
- * Most specific supported recording mime: the profile codec, then VP8, then bare WebM.
- * The chosen value is also what MSE assembly re-declares via `addSourceBuffer`, which
- * rejects bare `video/webm`, so a codec-qualified pick keeps playback on the MSE path.
+ * Most specific supported recording mime: profile codec, then VP8, then bare WebM. MSE
+ * assembly re-declares this via `addSourceBuffer`, which rejects bare `video/webm`, so a
+ * codec-qualified pick keeps playback on the MSE path.
  */
 function mimeFor(profile: CaptureProfile): string {
   const candidates = [`video/webm;codecs=${profile.codec}`, 'video/webm;codecs=vp8', 'video/webm'];
@@ -206,9 +172,8 @@ export class LiveCaptureFeatureService {
 
   /**
    * Drives the record toggle's `checked`. Includes `isStarting` so a cancelled picker
-   * still moves the bound value (true while the picker is open, back to false on dismiss),
-   * forcing Material to reset the switch - a plain `isCapturing` binding stays false the
-   * whole time and never gets re-written after the user flips it.
+   * moves the bound value (true while open, false on dismiss), forcing Material to reset
+   * the switch - a plain `isCapturing` binding stays false and never re-writes it.
    */
   readonly recordToggleOn = computed(() => this.isCapturing() || this.isStarting());
 
@@ -271,8 +236,8 @@ export class LiveCaptureFeatureService {
   }
 
   /**
-   * Record one `SEG_MS` segment, then roll immediately into the next. Each segment is a
-   * complete WebM (own header + keyframe) so it appends cleanly during MSE assembly.
+   * Record one `SEG_MS` segment, then roll into the next. Each segment is a complete
+   * WebM (own header + keyframe) so it appends cleanly during MSE assembly.
    */
   private cycleSegment(): void {
     if (!this.recording || !this.stream) return;
@@ -295,9 +260,6 @@ export class LiveCaptureFeatureService {
   /**
    * Capture the correlation context for the resolved fight so a clip button can map a
    * bench offset to buffer time. Called from the page on every newly resolved fight.
-   * With a buffer long enough to hold a whole fight plus upload lag, footage is still
-   * present when the user opens a clip; the cut is then memoized so the window stays
-   * openable after the buffer rolls on.
    */
   prepare(reportCode: string, reportStartTime: number, fight: WclFight): void {
     this.ctx.set({ reportCode, reportStartTime, fight });
@@ -350,8 +312,7 @@ export class LiveCaptureFeatureService {
 
   private clipWindowFor(anchor: ClipAnchor): ClipWindow {
     const { reportStartTime, fight } = this.ctx()!;
-    // A bench window plays its exact span; a point-in-time cast gets pre/post roll so it has
-    // context on either side.
+    // A window plays its exact span; a point-in-time cast gets pre/post roll for context.
     const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
     const [window] = buildClipWindows(reportStartTime, fight.startTime, [anchor], roll);
     return window;
@@ -371,10 +332,9 @@ export class LiveCaptureFeatureService {
 
   /**
    * Build the playable handle: the loop starts where the window begins inside the first
-   * segment (`startOffsetS`) and ends one window-span later, so playback trims the
-   * whole-segment footage down to the exact requested window. The window span is
-   * wall-clock while the assembled timeline is gapless, so the recorder-restart gaps
-   * between the selected segments are subtracted from the loop length.
+   * segment and ends one window-span later, trimming the whole-segment footage to the
+   * requested window. The recorder-restart gaps are subtracted since the wall-clock span
+   * spans them but the assembled timeline does not.
    */
   private handleFor(window: ClipWindow, segments: Segment[]): ClipHandle {
     const startOffsetS = segmentSeekOffset(window, segments[0]);
@@ -388,8 +348,8 @@ export class LiveCaptureFeatureService {
   }
 
   /**
-   * Re-record the assembled clip in real time into one clean WebM, playing only the exact
-   * window `[startOffsetS, endOffsetS]` so the downloaded file matches the on-screen clip.
+   * Re-record the assembled clip in real time into one clean WebM, playing only
+   * `[startOffsetS, endOffsetS]` so the file matches the on-screen clip.
    */
   private async reRecord(handle: ClipHandle): Promise<Blob> {
     const video = document.createElement('video');
@@ -434,12 +394,10 @@ export class LiveCaptureFeatureService {
 
 /**
  * Stitch the ordered segment blobs into `video` via MSE in `sequence` mode, which re-bases
- * each self-contained segment's timecodes so the assembled timeline starts at 0. The
- * MediaSource only reaches `sourceopen` once attached to a real media element, so the URL
- * is set on `video` FIRST, then the buffers are appended; after attachment the URL is
- * revoked (the element itself keeps the MediaSource alive). Falls back to a concatenated
- * single blob src if any append throws (plays the first segment in Chrome; opens fully in
- * VLC after a download).
+ * each segment's timecodes so the assembled timeline starts at 0. The MediaSource only
+ * reaches `sourceopen` once attached, so the URL is set on `video` first, then the buffers
+ * appended, then the URL revoked (the element keeps the MediaSource alive). Falls back to a
+ * concatenated single-blob src if any append throws.
  */
 export async function pipeIntoElement(video: HTMLVideoElement, blobs: Blob[], mimeType: string): Promise<void> {
   releaseElement(video);
