@@ -37,7 +37,6 @@ type AbilityIcons = Record<number, BakedAbility>;
 /** Anchor for opening the positioning map on a defensive window (emitted as an output). */
 export interface DefensiveMapAnchor {
   timeS: number;
-  label: string;
   refGameId: number | null;
 }
 
@@ -370,11 +369,10 @@ export function defensiveDetailRows(
   }));
 }
 
-/** Map anchor for a defensive window: when to seek, label, and the dominant enemy. */
+/** Map anchor for a defensive window: when to seek and the dominant enemy. */
 export function defensiveMapAnchor(window: BurstWindow): DefensiveMapAnchor {
   return {
     timeS: window.time_s,
-    label: window.defensive_name ?? window.common_defensives?.[0] ?? 'Defensive',
     refGameId: window.ref_game_id ?? null,
   };
 }

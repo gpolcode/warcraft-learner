@@ -172,23 +172,22 @@ describe('MapFeatureService', () => {
 
   it('openAt sets the panel state and opens it', () => {
     const { service } = withData(sampleData);
-    service.openAt({ timeS: 42, label: 'Burst', reference: { kind: 'enemy', gameId: 200 } });
+    service.openAt({ timeS: 42, reference: { kind: 'enemy', gameId: 200 } });
     expect(service.open()).toBe(true);
     expect(service.anchorTime()).toBe(42);
-    expect(service.contextLabel()).toBe('Burst');
     expect(service.reference()).toEqual({ kind: 'enemy', gameId: 200 });
   });
 
   it('openAt defaults the reference to the boss', () => {
     const { service } = withData(sampleData);
-    service.openAt({ timeS: 5, label: '' });
+    service.openAt({ timeS: 5 });
     expect(service.reference()).toEqual({ kind: 'boss' });
   });
 
   it('close hides the panel but keeps the loaded bench', async () => {
     const { service } = withData(sampleData);
     await service.loadBench('SubtletyRogue', 3144);
-    service.openAt({ timeS: 1, label: '' });
+    service.openAt({ timeS: 1 });
     service.close();
     expect(service.open()).toBe(false);
     expect(service.positions()).toBe(sampleData);
@@ -197,7 +196,7 @@ describe('MapFeatureService', () => {
   it('clear drops everything', async () => {
     const { service } = withData(sampleData);
     await service.loadBench('SubtletyRogue', 3144);
-    service.openAt({ timeS: 1, label: '' });
+    service.openAt({ timeS: 1 });
     service.clear();
     expect(service.open()).toBe(false);
     expect(service.positions()).toBeNull();
@@ -258,7 +257,7 @@ describe('MapFeatureService deferred overlay', () => {
     expect(service.live()).toBeNull();
     expect(api.getAllEventsCalls).toBe(0);
 
-    service.openAt({ timeS: 1, label: '' });
+    service.openAt({ timeS: 1 });
     await settle();
     expect(api.getAllEventsCalls).toBeGreaterThan(0); // opening the panel triggers the fetch
   });
@@ -267,13 +266,13 @@ describe('MapFeatureService deferred overlay', () => {
     const { service, api } = setup();
     await service.prepare('code', sampleFight, 5, 'SubtletyRogue', []);
 
-    service.openAt({ timeS: 1, label: '' });
+    service.openAt({ timeS: 1 });
     await settle();
     const afterFirstOpen = api.getAllEventsCalls;
     expect(afterFirstOpen).toBeGreaterThan(0);
 
     service.close();
-    service.openAt({ timeS: 2, label: '' });
+    service.openAt({ timeS: 2 });
     await settle();
     expect(api.getAllEventsCalls).toBe(afterFirstOpen);
   });
@@ -288,7 +287,7 @@ describe('MapFeatureService deferred overlay', () => {
   it('fetches player casts (Friendlies) + enemy casts (Enemies) on open, never DamageDone', async () => {
     const { service, api } = setup();
     await service.prepare('code', sampleFight, PLAYER_ACTOR_ID, 'SubtletyRogue', []);
-    service.openAt({ timeS: 1, label: '' });
+    service.openAt({ timeS: 1 });
     await settle();
 
     const EXPECTED_FETCH_COUNT = 2; // player casts + enemy casts, nothing else

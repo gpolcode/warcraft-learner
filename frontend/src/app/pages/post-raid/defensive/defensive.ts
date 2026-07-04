@@ -91,7 +91,6 @@ export class DefensiveComponent {
     if (row.timestampMs == null) return;
     this.openMap.emit({
       timeS: row.timestampMs / 1000,
-      label: row.name ?? 'Defensive',
       refGameId: null,
     });
   }

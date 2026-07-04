@@ -41,7 +41,6 @@ export class MapCanvasComponent {
   protected readonly positions = this.map.positions;
   protected readonly live = this.map.live;
   protected readonly anchorTime = this.map.anchorTime;
-  protected readonly contextLabel = this.map.contextLabel;
 
   protected readonly selector = signal<ReferenceSelector>({ kind: 'boss' });
   protected readonly scrubT = signal(0);

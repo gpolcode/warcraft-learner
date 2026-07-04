@@ -21,7 +21,6 @@ export type AbilityIcons = Record<number, { icon: string; name: string }>;
 /** Anchor for opening the positioning map on a burst window (emitted as an output). */
 export interface BurstMapAnchor {
   timeS: number;
-  label: string;
 }
 
 /** The burst card view-model: one ComparisonWindow + one map anchor per top window. */
@@ -91,12 +90,9 @@ export function burstDetailRows(
   }));
 }
 
-/** Map anchor for a window: when to seek and its label. */
+/** Map anchor for a window: when to seek. */
 export function burstMapAnchor(window: BurstWindow): BurstMapAnchor {
-  return {
-    timeS: window.time_s,
-    label: window.common_cds.join(', ') || 'Burst window',
-  };
+  return { timeS: window.time_s };
 }
 
 /**
