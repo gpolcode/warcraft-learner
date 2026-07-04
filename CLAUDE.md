@@ -48,7 +48,6 @@ The ~100 MB of minified bench data under `frontend/public/data/specs/**` is **no
 | `npm test` | `ng test` (frontend Vitest) + scripts Vitest + scripts typecheck |
 | `npm run lint` | `ng lint` over `src/**` then `eslint scripts` over `scripts/**` |
 | `npm run ingest` | Run the ingestion orchestrator (needs `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET`) |
-| `npm run rulebook:publish` | Publish locally-generated rulebooks to the gh-pages data tree |
 
 ## Development workflow router
 

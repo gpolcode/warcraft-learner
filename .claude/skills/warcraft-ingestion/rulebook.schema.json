@@ -11,6 +11,10 @@
       "type": "string",
       "description": "WCL spec name, e.g. SubtletyRogue. Must match the spec being analysed."
     },
+    "spec_icon": {
+      "type": "string",
+      "description": "Optional. The spec's zamimg icon file stem (no extension), e.g. 'ability_stealth'. Read it from the spec's guide page; it becomes the spec's dropdown art."
+    },
     "major_cooldowns": {
       "type": "array",
       "description": "REQUIRED and must be populated. All major cooldowns: abilities with a cooldown >= 30s that meaningfully affect damage output (or healing/tanking if applicable). Include on-use trinkets when the guide mentions specific timing for them. Every spec has at least one major cooldown; a spec with an empty list produces no burst/rotation bench, so this must contain at least one item.",

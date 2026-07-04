@@ -130,10 +130,9 @@ describe('mapClassesToSpecMeta', () => {
     expect(metas.find(meta => meta.spec === 'DevourerDemonHunter')?.classIcon).toBe('class_demonhunter');
   });
 
-  it('merges a curated spec-icon stem, and leaves it empty for an uncurated new spec', () => {
+  it('leaves the spec icon empty (the orchestrator fills it from the rulebook)', () => {
     const metas = mapClassesToSpecMeta(classes);
-    expect(metas.find(meta => meta.spec === 'SubtletyRogue')?.specIcon).toBe('ability_stealth');
-    expect(metas.find(meta => meta.spec === 'DevourerDemonHunter')?.specIcon).toBe('');
+    expect(metas.every(meta => meta.specIcon === '')).toBe(true);
   });
 });
 

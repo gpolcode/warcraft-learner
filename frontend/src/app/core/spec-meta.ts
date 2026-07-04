@@ -2,8 +2,8 @@
  * Spec-metadata helpers over a runtime-hydrated cache. The spec universe (class/spec names,
  * slugs, icons) is derived from WCL `gameData.classes` at ingest and baked to `spec-meta.json`;
  * the browser hydrates the cache once at startup (an app initializer) and the headless ingest
- * runtime hydrates it explicitly. These helpers read that cache, so the class/spec list is
- * never hardcoded. Both the rankings query (`wcl-api.ts`) and the selection dropdowns use them.
+ * runtime hydrates it explicitly. These helpers read that cache; both the rankings query
+ * (`wcl-api.ts`) and the selection dropdowns use them.
  */
 import type { SpecMeta } from './models/spec-meta.models';
 

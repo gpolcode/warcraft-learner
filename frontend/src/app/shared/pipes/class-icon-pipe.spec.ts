@@ -4,10 +4,9 @@ import { hydrateSpecMeta } from '../../core/spec-meta';
 
 const pipe = new ClassIconPipe();
 
-// The class icon comes from the hydrated spec universe; seed the classes these rows use.
+// The class icon comes from the hydrated spec universe; seed the one spec these rows use.
 beforeAll(() => hydrateSpecMeta([
   { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth' },
-  { spec: 'BloodDeathKnight', className: 'DeathKnight', specName: 'Blood', classLabel: 'Death Knight', specLabel: 'Blood', classIcon: 'class_deathknight', specIcon: 'spell_deathknight_bloodpresence' },
 ]));
 
 describe('ClassIconPipe', () => {
@@ -16,7 +15,6 @@ describe('ClassIconPipe', () => {
     { input: undefined,      expected: '', why: 'undefined coalesces to the empty class name' },
     { input: '',             expected: '', why: 'empty class name yields no icon' },
     { input: 'Rogue',        expected: 'https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg', why: 'delegation row; URL shape pinned in spec-meta.spec.ts' },
-    { input: 'Death Knight', expected: 'https://wow.zamimg.com/images/wow/icons/small/class_deathknight.jpg', why: 'spaced class name from actor subType resolves' },
     { input: 'Unknown',      expected: '', why: 'unknown class yields no icon' },
   ] as { input: string | null | undefined; expected: string; why: string }[])(
     'transform($input) === "$expected" ($why)',

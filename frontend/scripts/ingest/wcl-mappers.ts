@@ -11,7 +11,6 @@ import type {
   WclRawRanking, WclExpansion, ParseRanking, IngestEncounter, WclGameClass,
 } from './models/wcl.models.ts';
 import type { SpecMeta } from '../../src/app/core/models/spec-meta.models.ts';
-import { SPEC_ICON_STEMS } from './spec-icons.ts';
 
 /** Folder key -> [WCL className, WCL specName] - the small map the discovery fetchers read. */
 export type SpecWclMap = Record<string, [string, string]>;
@@ -20,7 +19,8 @@ export type SpecWclMap = Record<string, [string, string]>;
  * Derive the full spec universe from a WCL `gameData.classes` response. The folder key is
  * `spec.slug + class.slug` (e.g. 'SubtletyRogue'); `className`/`specName` are the class/spec
  * slugs (exactly what the rankings query takes); labels are WCL display names; the class icon
- * is formulaic and the spec icon comes from the curated stem map ('' when a spec has none).
+ * is formulaic. The spec icon is left empty here - the orchestrator fills it from the spec's
+ * rulebook (`spec_icon`).
  */
 export function mapClassesToSpecMeta(classes: WclGameClass[]): SpecMeta[] {
   const metas: SpecMeta[] = [];
@@ -35,7 +35,7 @@ export function mapClassesToSpecMeta(classes: WclGameClass[]): SpecMeta[] {
         classLabel: cls.name,
         specLabel: spec.name,
         classIcon,
-        specIcon: SPEC_ICON_STEMS[folder] ?? '',
+        specIcon: '',
       });
     }
   }
