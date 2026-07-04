@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
-import { ComparisonWindow } from '../../../core/models/window-comparison.models';
+import { ComparisonWindow, WindowSpell } from '../../../core/models/window-comparison.models';
+import { ClipAnchor } from '../../../core/models/capture.models';
 import {
   bucketFindings, CAT_LABEL, FindingRow, FindingTableComponent, onPlanFromEntries, rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';
@@ -33,9 +34,12 @@ export class DefensiveComponent {
   readonly player = input.required<number>();
   /** Map button is available once the page has loaded top-parse positions. */
   readonly showMap = input<boolean>(false);
+  /** Clip button is available once the page is recording and the buffer covers this fight. */
+  readonly showClip = input<boolean>(false);
   readonly fightDuration = input<number>(0);
 
   readonly openMap = output<DefensiveMapAnchor>();
+  readonly openClip = output<ClipAnchor>();
   /** Emits false when the card has finished loading; the page gates its spinner on it. */
   readonly busyChange = output<boolean>();
 
@@ -86,12 +90,40 @@ export class DefensiveComponent {
     if (anchor) this.openMap.emit(anchor);
   }
 
+  protected onOpenClip(index: number): void {
+    const window = this._windows()[index];
+    const anchor = this._anchors()[index];
+    if (!window) return;
+    this.openClip.emit({
+      timeS: window.timeStartS,
+      windowLengthS: window.timeEndS - window.timeStartS,
+      label: anchor?.label ?? 'Defensive window',
+      spells: window.spells,
+      key: `defensive-${index}`,
+    });
+  }
+
   /** A timed finding's map button: open the map at that cast time (boss reference). */
   protected onFindingMap(row: FindingRow): void {
     if (row.timestampMs == null) return;
     this.openMap.emit({
       timeS: row.timestampMs / 1000,
       refGameId: null,
+    });
+  }
+
+  /** A timed finding's clip button: a clip centered on that cast instant (roll on each side). */
+  protected onFindingClip(row: FindingRow): void {
+    if (row.timestampMs == null) return;
+    const spells: WindowSpell[] = row.spellId != null && row.name != null
+      ? [{ id: row.spellId, icon: row.icon, name: row.name }]
+      : [];
+    this.openClip.emit({
+      timeS: row.timestampMs / 1000,
+      windowLengthS: 0,
+      label: row.name ?? 'Defensive',
+      spells,
+      key: `defensive-find-${Math.round(row.timestampMs / 1000)}`,
     });
   }
 }
