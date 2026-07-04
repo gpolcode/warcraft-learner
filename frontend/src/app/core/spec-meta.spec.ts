@@ -1,74 +1,47 @@
-import { describe, it, expect } from 'vitest';
-import { SPEC_META, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl } from './spec-meta';
+import { describe, it, expect, beforeEach } from 'vitest';
+import {
+  hydrateSpecMeta, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
+} from './spec-meta';
+import type { SpecMeta } from './models/spec-meta.models';
 
 /**
- * SPEC_META is the single source for the spec->class split (it replaced the old private
- * `SPEC_TO_WCL` in `wcl-api.ts`). This list pins the supported spec folders; adding/removing a
- * spec must change both.
+ * The spec universe is hydrated at runtime from the WCL-derived `spec-meta.json`, so these
+ * tests seed a small fixture and assert the helpers behave over it (no hardcoded spec count).
+ * The fixture mixes a multi-spec class (Rogue), a spaced class label (Death Knight), and a
+ * spec with no baked icon (Beast Mastery) to cover the label and icon-degrade paths.
  */
-const EXPECTED_SPECS = [
-  'RetributionPaladin', 'HolyPaladin', 'ProtectionPaladin',
-  'FireMage', 'ArcaneMage', 'FrostMage',
-  'HavocDemonHunter', 'VengeanceDemonHunter',
-  'FuryWarrior', 'ArmsWarrior', 'ProtectionWarrior',
-  'UnholyDeathKnight', 'FrostDeathKnight', 'BloodDeathKnight',
-  'BalanceDruid', 'FeralDruid', 'GuardianDruid', 'RestorationDruid',
-  'BeastMasteryHunter', 'MarksmanshipHunter', 'SurvivalHunter',
-  'BrewmasterMonk', 'WindwalkerMonk', 'MistweaverMonk',
-  'DisciplinePriest', 'HolyPriest', 'ShadowPriest',
-  'AssassinationRogue', 'OutlawRogue', 'SubtletyRogue',
-  'ElementalShaman', 'EnhancementShaman', 'RestorationShaman',
-  'AfflictionWarlock', 'DemonologyWarlock', 'DestructionWarlock',
-  'DevastationEvoker', 'PreservationEvoker', 'AugmentationEvoker',
+const FIXTURE: SpecMeta[] = [
+  { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth' },
+  { spec: 'OutlawRogue', className: 'Rogue', specName: 'Outlaw', classLabel: 'Rogue', specLabel: 'Outlaw', classIcon: 'class_rogue', specIcon: 'inv_sword_30' },
+  { spec: 'AssassinationRogue', className: 'Rogue', specName: 'Assassination', classLabel: 'Rogue', specLabel: 'Assassination', classIcon: 'class_rogue', specIcon: 'ability_rogue_deadlybrew' },
+  { spec: 'BloodDeathKnight', className: 'DeathKnight', specName: 'Blood', classLabel: 'Death Knight', specLabel: 'Blood', classIcon: 'class_deathknight', specIcon: 'spell_deathknight_bloodpresence' },
+  { spec: 'BeastMasteryHunter', className: 'Hunter', specName: 'BeastMastery', classLabel: 'Hunter', specLabel: 'Beast Mastery', classIcon: 'class_hunter', specIcon: '' },
+  { spec: 'FireMage', className: 'Mage', specName: 'Fire', classLabel: 'Mage', specLabel: 'Fire', classIcon: 'class_mage', specIcon: 'spell_fire_firebolt02' },
 ];
 
-const EXPECTED_CLASSES = [
-  'DeathKnight', 'DemonHunter', 'Druid', 'Evoker', 'Hunter', 'Mage', 'Monk',
-  'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior',
-];
+beforeEach(() => hydrateSpecMeta(FIXTURE));
 
-describe('SPEC_META', () => {
-  it('covers exactly the expected 39 spec folders', () => {
-    expect(Object.keys(SPEC_META).sort()).toEqual([...EXPECTED_SPECS].sort());
+describe('specMetaOf', () => {
+  it('resolves the WCL className/specName slugs a rankings query needs', () => {
+    expect(specMetaOf('BeastMasteryHunter')?.className).toBe('Hunter');
+    expect(specMetaOf('BeastMasteryHunter')?.specName).toBe('BeastMastery');
+    expect(specMetaOf('SubtletyRogue')?.specName).toBe('Subtlety');
   });
 
-  it('gives every spec a non-empty class name, spec name, and icon stems', () => {
-    for (const meta of Object.values(SPEC_META)) {
-      expect(meta.className, meta.spec).not.toBe('');
-      expect(meta.specName, meta.spec).not.toBe('');
-      expect(meta.classIcon, meta.spec).not.toBe('');
-      expect(meta.specIcon, meta.spec).not.toBe('');
-    }
-  });
-
-  it('keeps the WCL rankings split that wcl-api consumes (className + specName)', () => {
-    expect(SPEC_META['BeastMasteryHunter'].className).toBe('Hunter');
-    expect(SPEC_META['BeastMasteryHunter'].specName).toBe('BeastMastery');
-    expect(SPEC_META['BloodDeathKnight'].className).toBe('DeathKnight');
-    expect(SPEC_META['SubtletyRogue'].specName).toBe('Subtlety');
-  });
-
-  it('derives the class icon from the lowercased class name', () => {
-    expect(SPEC_META['SubtletyRogue'].classIcon).toBe('class_rogue');
-    expect(SPEC_META['BloodDeathKnight'].classIcon).toBe('class_deathknight');
-  });
-
-  it('derives readable spaced labels', () => {
-    expect(SPEC_META['BloodDeathKnight'].classLabel).toBe('Death Knight');
-    expect(SPEC_META['BeastMasteryHunter'].specLabel).toBe('Beast Mastery');
-    expect(SPEC_META['SubtletyRogue'].specLabel).toBe('Subtlety');
+  it('returns undefined for empty or unknown specs', () => {
+    expect(specMetaOf('')).toBeUndefined();
+    expect(specMetaOf(null)).toBeUndefined();
+    expect(specMetaOf('Bogus')).toBeUndefined();
   });
 });
 
 describe('classList', () => {
-  it('collapses the specs to one entry per class, sorted by label', () => {
-    const labels = classList().map(entry => entry.classLabel);
-    expect(labels).toEqual([...EXPECTED_CLASSES].map(c => c.replace(/([A-Z])/g, ' $1').trim()).sort());
+  it('collapses to one entry per class, sorted by label', () => {
+    expect(classList().map(entry => entry.classLabel)).toEqual(['Death Knight', 'Hunter', 'Mage', 'Rogue']);
   });
 
   it('carries the class icon for each class', () => {
-    const rogue = classList().find(entry => entry.className === 'Rogue');
-    expect(rogue?.classIcon).toBe('class_rogue');
+    expect(classList().find(entry => entry.className === 'Rogue')?.classIcon).toBe('class_rogue');
   });
 });
 
@@ -83,23 +56,11 @@ describe('specsForClass', () => {
   });
 
   it('ignores unknown folder keys in the available list', () => {
-    expect(specsForClass('Rogue', ['NotAReal Spec', 'SubtletyRogue']).map(meta => meta.spec)).toEqual(['SubtletyRogue']);
+    expect(specsForClass('Rogue', ['NotARealSpec', 'SubtletyRogue']).map(meta => meta.spec)).toEqual(['SubtletyRogue']);
   });
 });
 
-describe('specMetaOf', () => {
-  it('looks up a known spec', () => {
-    expect(specMetaOf('SubtletyRogue')?.className).toBe('Rogue');
-  });
-
-  it('returns undefined for empty or unknown specs', () => {
-    expect(specMetaOf('')).toBeUndefined();
-    expect(specMetaOf(null)).toBeUndefined();
-    expect(specMetaOf('Bogus')).toBeUndefined();
-  });
-});
-
-describe('icon URL helpers', () => {
+describe('classIconUrl', () => {
   it('builds a class icon URL', () => {
     expect(classIconUrl('Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
   });
@@ -112,9 +73,15 @@ describe('icon URL helpers', () => {
     expect(classIconUrl('')).toBe('');
     expect(classIconUrl('Unknown')).toBe('');
   });
+});
 
+describe('specIconUrl', () => {
   it('builds a spec icon URL from the baked stem', () => {
     expect(specIconUrl('SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg');
+  });
+
+  it('returns empty when the spec has no baked stem', () => {
+    expect(specIconUrl('BeastMasteryHunter')).toBe('');
   });
 
   it('returns empty for an unknown spec', () => {
