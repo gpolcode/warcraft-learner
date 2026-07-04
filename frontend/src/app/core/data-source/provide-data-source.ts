@@ -34,10 +34,8 @@ export function provideLiveDataSource<T>(token: InjectionToken<DataSource<T>>, l
 }
 
 /**
- * "Empty encounter data" binding for a `*_DATA_SOURCE` token: an `EmptyDataSource<T>`
- * whose `getBench` always resolves `null`. Used from `environment.empty.ts` only, to
- * run the whole app against a fresh, un-ingested tier - so, like `provideFileDataSource`,
- * it references no `*TransformService` and keeps the transforms tree-shaken out.
+ * Empty-data binding for a `*_DATA_SOURCE` token: an `EmptyDataSource<T>` (`getBench`
+ * always `null`). Used from `environment.empty.ts` only; references no `*TransformService`.
  */
 export function provideEmptyDataSource<T>(token: InjectionToken<DataSource<T>>): Provider {
   return { provide: token, useFactory: () => new EmptyDataSource<T>() };

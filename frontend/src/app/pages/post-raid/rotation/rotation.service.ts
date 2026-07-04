@@ -81,12 +81,7 @@ export interface CdPlanRow {
 
 /** Post-raid rotation view-model. */
 export interface RotationPlayerView {
-  /**
-   * Whether the top-parse bench exists for this encounter. Drives the Offensives
-   * section: true renders the comparison, false the "waiting for top parses" state.
-   * The Rotation Rules section is bench-independent (rulebook-driven) and renders
-   * regardless.
-   */
+  /** Whether the top-parse bench exists (drives the Offensives section; rules render regardless). */
   available: boolean;
   ruleRows: RotationFindingRow[];
   /** Labels of rotation rules the player followed cleanly this fight. */
@@ -620,13 +615,9 @@ export class RotationFeatureService {
   private readonly dataFiles = inject(DataFileApiService);
 
   /**
-   * Post-raid: fetch the player's own log (Casts/Buffs), evaluate the rotation rules
-   * against it, and - when the top-parse bench exists - the offensive findings too.
-   *
-   * The Rotation Rules are read from the authored `{spec}/rulebook.json`, which is
-   * present regardless of ingest, so they still evaluate on a fresh tier with no bench.
-   * The offensive comparison is bench-driven: `available` is false when the bench is
-   * absent and the Offensives section shows its "waiting for top parses" state.
+   * Post-raid: evaluate the rotation rules (from the authored rulebook, so they work with no
+   * bench) against the player's casts, plus the offensive findings when the bench exists.
+   * `available` reflects the bench and drives the Offensives "waiting" state.
    */
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -649,8 +640,7 @@ export class RotationFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       ]);
 
-      // Rules come from the rulebook and are evaluated regardless of the bench. The
-      // offensive/comparison findings need the bench, so they run only when it exists.
+      // Rules (rulebook) evaluate regardless of the bench; offensive findings need it.
       const ruleFindings = evaluateRules(rules, casts, fight.startTime);
       const offensiveFindings = bench
         ? analyzeRotationFindings({

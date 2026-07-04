@@ -217,10 +217,8 @@ export class PostRaidComponent {
   protected readonly cardsBusy = computed(() =>
     this.rotationBusy() || this.burstBusy() || this.defensiveBusy() || this.gearBusy());
 
-  // Per-card bench availability. Each card emits `availableChange` with whether its
-  // top-parse bench exists; the page shows the no-benchmark banner when none do (a fresh
-  // tier with no ingested parses). Rotation is included via its offensives; its rulebook
-  // rules render regardless.
+  // Per-card bench availability (from each card's `availableChange`); the banner shows when
+  // none have a bench. Rotation counts via its offensives; its rulebook rules render regardless.
   protected readonly rotationAvailable = signal(false);
   protected readonly burstAvailable = signal(false);
   protected readonly defensiveAvailable = signal(false);

@@ -29,10 +29,7 @@ import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 
 /** Where the gear card seeks its data: a chosen player log, or bench-only consensus. */
 export interface GearComparisonView {
-  /**
-   * Whether the top-parse gear bench exists for this encounter. False on a fresh tier
-   * with no ingested consensus, so the card shows its "waiting for top parses" state.
-   */
+  /** Whether the top-parse gear bench exists (false shows the "waiting" state). */
   available: boolean;
   /** True when the player's own gear is shown alongside the bench (post-raid). */
   comparison: boolean;

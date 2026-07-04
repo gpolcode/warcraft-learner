@@ -2,13 +2,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
- * A card-shaped placeholder shown in place of a bench-driven card when the encounter
- * has no ingested top-parse data yet. Presentational leaf: inputs only, no services.
- *
- * It mirrors the finding-table / window-comparison card chrome (header + dashed
- * divider + centered body) so an un-benched card reads as *pending ingest* ("Waiting
- * for top parses"), not as a clean/empty result. `heading` + `subtitle` match the
- * card it replaces; `caption` is the optional line under the waiting message.
+ * Card-shaped "Waiting for top parses" placeholder shown in place of a bench-driven card
+ * on a fresh, un-ingested tier. Inputs-only leaf; `heading`/`subtitle` mirror the card it
+ * replaces.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,5 +16,5 @@ import { MatIconModule } from '@angular/material/icon';
 export class WaitingPlaceholderComponent {
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
-  readonly caption = input<string>('');
+  readonly caption = input<string>('Built from the top-parse bench.');
 }

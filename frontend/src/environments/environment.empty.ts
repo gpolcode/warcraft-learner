@@ -1,19 +1,13 @@
 /**
- * Empty-encounter environment (swapped in by the `empty` build configuration).
+ * Empty-encounter environment (swapped in by the `empty` build config; serve via
+ * `npm run start:empty`). Binds every `*_DATA_SOURCE` to an `EmptyDataSource` (`getBench`
+ * always `null`), reproducing a fresh tier with no ingested bench: every card shows its
+ * "waiting for top parses" state and the pages show the no-benchmark banner. Importing only
+ * the tokens keeps the transforms tree-shaken out, as in production.
  *
- * `useLiveTransform: false` binds every `*_DATA_SOURCE` token (see `dataSourceProviders`
- * below) to an `EmptyDataSource`, whose `getBench` always resolves `null`. It reproduces a
- * fresh tier/expansion release where no top-parse bench has been ingested yet: every slice
- * reads `null`, so each card renders its "waiting for top parses" empty state and the pages
- * show the no-benchmark banner. Because it imports only the slice tokens (never a
- * `*TransformService`), the five transforms stay tree-shaken out, exactly as in production.
- *
- * Everything read through `DataFileApiService` (the spec manifest `index.json`, the WCL spec
- * universe `spec-meta.json`, per-spec `encounters.json`, and the authored `rulebook.json`) is
- * untouched, so the class/spec/encounter dropdowns still populate and the rulebook-driven
- * rotation rules still evaluate. `dataBaseHref` is empty so those files resolve relative to
- * `document.baseURI` (the served `public/data/specs/`); run `npm run data:pull` first to
- * populate them. Serve it with `npm run start:empty`.
+ * Reads through `DataFileApiService` (`index.json`, `spec-meta.json`, `encounters.json`,
+ * `rulebook.json`) are untouched, so the dropdowns populate and the rulebook rules evaluate.
+ * `dataBaseHref` is empty so they resolve against `document.baseURI`; `npm run data:pull` first.
  */
 import { Provider } from '@angular/core';
 import { provideEmptyDataSource } from '../app/core/data-source/provide-data-source';

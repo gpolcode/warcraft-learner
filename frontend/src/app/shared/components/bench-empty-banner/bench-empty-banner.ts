@@ -5,13 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 export type BenchEmptyVariant = 'post' | 'pre';
 
 /**
- * Top-of-page banner shown when the selected encounter has no ingested top-parse bench
- * yet (a fresh tier/expansion). Presentational leaf: inputs only, no services.
- *
- * It names the encounter, explains that comparisons need top-parse logs, and lays out
- * the three-step ingest pipeline (mythic kills logged -> ingest -> unlock). The
- * `variant` switches the body copy and the final step between the post-raid
- * ("Comparisons unlock") and pre-fight ("Plan unlocks") wording.
+ * Top-of-page banner for an encounter with no ingested bench yet: names it and lays out the
+ * three-step ingest pipeline. Inputs-only leaf. `variant` switches the body + final step
+ * between the post-raid ("Comparisons unlock") and pre-fight ("Plan unlocks") copy.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

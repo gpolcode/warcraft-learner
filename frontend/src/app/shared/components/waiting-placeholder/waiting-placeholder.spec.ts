@@ -21,19 +21,12 @@ describe('WaitingPlaceholderComponent', () => {
     expect(text).toContain('Waiting for top parses');
   });
 
-  it('renders the optional subtitle and caption when provided', () => {
-    const text = render({
-      heading: 'Offensives',
-      subtitle: 'Offensive cooldowns vs top parses.',
-      caption: 'Your cooldown timing has nothing to be compared against yet.',
-    });
+  it('renders the optional subtitle when provided', () => {
+    const text = render({ heading: 'Offensives', subtitle: 'Offensive cooldowns vs top parses.' });
     expect(text).toContain('Offensive cooldowns vs top parses.');
-    expect(text).toContain('Your cooldown timing has nothing to be compared against yet.');
   });
 
-  it('omits the caption when none is given', () => {
-    const text = render({ heading: 'Defensives' });
-    expect(text).toContain('Defensives');
-    expect(text).toContain('Waiting for top parses');
+  it('shows the default caption', () => {
+    expect(render({ heading: 'Defensives' })).toContain('Built from the top-parse bench.');
   });
 });

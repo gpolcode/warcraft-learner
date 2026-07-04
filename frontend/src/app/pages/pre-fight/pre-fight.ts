@@ -78,11 +78,9 @@ export class PreFightComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
 
-  // Per-card bench availability. Each card emits `availableChange` with whether its
-  // top-parse bench exists; the page shows the no-benchmark banner when none do (a fresh
-  // tier with no ingested parses). Init true (optimistic): unlike the post-raid page, the
-  // pre-fight cards render as they load with no reveal gate, so starting true avoids a
-  // one-frame banner flash before the benched case reports in.
+  // Per-card bench availability (from each card's `availableChange`); the banner shows when
+  // none have a bench. Init true (optimistic): pre-fight cards render with no reveal gate, so
+  // starting true avoids a one-frame banner flash on a benched encounter.
   protected readonly gearAvailable = signal(true);
   protected readonly cdPlanAvailable = signal(true);
   protected readonly defensivePlanAvailable = signal(true);
