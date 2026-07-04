@@ -115,6 +115,19 @@
           "configurations": {
             "ci": {
               "reporters": ["default", "github-actions"]
+            },
+            "coverage": {
+              "coverage": true,
+              "coverageReporters": ["text-summary", "html", "lcovonly", "json-summary"],
+              "coverageExclude": [
+                "**/*.spec.ts",
+                "src/testing/**",
+                "src/**/*.models.ts",
+                "src/environments/**",
+                "src/main.ts",
+                "src/app/app.config.ts",
+                "src/app/app.routes.ts"
+              ]
             }
           }
         },

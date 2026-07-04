@@ -3,6 +3,7 @@ import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
+import vitest from '@vitest/eslint-plugin';
 
 export default defineConfig([
   {
@@ -55,6 +56,16 @@ export default defineConfig([
     files: ['scripts/**/*.ts'],
     rules: {
       'no-console': 'off',
+    },
+  },
+  {
+    // Spec files (src/** and scripts/**): fail the lint gate on a committed focused or
+    // skipped test, so an accidental `.only` / `.skip` can never silently shrink CI.
+    files: ['**/*.spec.ts'],
+    plugins: { vitest },
+    rules: {
+      'vitest/no-focused-tests': 'error',
+      'vitest/no-disabled-tests': 'error',
     },
   },
   {
