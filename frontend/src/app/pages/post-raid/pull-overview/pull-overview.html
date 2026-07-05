@@ -10,15 +10,16 @@
       </div>
     </div>
 
-    <!-- Body: deaths & wipe (wide, left) | DPS + pull stats (narrow, right) - matching the
-         other cards' content-left / numbers-right layout. -->
-    <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_200px] border-t border-[var(--border)]">
+    <!-- Body: deaths & wipe (wide, left) | DPS + pull stats (narrow, right). The px-4 wrapper +
+         200px right column + border-l mirror the finding-table cards' geometry (px-4 rows with a
+         trailing 200px column), so this card's divider lines up with theirs. -->
+    <div class="px-4 border-t border-[var(--border)] md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
       <!-- Left: deaths & wipe. -->
-      <div class="p-4">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="text-[13px] font-semibold text-[var(--text)]">Deaths &amp; wipe</span>
-          <span class="font-mono text-[11px] text-[var(--muted)]">{{ v.eventCount }} {{ v.eventCount === 1 ? 'event' : 'events' }}</span>
+      <div class="pt-3 pb-1.5">
+        <div class="flex items-baseline gap-2 mb-2">
+          <span class="text-[10px] uppercase tracking-widest text-[var(--muted)]">Deaths &amp; wipe</span>
+          <span class="text-[10px] text-[var(--muted)] tabular-nums">{{ v.eventCount }} {{ v.eventCount === 1 ? 'event' : 'events' }}</span>
         </div>
 
         @if (!v.deaths.length) {
@@ -84,7 +85,7 @@
       </div>
 
       <!-- Right: Your DPS, pull time, boss % (kill result). One row on mobile, stacked at md. -->
-      <div class="p-4 border-t md:border-t-0 md:border-l border-[var(--border)]">
+      <div class="pt-3.5 pb-3.5 md:pt-3 border-t md:border-t-0 md:border-l border-[var(--border)] md:pl-4">
         <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
           <div>
             <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>
