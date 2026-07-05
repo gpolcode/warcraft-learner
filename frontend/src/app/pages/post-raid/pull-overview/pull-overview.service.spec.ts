@@ -137,17 +137,30 @@ describe('buildDeathRows', () => {
 });
 
 describe('wipeTimeS', () => {
-  const WIPE_D1_S = 20;
-  const WIPE_D2_S = 35;
-  const WIPE_D3_S = 50; // the raid loses its 3rd player here
+  const REZZED_EARLY_S = 20; // an early death, later rezzed - must not count toward the wipe
+  const COLLAPSE_1_S = 250;
+  const COLLAPSE_2_S = 252;
+  const COLLAPSE_3_S = 253; // 3rd distinct player down within the window -> the wipe
+  const SPREAD_2_S = 60;
+  const SPREAD_3_S = 120;
 
-  it('marks the wipe at the 3rd raid death, regardless of event order', () => {
-    const deaths = [deathEvent(1, WIPE_D3_S, 0), deathEvent(2, WIPE_D1_S, 0), deathEvent(3, WIPE_D2_S, 0)];
-    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(WIPE_D3_S);
+  it('marks the wipe when 3 distinct players die within the window, ignoring earlier scattered deaths', () => {
+    const deaths = [
+      deathEvent(1, REZZED_EARLY_S, 0),
+      deathEvent(2, COLLAPSE_1_S, 0),
+      deathEvent(3, COLLAPSE_2_S, 0),
+      deathEvent(4, COLLAPSE_3_S, 0),
+    ];
+    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(COLLAPSE_3_S);
   });
 
-  it('falls back to the fight end when fewer than 3 players died', () => {
-    const deaths = [deathEvent(1, WIPE_D1_S, 0), deathEvent(2, WIPE_D2_S, 0)];
+  it('counts distinct players, so one player dying twice in the window is not a wipe', () => {
+    const deaths = [deathEvent(2, COLLAPSE_1_S, 0), deathEvent(2, COLLAPSE_2_S, 0), deathEvent(3, COLLAPSE_3_S, 0)];
+    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+  });
+
+  it('falls back to the fight end when deaths stay spread out (rezzed between), or none occur', () => {
+    const deaths = [deathEvent(1, REZZED_EARLY_S, 0), deathEvent(2, SPREAD_2_S, 0), deathEvent(3, SPREAD_3_S, 0)];
     expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
     expect(wipeTimeS([], FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
   });
@@ -174,10 +187,10 @@ function makeService(over: { fight?: Partial<WclFight>; deaths?: WclEvent[]; dam
 }
 
 describe('PullOverviewFeatureService.loadView', () => {
-  const RAID_D2_AT_S = 45;
-  const RAID_D3_AT_S = 50; // the raid's 3rd death - the wipe moment
+  const RAID_D2_AT_S = 43;
+  const RAID_D3_AT_S = 45; // player@41 + 2 others within 5s -> the raid collapse
 
-  it('summarizes a wipe: player deaths listed, wipe timed at the raid\'s 3rd death', async () => {
+  it('summarizes a wipe: player deaths listed, wipe timed at the raid collapse (3 dead within the window)', async () => {
     const { service, calls } = makeService({
       deaths: [
         deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),

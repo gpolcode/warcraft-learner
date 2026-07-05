@@ -43,18 +43,26 @@ export interface PullOverviewView {
   outcomeTimeS: number;
 }
 
-/** A raid is counted as wiped when the WIPE_DEATHS-th player dies. */
+/** The raid has wiped once WIPE_DEATHS distinct players lie dead within WIPE_WINDOW_S. */
 const WIPE_DEATHS = 3;
+const WIPE_WINDOW_S = 5;
 
 /**
- * The wipe moment: when the raid loses its WIPE_DEATHS-th player, rather than when the log
- * ends. Deaths are treated as final (WCL exposes no resurrect event to model a recovery), so
- * this is the WIPE_DEATHS-th death time; falls back to the fight end when fewer players died.
+ * The wipe moment: the first time WIPE_DEATHS distinct players die within a WIPE_WINDOW_S
+ * span - a raid collapse - rather than when the log ends. WCL exposes no resurrect event, so
+ * this window (instead of a running dead count) is what excludes earlier scattered deaths
+ * that were battle-rezzed. Falls back to the fight end when no such collapse is found.
  */
 export function wipeTimeS(deathEvents: WclEvent[], fightStartMs: number, fightDurationS: number): number {
-  const times = deathEvents.map(event => event.timestamp).sort((a, b) => a - b);
-  if (times.length < WIPE_DEATHS) return fightDurationS;
-  return (times[WIPE_DEATHS - 1] - fightStartMs) / MS_PER_S;
+  const sorted = [...deathEvents].sort((a, b) => a.timestamp - b.timestamp);
+  const windowMs = WIPE_WINDOW_S * MS_PER_S;
+  for (let i = 0; i < sorted.length; i++) {
+    const cutoff = sorted[i].timestamp - windowMs;
+    const dead = new Set<number | undefined>();
+    for (let j = i; j >= 0 && sorted[j].timestamp >= cutoff; j--) dead.add(sorted[j].targetID);
+    if (dead.size >= WIPE_DEATHS) return (sorted[i].timestamp - fightStartMs) / MS_PER_S;
+  }
+  return fightDurationS;
 }
 
 /** Parse WCL's `table` blob (string or object) into its source-actor entries. */
