@@ -290,10 +290,6 @@
 
 </div>
 } @else {
-  <!-- No top-parse gear consensus yet (fresh tier): show the waiting state. -->
-  @if (view().comparison) {
-    <wl-waiting-placeholder heading="Gear" subtitle="Gear vs top parses."></wl-waiting-placeholder>
-  } @else {
-    <wl-waiting-placeholder heading="Gear" subtitle="Top-parse gear consensus."></wl-waiting-placeholder>
-  }
+  <!-- No top-parse gear bench yet (fresh tier): show the waiting state. -->
+  <wl-waiting-placeholder heading="Gear" subtitle="Top-parse gear consensus."></wl-waiting-placeholder>
 }
