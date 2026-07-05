@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output, sign
 import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { WclFight } from '../../../core/models/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { MapAnchor } from '../map/map.service';
@@ -16,13 +15,13 @@ import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.se
  * exactly one service (`PullOverviewFeatureService`) and renders a single pull's summary from
  * the player's own log. It needs no bench, so it is always available (no `availableChange`).
  * The per-row positioning / rewatch actions are outputs the page forwards to the map / clip
- * flyovers; positioning is disabled until the fight has bench positions (`showMap`), rewatch
- * until the rolling buffer covers the fight (`showClip`).
+ * flyovers; the positioning button shows once the fight has bench positions (`showMap`), the
+ * rewatch button once the rolling buffer covers the fight (`showClip`) - same as the other cards.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, MatButtonModule, MatTooltipModule, FormatDurationPipe, FormatDamagePipe],
+  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })
