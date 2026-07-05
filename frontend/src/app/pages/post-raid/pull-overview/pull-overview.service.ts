@@ -43,24 +43,29 @@ export interface PullOverviewView {
   outcomeTimeS: number;
 }
 
-/** The raid has wiped once WIPE_DEATHS distinct players lie dead within WIPE_WINDOW_S. */
+/** The raid has wiped once WIPE_DEATHS players lie dead at the same time. */
 const WIPE_DEATHS = 3;
-const WIPE_WINDOW_S = 5;
 
 /**
- * The wipe moment: the first time WIPE_DEATHS distinct players die within a WIPE_WINDOW_S
- * span - a raid collapse - rather than when the log ends. WCL exposes no resurrect event, so
- * this window (instead of a running dead count) is what excludes earlier scattered deaths
- * that were battle-rezzed. Falls back to the fight end when no such collapse is found.
+ * The wipe moment: the first instant WIPE_DEATHS players are simultaneously dead, however
+ * far apart the deaths fall. Deaths and resurrects are walked as one time-ordered stream that
+ * maintains a live set of who is currently dead - a battle-rezzed player leaves the set, so
+ * earlier deaths that were recovered never count toward the wipe. At a tied timestamp a
+ * resurrect is applied before a death. Falls back to the fight end when the raid never has
+ * that many down at once.
  */
-export function wipeTimeS(deathEvents: WclEvent[], fightStartMs: number, fightDurationS: number): number {
-  const sorted = [...deathEvents].sort((a, b) => a.timestamp - b.timestamp);
-  const windowMs = WIPE_WINDOW_S * MS_PER_S;
-  for (let i = 0; i < sorted.length; i++) {
-    const cutoff = sorted[i].timestamp - windowMs;
-    const dead = new Set<number | undefined>();
-    for (let j = i; j >= 0 && sorted[j].timestamp >= cutoff; j--) dead.add(sorted[j].targetID);
-    if (dead.size >= WIPE_DEATHS) return (sorted[i].timestamp - fightStartMs) / MS_PER_S;
+export function wipeTimeS(
+  deathEvents: WclEvent[], resurrectEvents: WclEvent[], fightStartMs: number, fightDurationS: number,
+): number {
+  const timeline = [
+    ...deathEvents.map(event => ({ t: event.timestamp, player: event.targetID, died: true })),
+    ...resurrectEvents.map(event => ({ t: event.timestamp, player: event.targetID, died: false })),
+  ].sort((a, b) => a.t - b.t || Number(a.died) - Number(b.died));
+  const dead = new Set<number | undefined>();
+  for (const event of timeline) {
+    if (event.died) dead.add(event.player);
+    else dead.delete(event.player);
+    if (dead.size >= WIPE_DEATHS) return (event.t - fightStartMs) / MS_PER_S;
   }
   return fightDurationS;
 }
@@ -160,9 +165,11 @@ export class PullOverviewFeatureService {
       ? await this.wclApi.getAllEvents(reportCode, fight.id, 'DamageTaken', fight.startTime, fight.endTime, playerId)
       : [];
     const deaths = buildDeathRows(myDeaths, damageTaken, playerId, fight.startTime, names);
-    const outcomeTimeS = result === 'kill'
-      ? fight.duration_s
-      : wipeTimeS(deathEvents, fight.startTime, fight.duration_s);
+    let outcomeTimeS = fight.duration_s;
+    if (result === 'wipe') {
+      const resurrects = await this.wclApi.getResurrects(reportCode, fight.id, fight.startTime, fight.endTime);
+      outcomeTimeS = wipeTimeS(deathEvents, resurrects, fight.startTime, fight.duration_s);
+    }
 
     return {
       attempt: fight.attempt,

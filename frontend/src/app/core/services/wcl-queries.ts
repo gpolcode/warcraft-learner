@@ -25,6 +25,7 @@ export interface EventsQueryVars {
 export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
 export interface RankingsQueryVars { encounterID: number; className: string; specName: string }
 export interface TableQueryVars { code: string; fightIDs: number[]; dataType: string }
+export interface ResurrectsQueryVars { code: string; fightIDs: number[]; filter: string; startTime: number; endTime: number }
 
 // ---------------------------------------------------------------------------
 // Query strings
@@ -64,6 +65,18 @@ query($code:String!,$fightIDs:[Int]!,$dataType:EventDataType,$sourceID:Int,$star
 export const TABLE_Q = `
 query($code:String!,$fightIDs:[Int]!,$dataType:TableDataType){
   reportData{report(code:$code){table(fightIDs:$fightIDs,dataType:$dataType)}}
+}`;
+
+/**
+ * Resurrect events for a fight. WCL has no `Resurrects` data type, so this scans `All`
+ * with a server-side `filterExpression` (only the matching events come back), so the wipe
+ * analysis can tell when a dead player is brought back. Paginated like the events reader.
+ */
+export const RESURRECTS_Q = `
+query($code:String!,$fightIDs:[Int]!,$filter:String,$startTime:Float,$endTime:Float){
+  reportData{report(code:$code){
+    events(fightIDs:$fightIDs,dataType:All,filterExpression:$filter,startTime:$startTime,endTime:$endTime,limit:10000){data nextPageTimestamp}
+  }}
 }`;
 
 /**

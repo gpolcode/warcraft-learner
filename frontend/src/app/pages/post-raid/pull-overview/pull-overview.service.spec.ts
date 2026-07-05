@@ -38,6 +38,10 @@ function dtEvent(abilityGameID: number, atS: number, amount: number, unmitigated
   return event;
 }
 
+function resEvent(targetID: number, atS: number): WclEvent {
+  return { type: 'resurrect', timestamp: FIGHT_START_MS + atS * MS_PER_S, abilityGameID: 0, targetID };
+}
+
 function fight(over: Partial<WclFight> = {}): WclFight {
   return {
     id: 6, name: 'Boss', startTime: FIGHT_START_MS, endTime: FIGHT_START_MS + FIGHT_DURATION_S * MS_PER_S,
@@ -137,39 +141,43 @@ describe('buildDeathRows', () => {
 });
 
 describe('wipeTimeS', () => {
-  const REZZED_EARLY_S = 20; // an early death, later rezzed - must not count toward the wipe
-  const COLLAPSE_1_S = 250;
-  const COLLAPSE_2_S = 252;
-  const COLLAPSE_3_S = 253; // 3rd distinct player down within the window -> the wipe
-  const SPREAD_2_S = 60;
-  const SPREAD_3_S = 120;
+  const NO_REZ: WclEvent[] = [];
 
-  it('marks the wipe when 3 distinct players die within the window, ignoring earlier scattered deaths', () => {
-    const deaths = [
-      deathEvent(1, REZZED_EARLY_S, 0),
-      deathEvent(2, COLLAPSE_1_S, 0),
-      deathEvent(3, COLLAPSE_2_S, 0),
-      deathEvent(4, COLLAPSE_3_S, 0),
-    ];
-    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(COLLAPSE_3_S);
+  it('marks the wipe the instant 3 players are simultaneously dead, however far apart the deaths fall', () => {
+    const SPREAD_1_S = 20;
+    const SPREAD_2_S = 100;
+    const SPREAD_3_S = 200; // 49s+ gaps, no window - still the 3rd concurrent death
+    const deaths = [deathEvent(1, SPREAD_1_S, 0), deathEvent(2, SPREAD_2_S, 0), deathEvent(3, SPREAD_3_S, 0)];
+    expect(wipeTimeS(deaths, NO_REZ, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(SPREAD_3_S);
   });
 
-  it('counts distinct players, so one player dying twice in the window is not a wipe', () => {
-    const deaths = [deathEvent(2, COLLAPSE_1_S, 0), deathEvent(2, COLLAPSE_2_S, 0), deathEvent(3, COLLAPSE_3_S, 0)];
-    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+  it('drops a battle-rezzed player from the dead count, so the wipe waits for a later death', () => {
+    const P1_DEATH_S = 20;
+    const P2_DEATH_S = 30;
+    const P1_REZ_S = 35; // player 1 back up before the 3rd death
+    const P3_DEATH_S = 40; // only P2 + P3 down here (not a wipe)
+    const P4_DEATH_S = 50; // P2 + P3 + P4 -> the wipe
+    const deaths = [deathEvent(1, P1_DEATH_S, 0), deathEvent(2, P2_DEATH_S, 0), deathEvent(3, P3_DEATH_S, 0), deathEvent(4, P4_DEATH_S, 0)];
+    expect(wipeTimeS(deaths, [resEvent(1, P1_REZ_S)], FIGHT_START_MS, FIGHT_DURATION_S)).toBe(P4_DEATH_S);
   });
 
-  it('falls back to the fight end when deaths stay spread out (rezzed between), or none occur', () => {
-    const deaths = [deathEvent(1, REZZED_EARLY_S, 0), deathEvent(2, SPREAD_2_S, 0), deathEvent(3, SPREAD_3_S, 0)];
-    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
-    expect(wipeTimeS([], FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+  it('falls back to the fight end when resurrects keep fewer than 3 down at once, or nobody dies', () => {
+    const A_DEATH_S = 20;
+    const A_REZ_S = 25;
+    const B_DEATH_S = 30;
+    const B_REZ_S = 35;
+    const C_DEATH_S = 40;
+    const deaths = [deathEvent(1, A_DEATH_S, 0), deathEvent(2, B_DEATH_S, 0), deathEvent(3, C_DEATH_S, 0)];
+    const rez = [resEvent(1, A_REZ_S), resEvent(2, B_REZ_S)];
+    expect(wipeTimeS(deaths, rez, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+    expect(wipeTimeS([], [], FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
   });
 });
 
 // --- end-to-end through the feature service (fake WclApiService) ----------------
 interface FakeCalls { dataTypes: string[] }
 
-function makeService(over: { fight?: Partial<WclFight>; deaths?: WclEvent[]; damageTaken?: WclEvent[] } = {}): {
+function makeService(over: { fight?: Partial<WclFight>; deaths?: WclEvent[]; damageTaken?: WclEvent[]; resurrects?: WclEvent[] } = {}): {
   service: PullOverviewFeatureService; calls: FakeCalls;
 } {
   const calls: FakeCalls = { dataTypes: [] };
@@ -181,16 +189,17 @@ function makeService(over: { fight?: Partial<WclFight>; deaths?: WclEvent[]; dam
       if (dataType === 'Deaths') return over.deaths ?? [];
       return over.damageTaken ?? [];
     },
+    getResurrects: async () => over.resurrects ?? [],
   };
   TestBed.configureTestingModule({ providers: [{ provide: WclApiService, useValue: wcl as unknown as WclApiService }] });
   return { service: TestBed.inject(PullOverviewFeatureService), calls };
 }
 
 describe('PullOverviewFeatureService.loadView', () => {
-  const RAID_D2_AT_S = 43;
-  const RAID_D3_AT_S = 45; // player@41 + 2 others within 5s -> the raid collapse
+  const RAID_D2_AT_S = 60;
+  const RAID_D3_AT_S = 90; // player@41 + 2 others, spread out - 3 dead at once, no window
 
-  it('summarizes a wipe: player deaths listed, wipe timed at the raid collapse (3 dead within the window)', async () => {
+  it('summarizes a wipe: player deaths listed, wipe timed when the 3rd player is concurrently dead', async () => {
     const { service, calls } = makeService({
       deaths: [
         deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),

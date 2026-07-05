@@ -8,9 +8,9 @@ import {
 } from '../models/wcl.models';
 import {
   REPORT_Q, PLAYER_DETAILS_Q, EVENTS_Q,
-  COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, buildGearNamesQuery, buildAbilityIconsQuery,
+  COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
   ReportQueryVars, PlayerDetailsQueryVars,
-  EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars,
+  EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars, ResurrectsQueryVars,
 } from './wcl-queries';
 import { specMetaOf } from '../spec-meta';
 
@@ -125,6 +125,27 @@ export class WclApiService {
       TABLE_Q, vars, this.livePolicy(),
     );
     return result?.reportData?.report?.table ?? null;
+  }
+
+  /**
+   * Resurrect events (type `resurrect`) for a fight - who was brought back and when - so the
+   * wipe analysis can tell when a dead player is alive again. WCL has no `Resurrects` data
+   * type, so this scans `All` with a server-side `type` filter (only matches come back).
+   */
+  async getResurrects(code: string, fightId: number, startTime: number, endTime: number): Promise<WclEvent[]> {
+    const events: WclEvent[] = [];
+    let currentStart = startTime;
+    for (;;) {
+      const vars: ResurrectsQueryVars = { code, fightIDs: [fightId], filter: 'type = "resurrect"', startTime: currentStart, endTime };
+      const result = await this.query<{ reportData: { report: { events: { data: WclEvent[]; nextPageTimestamp?: number } } } }>(
+        RESURRECTS_Q, vars, this.livePolicy(),
+      );
+      const page = result.reportData.report.events;
+      events.push(...(page.data ?? []));
+      if (!page.nextPageTimestamp) break;
+      currentStart = page.nextPageTimestamp;
+    }
+    return events;
   }
 
   /**
