@@ -1,0 +1,114 @@
+@if (view(); as v) {
+  <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+
+    <!-- Header. The pull time + boss % live in the left column, not here. -->
+    <div class="px-4 pt-3 pb-2.5">
+      <div class="text-[17px] font-semibold text-[var(--text)]">Pull overview</div>
+      <div class="text-xs text-[var(--muted)] mt-0.5">
+        @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
+        @else { Pull {{ v.attempt }} of this session. }
+      </div>
+    </div>
+    <div class="h-px bg-[var(--border)]"></div>
+
+    <!-- Body: DPS + pull stats | deaths & wipe. -->
+    <div class="grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)]">
+
+      <!-- Left: Your DPS, pull time, boss % (kill result). -->
+      <div class="p-4 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-[var(--border)]">
+        <div>
+          <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>
+          <div class="text-[34px] leading-none font-bold text-[var(--text)] tabular-nums">{{ v.dps | formatDamage }}</div>
+        </div>
+        <div class="flex gap-6">
+          <div>
+            <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Pull</div>
+            <div class="font-mono text-[14px] text-[var(--text)] tabular-nums">{{ v.durationS | formatDuration }}</div>
+          </div>
+          <div>
+            @if (v.result === 'kill') {
+              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Result</div>
+              <div class="font-mono text-[14px] text-[var(--gold)]">Kill</div>
+            } @else {
+              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss</div>
+              <div class="font-mono text-[14px] text-[var(--critical)] tabular-nums">{{ v.bossPercentage | number:'1.0-0' }}%</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: deaths & wipe. -->
+      <div class="p-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[13px] font-semibold text-[var(--text)]">Deaths &amp; wipe</span>
+          <span class="font-mono text-[11px] text-[var(--muted)]">{{ v.eventCount }} {{ v.eventCount === 1 ? 'event' : 'events' }}</span>
+        </div>
+
+        @if (!v.deaths.length) {
+          <div class="flex items-center gap-2.5 py-2.5 border-t border-[var(--border)]">
+            <mat-icon class="icon-18 badge-success">check_circle</mat-icon>
+            <span class="text-[13px] text-[var(--text)]">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
+          </div>
+        }
+
+        @for (d of v.deaths; track d.index) {
+          <div class="grid grid-cols-[20px_46px_minmax(0,1fr)_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
+            <mat-icon class="icon-18 badge-critical">skull</mat-icon>
+            <span class="font-mono text-[13px] text-[var(--text)] tabular-nums">{{ d.timeS | formatDuration }}</span>
+            <div class="min-w-0">
+              <div class="text-[13px] text-[var(--text)]">Death {{ d.index }}</div>
+              @if (d.ability) {
+                <div class="text-[11px] text-[var(--muted)] truncate">{{ d.ability }}@if (d.amount) { - {{ d.amount | formatDamage }} }</div>
+              }
+            </div>
+            <div class="flex gap-1.5">
+              <button mat-icon-button class="icon-button-compact" aria-label="Open positioning map"
+                      [disabled]="!showMap()"
+                      [matTooltip]="showMap() ? 'Open positioning map' : 'Positioning needs bench data'"
+                      (click)="onOpenMap(d.timeS)">
+                <mat-icon class="icon-18">my_location</mat-icon>
+              </button>
+              <button mat-icon-button class="icon-button-compact" aria-label="Rewatch this moment"
+                      [disabled]="!showClip()"
+                      [matTooltip]="showClip() ? 'Rewatch this moment' : 'Record this pull to rewatch'"
+                      (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
+                <mat-icon class="icon-18">smart_display</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Closing kill / wipe row. -->
+        <div class="grid grid-cols-[20px_46px_minmax(0,1fr)_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
+          @if (v.result === 'kill') {
+            <mat-icon class="icon-18 text-[var(--gold)]">emoji_events</mat-icon>
+          } @else {
+            <mat-icon class="icon-18 badge-warning">flag</mat-icon>
+          }
+          <span class="font-mono text-[13px] text-[var(--text)] tabular-nums">{{ v.durationS | formatDuration }}</span>
+          <div class="min-w-0">
+            <div class="text-[13px] font-medium text-[var(--text)]">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
+            <div class="text-[11px] text-[var(--muted)]">
+              @if (v.result === 'kill') { Boss defeated }
+              @else { Boss reached {{ v.bossPercentage | number:'1.0-0' }}% - raid ended }
+            </div>
+          </div>
+          <div class="flex gap-1.5">
+            <button mat-icon-button class="icon-button-compact" aria-label="Open positioning map"
+                    [disabled]="!showMap()"
+                    [matTooltip]="showMap() ? 'Open positioning map' : 'Positioning needs bench data'"
+                    (click)="onOpenMap(v.durationS)">
+              <mat-icon class="icon-18">my_location</mat-icon>
+            </button>
+            <button mat-icon-button class="icon-button-compact" aria-label="Rewatch this moment"
+                    [disabled]="!showClip()"
+                    [matTooltip]="showClip() ? 'Rewatch this moment' : 'Record this pull to rewatch'"
+                    (click)="onOpenClip(v.durationS, 'pull-overview-' + v.result)">
+              <mat-icon class="icon-18">smart_display</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

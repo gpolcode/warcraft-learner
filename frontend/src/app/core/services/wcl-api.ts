@@ -4,13 +4,13 @@ import { LiveModeState } from './live-mode-state';
 import { WCL_TRANSPORT, WCL_INGEST_MODE, WclTransportError } from './wcl-transport';
 import {
   WclReport, WclEvent,
-  PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo,
+  PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
 } from '../models/wcl.models';
 import {
   REPORT_Q, PLAYER_DETAILS_Q, EVENTS_Q,
-  COMBATANT_INFO_Q, RANKINGS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
+  COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, buildGearNamesQuery, buildAbilityIconsQuery,
   ReportQueryVars, PlayerDetailsQueryVars,
-  EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars,
+  EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars,
 } from './wcl-queries';
 import { specMetaOf } from '../spec-meta';
 
@@ -112,6 +112,19 @@ export class WclApiService {
       COMBATANT_INFO_Q, vars,
     );
     return result?.reportData?.report?.events?.data ?? [];
+  }
+
+  /**
+   * Raw damage-done summary table for a fight (JSON blob, string or object). Consumers
+   * pick their player's `data.entries` row by actor id and derive DPS from `total` over
+   * the fight duration. Cache-first per `livePolicy` (a saved report's table is immutable).
+   */
+  async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
+    const vars: TableQueryVars = { code, fightIDs: [fightId], dataType: 'DamageDone' };
+    const result = await this.query<{ reportData: { report: { table: WclTableBlob } } }>(
+      TABLE_Q, vars, this.livePolicy(),
+    );
+    return result?.reportData?.report?.table ?? null;
   }
 
   /**
