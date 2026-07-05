@@ -1,7 +1,7 @@
 @if (view(); as v) {
   <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
 
-    <!-- Header. The pull time + boss % live in the left column, not here. -->
+    <!-- Header. The pull time + boss % live in the stat column, not here. -->
     <div class="px-4 pt-3 pb-2">
       <div class="text-[17px] font-semibold text-[var(--text)]">Pull overview</div>
       <div class="text-xs text-[var(--muted)] mt-0.5">
@@ -10,35 +10,11 @@
       </div>
     </div>
 
-    <!-- Body: DPS + pull stats | deaths & wipe. -->
-    <div class="grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] border-t border-[var(--border)]">
+    <!-- Body: deaths & wipe (wide, left) | DPS + pull stats (narrow, right) - matching the
+         other cards' content-left / numbers-right layout. -->
+    <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_200px] border-t border-[var(--border)]">
 
-      <!-- Left: Your DPS, pull time, boss % (kill result). One row on mobile, stacked at md. -->
-      <div class="p-4 border-b md:border-b-0 md:border-r border-[var(--border)]">
-        <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
-          <div>
-            <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>
-            <div class="text-[34px] leading-none font-bold text-[var(--text)] tabular-nums">{{ v.dps | formatDamage }}</div>
-          </div>
-          <div class="flex gap-6">
-            <div>
-              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Pull</div>
-              <div class="font-mono text-[14px] text-[var(--accent)] tabular-nums">{{ v.durationS | formatDuration }}</div>
-            </div>
-            <div>
-              @if (v.result === 'kill') {
-                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Result</div>
-                <div class="font-mono text-[14px] text-[var(--gold)]">Kill</div>
-              } @else {
-                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss</div>
-                <div class="font-mono text-[14px] text-[var(--text)] tabular-nums">{{ v.bossPercentage | number:'1.0-0' }}%</div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: deaths & wipe. -->
+      <!-- Left: deaths & wipe. -->
       <div class="p-4">
         <div class="flex items-center gap-2 mb-1">
           <span class="text-[13px] font-semibold text-[var(--text)]">Deaths &amp; wipe</span>
@@ -103,6 +79,31 @@
                 <mat-icon class="icon-16">videocam</mat-icon>
               </button>
             }
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Your DPS, pull time, boss % (kill result). One row on mobile, stacked at md. -->
+      <div class="p-4 border-t md:border-t-0 md:border-l border-[var(--border)]">
+        <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
+          <div>
+            <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>
+            <div class="text-[34px] leading-none font-bold text-[var(--text)] tabular-nums">{{ v.dps | formatDamage }}</div>
+          </div>
+          <div class="flex gap-6">
+            <div>
+              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Pull</div>
+              <div class="font-mono text-[14px] text-[var(--accent)] tabular-nums">{{ v.durationS | formatDuration }}</div>
+            </div>
+            <div>
+              @if (v.result === 'kill') {
+                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Result</div>
+                <div class="font-mono text-[14px] text-[var(--gold)]">Kill</div>
+              } @else {
+                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss</div>
+                <div class="font-mono text-[14px] text-[var(--text)] tabular-nums">{{ v.bossPercentage | number:'1.0-0' }}%</div>
+              }
+            </div>
           </div>
         </div>
       </div>
