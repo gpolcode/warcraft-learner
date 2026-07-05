@@ -422,7 +422,11 @@ export class PostRaidComponent {
   }
 
   protected async onPlayerChange(): Promise<void> {
-    if (this.liveSyncEnabled()) return;
+    // Live sync owns only the fight selection; the player dropdown stays interactive so a
+    // raider can switch to a raidmate mid-pull. That switch must re-resolve the spec here, or
+    // the spec-dependent cards (rotation / burst / defensive / gear) keep analyzing the
+    // previous player's spec. resolveSelection never touches the fight, so it is safe to run
+    // while live sync is on.
     this._persistPlayerName();
     await this.resolveSelection();
   }
