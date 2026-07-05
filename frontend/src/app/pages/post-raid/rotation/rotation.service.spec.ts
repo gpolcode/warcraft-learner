@@ -514,14 +514,14 @@ function withSource(value: RotationBench | null, wcl?: unknown, rules: RulebookR
   const source: DataSource<RotationBench> = { getBench: () => Promise.resolve(value) };
   // The rotation rules are read from the authored rulebook (present regardless of ingest),
   // so the feature service also injects the pass-through DataFileApiService.
-  const dataFiles = {
+  const dataFiles: Pick<DataFileApiService, 'getRulebook'> = {
     getRulebook: () => Promise.resolve({ spec: 'SubtletyRogue', spec_icon: 'x', rules }),
   };
   TestBed.configureTestingModule({
     providers: [
       { provide: ROTATION_DATA_SOURCE, useValue: source },
       { provide: WclApiService, useValue: (wcl ?? {}) as WclApiService },
-      { provide: DataFileApiService, useValue: dataFiles as unknown as DataFileApiService },
+      { provide: DataFileApiService, useValue: dataFiles },
     ],
   });
   return TestBed.inject(RotationFeatureService);
