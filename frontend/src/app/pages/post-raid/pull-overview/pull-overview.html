@@ -10,17 +10,12 @@
       </div>
     </div>
 
-    <!-- Body: deaths & wipe (wide, left) | DPS + pull stats (narrow, right). The px-4 wrapper +
-         200px right column + border-l mirror the finding-table cards' geometry (px-4 rows with a
-         trailing 200px column), so this card's divider lines up with theirs. -->
+    <!-- Body geometry (px-4 + trailing 200px column) mirrors the finding-table cards so the divider lines up. -->
     <div class="px-4 border-t border-[var(--border)] md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
       <!-- Left: deaths & wipe. -->
       <div class="pt-3 pb-1.5">
-        <div class="flex items-baseline gap-2 mb-2">
-          <span class="text-[10px] uppercase tracking-widest text-[var(--muted)]">Deaths &amp; wipe</span>
-          <span class="text-[10px] text-[var(--muted)] tabular-nums">{{ v.eventCount }} {{ v.eventCount === 1 ? 'event' : 'events' }}</span>
-        </div>
+        <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-2">Deaths &amp; wipe</div>
 
         @if (!v.deaths.length) {
           <div class="flex items-center gap-2.5 py-2.5 border-t border-[var(--border)]">
@@ -39,7 +34,7 @@
                 <div class="text-xs text-[var(--muted)] truncate">{{ d.ability }}@if (d.amount) { - {{ d.amount | formatDamage }} }</div>
               }
             </div>
-            <div class="flex gap-0.5">
+            <div class="flex gap-0.5 pr-1.5">
               @if (showMap()) {
                 <button mat-icon-button class="icon-button-compact" aria-label="Open positioning map" (click)="onOpenMap(d.timeS)">
                   <mat-icon class="icon-16">my_location</mat-icon>
@@ -61,7 +56,7 @@
           } @else {
             <mat-icon class="icon-18 badge-warning">flag</mat-icon>
           }
-          <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ v.durationS | formatDuration }}</span>
+          <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="min-w-0">
             <div class="text-[13px] font-medium text-[var(--text)]">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
             <div class="text-xs text-[var(--muted)]">
@@ -69,14 +64,14 @@
               @else { Boss reached {{ v.bossPercentage | number:'1.0-0' }}% - raid ended }
             </div>
           </div>
-          <div class="flex gap-0.5">
+          <div class="flex gap-0.5 pr-1.5">
             @if (showMap()) {
-              <button mat-icon-button class="icon-button-compact" aria-label="Open positioning map" (click)="onOpenMap(v.durationS)">
+              <button mat-icon-button class="icon-button-compact" aria-label="Open positioning map" (click)="onOpenMap(v.outcomeTimeS)">
                 <mat-icon class="icon-16">my_location</mat-icon>
               </button>
             }
             @if (showClip()) {
-              <button mat-icon-button class="icon-button-compact" aria-label="Watch clip" (click)="onOpenClip(v.durationS, 'pull-overview-' + v.result)">
+              <button mat-icon-button class="icon-button-compact" aria-label="Watch clip" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
                 <mat-icon class="icon-16">videocam</mat-icon>
               </button>
             }

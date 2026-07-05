@@ -8,8 +8,8 @@ export interface WclFight {
   attempt: number;
   duration_s: number;
   friendlyPlayers: number[];
-  /** Boss health % remaining when the pull ended (WCL `fightPercentage`); 0 on a kill. */
-  fightPercentage?: number;
+  /** Boss health % remaining when the pull ended (WCL `fightPercentage`); ~0 on a kill. */
+  fightPercentage: number;
 }
 
 export interface WclPlayer {

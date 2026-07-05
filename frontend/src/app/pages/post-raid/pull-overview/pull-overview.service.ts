@@ -39,8 +39,22 @@ export interface PullOverviewView {
   /** The player's damage per second over the pull. */
   dps: number;
   deaths: PullDeathRow[];
-  /** Total rows in the deaths & wipe list: each death plus the closing kill/wipe row. */
-  eventCount: number;
+  /** Time of the closing row: fight end on a kill, the wipe moment on a wipe (see `wipeTimeS`). */
+  outcomeTimeS: number;
+}
+
+/** A raid is counted as wiped when the WIPE_DEATHS-th player dies. */
+const WIPE_DEATHS = 3;
+
+/**
+ * The wipe moment: when the raid loses its WIPE_DEATHS-th player, rather than when the log
+ * ends. Deaths are treated as final (WCL exposes no resurrect event to model a recovery), so
+ * this is the WIPE_DEATHS-th death time; falls back to the fight end when fewer players died.
+ */
+export function wipeTimeS(deathEvents: WclEvent[], fightStartMs: number, fightDurationS: number): number {
+  const times = deathEvents.map(event => event.timestamp).sort((a, b) => a - b);
+  if (times.length < WIPE_DEATHS) return fightDurationS;
+  return (times[WIPE_DEATHS - 1] - fightStartMs) / MS_PER_S;
 }
 
 /** Parse WCL's `table` blob (string or object) into its source-actor entries. */
@@ -123,12 +137,6 @@ export class PullOverviewFeatureService {
    */
   async loadView(reportCode: string, playerId: number, fight: WclFight): Promise<PullOverviewView> {
     const result: PullResult = fight.kill ? 'kill' : 'wipe';
-    const base = {
-      attempt: fight.attempt,
-      result,
-      durationS: fight.duration_s,
-      bossPercentage: fight.fightPercentage ?? 0,
-    };
 
     const report = await this.wclApi.getReport(reportCode);
     const names = abilityNameMap(report);
@@ -144,7 +152,18 @@ export class PullOverviewFeatureService {
       ? await this.wclApi.getAllEvents(reportCode, fight.id, 'DamageTaken', fight.startTime, fight.endTime, playerId)
       : [];
     const deaths = buildDeathRows(myDeaths, damageTaken, playerId, fight.startTime, names);
+    const outcomeTimeS = result === 'kill'
+      ? fight.duration_s
+      : wipeTimeS(deathEvents, fight.startTime, fight.duration_s);
 
-    return { ...base, dps, deaths, eventCount: deaths.length + 1 };
+    return {
+      attempt: fight.attempt,
+      result,
+      durationS: fight.duration_s,
+      bossPercentage: fight.fightPercentage,
+      dps,
+      deaths,
+      outcomeTimeS,
+    };
   }
 }

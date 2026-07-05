@@ -4,7 +4,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent, WclFight, WclReport } from '../../../core/models/wcl.models';
 import {
   PullOverviewFeatureService,
-  dpsFromTable, abilityNameMap, lethalHitAmount, buildDeathRows,
+  dpsFromTable, abilityNameMap, lethalHitAmount, buildDeathRows, wipeTimeS,
 } from './pull-overview.service';
 
 // --- readable fixture constants -------------------------------------------------
@@ -136,6 +136,23 @@ describe('buildDeathRows', () => {
   });
 });
 
+describe('wipeTimeS', () => {
+  const WIPE_D1_S = 20;
+  const WIPE_D2_S = 35;
+  const WIPE_D3_S = 50; // the raid loses its 3rd player here
+
+  it('marks the wipe at the 3rd raid death, regardless of event order', () => {
+    const deaths = [deathEvent(1, WIPE_D3_S, 0), deathEvent(2, WIPE_D1_S, 0), deathEvent(3, WIPE_D2_S, 0)];
+    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(WIPE_D3_S);
+  });
+
+  it('falls back to the fight end when fewer than 3 players died', () => {
+    const deaths = [deathEvent(1, WIPE_D1_S, 0), deathEvent(2, WIPE_D2_S, 0)];
+    expect(wipeTimeS(deaths, FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+    expect(wipeTimeS([], FIGHT_START_MS, FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+  });
+});
+
 // --- end-to-end through the feature service (fake WclApiService) ----------------
 interface FakeCalls { dataTypes: string[] }
 
@@ -157,9 +174,16 @@ function makeService(over: { fight?: Partial<WclFight>; deaths?: WclEvent[]; dam
 }
 
 describe('PullOverviewFeatureService.loadView', () => {
-  it('summarizes a wipe with the player deaths and the closing wipe row', async () => {
+  const RAID_D2_AT_S = 45;
+  const RAID_D3_AT_S = 50; // the raid's 3rd death - the wipe moment
+
+  it('summarizes a wipe: player deaths listed, wipe timed at the raid\'s 3rd death', async () => {
     const { service, calls } = makeService({
-      deaths: [deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST)],
+      deaths: [
+        deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
+        deathEvent(OTHER_PLAYER, RAID_D2_AT_S, FROST_BOMB),
+        deathEvent(OTHER_PLAYER + 1, RAID_D3_AT_S, FROST_BOMB),
+      ],
       damageTaken: [dtEvent(OVERWHELMING_BLAST, DEATH_1_AT_S, BLAST_AMOUNT, BLAST_UNMITIGATED)],
     });
     const view = await service.loadView('r', PLAYER_ID, fight());
@@ -169,17 +193,17 @@ describe('PullOverviewFeatureService.loadView', () => {
     expect(view.durationS).toBe(FIGHT_DURATION_S);
     expect(view.dps).toBe(EXPECTED_DPS);
     expect(view.deaths).toEqual([{ index: 1, timeS: DEATH_1_AT_S, ability: 'Overwhelming Blast', amount: BLAST_UNMITIGATED }]);
-    expect(view.eventCount).toBe(2); // one death + the wipe row
+    expect(view.outcomeTimeS).toBe(RAID_D3_AT_S);
     expect(calls.dataTypes).toContain('DamageTaken');
   });
 
-  it('marks a clean kill and skips the DamageTaken fetch when the player did not die', async () => {
+  it('marks a clean kill at the fight end and skips the DamageTaken fetch when the player did not die', async () => {
     const { service, calls } = makeService({ deaths: [deathEvent(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)] });
     const view = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
 
     expect(view.result).toBe('kill');
     expect(view.deaths).toEqual([]);
-    expect(view.eventCount).toBe(1); // just the kill row
+    expect(view.outcomeTimeS).toBe(FIGHT_DURATION_S);
     expect(calls.dataTypes).not.toContain('DamageTaken');
   });
 });
