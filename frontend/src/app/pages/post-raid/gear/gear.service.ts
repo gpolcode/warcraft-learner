@@ -5,7 +5,7 @@ import { CharacterGear, WclCombatantInfo } from '../../../core/models/wcl.models
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, permanent } from '../../../core/result';
+import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { decodeHtmlEntities, extractGear, selectCombatantInfo, talentKeyFromTree } from './gear-extract';
 import {
@@ -57,7 +57,7 @@ export function buildCharacterGear(
   spec?: string,
 ): Result<CharacterGear, LoadError> {
   if (!event?.gear?.length) {
-    return err(permanent('No combatant info in this log.', 'gear.combatant-info'));
+    return permanent('No combatant info in this log.', 'gear.combatant-info');
   }
   const { trinkets, enchants } = extractGear(event.gear);
   const talent_key = talentKeyFromTree(event.talentTree);
@@ -167,7 +167,7 @@ export class GearFeatureService {
       return buildCharacterGear(event, names, reportCode, spec);
     } catch (cause) {
       logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, cause);
-      return err(toLoadError(cause, 'gear.player-view'));
+      return toLoadError(cause, 'gear.player-view');
     }
   }
 }

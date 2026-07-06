@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { DataFileApiService } from '../services/data-file-api';
 import { FileDataSource } from './file-data-source';
-import { Result, LoadError, ok, err, missing } from '../result';
+import { Result, LoadError, ok, missing } from '../result';
 
 interface DummyBench { encounter_id: number; }
 
@@ -34,14 +34,14 @@ describe('FileDataSource', () => {
     expect(calls).toEqual([[SPEC, ENCOUNTER_ID, SLICE]]);
   });
 
-  it('passes an un-ingested slice file through as err(missing)', async () => {
-    const { files } = fakeFiles(err(missing('Not yet ingested.')));
+  it('passes an un-ingested slice file through as missing', async () => {
+    const { files } = fakeFiles(missing('Not yet ingested.'));
     expect(await new FileDataSource<DummyBench>(files, SLICE).getBench(SPEC, ENCOUNTER_ID))
-      .toEqual(err(missing('Not yet ingested.')));
+      .toEqual(missing('Not yet ingested.'));
   });
 
   it('reads the slice directory it was constructed with (map binds "positions")', async () => {
-    const { files, calls } = fakeFiles(err(missing('Not yet ingested.')));
+    const { files, calls } = fakeFiles(missing('Not yet ingested.'));
     await new FileDataSource<DummyBench>(files, 'positions').getBench(SPEC, ENCOUNTER_ID);
     expect(calls[0][2]).toBe('positions');
   });

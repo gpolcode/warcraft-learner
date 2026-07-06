@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { err, missing, transient } from '../../../core/result';
+import { missing, transient } from '../../../core/result';
 import {
   MapTransformService,
   posActorId, collectPositionSamples, resampleTimeline, buildParsePositions, selectBossAndEnemies,
@@ -270,14 +270,14 @@ describe('MapTransformService.getBench', () => {
 
   it('reports an encounter with no top parses as a missing bench', async () => {
     const result = await serviceWith({ getRankings: async () => ({ rankings: [] }) }).getBench(SPEC, ENCOUNTER_ID);
-    expect(result).toEqual(err(missing('No top parses for this encounter.')));
+    expect(result).toEqual(missing('No top parses for this encounter.'));
   });
 
   it('surfaces a transient WCL outage as an err instead of a silent empty bench', async () => {
     const result = await serviceWith({
       getRankings: async () => { throw new HttpErrorResponse({ status: SERVER_UNREACHABLE_STATUS }); },
     }).getBench(SPEC, ENCOUNTER_ID);
-    expect(result).toEqual(err(transient('WCL is unreachable right now.')));
+    expect(result).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('surfaces an unexpected WCL failure as a permanent err tagged for repro', async () => {

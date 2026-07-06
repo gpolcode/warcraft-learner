@@ -5,7 +5,7 @@ import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation, quantile } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
@@ -321,12 +321,12 @@ export class BurstTransformService implements DataSource<BurstBench> {
     const rulebook = await this.dataFiles.getRulebook(spec);
     if (!rulebook.ok) return rulebook;
     const cooldowns = rulebook.value.major_cooldowns ?? [];
-    if (!cooldowns.length) return err(missing('Not yet ingested.'));
+    if (!cooldowns.length) return missing('Not yet ingested.');
     const defensives = rulebook.value.defensives ?? [];
 
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-      if (!rankings.length) return err(missing('Not yet ingested.'));
+      if (!rankings.length) return missing('Not yet ingested.');
 
       const allWindows: ParseWindow[] = [];
       let sampleCount = 0;
@@ -341,7 +341,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
         sampleCount += 1;
         if (sampleCount >= TOP_PARSE_COUNT) break;
       }
-      if (!sampleCount) return err(missing('Not yet ingested.'));
+      if (!sampleCount) return missing('Not yet ingested.');
 
       const windows = clusterParseWindows(allWindows, sampleCount);
       const cd_spell_ids = cdSpellIds(cooldowns, defensives);
@@ -362,7 +362,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
       });
     } catch (cause) {
       logWarn('BurstTransformService.getBench', cause);
-      return err(toLoadError(cause, 'burst.bench'));
+      return toLoadError(cause, 'burst.bench');
     }
   }
 

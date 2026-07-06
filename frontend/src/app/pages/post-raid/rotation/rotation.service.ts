@@ -8,7 +8,7 @@ import {
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, permanent } from '../../../core/result';
+import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
@@ -546,7 +546,7 @@ export class RotationFeatureService {
     try {
       const report = await this.wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
-      if (!fight) return err(permanent('Fight not found in this report.', 'rotation.player-view'));
+      if (!fight) return permanent('Fight not found in this report.', 'rotation.player-view');
 
       const [casts, buffs] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
@@ -567,7 +567,7 @@ export class RotationFeatureService {
       return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
     } catch (cause) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
-      return err(toLoadError(cause, 'rotation.player-view'));
+      return toLoadError(cause, 'rotation.player-view');
     }
   }
 

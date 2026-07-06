@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclTransportError } from '../../../core/services/wcl-transport';
-import { Result, LoadError, ok, err, missing, transient } from '../../../core/result';
+import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition } from '../../../core/models/rulebook.models';
@@ -528,16 +528,16 @@ function withSource(bench: Result<RotationBench, LoadError>, wcl: unknown = WORK
 describe('RotationFeatureService', () => {
   it('surfaces a missing bench so the offensives waiting state shows', async () => {
     // A working WCL fake proves the missing comes from the bench read, not a player-log failure.
-    const service = withSource(err(missing('Not yet ingested.')));
+    const service = withSource(missing('Not yet ingested.'));
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(result).toEqual(err(missing('Not yet ingested.')));
+    expect(result).toEqual(missing('Not yet ingested.'));
   });
 
   it('surfaces a WCL failure as a transient error instead of a silent empty view', async () => {
     const failingWcl = { getReport: async () => { throw new WclTransportError('WCL down', WCL_UNAVAILABLE_STATUS); } };
     const service = withSource(ok(bench()), failingWcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(result).toEqual(err(transient('WCL is unreachable right now.')));
+    expect(result).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('evaluates the rotation rules baked into the bench', async () => {
@@ -586,7 +586,7 @@ describe('RotationFeatureService', () => {
   });
 
   it('marks the pre-fight plan unavailable when the bench is absent', async () => {
-    const service = withSource(err(missing('Not yet ingested.')));
+    const service = withSource(missing('Not yet ingested.'));
     const view = await service.loadPlanView('SubtletyRogue', 1);
     expect(view).toEqual({ available: false, rows: [] });
   });

@@ -23,20 +23,20 @@ export function ok<T>(value: T): Result<T, never> {
   return { ok: true, value };
 }
 
-export function err<E>(error: E): Result<never, E> {
+function err<E>(error: E): Result<never, E> {
   return { ok: false, error };
 }
 
-export function missing(message: string): LoadError {
-  return { kind: 'missing', message };
+export function missing(message: string): Result<never, LoadError> {
+  return err({ kind: 'missing', message });
 }
 
-export function transient(message: string): LoadError {
-  return { kind: 'transient', message };
+export function transient(message: string): Result<never, LoadError> {
+  return err({ kind: 'transient', message });
 }
 
-export function permanent(message: string, id: string, context?: unknown): LoadError {
-  return { kind: 'permanent', message, id, context };
+export function permanent(message: string, id: string, context?: unknown): Result<never, LoadError> {
+  return err({ kind: 'permanent', message, id, context });
 }
 
 export function isOk<T, E>(result: Result<T, E>): result is { ok: true; value: T } {

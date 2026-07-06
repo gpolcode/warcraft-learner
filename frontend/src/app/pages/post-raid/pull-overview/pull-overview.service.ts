@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, permanent } from '../../../core/result';
+import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 
 /**
@@ -93,7 +93,7 @@ export function dpsFromTable(
   blob: WclTableBlob | null, playerId: number, durationS: number,
 ): Result<number, LoadError> {
   if (durationS <= 0) return ok(0);
-  if (!blob) return err(permanent('Damage table missing for this pull.', 'pull-overview.damage-table'));
+  if (!blob) return permanent('Damage table missing for this pull.', 'pull-overview.damage-table');
   const entry = tableEntries(blob).find(row => row.id === playerId);
   return ok(entry ? entry.total / durationS : 0);
 }
@@ -192,7 +192,7 @@ export class PullOverviewFeatureService {
       });
     } catch (cause) {
       logWarn('PullOverviewFeatureService.loadView', cause);
-      return err(toLoadError(cause, 'pull-overview.view'));
+      return toLoadError(cause, 'pull-overview.view');
     }
   }
 }

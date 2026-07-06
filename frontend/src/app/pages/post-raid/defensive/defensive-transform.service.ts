@@ -12,7 +12,7 @@ import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow, TopDefensiveSummary } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark, CdHoldTargets } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
@@ -422,11 +422,11 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const rulebookResult = await this.dataFiles.getRulebook(spec);
     if (!rulebookResult.ok) return rulebookResult;
     const defensives = rulebookResult.value.defensives ?? [];
-    if (!defensives.length) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
+    if (!defensives.length) return missing(NO_DEFENSIVE_BENCH_MESSAGE);
 
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-      if (!rankings.length) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
+      if (!rankings.length) return missing(NO_DEFENSIVE_BENCH_MESSAGE);
 
       const allWindows: ParseDefWindow[] = [];
       const perParseSummaries: ParseDefensiveSummary[][] = [];
@@ -442,7 +442,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
         sampleCount += 1;
         if (sampleCount >= TOP_PARSE_COUNT) break;
       }
-      if (!sampleCount) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
+      if (!sampleCount) return missing(NO_DEFENSIVE_BENCH_MESSAGE);
 
       const defensiveWindows = clusterDefensiveWindows(allWindows, sampleCount);
       const { perDefensiveBenchmarks, topDefensivesSummary } = aggregateDefensiveBenchmarks(perParseSummaries, defensives);
@@ -467,7 +467,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       });
     } catch (cause) {
       logWarn('DefensiveTransformService.getBench', cause);
-      return err(toLoadError(cause, 'defensive.bench'));
+      return toLoadError(cause, 'defensive.bench');
     }
   }
 

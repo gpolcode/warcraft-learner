@@ -14,7 +14,7 @@ import {
 } from './defensive.service';
 import { applyBuff, removeBuff, damageTaken, cast } from '../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
-import { Result, LoadError, ok, err, missing, transient } from '../../../core/result';
+import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 
 const CLOAK_META = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5, usage_rule: 'Use on big hits', talent_gated: false };
 
@@ -413,9 +413,9 @@ function serviceWith(bench: Result<DefensiveBench, LoadError>, wcl: Record<strin
 
 describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
   it('propagates a non-ok bench unchanged (missing drives the waiting state)', async () => {
-    const service = serviceWith(err(missing('Not yet ingested.')));
+    const service = serviceWith(missing('Not yet ingested.'));
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
-    expect(result).toEqual(err(missing('Not yet ingested.')));
+    expect(result).toEqual(missing('Not yet ingested.'));
   });
 
   it('computes player findings + windows from the player log', async () => {
@@ -471,7 +471,7 @@ describe('DefensiveFeatureService.loadPlan (pre-fight)', () => {
   });
 
   it('is unavailable with empty rows when the bench is not ok', async () => {
-    const service = serviceWith(err(transient('WCL is unreachable right now.')));
+    const service = serviceWith(transient('WCL is unreachable right now.'));
     expect(await service.loadPlan('SubtletyRogue', 1)).toEqual({ available: false, rows: [] });
   });
 });

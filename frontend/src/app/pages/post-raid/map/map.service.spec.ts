@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WclEvent, WclFight } from '../../../core/models/wcl.models';
 import { EncounterPositions } from '../../../core/models/positioning.models';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { Result, LoadError, ok, err, missing, transient } from '../../../core/result';
+import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import {
@@ -161,7 +161,7 @@ describe('MapFeatureService', () => {
   });
 
   it('is not ready and stays error-free when the bench is missing', async () => {
-    const { service } = withResult(err(missing('Not yet ingested.')));
+    const { service } = withResult(missing('Not yet ingested.'));
     await service.loadBench('SubtletyRogue', 3144);
     expect(service.positions()).toBeNull();
     expect(service.live()).toBeNull();
@@ -172,12 +172,12 @@ describe('MapFeatureService', () => {
 
   it('surfaces a transient bench failure as an error rather than a silent empty map', async () => {
     const outage = transient('WCL is unreachable right now.');
-    const { service } = withResult(err(outage));
+    const { service } = withResult(outage);
     const result = await service.loadBench('SubtletyRogue', 3144);
-    expect(result).toEqual(err(outage));
+    expect(result).toEqual(outage);
     expect(service.positions()).toBeNull();
     expect(service.ready()).toBe(false);
-    expect(service.error()).toEqual(outage);
+    if (!outage.ok) expect(service.error()).toEqual(outage.error);
   });
 
   it('openAt sets the panel state and opens it', () => {

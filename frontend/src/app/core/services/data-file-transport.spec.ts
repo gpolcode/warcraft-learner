@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DataFileTransport, HttpDataFileTransport } from './data-file-transport';
-import { ok, err, missing, transient } from '../result';
+import { ok, missing, transient } from '../result';
 
 const REL_PATH = 'SubtletyRogue/burst/3176.json';
 const SLICE_BODY = { encounter_id: 3176, sample_count: 5 };
@@ -46,7 +46,7 @@ describe('HttpDataFileTransport', () => {
     expect(await pending).toEqual(ok(SLICE_BODY));
   });
 
-  it('resolves err(missing) and logs a warning when the file is missing (404)', async () => {
+  it('resolves missing and logs a warning when the file is missing (404)', async () => {
     const warn = spyOnWarn();
     const { transport, httpMock } = setup();
 
@@ -55,11 +55,11 @@ describe('HttpDataFileTransport', () => {
       .expectOne(request => request.url.endsWith(`data/specs/${REL_PATH}`))
       .flush('Not found', { status: NOT_FOUND_STATUS, statusText: 'Not Found' });
 
-    expect(await pending).toEqual(err(missing(MISSING_MESSAGE)));
+    expect(await pending).toEqual(missing(MISSING_MESSAGE));
     expect(warn).toHaveBeenCalled();
   });
 
-  it('resolves err(transient) and logs a warning when the read fails (500), distinct from missing', async () => {
+  it('resolves transient and logs a warning when the read fails (500), distinct from missing', async () => {
     const warn = spyOnWarn();
     const { transport, httpMock } = setup();
 
@@ -69,7 +69,7 @@ describe('HttpDataFileTransport', () => {
       .flush('Server error', { status: SERVER_ERROR_STATUS, statusText: 'Internal Server Error' });
 
     const result = await pending;
-    expect(result).toEqual(err(transient(TRANSIENT_MESSAGE)));
+    expect(result).toEqual(transient(TRANSIENT_MESSAGE));
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe('transient');
     expect(warn).toHaveBeenCalled();

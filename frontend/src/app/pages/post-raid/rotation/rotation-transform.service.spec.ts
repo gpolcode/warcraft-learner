@@ -11,7 +11,7 @@ import {
 import { SHADOW_BLADES, BLOODLUST, CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
-import { ok, err, missing } from '../../../core/result';
+import { ok, missing } from '../../../core/result';
 
 describe('rotationCdSpellIds', () => {
   it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
@@ -293,6 +293,6 @@ describe('RotationTransformService (live, in-browser)', () => {
       ],
     });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(err(missing('No rulebook cooldowns for this spec.')));
+      .toEqual(missing('No rulebook cooldowns for this spec.'));
   });
 });

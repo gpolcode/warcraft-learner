@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { DataFileTransport } from '../../src/app/core/services/data-file-transport.ts';
-import { Result, LoadError, ok, err, missing, permanent } from '../../src/app/core/result.ts';
+import { Result, LoadError, ok, missing, permanent } from '../../src/app/core/result.ts';
 
 export class FsDataFileTransport implements DataFileTransport {
   constructor(private readonly root: string) {}
@@ -26,8 +26,8 @@ export class FsDataFileTransport implements DataFileTransport {
       return ok(JSON.parse(await fs.promises.readFile(this.resolve(relPath), 'utf8')) as T);
     } catch (cause) {
       // An absent file is the un-ingested `missing` case, mirroring the browser 404.
-      if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return err(missing('Not yet ingested.'));
-      return err(permanent('Data file could not be read.', `data-file.${relPath}`, cause));
+      if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return missing('Not yet ingested.');
+      return permanent('Data file could not be read.', `data-file.${relPath}`, cause);
     }
   }
 

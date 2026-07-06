@@ -9,7 +9,7 @@ import { mean, median, deviation, quantile } from 'd3-array';
 import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
-import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { RotationBench } from './rotation-data-source';
 
@@ -266,13 +266,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
     if (!rulebookResult.ok) return rulebookResult;
     const rulebook = rulebookResult.value;
     const cooldowns = rulebook.major_cooldowns ?? [];
-    if (!cooldowns.length) return err(missing('No rulebook cooldowns for this spec.'));
+    if (!cooldowns.length) return missing('No rulebook cooldowns for this spec.');
     const defensives = rulebook.defensives ?? [];
     const rules = rulebook.rules ?? [];
 
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-      if (!rankings.length) return err(missing('No top parses for this encounter.'));
+      if (!rankings.length) return missing('No top parses for this encounter.');
 
       const perParse: CdSummary[][] = [];
       const gapLists: number[][] = [];
@@ -287,7 +287,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         encounterName ||= parse.encounterName;
         if (perParse.length >= TOP_PARSE_COUNT) break;
       }
-      if (!perParse.length) return err(missing('No usable top parses for this encounter.'));
+      if (!perParse.length) return missing('No usable top parses for this encounter.');
 
       const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
 
@@ -310,7 +310,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       });
     } catch (cause) {
       logWarn(`RotationTransformService.getBench ${spec}:${encounterId}`, cause);
-      return err(toLoadError(cause, 'rotation.bench'));
+      return toLoadError(cause, 'rotation.bench');
     }
   }
 

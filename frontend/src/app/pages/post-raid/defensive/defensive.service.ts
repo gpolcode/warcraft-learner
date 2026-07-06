@@ -8,7 +8,7 @@ import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
 import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err } from '../../../core/result';
+import { Result, LoadError, ok } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import {
   benchExpectedUses, fmtClock, isOutlierAbove, sortBySeverity,
@@ -464,7 +464,7 @@ export class DefensiveFeatureService {
       return ok({ findings, spellIdsByName: bench.value.cd_spell_ids, iconByName, windows, anchors, clipAnchors });
     } catch (cause) {
       logWarn(`DefensiveFeatureService.loadAnalysisView ${reportCode}:${fightId}`, cause);
-      return err(toLoadError(cause, 'defensive.player-view'));
+      return toLoadError(cause, 'defensive.player-view');
     }
   }
 

@@ -3,12 +3,12 @@ import { InjectionToken, Injector } from '@angular/core';
 import { DataSource } from './data-source';
 import { EmptyDataSource } from './empty-data-source';
 import { provideEmptyDataSource } from './provide-data-source';
-import { err, missing } from '../result';
+import { missing } from '../result';
 
 describe('EmptyDataSource', () => {
-  it('always resolves err(missing) (a fresh, un-ingested tier)', async () => {
+  it('always resolves missing (a fresh, un-ingested tier)', async () => {
     const source = new EmptyDataSource<{ x: number }>();
-    expect(await source.getBench()).toEqual(err(missing('Not yet ingested.')));
+    expect(await source.getBench()).toEqual(missing('Not yet ingested.'));
   });
 });
 

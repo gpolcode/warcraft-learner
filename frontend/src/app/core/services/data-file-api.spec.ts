@@ -4,7 +4,7 @@ import { DataFileApiService } from './data-file-api';
 import { DATA_FILE_TRANSPORT, DataFileTransport } from './data-file-transport';
 import { EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { SpecMeta } from '../models/spec-meta.models';
-import { Result, LoadError, ok, err, missing, transient } from '../result';
+import { Result, LoadError, ok, missing, transient } from '../result';
 
 // These tests pin the exact relative paths the service owns: a drift silently 404s every
 // runtime read or writes ingested data to the wrong place.
@@ -69,9 +69,9 @@ describe('DataFileApiService reads', () => {
   });
 
   it('propagates a transient slice read failure unchanged', async () => {
-    const transport = new RecordingTransport(err(transient('WCL is unreachable right now.')));
+    const transport = new RecordingTransport(transient('WCL is unreachable right now.'));
     expect(await withTransport(transport).getSlice(SPEC, ENCOUNTER_ID, SLICE))
-      .toEqual(err(transient('WCL is unreachable right now.')));
+      .toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('reads a rulebook at {spec}/rulebook.json', async () => {
@@ -92,11 +92,11 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(present).getSpecs()).toEqual(ok(specs));
     expect(present.reads).toEqual(['index.json']);
 
-    const missingManifest = new RecordingTransport(err(missing('Not yet ingested.')));
+    const missingManifest = new RecordingTransport(missing('Not yet ingested.'));
     expect(await withTransport(missingManifest).getSpecs()).toEqual(ok([]));
 
-    const outage = new RecordingTransport(err(transient('WCL is unreachable right now.')));
-    expect(await withTransport(outage).getSpecs()).toEqual(err(transient('WCL is unreachable right now.')));
+    const outage = new RecordingTransport(transient('WCL is unreachable right now.'));
+    expect(await withTransport(outage).getSpecs()).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('reads a spec encounter index at {spec}/encounters.json, folding a missing file to ok([])', async () => {
@@ -105,11 +105,11 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(present).getEncounters(SPEC)).toEqual(ok(encounters));
     expect(present.reads).toEqual(['SubtletyRogue/encounters.json']);
 
-    const missingIndex = new RecordingTransport(err(missing('Not yet ingested.')));
+    const missingIndex = new RecordingTransport(missing('Not yet ingested.'));
     expect(await withTransport(missingIndex).getEncounters(SPEC)).toEqual(ok([]));
 
-    const outage = new RecordingTransport(err(transient('WCL is unreachable right now.')));
-    expect(await withTransport(outage).getEncounters(SPEC)).toEqual(err(transient('WCL is unreachable right now.')));
+    const outage = new RecordingTransport(transient('WCL is unreachable right now.'));
+    expect(await withTransport(outage).getEncounters(SPEC)).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('reads the spec universe at spec-meta.json, returning the bare array and folding any failure to []', async () => {
@@ -127,7 +127,7 @@ describe('DataFileApiService reads', () => {
     expect(present.reads).toEqual(['spec-meta.json']);
 
     // A bootstrap read has no card to surface an error on, so any failure degrades to [].
-    const outage = new RecordingTransport(err(transient('WCL is unreachable right now.')));
+    const outage = new RecordingTransport(transient('WCL is unreachable right now.'));
     expect(await withTransport(outage).getSpecMeta()).toEqual([]);
   });
 });

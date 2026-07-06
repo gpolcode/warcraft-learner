@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { LoadError, missing, transient, permanent } from './result';
+import { Result, LoadError, missing, transient, permanent } from './result';
 import { WclTransportError } from './services/wcl-transport';
 
 // The interceptor already retried these once, so reaching here means the retry did not
@@ -13,7 +13,7 @@ const HTTP_NOT_FOUND = 404;
  * re-derive the mapping. Only for the catch site: a pure-core semantic failure calls the
  * `missing`/`permanent` builders directly.
  */
-export function toLoadError(cause: unknown, id: string): LoadError {
+export function toLoadError(cause: unknown, id: string): Result<never, LoadError> {
   const status =
     cause instanceof HttpErrorResponse ? cause.status
     : cause instanceof WclTransportError ? cause.status

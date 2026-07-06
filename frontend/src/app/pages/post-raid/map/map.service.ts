@@ -242,10 +242,10 @@ export class MapFeatureService {
       this.overlayLoaded = true;
     } catch (cause) {
       // Surface a failed overlay read instead of a silently empty map.
-      const error = toLoadError(cause, 'map.overlay');
+      const result = toLoadError(cause, 'map.overlay');
       logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, cause);
       this.live.set(null);
-      this.error.set(error.kind === 'missing' ? null : error);
+      this.error.set(!result.ok && result.error.kind !== 'missing' ? result.error : null);
     } finally {
       this.overlayLoading.set(false);
     }

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { Result, LoadError, ok, err, missing, transient } from '../../../core/result';
+import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import {
@@ -167,8 +167,8 @@ const HTTP_SERVICE_UNAVAILABLE = 503;
 
 describe('BurstFeatureService', () => {
   it('propagates the data-source error when the bench read fails', async () => {
-    const result = await withBench(err(missing('Not yet ingested.'))).loadBenchView('SubtletyRogue', 1);
-    expect(result).toEqual(err(missing('Not yet ingested.')));
+    const result = await withBench(missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
+    expect(result).toEqual(missing('Not yet ingested.'));
   });
 
   it('returns an ok bench view when the bench file exists', async () => {
@@ -200,7 +200,7 @@ describe('BurstFeatureService', () => {
   it('surfaces a WCL failure in the player view as a transient error (no silent bench-only fallback)', async () => {
     const failingWcl = { getReport: async () => { throw new HttpErrorResponse({ status: HTTP_SERVICE_UNAVAILABLE }); } };
     const result = await withBench(ok(benchFixture), failingWcl).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
-    expect(result).toEqual(err(transient('WCL is unreachable right now.')));
+    expect(result).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('returns an ok informational view when the selected fight is not in the report (live sync)', async () => {

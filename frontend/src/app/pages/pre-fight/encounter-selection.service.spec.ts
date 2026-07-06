@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from '../../core/services/data-file-api';
 import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
-import { Result, LoadError, ok, err, transient } from '../../core/result';
+import { Result, LoadError, ok, transient } from '../../core/result';
 import { EncounterSelectionService, benchedEncounters } from './encounter-selection.service';
 
 const SPEC = 'SubtletyRogue';
@@ -60,8 +60,8 @@ describe('EncounterSelectionService', () => {
   });
 
   it('propagates a read failure for the spec manifest', async () => {
-    const { service } = withFiles(err(TRANSIENT_ERROR), ok([]));
-    expect(await service.getSpecs()).toEqual(err(TRANSIENT_ERROR));
+    const { service } = withFiles(TRANSIENT_ERROR, ok([]));
+    expect(await service.getSpecs()).toEqual(TRANSIENT_ERROR);
   });
 
   it('returns only the benched encounters for a spec', async () => {
@@ -71,7 +71,7 @@ describe('EncounterSelectionService', () => {
   });
 
   it('propagates a read failure for a spec encounter index', async () => {
-    const { service } = withFiles(ok(SPECS), err(TRANSIENT_ERROR));
-    expect(await service.getEncounters(SPEC)).toEqual(err(TRANSIENT_ERROR));
+    const { service } = withFiles(ok(SPECS), TRANSIENT_ERROR);
+    expect(await service.getEncounters(SPEC)).toEqual(TRANSIENT_ERROR);
   });
 });

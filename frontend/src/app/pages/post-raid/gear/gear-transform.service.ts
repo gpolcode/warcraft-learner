@@ -9,7 +9,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { CharacterGear, ParseRanking } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { TRINKET_SLOTS, decodeHtmlEntities, extractGear, selectCombatantInfo, talentKeyFromTree } from './gear-extract';
 import { toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
@@ -178,7 +178,7 @@ export class GearTransformService implements DataSource<GearBench> {
   async getBench(spec: string, encounterId: number): Promise<Result<GearBench, LoadError>> {
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-      if (!rankings.length) return err(missing('Not yet ingested.'));
+      if (!rankings.length) return missing('Not yet ingested.');
 
       const parses: ParseGear[] = [];
       let encounterName = '';
@@ -189,7 +189,7 @@ export class GearTransformService implements DataSource<GearBench> {
         encounterName ||= fetched.encounterName;
         if (parses.length >= TOP_PARSE_COUNT) break;
       }
-      if (!parses.length) return err(missing('Not yet ingested.'));
+      if (!parses.length) return missing('Not yet ingested.');
 
       const stats = aggregateParseGear(parses);
       return ok({
@@ -203,7 +203,7 @@ export class GearTransformService implements DataSource<GearBench> {
       });
     } catch (cause) {
       logWarn(`GearTransformService bench ${spec}:${encounterId}`, cause);
-      return err(toLoadError(cause, 'gear.bench'));
+      return toLoadError(cause, 'gear.bench');
     }
   }
 

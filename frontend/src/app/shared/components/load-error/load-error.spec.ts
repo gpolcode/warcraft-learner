@@ -2,14 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LoadErrorComponent, RenderableLoadError } from './load-error';
-import { transient, permanent } from '../../../core/result';
 
 const TRANSIENT_MESSAGE = 'WCL is unreachable right now.';
 const PERMANENT_MESSAGE = 'Analysis data could not be loaded.';
 const PERMANENT_ID = 'gear.combatant-info';
 
-const TRANSIENT_ERROR = transient(TRANSIENT_MESSAGE) as RenderableLoadError;
-const PERMANENT_ERROR = permanent(PERMANENT_MESSAGE, PERMANENT_ID) as RenderableLoadError;
+const TRANSIENT_ERROR: RenderableLoadError = { kind: 'transient', message: TRANSIENT_MESSAGE };
+const PERMANENT_ERROR: RenderableLoadError = { kind: 'permanent', message: PERMANENT_MESSAGE, id: PERMANENT_ID };
 
 const TRANSIENT_ICON = 'cloud_off';
 const PERMANENT_ICON = 'error';

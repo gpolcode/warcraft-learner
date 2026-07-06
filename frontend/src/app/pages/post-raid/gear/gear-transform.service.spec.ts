@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
-import { err, missing } from '../../../core/result';
+import { missing } from '../../../core/result';
 import {
   GearTransformService, toParseGear, aggregateParseGear, ParseGear,
   aggregateTalents, aggregateTrinkets, aggregateEnchants, talentKeyFromTree,
@@ -231,6 +231,6 @@ describe('GearTransformService (live, in-browser)', () => {
       ],
     });
     expect(await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(err(missing('Not yet ingested.')));
+      .toEqual(missing('Not yet ingested.'));
   });
 });

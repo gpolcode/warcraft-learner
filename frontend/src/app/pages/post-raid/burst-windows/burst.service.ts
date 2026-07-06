@@ -5,7 +5,7 @@ import { WclEvent } from '../../../core/models/wcl.models';
 import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err } from '../../../core/result';
+import { Result, LoadError, ok } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { windowSpells } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
@@ -202,7 +202,7 @@ export class BurstFeatureService {
       return ok(buildBurstView(bench.value.windows, playerWindows, fightDurationS, bench.value.cd_spell_ids, bench.value.ability_icons));
     } catch (cause) {
       logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
-      return err(toLoadError(cause, 'burst.player-view'));
+      return toLoadError(cause, 'burst.player-view');
     }
   }
 

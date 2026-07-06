@@ -33,7 +33,7 @@ export class HttpDataFileTransport implements DataFileTransport {
       return ok(await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`)));
     } catch (cause) {
       logWarn(`DataFileTransport.readJson ${relPath}`, cause);
-      return { ok: false, error: toLoadError(cause, `data-file.${relPath}`) };
+      return toLoadError(cause, `data-file.${relPath}`);
     }
   }
 

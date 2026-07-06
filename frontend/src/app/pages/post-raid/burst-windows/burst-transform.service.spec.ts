@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { ok, err, missing } from '../../../core/result';
+import { ok, missing } from '../../../core/result';
 import {
   BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, cdSpellIds, ParseWindow,
   bucketDamagePerBin, forwardRollingDamage, detectDenseRuns, trimRunToDamage,
@@ -437,7 +437,7 @@ describe('BurstTransformService (live, in-browser)', () => {
     if (bench.ok) expect(bench.value.sample_count).toBe(10);
   });
 
-  it('returns err(missing) when the spec rulebook has no cooldowns', async () => {
+  it('returns missing when the spec rulebook has no cooldowns', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
@@ -448,20 +448,20 @@ describe('BurstTransformService (live, in-browser)', () => {
       ],
     });
     expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(err(missing('Not yet ingested.')));
+      .toEqual(missing('Not yet ingested.'));
   });
 
-  it('propagates a missing rulebook read as err(missing)', async () => {
+  it('propagates a missing rulebook read as missing', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
         {
           provide: DataFileApiService,
-          useValue: { getRulebook: async () => err(missing('Not yet ingested.')) } as unknown as DataFileApiService,
+          useValue: { getRulebook: async () => missing('Not yet ingested.') } as unknown as DataFileApiService,
         },
       ],
     });
     expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(err(missing('Not yet ingested.')));
+      .toEqual(missing('Not yet ingested.'));
   });
 });

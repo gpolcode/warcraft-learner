@@ -15,7 +15,7 @@ import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent, WclFight, ParseRanking } from '../../../core/models/wcl.models';
 import { ParsePositions, PosRow } from '../../../core/models/positioning.models';
 import { logWarn } from '../../../core/log';
-import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
@@ -191,7 +191,7 @@ export class MapTransformService implements DataSource<MapData> {
   async getBench(spec: string, encounterId: number): Promise<Result<MapData, LoadError>> {
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-      if (!rankings.length) return err(missing('No top parses for this encounter.'));
+      if (!rankings.length) return missing('No top parses for this encounter.');
 
       const parses: ParsePositions[] = [];
       let encounterName = '';
@@ -202,7 +202,7 @@ export class MapTransformService implements DataSource<MapData> {
         encounterName ||= parse.encounterName;
         if (parses.length >= TOP_PARSE_COUNT) break;
       }
-      if (!parses.length) return err(missing('No fetchable top parses for this encounter.'));
+      if (!parses.length) return missing('No fetchable top parses for this encounter.');
 
       return ok({
         spec,
@@ -214,7 +214,7 @@ export class MapTransformService implements DataSource<MapData> {
       });
     } catch (cause) {
       logWarn('MapTransformService.getBench', cause);
-      return err(toLoadError(cause, 'map.bench'));
+      return toLoadError(cause, 'map.bench');
     }
   }
 

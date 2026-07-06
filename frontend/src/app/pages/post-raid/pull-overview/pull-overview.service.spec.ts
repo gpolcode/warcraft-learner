@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../core/models/wcl.models';
-import { ok, err, permanent } from '../../../core/result';
+import { ok, permanent } from '../../../core/result';
 import {
   PullOverviewFeatureService,
   dpsFromTable, abilityNameMap, lethalHitAmount, buildDeathRows, wipeTimeS,
@@ -79,7 +79,7 @@ describe('dpsFromTable', () => {
   });
 
   it('reports a null blob as a failed load, so the player never shows a bogus measured 0', () => {
-    expect(dpsFromTable(null, PLAYER_ID, FIGHT_DURATION_S)).toEqual(err(MISSING_TABLE_ERROR));
+    expect(dpsFromTable(null, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
   });
 
   it('reports a real 0 for a player absent from a valid table (a healer with no damage entry)', () => {
@@ -255,6 +255,6 @@ describe('PullOverviewFeatureService.loadView', () => {
     });
     const result = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
 
-    expect(result).toEqual(err(MISSING_TABLE_ERROR));
+    expect(result).toEqual(MISSING_TABLE_ERROR);
   });
 });

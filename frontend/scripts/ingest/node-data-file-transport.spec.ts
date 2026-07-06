@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { FsDataFileTransport } from './node-data-file-transport.ts';
-import { ok, err, missing } from '../../src/app/core/result.ts';
+import { ok, missing } from '../../src/app/core/result.ts';
 
 // A relative path that climbs out of the data root: the exact shape the containment check must reject.
 const TRAVERSAL_PATH = '../escapes.json';
@@ -32,15 +32,15 @@ describe('FsDataFileTransport', () => {
     expect(await transport.readJson(SAFE_REL_PATH)).toEqual(ok(PAYLOAD));
   });
 
-  it('resolves err(missing) for a missing file (ENOENT-tolerant read)', async () => {
-    expect(await transport.readJson(MISSING_REL_PATH)).toEqual(err(missing('Not yet ingested.')));
+  it('resolves missing for a missing file (ENOENT-tolerant read)', async () => {
+    expect(await transport.readJson(MISSING_REL_PATH)).toEqual(missing('Not yet ingested.'));
   });
 
   it('returns an empty list for a missing directory (ENOENT-tolerant list)', async () => {
     expect(await transport.list(MISSING_DIR)).toEqual([]);
   });
 
-  it('contains a read that escapes the data root with `..`, resolving err(permanent)', async () => {
+  it('contains a read that escapes the data root with `..`, resolving permanent', async () => {
     const result = await transport.readJson(TRAVERSAL_PATH);
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -49,7 +49,7 @@ describe('FsDataFileTransport', () => {
     }
   });
 
-  it('contains a nested `..` read sequence that resolves outside the root, resolving err(permanent)', async () => {
+  it('contains a nested `..` read sequence that resolves outside the root, resolving permanent', async () => {
     const result = await transport.readJson(NESTED_TRAVERSAL_PATH);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe('permanent');
