@@ -36,6 +36,9 @@ import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { SelectionStore } from '../../core/services/selection-store';
 import { logWarn } from '../../core/log';
+import { Result, LoadError, permanent } from '../../core/result';
+import { toLoadError } from '../../core/http-load-error';
+import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 
 /** Pull a report code out of a WCL report URL, or pass through a bare code. */
 export function extractCode(url: string): string {
@@ -171,7 +174,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinnerComponent, BenchEmptyBannerComponent, ArtIconComponent, PullOverviewComponent, RotationComponent, BurstWindowsComponent,
+    LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent, PullOverviewComponent, RotationComponent, BurstWindowsComponent,
     DefensiveComponent, GearComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
@@ -227,7 +230,13 @@ export class PostRaidComponent {
   protected readonly gearAvailable = signal(false);
   protected readonly benchAvailable = computed(() =>
     this.rotationAvailable() || this.burstAvailable() || this.defensiveAvailable() || this.gearAvailable());
-  protected readonly error = signal('');
+
+  // The shell surfaces failures through the same taxonomy the cards use, not a raw string.
+  // `loadError` holds a transient/permanent report/spec/poll failure and renders through the
+  // shared `wl-load-state` panel (icon + retry guidance); `notice` is a plain informational
+  // line for the states the taxonomy does not cover (an invalid code, or a zero-pull report).
+  protected readonly loadError = signal<RenderableLoadError | null>(null);
+  protected readonly notice = signal('');
 
   protected readonly fights = signal<WclFight[]>([]);
   protected readonly players = signal<WclPlayer[]>([]);
@@ -337,13 +346,26 @@ export class PostRaidComponent {
     setTimeout(() => void this.loadReport());
   }
 
+  /**
+   * Route a caught load failure into the shell's banners: a transient/permanent goes to the
+   * taxonomy panel with retry guidance, a `missing` collapses to the plain informational
+   * notice. `missing` is not expected for the report/spec/poll reads, so that fold is
+   * defensive - it keeps the shell exhaustive over the taxonomy without a raw string leak.
+   */
+  private _showError(result: Result<never, LoadError>): void {
+    if (result.ok) return; // toLoadError / permanent never return ok; this narrows the union
+    if (result.error.kind === 'missing') this.notice.set(result.error.message);
+    else this.loadError.set(result.error);
+  }
+
   protected async loadReport(): Promise<void> {
-    this.error.set('');
+    this.loadError.set(null);
+    this.notice.set('');
     const code = extractCode(this.reportControl.value.trim());
     // Guard before any network call: an invalid code never reaches WCL. The Analyze button
     // is already disabled while invalid; this also covers the Enter-key path.
     if (!isValidReportCode(code)) {
-      if (code) this.error.set('Enter a valid Warcraft Logs report URL or 16-character report code.');
+      if (code) this.notice.set('Enter a valid Warcraft Logs report URL or 16-character report code.');
       return;
     }
     // Setting reportCode to '' stops any active poll before the fetch completes.
@@ -364,6 +386,9 @@ export class PostRaidComponent {
 
       const lastFight = this.fights()[this.fights().length - 1];
       this.fightControl.setValue(lastFight?.id ?? null);
+      // An all-trash log yields no pulls: the fight dropdown stays hidden and no card renders,
+      // so say so plainly instead of leaving the page looking like the load did nothing.
+      if (!this.fights().length) this.notice.set('No boss pulls found in this report.');
       this._applyAutoPlayer();
       // Set reportCode last - this activates the polling pipeline if liveSync is on.
       this.reportCode.set(code);
@@ -371,7 +396,7 @@ export class PostRaidComponent {
       await this.resolveSelection();
     } catch (err) {
       logWarn('PostRaidComponent.loadReport', err);
-      this.error.set(err instanceof Error ? err.message : 'Failed to load report.');
+      this._showError(toLoadError(err, 'post-raid.load-report'));
     } finally {
       this.loadingReport.set(false);
     }
@@ -386,7 +411,7 @@ export class PostRaidComponent {
   }
 
   private async _pollOnce(): Promise<void> {
-    this.error.set('');
+    this.loadError.set(null);
     this.liveCapture.setStatus('Checking for new pulls…');
     try {
       const report = await this.wclApi.getReport(this.reportCode());
@@ -410,7 +435,10 @@ export class PostRaidComponent {
       this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} · ${latest.name}`);
     } catch (err) {
       logWarn('PostRaidComponent._pollOnce', err);
-      this.error.set(err instanceof Error ? err.message : 'Poll failed.');
+      this._showError(toLoadError(err, 'post-raid.poll'));
+      // The status was set to the in-flight "Checking..." above; clear that so the strip
+      // stops claiming a check is running, and tell the user the poll will retry.
+      this.liveCapture.setStatus('Live sync error, retrying on the next check.');
     }
   }
 
@@ -432,7 +460,7 @@ export class PostRaidComponent {
    * the cross-cutting work a shell legitimately owns (spec resolution + map prepare).
    */
   protected async resolveSelection(): Promise<void> {
-    this.error.set('');
+    this.loadError.set(null);
     const fightId = this.selectedFightId();
     const playerId = this.selectedPlayerId();
     this.spec.set('');
@@ -446,7 +474,9 @@ export class PostRaidComponent {
       const groups = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
       this.playerDetailGroups.set(groups);
       const spec = specOf(groups, playerId);
-      if (!spec) { this.error.set('Could not resolve the selected player\'s spec.'); return; }
+      // A 200 OK we cannot map to a spec is semantically unusable, not retriable: surface it
+      // as a permanent taxonomy failure rather than a bare string.
+      if (!spec) { this._showError(permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return; }
       this.spec.set(spec);
 
       // Mark every card busy before they mount/reload, so the spinner stays up continuously
@@ -465,7 +495,7 @@ export class PostRaidComponent {
       }
     } catch (err) {
       logWarn('PostRaidComponent.resolveSelection', err);
-      this.error.set(err instanceof Error ? err.message : 'Failed to resolve selection.');
+      this._showError(toLoadError(err, 'post-raid.resolve-selection'));
     } finally {
       this.loadingAnalysis.set(false);
     }
