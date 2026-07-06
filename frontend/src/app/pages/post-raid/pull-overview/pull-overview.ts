@@ -9,7 +9,7 @@ import { LatestLoad } from '../../../shared/latest-load';
 import { logWarn } from '../../../core/log';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../../shared/pipes/format-damage-pipe';
-import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
+import { BenchEmptyBannerComponent, RenderableLoadError } from '../../../shared/components/bench-empty-banner/bench-empty-banner';
 import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.service';
 
 /**
@@ -22,7 +22,7 @@ import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadErrorComponent],
+  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, BenchEmptyBannerComponent],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })

@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ReferenceSelector } from '../../../core/models/positioning.models';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
-import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
+import { BenchEmptyBannerComponent, RenderableLoadError } from '../../../shared/components/bench-empty-banner/bench-empty-banner';
 import { MapFeatureService } from './map.service';
 import {
   RelPos, ParseTimelines, buildParseTimelines, buildTrail, positionAt, toReferenceLocal,
@@ -29,7 +29,7 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadErrorComponent],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, BenchEmptyBannerComponent],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvasComponent {

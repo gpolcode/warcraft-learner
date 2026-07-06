@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
 import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
-import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
+import { BenchEmptyBannerComponent, RenderableLoadError } from '../../../shared/components/bench-empty-banner/bench-empty-banner';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
@@ -11,7 +11,7 @@ import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-burst-windows',
-  imports: [WindowComparisonComponent, WaitingPlaceholderComponent, LoadErrorComponent],
+  imports: [WindowComparisonComponent, WaitingPlaceholderComponent, BenchEmptyBannerComponent],
   templateUrl: './burst-windows.html',
 })
 export class BurstWindowsComponent {
