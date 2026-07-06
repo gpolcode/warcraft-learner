@@ -8,16 +8,6 @@ import { logWarn } from '../../../core/log';
 import { LatestLoad } from '../../../shared/latest-load';
 import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 
-/**
- * Burst card. A feature component: it injects exactly one service
- * (`BurstFeatureService`) and renders. Its bench windows come from the swappable
- * `BURST_DATA_SOURCE` (file in prod, live transform under the dev flag); the
- * player's window damage is computed by the service from the player's own log.
- *
- * Dual-mode: with a `report`/`fight`/`player` selection (post-raid) it compares the
- * player against the bench; with only `spec`/`encounterId` (pre-fight) it shows the
- * bench windows informationally. Opening the map is an output the page wires.
- */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-burst-windows',
@@ -46,7 +36,6 @@ export class BurstWindowsComponent {
   readonly availableChange = output<boolean>();
 
   protected readonly available = signal(true);
-  /** Set for a transient/permanent failure; `missing` stays null (waiting placeholder). */
   protected readonly error = signal<RenderableLoadError | null>(null);
   private readonly _windows = signal<ComparisonWindow[]>([]);
   private readonly _anchors = signal<BurstMapAnchor[]>([]);
@@ -77,8 +66,6 @@ export class BurstWindowsComponent {
             this._clipAnchors.set(result.value.clipAnchors);
           } else {
             if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
-            // `missing` renders the waiting placeholder (page shows the bench-empty banner);
-            // `transient`/`permanent` render the wl-load-error leaf.
             this.error.set(result.error.kind === 'missing' ? null : result.error);
             this.available.set(false);
             this.availableChange.emit(false);

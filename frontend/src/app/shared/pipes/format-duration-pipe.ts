@@ -4,8 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FormatDurationPipe implements PipeTransform {
   transform(seconds: number | null | undefined): string {
     if (seconds == null) return '-';
-    // Durations here (fight times, gaps) are semantically non-negative; clamp a
-    // negative or non-finite input to zero so it renders as the zero duration.
+    // Fight times/gaps are non-negative; clamp a negative or non-finite input to the zero rendering.
     const safe = Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
     const m = Math.floor(safe / 60);
     const s = Math.floor(safe % 60);

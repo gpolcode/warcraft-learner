@@ -5,11 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { firstValueFrom } from 'rxjs';
 import { retryTransientInterceptor } from './retry-transient.interceptor';
 
-/**
- * The interceptor is the single transport-level retry point. It retries a request exactly
- * once and only for transient statuses; 401/403/404 pass straight through. The backoff is
- * a real RxJS timer, so the retry is driven by advancing fake timers.
- */
+// The backoff is a real RxJS timer, so the retry is driven by advancing fake timers.
 const URL = '/data/specs/index.json';
 const BODY = { ok: true };
 const BACKOFF_MS = 400;

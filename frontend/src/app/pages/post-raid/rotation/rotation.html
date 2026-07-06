@@ -5,7 +5,6 @@
     <!-- Offensive cooldowns are bench-driven, so the waiting state stands in until a bench exists. -->
     <wl-waiting-placeholder heading="Offensives" subtitle="Offensive cooldowns vs top parses."></wl-waiting-placeholder>
   } @else {
-    <!-- Rotation rules: rendered only when there is something to say. -->
     @if (ruleRows().length || ruleOnPlanChips().length) {
       <wl-finding-table
         heading="Rotation Rules"

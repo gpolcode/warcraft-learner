@@ -1,24 +1,3 @@
-/**
- * Rotation slice runtime shell + its pure analysis functions, colocated.
- *
- * `RotationFeatureService` is the imperative shell (each component injects only
- * it). It is dual-mode:
- *
- * - Post-raid (`loadPlayerView`): fetches the player's own log (report master
- *   abilities for icons + Casts/Buffs events), reads the prepared rotation bench
- *   via the swappable `ROTATION_DATA_SOURCE`, and produces the offensive findings
- *   (split into needs-improvement / timing-suggestions / doing-well) plus the
- *   per-cooldown comparison rows.
- * - Pre-fight (`loadPlanView`): bench-only, returns the cooldown-plan rows.
- *
- * Per the slice rule it imports the two API services + its data-source token +
- * models + `logWarn`, plus the generic, non-domain primitives (outlier predicates,
- * cast-efficiency %, expected-use arithmetic, clock formatting, severity ordering)
- * from the blessed `shared/analysis/analysis-math` module. It owns all of its DOMAIN
- * analysis math as named, pure, total functions below (it does NOT import
- * core/analysis). Duplication with the legacy cooldown-analysis / rule-engine is
- * expected and accepted.
- */
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
@@ -39,16 +18,13 @@ import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 
 export type Severity = AnalysisFinding['severity'];
 
-/** Spell id -> baked icon + name, complete over every spell the card renders. */
 export type AbilityIcons = Record<number, { icon: string; name: string }>;
 
-/** One row of the flat finding table (severity / what / measured / fix). */
 export interface RotationFindingRow {
   severity: 'critical' | 'warning';
-  /** Display name for cooldown rows; empty for rule rows (which render `what`). */
+  /** Empty for rule rows, which render `what` instead. */
   name: string;
   spellId?: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
   timestampMs?: number | null;
   chip?: string;
@@ -57,19 +33,15 @@ export interface RotationFindingRow {
   fix?: string;
 }
 
-/** A cooldown used cleanly, shown as an "on plan" chip rather than a row. */
 export interface RotationOnPlanChip {
   name: string;
   spellId: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
 }
 
-/** Pre-fight cooldown-plan row. */
 export interface CdPlanRow {
   name: string;
   spellId: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
   firstCastS: number | null;
   uses: number | null;
@@ -80,30 +52,24 @@ export interface CdPlanRow {
   rule: string | null;
 }
 
-/** Post-raid rotation view-model. An `ok` result implies the top-parse bench exists. */
+/** An `ok` result implies the top-parse bench exists. */
 export interface RotationPlayerView {
   ruleRows: RotationFindingRow[];
-  /** Labels of rotation rules the player followed cleanly this fight. */
   ruleOnPlan: string[];
   offensiveRows: RotationFindingRow[];
   onPlan: RotationOnPlanChip[];
 }
 
-/** Bloodlust ids + window grace (mirrors the analysis format module). */
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
 const BLOODLUST_DURATION_S = 40;
-// BL alignment window around the BL apply: a cast from BL_WINDOW_LEAD_S before the
-// pull of BL through BL_WINDOW_TRAIL_S after the buff expires counts as aligned.
+// A cast from BL_WINDOW_LEAD_S before BL through BL_WINDOW_TRAIL_S after it expires counts as aligned.
 const BL_WINDOW_LEAD_S = 30;
 const BL_WINDOW_TRAIL_S = 15;
-/** A cooldown is treated as Bloodlust-aligned when at least this share (%) of top parses align it. */
+/** A cooldown counts as Bloodlust-aligned when at least this share (%) of top parses align it. */
 const BL_CONSENSUS_PCT = 50;
-
-/* ----------------------------- rule engine (ported) ----------------------------- */
 
 export type CastTimes = Record<number, number[]>;
 
-/** Build the spell-id -> fight-relative cast-time index the rules consume. */
 export function buildCastTimes(casts: WclEvent[], fStart: number): CastTimes {
   const castTimes: CastTimes = {};
   for (const cast of casts) {
@@ -114,7 +80,6 @@ export function buildCastTimes(casts: WclEvent[], fStart: number): CastTimes {
   return castTimes;
 }
 
-/** Evaluate one `cast_without_prior` condition. Returns a finding or null. */
 export function evaluateCastWithoutPrior(
   cond: CastWithoutPriorCondition, castTimes: CastTimes, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
@@ -146,7 +111,6 @@ export function evaluateCastWithoutPrior(
   };
 }
 
-/** Evaluate one `hold_cooldown_for_anchor` condition. Returns a finding or null. */
 export function evaluateHoldForAnchor(
   cond: HoldCooldownForAnchorCondition, castTimes: CastTimes, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
@@ -173,7 +137,6 @@ export function evaluateHoldForAnchor(
   };
 }
 
-/** Evaluate every rule's condition against the cast stream. */
 export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: number): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   const castTimes = buildCastTimes(casts, fStart);
@@ -191,7 +154,6 @@ export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: 
   return findings;
 }
 
-/** Positive on-plan label for a rule: its description, else a phrasing of the condition. */
 export function ruleLabel(cond: RuleCondition, description?: string): string {
   if (description) return description;
   return cond.kind === 'cast_without_prior'
@@ -199,7 +161,6 @@ export function ruleLabel(cond: RuleCondition, description?: string): string {
     : `${cond.spell_names.join('/')} held for ${cond.anchor_spell_name}`;
 }
 
-/** Labels of rules the player exercised this fight and followed cleanly (no violation). */
 export function rulesFollowed(rules: RulebookRule[], casts: WclEvent[], fStart: number): string[] {
   const castTimes = buildCastTimes(casts, fStart);
   const followed: string[] = [];
@@ -219,17 +180,13 @@ export function rulesFollowed(rules: RulebookRule[], casts: WclEvent[], fStart: 
   return followed;
 }
 
-/* ----------------------------- offensive cooldown analysis (ported) ----------------------------- */
-
 /** A cooldown's lost/unused + first-cast checks run only when at least this share of top parses used it. */
 const MIN_USE_SHARE_FRAC = 0.5;
 
-/** Fraction of sampled top parses that used a cooldown at least once. */
 function usedShare(bench: PerCdBenchmark): number {
   return bench.used_sample_count / bench.sample_count;
 }
 
-/** The named inputs `analyzeRotationFindings` scans (replaces 7 positional args). */
 export interface RotationScanInput {
   fStart: number;
   fEnd: number;
@@ -240,10 +197,8 @@ export interface RotationScanInput {
   bench: RotationBench;
 }
 
-/** Per-cooldown findings + whether the cooldown landed in the Bloodlust window. */
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; }
 
-/** Lost-cooldown critical when a cooldown is unused or under the floor. Null if on plan. */
 export function checkLostUses(
   cdName: string, actual: number, expected: number, floor: number, fightDurS: number,
 ): AnalysisFinding | null {
@@ -260,7 +215,6 @@ export function checkLostUses(
   return null;
 }
 
-/** Late-opener warning when the first cast sits >2 sigma past the top first-cast. Null otherwise. */
 export function checkFirstCastDelay(
   cdName: string, castTimesMs: number[], cdBench: PerCdBenchmark,
 ): AnalysisFinding | null {
@@ -276,10 +230,6 @@ export function checkFirstCastDelay(
     details: { remedy: `Open with ${cdName} earlier.` } };
 }
 
-/**
- * Bloodlust alignment: whether the cooldown landed in the BL window, plus the
- * miss (when top parses align it) or in-window offset warning.
- */
 export function checkBloodlustAlignment(
   cdName: string, castTimesMs: number[], cdBench: PerCdBenchmark, blTimeS: number | null, wantsBL: boolean,
 ): { blAligned: boolean; findings: AnalysisFinding[] } {
@@ -311,7 +261,6 @@ export function checkBloodlustAlignment(
   return { blAligned, findings };
 }
 
-/** Held-past-reset warnings: each inter-cast gap >2 sigma above the top gap. */
 export function checkGaps(cdName: string, castTimesMs: number[], cdBench: PerCdBenchmark): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   if (cdBench.avg_gap_s == null || cdBench.stddev_gap_s == null) return findings;
@@ -327,7 +276,6 @@ export function checkGaps(cdName: string, castTimesMs: number[], cdBench: PerCdB
   return findings;
 }
 
-/** Hold suggestions: flag an under-hold clearly below the consensus band (over-holding tolerated). */
 export function checkHoldSuggestions(cdName: string, castTimesMs: number[], cdBench: PerCdBenchmark): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   if (!castTimesMs.length) return findings;
@@ -348,7 +296,6 @@ export function checkHoldSuggestions(cdName: string, castTimesMs: number[], cdBe
   return findings;
 }
 
-/** Low-cast-efficiency finding from the player's whole cast stream. Null when efficiency is fine. */
 export function checkCastEfficiency(
   castTimesMs: number[], fightDurS: number, bench: RotationBench,
 ): AnalysisFinding | null {
@@ -362,9 +309,8 @@ export function checkCastEfficiency(
   const topE = bench.top_avg_efficiency;
   const topSD = bench.top_efficiency_stddev;
   const effPct = castEfficiencyPct(totalDtS, fightDurS);
-  // Flag only when the player sits more than 1 sigma BELOW the top-parse efficiency; within
-  // the +/-1 sigma band, or above it, is fine, so beating the top parses never trips a
-  // warning. Low cast efficiency is a nudge, always a warning, never critical.
+  // Flag only more than 1 sigma below the top-parse efficiency, so beating the top parses never
+  // trips a warning. Always a warning, never critical.
   const WARN_SIGMAS_BELOW = 1;
   if (!isOutlierBelow(effPct, topE, topSD, WARN_SIGMAS_BELOW)) return null;
   return {
@@ -375,11 +321,7 @@ export function checkCastEfficiency(
     details: { remedy: `Fill ${totalDtS.toFixed(1)}s of gaps. Top: ${topE.toFixed(0)}%.` } };
 }
 
-/**
- * Analyze one cooldown: its lost-use / first-cast / Bloodlust / gap / hold checks.
- * `castTimesMs` are the cooldown's fight-relative cast timestamps (ms, ascending).
- * Returns null when the cooldown is talent-gated and unused (skipped entirely).
- */
+/** `castTimesMs` are fight-relative (ms, ascending). Null when the cooldown is talent-gated and unused. */
 export function analyzeOneCooldown(
   cd: RulebookCooldown, castTimesMs: number[], cdBench: PerCdBenchmark | undefined,
   fightDurS: number, blTimeS: number | null,
@@ -400,10 +342,9 @@ export function analyzeOneCooldown(
   const { expected, floor } = benchExpectedUses(fightDurS, cdBench.uses_per_min);
 
   const issues: AnalysisFinding[] = [];
-  // Only judge lost/unused casts and a late opener when a MAJORITY of top parses used this
-  // cooldown. A situational cd most top parses skip has a noisy expected count (and, if no
-  // top parse cast it, a meaningless avg_first_cast_s of 0), so flagging it would be a false
-  // positive - the player is matching the top parses by NOT pressing it.
+  // Judge lost/unused casts and a late opener only when a MAJORITY of top parses used this cooldown:
+  // a situational cd most parses skip has a noisy expected count and a meaningless avg_first_cast_s,
+  // so flagging it would punish the player for correctly matching the parses.
   if (usedShare(cdBench) >= MIN_USE_SHARE_FRAC) {
     const lost = checkLostUses(cdName, actual, expected, floor, fightDurS);
     if (lost) issues.push(lost);
@@ -422,7 +363,6 @@ export function analyzeOneCooldown(
   return { success, scan: { issues, holds, blAligned: bl.blAligned } };
 }
 
-/** Produce the offensive `AnalysisFinding[]` (ported from cooldown-analysis). */
 export function analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
   const { fStart, fEnd, castEvents, buffEvents, cooldowns, rules, bench } = input;
   const fightDurS = (fEnd - fStart) / 1000;
@@ -461,8 +401,6 @@ export function analyzeRotationFindings(input: RotationScanInput): AnalysisFindi
   return findings;
 }
 
-/* ----------------------------- finding -> row bucketing ----------------------------- */
-
 const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
   cooldown_delay: 'held',
@@ -473,10 +411,8 @@ const CAT_LABEL: Record<string, string> = {
 
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; }
 
-/** Resolved row identity for a cooldown name (id-less names render as plain text). */
 interface ResolvedCd { spellId: number | null; icon: string; rowName: string }
 
-/** Cooldown name + icons -> its spell id + baked icon + display name. */
 function resolveCd(name: string, cdSpellIds: Record<string, number>, abilities: AbilityIcons): ResolvedCd {
   const spellId = cdSpellIds[name] ?? null;
   return spellId != null
@@ -484,14 +420,12 @@ function resolveCd(name: string, cdSpellIds: Record<string, number>, abilities: 
     : { spellId: null, icon: '', rowName: name };
 }
 
-/** The findings sorted into rule findings, per-cd buckets, and successful-cd names. */
 interface PartitionedFindings {
   ruleFindings: AnalysisFinding[];
   byName: Record<string, FindingBucket>;
   successNames: Set<string>;
 }
 
-/** Pass 1: split raw findings into rule findings, per-cd issue/hold buckets, and successes. */
 export function partitionRotationFindings(findings: AnalysisFinding[]): PartitionedFindings {
   const ruleFindings: AnalysisFinding[] = [];
   const byName: Record<string, FindingBucket> = {};
@@ -509,7 +443,6 @@ export function partitionRotationFindings(findings: AnalysisFinding[]): Partitio
   return { ruleFindings, byName, successNames };
 }
 
-/** Pass 2a: rotation-rule findings -> flat rule rows (rendered by their `what`). */
 export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingRow[] {
   return ruleFindings.map(finding => ({
     severity: finding.severity === 'critical' ? 'critical' : 'warning',
@@ -521,7 +454,6 @@ export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingR
   }));
 }
 
-/** Pass 2b: per-cd issue/hold buckets -> offensive rows (icons + chip per finding). */
 export function buildOffensiveRows(
   byName: Record<string, FindingBucket>, cdSpellIds: Record<string, number>, abilities: AbilityIcons,
 ): RotationFindingRow[] {
@@ -545,7 +477,6 @@ export function buildOffensiveRows(
   return offensiveRows;
 }
 
-/** Pass 2c: cooldowns that produced a success and no issues -> on-plan chips. */
 export function buildOnPlanChips(
   partition: PartitionedFindings, cdSpellIds: Record<string, number>, abilities: AbilityIcons,
 ): RotationOnPlanChip[] {
@@ -560,7 +491,6 @@ export function buildOnPlanChips(
   return onPlan;
 }
 
-/** Split findings into rotation-rule rows, per-cd issue rows, and on-plan chips. */
 export function bucketRotationFindings(
   findings: AnalysisFinding[], cdSpellIds: Record<string, number>, abilities: AbilityIcons,
 ): { ruleRows: RotationFindingRow[]; offensiveRows: RotationFindingRow[]; onPlan: RotationOnPlanChip[] } {
@@ -572,9 +502,6 @@ export function bucketRotationFindings(
   };
 }
 
-/* ----------------------------- pre-fight cooldown plan ----------------------------- */
-
-/** Bench-only cooldown game plan rows, ordered by opener priority. */
 export function buildCdPlan(
   cooldowns: RulebookCooldown[], benchmarks: Record<string, PerCdBenchmark>, abilities: AbilityIcons,
 ): CdPlanRow[] {
@@ -605,19 +532,11 @@ export function buildCdPlan(
   });
 }
 
-/* ----------------------------- feature service ---------------------------- */
-
 @Injectable({ providedIn: 'root' })
 export class RotationFeatureService {
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
-  /**
-   * Post-raid: build the offensive findings (needs-improvement / timing-suggestions /
-   * doing-well) plus the rotation-rule findings from the player's own log and the top-parse
-   * bench (which carries the authored rules). Propagates a non-ok bench (`missing` drives the
-   * Offensives waiting state); a WCL failure surfaces as `err(toLoadError(...))`.
-   */
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
   ): Promise<Result<RotationPlayerView, LoadError>> {
@@ -652,7 +571,6 @@ export class RotationFeatureService {
     }
   }
 
-  /** Pre-fight: bench-only cooldown plan rows (icons baked onto each row). */
   async loadPlanView(spec: string, encounterId: number): Promise<{ available: boolean; rows: CdPlanRow[] }> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return { available: false, rows: [] };

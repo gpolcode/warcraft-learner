@@ -8,15 +8,6 @@ import {
   RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
 } from './rotation.service';
 
-/**
- * Rotation card (post-raid). A feature component: it injects exactly one service
- * (`RotationFeatureService`). It renders the "Rotation Rules" + "Offensives"
- * finding sections as two `wl-finding-table` cards. Its bench
- * comes from the swappable `ROTATION_DATA_SOURCE` (file in prod, live transform
- * under the dev flag); the player findings are computed from the player's own log,
- * fetched by the service. Spell art is baked onto each row and passed explicitly
- * to `wl-game-icon`.
- */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-rotation',
@@ -38,14 +29,12 @@ export class RotationComponent {
   readonly availableChange = output<boolean>();
 
   protected readonly available = signal(true);
-  /** Transient/permanent load error (missing renders the waiting placeholder instead). */
   protected readonly error = signal<RenderableLoadError | null>(null);
   protected readonly ruleRows = signal<RotationFindingRow[]>([]);
   protected readonly ruleOnPlan = signal<string[]>([]);
   protected readonly offensiveRows = signal<RotationFindingRow[]>([]);
   protected readonly onPlan = signal<RotationOnPlanChip[]>([]);
 
-  /** Followed-rule labels as spell-less chips for the shared finding table. */
   protected readonly ruleOnPlanChips = computed<OnPlanChip[]>(() =>
     this.ruleOnPlan().map(label => ({ name: label, spellId: null, icon: '' })));
 

@@ -60,16 +60,13 @@ export const appConfig: ApplicationConfig = {
       iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
       iconRegistry.addSvgIconLiteral('github', sanitizer.bypassSecurityTrustHtml(GITHUB_SVG));
     }),
-    // WCL GraphQL transport: apollo-angular in the browser (its InMemoryCache dedupes and
-    // memoises the cache-first reads, so the five feature cards share one report/event fetch).
-    // The Node ingestion binds a plain-fetch transport instead, since apollo-angular does not
-    // run headless.
+    // apollo-angular in the browser, whose InMemoryCache dedupes the cache-first reads so the
+    // five cards share one report/event fetch. Node ingestion binds plain fetch (no headless apollo).
     { provide: WCL_TRANSPORT, useExisting: ApolloWclTransport },
     // Data-file transport: HTTP read-only in the browser (Node ingestion binds a fs read+write one).
     { provide: DATA_FILE_TRANSPORT, useExisting: HttpDataFileTransport },
-    // Vertical-slice data sources: file-backed in production, live transforms under the dev
-    // flag. The list is defined per-environment so a production build never imports (and thus
-    // tree-shakes out) the five `*TransformService`s.
+    // File-backed in production, live transforms under the dev flag. The per-environment list
+    // keeps a production build from importing (so it tree-shakes out) the five *TransformServices.
     ...dataSourceProviders,
   ],
 };

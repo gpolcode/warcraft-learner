@@ -26,8 +26,6 @@ const ADD_GAME_ID = 5555;   // stable gameID the add actor maps to
 const CLOAK = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5 };
 const FIGHT_DUR_S = 300;  // standard fight length used across the per-parse summary fixtures
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('defensiveSpellIds', () => {
   it('maps defensive names to spell ids, skipping missing ids', () => {
     expect(defensiveSpellIds([CLOAK, { name: 'NoId', spell_id: 0, cooldown: 60 }]))
@@ -250,8 +248,6 @@ describe('aggregateDefensiveBenchmarks', () => {
   });
 });
 
-/* ----------------------------- service (end to end, fake client) ----------------------------- */
-
 function reportFor(playerId: number, playerName: string, fightId: number) {
   return {
     title: 't',
@@ -352,7 +348,6 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     });
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(false);
-    // An unknown throw (not an HTTP status) maps to a permanent error carrying the repro id.
     if (!bench.ok) expect(bench.error).toMatchObject({ kind: 'permanent', id: 'defensive.bench' });
   });
 });

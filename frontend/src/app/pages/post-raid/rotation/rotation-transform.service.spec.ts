@@ -13,8 +13,6 @@ import { cast, applyBuff } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { ok, err, missing } from '../../../core/result';
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('rotationCdSpellIds', () => {
   it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
     expect(rotationCdSpellIds(
@@ -200,8 +198,6 @@ describe('aggregateCdBenchmarks', () => {
     expect(result['Shadow Blades'].sample_count).toBe(2);
   });
 });
-
-/* ----------------------------- service (end to end, fake client) ----------------------------- */
 
 function reportFor(playerId: number, playerName: string, fightId: number) {
   return {

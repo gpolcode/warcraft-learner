@@ -20,8 +20,6 @@ const TRINKET_2_SLOT = 13;
 const ENCHANT_SLOT = 15;
 const EXAMPLE_SOURCE_ID = 537;
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('talentKeyFromTree', () => {
   it('builds a v2: key from string-sorted nodeIDs', () => {
     expect(talentKeyFromTree([{ nodeID: 90640 }, { nodeID: 90638 }])).toBe('v2:90638,90640');
@@ -51,8 +49,6 @@ describe('toParseGear', () => {
     expect(toParseGear({ found: false }, ranking, 537)).toBeNull();
   });
 });
-
-/* ----------------------------- per-facet aggregators ----------------------------- */
 
 function gearParse(overrides: Partial<ParseGear>): ParseGear {
   return {
@@ -151,8 +147,6 @@ describe('aggregateParseGear', () => {
     });
   });
 });
-
-/* ----------------------------- service (end to end, fake client) ----------------------------- */
 
 function reportFor(playerId: number, playerName: string, fightId: number) {
   return {

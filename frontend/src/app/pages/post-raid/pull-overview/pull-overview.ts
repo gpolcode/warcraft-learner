@@ -13,12 +13,11 @@ import { LoadErrorComponent, RenderableLoadError } from '../../../shared/compone
 import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.service';
 
 /**
- * Pull overview card - the first card on the post-raid page. A feature component: it injects
- * exactly one service (`PullOverviewFeatureService`) and renders a single pull's summary from
- * the player's own log. It needs no bench, so it is always available (no `availableChange`).
- * The per-row positioning / rewatch actions are outputs the page forwards to the map / clip
- * flyovers; the positioning button shows once the fight has bench positions (`showMap`), the
- * rewatch button once the rolling buffer covers the fight (`showClip`) - same as the other cards.
+ * Pull overview card - the first card on the post-raid page. Injects one service
+ * (`PullOverviewFeatureService`) and renders a single pull's summary from the player's own log. It
+ * needs no bench, so it is always available (no `availableChange`). The positioning / rewatch
+ * actions are outputs the page forwards; `showMap` gates the positioning button once the fight has
+ * bench positions, `showClip` the rewatch button once the rolling buffer covers the fight.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,7 +44,6 @@ export class PullOverviewComponent {
 
   private readonly _view = signal<PullOverviewView | null>(null);
   protected readonly view = this._view.asReadonly();
-  /** The transient/permanent load error to render; null when the load is fine or missing. */
   private readonly _error = signal<RenderableLoadError | null>(null);
   protected readonly error = this._error.asReadonly();
 

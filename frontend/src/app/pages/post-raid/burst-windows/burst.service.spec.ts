@@ -13,8 +13,6 @@ import {
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../testing/spell-ids';
 import { cast, damage } from '../../../../testing/builders/events';
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('burstWindowStatus', () => {
   // topAvg 1000, topMin 800, stddev 100 -> bad below 700, warn below 900.
   it.each([
@@ -109,8 +107,6 @@ describe('buildBurstView', () => {
   });
 });
 
-/* ----------------------------- feature service ---------------------------- */
-
 describe('findPlayerBurstWindows', () => {
   const window: BurstWindow = {
     time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
@@ -166,7 +162,7 @@ const benchFixture: BurstBench = {
   }],
 };
 
-// A transient status the retry-transient interceptor has already retried once.
+// A 5xx status toLoadError maps to a transient error.
 const HTTP_SERVICE_UNAVAILABLE = 503;
 
 describe('BurstFeatureService', () => {

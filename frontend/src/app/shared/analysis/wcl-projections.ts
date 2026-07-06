@@ -1,13 +1,7 @@
 /**
- * Generic, cross-slice WCL-response projections and window view-row builders.
- *
- * These are the small pure functions that several slices projected identically:
- * turning a raw WCL rankings array into the top fetchable parses, and turning a
- * list of spell ids + baked ability art into window header chips. They are not
- * domain analysis - just shape reprojections - so they live here under `shared/`
- * (a blessed cross-slice home, the same way `shared/analysis/analysis-math.ts` and
- * `shared/gear/gear-comparison.ts` do) and each slice imports one implementation
- * instead of re-declaring it. No Angular / `inject()` / IO; pure functions only.
+ * Generic, cross-slice WCL-response projections and window view-row builders: small pure functions
+ * several slices need (raw WCL rankings -> top fetchable parses; spell ids + baked art -> window
+ * header chips), kept here so each slice imports one implementation. No Angular / IO.
  */
 import { logWarn } from '../../core/log';
 import { ParseRanking, WclRankingsBlob, WclRawAbility, WclRawRanking } from '../../core/models/wcl.models';

@@ -41,8 +41,6 @@ describe('FsDataFileTransport', () => {
   });
 
   it('contains a read that escapes the data root with `..`, resolving err(permanent)', async () => {
-    // The containment check throws inside readJson, which the shell catches and turns into a
-    // permanent error carrying the rejected path - the read never escapes the root.
     const result = await transport.readJson(TRAVERSAL_PATH);
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -70,7 +68,6 @@ describe('FsDataFileTransport', () => {
   });
 
   it('allows the root itself (relPath resolving exactly to root)', async () => {
-    // `list('')` targets the root directory, which is inside the root and must not be rejected.
     expect(await transport.list('')).toEqual([]);
   });
 });

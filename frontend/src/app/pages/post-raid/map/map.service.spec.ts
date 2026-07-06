@@ -21,8 +21,6 @@ function posEvent(
   };
 }
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('buildActorTimelines', () => {
   it('attributes the flattened position to the source by default (resourceActor 1)', () => {
     const timelines = buildActorTimelines([posEvent({ ts: 1000, source: 7, x: 200, y: 400 })], 0);
@@ -136,8 +134,6 @@ describe('FACING_OFFSET_RAD', () => {
   });
 });
 
-/* ----------------------------- feature service ---------------------------- */
-
 function withResult(result: Result<MapData, LoadError>): { service: MapFeatureService; calls: [string, number][] } {
   const calls: [string, number][] = [];
   const source: DataSource<MapData> = {
@@ -223,10 +219,8 @@ describe('MapFeatureService', () => {
 interface RecordedFetch { dataType: string; sourceId?: number; includeResources?: boolean; hostilityType?: string; }
 
 /**
- * A WclApiService stub that records every `getAllEvents` call - enough to assert both WHEN the
- * deferred position-event streams are fetched (call count) and WHAT each fetch asks for
- * (dataType / source / hostility). It returns no events, so no overlay is built (the overlay
- * content itself is covered by the buildLiveOverlay tests above).
+ * Records every `getAllEvents` call so tests can assert when the deferred fetch fires and what it
+ * asks for. Returns no events, so no overlay is built (overlay content is covered above).
  */
 class RecordingWclApi {
   readonly calls: RecordedFetch[] = [];

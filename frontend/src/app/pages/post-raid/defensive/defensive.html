@@ -1,13 +1,10 @@
-<!-- A transient / permanent load failure takes priority over the waiting and content states. -->
 @if (error(); as e) {
   <wl-load-error [error]="e"></wl-load-error>
 }
-<!-- No top-parse bench yet: the whole card has nothing to grade against. -->
 @else if (!available()) {
   <wl-waiting-placeholder heading="Defensives" subtitle="Defensive cooldowns vs top parses."></wl-waiting-placeholder>
 }
 @else {
-  <!-- Per-defensive findings -->
   @if (findingRows().length || onPlan().length) {
     <wl-finding-table
       heading="Defensives"
@@ -21,7 +18,6 @@
     </wl-finding-table>
   }
 
-  <!-- Defensive windows: when top parsers use each defensive and how much damage they absorbed -->
   @if (windows().length > 0) {
     <wl-window-comparison
       [class.mt-6]="findingRows().length > 0 || onPlan().length > 0"

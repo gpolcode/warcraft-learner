@@ -10,13 +10,8 @@ import { logWarn } from '../../../core/log';
 import { GearFeatureService, GearComparisonView, emptyGearView } from './gear.service';
 
 /**
- * Gear card. A feature component: it injects exactly one service
- * (`GearFeatureService`) and renders. Its bench data comes from the swappable
- * `GEAR_DATA_SOURCE` (file in prod, live transform under the dev flag).
- *
- * Dual-mode: when a `report`/`fight`/`player` selection is supplied (post-raid) the
- * card compares the player's combatant-info gear against the bench; with only
- * `spec`/`encounterId` (pre-fight) it shows the bench-only consensus.
+ * Gear card. Dual-mode: with a `report`/`fight`/`player` selection (post-raid) it compares
+ * the player's gear against the bench; with only `spec`/`encounterId` it shows the consensus.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,15 +36,13 @@ export class GearComponent {
 
   private readonly _view = signal<GearComparisonView>(emptyGearView());
   protected readonly view = this._view.asReadonly();
-  // available() is the load outcome, not a view flag: true once an ok result lands,
-  // false while loading or on any error (missing renders the waiting placeholder).
+  // available() is the load outcome, not a view flag: true only once an ok result lands.
   private readonly _available = signal(false);
   protected readonly available = this._available.asReadonly();
-  // The transient / permanent arm the wl-load-error leaf renders; null for ok or missing.
   private readonly _error = signal<RenderableLoadError | null>(null);
   protected readonly error = this._error.asReadonly();
 
-  // Enchant rows partitioned for the comparison view (semantic data only, no styling).
+  // Partitioned in the component (semantic data only, no styling).
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
@@ -78,7 +71,6 @@ export class GearComponent {
             this.availableChange.emit(true);
           } else {
             if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
-            // missing -> the waiting placeholder (bench-empty banner); transient / permanent -> wl-load-error.
             this._error.set(result.error.kind === 'missing' ? null : result.error);
             this._view.set(emptyGearView());
             this._available.set(false);

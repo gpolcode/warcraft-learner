@@ -35,8 +35,6 @@ function toRawEvent(gear: CharacterGear): WclCombatantInfo {
   return { sourceID: 10, gear: items, talentTree };
 }
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('benchToStats', () => {
   it('extracts the gear stats block from a bench', () => {
     expect(benchToStats(benchWith())).toEqual({
@@ -119,8 +117,6 @@ describe('emptyGearView', () => {
     });
   });
 });
-
-/* ----------------------------- feature service ---------------------------- */
 
 function configure(bench: Result<GearBench, LoadError>, gear: CharacterGear | null): GearFeatureService {
   const source: DataSource<GearBench> = { getBench: () => Promise.resolve(bench) };

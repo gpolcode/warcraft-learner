@@ -7,15 +7,12 @@ import { EncounterSelectionService, benchedEncounters } from './encounter-select
 
 const SPEC = 'SubtletyRogue';
 
-// A read failure the data API surfaces unchanged (a missing manifest folds to ok([]) upstream).
 const TRANSIENT_ERROR = transient('WCL is unreachable right now.');
 
-/** A benched encounter carries at least one ingested sample; an empty one carries zero. */
+// sample_count spans the boundary: 12 and 1 are benched, 0 is empty.
 const BENCHED: EncounterEntry = { id: 3144, name: 'Boss A', sample_count: 12 };
 const ALSO_BENCHED: EncounterEntry = { id: 3145, name: 'Boss B', sample_count: 1 };
 const EMPTY: EncounterEntry = { id: 3146, name: 'Boss C', sample_count: 0 };
-
-/* ----------------------------- pure projection ---------------------------- */
 
 describe('benchedEncounters', () => {
   it('keeps encounters with at least one sample', () => {
@@ -31,9 +28,7 @@ describe('benchedEncounters', () => {
   });
 });
 
-/* ----------------------------- discovery shell ---------------------------- */
-
-/** A partial `DataFileApiService` fake - the service only calls `getSpecs` / `getEncounters`. */
+/** Partial `DataFileApiService` fake: the service only calls `getSpecs` / `getEncounters`. */
 function fakeFiles(
   specs: Result<SpecEntry[], LoadError>, encounters: Result<EncounterEntry[], LoadError>,
 ): { files: DataFileApiService; encounterCalls: string[] } {

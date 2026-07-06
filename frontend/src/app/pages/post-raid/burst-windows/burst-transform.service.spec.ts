@@ -44,8 +44,6 @@ function burstAt(startS: number): WclEvent[] {
   return [0, 1, 2, 3].map(offset => damage(SHADOW_BLADES_DAMAGE, startS + offset, BIN_DAMAGE));
 }
 
-/* ----------------------------- pure functions ----------------------------- */
-
 describe('cdSpellIds', () => {
   it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
     expect(cdSpellIds(
@@ -358,8 +356,6 @@ describe('clusterParseWindows', () => {
     expect(out[0].dmg_avg).toBe(EXPECTED_AVG);
   });
 });
-
-/* ----------------------------- service (end to end, fake client) ----------------------------- */
 
 function reportFor(playerId: number, playerName: string, fightId: number) {
   return {

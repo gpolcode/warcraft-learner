@@ -5,16 +5,6 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { DataFileTransport, HttpDataFileTransport } from './data-file-transport';
 import { ok, err, missing, transient } from '../result';
 
-/**
- * The browser transport is a read-only HTTP GET of the static ingested files. These
- * tests pin the outcomes the runtime relies on: a slice read resolves `ok(body)` under
- * the configured data base; a 404 (a spec/encounter with no ingested file yet) resolves
- * `err(missing)`, the "un-ingested file is not an error" waiting state every *DataSource
- * depends on; and a 5xx / network failure resolves `err(transient)` - a distinct outcome
- * so a data-host outage surfaces "retry in a moment" instead of masquerading as "not
- * ingested". Both failure outcomes still logWarn. The write side is a hard error in the
- * browser (only the Node ingestion writes).
- */
 const REL_PATH = 'SubtletyRogue/burst/3176.json';
 const SLICE_BODY = { encounter_id: 3176, sample_count: 5 };
 const NOT_FOUND_STATUS = 404;
@@ -24,8 +14,6 @@ const MISSING_MESSAGE = 'Not yet ingested.';
 const TRANSIENT_MESSAGE = 'WCL is unreachable right now.';
 const BROWSER_READONLY_ERROR = /read-only in the browser/;
 
-// The transport is exercised through its interface, so the read-only write-side methods
-// are called with the arguments real callers pass (the browser impl ignores them and throws).
 function setup(): { transport: DataFileTransport; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
     providers: [HttpDataFileTransport, provideHttpClient(), provideHttpClientTesting()],
@@ -36,7 +24,7 @@ function setup(): { transport: DataFileTransport; httpMock: HttpTestingControlle
   };
 }
 
-/** Silences and captures the transport's logWarn output on a failed read. */
+// Silences and captures the transport's logWarn output on a failed read.
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }
@@ -82,7 +70,6 @@ describe('HttpDataFileTransport', () => {
 
     const result = await pending;
     expect(result).toEqual(err(transient(TRANSIENT_MESSAGE)));
-    // A data-host outage must not read as "not ingested": the transient outcome is distinct.
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe('transient');
     expect(warn).toHaveBeenCalled();

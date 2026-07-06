@@ -45,7 +45,6 @@ describe('collectPositionSamples', () => {
     const samples = byActor.get(1)!;
     expect(samples.map(s => s.t)).toEqual([1, 2]);
     expect(samples[0]).toEqual({ t: 1, x: 100, y: 50, facing: 1500, mapID: 7, maxHp: 5000 });
-    // raw units, not scaled
     expect(samples[1].x).toBe(200);
   });
 });
@@ -61,7 +60,6 @@ describe('resampleTimeline', () => {
       { t: 3, x: 300, y: 600, facing: 200, mapID: 2, maxHp: 0 },
     ];
     const rows = resampleTimeline(samples, 3, 1.5);
-    // rows at t = 0, 1.5, 3
     expect(rows.map(r => r[0])).toEqual([0, 1.5, 3]);
     // midpoint interpolates x to 150, y to 300; facing nearest is the later (>=0.5 -> after)
     expect(rows[1]).toEqual([1.5, 150, 300, 200, 2]);
@@ -185,7 +183,6 @@ describe('buildParsePositions', () => {
     expect(parse.player.length).toBeGreaterThan(0);
     const boss = parse.enemies.find(e => e.is_boss);
     expect(boss?.game_id).toBe(100);
-    // the add is kept (>= 4 samples)
     expect(parse.enemies.some(e => e.game_id === 200 && !e.is_boss)).toBe(true);
   });
 
@@ -205,8 +202,6 @@ describe('buildParsePositions', () => {
     expect(parse.enemies.some(e => e.is_boss)).toBe(true);
   });
 });
-
-/* ----------------------------- service (fetch pattern) ----------------------------- */
 
 /** One recorded getAllEvents call, reduced to the fields that decide what WCL returns. */
 interface RecordedFetch { dataType: string; sourceId?: number; includeResources?: boolean; hostilityType?: string; }

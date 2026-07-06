@@ -6,21 +6,13 @@ import { EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { SpecMeta } from '../models/spec-meta.models';
 import { Result, LoadError, ok, err, missing, transient } from '../result';
 
-/**
- * DataFileApiService is a pass-through over the ingested static files: it owns the
- * relative-path contract that the browser reads and the Node ingestion writes
- * (`{spec}/{slice}/{enc}.json`, `{spec}/rulebook.json`, `index.json`, ...). These
- * tests pin those exact paths - a drift here silently 404s every runtime read or
- * writes ingested data to the wrong place - the Result outcomes each read exposes (a
- * single read passes the transport `Result` straight through; the manifest reads fold a
- * `missing` file to the empty fresh-tier state but propagate a real failure), and the
- * `listSpecs` dot-filter that keeps the index rebuild from treating `index.json` as a spec.
- */
+// These tests pin the exact relative paths the service owns: a drift silently 404s every
+// runtime read or writes ingested data to the wrong place.
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3176;
 const SLICE = 'burst';
 
-/** Records every transport call so a test can assert the exact relative path used. */
+// Records every transport call so a test can assert the exact relative path used.
 class RecordingTransport implements DataFileTransport {
   readonly reads: string[] = [];
   readonly writes: [string, unknown][] = [];
@@ -169,9 +161,6 @@ describe('DataFileApiService writes and listing', () => {
   });
 
   it('lists spec folders from the root, dropping any name with a dot so index.json is not a spec', async () => {
-    // The specs root also holds index.json (and possibly dotfiles); a spec folder name
-    // never contains a dot, so those are filtered - otherwise the index rebuild would
-    // read index.json/encounters.json and hit ENOTDIR.
     const transport = new RecordingTransport(ok(null), ['SubtletyRogue', 'FireMage', 'index.json', '.gitkeep']);
     const specs = await withTransport(transport).listSpecs();
     expect(specs).toEqual(['SubtletyRogue', 'FireMage']);

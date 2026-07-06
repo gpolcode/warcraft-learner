@@ -1,19 +1,3 @@
-/**
- * Defensive slice runtime shell + its pure transform functions, colocated.
- *
- * `DefensiveFeatureService` is the imperative shell (components inject only it). It
- * is dual-mode:
- *  - `loadAnalysisView(...)` (post-raid) fetches the player's own log, computes the
- *    player's defensive usage + windows, and assembles the findings + the defensive
- *    windows card view-model against the prepared bench.
- *  - `loadPlan(...)` (pre-fight) returns the bench-only defensive-plan rows.
- *
- * Self-contained per the slice rule: imports the two API services / the slice
- * `DEFENSIVE_DATA_SOURCE` token + models + `logWarn`, plus the generic, non-domain
- * primitives from the blessed `shared/analysis/analysis-math` module. Every DOMAIN
- * calculated field is its own small, exported, individually-tested pure function -
- * no separate vm file.
- */
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent, WclReport } from '../../../core/models/wcl.models';
@@ -34,34 +18,28 @@ import {
   DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensivePlanMeta, BakedAbility,
 } from './defensive-data-source';
 
-/** Spell id -> baked icon + name, complete over every spell the card renders. */
 type AbilityIcons = Record<number, BakedAbility>;
 
-/** Anchor for opening the positioning map on a defensive window (emitted as an output). */
 export interface DefensiveMapAnchor {
   timeS: number;
   refGameId: number | null;
-  /** Window length in seconds; 0/undefined for a point-in-time finding cast. */
+  /** 0/undefined for a point-in-time finding cast. */
   windowLengthS?: number;
 }
 
-/** The defensive card view-model: findings + per-window comparison + map/clip anchors. */
 export interface DefensiveView {
   findings: AnalysisFinding[];
-  /** Defensive name -> spell id, so the findings table links to the right spell. */
   spellIdsByName: Record<string, number>;
-  /** Defensive name -> icon filename, so the findings table renders art without a cache. */
   iconByName: Record<string, string>;
   windows: ComparisonWindow[];
   anchors: DefensiveMapAnchor[];
   clipAnchors: ClipAnchor[];
 }
 
-/** One /pre defensive-plan row (bench-only). */
 export interface DefensivePlanRow {
   name: string;
   spellId: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
+  /** Empty string when there is no art. */
   icon: string;
   uses: number | null;
   firstCastS: number | null;
@@ -70,28 +48,20 @@ export interface DefensivePlanRow {
   rule: string | null;
 }
 
-/* ----------------------------- shared atoms ----------------------------- */
-
 const dmgOf = (event: WclEvent): number => (event.amount || 0) + (event.absorbed || 0);
 
-/** A defensive's lost/unused + first-cast checks run only when at least this share of top parses used it. */
+/** Lost/unused + first-cast checks run only when at least this share of top parses used the defensive. */
 const MIN_USE_SHARE_FRAC = 0.5;
 
-/** Fraction of sampled top parses that used a defensive at least once. */
 function defensiveUsedShare(bench: PerDefensiveBenchmark): number {
   return bench.used_sample_count / bench.sample_count;
 }
 
-/* ----------------------------- player defensives ----------------------------- */
-
-/** One player defensive usage span (measured buff window or a point cast). */
 type DefensiveUsageWindow = PlayerDefensive['windows'][number];
 
 /**
- * Build one defensive's usage windows: each measured buff span (apply -> remove, or an
- * open buff to fight end - never a rulebook duration) with the damage taken during it.
- * When there is no self-buff, falls back to each cast as a point usage (zero span, no
- * invented duration).
+ * Each measured buff span with damage taken during it; falls back to point casts (zero
+ * span) when there is no self-buff. Never invents a rulebook-duration span.
  */
 export function buildDefensiveUsageWindows(
   spellId: number,
@@ -104,12 +74,11 @@ export function buildDefensiveUsageWindows(
   fightEndS: number,
 ): DefensiveUsageWindow[] {
   const windows = buffSpans.map(([windowStartS, windowEndS]) => {
-    // Measured span; an open buff (no remove) runs to fight end - never a rulebook duration.
+    // An open buff (no remove) runs to fight end, never a rulebook duration.
     const end = windowEndS ?? fightEndS;
     return { start_s: Math.round(windowStartS * 10) / 10, end_s: Math.round(end * 10) / 10, dmg_during: Math.round(dmgInWindow(windowStartS, end)) };
   });
   if (windows.length) return windows;
-  // No self-buff: a cast is a point usage (no rulebook-duration span invented).
   return castEvents
     .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId && cast.timestamp >= fStart && cast.timestamp <= fEnd)
     .map(cast => {
@@ -118,7 +87,7 @@ export function buildDefensiveUsageWindows(
     });
 }
 
-/** Build per-defensive usage windows (buff-window-centric, cast+duration fallback). */
+/** Per-defensive usage windows (buff-window-centric, point-cast fallback). */
 export function analyzeDefensives(
   defensives: DefensivePlanMeta[],
   castEvents: WclEvent[],
@@ -179,10 +148,8 @@ export function gapDelayFindings(
 }
 
 /**
- * Hold suggestions where the player pressed a cast earlier than the top-parse consensus.
- * Prior-relative (cascade-free, like the rotation slice): compare the player's own gap from
- * their previous cast against the band. Flags only an under-hold clearly below the band;
- * over-holding is tolerated.
+ * Prior-relative (cascade-free): compares the player's own gap from their previous cast
+ * against the band. Flags only an under-hold clearly below it; over-holding is tolerated.
  */
 export function holdSuggestionFindings(
   name: string, castTimesS: number[], holdTargets: PerDefensiveBenchmark['hold_targets'],
@@ -224,9 +191,8 @@ export function analyzeOneDefensive(
   const { expected, floor } = benchExpectedUses(fightDurS, defBench.uses_per_min);
   const issues: AnalysisFinding[] = [];
 
-  // Only judge lost/unused uses and a late first-use when a MAJORITY of top parses used this
-  // defensive. A situational defensive most top parses skip has a noisy expected count (and a
-  // meaningless top first-cast), so flagging it would be a false positive.
+  // Lost-use and late-first-use checks need a majority of top parses to use this defensive:
+  // a situational one most skip has a noisy expected count, so flagging it is a false positive.
   const majorityUse = defensiveUsedShare(defBench) >= MIN_USE_SHARE_FRAC;
 
   if (majorityUse && uses === 0 && expected >= 1) {
@@ -301,10 +267,7 @@ export function computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEv
 /** Slack (s) around a top window within which a player defensive still "covers" it. */
 const WINDOW_NEAR_S = 3;
 
-/**
- * Did the player have `defensive` active at/near this top-parse window? Window-centric:
- * any player defensive span (or point cast) overlapping [time_s - near, end + near].
- */
+/** True when any player defensive span overlaps [time_s - near, end + near]. */
 export function playerCoveredWindow(
   window: BurstWindow, playerDefensive: PlayerDefensive | undefined, nearS = WINDOW_NEAR_S,
 ): boolean {
@@ -314,24 +277,15 @@ export function playerCoveredWindow(
   return playerDefensive.windows.some(span => span.start_s <= hi && span.end_s >= lo);
 }
 
-/* ----------------------------- defensive windows view ----------------------------- */
-
-/**
- * Window annotations shown beside a defensive window's status glyph (terse-expert voice).
- * The status is set by damage taken; the annotation names whether the expected defensive
- * was pressed so the two read together.
- */
+/** Annotations naming whether the expected defensive was pressed; do not set the status. */
 const NOTE_COVERED = 'covered';
 const NOTE_NO_DEFENSIVE = 'no defensive used';
 const NOTE_USED_WRONGLY = 'defensive used wrongly';
 const NOTE_NEEDED_UNUSED = 'defensive needed, unused';
 
 /**
- * Status + annotation for one defensive window. Less damage taken is better, so the status
- * is driven by damage TAKEN against the top-parse band: within or below the acceptable band
- * (top max plus one stddev of tolerance, mirroring the burst slice's raw-stddev band edge)
- * is good; above it is bad. Whether the player pressed the expected defensive ("covered")
- * does not set the status - it only annotates it.
+ * Status is driven by damage TAKEN vs the band (less is better): at or below the band edge
+ * (topMax + stddev) is good, strictly above is bad. Coverage only annotates, never gates.
  */
 export function defensiveWindowStatus(
   playerDamage: number | null,
@@ -377,21 +331,16 @@ export function defensiveMapAnchor(window: BurstWindow): DefensiveMapAnchor {
   };
 }
 
-/** Clip anchor for a defensive window: its exact span plus the stable key clips are memoized under. */
+/** Clip anchor for a defensive window: its span plus the stable memoization key. */
 export function defensiveClipAnchor(window: BurstWindow, index: number): ClipAnchor {
   return { timeS: window.time_s, windowLengthS: window.window_length_s, key: `defensive-${index}` };
 }
 
-/**
- * Clip anchor for a timed finding cast: a point anchor (the player gets pre/post roll)
- * keyed by the exact cast millisecond, so two findings within the same second resolve
- * two distinct clips.
- */
+/** Point anchor keyed by the exact cast millisecond, so two findings in one second stay distinct. */
 export function defensiveFindingClipAnchor(timestampMs: number): ClipAnchor {
   return { timeS: timestampMs / 1000, windowLengthS: 0, key: `defensive-find-${timestampMs}` };
 }
 
-/** Inputs to the defensive windows card view-model build (top bench + the player's log). */
 export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
@@ -401,9 +350,8 @@ export interface DefensiveWindowsInput {
 }
 
 /**
- * Build the defensive windows card view-model: each top-parse defensive window
- * paired with the player's damage taken inside it (by index), plus a map anchor. A
- * window whose start is past the player's fight length is "not reached" and muted.
+ * Pairs each top-parse defensive window with the player's damage taken inside it (by index).
+ * A window starting past the player's fight length is "not reached" and muted.
  */
 export function buildDefensiveWindows(
   { topWindows, playerWindows, playerDefensives, fightDurationS, abilities }: DefensiveWindowsInput,
@@ -437,8 +385,6 @@ export function buildDefensiveWindows(
   return { windows, anchors, clipAnchors };
 }
 
-/* ----------------------------- pre-fight plan ----------------------------- */
-
 /** Defensive plan rows: when top parsers fire each defensive and how often. */
 export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensivePlanRow[] {
   if (!bench?.defensives?.length) return [];
@@ -468,18 +414,14 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
   }).filter(row => row.uses != null || row.firstCastS != null || row.windowsS.length || row.holds.length || row.rule);
 }
 
-/* ----------------------------- feature service ---------------------------- */
-
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
   /**
-   * Post-raid entry: load the prepared bench, fetch the player's own log (Casts /
-   * Buffs / DamageTaken), and build the player's defensive findings + the defensive
-   * windows card view-model. Propagates a non-ok bench (missing / transient / permanent);
-   * a WCL fetch failure surfaces as an `err`, never a silent bench-only degrade.
+   * Post-raid: player findings + windows card from their own log against the bench. A WCL
+   * fetch failure surfaces as an `err`, never a silent bench-only degrade.
    */
   async loadAnalysisView(
     spec: string,

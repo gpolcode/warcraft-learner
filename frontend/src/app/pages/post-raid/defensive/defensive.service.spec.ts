@@ -28,8 +28,6 @@ function defBench(overrides: Partial<PerDefensiveBenchmark> = {}): PerDefensiveB
   };
 }
 
-/* ----------------------------- player defensives ----------------------------- */
-
 describe('analyzeDefensives', () => {
   // Composition only: span shapes and fallbacks are specced on buildDefensiveUsageWindows.
   it('builds buff-window-centric uses with damage taken during each window', () => {
@@ -237,8 +235,6 @@ describe('computePlayerDefensiveWindows', () => {
   });
 });
 
-/* ----------------------------- defensive windows view ----------------------------- */
-
 describe('defensiveWindowStatus', () => {
   // Status is driven by damage TAKEN vs the band, not by coverage. Band edge = topMax + stddev.
   const TOP_MAX = 1200;
@@ -358,8 +354,6 @@ describe('buildDefensiveWindows', () => {
   });
 });
 
-/* ----------------------------- pre-fight plan ----------------------------- */
-
 describe('buildDefensivePlanRows', () => {
   function benchWith(overrides: Partial<DefensiveBench>): DefensiveBench {
     return {
@@ -389,8 +383,6 @@ describe('buildDefensivePlanRows', () => {
     expect(rows[0]).toMatchObject({ name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak', uses: 2, firstCastS: 12, windowsS: [30], rule: 'Use it' });
   });
 });
-
-/* ----------------------------- feature service (dual mode) ---------------------------- */
 
 function fullBench(): DefensiveBench {
   return {
@@ -457,7 +449,6 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const service = serviceWith(ok(fullBench()), wcl);
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
     expect(result.ok).toBe(false);
-    // An unknown throw maps to a permanent error carrying the repro id.
     if (!result.ok) expect(result.error).toMatchObject({ kind: 'permanent', id: 'defensive.player-view' });
   });
 

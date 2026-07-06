@@ -6,18 +6,15 @@ import { Result, LoadError, ok, err, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 
 /**
- * Pull overview - the first, always-on card on the post-raid page. It summarizes a single
- * pull from the player's OWN log alone (WCL, no bench): the player's DPS, the pull time and
- * boss % reached, and each of the player's deaths plus the kill/wipe outcome. It injects
- * only `WclApiService`; there is no bench, no `*_DATA_SOURCE`, and no transform.
+ * Pull overview - the first, always-on card on the post-raid page. Summarizes one pull from the
+ * player's OWN log (WCL, no bench): DPS, pull time, boss % reached, the player's deaths, and the
+ * kill/wipe outcome. Injects only `WclApiService`; no bench, no `*_DATA_SOURCE`, no transform.
  */
 
 const MS_PER_S = 1000;
 
-/** Whether the pull ended in a kill or a wipe. */
 export type PullResult = 'kill' | 'wipe';
 
-/** One of the player's deaths in the pull. */
 export interface PullDeathRow {
   /** 1-based ordinal ("Death 1", "Death 2"). */
   index: number;
@@ -29,7 +26,6 @@ export interface PullDeathRow {
   amount: number;
 }
 
-/** The card's view-model: a single pull, entirely derived from the player's own log. */
 export interface PullOverviewView {
   /** Attempt number of this boss within the report ("Pull N of this session"). */
   attempt: number;
@@ -89,11 +85,9 @@ function safeJson(raw: string): { data?: { entries?: { id: number; total: number
 }
 
 /**
- * The player's DPS from the damage-done table: their entry's total over the pull length.
- * A null/failed table blob is a load failure - the whole damage table is unusable, so the
- * player would otherwise show a bogus measured 0 for a pull they played - and returns a
- * `permanent` error. A player legitimately absent from a valid table (a healer with no
- * damage entry) is a real 0. A zero-length pull measures no damage, also a real 0.
+ * The player's DPS from the damage-done table. A null/failed blob is a load failure (the whole
+ * table is unusable, so a played pull would show a bogus 0), returned as a `permanent` error. A
+ * player legitimately absent from a valid table (a healer) is a real 0, as is a zero-length pull.
  */
 export function dpsFromTable(
   blob: WclTableBlob | null, playerId: number, durationS: number,

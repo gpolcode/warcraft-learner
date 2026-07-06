@@ -12,15 +12,6 @@ import { LatestLoad } from '../../../shared/latest-load';
 import { logWarn } from '../../../core/log';
 import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from './defensive.service';
 
-/**
- * Defensive card. A feature component: it injects exactly one service
- * (`DefensiveFeatureService`) and renders. Findings + defensive windows are computed
- * from the player's own log against the bench read via the swappable
- * `DEFENSIVE_DATA_SOURCE`; opening the map is an output the page wires.
- *
- * The findings table rows are a pure presentational derivation built from the shared
- * `finding-table` utils, mirroring the legacy section.
- */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensive',
@@ -49,7 +40,6 @@ export class DefensiveComponent {
   readonly availableChange = output<boolean>();
 
   protected readonly available = signal(true);
-  /** Transient / permanent load failure to render inline; null when there is nothing to show. */
   protected readonly error = signal<RenderableLoadError | null>(null);
   private readonly _findings = signal<AnalysisFinding[]>([]);
   private readonly _spellIdsByName = signal<Record<string, number>>({});
@@ -84,8 +74,6 @@ export class DefensiveComponent {
             this._clipAnchors.set(view.clipAnchors);
           } else {
             if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
-            // `missing` renders the waiting placeholder (page shows the bench-empty banner);
-            // `transient` / `permanent` render the wl-load-error leaf.
             this.error.set(result.error.kind === 'missing' ? null : result.error);
             this.available.set(false);
             this.availableChange.emit(false);

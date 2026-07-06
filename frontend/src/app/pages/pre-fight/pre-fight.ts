@@ -26,14 +26,9 @@ import { MapPanelComponent } from '../post-raid/map/map-panel';
 import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
 
 /**
- * Pre-fight gear/plan page shell. It owns only spec + encounter selection - no domain
- * analysis. Each feature card reads its own bench-only slice from the swappable data
- * source: the cooldown + defensive plans, the bench burst windows, and the gear
- * consensus. The map renders top-parse trails; opening it from a card's `openMap`
- * output is forwarded to the `MapFeatureService`.
- *
- * Selection is not carried in the URL. The last spec is restored from localStorage; the
- * encounter is always re-selected.
+ * Pre-fight page shell. Owns only spec + encounter selection; each feature card reads its own
+ * bench-only slice. Selection is not carried in the URL: the last spec is restored from
+ * localStorage, the encounter is always re-selected.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,8 +40,7 @@ import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
     RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
     GearComponent, MapPanelComponent,
   ],
-  // No reserved subscript strip under this page's form fields (see post-raid.ts;
-  // provided per lazy page so form-field stays out of the initial bundle).
+  // Provided per lazy page so form-field stays out of the initial bundle.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './pre-fight.html',
 })
@@ -55,8 +49,7 @@ export class PreFightComponent implements OnInit {
   private readonly mapFeature = inject(MapFeatureService);
   private readonly selectionStore = inject(SelectionStore);
 
-  // Class is chosen first; the spec select stays disabled until a class is picked, mirroring
-  // how the encounter select gates on the spec.
+  // The spec select stays disabled until a class is picked, mirroring how encounter gates on spec.
   protected readonly classControl = new FormControl('', { nonNullable: true });
   protected readonly specControl = new FormControl<string>({ value: '', disabled: true }, { nonNullable: true });
   protected readonly encControl = new FormControl<number>({ value: 0, disabled: true }, { nonNullable: true });
@@ -72,20 +65,16 @@ export class PreFightComponent implements OnInit {
     const available = this.specs().map(entry => entry.spec);
     return classList().filter(cls => specsForClass(cls.className, available).length > 0);
   });
-  // Specs belonging to the chosen class, restricted to those with ingested data.
   protected readonly specsForSelectedClass = computed(() =>
     specsForClass(this.selectedClass(), this.specs().map(entry => entry.spec)));
-  // The selected encounter row, so the select trigger can render its boss icon + name.
+  // The select trigger renders the selected row's boss icon + name.
   protected readonly selectedEncounter = computed(() =>
     this.encounters().find(entry => entry.id === this.selectedEncId()));
   protected readonly loading = signal(false);
-  // A transient/permanent failure reading the spec or encounter manifests; a not-yet-generated
-  // manifest arrives as ok([]) (the empty fresh-tier state), so it never surfaces here.
   protected readonly error = signal<RenderableLoadError | null>(null);
 
-  // Per-card bench availability (from each card's `availableChange`); the banner shows when
-  // none have a bench. Init true (optimistic): pre-fight cards render with no reveal gate, so
-  // starting true avoids a one-frame banner flash on a benched encounter.
+  // Per-card bench availability; the banner shows when none have a bench. Init true avoids a
+  // one-frame banner flash on a benched encounter (pre-fight cards render with no reveal gate).
   protected readonly gearAvailable = signal(true);
   protected readonly cdPlanAvailable = signal(true);
   protected readonly defensivePlanAvailable = signal(true);
@@ -93,7 +82,7 @@ export class PreFightComponent implements OnInit {
   protected readonly benchAvailable = computed(() =>
     this.gearAvailable() || this.cdPlanAvailable() || this.defensivePlanAvailable() || this.burstAvailable());
 
-  // The burst-window positioning button lights up once the top-parse trails have loaded.
+  // The burst-window positioning button lights up once the top-parse trails load.
   protected readonly mapReady = computed(() => this.mapFeature.ready());
 
   protected onOpenMap(anchor: MapAnchor): void {
@@ -114,8 +103,7 @@ export class PreFightComponent implements OnInit {
       this.loading.set(false);
     }
 
-    // Restore the last spec from localStorage (the only persisted pre-fight selection); the
-    // class is derived from it (not stored), and the encounter is always re-selected.
+    // The class is derived from the restored spec (not stored); the encounter is re-selected.
     const autoSpec = this.selectionStore.loadPreFight()?.spec ?? '';
     const meta = specMetaOf(autoSpec);
     if (autoSpec && meta && this.specs().some(specEntry => specEntry.spec === autoSpec)) {
@@ -127,9 +115,8 @@ export class PreFightComponent implements OnInit {
   }
 
   protected onClassChange(): void {
-    // A new class invalidates the spec, encounter, map, and persisted spec selection.
-    // Emit so the `selectedSpec` signal (and thus the select trigger) clears - suppressing
-    // the event would leave the trigger showing the now-invalid spec from the old class.
+    // Emit so the `selectedSpec` signal (and the select trigger) clears; suppressing the event
+    // would leave the trigger showing the now-invalid spec from the old class.
     this.specControl.setValue('', { emitEvent: true });
     this.selectionStore.savePreFight({ spec: null });
     this.mapFeature.clear();
@@ -171,8 +158,7 @@ export class PreFightComponent implements OnInit {
     }
   }
 
-  // Surface a transient/permanent manifest read failure on the page instead of an empty
-  // dropdown; a missing manifest already folds to ok([]), so it never reaches here.
+  // Surface a real read failure on the page instead of an empty dropdown.
   private surfaceLoadError(error: LoadError): void {
     if (error.kind === 'permanent') logWarn(error.id, error.context);
     this.error.set(error.kind === 'missing' ? null : error);
@@ -183,7 +169,6 @@ export class PreFightComponent implements OnInit {
     const spec = this.specControl.value;
     this.mapFeature.clear();
     if (!encId || !spec) return;
-    // Load the top-parse position trails for the map (bench-only, no player log).
     void this.mapFeature.loadBench(spec, encId);
   }
 }

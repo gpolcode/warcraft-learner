@@ -69,8 +69,6 @@ const HOLD_DANCE_FOR_BLADES: HoldCooldownForAnchorCondition = {
   anchor_spell_id: SHADOW_BLADES, anchor_spell_name: 'Shadow Blades', hold_window_s: 15,
 };
 
-/* ----------------------------- rule engine ----------------------------- */
-
 describe('rule engine', () => {
   it('flags Shadow Dance cast without Secret Technique in window', () => {
     const castTimes = buildCastTimes([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)], 0);
@@ -98,8 +96,6 @@ describe('rule engine', () => {
     expect(findings).toEqual([]);
   });
 });
-
-/* ----------------------------- rules followed (on-plan) ----------------------------- */
 
 describe('ruleLabel', () => {
   it('prefers the rule description when present', () => {
@@ -159,8 +155,6 @@ describe('rulesFollowed', () => {
     expect(rulesFollowed([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0)).toEqual([]);
   });
 });
-
-/* ----------------------------- offensive analysis ----------------------------- */
 
 describe('analyzeRotationFindings', () => {
   it('emits a lost-cooldown critical when never used and expected', () => {
@@ -227,8 +221,6 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 });
-
-/* ----------------------------- per-cooldown checks ----------------------------- */
 
 describe('checkLostUses', () => {
   const FIGHT_S = 120;
@@ -508,8 +500,6 @@ describe('buildCdPlan', () => {
     expect(unaligned.bloodlustPct).toBeNull();
   });
 });
-
-/* ----------------------------- feature service ----------------------------- */
 
 // A WCL fake that resolves a valid (empty) player log, so a test's outcome is driven by the
 // bench Result rather than an incidental transport throw.

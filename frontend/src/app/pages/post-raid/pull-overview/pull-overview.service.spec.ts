@@ -8,7 +8,6 @@ import {
   dpsFromTable, abilityNameMap, lethalHitAmount, buildDeathRows, wipeTimeS,
 } from './pull-overview.service';
 
-// --- readable fixture constants -------------------------------------------------
 const PLAYER_ID = 5;
 const OTHER_PLAYER = 9;
 const KILLER_ID = 88;
@@ -185,7 +184,6 @@ describe('wipeTimeS', () => {
   });
 });
 
-// --- end-to-end through the feature service (fake WclApiService) ----------------
 interface FakeCalls { dataTypes: string[] }
 
 function makeService(over: {
