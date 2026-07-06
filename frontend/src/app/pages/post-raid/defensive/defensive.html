@@ -1,8 +1,5 @@
-@if (error(); as e) {
-  <wl-bench-empty-banner [error]="e"></wl-bench-empty-banner>
-}
-@else if (!available()) {
-  <wl-waiting-placeholder heading="Defensives" subtitle="Defensive cooldowns vs top parses."></wl-waiting-placeholder>
+@if (error() || !available()) {
+  <wl-load-state heading="Defensives" subtitle="Defensive cooldowns vs top parses." [error]="error()"></wl-load-state>
 }
 @else {
   @if (findingRows().length || onPlan().length) {

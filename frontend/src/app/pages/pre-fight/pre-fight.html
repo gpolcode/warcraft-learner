@@ -1,6 +1,6 @@
 <div class="mx-auto flex max-w-[860px] flex-col gap-4 px-3 md:px-4 pt-6 pb-12">
   @if (error(); as e) {
-    <wl-bench-empty-banner [error]="e" />
+    <wl-load-state [error]="e" />
   }
 
   <mat-card appearance="outlined" class="p-4">

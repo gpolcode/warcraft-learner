@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, ou
 import { MatIconModule } from '@angular/material/icon';
 import { GameIconComponent } from '../../../shared/components/game-icon/game-icon';
 import { CollapsibleTextComponent } from '../../../shared/components/collapsible-text/collapsible-text';
-import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
-import { BenchEmptyBannerComponent, RenderableLoadError } from '../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { LoadStateComponent, RenderableLoadError } from '../../../shared/components/load-state/load-state';
 import { slotName, statusIcon } from '../../../shared/gear/gear-comparison';
 import { LatestLoad } from '../../../shared/latest-load';
 import { logWarn } from '../../../core/log';
@@ -16,7 +15,7 @@ import { GearFeatureService, GearComparisonView, emptyGearView } from './gear.se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatIconModule, GameIconComponent, CollapsibleTextComponent, WaitingPlaceholderComponent, BenchEmptyBannerComponent],
+  imports: [MatIconModule, GameIconComponent, CollapsibleTextComponent, LoadStateComponent],
   templateUrl: './gear.html',
 })
 export class GearComponent {

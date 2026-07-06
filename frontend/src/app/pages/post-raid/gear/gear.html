@@ -1,7 +1,7 @@
 <!-- The 4-col grid template literals are mirrored across header + every row; keep them in sync. -->
-@if (error(); as e) {
-  <wl-bench-empty-banner [error]="e"></wl-bench-empty-banner>
-} @else if (available()) {
+@if (error() || !available()) {
+  <wl-load-state heading="Gear" subtitle="Top-parse gear consensus." [error]="error()"></wl-load-state>
+} @else {
 <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
@@ -264,6 +264,4 @@
   </div>
 
 </div>
-} @else {
-  <wl-waiting-placeholder heading="Gear" subtitle="Top-parse gear consensus."></wl-waiting-placeholder>
 }

@@ -1,5 +1,5 @@
 @if (loadError(); as e) {
-  <wl-bench-empty-banner [error]="e" />
+  <wl-load-state [error]="e" />
 } @else if (!positions()) {
   <p class="text-[13px] text-[var(--muted)]">
     No position data for this encounter.

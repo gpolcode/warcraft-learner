@@ -10,7 +10,8 @@ import { LoadError } from '../../core/result';
 import { logWarn } from '../../core/log';
 import { EncounterSelectionService } from './encounter-selection.service';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
-import { BenchEmptyBannerComponent, RenderableLoadError } from '../../shared/components/bench-empty-banner/bench-empty-banner';
+import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
+import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
@@ -34,7 +35,7 @@ import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
-    LoadingSpinnerComponent, BenchEmptyBannerComponent, ArtIconComponent,
+    LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
     GearComponent, MapPanelComponent,

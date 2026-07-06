@@ -6,8 +6,7 @@ import {
   bucketFindings, CAT_LABEL, FindingRow, FindingTableComponent, onPlanFromEntries, rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
-import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
-import { BenchEmptyBannerComponent, RenderableLoadError } from '../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { LoadStateComponent, RenderableLoadError } from '../../../shared/components/load-state/load-state';
 import { LatestLoad } from '../../../shared/latest-load';
 import { logWarn } from '../../../core/log';
 import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from './defensive.service';
@@ -15,7 +14,7 @@ import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensive',
-  imports: [FindingTableComponent, WindowComparisonComponent, WaitingPlaceholderComponent, BenchEmptyBannerComponent],
+  imports: [FindingTableComponent, WindowComparisonComponent, LoadStateComponent],
   templateUrl: './defensive.html',
 })
 export class DefensiveComponent {
