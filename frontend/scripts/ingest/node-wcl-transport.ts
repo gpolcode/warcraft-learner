@@ -9,8 +9,25 @@
  * caching"). `network-only` reads always hit the wire.
  */
 import { WCL_API_URL, WclTransportError, type WclTransport } from '../../src/app/core/services/wcl-transport.ts';
+import { logWarn } from '../../src/app/core/log.ts';
 
 interface GraphQLResponse<TData> { data?: TData; errors?: { message: string }[]; }
+
+// The transport statuses worth retrying: a network drop (status 0 from the fetch catch) and
+// the retryable HTTP codes. Mirrors the browser retry interceptor's RETRYABLE_STATUSES so a
+// transient WCL blip is treated the same in both runtimes. GraphQL-level errors (a 200 with an
+// `errors` body - report not found, permission denied) are semantic, never retried.
+const RETRYABLE_STATUSES = new Set([0, 408, 429, 500, 502, 503, 504]);
+// The browser interceptor retries once because a person is waiting; the headless batch run has
+// no one waiting, so it retries a few times with exponential backoff to ride out a longer blip
+// (each parse fetch is swallowed to a dropped parse downstream, so a bench built during an
+// un-retried outage would silently thin - and then signature-lock that thin bench).
+const MAX_RETRIES = 3;
+const BASE_DELAY_MS = 500;
+
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export class FetchWclTransport implements WclTransport {
   private readonly cache = new Map<string, Promise<unknown>>();
@@ -45,6 +62,47 @@ export class FetchWclTransport implements WclTransport {
   }
 
   private async run<TData>(gqlString: string, variables: object, token: string): Promise<TData> {
+    const body = await this.fetchWithRetry<TData>(gqlString, variables, token);
+    if (body.errors?.length) {
+      const message = body.errors[0]?.message || 'WCL GraphQL error';
+      // A "no permission to view this report" rejection marks the report as inaccessible.
+      const code = (variables as { code?: string }).code;
+      if (code && /permission/i.test(message)) this.inaccessibleCodes.add(code);
+      throw new WclTransportError(message, 0);
+    }
+    if (body.data === undefined) {
+      throw new WclTransportError('WCL response had no data', 0);
+    }
+    return body.data;
+  }
+
+  /**
+   * The single retry point for ingestion (the headless runtime registers no HTTP interceptor,
+   * so this transport is where a transient WCL failure is retried). Retries the network + HTTP
+   * layer only, on RETRYABLE_STATUSES, with exponential backoff; a non-retryable status throws
+   * immediately. The GraphQL-error / no-data checks live above this so a semantic 200 is never
+   * retried. On the final give-up for a retryable status it logs the failure, since the caller
+   * (a transform's per-parse loop) swallows it to a silently dropped parse.
+   */
+  private async fetchWithRetry<TData>(gqlString: string, variables: object, token: string): Promise<GraphQLResponse<TData>> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.fetchOnce<TData>(gqlString, variables, token);
+      } catch (err) {
+        const status = err instanceof WclTransportError ? err.status : -1;
+        if (RETRYABLE_STATUSES.has(status) && attempt < MAX_RETRIES) {
+          await delay(BASE_DELAY_MS * 2 ** attempt);
+          continue;
+        }
+        if (RETRYABLE_STATUSES.has(status)) {
+          logWarn(`FetchWclTransport: giving up after ${MAX_RETRIES} retries`, err);
+        }
+        throw err;
+      }
+    }
+  }
+
+  private async fetchOnce<TData>(gqlString: string, variables: object, token: string): Promise<GraphQLResponse<TData>> {
     let response: Response;
     try {
       response = await fetch(WCL_API_URL, {
@@ -58,17 +116,6 @@ export class FetchWclTransport implements WclTransport {
     if (!response.ok) {
       throw new WclTransportError(`WCL API error (${response.status})`, response.status);
     }
-    const body = await response.json() as GraphQLResponse<TData>;
-    if (body.errors?.length) {
-      const message = body.errors[0]?.message || 'WCL GraphQL error';
-      // A "no permission to view this report" rejection marks the report as inaccessible.
-      const code = (variables as { code?: string }).code;
-      if (code && /permission/i.test(message)) this.inaccessibleCodes.add(code);
-      throw new WclTransportError(message, 0);
-    }
-    if (body.data === undefined) {
-      throw new WclTransportError('WCL response had no data', 0);
-    }
-    return body.data;
+    return await response.json() as GraphQLResponse<TData>;
   }
 }

@@ -6,6 +6,11 @@ import fs from 'fs';
 import path from 'path';
 import type { DataFileTransport } from '../../src/app/core/services/data-file-transport.ts';
 import { Result, LoadError, ok, missing, permanent } from '../../src/app/core/result.ts';
+import { INGEST_VERSION } from './ingest-version.ts';
+import { isFutureVersion } from './signature.ts';
+
+// Monotonic suffix so two concurrent writes to the same path never collide on the temp name.
+let tempWriteCounter = 0;
 
 export class FsDataFileTransport implements DataFileTransport {
   constructor(private readonly root: string) {}
@@ -22,13 +27,21 @@ export class FsDataFileTransport implements DataFileTransport {
   }
 
   async readJson<T>(relPath: string): Promise<Result<T, LoadError>> {
+    let parsed: unknown;
     try {
-      return ok(JSON.parse(await fs.promises.readFile(this.resolve(relPath), 'utf8')) as T);
+      parsed = JSON.parse(await fs.promises.readFile(this.resolve(relPath), 'utf8'));
     } catch (cause) {
       // An absent file is the un-ingested `missing` case, mirroring the browser 404.
       if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return missing('Not yet ingested.');
       return permanent('Data file could not be read.', `data-file.${relPath}`, cause);
     }
+    // Schema/version guard: a file stamped with a newer ingest version has a shape this build
+    // does not know, so surface it as permanent (which drives a re-ingest at the current
+    // version) instead of casting the drifted JSON blindly to T.
+    if (isFutureVersion(parsed, INGEST_VERSION)) {
+      return permanent('Data file is from a newer ingest version.', `data-file.version.${relPath}`);
+    }
+    return ok(parsed as T);
   }
 
   async writeJson(relPath: string, data: unknown): Promise<void> {
@@ -36,7 +49,16 @@ export class FsDataFileTransport implements DataFileTransport {
     await fs.promises.mkdir(path.dirname(full), { recursive: true });
     // Minified: the bench data is machine-read across thousands of files, so dropping
     // pretty-print indentation cuts the deployed footprint by roughly 70%.
-    await fs.promises.writeFile(full, JSON.stringify(data) + '\n');
+    // Write to a temp sibling then atomically rename, so a hard kill mid-write leaves the
+    // previous complete file in place rather than a truncated JSON blob in the tree.
+    const tmp = `${full}.${process.pid}.${tempWriteCounter++}.tmp`;
+    try {
+      await fs.promises.writeFile(tmp, JSON.stringify(data) + '\n');
+      await fs.promises.rename(tmp, full);
+    } catch (err) {
+      await fs.promises.rm(tmp, { force: true });
+      throw err;
+    }
   }
 
   async remove(relPath: string): Promise<void> {

@@ -299,7 +299,17 @@ async function main(): Promise<void> {
   const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
   for (const meta of metas) {
     const rulebook = await runtime.dataFile.getRulebook(meta.spec);
-    meta.specIcon = rulebook.ok ? rulebook.value.spec_icon : '';
+    if (rulebook.ok) {
+      meta.specIcon = rulebook.value.spec_icon;
+    } else {
+      // A `missing` rulebook is the expected un-authored spec (blank icon, no noise); a
+      // `permanent` read is a corrupt rulebook.json - log it, since it otherwise ships a blank
+      // icon and freezes the spec silently.
+      if (rulebook.error.kind === 'permanent') {
+        logWarn(`orchestrator ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
+      }
+      meta.specIcon = '';
+    }
   }
   const specWcl: SpecWclMap = specWclFromMetas(metas);
   runtime.hydrateSpecMeta(metas);
@@ -329,7 +339,14 @@ async function main(): Promise<void> {
     const onDisk = await runtime.dataFile.listSpecs();
     const withRulebook: string[] = [];
     for (const spec of onDisk) {
-      if ((await runtime.dataFile.getRulebook(spec)).ok) withRulebook.push(spec);
+      const rulebook = await runtime.dataFile.getRulebook(spec);
+      if (rulebook.ok) {
+        withRulebook.push(spec);
+      } else if (rulebook.error.kind === 'permanent') {
+        // A corrupt rulebook.json drops the spec from this run (frozen on stale data). That is
+        // acceptable, but it must not be silent - log so a corrupt file is diagnosable.
+        logWarn(`orchestrator ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
+      }
     }
     if (!withRulebook.length) {
       console.log('No known specs (no rulebook.json found). Nothing to do.');
@@ -364,9 +381,39 @@ async function main(): Promise<void> {
     console.log(`Specs (old version first):\n${versionLines.join('\n')}`);
   }
 
+  // Isolate each spec: a stray throw (a WCL blip on this spec's rankings, a file write) drops
+  // only that spec and the run continues with the rest, instead of aborting the whole hour.
+  // A total WCL outage still aborts red earlier (raid resolution above), so the success-gated
+  // publish never ships on a dead network; a per-spec failure leaves that spec's overlaid data
+  // untouched, so publishing the run's partial progress is safe.
+  const succeeded: string[] = [];
+  const failed: { spec: string; error: unknown }[] = [];
+  let budgetStopped = false;
   for (const spec of specs) {
-    const budgetExhausted = await ingestSpec(runtime, client, spec, encounters, protectedIds, version);
-    if (budgetExhausted) break;
+    try {
+      const budgetExhausted = await ingestSpec(runtime, client, spec, encounters, protectedIds, version);
+      succeeded.push(spec);
+      if (budgetExhausted) { budgetStopped = true; break; }
+    } catch (err) {
+      logWarn(`orchestrator: spec ${spec} aborted, continuing with the remaining specs`, err);
+      failed.push({ spec, error: err });
+    }
+  }
+
+  // End-of-run summary so a clean quiet hour is distinguishable from one that aborted partway
+  // through - otherwise failures exist only as scattered log lines.
+  console.log('\n=== Ingestion summary ===');
+  console.log(`Specs processed: ${succeeded.length} of ${specs.length}`);
+  if (budgetStopped) {
+    console.log('Stopped early: WCL point budget exhausted; the remaining specs resume next run.');
+  }
+  if (failed.length) {
+    console.log(`Specs failed (${failed.length}): ${failed.map(entry => entry.spec).join(', ')}`);
+    for (const entry of failed) {
+      console.log(`  ${entry.spec}: ${entry.error instanceof Error ? entry.error.message : String(entry.error)}`);
+    }
+  } else {
+    console.log('No spec-level failures.');
   }
 }
 

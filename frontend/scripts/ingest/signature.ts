@@ -134,6 +134,20 @@ export function readStoredVersion(file: SignedFile): number {
 }
 
 /**
+ * Schema/version guard for a freshly-read data file. A tailored file carries a numeric
+ * `ingest_version`; one stamped NEWER than the build's `currentVersion` was produced by a
+ * later ingest whose data shape this code does not know (a code deploy racing a data-shape
+ * change), so it is unusable here and must be treated as a load failure rather than cast
+ * blindly to the current type. An older or matching version, or a file with no version stamp
+ * (a manifest, a hand-authored rulebook), is left to the normal read path.
+ */
+export function isFutureVersion(parsed: unknown, currentVersion: number): boolean {
+  if (typeof parsed !== 'object' || parsed === null) return false;
+  const version = (parsed as { ingest_version?: unknown }).ingest_version;
+  return typeof version === 'number' && Number.isFinite(version) && version > currentVersion;
+}
+
+/**
  * True when a previously written file's stamped signature matches the freshly computed
  * one: nothing the output depends on (transform code or parse set) has changed, so the
  * encounter can be skipped. A missing stored signature never matches (always recompute).
