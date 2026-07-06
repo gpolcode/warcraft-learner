@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { provideApollo } from 'apollo-angular';
@@ -18,6 +18,7 @@ import { WCL_TRANSPORT, WCL_API_URL } from './core/services/wcl-transport';
 import { ApolloWclTransport } from './core/services/apollo-wcl-transport';
 import { DATA_FILE_TRANSPORT, HttpDataFileTransport } from './core/services/data-file-transport';
 import { DataFileApiService } from './core/services/data-file-api';
+import { retryTransientInterceptor } from './core/interceptors/retry-transient.interceptor';
 import { hydrateSpecMeta } from './core/spec-meta';
 import { dataSourceProviders } from '../environments/environment';
 
@@ -37,7 +38,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
-    provideHttpClient(withFetch()),
+    // Apollo's HttpLink rides on this HttpClient, so the retry-transient interceptor
+    // covers both the WCL GraphQL POSTs and the static data-file GETs from one place.
+    provideHttpClient(withFetch(), withInterceptors([retryTransientInterceptor])),
     provideAppInitializer(async () => {
       // Hydrate the spec-meta cache (folder -> class/spec names + icons) from the baked
       // spec-meta.json before anything renders, so the class/spec dropdowns, the icon pipes,

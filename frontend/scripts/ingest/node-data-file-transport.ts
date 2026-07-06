@@ -7,6 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { DataFileTransport } from '../../src/app/core/services/data-file-transport.ts';
+import { Result, LoadError, ok, err, missing, permanent } from '../../src/app/core/result.ts';
 
 export class FsDataFileTransport implements DataFileTransport {
   constructor(private readonly root: string) {}
@@ -23,12 +24,14 @@ export class FsDataFileTransport implements DataFileTransport {
     return full;
   }
 
-  async readJson<T>(relPath: string): Promise<T | null> {
+  async readJson<T>(relPath: string): Promise<Result<T, LoadError>> {
     try {
-      return JSON.parse(await fs.promises.readFile(this.resolve(relPath), 'utf8')) as T;
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
-      throw err;
+      return ok(JSON.parse(await fs.promises.readFile(this.resolve(relPath), 'utf8')) as T);
+    } catch (cause) {
+      // An absent file is the un-ingested `missing` case (mirrors the browser 404); any
+      // other read/parse failure is a real problem the ingestion should not treat as empty.
+      if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return err(missing('Not yet ingested.'));
+      return err(permanent('Data file could not be read.', `data-file.${relPath}`, cause));
     }
   }
 

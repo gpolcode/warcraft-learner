@@ -4,6 +4,17 @@ import { EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { SpecMeta } from '../models/spec-meta.models';
 import { EncounterPositions } from '../models/positioning.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
+import { Result, LoadError, ok } from '../result';
+
+/**
+ * Collection reads (the spec/encounter manifests) treat a `missing` file as the legitimate
+ * empty fresh-tier state, so it folds to `ok([])`; a transient/permanent read failure
+ * propagates unchanged so the UI can surface it instead of showing an empty list.
+ */
+function foldMissingToEmpty<T>(result: Result<T[], LoadError>): Result<T[], LoadError> {
+  if (result.ok) return result;
+  return result.error.kind === 'missing' ? ok([]) : result;
+}
 
 /**
  * Data API over the ingested static files. Reads are pass-through (no transform):
@@ -22,32 +33,43 @@ export class DataFileApiService {
   // ── Reads (browser + Node) ──────────────────────────────────────────────────
 
   /** Raw read of a per-use-case tailored slice file (`{spec}/{slice}/{enc}.json`). */
-  getSlice<T>(spec: string, encounterId: number, slice: string): Promise<T | null> {
+  getSlice<T>(spec: string, encounterId: number, slice: string): Promise<Result<T, LoadError>> {
     return this.io.readJson<T>(`${spec}/${slice}/${encounterId}.json`);
   }
 
   /** Raw read of a spec's rulebook (`{spec}/rulebook.json`). */
-  getRulebook(spec: string): Promise<Rulebook | null> {
+  getRulebook(spec: string): Promise<Result<Rulebook, LoadError>> {
     return this.io.readJson<Rulebook>(`${spec}/rulebook.json`);
   }
 
-  /** Raw read of the spec manifest (`index.json`). Empty when not yet generated. */
-  async getSpecs(): Promise<SpecEntry[]> {
-    return (await this.io.readJson<SpecEntry[]>('index.json')) ?? [];
+  /**
+   * Raw read of the spec manifest (`index.json`). A not-yet-generated manifest (`missing`)
+   * folds to an empty list - the legitimate fresh-tier state that shows an empty spec
+   * dropdown - while a transient/permanent read failure propagates so the UI can surface
+   * it instead of showing an empty dropdown during a data-host outage.
+   */
+  async getSpecs(): Promise<Result<SpecEntry[], LoadError>> {
+    return foldMissingToEmpty(await this.io.readJson<SpecEntry[]>('index.json'));
   }
 
-  /** Raw read of the WCL-derived spec universe (`spec-meta.json`). Empty when not yet generated. */
+  /**
+   * Raw read of the WCL-derived spec universe (`spec-meta.json`). This one folds every
+   * failure to an empty list: it hydrates the icon/spec cache before anything renders, so
+   * a failure here degrades the whole app rather than a single card, and there is no card
+   * to surface an error on at bootstrap. The transport has already logged the failure.
+   */
   async getSpecMeta(): Promise<SpecMeta[]> {
-    return (await this.io.readJson<SpecMeta[]>('spec-meta.json')) ?? [];
+    const result = await this.io.readJson<SpecMeta[]>('spec-meta.json');
+    return result.ok ? result.value : [];
   }
 
   /** Raw read of a spec's encounter index (`{spec}/encounters.json`). */
-  async getEncounters(spec: string): Promise<EncounterEntry[]> {
-    return (await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`)) ?? [];
+  async getEncounters(spec: string): Promise<Result<EncounterEntry[], LoadError>> {
+    return foldMissingToEmpty(await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`));
   }
 
   /** Raw read of ingested top-parse position timelines (`{spec}/positions/{enc}.json`). */
-  getPositions(spec: string, encounterId: number): Promise<EncounterPositions | null> {
+  getPositions(spec: string, encounterId: number): Promise<Result<EncounterPositions, LoadError>> {
     return this.io.readJson<EncounterPositions>(`${spec}/positions/${encounterId}.json`);
   }
 

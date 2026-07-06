@@ -12,6 +12,9 @@ describe('FormatDurationPipe', () => {
     { input: 300,       expected: '5:00',   why: 'exact five minutes' },
     { input: 3661,      expected: '61:01',  why: 'minutes can exceed 59 (no capping)' },
     { input: 9.9,       expected: '0:09',   why: 'fractional seconds are floored' },
+    { input: -1,        expected: '0:00',   why: 'a small negative duration clamps to the zero rendering' },
+    { input: -3661,     expected: '0:00',   why: 'a large negative duration clamps to the zero rendering' },
+    { input: NaN,       expected: '0:00',   why: 'a non-finite duration clamps to the zero rendering' },
   ] as { input: number | null | undefined; expected: string; why: string }[])(
     'transform($input) === "$expected" ($why)',
     ({ input, expected }) => {

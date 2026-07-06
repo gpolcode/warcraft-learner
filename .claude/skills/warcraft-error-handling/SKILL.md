@@ -84,6 +84,58 @@ expect(await source.getBench(SUBTLETY, UNKNOWN_ENCOUNTER_ID))
 
 The interceptor's backoff is a real RxJS timer: drive its retry with `vi.useFakeTimers()` + `vi.advanceTimersByTimeAsync(BACKOFF_MS)` and `HttpTestingController`.
 
+## Card rendering contract (feature service + component)
+
+Every post-raid/pre-fight card follows the same four-state shape so the app never shows a blank or stale card that reads as "nothing to report".
+
+**Feature service** load methods return `Promise<Result<XView, LoadError>>`. `XView` is the success payload only and carries no `available` flag (an `ok` result is available). Propagate the data-source error, and surface WCL failures instead of silently falling back:
+
+```ts
+async loadPlayerView(...): Promise<Result<XView, LoadError>> {
+  const bench = await this.source.getBench(spec, encounterId);
+  if (!bench.ok) return bench;                      // missing / transient / permanent, propagated
+  try {
+    const report = await this.wclApi.getReport(reportCode);
+    // ...build the view from bench.value + the player's log...
+    return ok(view);
+  } catch (cause) {
+    logWarn('XFeatureService.loadPlayerView', cause);
+    return err(toLoadError(cause, 'x.player-view'));  // a WCL failure surfaces, not a silent bench-only fallback
+  }
+}
+```
+
+A legitimate not-an-error state (no player selected in the pre-fight bench view, or a selected fight not yet present during a live sync) still returns `ok(...)` with the informational view - only a genuine failure returns `err`.
+
+**Component** applies the `Result` through `LatestLoad`, keeping the existing `available` signal (now `= result.ok`) and adding one `error` signal for the transient/permanent arms:
+
+```ts
+apply: result => {
+  if (result.ok) {
+    this.error.set(null);
+    this.available.set(true); this.availableChange.emit(true);
+    // set the view signals from result.value
+  } else {
+    if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+    // `missing` renders the existing waiting placeholder (page shows the bench-empty banner);
+    // `transient`/`permanent` render the wl-load-error leaf.
+    this.error.set(result.error.kind === 'missing' ? null : result.error);
+    this.available.set(false); this.availableChange.emit(false);
+    // clear the view signals
+  }
+},
+```
+
+**Template** switches in priority order: load-error leaf, then waiting placeholder, then content.
+
+```html
+@if (error(); as e) { <wl-load-error [error]="e" /> }
+@else if (!available()) { <wl-waiting-placeholder ... /> }
+@else { <!-- card content --> }
+```
+
+`availableChange` stays `= result.ok`: a transient WCL outage on one card does not flip the whole page into the un-ingested bench-empty banner unless the bench file itself was missing. The `wl-load-error` leaf renders `Extract<LoadError, { kind: 'transient' | 'permanent' }>` (its exported `RenderableLoadError`), so narrow `missing` out before passing it.
+
 ## The rules
 
 1. Every fallible load returns `Result<T, LoadError>` - never `T | null`, never an escaping throw, never a `{ found: false }` placeholder.

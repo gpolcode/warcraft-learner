@@ -319,7 +319,8 @@ async function main(): Promise<void> {
   const classesData = await client.query<{ gameData?: { classes?: WclGameClass[] } }>(CLASSES_QUERY);
   const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
   for (const meta of metas) {
-    meta.specIcon = (await runtime.dataFile.getRulebook(meta.spec))?.spec_icon ?? '';
+    const rulebook = await runtime.dataFile.getRulebook(meta.spec);
+    meta.specIcon = rulebook.ok ? rulebook.value.spec_icon : '';
   }
   const specWcl: SpecWclMap = specWclFromMetas(metas);
   runtime.hydrateSpecMeta(metas);
@@ -350,7 +351,7 @@ async function main(): Promise<void> {
     const onDisk = await runtime.dataFile.listSpecs();
     const withRulebook: string[] = [];
     for (const spec of onDisk) {
-      if (await runtime.dataFile.getRulebook(spec)) withRulebook.push(spec);
+      if ((await runtime.dataFile.getRulebook(spec)).ok) withRulebook.push(spec);
     }
     if (!withRulebook.length) {
       console.log('No known specs (no rulebook.json found). Nothing to do.');

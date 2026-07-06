@@ -73,6 +73,7 @@ export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): nu
 
 /** The value closest to zero (smallest absolute value) - the primary BL offset. */
 export function closestToZero(values: number[]): number {
+  if (values.length === 0) return 0;
   return values.reduce((best, value) => (Math.abs(value) < Math.abs(best) ? value : best));
 }
 

@@ -12,6 +12,7 @@
 import { Injectable, inject } from '@angular/core';
 import { DataFileApiService } from '../../core/services/data-file-api';
 import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
+import { Result, LoadError, ok } from '../../core/result';
 
 /* ----------------------------- pure projection ---------------------------- */
 
@@ -30,12 +31,13 @@ export class EncounterSelectionService {
   private readonly files = inject(DataFileApiService);
 
   /** The ingested spec manifest, for the class / spec dropdowns. */
-  getSpecs(): Promise<SpecEntry[]> {
+  getSpecs(): Promise<Result<SpecEntry[], LoadError>> {
     return this.files.getSpecs();
   }
 
   /** A spec's encounters that carry bench samples (empty ones dropped). */
-  async getEncounters(spec: string): Promise<EncounterEntry[]> {
-    return benchedEncounters(await this.files.getEncounters(spec));
+  async getEncounters(spec: string): Promise<Result<EncounterEntry[], LoadError>> {
+    const result = await this.files.getEncounters(spec);
+    return result.ok ? ok(benchedEncounters(result.value)) : result;
   }
 }

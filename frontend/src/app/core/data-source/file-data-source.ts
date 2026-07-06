@@ -1,5 +1,6 @@
 import { DataFileApiService } from '../services/data-file-api';
 import { DataSource } from './data-source';
+import { Result, LoadError } from '../result';
 
 /**
  * Production `DataSource<T>` for every slice: reads the ingest-baked tailored file
@@ -14,7 +15,7 @@ import { DataSource } from './data-source';
 export class FileDataSource<T> implements DataSource<T> {
   constructor(private readonly files: DataFileApiService, private readonly slice: string) {}
 
-  getBench(spec: string, encounterId: number): Promise<T | null> {
+  getBench(spec: string, encounterId: number): Promise<Result<T, LoadError>> {
     return this.files.getSlice<T>(spec, encounterId, this.slice);
   }
 }

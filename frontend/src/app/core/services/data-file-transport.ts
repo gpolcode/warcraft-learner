@@ -2,6 +2,8 @@ import { Injectable, InjectionToken, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { logWarn } from '../log';
+import { Result, LoadError, ok } from '../result';
+import { toLoadError } from '../http-load-error';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -10,9 +12,14 @@ import { environment } from '../../../environments/environment';
  * GET under `document.baseURI`, read-only); the Node ingestion binds a filesystem
  * implementation that also writes/lists/removes. Paths are relative to the
  * `data/specs/` root (e.g. `SubtletyRogue/burst/3176.json`, `index.json`).
+ *
+ * `readJson` returns a `Result`: `ok(body)` on a hit, `err(missing)` when the file is
+ * absent (a 404 / ENOENT, which the cards render as the un-ingested waiting state), and
+ * `err(transient)` / `err(permanent)` when the read itself failed - so a data-host
+ * outage surfaces as an error instead of masquerading as "not ingested".
  */
 export interface DataFileTransport {
-  readJson<T>(relPath: string): Promise<T | null>;
+  readJson<T>(relPath: string): Promise<Result<T, LoadError>>;
   /** Write side - Node ingestion only; the browser transport throws if called. */
   writeJson(relPath: string, data: unknown): Promise<void>;
   /** Remove a file (pruning) - Node only. */
@@ -34,12 +41,12 @@ export class HttpDataFileTransport implements DataFileTransport {
   // `document.baseURI`.
   private readonly base = new URL(environment.dataBaseHref || 'data/specs/', document.baseURI).href;
 
-  async readJson<T>(relPath: string): Promise<T | null> {
+  async readJson<T>(relPath: string): Promise<Result<T, LoadError>> {
     try {
-      return await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`));
-    } catch (err) {
-      logWarn(`DataFileTransport.readJson ${relPath}`, err);
-      return null;
+      return ok(await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`)));
+    } catch (cause) {
+      logWarn(`DataFileTransport.readJson ${relPath}`, cause);
+      return { ok: false, error: toLoadError(cause, `data-file.${relPath}`) };
     }
   }
 
