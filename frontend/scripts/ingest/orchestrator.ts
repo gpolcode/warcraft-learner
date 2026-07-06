@@ -30,6 +30,7 @@ import {
 } from './wcl-client.ts';
 import { RATE_LIMIT_QUERY, CLASSES_QUERY } from './wcl-queries.ts';
 import { INGEST_VERSION } from './ingest-version.ts';
+import { type LoadError } from '../../src/app/core/result.ts';
 import {
   orderSpecsByVersion, orderEncountersByMissingFirst, type SpecOrderEntry,
 } from './ordering.ts';
@@ -136,29 +137,37 @@ async function ingestEncounter(
   const inaccessibleCodes = new Set(runtime.takeInaccessibleReportCodes());
   const { signature, inaccessibleParses } = signatureAfterFetch(poolRows, inaccessibleCodes, version, TOP_N);
 
+  // A `missing` bench is the normal "nothing to ingest for this slice" case; a
+  // transient/permanent bench is a real fetch failure, logged with its kind so the run
+  // surfaces it, and skipped so the slice is never overwritten with partial data.
+  const skipNote = (slice: string, error: LoadError): string =>
+    error.kind === 'missing'
+      ? `    [${encounter.name}] ${slice}: no data, skipped`
+      : `    [${encounter.name}] ${slice}: ${error.kind} (${error.message}), skipped`;
+
   let wroteAny = false;
   const writes: Promise<unknown>[] = [];
-  if (burst) {
+  if (burst.ok) {
     // Canonical carrier: also persists the inaccessible set the skip check reads.
-    const stamped = { ...stampSignature(burst, signature, INGEST_VERSION), inaccessible_parses: inaccessibleParses };
+    const stamped = { ...stampSignature(burst.value, signature, INGEST_VERSION), inaccessible_parses: inaccessibleParses };
     writes.push(dataFile.writeSlice(spec, encId, 'burst', stamped));
     wroteAny = true;
-  } else { console.log(`    [${encounter.name}] burst: no data, skipped`); }
-  if (rotation) {
-    writes.push(dataFile.writeSlice(spec, encId, 'rotation', stampSignature(rotation, signature, INGEST_VERSION)));
+  } else { console.log(skipNote('burst', burst.error)); }
+  if (rotation.ok) {
+    writes.push(dataFile.writeSlice(spec, encId, 'rotation', stampSignature(rotation.value, signature, INGEST_VERSION)));
     wroteAny = true;
-  } else { console.log(`    [${encounter.name}] rotation: no data, skipped`); }
-  if (defensive) {
-    writes.push(dataFile.writeSlice(spec, encId, 'defensive', stampSignature(defensive, signature, INGEST_VERSION)));
+  } else { console.log(skipNote('rotation', rotation.error)); }
+  if (defensive.ok) {
+    writes.push(dataFile.writeSlice(spec, encId, 'defensive', stampSignature(defensive.value, signature, INGEST_VERSION)));
     wroteAny = true;
-  } else { console.log(`    [${encounter.name}] defensive: no data, skipped`); }
-  if (gear) {
-    writes.push(dataFile.writeSlice(spec, encId, 'gear', stampSignature(gear, signature, INGEST_VERSION)));
+  } else { console.log(skipNote('defensive', defensive.error)); }
+  if (gear.ok) {
+    writes.push(dataFile.writeSlice(spec, encId, 'gear', stampSignature(gear.value, signature, INGEST_VERSION)));
     wroteAny = true;
-  } else { console.log(`    [${encounter.name}] gear: no data, skipped`); }
-  if (map) {
-    writes.push(dataFile.writePositions(spec, encId, stampSignature(map, signature, INGEST_VERSION)));
-  } else { console.log(`    [${encounter.name}] positions: no data, skipped`); }
+  } else { console.log(skipNote('gear', gear.error)); }
+  if (map.ok) {
+    writes.push(dataFile.writePositions(spec, encId, stampSignature(map.value, signature, INGEST_VERSION)));
+  } else { console.log(skipNote('positions', map.error)); }
 
   await Promise.all(writes);
   return wroteAny;
@@ -177,11 +186,11 @@ async function rebuildEncountersIndex(runtime: IngestRuntime, spec: string): Pro
     const encId = parseInt(file);
     if (!Number.isFinite(encId)) continue;
     const bench = await dataFile.getSlice<{ encounter_id?: number; encounter_name?: string; sample_count?: number }>(spec, encId, 'burst');
-    if (!bench) continue;
+    if (!bench.ok) continue;
     entries.push({
-      id: bench.encounter_id ?? encId,
-      name: bench.encounter_name ?? file,
-      sample_count: bench.sample_count ?? 0,
+      id: bench.value.encounter_id ?? encId,
+      name: bench.value.encounter_name ?? file,
+      sample_count: bench.value.sample_count ?? 0,
     });
   }
   await dataFile.writeEncounters(spec, entries);
@@ -195,7 +204,7 @@ async function rebuildSpecIndex(runtime: IngestRuntime): Promise<void> {
   const entries: SpecEntry[] = [];
   for (const spec of specs.sort()) {
     const encounters = await dataFile.getEncounters(spec);
-    const count = encounters.filter(entry => entry.sample_count > 0).length;
+    const count = encounters.ok ? encounters.value.filter(entry => entry.sample_count > 0).length : 0;
     if (count > 0) entries.push({ spec, encounter_count: count });
   }
   await dataFile.writeSpecs(entries);
@@ -257,7 +266,8 @@ async function ingestSpec(
 
       // Skip check: key on the top-N ACCESSIBLE parses - exclude the ones a prior run found
       // inaccessible (persisted on the burst file) - and compare against its stamped signature.
-      const existing = await runtime.dataFile.getSlice<SignedFile>(spec, encounter.id, 'burst');
+      const existingResult = await runtime.dataFile.getSlice<SignedFile>(spec, encounter.id, 'burst');
+      const existing = existingResult.ok ? existingResult.value : null;
       const skipKey = encounterSkipKey(poolRows, readInaccessibleParses(existing), version, TOP_N);
       if (signatureMatches(readStoredSignature(existing), skipKey)) {
         console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
@@ -365,7 +375,7 @@ async function main(): Promise<void> {
         .filter(file => file.endsWith('.json'));
       const versions = await Promise.all(burstFiles.map(async file => {
         const slice = await runtime.dataFile.getSlice<SignedFile>(spec, parseInt(file), 'burst');
-        return slice ? readStoredVersion(slice) : null;
+        return slice.ok ? readStoredVersion(slice.value) : null;
       }));
       const storedVersions = versions.filter((stored): stored is number => stored !== null);
       const entry: SpecOrderEntry = {

@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ReferenceSelector } from '../../../core/models/positioning.models';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
+import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
 import { MapFeatureService } from './map.service';
 import {
   RelPos, ParseTimelines, buildParseTimelines, buildTrail, positionAt, toReferenceLocal,
@@ -30,7 +31,7 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadErrorComponent],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvasComponent {
@@ -39,6 +40,15 @@ export class MapCanvasComponent {
   protected readonly positions = this.map.positions;
   protected readonly live = this.map.live;
   protected readonly anchorTime = this.map.anchorTime;
+  /**
+   * Transient/permanent bench or overlay failure, narrowed to the two renderable kinds;
+   * when set it renders `wl-load-error` in place of the canvas. A `missing` bench is kept
+   * out of the service's error signal, so this only ever holds a renderable error.
+   */
+  protected readonly loadError = computed<RenderableLoadError | null>(() => {
+    const error = this.map.error();
+    return error && error.kind !== 'missing' ? error : null;
+  });
 
   protected readonly selector = signal<ReferenceSelector>({ kind: 'boss' });
   protected readonly scrubT = signal(0);

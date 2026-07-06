@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
 import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
+import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
+import { logWarn } from '../../../core/log';
 import { LatestLoad } from '../../../shared/latest-load';
 import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 
@@ -19,7 +21,7 @@ import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-burst-windows',
-  imports: [WindowComparisonComponent, WaitingPlaceholderComponent],
+  imports: [WindowComparisonComponent, WaitingPlaceholderComponent, LoadErrorComponent],
   templateUrl: './burst-windows.html',
 })
 export class BurstWindowsComponent {
@@ -44,6 +46,8 @@ export class BurstWindowsComponent {
   readonly availableChange = output<boolean>();
 
   protected readonly available = signal(true);
+  /** Set for a transient/permanent failure; `missing` stays null (waiting placeholder). */
+  protected readonly error = signal<RenderableLoadError | null>(null);
   private readonly _windows = signal<ComparisonWindow[]>([]);
   private readonly _anchors = signal<BurstMapAnchor[]>([]);
   private readonly _clipAnchors = signal<ClipAnchor[]>([]);
@@ -63,12 +67,25 @@ export class BurstWindowsComponent {
         : this.burst.loadBenchView(spec, encounterId);
       this.loader.run(load, {
         context: 'burst.loadPlayerView',
-        apply: view => {
-          this.available.set(view.available);
-          this.availableChange.emit(view.available);
-          this._windows.set(view.windows);
-          this._anchors.set(view.anchors);
-          this._clipAnchors.set(view.clipAnchors);
+        apply: result => {
+          if (result.ok) {
+            this.error.set(null);
+            this.available.set(true);
+            this.availableChange.emit(true);
+            this._windows.set(result.value.windows);
+            this._anchors.set(result.value.anchors);
+            this._clipAnchors.set(result.value.clipAnchors);
+          } else {
+            if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+            // `missing` renders the waiting placeholder (page shows the bench-empty banner);
+            // `transient`/`permanent` render the wl-load-error leaf.
+            this.error.set(result.error.kind === 'missing' ? null : result.error);
+            this.available.set(false);
+            this.availableChange.emit(false);
+            this._windows.set([]);
+            this._anchors.set([]);
+            this._clipAnchors.set([]);
+          }
         },
         settled: () => this.busyChange.emit(false),
       });

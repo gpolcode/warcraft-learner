@@ -3,8 +3,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { GameIconComponent } from '../../../shared/components/game-icon/game-icon';
 import { CollapsibleTextComponent } from '../../../shared/components/collapsible-text/collapsible-text';
 import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
+import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
 import { slotName, statusIcon } from '../../../shared/gear/gear-comparison';
 import { LatestLoad } from '../../../shared/latest-load';
+import { logWarn } from '../../../core/log';
 import { GearFeatureService, GearComparisonView, emptyGearView } from './gear.service';
 
 /**
@@ -19,7 +21,7 @@ import { GearFeatureService, GearComparisonView, emptyGearView } from './gear.se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatIconModule, GameIconComponent, CollapsibleTextComponent, WaitingPlaceholderComponent],
+  imports: [MatIconModule, GameIconComponent, CollapsibleTextComponent, WaitingPlaceholderComponent, LoadErrorComponent],
   templateUrl: './gear.html',
 })
 export class GearComponent {
@@ -39,7 +41,13 @@ export class GearComponent {
 
   private readonly _view = signal<GearComparisonView>(emptyGearView());
   protected readonly view = this._view.asReadonly();
-  protected readonly available = computed(() => this.view().available);
+  // available() is the load outcome, not a view flag: true once an ok result lands,
+  // false while loading or on any error (missing renders the waiting placeholder).
+  private readonly _available = signal(false);
+  protected readonly available = this._available.asReadonly();
+  // The transient / permanent arm the wl-load-error leaf renders; null for ok or missing.
+  private readonly _error = signal<RenderableLoadError | null>(null);
+  protected readonly error = this._error.asReadonly();
 
   // Enchant rows partitioned for the comparison view (semantic data only, no styling).
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
@@ -61,10 +69,21 @@ export class GearComponent {
         ? this.gear.loadComparisonView(spec, encounterId, report, fight, player)
         : this.gear.loadBenchView(spec, encounterId);
       this.loader.run(load, {
-        context: 'gear.loadComparisonView',
-        apply: view => {
-          this._view.set(view);
-          this.availableChange.emit(view.available);
+        context: 'gear.load',
+        apply: result => {
+          if (result.ok) {
+            this._error.set(null);
+            this._view.set(result.value);
+            this._available.set(true);
+            this.availableChange.emit(true);
+          } else {
+            if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+            // missing -> the waiting placeholder (bench-empty banner); transient / permanent -> wl-load-error.
+            this._error.set(result.error.kind === 'missing' ? null : result.error);
+            this._view.set(emptyGearView());
+            this._available.set(false);
+            this.availableChange.emit(false);
+          }
         },
         settled: () => this.busyChange.emit(false),
       });

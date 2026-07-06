@@ -13,6 +13,8 @@ import { WclEvent } from '../../../core/models/wcl.models';
 import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { windowSpells } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
 
@@ -27,8 +29,6 @@ export interface BurstMapAnchor {
 
 /** The burst card view-model: one ComparisonWindow + one map/clip anchor per top window. */
 export interface BurstView {
-  /** Whether the top-parse bench exists for this encounter (false shows the waiting state). */
-  available: boolean;
   windows: ComparisonWindow[];
   anchors: BurstMapAnchor[];
   clipAnchors: ClipAnchor[];
@@ -140,7 +140,7 @@ export function buildBurstView(
     anchors.push(burstMapAnchor(window));
     clipAnchors.push(burstClipAnchor(window, index));
   });
-  return { available: true, windows, anchors, clipAnchors };
+  return { windows, anchors, clipAnchors };
 }
 
 /** Total damage on a WCL event (raw amount + absorbed). */
@@ -224,14 +224,16 @@ export class BurstFeatureService {
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
-  ): Promise<BurstView> {
+  ): Promise<Result<BurstView, LoadError>> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return { available: false, windows: [], anchors: [], clipAnchors: [] };
+    if (!bench.ok) return bench;
 
     try {
       const report = await this.wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
-      if (!fight) return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
+      // A selected fight may legitimately not be present in the report yet during a
+      // live sync - an informational bench-only view, not a failure.
+      if (!fight) return ok(buildBurstView(bench.value.windows, [], Number.POSITIVE_INFINITY, bench.value.cd_spell_ids, bench.value.ability_icons, true));
 
       // Names only, to attribute the player's casts by ability name in each window.
       const abilityNames = new Map<number, string>();
@@ -241,19 +243,19 @@ export class BurstFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
         this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
       ]);
-      const playerWindows = findPlayerBurstWindows(bench.windows, damage, casts, fight.startTime, abilityNames);
+      const playerWindows = findPlayerBurstWindows(bench.value.windows, damage, casts, fight.startTime, abilityNames);
       const fightDurationS = (fight.endTime - fight.startTime) / 1000;
-      return buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
-    } catch (err) {
-      logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, err);
-      return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
+      return ok(buildBurstView(bench.value.windows, playerWindows, fightDurationS, bench.value.cd_spell_ids, bench.value.ability_icons));
+    } catch (cause) {
+      logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
+      return err(toLoadError(cause, 'burst.player-view'));
     }
   }
 
   /** Pre-fight: the top-parse burst windows with no player overlay (informational). */
-  async loadBenchView(spec: string, encounterId: number): Promise<BurstView> {
+  async loadBenchView(spec: string, encounterId: number): Promise<Result<BurstView, LoadError>> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return { available: false, windows: [], anchors: [], clipAnchors: [] };
-    return buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
+    if (!bench.ok) return bench;
+    return ok(buildBurstView(bench.value.windows, [], Number.POSITIVE_INFINITY, bench.value.cd_spell_ids, bench.value.ability_icons, true));
   }
 }

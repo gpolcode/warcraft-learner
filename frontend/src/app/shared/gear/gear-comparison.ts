@@ -53,14 +53,20 @@ export interface TrinketRow {
 }
 
 // ── Player-vs-bench comparison (analyze page) ─────────────────────────────────
+//
+// The comparison builders below take a real `CharacterGear` (never null): the card
+// only compares once the player's own combatant-info gear is in hand. The bench-only
+// consensus view (the /pre plan) has no player to compare against and uses the
+// dedicated `buildBenchEnchantRows` / `buildBenchTrinketRows` further down instead, so
+// there is no "Not enchanted for every slot" render for a not-yet-loaded player.
 
 /**
  * Enchants: flag slots the player left un-enchanted that top parsers consider
  * mandatory, and surface where the player differs from the consensus enchant.
  */
-export function buildEnchantRows(gear: CharacterGear | null, stats: EncounterGearStats | null): EnchantRow[] {
+export function buildEnchantRows(gear: CharacterGear, stats: EncounterGearStats | null): EnchantRow[] {
   const topEnch = stats?.enchants ?? {};
-  const playerEnch = gear?.enchants ?? [];
+  const playerEnch = gear.enchants ?? [];
   if (!Object.keys(topEnch).length && !playerEnch.length) return [];
   const slots = new Set<number>();
   for (const k of Object.keys(topEnch)) slots.add(Number(k));
@@ -182,8 +188,8 @@ function trinketUsagePct(stats: EncounterGearStats | null, id: number): number |
  * so each recommendation is consumed by at most one slot and the same item is
  * never suggested for both.
  */
-export function buildTrinketRows(gear: CharacterGear | null, stats: EncounterGearStats | null): TrinketRow[] {
-  const playerTrinkets = gear?.trinkets ?? [];
+export function buildTrinketRows(gear: CharacterGear, stats: EncounterGearStats | null): TrinketRow[] {
+  const playerTrinkets = gear.trinkets ?? [];
   const pair = topTrinketPair(stats);
   const rows: TrinketRow[] = [];
 

@@ -6,7 +6,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { SelectionStore } from '../../core/services/selection-store';
 import { SpecEntry, EncounterEntry } from '../../core/models/encounter.models';
+import { LoadError } from '../../core/result';
+import { logWarn } from '../../core/log';
 import { EncounterSelectionService } from './encounter-selection.service';
+import { LoadErrorComponent, RenderableLoadError } from '../../shared/components/load-error/load-error';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
@@ -37,7 +40,7 @@ import { MapFeatureService, MapAnchor } from '../post-raid/map/map.service';
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
-    LoadingSpinnerComponent, BenchEmptyBannerComponent, ArtIconComponent,
+    LoadingSpinnerComponent, LoadErrorComponent, BenchEmptyBannerComponent, ArtIconComponent,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
     GearComponent, MapPanelComponent,
@@ -76,7 +79,9 @@ export class PreFightComponent implements OnInit {
   protected readonly selectedEncounter = computed(() =>
     this.encounters().find(entry => entry.id === this.selectedEncId()));
   protected readonly loading = signal(false);
-  protected readonly error = signal('');
+  // A transient/permanent failure reading the spec or encounter manifests; a not-yet-generated
+  // manifest arrives as ok([]) (the empty fresh-tier state), so it never surfaces here.
+  protected readonly error = signal<RenderableLoadError | null>(null);
 
   // Per-card bench availability (from each card's `availableChange`); the banner shows when
   // none have a bench. Init true (optimistic): pre-fight cards render with no reveal gate, so
@@ -99,8 +104,12 @@ export class PreFightComponent implements OnInit {
     this.loading.set(true);
     try {
       const specs = await this.encounterSelection.getSpecs();
-      this.specs.set(specs);
-      if (this.classes().length) this.classControl.enable({ emitEvent: false });
+      if (specs.ok) {
+        this.specs.set(specs.value);
+        if (this.classes().length) this.classControl.enable({ emitEvent: false });
+      } else {
+        this.surfaceLoadError(specs.error);
+      }
     } finally {
       this.loading.set(false);
     }
@@ -147,12 +156,26 @@ export class PreFightComponent implements OnInit {
   }
 
   private async _onSpecSelected(spec: string): Promise<void> {
-    this.encounters.set(await this.encounterSelection.getEncounters(spec));
+    this.error.set(null);
+    const encounters = await this.encounterSelection.getEncounters(spec);
+    if (!encounters.ok) {
+      this.surfaceLoadError(encounters.error);
+      this.encControl.disable({ emitEvent: false });
+      return;
+    }
+    this.encounters.set(encounters.value);
     if (this.encounters().length) {
       this.encControl.enable({ emitEvent: false });
     } else {
       this.encControl.disable({ emitEvent: false });
     }
+  }
+
+  // Surface a transient/permanent manifest read failure on the page instead of an empty
+  // dropdown; a missing manifest already folds to ok([]), so it never reaches here.
+  private surfaceLoadError(error: LoadError): void {
+    if (error.kind === 'permanent') logWarn(error.id, error.context);
+    this.error.set(error.kind === 'missing' ? null : error);
   }
 
   protected async onEncChange(): Promise<void> {

@@ -21,7 +21,6 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import {
@@ -30,6 +29,8 @@ import {
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, permanent } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
@@ -79,10 +80,8 @@ export interface CdPlanRow {
   rule: string | null;
 }
 
-/** Post-raid rotation view-model. */
+/** Post-raid rotation view-model. An `ok` result implies the top-parse bench exists. */
 export interface RotationPlayerView {
-  /** Whether the top-parse bench exists (drives the Offensives section; rules render regardless). */
-  available: boolean;
   ruleRows: RotationFindingRow[];
   /** Labels of rotation rules the player followed cleanly this fight. */
   ruleOnPlan: string[];
@@ -612,58 +611,51 @@ export function buildCdPlan(
 export class RotationFeatureService {
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
 
   /**
-   * Post-raid: evaluate the rotation rules (from the authored rulebook, so they work with no
-   * bench) against the player's casts, plus the offensive findings when the bench exists.
-   * `available` reflects the bench and drives the Offensives "waiting" state.
+   * Post-raid: build the offensive findings (needs-improvement / timing-suggestions /
+   * doing-well) plus the rotation-rule findings from the player's own log and the top-parse
+   * bench (which carries the authored rules). Propagates a non-ok bench (`missing` drives the
+   * Offensives waiting state); a WCL failure surfaces as `err(toLoadError(...))`.
    */
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
-  ): Promise<RotationPlayerView> {
-    const [rulebook, bench] = await Promise.all([
-      this.dataFiles.getRulebook(spec),
-      this.source.getBench(spec, encounterId),
-    ]);
-    const rules = rulebook?.rules ?? [];
-    const available = bench !== null;
-    const empty: RotationPlayerView = { available, ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] };
+  ): Promise<Result<RotationPlayerView, LoadError>> {
+    const bench = await this.source.getBench(spec, encounterId);
+    if (!bench.ok) return bench;
 
     try {
       const report = await this.wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
-      if (!fight) return empty;
+      if (!fight) return err(permanent('Fight not found in this report.', 'rotation.player-view'));
 
       const [casts, buffs] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       ]);
 
-      // Rules (rulebook) evaluate regardless of the bench; offensive findings need it.
+      const rules = bench.value.rules;
+      const offensiveFindings = analyzeRotationFindings({
+        fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
+        cooldowns: bench.value.major_cooldowns, rules: [], bench: bench.value,
+      });
       const ruleFindings = evaluateRules(rules, casts, fight.startTime);
-      const offensiveFindings = bench
-        ? analyzeRotationFindings({
-            fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
-            cooldowns: bench.major_cooldowns, rules: [], bench,
-          })
-        : [];
       const findings = [...offensiveFindings, ...ruleFindings];
       sortBySeverity(findings);
       const { ruleRows, offensiveRows, onPlan } =
-        bucketRotationFindings(findings, bench?.cd_spell_ids ?? {}, bench?.ability_icons ?? {});
+        bucketRotationFindings(findings, bench.value.cd_spell_ids, bench.value.ability_icons);
       const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
-      return { available, ruleRows, ruleOnPlan, offensiveRows, onPlan };
-    } catch (err) {
-      logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, err);
-      return empty;
+      return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
+    } catch (cause) {
+      logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
+      return err(toLoadError(cause, 'rotation.player-view'));
     }
   }
 
   /** Pre-fight: bench-only cooldown plan rows (icons baked onto each row). */
   async loadPlanView(spec: string, encounterId: number): Promise<{ available: boolean; rows: CdPlanRow[] }> {
     const bench = await this.source.getBench(spec, encounterId);
-    if (!bench) return { available: false, rows: [] };
-    return { available: true, rows: buildCdPlan(bench.major_cooldowns, bench.per_cd_benchmarks, bench.ability_icons) };
+    if (!bench.ok) return { available: false, rows: [] };
+    return { available: true, rows: buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons) };
   }
 }

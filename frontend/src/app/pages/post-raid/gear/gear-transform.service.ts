@@ -14,6 +14,8 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { CharacterGear, ParseRanking } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { TRINKET_SLOTS, decodeHtmlEntities, extractGear, selectCombatantInfo, talentKeyFromTree } from './gear-extract';
 import { toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { getOrInsert } from '../../../shared/analysis/analysis-math';
@@ -193,31 +195,36 @@ export function aggregateParseGear(parses: ParseGear[]): EncounterGearStats {
 export class GearTransformService implements DataSource<GearBench> {
   private readonly wclApi = inject(WclApiService);
 
-  async getBench(spec: string, encounterId: number): Promise<GearBench | null> {
-    const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-    if (!rankings.length) return null;
+  async getBench(spec: string, encounterId: number): Promise<Result<GearBench, LoadError>> {
+    try {
+      const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
+      if (!rankings.length) return err(missing('Not yet ingested.'));
 
-    const parses: ParseGear[] = [];
-    let encounterName = '';
-    for (const ranking of rankings) {
-      const fetched = await this.fetchParseGear(ranking, spec);
-      if (!fetched) continue;
-      parses.push(fetched.gear);
-      encounterName ||= fetched.encounterName;
-      if (parses.length >= TOP_PARSE_COUNT) break;
+      const parses: ParseGear[] = [];
+      let encounterName = '';
+      for (const ranking of rankings) {
+        const fetched = await this.fetchParseGear(ranking, spec);
+        if (!fetched) continue;
+        parses.push(fetched.gear);
+        encounterName ||= fetched.encounterName;
+        if (parses.length >= TOP_PARSE_COUNT) break;
+      }
+      if (!parses.length) return err(missing('Not yet ingested.'));
+
+      const stats = aggregateParseGear(parses);
+      return ok({
+        spec,
+        encounter_id: encounterId,
+        encounter_name: encounterName,
+        sample_count: parses.length,
+        talent_builds: stats.talent_builds,
+        trinkets: stats.trinkets,
+        enchants: stats.enchants,
+      });
+    } catch (cause) {
+      logWarn(`GearTransformService bench ${spec}:${encounterId}`, cause);
+      return err(toLoadError(cause, 'gear.bench'));
     }
-    if (!parses.length) return null;
-
-    const stats = aggregateParseGear(parses);
-    return {
-      spec,
-      encounter_id: encounterId,
-      encounter_name: encounterName,
-      sample_count: parses.length,
-      talent_builds: stats.talent_builds,
-      trinkets: stats.trinkets,
-      enchants: stats.enchants,
-    };
   }
 
   /** One parse's gear fingerprint via raw combatant info; null if it can't be fetched. */

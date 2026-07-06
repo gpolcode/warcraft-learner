@@ -5,7 +5,9 @@
      Dual-mode off `view()`: comparison (player vs bench) when view().comparison, else bench-only.
      The 4-col grid template literals are mirrored across header + every row; keep them in sync. -->
 
-@if (available()) {
+@if (error(); as e) {
+  <wl-load-error [error]="e"></wl-load-error>
+} @else if (available()) {
 <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
 
   <!-- Card header: same 4-col grid as wl-finding-table. Mobile drops the grid + column labels. -->

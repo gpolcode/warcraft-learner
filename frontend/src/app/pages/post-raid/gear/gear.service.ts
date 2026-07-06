@@ -16,6 +16,8 @@ import { CharacterGear, WclCombatantInfo } from '../../../core/models/wcl.models
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, permanent } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { decodeHtmlEntities, extractGear, selectCombatantInfo, talentKeyFromTree } from './gear-extract';
 import {
   GearStatus,
@@ -27,10 +29,12 @@ import {
 } from '../../../shared/gear/gear-comparison';
 import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 
-/** Where the gear card seeks its data: a chosen player log, or bench-only consensus. */
+/**
+ * The gear card's success payload. An `ok` `Result` carries this; the card's
+ * waiting / error states are the `Result` variants, so the view holds no
+ * `available` flag of its own.
+ */
 export interface GearComparisonView {
-  /** Whether the top-parse gear bench exists (false shows the "waiting" state). */
-  available: boolean;
   /** True when the player's own gear is shown alongside the bench (post-raid). */
   comparison: boolean;
 
@@ -49,10 +53,9 @@ export interface GearComparisonView {
   benchEnchantRows: BenchEnchantRow[];
 }
 
-/** Empty bench-only view used when no bench data is available at all. */
+/** Empty placeholder view the card holds while loading or in an error state. */
 export function emptyGearView(): GearComparisonView {
   return {
-    available: false,
     comparison: false,
     talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
     trinketRows: [], trinketStatus: 'ok', benchTrinketRows: [],
@@ -65,17 +68,19 @@ export function emptyGearView(): GearComparisonView {
 /**
  * Assemble a `CharacterGear` from a raw CombatantInfo event + the resolved item /
  * enchant name map (raw `i<id>` / `e<id>` aliases). Names already on the gear item
- * win; otherwise they are filled in from the name map and decoded. Returns a
- * `found:false` placeholder when the event carries no gear.
+ * win; otherwise they are filled in from the name map and decoded. A log with no
+ * recorded combatant info is a 200 OK that is semantically unusable for this
+ * analysis, so it is a `permanent` error (repro id `gear.combatant-info`), never a
+ * placeholder the caller silently discards.
  */
 export function buildCharacterGear(
   event: WclCombatantInfo | null,
   names: Record<string, { id: number; name: string }>,
   code: string,
   spec?: string,
-): CharacterGear {
+): Result<CharacterGear, LoadError> {
   if (!event?.gear?.length) {
-    return { found: false, message: 'No combatant info in this log.' };
+    return err(permanent('No combatant info in this log.', 'gear.combatant-info'));
   }
   const { trinkets, enchants } = extractGear(event.gear);
   const talent_key = talentKeyFromTree(event.talentTree);
@@ -87,42 +92,56 @@ export function buildCharacterGear(
     if (!enchant.name && enchant.id) enchant.name = decodeHtmlEntities(names[`e${enchant.id}`]?.name ?? '');
   }
 
-  return { found: true, spec, source_report: code, talent_key, trinkets, enchants };
+  return ok({ found: true, spec, source_report: code, talent_key, trinkets, enchants });
 }
 
 /* ----------------------------- pure view-model ----------------------------- */
 
 /** Reshape a `GearBench` into the `EncounterGearStats` shape the helpers consume. */
-export function benchToStats(bench: GearBench | null): EncounterGearStats | null {
-  if (!bench) return null;
+export function benchToStats(bench: GearBench): EncounterGearStats {
   return { talent_builds: bench.talent_builds, trinkets: bench.trinkets, enchants: bench.enchants };
 }
 
 /**
- * Build the gear card view-model in either mode. When `playerGear` is present the
- * card compares the player against the bench; otherwise it shows the bench-only
- * consensus. All derivation is delegated to the shared presentational helpers.
+ * Post-raid comparison view: the player's own gear against the bench. Takes a real
+ * `CharacterGear` (never null) - the card only builds comparison rows once the
+ * player's combatant-info gear is in hand, so the comparison enchant / trinket
+ * builders are never called with an absent player. All derivation is delegated to
+ * the shared presentational helpers.
  */
-export function buildGearView(
-  playerGear: CharacterGear | null,
-  stats: EncounterGearStats | null,
-): GearComparisonView {
-  const comparison = !!playerGear;
-  const playerKey = playerGear?.talent_key ?? '';
-
+export function buildGearView(playerGear: CharacterGear, stats: EncounterGearStats): GearComparisonView {
+  const playerKey = playerGear.talent_key ?? '';
   const enchantRows = buildEnchantRows(playerGear, stats);
   const trinketRows = buildTrinketRows(playerGear, stats);
 
   return {
-    available: stats !== null,
-    comparison,
+    comparison: true,
     talentBuilds: buildTalentBuilds(stats, playerKey),
     talentStatus: talentStatusOf(stats, playerKey),
     trinketRows,
     trinketStatus: trinketStatusOf(trinketRows),
-    benchTrinketRows: buildBenchTrinketRows(stats),
+    benchTrinketRows: [],
     enchantRows,
     enchantStatus: enchantStatusOf(enchantRows),
+    benchEnchantRows: [],
+  };
+}
+
+/**
+ * Pre-fight bench-only view: the top-parse consensus with no player overlay. Uses the
+ * dedicated bench builders (`buildBenchEnchantRows` / `buildBenchTrinketRows`), so the
+ * comparison builders are never reached without a player.
+ */
+export function buildBenchGearView(stats: EncounterGearStats): GearComparisonView {
+  return {
+    comparison: false,
+    talentBuilds: buildTalentBuilds(stats, ''),
+    talentStatus: talentStatusOf(stats, ''),
+    trinketRows: [],
+    trinketStatus: 'ok',
+    benchTrinketRows: buildBenchTrinketRows(stats),
+    enchantRows: [],
+    enchantStatus: 'ok',
     benchEnchantRows: buildBenchEnchantRows(stats),
   };
 }
@@ -141,57 +160,56 @@ export class GearFeatureService {
   private readonly wclApi = inject(WclApiService);
 
   /**
-   * Post-raid: the analyzed player's gear vs the top-parse bench. Fetches the
-   * player's combatant-info gear from the chosen log; falls back to bench-only when
-   * the player has no recorded combatant info.
+   * Post-raid: the analyzed player's gear vs the top-parse bench. Propagates a
+   * non-ok bench (missing / transient / permanent) and the player's own
+   * `permanent` no-combatant-info error unchanged, so the card surfaces the exact
+   * failure instead of silently degrading to a bench-only view.
    */
   async loadComparisonView(
     spec: string, encounterId: number,
     reportCode: string, fightId: number, playerId: number,
-  ): Promise<GearComparisonView> {
+  ): Promise<Result<GearComparisonView, LoadError>> {
     const bench = await this.source.getBench(spec, encounterId);
-    const stats = benchToStats(bench);
+    if (!bench.ok) return bench;
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId, spec);
-    if (!stats && !playerGear) return emptyGearView();
-    return buildGearView(playerGear, stats);
+    if (!playerGear.ok) return playerGear;
+    return ok(buildGearView(playerGear.value, benchToStats(bench.value)));
   }
 
-  /** Pre-fight: bench-only consensus (no player log). */
-  async loadBenchView(spec: string, encounterId: number): Promise<GearComparisonView> {
+  /** Pre-fight: bench-only consensus (no player log). Propagates a non-ok bench. */
+  async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView, LoadError>> {
     const bench = await this.source.getBench(spec, encounterId);
-    const stats = benchToStats(bench);
-    if (!stats) return emptyGearView();
-    return buildGearView(null, stats);
+    if (!bench.ok) return bench;
+    return ok(buildBenchGearView(benchToStats(bench.value)));
   }
 
   /**
-   * Best-effort player gear; null when absent or the fetch fails. Reads the raw
-   * CombatantInfo event, extracts gear via the colocated pure fns, then resolves
-   * item / enchant names in one batched gameData round-trip.
+   * The analyzed player's combatant-info gear. Reads the raw CombatantInfo event,
+   * resolves item / enchant names in one batched gameData round-trip, then builds
+   * the `CharacterGear`. A log with no combatant info surfaces as the `permanent`
+   * error `buildCharacterGear` returns; a WCL fetch failure becomes the mapped
+   * `LoadError` (a real failure, never a silent fallback).
    */
   private async fetchPlayerGear(
     reportCode: string, fightId: number, playerId: number, spec: string,
-  ): Promise<CharacterGear | null> {
-    if (!reportCode || !fightId || !playerId) return null;
+  ): Promise<Result<CharacterGear, LoadError>> {
     try {
       const event = selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
-      if (!event?.gear?.length) return null;
-
-      const { trinkets, enchants } = extractGear(event.gear);
-      const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
-      const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
       let names: Record<string, { id: number; name: string }> = {};
-      try {
-        names = await this.wclApi.getGameNames(itemIds, enchantIds);
-      } catch (err) {
-        logWarn(`GearFeatureService name resolution ${reportCode}:${fightId}:${playerId}`, err);
+      if (event?.gear?.length) {
+        const { trinkets, enchants } = extractGear(event.gear);
+        const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
+        const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
+        try {
+          names = await this.wclApi.getGameNames(itemIds, enchantIds);
+        } catch (err) {
+          logWarn(`GearFeatureService name resolution ${reportCode}:${fightId}:${playerId}`, err);
+        }
       }
-
-      const gear = buildCharacterGear(event, names, reportCode, spec);
-      return gear.found ? gear : null;
-    } catch (err) {
-      logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, err);
-      return null;
+      return buildCharacterGear(event, names, reportCode, spec);
+    } catch (cause) {
+      logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, cause);
+      return err(toLoadError(cause, 'gear.player-view'));
     }
   }
 }

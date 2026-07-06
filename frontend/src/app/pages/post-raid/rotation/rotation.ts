@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FindingTableComponent, OnPlanChip } from '../../../shared/components/finding-table/finding-table';
 import { WaitingPlaceholderComponent } from '../../../shared/components/waiting-placeholder/waiting-placeholder';
+import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
 import { LatestLoad } from '../../../shared/latest-load';
+import { logWarn } from '../../../core/log';
 import {
   RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
 } from './rotation.service';
@@ -18,7 +20,7 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-rotation',
-  imports: [FindingTableComponent, WaitingPlaceholderComponent],
+  imports: [FindingTableComponent, WaitingPlaceholderComponent, LoadErrorComponent],
   templateUrl: './rotation.html',
 })
 export class RotationComponent {
@@ -36,6 +38,8 @@ export class RotationComponent {
   readonly availableChange = output<boolean>();
 
   protected readonly available = signal(true);
+  /** Transient/permanent load error (missing renders the waiting placeholder instead). */
+  protected readonly error = signal<RenderableLoadError | null>(null);
   protected readonly ruleRows = signal<RotationFindingRow[]>([]);
   protected readonly ruleOnPlan = signal<string[]>([]);
   protected readonly offensiveRows = signal<RotationFindingRow[]>([]);
@@ -56,13 +60,25 @@ export class RotationComponent {
       const playerId = this.playerId();
       this.loader.run(this.rotation.loadPlayerView(spec, encounterId, reportCode, fightId, playerId), {
         context: 'rotation.loadPlayerView',
-        apply: view => {
-          this.available.set(view.available);
-          this.availableChange.emit(view.available);
-          this.ruleRows.set(view.ruleRows);
-          this.ruleOnPlan.set(view.ruleOnPlan);
-          this.offensiveRows.set(view.offensiveRows);
-          this.onPlan.set(view.onPlan);
+        apply: result => {
+          if (result.ok) {
+            this.error.set(null);
+            this.available.set(true);
+            this.availableChange.emit(true);
+            this.ruleRows.set(result.value.ruleRows);
+            this.ruleOnPlan.set(result.value.ruleOnPlan);
+            this.offensiveRows.set(result.value.offensiveRows);
+            this.onPlan.set(result.value.onPlan);
+          } else {
+            if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+            this.error.set(result.error.kind === 'missing' ? null : result.error);
+            this.available.set(false);
+            this.availableChange.emit(false);
+            this.ruleRows.set([]);
+            this.ruleOnPlan.set([]);
+            this.offensiveRows.set([]);
+            this.onPlan.set([]);
+          }
         },
         settled: () => this.busyChange.emit(false),
       });

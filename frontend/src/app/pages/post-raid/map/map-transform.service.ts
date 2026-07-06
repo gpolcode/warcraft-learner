@@ -23,6 +23,8 @@ import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent, WclFight, ParseRanking } from '../../../core/models/wcl.models';
 import { ParsePositions, PosRow } from '../../../core/models/positioning.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { DataSource } from '../../../core/data-source/data-source';
@@ -207,29 +209,34 @@ export class MapTransformService implements DataSource<MapData> {
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number): Promise<MapData | null> {
-    const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-    if (!rankings.length) return null;
+  async getBench(spec: string, encounterId: number): Promise<Result<MapData, LoadError>> {
+    try {
+      const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
+      if (!rankings.length) return err(missing('No top parses for this encounter.'));
 
-    const parses: ParsePositions[] = [];
-    let encounterName = '';
-    for (const ranking of rankings) {
-      const parse = await this.computeParse(ranking);
-      if (!parse) continue;
-      parses.push(parse.positions);
-      encounterName ||= parse.encounterName;
-      if (parses.length >= TOP_PARSE_COUNT) break;
+      const parses: ParsePositions[] = [];
+      let encounterName = '';
+      for (const ranking of rankings) {
+        const parse = await this.computeParse(ranking);
+        if (!parse) continue;
+        parses.push(parse.positions);
+        encounterName ||= parse.encounterName;
+        if (parses.length >= TOP_PARSE_COUNT) break;
+      }
+      if (!parses.length) return err(missing('No fetchable top parses for this encounter.'));
+
+      return ok({
+        spec,
+        encounter_id: encounterId,
+        encounter_name: encounterName,
+        interval_s: POSITIONS_INTERVAL_S,
+        sample_count: parses.length,
+        parses,
+      });
+    } catch (cause) {
+      logWarn('MapTransformService.getBench', cause);
+      return err(toLoadError(cause, 'map.bench'));
     }
-    if (!parses.length) return null;
-
-    return {
-      spec,
-      encounter_id: encounterId,
-      encounter_name: encounterName,
-      interval_s: POSITIONS_INTERVAL_S,
-      sample_count: parses.length,
-      parses,
-    };
   }
 
   /** One parse's resampled positions via the colocated pure fns; null if it can't be fetched. */
@@ -258,8 +265,8 @@ export class MapTransformService implements DataSource<MapData> {
         durationS: (fight.endTime - fight.startTime) / 1000,
       });
       return { positions, encounterName: fight.name ?? '' };
-    } catch (err) {
-      logWarn(`MapTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
+    } catch (cause) {
+      logWarn(`MapTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
       return null;
     }
   }

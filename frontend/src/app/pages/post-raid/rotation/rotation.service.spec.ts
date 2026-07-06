@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
+import { WclTransportError } from '../../../core/services/wcl-transport';
+import { Result, LoadError, ok, err, missing, transient } from '../../../core/result';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition } from '../../../core/models/rulebook.models';
@@ -510,44 +511,61 @@ describe('buildCdPlan', () => {
 
 /* ----------------------------- feature service ----------------------------- */
 
-function withSource(value: RotationBench | null, wcl?: unknown, rules: RulebookRule[] = []): RotationFeatureService {
-  const source: DataSource<RotationBench> = { getBench: () => Promise.resolve(value) };
-  // The rotation rules are read from the authored rulebook (present regardless of ingest),
-  // so the feature service also injects the pass-through DataFileApiService.
-  const dataFiles: Pick<DataFileApiService, 'getRulebook'> = {
-    getRulebook: () => Promise.resolve({ spec: 'SubtletyRogue', spec_icon: 'x', rules }),
-  };
+// A WCL fake that resolves a valid (empty) player log, so a test's outcome is driven by the
+// bench Result rather than an incidental transport throw.
+const WORKING_WCL = {
+  getReport: async () => ({
+    title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }],
+    masterData: { actors: [], abilities: [] },
+  }),
+  getAllEvents: async () => [],
+};
+
+// Status a 5xx WCL outage raises; `toLoadError` maps it to a transient error.
+const WCL_UNAVAILABLE_STATUS = 503;
+
+function withSource(bench: Result<RotationBench, LoadError>, wcl: unknown = WORKING_WCL): RotationFeatureService {
+  const source: DataSource<RotationBench> = { getBench: () => Promise.resolve(bench) };
   TestBed.configureTestingModule({
     providers: [
       { provide: ROTATION_DATA_SOURCE, useValue: source },
-      { provide: WclApiService, useValue: (wcl ?? {}) as WclApiService },
-      { provide: DataFileApiService, useValue: dataFiles },
+      { provide: WclApiService, useValue: wcl as WclApiService },
     ],
   });
   return TestBed.inject(RotationFeatureService);
 }
 
 describe('RotationFeatureService', () => {
-  it('marks offensives unavailable and empty when the top-parse bench is absent', async () => {
-    const service = withSource(null);
-    const view = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(view).toEqual({ available: false, ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] });
+  it('surfaces a missing bench so the offensives waiting state shows', async () => {
+    // A working WCL fake proves the missing comes from the bench read, not a player-log failure.
+    const service = withSource(err(missing('Not yet ingested.')));
+    const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result).toEqual(err(missing('Not yet ingested.')));
   });
 
-  it('evaluates the rulebook rules even with no bench (offensives unavailable)', async () => {
-    // A fresh tier: no top-parse bench, but the rulebook rules still grade the player's casts.
+  it('surfaces a WCL failure as a transient error instead of a silent empty view', async () => {
+    const failingWcl = { getReport: async () => { throw new WclTransportError('WCL down', WCL_UNAVAILABLE_STATUS); } };
+    const service = withSource(ok(bench()), failingWcl);
+    const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result).toEqual(err(transient('WCL is unreachable right now.')));
+  });
+
+  it('evaluates the rotation rules baked into the bench', async () => {
     const wcl = {
       getReport: async () => ({ title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } }),
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
     };
     const rule: RulebookRule = { priority: 'critical', condition: DANCE_NEEDS_SECRET_TECH };
-    const service = withSource(null, wcl, [rule]);
-    const view = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(view.available).toBe(false);
-    expect(view.offensiveRows).toEqual([]);
-    expect(view.ruleRows).toHaveLength(1);
-    expect(view.ruleRows[0].what).toBe('Shadow Dance without Secret Technique');
+    const service = withSource(ok(bench({ rules: [rule] })), wcl);
+    const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      // The baked rule is evaluated exactly once into a rule row (the sparse cast fixture also
+      // yields a separate cast-efficiency row, so assert on the rule row rather than the count).
+      const ruleRows = result.value.ruleRows.filter(row => row.what === 'Shadow Dance without Secret Technique');
+      expect(ruleRows).toHaveLength(1);
+    }
   });
 
   it('computes player findings from the player log', async () => {
@@ -560,16 +578,16 @@ describe('RotationFeatureService', () => {
         dataType === 'Casts' ? [cast(SHADOW_BLADES, 6)] : [applyBuff(BLOODLUST, 6)],
     };
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } }) } });
-    const service = withSource(single, wcl);
-    const view = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(view.available).toBe(true);
-    expect(view.onPlan).toEqual([{ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb' }]);
+    const service = withSource(ok(single), wcl);
+    const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.onPlan).toEqual([{ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb' }]);
   });
 
   it('returns bench-only plan rows for the pre-fight view', async () => {
-    const service = withSource(bench({
+    const service = withSource(ok(bench({
       per_cd_benchmarks: { 'Shadow Blades': cdBench() },
-    }));
+    })));
     const view = await service.loadPlanView('SubtletyRogue', 1);
     expect(view.available).toBe(true);
     expect(view.rows).toHaveLength(1);
@@ -578,7 +596,7 @@ describe('RotationFeatureService', () => {
   });
 
   it('marks the pre-fight plan unavailable when the bench is absent', async () => {
-    const service = withSource(null);
+    const service = withSource(err(missing('Not yet ingested.')));
     const view = await service.loadPlanView('SubtletyRogue', 1);
     expect(view).toEqual({ available: false, rows: [] });
   });

@@ -6,8 +6,10 @@ import { WclFight } from '../../../core/models/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { MapAnchor } from '../map/map.service';
 import { LatestLoad } from '../../../shared/latest-load';
+import { logWarn } from '../../../core/log';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../../shared/pipes/format-damage-pipe';
+import { LoadErrorComponent, RenderableLoadError } from '../../../shared/components/load-error/load-error';
 import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.service';
 
 /**
@@ -21,7 +23,7 @@ import { PullOverviewFeatureService, PullOverviewView } from './pull-overview.se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe],
+  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadErrorComponent],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })
@@ -43,6 +45,9 @@ export class PullOverviewComponent {
 
   private readonly _view = signal<PullOverviewView | null>(null);
   protected readonly view = this._view.asReadonly();
+  /** The transient/permanent load error to render; null when the load is fine or missing. */
+  private readonly _error = signal<RenderableLoadError | null>(null);
+  protected readonly error = this._error.asReadonly();
 
   private readonly loader = new LatestLoad();
 
@@ -53,7 +58,17 @@ export class PullOverviewComponent {
       const fight = this.fight();
       this.loader.run(this.service.loadView(report, player, fight), {
         context: 'pull-overview.loadView',
-        apply: view => this._view.set(view),
+        apply: result => {
+          if (result.ok) {
+            this._error.set(null);
+            this._view.set(result.value);
+          } else {
+            if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+            // A missing report renders nothing; transient/permanent render the load-error leaf.
+            this._error.set(result.error.kind === 'missing' ? null : result.error);
+            this._view.set(null);
+          }
+        },
         settled: () => this.busyChange.emit(false),
       });
     });

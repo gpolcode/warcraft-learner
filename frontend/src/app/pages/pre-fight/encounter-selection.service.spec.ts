@@ -2,9 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from '../../core/services/data-file-api';
 import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
+import { Result, LoadError, ok, err, transient } from '../../core/result';
 import { EncounterSelectionService, benchedEncounters } from './encounter-selection.service';
 
 const SPEC = 'SubtletyRogue';
+
+// A read failure the data API surfaces unchanged (a missing manifest folds to ok([]) upstream).
+const TRANSIENT_ERROR = transient('WCL is unreachable right now.');
 
 /** A benched encounter carries at least one ingested sample; an empty one carries zero. */
 const BENCHED: EncounterEntry = { id: 3144, name: 'Boss A', sample_count: 12 };
@@ -31,12 +35,12 @@ describe('benchedEncounters', () => {
 
 /** A partial `DataFileApiService` fake - the service only calls `getSpecs` / `getEncounters`. */
 function fakeFiles(
-  specs: SpecEntry[], encounters: EncounterEntry[],
+  specs: Result<SpecEntry[], LoadError>, encounters: Result<EncounterEntry[], LoadError>,
 ): { files: DataFileApiService; encounterCalls: string[] } {
   const encounterCalls: string[] = [];
   const files = {
-    getSpecs: (): Promise<SpecEntry[]> => Promise.resolve(specs),
-    getEncounters: (spec: string): Promise<EncounterEntry[]> => {
+    getSpecs: (): Promise<Result<SpecEntry[], LoadError>> => Promise.resolve(specs),
+    getEncounters: (spec: string): Promise<Result<EncounterEntry[], LoadError>> => {
       encounterCalls.push(spec);
       return Promise.resolve(encounters);
     },
@@ -44,7 +48,7 @@ function fakeFiles(
   return { files, encounterCalls };
 }
 
-function withFiles(specs: SpecEntry[], encounters: EncounterEntry[]): {
+function withFiles(specs: Result<SpecEntry[], LoadError>, encounters: Result<EncounterEntry[], LoadError>): {
   service: EncounterSelectionService; encounterCalls: string[];
 } {
   const { files, encounterCalls } = fakeFiles(specs, encounters);
@@ -56,13 +60,23 @@ describe('EncounterSelectionService', () => {
   const SPECS: SpecEntry[] = [{ spec: SPEC, encounter_count: 2 }];
 
   it('reads the spec manifest through DataFileApiService', async () => {
-    const { service } = withFiles(SPECS, []);
-    expect(await service.getSpecs()).toEqual(SPECS);
+    const { service } = withFiles(ok(SPECS), ok([]));
+    expect(await service.getSpecs()).toEqual(ok(SPECS));
+  });
+
+  it('propagates a read failure for the spec manifest', async () => {
+    const { service } = withFiles(err(TRANSIENT_ERROR), ok([]));
+    expect(await service.getSpecs()).toEqual(err(TRANSIENT_ERROR));
   });
 
   it('returns only the benched encounters for a spec', async () => {
-    const { service, encounterCalls } = withFiles(SPECS, [BENCHED, EMPTY, ALSO_BENCHED]);
-    expect(await service.getEncounters(SPEC)).toEqual([BENCHED, ALSO_BENCHED]);
+    const { service, encounterCalls } = withFiles(ok(SPECS), ok([BENCHED, EMPTY, ALSO_BENCHED]));
+    expect(await service.getEncounters(SPEC)).toEqual(ok([BENCHED, ALSO_BENCHED]));
     expect(encounterCalls).toEqual([SPEC]);
+  });
+
+  it('propagates a read failure for a spec encounter index', async () => {
+    const { service } = withFiles(ok(SPECS), err(TRANSIENT_ERROR));
+    expect(await service.getEncounters(SPEC)).toEqual(err(TRANSIENT_ERROR));
   });
 });

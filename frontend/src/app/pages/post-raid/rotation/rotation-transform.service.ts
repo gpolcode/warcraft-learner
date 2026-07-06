@@ -21,6 +21,8 @@ import { mean, median, deviation, quantile } from 'd3-array';
 import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
+import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { RotationBench } from './rotation-data-source';
 
 // Re-exported from the shared blessed module so call sites / specs that import it
@@ -295,50 +297,57 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number): Promise<RotationBench | null> {
-    const rulebook = await this.dataFiles.getRulebook(spec);
-    const cooldowns = rulebook?.major_cooldowns ?? [];
-    if (!cooldowns.length) return null;
-    const defensives = rulebook?.defensives ?? [];
-    const rules = rulebook?.rules ?? [];
+  async getBench(spec: string, encounterId: number): Promise<Result<RotationBench, LoadError>> {
+    const rulebookResult = await this.dataFiles.getRulebook(spec);
+    if (!rulebookResult.ok) return rulebookResult;
+    const rulebook = rulebookResult.value;
+    const cooldowns = rulebook.major_cooldowns ?? [];
+    if (!cooldowns.length) return err(missing('No rulebook cooldowns for this spec.'));
+    const defensives = rulebook.defensives ?? [];
+    const rules = rulebook.rules ?? [];
 
-    const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-    if (!rankings.length) return null;
+    try {
+      const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
+      if (!rankings.length) return err(missing('No top parses for this encounter.'));
 
-    const perParse: CdSummary[][] = [];
-    const gapLists: number[][] = [];
-    const durations: number[] = [];
-    let encounterName = '';
-    for (const ranking of rankings) {
-      const parse = await this.computeParse(ranking, cooldowns);
-      if (!parse) continue;
-      perParse.push(parse.summaries);
-      gapLists.push(parse.gapListMs);
-      durations.push(parse.durationS);
-      encounterName ||= parse.encounterName;
-      if (perParse.length >= TOP_PARSE_COUNT) break;
+      const perParse: CdSummary[][] = [];
+      const gapLists: number[][] = [];
+      const durations: number[] = [];
+      let encounterName = '';
+      for (const ranking of rankings) {
+        const parse = await this.computeParse(ranking, cooldowns);
+        if (!parse) continue;
+        perParse.push(parse.summaries);
+        gapLists.push(parse.gapListMs);
+        durations.push(parse.durationS);
+        encounterName ||= parse.encounterName;
+        if (perParse.length >= TOP_PARSE_COUNT) break;
+      }
+      if (!perParse.length) return err(missing('No usable top parses for this encounter.'));
+
+      const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
+
+      const cd_spell_ids = rotationCdSpellIds(cooldowns, defensives);
+      return ok({
+        spec,
+        encounter_id: encounterId,
+        encounter_name: encounterName,
+        sample_count: perParse.length,
+        avg_duration_s: durations.length ? round((mean(durations) ?? 0)) : 0,
+        downtime_threshold_ms: downtimeThresholdMs,
+        top_avg_efficiency: topAvgEfficiency,
+        top_efficiency_stddev: topEfficiencyStddev,
+        per_cd_benchmarks: aggregateCdBenchmarks(perParse, cooldowns),
+        major_cooldowns: cooldowns,
+        rules,
+        cd_spell_ids,
+        // Resolve a real icon for every cooldown + defensive by id (complete, no fallback).
+        ability_icons: abilityIcons(await this.wclApi.getAbilities(Object.values(cd_spell_ids))),
+      });
+    } catch (cause) {
+      logWarn(`RotationTransformService.getBench ${spec}:${encounterId}`, cause);
+      return err(toLoadError(cause, 'rotation.bench'));
     }
-    if (!perParse.length) return null;
-
-    const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
-
-    const cd_spell_ids = rotationCdSpellIds(cooldowns, defensives);
-    return {
-      spec,
-      encounter_id: encounterId,
-      encounter_name: encounterName,
-      sample_count: perParse.length,
-      avg_duration_s: durations.length ? round((mean(durations) ?? 0)) : 0,
-      downtime_threshold_ms: downtimeThresholdMs,
-      top_avg_efficiency: topAvgEfficiency,
-      top_efficiency_stddev: topEfficiencyStddev,
-      per_cd_benchmarks: aggregateCdBenchmarks(perParse, cooldowns),
-      major_cooldowns: cooldowns,
-      rules,
-      cd_spell_ids,
-      // Resolve a real icon for every cooldown + defensive by id (complete, no fallback).
-      ability_icons: abilityIcons(await this.wclApi.getAbilities(Object.values(cd_spell_ids))),
-    };
   }
 
   /** One parse's rotation summary via the colocated pure fns; null if unfetchable. */

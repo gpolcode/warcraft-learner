@@ -19,6 +19,8 @@ import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow, TopDefensiveSummary } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark, CdHoldTargets } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
@@ -48,6 +50,12 @@ const HOLD_THRESHOLD_S = 8;
 const HOLD_BAND_MIN_S = 5.0;
 /** Keep only the top-N damage sources in a window's ability breakdown (UI row cap). */
 const ABILITY_BREAKDOWN_TOP_N = 6;
+/**
+ * No ingestable defensive bench for this spec+encounter (empty rulebook, no top parses,
+ * or no fetchable sample). Reported as `missing` so the UI shows the waiting state, the
+ * same as a not-yet-ingested 404.
+ */
+const NO_DEFENSIVE_BENCH_MESSAGE = 'Not yet ingested.';
 
 /* ----------------------------- pure helpers (own math) ----------------------------- */
 
@@ -441,51 +449,57 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number): Promise<DefensiveBench | null> {
-    const rulebook = await this.dataFiles.getRulebook(spec);
-    const defensives = rulebook?.defensives ?? [];
-    if (!defensives.length) return null;
+  async getBench(spec: string, encounterId: number): Promise<Result<DefensiveBench, LoadError>> {
+    const rulebookResult = await this.dataFiles.getRulebook(spec);
+    if (!rulebookResult.ok) return rulebookResult;
+    const defensives = rulebookResult.value.defensives ?? [];
+    if (!defensives.length) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
 
-    const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-    if (!rankings.length) return null;
+    try {
+      const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
+      if (!rankings.length) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
 
-    const allWindows: ParseDefWindow[] = [];
-    const perParseSummaries: ParseDefensiveSummary[][] = [];
-    let sampleCount = 0;
-    let encounterName = '';
-    for (const ranking of rankings) {
-      const parse = await this.computeParse(ranking, defensives);
-      if (!parse) continue;
-      for (const window of parse.windows) window.parse_index = sampleCount;
-      allWindows.push(...parse.windows);
-      perParseSummaries.push(parse.summaries);
-      encounterName ||= parse.encounterName;
-      sampleCount += 1;
-      if (sampleCount >= TOP_PARSE_COUNT) break;
+      const allWindows: ParseDefWindow[] = [];
+      const perParseSummaries: ParseDefensiveSummary[][] = [];
+      let sampleCount = 0;
+      let encounterName = '';
+      for (const ranking of rankings) {
+        const parse = await this.computeParse(ranking, defensives);
+        if (!parse) continue;
+        for (const window of parse.windows) window.parse_index = sampleCount;
+        allWindows.push(...parse.windows);
+        perParseSummaries.push(parse.summaries);
+        encounterName ||= parse.encounterName;
+        sampleCount += 1;
+        if (sampleCount >= TOP_PARSE_COUNT) break;
+      }
+      if (!sampleCount) return err(missing(NO_DEFENSIVE_BENCH_MESSAGE));
+
+      const defensiveWindows = clusterDefensiveWindows(allWindows, sampleCount);
+      const { perDefensiveBenchmarks, topDefensivesSummary } = aggregateDefensiveBenchmarks(perParseSummaries, defensives);
+      const cd_spell_ids = defensiveSpellIds(defensives);
+      // Resolve a real icon for every defensive + window ability by id (complete, no fallback).
+      const referencedIds = [
+        ...Object.values(cd_spell_ids),
+        ...defensiveWindows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
+      ];
+
+      return ok({
+        spec,
+        encounter_id: encounterId,
+        encounter_name: encounterName,
+        sample_count: sampleCount,
+        per_defensive_benchmarks: perDefensiveBenchmarks,
+        defensive_windows: defensiveWindows,
+        top_defensives_summary: topDefensivesSummary,
+        defensives: defensivePlanMeta(defensives),
+        cd_spell_ids,
+        ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
+      });
+    } catch (cause) {
+      logWarn('DefensiveTransformService.getBench', cause);
+      return err(toLoadError(cause, 'defensive.bench'));
     }
-    if (!sampleCount) return null;
-
-    const defensiveWindows = clusterDefensiveWindows(allWindows, sampleCount);
-    const { perDefensiveBenchmarks, topDefensivesSummary } = aggregateDefensiveBenchmarks(perParseSummaries, defensives);
-    const cd_spell_ids = defensiveSpellIds(defensives);
-    // Resolve a real icon for every defensive + window ability by id (complete, no fallback).
-    const referencedIds = [
-      ...Object.values(cd_spell_ids),
-      ...defensiveWindows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
-    ];
-
-    return {
-      spec,
-      encounter_id: encounterId,
-      encounter_name: encounterName,
-      sample_count: sampleCount,
-      per_defensive_benchmarks: perDefensiveBenchmarks,
-      defensive_windows: defensiveWindows,
-      top_defensives_summary: topDefensivesSummary,
-      defensives: defensivePlanMeta(defensives),
-      cd_spell_ids,
-      ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
-    };
   }
 
   /** One parse's defensive windows + usage summaries via the colocated pure fns; null on fetch failure. */

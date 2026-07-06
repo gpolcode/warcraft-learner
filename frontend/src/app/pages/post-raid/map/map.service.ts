@@ -19,6 +19,8 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { WclEvent, WclFight } from '../../../core/models/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../core/models/positioning.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { posActorId } from './map-positions';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 
@@ -197,6 +199,13 @@ export class MapFeatureService {
   readonly positions = signal<EncounterPositions | null>(null);
   /** Live player overlay; null on pages with no pull (e.g. /pre) or before a pull loads. */
   readonly live = signal<MapLiveOverlay | null>(null);
+  /**
+   * Transient/permanent load failure for the current bench or overlay read; null when
+   * healthy or when the failure is a `missing` bench (which feeds the empty placeholder,
+   * not the error leaf). Only the two renderable kinds are ever stored; the canvas
+   * narrows and renders `wl-load-error` from it.
+   */
+  readonly error = signal<LoadError | null>(null);
   /** True while the deferred live-overlay event fetch is in flight (drives the panel spinner). */
   readonly overlayLoading = signal(false);
 
@@ -218,13 +227,23 @@ export class MapFeatureService {
 
   /**
    * Load the top-parse bench for an encounter (bench-only path - /pre and the
-   * initial post-raid load). Clears any stale live overlay.
+   * initial post-raid load). Clears any stale live overlay. Applies the `Result`:
+   * `ok` populates the positions; a `missing` bench clears to the empty state; a
+   * `transient`/`permanent` failure surfaces through the `error` signal (and a
+   * `permanent` one is logged for repro). Returns the `Result` for callers.
    */
-  async loadBench(spec: string, encounterId: number): Promise<MapData | null> {
-    const data = await this.source.getBench(spec, encounterId);
-    this.positions.set(data);
+  async loadBench(spec: string, encounterId: number): Promise<Result<MapData, LoadError>> {
+    const result = await this.source.getBench(spec, encounterId);
     this.live.set(null);
-    return data;
+    if (result.ok) {
+      this.positions.set(result.value);
+      this.error.set(null);
+    } else {
+      if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+      this.positions.set(null);
+      this.error.set(result.error.kind === 'missing' ? null : result.error);
+    }
+    return result;
   }
 
   /**
@@ -240,16 +259,13 @@ export class MapFeatureService {
   ): Promise<void> {
     this.live.set(null);
     this._resetOverlay();
-    if (!fight?.encounterID) { this.positions.set(null); return; }
-    try {
-      const positions = await this.loadBench(spec, fight.encounterID);
-      if (!positions) return;
-      this.pendingOverlay = { reportCode, fight, playerId, positions, enemies };
-      if (this.open()) await this.ensureLiveOverlay();
-    } catch (err) {
-      logWarn(`MapFeatureService.prepare ${reportCode}:${fight?.id}`, err);
-      this.live.set(null);
-    }
+    if (!fight?.encounterID) { this.positions.set(null); this.error.set(null); return; }
+    // loadBench already applies its Result to the positions/error signals; only an ok
+    // bench arms the deferred overlay fetch. A failed bench read is surfaced there.
+    const result = await this.loadBench(spec, fight.encounterID);
+    if (!result.ok) return;
+    this.pendingOverlay = { reportCode, fight, playerId, positions: result.value, enemies };
+    if (this.open()) await this.ensureLiveOverlay();
   }
 
   /** Open the map at an anchor emitted by another feature card. */
@@ -274,6 +290,7 @@ export class MapFeatureService {
     this.open.set(false);
     this.positions.set(null);
     this.live.set(null);
+    this.error.set(null);
     this._resetOverlay();
   }
 
@@ -297,10 +314,15 @@ export class MapFeatureService {
       const { reportCode, fight, playerId, positions, enemies } = pending;
       const events = await this.fetchLiveEvents(reportCode, fight, playerId);
       this.live.set(buildLiveOverlay({ positions, events, fightStartMs: fight.startTime, playerId, enemies }));
+      this.error.set(null);
       this.overlayLoaded = true;
-    } catch (err) {
-      logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, err);
+    } catch (cause) {
+      // A failed overlay read surfaces through the error signal instead of a silent
+      // empty map; a `missing` (404) stays out of the error channel.
+      const error = toLoadError(cause, 'map.overlay');
+      logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, cause);
       this.live.set(null);
+      this.error.set(error.kind === 'missing' ? null : error);
     } finally {
       this.overlayLoading.set(false);
     }

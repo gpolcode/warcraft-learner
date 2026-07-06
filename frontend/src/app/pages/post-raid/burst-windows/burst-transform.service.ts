@@ -20,6 +20,8 @@ import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
+import { Result, LoadError, ok, err, missing } from '../../../core/result';
+import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation, quantile } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
@@ -369,47 +371,53 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number): Promise<BurstBench | null> {
+  async getBench(spec: string, encounterId: number): Promise<Result<BurstBench, LoadError>> {
     const rulebook = await this.dataFiles.getRulebook(spec);
-    const cooldowns = rulebook?.major_cooldowns ?? [];
-    if (!cooldowns.length) return null;
-    const defensives = rulebook?.defensives ?? [];
+    if (!rulebook.ok) return rulebook;
+    const cooldowns = rulebook.value.major_cooldowns ?? [];
+    if (!cooldowns.length) return err(missing('Not yet ingested.'));
+    const defensives = rulebook.value.defensives ?? [];
 
-    const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
-    if (!rankings.length) return null;
+    try {
+      const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
+      if (!rankings.length) return err(missing('Not yet ingested.'));
 
-    const allWindows: ParseWindow[] = [];
-    let sampleCount = 0;
-    let encounterName = '';
-    for (const ranking of rankings) {
-      const parse = await this.computeParseWindows(ranking, cooldowns);
-      if (!parse) continue;
-      // Stamp the parse index so clustering counts distinct parses (mirrors the defensive slice).
-      for (const window of parse.windows) window.parse_index = sampleCount;
-      allWindows.push(...parse.windows);
-      encounterName ||= parse.encounterName;
-      sampleCount += 1;
-      if (sampleCount >= TOP_PARSE_COUNT) break;
+      const allWindows: ParseWindow[] = [];
+      let sampleCount = 0;
+      let encounterName = '';
+      for (const ranking of rankings) {
+        const parse = await this.computeParseWindows(ranking, cooldowns);
+        if (!parse) continue;
+        // Stamp the parse index so clustering counts distinct parses (mirrors the defensive slice).
+        for (const window of parse.windows) window.parse_index = sampleCount;
+        allWindows.push(...parse.windows);
+        encounterName ||= parse.encounterName;
+        sampleCount += 1;
+        if (sampleCount >= TOP_PARSE_COUNT) break;
+      }
+      if (!sampleCount) return err(missing('Not yet ingested.'));
+
+      const windows = clusterParseWindows(allWindows, sampleCount);
+      const cd_spell_ids = cdSpellIds(cooldowns, defensives);
+      // Resolve a real icon for every spell the card renders - header cooldowns and
+      // each window ability - by id, so the map is complete (no fallback).
+      const referencedIds = [
+        ...Object.values(cd_spell_ids),
+        ...windows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
+      ];
+      return ok({
+        spec,
+        encounter_id: encounterId,
+        encounter_name: encounterName,
+        sample_count: sampleCount,
+        windows,
+        cd_spell_ids,
+        ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
+      });
+    } catch (cause) {
+      logWarn('BurstTransformService.getBench', cause);
+      return err(toLoadError(cause, 'burst.bench'));
     }
-    if (!sampleCount) return null;
-
-    const windows = clusterParseWindows(allWindows, sampleCount);
-    const cd_spell_ids = cdSpellIds(cooldowns, defensives);
-    // Resolve a real icon for every spell the card renders - header cooldowns and
-    // each window ability - by id, so the map is complete (no fallback).
-    const referencedIds = [
-      ...Object.values(cd_spell_ids),
-      ...windows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
-    ];
-    return {
-      spec,
-      encounter_id: encounterId,
-      encounter_name: encounterName,
-      sample_count: sampleCount,
-      windows,
-      cd_spell_ids,
-      ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
-    };
   }
 
   /** One parse's burst windows via the colocated pure fns; null if it can't be fetched. */
@@ -436,8 +444,8 @@ export class BurstTransformService implements DataSource<BurstBench> {
         damage, fightStartMs: fight.startTime, fightEndMs: fight.endTime, timings, casts, abilityNames,
       });
       return { windows, encounterName: fight.name ?? '' };
-    } catch (err) {
-      logWarn(`BurstTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
+    } catch (cause) {
+      logWarn(`BurstTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
       return null;
     }
   }
