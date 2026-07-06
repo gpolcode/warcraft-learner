@@ -9,8 +9,8 @@ Every load that can fail returns a typed `Result`, never `null`, never a `{ foun
 
 ## The two files
 
-- `core/result.ts` - Angular-free, dependency-free. The pure core transforms and the headless Node ingestion import it. Holds `Result<T, E>`, `LoadError`, the constructors (`ok`, `err`), the variant builders (`missing`, `transient`, `permanent`), and the helpers (`isOk`, `match`, `mapErr`).
-- `core/http-load-error.ts` - browser shell only (imports `HttpErrorResponse`). Holds `toLoadError`, the one place an HTTP/transport status becomes a taxonomy variant.
+- `core/result.ts` - Angular-free, dependency-free. The pure core transforms and the headless Node ingestion import it. Holds `Result<T, E>`, `LoadError`, `ok`, the variant builders (`missing`, `transient`, `permanent`), and the helpers (`isOk`, `match`, `mapErr`). The variant builders return a ready-wrapped `Result` (an `err` arm), so call sites write `return permanent('...', id)`, not `return err(permanent(...))`; `err` itself is a private helper and is not exported.
+- `core/http-load-error.ts` - browser shell only (imports `HttpErrorResponse`). Holds `toLoadError`, the one place an HTTP/transport status becomes a taxonomy variant. It also returns a ready-wrapped `Result`.
 
 ## The type
 
@@ -28,7 +28,7 @@ Discriminate on `.ok`. Both arms are plain object literals (no class) so they tr
 
 | kind | when | user sees | retry? | logWarn? |
 |---|---|---|---|---|
-| `missing` | 404 - an un-ingested spec/boss | the existing bench-empty / missing-data waiting feature | no | no (not an error) |
+| `missing` | 404 - an un-ingested spec/boss | the card's `wl-load-state` waiting state (and the page-level bench-empty ingest banner) | no | no (not an error) |
 | `transient` | network / 5xx / 429 / 408 / status 0 | "something broke, retry in a moment" | already retried once by the interceptor | yes |
 | `permanent` | a 200 OK that is semantically unusable for this analysis (no combatant info, player absent from the damage table, an unknown ability id) | "this analysis is bugged, do not retry" | no | yes, with `id` + `context` for repro |
 
@@ -37,8 +37,8 @@ Discriminate on `.ok`. Both arms are plain object literals (no class) so they tr
 ## Where each piece lives (the layer map)
 
 - **Retry interceptor** (`core/interceptors/retry-transient.interceptor.ts`): the single retry point. Retries once, transient statuses only, `delay` as a function (no deprecated `retryWhen`). Because Apollo's `HttpLink` rides on Angular `HttpClient`, this one interceptor covers both the data-file GETs and the WCL GraphQL POSTs. Knows HTTP status only, never domain meaning. 401/403/404 pass through un-retried (401 is the auth layer's job; 404 is `missing`; 403 is permanent). Never add a per-service retry loop.
-- **Imperative shell** (`*FeatureService`, `*DataFileService`, `HttpDataFileTransport`, `WclApiService`): the only layer with `try/catch`. The catch body `logWarn`s, then returns `err(toLoadError(cause, id))`. Fallible reads change from `Promise<T | null>` to `Promise<Result<T, LoadError>>`.
-- **Functional core** (colocated pure `*.service.ts` transforms): total, no-throw, no-IO. A semantically-impossible analysis returns `err(permanent(...))` or `err(missing(...))` directly, never a `null` sentinel or a `{ found: false }` placeholder.
+- **Imperative shell** (`*FeatureService`, `*DataFileService`, `HttpDataFileTransport`, `WclApiService`): the only layer with `try/catch`. The catch body `logWarn`s, then returns `toLoadError(cause, id)`. Fallible reads return `Promise<Result<T, LoadError>>`.
+- **Functional core** (colocated pure `*.service.ts` transforms): total, no-throw, no-IO. A semantically-impossible analysis returns `permanent(...)` or `missing(...)` directly, never a `null` sentinel or a `{ found: false }` placeholder.
 - **Components / view-models**: `match` the `Result` into one of the four render states; a `permanent` result also triggers `logWarn(error.id, error.context)`.
 
 ## Status-to-variant mapping lives in one place
@@ -46,7 +46,7 @@ Discriminate on `.ok`. Both arms are plain object literals (no class) so they tr
 `toLoadError` (catch site) and the interceptor's `RETRYABLE_STATUSES` are the only two places that map an HTTP status to a variant. Do not re-derive the mapping per slice.
 
 ```ts
-export function toLoadError(cause: unknown, id: string): LoadError {
+export function toLoadError(cause: unknown, id: string): Result<never, LoadError> {
   const status = cause instanceof HttpErrorResponse ? cause.status
     : cause instanceof WclTransportError ? cause.status : -1;
   if (status === 404) return missing('Not yet ingested.');
@@ -65,7 +65,7 @@ if (!bench.ok) return errorView(bench.error);   // .ok narrows bench.value below
 // ...use bench.value...
 ```
 
-The minimal API is `ok`, `err`, `missing`, `transient`, `permanent`, `isOk`, `match`, `mapErr`, `toLoadError`. No `map` / `andThen` / `unwrapOr` until a real synchronous multi-step transform earns them (Rule of Three). `null` / `[]` stays legal only for the total-function "empty but valid input" contract (returning `0` / `[]` for genuinely empty data), never for a failure.
+The minimal API is `ok`, `missing`, `transient`, `permanent`, `isOk`, `match`, `mapErr`, `toLoadError` (the builders and `toLoadError` already return a `Result`, so there is no exported `err`). No `map` / `andThen` / `unwrapOr` until a real synchronous multi-step transform earns them (Rule of Three). `null` / `[]` stays legal only for the total-function "empty but valid input" contract (returning `0` / `[]` for genuinely empty data), never for a failure.
 
 ## Testing
 
@@ -76,10 +76,10 @@ expect(result.ok).toBe(true);
 if (result.ok) expect(result.value.trinkets).toHaveLength(EXPECTED_TRINKET_COUNT);
 
 expect(buildCharacterGear(null, {}, REPORT_CODE, SUBTLETY))
-  .toEqual(err(permanent('No combatant info in this log.', 'gear.combatant-info')));
+  .toEqual(permanent('No combatant info in this log.', 'gear.combatant-info'));
 
 expect(await source.getBench(SUBTLETY, UNKNOWN_ENCOUNTER_ID))
-  .toEqual(err(missing('Not yet ingested.')));
+  .toEqual(missing('Not yet ingested.'));
 ```
 
 The interceptor's backoff is a real RxJS timer: drive its retry with `vi.useFakeTimers()` + `vi.advanceTimersByTimeAsync(BACKOFF_MS)` and `HttpTestingController`.
@@ -100,14 +100,14 @@ async loadPlayerView(...): Promise<Result<XView, LoadError>> {
     return ok(view);
   } catch (cause) {
     logWarn('XFeatureService.loadPlayerView', cause);
-    return err(toLoadError(cause, 'x.player-view'));  // a WCL failure surfaces, not a silent bench-only fallback
+    return toLoadError(cause, 'x.player-view');  // a WCL failure surfaces, not a silent bench-only fallback
   }
 }
 ```
 
 A legitimate not-an-error state (no player selected in the pre-fight bench view, or a selected fight not yet present during a live sync) still returns `ok(...)` with the informational view - only a genuine failure returns `err`.
 
-**Component** applies the `Result` through `LatestLoad`, keeping the existing `available` signal (now `= result.ok`) and adding one `error` signal for the transient/permanent arms:
+**Component** applies the `Result` through `LatestLoad`, keeping the `available` signal (`= result.ok`) and one `error` signal for the transient/permanent arms; a `missing` failure clears `error` so the waiting state shows:
 
 ```ts
 apply: result => {
@@ -117,8 +117,6 @@ apply: result => {
     // set the view signals from result.value
   } else {
     if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
-    // `missing` renders the existing waiting placeholder (page shows the bench-empty banner);
-    // `transient`/`permanent` render the wl-load-error leaf.
     this.error.set(result.error.kind === 'missing' ? null : result.error);
     this.available.set(false); this.availableChange.emit(false);
     // clear the view signals
@@ -126,22 +124,22 @@ apply: result => {
 },
 ```
 
-**Template** switches in priority order: load-error leaf, then waiting placeholder, then content.
+**Template**: one `wl-load-state` covers both the waiting (`missing`/null error) and the transient/permanent error, so the card shows content or that single stand-in:
 
 ```html
-@if (error(); as e) { <wl-load-error [error]="e" /> }
-@else if (!available()) { <wl-waiting-placeholder ... /> }
-@else { <!-- card content --> }
+@if (error() || !available()) {
+  <wl-load-state heading="Offensives" subtitle="..." [error]="error()" />
+} @else { <!-- card content --> }
 ```
 
-`availableChange` stays `= result.ok`: a transient WCL outage on one card does not flip the whole page into the un-ingested bench-empty banner unless the bench file itself was missing. The `wl-load-error` leaf renders `Extract<LoadError, { kind: 'transient' | 'permanent' }>` (its exported `RenderableLoadError`), so narrow `missing` out before passing it.
+`wl-load-state` (`shared/components/load-state`) is the card-level panel: given an `error` it renders that failure, otherwise the "Waiting for top parses" state; `heading`/`subtitle` mirror the card (omit them for a standalone error with no card header, as pull-overview / map / the pre-fight dropdowns do). Its exported `RenderableLoadError` is `Extract<LoadError, { kind: 'transient' | 'permanent' }>`, so the `error` signal is typed to it and `missing` is narrowed to null before it reaches the panel. The page-level `wl-bench-empty-banner` is a separate component: it shows the three-step ingest pipeline once at the top when the whole page has no bench. `availableChange` stays `= result.ok` so a transient outage on one card does not flip the page into that banner unless the bench file itself was missing.
 
 ## The rules
 
 1. Every fallible load returns `Result<T, LoadError>` - never `T | null`, never an escaping throw, never a `{ found: false }` placeholder.
 2. The error channel is the three-variant `LoadError` union. No fourth kind, no bare `Error`. `missing` is not an error; `permanent` carries an `id` and is `logWarn`ed.
-3. `try/catch` lives only in the imperative shell; the catch `logWarn`s then returns `err(toLoadError(cause, id))`. No silent swallow.
-4. Pure core functions signal failure by returning `err(...)`, never by throwing. They stay synchronous, IO-free, and total.
+3. `try/catch` lives only in the imperative shell; the catch `logWarn`s then returns `toLoadError(cause, id)`. No silent swallow.
+4. Pure core functions signal failure by returning `missing(...)` / `permanent(...)`, never by throwing. They stay synchronous, IO-free, and total.
 5. Consume by discriminating on `.ok` or by `match`. No monadic chaining until earned.
 6. The retry-transient interceptor is the single retry point (count 1, transient statuses only). 401/403/404 pass through.
 7. Map status to variant in exactly one place (`toLoadError` / `RETRYABLE_STATUSES`).
