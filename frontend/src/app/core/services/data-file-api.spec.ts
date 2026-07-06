@@ -112,7 +112,7 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(outage).getEncounters(SPEC)).toEqual(transient('WCL is unreachable right now.'));
   });
 
-  it('reads the spec universe at spec-meta.json, returning the bare array and folding any failure to []', async () => {
+  it('reads the spec universe at spec-meta.json, folding a missing manifest to [] but surfacing a real failure', async () => {
     const metas: SpecMeta[] = [{
       spec: SPEC,
       className: 'Rogue',
@@ -123,12 +123,14 @@ describe('DataFileApiService reads', () => {
       specIcon: 'ability_stealth',
     }];
     const present = new RecordingTransport(ok(metas));
-    expect(await withTransport(present).getSpecMeta()).toBe(metas);
+    expect(await withTransport(present).getSpecMeta()).toEqual(ok(metas));
     expect(present.reads).toEqual(['spec-meta.json']);
 
-    // A bootstrap read has no card to surface an error on, so any failure degrades to [].
+    const fresh = new RecordingTransport(missing('Not yet ingested.'));
+    expect(await withTransport(fresh).getSpecMeta()).toEqual(ok([]));
+
     const outage = new RecordingTransport(transient('WCL is unreachable right now.'));
-    expect(await withTransport(outage).getSpecMeta()).toEqual([]);
+    expect(await withTransport(outage).getSpecMeta()).toEqual(transient('WCL is unreachable right now.'));
   });
 });
 

@@ -32,11 +32,8 @@ export class DataFileApiService {
     return foldMissingToEmpty(await this.io.readJson<SpecEntry[]>('index.json'));
   }
 
-  // Folds every failure to []: this hydrates the icon/spec cache at bootstrap, before any
-  // card exists to surface an error, so a failure would degrade the whole app anyway.
-  async getSpecMeta(): Promise<SpecMeta[]> {
-    const result = await this.io.readJson<SpecMeta[]>('spec-meta.json');
-    return result.ok ? result.value : [];
+  async getSpecMeta(): Promise<Result<SpecMeta[], LoadError>> {
+    return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
   }
 
   async getEncounters(spec: string): Promise<Result<EncounterEntry[], LoadError>> {

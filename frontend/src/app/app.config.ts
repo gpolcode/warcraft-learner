@@ -46,7 +46,10 @@ export const appConfig: ApplicationConfig = {
       // spec-meta.json before anything renders, so the class/spec dropdowns, the icon pipes,
       // and getRankings resolve. One tiny (~40-entry) file fetch, blocking bootstrap.
       const dataFile = inject(DataFileApiService);
-      hydrateSpecMeta(await dataFile.getSpecMeta());
+      // Bootstrap has no card to surface an error on, so a failed read degrades to an empty
+      // universe (which then shows the empty dropdowns) rather than blocking the app.
+      const specMeta = await dataFile.getSpecMeta();
+      hydrateSpecMeta(specMeta.ok ? specMeta.value : []);
     }),
     provideApollo(() => {
       // HttpLink rides on Angular's HttpClient; the per-request bearer token is supplied
