@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { logWarn } from '../log';
+import { WclTransportError } from './wcl-transport';
 
 const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 
@@ -122,9 +123,19 @@ export class WclAuthService {
       const detail = err instanceof HttpErrorResponse
         ? (typeof err.error === 'string' ? err.error : JSON.stringify(err.error))
         : '';
-      throw new Error(`WCL token request failed (${status}): ${detail}`, { cause: err });
+      // Preserve the status as a WclTransportError so toLoadError classifies it: a network
+      // drop / 5xx during the grant is transient, a rejected secret (401/403) is permanent.
+      // A bare Error would discard the status and always classify as permanent.
+      throw new WclTransportError(`WCL token request failed (${status}): ${detail}`, status);
     }
-    this._token = data.access_token;
+    const accessToken = data?.access_token;
+    if (typeof accessToken !== 'string' || accessToken.length === 0) {
+      // A 200 with no usable token (captive portal / proxy interstitial). Reject it rather
+      // than cache a junk token that 401-loops or an undefined that refetches every call.
+      // Status 0 classifies as transient: it clears once the network state is resolved.
+      throw new WclTransportError('WCL token response carried no access_token.', 0);
+    }
+    this._token = accessToken;
     this._expiry = Date.now() + (data.expires_in || 3600) * 1000;
     this._persist();
     return this._token;
