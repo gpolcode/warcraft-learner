@@ -1,36 +1,27 @@
 @let e = error();
-@if (e && (e.kind === 'transient' || e.kind === 'permanent')) {
-  <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-4">
-    <div class="flex items-start gap-2.5">
-      <mat-icon class="icon-18 mt-px shrink-0" [class]="e.kind === 'permanent' ? 'badge-critical' : 'badge-warning'">
-        {{ e.kind === 'permanent' ? 'error' : 'cloud_off' }}
-      </mat-icon>
-      <div>
-        <div class="text-sm font-semibold text-[var(--text)]">{{ e.message }}</div>
-        <div class="text-[12.5px] text-[var(--muted)] leading-relaxed mt-0.5">
-          {{ e.kind === 'permanent'
+@let err = e && (e.kind === 'transient' || e.kind === 'permanent') ? e : null;
+<div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-4">
+  <div class="flex items-start gap-2.5">
+    <mat-icon class="icon-18 text-[var(--info)] mt-px shrink-0">{{ err ? (err.kind === 'permanent' ? 'error' : 'cloud_off') : 'info' }}</mat-icon>
+    <div>
+      <div class="text-sm font-semibold text-[var(--text)]">
+        {{ err ? err.message : 'No benchmark for ' + encounter() + ' yet' }}
+      </div>
+      <div class="text-[12.5px] text-[var(--muted)] leading-relaxed mt-0.5">
+        @if (err) {
+          {{ err.kind === 'permanent'
             ? 'This analysis is bugged. Retrying will not fix it.'
             : 'Retries on the next sync, or reselect the fight.' }}
-        </div>
+        } @else if (variant() === 'pre') {
+          The pre-fight plan is built entirely from top-parse logs. Gear, cooldown, defensive and burst plans all need parses - none are in yet. Here's what has to happen first:
+        } @else {
+          Your pull graded against the spec rulebook below. Cooldown, burst, defensive and gear comparisons need top-parse logs - none are in yet. Here's what has to happen first:
+        }
       </div>
     </div>
   </div>
-} @else {
-  <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] p-4">
-    <div class="flex items-start gap-2.5">
-      <mat-icon class="icon-18 text-[var(--info)] mt-px shrink-0">info</mat-icon>
-      <div>
-        <div class="text-sm font-semibold text-[var(--text)]">No benchmark for {{ encounter() }} yet</div>
-        <div class="text-[12.5px] text-[var(--muted)] leading-relaxed mt-0.5">
-          @if (variant() === 'pre') {
-            The pre-fight plan is built entirely from top-parse logs. Gear, cooldown, defensive and burst plans all need parses - none are in yet. Here's what has to happen first:
-          } @else {
-            Your pull graded against the spec rulebook below. Cooldown, burst, defensive and gear comparisons need top-parse logs - none are in yet. Here's what has to happen first:
-          }
-        </div>
-      </div>
-    </div>
 
+  @if (!err) {
     <div class="flex items-stretch gap-1 bg-[var(--bg)] border border-[var(--border)] rounded-lg px-4 py-3.5 mt-3.5">
       <div class="flex-1 flex flex-col gap-1.5">
         <mat-icon class="icon-seg text-[var(--muted)]">military_tech</mat-icon>
@@ -66,5 +57,5 @@
         <div class="font-mono text-[10px] text-[var(--success)] mt-px">automatic</div>
       </div>
     </div>
-  </div>
-}
+  }
+</div>

@@ -69,7 +69,7 @@ describe('BenchEmptyBannerComponent', () => {
       expect(text).toContain(TRANSIENT_ERROR.message);
       expect(text).toContain('Retries on the next sync, or reselect the fight.');
       expect(icon).toBe('cloud_off');
-      expect(iconClasses).toContain('badge-warning');
+      expect(iconClasses).toContain('text-[var(--info)]');
     });
 
     it('renders a permanent error with its message, the error icon and a do-not-retry line', () => {
@@ -77,7 +77,7 @@ describe('BenchEmptyBannerComponent', () => {
       expect(text).toContain(PERMANENT_ERROR.message);
       expect(text).toContain('This analysis is bugged. Retrying will not fix it.');
       expect(icon).toBe('error');
-      expect(iconClasses).toContain('badge-critical');
+      expect(iconClasses).toContain('text-[var(--info)]');
     });
 
     it('does not show the ingest pipeline for an error', () => {
