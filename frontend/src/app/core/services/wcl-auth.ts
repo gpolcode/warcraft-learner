@@ -123,16 +123,14 @@ export class WclAuthService {
       const detail = err instanceof HttpErrorResponse
         ? (typeof err.error === 'string' ? err.error : JSON.stringify(err.error))
         : '';
-      // Preserve the status as a WclTransportError so toLoadError classifies it: a network
-      // drop / 5xx during the grant is transient, a rejected secret (401/403) is permanent.
-      // A bare Error would discard the status and always classify as permanent.
+      // Keep the status so toLoadError can tell a transient outage from a rejected secret;
+      // a bare Error would discard it and always classify as permanent.
       throw new WclTransportError(`WCL token request failed (${status}): ${detail}`, status);
     }
     const accessToken = data?.access_token;
     if (typeof accessToken !== 'string' || accessToken.length === 0) {
-      // A 200 with no usable token (captive portal / proxy interstitial). Reject it rather
-      // than cache a junk token that 401-loops or an undefined that refetches every call.
-      // Status 0 classifies as transient: it clears once the network state is resolved.
+      // A 200 with no token (captive portal): reject as transient rather than cache junk
+      // that 401-loops for an hour.
       throw new WclTransportError('WCL token response carried no access_token.', 0);
     }
     this._token = accessToken;

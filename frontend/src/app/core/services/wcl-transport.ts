@@ -22,12 +22,9 @@ export class WclTransportError extends Error {
 }
 
 /**
- * Synthetic status for a WCL HTTP 200 response that is semantically unusable: a
- * GraphQL-level error (report not found, private, or permission denied) or a null
- * report. It is not a real HTTP status - it exists so `toLoadError` classifies these as
- * `permanent` (retrying a bad, private, or expired report code never helps) rather than
- * as the `transient` "WCL is unreachable" state. 422 is used because it is a client-error
- * status, never in the retryable set.
+ * Synthetic status for a WCL 200 that is semantically unusable (a GraphQL error or a null
+ * report), so `toLoadError` classifies it `permanent`: retrying a missing/private/expired
+ * report never helps. 422 because a client-error status is never in the retryable set.
  */
 export const WCL_UNUSABLE_STATUS = 422;
 

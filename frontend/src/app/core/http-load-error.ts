@@ -8,14 +8,12 @@ import { WclTransportError } from './services/wcl-transport';
 const TRANSIENT_STATUSES = new Set([0, 408, 429, 500, 502, 503, 504]);
 const HTTP_NOT_FOUND = 404;
 
-// Bound on the cause chain walk, so a self-referential or pathologically nested cause can
-// never spin. Real chains here are one or two links deep.
+// Bound the cause-chain walk so a cyclic cause can never spin.
 const MAX_CAUSE_DEPTH = 8;
 
 /**
- * The HTTP/transport status of the failure, or -1 when none is present. The chain of
- * `Error.cause` links is walked so a wrapped `HttpErrorResponse` / `WclTransportError`
- * still classifies by its real status instead of collapsing to the `permanent` fallback.
+ * Status of the failure, or -1. Walks `Error.cause` so a wrapped transport/HTTP error
+ * still classifies by its real status instead of the `permanent` fallback.
  */
 function statusOf(cause: unknown): number {
   let current: unknown = cause;

@@ -33,10 +33,8 @@ export class ApolloWclTransport implements WclTransport {
       if (ServerError.is(error)) {
         throw new WclTransportError(`WCL API error (${error.statusCode})`, error.statusCode);
       }
-      // A 200 response carrying a top-level `errors` array surfaces as CombinedGraphQLErrors.
-      // These are semantic failures WCL returns for a report it will not serve (not found,
-      // private, permission denied) or a malformed query - retrying never helps, so they
-      // map to the permanent-classified `WCL_UNUSABLE_STATUS`, not the transient status 0.
+      // A 200 with a top-level `errors` array (report not found, private, denied) surfaces as
+      // CombinedGraphQLErrors. Retrying can't help, so classify permanent, not transient.
       if (CombinedGraphQLErrors.is(error)) {
         throw new WclTransportError(error.errors[0]?.message || 'WCL GraphQL error', WCL_UNUSABLE_STATUS);
       }
