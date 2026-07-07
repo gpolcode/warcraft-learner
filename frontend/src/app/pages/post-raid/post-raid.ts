@@ -231,10 +231,7 @@ export class PostRaidComponent {
   protected readonly benchAvailable = computed(() =>
     this.rotationAvailable() || this.burstAvailable() || this.defensiveAvailable() || this.gearAvailable());
 
-  // The shell surfaces failures through the same taxonomy the cards use, not a raw string.
-  // `loadError` holds a transient/permanent report/spec/poll failure and renders through the
-  // shared `wl-load-state` panel (icon + retry guidance); `notice` is a plain informational
-  // line for the states the taxonomy does not cover (an invalid code, or a zero-pull report).
+  // `notice` carries the non-failure states the taxonomy does not cover (invalid code, zero-pull report).
   protected readonly loadError = signal<RenderableLoadError | null>(null);
   protected readonly notice = signal('');
 
@@ -346,12 +343,8 @@ export class PostRaidComponent {
     setTimeout(() => void this.loadReport());
   }
 
-  /**
-   * Route a caught load failure into the shell's banners: a transient/permanent goes to the
-   * taxonomy panel with retry guidance, a `missing` collapses to the plain informational
-   * notice. `missing` is not expected for the report/spec/poll reads, so that fold is
-   * defensive - it keeps the shell exhaustive over the taxonomy without a raw string leak.
-   */
+  // `missing` is not expected for these reads; folding it to the notice keeps the shell
+  // exhaustive over the taxonomy without leaking a raw string.
   private _showError(result: Result<never, LoadError>): void {
     if (result.ok) return; // toLoadError / permanent never return ok; this narrows the union
     if (result.error.kind === 'missing') this.notice.set(result.error.message);
@@ -386,8 +379,7 @@ export class PostRaidComponent {
 
       const lastFight = this.fights()[this.fights().length - 1];
       this.fightControl.setValue(lastFight?.id ?? null);
-      // An all-trash log yields no pulls: the fight dropdown stays hidden and no card renders,
-      // so say so plainly instead of leaving the page looking like the load did nothing.
+      // Without this a zero-pull log is a successful load that looks like nothing happened.
       if (!this.fights().length) this.notice.set('No boss pulls found in this report.');
       this._applyAutoPlayer();
       // Set reportCode last - this activates the polling pipeline if liveSync is on.
@@ -436,8 +428,7 @@ export class PostRaidComponent {
     } catch (err) {
       logWarn('PostRaidComponent._pollOnce', err);
       this._showError(toLoadError(err, 'post-raid.poll'));
-      // The status was set to the in-flight "Checking..." above; clear that so the strip
-      // stops claiming a check is running, and tell the user the poll will retry.
+      // Overwrite the in-flight "Checking..." status so the strip stops claiming a live check.
       this.liveCapture.setStatus('Live sync error, retrying on the next check.');
     }
   }
@@ -474,8 +465,7 @@ export class PostRaidComponent {
       const groups = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
       this.playerDetailGroups.set(groups);
       const spec = specOf(groups, playerId);
-      // A 200 OK we cannot map to a spec is semantically unusable, not retriable: surface it
-      // as a permanent taxonomy failure rather than a bare string.
+      // Unmappable spec is a semantic dead end, not retriable: permanent, not transient.
       if (!spec) { this._showError(permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return; }
       this.spec.set(spec);
 
