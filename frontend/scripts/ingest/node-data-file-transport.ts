@@ -35,9 +35,8 @@ export class FsDataFileTransport implements DataFileTransport {
       if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return missing('Not yet ingested.');
       return permanent('Data file could not be read.', `data-file.${relPath}`, cause);
     }
-    // Schema/version guard: a file stamped with a newer ingest version has a shape this build
-    // does not know, so surface it as permanent (which drives a re-ingest at the current
-    // version) instead of casting the drifted JSON blindly to T.
+    // A newer-versioned file has a shape this build does not know; fail it (driving a re-ingest)
+    // rather than cast the drifted JSON to T.
     if (isFutureVersion(parsed, INGEST_VERSION)) {
       return permanent('Data file is from a newer ingest version.', `data-file.version.${relPath}`);
     }
@@ -49,8 +48,7 @@ export class FsDataFileTransport implements DataFileTransport {
     await fs.promises.mkdir(path.dirname(full), { recursive: true });
     // Minified: the bench data is machine-read across thousands of files, so dropping
     // pretty-print indentation cuts the deployed footprint by roughly 70%.
-    // Write to a temp sibling then atomically rename, so a hard kill mid-write leaves the
-    // previous complete file in place rather than a truncated JSON blob in the tree.
+    // Temp-then-rename so a kill mid-write leaves the previous complete file, not a truncated one.
     const tmp = `${full}.${process.pid}.${tempWriteCounter++}.tmp`;
     try {
       await fs.promises.writeFile(tmp, JSON.stringify(data) + '\n');

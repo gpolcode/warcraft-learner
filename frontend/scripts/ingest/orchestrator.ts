@@ -302,9 +302,7 @@ async function main(): Promise<void> {
     if (rulebook.ok) {
       meta.specIcon = rulebook.value.spec_icon;
     } else {
-      // A `missing` rulebook is the expected un-authored spec (blank icon, no noise); a
-      // `permanent` read is a corrupt rulebook.json - log it, since it otherwise ships a blank
-      // icon and freezes the spec silently.
+      // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
       if (rulebook.error.kind === 'permanent') {
         logWarn(`orchestrator ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
       }
@@ -343,8 +341,7 @@ async function main(): Promise<void> {
       if (rulebook.ok) {
         withRulebook.push(spec);
       } else if (rulebook.error.kind === 'permanent') {
-        // A corrupt rulebook.json drops the spec from this run (frozen on stale data). That is
-        // acceptable, but it must not be silent - log so a corrupt file is diagnosable.
+        // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
         logWarn(`orchestrator ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
       }
     }
@@ -381,11 +378,9 @@ async function main(): Promise<void> {
     console.log(`Specs (old version first):\n${versionLines.join('\n')}`);
   }
 
-  // Isolate each spec: a stray throw (a WCL blip on this spec's rankings, a file write) drops
-  // only that spec and the run continues with the rest, instead of aborting the whole hour.
-  // A total WCL outage still aborts red earlier (raid resolution above), so the success-gated
-  // publish never ships on a dead network; a per-spec failure leaves that spec's overlaid data
-  // untouched, so publishing the run's partial progress is safe.
+  // Isolate each spec so one throw drops only that spec, not the whole hour. Publishing partial
+  // progress is safe: a total WCL outage already aborted at raid resolution above, and a failed
+  // spec keeps its overlaid data untouched.
   const succeeded: string[] = [];
   const failed: { spec: string; error: unknown }[] = [];
   let budgetStopped = false;
@@ -400,8 +395,7 @@ async function main(): Promise<void> {
     }
   }
 
-  // End-of-run summary so a clean quiet hour is distinguishable from one that aborted partway
-  // through - otherwise failures exist only as scattered log lines.
+  // Distinguish a clean hour from one that aborted partway; otherwise failures are only scattered logs.
   console.log('\n=== Ingestion summary ===');
   console.log(`Specs processed: ${succeeded.length} of ${specs.length}`);
   if (budgetStopped) {

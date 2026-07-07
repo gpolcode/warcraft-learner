@@ -13,15 +13,10 @@ import { logWarn } from '../../src/app/core/log.ts';
 
 interface GraphQLResponse<TData> { data?: TData; errors?: { message: string }[]; }
 
-// The transport statuses worth retrying: a network drop (status 0 from the fetch catch) and
-// the retryable HTTP codes. Mirrors the browser retry interceptor's RETRYABLE_STATUSES so a
-// transient WCL blip is treated the same in both runtimes. GraphQL-level errors (a 200 with an
-// `errors` body - report not found, permission denied) are semantic, never retried.
+// Mirrors the browser retry interceptor's RETRYABLE_STATUSES.
 const RETRYABLE_STATUSES = new Set([0, 408, 429, 500, 502, 503, 504]);
-// The browser interceptor retries once because a person is waiting; the headless batch run has
-// no one waiting, so it retries a few times with exponential backoff to ride out a longer blip
-// (each parse fetch is swallowed to a dropped parse downstream, so a bench built during an
-// un-retried outage would silently thin - and then signature-lock that thin bench).
+// More than the browser's single retry: nothing runs headless to retry for us, and a swallowed
+// parse fetch silently thins the bench, so ingestion rides out a longer blip.
 const MAX_RETRIES = 3;
 const BASE_DELAY_MS = 500;
 
@@ -77,12 +72,9 @@ export class FetchWclTransport implements WclTransport {
   }
 
   /**
-   * The single retry point for ingestion (the headless runtime registers no HTTP interceptor,
-   * so this transport is where a transient WCL failure is retried). Retries the network + HTTP
-   * layer only, on RETRYABLE_STATUSES, with exponential backoff; a non-retryable status throws
-   * immediately. The GraphQL-error / no-data checks live above this so a semantic 200 is never
-   * retried. On the final give-up for a retryable status it logs the failure, since the caller
-   * (a transform's per-parse loop) swallows it to a silently dropped parse.
+   * Retries only the network + HTTP layer, so a semantic 200 (a GraphQL error, handled by the
+   * caller) is never retried. Logs the final give-up, since the caller swallows it to a
+   * silently dropped parse.
    */
   private async fetchWithRetry<TData>(gqlString: string, variables: object, token: string): Promise<GraphQLResponse<TData>> {
     for (let attempt = 0; ; attempt++) {

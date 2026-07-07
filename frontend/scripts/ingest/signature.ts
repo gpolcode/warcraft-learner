@@ -134,12 +134,9 @@ export function readStoredVersion(file: SignedFile): number {
 }
 
 /**
- * Schema/version guard for a freshly-read data file. A tailored file carries a numeric
- * `ingest_version`; one stamped NEWER than the build's `currentVersion` was produced by a
- * later ingest whose data shape this code does not know (a code deploy racing a data-shape
- * change), so it is unusable here and must be treated as a load failure rather than cast
- * blindly to the current type. An older or matching version, or a file with no version stamp
- * (a manifest, a hand-authored rulebook), is left to the normal read path.
+ * True when a file was written by a later ingest whose shape this build does not know (a code
+ * deploy racing a data-shape change), so a reader can fail it instead of casting blindly. Files
+ * with no numeric `ingest_version` (manifests, rulebooks) are never future.
  */
 export function isFutureVersion(parsed: unknown, currentVersion: number): boolean {
   if (typeof parsed !== 'object' || parsed === null) return false;
