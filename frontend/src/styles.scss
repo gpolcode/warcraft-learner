@@ -81,21 +81,19 @@ mat-sidenav.nav-drawer-rail { width: 5rem; }
 /* Navigation-drawer row rhythm: space the rows apart. */
 mat-nav-list .mdc-list-item { margin-block: 4px; }
 
-/* Collapsed rail: center each row's icon in a 48px circular target.
- * The element-qualified selectors outrank Material's item padding / leading-icon
- * rules (injected unlayered after this sheet) without `!important`. Material's
- * content span keeps `flex: 1` even when empty, so hiding it lets the lone icon
- * sit centered. */
+/* Collapsed rail: shrink each row to a 48px hit target, keeping the icon at the
+ * same inline offset the toolbar's hamburger and the expanded row's icon use, so
+ * toggling the rail never shifts the icon horizontally. The element-qualified
+ * selectors outrank Material's item padding / leading-icon rules (injected
+ * unlayered after this sheet) without `!important`. Material's content span keeps
+ * `flex: 1` even when empty, so hiding it lets the lone icon keep its own margin. */
 mat-sidenav.nav-drawer-rail .mdc-list-item {
   width: 48px;
   padding: 0;
-  margin-inline: auto;
   align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
-mat-sidenav.nav-drawer-rail .mat-mdc-list-item-icon { margin: 0; padding: 0; align-self: center; }
 
 /* mat-icon sizes. Material injects an unlayered `.mat-icon { width/height: 24px }`
  * and the Material Symbols font class sets `font-size: 24px`; Tailwind v4 utilities
