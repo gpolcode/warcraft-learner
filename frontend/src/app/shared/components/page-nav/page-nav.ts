@@ -8,7 +8,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
@@ -19,7 +18,7 @@ const MOBILE_QUERY = '(max-width: 600px)';
   selector: 'wl-page-nav',
   imports: [
     RouterLink, RouterLinkActive, MatToolbarModule, MatSidenavModule, MatListModule,
-    MatButtonModule, MatIconModule, MatDividerModule, MatTooltipModule,
+    MatButtonModule, MatIconModule, MatTooltipModule,
   ],
   templateUrl: './page-nav.html',
   host: { class: 'flex flex-col h-[100dvh]' },
