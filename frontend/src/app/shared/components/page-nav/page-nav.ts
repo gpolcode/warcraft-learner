@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule, MatSidenavContainer } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,6 +48,19 @@ export class PageNavComponent {
     this.isMobile() ? this.mobileOpen() : true);
   protected readonly railCollapsed = computed(() =>
     !this.isMobile() && this.desktopCollapsed());
+
+  private readonly container = viewChild(MatSidenavContainer);
+
+  constructor() {
+    // Material sizes the sidenav content margin from the drawer width only when the
+    // drawer opens or closes, not when an already-open side drawer resizes. The rail
+    // collapses by swapping a width class, so recompute the margin once the new width
+    // has been laid out, otherwise the content stays offset at the previous width.
+    effect(() => {
+      this.railCollapsed();
+      requestAnimationFrame(() => this.container()?.updateContentMargins());
+    });
+  }
 
   protected toggleNav(): void {
     if (this.isMobile()) {
