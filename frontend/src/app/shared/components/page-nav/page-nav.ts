@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NavStateStore } from '../../../core/services/nav-state-store';
 
 const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
 const MOBILE_QUERY = '(max-width: 600px)';
@@ -26,6 +27,7 @@ const MOBILE_QUERY = '(max-width: 600px)';
 export class PageNavComponent {
   protected readonly githubUrl = GITHUB_URL;
   private readonly breakpoints = inject(BreakpointObserver);
+  private readonly navState = inject(NavStateStore);
 
   protected readonly isMobile = toSignal(
     this.breakpoints.observe(MOBILE_QUERY).pipe(map(result => result.matches)),
@@ -33,10 +35,10 @@ export class PageNavComponent {
   );
 
   // Mobile: a modal drawer that overlays the content below the bar, closed by
-  // default. Desktop: a permanent drawer that collapses to an icons-only rail,
-  // expanded by default.
+  // default. Desktop: a permanent drawer that collapses to an icons-only rail;
+  // the collapsed choice is restored from the last session.
   protected readonly mobileOpen = signal(false);
-  protected readonly desktopCollapsed = signal(false);
+  protected readonly desktopCollapsed = signal(this.navState.loadCollapsed());
 
   protected readonly sidenavMode = computed<'over' | 'side'>(() =>
     this.isMobile() ? 'over' : 'side');
@@ -52,6 +54,7 @@ export class PageNavComponent {
       this.mobileOpen.update(open => !open);
     } else {
       this.desktopCollapsed.update(collapsed => !collapsed);
+      this.navState.saveCollapsed(this.desktopCollapsed());
     }
   }
 
