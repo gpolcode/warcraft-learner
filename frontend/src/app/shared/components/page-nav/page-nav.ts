@@ -22,7 +22,7 @@ const MOBILE_QUERY = '(max-width: 600px)';
     MatButtonModule, MatIconModule, MatDividerModule, MatTooltipModule,
   ],
   templateUrl: './page-nav.html',
-  host: { class: 'block h-[100dvh]' },
+  host: { class: 'flex flex-col h-[100dvh]' },
 })
 export class PageNavComponent {
   protected readonly githubUrl = GITHUB_URL;
