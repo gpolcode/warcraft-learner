@@ -81,19 +81,24 @@ mat-sidenav.nav-drawer-rail { width: 5rem; }
 /* Navigation-drawer row rhythm: space the rows apart. */
 mat-nav-list .mdc-list-item { margin-block: 4px; }
 
-/* Collapsed rail: shrink each row to a 48px hit target, keeping the icon at the
- * same inline offset the toolbar's hamburger and the expanded row's icon use, so
- * toggling the rail never shifts the icon horizontally. The element-qualified
- * selectors outrank Material's item padding / leading-icon rules (injected
- * unlayered after this sheet) without `!important`. Material's content span keeps
- * `flex: 1` even when empty, so hiding it lets the lone icon keep its own margin. */
+/* Collapsed rail: shrink each row to a 48px circular hit target centered on the
+ * icon, with the icon itself kept at the same inline offset the toolbar's
+ * hamburger and the expanded row's icon use (list inset 8px + 16px icon column =
+ * 24px), so toggling the rail never shifts the icon horizontally. That inset
+ * puts the icon's own center 4px right of the hit target's natural left-aligned
+ * center, hence the 4px item offset below. The element-qualified selectors
+ * outrank Material's item padding / leading-icon rules (injected unlayered
+ * after this sheet) without `!important`. Material's content span keeps
+ * `flex: 1` even when empty, so hiding it lets the lone icon sit alone. */
 mat-sidenav.nav-drawer-rail .mdc-list-item {
   width: 48px;
   padding: 0;
+  margin-left: 4px;
   align-items: center;
   overflow: hidden;
 }
 mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
+mat-sidenav.nav-drawer-rail .mat-mdc-list-item-icon { margin: 0 12px; }
 
 /* mat-icon sizes. Material injects an unlayered `.mat-icon { width/height: 24px }`
  * and the Material Symbols font class sets `font-size: 24px`; Tailwind v4 utilities
