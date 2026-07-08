@@ -83,9 +83,9 @@ mat-nav-list .mdc-list-item { margin-block: 4px; }
 
 /* Collapsed rail: center each row's icon in a 48px circular target (Keep-style).
  * The element-qualified selectors outrank Material's item padding / leading-icon
- * rules (injected unlayered after this sheet) without `!important`. The label's
- * content span keeps `flex: 1` even when empty, which would shove the icon to the
- * edge, so it is removed and the icon becomes the item's only centered child. */
+ * rules (injected unlayered after this sheet) without `!important`. Material's
+ * content span keeps `flex: 1` even when empty, so hiding it lets the lone icon
+ * sit centered. */
 mat-sidenav.nav-drawer-rail .mdc-list-item {
   width: 48px;
   padding: 0;

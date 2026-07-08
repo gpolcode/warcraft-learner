@@ -32,9 +32,9 @@ export class PageNavComponent {
     { initialValue: false },
   );
 
-  // Mobile: a modal drawer that overlays everything (top app bar included),
-  // closed by default. Desktop: a permanent drawer that collapses to an
-  // icons-only rail, expanded by default.
+  // Mobile: a modal drawer that overlays the content below the bar, closed by
+  // default. Desktop: a permanent drawer that collapses to an icons-only rail,
+  // expanded by default.
   protected readonly mobileOpen = signal(false);
   protected readonly desktopCollapsed = signal(false);
 
