@@ -115,13 +115,8 @@ mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
  * `text-*` utilities silently do nothing on a mat-icon. These mat-icon-scoped
  * classes (specificity 0,1,1) beat both without `!important`. */
 
-/* An icon button has no line-height of its own, so it inherits whatever ambient
- * line-height its container sets (e.g. Tailwind's 1.5 body default computes to 36px
- * against the button's 24px font-size). mat-toolbar happens to reset its own
- * line-height, which is why a toolbar icon button centers correctly while the same
- * button elsewhere does not: the inherited line-height overflows the button's fixed
- * 40px height and gets clipped asymmetrically, pushing the icon a couple pixels off
- * center. Resetting it to 1 keeps the icon centered regardless of where the button sits. */
+/* Without this, the icon inherits ambient line-height (varies by container) and sits
+ * a couple pixels off-center inside the button's fixed height. */
 .mdc-icon-button { line-height: 1; }
 
 mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
