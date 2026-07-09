@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
-import { getEncounters, getRankingsLite } from './wcl-fetchers.ts';
-import { BudgetExceededError } from './wcl-client.ts';
-import type { WclQueryClient, EventFetchOptions } from './wcl-client.ts';
-import type { SpecWclMap } from './wcl-mappers.ts';
-import type { WclResourceEvent, WclRawRanking } from './models/wcl.models.ts';
+import { getEncounters, getRankingsLite } from './wcl-fetchers';
+import { BudgetExceededError } from './wcl-client';
+import type { WclQueryClient, EventFetchOptions } from './wcl-client';
+import type { SpecWclMap } from './wcl-mappers';
+import type { WclResourceEvent, WclRawRanking } from './models/wcl.models';
 
 // Folder -> [className, specName] for the probe specs plus the specs these tests query.
 const SPEC_WCL: SpecWclMap = {

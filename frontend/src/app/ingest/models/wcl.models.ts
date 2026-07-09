@@ -1,11 +1,10 @@
 /**
  * WCL API response shapes and ingest-local aggregation types.
  *
- * Used across the Extract layer (wcl-client / wcl-queries / wcl-mappers /
- * wcl-fetchers) and consumed read-only by the Transform layer (analysis/**).
- * These describe what the WCL v2 API returns and the intermediate shapes the
- * ingestion pipeline passes around - not the on-disk file format (that lives in
- * parse-sample.models.ts / bench.models.ts).
+ * Used across the ingest discovery layer (wcl-client / wcl-queries / wcl-mappers /
+ * wcl-fetchers). These describe what the WCL v2 API returns and the intermediate
+ * shapes the orchestrator passes around - not the on-disk tailored-file shapes
+ * (each slice's `*Bench` interface plus `core/models/*` own those).
  */
 
 /** One gear slot from a ranking's combatant info (ingest-local WCL response shape). */

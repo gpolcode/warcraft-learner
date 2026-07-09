@@ -1,26 +1,26 @@
 /**
- * Extract layer - encounter discovery.
+ * Ingest discovery layer - encounter discovery.
  *
- * The v5 ingestion (orchestrator.ts) drives the Angular `*TransformService`s for all
- * per-parse fetching and analysis; the only `get*` fetcher that survives here is the
- * one piece of orchestration the transforms do not own: resolving which raids are
- * "current" from `worldData` plus a cheap rankings liveness probe. It composes the
- * transport client (wcl-client), the discovery query strings (wcl-queries), and the
- * pure mappers (wcl-mappers), accepting a `WclQueryClient` interface so tests can
- * inject a fake. Best-effort failures are logged via `logWarn`, never swallowed.
+ * The orchestrator drives the `*TransformService`s for all per-parse fetching and
+ * analysis; the one `get*` fetcher here is the piece of orchestration the transforms
+ * do not own: resolving which raids are "current" from `worldData` plus a cheap
+ * rankings liveness probe. It composes the transport client (wcl-client), the
+ * discovery query strings (wcl-queries), and the pure mappers (wcl-mappers),
+ * accepting a `WclQueryClient` interface so tests can inject a fake. Best-effort
+ * failures are logged via `logWarn`, never swallowed.
  */
 
-import { logWarn } from '../../src/app/core/log.ts';
-import { BudgetExceededError, type WclQueryClient } from './wcl-client.ts';
+import { logWarn } from '../core/log';
+import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
   ENCOUNTERS_QUERY, RANKINGS_QUERY, type RankingsQueryVars,
-} from './wcl-queries.ts';
+} from './wcl-queries';
 import {
   mapRankings, filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap,
-} from './wcl-mappers.ts';
+} from './wcl-mappers';
 import type {
   WclExpansion, WclRawRanking, ParseRanking, IngestEncounter,
-} from './models/wcl.models.ts';
+} from './models/wcl.models';
 
 // Reliably-populated DPS specs used to probe a zone for liveness. A genuinely live
 // raid has many real parses for any of these; a beta/PTR/test zone has none, so one

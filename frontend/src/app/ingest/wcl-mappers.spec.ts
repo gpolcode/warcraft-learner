@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { mapRankings, filterEncounters, groupEncountersByZone, protectedEncounterIds, mapClassesToSpecMeta, specWclFromMetas } from './wcl-mappers.ts';
-import type { WclRawRanking, WclExpansion, IngestEncounter, WclGameClass } from './models/wcl.models.ts';
+import { mapRankings, filterEncounters, groupEncountersByZone, protectedEncounterIds, mapClassesToSpecMeta, specWclFromMetas } from './wcl-mappers';
+import type { WclRawRanking, WclExpansion, IngestEncounter, WclGameClass } from './models/wcl.models';
 
 describe('mapRankings', () => {
   const raw: WclRawRanking[] = [

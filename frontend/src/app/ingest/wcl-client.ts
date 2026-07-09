@@ -1,14 +1,12 @@
 /**
- * Extract layer - WCL transport contract.
+ * Ingest discovery layer - WCL transport contract.
  *
- * The v5 ingestion no longer ships its own GraphQL/OAuth client: every WCL read goes
- * through the shared Angular `WclApiService` (over the Node `FetchWclTransport`),
- * which the orchestrator adapts to this `WclQueryClient` interface so the one
- * surviving discovery fetcher (`getEncounters`) and the budget gate can stay
- * transport-agnostic and testable with a fake.
+ * Every WCL read goes through the shared `WclApiService`; the orchestrator adapts it
+ * to this `WclQueryClient` interface so the discovery fetcher (`getEncounters`) and the
+ * budget gate stay transport-agnostic and testable with a fake.
  */
 
-import type { WclResourceEvent } from './models/wcl.models.ts';
+import type { WclResourceEvent } from './models/wcl.models';
 
 /** Options accepted by the event-fetching helpers. */
 export interface EventFetchOptions {

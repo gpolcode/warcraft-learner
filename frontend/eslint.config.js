@@ -48,11 +48,22 @@ export default defineConfig([
     },
   },
   {
-    // Node CLI scripts under scripts/** are plain tsx entrypoints, not Angular.
-    // console.log/console.error are their user-facing output, so keep it allowed.
-    // Node globals (process, etc) need no globals block: typescript-eslint disables
-    // core `no-undef` for .ts, so TypeScript itself owns undefined-symbol checks.
-    files: ['scripts/**/*.ts'],
+    // The scripts under scripts/** are plain Node JS (the ingest file server and the
+    // headless harness), not Angular and not TypeScript. console output is their
+    // user-facing logging, so keep it allowed. Plain JS keeps core `no-undef`, so the
+    // Node globals they use are declared here.
+    files: ['scripts/**/*.{js,mjs}'],
+    extends: [eslint.configs.recommended],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        fetch: 'readonly',
+        URL: 'readonly',
+      },
+    },
     rules: {
       'no-console': 'off',
     },

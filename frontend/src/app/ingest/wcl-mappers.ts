@@ -1,16 +1,16 @@
 /**
- * Extract layer - pure response-to-model mappers and the spec-universe derivation.
+ * Ingest discovery layer - pure response-to-model mappers and the spec-universe
+ * derivation.
  *
  * No network, no filesystem, no client: every function takes a raw WCL response
- * fragment and returns an ingest model. The frontend runtime owns its own copy of
- * the equivalent projections inside each vertical slice. Unit-tested in
- * wcl-mappers.spec.ts.
+ * fragment and returns an ingest model. The runtime slices own their own copies of
+ * the equivalent projections. Unit-tested in wcl-mappers.spec.ts.
  */
 
 import type {
   WclRawRanking, WclExpansion, ParseRanking, IngestEncounter, WclGameClass,
-} from './models/wcl.models.ts';
-import type { SpecMeta } from '../../src/app/core/models/spec-meta.models.ts';
+} from './models/wcl.models';
+import type { SpecMeta } from '../core/models/spec-meta.models';
 
 /** Folder key -> [WCL className, WCL specName] - the small map the discovery fetchers read. */
 export type SpecWclMap = Record<string, [string, string]>;

@@ -15,12 +15,13 @@
  * `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` from the process environment - the env override
  * takes precedence in wcl-auth.ts.
  */
-import { EnvironmentProviders, Provider } from '@angular/core';
+import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { DATA_FILE_TRANSPORT } from '../app/core/services/data-file-transport';
 import { WCL_INGEST_MODE } from '../app/core/services/wcl-transport';
 import { RETRY_MAX_ATTEMPTS } from '../app/core/interceptors/retry-transient.interceptor';
 import { IngestHttpDataFileTransport } from '../app/ingest/ingest-data-file-transport';
+import { IngestOrchestratorService } from '../app/ingest/ingest-orchestrator.service';
 import { BURST_DATA_SOURCE } from '../app/pages/post-raid/burst-windows/burst-data-source';
 import { BurstTransformService } from '../app/pages/post-raid/burst-windows/burst-transform.service';
 import { ROTATION_DATA_SOURCE } from '../app/pages/post-raid/rotation/rotation-data-source';
@@ -63,4 +64,9 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   { provide: WCL_INGEST_MODE, useValue: true },
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
+  provideAppInitializer(() => {
+    // Fire and forget: the app shell must render while ingestion runs in the background;
+    // run() owns its failures, so this can never surface an unhandled rejection.
+    void inject(IngestOrchestratorService).run();
+  }),
 ];
