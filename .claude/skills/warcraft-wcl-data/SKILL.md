@@ -7,12 +7,12 @@ description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model
 
 ## Browser auth model (intentional embedded secret)
 
-The browser authenticates to WCL with the **client-credentials** grant against `/api/v2/client`, using a client id + secret **hardcoded in `core/services/wcl-auth.ts`** (and therefore shipped, public, in the static JS bundle). This is a deliberate trade-off, not a leak to fix:
+The browser authenticates to WCL with the **client-credentials** grant against `/api/v2/client`, using a client id + secret **hardcoded in the environment files** (`src/environments/environment*.ts`, read by `core/services/wcl-auth.ts` - and therefore shipped, public, in the static JS bundle). This is a deliberate trade-off, not a leak to fix:
 
 - The token only reads the same **public** WCL report data the app always read; there is no private data behind it and no user-specific budget to lose. The app never required user-scoped access.
 - The **only** risk is someone extracting the secret and draining the app's shared hourly rate-limit budget. Mitigation is manual: regenerate the secret at `warcraftlogs.com/api/clients/` and redeploy. WCL exposes **no API to rotate a client secret**, so this cannot be automated.
 - There is **no login UI, callback route, or PKCE flow** anymore. `WclAuthService.getToken()` fetches and caches the token silently. Consequently the `userData.currentUser` "your own characters" convenience was removed end-to-end (a client token has no current user); users always supply a report code or character name.
-- This is independent of the **ingestion** client credentials (`WCL_CLIENT_ID`/`WCL_CLIENT_SECRET`), which remain server-side-only GHA secrets used by the CLI.
+- The **ingestion** client credentials (`WCL_CLIENT_ID`/`WCL_CLIENT_SECRET`) stay server-side-only GHA secrets: the headless harness (`scripts/ingest-headless.mjs`) injects them into the page as a process-env global, which `wcl-auth.ts` prefers over the environment pair. So CI ingests on the dedicated client's budget while the secret never enters the bundle or the repo; a local `npm run start:ingest` without them uses the public pair.
 
 ## WCL API quirks
 
@@ -42,7 +42,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 | API | Auth | Where used |
 |---|---|---|
 | Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (browser; embedded secret, see "Browser auth model") | Report events, character rankings, gear lookup |
-| Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (CLI/GHA only, never browser) | The transform services fetching parses (via the shared `WclApiService` under the Node transport, driven by `scripts/ingest/orchestrator.ts`) |
+| Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (GHA secrets, injected into the page by the headless harness) | The transform services fetching parses during ingest (via the shared `WclApiService`, driven by `src/app/ingest/ingest-orchestrator.service.ts`) |
 
 ## Event positions
 
