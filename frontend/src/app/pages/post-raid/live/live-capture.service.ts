@@ -111,6 +111,11 @@ export function buildClipWindows(
   });
 }
 
+/** The whole-fight wall-clock window (unix epoch ms) whose segments make up a full-pull clip. */
+export function fullPullWindow(reportStartTime: number, fightStartTime: number, fightEndTime: number): ClipWindow {
+  return { fromMs: reportStartTime + fightStartTime, toMs: reportStartTime + fightEndTime, key: 'full-pull' };
+}
+
 /** Segments overlapping `[fromMs, toMs]`, sorted by start. Half-open on neither end (any touch counts). */
 export function selectSegments(segments: Segment[], window: ClipWindow): Segment[] {
   return segments
@@ -340,6 +345,22 @@ export class LiveCaptureFeatureService {
       this.downloadError.set('Download failed.');
       logWarn(`LiveCaptureFeatureService.download ${anchor.key}`, err);
     }
+  }
+
+  /** Export the whole prepared fight from the rolling buffer to one downloadable WebM file. */
+  downloadFullPull(): void {
+    const ctx = this.ctx();
+    if (!ctx) return;
+    this.downloadError.set(null);
+    const segments = selectSegments(this.segments(), fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
+    if (!segments.length) {
+      this.downloadError.set('Download failed.');
+      logWarn('LiveCaptureFeatureService.downloadFullPull', 'no footage covering the fight');
+      return;
+    }
+    // Concatenate whole segment blobs directly: instant, unlike the real-time re-record a trimmed
+    // clip needs. The file spans whole segments, so its bounds sit within one SEG_MS of the fight edges.
+    this.triggerDownload(new Blob(segments.map(segment => segment.blob), { type: this.mimeType }), 'full-pull.webm');
   }
 
   /** The clip player's `<video>` could not decode the assembled footage; flip to the dead-clip message. */
