@@ -15,24 +15,13 @@
  * `data/specs/` relative to `document.baseURI` (it runs live-transform anyway).
  */
 import { Provider } from '@angular/core';
+import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
 import { provideFileDataSource } from '../app/core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from '../app/pages/post-raid/burst-windows/burst-data-source';
 import { ROTATION_DATA_SOURCE } from '../app/pages/post-raid/rotation/rotation-data-source';
 import { DEFENSIVE_DATA_SOURCE } from '../app/pages/post-raid/defensive/defensive-data-source';
 import { GEAR_DATA_SOURCE } from '../app/pages/post-raid/gear/gear-data-source';
 import { MAP_DATA_SOURCE } from '../app/pages/post-raid/map/map-data-source';
-
-// WCL OAuth client used for the client-credentials grant.
-//
-// INTENTIONAL SECRET EXPOSURE: this secret ships inside the static JS bundle and is
-// therefore public. That is a deliberate design choice. The client-credentials token
-// only grants access to public WCL report data - there is no private data behind it and
-// no per-user budget to lose. The sole risk is that someone extracts the secret and
-// drains our shared hourly rate-limit budget. Mitigation is manual: regenerate the
-// secret at warcraftlogs.com/api/clients/ and redeploy (WCL exposes no API to rotate a
-// secret, so this cannot be automated). See the project notes on this trade-off.
-const CLIENT_ID = 'a21cf850-4cf8-4591-b3e5-906aba0da145';
-const CLIENT_SECRET = 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze';
 
 export const environment = {
   /** When true, slices compute their prepared data live in the browser instead of
@@ -53,9 +42,9 @@ export const environment = {
   ingest: false,
   /** Ingest environment only: target a single spec folder (e.g. 'SubtletyRogue') instead of all. */
   ingestSpec: null as string | null,
-  /** WCL client-credentials pair (see the INTENTIONAL SECRET EXPOSURE note above). */
-  wclClientId: CLIENT_ID,
-  wclClientSecret: CLIENT_SECRET,
+  /** WCL client-credentials pair (intentionally public - see wcl-public-client.ts). */
+  wclClientId: WCL_PUBLIC_CLIENT_ID,
+  wclClientSecret: WCL_PUBLIC_CLIENT_SECRET,
 };
 
 /**

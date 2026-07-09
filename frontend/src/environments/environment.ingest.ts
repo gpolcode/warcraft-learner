@@ -10,12 +10,13 @@
  * check has the current published data to compare against.
  *
  * `wclClientId`/`wclClientSecret` default to the intentionally public pair every build
- * ships (see environment.ts). To ingest on a dedicated WCL client's budget, either edit
+ * ships (see wcl-public-client.ts). To ingest on a dedicated WCL client's budget, either edit
  * them here locally (do not commit a private pair) or let the headless harness inject
  * `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` from the process environment - the env override
  * takes precedence in wcl-auth.ts.
  */
 import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
+import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { DATA_FILE_TRANSPORT } from '../app/core/services/data-file-transport';
 import { WCL_INGEST_MODE } from '../app/core/services/wcl-transport';
@@ -45,8 +46,8 @@ export const environment = {
   ingest: true,
   /** Set locally to target a single spec folder (e.g. 'SubtletyRogue') instead of all. */
   ingestSpec: null as string | null,
-  wclClientId: 'a21cf850-4cf8-4591-b3e5-906aba0da145',
-  wclClientSecret: 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze',
+  wclClientId: WCL_PUBLIC_CLIENT_ID,
+  wclClientSecret: WCL_PUBLIC_CLIENT_SECRET,
 };
 
 /**

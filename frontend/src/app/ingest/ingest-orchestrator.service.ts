@@ -427,7 +427,7 @@ export class IngestOrchestratorService {
   }
 
   /**
-   * Prune on-disk data for a spec's encounters whose ids are no longer in the protected set.
+   * Prune on-disk data for a spec's encounters whose ids are outside the protected set.
    * An empty protected set (a transient worldData failure) never deletes anything.
    */
   private async pruneStaleEncounters(spec: string, protectedIds: Set<number>): Promise<number[]> {

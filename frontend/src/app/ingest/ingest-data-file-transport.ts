@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../core/services/data-file-transport';
-import { Result, LoadError, ok, missing, permanent } from '../core/result';
+import { Result, LoadError, ok, permanent } from '../core/result';
 import { logWarn } from '../core/log';
 import { toLoadError } from '../core/http-load-error';
 import { INGEST_VERSION } from './ingest-version';
@@ -36,9 +36,13 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
         params: { filePath: `${SPECS_PREFIX}${relPath}` },
       }));
     } catch (cause) {
-      if (cause instanceof HttpErrorResponse && cause.status === 404) return missing('Not yet ingested.');
-      logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
-      return toLoadError(cause, `data-file.${relPath}`);
+      const result = toLoadError(cause, `data-file.${relPath}`);
+      // `missing` is not an error (an un-ingested file is the orchestrator's normal case,
+      // hit for every rulebook probe and first-run stamp read), so only real failures log.
+      if (!result.ok && result.error.kind !== 'missing') {
+        logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
+      }
+      return result;
     }
     // A newer-versioned file has a shape this build does not know; fail it (driving a
     // re-ingest) rather than cast the drifted JSON to T.

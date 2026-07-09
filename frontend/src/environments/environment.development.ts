@@ -12,6 +12,7 @@
  * entirely.
  */
 import { Provider } from '@angular/core';
+import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from '../app/pages/post-raid/burst-windows/burst-data-source';
 import { BurstTransformService } from '../app/pages/post-raid/burst-windows/burst-transform.service';
@@ -31,9 +32,9 @@ export const environment = {
   dataBaseHref: '',
   ingest: false,
   ingestSpec: null as string | null,
-  /** WCL client-credentials pair (the intentionally public one - see environment.ts). */
-  wclClientId: 'a21cf850-4cf8-4591-b3e5-906aba0da145',
-  wclClientSecret: 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze',
+  /** WCL client-credentials pair (intentionally public - see wcl-public-client.ts). */
+  wclClientId: WCL_PUBLIC_CLIENT_ID,
+  wclClientSecret: WCL_PUBLIC_CLIENT_SECRET,
 };
 
 /** Development data-source bindings: every slice computes its bench live via its transform. */
