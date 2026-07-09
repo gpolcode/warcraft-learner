@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { logWarn } from '../log';
 import { WclTransportError } from './wcl-transport';
+import { environment } from '../../../environments/environment';
 
 const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 
@@ -30,31 +31,19 @@ function sessionStore(): Storage | null {
   }
 }
 
-// WCL OAuth client used for the browser's client-credentials grant.
-//
-// INTENTIONAL SECRET EXPOSURE: this secret ships inside the static JS bundle and is
-// therefore public. That is a deliberate design choice. The client-credentials token
-// only grants access to the same public WCL report data the previous PKCE login flow
-// already read - there is no private data behind it and no per-user budget to lose.
-// The sole risk is that someone extracts the secret and drains our shared hourly
-// rate-limit budget. Mitigation is manual: regenerate the secret at
-// warcraftlogs.com/api/clients/ and redeploy (WCL exposes no API to rotate a secret,
-// so this cannot be automated). See the project notes on this trade-off.
-const CLIENT_ID = 'a21cf850-4cf8-4591-b3e5-906aba0da145';
-const CLIENT_SECRET = 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze';
-
 /**
- * The client-credentials pair. In the browser there is no `process`, so it always
- * uses the embedded (intentionally public) secret. The Node ingestion sets
- * `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` (server-side GHA secrets) which take precedence -
- * the same env vars the old ingest client used. Read via `globalThis` so the app
- * bundle needs no Node types and `process` never appears in browser code.
+ * The client-credentials pair. Normally the environment's embedded (intentionally
+ * public - see environment.ts) pair. A `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` pair on a
+ * process-env global takes precedence: the headless ingest harness injects one so CI
+ * ingests on its dedicated client's budget without committing that secret. Read via
+ * `globalThis` so the app bundle needs no Node types and `process` never appears in
+ * browser code.
  */
 function clientCredentials(): { id: string; secret: string } {
   const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
   return {
-    id: env?.['WCL_CLIENT_ID'] || CLIENT_ID,
-    secret: env?.['WCL_CLIENT_SECRET'] || CLIENT_SECRET,
+    id: env?.['WCL_CLIENT_ID'] || environment.wclClientId,
+    secret: env?.['WCL_CLIENT_SECRET'] || environment.wclClientSecret,
   };
 }
 

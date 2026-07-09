@@ -1,7 +1,7 @@
 /**
  * Development environment (swapped in by the `development` build configuration).
  *
- * `useLiveTransform: true` binds every `*_DATA_SOURCE` token (see `dataSourceProviders`
+ * `useLiveTransform: true` binds every `*_DATA_SOURCE` token (see `environmentProviders`
  * below) to its `*TransformService`, so each slice computes its prepared data live from WCL
  * in the browser - `npm start` runs with zero ingested files. Slower (a burst render
  * fetches the top parses + their Casts/DamageDone), dev only. Production stays on the file
@@ -29,10 +29,15 @@ export const environment = {
   /** Empty resolves `data/specs/` relative to `document.baseURI` (per-folder copy);
    * see `environment.ts` for the shared-copy override used by preview builds. */
   dataBaseHref: '',
+  ingest: false,
+  ingestSpec: null as string | null,
+  /** WCL client-credentials pair (the intentionally public one - see environment.ts). */
+  wclClientId: 'a21cf850-4cf8-4591-b3e5-906aba0da145',
+  wclClientSecret: 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze',
 };
 
 /** Development data-source bindings: every slice computes its bench live via its transform. */
-export const dataSourceProviders: Provider[] = [
+export const environmentProviders: Provider[] = [
   provideLiveDataSource(BURST_DATA_SOURCE, BurstTransformService),
   provideLiveDataSource(ROTATION_DATA_SOURCE, RotationTransformService),
   provideLiveDataSource(DEFENSIVE_DATA_SOURCE, DefensiveTransformService),

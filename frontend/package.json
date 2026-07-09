@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:empty": "ng serve --configuration empty",
+    "start:ingest": "concurrently -k \"node scripts/ingest-server.js\" \"ng serve --configuration ingest\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test && vitest run --config vitest.scripts.config.ts && tsc -p tsconfig.scripts.json --noEmit",

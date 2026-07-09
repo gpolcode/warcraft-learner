@@ -18,7 +18,7 @@ import { DATA_FILE_TRANSPORT, HttpDataFileTransport } from './core/services/data
 import { DataFileApiService } from './core/services/data-file-api';
 import { retryTransientInterceptor } from './core/interceptors/retry-transient.interceptor';
 import { hydrateSpecMeta } from './core/spec-meta';
-import { dataSourceProviders } from '../environments/environment';
+import { environmentProviders } from '../environments/environment';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
   <path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577
@@ -64,8 +64,10 @@ export const appConfig: ApplicationConfig = {
     // Data-file transport: HTTP read-only at runtime (the ingest environment overrides
     // this binding with the read+write file-server transport).
     { provide: DATA_FILE_TRANSPORT, useExisting: HttpDataFileTransport },
-    // File-backed in production, live transforms under the dev flag. The per-environment list
-    // keeps a production build from importing (so it tree-shakes out) the five *TransformServices.
-    ...dataSourceProviders,
+    // File-backed in production, live transforms under the dev flag, the full ingest
+    // wiring in the ingest environment. The per-environment list keeps a production build
+    // from importing (so it tree-shakes out) the five *TransformServices and the ingest
+    // machinery, and being last lets an environment override the bindings above.
+    ...environmentProviders,
   ],
 };

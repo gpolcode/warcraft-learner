@@ -22,10 +22,15 @@ export const environment = {
   /** Empty resolves `data/specs/` relative to `document.baseURI` (the `data:pull`ed
    * `public/data/specs/`), so manifests + rulebooks load while the benches stay empty. */
   dataBaseHref: '',
+  ingest: false,
+  ingestSpec: null as string | null,
+  /** WCL client-credentials pair (the intentionally public one - see environment.ts). */
+  wclClientId: 'a21cf850-4cf8-4591-b3e5-906aba0da145',
+  wclClientSecret: 'ZYBFec16gC0CfwaunQjSAwUCQwEXTKOFo5JkwSze',
 };
 
 /** Empty-encounter data-source bindings: every slice reads a null bench. */
-export const dataSourceProviders: Provider[] = [
+export const environmentProviders: Provider[] = [
   provideEmptyDataSource(BURST_DATA_SOURCE),
   provideEmptyDataSource(ROTATION_DATA_SOURCE),
   provideEmptyDataSource(DEFENSIVE_DATA_SOURCE),
