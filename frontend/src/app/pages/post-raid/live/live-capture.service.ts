@@ -4,7 +4,7 @@
  * It owns three concerns:
  *
  *  1. Recording engine - `getDisplayMedia` + a per-segment `MediaRecorder` rolling
- *     buffer, MSE clip assembly for playback, and blob-concat export.
+ *     buffer, MSE clip assembly for playback, and single-file WebM export by remux.
  *  2. Live-sync toggle + status the controls strip renders (the page owns the polling).
  *  3. Clip flyover state - panel open/close, the current `ClipHandle`, and the
  *     correlation context captured from `prepare`.
@@ -13,6 +13,9 @@
  * written to disk.
  */
 import { Injectable, computed, inject, signal } from '@angular/core';
+import {
+  BlobSource, BufferTarget, EncodedPacketSink, EncodedVideoPacketSource, Input, Output, WEBM, WebMOutputFormat,
+} from 'mediabunny';
 import { WclFight } from '../../../core/models/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
@@ -335,7 +338,7 @@ export class LiveCaptureFeatureService {
     const anchor = this.currentAnchor;
     const handle = this.handle();
     if (!anchor || !handle) return;
-    this.saveSegments(handle.blobs, `${anchor.key}.webm`);
+    void this.saveSegments(handle.blobs, `${anchor.key}.webm`);
   }
 
   /** Export the whole prepared fight from the rolling buffer to one downloadable WebM file. */
@@ -343,18 +346,23 @@ export class LiveCaptureFeatureService {
     const ctx = this.ctx();
     if (!ctx) return;
     const segments = selectSegments(this.segments(), fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
-    this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
+    void this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
   }
 
-  /** Concatenate the segment blobs into one file and save it. No re-encode, so instant; footage is padded to whole segment edges. */
-  private saveSegments(blobs: Blob[], filename: string): void {
+  /** Remux the buffered segments into one seekable WebM and save it. No re-encode, so it stays near-instant. */
+  private async saveSegments(blobs: Blob[], filename: string): Promise<void> {
     this.downloadError.set(null);
     if (!blobs.length) {
       this.downloadError.set('Download failed.');
       logWarn('LiveCaptureFeatureService.saveSegments', `no footage for ${filename}`);
       return;
     }
-    this.triggerDownload(new Blob(blobs, { type: this.mimeType }), filename);
+    try {
+      this.triggerDownload(await remuxSegments(blobs), filename);
+    } catch (err) {
+      this.downloadError.set('Download failed.');
+      logWarn('LiveCaptureFeatureService.saveSegments', err);
+    }
   }
 
   /** The clip player's `<video>` could not decode the assembled footage; flip to the dead-clip message. */
@@ -447,6 +455,44 @@ export async function pipeIntoElement(video: HTMLVideoElement, blobs: Blob[], mi
     logWarn('pipeIntoElement: MSE assembly failed, falling back to single-blob src', err);
     video.src = URL.createObjectURL(new Blob(blobs, { type: mimeType }));
   }
+}
+
+/**
+ * Stitch the independently-recorded WebM segments into one continuous, seekable WebM by remuxing,
+ * no re-encode. Each segment is a self-contained WebM whose clusters restart at 0, so a plain blob
+ * concat repeats the header and timeline and players read only the first segment's ~SEG_MS. Here each
+ * segment's encoded packets are re-timed onto one gapless timeline (offset by the running duration) and
+ * written to a single output, so the file plays and seeks its full length while staying near-instant.
+ */
+export async function remuxSegments(blobs: Blob[]): Promise<Blob> {
+  const output = new Output({ format: new WebMOutputFormat(), target: new BufferTarget() });
+  let source: EncodedVideoPacketSource | null = null;
+  // The decoder config only needs to ride the first packet; every segment shares one codec.
+  let firstMeta: Parameters<EncodedVideoPacketSource['add']>[1];
+  let timeOffset = 0;
+  for (const blob of blobs) {
+    const track = await new Input({ formats: [WEBM], source: new BlobSource(blob) }).getPrimaryVideoTrack();
+    if (!track) continue;
+    if (!source) {
+      source = new EncodedVideoPacketSource(track.codec ?? 'vp8');
+      output.addVideoTrack(source);
+      await output.start();
+      const config = await track.getDecoderConfig();
+      firstMeta = config ? { decoderConfig: config } : undefined;
+    }
+    let segmentEnd = 0;
+    for await (const packet of new EncodedPacketSink(track).packets()) {
+      await source.add(packet.clone({ timestamp: packet.timestamp + timeOffset }), firstMeta);
+      firstMeta = undefined;
+      segmentEnd = Math.max(segmentEnd, packet.timestamp + packet.duration);
+    }
+    timeOffset += segmentEnd;
+  }
+  if (!source) throw new Error('no decodable video track in the buffered segments');
+  await output.finalize();
+  const buffer = output.target.buffer;
+  if (!buffer) throw new Error('remux produced no output');
+  return new Blob([buffer], { type: 'video/webm' });
 }
 
 /** Revoke a media element's blob src (a no-op for an already-revoked or non-blob src). */
