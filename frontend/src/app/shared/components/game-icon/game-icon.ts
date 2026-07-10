@@ -38,9 +38,7 @@ export type GameIconKind = 'spell' | 'item';
 })
 export class GameIconComponent {
   constructor() {
-    // This link is the only Wowhead anchor the app renders; load the tooltip
-    // enhancer on demand once one exists (afterNextRender is browser-only, so
-    // prerendered pages with no links never pull the zamimg script/CSS).
+    // Load the tooltip enhancer on first render; afterNextRender is browser-only, so prerender skips it.
     const tooltips = inject(WowheadTooltipsService);
     afterNextRender(() => tooltips.ensureLoaded());
   }

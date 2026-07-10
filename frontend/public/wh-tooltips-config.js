@@ -1,6 +1,2 @@
-// Wowhead tooltip configuration. WowheadTooltipsService injects this as an
-// external script (rather than inlining the global) so the Content-Security-Policy
-// script-src can stay 'self' https://wow.zamimg.com without needing 'unsafe-inline',
-// and injects it before https://wow.zamimg.com/js/tooltips.js so the global is set
-// when it runs.
+// Wowhead tooltip config. A separate file (not inlined) so CSP script-src stays 'self' without 'unsafe-inline'.
 var whTooltips = { colorLinks: true, iconSize: 'small', renameLinks: false };

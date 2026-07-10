@@ -41,8 +41,6 @@ describe('WowheadTooltipsService', () => {
 
     service.ensureLoaded();
 
-    // tooltips.js reads the whTooltips global the config sets, so it must not be
-    // requested before the config script has run.
     expect(scriptWith(doc, CONFIG_SRC)).toBeDefined();
     expect(scriptWith(doc, TOOLTIPS_SRC)).toBeUndefined();
 
