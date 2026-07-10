@@ -4,7 +4,7 @@
  * header chips), kept here so each slice imports one implementation. No Angular / IO.
  */
 import { logWarn } from '../../core/log';
-import { ParseRanking, WclRankingsBlob, WclRawAbility, WclRawRanking } from '../../core/models/wcl.models';
+import { ParseRanking, WclAbility, WclRankingsBlob, WclRawAbility, WclRawRanking } from '../../core/models/wcl.models';
 import { WindowSpell } from '../../core/models/window-comparison.models';
 
 // WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>",
@@ -57,6 +57,42 @@ export function abilityIcons(
   const icons: Record<number, { icon: string; name: string }> = {};
   for (const entry of Object.values(raw)) {
     if (entry) icons[entry.id] = { icon: entry.icon?.replace(/\.jpg$/i, '') ?? '', name: entry.name };
+  }
+  return icons;
+}
+
+/**
+ * Project a report's `masterData.abilities` into the id-keyed `{ icon, name }` record,
+ * stripping the trailing `.jpg` so the value matches `abilityIcons`. Unlike
+ * `gameData.ability`, WCL populates masterData for the synthetic negative-guid sources
+ * it puts in an event stream (pet melee, environmental damage), so it is the only art
+ * source for those ids.
+ */
+export function masterDataAbilityIcons(
+  abilities: WclAbility[],
+): Record<number, { icon: string; name: string }> {
+  const icons: Record<number, { icon: string; name: string }> = {};
+  for (const ability of abilities) {
+    icons[ability.gameID] = { icon: ability.icon?.replace(/\.jpg$/i, '') ?? '', name: ability.name };
+  }
+  return icons;
+}
+
+/**
+ * Build an id-keyed art map over exactly `referencedIds`: each id keeps its `resolved`
+ * (gameData) art, and any id gameData left out - the synthetic negative-guid sources it
+ * cannot resolve - is filled from the report-supplied `fallback` art. An id in neither
+ * source stays absent, so the card still renders its labelled placeholder and warns.
+ */
+export function completeAbilityIcons(
+  referencedIds: number[],
+  resolved: Record<number, { icon: string; name: string }>,
+  fallback: Record<number, { icon: string; name: string }>,
+): Record<number, { icon: string; name: string }> {
+  const icons: Record<number, { icon: string; name: string }> = {};
+  for (const id of new Set(referencedIds)) {
+    const art = resolved[id] ?? fallback[id];
+    if (art) icons[id] = art;
   }
   return icons;
 }

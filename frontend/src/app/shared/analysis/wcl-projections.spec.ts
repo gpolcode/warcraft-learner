@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
 import {
-  abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings, windowSpells,
+  abilityIcons, completeAbilityIcons, masterDataAbilityIcons, normalizeAbilityId,
+  toParseRankings, unwrapRankings, windowSpells,
   WCL_MELEE_EVENT_ABILITY_ID, WOW_AUTO_ATTACK_SPELL_ID,
 } from './wcl-projections';
 
@@ -88,6 +89,62 @@ describe('abilityIcons', () => {
     expect(abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: '', name: 'Shadow Blades' } });
   });
 
+});
+
+describe('masterDataAbilityIcons', () => {
+  const SHADOW_BLADES = 121471;
+  // A synthetic negative-guid source WCL puts in an event stream (e.g. pet melee); gameData
+  // cannot resolve it, so masterData is the only art source. This is the -32 that warned.
+  const SYNTHETIC_ABILITY_ID = -32;
+
+  it('keys by masterData gameID and strips the trailing .jpg', () => {
+    const abilities = [
+      { gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'ability_sb.jpg' },
+      { gameID: SYNTHETIC_ABILITY_ID, name: 'Melee', icon: 'inv_axe_02.jpg' },
+    ];
+    expect(masterDataAbilityIcons(abilities)).toEqual({
+      [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' },
+      [SYNTHETIC_ABILITY_ID]: { icon: 'inv_axe_02', name: 'Melee' },
+    });
+  });
+
+  it('projects a missing icon to an empty icon (name-only) and returns {} for no abilities', () => {
+    const abilities = [{ gameID: SYNTHETIC_ABILITY_ID, name: 'Melee', icon: '' }];
+    expect(masterDataAbilityIcons(abilities)).toEqual({ [SYNTHETIC_ABILITY_ID]: { icon: '', name: 'Melee' } });
+    expect(masterDataAbilityIcons([])).toEqual({});
+  });
+});
+
+describe('completeAbilityIcons', () => {
+  const SHADOW_BLADES = 121471;
+  const SYNTHETIC_ABILITY_ID = -32; // gameData leaves this out; the report's masterData fills it
+  const UNKNOWN_SPELL_ID = 999999; // in neither source, so it stays absent
+  const resolved = { [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' } };
+  const fallback = { [SYNTHETIC_ABILITY_ID]: { icon: 'inv_axe_02', name: 'Melee' } };
+
+  it('keeps the gameData-resolved art and fills a gap from the masterData fallback', () => {
+    expect(completeAbilityIcons([SHADOW_BLADES, SYNTHETIC_ABILITY_ID], resolved, fallback)).toEqual({
+      [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' },
+      [SYNTHETIC_ABILITY_ID]: { icon: 'inv_axe_02', name: 'Melee' },
+    });
+  });
+
+  it('prefers the resolved art when both sources carry the id', () => {
+    const both = { [SHADOW_BLADES]: { icon: 'masterdata_art', name: 'Shadow Blades' } };
+    expect(completeAbilityIcons([SHADOW_BLADES], resolved, both)).toEqual({
+      [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' },
+    });
+  });
+
+  it('leaves an id absent when neither source resolves it (card renders its placeholder)', () => {
+    expect(completeAbilityIcons([UNKNOWN_SPELL_ID], resolved, fallback)).toEqual({});
+  });
+
+  it('emits one entry per id when referencedIds repeats one', () => {
+    expect(completeAbilityIcons([SHADOW_BLADES, SHADOW_BLADES], resolved, fallback)).toEqual({
+      [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' },
+    });
+  });
 });
 
 describe('windowSpells', () => {

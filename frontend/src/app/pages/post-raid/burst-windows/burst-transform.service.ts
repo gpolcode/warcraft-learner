@@ -9,7 +9,8 @@ import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation, quantile } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
-import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { abilityIcons, completeAbilityIcons, masterDataAbilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { WclAbility } from '../../../core/models/wcl.models';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
@@ -329,6 +330,9 @@ export class BurstTransformService implements DataSource<BurstBench> {
       if (!rankings.length) return missing('Not yet ingested.');
 
       const allWindows: ParseWindow[] = [];
+      // Art for the synthetic negative-guid abilities gameData.ability can't resolve,
+      // collected from each report's masterData (the only source for them).
+      const masterArt: Record<number, { icon: string; name: string }> = {};
       let sampleCount = 0;
       let encounterName = '';
       for (const ranking of rankings) {
@@ -337,6 +341,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
         // Stamp the parse index so clustering counts distinct parses.
         for (const window of parse.windows) window.parse_index = sampleCount;
         allWindows.push(...parse.windows);
+        Object.assign(masterArt, masterDataAbilityIcons(parse.abilities));
         encounterName ||= parse.encounterName;
         sampleCount += 1;
         if (sampleCount >= TOP_PARSE_COUNT) break;
@@ -358,7 +363,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
         sample_count: sampleCount,
         windows,
         cd_spell_ids,
-        ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
+        ability_icons: completeAbilityIcons(referencedIds, abilityIcons(await this.wclApi.getAbilities(referencedIds)), masterArt),
       });
     } catch (cause) {
       logWarn('BurstTransformService.getBench', cause);
@@ -368,17 +373,16 @@ export class BurstTransformService implements DataSource<BurstBench> {
 
   private async computeParseWindows(
     ranking: ParseRanking, cooldowns: RulebookCooldown[],
-  ): Promise<{ windows: ParseWindow[]; encounterName: string } | null> {
+  ): Promise<{ windows: ParseWindow[]; encounterName: string; abilities: WclAbility[] } | null> {
     try {
       const report = await this.wclApi.getReport(ranking.report_code);
       const fight = report.fights.find(entry => entry.id === ranking.fight_id);
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
+      const abilities = report.masterData?.abilities ?? [];
       // Names only, to attribute casts by ability name inside a parse window.
-      const abilityNames = new Map<number, string>(
-        (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
-      );
+      const abilityNames = new Map<number, string>(abilities.map(ability => [ability.gameID, ability.name]));
       const [casts, damage] = await Promise.all([
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
@@ -388,7 +392,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
       const windows = findParseWindows({
         damage, fightStartMs: fight.startTime, fightEndMs: fight.endTime, timings, casts, abilityNames,
       });
-      return { windows, encounterName: fight.name ?? '' };
+      return { windows, encounterName: fight.name ?? '', abilities };
     } catch (cause) {
       logWarn(`BurstTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
       return null;
