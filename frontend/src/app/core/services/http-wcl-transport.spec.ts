@@ -19,8 +19,8 @@ const NETWORK_ONLY = false;
 
 function setup(): { transport: HttpWclTransport; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
-    // The real ng-http-caching interceptor is part of the contract under test (dedupe of
-    // cache-first reads), so it joins the chain exactly as in app.config.ts.
+    // The real caching interceptor is part of the contract under test, so it joins the
+    // chain exactly as in app.config.ts.
     providers: [provideWclCaching(), provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
   });
   return {

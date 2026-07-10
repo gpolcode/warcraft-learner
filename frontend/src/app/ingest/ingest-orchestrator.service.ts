@@ -1,11 +1,7 @@
 /**
- * Ingestion orchestrator. Runs inside the app booted with the ingest environment
- * (npm run start:ingest / npm run ingest): kicked off by that environment's app
- * initializer, it drives the same `*TransformService`s the runtime uses and persists
- * through the same `DataFileApiService` (bound to the file-server transport), so
- * ingestion and the live browser transform share one implementation. Orchestration
- * only; no transformation lives here. Progress goes to the browser console, and the
- * final summary lands on `globalThis.__INGEST_DONE__` for the headless harness.
+ * Ingestion orchestrator: drives the same `*TransformService`s the runtime uses and
+ * persists through the same `DataFileApiService`, so ingestion and the live browser
+ * transform share one implementation. Orchestration only; no transformation lives here.
  */
 import { Injectable, inject } from '@angular/core';
 import pLimit from 'p-limit';
@@ -16,8 +12,9 @@ import { HttpWclTransport } from '../core/services/http-wcl-transport';
 import { hydrateSpecMeta } from '../core/spec-meta';
 import { logWarn } from '../core/log';
 import { type LoadError } from '../core/result';
-import { unwrapRankings } from '../shared/analysis/wcl-projections';
+import { toParseRankings, unwrapRankings } from '../shared/analysis/wcl-projections';
 import type { EncounterEntry, SpecEntry } from '../core/models/encounter.models';
+import { RATE_LIMIT_Q, CLASSES_Q } from '../core/services/wcl-queries';
 import { BurstTransformService } from '../pages/post-raid/burst-windows/burst-transform.service';
 import { RotationTransformService } from '../pages/post-raid/rotation/rotation-transform.service';
 import { DefensiveTransformService } from '../pages/post-raid/defensive/defensive-transform.service';
@@ -26,16 +23,15 @@ import { MapTransformService } from '../pages/post-raid/map/map-transform.servic
 import { environment } from '../../environments/environment';
 import { getEncounters } from './wcl-fetchers';
 import { mapClassesToSpecMeta, specWclFromMetas, type SpecWclMap } from './wcl-mappers';
-import { type WclQueryClient, type EventFetchOptions, BudgetExceededError } from './wcl-client';
-import { RATE_LIMIT_QUERY, CLASSES_QUERY } from './wcl-queries';
+import { type WclQueryClient, BudgetExceededError } from './wcl-client';
 import { INGEST_VERSION } from './ingest-version';
 import { orderSpecsByVersion, orderEncountersByMissingFirst, SPEC_LIMIT, type SpecOrderEntry } from './ordering';
 import {
   encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, signatureMatches,
-  stampSignature, selectSignatureRankings, readInaccessibleParses,
+  stampSignature, readInaccessibleParses,
   type SignatureRanking, type SignedFile,
 } from './signature';
-import type { WclRateLimitData, WclResourceEvent, IngestEncounter, WclGameClass } from './models/wcl.models';
+import type { WclRateLimitData, IngestEncounter, WclGameClass } from './models/wcl.models';
 
 const TOP_N = 10;
 // Matches the depth the transforms over-fetch to (CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2),
@@ -48,10 +44,7 @@ const SLICE_CONCURRENCY = 3;
 // same parse set, so any one would do).
 const SLICES = ['burst', 'rotation', 'defensive', 'gear'] as const;
 
-/**
- * The run summary published on `globalThis.__INGEST_DONE__` when the orchestrator
- * finishes - the headless harness polls for it to know when to exit (and with what code).
- */
+/** Published on `globalThis.__INGEST_DONE__` - the headless harness's exit signal. */
 export interface IngestRunSummary {
   succeeded: string[];
   failed: { spec: string; message: string }[];
@@ -63,10 +56,7 @@ function publishSummary(summary: IngestRunSummary): void {
   (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
 }
 
-/**
- * `WclQueryClient` adapter over `WclApiService`, so `getEncounters` can be reused
- * unchanged. Owns budget tracking via the rateLimitData query.
- */
+/** Budget-gated `WclQueryClient` over `WclApiService`. */
 class ApiWclClient implements WclQueryClient {
   private _limitPerHour: number | null = null;
   private _pointsSpentThisHour = 0;
@@ -74,29 +64,12 @@ class ApiWclClient implements WclQueryClient {
   constructor(private readonly wclApi: WclApiService) {}
 
   query<T = unknown, TVars extends object = Record<string, never>>(gql: string, variables?: TVars): Promise<T> {
+    // network-only: the budget gate must see fresh rateLimitData, and discovery reads are one-shot.
     return this.wclApi.query<T>(gql, (variables ?? {}) as object, 'network-only');
   }
 
-  // The WclApiService has a positional signature; translate the options bag.
-  getAllEvents(
-    code: string, fightId: number, dataType: string,
-    startTime: number, endTime: number, options: EventFetchOptions = {},
-  ): Promise<WclResourceEvent[]> {
-    const hostility = options.hostilityType === 'Enemies' ? 'Enemies' : options.hostilityType === 'Friendlies' ? 'Friendlies' : undefined;
-    return this.wclApi.getAllEvents(
-      code, fightId, dataType, startTime, endTime,
-      options.sourceId, options.includeResources ?? false, hostility,
-    ) as Promise<WclResourceEvent[]>;
-  }
-
-  // Discovery never resolves server slugs (that is per-parse gear enrichment the transforms
-  // own internally), so a no-op satisfies the interface.
-  async resolveServerSlug(): Promise<[string, string]> {
-    return ['', ''];
-  }
-
   async assertBudget(margin: number): Promise<void> {
-    const data = await this.query<{ rateLimitData?: WclRateLimitData }>(RATE_LIMIT_QUERY);
+    const data = await this.query<{ rateLimitData?: WclRateLimitData }>(RATE_LIMIT_Q);
     const rateLimit = data.rateLimitData ?? {};
     if (rateLimit.limitPerHour != null) this._limitPerHour = rateLimit.limitPerHour;
     if (rateLimit.pointsSpentThisHour != null) this._pointsSpentThisHour = rateLimit.pointsSpentThisHour;
@@ -124,11 +97,7 @@ export class IngestOrchestratorService {
     map: inject(MapTransformService),
   };
 
-  /**
-   * The full ingest run. Never rejects: a fatal failure is logged, published on the
-   * summary and swallowed, so the fire-and-forget app initializer cannot produce an
-   * unhandled rejection.
-   */
+  /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
     try {
       await this.ingestAll();
@@ -147,7 +116,7 @@ export class IngestOrchestratorService {
 
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon
     // stem). Hydrating the cache lets getRankings resolve a spec.
-    const classesData = await client.query<{ gameData?: { classes?: WclGameClass[] } }>(CLASSES_QUERY);
+    const classesData = await client.query<{ gameData?: { classes?: WclGameClass[] } }>(CLASSES_Q);
     const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
@@ -220,11 +189,7 @@ export class IngestOrchestratorService {
     publishSummary({ succeeded, failed, budgetStopped });
   }
 
-  /**
-   * The rulebook-bearing specs ordered so a budget-bounded run fixes the most out-of-date
-   * data first: empty -> old-version -> current, randomized within each group, capped at
-   * SPEC_LIMIT. Cheap file-server reads, zero WCL budget.
-   */
+  /** Rulebook-bearing specs in the orderSpecsByVersion work order, capped at SPEC_LIMIT (cheap file reads, zero WCL budget). */
   private async orderedSpecsFromDisk(): Promise<string[]> {
     const onDisk = await this.dataFile.listSpecs();
     const withRulebook: string[] = [];
@@ -256,8 +221,6 @@ export class IngestOrchestratorService {
       const displayVersion = storedVersions.length ? Math.min(...storedVersions) : null;
       return { spec, entry, displayVersion };
     }));
-    // Cap each run at SPEC_LIMIT specs so it stays within the WCL point budget; the randomized
-    // within-group order (see orderSpecsByVersion) gives the remaining specs a turn on later runs.
     const specs = orderSpecsByVersion(orderInputs.map(input => input.entry)).slice(0, SPEC_LIMIT);
     const displayBySpec = new Map(orderInputs.map(input => [input.spec, input] as const));
     const versionLines = specs.map(spec => {
@@ -276,8 +239,7 @@ export class IngestOrchestratorService {
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
 
-    // Process never-ingested encounters first so a partial spec fills its remaining bosses
-    // before re-checking the ones already done (file-server-only signal, zero WCL budget).
+    // Feeds the missing-first order - a file-server-only signal, zero WCL budget.
     const presentIds = new Set(
       (await this.dataFile.listSliceFiles(spec, 'burst'))
         .filter(file => file.endsWith('.json'))
@@ -295,8 +257,6 @@ export class IngestOrchestratorService {
           continue;
         }
 
-        // Key on the top-N accessible parses, excluding ones a prior run found inaccessible
-        // (persisted on the burst file), and compare against the stamped signature.
         const existingResult = await this.dataFile.getSlice<SignedFile>(spec, encounter.id, 'burst');
         const existing = existingResult.ok ? existingResult.value : null;
         const skipKey = encounterSkipKey(poolRows, readInaccessibleParses(existing), version, TOP_N);
@@ -334,7 +294,7 @@ export class IngestOrchestratorService {
 
   private async rankingPool(spec: string, encounterId: number): Promise<SignatureRanking[]> {
     const raw = await this.wclApi.getRankings(spec, encounterId);
-    return selectSignatureRankings(unwrapRankings(raw), SIGNATURE_POOL_COUNT);
+    return toParseRankings(unwrapRankings(raw), SIGNATURE_POOL_COUNT);
   }
 
   /**
@@ -356,8 +316,6 @@ export class IngestOrchestratorService {
       limit(() => this.transforms.map.getBench(spec, encId)),
     ]);
 
-    // signatureAfterFetch keys the stamp on the top-N accessible parses and returns the
-    // inaccessible keys to persist, so the next cheap hash check can exclude them without re-fetching.
     const inaccessibleCodes = new Set(this.wclTransport.takeInaccessibleCodes());
     const { signature, inaccessibleParses } = signatureAfterFetch(poolRows, inaccessibleCodes, version, TOP_N);
 
@@ -395,7 +353,6 @@ export class IngestOrchestratorService {
     return wroteAny;
   }
 
-  /** Rebuild a spec's encounters.json from the burst files present on disk. */
   private async rebuildEncountersIndex(spec: string): Promise<EncounterEntry[]> {
     const files = await this.dataFile.listSliceFiles(spec, 'burst');
     const entries: EncounterEntry[] = [];

@@ -1,54 +1,26 @@
 /**
- * Per-encounter output signature for the ingest orchestrator.
- *
- * A tailored file is fresh when (a) the ingest version that produced it is unchanged
- * and (b) the exact set of top parses feeding it is unchanged. `encounterSignature`
- * folds both into one short hash: the manual ingest version (see ingest-version.ts) plus
- * the sorted `report_code:fight_id` of the current rankings. The orchestrator stamps the
- * hash onto every written file as `source_signature`; on the next run it recomputes the
- * signature from the fresh (cheap, cached) rankings query and skips the encounter entirely
- * when it matches the stored value - spending only the rankings read.
- *
- * Each file also carries the bare `ingest_version` integer (the same value, unhashed) so
- * the work-ordering can tell stale-version data from current without recomputing anything.
+ * Per-encounter output signature: a tailored file is fresh when the ingest version AND
+ * the exact top-parse set that produced it are unchanged, folded into one short hash.
+ * The orchestrator stamps it as `source_signature` and skips a matching encounter on
+ * the next run for the price of a cheap rankings read. Files also carry the bare
+ * `ingest_version` integer so the work-ordering can spot stale-version data without
+ * recomputing anything.
  */
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 
-/** The minimal ranking shape the signature needs (report + fight identity). */
+/**
+ * Satisfied by the shared `toParseRankings` selection's rows, so the signature keys on
+ * exactly the parses that feed the transforms.
+ */
 export interface SignatureRanking {
   report_code: string;
   fight_id: number;
 }
 
-/** The raw WCL ranking fields the selection reads (structural, no transport coupling). */
-export interface RawSignatureRanking {
-  name?: string;
-  report?: { code?: string; fightID?: number };
-}
-
-// WCL surfaces a privacy-hidden parse in rankings with an anonymized "Character <id>-<id>"
-// name (real names are letters only), so it can never match a report actor and the
-// transforms drop it as unfetchable. The WCL API has no flag to exclude these, so the
-// filter is client-side - and the signature applies the same one so the hash keys on the
-// parses that actually feed the data. Keep in lockstep with the transforms' regex.
-const ANONYMIZED_NAME = /^Character \d+-\d+$/;
-
 /** `report_code:fight_id` key - the unit of the parse-set fingerprint and the inaccessible set. */
 export function parseKey(ranking: SignatureRanking): string {
   return `${ranking.report_code}:${ranking.fight_id}`;
-}
-
-/**
- * The candidate parse set the signature draws from - identical to the transforms'
- * `toParseRankings(raw, count)` selection (drop anonymized + no-code rows, take the top
- * `count`), minus the unused player field.
- */
-export function selectSignatureRankings(raw: RawSignatureRanking[], count: number): SignatureRanking[] {
-  return raw
-    .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
-    .slice(0, count)
-    .map(ranking => ({ report_code: ranking.report?.code ?? '', fight_id: ranking.report?.fightID ?? 0 }));
 }
 
 /** The persisted `report_code:fight_id` keys known inaccessible (permission-denied) last run. */
@@ -56,17 +28,12 @@ export function readInaccessibleParses(file: { inaccessible_parses?: string[] } 
   return new Set(file?.inaccessible_parses ?? []);
 }
 
-/**
- * A stored tailored file carries its producing signature for the skip check, plus the
- * bare ingest version for the work-ordering. `ingest_version` is required: every write
- * stamps it.
- */
+/** The stamp every write carries; `ingest_version` is required. */
 export interface SignedFile {
   source_signature?: string;
   ingest_version: number;
-  // Only the canonical burst file carries this: the report_code:fight_id keys found
-  // inaccessible (permission-denied) during the run that produced it, so the next cheap
-  // hash check can exclude them without re-fetching.
+  // Burst-file-only: parses found permission-denied by the producing run, so the next
+  // cheap hash check can exclude them without re-fetching.
   inaccessible_parses?: string[];
 }
 
@@ -84,12 +51,9 @@ export function encounterSignature(version: string, rankings: SignatureRanking[]
 }
 
 /**
- * The encounter's skip key: the signature over the top-`topN` ACCESSIBLE parses (the
- * candidate pool minus the parses already known inaccessible). This is the one rule both
- * the cheap pre-check and the post-fetch stamp key on, so they can never diverge.
- *
- * `inaccessible` is a set of `report_code:fight_id` keys (see `parseKey`) - the persisted
- * set on the cheap check, the freshly discovered one after a fetch.
+ * The signature over the top-`topN` ACCESSIBLE parses - the one rule both the cheap
+ * pre-check and the post-fetch stamp key on, so they can never diverge. `inaccessible`
+ * holds `parseKey`s: the persisted set on the cheap check, the fresh one after a fetch.
  */
 export function encounterSkipKey(
   poolRows: SignatureRanking[], inaccessible: Set<string>, version: string, topN: number,
@@ -99,14 +63,10 @@ export function encounterSkipKey(
 }
 
 /**
- * The post-fetch stamp decision: given the report codes a run found inaccessible
- * (permission-denied), derive both the inaccessible parse keys to persist on the burst
- * file AND the signature to stamp (keyed on the top-`topN` accessible parses). Parses
- * never fetched - those below the `topN`th accessible - are naturally pruned, since only
- * the codes the transforms actually hit are reported inaccessible.
- *
- * `inaccessibleCodes` is a set of bare report codes (what the transport reports), distinct
- * from `encounterSkipKey`'s set of `report_code:fight_id` keys - the conversion happens here.
+ * Derives both the inaccessible parse keys to persist on the burst file and the
+ * signature to stamp. `inaccessibleCodes` holds bare report codes (what the transport
+ * reports), not `parseKey`s - the conversion happens here, which also prunes codes
+ * below the `topN`th accessible parse that no future check will ever fetch.
  */
 export function signatureAfterFetch(
   poolRows: SignatureRanking[], inaccessibleCodes: Set<string>, version: string, topN: number,
@@ -127,9 +87,9 @@ export function readStoredVersion(file: SignedFile): number {
 }
 
 /**
- * True when a file was written by a later ingest whose shape this build does not know (a code
- * deploy racing a data-shape change), so a reader can fail it instead of casting blindly. Files
- * with no numeric `ingest_version` (manifests, rulebooks) are never future.
+ * A later ingest's file has a shape this build does not know (a code deploy racing a
+ * data-shape change), so readers fail it instead of casting blindly. Files with no
+ * numeric `ingest_version` (manifests, rulebooks) are never future.
  */
 export function isFutureVersion(parsed: unknown, currentVersion: number): boolean {
   if (typeof parsed !== 'object' || parsed === null) return false;
@@ -137,20 +97,12 @@ export function isFutureVersion(parsed: unknown, currentVersion: number): boolea
   return typeof version === 'number' && Number.isFinite(version) && version > currentVersion;
 }
 
-/**
- * True when a previously written file's stamped signature matches the freshly computed
- * one: nothing the output depends on (transform code or parse set) has changed, so the
- * encounter can be skipped. A missing stored signature never matches (always recompute).
- */
+/** A missing stored signature never matches, so an unstamped file always recomputes. */
 export function signatureMatches(stored: string | null, current: string): boolean {
   return stored != null && stored === current;
 }
 
-/**
- * Return a shallow copy of `data` with the signature + ingest version stamped on (added
- * before writing). `source_signature` drives the skip check; `ingest_version` (the bare
- * integer) drives the work-ordering.
- */
+/** `source_signature` drives the skip check; the bare `ingest_version` drives the work-ordering. */
 export function stampSignature<T extends object>(data: T, signature: string, version: number): T & SignedFile {
   return { ...data, source_signature: signature, ingest_version: version };
 }

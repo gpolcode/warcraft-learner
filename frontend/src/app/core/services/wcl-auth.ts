@@ -32,12 +32,10 @@ function sessionStore(): Storage | null {
 }
 
 /**
- * The client-credentials pair. Normally the environment's embedded (intentionally
- * public - see environment.ts) pair. A `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` pair on a
- * process-env global takes precedence: the headless ingest harness injects one so CI
- * ingests on its dedicated client's budget without committing that secret. Read via
- * `globalThis` so the app bundle needs no Node types and `process` never appears in
- * browser code.
+ * A `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` pair on a process-env global outranks the
+ * environment's embedded pair (intentionally public - see wcl-public-client.ts): the
+ * headless ingest harness injects one so CI ingests on its dedicated client's budget
+ * without committing that secret. Read via `globalThis` so the bundle needs no Node types.
  */
 function clientCredentials(): { id: string; secret: string } {
   const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;

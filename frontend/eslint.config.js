@@ -6,8 +6,8 @@ import angular from 'angular-eslint';
 
 export default defineConfig([
   {
-    // Base TypeScript rules shared by the Angular app (src/**) and the Node CLI
-    // scripts (scripts/**). Angular-specific rules live in the src-only block below.
+    // Base TypeScript rules for the Angular app (src/**). Angular-specific rules live
+    // in the src-only block below; the plain-JS Node scripts have their own block.
     files: ['**/*.ts'],
     extends: [eslint.configs.recommended, tseslint.configs.recommended, tseslint.configs.stylistic],
     rules: {
@@ -21,7 +21,6 @@ export default defineConfig([
   },
   {
     // Angular-specific rules + the inline-template processor apply to the app only.
-    // The Node CLI scripts under scripts/** are plain tsx, so they never see these.
     files: ['src/**/*.ts'],
     extends: [angular.configs.tsRecommended],
     processor: angular.processInlineTemplates,
@@ -48,10 +47,9 @@ export default defineConfig([
     },
   },
   {
-    // The scripts under scripts/** are plain Node JS (the ingest file server and the
-    // headless harness), not Angular and not TypeScript. console output is their
-    // user-facing logging, so keep it allowed. Plain JS keeps core `no-undef`, so the
-    // Node globals they use are declared here.
+    // Plain-JS Node scripts (the ingest file server + headless harness). console is
+    // their user-facing logging, so it stays allowed; plain JS keeps core `no-undef`,
+    // so the Node globals they use are declared here.
     files: ['scripts/**/*.{js,mjs}'],
     extends: [eslint.configs.recommended],
     languageOptions: {

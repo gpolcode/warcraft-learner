@@ -13,9 +13,8 @@ const BASE_DELAY_MS = 400;
 const RETRYABLE_STATUSES = new Set([0, 408, 429, 500, 502, 503, 504]);
 
 /**
- * Transient-retry attempt count. Defaults to 1 (an interactive user can retry manually).
- * The ingest environment provides 3: nothing sits behind an unattended run to retry for
- * it, and a swallowed parse fetch silently thins the bench.
+ * Default 1: an interactive user can retry manually. The ingest environment provides 3 -
+ * nothing sits behind an unattended run, and a swallowed parse fetch silently thins the bench.
  */
 export const RETRY_MAX_ATTEMPTS = new InjectionToken<number>('RETRY_MAX_ATTEMPTS', { factory: () => 1 });
 

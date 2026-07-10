@@ -10,21 +10,18 @@ interface GraphQLResponse<TData> {
 }
 
 /**
- * WCL transport: a plain `HttpClient` GraphQL POST. `cacheFirst` reads are deduped and
- * memoised by the ng-http-caching interceptor (in-memory store, WCL endpoint only - see
- * `provideWclCaching`), which is what lets the five slice cards share one report/event
- * fetch per session; `network-only` reads opt out per request via the DISALLOW_CACHE
- * header. The bearer is attached per request because the token renews on expiry.
+ * WCL transport: an `HttpClient` GraphQL POST. Caching lives in the ng-http-caching
+ * interceptor (see `provideWclCaching`); `cacheFirst` only decides whether the request
+ * opts out via the DISALLOW_CACHE header. The bearer is attached per request because
+ * the token renews on expiry.
  */
 @Injectable({ providedIn: 'root' })
 export class HttpWclTransport implements WclTransport {
   private readonly http = inject(HttpClient);
-  // Report codes that returned a "no permission" GraphQL error since the last drain. A
-  // private/inaccessible log is only knowable by fetching it, so it is recorded here when
-  // the fetch reveals it; the ingest orchestrator persists the set so later cheap signature
-  // checks can exclude these logs without re-fetching. Only deterministic permission
-  // denials land here - never transient network/HTTP errors (which must not stick a usable
-  // log as inaccessible).
+  // A private log is only knowable by fetching it; the ingest orchestrator persists this
+  // set so the next cheap signature check excludes it without re-fetching. Only
+  // deterministic permission denials land here - a transient error must not stick a
+  // usable log as inaccessible.
   private readonly inaccessibleCodes = new Set<string>();
 
   /** Return + clear the report codes that hit a permission-denied error since the last call. */
@@ -50,9 +47,8 @@ export class HttpWclTransport implements WclTransport {
       }
       throw error;
     }
-    // A 200 with a top-level `errors` array (report not found, private, denied) is
-    // semantically unusable for the caller; retrying cannot help, so it carries
-    // WCL_UNUSABLE_STATUS and classifies permanent, not transient.
+    // A 200 with a GraphQL `errors` array (report not found, private, denied) never
+    // improves on retry, so it classifies permanent, not transient.
     if (body.errors?.length) {
       const message = body.errors[0]?.message || 'WCL GraphQL error';
       const code = (variables as { code?: string }).code;

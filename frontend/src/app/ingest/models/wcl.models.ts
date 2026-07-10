@@ -1,20 +1,9 @@
 /**
- * WCL API response shapes and ingest-local aggregation types.
- *
- * Used across the ingest discovery layer (wcl-client / wcl-queries / wcl-mappers /
- * wcl-fetchers). These describe what the WCL v2 API returns and the intermediate
- * shapes the orchestrator passes around - not the on-disk tailored-file shapes
- * (each slice's `*Bench` interface plus `core/models/*` own those).
+ * WCL response shapes only the ingest discovery layer reads (wcl-client / wcl-mappers /
+ * wcl-fetchers): the rate-limit budget, the worldData expansion tree, and the
+ * gameData.classes spec universe. Everything the runtime also reads (events, rankings,
+ * reports, gear) lives in `core/models/wcl.models.ts`.
  */
-
-/** One gear slot from a ranking's combatant info (ingest-local WCL response shape). */
-export interface WclGearItem {
-  id?: number | string;
-  name?: string;
-  icon?: string;
-  permanentEnchant?: number | string;
-  permanentEnchantName?: string;
-}
 
 export interface WclRateLimitData {
   limitPerHour?: number;
@@ -33,69 +22,6 @@ export interface WclExpansion { id: number; name: string; zones?: WclZone[]; }
 export interface WclGameSpec { id: number; name: string; slug: string; }
 export interface WclGameClass { id: number; name: string; slug: string; specs?: WclGameSpec[]; }
 
-export interface WclServerRef { id?: number; name?: string; region?: { slug?: string }; }
-export interface WclReportRef { code?: string; fightID?: number; }
-
-export interface WclRawRanking {
-  name?: string;
-  amount?: number;
-  duration?: number;
-  server?: WclServerRef;
-  report?: WclReportRef;
-  gear?: WclGearItem[];
-}
-
-export interface WclFightEntry { id: number; startTime: number; endTime: number; encounterID: number; }
-export interface WclActorEntry { id: number; name: string; type: string; subType?: string; gameID?: number | null; }
-
-// Event from WCL (may include position fields when includeResources: true).
-export interface WclResourceEvent {
-  type: string;
-  timestamp: number;
-  abilityGameID?: number;
-  amount?: number;
-  absorbed?: number;
-  sourceID?: number;
-  targetID?: number;
-  resourceActor?: number;
-  x?: number;
-  y?: number;
-  facing?: number;
-  mapID?: number;
-  maxHitPoints?: number;
-}
-
-// CombatantInfo event shape.
-export interface WclCombatantInfoEvent {
-  type: string;
-  timestamp: number;
-  sourceID?: number;
-  talentTree?: { id?: number; rank?: number; nodeID?: number }[];
-}
-
-// Processed ranking entry (one top-parse row), with the raw response kept on
-// `_raw` so enrichment can extract gear later without a second query.
-export interface ParseRanking {
-  rank: number;
-  player: string;
-  amount: number;
-  duration_s: number;
-  report_code: string;
-  fight_id: number;
-  server: string;
-  _raw: WclRawRanking;
-}
-
-export interface EnrichedRanking {
-  server_slug: string;
-  server_region: string;
-  combatant_info: {
-    talent_key: string;
-    trinkets: { slot: number; id: number | string; name: string }[];
-    enchants: { slot: number; id: number | string; name: string }[];
-  };
-}
-
 export interface IngestEncounter {
   id: number;
   name: string;
@@ -103,25 +29,4 @@ export interface IngestEncounter {
   zoneId: number;
   expansion: string;
   partitionIds: number[];
-}
-
-// Fully-fetched per-parse event payload handed to the (pure) analyzer.
-export interface ParseEventBundle {
-  report_code: string;
-  fight_id: number;
-  player: WclActorEntry;
-  npcById: Map<number, WclActorEntry>;
-  // id -> WCL ability name, from the report's masterData.abilities. Bridges the
-  // damage-id and cast-id spaces when attributing burst-window cast counts.
-  abilityNames: Map<number, string>;
-  start: number;
-  end: number;
-  fightDurS: number;
-  castEvents: WclResourceEvent[];
-  buffEvents: WclResourceEvent[];
-  damageEvents: WclResourceEvent[];
-  damageTakenEvents: WclResourceEvent[];
-  enemyCastEvents: WclResourceEvent[];
-  combatantEvents: WclCombatantInfoEvent[];
-  bossDamageEvents: WclResourceEvent[];
 }

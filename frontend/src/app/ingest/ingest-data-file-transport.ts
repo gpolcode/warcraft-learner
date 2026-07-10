@@ -8,11 +8,7 @@ import { toLoadError } from '../core/http-load-error';
 import { INGEST_VERSION } from './ingest-version';
 import { isFutureVersion } from './signature';
 
-/**
- * Base URL of the ingest file server (scripts/ingest-server.js), the one process with
- * filesystem access during an ingest run. Its endpoints are dumb file ops; all ingestion
- * semantics stay on this side.
- */
+/** The file server (scripts/ingest-server.js) is dumb file ops; all ingestion semantics stay on this side. */
 export const INGEST_SERVER_URL = 'http://localhost:3000';
 
 // DataFileApiService paths are relative to data/specs/; the file server is rooted one
@@ -20,10 +16,9 @@ export const INGEST_SERVER_URL = 'http://localhost:3000';
 const SPECS_PREFIX = 'specs/';
 
 /**
- * Read + write `DataFileTransport` for the ingest environment: every file op goes through
- * the local file server instead of the static asset pipeline. Reads too - the server
- * returns an exact 404 for an absent file (the `missing` signal), where the dev server
- * would be ambiguous about paths it does not know.
+ * Read + write `DataFileTransport` over the local file server. Reads go through it too:
+ * the server returns an exact 404 for an absent file (the `missing` signal), where the
+ * dev server would be ambiguous about paths it does not know.
  */
 @Injectable({ providedIn: 'root' })
 export class IngestHttpDataFileTransport implements DataFileTransport {
@@ -37,8 +32,7 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
       }));
     } catch (cause) {
       const result = toLoadError(cause, `data-file.${relPath}`);
-      // `missing` is not an error (an un-ingested file is the orchestrator's normal case,
-      // hit for every rulebook probe and first-run stamp read), so only real failures log.
+      // An un-ingested file is the orchestrator's normal case, so only real failures log.
       if (!result.ok && result.error.kind !== 'missing') {
         logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
       }

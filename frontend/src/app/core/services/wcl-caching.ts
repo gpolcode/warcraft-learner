@@ -4,21 +4,13 @@ import { provideNgHttpCaching, NgHttpCachingMemoryStorage, NG_HTTP_CACHING_YEAR_
 import { WCL_API_URL } from './wcl-transport';
 
 /**
- * The WCL response cache: ng-http-caching scoped to the WCL GraphQL endpoint only.
- *
- * - Store is strictly in-memory (never localStorage/sessionStorage): cached report/event
- *   streams run far past the ~5 MB storage quota, and the dedupe contract is per-session
- *   anyway - the store lives and dies with the tab.
- * - Only POSTs to WCL_API_URL are cacheable. Data-file GETs, the OAuth token grant, and
- *   the ingest file-server calls all bypass the cache.
- * - The key includes the serialized GraphQL body, so distinct queries/variables cache
- *   separately while the per-request Authorization header (which renews on expiry) does
- *   not fragment the cache.
- * - Lifetime is nominal-infinite (one year) because eviction is handled by scope: a page
- *   close drops the store, and the ingest orchestrator clears it between encounters via
- *   NgHttpCachingService.clearCache() to bound memory.
- * - `network-only` reads (live-sync polling, ingest discovery/budget queries) opt out per
- *   request through the DISALLOW_CACHE header set by HttpWclTransport.
+ * The WCL response cache: dedupes cache-first reads so the five slice cards share one
+ * report/event fetch per session. Strictly the in-memory store - cached event streams
+ * run far past the ~5 MB localStorage quota, and the dedupe contract is per-session
+ * anyway. Only WCL_API_URL POSTs are cacheable, keyed on the GraphQL body so the
+ * renewing Authorization header cannot fragment the cache. Lifetime is nominal-infinite
+ * because eviction is by scope: a page close drops the store, and the ingest
+ * orchestrator clears it between encounters to bound memory.
  */
 export function provideWclCaching(): EnvironmentProviders {
   return provideNgHttpCaching({

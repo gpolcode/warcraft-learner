@@ -96,7 +96,7 @@ Reading the runtime graph: in production each slice's `*_DATA_SOURCE` resolves t
 - **Page shells - zero domain services.** They read `report`/`fight`/`player` from the route and compose feature components, passing selection as inputs. Framework tokens (`ActivatedRoute`, `Router`) do not count.
 - **Presentational leaves - inputs/outputs only.** `game-icon`, `compact-ability-row`, `window-comparison`, `range-chart`, `callout`, `loading-spinner`. No services beyond framework tokens.
 
-`DataFileApiService` is the single static-file reader; each per-slice `*TransformService` computes its tailored file directly from WCL (no generic bench is reshaped), and `wl-game-icon` is inputs-only with each slice/shell owning the small WCL-response projection it needs (the ingest side keeps a slim discovery `src/app/ingest/wcl-mappers.ts` for rankings/encounter filtering).
+`DataFileApiService` is the single static-file reader; each per-slice `*TransformService` computes its tailored file directly from WCL (no generic bench is reshaped), and `wl-game-icon` is inputs-only with each slice/shell owning the small WCL-response projection it needs (the ingest side keeps a slim discovery `src/app/ingest/wcl-mappers.ts` for encounter filtering and the spec-universe mapping; ranking selection is the one shared `toParseRankings` in `shared/analysis/wcl-projections.ts`, used by the transforms, the ingest signature, and the liveness probe alike).
 
 ## Key flows
 

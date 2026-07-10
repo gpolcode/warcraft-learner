@@ -1,12 +1,7 @@
 /**
  * Ingest environment (swapped in by the `ingest` build configuration; run via
- * `npm run start:ingest`, which also starts the local file server on :3000).
- *
- * The app boots normally, and the ingest orchestrator runs in the background on
- * startup: it drives the five `*TransformService`s (bound below as the live data
- * sources) and persists their tailored files through `IngestHttpDataFileTransport`,
- * which reads and writes `frontend/public/data/**` via the file server. Progress is
- * logged to the browser console. Run `npm run data:pull` first so the signature-skip
+ * `npm run start:ingest`, which also starts the local file server on :3000). Progress
+ * logs to the browser console. Run `npm run data:pull` first so the signature-skip
  * check has the current published data to compare against.
  *
  * `wclClientId`/`wclClientSecret` default to the intentionally public pair every build
@@ -34,9 +29,7 @@ import { GearTransformService } from '../app/pages/post-raid/gear/gear-transform
 import { MAP_DATA_SOURCE } from '../app/pages/post-raid/map/map-data-source';
 import { MapTransformService } from '../app/pages/post-raid/map/map-transform.service';
 
-// Nothing sits behind an unattended ingest run to retry for it, and a swallowed parse
-// fetch silently thins the bench, so ingest rides out a longer blip than the interactive
-// app's single retry.
+// Why 3: see RETRY_MAX_ATTEMPTS - unattended runs must ride out longer blips.
 const INGEST_RETRY_MAX_ATTEMPTS = 3;
 
 export const environment = {
@@ -50,12 +43,6 @@ export const environment = {
   wclClientSecret: WCL_PUBLIC_CLIENT_SECRET,
 };
 
-/**
- * Ingest bindings: live transforms as the data sources (the orchestrator drives the same
- * services), the read+write file-server transport in place of the read-only static one,
- * cache-first report reads (WCL_INGEST_MODE) so the five transforms share one fetch per
- * stream, and the longer transient-retry budget.
- */
 export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   provideLiveDataSource(BURST_DATA_SOURCE, BurstTransformService),
   provideLiveDataSource(ROTATION_DATA_SOURCE, RotationTransformService),
@@ -66,8 +53,7 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
   provideAppInitializer(() => {
-    // Fire and forget: the app shell must render while ingestion runs in the background;
-    // run() owns its failures, so this can never surface an unhandled rejection.
+    // Not awaited: the app shell must render while ingestion runs; run() owns its failures.
     void inject(IngestOrchestratorService).run();
   }),
 ];

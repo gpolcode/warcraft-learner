@@ -36,10 +36,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
-    // Every request rides this HttpClient, so the retry-transient interceptor covers
-    // both the WCL GraphQL POSTs and the static data-file GETs from one place.
-    // withInterceptorsFromDi() lets the ng-http-caching interceptor (a DI-registered
-    // class interceptor, see provideWclCaching below) join the same chain.
+    // One HttpClient carries every request, so the retry interceptor covers WCL POSTs
+    // and data-file GETs alike; withInterceptorsFromDi() admits the DI-registered
+    // ng-http-caching interceptor into the same chain.
     provideHttpClient(withFetch(), withInterceptors([retryTransientInterceptor]), withInterceptorsFromDi()),
     provideAppInitializer(async () => {
       // Hydrate the spec-meta cache (folder -> class/spec names + icons) from the baked
@@ -51,8 +50,6 @@ export const appConfig: ApplicationConfig = {
       const specMeta = await dataFile.getSpecMeta();
       hydrateSpecMeta(specMeta.ok ? specMeta.value : []);
     }),
-    // WCL response cache (in-memory, WCL endpoint only): dedupes the cache-first reads so
-    // the five cards share one report/event fetch per session.
     provideWclCaching(),
     provideEnvironmentInitializer(() => {
       const iconRegistry = inject(MatIconRegistry);
@@ -61,13 +58,10 @@ export const appConfig: ApplicationConfig = {
       iconRegistry.addSvgIconLiteral('github', sanitizer.bypassSecurityTrustHtml(GITHUB_SVG));
     }),
     { provide: WCL_TRANSPORT, useExisting: HttpWclTransport },
-    // Data-file transport: HTTP read-only at runtime (the ingest environment overrides
-    // this binding with the read+write file-server transport).
     { provide: DATA_FILE_TRANSPORT, useExisting: HttpDataFileTransport },
-    // File-backed in production, live transforms under the dev flag, the full ingest
-    // wiring in the ingest environment. The per-environment list keeps a production build
-    // from importing (so it tree-shakes out) the five *TransformServices and the ingest
-    // machinery, and being last lets an environment override the bindings above.
+    // Last so an environment can override the bindings above (the ingest one swaps the
+    // data-file transport); the per-environment list is also what keeps a production
+    // build from importing the transforms and ingest machinery, so they tree-shake out.
     ...environmentProviders,
   ],
 };

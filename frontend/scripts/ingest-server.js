@@ -1,9 +1,7 @@
 /**
- * Ingest file server: the one process with filesystem access while the browser app
- * ingests (npm run start:ingest / npm run ingest). A dumb file store over
- * frontend/public/data/** - save, delete, list and load, nothing else. Every piece of
- * ingestion logic (signatures, versioning, ordering, transforms) lives in the Angular
- * app; this server must never grow any.
+ * Dumb file store over frontend/public/data for the ingest app - the one process with
+ * filesystem access. All ingestion logic (signatures, versioning, ordering, transforms)
+ * lives in the Angular app; this server must never grow any.
  */
 import express from 'express';
 import cors from 'cors';
@@ -19,10 +17,7 @@ const BODY_LIMIT = '200mb';
 // Monotonic suffix so two concurrent writes to the same path never collide on the temp name.
 let tempWriteCounter = 0;
 
-/**
- * Resolve a client-supplied relative path inside DATA_ROOT, or null when its `..`
- * segments would escape the root - no request may read or write outside the data folder.
- */
+// A crafted relPath must never read or write outside the data root.
 function resolveContained(relPath) {
   if (typeof relPath !== 'string' || relPath.length === 0) return null;
   const full = path.resolve(DATA_ROOT, relPath);
@@ -40,9 +35,8 @@ app.post('/api/save', async (req, res) => {
   if (!full || data === undefined) return res.status(400).json({ error: 'filePath and data are required' });
   try {
     await fs.promises.mkdir(path.dirname(full), { recursive: true });
-    // Minified + temp-then-rename: the bench data is machine-read across thousands of
-    // files (minifying cuts the footprint ~70%), and a kill mid-write must leave the
-    // previous complete file, not a truncated one.
+    // Minified because the bench data is machine-read across thousands of files;
+    // temp-then-rename so a kill mid-write leaves the previous complete file.
     const tmp = `${full}.${process.pid}.${tempWriteCounter++}.tmp`;
     try {
       await fs.promises.writeFile(tmp, JSON.stringify(data) + '\n');

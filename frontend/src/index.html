@@ -15,11 +15,9 @@
       spell/item icons plus assets.rpglogs.com, which serves the per-encounter boss icons
       (see shared/boss-icon.ts). media-src allows blob: so the recording flyover can play a
       MediaSource-assembled clip from the in-browser rolling buffer (nothing remote).
-      connect-src also allows http://localhost:3000 - the local ingest file server every
-      data-file read and write goes through when the app runs in the ingest configuration;
-      at runtime nothing calls it, and allowing it here lets every configuration share this
-      one index. frame-ancestors / report-uri are omitted because they are ignored in a
-      meta-tag CSP.
+      connect-src allows http://localhost:3000 - the ingest configuration's file server -
+      so every configuration shares this one index; nothing calls it at runtime.
+      frame-ancestors / report-uri are omitted because they are ignored in a meta-tag CSP.
     -->
     <meta
       http-equiv="Content-Security-Policy"

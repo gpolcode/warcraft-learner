@@ -1,20 +1,9 @@
 /**
- * Headless ingest harness (npm run ingest): the unattended CI/local entry for the
- * browser ingestion. Zero ingestion logic - it only wires processes together:
- *
- *   1. starts the ingest file server (scripts/ingest-server.js),
- *   2. starts `ng serve --configuration ingest`,
- *   3. opens the app in headless Chromium (Playwright), piping its console to stdout,
- *   4. waits for the orchestrator's completion flag (`globalThis.__INGEST_DONE__`),
- *   5. exits 0 on a completed run, 1 on a fatal one.
- *
- * `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` in the process environment are injected into the
- * page as a process-env global before the app loads, so CI ingests on its dedicated WCL
- * client's budget without that secret ever entering the bundle (see wcl-auth.ts).
- *
- * Browser resolution: `INGEST_CHROMIUM_PATH` (an explicit executable) when set, else a
- * Playwright-managed Chromium when one is installed, else the system Chrome channel
- * (preinstalled on GitHub Actions ubuntu runners). If none is available, run
+ * Headless ingest harness (npm run ingest): drives the browser ingestion unattended
+ * for CI. All ingestion logic lives in the Angular app; this file must never grow any.
+ * WCL_CLIENT_ID/WCL_CLIENT_SECRET are injected into the page before the app loads so
+ * CI ingests on its dedicated WCL client's budget without the secret ever entering
+ * the bundle (see wcl-auth.ts). If no browser resolves, run
  * `npx playwright install chromium` once.
  */
 import { spawn } from 'child_process';
@@ -38,8 +27,7 @@ function startChild(name, command, args) {
   child.stdout.on('data', forward);
   child.stderr.on('data', forward);
   child.on('exit', code => {
-    // A child dying before the run completes is fatal: without the file server or the
-    // dev server the ingestion cannot finish, so fail loudly instead of hanging.
+    // A dead child can never finish the run - fail loudly instead of hanging.
     if (!shuttingDown) {
       console.error(`[harness] ${name} exited early (code ${code})`);
       shutdown(1);
@@ -68,7 +56,7 @@ async function waitForHttp(url, name) {
       const response = await fetch(url);
       if (response.ok) return;
     } catch {
-      // Not up yet - keep polling until the deadline.
+      // Refusals are expected while the process boots, so the swallow is deliberate.
     }
     if (Date.now() > deadline) throw new Error(`${name} did not become ready at ${url}`);
     await new Promise(resolve => setTimeout(resolve, READY_POLL_MS));
@@ -108,8 +96,7 @@ async function main() {
   page.on('pageerror', err => console.error(`[app] pageerror: ${err.message}`));
   await page.goto(APP_URL);
 
-  // The orchestrator publishes its summary when the run ends; ingestion is bounded by
-  // the WCL point budget, so no harness-side timeout is needed.
+  // No timeout: the WCL point budget bounds the run, so it always ends.
   await page.waitForFunction(() => globalThis.__INGEST_DONE__, undefined, { timeout: 0, polling: DONE_POLL_MS });
   const summary = await page.evaluate(() => globalThis.__INGEST_DONE__);
 

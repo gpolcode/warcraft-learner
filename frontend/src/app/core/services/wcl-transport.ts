@@ -26,16 +26,13 @@ export class WclTransportError extends Error {
 export const WCL_UNUSABLE_STATUS = 422;
 
 /**
- * The low-level GraphQL transport `WclApiService` delegates to, bound to
- * {@link HttpWclTransport} behind the token. Everything above `query()` - auth, the
- * typed `get*` reads, the slice transforms - is shared by the runtime and ingest
- * environments.
+ * The low-level GraphQL transport `WclApiService` delegates to - an interface (not the
+ * concrete {@link HttpWclTransport}) so specs can fake it through the token.
  */
 export interface WclTransport {
   /**
-   * Run one GraphQL operation with the given bearer token. `cacheFirst` lets the
-   * transport dedupe repeat reads within a session (the ng-http-caching memory store);
-   * pass false to always hit the network. Throws {@link WclTransportError} on failure.
+   * `cacheFirst` dedupes repeat reads within a session (the ng-http-caching memory
+   * store); false always hits the network. Throws {@link WclTransportError} on failure.
    */
   query<TData>(gqlString: string, variables: object, token: string, cacheFirst: boolean): Promise<TData>;
 }
