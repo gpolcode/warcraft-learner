@@ -29,10 +29,8 @@ export class WclApiService {
    * newly-recorded fights.
    */
   private livePolicy(): 'cache-first' | 'network-only' {
-    // Untracked: the fetch policy is a transport detail. A card's load effect reaches this
-    // synchronously (the pre-await prefix of its service call runs inside the effect), and a
-    // tracked read would re-run that effect - refetching the card's whole slice - every time
-    // the live toggle flips.
+    // untracked: card load effects reach this read synchronously; tracking it would refetch
+    // a card's whole slice on every live-toggle flip.
     return this.ingestMode || !untracked(this.liveMode.active) ? 'cache-first' : 'network-only';
   }
 
@@ -76,11 +74,7 @@ export class WclApiService {
     return report;
   }
 
-  /**
-   * Fights-only read of a report - the live-sync poll's cheap new-pull probe. Skips
-   * masterData (the bulk of the full report response), so an idle poll tick spends
-   * minimal quota; callers fetch the full report only when this reveals a new pull.
-   */
+  /** Fights-only read of a report - the live-sync poll's new-pull probe. */
   async getReportFights(code: string): Promise<WclReport['fights']> {
     const vars: ReportQueryVars = { code };
     const result = await this.query<{ reportData: { report: { fights: WclReport['fights'] } | null } }>(

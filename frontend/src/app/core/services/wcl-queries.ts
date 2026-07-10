@@ -44,12 +44,6 @@ query($code:String!){reportData{report(code:$code){
   }
 }}}`;
 
-/**
- * Fights-only report read - the live-sync poll's new-pull probe. Carries no masterData
- * (the actors / enemies / abilities lists are the bulk of REPORT_Q's response), so the
- * recurring poll tick spends minimal WCL quota; the full REPORT_Q runs only when the
- * probe reveals a pull to analyze.
- */
 export const REPORT_FIGHTS_Q = `
 query($code:String!){reportData{report(code:$code){
   fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage}
