@@ -10,10 +10,8 @@ interface GraphQLResponse<TData> {
 }
 
 /**
- * WCL transport: an `HttpClient` GraphQL POST. Caching lives in the ng-http-caching
- * interceptor (see `provideWclCaching`); this attaches the query's cache-control headers
- * (`wclCachingHeaders`), so caching is decided by the query alone. The bearer is attached
- * per request because the token renews on expiry.
+ * WCL GraphQL transport (`HttpClient` POST). The bearer is attached per request because the token
+ * renews on expiry; the query's cache-control headers come from `wclCachingHeaders`.
  */
 @Injectable({ providedIn: 'root' })
 export class HttpWclTransport implements WclTransport {

@@ -64,8 +64,7 @@ class ApiWclClient implements WclQueryClient {
   constructor(private readonly wclApi: WclApiService) {}
 
   query<T = unknown, TVars extends object = Record<string, never>>(gql: string, variables?: TVars): Promise<T> {
-    // Discovery/budget reads are marked uncached by query (see wclCachingHeaders), so the budget
-    // gate always sees fresh rateLimitData.
+    // These reads are marked uncached (see wclCachingHeaders), so the budget gate sees fresh data.
     return this.wclApi.query<T>(gql, (variables ?? {}) as object);
   }
 

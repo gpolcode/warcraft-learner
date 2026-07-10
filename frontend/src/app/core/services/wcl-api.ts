@@ -19,12 +19,8 @@ export class WclApiService {
   private readonly transport = inject(WCL_TRANSPORT);
 
   /**
-   * Runs a GraphQL query against WCL through the injected transport (an `HttpClient`
-   * POST behind the ng-http-caching memory cache). The client-credentials bearer token is
-   * fetched here and passed per request (it is renewed on expiry). Caching is decided by
-   * the query alone (see `wclCachingHeaders`), so there is no per-call fetch policy. A 401
-   * refreshes the token and retries once so an early-rejected token recovers in place; the
-   * `WclTransportError` propagates intact so `toLoadError` can classify it.
+   * A 401 refreshes the token and retries once, so an early-rejected token (early expiry, rotated
+   * secret) recovers in place; other `WclTransportError`s propagate intact for `toLoadError`.
    */
   async query<TData = unknown>(gqlString: string, variables: object = {}): Promise<TData> {
     const token = await this.auth.getToken();
@@ -32,8 +28,7 @@ export class WclApiService {
       return await this.transport.query<TData>(gqlString, variables, token);
     } catch (error) {
       if (error instanceof WclTransportError && error.status === 401) {
-        // A stale token (early expiry, rotated secret) shouldn't surface as a failure:
-        // refresh and retry once. A second 401 propagates and classifies as permanent.
+        // A second 401 propagates and classifies as permanent.
         this.auth.invalidate();
         const freshToken = await this.auth.getToken();
         return await this.transport.query<TData>(gqlString, variables, freshToken);
@@ -95,8 +90,6 @@ export class WclApiService {
       if (sourceId != null) vars.sourceID = sourceId;
       if (includeResources) vars.includeResources = true;
       if (hostilityType) vars.hostilityType = hostilityType;
-      // Event pages are keyed on the immutable fight window, so a completed fight's events are
-      // served from cache on re-analysis; a live pull is a new window and fetches fresh.
       const result = await this.query<{ reportData: { report: { events: { data: WclEvent[]; nextPageTimestamp?: number } } } }>(
         EVENTS_Q, vars,
       );

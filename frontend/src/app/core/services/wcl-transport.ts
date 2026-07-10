@@ -30,10 +30,7 @@ export const WCL_UNUSABLE_STATUS = 422;
  * concrete {@link HttpWclTransport}) so specs can fake it through the token.
  */
 export interface WclTransport {
-  /**
-   * Runs the GraphQL POST. Caching is decided by the query alone (see `wclCachingHeaders`),
-   * so there is no per-call fetch policy. Throws {@link WclTransportError} on failure.
-   */
+  /** Runs the GraphQL POST; caching is the query's own concern (`wclCachingHeaders`). Throws {@link WclTransportError} on failure. */
   query<TData>(gqlString: string, variables: object, token: string): Promise<TData>;
 }
 

@@ -175,8 +175,7 @@ function isPickerDismissal(err: unknown): boolean {
 
 @Injectable({ providedIn: 'root' })
 export class LiveCaptureFeatureService {
-  // Whether live-sync is on. The post-raid polling pipeline watches `liveEnabled`; nothing else
-  // reads it, so the flag lives here rather than in a shared service.
+  // Live-sync on/off. Lives here because this is the only service that reads it.
   private readonly liveActive = signal(false);
 
   // --- recording engine state ---
