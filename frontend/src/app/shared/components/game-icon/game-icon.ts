@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { WowheadTooltipsService } from '../../../core/services/wowhead-tooltips';
 
 export type GameIconKind = 'spell' | 'item';
 
@@ -36,6 +37,14 @@ export type GameIconKind = 'spell' | 'item';
   `,
 })
 export class GameIconComponent {
+  constructor() {
+    // This link is the only Wowhead anchor the app renders; load the tooltip
+    // enhancer on demand once one exists (afterNextRender is browser-only, so
+    // prerendered pages with no links never pull the zamimg script/CSS).
+    const tooltips = inject(WowheadTooltipsService);
+    afterNextRender(() => tooltips.ensureLoaded());
+  }
+
   readonly id = input.required<number>();
   readonly kind = input<GameIconKind>('spell');
   /** Explicit display name (always provided by the caller). */
