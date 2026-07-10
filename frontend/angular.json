@@ -104,6 +104,13 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "public",
+                  "ignore": ["data/**"]
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -127,7 +134,8 @@
               "buildTarget": "frontend:build:empty"
             },
             "ingest": {
-              "buildTarget": "frontend:build:ingest"
+              "buildTarget": "frontend:build:ingest",
+              "watch": false
             }
           },
           "defaultConfiguration": "development"
