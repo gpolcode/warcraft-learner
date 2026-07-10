@@ -106,6 +106,24 @@ export function pickPlayerId(
 }
 
 /**
+ * What a live poll should do, decided from the fights-only probe: 'none' when the report
+ * has no boss pulls, 'skip' when the latest pull is already the analyzed selection, and
+ * 'analyze' when a newer pull exists (or the selected one has not finished analyzing,
+ * so the next tick retries a failed resolve).
+ */
+export type LivePollAction = 'none' | 'skip' | 'analyze';
+
+export function livePollActionOf(
+  fights: WclFight[],
+  selectedFightId: number | null | undefined,
+  analyzed: boolean,
+): LivePollAction {
+  const latest = fights[fights.length - 1];
+  if (!latest) return 'none';
+  return latest.id === selectedFightId && analyzed ? 'skip' : 'analyze';
+}
+
+/**
  * Choose which player to track across live-sync pulls.
  *
  * If the currently selected player is visible in the new pull (matched by name,
@@ -406,17 +424,24 @@ export class PostRaidComponent {
     this.loadError.set(null);
     this.liveCapture.setStatus('Checking for new pulls…');
     try {
+      // Fights-only probe first: every WCL read is network-only while live-syncing, and
+      // applying a full report rebuilds the fight objects, which retriggers the cards'
+      // input effects and their own WCL fetches. Probing just the fight list keeps an
+      // idle tick at one cheap request; the full report and the analysis fetches run
+      // only when the probe reveals a pull to analyze.
+      const probedFights = buildFights(await this.wclApi.getReportFights(this.reportCode()));
+      const action = livePollActionOf(probedFights, this.selectedFightId(), this.ready());
+      if (action === 'none') { this.liveCapture.setStatus('No boss pulls found.'); return; }
+      if (action === 'skip') {
+        this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()} · Polling every ${POLL_INTERVAL_MS / 1000}s`);
+        return;
+      }
+
       const report = await this.wclApi.getReport(this.reportCode());
       this._applyReport(report);
 
       const latest = this.fights()[this.fights().length - 1];
       if (!latest) { this.liveCapture.setStatus('No boss pulls found.'); return; }
-
-      // Cheap-diff: latest pull unchanged and already analyzed - skip re-analysis.
-      if (this.selectedFightId() === latest.id && this.ready()) {
-        this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()} · Polling every ${POLL_INTERVAL_MS / 1000}s`);
-        return;
-      }
 
       const currentName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
       const visible = visiblePlayersOf(this.fights(), this.players(), latest.id);

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, untracked } from '@angular/core';
 import { WclAuthService } from './wcl-auth';
 import { LiveModeState } from './live-mode-state';
 import { WCL_TRANSPORT, WCL_INGEST_MODE, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
@@ -7,7 +7,7 @@ import {
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
 } from '../models/wcl.models';
 import {
-  REPORT_Q, PLAYER_DETAILS_Q, EVENTS_Q,
+  REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
   COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
   ReportQueryVars, PlayerDetailsQueryVars,
   EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars, ResurrectsQueryVars,
@@ -29,7 +29,11 @@ export class WclApiService {
    * newly-recorded fights.
    */
   private livePolicy(): 'cache-first' | 'network-only' {
-    return this.ingestMode || !this.liveMode.active() ? 'cache-first' : 'network-only';
+    // Untracked: the fetch policy is a transport detail. A card's load effect reaches this
+    // synchronously (the pre-await prefix of its service call runs inside the effect), and a
+    // tracked read would re-run that effect - refetching the card's whole slice - every time
+    // the live toggle flips.
+    return this.ingestMode || !untracked(this.liveMode.active) ? 'cache-first' : 'network-only';
   }
 
   /**
@@ -70,6 +74,22 @@ export class WclApiService {
     // GraphQL error. Fail typed so a caller can't dereference the null into a TypeError.
     if (!report) throw this.reportUnavailable(code);
     return report;
+  }
+
+  /**
+   * Fights-only read of a report - the live-sync poll's cheap new-pull probe. Skips
+   * masterData (the bulk of the full report response), so an idle poll tick spends
+   * minimal quota; callers fetch the full report only when this reveals a new pull.
+   */
+  async getReportFights(code: string): Promise<WclReport['fights']> {
+    const vars: ReportQueryVars = { code };
+    const result = await this.query<{ reportData: { report: { fights: WclReport['fights'] } | null } }>(
+      REPORT_FIGHTS_Q, vars, this.livePolicy(),
+    );
+    const report = result?.reportData?.report;
+    // Same unserved-report case as getReport; fail typed rather than into a TypeError.
+    if (!report) throw this.reportUnavailable(code);
+    return report.fights ?? [];
   }
 
   /** Raw `playerDetails` groups (dps / healers / tanks / unknown). Consumers map to spec. */
