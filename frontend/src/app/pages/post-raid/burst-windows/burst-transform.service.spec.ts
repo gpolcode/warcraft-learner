@@ -414,46 +414,6 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
   });
 
-  it('fills a synthetic negative-id ability from masterData when gameData cannot resolve it', async () => {
-    // WCL puts synthetic negative-guid sources (pet melee, environmental) in the event stream;
-    // gameData.ability returns nothing for them (the real getAbilities filters id > 0), but the
-    // report's masterData names + icons them. This is the -32 that warned on a priest log.
-    const SHADOWFIEND_MELEE = -32;
-    const syntheticReport = (playerId: number, playerName: string, fightId: number) => ({
-      ...reportFor(playerId, playerName, fightId),
-      masterData: {
-        actors: [{ id: playerId, name: playerName, subType: 'Priest', server: '' }],
-        abilities: [
-          { gameID: SHADOW_BLADES_DAMAGE, name: 'Eviscerate', icon: 'x' },
-          { gameID: SHADOWFIEND_MELEE, name: 'Melee', icon: 'inv_axe_02.jpg' },
-        ],
-      },
-    });
-    // The synthetic id lands the same window as the burst damage, so it reaches the breakdown.
-    const syntheticDamage = [...burstDamage, damage(SHADOWFIEND_MELEE, 10, BIN_DAMAGE), damage(SHADOWFIEND_MELEE, 11, BIN_DAMAGE)];
-    const negativeIdWcl = {
-      ...wclFake,
-      getReport: async (code: string) => (code === 'r1' ? syntheticReport(10, 'P1', 1) : syntheticReport(20, 'P2', 2)),
-      getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
-        dataType === 'Casts' ? [cast(SHADOW_BLADES, 10)] : syntheticDamage,
-      // Mirror the real service: gameData.ability resolves only positive ids.
-      getAbilities: async (ids: number[]) =>
-        Object.fromEntries(ids.filter(id => id > 0).map(id => [id, { id, icon: `icon_${id}`, name: `name_${id}` }])),
-    };
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: WclApiService, useValue: negativeIdWcl as unknown as WclApiService },
-        { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
-      ],
-    });
-    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
-    expect(bench.ok).toBe(true);
-    if (!bench.ok) return;
-    // The synthetic id is a rendered window ability, resolved from masterData (jpg stripped).
-    expect(bench.value.windows[0].ability_breakdown.map(ability => ability.spell_id)).toContain(SHADOWFIEND_MELEE);
-    expect(bench.value.ability_icons[SHADOWFIEND_MELEE]).toEqual({ icon: 'inv_axe_02', name: 'Melee' });
-  });
-
   it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {
     const candidates = Array.from({ length: 11 }, (_, i) => ({ name: `P${i + 1}`, report: { code: `r${i + 1}`, fightID: i + 1 } }));
     const backfillWcl = {

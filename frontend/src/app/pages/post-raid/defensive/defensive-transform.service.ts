@@ -7,7 +7,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, ParseRanking, WclReport, WclAbility } from '../../../core/models/wcl.models';
+import { WclEvent, ParseRanking, WclReport } from '../../../core/models/wcl.models';
 import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow, TopDefensiveSummary } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark, CdHoldTargets } from '../../../core/models/encounter.models';
@@ -16,7 +16,7 @@ import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
-import { abilityIcons, completeAbilityIcons, masterDataAbilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
@@ -430,9 +430,6 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
 
       const allWindows: ParseDefWindow[] = [];
       const perParseSummaries: ParseDefensiveSummary[][] = [];
-      // Art for the synthetic negative-guid abilities gameData.ability can't resolve
-      // (environmental damage taken), collected from each report's masterData.
-      const masterArt: Record<number, { icon: string; name: string }> = {};
       let sampleCount = 0;
       let encounterName = '';
       for (const ranking of rankings) {
@@ -441,7 +438,6 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
         for (const window of parse.windows) window.parse_index = sampleCount;
         allWindows.push(...parse.windows);
         perParseSummaries.push(parse.summaries);
-        Object.assign(masterArt, masterDataAbilityIcons(parse.abilities));
         encounterName ||= parse.encounterName;
         sampleCount += 1;
         if (sampleCount >= TOP_PARSE_COUNT) break;
@@ -467,7 +463,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
         top_defensives_summary: topDefensivesSummary,
         defensives: defensivePlanMeta(defensives),
         cd_spell_ids,
-        ability_icons: completeAbilityIcons(referencedIds, abilityIcons(await this.wclApi.getAbilities(referencedIds)), masterArt),
+        ability_icons: abilityIcons(await this.wclApi.getAbilities(referencedIds)),
       });
     } catch (cause) {
       logWarn('DefensiveTransformService.getBench', cause);
@@ -482,7 +478,6 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     windows: ParseDefWindow[];
     summaries: ParseDefensiveSummary[];
     encounterName: string;
-    abilities: WclAbility[];
   } | null> {
     try {
       const report: WclReport = await this.wclApi.getReport(ranking.report_code);
@@ -503,7 +498,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       const buffWindows = buildBuffWindows(buffs, fight.startTime);
       const windows = findParseDefensiveWindows(dmgTaken, fight.startTime, fightDurationS, buffWindows, defensives, gameIdByActorId);
       const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationS);
-      return { windows, summaries, encounterName: fight.name ?? '', abilities: report.masterData?.abilities ?? [] };
+      return { windows, summaries, encounterName: fight.name ?? '' };
     } catch (err) {
       logWarn(`DefensiveTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
       return null;
