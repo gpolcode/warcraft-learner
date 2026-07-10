@@ -18,10 +18,9 @@ const TOKEN_STORAGE_KEY = 'wcl.token';
 interface StoredToken { token: string; expiry: number; }
 
 /**
- * `sessionStorage` if it is reachable, else null. Absent in the headless ingest runtime
- * (jsdom is booted without a storage global) and can throw in locked-down browsers, so
- * every access is best-effort - persistence is an optimization, never a correctness
- * dependency.
+ * `sessionStorage` if it is reachable, else null. Access can throw in locked-down
+ * browsers, so every use is best-effort - persistence is an optimization, never a
+ * correctness dependency.
  */
 function sessionStore(): Storage | null {
   try {
@@ -29,20 +28,6 @@ function sessionStore(): Storage | null {
   } catch {
     return null;
   }
-}
-
-/**
- * A `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` pair on a process-env global outranks the
- * environment's embedded pair (intentionally public - see wcl-public-client.ts): the
- * headless ingest harness injects one so CI ingests on its dedicated client's budget
- * without committing that secret. Read via `globalThis` so the bundle needs no Node types.
- */
-function clientCredentials(): { id: string; secret: string } {
-  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-  return {
-    id: env?.['WCL_CLIENT_ID'] || environment.wclClientId,
-    secret: env?.['WCL_CLIENT_SECRET'] || environment.wclClientSecret,
-  };
 }
 
 interface TokenResponse {
@@ -92,11 +77,10 @@ export class WclAuthService {
   }
 
   private async _fetchToken(): Promise<string> {
-    const { id, secret } = clientCredentials();
     const params = new URLSearchParams({
       grant_type: 'client_credentials',
-      client_id: id,
-      client_secret: secret,
+      client_id: environment.wclClientId,
+      client_secret: environment.wclClientSecret,
     });
     let data: TokenResponse;
     try {

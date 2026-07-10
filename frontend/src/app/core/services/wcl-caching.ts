@@ -5,12 +5,10 @@ import { WCL_API_URL } from './wcl-transport';
 
 /**
  * The WCL response cache: dedupes cache-first reads so the five slice cards share one
- * report/event fetch per session. Strictly the in-memory store - cached event streams
- * run far past the ~5 MB localStorage quota, and the dedupe contract is per-session
- * anyway. Only WCL_API_URL POSTs are cacheable, keyed on the GraphQL body so the
- * renewing Authorization header cannot fragment the cache. Lifetime is nominal-infinite
- * because eviction is by scope: a page close drops the store, and the ingest
- * orchestrator clears it between encounters to bound memory.
+ * report/event fetch per session. Only WCL_API_URL POSTs are cacheable, keyed on the
+ * GraphQL body so the renewing Authorization header cannot fragment the cache. Lifetime
+ * is nominal-infinite because eviction is by scope: a page close drops the store, and
+ * the ingest orchestrator clears it between encounters to bound memory.
  */
 export function provideWclCaching(): EnvironmentProviders {
   return provideNgHttpCaching({

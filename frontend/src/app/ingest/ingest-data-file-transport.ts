@@ -15,6 +15,10 @@ export const INGEST_SERVER_URL = 'http://localhost:3000';
 // level up at data/ so a single containment guard covers the whole data folder.
 const SPECS_PREFIX = 'specs/';
 
+function fileUrl(relPath: string): string {
+  return `${INGEST_SERVER_URL}/api/data/${SPECS_PREFIX}${relPath}`;
+}
+
 /**
  * Read + write `DataFileTransport` over the local file server. Reads go through it too:
  * the server returns an exact 404 for an absent file (the `missing` signal), where the
@@ -27,9 +31,7 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
   async readJson<T>(relPath: string): Promise<Result<T, LoadError>> {
     let parsed: unknown;
     try {
-      parsed = await firstValueFrom(this.http.get<unknown>(`${INGEST_SERVER_URL}/api/load`, {
-        params: { filePath: `${SPECS_PREFIX}${relPath}` },
-      }));
+      parsed = await firstValueFrom(this.http.get<unknown>(fileUrl(relPath)));
     } catch (cause) {
       const result = toLoadError(cause, `data-file.${relPath}`);
       // An un-ingested file is the orchestrator's normal case, so only real failures log.
@@ -47,22 +49,14 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
   }
 
   async writeJson(relPath: string, data: unknown): Promise<void> {
-    await firstValueFrom(this.http.post(`${INGEST_SERVER_URL}/api/save`, {
-      filePath: `${SPECS_PREFIX}${relPath}`,
-      data,
-    }));
+    await firstValueFrom(this.http.put(fileUrl(relPath), data));
   }
 
   async remove(relPath: string): Promise<void> {
-    await firstValueFrom(this.http.post(`${INGEST_SERVER_URL}/api/delete`, {
-      filePath: `${SPECS_PREFIX}${relPath}`,
-    }));
+    await firstValueFrom(this.http.delete(fileUrl(relPath)));
   }
 
   async list(relDir: string): Promise<string[]> {
-    const body = await firstValueFrom(this.http.get<{ entries: string[] }>(`${INGEST_SERVER_URL}/api/list`, {
-      params: { dir: `${SPECS_PREFIX}${relDir}` },
-    }));
-    return body.entries;
+    return await firstValueFrom(this.http.get<string[]>(`${INGEST_SERVER_URL}/api/dirs/${SPECS_PREFIX}${relDir}`));
   }
 }

@@ -12,6 +12,7 @@ const SERVER_FILE_PATH = `specs/${REL_PATH}`;
 const SLICE_BODY = { encounter_id: 3176, sample_count: 5, ingest_version: INGEST_VERSION };
 const FUTURE_BODY = { encounter_id: 3176, ingest_version: INGEST_VERSION + 1 };
 const NOT_FOUND_STATUS = 404;
+const NO_CONTENT_STATUS = 204;
 const MISSING_MESSAGE = 'Not yet ingested.';
 
 function setup(): { transport: IngestHttpDataFileTransport; httpMock: HttpTestingController } {
@@ -30,13 +31,12 @@ describe('IngestHttpDataFileTransport', () => {
     vi.restoreAllMocks();
   });
 
-  it('reads through the file server load endpoint and returns ok(body)', async () => {
+  it('GETs the server-rooted file path and returns ok(body)', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.readJson<typeof SLICE_BODY>(REL_PATH);
-    const req = httpMock.expectOne(request => request.url === `${INGEST_SERVER_URL}/api/load`);
+    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`);
     expect(req.request.method).toBe('GET');
-    expect(req.request.params.get('filePath')).toBe(SERVER_FILE_PATH);
     req.flush(SLICE_BODY);
 
     expect(await pending).toEqual(ok(SLICE_BODY));
@@ -47,7 +47,7 @@ describe('IngestHttpDataFileTransport', () => {
 
     const pending = transport.readJson(REL_PATH);
     httpMock
-      .expectOne(request => request.url === `${INGEST_SERVER_URL}/api/load`)
+      .expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`)
       .flush({ error: 'not found' }, { status: NOT_FOUND_STATUS, statusText: 'Not Found' });
 
     expect(await pending).toEqual(missing(MISSING_MESSAGE));
@@ -57,43 +57,43 @@ describe('IngestHttpDataFileTransport', () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.readJson(REL_PATH);
-    httpMock.expectOne(request => request.url === `${INGEST_SERVER_URL}/api/load`).flush(FUTURE_BODY);
+    httpMock.expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`).flush(FUTURE_BODY);
 
     const result = await pending;
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe('permanent');
   });
 
-  it('POSTs writes to the save endpoint with the server-rooted path and raw data', async () => {
+  it('PUTs writes to the file path with the document as the body', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.writeJson(REL_PATH, SLICE_BODY);
-    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/save`);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ filePath: SERVER_FILE_PATH, data: SLICE_BODY });
-    req.flush({ ok: true });
+    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(SLICE_BODY);
+    req.flush(null, { status: NO_CONTENT_STATUS, statusText: 'No Content' });
 
     await pending;
   });
 
-  it('POSTs removals to the delete endpoint', async () => {
+  it('DELETEs the file path on remove', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.remove(REL_PATH);
-    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/delete`);
-    expect(req.request.body).toEqual({ filePath: SERVER_FILE_PATH });
-    req.flush({ ok: true });
+    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: NO_CONTENT_STATUS, statusText: 'No Content' });
 
     await pending;
   });
 
-  it('lists a directory through the list endpoint and unwraps the entries', async () => {
+  it('GETs the directory resource and returns its entries', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.list('SubtletyRogue/burst');
-    const req = httpMock.expectOne(request => request.url === `${INGEST_SERVER_URL}/api/list`);
-    expect(req.request.params.get('dir')).toBe('specs/SubtletyRogue/burst');
-    req.flush({ entries: ['3176.json', '3177.json'] });
+    const req = httpMock.expectOne(`${INGEST_SERVER_URL}/api/dirs/specs/SubtletyRogue/burst`);
+    expect(req.request.method).toBe('GET');
+    req.flush(['3176.json', '3177.json']);
 
     expect(await pending).toEqual(['3176.json', '3177.json']);
   });

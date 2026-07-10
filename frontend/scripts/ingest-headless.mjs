@@ -1,16 +1,13 @@
 /**
  * Headless ingest harness (npm run ingest): drives the browser ingestion unattended
  * for CI. All ingestion logic lives in the Angular app; this file must never grow any.
- * WCL_CLIENT_ID/WCL_CLIENT_SECRET are injected into the page before the app loads so
- * CI ingests on its dedicated WCL client's budget without the secret ever entering
- * the bundle (see wcl-auth.ts). If no browser resolves, run
- * `npx playwright install chromium` once.
+ * If no browser resolves, run `npx playwright install chromium` once.
  */
 import { spawn } from 'child_process';
 import { chromium } from 'playwright';
 
 const APP_URL = 'http://localhost:4200';
-const SERVER_PROBE_URL = 'http://localhost:3000/api/list?dir=specs';
+const SERVER_PROBE_URL = 'http://localhost:3000/api/dirs/specs';
 const READY_TIMEOUT_MS = 5 * 60_000;
 const READY_POLL_MS = 500;
 const DONE_POLL_MS = 1_000;
@@ -82,15 +79,6 @@ async function main() {
 
   browser = await launchBrowser();
   const context = await browser.newContext();
-
-  const { WCL_CLIENT_ID, WCL_CLIENT_SECRET } = process.env;
-  if (WCL_CLIENT_ID && WCL_CLIENT_SECRET) {
-    await context.addInitScript(([id, secret]) => {
-      globalThis.process = { env: { WCL_CLIENT_ID: id, WCL_CLIENT_SECRET: secret } };
-    }, [WCL_CLIENT_ID, WCL_CLIENT_SECRET]);
-    console.log('[harness] injected WCL credentials from the environment');
-  }
-
   const page = await context.newPage();
   page.on('console', message => console.log(`[app] ${message.text()}`));
   page.on('pageerror', err => console.error(`[app] pageerror: ${err.message}`));

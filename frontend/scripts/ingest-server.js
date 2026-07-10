@@ -2,6 +2,10 @@
  * Dumb file store over frontend/public/data for the ingest app - the one process with
  * filesystem access. All ingestion logic (signatures, versioning, ordering, transforms)
  * lives in the Angular app; this server must never grow any.
+ *
+ * REST surface: a file is /api/data/{path} (GET/PUT/DELETE), a directory listing is
+ * /api/dirs/{path} (GET). PUT bodies are stored verbatim - the Angular HttpClient
+ * already serializes minified JSON, so the server never parses the payload.
  */
 import express from 'express';
 import cors from 'cors';
@@ -17,9 +21,10 @@ const BODY_LIMIT = '200mb';
 // Monotonic suffix so two concurrent writes to the same path never collide on the temp name.
 let tempWriteCounter = 0;
 
-// A crafted relPath must never read or write outside the data root.
-function resolveContained(relPath) {
-  if (typeof relPath !== 'string' || relPath.length === 0) return null;
+// A crafted path must never read or write outside the data root.
+function resolveContained(segments) {
+  const relPath = (segments ?? []).join('/');
+  if (relPath.length === 0) return null;
   const full = path.resolve(DATA_ROOT, relPath);
   if (full !== DATA_ROOT && !full.startsWith(DATA_ROOT + path.sep)) return null;
   return full;
@@ -27,62 +32,62 @@ function resolveContained(relPath) {
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: BODY_LIMIT }));
+app.use(express.text({ type: 'application/json', limit: BODY_LIMIT }));
 
-app.post('/api/save', async (req, res) => {
-  const { filePath, data } = req.body ?? {};
-  const full = resolveContained(filePath);
-  if (!full || data === undefined) return res.status(400).json({ error: 'filePath and data are required' });
+app.put('/api/data/*path', async (req, res) => {
+  const full = resolveContained(req.params.path);
+  if (!full || typeof req.body !== 'string' || req.body.length === 0) {
+    return res.status(400).json({ error: 'a contained path and a JSON body are required' });
+  }
   try {
     await fs.promises.mkdir(path.dirname(full), { recursive: true });
-    // Minified because the bench data is machine-read across thousands of files;
-    // temp-then-rename so a kill mid-write leaves the previous complete file.
+    // Temp-then-rename so a kill mid-write leaves the previous complete file.
     const tmp = `${full}.${process.pid}.${tempWriteCounter++}.tmp`;
     try {
-      await fs.promises.writeFile(tmp, JSON.stringify(data) + '\n');
+      await fs.promises.writeFile(tmp, req.body + '\n');
       await fs.promises.rename(tmp, full);
     } catch (err) {
       await fs.promises.rm(tmp, { force: true });
       throw err;
     }
-    res.json({ ok: true });
+    res.status(204).end();
   } catch (err) {
     res.status(500).json({ error: String(err) });
   }
 });
 
-app.post('/api/delete', async (req, res) => {
-  const full = resolveContained(req.body?.filePath);
-  if (!full) return res.status(400).json({ error: 'filePath is required' });
-  try {
-    await fs.promises.rm(full, { force: true });
-    res.json({ ok: true });
-  } catch (err) {
-    res.status(500).json({ error: String(err) });
-  }
-});
-
-app.get('/api/list', async (req, res) => {
-  const full = resolveContained(req.query.dir);
-  if (!full) return res.status(400).json({ error: 'dir is required' });
-  try {
-    res.json({ entries: (await fs.promises.readdir(full)).sort() });
-  } catch (err) {
-    // An absent directory is a legitimate empty listing (first run of a spec).
-    if (err.code === 'ENOENT') return res.json({ entries: [] });
-    res.status(500).json({ error: String(err) });
-  }
-});
-
-app.get('/api/load', async (req, res) => {
-  const full = resolveContained(req.query.filePath);
-  if (!full) return res.status(400).json({ error: 'filePath is required' });
+app.get('/api/data/*path', async (req, res) => {
+  const full = resolveContained(req.params.path);
+  if (!full) return res.status(400).json({ error: 'a contained path is required' });
   try {
     const content = await fs.promises.readFile(full, 'utf8');
     res.type('application/json').send(content);
   } catch (err) {
     // An exact 404 is the contract: the transport maps it to the `missing` load state.
     if (err.code === 'ENOENT') return res.status(404).json({ error: 'not found' });
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+app.delete('/api/data/*path', async (req, res) => {
+  const full = resolveContained(req.params.path);
+  if (!full) return res.status(400).json({ error: 'a contained path is required' });
+  try {
+    await fs.promises.rm(full, { force: true });
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+app.get('/api/dirs/*path', async (req, res) => {
+  const full = resolveContained(req.params.path);
+  if (!full) return res.status(400).json({ error: 'a contained path is required' });
+  try {
+    res.json((await fs.promises.readdir(full)).sort());
+  } catch (err) {
+    // An absent directory is a legitimate empty listing (first run of a spec).
+    if (err.code === 'ENOENT') return res.json([]);
     res.status(500).json({ error: String(err) });
   }
 });

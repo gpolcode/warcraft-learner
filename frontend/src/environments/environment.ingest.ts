@@ -5,10 +5,8 @@
  * check has the current published data to compare against.
  *
  * `wclClientId`/`wclClientSecret` default to the intentionally public pair every build
- * ships (see wcl-public-client.ts). To ingest on a dedicated WCL client's budget, either edit
- * them here locally (do not commit a private pair) or let the headless harness inject
- * `WCL_CLIENT_ID`/`WCL_CLIENT_SECRET` from the process environment - the env override
- * takes precedence in wcl-auth.ts.
+ * ships (see wcl-public-client.ts). To ingest on a dedicated WCL client's budget, edit
+ * them here locally (do not commit a private pair).
  */
 import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
 import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
