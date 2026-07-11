@@ -160,7 +160,8 @@
     }
 
     <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
-         Column widths (flex-1 / w-[7.5rem] / w-[9rem] / w-[9rem]) mirror compact-ability-row.html. -->
+         Column widths (flex-1 / w-[6rem] / w-[6rem] / w-[6rem]) mirror compact-ability-row.html and
+         the finding-table numeric column so the two stacked cards share one column rhythm. -->
     @if (w.detailRows.length) {
       <!-- Wrapper border is desktop-only; on mobile the per-row borders own the dividers (so the
            first row does not double up with this one). -->
@@ -169,11 +170,11 @@
         <div class="hidden md:flex items-center gap-[14px] px-4 pb-1">
           <span class="flex-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="w-[7.5rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
+            <span class="w-[6rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
           }
-          <span class="w-[9rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
+          <span class="w-[6rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
           @if (!activeIsMuted()) {
-            <span class="w-[9rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
+            <span class="w-[6rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {
