@@ -119,6 +119,14 @@ mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
  * a couple pixels off-center inside the button's fixed height. */
 .mdc-icon-button { line-height: 1; }
 
+/* A custom `mat-select-trigger` with icon + text content makes the inline-flex trigger's
+ * synthesized baseline fall to its bottom edge, so the select's line-height strut adds
+ * descent space below it and the value sits a few pixels above the field's vertical
+ * center. Top-aligning the trigger in the select's line box drops that strut gap so the
+ * icon+text center in the outline. Element+class (0,1,1) outranks Material's
+ * `.mat-mdc-select-trigger` (0,1,0) without `!important`. */
+mat-select .mat-mdc-select-trigger { vertical-align: top; }
+
 mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
 mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px; }
 
