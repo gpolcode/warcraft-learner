@@ -74,10 +74,7 @@
       w.status === 'bad' ? 'bg-[var(--critical)]' :
       w.status === 'muted' ? 'bg-[var(--muted)]' : 'bg-[var(--info)]';
 
-    <!-- Two-tier header. Row 1: fixed-width metric columns (window · burst · vs top)
-         plus the action buttons pinned right with ml-auto - none of it wraps, so the
-         buttons never get pushed off-screen. Row 2: the variable-length cast chips,
-         the only elements allowed to wrap. -->
+    <!-- Two-tier header: only row 2's cast chips wrap, so row 1's metric cluster + action buttons never get pushed off-screen. -->
     <div class="px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
       <div class="flex items-center gap-4 md:gap-[22px]">
         <div class="flex flex-col shrink-0">
@@ -86,8 +83,7 @@
             {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
         </div>
-        <!-- Burst value: reached window shows the player's damage; a bench-only (pre)
-             window shows the top-parse damage; a not-reached window shows the label. -->
+        <!-- Burst value: player damage when reached, top-parse damage for bench-only, else the not-reached label. -->
         <div class="flex flex-col shrink-0">
           <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">burst</span>
           @if (!activeIsMuted()) {
@@ -139,8 +135,7 @@
       }
     </div>
 
-    <!-- Damage-spread bar: player fill + top-parse range band + avg tick. Hidden for
-         bench-only (pre-fight) windows, where there is no player to compare against. -->
+    <!-- Damage-spread bar, hidden for bench-only (pre-fight) windows that have no player to compare against. -->
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
         <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Damage vs top range</span>
@@ -159,15 +154,9 @@
       </div>
     }
 
-    <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
-         Grid tracks (1fr / 96px / 96px / 90px) mirror compact-ability-row.html and align with the
-         finding-table: casts sits under its measured column (96px), and top avg + gap together span
-         the same 200px region as its fix column (96 + 14 gap + 90), so the casts|top-avg divider
-         lines up with the measured|fix divider across the stacked cards. A fixed grid also keeps
-         every column in place when casts/gap are hidden (a not-reached window), so top avg never jumps. -->
+    <!-- Grid tracks mirror compact-ability-row.html and the finding-table so the casts|top-avg divider lines up with its measured|fix divider; a fixed grid holds columns in place when casts/gap are hidden. -->
     @if (w.detailRows.length) {
-      <!-- Wrapper border is desktop-only; on mobile the per-row borders own the dividers (so the
-           first row does not double up with this one). -->
+      <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
         <!-- Column labels are desktop-only; on mobile each row carries inline labels instead. -->
         <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_96px_90px] gap-x-[14px] items-center px-4 pb-1">
