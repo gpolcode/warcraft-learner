@@ -35,10 +35,10 @@ export class WindowComparisonComponent {
   /** Emits the active window index when its clip button is clicked; the page forwards it. */
   readonly openClip = output<number>();
 
-  // Seconds of pause before the next window that add a dashed pacing slot. Under
-  // the first threshold is the same burst (0 slots); each further threshold adds
-  // one, capped at three for a long gap.
-  private static readonly GAP_SLOT_THRESHOLDS_S = [20, 45, 90];
+  // Each dashed pacing slot stands for this many seconds of pause before the next
+  // window, so a sub-slot pause is the same burst (0 slots) and longer lulls add
+  // proportionally more slots.
+  private static readonly GAP_SLOT_SECONDS = 20;
 
   protected readonly selectedIndex = computed(() => {
     const windows = this.windows();
@@ -84,7 +84,7 @@ export class WindowComparisonComponent {
   });
 
   private gapSlots(pauseS: number): number {
-    return WindowComparisonComponent.GAP_SLOT_THRESHOLDS_S.filter(t => pauseS >= t).length;
+    return Math.max(0, Math.floor(pauseS / WindowComparisonComponent.GAP_SLOT_SECONDS));
   }
 
   protected select(i: number): void {

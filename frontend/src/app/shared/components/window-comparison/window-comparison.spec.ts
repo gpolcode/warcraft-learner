@@ -169,11 +169,10 @@ describe('WindowComparisonComponent showCasts', () => {
 });
 
 describe('WindowComparisonComponent timelineCells', () => {
-  // GAP_SLOT_THRESHOLDS_S = [20, 45, 90]: pause (next.start - this.end) crosses each
-  // threshold to add one dashed pacing slot, capped at three. Boundaries are inclusive.
-  const SLOT_1_S = 20;
-  const SLOT_2_S = 45;
-  const SLOT_3_S = 90;
+  // GAP_SLOT_SECONDS = 20: each dashed pacing slot stands for 20s of pause
+  // (next.start - this.end), floored, so a sub-20s pause is the same burst (0 slots)
+  // and longer lulls add proportionally more slots with no cap.
+  const SLOT_SECONDS = 20;
 
   type Cell = { kind: 'window'; index: number } | { kind: 'gap'; id: string };
 
@@ -195,28 +194,26 @@ describe('WindowComparisonComponent timelineCells', () => {
     };
   };
 
-  it('emits no gap slots for a pause under the first threshold (same burst)', () => {
+  it('emits no gap slots for a pause under one slot (same burst)', () => {
     const gaps = gapCounter();
-    expect(gaps(SLOT_1_S - 1)).toBe(0);
-    expect(gaps(SLOT_1_S)).toBe(1);
+    expect(gaps(SLOT_SECONDS - 1)).toBe(0);
+    expect(gaps(SLOT_SECONDS)).toBe(1);
   });
 
-  it('adds a second slot at the second threshold, not before', () => {
+  it('adds one more slot per further 20s of pause', () => {
     const gaps = gapCounter();
-    expect(gaps(SLOT_2_S - 1)).toBe(1);
-    expect(gaps(SLOT_2_S)).toBe(2);
+    expect(gaps(2 * SLOT_SECONDS - 1)).toBe(1);
+    expect(gaps(2 * SLOT_SECONDS)).toBe(2);
+    expect(gaps(3 * SLOT_SECONDS)).toBe(3);
   });
 
-  it('emits three slots at the third threshold and never more (long gap, capped)', () => {
-    const gaps = gapCounter();
-    expect(gaps(SLOT_3_S - 1)).toBe(2);
-    expect(gaps(SLOT_3_S)).toBe(3);
-    expect(gaps(SLOT_3_S * 10)).toBe(3);
+  it('is uncapped, so a long lull keeps adding slots', () => {
+    expect(gapCounter()(10 * SLOT_SECONDS)).toBe(10);
   });
 
   it('interleaves window and gap cells in fight order', () => {
-    // 0->0 (start), then a 45s pause (2 slots) to the second window.
-    const { vm } = mountVm(WindowComparisonComponent, { windows: [winSpan(0, 0), winSpan(SLOT_2_S, SLOT_2_S + 10)] });
+    // 0->0 (start), then a 40s pause (2 slots) to the second window.
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [winSpan(0, 0), winSpan(2 * SLOT_SECONDS, 2 * SLOT_SECONDS + 10)] });
     const cells = (vm['timelineCells'] as () => Cell[])();
     expect(cells.map(c => c.kind)).toEqual(['window', 'gap', 'gap', 'window']);
     expect(cells.filter(c => c.kind === 'window').map(c => (c as { index: number }).index)).toEqual([0, 1]);
