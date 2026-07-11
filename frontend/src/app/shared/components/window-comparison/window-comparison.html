@@ -67,56 +67,71 @@
 
   <!-- Detail panel: driven by activeIndex(), inside the same card. -->
   @if (activeWindow(); as w) {
-    <!-- Status fill color, shared by the header dot and the overview bar player fill. -->
+    <!-- Status fill color for the overview bar player fill. -->
     @let fillBg =
       w.status === 'good' ? 'bg-[var(--success)]' :
       w.status === 'warn' ? 'bg-[var(--warning)]' :
       w.status === 'bad' ? 'bg-[var(--critical)]' :
       w.status === 'muted' ? 'bg-[var(--muted)]' : 'bg-[var(--info)]';
 
-    <!-- Header: status dot · window title · spell icons, then a meta group (map + value/delta).
-         The title never wraps; the meta group drops to its own line on mobile and sits right at md. -->
-    <div class="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
-      <span [class]="'w-2.5 h-2.5 rounded-full shrink-0 ' + fillBg"></span>
-      <span class="text-sm font-medium whitespace-nowrap">
-        Window {{ activeIndex() + 1 }} - {{ w.timeStartS | formatDuration }} to {{ w.timeEndS | formatDuration }}
-      </span>
-      @for (spell of w.spells; track spell.id) {
-        <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
-      }
-      @for (lbl of w.labels; track lbl) {
-        <span class="text-sm text-[var(--muted)]">{{ lbl }}</span>
-      }
-      <!-- Meta group: map button + value. Drops to its own line on mobile, sits right at md.
-           Reached windows show the player's damage + delta; bench-only (pre) windows show the
-           top-parse damage; a not-reached player window shows the italic label. -->
-      <div class="basis-full md:basis-auto md:ml-auto flex items-center gap-2">
-        @if (showMap()) {
-          <button mat-icon-button title="Open positioning map" (click)="openMap.emit(activeIndex())">
-            <mat-icon>my_location</mat-icon>
-          </button>
-        }
-        @if (showClip()) {
-          <button mat-icon-button title="Watch clip" (click)="openClip.emit(activeIndex())">
-            <mat-icon>videocam</mat-icon>
-          </button>
-        }
-        @if (!activeIsMuted()) {
-          <span class="tabular-nums text-xs flex items-baseline gap-2">
-            <span class="text-[var(--muted)]">{{ w.overview.playerPct | formatDamage }}</span>
-            @if (overviewDelta() !== null) {
-              <span
-                [class.badge-muted]="overviewDeltaStatus() === 'muted'"
-                [class.badge-success]="overviewDeltaStatus() === 'better'"
-                [class.badge-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
-            }
+    <!-- Two-tier header. Row 1: fixed-width metric columns (window · burst · vs top)
+         plus the action buttons pinned right with ml-auto - none of it wraps, so the
+         buttons never get pushed off-screen. Row 2: the variable-length cast chips,
+         the only elements allowed to wrap. -->
+    <div class="px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
+      <div class="flex items-center gap-4 md:gap-[22px]">
+        <div class="flex flex-col shrink-0">
+          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">window</span>
+          <span class="text-[13px] font-semibold tabular-nums text-[var(--text)] whitespace-nowrap">
+            {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
-        } @else if (activeIsBenchOnly()) {
-          <span class="tabular-nums text-xs text-[var(--muted)]">{{ w.overview.topAvg | formatDamage }}</span>
-        } @else if (activeIsNotReached()) {
-          <span class="text-xs text-[var(--muted)] italic">not reached</span>
+        </div>
+        <!-- Burst value: reached window shows the player's damage; a bench-only (pre)
+             window shows the top-parse damage; a not-reached window shows the label. -->
+        <div class="flex flex-col shrink-0">
+          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">burst</span>
+          @if (!activeIsMuted()) {
+            <span class="text-[13px] font-semibold tabular-nums text-[var(--text)]">{{ w.overview.playerPct | formatDamage }}</span>
+          } @else if (activeIsBenchOnly()) {
+            <span class="text-[13px] font-semibold tabular-nums text-[var(--text)]">{{ w.overview.topAvg | formatDamage }}</span>
+          } @else {
+            <span class="text-[13px] font-semibold italic text-[var(--muted)]">not reached</span>
+          }
+        </div>
+        @if (!activeIsMuted() && overviewDelta() !== null) {
+          <div class="flex flex-col shrink-0">
+            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top</span>
+            <span class="text-[13px] font-semibold tabular-nums"
+              [class.badge-muted]="overviewDeltaStatus() === 'muted'"
+              [class.badge-success]="overviewDeltaStatus() === 'better'"
+              [class.badge-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
+          </div>
         }
+        <div class="ml-auto flex items-center gap-[7px] shrink-0">
+          @if (showMap()) {
+            <button mat-icon-button title="Open positioning map" (click)="openMap.emit(activeIndex())">
+              <mat-icon>my_location</mat-icon>
+            </button>
+          }
+          @if (showClip()) {
+            <button mat-icon-button title="Watch clip" (click)="openClip.emit(activeIndex())">
+              <mat-icon>videocam</mat-icon>
+            </button>
+          }
+        </div>
       </div>
+      @if (w.spells.length || w.labels.length) {
+        <div class="flex flex-wrap items-center gap-2 mt-2.5">
+          @for (spell of w.spells; track spell.id) {
+            <span class="inline-flex items-center rounded-[7px] px-2 py-1 bg-[var(--bg)] border border-[var(--border)]">
+              <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
+            </span>
+          }
+          @for (lbl of w.labels; track lbl) {
+            <span class="inline-flex items-center rounded-[7px] px-2 py-1 bg-[var(--bg)] border border-[var(--border)] text-sm text-[var(--muted)]">{{ lbl }}</span>
+          }
+        </div>
+      }
     </div>
 
     <!-- Full-width overview bar: player fill + range band + avg tick. Hidden for bench-only
