@@ -22,8 +22,7 @@ function setup(): { service: WowheadTooltipsService; doc: Document } {
   };
 }
 
-// Stand-in for the global `tooltips.js` publishes once it executes; the service calls its
-// refreshLinks to re-scan the DOM.
+// Stub of the $WowheadPower global that tooltips.js publishes; the service calls its refreshLinks.
 type PowerWindow = Window & { $WowheadPower?: { refreshLinks: () => void } };
 
 function stubWowheadPower(doc: Document): ReturnType<typeof vi.fn> {

@@ -6,7 +6,6 @@ import { logWarn } from '../log';
 const CONFIG_SRC = 'wh-tooltips-config.js';
 const TOOLTIPS_SRC = 'https://wow.zamimg.com/js/tooltips.js';
 
-/** The one global `tooltips.js` exposes for re-scanning links added after it loaded. */
 interface WowheadPower {
   refreshLinks(): void;
 }
@@ -16,9 +15,7 @@ type WowheadWindow = Window & { $WowheadPower?: WowheadPower };
 export class WowheadTooltipsService {
   private readonly document = inject(DOCUMENT);
   private loaded = false;
-  // tooltips.js binds its hover/tap handler to each link once, during a single scan when
-  // it loads, and never observes the DOM again. `ready` gates re-scans until that global
-  // exists.
+  // tooltips.js enhances each link once on load and never re-observes the DOM.
   private ready = false;
   private refreshScheduled = false;
 
@@ -44,12 +41,7 @@ export class WowheadTooltipsService {
     this.document.head.appendChild(config);
   }
 
-  /**
-   * Re-scan the document so links Angular rendered after `tooltips.js` did its one-time
-   * scan get enhanced too (the hover tooltip, and on touch the fullscreen tap tooltip).
-   * Coalesces a burst of calls - every `wl-game-icon` requests one on render - into a
-   * single scan per microtask, and no-ops until the script is `ready`.
-   */
+  /** Re-scan so links rendered after the load-time scan get enhanced; coalesced per microtask, no-op until ready. */
   refreshLinks(): void {
     if (this.refreshScheduled) return;
     this.refreshScheduled = true;

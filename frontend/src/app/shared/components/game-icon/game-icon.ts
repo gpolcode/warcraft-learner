@@ -42,8 +42,7 @@ export class GameIconComponent {
     const tooltips = inject(WowheadTooltipsService);
     afterNextRender(() => {
       tooltips.ensureLoaded();
-      // tooltips.js scans links only once at load, so re-scan whenever a new icon renders
-      // (later data waves, route changes) - otherwise these links never get a tooltip.
+      // Re-scan so an icon rendered after the load-time scan still gets a tooltip.
       tooltips.refreshLinks();
     });
   }
