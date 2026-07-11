@@ -6,10 +6,21 @@ import { logWarn } from '../log';
 const CONFIG_SRC = 'wh-tooltips-config.js';
 const TOOLTIPS_SRC = 'https://wow.zamimg.com/js/tooltips.js';
 
+/** The one global `tooltips.js` exposes for re-scanning links added after it loaded. */
+interface WowheadPower {
+  refreshLinks(): void;
+}
+type WowheadWindow = Window & { $WowheadPower?: WowheadPower };
+
 @Injectable({ providedIn: 'root' })
 export class WowheadTooltipsService {
   private readonly document = inject(DOCUMENT);
   private loaded = false;
+  // tooltips.js binds its hover/tap handler to each link once, during a single scan when
+  // it loads, and never observes the DOM again. `ready` gates re-scans until that global
+  // exists.
+  private ready = false;
+  private refreshScheduled = false;
 
   ensureLoaded(): void {
     if (this.loaded) return;
@@ -24,8 +35,28 @@ export class WowheadTooltipsService {
       const tooltips = this.document.createElement('script');
       tooltips.src = TOOLTIPS_SRC;
       tooltips.addEventListener('error', (err) => logWarn('wowhead tooltips script load', err));
+      tooltips.addEventListener('load', () => {
+        this.ready = true;
+        this.refreshLinks();
+      });
       this.document.head.appendChild(tooltips);
     });
     this.document.head.appendChild(config);
+  }
+
+  /**
+   * Re-scan the document so links Angular rendered after `tooltips.js` did its one-time
+   * scan get enhanced too (the hover tooltip, and on touch the fullscreen tap tooltip).
+   * Coalesces a burst of calls - every `wl-game-icon` requests one on render - into a
+   * single scan per microtask, and no-ops until the script is `ready`.
+   */
+  refreshLinks(): void {
+    if (this.refreshScheduled) return;
+    this.refreshScheduled = true;
+    queueMicrotask(() => {
+      this.refreshScheduled = false;
+      if (!this.ready) return;
+      (this.document.defaultView as WowheadWindow | null)?.$WowheadPower?.refreshLinks?.();
+    });
   }
 }
