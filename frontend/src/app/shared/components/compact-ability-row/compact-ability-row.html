@@ -1,17 +1,20 @@
 <!--
   Sorted-impact table row.
-  Desktop (md+): a grid of 4 tracks (1fr / 6rem / 6rem / 6rem) that mirror the header row in
-  window-comparison.html so the two stay aligned. The two wrapper divs use `md:contents` so their
-  children are promoted into this single grid at md, and `md:col-start-*` pins each to the
-  name / casts / top-avg / gap track - a fixed grid keeps top avg put when casts/gap are hidden.
+  Desktop (md+): a grid of 4 tracks (1fr / 6rem / 96px / 200px) that mirror the header row in
+  window-comparison.html; the last two tracks match the finding-table measured + fix columns.
+  The two wrapper divs use `md:contents` so their children promote into this single grid at md, and
+  each cell is pinned with `md:col-start-*` + `md:row-start-1` - the row-start pin is required because
+  the mobile DOM order (name, gap, top-avg, casts) is out of column order, and without it grid
+  auto-placement would push the later cells onto new rows. A fixed grid also keeps top avg put when
+  casts/gap are hidden.
   Mobile: the wrappers become two stacked lines - name + gap on top, then top-avg + casts with inline
   labels - so nothing overflows a phone width.
 -->
-<div class="md:grid md:grid-cols-[minmax(0,1fr)_6rem_6rem_6rem] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
+<div class="md:grid md:grid-cols-[minmax(0,1fr)_6rem_96px_200px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
 
   <!-- Line 1 (mobile): name + gap. Pinned to tracks 1 and 4 at md. -->
   <div class="flex items-baseline gap-2 min-w-0 md:contents">
-    <div class="flex-1 min-w-0 overflow-hidden md:col-start-1">
+    <div class="flex-1 min-w-0 overflow-hidden md:col-start-1 md:row-start-1">
       @if (row().spellId; as spellId) {
         <wl-game-icon [id]="spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
       } @else {
@@ -20,7 +23,7 @@
     </div>
 
     @if (!hidePlayer()) {
-      <span class="shrink-0 md:col-start-4 text-right tabular-nums text-xs font-semibold"
+      <span class="shrink-0 md:col-start-4 md:row-start-1 text-right md:text-left tabular-nums text-xs font-semibold"
             [class.badge-success]="gapStatus() === 'success'"
             [class.badge-warning]="gapStatus() === 'warning'"
             [class.badge-critical]="gapStatus() === 'critical'"
@@ -36,17 +39,17 @@
 
   <!-- Line 2 (mobile): top avg + casts with inline labels. Promoted to columns 3 and 2 at md. -->
   <div class="flex items-baseline flex-wrap gap-x-1.5 gap-y-1 mt-1.5 md:mt-0 md:contents">
-    <span class="shrink-0 mr-2 md:mr-0 md:col-start-3 md:text-left tabular-nums text-xs text-[var(--muted)]">
+    <span class="shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-right tabular-nums text-xs text-[var(--muted)]">
       <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top avg </span>{{ row().topAvg | formatDamage }}
     </span>
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
         <!-- Passive ability (proc/auto/pet damage): no cast count, just a muted tag. -->
-        <span class="shrink-0 md:col-start-2 w-auto text-center text-xs rounded px-2 py-0.5 border border-current badge-muted">passive</span>
+        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-xs rounded px-2 py-0.5 border border-current badge-muted">passive</span>
       } @else {
         <span class="md:hidden font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">Casts</span>
-        <span class="shrink-0 md:col-start-2 w-auto text-center tabular-nums text-xs rounded px-2 py-0.5 border border-current"
+        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center tabular-nums text-xs rounded px-2 py-0.5 border border-current"
               [class.badge-success]="castsStatus() === 'success'"
               [class.badge-warning]="castsStatus() === 'warning'"
               [class.badge-critical]="castsStatus() === 'critical'"
