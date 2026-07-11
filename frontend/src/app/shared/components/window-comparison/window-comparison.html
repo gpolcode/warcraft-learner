@@ -100,7 +100,7 @@
         </div>
         @if (!activeIsMuted() && overviewDelta() !== null) {
           <div class="flex flex-col shrink-0">
-            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top</span>
+            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top average</span>
             <span class="text-[13px] font-semibold tabular-nums"
               [class.badge-muted]="overviewDeltaStatus() === 'muted'"
               [class.badge-success]="overviewDeltaStatus() === 'better'"
@@ -160,21 +160,22 @@
     }
 
     <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
-         Column widths (flex-1 / w-[6rem] / w-[6rem] / w-[6rem]) mirror compact-ability-row.html and
-         the finding-table numeric column so the two stacked cards share one column rhythm. -->
+         Grid tracks (1fr / 6rem / 6rem / 6rem) mirror compact-ability-row.html; a fixed grid keeps
+         every column in place even when casts/gap are hidden (a not-reached window), so top avg never
+         jumps to the far right. -->
     @if (w.detailRows.length) {
       <!-- Wrapper border is desktop-only; on mobile the per-row borders own the dividers (so the
            first row does not double up with this one). -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
         <!-- Column labels are desktop-only; on mobile each row carries inline labels instead. -->
-        <div class="hidden md:flex items-center gap-[14px] px-4 pb-1">
-          <span class="flex-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
+        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_6rem_6rem_6rem] gap-x-[14px] items-center px-4 pb-1">
+          <span class="col-start-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="w-[6rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
+            <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
           }
-          <span class="w-[6rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
+          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
           @if (!activeIsMuted()) {
-            <span class="w-[6rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
+            <span class="col-start-4 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {
