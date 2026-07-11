@@ -17,6 +17,10 @@ export { rowsFromEntries, onPlanFromEntries, bucketFindings, CAT_LABEL } from '.
   host: { class: 'block' },
   imports: [MatIconModule, MatButtonModule, GameIconComponent, CollapsibleTextComponent, FormatDurationPipe],
   templateUrl: './finding-table.html',
+  styles: `
+    /* finding-table: faint critical wash behind a critical finding row. */
+    .row-critical { background-color: color-mix(in srgb, var(--critical) 4%, transparent); }
+  `,
 })
 export class FindingTableComponent {
   readonly heading = input.required<string>();
