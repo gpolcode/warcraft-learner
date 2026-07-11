@@ -1,7 +1,8 @@
 <!--
   Sorted-impact table row.
-  Desktop (md+): a grid of 4 tracks (1fr / 6rem / 96px / 200px) that mirror the header row in
-  window-comparison.html; the last two tracks match the finding-table measured + fix columns.
+  Desktop (md+): a grid of 4 tracks (1fr / 96px / 96px / 90px) that mirror the header row in
+  window-comparison.html; casts aligns with the finding-table measured column and top avg + gap span
+  its fix column, so the casts|top-avg divider lines up with the measured|fix divider.
   The two wrapper divs use `md:contents` so their children promote into this single grid at md, and
   each cell is pinned with `md:col-start-*` + `md:row-start-1` - the row-start pin is required because
   the mobile DOM order (name, gap, top-avg, casts) is out of column order, and without it grid
@@ -10,7 +11,7 @@
   Mobile: the wrappers become two stacked lines - name + gap on top, then top-avg + casts with inline
   labels - so nothing overflows a phone width.
 -->
-<div class="md:grid md:grid-cols-[minmax(0,1fr)_6rem_96px_200px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
+<div class="md:grid md:grid-cols-[minmax(0,1fr)_96px_96px_90px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
 
   <!-- Line 1 (mobile): name + gap. Pinned to tracks 1 and 4 at md. -->
   <div class="flex items-baseline gap-2 min-w-0 md:contents">

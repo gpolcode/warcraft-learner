@@ -160,16 +160,17 @@
     }
 
     <!-- Per-ability breakdown: sorted-impact table (biggest gap first).
-         Grid tracks (1fr / 6rem / 96px / 200px) mirror compact-ability-row.html; the last two tracks
-         match the finding-table's measured + fix columns so the two stacked cards share the same
-         column boxes - casts is the extra column. A fixed grid also keeps every column in place when
-         casts/gap are hidden (a not-reached window), so top avg never jumps. -->
+         Grid tracks (1fr / 96px / 96px / 90px) mirror compact-ability-row.html and align with the
+         finding-table: casts sits under its measured column (96px), and top avg + gap together span
+         the same 200px region as its fix column (96 + 14 gap + 90), so the casts|top-avg divider
+         lines up with the measured|fix divider across the stacked cards. A fixed grid also keeps
+         every column in place when casts/gap are hidden (a not-reached window), so top avg never jumps. -->
     @if (w.detailRows.length) {
       <!-- Wrapper border is desktop-only; on mobile the per-row borders own the dividers (so the
            first row does not double up with this one). -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
         <!-- Column labels are desktop-only; on mobile each row carries inline labels instead. -->
-        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_6rem_96px_200px] gap-x-[14px] items-center px-4 pb-1">
+        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_96px_90px] gap-x-[14px] items-center px-4 pb-1">
           <span class="col-start-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
             <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
