@@ -121,18 +121,20 @@
         </div>
       </div>
       @if (w.spells.length || w.labels.length) {
-        <div class="flex flex-wrap items-center gap-2 mt-2.5">
-          <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5">Cooldowns</span>
-          @for (spell of w.spells; track spell.id) {
-            <span class="chip-onplan">
-              <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
-            </span>
-          }
-          @for (lbl of w.labels; track lbl) {
-            <span class="chip-onplan">
-              <span class="text-[13px] text-[var(--muted)]">{{ lbl }}</span>
-            </span>
-          }
+        <div class="mt-2.5">
+          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Recommended cooldowns</span>
+          <div class="flex flex-wrap items-center gap-2">
+            @for (spell of w.spells; track spell.id) {
+              <span class="chip-onplan">
+                <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
+              </span>
+            }
+            @for (lbl of w.labels; track lbl) {
+              <span class="chip-onplan">
+                <span class="text-[13px] text-[var(--muted)]">{{ lbl }}</span>
+              </span>
+            }
+          </div>
         </div>
       }
     </div>
@@ -167,11 +169,11 @@
         <div class="hidden md:flex items-center gap-[14px] px-4 pb-1">
           <span class="flex-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="w-[7.5rem] text-center text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
+            <span class="w-[7.5rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
           }
-          <span class="w-[9rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
+          <span class="w-[9rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
           @if (!activeIsMuted()) {
-            <span class="w-[9rem] text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
+            <span class="w-[9rem] text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {
