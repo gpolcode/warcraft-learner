@@ -184,3 +184,5 @@ Encounters loaded from `/data/specs/{spec}/encounters.json` (static file). Filte
 3. Each cluster: `defensive_name`, `spell_id`, `window_length_s`, absolute damage stats (`dmg_avg`/`dmg_min`/`dmg_max`/`dmg_stddev`), `dmg_pct_avg`, ability breakdown of damage sources, and `ref_game_id` (the gameID of the enemy dealing the window's main damage). The runtime then scores the player on covering each window (and mitigating well) and emits a window-miss finding for uncovered windows.
 
 Both cluster functions share the `groupByTime()` helper.
+
+The two sides use different end boundaries: the per-parse bench span counts damage on an inclusive end, and the runtime player measurement over the cluster windows is half-open `[start, end)`.
