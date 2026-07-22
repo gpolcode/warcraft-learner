@@ -563,7 +563,68 @@ Files with no findings list their audited tests in one consolidated entry; flagg
 
 ## Map slice
 
-(placeholder-map)
+### File: `frontend/src/app/pages/post-raid/map/map-transform.service.spec.ts`
+
+#### Test: `caps the kept set at MAX_TRACKED_ENEMIES, keeping the most-sampled` (line 191)
+* **Existing Assertion:** `expect(kept).toHaveLength(MAX_TRACKED_ENEMIES + 1); expect(kept.some(e => e.actorId === BOSS_OF_MANY)).toBe(true); expect(kept.some(e => e.actorId === 15)).toBe(true);`
+* **User/Domain Expected Outcome:** with six enemies (cap + 1), the cap keeps the five most-sampled and the boss is appended past the cap (`map-transform.service.ts:158-162`).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the fixture's one overflow enemy IS the boss (id 20, fewest samples, max HP). With the cap: kept = [11..15] + boss appended = 6 entries. With the cap deleted (`kept = enemies`): all 6 entries including the boss, no append - the identical set. Length, `some(20)` and `some(15)` all pass either way, so the cap this test names is undiscriminated here; only the boss-append is. (The sibling test at line 208, whose overflow is a non-boss add, is the one that actually catches a no-cap mutant.)
+* **Recommended Assertion:** add a seventh non-boss enemy so the cap truncates in this test too: entries `[11,60],[12,50],[13,40],[14,30],[15,20],[16,15],[BOSS_OF_MANY,10,BASE_HP+1]`, keep the length assertion, and add `expect(kept.some(e => e.actorId === 16)).toBe(false);`
+
+#### Test: `emits the player timeline and picks the boss by highest maxHp` (line 253)
+* **Existing Assertion:** `expect(parse.interval_s).toBe(POSITIONS_INTERVAL_S); expect(parse.player.length).toBeGreaterThan(0);`
+* **User/Domain Expected Outcome:** `interval_s` is the ingest resample cadence 1.5 s, and the player samples spanning t = 0..6 s resample to rows at exactly t = 0, 1.5, 3, 4.5, 6 (five rows - the test's own comment derives the cadence but never asserts it).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** `POSITIONS_INTERVAL_S` is imported from the SUT, so a wrong cadence constant (999) passes the first assertion; `length > 0` passes for mutants that mis-wire `durationS` or the interval into the resampler (interval 999 -> 1 row). The exact row times are fully derivable. The boss-pick assertions in the same test are valid.
+* **Recommended Assertion:** `const RESAMPLE_CADENCE_S = 1.5; expect(parse.interval_s).toBe(RESAMPLE_CADENCE_S); expect(parse.player.map(row => row[0])).toEqual([0, 1.5, 3, 4.5, 6]);`
+
+#### Tests: remaining 24 audited
+* **Existing Assertion:** resource-actor attribution (source default, `resourceActor 2` -> target, null arms); raw wire-unit grouping with ms -> s and per-actor sort; linear interpolation within one mapID (150/300 digit-exact) and verbatim nearest-sample snapping across a mapID change on both sides of the midpoint; coordinate rounding with null facing pass-through; `[t, x, y, mapID]` player rows with no facing element; boss picked by highest observed maxHp regardless of sample count; player and non-enemy actors excluded; the lowest-sampled non-boss dropped over the cap; the fetch shape (`includeResources: true`, `hostilityType: 'Enemies'`, never DamageDone); missing/transient/permanent bench arms.
+* **Correctness Status:** `VALID`
+* **Analysis:** the interpolation and mapID-snap traces were recomputed digit by digit in wire units; the fetch-shape test pins the two WCL position quirks (includeResources and hostility) that the wcl-data skill documents.
+
+### File: `frontend/src/app/pages/post-raid/map/map.service.spec.ts`
+
+#### Test: `dedupes enemies by gameId and sorts the boss first` (line 66)
+* **Existing Assertion:** `expect(listReferenceEnemies(positions)).toEqual([{ gameId: 100, name: 'Boss', isBoss: true }, { gameId: 200, name: 'Add', isBoss: false }]);`
+* **User/Domain Expected Outcome:** enemies deduped by gameId across parses AND the boss sorted first (`map.service.ts:115` sorts by `isBoss`).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the fixture's first parse lists the Boss before the Add, so the Map's insertion order is already boss-first and the stable sort is a no-op; a mutant with `.sort()` removed returns the identical array. The dedup half IS discriminated (gameId 200 appears in two parses and emits once); the sort half the name claims is unobservable with this fixture. No fixture in the file ever lists the boss after an add.
+* **Recommended Assertion:** reorder the first parse's enemies so the Add precedes the Boss, keeping the same boss-first `toEqual`.
+
+#### Tests: remaining 24 audited
+* **Existing Assertion:** flattened-position attribution by `resourceActor` with yards/radians scaling (digit-exact `/100`, `/1000`); the documented -90 degree facing offset pinned as an independent ground truth; boss gameId -> live actor mapping with null arms; bench load/missing/transient signal arms; panel open/close/clear state; deferred overlay fetch (0 calls before open, memoized on re-open, never fetched unopened); the exact 2-call fetch shape; permanent errors for no-player-positions and failed overlay; the stale-bench race guard (out-of-order resolve discriminated).
+* **Correctness Status:** `VALID`
+* **Analysis:** deferral and memoization are pinned by call counts that fail in both mutant directions; unit conversions recomputed against the wire contract.
+
+### File: `frontend/src/app/pages/post-raid/map/map-draw.spec.ts`
+
+#### Test: `builds a trail per parse across the window` (line 116)
+* **Existing Assertion:** `expect(trails[0].length).toBeGreaterThan(1);`
+* **User/Domain Expected Outcome:** the trail loop (`map-draw.ts:168`) steps tt = 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 (binary-exact floats) and every step has a valid reference and player sample, so exactly 7 points = `(pre + post) / step + 1`.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** `> 1` passes for step/window mutants (step ignored -> 3 points; pre dropped -> 4 points); the window extent and step handling the test names are undiscriminated while the exact count is fully derivable.
+* **Recommended Assertion:** `const TRAIL_POINT_COUNT = 7; // (pre 1.5 + post 1.5) / step 0.5 + 1` then `expect(trails[0]).toHaveLength(TRAIL_POINT_COUNT);` (optionally pin the tt sequence).
+
+#### Test: `parsePointsAt on prebuilt timelines matches the all-in-one topParsePoints` (line 152)
+* **Existing Assertion:** `expect(parsePointsAt(timelines, 3)).toEqual(topParsePoints(positions, { kind: 'boss' }, 3));`
+* **User/Domain Expected Outcome:** at t = 3 each parse's point is `{ t: 3, fwd: 5, right: 0, dist: 5, angleDeg: 0 }` (player at 500 raw = 5 yd forward of a facing-less boss at origin; effective facing = pi/2 - pi/2 = 0) - derivable independently.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** `topParsePoints` is literally defined as `parsePointsAt(buildParseTimelines(positions, selector), t)` (`map-draw.ts:179-181`), so both sides of the `toEqual` execute the same code on the same inputs; any bug in `positionAt`/`toReferenceLocal`/`parsePointsAt` corrupts expected and actual identically. The assertion can never fail.
+* **Recommended Assertion:** `const points = parsePointsAt(timelines, 3); expect(points).toHaveLength(2); expect(points[0]).toMatchObject({ t: 3, fwd: 5, right: 0, dist: 5, angleDeg: 0 });`
+
+#### Test: `parseTrailsOf on prebuilt timelines matches the all-in-one topParseTrails` (line 157)
+* **Existing Assertion:** `expect(parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5)).toEqual(topParseTrails(positions, { kind: 'boss' }, 3, 1.5, 1.5, 0.5));`
+* **User/Domain Expected Outcome:** two trails of exactly 7 points each, every point `{ t: tt, fwd: 5, right: 0, dist: 5, angleDeg: 0 }` - derivable independently.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** `topParseTrails` is the literal `parseTrailsOf(buildParseTimelines(...), ...)` composition (`map-draw.ts:184-189`); the assertion compares the SUT to itself and cannot fail under any geometry bug.
+* **Recommended Assertion:** `const trails = parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5); expect(trails).toHaveLength(2); expect(trails[0].map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]); expect(trails[0].every(p => p.dist === 5 && p.fwd === 5)).toBe(true);`
+
+#### Tests: remaining 16 audited
+* **Existing Assertion:** interpolation within a shared mapID; nearest-sample snapping across a mapID change with the `fraction >= 0.5` midpoint boundary pinned exactly; endpoint clamping inside tolerance and null beyond it; empty-timeline contract; the -90 degree facing offset discriminated (a mutant without the offset yields fwd 0, not 5); rotation-invariant distance; mapID carried for trail line-breaking; raw-to-yards/radians scaling digit-exact; anchor-time points per parse; enemy-reference selection by gameId with the absent-reference skip.
+* **Correctness Status:** `VALID`
+* **Analysis:** geometry recomputed by hand (hypot, atan2, rotation), including the facing-offset mutant check.
 
 ## Post-raid shell, live capture, pull overview
 
