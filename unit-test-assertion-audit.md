@@ -8,7 +8,7 @@
 - `TAUTOLOGICAL`: the assertion cannot fail for the behavior the test names - pure tautologies (constant vs constant, mock echo, test-authored state read back), vacuous passes (loops over possibly-empty arrays, unreachable guard branches), and under-discriminating setups (range asserts where an exact value is derivable, "boundary" fixtures that do not sit at the boundary, fixtures where the named contract and a broken mutant produce identical output).
 - `VALID`: the assertion pins independently re-derived correct behavior.
 
-**Headline result:** 0 INCORRECT, 26 TAUTOLOGICAL findings, remainder VALID. No assertion in the suite locks in a mathematically or semantically wrong expected value; the defects found are all assertions that pass regardless of whether the specific behavior they claim to verify works. Deliberate project conventions (strict threshold boundaries, total functions returning `0`/`null`/`[]`, pass-through API services, the embedded WCL secret, raw wire-unit map fixtures) were treated as contracts, not defects, and the suite's boundary tests almost universally honor them - the exceptions are flagged below.
+**Headline result:** 0 INCORRECT, 38 TAUTOLOGICAL-class findings, 1 documentation/code contract mismatch (surfaced separately, not a defective assertion), remainder VALID. No assertion in the suite locks in a mathematically or semantically wrong expected value; the defects found are all assertions that pass regardless of whether the specific behavior they claim to verify works. Deliberate project conventions (strict threshold boundaries, total functions returning `0`/`null`/`[]`, pass-through API services, the embedded WCL secret, raw wire-unit map fixtures) were treated as contracts, not defects, and the suite's boundary tests almost universally honor them - the exceptions are flagged below.
 
 Files with no findings list their audited tests in one consolidated entry; flagged files get one full entry per flagged test plus a consolidated entry for the rest.
 
@@ -469,7 +469,82 @@ Files with no findings list their audited tests in one consolidated entry; flagg
 
 ## Burst slice
 
-(placeholder-burst)
+### File: `frontend/src/app/pages/post-raid/burst-windows/burst-transform.service.spec.ts`
+
+#### Test: `ranks abilities by window damage, counts casts by name, and flags passive abilities` (line 155)
+* **Existing Assertion:** `expect(breakdown).toEqual([{ spell_id: EVISCERATE, damage: EVIS_DMG, casts: 1, is_passive: false }, { spell_id: BLACK_POWDER, damage: BP_DMG, casts: 0, is_passive: true }]);`
+* **User/Domain Expected Outcome:** cast counts are keyed by ability NAME because a WCL damage event's ability id differs from its cast id (the documented `SHADOW_BLADES` 121471 cast / `SHADOW_BLADES_DAMAGE` 279043 quirk); the SUT builds `castsByName` and looks up `nameOf(spell_id)` (`burst-transform.service.ts:159-169`).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** in the fixture the cast id equals the damage id (both `EVISCERATE`), so a mutant that counts casts by id (Map keyed on `abilityId`, looked up by `spell_id`) produces the identical `[1, 0]`; the by-name bridge the test names is undiscriminated. The passive flag and damage ranking are genuinely tested.
+* **Recommended Assertion:** add a case where `nameOf` maps both `SHADOW_BLADES` and `SHADOW_BLADES_DAMAGE` to `'Shadow Blades'`, damage lands on `SHADOW_BLADES_DAMAGE`, casts land on `SHADOW_BLADES`, and `expect(breakdown[0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, casts: 1 })`.
+
+#### Test: `detects and measures a damage-density burst as a single window` (line 198)
+* **Existing Assertion:** `expect(windows[0]).toMatchObject({ time_s: 10, window_length_s: 4, window_damage: 4 * BIN_DAMAGE });`
+* **User/Domain Expected Outcome:** `window_damage` is the sum of `amount + absorbed` per hit (`burst-transform.service.ts:190-192`); an absorbed-only hit must survive the `> 0` filter and count.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the current numeric result is exact (dense bins trimmed to `{10,13}`, half-open `[10000,14000)` sums `4 x 1000`), but no `damage()` call anywhere in the file passes `absorbed`, so deleting `+ (event.absorbed ?? 0)` from both the filter and the map passes all 47 tests. The amount-plus-absorbed definition is unvalidated on the burst side (same class of gap as the defensive slice).
+* **Recommended Assertion:** build the burst with one shielded hit, e.g. `damage(SHADOW_BLADES_DAMAGE, 10, BIN_DAMAGE - 400, { absorbed: 400 })`, keeping `window_damage: 4 * BIN_DAMAGE`.
+
+#### Test: `keeps a dense window at or above the significance share of fight damage` (line 253)
+* **Existing Assertion:** `expect(windows.some(w => w.time_s === 10 && w.window_damage === significantDamage)).toBe(true);`
+* **User/Domain Expected Outcome:** the significance drop is strict `<` (`burst-transform.service.ts:231`), so a window at exactly `SIGNIFICANCE_PCT` is KEPT - the "at" the test name promises.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the fixture is `600/10600 = 5.66%`, 3.8x the 1.5% boundary, and the paired drop test is `0.99%` - both far from the edge, so mutating `<` to `<=` (dropping the exactly-at window) passes both. This violates the project's mandatory at-the-boundary pairing convention. A float-exact boundary fixture is constructible (spike 150 in a 1000-bin fight -> `150/10000 = 0.015` exactly).
+* **Recommended Assertion:** `const windows = scanWindows([damage(EVISCERATE, 10, 150), damage(BLACK_POWDER, 500, 9850)], 1_000_000); expect(windows.some(w => w.time_s === 10 && w.window_damage === 150)).toBe(true);`
+
+#### Tests: `counts a killing-blow hit at exactly fight end in the fight-closing window` (line 272) and `keeps a last-bin-only window whose only damage is a killing blow at exact fight end` (line 281)
+* **Existing Assertion:** `expect(closing?.window_damage).toBe(4 * BIN_DAMAGE + KILLING_BLOW_DMG);` and `expect(closing?.window_damage).toBe(KILLING_BLOW_DMG);`
+* **User/Domain Expected Outcome:** the documented burst contract (warcraft-architecture skill) states `window_damage` is measured over the **half-open** `[start, end)` with no exception; under that a hit at exactly `endMs` is excluded, making the first expected value `4000` (not `9000`) and the second window nonexistent.
+* **Correctness Status:** `VALID` (assertion pins intentional behavior) - but flags a **doc/code contract mismatch that must be reconciled**.
+* **Analysis:** the SUT deliberately makes the **fight-closing** window end-inclusive (`closesFight ? hit[0] <= endMs : hit[0] < endMs`, `burst-transform.service.ts:227-229`) with a source comment: `bucketDamagePerBin` clamps the fight-end killing blow into the last bin, so excluding it at the window layer would drop real, already-binned damage. Recomputing the SUT gives exactly the asserted 9000 and 2000. This is the more domain-correct behavior (a killing blow is real burst damage), so the assertions are not wrong - but the architecture skill's blanket "half-open `[start, end)`" omits this fight-closing exception. The test is faithful to the code; the **documentation is incomplete**. This is the one substantive code/contract divergence the audit surfaced, and it is a doc defect, not a test-assertion defect.
+* **Recommended Action:** amend the burst-window definition in the warcraft-architecture skill to document the fight-closing inclusive end (after which these two assertions stand as correct); do NOT change the assertions to strict half-open, which would canonize dropping the killing blow.
+
+#### Test: `emits a cluster present in enough parses, with common cds + ability stats` (line 331)
+* **Existing Assertion:** `expect(out[0]).toMatchObject({ time_s: 10.5, common_cds: ['Shadow Blades'], dmg_avg: BIN_DAMAGE, window_length_s: 6 });`
+* **User/Domain Expected Outcome:** `time_s` is the MEDIAN of member `time_s` and `window_length_s` is the MEAN of member lengths (`burst-transform.service.ts:305,311`); `dmg_stddev`/`dmg_min`/`dmg_max` are part of the documented absolute-damage stat block.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** both members have `window_length_s = 6` (mean = median = min = max = first) and times `[10, 11]` (median 10.5 = mean 10.5), so the asserted values hold under any aggregate: mutating `mean` to `max`/`min`/`first`, or `median` to `mean`, passes. `dmg_stddev`/`dmg_min`/`dmg_max` are asserted nowhere in the file even though the sibling dedupe fixture makes them exactly derivable (damages `[900, 700]` -> min 700, max 900, sample stddev `sqrt(20000) = 141`).
+* **Recommended Assertion:** give members differing lengths and 3 skewed times (lengths `[4, 5, 9]` -> 6 only under mean; times `[10, 11, 14]` -> 11 only under median), and add `expect(out[0]).toMatchObject({ dmg_min: 700, dmg_max: 900, dmg_stddev: 141 });`.
+
+#### Test: `drops a cluster present in fewer parses than the consensus floor` (line 348)
+* **Existing Assertion:** `expect(clusterParseWindows(three, 10)).toHaveLength(0);`
+* **User/Domain Expected Outcome:** the consensus gate is `max(2, CLUSTER_MIN_FRAC x samples)` (`burst-transform.service.ts:269`); the absolute-2 floor exists so a single parse is never "consensus" at small sample counts (where the fraction alone would fall below 2).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** across every cluster fixture in the file (floors 4/2.4/2 against member counts 3/2/2/2/4), `max(2, frac)` and plain `frac` produce identical keep/drop outcomes, so deleting the `max(2, ...)` passes all 47 tests. The absolute-2 arm is never discriminated.
+* **Recommended Assertion:** add `expect(clusterParseWindows([window(10)], 2)).toHaveLength(0); // single parse: frac arm 0.8 would wrongly keep it; the 2-floor drops it`.
+
+#### Test: `gates and counts clustered abilities by distinct parses (1 of 4 does not surface)` (line 397)
+* **Existing Assertion:** `expect(out[0].ability_breakdown).toHaveLength(1); expect(out[0].ability_breakdown[0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, count: 4 });`
+* **User/Domain Expected Outcome:** `MEMBER_MAJORITY_FRAC = 0.5` with `>=` means an ability or cd present in exactly half the members surfaces (2 of 4: `2 >= 2`); the same filter gates `common_cds`.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the fixtures only exercise 4/4 (kept) and 1/4 (dropped), and in every cluster fixture the cd `'Shadow Blades'` is in 100% of members, so mutating `>=` to strict `>` (an exactly-half ability/cd vanishing) fails no test, and the `common_cds` majority filter has no discriminating fixture at all.
+* **Recommended Assertion:** add a 2-of-4 ability expecting `count: 2` in the breakdown, plus a cd in 2 of 4 members (expect present) and one in 1 of 4 (expect absent).
+
+#### Tests: remaining 38 audited
+* **Existing Assertion:** name-to-id mapping with falsy-id skip; per-cooldown cast collection in fight-relative seconds; bin bucketing with clamp; forward rolling sum with end truncation and the `rollBins === 1` identity; dense-run opening at strict `>=` threshold with the one-below non-trigger; gap bridging at exactly `mergeGapBins` and splitting at `+1`; run trimming to damage-carrying bins; half-open cast/hit exclusion at the window end with the just-inside inclusion; top-6 breakdown cap; synthetic-id folding; the density threshold `max(THRESHOLD_MULT x mean, RATE_QUANTILE quantile)` pinned exactly at 48 with the 47 non-trigger (machine-verified); significance drop below share; bridge/split of dense runs; distinct-parse consensus counting (windows vs parses) with the biggest-window-per-parse dedupe; the `MEMBER_MAJORITY_FRAC` floor at exactly 4 of 10; passive-only-when-every-member flag; end-to-end cluster bench with icon projection; backfill past a private parse to 10; missing on no cooldowns and error pass-through.
+* **Correctness Status:** `VALID`
+* **Analysis:** the per-parse window detection (binning, rolling, threshold, trim, half-open interior boundary) is pinned with strict boundary pairs and machine-verified arithmetic; the flagged gaps are confined to the absorbed term, the cluster-aggregate discrimination, and three unpinned boundaries.
+
+### File: `frontend/src/app/pages/post-raid/burst-windows/burst.service.spec.ts`
+
+#### Test: `below avg band -> warn` (the `it.each` at lines 27-35)
+* **Existing Assertion:** `expect(burstWindowStatus(player, 1000, 800, 100, notReached)).toEqual({ status, icon });` with rows at player damage 650/850/950/1000.
+* **User/Domain Expected Outcome:** both band comparisons are strict `<` (`burst.service.ts:39-40`): with `topAvg 1000, topMin 800, stddev 100`, player damage exactly 700 is NOT bad (`700 < 700` false) -> warn, and exactly 900 is NOT warn -> good. The project convention hard-requires the at-boundary pair.
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** all five rows are interior (650/850/950/1000), so mutating either `<` to `<=` misclassifies the edge damage and yet passes every row plus the bench-only test; the strict band edges the SUT (and the spec's own comment) define are unpinned.
+* **Recommended Assertion:** add rows `{ player: 700, notReached: false, status: 'warn' }` and `{ player: 900, notReached: false, status: 'good' }`.
+
+#### Test: `sums player damage inside the window and counts casts by ability name` (line 168)
+* **Existing Assertion:** `expect(out[0].window_damage).toBe(1000); expect(out[0].ability_breakdown![0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, damage: 1000 });`
+* **User/Domain Expected Outcome:** the sum is `amount + absorbed` (`burst.service.ts:126-128`) and casts are counted by name so a damage row picks up casts made under a different id with the same name (SUT comment, lines 130-131).
+* **Correctness Status:** `TAUTOLOGICAL`
+* **Analysis:** the sum 1000 is correct, but no `expect` in the test touches `casts` despite the name, and with the fixture's names the breakdown row's `casts` is 0 (the two casts have no same-name damage row, and `toMatchObject` ignores the unasserted field); the only cast assertion in the file is a zero elsewhere. No fixture carries `absorbed` either. A mutant hard-coding `casts: 0`, or one dropping `+ (event.absorbed || 0)`, passes every test.
+* **Recommended Assertion:** map both `SHADOW_BLADES_DAMAGE` and `SHADOW_BLADES` to `'Shadow Blades'`, give one hit an absorbed share, and assert `expect(out[0].ability_breakdown![0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, damage: 1000, casts: 2 })`.
+
+#### Tests: remaining 24 audited
+* **Existing Assertion:** the window status matrix (not-reached/missing -> muted; far below min -> bad; within range -> good; bench-only -> neutral info overriding every other state); name-to-id routing with placeholder labels; the indexed clip key; player-damage join onto normalized melee/synthetic bench rows with `playerCasts` 0-vs-null discrimination; per-window player pairing with the detail join; passive detail flag; muted-and-null for an unreached window; the runtime half-open exclusion at exactly `time_s + length` pinned exactly; a low-ranked player ability surfacing through the join (a top-6 player cap would fail it); data-source error propagation; the missing-fight informational view; and the transient WCL-failure error (no silent bench-only fallback).
+* **Correctness Status:** `VALID`
+* **Analysis:** the runtime half-open boundary and the status matrix are pinned exactly; the melee/synthetic normalization join is recomputed.
 
 ## Defensive slice
 
@@ -682,4 +757,32 @@ Files with no findings list their audited tests in one consolidated entry; flagg
 
 ## Summary of findings
 
-(placeholder-summary)
+Across all 57 spec files (844 assertions' worth of tests), the audit found **zero assertions that lock in an incorrect expected value**. Every numeric expectation that was recomputed by hand matched the domain-correct result, and every status/taxonomy/routing expectation matched the SUT's intended contract. The suite's boundary discipline is unusually good: the great majority of threshold tests pair a "triggers" case with a strict at-the-boundary "does not trigger" case, exactly as the project convention requires.
+
+What the audit did find is **38 assertions that pass regardless of whether the behavior they name actually works** - the `TAUTOLOGICAL` class in this report. These fall into a few recurring shapes:
+
+| Shape | What makes it non-discriminating | Findings |
+|---|---|---|
+| Self-comparison | `toEqual` between a function and its own literal composition; cannot fail under any bug | M5, M6 |
+| Constant vs constant / SUT-constant echo | both sides are the SUT's own exported constant, or a test-local constant compared to another | A2, ING-speclimit, R3 (line 372), C3 |
+| Test-authored / framework state read back | asserts state the test itself set, or a raw `input()` the SUT never transforms | S3, C3 |
+| Absent-default collision | the "explicit" value equals the fallback/default, so the branch under test contributes nothing | S2, M1, T1, C1 |
+| Range assert where an exact value is derivable | `toBeGreaterThan(0)` / `>= floor` on outputs whose exact value is computable | R1, R2, D2, D4 |
+| Boundary not sat on | a "boundary" test whose fixture sits far from the strict `<`/`>=` edge, so a `<=`/`>` mutant passes | R3, B3, B8 |
+| Contract clause never fixtured | `amount + absorbed` with no `absorbed` in any fixture; by-name counting where the cast id equals the damage id; median-vs-mean on degenerate members; the `max(2, ...)` floor never reached | B1, B2, B5, B6, B7, B9, D1, D3, D5, G1, G2, S1 |
+| Vacuous / duplicate coverage | a loop over a possibly-empty iterable with no length check; a disjunct satisfied by the wrong arm | A3, C2, ING-partition |
+| Tie clause unexercised | a "stable for equal ranks" claim with no equal-rank pair; a sort that is a no-op on an already-ordered fixture | A1, M2, M3, M4, B4-adjacent |
+
+None of these is a shipped-product bug on its own - the current code produces the right answer for the fixtures given. Each is a **latent gap**: the day someone refactors the SUT (swaps a sample stddev for population, drops an `absorbed` term, flips a strict boundary, changes a sort key, renames a cast-id mapping), the test that exists to catch it stays green. The highest-leverage repairs are the ones guarding load-bearing math that has no other coverage: `R1`/`R2` (the only tests touching `uses_per_min` and the p90 downtime floor that feed the lost-cast and efficiency findings), `D1`/`D5`/`B2`/`B9` (the `amount + absorbed` damage definition, which every window-damage comparison depends on and which no fixture exercises), and `G1`/`G2` (the talent-key sort order and enchant-name resolution that gate the ingest-vs-runtime gear join).
+
+### The one code/contract divergence
+
+`B4` is not a defective assertion - it is a **documentation gap**. The burst transform deliberately treats the fight-closing window's end as inclusive (`burst-transform.service.ts:227-229`, with a source comment: the fight-end killing blow is already clamped into the last bin by `bucketDamagePerBin`, so excluding it at the window layer would drop real damage), while interior windows stay half-open. The two tests at `burst-transform.service.spec.ts:272` and `:281` correctly pin this. But the warcraft-architecture skill documents `window_damage` over an unconditional half-open `[start, end)` with no fight-closing exception. The code's behavior is the more domain-correct of the two (a killing blow is real burst damage); the fix is to **amend the skill doc** to state the exception, not to change the assertions.
+
+### Limitations of this method (what "0 INCORRECT" does and does not mean)
+
+"0 INCORRECT" is scoped precisely: **no assertion contradicts the code as written, and no recomputed expected value is wrong**. It is not proof that the analysis math is correct. A per-file assertion sweep compares each expectation against the SUT and against first-principles derivation, but it has no independent oracle for the domain math, so a locked-in **wrong-but-internally-consistent** value - a mis-scaled coefficient, an off-by-one window bound, a wrong `uses_per_min` divisor that the fixture and the code happen to agree on - would pass all 844 tests and survive this audit untouched. Tellingly, the audit's own dominant finding (fixtures that never exercise the discriminating input) is exactly the condition under which such a bug hides. Three defect classes are structurally outside a per-file sweep and are **not** claimed to be clear: (1) a shared fixture factory reused across files would mask a common bug identically in every caller, each reading as internally consistent in isolation; (2) slice math validated only end-to-end against helpers the production code also calls is self-consistent, not independently verified; (3) a shared helper asserted only transitively through its callers has its constants sat on nowhere. Any snapshot/golden-style assertion captured from current output rather than derived independently is a regression lock, not a correctness check. Establishing correctness of the analysis math would require a separate effort: an independent expected-value oracle (hand-computed or a reference implementation) and a cross-file fixture-provenance check. This audit establishes that the suite's assertions are sound and mostly discriminating; it does not certify the numbers they pin.
+
+### Scope notes
+
+This audit judged assertion validity only. It did not evaluate test structure, coverage breadth, naming, or missing test cases except where a missing assertion makes an existing one non-discriminating (which is the substance of the `TAUTOLOGICAL` findings above). Deliberate project conventions - strict threshold boundaries, total functions returning `0`/`null`/`[]` on empty input, the two pass-through API services, the embedded WCL client-credentials secret, and the map slice's raw wire-unit fixtures - were treated as contracts and are not defects. Recommended assertions are provided per finding; they are drop-in replacements or additions that make each test fail under the mutant it currently misses.
