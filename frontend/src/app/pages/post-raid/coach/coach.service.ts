@@ -24,6 +24,7 @@ interface LanguageModelApi {
     initialPrompts?: { role: 'system' | 'user' | 'assistant'; content: string }[];
     expectedInputs?: { type: 'text'; languages: string[] }[];
     expectedOutputs?: { type: 'text'; languages: string[] }[];
+    outputLanguage?: string;
     monitor?: CreateMonitor;
   }): Promise<PromptSession>;
 }
@@ -40,6 +41,7 @@ interface SummarizerApi {
     format?: 'plain-text' | 'markdown';
     length?: 'short' | 'medium' | 'long';
     sharedContext?: string;
+    outputLanguage?: string;
     monitor?: CreateMonitor;
   }): Promise<SummarizerSession>;
 }
@@ -227,6 +229,8 @@ export class CoachFeatureService {
       initialPrompts: [{ role: 'system', content: COACH_SYSTEM_PROMPT }],
       expectedInputs: [{ type: 'text', languages: ['en'] }],
       expectedOutputs: [{ type: 'text', languages: ['en'] }],
+      // Chromium attests output safety on this option; without it every request logs a console warning.
+      outputLanguage: 'en',
       monitor: this._monitor,
     });
     return { chunks: session.promptStreaming(buildCoachPrompt(context, rotation, defensive)), destroy: () => session.destroy() };
@@ -239,6 +243,7 @@ export class CoachFeatureService {
     const session = await api.create({
       type: 'key-points', format: 'plain-text', length: 'short',
       sharedContext: SUMMARIZER_CONTEXT,
+      outputLanguage: 'en',
       monitor: this._monitor,
     });
     return { chunks: session.summarizeStreaming(buildCoachPrompt(context, rotation, defensive)), destroy: () => session.destroy() };
