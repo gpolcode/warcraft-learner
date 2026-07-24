@@ -1,17 +1,11 @@
 import { expect, test, Page } from '@playwright/test';
+import { opensThePositioningMap, shows, showsAnAbility, showsAWindowChip } from './support';
 
 // A finished WCL report is immutable, so every stat derived from the player's own log is pinned exactly.
 const REPORT_URL = 'https://www.warcraftlogs.com/reports/YkVMTyfmFLtXZ1NQ?fight=last';
 const PLAYER_NAME = 'Elsahr';
 // Mirrors POST_RAID_KEY in core/services/selection-store.ts; the sticky name makes the one analysis target Elsahr instead of the roster's first player.
 const STICKY_PLAYER_KEY = 'wl.sel.postRaid';
-
-// The auto-selected last boss pull of the report: fight 27, a kill at 454.4s.
-const LAST_FIGHT_LABEL = 'Crown of the Cosmos - Kill - 7:34';
-const PLAYER_SPEC_LABEL = 'Subtlety Rogue';
-const PULL_DURATION = '7:34';
-// 29,487,085 damage done over the 454.4s pull, through formatDamage: 64,892 DPS renders as 65K.
-const PLAYER_DPS = '65K';
 
 // The analysis spans the report fetch, playerDetails, and every card's WCL event queries.
 const ANALYZE_TIMEOUT_MS = 120_000;
@@ -47,54 +41,50 @@ test.afterAll(async () => {
 });
 
 test('analyzing the report selects the last pull and the sticky player', async () => {
-  await expect(page.getByRole('combobox', { name: 'Fight' })).toContainText(LAST_FIGHT_LABEL);
+  await expect(page.getByRole('combobox', { name: 'Fight' })).toContainText('Crown of the Cosmos - Kill - 7:34');
   const player = page.getByRole('combobox', { name: 'Player' });
   await expect(player).toContainText(PLAYER_NAME);
-  await expect(player.getByAltText(PLAYER_SPEC_LABEL)).toBeVisible();
+  await expect(player.getByAltText('Subtlety Rogue')).toBeVisible();
 });
 
 test('pull overview reports the DPS, duration, and outcome of the pull', async () => {
-  const card = page.locator('wl-pull-overview');
-  await expect(card.getByText('Your DPS')).toBeVisible();
-  await expect(card.getByText(PLAYER_DPS, { exact: true }).first()).toBeVisible();
-  await expect(card.getByText(PULL_DURATION).first()).toBeVisible();
-  await expect(card.getByText('Boss defeated')).toBeVisible();
+  const pullOverview = page.locator('wl-pull-overview');
+  await shows(pullOverview, 'Your DPS');
+  // 29,487,085 damage done over the 454.4s pull: 64,892 DPS renders as 65K.
+  await shows(pullOverview, '65K');
+  await shows(pullOverview, '7:34');
+  await shows(pullOverview, 'Boss defeated');
 });
 
 test('rotation benchmarks the offensive cooldowns against top parses', async () => {
-  const card = page.locator('wl-rotation');
-  await expect(card.getByText('Offensive cooldowns vs top parses.')).toBeVisible();
-  await expect(card.locator('wl-game-icon').first()).toBeVisible();
+  const rotation = page.locator('wl-rotation');
+  await shows(rotation, 'Offensive cooldowns vs top parses.');
+  await showsAnAbility(rotation);
 });
 
 test('burst windows compare the player damage against the top-parse windows', async () => {
-  const card = page.locator('wl-burst-windows');
-  await expect(card.getByText('Damage in each burst window vs top parses.')).toBeVisible();
-  await expect(card.getByRole('option').first()).toBeVisible();
-  await expect(card.getByText(WINDOW_RANGE).first()).toBeVisible();
-  await expect(card.getByText('burst', { exact: true })).toBeVisible();
+  const burstWindows = page.locator('wl-burst-windows');
+  await shows(burstWindows, 'Damage in each burst window vs top parses.');
+  await showsAWindowChip(burstWindows);
+  await shows(burstWindows, WINDOW_RANGE);
+  await shows(burstWindows, 'burst');
 });
 
 test('defensives benchmark the damage taken in top-parse defensive windows', async () => {
-  const card = page.locator('wl-defensive');
-  await expect(card.getByText('Damage taken in top-parse defensive windows vs top parses.')).toBeVisible();
-  await expect(card.getByRole('option').first()).toBeVisible();
+  const defensives = page.locator('wl-defensive');
+  await shows(defensives, 'Damage taken in top-parse defensive windows vs top parses.');
+  await showsAWindowChip(defensives);
 });
 
 test('gear compares talents, trinkets, and enchants against the consensus', async () => {
-  const card = page.locator('wl-gear');
-  await expect(card.getByText('Gear vs top parses.')).toBeVisible();
-  await expect(card.getByText('Talents', { exact: true })).toBeVisible();
-  await expect(card.getByText('Trinkets', { exact: true })).toBeVisible();
-  await expect(card.getByText('Enchants', { exact: true })).toBeVisible();
+  const gear = page.locator('wl-gear');
+  await shows(gear, 'Gear vs top parses.');
+  await shows(gear, 'Talents');
+  await shows(gear, 'Trinkets');
+  await shows(gear, 'Enchants');
 });
 
 test('the positioning map opens with the fight canvas', async () => {
   test.setTimeout(MAP_READY_TIMEOUT_MS + SLACK_MS);
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
-  await expect(openMap).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
-  await openMap.click();
-  await expect(page.getByText('Positioning')).toBeVisible();
-  await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await page.getByRole('button', { name: 'Close map' }).click();
+  await opensThePositioningMap(page, MAP_READY_TIMEOUT_MS);
 });
