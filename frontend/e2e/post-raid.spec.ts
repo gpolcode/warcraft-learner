@@ -20,8 +20,8 @@ const MAP_READY_TIMEOUT_MS = 60_000;
 // Navigation and form entry that surround the long waits above.
 const SLACK_MS = 30_000;
 
-// formatDuration range in the window detail header: "0:05 - 0:21".
-const WINDOW_RANGE = /^\d+:\d{2} - \d+:\d{2}$/;
+// formatDuration range in the window detail header ("0:05 - 0:21"); unanchored because the span's raw text keeps template newlines.
+const WINDOW_RANGE = /\d+:\d{2} - \d+:\d{2}/;
 
 // Serial on one shared page: the report is analyzed exactly once and every use case asserts against that single load, so a run costs one WCL analysis.
 test.describe.configure({ mode: 'serial' });
@@ -71,7 +71,7 @@ test('burst windows compare the player damage against the top-parse windows', as
   const card = page.locator('wl-burst-windows');
   await expect(card.getByText('Damage in each burst window vs top parses.')).toBeVisible();
   await expect(card.getByRole('option').first()).toBeVisible();
-  await expect(card.getByText(WINDOW_RANGE)).toBeVisible();
+  await expect(card.getByText(WINDOW_RANGE).first()).toBeVisible();
   await expect(card.getByText('burst', { exact: true })).toBeVisible();
 });
 

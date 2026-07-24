@@ -7,8 +7,8 @@ const ENCOUNTER_NAME = 'Crown of the Cosmos';
 
 // formatDuration output: "0:12", "7:34".
 const CLOCK_VALUE = /^\d+:\d{2}$/;
-// formatDamage output: "2.4M", "875K", "930".
-const DAMAGE_VALUE = /^\d+(\.\d+)?[KM]?$/;
+// formatDamage output at bench-window scale, so the suffix is mandatory: "875K", "2.4M".
+const DAMAGE_VALUE = /^\d+(\.\d+)?[KM]$/;
 // Bench consensus share: "57%".
 const CONSENSUS_PCT = /^\d+%$/;
 
