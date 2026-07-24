@@ -33,6 +33,8 @@ export class BurstWindowsComponent {
   readonly busyChange = output<boolean>();
   /** Whether the top-parse bench exists. The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
+  /** Comparison windows for the page to feed the coach card. */
+  readonly windowsChange = output<ComparisonWindow[]>();
 
   protected readonly available = signal(true);
   protected readonly error = signal<RenderableLoadError | null>(null);
@@ -61,6 +63,7 @@ export class BurstWindowsComponent {
             this.available.set(true);
             this.availableChange.emit(true);
             this._windows.set(result.value.windows);
+            this.windowsChange.emit(result.value.windows);
             this._anchors.set(result.value.anchors);
             this._clipAnchors.set(result.value.clipAnchors);
           } else {
@@ -69,6 +72,7 @@ export class BurstWindowsComponent {
             this.available.set(false);
             this.availableChange.emit(false);
             this._windows.set([]);
+            this.windowsChange.emit([]);
             this._anchors.set([]);
             this._clipAnchors.set([]);
           }

@@ -8,6 +8,20 @@ import { LatestLoad } from '../../../shared/latest-load';
 import { logWarn } from '../../../core/log';
 import { GearFeatureService, GearComparisonView, emptyGearView } from './gear.service';
 
+/** Project the comparison view into the prose notes the coach card grounds its answers in. */
+export function gearContextLines(view: GearComparisonView): string[] {
+  if (!view.comparison) return [];
+  const lines: string[] = [];
+  if (view.talentStatus.note) lines.push(`Talents: ${view.talentStatus.note}`);
+  for (const row of view.trinketRows) {
+    if (row.note) lines.push(`Trinket (${row.slotLabel}): ${row.name}. ${row.note}`);
+  }
+  for (const row of view.enchantRows) {
+    if (row.status !== 'ok' && row.note) lines.push(`Enchant (${row.slotName}): ${row.note}`);
+  }
+  return lines;
+}
+
 /**
  * Gear card. Dual-mode: with a `report`/`fight`/`player` selection (post-raid) it compares
  * the player's gear against the bench; with only `spec`/`encounterId` it shows the consensus.
@@ -32,6 +46,8 @@ export class GearComponent {
   readonly busyChange = output<boolean>();
   /** Whether the top-parse gear bench exists. The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
+  /** Prose gear notes for the page to feed the coach card. */
+  readonly notesChange = output<string[]>();
 
   private readonly _view = signal<GearComparisonView>(emptyGearView());
   protected readonly view = this._view.asReadonly();
@@ -68,12 +84,14 @@ export class GearComponent {
             this._view.set(result.value);
             this._available.set(true);
             this.availableChange.emit(true);
+            this.notesChange.emit(gearContextLines(result.value));
           } else {
             if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
             this._error.set(result.error.kind === 'missing' ? null : result.error);
             this._view.set(emptyGearView());
             this._available.set(false);
             this.availableChange.emit(false);
+            this.notesChange.emit([]);
           }
         },
         settled: () => this.busyChange.emit(false),

@@ -38,6 +38,8 @@ export class DefensiveComponent {
   readonly availableChange = output<boolean>();
   /** Raw findings for the page to feed the coach card. */
   readonly findingsChange = output<AnalysisFinding[]>();
+  /** Comparison windows for the page to feed the coach card. */
+  readonly windowsChange = output<ComparisonWindow[]>();
 
   protected readonly available = signal(true);
   protected readonly error = signal<RenderableLoadError | null>(null);
@@ -71,6 +73,7 @@ export class DefensiveComponent {
             this._spellIdsByName.set(view.spellIdsByName);
             this._iconByName.set(view.iconByName);
             this._windows.set(view.windows);
+            this.windowsChange.emit(view.windows);
             this._anchors.set(view.anchors);
             this._clipAnchors.set(view.clipAnchors);
           } else {
@@ -83,6 +86,7 @@ export class DefensiveComponent {
             this._spellIdsByName.set({});
             this._iconByName.set({});
             this._windows.set([]);
+            this.windowsChange.emit([]);
             this._anchors.set([]);
             this._clipAnchors.set([]);
           }

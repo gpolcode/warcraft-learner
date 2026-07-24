@@ -15,6 +15,7 @@ import { WclApiService } from '../../core/services/wcl-api';
 import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
 import { AnalysisFinding } from '../../core/models/analysis.models';
+import { ComparisonWindow } from '../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -246,9 +247,12 @@ export class PostRaidComponent {
   protected readonly benchAvailable = computed(() =>
     this.rotationAvailable() || this.burstAvailable() || this.defensiveAvailable() || this.gearAvailable());
 
-  // Raw findings the rotation/defensive cards emit; the coach card debriefs them on-device.
+  // Analysis data the cards emit; the coach card grounds its on-device debrief chat in it.
   protected readonly rotationFindings = signal<AnalysisFinding[]>([]);
   protected readonly defensiveFindings = signal<AnalysisFinding[]>([]);
+  protected readonly burstWindows = signal<ComparisonWindow[]>([]);
+  protected readonly defensiveWindows = signal<ComparisonWindow[]>([]);
+  protected readonly gearNotes = signal<string[]>([]);
 
   // `notice` carries the non-failure states the taxonomy does not cover (invalid code, zero-pull report).
   protected readonly loadError = signal<RenderableLoadError | null>(null);

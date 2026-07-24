@@ -9,6 +9,7 @@ import {
   GearFeatureService, benchToStats, buildGearView, buildBenchGearView,
   buildCharacterGear, emptyGearView,
 } from './gear.service';
+import { gearContextLines } from './gear';
 
 function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   return {
@@ -168,5 +169,29 @@ describe('GearFeatureService', () => {
   it('loadComparisonView propagates a missing bench before fetching player gear', async () => {
     const result = await configure(missing('Not yet ingested.'), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
     expect(result).toEqual(missing('Not yet ingested.'));
+  });
+});
+
+describe('gearContextLines', () => {
+  it('projects only actionable notes from a comparison view and skips the bench-only view', () => {
+    const view = {
+      ...emptyGearView(),
+      comparison: true,
+      talentStatus: { status: 'warn' as const, note: 'Off-meta build.' },
+      trinketRows: [
+        { slotLabel: 'Trinket 1', id: 1, name: 'Signet', icon: '', status: 'warn' as const, topPct: 10, note: '80% run another trinket.' },
+        { slotLabel: 'Trinket 2', id: 2, name: 'Idol', icon: '', status: 'ok' as const, topPct: 80, note: null },
+      ],
+      enchantRows: [
+        { slotName: 'Chest', status: 'warn' as const, name: '', topPct: null, note: 'Not enchanted. Top: 91%.' },
+        { slotName: 'Legs', status: 'ok' as const, name: 'Sunset', topPct: 70, note: null },
+      ],
+    };
+    expect(gearContextLines(view)).toEqual([
+      'Talents: Off-meta build.',
+      'Trinket (Trinket 1): Signet. 80% run another trinket.',
+      'Enchant (Chest): Not enchanted. Top: 91%.',
+    ]);
+    expect(gearContextLines({ ...view, comparison: false })).toEqual([]);
   });
 });

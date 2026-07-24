@@ -112,7 +112,10 @@
           [kill]="selectedFight()?.kill ?? false"
           [durationS]="selectedFight()?.duration_s ?? 0"
           [rotationFindings]="rotationFindings()"
-          [defensiveFindings]="defensiveFindings()">
+          [defensiveFindings]="defensiveFindings()"
+          [burstWindows]="burstWindows()"
+          [defensiveWindows]="defensiveWindows()"
+          [gearNotes]="gearNotes()">
         </wl-coach>
 
         <wl-rotation
@@ -137,7 +140,8 @@
           (openMap)="onOpenMap($event)"
           (openClip)="onOpenClip($event)"
           (busyChange)="burstBusy.set($event)"
-          (availableChange)="burstAvailable.set($event)">
+          (availableChange)="burstAvailable.set($event)"
+          (windowsChange)="burstWindows.set($event)">
         </wl-burst-windows>
 
         <wl-defensive
@@ -152,7 +156,8 @@
           (openClip)="onOpenClip($event)"
           (busyChange)="defensiveBusy.set($event)"
           (availableChange)="defensiveAvailable.set($event)"
-          (findingsChange)="defensiveFindings.set($event)">
+          (findingsChange)="defensiveFindings.set($event)"
+          (windowsChange)="defensiveWindows.set($event)">
         </wl-defensive>
 
         <wl-gear
@@ -162,7 +167,8 @@
           [fight]="selectedFightId()!"
           [player]="selectedPlayerId()!"
           (busyChange)="gearBusy.set($event)"
-          (availableChange)="gearAvailable.set($event)">
+          (availableChange)="gearAvailable.set($event)"
+          (notesChange)="gearNotes.set($event)">
         </wl-gear>
       </div>
     }
