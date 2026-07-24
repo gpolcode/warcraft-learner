@@ -43,9 +43,9 @@ test('selecting class, spec, and encounter reveals the plan cards', async () => 
 test('gear shows the top-parse talent, trinket, and enchant consensus', async () => {
   const card = page.locator('wl-gear');
   await expect(card.getByText('Top-parse gear consensus.')).toBeVisible();
-  await expect(card.getByText('Talents')).toBeVisible();
-  await expect(card.getByText('Trinkets')).toBeVisible();
-  await expect(card.getByText('Enchants')).toBeVisible();
+  await expect(card.getByText('Talents', { exact: true })).toBeVisible();
+  await expect(card.getByText('Trinkets', { exact: true })).toBeVisible();
+  await expect(card.getByText('Enchants', { exact: true })).toBeVisible();
   await expect(card.getByText(CONSENSUS_PCT).first()).toBeVisible();
   await expect(card.getByText('of top parsers').first()).toBeVisible();
 });

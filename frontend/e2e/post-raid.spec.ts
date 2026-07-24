@@ -84,9 +84,9 @@ test('defensives benchmark the damage taken in top-parse defensive windows', asy
 test('gear compares talents, trinkets, and enchants against the consensus', async () => {
   const card = page.locator('wl-gear');
   await expect(card.getByText('Gear vs top parses.')).toBeVisible();
-  await expect(card.getByText('Talents')).toBeVisible();
-  await expect(card.getByText('Trinkets')).toBeVisible();
-  await expect(card.getByText('Enchants')).toBeVisible();
+  await expect(card.getByText('Talents', { exact: true })).toBeVisible();
+  await expect(card.getByText('Trinkets', { exact: true })).toBeVisible();
+  await expect(card.getByText('Enchants', { exact: true })).toBeVisible();
 });
 
 test('the positioning map opens with the fight canvas', async () => {
