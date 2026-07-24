@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { FindingTableComponent, OnPlanChip } from '../../../shared/components/finding-table/finding-table';
 import { LoadStateComponent, RenderableLoadError } from '../../../shared/components/load-state/load-state';
 import { LatestLoad } from '../../../shared/latest-load';
@@ -26,6 +27,8 @@ export class RotationComponent {
   readonly busyChange = output<boolean>();
   /** Whether the top-parse bench exists (Offensives). The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
+  /** Raw findings for the page to feed the coach card. */
+  readonly findingsChange = output<AnalysisFinding[]>();
 
   protected readonly available = signal(true);
   protected readonly error = signal<RenderableLoadError | null>(null);
@@ -53,6 +56,7 @@ export class RotationComponent {
             this.error.set(null);
             this.available.set(true);
             this.availableChange.emit(true);
+            this.findingsChange.emit(result.value.findings);
             this.ruleRows.set(result.value.ruleRows);
             this.ruleOnPlan.set(result.value.ruleOnPlan);
             this.offensiveRows.set(result.value.offensiveRows);
@@ -62,6 +66,7 @@ export class RotationComponent {
             this.error.set(result.error.kind === 'missing' ? null : result.error);
             this.available.set(false);
             this.availableChange.emit(false);
+            this.findingsChange.emit([]);
             this.ruleRows.set([]);
             this.ruleOnPlan.set([]);
             this.offensiveRows.set([]);

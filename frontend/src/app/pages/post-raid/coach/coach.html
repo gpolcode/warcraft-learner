@@ -1,0 +1,62 @@
+<div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+
+  <div class="px-4 pt-3 pb-2 flex items-center justify-between gap-3 flex-wrap">
+    <div>
+      <div class="text-[17px] font-semibold text-[var(--text)]">Coach Debrief</div>
+      <div class="text-xs text-[var(--muted)] mt-0.5">On-device AI summary of this pull's findings. Everything runs in this browser, nothing is uploaded.</div>
+    </div>
+
+    @if (coach.availability() === 'ready' || coach.availability() === 'downloadable') {
+      <button mat-stroked-button [disabled]="!canGenerate()" (click)="generate()">
+        @if (coach.availability() === 'downloadable') {
+          Download model and generate
+        } @else if (coach.output()) {
+          Regenerate
+        } @else {
+          Generate debrief
+        }
+      </button>
+    }
+  </div>
+
+  <div class="px-4 py-3 border-t border-[var(--border)] text-[13px] text-[var(--text)]">
+    @switch (coach.availability()) {
+      @case ('checking') {
+        <div class="text-[var(--muted)]">Checking for on-device AI.</div>
+      }
+      @case ('unavailable') {
+        <div class="text-[var(--muted)]">
+          On-device AI is not available in this browser. Use desktop Chrome 138+ with built-in AI.
+        </div>
+      }
+      @case ('downloading') {
+        <div class="text-[var(--muted)] mb-2">Downloading the on-device model. One-time; runs offline after.</div>
+        <div class="h-1.5 rounded bg-[var(--border)] overflow-hidden">
+          <div class="h-full bg-[var(--accent)]" [style.width.%]="coach.downloadPct()"></div>
+        </div>
+        <div class="text-xs text-[var(--muted)] mt-1 tabular-nums">{{ coach.downloadPct() }}%</div>
+      }
+      @default {
+        @if (coach.failed()) {
+          <div class="text-[var(--critical)]">Debrief failed. Generate again.</div>
+        } @else if (coach.output()) {
+          <div class="whitespace-pre-wrap leading-relaxed">{{ coach.output() }}</div>
+        } @else if (coach.generating()) {
+          <div class="text-[var(--muted)]">Writing debrief.</div>
+        } @else if (!hasFindings()) {
+          <div class="text-[var(--muted)]">Nothing flagged. No debrief to write.</div>
+        } @else if (coach.availability() === 'downloadable') {
+          <div class="text-[var(--muted)]">First run downloads the model in the browser (one-time, large). Generation stays local.</div>
+        } @else {
+          <div class="text-[var(--muted)]">Turns the flagged findings below into a prioritized debrief.</div>
+        }
+
+        @if (coach.engine() === 'summarizer') {
+          <div class="text-xs text-[var(--muted)] mt-2">
+            Summarizer mode: key points only. Enable chrome://flags/#prompt-api-for-gemini-nano for full debriefs.
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

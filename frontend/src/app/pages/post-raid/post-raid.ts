@@ -14,6 +14,7 @@ import { MatCardModule } from '@angular/material/card';
 import { WclApiService } from '../../core/services/wcl-api';
 import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
+import { AnalysisFinding } from '../../core/models/analysis.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -23,6 +24,7 @@ import { BurstWindowsComponent } from './burst-windows/burst-windows';
 import { DefensiveComponent } from './defensive/defensive';
 import { DefensiveMapAnchor } from './defensive/defensive.service';
 import { GearComponent } from './gear/gear';
+import { CoachComponent } from './coach/coach';
 import { MapPanelComponent } from './map/map-panel';
 import { MapFeatureService, MapAnchor } from './map/map.service';
 import { LiveCaptureFeatureService } from './live/live-capture.service';
@@ -188,7 +190,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
     LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent, PullOverviewComponent, RotationComponent, BurstWindowsComponent,
-    DefensiveComponent, GearComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
+    DefensiveComponent, GearComponent, CoachComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   // No reserved subscript strip under this page's form fields; a field grows to
@@ -243,6 +245,10 @@ export class PostRaidComponent {
   protected readonly gearAvailable = signal(false);
   protected readonly benchAvailable = computed(() =>
     this.rotationAvailable() || this.burstAvailable() || this.defensiveAvailable() || this.gearAvailable());
+
+  // Raw findings the rotation/defensive cards emit; the coach card debriefs them on-device.
+  protected readonly rotationFindings = signal<AnalysisFinding[]>([]);
+  protected readonly defensiveFindings = signal<AnalysisFinding[]>([]);
 
   // `notice` carries the non-failure states the taxonomy does not cover (invalid code, zero-pull report).
   protected readonly loadError = signal<RenderableLoadError | null>(null);
