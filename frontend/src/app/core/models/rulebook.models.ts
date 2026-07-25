@@ -49,6 +49,7 @@ export interface RulebookRule {
   type?: string;
   priority?: 'critical' | 'high' | 'medium' | 'low' | string;
   description?: string;
+  /** Required by the schema; still nullable here because deployed rulebooks predate that and are skipped. */
   condition?: RuleCondition | null;
   action?: string;
 }

@@ -30,7 +30,7 @@
     },
     "rules": {
       "type": "array",
-      "description": "5-10 high-signal rotation and cooldown usage rules: when to pair abilities, when to hold for Bloodlust, opener sequence, phase notes, pooling requirements, etc. Omit rules that are obvious, low-priority, or not checkable from cast timing alone.",
+      "description": "High-signal rotation and cooldown usage rules that are CHECKABLE from cast timing: pairing two abilities, or holding one for an anchor cooldown. Every rule needs a condition, so omit anything that cannot be expressed as one - guidance the engine cannot judge is not a rule. Quality over count: a spec with two real rules is better than one with eight, and an empty list is valid.",
       "items": { "$ref": "#/$defs/rule" }
     },
     "source_summary": {
@@ -133,7 +133,7 @@
     "rule": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "priority", "description", "action"],
+      "required": ["type", "priority", "description", "condition", "action"],
       "properties": {
         "type": {
           "type": "string",
@@ -150,9 +150,8 @@
           "description": "Short rule title shown in the UI (<= 60 chars)."
         },
         "condition": {
-          "description": "Machine-readable trigger. Use null when the rule does not map cleanly to a supported kind. Rules with condition null are never auto-detected - they surface as display-only text, so only include them if the action alone is worth showing to the player.",
+          "description": "REQUIRED machine-readable trigger. Every rule is judged against the player's cast timeline; a rule that cannot be expressed as one of the kinds below does not belong in the rulebook at all. Do not invent a rule to fill a slot - a short list of checkable rules is correct, an empty list is acceptable.",
           "anyOf": [
-            { "type": "null" },
             { "$ref": "#/$defs/castWithoutPrior" },
             { "$ref": "#/$defs/holdCooldownForAnchor" }
           ]

@@ -57,7 +57,6 @@ export interface CdPlanRow {
 export interface RotationPlayerView {
   ruleRows: RotationFindingRow[];
   ruleOnPlan: string[];
-  ruleHints: RuleHint[];
   offensiveRows: RotationFindingRow[];
   onPlan: RotationOnPlanChip[];
 }
@@ -186,35 +185,6 @@ export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: 
     if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
   }
   return findings;
-}
-
-/** A display-only rule surfaced because this pull flagged a cooldown the rule names. */
-export interface RuleHint {
-  title: string;
-  chip: string;
-  action: string;
-}
-
-export function buildRuleHints(rules: RulebookRule[], findings: AnalysisFinding[]): RuleHint[] {
-  const flagged = new Set<string>();
-  for (const finding of findings) {
-    if (finding.severity === 'success') continue;
-    const name = finding.cd_name ?? finding.details?.cd_name;
-    if (name) flagged.add(name);
-  }
-  const hints: RuleHint[] = [];
-  for (const rule of rules) {
-    if (rule.condition || !rule.action) continue;
-    const text = `${rule.description ?? ''} ${rule.action}`;
-    // A display-only rule earns a row only by naming a cooldown this pull already flagged.
-    if (![...flagged].some(name => text.includes(name))) continue;
-    hints.push({
-      title: rule.description ?? rule.action,
-      chip: RULE_TYPE_LABEL[rule.type ?? ''] ?? '',
-      action: rule.action,
-    });
-  }
-  return hints;
 }
 
 export function ruleLabel(cond: RuleCondition, description?: string): string {
@@ -613,7 +583,7 @@ export class RotationFeatureService {
       const { ruleRows, offensiveRows, onPlan } =
         bucketRotationFindings(findings, bench.value.cd_spell_ids, bench.value.ability_icons);
       const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
-      return ok({ ruleRows, ruleOnPlan, ruleHints: buildRuleHints(rules, findings), offensiveRows, onPlan });
+      return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
     } catch (cause) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
       return toLoadError(cause, 'rotation.player-view');

@@ -14,7 +14,7 @@ import {
   RotationFeatureService,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateRules, buildCastTimes,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
-  ruleLabel, rulesFollowed, ruleSeverity, buildRuleHints,
+  ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
   checkCastEfficiency, analyzeOneCooldown,
   partitionRotationFindings, buildRuleRows, buildOffensiveRows, buildOnPlanChips,
@@ -259,64 +259,6 @@ describe('rulesFollowed', () => {
 
   it('skips rules without a condition', () => {
     expect(rulesFollowed([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0)).toEqual([]);
-  });
-});
-
-describe('buildRuleHints', () => {
-  const dropDanceOnCooldown: RulebookRule = {
-    type: 'cd_hold', priority: 'high', condition: null,
-    description: 'Never sit on Shadow Dance',
-    action: 'Spend Shadow Dance as it comes up outside the Shadow Blades window.',
-  };
-  const bladesFinding: AnalysisFinding = {
-    severity: 'warning', category: 'cooldown_delay', cd_name: 'Shadow Blades', message: '',
-  };
-  const danceHoldFinding: AnalysisFinding = {
-    severity: 'info', category: 'hold_suggestion', message: '', details: { cd_name: 'Shadow Dance' },
-  };
-  const cleanFinding: AnalysisFinding = {
-    severity: 'success', category: 'cooldown_usage', cd_name: 'Shadow Blades', message: '',
-  };
-
-  it('surfaces a rule naming a cooldown this pull flagged', () => {
-    expect(buildRuleHints([dropDanceOnCooldown], [bladesFinding]))
-      .toEqual([{
-        title: 'Never sit on Shadow Dance',
-        chip: 'cd hold',
-        action: 'Spend Shadow Dance as it comes up outside the Shadow Blades window.',
-      }]);
-  });
-
-  it('reads the cooldown name off a hold suggestion, which carries it in details', () => {
-    expect(buildRuleHints([dropDanceOnCooldown], [danceHoldFinding])).toHaveLength(1);
-  });
-
-  it('omits a rule when the only finding is a success', () => {
-    expect(buildRuleHints([dropDanceOnCooldown], [cleanFinding])).toEqual([]);
-  });
-
-  it('omits a rule naming no flagged cooldown', () => {
-    const vanishFlagged: AnalysisFinding = { ...bladesFinding, cd_name: 'Vanish' };
-    expect(buildRuleHints([dropDanceOnCooldown], [vanishFlagged])).toEqual([]);
-  });
-
-  it('omits an evaluable rule, which is already judged as a row', () => {
-    const evaluable: RulebookRule = { ...dropDanceOnCooldown, condition: SECRET_TECH_NEEDS_DANCE };
-    expect(buildRuleHints([evaluable], [bladesFinding])).toEqual([]);
-  });
-
-  it('omits a rule with no action text to show', () => {
-    expect(buildRuleHints([{ ...dropDanceOnCooldown, action: undefined }], [bladesFinding])).toEqual([]);
-  });
-
-  it('falls back to the action as the title when the rule has no description', () => {
-    const untitled: RulebookRule = { ...dropDanceOnCooldown, description: undefined };
-    expect(buildRuleHints([untitled], [bladesFinding])[0].title).toBe(untitled.action);
-  });
-
-  it('leaves the chip empty for an unknown rule type', () => {
-    const untyped: RulebookRule = { ...dropDanceOnCooldown, type: undefined };
-    expect(buildRuleHints([untyped], [bladesFinding])[0].chip).toBe('');
   });
 });
 
