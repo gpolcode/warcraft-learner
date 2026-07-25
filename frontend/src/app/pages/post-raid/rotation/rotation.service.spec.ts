@@ -120,6 +120,38 @@ describe('rule engine', () => {
     expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, pastEdge, 'warning')).not.toBeNull();
   });
 
+  it('exempts a violation inside a preceding context window', () => {
+    // Vanish at 20 opens a 20s context, so the uncovered Secret Technique at 30 is forgiven.
+    const exempted: CastWithoutPriorCondition = {
+      ...SECRET_TECH_NEEDS_DANCE,
+      exception: { context_spell_id: VANISH, context_window_s: 20, position: 'before' },
+    };
+    const inContext = buildCastTimes([cast(VANISH, 20), cast(SECRET_TECHNIQUE, 30)], 0);
+    const outOfContext = buildCastTimes([cast(VANISH, 5), cast(SECRET_TECHNIQUE, 30)], 0);
+    expect(evaluateCastWithoutPrior(exempted, inContext, 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(exempted, outOfContext, 'warning')).not.toBeNull();
+  });
+
+  it('exempts a violation inside a following context window', () => {
+    const exempted: CastWithoutPriorCondition = {
+      ...SECRET_TECH_NEEDS_DANCE,
+      exception: { context_spell_id: VANISH, context_window_s: 20, position: 'after' },
+    };
+    const inContext = buildCastTimes([cast(SECRET_TECHNIQUE, 30), cast(VANISH, 40)], 0);
+    const outOfContext = buildCastTimes([cast(SECRET_TECHNIQUE, 30), cast(VANISH, 55)], 0);
+    expect(evaluateCastWithoutPrior(exempted, inContext, 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(exempted, outOfContext, 'warning')).not.toBeNull();
+  });
+
+  it('never reaches the exception when the required cast already satisfies the rule', () => {
+    const exempted: CastWithoutPriorCondition = {
+      ...SECRET_TECH_NEEDS_DANCE,
+      exception: { context_spell_id: VANISH, context_window_s: 20, position: 'before' },
+    };
+    const satisfied = buildCastTimes([cast(SHADOW_DANCE, 28), cast(SECRET_TECHNIQUE, 30)], 0);
+    expect(evaluateCastWithoutPrior(exempted, satisfied, 'warning')).toBeNull();
+  });
+
   it('evaluateRules skips rules without a condition', () => {
     const findings = evaluateRules([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0);
     expect(findings).toEqual([]);
