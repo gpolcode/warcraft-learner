@@ -17,7 +17,10 @@ export default defineConfig({
   testDir: 'e2e',
   // A retry re-runs a spec file's whole serial chain, spending a second WCL analysis on an already-failing run.
   retries: 0,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // The `github` reporter annotates the failing spec lines in the PR's checks view, mirroring the unit suite's `github-actions` Vitest reporter.
+  reporter: process.env['CI']
+    ? [['github'], ['html', { open: 'never' }]]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: APP_URL,
     trace: 'retain-on-failure',

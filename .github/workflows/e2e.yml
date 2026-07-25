@@ -1,11 +1,19 @@
 name: E2E
 
-# Dispatch-only: every run spends shared WCL rate-limit budget on one report analysis.
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
+
+# One run per branch: a rapid re-push cancels the superseded run rather than spending a second WCL analysis on a stale commit.
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   e2e-tests:

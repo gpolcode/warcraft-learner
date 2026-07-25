@@ -1,14 +1,9 @@
 import { expect, test, Page } from '@playwright/test';
-import { opensThePositioningMap, shows, showsAnAbility, showsAWindowChip } from './support';
+import { shows, showsAbility } from './support';
 
-// formatDuration output: "0:12", "7:34".
-const CLOCK_VALUE = /^\d+:\d{2}$/;
-// formatDamage output at bench-window scale, so the suffix is mandatory: "875K", "2.4M".
-const DAMAGE_VALUE = /^\d+(\.\d+)?[KM]$/;
-// Bench consensus share: "57%".
-const CONSENSUS_PCT = /^\d+%$/;
-
-// The pre-fight page is bench-only, so this spec file spends zero WCL budget.
+// The pre-fight page is bench-only, so this spec file spends zero WCL budget. Every asserted number
+// is a top-parse statistic the ingest baked for Subtlety Rogue on Crown of the Cosmos; re-pin them
+// from a fresh render when the ingested dataset moves (see the warcraft-e2e skill).
 // Serial on one shared page: the spec and encounter are selected once and every card asserts against that single selection.
 test.describe.configure({ mode: 'serial' });
 
@@ -31,47 +26,76 @@ test.afterAll(async () => {
   await page?.close();
 });
 
-test('selecting class, spec, and encounter reveals the plan cards', async () => {
+test('selecting class, spec, and encounter loads that spec\'s plan', async () => {
+  await expect(page.getByRole('combobox', { name: 'Class' })).toContainText('Rogue');
+  await expect(page.getByRole('combobox', { name: 'Spec' })).toContainText('Subtlety');
   await expect(page.getByRole('combobox', { name: 'Encounter' })).toContainText('Crown of the Cosmos');
-  await expect(page.locator('wl-gear')).toBeVisible();
-  await expect(page.locator('wl-burst-windows')).toBeVisible();
+  // The plan that appears is the Subtlety cooldown set, opening with Shadow Blades at 0:06.
+  const cooldownPlan = page.locator('wl-rotation-cd-plan');
+  await shows(cooldownPlan, 'Shadow Blades');
+  await shows(cooldownPlan, '0:06');
 });
 
 test('gear shows the top-parse talent, trinket, and enchant consensus', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Top-parse gear consensus.');
   await shows(gear, 'Talents');
-  await shows(gear, 'Trinkets');
-  await shows(gear, 'Enchants');
-  await shows(gear, CONSENSUS_PCT);
+  // 60% of the top parses run the same build; the rest split across three alternatives.
+  await shows(gear, 'Most common build');
+  await shows(gear, '60%');
   await shows(gear, 'of top parsers');
+  await shows(gear, 'Trinkets');
+  // Every top parse ran this pair, one per trinket slot.
+  await shows(gear, 'Light Company Guidon');
+  await shows(gear, 'Trinket 1');
+  await shows(gear, '100%');
+  await shows(gear, 'Enchants');
+  await shows(gear, 'Enchant Chest - Mark of the Worldsoul');
 });
 
-test('the cooldown plan lists first use and average uses per cooldown', async () => {
+test('the cooldown plan lists first use, average uses, and the holds', async () => {
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
   await shows(cooldownPlan, 'Cooldown plan');
-  await showsAnAbility(cooldownPlan);
+  await shows(cooldownPlan, 'Shadow Blades');
   await shows(cooldownPlan, 'First use');
-  await shows(cooldownPlan, CLOCK_VALUE);
   await shows(cooldownPlan, 'Avg uses');
+  // The top parses open Shadow Blades at 0:06 and land 4.3 casts, holding twice.
+  await shows(cooldownPlan, '4.3');
+  await shows(cooldownPlan, 'Holds');
+  await shows(cooldownPlan, '6:09');
 });
 
 test('the defensive plan lists the consensus defensives', async () => {
   const defensivePlan = page.locator('wl-defensive-plan');
   await shows(defensivePlan, 'Defensive plan');
-  await showsAnAbility(defensivePlan);
+  await shows(defensivePlan, 'Cloak of Shadows');
   await shows(defensivePlan, 'First use');
-  await shows(defensivePlan, CLOCK_VALUE);
+  // Cloak first goes out at 4:32 across the top parses, 1.4 casts on average.
+  await shows(defensivePlan, '4:32');
+  await shows(defensivePlan, 'Avg uses');
+  await shows(defensivePlan, '1.4');
 });
 
 test('burst windows show the top-parse windows with their bench damage', async () => {
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Damage in each burst window vs top parses.');
-  await showsAWindowChip(burstWindows);
+  // The opener window runs 0:08 to 0:33 and averages 15.6M across the top parses.
+  await shows(burstWindows, 'window');
+  await shows(burstWindows, '0:08 - 0:33');
   await shows(burstWindows, 'burst');
-  await shows(burstWindows, DAMAGE_VALUE);
+  await shows(burstWindows, '15.6M');
+  // Eviscerate is the window's biggest damage source at 2.9M.
+  await showsAbility(burstWindows, 'Eviscerate', '2.9M');
 });
 
-test('the positioning map opens with the encounter canvas', async () => {
-  await opensThePositioningMap(page);
+test('the positioning map opens anchored on the selected burst window', async () => {
+  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  await expect(openMap).toBeVisible();
+  await openMap.click();
+  await shows(page, 'Positioning');
+  await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
+  // The map opens from the active burst window, so the scrub window centres on its 0:08 start.
+  await shows(page, 'anchor 0:08');
+  await shows(page, '● top parses');
+  await page.getByRole('button', { name: 'Close map' }).click();
 });
