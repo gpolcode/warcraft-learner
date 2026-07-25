@@ -6,17 +6,23 @@
       <div class="text-xs text-[var(--muted)] mt-0.5">On-device AI debrief of every card below. Everything runs in this browser, nothing is uploaded.</div>
     </div>
 
-    @if (coach.availability() === 'ready' || coach.availability() === 'downloadable') {
-      <button mat-stroked-button [disabled]="!canStart()" (click)="start()">
-        @if (coach.availability() === 'downloadable') {
-          Download model and start
-        } @else if (coach.transcript().length) {
-          Restart debrief
-        } @else {
-          Start debrief
-        }
-      </button>
-    }
+    <div class="flex items-center gap-2">
+      @if (coach.availability() === 'unavailable') {
+        <button mat-stroked-button (click)="recheck()">Check again</button>
+      } @else if (coach.availability() !== 'checking') {
+        <button mat-stroked-button [disabled]="!canStart()" (click)="start()">
+          @if (coach.availability() === 'downloading') {
+            Resume download
+          } @else if (coach.availability() === 'downloadable') {
+            Download model and start
+          } @else if (coach.transcript().length) {
+            Restart debrief
+          } @else {
+            Start debrief
+          }
+        </button>
+      }
+    </div>
   </div>
 
   <div class="px-4 py-3 border-t border-[var(--border)] text-[13px] text-[var(--text)]">
@@ -25,9 +31,12 @@
         <div class="text-[var(--muted)]">Checking for on-device AI.</div>
       }
       @case ('unavailable') {
-        <div class="text-[var(--muted)]">
-          On-device AI is not available in this browser. Use desktop Chrome 138+ with built-in AI.
-        </div>
+        <div class="text-[var(--muted)]">On-device AI is not available in this browser.</div>
+        <ul class="text-xs text-[var(--muted)] mt-2 list-disc pl-4 flex flex-col gap-1">
+          <li>Use desktop Chrome 138+ (Windows, macOS or Linux; not Android or iOS).</li>
+          <li>Enable chrome://flags/#prompt-api-for-gemini-nano, then restart Chrome.</li>
+          <li>Check the model state at chrome://on-device-internals.</li>
+        </ul>
       }
       @case ('downloading') {
         <div class="text-[var(--muted)] mb-2">Downloading the on-device model. One-time; runs offline after.</div>
@@ -35,6 +44,11 @@
           <div class="h-full bg-[var(--accent)]" [style.width.%]="coach.downloadPct()"></div>
         </div>
         <div class="text-xs text-[var(--muted)] mt-1 tabular-nums">{{ coach.downloadPct() }}%</div>
+        @if (!coach.generating()) {
+          <div class="text-xs text-[var(--muted)] mt-2">
+            Chrome started this download outside the page, so it reports no progress here. Resume download to attach to it, or track it at chrome://on-device-internals.
+          </div>
+        }
       }
       @default {
         @if (!coach.transcript().length) {
@@ -43,7 +57,7 @@
           } @else if (coach.generating()) {
             <div class="text-[var(--muted)]">Reading the pull.</div>
           } @else if (coach.availability() === 'downloadable') {
-            <div class="text-[var(--muted)]">First run downloads the model in the browser (one-time, large). The debrief and chat stay local.</div>
+            <div class="text-[var(--muted)]">First run downloads the model in the browser (one-time, several GB, needs free disk). The debrief and chat stay local.</div>
           } @else {
             <div class="text-[var(--muted)]">Debriefs the findings, burst and defensive windows, and gear below - then answers questions about them.</div>
           }
@@ -60,7 +74,7 @@
         }
 
         @if (coach.failed()) {
-          <div class="text-[var(--critical)] mt-2">Coach failed. Start again.</div>
+          <div class="text-[var(--critical)] mt-2">Coach failed. Start again, or open diagnostics below.</div>
         }
 
         @if (coach.chatReady()) {
@@ -88,4 +102,17 @@
       }
     }
   </div>
+
+  <div class="px-4 py-2 border-t border-[var(--border)] flex items-center gap-2 flex-wrap">
+    <button mat-stroked-button class="text-xs" (click)="showDiagnostics.set(!showDiagnostics())">
+      {{ showDiagnostics() ? 'Hide' : 'Show' }} diagnostics ({{ coach.diagnostics().length }})
+    </button>
+    @if (showDiagnostics()) {
+      <button mat-stroked-button class="text-xs" (click)="copyDiagnostics()">Copy</button>
+    }
+  </div>
+
+  @if (showDiagnostics()) {
+    <div class="px-4 pb-3 text-[11px] font-mono text-[var(--muted)] whitespace-pre-wrap break-words">{{ coach.diagnostics().join('\n') }}</div>
+  }
 </div>

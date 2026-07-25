@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
-import { CoachData, CoachFeatureService, hasCoachContext, suggestedQuestions } from './coach.service';
+import { logWarn } from '../../../core/log';
+import {
+  CoachData, CoachFeatureService, canStartWith, hasCoachContext, suggestedQuestions,
+} from './coach.service';
 
 /** On-device AI coach card; starting is user-triggered so a model download never begins without a click. */
 @Component({
@@ -45,20 +48,31 @@ export class CoachComponent {
 
   protected readonly hasContext = computed(() => hasCoachContext(this.data()));
   protected readonly suggested = computed(() => suggestedQuestions(this.data()));
+  protected readonly showDiagnostics = signal(false);
 
-  protected readonly canStart = computed(() => {
-    const availability = this.coach.availability();
-    return (availability === 'ready' || availability === 'downloadable')
-      && this.hasContext() && !this.coach.generating();
-  });
+  protected readonly canStart = computed(() =>
+    canStartWith(this.coach.availability()) && this.hasContext() && !this.coach.generating());
+
+  /** Identifies the pull, not the analysis payload: the cards emit their data at different times. */
+  private readonly pullKey = computed(() =>
+    [this.spec(), this.encounterName(), this.kill(), this.durationS()].join('|'));
 
   constructor() {
     void this.coach.refresh();
-    // A new selection means new analysis data; a debrief chat about the previous pull is stale.
+    // Keyed on the pull, so a late-settling card cannot tear down a live debrief session.
     effect(() => {
-      this.data();
+      this.pullKey();
       this.coach.reset();
     });
+  }
+
+  protected recheck(): void {
+    void this.coach.refresh();
+  }
+
+  protected copyDiagnostics(): void {
+    navigator.clipboard.writeText(this.coach.diagnostics().join('\n'))
+      .catch(err => logWarn('CoachComponent.copyDiagnostics', err));
   }
 
   protected start(): void {

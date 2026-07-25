@@ -3,8 +3,8 @@ import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import {
   CoachData, CoachFeatureService, MAX_PROMPT_FINDINGS, MAX_SUGGESTED_QUESTIONS,
-  buildAnalysisContext, buildCoachDigest, compactDamage, findingLine, hasCoachContext,
-  specLabel, suggestedQuestions, windowLine,
+  buildAnalysisContext, buildCoachDigest, canStartWith, compactDamage, findingLine,
+  hasCoachContext, specLabel, suggestedQuestions, windowLine,
 } from './coach.service';
 
 function finding(over: Partial<AnalysisFinding> = {}): AnalysisFinding {
@@ -154,6 +154,19 @@ describe('hasCoachContext', () => {
   });
 });
 
+describe('canStartWith', () => {
+  it('keeps an already-running download actionable, since progress needs a monitor from create()', () => {
+    expect(canStartWith('downloading')).toBe(true);
+  });
+
+  it('allows a ready or downloadable model and blocks the states with nothing to attach to', () => {
+    expect(canStartWith('ready')).toBe(true);
+    expect(canStartWith('downloadable')).toBe(true);
+    expect(canStartWith('checking')).toBe(false);
+    expect(canStartWith('unavailable')).toBe(false);
+  });
+});
+
 interface CreateCall { options: Record<string, unknown> }
 
 describe('CoachFeatureService (fake built-in AI)', () => {
@@ -163,13 +176,13 @@ describe('CoachFeatureService (fake built-in AI)', () => {
     delete globals['Summarizer'];
   });
 
-  function fakeLanguageModel(replies: string[][]) {
+  function fakeLanguageModel(replies: string[][], availability = 'available') {
     const calls = { availabilityOptions: [] as Record<string, unknown>[], creates: [] as CreateCall[], destroyed: 0, prompts: [] as string[] };
     let reply = 0;
     globals['LanguageModel'] = {
       availability: (options: Record<string, unknown>) => {
         calls.availabilityOptions.push(options);
-        return Promise.resolve('available');
+        return Promise.resolve(availability);
       },
       create: (options: Record<string, unknown>) => {
         calls.creates.push({ options });
@@ -253,6 +266,42 @@ describe('CoachFeatureService (fake built-in AI)', () => {
     await service.start(coachData({ rotationFindings: [finding()] }));
     expect(service.transcript()).toEqual([{ role: 'coach', text: 'key points' }]);
     expect(service.chatReady()).toBe(false);
+  });
+
+  it('starts from a download Chrome already had in flight, which reports no progress on its own', async () => {
+    const calls = fakeLanguageModel([['debrief']], 'downloading');
+    const service = new CoachFeatureService();
+    await service.refresh();
+    expect(service.availability()).toBe('downloading');
+
+    await service.start(coachData({ rotationFindings: [finding()] }));
+    expect(calls.creates).toHaveLength(1);
+    expect(service.transcript()).toEqual([{ role: 'coach', text: 'debrief' }]);
+    expect(service.availability()).toBe('ready');
+  });
+
+  it('traces the probe, the session handshake and the stream length for debugging', async () => {
+    fakeLanguageModel([['debrief']]);
+    const service = new CoachFeatureService();
+    await service.refresh();
+    await service.start(coachData({ rotationFindings: [finding()] }));
+
+    const trace = service.diagnostics().join('\n');
+    expect(trace).toContain('LanguageModel present');
+    expect(trace).toContain('LanguageModel.availability -> available');
+    expect(trace).toContain('LanguageModel.create: session ready');
+    expect(trace).toContain('stream: ended after 1 chunk(s)');
+  });
+
+  it('traces a create() failure with its error name and message', async () => {
+    globals['LanguageModel'] = {
+      availability: () => Promise.resolve('available'),
+      create: () => Promise.reject(new Error('model crashed')),
+    };
+    const service = new CoachFeatureService();
+    await service.refresh();
+    await service.start(coachData({ rotationFindings: [finding()] }));
+    expect(service.diagnostics().join('\n')).toContain('start failed: Error: model crashed');
   });
 
   it('reports unavailable when the browser has neither engine', async () => {

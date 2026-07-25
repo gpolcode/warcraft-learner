@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
-import { logWarn } from '../../../core/log';
+import { logInfo, logWarn } from '../../../core/log';
 import { fmtClock } from '../../../shared/analysis/analysis-math';
 
 // Chrome built-in AI typings (Prompt + Summarizer APIs); not yet in the TS DOM lib.
@@ -84,6 +84,9 @@ export interface CoachTurn {
   role: 'user' | 'coach';
   text: string;
 }
+
+/** Newest-last trace of the built-in AI handshake, surfaced in the card and the console. */
+export const MAX_DIAGNOSTICS = 60;
 
 /** On-device models have small context windows, so the digest is hard-capped. */
 export const MAX_PROMPT_FINDINGS = 24;
@@ -228,6 +231,20 @@ function toCoachAvailability(availability: BuiltInAvailability): CoachAvailabili
   return availability === 'available' ? 'ready' : availability;
 }
 
+function describeError(err: unknown): string {
+  return err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+}
+
+/**
+ * Chrome reports 'downloading' when the model fetch is already running from an earlier
+ * session, but download progress only reaches a page through a monitor passed to create().
+ * So 'downloading' has to stay actionable: create() attaches the monitor and resolves once
+ * the fetch completes.
+ */
+export function canStartWith(availability: CoachAvailability): boolean {
+  return availability === 'ready' || availability === 'downloadable' || availability === 'downloading';
+}
+
 /** Shell around the browser's built-in on-device AI; model, context and chat never leave the browser. */
 @Injectable({ providedIn: 'root' })
 export class CoachFeatureService {
@@ -238,6 +255,7 @@ export class CoachFeatureService {
   private readonly _generating = signal(false);
   private readonly _failed = signal(false);
   private readonly _sessionActive = signal(false);
+  private readonly _diagnostics = signal<string[]>([]);
 
   private _session: PromptSession | null = null;
 
@@ -247,17 +265,27 @@ export class CoachFeatureService {
   readonly transcript = this._transcript.asReadonly();
   readonly generating = this._generating.asReadonly();
   readonly failed = this._failed.asReadonly();
+  readonly diagnostics = this._diagnostics.asReadonly();
   /** Follow-up questions need a live Prompt API session; the Summarizer is one-shot. */
   readonly chatReady = computed(() => this._engine() === 'prompt' && this._sessionActive());
+
+  private _trace(message: string): void {
+    logInfo('coach', message);
+    const stamped = `${new Date().toLocaleTimeString()}  ${message}`;
+    this._diagnostics.update(entries => [...entries, stamped].slice(-MAX_DIAGNOSTICS));
+  }
 
   /** Detect which built-in engine this browser offers; Prompt API wins over Summarizer. */
   async refresh(): Promise<void> {
     this._availability.set('checking');
     this._engine.set(null);
+    const ai = builtInAi();
+    this._trace(`probing: LanguageModel ${ai.LanguageModel ? 'present' : 'absent'}, `
+      + `Summarizer ${ai.Summarizer ? 'present' : 'absent'}`);
     try {
-      const ai = builtInAi();
       if (ai.LanguageModel) {
         const availability = await ai.LanguageModel.availability(LANGUAGE_MODEL_OPTIONS);
+        this._trace(`LanguageModel.availability -> ${availability}`);
         if (availability !== 'unavailable') {
           this._engine.set('prompt');
           this._availability.set(toCoachAvailability(availability));
@@ -266,21 +294,25 @@ export class CoachFeatureService {
       }
       if (ai.Summarizer) {
         const availability = await ai.Summarizer.availability(SUMMARIZER_OPTIONS);
+        this._trace(`Summarizer.availability -> ${availability}`);
         if (availability !== 'unavailable') {
           this._engine.set('summarizer');
           this._availability.set(toCoachAvailability(availability));
           return;
         }
       }
+      this._trace('no usable engine; coach unavailable');
       this._availability.set('unavailable');
     } catch (err) {
       logWarn('CoachFeatureService.refresh', err);
+      this._trace(`availability probe threw ${describeError(err)}`);
       this._availability.set('unavailable');
     }
   }
 
   /** Drop the session and transcript; called when the selection (and thus the findings) changes. */
   reset(): void {
+    if (this._session) this._trace('session destroyed');
     this._session?.destroy();
     this._session = null;
     this._sessionActive.set(false);
@@ -294,12 +326,17 @@ export class CoachFeatureService {
     if (this._generating()) return;
     this.reset();
     this._generating.set(true);
+    const context = buildAnalysisContext(data);
+    this._trace(`start: engine ${this._engine() ?? 'none'}, context ${context.length} chars / `
+      + `${context.split('\n').length} lines`);
     try {
-      if (this._engine() === 'prompt') await this._startPromptSession(data);
-      else await this._summarizeOnce(data);
+      if (this._engine() === 'prompt') await this._startPromptSession(context);
+      else await this._summarizeOnce(context);
       this._availability.set('ready');
+      this._trace('start: complete');
     } catch (err) {
       logWarn('CoachFeatureService.start', err);
+      this._trace(`start failed: ${describeError(err)}`);
       this._failed.set(true);
     } finally {
       this._generating.set(false);
@@ -313,10 +350,12 @@ export class CoachFeatureService {
     this._failed.set(false);
     this._transcript.update(turns => [...turns, { role: 'user', text: question }]);
     this._generating.set(true);
+    this._trace(`ask: ${question.length} chars`);
     try {
       await this._streamCoachTurn(session.promptStreaming(question));
     } catch (err) {
       logWarn('CoachFeatureService.ask', err);
+      this._trace(`ask failed: ${describeError(err)}`);
       this._failed.set(true);
     } finally {
       this._generating.set(false);
@@ -325,21 +364,26 @@ export class CoachFeatureService {
 
   /** Session creation triggers the one-time model download when needed; surface its progress. */
   private readonly _monitor: CreateMonitor = monitor => {
+    this._trace('monitor attached; waiting for downloadprogress');
     monitor.addEventListener('downloadprogress', event => {
       const progress = event as DownloadProgressEvent;
       const fraction = progress.total ? progress.loaded / progress.total : progress.loaded;
+      const pct = Math.round(fraction * 100);
+      this._trace(`downloadprogress loaded=${progress.loaded} total=${progress.total ?? 'n/a'} -> ${pct}%`);
       this._availability.set('downloading');
-      this._downloadPct.set(Math.round(fraction * 100));
+      this._downloadPct.set(pct);
     });
   };
 
-  private async _startPromptSession(data: CoachData): Promise<void> {
+  private async _startPromptSession(context: string): Promise<void> {
     const api = builtInAi().LanguageModel!;
+    this._trace('LanguageModel.create: requested (downloads the model on first run)');
     const session = await api.create({
       ...LANGUAGE_MODEL_OPTIONS,
-      initialPrompts: [{ role: 'system', content: `${COACH_SYSTEM_PROMPT}\n\n${buildAnalysisContext(data)}` }],
+      initialPrompts: [{ role: 'system', content: `${COACH_SYSTEM_PROMPT}\n\n${context}` }],
       monitor: this._monitor,
     });
+    this._trace('LanguageModel.create: session ready');
     this._session = session;
     this._sessionActive.set(true);
     // Flip out of the download UI the moment the session exists, not when streaming ends.
@@ -347,16 +391,18 @@ export class CoachFeatureService {
     await this._streamCoachTurn(session.promptStreaming(DEBRIEF_REQUEST));
   }
 
-  private async _summarizeOnce(data: CoachData): Promise<void> {
+  private async _summarizeOnce(context: string): Promise<void> {
     const api = builtInAi().Summarizer!;
+    this._trace('Summarizer.create: requested (downloads the model on first run)');
     const session = await api.create({
       ...SUMMARIZER_OPTIONS,
       sharedContext: SUMMARIZER_CONTEXT,
       monitor: this._monitor,
     });
+    this._trace('Summarizer.create: session ready');
     this._availability.set('ready');
     try {
-      await this._streamCoachTurn(session.summarizeStreaming(buildAnalysisContext(data)));
+      await this._streamCoachTurn(session.summarizeStreaming(context));
     } finally {
       session.destroy();
     }
@@ -364,11 +410,16 @@ export class CoachFeatureService {
 
   private async _streamCoachTurn(chunks: AsyncIterable<string>): Promise<void> {
     this._transcript.update(turns => [...turns, { role: 'coach', text: '' }]);
+    let received = 0;
     for await (const chunk of chunks) {
+      if (received === 0) this._trace('stream: first chunk');
+      received++;
       this._transcript.update(turns => {
         const last = turns[turns.length - 1];
         return [...turns.slice(0, -1), { ...last, text: last.text + chunk }];
       });
     }
+    // A zero-chunk stream is the silent failure mode this trace exists to expose.
+    this._trace(`stream: ended after ${received} chunk(s)`);
   }
 }
