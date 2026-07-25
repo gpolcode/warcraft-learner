@@ -7,6 +7,9 @@
     </div>
 
     <div class="flex items-center gap-2">
+      @if (coach.generating()) {
+        <button mat-stroked-button (click)="cancel()">Cancel</button>
+      }
       @if (coach.availability() === 'unavailable') {
         <button mat-stroked-button (click)="recheck()">Check again</button>
       } @else if (coach.availability() !== 'checking') {
@@ -44,7 +47,17 @@
           <div class="h-full bg-[var(--accent)]" [style.width.%]="coach.downloadPct()"></div>
         </div>
         <div class="text-xs text-[var(--muted)] mt-1 tabular-nums">{{ coach.downloadPct() }}%</div>
-        @if (!coach.generating()) {
+
+        @if (coach.stalled()) {
+          <div class="text-xs text-[var(--muted)] mt-2">
+            Chrome has sent no bytes to this page. It fetches the model only when it judges the device idle and the connection unmetered, so this can sit here. Check the Model Status tab at chrome://on-device-internals, then confirm:
+          </div>
+          <ul class="text-xs text-[var(--muted)] mt-1 list-disc pl-4 flex flex-col gap-1">
+            <li>22 GB free on the volume holding your Chrome profile.</li>
+            <li>More than 4 GB VRAM, 16 GB RAM, 4 CPU cores or more.</li>
+            <li>An unmetered connection.</li>
+          </ul>
+        } @else if (!coach.generating()) {
           <div class="text-xs text-[var(--muted)] mt-2">
             Chrome started this download outside the page, so it reports no progress here. Resume download to attach to it, or track it at chrome://on-device-internals.
           </div>

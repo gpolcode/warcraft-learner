@@ -1,10 +1,10 @@
-import { describe, expect, it, afterEach } from 'vitest';
+import { describe, expect, it, afterEach, vi } from 'vitest';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import {
   CoachData, CoachFeatureService, MAX_PROMPT_FINDINGS, MAX_SUGGESTED_QUESTIONS,
-  buildAnalysisContext, buildCoachDigest, canStartWith, compactDamage, findingLine,
-  hasCoachContext, specLabel, suggestedQuestions, windowLine,
+  DOWNLOAD_STALL_MS, buildAnalysisContext, buildCoachDigest, canStartWith, compactDamage,
+  findingLine, hasCoachContext, specLabel, suggestedQuestions, windowLine,
 } from './coach.service';
 
 function finding(over: Partial<AnalysisFinding> = {}): AnalysisFinding {
@@ -174,7 +174,21 @@ describe('CoachFeatureService (fake built-in AI)', () => {
   afterEach(() => {
     delete globals['LanguageModel'];
     delete globals['Summarizer'];
+    vi.useRealTimers();
   });
+
+  /** Chrome's real failure mode: create() resolves never, rejects never, emits no progress. */
+  function hangingLanguageModel(availability = 'downloading') {
+    const calls: { signal?: AbortSignal } = {};
+    globals['LanguageModel'] = {
+      availability: () => Promise.resolve(availability),
+      create: (options: { signal?: AbortSignal }) => {
+        calls.signal = options.signal;
+        return new Promise<never>(() => undefined);
+      },
+    };
+    return calls;
+  }
 
   function fakeLanguageModel(replies: string[][], availability = 'available') {
     const calls = { availabilityOptions: [] as Record<string, unknown>[], creates: [] as CreateCall[], destroyed: 0, prompts: [] as string[] };
@@ -302,6 +316,35 @@ describe('CoachFeatureService (fake built-in AI)', () => {
     await service.refresh();
     await service.start(coachData({ rotationFindings: [finding()] }));
     expect(service.diagnostics().join('\n')).toContain('start failed: Error: model crashed');
+  });
+
+  it('flags the download as stalled once Chrome sends no progress for DOWNLOAD_STALL_MS', async () => {
+    vi.useFakeTimers();
+    hangingLanguageModel();
+    const service = new CoachFeatureService();
+    await service.refresh();
+    void service.start(coachData({ rotationFindings: [finding()] }));
+
+    await vi.advanceTimersByTimeAsync(DOWNLOAD_STALL_MS - 1);
+    expect(service.stalled()).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(service.stalled()).toBe(true);
+    // The periodic re-probe records whether Chrome's own state is moving while create() waits.
+    expect(service.diagnostics().join('\n')).toContain('still waiting; availability -> downloading');
+  });
+
+  it('cancel aborts the pending create() so the card stops waiting on a fetch Chrome is not running', async () => {
+    const calls = hangingLanguageModel();
+    const service = new CoachFeatureService();
+    await service.refresh();
+    void service.start(coachData({ rotationFindings: [finding()] }));
+    expect(service.generating()).toBe(true);
+    expect(calls.signal?.aborted).toBe(false);
+
+    service.cancel();
+    expect(calls.signal?.aborted).toBe(true);
+    expect(service.generating()).toBe(false);
+    expect(service.failed()).toBe(false);
   });
 
   it('reports unavailable when the browser has neither engine', async () => {

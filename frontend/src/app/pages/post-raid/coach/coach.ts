@@ -70,6 +70,10 @@ export class CoachComponent {
     void this.coach.refresh();
   }
 
+  protected cancel(): void {
+    this.coach.cancel();
+  }
+
   protected copyDiagnostics(): void {
     navigator.clipboard.writeText(this.coach.diagnostics().join('\n'))
       .catch(err => logWarn('CoachComponent.copyDiagnostics', err));

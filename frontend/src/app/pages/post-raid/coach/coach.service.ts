@@ -32,6 +32,7 @@ interface LanguageModelApi {
   create(options?: LanguageModelOptions & {
     initialPrompts?: { role: 'system' | 'user' | 'assistant'; content: string }[];
     monitor?: CreateMonitor;
+    signal?: AbortSignal;
   }): Promise<PromptSession>;
 }
 
@@ -87,6 +88,15 @@ export interface CoachTurn {
 
 /** Newest-last trace of the built-in AI handshake, surfaced in the card and the console. */
 export const MAX_DIAGNOSTICS = 60;
+
+/**
+ * Chrome fetches the model only when it judges the device idle and the connection unmetered,
+ * and create() then waits with no downloadprogress event and no rejection. These bound that
+ * silence: a stall notice with the real requirements, and a periodic availability re-probe
+ * that shows in the trace whether Chrome's own state is moving.
+ */
+export const DOWNLOAD_STALL_MS = 30_000;
+export const DOWNLOAD_PROBE_MS = 10_000;
 
 /** On-device models have small context windows, so the digest is hard-capped. */
 export const MAX_PROMPT_FINDINGS = 24;
@@ -235,6 +245,12 @@ function describeError(err: unknown): string {
   return err instanceof Error ? `${err.name}: ${err.message}` : String(err);
 }
 
+/** Chrome refuses to start the model fetch without user activation, so record it at create() time. */
+function describeActivation(): string {
+  const activation = (navigator as Navigator & { userActivation?: { isActive: boolean } }).userActivation;
+  return activation ? `userActivation.isActive=${activation.isActive}` : 'userActivation unsupported';
+}
+
 /**
  * Chrome reports 'downloading' when the model fetch is already running from an earlier
  * session, but download progress only reaches a page through a monitor passed to create().
@@ -256,8 +272,12 @@ export class CoachFeatureService {
   private readonly _failed = signal(false);
   private readonly _sessionActive = signal(false);
   private readonly _diagnostics = signal<string[]>([]);
+  private readonly _stalled = signal(false);
 
   private _session: PromptSession | null = null;
+  private _abort: AbortController | null = null;
+  private _stallTimer: ReturnType<typeof setTimeout> | null = null;
+  private _probeTimer: ReturnType<typeof setInterval> | null = null;
 
   readonly availability = this._availability.asReadonly();
   readonly engine = this._engine.asReadonly();
@@ -266,6 +286,8 @@ export class CoachFeatureService {
   readonly generating = this._generating.asReadonly();
   readonly failed = this._failed.asReadonly();
   readonly diagnostics = this._diagnostics.asReadonly();
+  /** The model fetch has produced no progress for DOWNLOAD_STALL_MS; Chrome is sitting on it. */
+  readonly stalled = this._stalled.asReadonly();
   /** Follow-up questions need a live Prompt API session; the Summarizer is one-shot. */
   readonly chatReady = computed(() => this._engine() === 'prompt' && this._sessionActive());
 
@@ -282,6 +304,7 @@ export class CoachFeatureService {
     const ai = builtInAi();
     this._trace(`probing: LanguageModel ${ai.LanguageModel ? 'present' : 'absent'}, `
       + `Summarizer ${ai.Summarizer ? 'present' : 'absent'}`);
+    await this._traceStorage();
     try {
       if (ai.LanguageModel) {
         const availability = await ai.LanguageModel.availability(LANGUAGE_MODEL_OPTIONS);
@@ -315,10 +338,12 @@ export class CoachFeatureService {
     if (this._session) this._trace('session destroyed');
     this._session?.destroy();
     this._session = null;
+    this._stopWatchdog();
     this._sessionActive.set(false);
     this._transcript.set([]);
     this._failed.set(false);
     this._generating.set(false);
+    this._stalled.set(false);
   }
 
   /** Open a fresh debrief: seed the session with the full analysis context, stream the debrief. */
@@ -326,21 +351,38 @@ export class CoachFeatureService {
     if (this._generating()) return;
     this.reset();
     this._generating.set(true);
+    this._abort = new AbortController();
     const context = buildAnalysisContext(data);
     this._trace(`start: engine ${this._engine() ?? 'none'}, context ${context.length} chars / `
-      + `${context.split('\n').length} lines`);
+      + `${context.split('\n').length} lines, ${describeActivation()}`);
+    this._armStall();
+    this._probeTimer = setInterval(() => void this._probeWhileWaiting(), DOWNLOAD_PROBE_MS);
     try {
       if (this._engine() === 'prompt') await this._startPromptSession(context);
       else await this._summarizeOnce(context);
       this._availability.set('ready');
       this._trace('start: complete');
     } catch (err) {
-      logWarn('CoachFeatureService.start', err);
-      this._trace(`start failed: ${describeError(err)}`);
-      this._failed.set(true);
+      if (this._abort?.signal.aborted) this._trace('start: canceled');
+      else {
+        logWarn('CoachFeatureService.start', err);
+        this._trace(`start failed: ${describeError(err)}`);
+        this._failed.set(true);
+      }
     } finally {
+      this._stopWatchdog();
       this._generating.set(false);
     }
+  }
+
+  /** Abandon a model fetch Chrome is not progressing, so the card stops waiting on it. */
+  cancel(): void {
+    if (!this._generating()) return;
+    this._trace('canceling the pending create()');
+    this._abort?.abort();
+    this._stopWatchdog();
+    this._generating.set(false);
+    void this.refresh();
   }
 
   /** Follow-up question against the live session; the model still holds the pull context. */
@@ -372,8 +414,49 @@ export class CoachFeatureService {
       this._trace(`downloadprogress loaded=${progress.loaded} total=${progress.total ?? 'n/a'} -> ${pct}%`);
       this._availability.set('downloading');
       this._downloadPct.set(pct);
+      // Bytes are moving, so restart the silence clock rather than leaving a stale stall notice.
+      this._stalled.set(false);
+      this._armStall();
     });
   };
+
+  private _armStall(): void {
+    if (this._stallTimer) clearTimeout(this._stallTimer);
+    this._stallTimer = setTimeout(() => {
+      this._trace(`no downloadprogress for ${DOWNLOAD_STALL_MS / 1000}s; Chrome has not started sending the model`);
+      this._stalled.set(true);
+    }, DOWNLOAD_STALL_MS);
+  }
+
+  /** Chrome deletes or refuses the model without room to spare, so record what the origin sees. */
+  private async _traceStorage(): Promise<void> {
+    const storage = navigator.storage;
+    if (!storage?.estimate) return;
+    try {
+      const { quota } = await storage.estimate();
+      if (quota != null) this._trace(`storage quota ${(quota / 1e9).toFixed(1)} GB (the model needs 22 GB free on the profile volume)`);
+    } catch (err) {
+      this._trace(`storage estimate threw ${describeError(err)}`);
+    }
+  }
+
+  private _stopWatchdog(): void {
+    if (this._stallTimer) clearTimeout(this._stallTimer);
+    if (this._probeTimer) clearInterval(this._probeTimer);
+    this._stallTimer = null;
+    this._probeTimer = null;
+  }
+
+  /** Chrome's own view of the model while create() waits; the trace shows whether it moves. */
+  private async _probeWhileWaiting(): Promise<void> {
+    const api = builtInAi().LanguageModel;
+    if (!api) return;
+    try {
+      this._trace(`still waiting; availability -> ${await api.availability(LANGUAGE_MODEL_OPTIONS)}`);
+    } catch (err) {
+      this._trace(`re-probe threw ${describeError(err)}`);
+    }
+  }
 
   private async _startPromptSession(context: string): Promise<void> {
     const api = builtInAi().LanguageModel!;
@@ -382,6 +465,7 @@ export class CoachFeatureService {
       ...LANGUAGE_MODEL_OPTIONS,
       initialPrompts: [{ role: 'system', content: `${COACH_SYSTEM_PROMPT}\n\n${context}` }],
       monitor: this._monitor,
+      signal: this._abort?.signal,
     });
     this._trace('LanguageModel.create: session ready');
     this._session = session;
