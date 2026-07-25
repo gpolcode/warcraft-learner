@@ -1,0 +1,168 @@
+{
+  "spec": "MistweaverMonk",
+  "spec_icon": "spell_monk_mistweaver_spec",
+  "major_cooldowns": [
+    {
+      "name": "Thunder Focus Tea",
+      "spell_id": 116680,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Treat as a rotational cooldown and press it on cooldown to empower your next spell (Rising Sun Kick for the cooldown reduction, or Renewing Mist for the +10s duration and Secret Infusion Haste); never let it sit, especially with Conduit of the Celestials where it drives Heart of the Jade Serpent cooldown acceleration."
+    },
+    {
+      "name": "Invoke Yu'lon, the Jade Serpent",
+      "spell_id": 322118,
+      "cooldown": 120,
+      "duration": 25,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use ahead of heavy AoE damage and then chain multiple Enveloping Mist casts on different injured targets to fuel Rapid Diffusion and set up large Invigorating Mists Vivify healing; with Gift of the Celestials its cooldown drops to 60s with half the duration."
+    },
+    {
+      "name": "Invoke Chi-Ji, the Red Crane",
+      "spell_id": 325197,
+      "cooldown": 120,
+      "duration": 25,
+      "align_with_bloodlust": true,
+      "usage_rule": "Use into sustained damage and keep pressing Blackout Kick, Rising Sun Kick, and Spinning Crane Kick to trigger Gust of Mists healing while spending the free instant Enveloping Mists; with Gift of the Celestials its cooldown drops to 60s with half the duration."
+    },
+    {
+      "name": "Revival",
+      "spell_id": 115310,
+      "cooldown": 180,
+      "align_with_bloodlust": false,
+      "usage_rule": "Save for a major raid-wide damage spike as an instant full-group heal, ideally timed with a moment that also needs mass Poison, Disease, or Magic dispel; Uplifted Spirits lowers the cooldown to 150s."
+    },
+    {
+      "name": "Restoral",
+      "spell_id": 388615,
+      "cooldown": 180,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Talented replacement for Revival that drops the Magic dispel for safer, controlled use on encounters where mass-dispelling magical effects would wipe the raid; use as your emergency raid-wide heal."
+    },
+    {
+      "name": "Celestial Conduit",
+      "spell_id": 443028,
+      "cooldown": 90,
+      "duration": 4,
+      "align_with_bloodlust": true,
+      "talent_gated": true,
+      "usage_rule": "Conduit of the Celestials channel used on cooldown into damage to summon all four Celestials via Unity Within; let it channel fully unless your group is in danger, in which case re-press to summon the Celestials early."
+    },
+    {
+      "name": "Sheilun's Gift",
+      "spell_id": 399491,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Build clouds passively and unload a high-stack cast timed to land as AoE damage hits the group; cast on your most injured ally to maximize the Invigorating Mists primary-target bonus."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Life Cocoon",
+      "spell_id": 116849,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Apply the large absorb shield to a low-health ally taking sustained damage, to solo-soak a mechanic, or as a proactive external; its value scales up the lower the target's current health."
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 90,
+      "duration": 15,
+      "usage_rule": "Press before a large hit on yourself to gain bonus health and reduce all incoming damage; use proactively for telegraphed self-damage rather than holding it."
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Use ahead of heavy magic damage to reduce it for 6 seconds and to transfer harmful magical debuffs back to their caster."
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "talent_gated": true,
+      "usage_rule": "Use before large physical or burst hits to reduce high-percentage incoming damage for 10 seconds; strongest against single big hits rather than chip damage."
+    },
+    {
+      "name": "Healing Elixir",
+      "spell_id": 122281,
+      "cooldown": 30,
+      "talent_gated": true,
+      "usage_rule": "Press when your own health drops to restore a chunk of HP; with two charges and a short cooldown it can be used freely as self-sustain."
+    },
+    {
+      "name": "Zen Meditation",
+      "spell_id": 115176,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Channel to massively reduce incoming damage as a panic button when no other defensive is available; note it breaks if you take a melee hit, so use it against ranged or magic bursts."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Pair Thunder Focus Tea with Rising Sun Kick",
+      "condition": null,
+      "action": "In Mythic+ and DPS windows, press Thunder Focus Tea immediately before Rising Sun Kick to bank the 9s cooldown reduction and feed Heart of the Jade Serpent acceleration; keep Thunder Focus Tea off cooldown so the cycle stays rolling."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Never overcap Mana Tea stacks",
+      "condition": null,
+      "action": "Consume Mana Tea before reaching 20 stacks and spend down stacks during downtime; any mana spent after capping at 20 stacks sharply shortens how long your mana lasts."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Hold healing procs for incoming damage",
+      "condition": null,
+      "action": "Bank Zen Pulse, Spiritfont, and Strength of the Black Ox procs for heavier incoming damage instead of spending them in downtime, but consume at least one stack before overcapping to avoid waste."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Renewing Mist rolling on the group",
+      "condition": null,
+      "action": "Maintain Renewing Mist coverage and refresh charges before they fall off; extend durations with Rising Mist and let overhealing jumps spread the HoT to injured allies for passive throughput."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "medium",
+      "description": "Ramp Yu'lon before known damage",
+      "condition": null,
+      "action": "Invoke Yu'lon a few seconds before a scripted raid damage event so your stacked Enveloping Mists and Vivify follow-ups land exactly as the damage hits, rather than reacting after the fact."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "medium",
+      "description": "Spinning Crane Kick at higher target counts",
+      "condition": null,
+      "action": "Use Rising Sun Kick and a Tiger Palm filler at one target, but switch to Spinning Crane Kick at two-plus targets and spam it past three targets where its damage-to-healing transfer dominates."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Tiger Palm before Blackout Kick",
+      "condition": null,
+      "action": "Land at least one Tiger Palm to stack Teachings of the Monastery before each Blackout Kick (two stacks as Way of the Crane) to maximize Gust of Mists healing and Rising Sun Kick reset chances."
+    },
+    {
+      "type": "positioning",
+      "priority": "low",
+      "description": "Stay in melee to weave damage and Mystic Touch",
+      "condition": null,
+      "action": "Keep yourself in melee range during healing downtime so you can weave Tiger Palm, Blackout Kick, and Rising Sun Kick for maintenance healing and apply the Mystic Touch armor debuff for your group."
+    }
+  ],
+  "source_summary": "Mistweaver Monk revolves around juggling short-cooldown HoTs, procs, and mana while ramping ahead of incoming damage. Thunder Focus Tea is a near-rotational cooldown that empowers key spells and, under Conduit of the Celestials, drives Heart of the Jade Serpent acceleration, while the Celestials (Yu'lon and Chi-Ji) and Revival are saved for heavy AoE windows. The core discipline is never overcapping Mana Tea, holding healing procs for real damage, and timing major cooldowns to land as damage hits.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:11:30"
+}
