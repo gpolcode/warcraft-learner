@@ -87,16 +87,23 @@ export function buildCastTimes(casts: WclEvent[], fStart: number): CastTimes {
   return castTimes;
 }
 
+/** `lead` is the judged cast minus the required one: positive when the required cast came first. */
+function withinWindow(lead: number, win: number, position: 'before' | 'after' | 'either'): boolean {
+  if (position === 'either') return Math.abs(lead) <= win;
+  return position === 'before' ? lead >= 0 && lead <= win : lead <= 0 && -lead <= win;
+}
+
 export function evaluateCastWithoutPrior(
   cond: CastWithoutPriorCondition, castTimes: CastTimes, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   const win = cond.window_s ?? 5;
   const exception = cond.exception;
+  const position = cond.position ?? 'before';
   const primary = [...(castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
   const required = castTimes[cond.required_spell_id] ?? [];
   const violations: number[] = [];
   for (const time of primary) {
-    if (required.some(rt => Math.abs(time - rt) <= win)) continue;
+    if (required.some(rt => withinWindow(time - rt, win, position))) continue;
     if (exception) {
       const context = castTimes[exception.context_spell_id] ?? [];
       const contextWindow = exception.context_window_s ?? 20;
@@ -175,7 +182,8 @@ export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: 
       : cond.kind === 'hold_cooldown_for_anchor'
         ? evaluateHoldForAnchor(cond, castTimes, severity, rule.action)
         : null;
-    if (finding) findings.push({ ...finding, rule_type: rule.type });
+    // One authored name in both states, so a rule does not read as two different rules.
+    if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
   }
   return findings;
 }
@@ -248,7 +256,6 @@ export interface RotationScanInput {
   castEvents: WclEvent[];
   buffEvents: WclEvent[];
   cooldowns: RulebookCooldown[];
-  rules: RulebookRule[];
   bench: RotationBench;
 }
 
@@ -402,7 +409,7 @@ export function analyzeOneCooldown(
 }
 
 export function analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
-  const { fStart, fEnd, castEvents, buffEvents, cooldowns, rules, bench } = input;
+  const { fStart, fEnd, castEvents, buffEvents, cooldowns, bench } = input;
   const fightDurS = (fEnd - fStart) / 1000;
   const casts = castEvents
     .filter(event => event.type === 'cast' && event.timestamp >= fStart && event.timestamp <= fEnd)
@@ -429,8 +436,6 @@ export function analyzeRotationFindings(input: RotationScanInput): AnalysisFindi
     else if (result.success) findings.push(result.success);
     if (castTimesMs.length) findings.push(...result.scan.holds);
   }
-
-  if (rules.length) findings.push(...evaluateRules(rules, casts, fStart));
 
   const efficiency = checkCastEfficiency(casts.map(cast => cast.timestamp - fStart), fightDurS, bench);
   if (efficiency) findings.push(efficiency);
@@ -600,7 +605,7 @@ export class RotationFeatureService {
       const rules = bench.value.rules;
       const offensiveFindings = analyzeRotationFindings({
         fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
-        cooldowns: bench.value.major_cooldowns, rules: [], bench: bench.value,
+        cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
       const ruleFindings = evaluateRules(rules, casts, fight.startTime);
       const findings = [...offensiveFindings, ...ruleFindings];
