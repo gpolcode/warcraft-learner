@@ -14,7 +14,7 @@ import {
   RotationFeatureService,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateRules, buildCastTimes,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
-  ruleLabel, rulesFollowed,
+  ruleLabel, rulesFollowed, ruleSeverity, buildRuleHints,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
   checkCastEfficiency, analyzeOneCooldown,
   partitionRotationFindings, buildRuleRows, buildOffensiveRows, buildOnPlanChips,
@@ -95,6 +95,37 @@ describe('rule engine', () => {
     const findings = evaluateRules([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0);
     expect(findings).toEqual([]);
   });
+
+  it('evaluateRules carries the rule type onto the finding', () => {
+    const rule: RulebookRule = { type: 'cooldown_pairing', priority: 'high', condition: DANCE_NEEDS_SECRET_TECH };
+    const findings = evaluateRules([rule], [cast(SHADOW_DANCE, 10)], 0);
+    expect(findings[0].rule_type).toBe('cooldown_pairing');
+  });
+});
+
+describe('ruleSeverity', () => {
+  it('maps critical to the critical tier', () => {
+    expect(ruleSeverity('critical')).toBe('critical');
+  });
+
+  it('maps high to the warning tier', () => {
+    expect(ruleSeverity('high')).toBe('warning');
+  });
+
+  it('maps medium and low to the info tier', () => {
+    expect(ruleSeverity('medium')).toBe('info');
+    expect(ruleSeverity('low')).toBe('info');
+  });
+
+  it('falls back to warning for a missing or unknown priority', () => {
+    expect(ruleSeverity(undefined)).toBe('warning');
+    expect(ruleSeverity('urgent')).toBe('warning');
+  });
+
+  it('drives the severity of an evaluated rule finding', () => {
+    const rule: RulebookRule = { priority: 'medium', condition: DANCE_NEEDS_SECRET_TECH };
+    expect(evaluateRules([rule], [cast(SHADOW_DANCE, 10)], 0)[0].severity).toBe('info');
+  });
 });
 
 describe('ruleLabel', () => {
@@ -153,6 +184,64 @@ describe('rulesFollowed', () => {
 
   it('skips rules without a condition', () => {
     expect(rulesFollowed([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0)).toEqual([]);
+  });
+});
+
+describe('buildRuleHints', () => {
+  const dropDanceOnCooldown: RulebookRule = {
+    type: 'cd_hold', priority: 'high', condition: null,
+    description: 'Never sit on Shadow Dance',
+    action: 'Spend Shadow Dance as it comes up outside the Shadow Blades window.',
+  };
+  const bladesFinding: AnalysisFinding = {
+    severity: 'warning', category: 'cooldown_delay', cd_name: 'Shadow Blades', message: '',
+  };
+  const danceHoldFinding: AnalysisFinding = {
+    severity: 'info', category: 'hold_suggestion', message: '', details: { cd_name: 'Shadow Dance' },
+  };
+  const cleanFinding: AnalysisFinding = {
+    severity: 'success', category: 'cooldown_usage', cd_name: 'Shadow Blades', message: '',
+  };
+
+  it('surfaces a rule naming a cooldown this pull flagged', () => {
+    expect(buildRuleHints([dropDanceOnCooldown], [bladesFinding]))
+      .toEqual([{
+        title: 'Never sit on Shadow Dance',
+        chip: 'cd hold',
+        action: 'Spend Shadow Dance as it comes up outside the Shadow Blades window.',
+      }]);
+  });
+
+  it('reads the cooldown name off a hold suggestion, which carries it in details', () => {
+    expect(buildRuleHints([dropDanceOnCooldown], [danceHoldFinding])).toHaveLength(1);
+  });
+
+  it('omits a rule when the only finding is a success', () => {
+    expect(buildRuleHints([dropDanceOnCooldown], [cleanFinding])).toEqual([]);
+  });
+
+  it('omits a rule naming no flagged cooldown', () => {
+    const vanishFlagged: AnalysisFinding = { ...bladesFinding, cd_name: 'Vanish' };
+    expect(buildRuleHints([dropDanceOnCooldown], [vanishFlagged])).toEqual([]);
+  });
+
+  it('omits an evaluable rule, which is already judged as a row', () => {
+    const evaluable: RulebookRule = { ...dropDanceOnCooldown, condition: DANCE_NEEDS_SECRET_TECH };
+    expect(buildRuleHints([evaluable], [bladesFinding])).toEqual([]);
+  });
+
+  it('omits a rule with no action text to show', () => {
+    expect(buildRuleHints([{ ...dropDanceOnCooldown, action: undefined }], [bladesFinding])).toEqual([]);
+  });
+
+  it('falls back to the action as the title when the rule has no description', () => {
+    const untitled: RulebookRule = { ...dropDanceOnCooldown, description: undefined };
+    expect(buildRuleHints([untitled], [bladesFinding])[0].title).toBe(untitled.action);
+  });
+
+  it('leaves the chip empty for an unknown rule type', () => {
+    const untyped: RulebookRule = { ...dropDanceOnCooldown, type: undefined };
+    expect(buildRuleHints([untyped], [bladesFinding])[0].chip).toBe('');
   });
 });
 
@@ -444,6 +533,11 @@ describe('rotation finding partition and row builders', () => {
     const rows = buildRuleRows([ruleFinding]);
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ what: 'Dance without Secret Technique', fix: 'fix' });
+  });
+
+  it('chips a rule row with its rule type and keeps the info tier', () => {
+    const medium: AnalysisFinding = { ...ruleFinding, severity: 'info', rule_type: 'cooldown_pairing' };
+    expect(buildRuleRows([medium])[0]).toMatchObject({ severity: 'info', chip: 'pairing' });
   });
 
   it('builds offensive rows with resolved icon + chip per finding', () => {

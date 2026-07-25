@@ -22,7 +22,7 @@ export type Severity = AnalysisFinding['severity'];
 export type AbilityIcons = Record<number, { icon: string; name: string }>;
 
 export interface RotationFindingRow {
-  severity: 'critical' | 'warning';
+  severity: 'critical' | 'warning' | 'info';
   /** Empty for rule rows, which render `what` instead. */
   name: string;
   spellId?: number | null;
@@ -57,6 +57,7 @@ export interface CdPlanRow {
 export interface RotationPlayerView {
   ruleRows: RotationFindingRow[];
   ruleOnPlan: string[];
+  ruleHints: RuleHint[];
   offensiveRows: RotationFindingRow[];
   onPlan: RotationOnPlanChip[];
 }
@@ -143,21 +144,69 @@ export function evaluateHoldForAnchor(
   };
 }
 
+/** Short chip label for a rulebook rule `type`, matching the tone of `CAT_LABEL`. */
+export const RULE_TYPE_LABEL: Record<string, string> = {
+  cooldown_pairing: 'pairing',
+  cd_hold: 'cd hold',
+  opener: 'opener',
+  rotation: 'rotation',
+  positioning: 'position',
+  aoe_switch: 'aoe',
+};
+
+// `low` shares the `info` tier: the finding table renders three, and no deployed rule is `low`.
+const RULE_SEVERITY: Record<string, Severity> = {
+  critical: 'critical', high: 'warning', medium: 'info', low: 'info',
+};
+
+export function ruleSeverity(priority?: string): Severity {
+  return RULE_SEVERITY[priority ?? ''] ?? 'warning';
+}
+
 export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: number): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   const castTimes = buildCastTimes(casts, fStart);
   for (const rule of rules) {
     const cond = rule.condition;
     if (!cond) continue;
-    const severity: Severity = rule.priority === 'critical' ? 'critical' : 'warning';
+    const severity = ruleSeverity(rule.priority);
     const finding = cond.kind === 'cast_without_prior'
       ? evaluateCastWithoutPrior(cond, castTimes, severity, rule.action)
       : cond.kind === 'hold_cooldown_for_anchor'
         ? evaluateHoldForAnchor(cond, castTimes, severity, rule.action)
         : null;
-    if (finding) findings.push(finding);
+    if (finding) findings.push({ ...finding, rule_type: rule.type });
   }
   return findings;
+}
+
+/** A display-only rule surfaced because this pull flagged a cooldown the rule names. */
+export interface RuleHint {
+  title: string;
+  chip: string;
+  action: string;
+}
+
+export function buildRuleHints(rules: RulebookRule[], findings: AnalysisFinding[]): RuleHint[] {
+  const flagged = new Set<string>();
+  for (const finding of findings) {
+    if (finding.severity === 'success') continue;
+    const name = finding.cd_name ?? finding.details?.cd_name;
+    if (name) flagged.add(name);
+  }
+  const hints: RuleHint[] = [];
+  for (const rule of rules) {
+    if (rule.condition || !rule.action) continue;
+    const text = `${rule.description ?? ''} ${rule.action}`;
+    // A display-only rule earns a row only by naming a cooldown this pull already flagged.
+    if (![...flagged].some(name => text.includes(name))) continue;
+    hints.push({
+      title: rule.description ?? rule.action,
+      chip: RULE_TYPE_LABEL[rule.type ?? ''] ?? '',
+      action: rule.action,
+    });
+  }
+  return hints;
 }
 
 export function ruleLabel(cond: RuleCondition, description?: string): string {
@@ -173,7 +222,7 @@ export function rulesFollowed(rules: RulebookRule[], casts: WclEvent[], fStart: 
   for (const rule of rules) {
     const cond = rule.condition;
     if (!cond) continue;
-    const severity: Severity = rule.priority === 'critical' ? 'critical' : 'warning';
+    const severity = ruleSeverity(rule.priority);
     if (cond.kind === 'cast_without_prior') {
       const applicable = (castTimes[cond.spell_id]?.length ?? 0) > 0;
       if (applicable && !evaluateCastWithoutPrior(cond, castTimes, severity)) followed.push(ruleLabel(cond, rule.description));
@@ -434,10 +483,11 @@ export function partitionRotationFindings(findings: AnalysisFinding[]): Partitio
 
 export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingRow[] {
   return ruleFindings.map(finding => ({
-    severity: finding.severity === 'critical' ? 'critical' : 'warning',
+    severity: finding.severity === 'critical' ? 'critical' : finding.severity === 'info' ? 'info' : 'warning',
     name: '',
     icon: '',
     what: finding.label,
+    chip: finding.rule_type ? RULE_TYPE_LABEL[finding.rule_type] : undefined,
     measured: finding.measured ?? { value: '-' },
     fix: finding.details?.remedy,
   }));
@@ -558,7 +608,7 @@ export class RotationFeatureService {
       const { ruleRows, offensiveRows, onPlan } =
         bucketRotationFindings(findings, bench.value.cd_spell_ids, bench.value.ability_icons);
       const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
-      return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
+      return ok({ ruleRows, ruleOnPlan, ruleHints: buildRuleHints(rules, findings), offensiveRows, onPlan });
     } catch (cause) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
       return toLoadError(cause, 'rotation.player-view');
