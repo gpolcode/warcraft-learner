@@ -20,7 +20,8 @@ subagent focused, cheap, and retryable.
 
 The schema is the authoritative shape: **`.claude/skills/warcraft-ingestion/rulebook.schema.json`**. Read
 it first and make the output conform to it - the schema is the only contract, since ingestion consumes
-rulebooks directly (no code-side validation). The field meanings live in the schema's own `description`
+rulebooks directly (the only code-side check is the rule-consistency report in
+`src/app/ingest/rulebook-validation.ts`, which rejects nothing). The field meanings live in the schema's own `description`
 strings; follow them exactly (especially: `usage_rule` is user-facing coaching copy and must never carry
 spell-id uncertainty; put that in `id_note`).
 

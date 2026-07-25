@@ -25,6 +25,7 @@ import { mapClassesToSpecMeta, specWclFromMetas, type SpecWclMap } from './wcl-m
 import { type WclQueryClient, BudgetExceededError } from './wcl-client';
 import { INGEST_VERSION } from './ingest-version';
 import { specsForRun, orderEncountersByMissingFirst, type SpecOrderEntry } from './ordering';
+import { validateRulebookRules, type RuleDefect } from './rulebook-validation';
 import {
   encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, signatureMatches,
   stampSignature, stampBurstFile, readInaccessibleParses,
@@ -153,7 +154,7 @@ export class IngestOrchestratorService {
     const { encounters, protectedIds } = discovery;
     console.log(`${encounters.length} live encounters`);
 
-    const specs = await this.orderedSpecsFromDisk();
+    const { specs, ruleDefects } = await this.orderedSpecsFromDisk();
     if (!specs.length) {
       console.log('No known specs (no rulebook.json found). Nothing to do.');
       publishSummary({ succeeded: [], failed: [], budgetStopped: false });
@@ -191,23 +192,32 @@ export class IngestOrchestratorService {
     } else {
       console.log('No spec-level failures.');
     }
+    if (ruleDefects.length) {
+      console.log(`Rules needing an author pass (${ruleDefects.length}):`);
+      for (const defect of ruleDefects) {
+        console.log(`  ${defect.spec} - "${defect.rule}": ${defect.problem}`);
+      }
+    }
     publishSummary({ succeeded, failed, budgetStopped });
   }
 
-  /** Rulebook-bearing specs in the specsForRun order (version-ordered, capped at SPEC_LIMIT; cheap file reads, zero WCL budget). */
-  private async orderedSpecsFromDisk(): Promise<string[]> {
+  /** Rulebook-bearing specs in the specsForRun order, plus any rule defects found while reading them
+   * (version-ordered, capped at SPEC_LIMIT; cheap file reads, zero WCL budget). */
+  private async orderedSpecsFromDisk(): Promise<{ specs: string[]; ruleDefects: RuleDefect[] }> {
     const onDisk = await this.dataFile.listSpecs();
     const withRulebook: string[] = [];
+    const ruleDefects: RuleDefect[] = [];
     for (const spec of onDisk) {
       const rulebook = await this.dataFile.getRulebook(spec);
       if (rulebook.ok) {
         withRulebook.push(spec);
+        ruleDefects.push(...validateRulebookRules(spec, rulebook.value.rules ?? []));
       } else if (rulebook.error.kind === 'permanent') {
         // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
         logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
       }
     }
-    if (!withRulebook.length) return [];
+    if (!withRulebook.length) return { specs: [], ruleDefects };
 
     const orderInputs = await Promise.all(withRulebook.map(async spec => {
       const burstFiles = (await this.dataFile.listSliceFiles(spec, 'burst'))
@@ -234,7 +244,7 @@ export class IngestOrchestratorService {
       return `${spec} ${versionLabel}`;
     });
     console.log(`Specs (old version first):\n${versionLines.join('\n')}`);
-    return specs;
+    return { specs, ruleDefects };
   }
 
   /** Returns true when the run stopped on the WCL budget (remaining specs resume next run). */
