@@ -46,49 +46,53 @@ copying the example get the operands the wrong way round.
 
 ## Target
 
-- Every authored rule reaches the user in some form: evaluated when it has a condition, shown as
-  guidance when it does not.
-- `type` groups the guidance, `priority` orders and weights it.
+- Every authored rule reaches the user when it has something to say about the pull in front of
+  them: evaluated when it has a condition, surfaced as a hint against a real finding when it
+  does not.
+- `type` categorises the rule, `priority` weights it.
 - A rule can only be authored in a way that produces a correct check, because a validation step
   rejects the rest.
 
-## Phase 1 - render display-only rules
+## Phase 1 - surface display-only rules as issue hints on post-raid
 
 The largest value unlock, and it needs no rulebook regeneration and no `INGEST_VERSION` bump:
 the text is already baked into every rotation bench file.
 
-- Add `buildGuidanceRows(rules)` alongside the existing rule builders in `rotation.service.ts`:
-  take rules with a null condition, group by `type`, and order by `priority`
-  (critical > high > medium > low), then by authored order.
-- Render as a distinct card, separate from findings. Guidance is not a finding: it has no
-  measured value, no timestamp and no pass/fail, so it must not enter `bucketFindings` or sit in
-  a findings table where every other row is a measurement. A simple sectioned list of
-  `description` (title) plus `action` (body, through `wl-collapsible-text`) is enough.
-- Section headings come from `type`: `opener` -> "Opener", `rotation` -> "Rotation",
-  `cooldown_pairing` -> "Cooldowns", `cd_hold` -> "Cooldowns", `positioning` -> "Positioning",
-  `aoe_switch` -> "AoE and target swaps".
-- Place it on **pre-fight** (`/pre`) primarily: this is preparation content, identical for every
-  encounter of a spec, and pre-fight already renders bench-only cards. Post-raid may link to it
-  rather than duplicating a wall of text next to the diagnostic cards.
-- Note the current gating: `rotation.html:2` hides the rules card whenever the bench is
-  unavailable, so a spec with no ingested bench shows nothing. Guidance should follow the same
-  data path (it arrives in the bench file), so this stays true; the comment at `post-raid.ts:239`
-  claiming rules "render regardless" is wrong and should be corrected.
+- **Post-raid only. Not pre-fight.** A flat list of how a spec is played is noise for this
+  audience: a Mythic raider already knows their spec, and pre-fight would render the same wall of
+  text for every encounter. The value is on post-raid, where a rule can explain an issue the pull
+  actually shows.
+- **Gate each display-only rule on the pull.** A rule surfaces only when this pull produced a
+  finding for a cooldown the rule names. Match the rule's `description` and `action` against the
+  spec's cooldown and defensive names; both come from the same rulebook, so the mentions are
+  exact strings, and the match is deterministic and testable.
+- Render as advisory rows inside the existing "Rotation Rules" card, below the evaluated rows:
+  `description` as the title, `action` through `wl-collapsible-text`. No measured value and no
+  timestamp, because a hint is not a measurement - it must not enter `bucketFindings` or claim a
+  row in the "Measured" column.
+- A rule that names no cooldown of the spec has nothing in the pull to attach to and does not
+  surface. In practice that is most `positioning` and `aoe_switch` rules. This is a deliberate
+  trade: the alternative is the reminder list this phase rejects.
+- Keep authored order within the card; no re-sorting (see Phase 2).
+- The comment at `post-raid.ts:239` claiming rules "render regardless" of a bench is wrong -
+  `rotation.html:2` hides the whole card when the bench is unavailable, and the rules arrive in
+  the bench file anyway. Correct it.
 
-Acceptance: all 40 specs show their authored guidance; the 293 currently-invisible rules are
-reachable; no finding counts change.
+Acceptance: a pull with a Dancing Rune Weapon finding shows the BloodDeathKnight rules that name
+Dancing Rune Weapon; a pull with no findings shows no hints; no finding counts change.
 
 ## Phase 2 - make `priority` and `type` carry weight
 
 - Map priority to four visual tiers rather than two: `critical` -> critical, `high` -> warning,
   `medium` -> info, `low` -> muted/info. Apply in both `evaluateRules` (`:151`) and
   `rulesFollowed` (`:175`).
-- Sort violated rule rows by priority so a critical pairing miss outranks a low min-max note.
-- Use `type` for the violation rows too, as the row's category chip, so the rules table matches
-  the grouping used by the guidance card.
+- Use `type` for the violation rows too, as the row's category chip, so a rule row states its
+  category the way every other finding row does.
+- Row order is unchanged. Findings stay in their current order and rule rows stay in authored
+  order; priority drives severity and colour, not position.
 
 Acceptance: a `medium` violation is visually distinguishable from a `critical` one; rule rows
-carry a category chip.
+carry a category chip; row order is byte-identical to today.
 
 ## Phase 3 - fix condition semantics
 
@@ -114,21 +118,29 @@ same rule reads with one name whether followed or violated.
 ## Phase 4 - validate rulebooks at ingest
 
 There is deliberately no code-side rulebook validation today; the schema is the contract and the
-generating agent is trusted. That is what let defects 5 and 6 ship. Add a validation pass in the
-orchestrator that reports (and skips) bad rules rather than baking them:
+generating agent is trusted. That is what let defect 5 ship. Add a validation pass in the
+orchestrator that reports bad rules rather than baking them silently:
 
-- **Unknown spell ids**: every `spell_id`, `required_spell_id` and `anchor_spell_id` must appear
-  in the spec's `major_cooldowns`, `defensives`, or the encounter's observed ability ids.
-- **Filler targets**: reject a `cast_without_prior` whose `spell_id` is cast far more often than
-  a cooldown would be. The per-cd bench already carries `uses_per_min`; a spell above a small
-  ceiling is a filler and cannot be judged this way. This catches the Rejuvenation rule.
 - **Inverted holds**: a `hold_cooldown_for_anchor` whose `action` text describes casting the held
   spell *before* the anchor is a pairing rule, not a hold. Flag any hold rule whose held spell is
   also the subject of "before"/"immediately before" phrasing in its own action, for author
   review. This catches BloodDeathKnight and FuryWarrior.
+- **Self-referential conditions**: a `cast_without_prior` whose `required_spell_id` equals its
+  `spell_id`, or a `hold_cooldown_for_anchor` listing its own anchor in `spell_ids`, can never
+  read as the author intended. This is a structural check with no judgement in it.
 - Emit the report in the ingest console summary so a bad rulebook is visible on the hourly run.
 
-Acceptance: running validation over the 40 deployed rulebooks reports exactly the known defects
+Two checks are deliberately **not** part of this pass:
+
+- **Unknown spell ids** (requiring every id to appear in the observed ability ids) would reject
+  valid rules. A spec legitimately skips a cooldown entirely on some encounters for strategic
+  reasons, so absence from one encounter's events says nothing about the rule.
+- **Filler targets** (rejecting a `cast_without_prior` whose subject is cast more often than a
+  cooldown would be) would tie a rule's validity to its subject's cooldown length. A rule is
+  worth checking regardless of how often the ability comes up, so cast frequency is not grounds
+  for rejection. The Rejuvenation rule is re-authored by hand in Phase 5 instead.
+
+Acceptance: running validation over the 40 deployed rulebooks reports the two inverted hold rules
 and nothing else.
 
 ## Phase 5 - re-author the broken rules, and use `exception`
@@ -148,10 +160,10 @@ Acceptance: no deployed rule flags correct play; `exception` has coverage.
 ## Sequencing and cost
 
 Phases 1 and 2 are pure runtime work with no data change and deliver most of the user value
-(293 rules become visible, priority starts meaning something). Phase 3 is a schema addition with
-a backward-compatible default. Phases 4 and 5 are the ingest-side hardening that stops the class
-of defect recurring, and are the only ones needing an `INGEST_VERSION` bump and a rulebook
-regeneration.
+(display-only rules start reaching the player where they explain a real issue, and priority
+starts meaning something). Phase 3 is a schema addition with a backward-compatible default.
+Phase 4 is ingest-side reporting that stops the class of defect recurring; it changes no baked
+data. Phase 5 is the only one needing an `INGEST_VERSION` bump and a rulebook regeneration.
 
 Doing nothing keeps 92% of authored rulebook content invisible and leaves two rules actively
 telling correct players they are wrong.
