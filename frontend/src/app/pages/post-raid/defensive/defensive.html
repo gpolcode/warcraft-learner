@@ -10,8 +10,10 @@
       [onPlan]="onPlan()"
       [showMap]="showMap()"
       [showClip]="showClip()"
+      [showExplain]="showExplain()"
       (openMap)="onFindingMap($event)"
-      (openClip)="onFindingClip($event)">
+      (openClip)="onFindingClip($event)"
+      (explain)="explainFinding.emit($event)">
     </wl-finding-table>
   }
 

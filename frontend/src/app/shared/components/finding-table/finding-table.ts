@@ -31,6 +31,10 @@ export class FindingTableComponent {
   readonly openMap = output<FindingRow>();
   /** Emitted when a timed finding's clip button is clicked; the page forwards it. */
   readonly openClip = output<FindingRow>();
+  /** Whether timed rows offer "why" (the page owns the on-device explanation). */
+  readonly showExplain = input<boolean>(false);
+  /** Emitted when a timed finding's why button is clicked; the page forwards it. */
+  readonly explain = output<FindingRow>();
 
   protected onOpenMap(row: FindingRow): void {
     if (row.timestampMs == null || !row.name) return;
@@ -40,5 +44,10 @@ export class FindingTableComponent {
   protected onOpenClip(row: FindingRow): void {
     if (row.timestampMs == null || !row.name) return;
     this.openClip.emit(row);
+  }
+
+  protected onExplain(row: FindingRow): void {
+    if (row.timestampMs == null || !row.name) return;
+    this.explain.emit(row);
   }
 }

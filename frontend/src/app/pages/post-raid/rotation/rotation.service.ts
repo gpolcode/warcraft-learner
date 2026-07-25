@@ -54,8 +54,6 @@ export interface CdPlanRow {
 
 /** An `ok` result implies the top-parse bench exists. */
 export interface RotationPlayerView {
-  /** The raw sorted findings behind the rows, for consumers that need prose (the coach card). */
-  findings: AnalysisFinding[];
   ruleRows: RotationFindingRow[];
   ruleOnPlan: string[];
   offensiveRows: RotationFindingRow[];
@@ -578,7 +576,7 @@ export class RotationFeatureService {
       const { ruleRows, offensiveRows, onPlan } =
         bucketRotationFindings(findings, bench.value.cd_spell_ids, bench.value.ability_icons);
       const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
-      return ok({ findings, ruleRows, ruleOnPlan, offensiveRows, onPlan });
+      return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
     } catch (cause) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
       return toLoadError(cause, 'rotation.player-view');

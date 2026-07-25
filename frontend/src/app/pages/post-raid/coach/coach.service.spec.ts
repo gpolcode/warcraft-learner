@@ -1,157 +1,129 @@
 import { describe, expect, it, afterEach, vi } from 'vitest';
-import { AnalysisFinding } from '../../../core/models/analysis.models';
-import { ComparisonWindow } from '../../../core/models/window-comparison.models';
+import { TestBed } from '@angular/core/testing';
+import { WclApiService } from '../../../core/services/wcl-api';
+import { WclEvent } from '../../../core/models/wcl.models';
 import {
-  CoachData, CoachFeatureService, MAX_PROMPT_FINDINGS, MAX_SUGGESTED_QUESTIONS,
-  DOWNLOAD_STALL_MS, MODEL_DISK_REQUIREMENT_GB, buildAnalysisContext, buildCoachDigest,
-  canStartWith, compactDamage, describeStorageQuota, findingLine, hasCoachContext, specLabel,
-  suggestedQuestions, windowLine,
+  CoachFeatureService, DOWNLOAD_STALL_MS, EVIDENCE_LEAD_S, MAX_EVIDENCE_ENTRIES,
+  MODEL_DISK_REQUIREMENT_GB, VERDICT_SCHEMA, buildEvidence, buildExplainPrompt, canStartWith,
+  causeLabel, describeStorageQuota, evidenceDamageTaken, parseVerdict,
 } from './coach.service';
+import { cast, damageTaken, applyBuff } from '../../../../testing/builders/events';
+import { SHADOW_BLADES, FEINT } from '../../../../testing/spell-ids';
 
-function finding(over: Partial<AnalysisFinding> = {}): AnalysisFinding {
-  return { severity: 'warning', category: 'cooldown_delay', message: 'Shadow Blades held.', ...over };
+// The shared event builders stamp fight-relative times, so the fight starts at the epoch here.
+const FIGHT_START_MS = 0;
+const FLAGGED_AT_MS = 60_000; // the finding's fight-relative instant, 01:00 into the pull
+const BOSS_HIT = 4001;
+const BOSS_HIT_DAMAGE = 820_000;
+const ABSORBED = 80_000;
+
+const ABILITIES = [
+  { gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' },
+  { gameID: FEINT, name: 'Feint', icon: 'ft' },
+  { gameID: BOSS_HIT, name: 'Crushing Slam', icon: 'cs' },
+];
+
+/** The builders emit fight-relative seconds; the evidence window works off the fight start. */
+function at(offsetS: number): number {
+  return FLAGGED_AT_MS / 1000 + offsetS;
 }
 
-function window_(over: Partial<ComparisonWindow> = {}): ComparisonWindow {
-  return {
-    timeStartS: 80, timeEndS: 95, spells: [], labels: [], status: 'good', statusIcon: '',
-    overview: { label: 'Damage', icon: '', playerPct: 1_240_000, topAvg: 1_800_000, topMin: 1_500_000, topMax: 2_100_000 },
-    detailRows: [],
-    ...over,
-  };
-}
+const ANCHOR = {
+  reportCode: 'abc', fightId: 3, playerId: 10,
+  timestampMs: FLAGGED_AT_MS, headline: 'Shadow Blades: held', measured: '47s avg 30s',
+};
 
-const PULL_DURATION_S = 245; // renders as 04:05 in the context's pull line
-const CONTEXT = { spec: 'SubtletyRogue', encounterName: 'Chrome King', kill: false, durationS: PULL_DURATION_S };
+describe('buildEvidence', () => {
+  it('collects casts, damage taken and buffs around the instant, offset from it', () => {
+    const evidence = buildEvidence({
+      casts: [cast(SHADOW_BLADES, at(-2))],
+      damageTaken: [damageTaken(BOSS_HIT, at(-1), BOSS_HIT_DAMAGE, { absorbed: ABSORBED })],
+      buffs: [applyBuff(FEINT, at(-1.5))],
+    }, ABILITIES, FIGHT_START_MS, FLAGGED_AT_MS);
 
-function coachData(over: Partial<CoachData> = {}): CoachData {
-  return {
-    context: CONTEXT,
-    rotationFindings: [], defensiveFindings: [],
-    burstWindows: [], defensiveWindows: [],
-    gearNotes: [],
-    ...over,
-  };
-}
-
-describe('specLabel', () => {
-  it('splits the spec folder name into words', () => {
-    expect(specLabel('SubtletyRogue')).toBe('Subtlety Rogue');
-  });
-});
-
-describe('compactDamage', () => {
-  it('formats millions, thousands, and null', () => {
-    expect(compactDamage(1_240_000)).toBe('1.2M');
-    expect(compactDamage(8_500)).toBe('9K');
-    expect(compactDamage(null)).toBe('unknown');
-  });
-});
-
-describe('findingLine', () => {
-  it('renders severity, slice, message and the remedy as the fix', () => {
-    const line = findingLine('rotation', finding({
-      severity: 'critical', message: 'Shadow Blades: 2 casts, expected 4. 2 lost.',
-      details: { remedy: 'Press Shadow Blades 2x more - sooner off cooldown.' },
-    }));
-    expect(line).toBe('- [critical] rotation: Shadow Blades: 2 casts, expected 4. 2 lost.'
-      + ' Fix: Press Shadow Blades 2x more - sooner off cooldown.');
-  });
-
-  it('omits the fix when the finding has no remedy', () => {
-    expect(findingLine('defensives', finding())).toBe('- [warning] defensives: Shadow Blades held.');
-  });
-});
-
-describe('windowLine', () => {
-  it('renders the time range, status, player vs top damage, and abilities', () => {
-    const line = windowLine('burst', window_({
-      status: 'warn',
-      spells: [{ id: 1, icon: '', name: 'Shadow Blades' }], labels: ['Flagellation'],
-    }));
-    expect(line).toBe('- burst 01:20-01:35 [warn]: you 1.2M vs top avg 1.8M. Abilities: Shadow Blades, Flagellation.');
-  });
-});
-
-describe('buildCoachDigest', () => {
-  it('orders critical findings before warnings across both slices', () => {
-    const digest = buildCoachDigest(
-      [finding({ severity: 'warning', message: 'rotation warning' })],
-      [finding({ severity: 'critical', message: 'defensive critical' })],
-    );
-    expect(digest.issueLines).toEqual([
-      '- [critical] defensives: defensive critical',
-      '- [warning] rotation: rotation warning',
+    expect(evidence).toEqual([
+      { offsetS: -2, kind: 'cast', label: 'Shadow Blades' },
+      { offsetS: -1.5, kind: 'buff', label: 'Feint' },
+      { offsetS: -1, kind: 'damage-taken', label: 'Crushing Slam', amount: BOSS_HIT_DAMAGE + ABSORBED },
     ]);
   });
 
-  it('collapses success findings into the on-plan list instead of issue lines', () => {
-    const digest = buildCoachDigest(
-      [finding({ severity: 'success', cd_name: 'Shadow Blades' })],
-      [finding({ severity: 'success', cd_name: undefined, message: 'Feint on plan.' })],
-    );
-    expect(digest.issueLines).toEqual([]);
-    expect(digest.onPlan).toEqual(['Shadow Blades', 'Feint on plan.']);
+  it('excludes events outside the window and keeps the boundary', () => {
+    const evidence = buildEvidence({
+      casts: [cast(SHADOW_BLADES, at(-EVIDENCE_LEAD_S)), cast(SHADOW_BLADES, at(-EVIDENCE_LEAD_S - 0.1))],
+      damageTaken: [], buffs: [],
+    }, ABILITIES, FIGHT_START_MS, FLAGGED_AT_MS);
+    expect(evidence).toHaveLength(1);
+    expect(evidence[0].offsetS).toBe(-EVIDENCE_LEAD_S);
   });
 
-  it('keeps exactly MAX_PROMPT_FINDINGS issues and drops the overflow', () => {
-    const atCap = Array.from({ length: MAX_PROMPT_FINDINGS }, () => finding());
-    expect(buildCoachDigest(atCap, []).issueLines).toHaveLength(MAX_PROMPT_FINDINGS);
-    expect(buildCoachDigest([...atCap, finding()], []).issueLines).toHaveLength(MAX_PROMPT_FINDINGS);
-  });
-});
-
-describe('buildAnalysisContext', () => {
-  it('leads with the pull line and includes every contributed section', () => {
-    const context = buildAnalysisContext(coachData({
-      rotationFindings: [finding({ severity: 'critical', message: 'Late opener.' })],
-      burstWindows: [window_()],
-      defensiveWindows: [window_({ timeStartS: 200, timeEndS: 210, status: 'bad' })],
-      gearNotes: ['Enchant (Chest): Not enchanted. Top: 91%.'],
-    }));
-    expect(context).toContain('Pull: Subtlety Rogue on Chrome King, Wipe, 04:05.');
-    expect(context).toContain('- [critical] rotation: Late opener.');
-    expect(context).toContain('Burst windows');
-    expect(context).toContain('- defensive 03:20-03:30 [bad]');
-    expect(context).toContain('- Enchant (Chest): Not enchanted. Top: 91%.');
+  it('caps a busy window at MAX_EVIDENCE_ENTRIES so the on-device context holds', () => {
+    const casts: WclEvent[] = Array.from({ length: MAX_EVIDENCE_ENTRIES + 5 },
+      (_, i) => cast(SHADOW_BLADES, at(-EVIDENCE_LEAD_S + i * 0.1)));
+    expect(buildEvidence({ casts, damageTaken: [], buffs: [] }, ABILITIES, FIGHT_START_MS, FLAGGED_AT_MS))
+      .toHaveLength(MAX_EVIDENCE_ENTRIES);
   });
 
-  it('marks a clean pull and appends the on-plan list', () => {
-    const context = buildAnalysisContext(coachData({
-      context: { ...CONTEXT, kill: true },
-      rotationFindings: [finding({ severity: 'success', cd_name: 'Shadow Blades' })],
-    }));
-    expect(context).toContain('Kill');
-    expect(context).toContain('- Nothing flagged.');
-    expect(context).toContain('On plan: Shadow Blades.');
+  it('names an ability the report does not describe by its id', () => {
+    const evidence = buildEvidence({ casts: [cast(SHADOW_BLADES, at(-1))], damageTaken: [], buffs: [] },
+      [], FIGHT_START_MS, FLAGGED_AT_MS);
+    expect(evidence[0].label).toBe(`Spell ${SHADOW_BLADES}`);
   });
 });
 
-describe('suggestedQuestions', () => {
-  it('grounds follow-ups in what was actually flagged, capped at MAX_SUGGESTED_QUESTIONS', () => {
-    const questions = suggestedQuestions(coachData({
-      rotationFindings: [finding({ severity: 'hold_suggestion', details: { cd_name: 'Vanish' } })],
-      defensiveWindows: [window_({ timeStartS: 200, status: 'bad' })],
-      gearNotes: ['Enchant missing.'],
-    }));
-    expect(questions).toEqual([
-      'What do I fix first next pull?',
-      'Why hold Vanish instead of casting it on cooldown?',
-      'How do I survive the hit at 03:20?',
-    ]);
-    expect(questions).toHaveLength(MAX_SUGGESTED_QUESTIONS);
+describe('evidenceDamageTaken', () => {
+  it('totals only the damage entries', () => {
+    const evidence = buildEvidence({
+      casts: [cast(SHADOW_BLADES, at(-2))],
+      damageTaken: [damageTaken(BOSS_HIT, at(-1), BOSS_HIT_DAMAGE, { absorbed: ABSORBED })],
+      buffs: [],
+    }, ABILITIES, FIGHT_START_MS, FLAGGED_AT_MS);
+    expect(evidenceDamageTaken(evidence)).toBe(BOSS_HIT_DAMAGE + ABSORBED);
   });
 
-  it('offers only the generic starter when nothing specific was flagged', () => {
-    expect(suggestedQuestions(coachData())).toEqual(['What do I fix first next pull?']);
+  it('is zero when nothing hit the player', () => {
+    expect(evidenceDamageTaken([])).toBe(0);
   });
 });
 
-describe('hasCoachContext', () => {
-  it('is true once any card contributed data and false when all are empty', () => {
-    expect(hasCoachContext(coachData())).toBe(false);
-    expect(hasCoachContext(coachData({ gearNotes: ['note'] }))).toBe(true);
-    expect(hasCoachContext(coachData({ burstWindows: [window_()] }))).toBe(true);
+describe('buildExplainPrompt', () => {
+  it('states the finding, the instant, and the evidence as offset lines', () => {
+    const evidence = buildEvidence({
+      casts: [cast(SHADOW_BLADES, at(-2))],
+      damageTaken: [damageTaken(BOSS_HIT, at(1), BOSS_HIT_DAMAGE)],
+      buffs: [],
+    }, ABILITIES, FIGHT_START_MS, FLAGGED_AT_MS);
+    const prompt = buildExplainPrompt(ANCHOR, evidence);
+
+    expect(prompt).toContain('Flagged: Shadow Blades: held');
+    expect(prompt).toContain('Measured: 47s avg 30s');
+    expect(prompt).toContain('01:00 into the pull');
+    expect(prompt).toContain('-2.0s cast Shadow Blades');
+    expect(prompt).toContain(`+1.0s took ${BOSS_HIT_DAMAGE} from Crushing Slam`);
+  });
+
+  it('says so plainly when the window recorded nothing', () => {
+    expect(buildExplainPrompt(ANCHOR, [])).toContain('Evidence: none recorded in this window.');
+  });
+});
+
+describe('parseVerdict', () => {
+  it('accepts the constrained shape the schema asks for', () => {
+    expect(parseVerdict('{"cause":"pressured","detail":"Took two hits.","confidence":"high"}'))
+      .toEqual({ cause: 'pressured', detail: 'Took two hits.', confidence: 'high' });
+  });
+
+  it('rejects malformed json and unknown causes rather than rendering junk', () => {
+    expect(parseVerdict('not json')).toBeNull();
+    expect(parseVerdict('{"cause":"vibes","detail":"x","confidence":"high"}')).toBeNull();
+  });
+});
+
+describe('causeLabel', () => {
+  it('renders every schema cause, so a verdict never shows a raw enum', () => {
+    for (const cause of VERDICT_SCHEMA.properties.cause.enum) {
+      expect(causeLabel(cause as Parameters<typeof causeLabel>[0])).not.toBe('');
+    }
   });
 });
 
@@ -161,15 +133,12 @@ describe('describeStorageQuota', () => {
 
   it('reads the profile volume size back out of the quota and flags it as too small', () => {
     const described = describeStorageQuota(SMALL_VOLUME_QUOTA_BYTES);
-    expect(described).toContain('storage quota 10.7 GB');
     expect(described).toContain('about 18 GB total');
     expect(described).toContain(`under the ${MODEL_DISK_REQUIREMENT_GB} GB`);
   });
 
   it('clears a volume with room for the model', () => {
-    const described = describeStorageQuota(LARGE_VOLUME_QUOTA_BYTES);
-    expect(described).toContain('about 500 GB total');
-    expect(described).toContain(`at or above the ${MODEL_DISK_REQUIREMENT_GB} GB`);
+    expect(describeStorageQuota(LARGE_VOLUME_QUOTA_BYTES)).toContain('about 500 GB total');
   });
 });
 
@@ -186,202 +155,106 @@ describe('canStartWith', () => {
   });
 });
 
-interface CreateCall { options: Record<string, unknown> }
-
 describe('CoachFeatureService (fake built-in AI)', () => {
   const globals = globalThis as Record<string, unknown>;
   afterEach(() => {
     delete globals['LanguageModel'];
-    delete globals['Summarizer'];
     vi.useRealTimers();
   });
 
-  /** Chrome's real failure mode: create() resolves never, rejects never, emits no progress. */
-  function hangingLanguageModel(availability = 'downloading') {
-    const calls: { signal?: AbortSignal } = {};
-    globals['LanguageModel'] = {
-      availability: () => Promise.resolve(availability),
-      create: (options: { signal?: AbortSignal }) => {
-        calls.signal = options.signal;
-        return new Promise<never>(() => undefined);
-      },
+  function configure(): CoachFeatureService {
+    const wclFake = {
+      getReport: () => Promise.resolve({
+        fights: [{ id: ANCHOR.fightId, startTime: FIGHT_START_MS, endTime: 300_000 }],
+        masterData: { abilities: ABILITIES },
+      }),
+      getAllEvents: (_code: string, _fight: number, dataType: string) => Promise.resolve(
+        dataType === 'Casts' ? [cast(SHADOW_BLADES, at(-2))]
+          : dataType === 'DamageTaken' ? [damageTaken(BOSS_HIT, at(-1), BOSS_HIT_DAMAGE)]
+            : [],
+      ),
     };
-    return calls;
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: WclApiService, useValue: wclFake as unknown as WclApiService }],
+    });
+    return TestBed.inject(CoachFeatureService);
   }
 
-  function fakeLanguageModel(replies: string[][], availability = 'available') {
-    const calls = { availabilityOptions: [] as Record<string, unknown>[], creates: [] as CreateCall[], destroyed: 0, prompts: [] as string[] };
-    let reply = 0;
+  function fakeLanguageModel(reply: string) {
+    const calls = { availabilityOptions: [] as Record<string, unknown>[], prompts: [] as string[], options: [] as Record<string, unknown>[], destroyed: 0 };
     globals['LanguageModel'] = {
       availability: (options: Record<string, unknown>) => {
         calls.availabilityOptions.push(options);
-        return Promise.resolve(availability);
+        return Promise.resolve('available');
       },
-      create: (options: Record<string, unknown>) => {
-        calls.creates.push({ options });
-        return Promise.resolve({
-          promptStreaming: (input: string) => {
-            calls.prompts.push(input);
-            const chunks = replies[reply++] ?? [];
-            return (async function* () { yield* chunks; })();
-          },
-          destroy: () => { calls.destroyed++; },
-        });
-      },
+      create: () => Promise.resolve({
+        prompt: (input: string, options: Record<string, unknown>) => {
+          calls.prompts.push(input);
+          calls.options.push(options);
+          return Promise.resolve(reply);
+        },
+        destroy: () => { calls.destroyed++; },
+      }),
     };
     return calls;
   }
 
-  it('passes the output language to BOTH availability() and create() - Chromium warns without it', async () => {
-    const calls = fakeLanguageModel([['debrief']]);
-    const service = new CoachFeatureService();
+  it('shows the log evidence and a typed verdict, constraining the model to the schema', async () => {
+    const calls = fakeLanguageModel('{"cause":"pressured","detail":"Took Crushing Slam 1s earlier.","confidence":"high"}');
+    const service = configure();
     await service.refresh();
-    await service.start(coachData({ rotationFindings: [finding()] }));
+    await service.explain(ANCHOR);
 
-    for (const options of [calls.availabilityOptions[0], calls.creates[0].options]) {
-      expect(options['outputLanguage']).toBe('en');
-      expect(options['expectedOutputs']).toEqual([{ type: 'text', languages: ['en'] }]);
-    }
-  });
-
-  it('streams the debrief, then answers a follow-up on the SAME session with the context intact', async () => {
-    const calls = fakeLanguageModel([['The pull ', 'died at 04:05.'], ['Fix the opener first.']]);
-    const service = new CoachFeatureService();
-    await service.refresh();
-    expect(service.engine()).toBe('prompt');
-    expect(service.availability()).toBe('ready');
-
-    await service.start(coachData({ rotationFindings: [finding()] }));
-    expect(service.transcript()).toEqual([{ role: 'coach', text: 'The pull died at 04:05.' }]);
-    expect(calls.creates).toHaveLength(1);
-    const systemPrompt = (calls.creates[0].options['initialPrompts'] as { content: string }[])[0].content;
-    expect(systemPrompt).toContain('Shadow Blades held.');
-    expect(service.chatReady()).toBe(true);
-
-    await service.ask('What do I fix first next pull?');
-    expect(calls.creates).toHaveLength(1);
-    expect(calls.prompts[1]).toBe('What do I fix first next pull?');
-    expect(service.transcript()).toEqual([
-      { role: 'coach', text: 'The pull died at 04:05.' },
-      { role: 'user', text: 'What do I fix first next pull?' },
-      { role: 'coach', text: 'Fix the opener first.' },
-    ]);
-  });
-
-  it('reset destroys the session so a new selection starts a clean debrief', async () => {
-    const calls = fakeLanguageModel([['debrief']]);
-    const service = new CoachFeatureService();
-    await service.refresh();
-    await service.start(coachData());
-    service.reset();
+    expect(service.open()).toBe(true);
+    expect(service.evidence().map(entry => entry.label)).toEqual(['Shadow Blades', 'Crushing Slam']);
+    expect(service.verdict()).toEqual({
+      cause: 'pressured', detail: 'Took Crushing Slam 1s earlier.', confidence: 'high',
+    });
+    expect(calls.options[0]['responseConstraint']).toBe(VERDICT_SCHEMA);
+    expect(calls.prompts[0]).toContain('cast Shadow Blades');
     expect(calls.destroyed).toBe(1);
-    expect(service.transcript()).toEqual([]);
-    expect(service.chatReady()).toBe(false);
   });
 
-  it('falls back to the one-shot Summarizer with no chat when there is no Prompt API', async () => {
-    const availabilityOptions: Record<string, unknown>[] = [];
-    globals['Summarizer'] = {
-      availability: (options: Record<string, unknown>) => {
-        availabilityOptions.push(options);
-        return Promise.resolve('available');
-      },
-      create: () => Promise.resolve({
-        summarizeStreaming: () => (async function* () { yield 'key points'; })(),
-        destroy: () => undefined,
-      }),
-    };
-    const service = new CoachFeatureService();
+  it('passes the output language to BOTH availability() and create() - Chromium warns without it', async () => {
+    const calls = fakeLanguageModel('{"cause":"movement","detail":"x","confidence":"low"}');
+    const service = configure();
     await service.refresh();
-    expect(service.engine()).toBe('summarizer');
-    expect(availabilityOptions[0]['outputLanguage']).toBe('en');
-
-    await service.start(coachData({ rotationFindings: [finding()] }));
-    expect(service.transcript()).toEqual([{ role: 'coach', text: 'key points' }]);
-    expect(service.chatReady()).toBe(false);
+    expect(calls.availabilityOptions[0]['outputLanguage']).toBe('en');
+    expect(calls.availabilityOptions[0]['expectedOutputs']).toEqual([{ type: 'text', languages: ['en'] }]);
   });
 
-  it('starts from a download Chrome already had in flight, which reports no progress on its own', async () => {
-    const calls = fakeLanguageModel([['debrief']], 'downloading');
-    const service = new CoachFeatureService();
+  it('still shows the evidence when the browser has no model at all', async () => {
+    const service = configure();
     await service.refresh();
-    expect(service.availability()).toBe('downloading');
+    expect(service.availability()).toBe('unavailable');
 
-    await service.start(coachData({ rotationFindings: [finding()] }));
-    expect(calls.creates).toHaveLength(1);
-    expect(service.transcript()).toEqual([{ role: 'coach', text: 'debrief' }]);
-    expect(service.availability()).toBe('ready');
+    await service.explain(ANCHOR);
+    expect(service.evidence()).toHaveLength(2);
+    expect(service.verdict()).toBeNull();
+    expect(service.failed()).toBe(false);
   });
 
-  it('traces the probe, the session handshake and the stream length for debugging', async () => {
-    fakeLanguageModel([['debrief']]);
-    const service = new CoachFeatureService();
+  it('marks a verdict the model returned malformed as failed, keeping the evidence', async () => {
+    fakeLanguageModel('not json at all');
+    const service = configure();
     await service.refresh();
-    await service.start(coachData({ rotationFindings: [finding()] }));
-
-    const trace = service.diagnostics().join('\n');
-    expect(trace).toContain('LanguageModel present');
-    expect(trace).toContain('LanguageModel.availability -> available');
-    expect(trace).toContain('LanguageModel.create: session ready');
-    expect(trace).toContain('stream: ended after 1 chunk(s)');
-  });
-
-  it('traces a create() failure with its error name and message', async () => {
-    globals['LanguageModel'] = {
-      availability: () => Promise.resolve('available'),
-      create: () => Promise.reject(new Error('model crashed')),
-    };
-    const service = new CoachFeatureService();
-    await service.refresh();
-    await service.start(coachData({ rotationFindings: [finding()] }));
-    expect(service.diagnostics().join('\n')).toContain('start failed: Error: model crashed');
+    await service.explain(ANCHOR);
+    expect(service.verdict()).toBeNull();
+    expect(service.failed()).toBe(true);
+    expect(service.evidence()).toHaveLength(2);
   });
 
   it('flags the download as stalled once Chrome sends no progress for DOWNLOAD_STALL_MS', async () => {
     vi.useFakeTimers();
-    hangingLanguageModel();
-    const service = new CoachFeatureService();
-    await service.refresh();
-    void service.start(coachData({ rotationFindings: [finding()] }));
-
-    await vi.advanceTimersByTimeAsync(DOWNLOAD_STALL_MS - 1);
-    expect(service.stalled()).toBe(false);
-    await vi.advanceTimersByTimeAsync(1);
-    expect(service.stalled()).toBe(true);
-    // The periodic re-probe records whether Chrome's own state is moving while create() waits.
-    expect(service.diagnostics().join('\n')).toContain('still waiting; availability -> downloading');
-  });
-
-  it('cancel aborts the pending create() so the card stops waiting on a fetch Chrome is not running', async () => {
-    const calls = hangingLanguageModel();
-    const service = new CoachFeatureService();
-    await service.refresh();
-    void service.start(coachData({ rotationFindings: [finding()] }));
-    expect(service.generating()).toBe(true);
-    expect(calls.signal?.aborted).toBe(false);
-
-    service.cancel();
-    expect(calls.signal?.aborted).toBe(true);
-    expect(service.generating()).toBe(false);
-    expect(service.failed()).toBe(false);
-  });
-
-  it('reports unavailable when the browser has neither engine', async () => {
-    const service = new CoachFeatureService();
-    await service.refresh();
-    expect(service.engine()).toBeNull();
-    expect(service.availability()).toBe('unavailable');
-  });
-
-  it('flags a failed generation without throwing', async () => {
     globals['LanguageModel'] = {
-      availability: () => Promise.resolve('available'),
-      create: () => Promise.reject(new Error('model crashed')),
+      availability: () => Promise.resolve('downloading'),
+      create: () => new Promise<never>(() => undefined),
     };
-    const service = new CoachFeatureService();
+    const service = configure();
     await service.refresh();
-    await service.start(coachData({ rotationFindings: [finding()] }));
-    expect(service.failed()).toBe(true);
-    expect(service.transcript()).toEqual([]);
+    void service.explain(ANCHOR);
+    await vi.advanceTimersByTimeAsync(DOWNLOAD_STALL_MS);
+    expect(service.stalled()).toBe(true);
   });
 });

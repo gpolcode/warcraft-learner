@@ -36,10 +36,10 @@ export class DefensiveComponent {
   readonly busyChange = output<boolean>();
   /** Whether the top-parse bench exists. The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
-  /** Raw findings for the page to feed the coach card. */
-  readonly findingsChange = output<AnalysisFinding[]>();
-  /** Comparison windows for the page to feed the coach card. */
-  readonly windowsChange = output<ComparisonWindow[]>();
+  /** Whether rows offer the on-device "why" action (the page owns the explanation). */
+  readonly showExplain = input<boolean>(false);
+  /** A row's why button; the page builds the log anchor and opens the panel. */
+  readonly explainFinding = output<FindingRow>();
 
   protected readonly available = signal(true);
   protected readonly error = signal<RenderableLoadError | null>(null);
@@ -69,11 +69,9 @@ export class DefensiveComponent {
             this.available.set(true);
             this.availableChange.emit(true);
             this._findings.set(view.findings);
-            this.findingsChange.emit(view.findings);
             this._spellIdsByName.set(view.spellIdsByName);
             this._iconByName.set(view.iconByName);
             this._windows.set(view.windows);
-            this.windowsChange.emit(view.windows);
             this._anchors.set(view.anchors);
             this._clipAnchors.set(view.clipAnchors);
           } else {
@@ -82,11 +80,9 @@ export class DefensiveComponent {
             this.available.set(false);
             this.availableChange.emit(false);
             this._findings.set([]);
-            this.findingsChange.emit([]);
             this._spellIdsByName.set({});
             this._iconByName.set({});
             this._windows.set([]);
-            this.windowsChange.emit([]);
             this._anchors.set([]);
             this._clipAnchors.set([]);
           }

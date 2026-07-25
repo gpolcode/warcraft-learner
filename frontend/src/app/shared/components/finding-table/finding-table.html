@@ -46,6 +46,11 @@
                   <mat-icon>videocam</mat-icon>
                 </button>
               }
+              @if (showExplain()) {
+                <button mat-icon-button title="Why did this happen" (click)="onExplain(row)">
+                  <mat-icon>help_outline</mat-icon>
+                </button>
+              }
             }
             @if (row.chip) {
               @switch (row.severity) {

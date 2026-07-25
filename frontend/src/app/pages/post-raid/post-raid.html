@@ -106,18 +106,6 @@
           (busyChange)="pullOverviewBusy.set($event)">
         </wl-pull-overview>
 
-        <wl-coach
-          [spec]="spec()"
-          [encounterName]="selectedFight()?.name ?? ''"
-          [kill]="selectedFight()?.kill ?? false"
-          [durationS]="selectedFight()?.duration_s ?? 0"
-          [rotationFindings]="rotationFindings()"
-          [defensiveFindings]="defensiveFindings()"
-          [burstWindows]="burstWindows()"
-          [defensiveWindows]="defensiveWindows()"
-          [gearNotes]="gearNotes()">
-        </wl-coach>
-
         <wl-rotation
           [spec]="spec()"
           [encounterId]="selectedEncounterId()"
@@ -126,7 +114,8 @@
           [playerId]="selectedPlayerId()!"
           (busyChange)="rotationBusy.set($event)"
           (availableChange)="rotationAvailable.set($event)"
-          (findingsChange)="rotationFindings.set($event)">
+          [showExplain]="explainReady()"
+          (explainFinding)="onExplain($event)">
         </wl-rotation>
 
         <wl-burst-windows
@@ -140,8 +129,7 @@
           (openMap)="onOpenMap($event)"
           (openClip)="onOpenClip($event)"
           (busyChange)="burstBusy.set($event)"
-          (availableChange)="burstAvailable.set($event)"
-          (windowsChange)="burstWindows.set($event)">
+          (availableChange)="burstAvailable.set($event)">
         </wl-burst-windows>
 
         <wl-defensive
@@ -156,8 +144,8 @@
           (openClip)="onOpenClip($event)"
           (busyChange)="defensiveBusy.set($event)"
           (availableChange)="defensiveAvailable.set($event)"
-          (findingsChange)="defensiveFindings.set($event)"
-          (windowsChange)="defensiveWindows.set($event)">
+          [showExplain]="explainReady()"
+          (explainFinding)="onExplain($event)">
         </wl-defensive>
 
         <wl-gear
@@ -167,12 +155,12 @@
           [fight]="selectedFightId()!"
           [player]="selectedPlayerId()!"
           (busyChange)="gearBusy.set($event)"
-          (availableChange)="gearAvailable.set($event)"
-          (notesChange)="gearNotes.set($event)">
+          (availableChange)="gearAvailable.set($event)">
         </wl-gear>
       </div>
     }
 
     <wl-map-panel></wl-map-panel>
     <wl-clip-panel></wl-clip-panel>
+    <wl-coach-panel></wl-coach-panel>
 </div>

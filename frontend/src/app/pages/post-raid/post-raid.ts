@@ -14,8 +14,6 @@ import { MatCardModule } from '@angular/material/card';
 import { WclApiService } from '../../core/services/wcl-api';
 import { LiveReportSyncService, POLL_INTERVAL_MS } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
-import { AnalysisFinding } from '../../core/models/analysis.models';
-import { ComparisonWindow } from '../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -25,7 +23,8 @@ import { BurstWindowsComponent } from './burst-windows/burst-windows';
 import { DefensiveComponent } from './defensive/defensive';
 import { DefensiveMapAnchor } from './defensive/defensive.service';
 import { GearComponent } from './gear/gear';
-import { CoachComponent } from './coach/coach';
+import { CoachPanelComponent } from './coach/coach-panel';
+import { CoachFeatureService } from './coach/coach.service';
 import { MapPanelComponent } from './map/map-panel';
 import { MapFeatureService, MapAnchor } from './map/map.service';
 import { LiveCaptureFeatureService } from './live/live-capture.service';
@@ -42,6 +41,7 @@ import { logWarn } from '../../core/log';
 import { Result, LoadError, permanent } from '../../core/result';
 import { toLoadError } from '../../core/http-load-error';
 import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
+import { FindingRow } from '../../shared/components/finding-table/finding-table';
 
 /** Pull a report code out of a WCL report URL, or pass through a bare code. */
 export function extractCode(url: string): string {
@@ -191,7 +191,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
     LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent, PullOverviewComponent, RotationComponent, BurstWindowsComponent,
-    DefensiveComponent, GearComponent, CoachComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
+    DefensiveComponent, GearComponent, CoachPanelComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   // No reserved subscript strip under this page's form fields; a field grows to
@@ -204,6 +204,7 @@ export class PostRaidComponent {
   private readonly wclApi = inject(WclApiService);
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
+  private readonly coachFeature = inject(CoachFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly selectionStore = inject(SelectionStore);
 
@@ -215,6 +216,7 @@ export class PostRaidComponent {
     // Live sync owns the fight selection: disable the control while it drives the fight
     // (setValue from the poll still works on a disabled control). The record toggle is
     // independent and does not touch selection.
+    void this.coachFeature.refresh();
     effect(() => {
       if (this.liveCapture.liveEnabled()) this.fightControl.disable();
       else this.fightControl.enable();
@@ -246,13 +248,6 @@ export class PostRaidComponent {
   protected readonly gearAvailable = signal(false);
   protected readonly benchAvailable = computed(() =>
     this.rotationAvailable() || this.burstAvailable() || this.defensiveAvailable() || this.gearAvailable());
-
-  // Analysis data the cards emit; the coach card grounds its on-device debrief chat in it.
-  protected readonly rotationFindings = signal<AnalysisFinding[]>([]);
-  protected readonly defensiveFindings = signal<AnalysisFinding[]>([]);
-  protected readonly burstWindows = signal<ComparisonWindow[]>([]);
-  protected readonly defensiveWindows = signal<ComparisonWindow[]>([]);
-  protected readonly gearNotes = signal<string[]>([]);
 
   // `notice` carries the non-failure states the taxonomy does not cover (invalid code, zero-pull report).
   protected readonly loadError = signal<RenderableLoadError | null>(null);
@@ -326,6 +321,25 @@ export class PostRaidComponent {
       timeS: anchor.timeS,
       windowLengthS: anchor.windowLengthS,
       reference: anchor.refGameId != null ? { kind: 'enemy', gameId: anchor.refGameId } : { kind: 'boss' },
+    });
+  }
+
+  /** The why action is offered once the browser has a usable on-device model. */
+  protected explainReady(): boolean { return this.coachFeature.availability() !== 'unavailable'; }
+
+  /**
+   * A finding row's why button: anchor the on-device explanation to that instant in this log,
+   * so the panel can fetch the events around it.
+   */
+  protected onExplain(row: FindingRow): void {
+    if (row.timestampMs == null) return;
+    void this.coachFeature.explain({
+      reportCode: this.reportCode(),
+      fightId: this.selectedFightId()!,
+      playerId: this.selectedPlayerId()!,
+      timestampMs: row.timestampMs,
+      headline: `${row.name}: ${row.chip ?? 'flagged'}`,
+      measured: `${row.measured.value}${row.measured.unit ? ' ' + row.measured.unit : ''}`,
     });
   }
 
