@@ -50,8 +50,8 @@ copying the example get the operands the wrong way round.
   them: evaluated when it has a condition, surfaced as a hint against a real finding when it
   does not.
 - `type` categorises the rule, `priority` weights it.
-- A rule can only be authored in a way that produces a correct check, because a validation step
-  rejects the rest.
+- A rule's condition agrees with its own text, enforced where the rule is authored rather than
+  where it is consumed.
 
 ## Phase 1 - surface display-only rules as issue hints on post-raid
 
@@ -119,35 +119,7 @@ carry a category chip; row order is byte-identical to today.
 Acceptance: a rule marked `before` no longer passes when the required spell comes second; the
 same rule reads with one name whether followed or violated.
 
-## Phase 4 - validate rulebooks at ingest
-
-There is deliberately no code-side rulebook validation today; the schema is the contract and the
-generating agent is trusted. That is what let defect 5 ship. Add a validation pass in the
-orchestrator that reports bad rules rather than baking them silently:
-
-- **Inverted holds**: a `hold_cooldown_for_anchor` whose `action` text describes casting the held
-  spell *before* the anchor is a pairing rule, not a hold. Flag any hold rule whose held spell is
-  also the subject of "before"/"immediately before" phrasing in its own action, for author
-  review. This catches BloodDeathKnight and FuryWarrior.
-- **Self-referential conditions**: a `cast_without_prior` whose `required_spell_id` equals its
-  `spell_id`, or a `hold_cooldown_for_anchor` listing its own anchor in `spell_ids`, can never
-  read as the author intended. This is a structural check with no judgement in it.
-- Emit the report in the ingest console summary so a bad rulebook is visible on the hourly run.
-
-Two checks are deliberately **not** part of this pass:
-
-- **Unknown spell ids** (requiring every id to appear in the observed ability ids) would reject
-  valid rules. A spec legitimately skips a cooldown entirely on some encounters for strategic
-  reasons, so absence from one encounter's events says nothing about the rule.
-- **Filler targets** (rejecting a `cast_without_prior` whose subject is cast more often than a
-  cooldown would be) would tie a rule's validity to its subject's cooldown length. A rule is
-  worth checking regardless of how often the ability comes up, so cast frequency is not grounds
-  for rejection. The Rejuvenation rule is re-authored by hand in Phase 5 instead.
-
-Acceptance: running validation over the 40 deployed rulebooks reports the two inverted hold rules
-and nothing else.
-
-## Phase 5 - re-author the broken rules, and use `exception`
+## Phase 4 - re-author the broken rules, and use `exception`
 
 - Re-author the two inverted hold rules as `cast_without_prior` with `position: "before"` (for
   BloodDeathKnight: Dancing Rune Weapon without a prior Reaper's Mark inside 6s), which states
@@ -156,7 +128,7 @@ and nothing else.
   the subject is the proc window, not every Rejuvenation cast.
 - **`exception` has never executed against real data.** Before relying on it, add a unit test
   covering both `position` values with realistic cast timings. The Rejuvenation case is exactly
-  what it was designed for, so Phase 5 is where it either earns its place or is proven working.
+  what it was designed for, so this phase is where it either earns its place or is proven working.
 - Bump `INGEST_VERSION` when re-authored rulebooks land, since the baked bench content changes.
 
 Acceptance: no deployed rule flags correct play; `exception` has coverage.
@@ -165,9 +137,13 @@ Acceptance: no deployed rule flags correct play; `exception` has coverage.
 
 Phases 1 and 2 are pure runtime work with no data change and deliver most of the user value
 (display-only rules start reaching the player where they explain a real issue, and priority
-starts meaning something). Phase 3 is a schema addition with a backward-compatible default.
-Phase 4 is ingest-side reporting that stops the class of defect recurring; it changes no baked
-data. Phase 5 is the only one needing an `INGEST_VERSION` bump and a rulebook regeneration.
+starts meaning something). Phase 3 is a schema addition. Phase 4 is the rulebook repair, and the
+only one needing an `INGEST_VERSION` bump.
+
+There is no ingest-time validation phase. Ingest is the wrong moment to judge an authored rule:
+it runs hourly and unattended, long after the authoring decision, and a report in its log reaches
+nobody who can act on it. The place to catch an inverted rule is the authoring pass, which is why
+the operand-order rule lives in the **warcraft-rulebook** skill instead.
 
 Doing nothing keeps 92% of authored rulebook content invisible and leaves two rules actively
 telling correct players they are wrong.
