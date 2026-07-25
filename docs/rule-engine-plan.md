@@ -71,8 +71,10 @@ the text is already baked into every rotation bench file.
   timestamp, because a hint is not a measurement - it must not enter `bucketFindings` or claim a
   row in the "Measured" column.
 - A rule that names no cooldown of the spec has nothing in the pull to attach to and does not
-  surface. In practice that is most `positioning` and `aoe_switch` rules. This is a deliberate
-  trade: the alternative is the reminder list this phase rejects.
+  surface. Across the 40 deployed rulebooks, 158 of the 293 display-only rules (54%) name at
+  least one cooldown and are therefore reachable; the 135 that do not are dominated by generic
+  `rotation` priority-list rules (94 of them), which is exactly the content this phase judges to
+  be noise. This is a deliberate trade: the alternative is the reminder list it rejects.
 - Keep authored order within the card; no re-sorting (see Phase 2).
 - The comment at `post-raid.ts:239` claiming rules "render regardless" of a bench is wrong -
   `rotation.html:2` hides the whole card when the bench is unavailable, and the rules arrive in
