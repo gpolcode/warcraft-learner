@@ -85,9 +85,11 @@ Dancing Rune Weapon; a pull with no findings shows no hints; no finding counts c
 
 ## Phase 2 - make `priority` and `type` carry weight
 
-- Map priority to four visual tiers rather than two: `critical` -> critical, `high` -> warning,
-  `medium` -> info, `low` -> muted/info. Apply in both `evaluateRules` (`:151`) and
-  `rulesFollowed` (`:175`).
+- Map priority onto the finding table's three severity tiers rather than the single bit it drives
+  today: `critical` -> critical, `high` -> warning, `medium` and `low` -> info. Apply in both
+  `evaluateRules` (`:151`) and `rulesFollowed` (`:175`). A fourth muted tier would be dead
+  markup: the table renders three, and no deployed rule is `low` (the 26 evaluable rules are 17
+  `high`, 7 `critical`, 2 `medium`).
 - Use `type` for the violation rows too, as the row's category chip, so a rule row states its
   category the way every other finding row does.
 - Row order is unchanged. Findings stay in their current order and rule rows stay in authored
