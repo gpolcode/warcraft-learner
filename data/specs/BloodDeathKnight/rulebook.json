@@ -96,20 +96,17 @@
       "action": "Pull with Death's Caress, pre-place Death and Decay while it is in flight, then cast Reaper's Mark (Deathbringer) followed immediately by Dancing Rune Weapon, a Blood Boil, and a Death Strike before settling into normal priority."
     },
     {
-      "type": "cd_hold",
+      "type": "cooldown_pairing",
       "priority": "high",
       "description": "Keep Reaper's Mark cast just before Dancing Rune Weapon",
       "condition": {
-        "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [
-          439843
-        ],
-        "spell_names": [
-          "Reaper's Mark"
-        ],
-        "anchor_spell_id": 49028,
-        "anchor_spell_name": "Dancing Rune Weapon",
-        "hold_window_s": 6
+        "kind": "cast_without_prior",
+        "spell_id": 49028,
+        "spell_name": "Dancing Rune Weapon",
+        "required_spell_id": 439843,
+        "required_spell_name": "Reaper's Mark",
+        "window_s": 6,
+        "position": "before"
       },
       "action": "As Deathbringer, cast Reaper's Mark immediately before Dancing Rune Weapon so the two cooldowns return together and stay synced for the rest of the fight; do not desync them by firing Dancing Rune Weapon first."
     },

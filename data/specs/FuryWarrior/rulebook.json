@@ -69,12 +69,13 @@
       "priority": "critical",
       "description": "Stack Avatar with Recklessness every window",
       "condition": {
-        "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [107574],
-        "spell_names": ["Avatar"],
-        "anchor_spell_id": 1719,
-        "anchor_spell_name": "Recklessness",
-        "hold_window_s": 20
+        "kind": "cast_without_prior",
+        "spell_id": 107574,
+        "spell_name": "Avatar",
+        "required_spell_id": 1719,
+        "required_spell_name": "Recklessness",
+        "window_s": 5,
+        "position": "either"
       },
       "action": "Always cast Avatar within 5 seconds of Recklessness to stack their damage bonuses - they share cooldown reduction from Anger Management and will stay aligned throughout the fight."
     },

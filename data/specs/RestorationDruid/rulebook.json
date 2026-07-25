@@ -117,11 +117,12 @@
       "description": "Follow Swiftmend with Rejuvenation",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 774,
-        "spell_name": "Rejuvenation",
-        "required_spell_id": 18562,
-        "required_spell_name": "Swiftmend",
-        "window_s": 3
+        "spell_id": 18562,
+        "spell_name": "Swiftmend",
+        "required_spell_id": 774,
+        "required_spell_name": "Rejuvenation",
+        "window_s": 3,
+        "position": "after"
       },
       "action": "Cast Rejuvenation immediately after Swiftmend to consume the Soul of the Forest proc and gain two free, supercharged Rejuvenation buffs."
     },
