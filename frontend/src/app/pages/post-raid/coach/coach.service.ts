@@ -98,6 +98,25 @@ export const MAX_DIAGNOSTICS = 60;
 export const DOWNLOAD_STALL_MS = 30_000;
 export const DOWNLOAD_PROBE_MS = 10_000;
 
+/** Chrome reports an origin 60% of the volume's TOTAL size and ignores free space entirely. */
+export const CHROME_ORIGIN_QUOTA_FRACTION = 0.6;
+export const MODEL_DISK_REQUIREMENT_GB = 22;
+
+/**
+ * Read the profile volume's size back out of the origin quota. A quota far under the model
+ * requirement means Chrome's profile sits on a small volume, which is invisible from the free
+ * space on whatever disk the user is looking at.
+ */
+export function describeStorageQuota(quotaBytes: number): string {
+  const quotaGb = quotaBytes / 1e9;
+  const volumeGb = quotaGb / CHROME_ORIGIN_QUOTA_FRACTION;
+  const verdict = volumeGb < MODEL_DISK_REQUIREMENT_GB
+    ? `under the ${MODEL_DISK_REQUIREMENT_GB} GB the model needs; check chrome://version for the profile path`
+    : `at or above the ${MODEL_DISK_REQUIREMENT_GB} GB the model needs`;
+  return `storage quota ${quotaGb.toFixed(1)} GB, so the Chrome profile volume is about `
+    + `${volumeGb.toFixed(0)} GB total (quota is 60% of total size, not free space) - ${verdict}`;
+}
+
 /** On-device models have small context windows, so the digest is hard-capped. */
 export const MAX_PROMPT_FINDINGS = 24;
 export const MAX_PROMPT_WINDOWS = 6;
@@ -434,7 +453,7 @@ export class CoachFeatureService {
     if (!storage?.estimate) return;
     try {
       const { quota } = await storage.estimate();
-      if (quota != null) this._trace(`storage quota ${(quota / 1e9).toFixed(1)} GB (the model needs 22 GB free on the profile volume)`);
+      if (quota != null) this._trace(describeStorageQuota(quota));
     } catch (err) {
       this._trace(`storage estimate threw ${describeError(err)}`);
     }

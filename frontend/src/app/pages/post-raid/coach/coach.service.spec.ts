@@ -3,8 +3,9 @@ import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { ComparisonWindow } from '../../../core/models/window-comparison.models';
 import {
   CoachData, CoachFeatureService, MAX_PROMPT_FINDINGS, MAX_SUGGESTED_QUESTIONS,
-  DOWNLOAD_STALL_MS, buildAnalysisContext, buildCoachDigest, canStartWith, compactDamage,
-  findingLine, hasCoachContext, specLabel, suggestedQuestions, windowLine,
+  DOWNLOAD_STALL_MS, MODEL_DISK_REQUIREMENT_GB, buildAnalysisContext, buildCoachDigest,
+  canStartWith, compactDamage, describeStorageQuota, findingLine, hasCoachContext, specLabel,
+  suggestedQuestions, windowLine,
 } from './coach.service';
 
 function finding(over: Partial<AnalysisFinding> = {}): AnalysisFinding {
@@ -151,6 +152,24 @@ describe('hasCoachContext', () => {
     expect(hasCoachContext(coachData())).toBe(false);
     expect(hasCoachContext(coachData({ gearNotes: ['note'] }))).toBe(true);
     expect(hasCoachContext(coachData({ burstWindows: [window_()] }))).toBe(true);
+  });
+});
+
+describe('describeStorageQuota', () => {
+  const SMALL_VOLUME_QUOTA_BYTES = 10.7e9; // 60% of a ~18 GB volume, under the model requirement
+  const LARGE_VOLUME_QUOTA_BYTES = 300e9; // 60% of a ~500 GB volume
+
+  it('reads the profile volume size back out of the quota and flags it as too small', () => {
+    const described = describeStorageQuota(SMALL_VOLUME_QUOTA_BYTES);
+    expect(described).toContain('storage quota 10.7 GB');
+    expect(described).toContain('about 18 GB total');
+    expect(described).toContain(`under the ${MODEL_DISK_REQUIREMENT_GB} GB`);
+  });
+
+  it('clears a volume with room for the model', () => {
+    const described = describeStorageQuota(LARGE_VOLUME_QUOTA_BYTES);
+    expect(described).toContain('about 500 GB total');
+    expect(described).toContain(`at or above the ${MODEL_DISK_REQUIREMENT_GB} GB`);
   });
 });
 
