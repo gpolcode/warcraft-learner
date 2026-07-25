@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://warcraft-learner/rulebook.schema.json",
   "title": "warcraft-learner spec rulebook",
-  "description": "AI-generated rulebook for a single WoW specialization. Extract all major offensive cooldowns, all personal defensive cooldowns, and 5-10 high-signal rotation/cooldown usage rules from the supplied guide content. Output ONLY the raw JSON object - no markdown fences, no preamble. The first character must be '{' and the last must be '}'.",
+  "description": "AI-generated rulebook for a single WoW specialization. Extract all major offensive cooldowns, all personal defensive cooldowns, and the spec's checkable rotation/cooldown usage rules from the supplied guide content. Output ONLY the raw JSON object - no markdown fences, no preamble. The first character must be '{' and the last must be '}'.",
   "type": "object",
   "additionalProperties": false,
   "required": ["spec", "spec_icon", "major_cooldowns", "defensives", "rules", "source_summary"],
@@ -30,7 +30,7 @@
     },
     "rules": {
       "type": "array",
-      "description": "High-signal rotation and cooldown usage rules that are CHECKABLE from cast timing: pairing two abilities, or holding one for an anchor cooldown. Every rule needs a condition, so omit anything that cannot be expressed as one - guidance the engine cannot judge is not a rule. Quality over count: a spec with two real rules is better than one with eight, and an empty list is valid.",
+      "description": "High-signal rotation and cooldown usage rules that are CHECKABLE against the player's log: cast timing, buff and debuff uptime, resources spent at a cast, enemies engaged, and cooldown usage against top parses. Every rule needs a condition, so omit anything that cannot be expressed as one - guidance the engine cannot judge is not a rule. Quality over count: a spec with two real rules is better than one with eight, and an empty list is valid.",
       "items": { "$ref": "#/$defs/rule" }
     },
     "source_summary": {
@@ -137,8 +137,8 @@
       "properties": {
         "type": {
           "type": "string",
-          "description": "Rule category. cooldown_pairing: two abilities must be cast together or in sequence. cd_hold: an ability should be delayed until an anchor cooldown is available. opener: specific sequence or timing required at pull. rotation: ongoing priority or combo maintained throughout the fight. positioning: player must be in a specific location (melee range, behind target, etc.). aoe_switch: behavior changes when multiple targets are present.",
-          "enum": ["cooldown_pairing", "cd_hold", "opener", "rotation", "positioning", "aoe_switch"]
+          "description": "Rule category. cooldown_pairing: two abilities must be cast together or in sequence. cd_hold: an ability should be delayed until an anchor cooldown is available. opener: specific sequence or timing required at pull. rotation: ongoing priority or combo maintained throughout the fight. aoe_switch: behavior changes when multiple targets are present.",
+          "enum": ["cooldown_pairing", "cd_hold", "opener", "rotation", "aoe_switch"]
         },
         "priority": {
           "type": "string",
@@ -150,10 +150,17 @@
           "description": "Short rule title shown in the UI (<= 60 chars)."
         },
         "condition": {
-          "description": "REQUIRED machine-readable trigger. Every rule is judged against the player's cast timeline; a rule that cannot be expressed as one of the kinds below does not belong in the rulebook at all. Do not invent a rule to fill a slot - a short list of checkable rules is correct, an empty list is acceptable.",
+          "description": "REQUIRED machine-readable trigger. Every rule is judged against the player's recorded behaviour, so a rule that cannot be expressed as one of the kinds below does not belong in the rulebook. Pick the kind that matches what the rule actually says rather than bending it into a cast-timing proxy: a rule about a buff being up wants castOutsideBuff or auraUptimeBelow, a resource threshold wants resourceAtCast, and a target count wants castAtTargetCount.",
           "anyOf": [
             { "$ref": "#/$defs/castWithoutPrior" },
-            { "$ref": "#/$defs/holdCooldownForAnchor" }
+            { "$ref": "#/$defs/holdCooldownForAnchor" },
+            { "$ref": "#/$defs/castOutsideBuff" },
+            { "$ref": "#/$defs/auraUptimeBelow" },
+            { "$ref": "#/$defs/openingSequence" },
+            { "$ref": "#/$defs/cooldownUnderused" },
+            { "$ref": "#/$defs/castAtTargetCount" },
+            { "$ref": "#/$defs/resourceAtCast" },
+            { "$ref": "#/$defs/procWasted" }
           ]
         },
         "action": {
@@ -221,6 +228,162 @@
           "anchor_spell_id": 121471,
           "anchor_spell_name": "Shadow Blades",
           "hold_window_s": 15
+        }
+      ]
+    },
+    "castOutsideBuff": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Judge each cast of spell_id against whether the buff was actually up, read from applybuff/removebuff. Prefer this over castWithoutPrior whenever the rule names a buff rather than a companion cast: 'inside Metamorphosis' means the aura, and a cast-to-cast proximity window only approximates it.",
+      "required": ["kind", "spell_id", "spell_name", "buff_spell_id", "buff_spell_name", "require"],
+      "properties": {
+        "kind": { "const": "cast_outside_buff" },
+        "spell_id": { "type": "integer", "description": "The spell being judged. Every cast of it is either a pass or a violation." },
+        "spell_name": { "type": "string" },
+        "buff_spell_id": { "type": "integer", "description": "The aura whose active spans decide each cast." },
+        "buff_spell_name": { "type": "string" },
+        "require": { "type": "string", "enum": ["inside", "outside"], "description": "'inside' flags casts made while the buff is down, for rules reading 'only during X'. 'outside' flags casts made while it is up, for rules reading 'never during X'." }
+      },
+      "examples": [
+        {
+          "kind": "cast_outside_buff",
+          "spell_id": 1943,
+          "spell_name": "Rupture",
+          "buff_spell_id": 457052,
+          "buff_spell_name": "Darkest Night",
+          "require": "outside"
+        }
+      ]
+    },
+    "auraUptimeBelow": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag when the aura's total uptime across the fight falls under min_pct. Use for the 'keep X up' family, including damage-over-time effects the player maintains on the boss.",
+      "required": ["kind", "aura_spell_id", "aura_spell_name", "min_pct", "on"],
+      "properties": {
+        "kind": { "const": "aura_uptime_below" },
+        "aura_spell_id": { "type": "integer" },
+        "aura_spell_name": { "type": "string" },
+        "min_pct": { "type": "number", "description": "Uptime percentage the player is expected to hold, taken from the guide rather than rounded to 100.", "exclusiveMinimum": 0, "maximum": 100 },
+        "on": { "type": "string", "enum": ["self", "target"], "description": "'self' for a buff on the player. 'target' for a debuff the player maintains on enemies, which is how most damage-over-time rules are written." }
+      },
+      "examples": [
+        {
+          "kind": "aura_uptime_below",
+          "aura_spell_id": 980,
+          "aura_spell_name": "Agony",
+          "min_pct": 95,
+          "on": "target"
+        }
+      ]
+    },
+    "openingSequence": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag an opener whose first casts do not contain the given spells in the given order, within window_s of the pull. Extra casts between them are allowed, so list only the spells whose order actually matters.",
+      "required": ["kind", "spell_ids", "spell_names", "window_s"],
+      "properties": {
+        "kind": { "const": "opening_sequence" },
+        "spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "description": "The opener spells, in the order they must be cast." },
+        "spell_names": { "type": "array", "items": { "type": "string" } },
+        "window_s": { "type": "number", "description": "Seconds from the first cast of the pull within which the sequence must complete.", "exclusiveMinimum": 0 }
+      },
+      "examples": [
+        {
+          "kind": "opening_sequence",
+          "spell_ids": [121471, 185313, 280719],
+          "spell_names": ["Shadow Blades", "Shadow Dance", "Secret Technique"],
+          "window_s": 12
+        }
+      ]
+    },
+    "cooldownUnderused": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag when the player got meaningfully fewer casts of spell_id than the benched top parses did on this encounter. Use for the 'keep X on cooldown' and 'do not sit on X' family. The expectation comes from the bench, so the rule states no number of its own; spell_id must be one of the spec's major_cooldowns or it has no benchmark.",
+      "required": ["kind", "spell_id", "spell_name"],
+      "properties": {
+        "kind": { "const": "cooldown_underused" },
+        "spell_id": { "type": "integer" },
+        "spell_name": { "type": "string" }
+      },
+      "examples": [
+        { "kind": "cooldown_underused", "spell_id": 107574, "spell_name": "Avatar" }
+      ]
+    },
+    "castAtTargetCount": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag casts of spell_id made at the wrong number of engaged enemies, counted from the distinct targets the player damaged around the cast. Set min_targets for an ability that is only worth pressing on several targets, max_targets for a single-target ability that should give way to a cleave. At least one bound is required.",
+      "required": ["kind", "spell_id", "spell_name"],
+      "anyOf": [
+        { "required": ["min_targets"] },
+        { "required": ["max_targets"] }
+      ],
+      "properties": {
+        "kind": { "const": "cast_at_target_count" },
+        "spell_id": { "type": "integer" },
+        "spell_name": { "type": "string" },
+        "min_targets": { "type": "integer", "description": "Casts made at fewer enemies than this are violations.", "minimum": 1 },
+        "max_targets": { "type": "integer", "description": "Casts made at more enemies than this are violations.", "minimum": 1 }
+      },
+      "examples": [
+        {
+          "kind": "cast_at_target_count",
+          "spell_id": 53385,
+          "spell_name": "Divine Storm",
+          "min_targets": 3
+        }
+      ]
+    },
+    "resourceAtCast": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag casts of spell_id made at the wrong resource level, read from the resource snapshot on the cast. Set min_amount for a spender that should only go off at a threshold, max_amount for a generator that should not be pressed near the cap. At least one bound is required; an overcap rule is a generator with max_amount just under the cap.",
+      "required": ["kind", "spell_id", "spell_name", "resource_type", "resource_name"],
+      "anyOf": [
+        { "required": ["min_amount"] },
+        { "required": ["max_amount"] }
+      ],
+      "properties": {
+        "kind": { "const": "resource_at_cast" },
+        "spell_id": { "type": "integer" },
+        "spell_name": { "type": "string" },
+        "resource_type": { "type": "integer", "description": "WCL power type id for the resource, e.g. 4 for combo points." },
+        "resource_name": { "type": "string", "description": "Resource name for the finding copy, e.g. 'combo points'." },
+        "min_amount": { "type": "number", "description": "Casts made below this are violations." },
+        "max_amount": { "type": "number", "description": "Casts made above this are violations." }
+      },
+      "examples": [
+        {
+          "kind": "resource_at_cast",
+          "spell_id": 32645,
+          "spell_name": "Envenom",
+          "resource_type": 4,
+          "resource_name": "combo points",
+          "min_amount": 5
+        }
+      ]
+    },
+    "procWasted": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Flag each span of buff_spell_id that ended without any of the spend spells being cast during it. Use for procs the rotation is supposed to consume on sight.",
+      "required": ["kind", "buff_spell_id", "buff_spell_name", "spend_spell_ids", "spend_spell_names"],
+      "properties": {
+        "kind": { "const": "proc_wasted" },
+        "buff_spell_id": { "type": "integer" },
+        "buff_spell_name": { "type": "string" },
+        "spend_spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "description": "Any one of these cast during the span counts as consuming the proc." },
+        "spend_spell_names": { "type": "array", "items": { "type": "string" } }
+      },
+      "examples": [
+        {
+          "kind": "proc_wasted",
+          "buff_spell_id": 48108,
+          "buff_spell_name": "Hot Streak!",
+          "spend_spell_ids": [11366, 2120],
+          "spend_spell_names": ["Pyroblast", "Flamestrike"]
         }
       ]
     }

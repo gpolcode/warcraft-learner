@@ -6,7 +6,7 @@ description: Generate or refresh warcraft-learner spec rulebooks on demand (no s
 # warcraft-learner rulebook generation
 
 A rulebook (`rulebook.json`) is the per-spec contract the ingestion transforms consume: the spec's
-major offensive cooldowns, personal defensives, a handful of machine-checkable usage rules - each with a
+major offensive cooldowns, personal defensives, its checkable usage rules - each with a
 **real WoW spell id** - and the spec's icon stem. One file per spec under
 `frontend/public/data/specs/{spec}/rulebook.json`. Every run is a **clean-slate regeneration**: build each
 rulebook fresh from the sources below and overwrite the existing file - never read, copy, or patch the old
@@ -141,8 +141,9 @@ Warrior rulebook contains only Fury Warrior abilities, never Arms). Batch the su
 Each subagent (starting from a clean slate - it does not read or reuse the existing `rulebook.json`):
 
 1. Reads the schema, then its `.simc.txt` (if present), `.guide.txt`, and `.abilities.tsv`.
-2. Extracts the rulebook JSON to the schema: all `major_cooldowns`, all `defensives`, 5-10 high-signal
-   `rules`, `source_summary`, `spec_icon`. Spec-only abilities - never another spec of the same class.
+2. Extracts the rulebook JSON to the schema: all `major_cooldowns`, all `defensives`, the spec's
+   checkable `rules`, `source_summary`, `spec_icon`. Spec-only abilities - never another spec of the
+   same class.
 3. Takes every `spell_id` from the ability table. An ability the sources name but the table lacks goes
    into the report **by name** - the subagent never guesses an id and never writes an unverified one.
 4. Writes the file (Step 4 shape) and returns a one-line report: spec, cooldown/defensive/rule counts,
@@ -163,10 +164,28 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   `combo_points<=2` means 2, not 1). `cooldown` values come from a source sentence or the table's
   `base_cd_s`; when the sources state an effective (talented) cooldown that differs from the base value,
   the source wins and the base goes in `id_note`.
-- **Every rule needs a `condition`** (`cast_without_prior` or `hold_cooldown_for_anchor` - see the
-  schema's `$defs`). The engine judges a rule against the player's cast timeline and renders nothing
-  else, so advice it cannot check is not a rule: leave it out rather than writing a rule around it.
-  Quality over count - two real rules beat eight, and an empty `rules` list is valid.
+- **Every rule needs a `condition`**, and the engine renders nothing else, so advice it cannot check is
+  not a rule: leave it out rather than writing a rule around it. Quality over count - two real rules
+  beat eight, and an empty `rules` list is valid. Nine kinds are available (see the schema's `$defs`):
+
+  | The rule says | Kind |
+  |---|---|
+  | cast A near cast B | `cast_without_prior` |
+  | do not spend A shortly before B | `hold_cooldown_for_anchor` |
+  | only / never cast A while buff B is up | `cast_outside_buff` |
+  | keep buff or dot B up | `aura_uptime_below` |
+  | open with A then B then C | `opening_sequence` |
+  | keep A on cooldown, do not sit on A | `cooldown_underused` |
+  | use A at N+ targets, stop using A above N | `cast_at_target_count` |
+  | spend A only at N resource, do not overcap | `resource_at_cast` |
+  | consume proc B on sight | `proc_wasted` |
+
+- **Pick the kind the rule actually means.** A rule about a buff being up wants `cast_outside_buff`,
+  not a `cast_without_prior` proximity window that only approximates it. A rule about combo points
+  wants `resource_at_cast`, not a cast pairing. `aura_uptime_below` needs `on: "target"` for a dot the
+  player maintains on the boss and `on: "self"` for a personal buff.
+- **`cooldown_underused` has no number of its own** - the expectation comes from the top parses, so its
+  `spell_id` must be one of the spec's `major_cooldowns` or the rule can never fire.
 - **`cast_without_prior` operands are ordered, and getting them backwards inverts the check.**
   `spell_id` is the ability being judged; `required_spell_id` is its companion, which under the default
   `position: "before"` must already have been cast. For "Secret Technique always inside Shadow Dance",

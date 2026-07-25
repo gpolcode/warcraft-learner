@@ -43,7 +43,74 @@ export interface HoldCooldownForAnchorCondition {
   hold_window_s?: number;
 }
 
-export type RuleCondition = CastWithoutPriorCondition | HoldCooldownForAnchorCondition;
+export interface CastOutsideBuffCondition {
+  kind: 'cast_outside_buff';
+  spell_id: number;
+  spell_name: string;
+  buff_spell_id: number;
+  buff_spell_name: string;
+  /** `inside` flags casts made while the buff is down; `outside` flags casts made while it is up. */
+  require: 'inside' | 'outside';
+}
+
+export interface AuraUptimeBelowCondition {
+  kind: 'aura_uptime_below';
+  aura_spell_id: number;
+  aura_spell_name: string;
+  min_pct: number;
+  /** `target` reads the enemy debuff stream, which is where damage-over-time rules live. */
+  on: 'self' | 'target';
+}
+
+export interface OpeningSequenceCondition {
+  kind: 'opening_sequence';
+  spell_ids: number[];
+  spell_names: string[];
+  window_s: number;
+}
+
+export interface CooldownUnderusedCondition {
+  kind: 'cooldown_underused';
+  spell_id: number;
+  spell_name: string;
+}
+
+export interface CastAtTargetCountCondition {
+  kind: 'cast_at_target_count';
+  spell_id: number;
+  spell_name: string;
+  min_targets?: number;
+  max_targets?: number;
+}
+
+export interface ResourceAtCastCondition {
+  kind: 'resource_at_cast';
+  spell_id: number;
+  spell_name: string;
+  resource_type: number;
+  resource_name: string;
+  min_amount?: number;
+  max_amount?: number;
+}
+
+export interface ProcWastedCondition {
+  kind: 'proc_wasted';
+  buff_spell_id: number;
+  buff_spell_name: string;
+  spend_spell_ids: number[];
+  spend_spell_names: string[];
+}
+
+export type RuleCondition =
+  | CastWithoutPriorCondition
+  | HoldCooldownForAnchorCondition
+  | CastOutsideBuffCondition
+  | AuraUptimeBelowCondition
+  | OpeningSequenceCondition
+  | CooldownUnderusedCondition
+  | CastAtTargetCountCondition
+  | ResourceAtCastCondition
+  | ProcWastedCondition;
 
 export interface RulebookRule {
   type?: string;

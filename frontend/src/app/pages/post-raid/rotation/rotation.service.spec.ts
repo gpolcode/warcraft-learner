@@ -5,14 +5,26 @@ import { WclTransportError } from '../../../core/services/wcl-transport';
 import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
-import { RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition } from '../../../core/models/rulebook.models';
-import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, VANISH, BLOODLUST } from '../../../../testing/spell-ids';
-import { cast, applyBuff } from '../../../../testing/builders/events';
+import {
+  RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
+  AuraUptimeBelowCondition, OpeningSequenceCondition, CooldownUnderusedCondition,
+  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
+} from '../../../core/models/rulebook.models';
+import {
+  SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, VANISH, BLOODLUST, RUPTURE, EVISCERATE, BLACK_POWDER,
+} from '../../../../testing/spell-ids';
+import {
+  cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, damage,
+} from '../../../../testing/builders/events';
+import { WclEvent } from '../../../core/models/wcl.models';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import {
   RotationFeatureService,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateRules, buildCastTimes,
+  buildRuleContext, RuleContext, RuleInputs, ruleApplicable,
+  evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence, evaluateCooldownUnderused,
+  evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
   ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
@@ -22,6 +34,16 @@ import {
 
 // The check* and analyzeOneCooldown functions take cast times in ms.
 const ONE_SEC_MS = 1000;
+
+// Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
+const RULE_FIGHT_END_MS = 120_000;
+function ruleCtx(casts: WclEvent[], over: Partial<RuleInputs> = {}): RuleContext {
+  return buildRuleContext({
+    casts, buffs: [], debuffs: [], damage: [], fStart: 0, fEnd: RULE_FIGHT_END_MS,
+    cooldowns: [], benchmarks: {},
+    ...over,
+  });
+}
 
 // Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
 function scan(over: Partial<RotationScanInput> & { bench: RotationBench }): RotationScanInput {
@@ -153,27 +175,27 @@ describe('rule engine', () => {
   });
 
   it('evaluateRules skips rules without a condition', () => {
-    const findings = evaluateRules([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0);
+    const findings = evaluateRules([{ description: 'r', condition: null }], ruleCtx([cast(SHADOW_DANCE, 1)]));
     expect(findings).toEqual([]);
   });
 
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
     const description = 'Secret Technique always inside Shadow Dance';
     const rule: RulebookRule = { description, condition: SECRET_TECH_NEEDS_DANCE };
-    const violated = evaluateRules([rule], [cast(SECRET_TECHNIQUE, 10)], 0);
+    const violated = evaluateRules([rule], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
     expect(violated[0].label).toBe(description);
-    expect(rulesFollowed([rule], [cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)], 0)).toEqual([description]);
+    expect(rulesFollowed([rule], ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]))).toEqual([description]);
   });
 
   it('evaluateRules falls back to the synthesized label when a rule has no description', () => {
     const rule: RulebookRule = { condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([rule], [cast(SECRET_TECHNIQUE, 10)], 0)[0].label)
+    expect(evaluateRules([rule], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].label)
       .toBe('Secret Technique without Shadow Dance');
   });
 
   it('evaluateRules carries the rule type onto the finding', () => {
     const rule: RulebookRule = { type: 'cooldown_pairing', priority: 'high', condition: SECRET_TECH_NEEDS_DANCE };
-    const findings = evaluateRules([rule], [cast(SECRET_TECHNIQUE, 10)], 0);
+    const findings = evaluateRules([rule], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
     expect(findings[0].rule_type).toBe('cooldown_pairing');
   });
 });
@@ -199,7 +221,7 @@ describe('ruleSeverity', () => {
 
   it('drives the severity of an evaluated rule finding', () => {
     const rule: RulebookRule = { priority: 'medium', condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([rule], [cast(SECRET_TECHNIQUE, 10)], 0)[0].severity).toBe('info');
+    expect(evaluateRules([rule], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].severity).toBe('info');
   });
 });
 
@@ -218,6 +240,226 @@ describe('ruleLabel', () => {
   });
 });
 
+// Fight-relative seconds shared by the new-kind fixtures.
+const DANCE_START_S = 20, DANCE_END_S = 28;
+const COMBO_POINT_TYPE = 4;  // WCL power-type id for combo points
+const MAX_COMBO_POINTS = 5;
+
+describe('evaluateCastOutsideBuff', () => {
+  const insideDance: CastOutsideBuffCondition = {
+    kind: 'cast_outside_buff', spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
+    buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', require: 'inside',
+  };
+  const dance = buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S);
+
+  it('flags a cast made while the buff was down', () => {
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S + 5)], { buffs: dance });
+    expect(evaluateCastOutsideBuff(insideDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('passes a cast made inside the buff span', () => {
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
+    expect(evaluateCastOutsideBuff(insideDance, ctx, 'warning')).toBeNull();
+  });
+
+  it('inverts for require "outside", flagging the cast made while the buff was up', () => {
+    const outsideDance: CastOutsideBuffCondition = { ...insideDance, require: 'outside' };
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
+    expect(evaluateCastOutsideBuff(outsideDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('is not applicable when the judged spell was never cast', () => {
+    expect(ruleApplicable(insideDance, ruleCtx([], { buffs: dance }))).toBe(false);
+  });
+});
+
+describe('evaluateAuraUptimeBelow', () => {
+  const RUPTURE_MIN_PCT = 90;
+  const ruptureUptime: AuraUptimeBelowCondition = {
+    kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture',
+    min_pct: RUPTURE_MIN_PCT, on: 'target',
+  };
+  // The context fight runs 0..120s, so a 60s span is 50% uptime.
+  const halfUptime = [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)];
+
+  it('flags uptime under the authored threshold, measured against it', () => {
+    const finding = evaluateAuraUptimeBelow(ruptureUptime, ruleCtx([], { debuffs: halfUptime }), 'warning');
+    expect(finding?.measured).toEqual({ value: `50 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
+  });
+
+  it('passes uptime at or above the threshold', () => {
+    const nearFull = [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 115)];
+    expect(evaluateAuraUptimeBelow(ruptureUptime, ruleCtx([], { debuffs: nearFull }), 'warning')).toBeNull();
+  });
+
+  it('stays silent on zero uptime, which reads as a build that skips the aura', () => {
+    expect(evaluateAuraUptimeBelow(ruptureUptime, ruleCtx([]), 'warning')).toBeNull();
+    expect(ruleApplicable(ruptureUptime, ruleCtx([]))).toBe(false);
+  });
+
+  it('reads the self stream when on is "self"', () => {
+    const selfAura: AuraUptimeBelowCondition = { ...ruptureUptime, on: 'self' };
+    const ctx = ruleCtx([], { buffs: [applyBuff(RUPTURE, 0), removeBuff(RUPTURE, 60)] });
+    expect(evaluateAuraUptimeBelow(selfAura, ctx, 'warning')?.measured?.value).toBe(`50 / ${RUPTURE_MIN_PCT}`);
+  });
+});
+
+describe('evaluateOpeningSequence', () => {
+  const OPENER_WINDOW_S = 12;
+  const opener: OpeningSequenceCondition = {
+    kind: 'opening_sequence',
+    spell_ids: [SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE],
+    spell_names: ['Shadow Blades', 'Shadow Dance', 'Secret Technique'],
+    window_s: OPENER_WINDOW_S,
+  };
+
+  it('passes the sequence cast in order inside the window', () => {
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, 'warning')).toBeNull();
+  });
+
+  it('flags a sequence cast out of order, reporting the steps reached', () => {
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SECRET_TECHNIQUE, 3), cast(SHADOW_DANCE, 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, 'warning')?.measured).toEqual({ value: '2 / 3', unit: 'step(s)' });
+  });
+
+  it('flags a step that lands past the opener window', () => {
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S + 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, 'warning')?.measured?.value).toBe('2 / 3');
+  });
+
+  it('tolerates unrelated casts between the steps', () => {
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(EVISCERATE, 2), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, 'warning')).toBeNull();
+  });
+
+  it('is not applicable on a pull with none of the sequence spells', () => {
+    expect(ruleApplicable(opener, ruleCtx([cast(EVISCERATE, 1)]))).toBe(false);
+  });
+});
+
+describe('evaluateCooldownUnderused', () => {
+  const blades: CooldownUnderusedCondition = {
+    kind: 'cooldown_underused', spell_id: SHADOW_BLADES, spell_name: 'Shadow Blades',
+  };
+  const BLADES_CD = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 120 };
+  // 1 use/min over the 120s context fight expects 2, with a floor of 2 at zero deviation.
+  const benched = { cooldowns: [BLADES_CD], benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0, min: 1, max: 1 } }) } };
+
+  it('flags fewer casts than the top parses averaged', () => {
+    const finding = evaluateCooldownUnderused(blades, ruleCtx([cast(SHADOW_BLADES, 10)], benched), 'warning');
+    expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
+  });
+
+  it('passes when the player matched the bench', () => {
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 80)], benched);
+    expect(evaluateCooldownUnderused(blades, ctx, 'warning')).toBeNull();
+  });
+
+  it('stays silent without a benchmark for the spell', () => {
+    expect(evaluateCooldownUnderused(blades, ruleCtx([]), 'warning')).toBeNull();
+    expect(ruleApplicable(blades, ruleCtx([]))).toBe(false);
+  });
+
+  it('stays silent when too few top parses used the cooldown to judge it', () => {
+    const rare = {
+      cooldowns: [BLADES_CD],
+      benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0, min: 1, max: 1 }, sample_count: 10, used_sample_count: 2 }) },
+    };
+    expect(evaluateCooldownUnderused(blades, ruleCtx([], rare), 'warning')).toBeNull();
+  });
+});
+
+describe('evaluateCastAtTargetCount', () => {
+  const MIN_AOE_TARGETS = 3;
+  const CAST_S = 10;
+  const blackPowder: CastAtTargetCountCondition = {
+    kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder',
+    min_targets: MIN_AOE_TARGETS,
+  };
+  const hits = (targets: number[]) => targets.map(id => damage(BLACK_POWDER, CAST_S + 1, 100, { target: id }));
+
+  it('flags an AoE finisher pressed under the target floor', () => {
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]) });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('passes the same cast once enough enemies are hit', () => {
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2, 3]) });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, 'warning')).toBeNull();
+  });
+
+  it('flags a single-target ability pressed over its ceiling', () => {
+    const capped: CastAtTargetCountCondition = {
+      kind: 'cast_at_target_count', spell_id: EVISCERATE, spell_name: 'Eviscerate', max_targets: 2,
+    };
+    const ctx = ruleCtx([cast(EVISCERATE, CAST_S)],
+      { damage: [1, 2, 3].map(id => damage(EVISCERATE, CAST_S + 1, 100, { target: id })) });
+    expect(evaluateCastAtTargetCount(capped, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('ignores a cast with no damage recorded near it, rather than reading it as zero targets', () => {
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]).map(e => ({ ...e, timestamp: 90_000 })) });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, 'warning')).toBeNull();
+  });
+});
+
+describe('evaluateResourceAtCast', () => {
+  const finisherAtMax: ResourceAtCastCondition = {
+    kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
+    resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', min_amount: MAX_COMBO_POINTS,
+  };
+  const atCombo = (atS: number, amount: number) =>
+    cast(EVISCERATE, atS, { resources: [{ amount, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] });
+
+  it('flags a finisher spent below the authored threshold', () => {
+    const ctx = ruleCtx([atCombo(10, 3), atCombo(20, MAX_COMBO_POINTS)]);
+    expect(evaluateResourceAtCast(finisherAtMax, ctx, 'warning')?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
+  });
+
+  it('passes finishers spent at the threshold', () => {
+    expect(evaluateResourceAtCast(finisherAtMax, ruleCtx([atCombo(10, MAX_COMBO_POINTS)]), 'warning')).toBeNull();
+  });
+
+  it('flags a generator pressed above its ceiling', () => {
+    const noOvercap: ResourceAtCastCondition = {
+      kind: 'resource_at_cast', spell_id: BLACK_POWDER, spell_name: 'Black Powder',
+      resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', max_amount: 4,
+    };
+    const ctx = ruleCtx([cast(BLACK_POWDER, 10, { resources: [{ amount: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] })]);
+    expect(evaluateResourceAtCast(noOvercap, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('is not applicable when the casts carry no resource snapshot', () => {
+    expect(evaluateResourceAtCast(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]), 'warning')).toBeNull();
+    expect(ruleApplicable(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]))).toBe(false);
+  });
+});
+
+describe('evaluateProcWasted', () => {
+  const spendDance: ProcWastedCondition = {
+    kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
+    spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
+  };
+  const dance = buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S);
+
+  it('flags a proc that expired with nothing spent into it', () => {
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S + 5)], { buffs: dance });
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')?.measured).toEqual({ value: '1 / 1', unit: 'proc(s)' });
+  });
+
+  it('passes a proc consumed inside its span', () => {
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
+  });
+
+  it('ignores a span still open at the end of the pull', () => {
+    const ctx = ruleCtx([], { buffs: [applyBuff(SHADOW_DANCE, DANCE_START_S)] });
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
+    expect(ruleApplicable(spendDance, ctx)).toBe(false);
+  });
+});
+
 describe('rulesFollowed', () => {
   const pairDanceWithSecretTech: RulebookRule = {
     priority: 'warning', description: 'Pair Shadow Dance with Secret Technique', condition: SECRET_TECH_NEEDS_DANCE,
@@ -227,38 +469,38 @@ describe('rulesFollowed', () => {
   };
 
   it('lists the rule when Shadow Dance is paired with Secret Technique', () => {
-    expect(rulesFollowed([pairDanceWithSecretTech], [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12)], 0))
+    expect(rulesFollowed([pairDanceWithSecretTech], ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12)])))
       .toEqual(['Pair Shadow Dance with Secret Technique']);
   });
 
   it('omits the rule when Shadow Dance is cast without Secret Technique', () => {
-    expect(rulesFollowed([pairDanceWithSecretTech], [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)], 0)).toEqual([]);
+    expect(rulesFollowed([pairDanceWithSecretTech], ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)]))).toEqual([]);
   });
 
   it('omits the rule when Secret Technique was never cast', () => {
-    expect(rulesFollowed([pairDanceWithSecretTech], [cast(SHADOW_DANCE, 12)], 0)).toEqual([]);
+    expect(rulesFollowed([pairDanceWithSecretTech], ruleCtx([cast(SHADOW_DANCE, 12)]))).toEqual([]);
   });
 
   it('lists the rule when Shadow Dance is held clear of Shadow Blades', () => {
     // Shadow Blades at 10 and 120; the held Shadow Dance at 50 is outside [105,120).
-    expect(rulesFollowed([holdDanceForBlades], [cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)], 0))
+    expect(rulesFollowed([holdDanceForBlades], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)])))
       .toEqual(['Hold Shadow Dance for Shadow Blades']);
   });
 
   it('omits the rule when Shadow Dance is spent in the hold window before Shadow Blades', () => {
-    expect(rulesFollowed([holdDanceForBlades], [cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)], 0)).toEqual([]);
+    expect(rulesFollowed([holdDanceForBlades], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]))).toEqual([]);
   });
 
   it('omits the rule when the held cooldown was never cast', () => {
-    expect(rulesFollowed([holdDanceForBlades], [cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120)], 0)).toEqual([]);
+    expect(rulesFollowed([holdDanceForBlades], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120)]))).toEqual([]);
   });
 
   it('omits the rule with only a single Shadow Blades cast', () => {
-    expect(rulesFollowed([holdDanceForBlades], [cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)], 0)).toEqual([]);
+    expect(rulesFollowed([holdDanceForBlades], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)]))).toEqual([]);
   });
 
   it('skips rules without a condition', () => {
-    expect(rulesFollowed([{ description: 'r', condition: null }], [cast(SHADOW_DANCE, 1)], 0)).toEqual([]);
+    expect(rulesFollowed([{ description: 'r', condition: null }], ruleCtx([cast(SHADOW_DANCE, 1)]))).toEqual([]);
   });
 });
 

@@ -4,7 +4,9 @@ import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import {
   RulebookCooldown, RulebookRule, RuleCondition,
-  CastWithoutPriorCondition, HoldCooldownForAnchorCondition,
+  CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
+  AuraUptimeBelowCondition, OpeningSequenceCondition, CooldownUnderusedCondition,
+  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
@@ -15,6 +17,7 @@ import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
+import { AuraWindows, buildAuraWindows, isInsideAura, auraUptimePct } from '../../../shared/analysis/aura-windows';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 
 export type Severity = AnalysisFinding['severity'];
@@ -150,13 +153,219 @@ export function evaluateHoldForAnchor(
   };
 }
 
+/** Enemies damaged this soon after a cast count as engaged for it; an AoE ability lands well inside a GCD or two. */
+const TARGET_COUNT_WINDOW_S = 3;
+
+/** WCL flattens one actor's pools onto the event; 1 means they belong to the caster. */
+const RESOURCE_ACTOR_SOURCE = 1;
+
+/** Everything the rule evaluators read, derived once per player view. */
+export interface RuleContext {
+  castTimes: CastTimes;
+  castEvents: WclEvent[];
+  fStart: number;
+  fightDurationS: number;
+  selfAuras: AuraWindows;
+  targetAuras: AuraWindows;
+  damage: WclEvent[];
+  benchBySpellId: Map<number, PerCdBenchmark>;
+}
+
+export interface RuleInputs {
+  casts: WclEvent[];
+  buffs: WclEvent[];
+  debuffs: WclEvent[];
+  damage: WclEvent[];
+  fStart: number;
+  fEnd: number;
+  cooldowns: RulebookCooldown[];
+  benchmarks: Record<string, PerCdBenchmark>;
+}
+
+export function buildRuleContext(input: RuleInputs): RuleContext {
+  const benchBySpellId = new Map<number, PerCdBenchmark>();
+  for (const cooldown of input.cooldowns) {
+    const bench = input.benchmarks[cooldown.name];
+    if (bench && cooldown.spell_id) benchBySpellId.set(cooldown.spell_id, bench);
+  }
+  return {
+    castTimes: buildCastTimes(input.casts, input.fStart),
+    castEvents: input.casts,
+    fStart: input.fStart,
+    fightDurationS: (input.fEnd - input.fStart) / 1000,
+    selfAuras: buildAuraWindows(input.buffs, input.fStart),
+    targetAuras: buildAuraWindows(input.debuffs, input.fStart),
+    damage: input.damage,
+    benchBySpellId,
+  };
+}
+
+export function evaluateCastOutsideBuff(
+  cond: CastOutsideBuffCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const primary = [...(ctx.castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
+  const violations = primary.filter(time =>
+    isInsideAura(ctx.selfAuras, cond.buff_spell_id, time * 1000) !== (cond.require === 'inside'));
+  if (!violations.length) return null;
+  const relation = cond.require === 'inside' ? 'without' : 'during';
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: Math.round(violations[0] * 1000),
+    label: `${cond.spell_name} ${relation} ${cond.buff_spell_name}`,
+    message: `${cond.spell_name} ${relation} ${cond.buff_spell_name}: ${violations.length} of ${primary.length} cast(s).`,
+    measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+export function evaluateAuraUptimeBelow(
+  cond: AuraUptimeBelowCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
+  const pct = auraUptimePct(windows, cond.aura_spell_id, ctx.fightDurationS * 1000);
+  // Zero uptime reads as a build that skips the aura rather than a mistake, which the app does not guess at.
+  if (pct <= 0 || pct >= cond.min_pct) return null;
+  return {
+    severity, category: 'rule_violation',
+    label: `${cond.aura_spell_name} uptime`,
+    message: `${cond.aura_spell_name} up ${Math.round(pct)}% of the fight, expected ${cond.min_pct}%.`,
+    measured: { value: `${Math.round(pct)} / ${cond.min_pct}`, unit: '% uptime' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+export function evaluateOpeningSequence(
+  cond: OpeningSequenceCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const all = Object.values(ctx.castTimes).flat();
+  if (!all.length) return null;
+  const pullS = Math.min(...all);
+  const deadlineS = pullS + cond.window_s;
+  let cursor = pullS;
+  let matched = 0;
+  for (const spellId of cond.spell_ids) {
+    const next = (ctx.castTimes[spellId] ?? [])
+      .filter(time => time >= cursor && time <= deadlineS)
+      .sort((a, b) => a - b)[0];
+    if (next == null) break;
+    cursor = next;
+    matched++;
+  }
+  if (matched === cond.spell_ids.length) return null;
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: Math.round(pullS * 1000),
+    label: `Opener: ${cond.spell_names.join(' > ')}`,
+    message: `Opener reached ${matched} of ${cond.spell_ids.length} steps in the first ${cond.window_s}s; ${cond.spell_names[matched]} did not follow in order.`,
+    measured: { value: `${matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+export function evaluateCooldownUnderused(
+  cond: CooldownUnderusedCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const bench = ctx.benchBySpellId.get(cond.spell_id);
+  if (!bench || usedShare(bench) < MIN_USE_SHARE_FRAC) return null;
+  const { expected, floor } = benchExpectedUses(ctx.fightDurationS, bench.uses_per_min);
+  const actual = ctx.castTimes[cond.spell_id]?.length ?? 0;
+  if (expected < 1 || actual >= floor) return null;
+  return {
+    severity, category: 'rule_violation',
+    label: `${cond.spell_name} underused`,
+    message: `${cond.spell_name}: ${actual} casts, top parses average ${expected} on a ${fmtClock(ctx.fightDurationS)} fight.`,
+    measured: { value: `${actual} / ${expected}`, unit: 'cast(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+/** Distinct enemies the player damaged in the window opened by a cast. */
+function targetsAtCast(damage: WclEvent[], fStart: number, castTimeS: number): number {
+  const fromMs = fStart + castTimeS * 1000;
+  const toMs = fromMs + TARGET_COUNT_WINDOW_S * 1000;
+  const targets = new Set<number>();
+  for (const event of damage) {
+    if (event.timestamp < fromMs || event.timestamp > toMs) continue;
+    if (event.targetID != null) targets.add(event.targetID);
+  }
+  return targets.size;
+}
+
+export function evaluateCastAtTargetCount(
+  cond: CastAtTargetCountCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const primary = [...(ctx.castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
+  const violations = primary.filter(time => {
+    const targets = targetsAtCast(ctx.damage, ctx.fStart, time);
+    if (!targets) return false;
+    return (cond.min_targets != null && targets < cond.min_targets)
+      || (cond.max_targets != null && targets > cond.max_targets);
+  });
+  if (!violations.length) return null;
+  const bound = cond.min_targets != null ? `under ${cond.min_targets}` : `over ${cond.max_targets}`;
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: Math.round(violations[0] * 1000),
+    label: `${cond.spell_name} at ${bound} targets`,
+    message: `${cond.spell_name} cast at ${bound} targets: ${violations.length} of ${primary.length} cast(s).`,
+    measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+export function evaluateResourceAtCast(
+  cond: ResourceAtCastCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const judged: { timeS: number; amount: number }[] = [];
+  for (const event of ctx.castEvents) {
+    if (event.type !== 'cast' || event.abilityGameID !== cond.spell_id) continue;
+    if (event.resourceActor != null && event.resourceActor !== RESOURCE_ACTOR_SOURCE) continue;
+    const pool = event.classResources?.find(resource => resource.type === cond.resource_type);
+    if (!pool) continue;
+    judged.push({ timeS: (event.timestamp - ctx.fStart) / 1000, amount: pool.amount });
+  }
+  if (!judged.length) return null;
+  const violations = judged.filter(({ amount }) =>
+    (cond.min_amount != null && amount < cond.min_amount)
+    || (cond.max_amount != null && amount > cond.max_amount));
+  if (!violations.length) return null;
+  const bound = cond.min_amount != null ? `below ${cond.min_amount}` : `above ${cond.max_amount}`;
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: Math.round(violations[0].timeS * 1000),
+    label: `${cond.spell_name} at ${bound} ${cond.resource_name}`,
+    message: `${cond.spell_name} cast ${bound} ${cond.resource_name}: ${violations.length} of ${judged.length} cast(s).`,
+    measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+export function evaluateProcWasted(
+  cond: ProcWastedCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  // An open span was still up at the pull's end, so nothing was wasted yet.
+  const spans = (ctx.selfAuras.get(cond.buff_spell_id) ?? []).filter(([, end]) => end != null);
+  if (!spans.length) return null;
+  const spendTimes = cond.spend_spell_ids.flatMap(spellId => ctx.castTimes[spellId] ?? []);
+  const wasted = spans.filter(([startMs, endMs]) =>
+    !spendTimes.some(time => time * 1000 >= startMs && time * 1000 <= (endMs as number)));
+  if (!wasted.length) return null;
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: Math.round(wasted[0][0]),
+    label: `${cond.buff_spell_name} wasted`,
+    message: `${cond.buff_spell_name} expired unspent ${wasted.length} of ${spans.length} time(s).`,
+    measured: { value: `${wasted.length} / ${spans.length}`, unit: 'proc(s)' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
 /** Short chip label for a rulebook rule `type`, matching the tone of `CAT_LABEL`. */
 export const RULE_TYPE_LABEL: Record<string, string> = {
   cooldown_pairing: 'pairing',
   cd_hold: 'cd hold',
   opener: 'opener',
   rotation: 'rotation',
-  positioning: 'position',
   aoe_switch: 'aoe',
 };
 
@@ -169,18 +378,53 @@ export function ruleSeverity(priority?: string): Severity {
   return RULE_SEVERITY[priority ?? ''] ?? 'warning';
 }
 
-export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: number): AnalysisFinding[] {
+export function evaluateCondition(
+  cond: RuleCondition, ctx: RuleContext, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  switch (cond.kind) {
+    case 'cast_without_prior': return evaluateCastWithoutPrior(cond, ctx.castTimes, severity, remedy);
+    case 'hold_cooldown_for_anchor': return evaluateHoldForAnchor(cond, ctx.castTimes, severity, remedy);
+    case 'cast_outside_buff': return evaluateCastOutsideBuff(cond, ctx, severity, remedy);
+    case 'aura_uptime_below': return evaluateAuraUptimeBelow(cond, ctx, severity, remedy);
+    case 'opening_sequence': return evaluateOpeningSequence(cond, ctx, severity, remedy);
+    case 'cooldown_underused': return evaluateCooldownUnderused(cond, ctx, severity, remedy);
+    case 'cast_at_target_count': return evaluateCastAtTargetCount(cond, ctx, severity, remedy);
+    case 'resource_at_cast': return evaluateResourceAtCast(cond, ctx, severity, remedy);
+    case 'proc_wasted': return evaluateProcWasted(cond, ctx, severity, remedy);
+  }
+}
+
+/** Whether the pull gave the player any chance to break the rule; without this a rule reads as followed on a fight it never came up in. */
+export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
+  const castCount = (spellId: number) => ctx.castTimes[spellId]?.length ?? 0;
+  switch (cond.kind) {
+    case 'cast_without_prior': return castCount(cond.spell_id) > 0;
+    case 'hold_cooldown_for_anchor':
+      return castCount(cond.anchor_spell_id) > 1 && cond.spell_ids.some(spellId => castCount(spellId) > 0);
+    case 'cast_outside_buff': return castCount(cond.spell_id) > 0;
+    case 'aura_uptime_below':
+      return auraUptimePct(cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras,
+        cond.aura_spell_id, ctx.fightDurationS * 1000) > 0;
+    case 'opening_sequence': return cond.spell_ids.some(spellId => castCount(spellId) > 0);
+    case 'cooldown_underused': {
+      const bench = ctx.benchBySpellId.get(cond.spell_id);
+      return !!bench && usedShare(bench) >= MIN_USE_SHARE_FRAC
+        && benchExpectedUses(ctx.fightDurationS, bench.uses_per_min).expected >= 1;
+    }
+    case 'cast_at_target_count': return castCount(cond.spell_id) > 0 && ctx.damage.length > 0;
+    case 'resource_at_cast':
+      return ctx.castEvents.some(event => event.type === 'cast' && event.abilityGameID === cond.spell_id
+        && !!event.classResources?.some(resource => resource.type === cond.resource_type));
+    case 'proc_wasted': return (ctx.selfAuras.get(cond.buff_spell_id) ?? []).some(([, end]) => end != null);
+  }
+}
+
+export function evaluateRules(rules: RulebookRule[], ctx: RuleContext): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
-  const castTimes = buildCastTimes(casts, fStart);
   for (const rule of rules) {
     const cond = rule.condition;
     if (!cond) continue;
-    const severity = ruleSeverity(rule.priority);
-    const finding = cond.kind === 'cast_without_prior'
-      ? evaluateCastWithoutPrior(cond, castTimes, severity, rule.action)
-      : cond.kind === 'hold_cooldown_for_anchor'
-        ? evaluateHoldForAnchor(cond, castTimes, severity, rule.action)
-        : null;
+    const finding = evaluateCondition(cond, ctx, ruleSeverity(rule.priority), rule.action);
     // One authored name in both states, so a rule does not read as two different rules.
     if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
   }
@@ -189,26 +433,25 @@ export function evaluateRules(rules: RulebookRule[], casts: WclEvent[], fStart: 
 
 export function ruleLabel(cond: RuleCondition, description?: string): string {
   if (description) return description;
-  return cond.kind === 'cast_without_prior'
-    ? `${cond.spell_name} with ${cond.required_spell_name}`
-    : `${cond.spell_names.join('/')} held for ${cond.anchor_spell_name}`;
+  switch (cond.kind) {
+    case 'cast_without_prior': return `${cond.spell_name} with ${cond.required_spell_name}`;
+    case 'hold_cooldown_for_anchor': return `${cond.spell_names.join('/')} held for ${cond.anchor_spell_name}`;
+    case 'cast_outside_buff': return `${cond.spell_name} ${cond.require} ${cond.buff_spell_name}`;
+    case 'aura_uptime_below': return `${cond.aura_spell_name} uptime`;
+    case 'opening_sequence': return `Opener: ${cond.spell_names.join(' > ')}`;
+    case 'cooldown_underused': return `${cond.spell_name} on cooldown`;
+    case 'cast_at_target_count': return `${cond.spell_name} target count`;
+    case 'resource_at_cast': return `${cond.spell_name} at ${cond.resource_name}`;
+    case 'proc_wasted': return `${cond.buff_spell_name} spent`;
+  }
 }
 
-export function rulesFollowed(rules: RulebookRule[], casts: WclEvent[], fStart: number): string[] {
-  const castTimes = buildCastTimes(casts, fStart);
+export function rulesFollowed(rules: RulebookRule[], ctx: RuleContext): string[] {
   const followed: string[] = [];
   for (const rule of rules) {
     const cond = rule.condition;
-    if (!cond) continue;
-    const severity = ruleSeverity(rule.priority);
-    if (cond.kind === 'cast_without_prior') {
-      const applicable = (castTimes[cond.spell_id]?.length ?? 0) > 0;
-      if (applicable && !evaluateCastWithoutPrior(cond, castTimes, severity)) followed.push(ruleLabel(cond, rule.description));
-    } else if (cond.kind === 'hold_cooldown_for_anchor') {
-      const applicable = (castTimes[cond.anchor_spell_id]?.length ?? 0) > 1
-        && cond.spell_ids.some(spellId => (castTimes[spellId]?.length ?? 0) > 0);
-      if (applicable && !evaluateHoldForAnchor(cond, castTimes, severity)) followed.push(ruleLabel(cond, rule.description));
-    }
+    if (!cond || !ruleApplicable(cond, ctx)) continue;
+    if (!evaluateCondition(cond, ctx, ruleSeverity(rule.priority))) followed.push(ruleLabel(cond, rule.description));
   }
   return followed;
 }
@@ -567,9 +810,11 @@ export class RotationFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       if (!fight) return permanent('Fight not found in this report.', 'rotation.player-view');
 
-      const [casts, buffs] = await Promise.all([
-        this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
+      const [casts, buffs, debuffs, damage] = await Promise.all([
+        this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
       ]);
 
       const rules = bench.value.rules;
@@ -577,12 +822,16 @@ export class RotationFeatureService {
         fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
         cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
-      const ruleFindings = evaluateRules(rules, casts, fight.startTime);
+      const ruleCtx = buildRuleContext({
+        casts, buffs, debuffs, damage, fStart: fight.startTime, fEnd: fight.endTime,
+        cooldowns: bench.value.major_cooldowns, benchmarks: bench.value.per_cd_benchmarks,
+      });
+      const ruleFindings = evaluateRules(rules, ruleCtx);
       const findings = [...offensiveFindings, ...ruleFindings];
       sortBySeverity(findings);
       const { ruleRows, offensiveRows, onPlan } =
         bucketRotationFindings(findings, bench.value.cd_spell_ids, bench.value.ability_icons);
-      const ruleOnPlan = rulesFollowed(rules, casts, fight.startTime);
+      const ruleOnPlan = rulesFollowed(rules, ruleCtx);
       return ok({ ruleRows, ruleOnPlan, offensiveRows, onPlan });
     } catch (cause) {
       logWarn(`RotationFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);

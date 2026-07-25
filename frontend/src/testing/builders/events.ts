@@ -17,14 +17,18 @@ import { WclEvent } from '../../app/core/models/wcl.models';
 /** WCL timestamps are milliseconds; factory times are fight-relative seconds. */
 const MS_PER_SECOND = 1000;
 
-/** A player ability cast (`type: 'cast'`). */
-export function cast(spellId: number, atS: number, opts?: { source?: number; target?: number }): WclEvent {
+/** A player ability cast (`type: 'cast'`). `resources` mirrors what `includeResources: true` flattens onto the event. */
+export function cast(
+  spellId: number, atS: number,
+  opts?: { source?: number; target?: number; resources?: { amount: number; max?: number; type: number }[] },
+): WclEvent {
   return {
     type: 'cast',
     timestamp: atS * MS_PER_SECOND,
     abilityGameID: spellId,
     ...(opts?.source !== undefined && { sourceID: opts.source }),
     ...(opts?.target !== undefined && { targetID: opts.target }),
+    ...(opts?.resources !== undefined && { resourceActor: 1, classResources: opts.resources }),
   };
 }
 
@@ -45,6 +49,26 @@ export function removeBuff(spellId: number, atS: number, opts?: { target?: numbe
     timestamp: atS * MS_PER_SECOND,
     abilityGameID: spellId,
     ...(opts?.target !== undefined && { sourceID: opts.target, targetID: opts.target }),
+  };
+}
+
+/** A debuff applied to an enemy (`type: 'applydebuff'`). */
+export function applyDebuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
+  return {
+    type: 'applydebuff',
+    timestamp: atS * MS_PER_SECOND,
+    abilityGameID: spellId,
+    ...(opts?.target !== undefined && { targetID: opts.target }),
+  };
+}
+
+/** A debuff dropping off an enemy (`type: 'removedebuff'`). */
+export function removeDebuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
+  return {
+    type: 'removedebuff',
+    timestamp: atS * MS_PER_SECOND,
+    abilityGameID: spellId,
+    ...(opts?.target !== undefined && { targetID: opts.target }),
   };
 }
 
