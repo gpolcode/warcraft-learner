@@ -36,4 +36,4 @@ See [`CLAUDE.md`](./CLAUDE.md) for the full technical reference: architecture, d
 
 ## License
 
-GPLv3, see [`LICENSE`](./LICENSE).
+AGPLv3, see [`LICENSE`](./LICENSE).
