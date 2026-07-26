@@ -23,8 +23,9 @@ export function buildAuraWindows(events: WclEvent[], fightStartMs: number): Aura
   return windows;
 }
 
+/** End-inclusive: a consuming cast shares the removal millisecond 38% of the time, so excluding it misreads correct play. */
 export function isInsideAura(windows: AuraWindows, spellId: number, timeMs: number): boolean {
-  return (windows.get(spellId) ?? []).some(([start, end]) => timeMs >= start && (end == null || timeMs < end));
+  return (windows.get(spellId) ?? []).some(([start, end]) => timeMs >= start && (end == null || timeMs <= end));
 }
 
 /** Percentage of the fight the aura was up. Overlapping spans are merged, so multi-target debuffs read as "up somewhere", which is what a maintain rule means. */

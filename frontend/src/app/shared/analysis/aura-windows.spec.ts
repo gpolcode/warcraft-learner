@@ -28,12 +28,13 @@ describe('buildAuraWindows', () => {
 describe('isInsideAura', () => {
   const windows = buildAuraWindows([applyBuff(CLOAK_OF_SHADOWS, APPLY_S), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0);
 
-  it('counts the apply instant and excludes the remove instant', () => {
+  it('counts both the apply and the remove instant, since the consuming cast lands on the removal', () => {
     expect(isInsideAura(windows, CLOAK_OF_SHADOWS, APPLY_S * MS_PER_S)).toBe(true);
-    expect(isInsideAura(windows, CLOAK_OF_SHADOWS, REMOVE_S * MS_PER_S)).toBe(false);
+    expect(isInsideAura(windows, CLOAK_OF_SHADOWS, REMOVE_S * MS_PER_S)).toBe(true);
   });
 
   it('is false outside the span and for an aura with no spans', () => {
+    expect(isInsideAura(windows, CLOAK_OF_SHADOWS, (REMOVE_S + 1) * MS_PER_S)).toBe(false);
     expect(isInsideAura(windows, CLOAK_OF_SHADOWS, (APPLY_S - 1) * MS_PER_S)).toBe(false);
     expect(isInsideAura(windows, RUPTURE, APPLY_S * MS_PER_S)).toBe(false);
   });

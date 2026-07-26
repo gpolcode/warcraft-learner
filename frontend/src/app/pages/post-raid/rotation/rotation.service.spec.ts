@@ -25,7 +25,7 @@ import {
   buildRuleContext, RuleContext, RuleInputs, ruleApplicable,
   evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence,
   evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
-  needsEnemyAuras, needsTargetCounts, judgeableRules,
+  rulesNeed, judgeableRules,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
   ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
@@ -303,22 +303,24 @@ describe('evaluateAuraUptimeBelow', () => {
 describe('rule evaluator boundaries', () => {
   const dance = buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S);
 
-  it('treats the aura span as end-exclusive for a cast inside it', () => {
+  // Measured on a real pull: 75 of 197 Hot Streak removals share the exact millisecond of the
+  // consuming cast, so both kinds must read that cast as inside the buff or perfect play is flagged twice.
+  it('reads a cast on the removal instant as inside the buff', () => {
     const insideDance: CastOutsideBuffCondition = {
       kind: 'cast_outside_buff', spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
       buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', require: 'inside',
     };
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S)], { buffs: dance });
-    expect(evaluateCastOutsideBuff(insideDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+    expect(evaluateCastOutsideBuff(insideDance, ctx, 'warning')).toBeNull();
   });
 
-  it('uses that same end-exclusive bound for a spent proc, so one cast cannot read both ways', () => {
+  it('reads that same cast as having consumed the proc', () => {
     const spendDance: ProcWastedCondition = {
       kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
       spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
     };
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S)], { buffs: dance });
-    expect(evaluateProcWasted(spendDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
   });
 
   it('passes uptime exactly at min_pct (strict below)', () => {
@@ -400,6 +402,22 @@ describe('evaluateCastAtTargetCount', () => {
     const ctx = ruleCtx([cast(EVISCERATE, CAST_S)],
       { damage: [1, 2, 3].map(id => damage(EVISCERATE, CAST_S + 1, 100, { target: id })) });
     expect(evaluateCastAtTargetCount(capped, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('counts violations on both sides of a band rule, not just the larger side', () => {
+    const BAND_MIN = 2, BAND_MAX = 3;
+    const banded: CastAtTargetCountCondition = {
+      kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder',
+      min_targets: BAND_MIN, max_targets: BAND_MAX,
+    };
+    // Three casts: one at 1 target (under), one at 3 (in band), two at 5 (over) - so 3 of 4 violate.
+    const at = (castS: number, targets: number) =>
+      Array.from({ length: targets }, (_, i) => damage(BLACK_POWDER, castS + 1, 100, { target: i + 1 }));
+    const ctx = ruleCtx(
+      [cast(BLACK_POWDER, 10), cast(BLACK_POWDER, 30), cast(BLACK_POWDER, 50), cast(BLACK_POWDER, 70)],
+      { damage: [...at(10, 1), ...at(30, 3), ...at(50, 5), ...at(70, 5)] },
+    );
+    expect(evaluateCastAtTargetCount(banded, ctx, 'warning')?.measured).toEqual({ value: '3 / 4', unit: 'cast(s)' });
   });
 
   it('counts copies of one add separately, since they share a targetID and differ only by instance', () => {
@@ -1075,17 +1093,17 @@ describe('judgeableRules', () => {
   });
 });
 
-describe('needsEnemyAuras / needsTargetCounts', () => {
+describe('rulesNeed', () => {
   it('reads enemy auras only for an on-target uptime rule', () => {
     const onSelf: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', min_pct: 90, on: 'self' } };
     const onTarget: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', min_pct: 90, on: 'target' } };
-    expect(needsEnemyAuras([onSelf])).toBe(false);
-    expect(needsEnemyAuras([onTarget])).toBe(true);
+    expect(rulesNeed([onSelf], 'enemyAuras')).toBe(false);
+    expect(rulesNeed([onTarget], 'enemyAuras')).toBe(true);
   });
 
   it('reads damage only for a target-count rule', () => {
     const rule: RulebookRule = { condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'BP', min_targets: 3 } };
-    expect(needsTargetCounts([])).toBe(false);
-    expect(needsTargetCounts([rule])).toBe(true);
+    expect(rulesNeed([], 'damage')).toBe(false);
+    expect(rulesNeed([rule], 'damage')).toBe(true);
   });
 });

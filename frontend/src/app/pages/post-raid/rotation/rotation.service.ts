@@ -159,12 +159,25 @@ const TARGET_COUNT_WINDOW_S = 3;
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster. */
 const RESOURCE_ACTOR_SOURCE = 1;
 
-export function needsEnemyAuras(rules: RulebookRule[]): boolean {
-  return rules.some(rule => rule.condition.kind === 'aura_uptime_below' && rule.condition.on === 'target');
+/** The optional event streams a rule reads beyond the always-fetched casts and buffs. */
+export type RuleStream = 'enemyAuras' | 'damage';
+
+/** Exhaustive by design: a new condition kind cannot compile until it declares the streams it reads. */
+function streamsFor(cond: RuleCondition): RuleStream[] {
+  switch (cond.kind) {
+    case 'aura_uptime_below': return cond.on === 'target' ? ['enemyAuras'] : [];
+    case 'cast_at_target_count': return ['damage'];
+    case 'cast_without_prior':
+    case 'hold_cooldown_for_anchor':
+    case 'cast_outside_buff':
+    case 'opening_sequence':
+    case 'resource_at_cast':
+    case 'proc_wasted': return [];
+  }
 }
 
-export function needsTargetCounts(rules: RulebookRule[]): boolean {
-  return rules.some(rule => rule.condition.kind === 'cast_at_target_count');
+export function rulesNeed(rules: RulebookRule[], stream: RuleStream): boolean {
+  return rules.some(rule => streamsFor(rule.condition).includes(stream));
 }
 
 /** Guards the engine against a rulebook file that does not conform: the schema requires a condition, unregenerated files predate it. */
@@ -298,11 +311,13 @@ export function evaluateCastAtTargetCount(
     .map(timeS => ({ timeS, targets: targetsAtCast(ctx.damage, ctx.fStart, timeS) }))
     .filter(({ targets }) => targets > 0);
   if (!judged.length) return null;
-  const under = judged.filter(({ targets }) => cond.min_targets != null && targets < cond.min_targets);
-  const over = judged.filter(({ targets }) => cond.max_targets != null && targets > cond.max_targets);
-  const violations = under.length >= over.length ? under : over;
+  const isUnder = ({ targets }: { targets: number }) => cond.min_targets != null && targets < cond.min_targets;
+  const violations = judged.filter(entry =>
+    isUnder(entry) || (cond.max_targets != null && entry.targets > cond.max_targets));
   if (!violations.length) return null;
-  const bound = violations === under ? `under ${cond.min_targets}` : `over ${cond.max_targets}`;
+  const underCount = violations.filter(isUnder).length;
+  const bound = underCount >= violations.length - underCount
+    ? `under ${cond.min_targets}` : `over ${cond.max_targets}`;
   return {
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(violations[0].timeS * 1000),
@@ -349,9 +364,8 @@ export function evaluateProcWasted(
   const spans = (ctx.selfAuras.get(cond.buff_spell_id) ?? []).filter(([, end]) => end != null);
   if (!spans.length) return null;
   const spendTimes = cond.spend_spell_ids.flatMap(spellId => ctx.castTimes[spellId] ?? []);
-  // End-exclusive, matching isInsideAura: the cast sharing a millisecond with removebuff must not read both ways.
   const wasted = spans.filter(([startMs, endMs]) =>
-    !spendTimes.some(time => time * 1000 >= startMs && time * 1000 < (endMs as number)));
+    !spendTimes.some(time => time * 1000 >= startMs && time * 1000 <= (endMs as number)));
   if (!wasted.length) return null;
   return {
     severity, category: 'rule_violation',
@@ -812,10 +826,10 @@ export class RotationFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
         // Raid-wide and unnarrowable: no sourceID (Enemies + sourceID returns nothing) and no server-side
         // source filter, so it costs several pages and is fetched only when a rule reads enemy auras.
-        needsEnemyAuras(rules)
+        rulesNeed(rules, 'enemyAuras')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
           : Promise.resolve([]),
-        needsTargetCounts(rules)
+        rulesNeed(rules, 'damage')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId)
           : Promise.resolve([]),
       ]);
