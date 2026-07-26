@@ -1,0 +1,147 @@
+{
+  "spec": "RestorationDruid",
+  "spec_icon": "spell_nature_healingtouch",
+  "major_cooldowns": [
+    {
+      "name": "Tranquility",
+      "spell_id": 740,
+      "cooldown": 180,
+      "duration": 8,
+      "align_with_bloodlust": true,
+      "usage_rule": "Save for the most dangerous raid-wide damage moments and ramp into it with Wild Growth plus as many Rejuvenations as possible so its per-tick HoT extension lands on a fully buffed group."
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast in caster form into a bed of Rejuvenations during your healing ramp so any Flourish-style extension and the spawned Grove Guardians carry maximum value, then follow with Regrowth casts; talent_gated because it competes with Incarnation."
+    },
+    {
+      "name": "Incarnation: Tree of Life",
+      "spell_id": 33891,
+      "cooldown": 180,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast 10-12 seconds before major damage and before your Rejuvenation ramp to bank the 30% Rejuvenation mana discount; pairs well with Tranquility since its duration pauses while you channel, and is talent_gated against Convoke.",
+      "talent_gated": true
+    },
+    {
+      "name": "Innervate",
+      "spell_id": 29166,
+      "cooldown": 180,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast on cooldown starting around 80% mana, ideally early in a ramp while you have low Abundance stacks so you spend the free mana mostly on Rejuvenation."
+    },
+    {
+      "name": "Flourish",
+      "spell_id": 197721,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press after you have a full spread of HoTs out to extend every active heal-over-time effect, layering it onto a Convoke or Tranquility ramp; talent_gated because not every build takes it.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "Press proactively before any predictable burst of damage on yourself; its short cooldown means you can use it on nearly every dangerous tank-style hit you eat."
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save for the largest spike of damage you will personally take and pop it just before the hit lands to halve incoming damage."
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "duration": 0.1,
+      "usage_rule": "Use as an instant self-heal when your own health drops low and you cannot spare a global to cast on yourself; talent_gated since not all builds take it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Cast on a raider taking heavy damage (often the tank) to grant a 20% damage reduction; pre-plan it over telegraphed spikes rather than reacting after the hit."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Cast Swiftmend and Wild Growth on cooldown",
+      "condition": null,
+      "action": "Press Swiftmend and Wild Growth on cooldown whenever the group has taken any damage; both spawn Grove Guardians and proc effects like Soul of the Forest and Reforestation that drive most of your throughput, with Swiftmend the higher priority."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Ramp Rejuvenations 10-15s before damage",
+      "condition": null,
+      "action": "Begin spreading Rejuvenation across the group about 10-15 seconds before a known damage event, then drop Wild Growth and your big cooldown so the payoff Regrowths land free with guaranteed crits via Abundance."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Lifebloom and Efflorescence up always",
+      "condition": null,
+      "action": "Maintain Lifebloom at all times to fuel Everbloom and, with Lifetreading, to auto-place Efflorescence; refresh Lifebloom inside its last 4.5 seconds to trigger the bloom without letting it drop."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Combine Incarnation with Tranquility",
+      "condition": null,
+      "action": "When playing Tree of Life, hold Tranquility to channel it during Incarnation: Tree of Life; the tree's duration pauses while you channel so you keep the full 30-second window after Tranquility ends."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Pre-plan cooldowns onto damage windows",
+      "condition": null,
+      "action": "Pre-plan Tranquility, Convoke, and Incarnation onto the hardest-hitting moments of each fight instead of saving them just in case; idle cooldowns waste mana and raise the chance a raider dies."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Follow Swiftmend with Rejuvenation",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 18562,
+        "spell_name": "Swiftmend",
+        "required_spell_id": 774,
+        "required_spell_name": "Rejuvenation",
+        "window_s": 3,
+        "position": "after"
+      },
+      "action": "Cast Rejuvenation immediately after Swiftmend to consume the Soul of the Forest proc and gain two free, supercharged Rejuvenation buffs."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Use Nature's Swiftness + Regrowth on spikes",
+      "condition": null,
+      "action": "React to a player dropping very low with Nature's Swiftness followed by an instant Regrowth, or a bare Regrowth when Nature's Swiftness is down, rather than relying on slow HoT ramps for emergencies."
+    },
+    {
+      "type": "rotation",
+      "priority": "low",
+      "description": "Fill downtime with Wrath for mana",
+      "condition": null,
+      "action": "Cast Wrath during any healing downtime to regenerate mana through Master Shapeshifter, and avoid casting Regrowth while your Abundance stacks are low."
+    }
+  ],
+  "source_summary": "Restoration Druid plays as a HoT-based ramp healer that builds peaks of throughput by spreading Rejuvenation, maintaining Lifebloom and Efflorescence, and pressing Swiftmend and Wild Growth on cooldown to fuel Grove Guardians and proc chains. The major cooldowns - Tranquility, Convoke the Spirits, and Incarnation: Tree of Life - are pre-planned onto the fight's most dangerous damage windows and ramped into with Rejuvenation so their healing and HoT extensions land on a fully buffed group. Innervate and Wrath keep mana topped off so cooldowns can be used freely rather than hoarded.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:13:28"
+}

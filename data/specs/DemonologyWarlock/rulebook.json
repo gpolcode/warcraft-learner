@@ -1,0 +1,153 @@
+{
+  "spec": "DemonologyWarlock",
+  "spec_icon": "spell_shadow_metamorphosis",
+  "major_cooldowns": [
+    {
+      "name": "Summon Demonic Tyrant",
+      "spell_id": 265187,
+      "cooldown": 90,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Press only after every other demon is already summoned and Call Dreadstalkers is out, so the Tyrant extends your Dreadstalkers and gains its per-demon damage modifier from the maximum number of active demons; sync with Bloodlust, potion, and on-use trinkets."
+    },
+    {
+      "name": "Grimoire: Imp Lord",
+      "spell_id": 1276452,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Cast early in your cooldown window to add the Imp Lord to the demon count before Summon Demonic Tyrant."
+    },
+    {
+      "name": "Grimoire: Fel Ravager",
+      "spell_id": 1276467,
+      "cooldown": 120,
+      "align_with_bloodlust": true,
+      "talent_gated": true,
+      "usage_rule": "Alternative to Grimoire: Imp Lord taken for its on-demand interrupt; cast it inside your Tyrant window when chosen, otherwise hold for the encounter interrupt."
+    },
+    {
+      "name": "Summon Doomguard",
+      "spell_id": 18540,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Press whenever multiple targets are present to feed your cooldown window, respecting its 5-target cap."
+    },
+    {
+      "name": "Power Siphon",
+      "spell_id": 264130,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Consume Wild Imps to bank Demonic Core charges, holding at least 2 charges entering each Summon Demonic Tyrant window so you can quickly resummon imps while the Tyrant is active."
+    },
+    {
+      "name": "Demonic Strength",
+      "spell_id": 267171,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast on cooldown inside your demon burst window to empower a Felguard Felstorm; talent-gated so absence is normal for builds that skip it."
+    },
+    {
+      "name": "Nether Portal",
+      "spell_id": 267217,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": true,
+      "talent_gated": true,
+      "usage_rule": "Open the portal at the start of a major burst window and spend every Soul Shard with Hand of Gul'dan and Call Dreadstalkers while it is active to summon as many demons as possible; talent-gated."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a large incoming magic or physical hit for a 40% damage reduction and interrupt immunity; your strongest planned defensive for scripted burst."
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "talent_gated": true,
+      "usage_rule": "Sacrifice current health into a large absorb shield ahead of predictable damage; talent-gated so its absence is expected on builds that skip it."
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "talent_gated": true,
+      "usage_rule": "Use to instantly heal a chunk of your health while horrifying the target when you need a quick personal recovery; talent-gated."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "critical",
+      "description": "Get Dreadstalkers out before Demonic Tyrant",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          265187
+        ],
+        "spell_names": [
+          "Summon Demonic Tyrant"
+        ],
+        "anchor_spell_id": 104316,
+        "anchor_spell_name": "Call Dreadstalkers",
+        "hold_window_s": 6
+      },
+      "action": "Always cast Call Dreadstalkers and put it on cooldown before pressing Summon Demonic Tyrant so the Tyrant extends your Dreadstalkers and locks in the guaranteed duration buff."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Bank 2 Demonic Cores before Tyrant",
+      "condition": null,
+      "action": "Hold at least 2 Demonic Core charges heading into each Summon Demonic Tyrant so you can immediately spend Demonbolt into Hand of Gul'dan and resummon Wild Imps while the Tyrant is active."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Never overcap Soul Shards",
+      "condition": null,
+      "action": "Spend Soul Shards before reaching the cap of 5, prioritizing Call Dreadstalkers then Hand of Gul'dan, and never fire a generator while sitting at 4 with a Demonbolt or 5 shards queued."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Maximize demons summoned for Tyrant",
+      "condition": null,
+      "action": "Summon every available demon (Dreadstalkers, Grimoire pet, Doomguard, and a full set of Wild Imps) before Summon Demonic Tyrant because its damage modifier scales per active demon."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Implode at 6 Wild Imps on AoE",
+      "condition": null,
+      "action": "On two or more targets, fire Implosion only when you have the full 6 Wild Imps active to maximize its damage, and add Summon Doomguard to the rotation for sustained cleave."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spread Doom for extra AoE",
+      "condition": null,
+      "action": "On multiple targets, weave Demonbolt onto additional enemies to apply Doom to each, since every Doom application is its own independent damage source."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "medium",
+      "description": "Pool Demonbolt with Power Siphon",
+      "condition": null,
+      "action": "Use Power Siphon to convert excess Wild Imps into Demonic Core charges right before a burst window so Demonbolt can rebuild Soul Shards quickly under Summon Demonic Tyrant."
+    }
+  ],
+  "source_summary": "Demonology Warlock is a generator-spender spec whose damage is concentrated in the Summon Demonic Tyrant window, which gains a damage bonus for every active demon. The defining skill is sequencing all summons (Call Dreadstalkers, Grimoire pet, Doomguard, and a full set of Wild Imps) and banking at least 2 Demonic Cores before pressing the Tyrant so it locks in the maximum demon count and the Dreadstalker extension. Between windows, avoid overcapping Soul Shards or Demonic Cores and use Power Siphon to keep Demonbolt fuel ready for the next burst.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:02:07"
+}

@@ -1,0 +1,119 @@
+{
+  "spec": "DevourerDemonHunter",
+  "spec_icon": "classicon_demonhunter_void",
+  "major_cooldowns": [
+    {
+      "name": "Void Metamorphosis",
+      "spell_id": 473671,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Enter as soon as you reach 50 Soul Fragments (35 with Soul Glutton) after seeding a few fragments on the ground, then pack the window with Void Ray and Collapsing Star casts.",
+      "id_note": "Resource-gated, not a fixed cooldown: available at 50 Soul Fragments (35 with Soul Glutton), combat starts at 25 via Entropy. The 60s here is a placeholder effective cadence since the schema requires cooldown > 0.",
+      "duration": 20
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 1246167,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast right before entering Void Metamorphosis so its meta upgrade Predator's Wake triggers a Voidsurge; part of the optional Melee Talents package.",
+      "talent_gated": true
+    },
+    {
+      "name": "Voidblade",
+      "spell_id": 1245412,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast right before entering Void Metamorphosis to upgrade your Hungering Slash into Reaper's Toll and buff Voidsurge; part of the optional Melee Talents package.",
+      "talent_gated": true
+    },
+    {
+      "name": "Soul Immolation",
+      "spell_id": 1241937,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use on cooldown but ONLY outside Void Metamorphosis; never press it while inside a meta window."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press for 25% damage reduction ahead of predictable melee or magic spikes."
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "usage_rule": "Drop for the group as a raid avoidance cooldown during heavy incoming AoE damage."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Enter Void Meta at the fragment threshold",
+      "condition": null,
+      "action": "Enter Void Metamorphosis as soon as you hold 50 Soul Fragments (35 with Soul Glutton), leaving up to 10 fragments lingering on the ground to smuggle into the window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Voidblade before Void Metamorphosis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 473671,
+        "spell_name": "Void Metamorphosis",
+        "required_spell_id": 1245412,
+        "required_spell_name": "Voidblade",
+        "window_s": 6
+      },
+      "action": "Cast Voidblade (and The Hunt) in the seconds before Void Metamorphosis so the first empowered melee casts each trigger a Voidsurge."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Reap only at full resources",
+      "condition": null,
+      "action": "Cast Reap at 84 Fury and 4 souls, or at 60 Fury and 10 souls with a Moment of Craving proc, so Soulshaper consumes the maximum fragments; never cast it under 4 souls."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Use Reap at 3 Voidfall stacks",
+      "condition": null,
+      "action": "As Annihilator, fire Reap (or Eradicate in AoE) whenever you reach 3 stacks of Voidfall, since Void Ray is the only ability that can push Voidfall above 3."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Void Ray on cooldown",
+      "condition": null,
+      "action": "Cast Void Ray every time it is available inside and outside Void Metamorphosis; never let it sit, as it drives Voidfall stacks and pauses your Fury drain in meta."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Stack Collapsing Stars in each meta",
+      "condition": null,
+      "action": "Inside Void Metamorphosis, cast Collapsing Star (requires 30 collected souls) as often as possible, aiming for 4-5 per window (3 or so with Soul Glutton)."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Soul Immolation outside meta only",
+      "condition": null,
+      "action": "Cast Soul Immolation on cooldown while in normal form and never while inside Void Metamorphosis."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Match your Void Metamorphosis tempo to hero tree",
+      "condition": null,
+      "action": "On the Void-Scarred melee build, cycle Void Metamorphosis as fast as possible to re-trigger Voidsurge; on the caster build (and Annihilator), extend the window to cast more Collapsing Stars."
+    }
+  ],
+  "source_summary": "Devourer Demon Hunter is built entirely around reaching and optimizing Void Metamorphosis, a resource-gated transform unlocked at 50 Soul Fragments (35 with Soul Glutton) that refills Fury and upgrades your kit. The goal is to seed fragments on the ground, fire Voidblade and The Hunt to buff Voidsurge as you enter, then spend the window on Void Ray and as many Collapsing Stars as possible. Reap, Cull, and Eradicate accelerate resource generation and should only be cast at maximum Soul Fragments, while Soul Immolation and personal defensives like Blur and Darkness are used outside the burst window."
+}
