@@ -133,17 +133,17 @@
     "rule": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type", "priority", "description", "condition", "action"],
+      "required": ["type", "severity", "description", "condition", "action"],
       "properties": {
         "type": {
           "type": "string",
           "description": "Rule category. cooldown_pairing: two abilities must be cast together or in sequence. cd_hold: an ability should be delayed until an anchor cooldown is available. opener: specific sequence or timing required at pull. rotation: ongoing priority or combo maintained throughout the fight. aoe_switch: behavior changes when multiple targets are present.",
           "enum": ["cooldown_pairing", "cd_hold", "opener", "rotation", "aoe_switch"]
         },
-        "priority": {
+        "severity": {
           "type": "string",
-          "description": "critical (fundamentally breaks the spec if ignored), high (major DPS loss), medium (moderate optimization), low (minor min-maxing).",
-          "enum": ["critical", "high", "medium", "low"]
+          "description": "How hard the app presses the player when they break this rule. critical: ignoring it fundamentally breaks the spec. warning: a real DPS loss worth fixing. info: an optimization worth knowing about. These are the exact three tiers the findings table renders, so write the one the coaching deserves.",
+          "enum": ["critical", "warning", "info"]
         },
         "description": {
           "type": "string",

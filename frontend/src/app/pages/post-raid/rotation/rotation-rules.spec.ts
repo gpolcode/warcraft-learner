@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
-  RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
+  RulebookRule, RuleSeverity,
+  CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
   AuraUptimeBelowCondition, OpeningSequenceCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
 } from '../../../core/models/rulebook.models';
@@ -13,7 +14,7 @@ import {
 } from '../../../../testing/builders/events';
 import {
   BenchedRule, RuleContext, RuleInputs, RuleStream, RuleThreshold,
-  buildRuleContext, evaluateRules, rulesFollowed, ruleSeverity, ruleLabel, ruleApplicable,
+  buildRuleContext, evaluateRules, rulesFollowed, ruleLabel, ruleApplicable,
   rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
   evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
@@ -104,40 +105,29 @@ describe('rule engine', () => {
 
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
     const description = 'Secret Technique always inside Shadow Dance';
-    const rule: RulebookRule = { description, condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = { severity: 'warning', description, condition: SECRET_TECH_NEEDS_DANCE };
     const violated = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
     expect(violated[0].label).toBe(description);
     expect(rulesFollowed([benched(rule)], ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]))).toEqual([description]);
   });
 
   it('evaluateRules falls back to the synthesized label when a rule has no description', () => {
-    const rule: RulebookRule = { condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = { severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
     expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].label)
       .toBe('Secret Technique without Shadow Dance');
   });
 
   it('evaluateRules carries the rule type onto the finding', () => {
-    const rule: RulebookRule = { type: 'cooldown_pairing', priority: 'high', condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = { type: 'cooldown_pairing', severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
     const findings = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
     expect(findings[0].rule_type).toBe('cooldown_pairing');
   });
 });
 
-describe('ruleSeverity', () => {
-  it.each([
-    { name: 'critical -> critical', priority: 'critical' as string | undefined, severity: 'critical' },
-    { name: 'high -> warning', priority: 'high', severity: 'warning' },
-    { name: 'medium -> info', priority: 'medium', severity: 'info' },
-    { name: 'low -> info, the tier it shares with medium', priority: 'low', severity: 'info' },
-    { name: 'a missing priority -> warning', priority: undefined, severity: 'warning' },
-    { name: 'an unauthored priority -> warning', priority: 'urgent', severity: 'warning' },
-  ])('maps $name', ({ priority, severity }) => {
-    expect(ruleSeverity(priority)).toBe(severity);
-  });
-
-  it('drives the severity of an evaluated rule finding', () => {
-    const rule: RulebookRule = { priority: 'medium', condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].severity).toBe('info');
+describe('rule severity', () => {
+  it.each(['critical', 'warning', 'info'] as RuleSeverity[])('carries an authored %s onto the finding', severity => {
+    const rule: RulebookRule = { severity, condition: SECRET_TECH_NEEDS_DANCE };
+    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].severity).toBe(severity);
   });
 });
 
@@ -398,10 +388,10 @@ describe('evaluateProcWasted', () => {
 
 describe('rulesFollowed', () => {
   const pairDanceWithSecretTech: RulebookRule = {
-    priority: 'warning', description: 'Pair Shadow Dance with Secret Technique', condition: SECRET_TECH_NEEDS_DANCE,
+    severity: 'warning', description: 'Pair Shadow Dance with Secret Technique', condition: SECRET_TECH_NEEDS_DANCE,
   };
   const holdDanceForBlades: RulebookRule = {
-    priority: 'critical', description: 'Hold Shadow Dance for Shadow Blades', condition: HOLD_DANCE_FOR_BLADES,
+    severity: 'critical', description: 'Hold Shadow Dance for Shadow Blades', condition: HOLD_DANCE_FOR_BLADES,
   };
 
   it('lists the rule when Shadow Dance is paired with Secret Technique', () => {
@@ -446,7 +436,7 @@ describe('judgeableRules', () => {
   });
 
   it('keeps every rule that carries a condition', () => {
-    const rule: RulebookRule = { description: 'real', condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = { severity: 'warning', description: 'real', condition: SECRET_TECH_NEEDS_DANCE };
     expect(judgeableRules([...unconformed, rule])).toEqual([rule]);
   });
 });
@@ -510,9 +500,9 @@ describe('ruleThreshold', () => {
 });
 
 describe('benchedRules', () => {
-  const needsMagnitude: RulebookRule = { description: 'pair', condition: SECRET_TECH_NEEDS_DANCE };
+  const needsMagnitude: RulebookRule = { severity: 'warning', description: 'pair', condition: SECRET_TECH_NEEDS_DANCE };
   const needsNone: RulebookRule = {
-    description: 'proc',
+    severity: 'warning', description: 'proc',
     condition: {
       kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
       spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
@@ -539,8 +529,9 @@ describe('benchedRules', () => {
 
 describe('rulesNeed', () => {
   const uptime = (on: 'self' | 'target'): RulebookRule =>
-    ({ condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on } });
+    ({ severity: 'warning', condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on } });
   const targetCount: RulebookRule = {
+    severity: 'warning',
     condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' },
   };
 

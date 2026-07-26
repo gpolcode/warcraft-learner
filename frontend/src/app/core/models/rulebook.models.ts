@@ -96,9 +96,12 @@ export type RuleCondition =
   | ResourceAtCastCondition
   | ProcWastedCondition;
 
+/** The tiers the findings table renders, authored directly so nothing translates between vocabularies. */
+export type RuleSeverity = 'critical' | 'warning' | 'info';
+
 export interface RulebookRule {
   type?: string;
-  priority?: 'critical' | 'high' | 'medium' | 'low' | string;
+  severity: RuleSeverity;
   description?: string;
   condition: RuleCondition;
   action?: string;

@@ -506,7 +506,7 @@ describe('RotationFeatureService', () => {
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
     };
-    const rule: RulebookRule = { priority: 'critical', condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = { severity: 'critical', condition: SECRET_TECH_NEEDS_DANCE };
     const service = withSource(ok(bench({ rules: [benched(rule)] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     expect(result.ok).toBe(true);
@@ -562,9 +562,11 @@ describe('RotationFeatureService fetch shape', () => {
   const REPORT = { title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } };
   const PLAYER_ID = 10;
   const dotUptime: RulebookRule = {
+    severity: 'warning',
     condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
   };
   const aoeSwitch: RulebookRule = {
+    severity: 'warning',
     condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' },
   };
 

@@ -338,15 +338,6 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
   aoe_switch: 'aoe',
 };
 
-// `low` shares the `info` tier: the finding table renders three, and no deployed rule is `low`.
-const RULE_SEVERITY: Record<string, Severity> = {
-  critical: 'critical', high: 'warning', medium: 'info', low: 'info',
-};
-
-export function ruleSeverity(priority?: string): Severity {
-  return RULE_SEVERITY[priority ?? ''] ?? 'warning';
-}
-
 /** The optional event streams a rule reads beyond the always-fetched casts and buffs. */
 export type RuleStream = 'enemyAuras' | 'damage';
 
@@ -484,7 +475,7 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
 export function evaluateRules(benched: BenchedRule[], ctx: RuleContext): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   for (const { rule, threshold } of benched) {
-    const finding = evaluateCondition(rule.condition, ctx, threshold, ruleSeverity(rule.priority), rule.action);
+    const finding = evaluateCondition(rule.condition, ctx, threshold, rule.severity, rule.action);
     // One authored name in both states, so a rule does not read as two different rules.
     if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
   }
@@ -510,7 +501,7 @@ export function rulesFollowed(benched: BenchedRule[], ctx: RuleContext): string[
   for (const { rule, threshold } of benched) {
     const cond = rule.condition;
     if (!ruleApplicable(cond, ctx)) continue;
-    if (!evaluateCondition(cond, ctx, threshold, ruleSeverity(rule.priority))) {
+    if (!evaluateCondition(cond, ctx, threshold, rule.severity)) {
       followed.push(ruleLabel(cond, rule.description));
     }
   }
