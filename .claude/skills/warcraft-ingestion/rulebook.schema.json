@@ -18,7 +18,7 @@
     },
     "major_cooldowns": {
       "type": "array",
-      "description": "REQUIRED and must be populated. All major cooldowns: abilities with a cooldown >= 30s that meaningfully affect damage output (or healing/tanking if applicable). Include on-use trinkets when the guide mentions specific timing for them. Every spec has at least one major cooldown; a spec with an empty list produces no burst/rotation bench, so this must contain at least one item.",
+      "description": "REQUIRED and must be populated. All major cooldowns: abilities with a cooldown >= 30s that meaningfully affect damage output (or healing/tanking if applicable). Include on-use trinkets when the guide mentions specific timing for them. Every spec has at least one major cooldown, and most of the spec's analysis is driven from this list, so it must never be empty.",
       "minItems": 1,
       "items": { "$ref": "#/$defs/majorCooldown" }
     },
@@ -30,7 +30,7 @@
     },
     "rules": {
       "type": "array",
-      "description": "High-signal rotation and cooldown usage rules that are CHECKABLE against the player's log: cast timing, buff and debuff uptime, resources spent at a cast, enemies engaged, and cooldown usage against top parses. Every rule needs a condition, so omit anything that cannot be expressed as one - guidance the engine cannot judge is not a rule. Quality over count: a spec with two real rules is better than one with eight, and an empty list is valid.",
+      "description": "The spec's rotation and cooldown rules, each one something the app can check against a player's own log: which abilities go together, which buffs and dots stay up, which resource level to spend at, how many enemies change the priority, and what the opener is. Every rule needs a condition, so leave out advice that cannot be expressed as one of the condition kinds - a spec whose sources are mostly prose yields few rules, which is correct. Quality over count: two real rules beat eight, and an empty list is valid. Never write a 'keep X on cooldown' rule; the app already checks that for every major cooldown.",
       "items": { "$ref": "#/$defs/rule" }
     },
     "source_summary": {
@@ -39,11 +39,11 @@
     },
     "guide_count": {
       "type": "integer",
-      "description": "Added automatically by the admin CLI on save - do not populate manually."
+      "description": "Written by the pipeline after the rulebook is saved. Never populate it."
     },
     "saved_at": {
       "type": "string",
-      "description": "Added automatically by the admin CLI on save - do not populate manually."
+      "description": "Written by the pipeline after the rulebook is saved. Never populate it."
     }
   },
   "$defs": {
@@ -147,10 +147,10 @@
         },
         "description": {
           "type": "string",
-          "description": "Short rule title shown in the UI (<= 60 chars)."
+          "description": "Short rule title the player sees, <= 60 chars, naming the abilities rather than the check, e.g. 'Secret Technique always inside Shadow Dance'. It is shown both when the rule is broken and when it is followed, so write it as the rule itself, not as a complaint."
         },
         "condition": {
-          "description": "REQUIRED machine-readable trigger. Every rule is judged against the player's recorded behaviour, so a rule that cannot be expressed as one of the kinds below does not belong in the rulebook. Pick the kind that matches what the rule actually says rather than bending it into a cast-timing proxy: a rule about a buff being up wants castOutsideBuff or auraUptimeBelow, a resource threshold wants resourceAtCast, and a target count wants castAtTargetCount.",
+          "description": "REQUIRED. How the app checks this rule against the player's log. Pick the kind that matches what the rule actually says rather than forcing it into a nearby one: a rule about a buff being up wants castOutsideBuff or auraUptimeBelow, a resource level wants resourceAtCast, a target count wants castAtTargetCount, and an opener wants openingSequence. A rule that fits none of them does not belong in the rulebook. Each kind takes ability identities and a direction only - never a number.",
           "anyOf": [
             { "$ref": "#/$defs/castWithoutPrior" },
             { "$ref": "#/$defs/holdCooldownForAnchor" },
@@ -164,22 +164,22 @@
         },
         "action": {
           "type": "string",
-          "description": "Second-person prescriptive instruction. Must tell the player what to DO, not describe what the rule checks. Good: 'Always cast Secret Technique within 5s of Shadow Dance.' Bad: 'Shadow Dance was cast without Secret Technique beforehand.'"
+          "description": "Second-person instruction telling the player what to DO, not describing what the check found. This is where the sources' concrete numbers belong - thresholds, target counts, hold windows - since the condition itself carries none. Good: 'Always cast Secret Technique inside Shadow Dance, at 5+ combo points.' Bad: 'Shadow Dance was cast without Secret Technique beforehand.'"
         }
       }
     },
     "castWithoutPrior": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag each cast of spell_id that is not accompanied by required_spell_id, on the side given by position. The pairing window is measured from the encounter's top parses, not authored here.",
+      "description": "Use when the sources say two abilities go together: 'always X inside Y', 'send Y then X'. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently.",
       "required": ["kind", "spell_id", "spell_name", "required_spell_id", "required_spell_name"],
       "properties": {
         "kind": { "const": "cast_without_prior" },
-        "spell_id": { "type": "integer", "description": "The spell being judged. Every cast of it is either a pass or a violation." },
-        "spell_name": { "type": "string" },
-        "required_spell_id": { "type": "integer", "description": "The companion spell that must accompany spell_id. Under the default position 'before' it must already have been cast, so the ability that comes FIRST goes here and the ability being judged goes in spell_id." },
-        "required_spell_name": { "type": "string" },
-        "position": { "type": "string", "enum": ["before", "after", "either"], "default": "before", "description": "Where required_spell_id must sit relative to the judged cast. 'before' (the default) requires it to come first, which is what most rules mean. 'after' requires it to follow. 'either' accepts both sides - use it only when the rule text genuinely says pair or sync rather than naming an order." }
+        "spell_id": { "type": "integer", "description": "The ability being coached. Every cast of it is either a pass or a violation." },
+        "spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "required_spell_id": { "type": "integer", "description": "The companion ability that must accompany it. Under the default position 'before' the companion is the one cast FIRST, so for 'Secret Technique always inside Shadow Dance' the companion is Shadow Dance." },
+        "required_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "position": { "type": "string", "enum": ["before", "after", "either"], "default": "before", "description": "Which side the companion sits on. 'before' (the default) is what most rules mean. 'after' when the sources say the companion follows. 'either' only when they say pair or sync without naming an order. Read the rule's own action text back against this before writing it." }
       },
       "examples": [
         {
@@ -195,14 +195,14 @@
     "holdCooldownForAnchor": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag casts of spell_ids that land too close before a non-opener cast of anchor_spell_id. How close is measured from the gap the encounter's top parses keep clear.",
+      "description": "Use when the sources say to save one ability for a bigger one: 'hold X for Y', 'do not spend X before Y'. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently.",
       "required": ["kind", "spell_ids", "spell_names", "anchor_spell_id", "anchor_spell_name"],
       "properties": {
         "kind": { "const": "hold_cooldown_for_anchor" },
-        "spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "Spells that should be held for the anchor." },
-        "spell_names": { "type": "array", "items": { "type": "string" } },
-        "anchor_spell_id": { "type": "integer", "description": "The anchor cooldown the spells should be saved for." },
-        "anchor_spell_name": { "type": "string" }
+        "spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "The abilities that should be saved. List every one the sources name for this anchor." },
+        "spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spell_ids and in the same order." },
+        "anchor_spell_id": { "type": "integer", "description": "The bigger cooldown they are being saved for." },
+        "anchor_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." }
       },
       "examples": [
         {
@@ -217,15 +217,15 @@
     "castOutsideBuff": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Judge each cast of spell_id against whether the buff was actually up, read from applybuff/removebuff. Prefer this over castWithoutPrior whenever the rule names a buff rather than a companion cast: 'inside Metamorphosis' means the aura, and a cast-to-cast proximity window only approximates it.",
+      "description": "Use when the sources tie an ability to a buff being active rather than to another cast: 'only during Metamorphosis', 'never while Darkest Night is up'. Prefer this over castWithoutPrior whenever the rule names a buff, since a buff can outlast or precede the cast that granted it. Needs no numbers at all.",
       "required": ["kind", "spell_id", "spell_name", "buff_spell_id", "buff_spell_name", "require"],
       "properties": {
         "kind": { "const": "cast_outside_buff" },
-        "spell_id": { "type": "integer", "description": "The spell being judged. Every cast of it is either a pass or a violation." },
-        "spell_name": { "type": "string" },
-        "buff_spell_id": { "type": "integer", "description": "The aura whose active spans decide each cast." },
-        "buff_spell_name": { "type": "string" },
-        "require": { "type": "string", "enum": ["inside", "outside"], "description": "'inside' flags casts made while the buff is down, for rules reading 'only during X'. 'outside' flags casts made while it is up, for rules reading 'never during X'." }
+        "spell_id": { "type": "integer", "description": "The ability being coached. Every cast of it is either a pass or a violation." },
+        "spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "buff_spell_id": { "type": "integer", "description": "The buff or form whose presence decides each cast. Use the aura's own id, which is often not the id of the ability that applies it." },
+        "buff_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "require": { "type": "string", "enum": ["inside", "outside"], "description": "'inside' for 'only cast it while the buff is up', which flags casts made while it is down. 'outside' for 'never cast it while the buff is up'." }
       },
       "examples": [
         {
@@ -241,13 +241,13 @@
     "auraUptimeBelow": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag when the aura's total uptime across the fight falls under what the encounter's top parses hold. Use for the 'keep X up' family, including damage-over-time effects the player maintains on the boss. Name only the aura; the bar is measured.",
+      "description": "Use for the 'keep X up' family: a buff or a damage-over-time effect the sources say should never fall off. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently. Do not write a target percentage.",
       "required": ["kind", "aura_spell_id", "aura_spell_name", "on"],
       "properties": {
         "kind": { "const": "aura_uptime_below" },
-        "aura_spell_id": { "type": "integer" },
-        "aura_spell_name": { "type": "string" },
-        "on": { "type": "string", "enum": ["self", "target"], "description": "'self' for a buff on the player. 'target' for a debuff the player maintains on enemies, which is how most damage-over-time rules are written." }
+        "aura_spell_id": { "type": "integer", "description": "The buff or damage-over-time effect that must stay up. Use the aura's own id, not the id of a different ability that refreshes it." },
+        "aura_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "on": { "type": "string", "enum": ["self", "target"], "description": "'self' for a buff on the player. 'target' for anything the player keeps on enemies, which covers almost every damage-over-time rule." }
       },
       "examples": [
         {
@@ -261,12 +261,12 @@
     "openingSequence": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag an opener whose first casts do not contain the given spells in the given order, inside the time the encounter's top parses take to complete it. Extra casts between them are allowed, so list only the spells whose order actually matters.",
+      "description": "Use when the sources give a specific opening order: 'open with X, then Y, then Z'. Extra casts between the listed steps are allowed, so list only the abilities whose order actually matters. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently. Do not write a time limit.",
       "required": ["kind", "spell_ids", "spell_names"],
       "properties": {
         "kind": { "const": "opening_sequence" },
-        "spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "description": "The opener spells, in the order they must be cast." },
-        "spell_names": { "type": "array", "items": { "type": "string" } }
+        "spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "description": "The opener abilities, in the order the sources say to cast them." },
+        "spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spell_ids and in the same order." }
       },
       "examples": [
         {
@@ -279,13 +279,13 @@
     "castAtTargetCount": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag casts of spell_id made at the wrong number of engaged enemies, counted from the distinct targets the player damaged around the cast. Name the direction only: the count the field uses it at is measured from the encounter's top parses.",
+      "description": "Use for the AoE switch: an ability the sources say to start using on several targets, or to stop using once several are up. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently. Do not write a target count, even when the guide names one - put that number in the rule's action text instead.",
       "required": ["kind", "spell_id", "spell_name", "bound"],
       "properties": {
         "kind": { "const": "cast_at_target_count" },
-        "spell_id": { "type": "integer" },
-        "spell_name": { "type": "string" },
-        "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for an ability only worth pressing on several targets, flagging casts made at too few. 'max' for a single-target ability that should give way to a cleave, flagging casts made at too many." }
+        "spell_id": { "type": "integer", "description": "The ability whose use depends on how many enemies are up." },
+        "spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for an ability only worth pressing on several targets, which flags using it on too few. 'max' for a single-target ability that should give way to a cleave, which flags using it on too many." }
       },
       "examples": [
         {
@@ -299,15 +299,15 @@
     "resourceAtCast": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag casts of spell_id made at the wrong resource level, read from the pre-cost snapshot on the cast. Name the direction only: the level the field spends at is measured from the encounter's top parses, as a share of the pool's own cap so one threshold holds for combo points and mana alike.",
+      "description": "Use when the sources gate an ability on a resource level: 'spend at 5 combo points', 'never overcap Soul Shards'. Supply no numbers: the app measures every threshold this rule is judged against from the encounter's best logs, so the same rule adapts to a fight the field plays differently. Do not write an amount, even when the guide names one - put that number in the rule's action text instead.",
       "required": ["kind", "spell_id", "spell_name", "resource_type", "resource_name", "bound"],
       "properties": {
         "kind": { "const": "resource_at_cast" },
-        "spell_id": { "type": "integer" },
-        "spell_name": { "type": "string" },
-        "resource_type": { "type": "integer", "description": "WCL power type id for the resource, e.g. 4 for combo points." },
-        "resource_name": { "type": "string", "description": "Resource name for the finding copy, e.g. 'combo points'." },
-        "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for a spender that should only go off high, flagging casts below the field's level. 'max' for a generator that should not be pressed near the cap." }
+        "spell_id": { "type": "integer", "description": "The ability whose use depends on the resource level." },
+        "spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "resource_type": { "type": "integer", "description": "The resource's numeric power type: 0 mana, 1 rage, 2 focus, 3 energy, 4 combo points, 6 runic power, 7 soul shards, 8 astral power, 9 holy power, 11 maelstrom, 12 chi, 13 insanity, 17 fury, 18 pain, 19 essence." },
+        "resource_name": { "type": "string", "description": "The resource's name in lower case, used in the coaching copy the player reads, e.g. 'combo points'." },
+        "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for a spender that should only go off at a high resource level, which flags spending too low. 'max' for a generator that should not be pressed near the cap, which is how an overcap rule is written." }
       },
       "examples": [
         {
@@ -323,14 +323,14 @@
     "procWasted": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Flag each span of buff_spell_id that ended without any of the spend spells being cast during it. Use for procs the rotation is supposed to consume on sight.",
+      "description": "Use for a proc the sources say to consume on sight: 'spend Hot Streak immediately', 'react to Nightfall'. Flags every time the proc expired with none of the spend abilities cast. Needs no numbers at all.",
       "required": ["kind", "buff_spell_id", "buff_spell_name", "spend_spell_ids", "spend_spell_names"],
       "properties": {
         "kind": { "const": "proc_wasted" },
-        "buff_spell_id": { "type": "integer" },
-        "buff_spell_name": { "type": "string" },
-        "spend_spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "description": "Any one of these cast during the span counts as consuming the proc." },
-        "spend_spell_names": { "type": "array", "items": { "type": "string" } }
+        "buff_spell_id": { "type": "integer", "description": "The proc's own aura id." },
+        "buff_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
+        "spend_spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "description": "The abilities that consume the proc. Casting any one of them while it is up counts as spending it, so list every option the sources name." },
+        "spend_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spend_spell_ids and in the same order." }
       },
       "examples": [
         {
