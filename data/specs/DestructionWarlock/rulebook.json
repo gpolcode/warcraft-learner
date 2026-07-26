@@ -1,0 +1,152 @@
+{
+  "spec": "DestructionWarlock",
+  "spec_icon": "spell_shadow_rainoffire",
+  "major_cooldowns": [
+    {
+      "name": "Summon Infernal",
+      "spell_id": 1122,
+      "cooldown": 120,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "opener_priority": 1,
+      "usage_rule": "Pop on cooldown paired with potions, trinkets, and racials, then generate and spend as many Soul Shards as possible during its window; delay only when you would otherwise lose a use later in the fight."
+    },
+    {
+      "name": "Havoc",
+      "spell_id": 80240,
+      "cooldown": 45,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Apply to a secondary target that will live the full duration when two or more enemies are present, then cleave spenders into it; it duplicates 60 percent of single-target damage so put it on the less important target."
+    },
+    {
+      "name": "Malevolence",
+      "spell_id": 442726,
+      "cooldown": 60,
+      "duration": 18,
+      "align_with_bloodlust": true,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "Hellcaller capstone: cast after Summon Infernal once Wither is applied to as many targets as possible, then dump every Soul Shard you can before it expires."
+    },
+    {
+      "name": "Cataclysm",
+      "spell_id": 152108,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Talent-gated AoE setup: cast just before a pull or pack lands to apply Immolate or Wither to the whole group, ideally before Malevolence and Channel Demonfire."
+    },
+    {
+      "name": "Channel Demonfire",
+      "spell_id": 196447,
+      "cooldown": 25,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Talent-gated: channel while Roaring Blaze and your Immolate or Wither dots are active to extend and amplify them, prioritizing it during cooldown windows."
+    },
+    {
+      "name": "Soul Fire",
+      "spell_id": 6353,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Talent-gated: precast it right before the pull and use it on cooldown when you have fewer than four Soul Shards to refund Immolate or Wither duration and generate a shard."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press before a known burst of incoming damage to reduce all damage taken by 40 percent and prevent interrupts and silences for the duration."
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "talent_gated": true,
+      "usage_rule": "Talent-gated: sacrifice current health for a large absorb shield ahead of a spike of magic damage; rotate it with Unending Resolve so a defensive is always available."
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "usage_rule": "Use as an emergency instant heal when your health drops dangerously low and no other defensive is up; create one before combat so it is always ready."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "priority": "high",
+      "description": "Open with Soul Fire into Infernal and cooldowns",
+      "condition": null,
+      "action": "Precast Soul Fire so it lands at the pull, then immediately pop Summon Infernal with potions, trinkets, and racials, fire Conflagrate to start your charges, and dump every Soul Shard while your cooldowns are up."
+    },
+    {
+      "type": "cooldown_pairing",
+      "priority": "high",
+      "description": "Sync Infernal with potion, trinkets, racials",
+      "condition": null,
+      "action": "Always line up Summon Infernal with your damage potion, on-use trinkets, and damage racials so every burst cooldown overlaps in the same window."
+    },
+    {
+      "type": "cd_hold",
+      "priority": "high",
+      "description": "Cast Malevolence after Infernal each window",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          442726
+        ],
+        "spell_names": [
+          "Malevolence"
+        ],
+        "anchor_spell_id": 1122,
+        "anchor_spell_name": "Summon Infernal",
+        "hold_window_s": 8
+      },
+      "action": "Cast Malevolence right after Summon Infernal so both windows overlap; because Malevolence is shorter, casting it first wastes overlap, so always summon the Infernal first."
+    },
+    {
+      "type": "rotation",
+      "priority": "critical",
+      "description": "Never overcap Soul Shards",
+      "condition": null,
+      "action": "Spend Soul Shards on Chaos Bolt or Rain of Fire before you hit the cap; wasting a generated shard by overcapping is a direct and avoidable damage loss."
+    },
+    {
+      "type": "rotation",
+      "priority": "high",
+      "description": "Keep Immolate or Wither up on the target",
+      "condition": null,
+      "action": "Maintain Immolate (or Wither as Hellcaller) on your primary target at all times and refresh it before it expires; let it drop only when the target is about to die."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Spend Backdraft stacks on Chaos Bolt",
+      "condition": null,
+      "action": "Generate Backdraft with Conflagrate and spend those stacks on Chaos Bolt whenever possible to cut its cast time, rather than wasting them on cheaper filler casts."
+    },
+    {
+      "type": "aoe_switch",
+      "priority": "high",
+      "description": "Rain of Fire on heavy AoE, Chaos Bolt on few",
+      "condition": null,
+      "action": "On one to three targets spend Soul Shards on Chaos Bolt; at four or more switch to Rain of Fire, and on five-plus with Havoc active prioritize Rain of Fire to maximize cleave."
+    },
+    {
+      "type": "rotation",
+      "priority": "medium",
+      "description": "Pool shards before cooldown windows on single target",
+      "condition": null,
+      "action": "On single target, pool three to four Soul Shards just before Summon Infernal and Malevolence so you can immediately dump spenders the moment your cooldowns go live; do not pool in AoE where shards generate too fast."
+    }
+  ],
+  "source_summary": "Destruction Warlock burst is built around the two-minute Summon Infernal, which should be popped on cooldown with potions, trinkets, and racials while you generate and spend Soul Shards as aggressively as possible. Hellcaller builds add Malevolence, cast immediately after Infernal once Wither is spread, and many builds layer Cataclysm, Channel Demonfire, and Soul Fire to set up dots before the burst window. Between windows the core discipline is never overcapping Soul Shards, keeping Immolate or Wither rolling, and feeding Backdraft stacks into Chaos Bolt.",
+  "guide_count": 2,
+  "saved_at": "2026-06-25 20:03:06"
+}
