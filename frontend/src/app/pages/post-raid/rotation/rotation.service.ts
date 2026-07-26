@@ -160,11 +160,16 @@ const TARGET_COUNT_WINDOW_S = 3;
 const RESOURCE_ACTOR_SOURCE = 1;
 
 export function needsEnemyAuras(rules: RulebookRule[]): boolean {
-  return rules.some(rule => rule.condition?.kind === 'aura_uptime_below' && rule.condition.on === 'target');
+  return rules.some(rule => rule.condition.kind === 'aura_uptime_below' && rule.condition.on === 'target');
 }
 
 export function needsTargetCounts(rules: RulebookRule[]): boolean {
-  return rules.some(rule => rule.condition?.kind === 'cast_at_target_count');
+  return rules.some(rule => rule.condition.kind === 'cast_at_target_count');
+}
+
+/** Guards the engine against a rulebook file that does not conform: the schema requires a condition, unregenerated files predate it. */
+export function judgeableRules(rules: RulebookRule[]): RulebookRule[] {
+  return rules.filter(rule => rule.condition != null);
 }
 
 /** Everything the rule evaluators read, derived once per player view. */
@@ -416,9 +421,7 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
 export function evaluateRules(rules: RulebookRule[], ctx: RuleContext): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   for (const rule of rules) {
-    const cond = rule.condition;
-    if (!cond) continue;
-    const finding = evaluateCondition(cond, ctx, ruleSeverity(rule.priority), rule.action);
+    const finding = evaluateCondition(rule.condition, ctx, ruleSeverity(rule.priority), rule.action);
     // One authored name in both states, so a rule does not read as two different rules.
     if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
   }
@@ -443,7 +446,7 @@ export function rulesFollowed(rules: RulebookRule[], ctx: RuleContext): string[]
   const followed: string[] = [];
   for (const rule of rules) {
     const cond = rule.condition;
-    if (!cond || !ruleApplicable(cond, ctx)) continue;
+    if (!ruleApplicable(cond, ctx)) continue;
     if (!evaluateCondition(cond, ctx, ruleSeverity(rule.priority))) followed.push(ruleLabel(cond, rule.description));
   }
   return followed;
@@ -803,7 +806,7 @@ export class RotationFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       if (!fight) return permanent('Fight not found in this report.', 'rotation.player-view');
 
-      const rules = bench.value.rules;
+      const rules = judgeableRules(bench.value.rules);
       const [casts, buffs, enemyAuras, damage] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),

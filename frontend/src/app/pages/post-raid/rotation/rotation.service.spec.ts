@@ -25,7 +25,7 @@ import {
   buildRuleContext, RuleContext, RuleInputs, ruleApplicable,
   evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence,
   evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
-  needsEnemyAuras, needsTargetCounts,
+  needsEnemyAuras, needsTargetCounts, judgeableRules,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
   ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
@@ -173,11 +173,6 @@ describe('rule engine', () => {
     };
     const satisfied = buildCastTimes([cast(SHADOW_DANCE, 28), cast(SECRET_TECHNIQUE, 30)], 0);
     expect(evaluateCastWithoutPrior(exempted, satisfied, 'warning')).toBeNull();
-  });
-
-  it('evaluateRules skips rules without a condition', () => {
-    const findings = evaluateRules([{ description: 'r', condition: null }], ruleCtx([cast(SHADOW_DANCE, 1)]));
-    expect(findings).toEqual([]);
   });
 
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
@@ -516,9 +511,6 @@ describe('rulesFollowed', () => {
     expect(rulesFollowed([holdDanceForBlades], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)]))).toEqual([]);
   });
 
-  it('skips rules without a condition', () => {
-    expect(rulesFollowed([{ description: 'r', condition: null }], ruleCtx([cast(SHADOW_DANCE, 1)]))).toEqual([]);
-  });
 });
 
 describe('analyzeRotationFindings', () => {
@@ -1066,6 +1058,20 @@ describe('RotationFeatureService fetch shape', () => {
     const { calls, api } = recording();
     await withSource(ok(bench({ rules: [aoeSwitch] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: false, hostilityType: undefined });
+  });
+});
+
+describe('judgeableRules', () => {
+  // A rulebook file that predates the schema's condition requirement, which the types alone cannot rule out.
+  const unconformed = [{ description: 'no condition' }, { description: 'null condition', condition: null }] as unknown as RulebookRule[];
+
+  it('drops rules the engine cannot judge, so a non-conforming file cannot crash it', () => {
+    expect(judgeableRules(unconformed)).toEqual([]);
+  });
+
+  it('keeps every rule that carries a condition', () => {
+    const rule: RulebookRule = { description: 'real', condition: SECRET_TECH_NEEDS_DANCE };
+    expect(judgeableRules([...unconformed, rule])).toEqual([rule]);
   });
 });
 
