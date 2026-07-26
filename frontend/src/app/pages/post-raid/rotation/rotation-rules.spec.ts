@@ -12,7 +12,7 @@ import {
   cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, damage,
 } from '../../../../testing/builders/events';
 import {
-  BenchedRule, RuleContext, RuleInputs, RuleThreshold,
+  BenchedRule, RuleContext, RuleInputs, RuleStream, RuleThreshold,
   buildRuleContext, evaluateRules, rulesFollowed, ruleSeverity, ruleLabel, ruleApplicable,
   rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
@@ -124,22 +124,15 @@ describe('rule engine', () => {
 });
 
 describe('ruleSeverity', () => {
-  it('maps critical to the critical tier', () => {
-    expect(ruleSeverity('critical')).toBe('critical');
-  });
-
-  it('maps high to the warning tier', () => {
-    expect(ruleSeverity('high')).toBe('warning');
-  });
-
-  it('maps medium and low to the info tier', () => {
-    expect(ruleSeverity('medium')).toBe('info');
-    expect(ruleSeverity('low')).toBe('info');
-  });
-
-  it('falls back to warning for a missing or unknown priority', () => {
-    expect(ruleSeverity(undefined)).toBe('warning');
-    expect(ruleSeverity('urgent')).toBe('warning');
+  it.each([
+    { name: 'critical -> critical', priority: 'critical' as string | undefined, severity: 'critical' },
+    { name: 'high -> warning', priority: 'high', severity: 'warning' },
+    { name: 'medium -> info', priority: 'medium', severity: 'info' },
+    { name: 'low -> info, the tier it shares with medium', priority: 'low', severity: 'info' },
+    { name: 'a missing priority -> warning', priority: undefined, severity: 'warning' },
+    { name: 'an unauthored priority -> warning', priority: 'urgent', severity: 'warning' },
+  ])('maps $name', ({ priority, severity }) => {
+    expect(ruleSeverity(priority)).toBe(severity);
   });
 
   it('drives the severity of an evaluated rule finding', () => {
@@ -545,16 +538,20 @@ describe('benchedRules', () => {
 });
 
 describe('rulesNeed', () => {
-  it('reads enemy auras only for an on-target uptime rule', () => {
-    const onSelf: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', on: 'self' } };
-    const onTarget: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', on: 'target' } };
-    expect(rulesNeed([onSelf], 'enemyAuras')).toBe(false);
-    expect(rulesNeed([onTarget], 'enemyAuras')).toBe(true);
-  });
+  const uptime = (on: 'self' | 'target'): RulebookRule =>
+    ({ condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on } });
+  const targetCount: RulebookRule = {
+    condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' },
+  };
 
-  it('reads damage only for a target-count rule', () => {
-    const rule: RulebookRule = { condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'BP', bound: 'min' } };
-    expect(rulesNeed([], 'damage')).toBe(false);
-    expect(rulesNeed([rule], 'damage')).toBe(true);
+  const cases: { name: string; rules: RulebookRule[]; stream: RuleStream; needed: boolean }[] = [
+    { name: 'an on-target uptime rule reads enemy auras', rules: [uptime('target')], stream: 'enemyAuras', needed: true },
+    { name: 'an on-self uptime rule leaves them unfetched', rules: [uptime('self')], stream: 'enemyAuras', needed: false },
+    { name: 'a target-count rule reads damage', rules: [targetCount], stream: 'damage', needed: true },
+    { name: 'a rulebook with no rules reads neither', rules: [], stream: 'damage', needed: false },
+  ];
+
+  it.each(cases)('$name', ({ rules, stream, needed }) => {
+    expect(rulesNeed(rules, stream)).toBe(needed);
   });
 });
