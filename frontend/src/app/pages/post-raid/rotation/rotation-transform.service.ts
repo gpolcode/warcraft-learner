@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
-import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
+import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
 import { mean, deviation, quantile } from 'd3-array';
@@ -14,6 +14,9 @@ import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/a
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
+import {
+  BenchedRule, RuleOutcome, buildRuleContext, judgeRules, ruleConsensus, judgeableRules, rulesNeed,
+} from './rotation-rules';
 import { RotationBench } from './rotation-data-source';
 
 // Re-exported so call sites and specs can import it from this service.
@@ -200,6 +203,13 @@ interface ParseRotation {
   gapListMs: number[];
   durationS: number;
   encounterName: string;
+  /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
+  ruleOutcomes: RuleOutcome[];
+}
+
+/** Pairs each rule with what the top parses did, so nothing has to key rules across the two arrays. */
+export function benchRules(rules: RulebookRule[], perParse: RuleOutcome[][]): BenchedRule[] {
+  return rules.map((rule, i) => ({ rule, ...ruleConsensus(perParse.map(outcomes => outcomes[i])) }));
 }
 
 @Injectable({ providedIn: 'root' })
@@ -214,20 +224,22 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const cooldowns = rulebook.major_cooldowns ?? [];
     if (!cooldowns.length) return missing('No rulebook cooldowns for this spec.');
     const defensives = rulebook.defensives ?? [];
-    const rules = rulebook.rules ?? [];
+    const judgeable = judgeableRules(rulebook.rules ?? []);
 
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
       if (!rankings.length) return missing('No top parses for this encounter.');
 
       const perParse: CdSummary[][] = [];
+      const ruleOutcomes: RuleOutcome[][] = [];
       const gapLists: number[][] = [];
       const durations: number[] = [];
       let encounterName = '';
       for (const ranking of rankings) {
-        const parse = await this.computeParse(ranking, cooldowns);
+        const parse = await this.computeParse(ranking, cooldowns, judgeable);
         if (!parse) continue;
         perParse.push(parse.summaries);
+        ruleOutcomes.push(parse.ruleOutcomes);
         gapLists.push(parse.gapListMs);
         durations.push(parse.durationS);
         encounterName ||= parse.encounterName;
@@ -249,7 +261,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         top_efficiency_stddev: topEfficiencyStddev,
         per_cd_benchmarks: aggregateCdBenchmarks(perParse, cooldowns),
         major_cooldowns: cooldowns,
-        rules,
+        rules: benchRules(judgeable, ruleOutcomes),
         cd_spell_ids,
         // A real icon for every cooldown + defensive by id, so the map is complete (no fallback).
         ability_icons: abilityIcons(await this.wclApi.getAbilities(Object.values(cd_spell_ids))),
@@ -261,7 +273,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   }
 
   private async computeParse(
-    ranking: ParseRanking, cooldowns: RulebookCooldown[],
+    ranking: ParseRanking, cooldowns: RulebookCooldown[], rules: RulebookRule[],
   ): Promise<ParseRotation | null> {
     try {
       const report = await this.wclApi.getReport(ranking.report_code);
@@ -269,18 +281,30 @@ export class RotationTransformService implements DataSource<RotationBench> {
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
-      const [casts, buffs] = await Promise.all([
-        this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
+      const [casts, buffs, enemyAuras, damage] = await Promise.all([
+        this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
+        // Same shape and cost as the runtime fetch: raid-wide, so only for a spec that reads enemy auras.
+        rulesNeed(rules, 'enemyAuras')
+          ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
+          : Promise.resolve([]),
+        rulesNeed(rules, 'damage')
+          ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id)
+          : Promise.resolve([]),
       ]);
 
       const fightDurS = (fight.endTime - fight.startTime) / 1000;
       const blTimeS = detectBloodlust(buffs, fight.startTime);
+      const ruleCtx = buildRuleContext({
+        casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
+        fStart: fight.startTime, fEnd: fight.endTime,
+      });
       return {
         summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeS),
         gapListMs: castGapListMs(casts),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
+        ruleOutcomes: judgeRules(rules, ruleCtx),
       };
     } catch (err) {
       logWarn(`RotationTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);

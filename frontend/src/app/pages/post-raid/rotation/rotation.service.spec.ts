@@ -25,7 +25,8 @@ import {
   buildRuleContext, RuleContext, RuleInputs, ruleApplicable,
   evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence,
   evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
-  rulesNeed, judgeableRules,
+  rulesNeed, judgeableRules, consensusRules, judgeRules, ruleConsensus, RULE_CONSENSUS_PCT,
+  BenchedRule, RuleOutcome,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
   ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
@@ -36,12 +37,16 @@ import {
 // The check* and analyzeOneCooldown functions take cast times in ms.
 const ONE_SEC_MS = 1000;
 
+// A rule every top parse followed, so consensus gating is out of the way in fixtures about something else.
+function benched(rule: RulebookRule, followedPct: number | null = 100): BenchedRule {
+  return { rule, followed_pct: followedPct, sample_count: followedPct == null ? 0 : 10 };
+}
+
 // Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
 const RULE_FIGHT_END_MS = 120_000;
 function ruleCtx(casts: WclEvent[], over: Partial<RuleInputs> = {}): RuleContext {
   return buildRuleContext({
     casts, buffs: [], debuffs: [], damage: [], fStart: 0, fEnd: RULE_FIGHT_END_MS,
-    cooldowns: [], benchmarks: {},
     ...over,
   });
 }
@@ -962,7 +967,7 @@ describe('RotationFeatureService', () => {
         dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
     };
     const rule: RulebookRule = { priority: 'critical', condition: SECRET_TECH_NEEDS_DANCE };
-    const service = withSource(ok(bench({ rules: [rule] })), wcl);
+    const service = withSource(ok(bench({ rules: [benched(rule)] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -1055,7 +1060,7 @@ describe('RotationFeatureService fetch shape', () => {
 
   it('fetches enemy auras with Enemies hostility and no source, the only shape WCL answers', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench({ rules: [dotUptime] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(ok(bench({ rules: [benched(dotUptime)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'Debuffs', sourceId: undefined, includeResources: false, hostilityType: 'Enemies' });
   });
 
@@ -1067,14 +1072,14 @@ describe('RotationFeatureService fetch shape', () => {
       { ...removeDebuff(RUPTURE, 40), sourceID: OTHER_RAIDER },
     ];
     const { api } = recording(raidWide);
-    const result = await withSource(ok(bench({ rules: [dotUptime] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    const result = await withSource(ok(bench({ rules: [benched(dotUptime)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
   });
 
   it('fetches the player damage only when a target-count rule needs it', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench({ rules: [aoeSwitch] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(ok(bench({ rules: [benched(aoeSwitch)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: false, hostilityType: undefined });
   });
 });
@@ -1090,6 +1095,70 @@ describe('judgeableRules', () => {
   it('keeps every rule that carries a condition', () => {
     const rule: RulebookRule = { description: 'real', condition: SECRET_TECH_NEEDS_DANCE };
     expect(judgeableRules([...unconformed, rule])).toEqual([rule]);
+  });
+});
+
+describe('ruleConsensus', () => {
+  const outcome = (applicable: boolean, followed: boolean): RuleOutcome => ({ applicable, followed });
+
+  it('measures the followed share over the parses the rule applied to, ignoring the rest', () => {
+    const outcomes = [outcome(true, true), outcome(true, false), outcome(false, false), outcome(false, false)];
+    expect(ruleConsensus(outcomes)).toEqual({ followed_pct: 50, sample_count: 2 });
+  });
+
+  it('reports no share when the rule applied to no parse', () => {
+    expect(ruleConsensus([outcome(false, false)])).toEqual({ followed_pct: null, sample_count: 0 });
+  });
+});
+
+describe('judgeRules', () => {
+  it('marks a rule the parse followed as applicable and followed', () => {
+    const rule: RulebookRule = { condition: SECRET_TECH_NEEDS_DANCE };
+    const ctx = ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]);
+    expect(judgeRules([rule], ctx)).toEqual([{ applicable: true, followed: true }]);
+  });
+
+  it('marks a rule the parse broke as applicable but not followed', () => {
+    const rule: RulebookRule = { condition: SECRET_TECH_NEEDS_DANCE };
+    expect(judgeRules([rule], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))).toEqual([{ applicable: true, followed: false }]);
+  });
+
+  it('never marks an inapplicable rule as followed, so it cannot inflate consensus', () => {
+    const rule: RulebookRule = { condition: SECRET_TECH_NEEDS_DANCE };
+    expect(judgeRules([rule], ruleCtx([cast(SHADOW_DANCE, 8)]))).toEqual([{ applicable: false, followed: false }]);
+  });
+});
+
+describe('consensusRules', () => {
+  const gated: RulebookRule = { description: 'pair', condition: SECRET_TECH_NEEDS_DANCE };
+  const ungated: RulebookRule = {
+    description: 'proc',
+    condition: {
+      kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
+      spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
+    },
+  };
+
+  it('keeps a gated rule most of the field follows on this encounter', () => {
+    expect(consensusRules([benched(gated, RULE_CONSENSUS_PCT)])).toEqual([gated]);
+  });
+
+  it('drops a gated rule the field plays differently here, so a strat is not flagged', () => {
+    expect(consensusRules([benched(gated, RULE_CONSENSUS_PCT - 1)])).toEqual([]);
+  });
+
+  it('drops a gated rule no top parse could be judged on, since there is no evidence for it', () => {
+    expect(consensusRules([benched(gated, null)])).toEqual([]);
+  });
+
+  it('keeps an ungated rule regardless, having no encounter-specific number to be wrong', () => {
+    expect(consensusRules([benched(ungated, null)])).toEqual([ungated]);
+    expect(consensusRules([benched(ungated, 0)])).toEqual([ungated]);
+  });
+
+  it('drops a rule with no condition before consensus is even considered', () => {
+    const unconformed = { rule: { description: 'none' }, followed_pct: 100, sample_count: 10 } as unknown as BenchedRule;
+    expect(consensusRules([unconformed])).toEqual([]);
   });
 });
 
