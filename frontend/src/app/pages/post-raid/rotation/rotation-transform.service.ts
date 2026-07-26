@@ -284,7 +284,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       const player = report.masterData?.actors?.find(actor => actor.name === ranking.player);
       if (!fight || !player) return null;
 
-      const [casts, buffs, enemyAuras, damage] = await Promise.all([
+      const [casts, buffs, enemyAuras, damage, raidDeaths] = await Promise.all([
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
         // Same shape and cost as the runtime fetch: raid-wide, so only for a spec that reads enemy auras.
@@ -294,12 +294,16 @@ export class RotationTransformService implements DataSource<RotationBench> {
         rulesNeed(rules, 'damage')
           ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id)
           : Promise.resolve([]),
+        rulesNeed(rules, 'deaths')
+          ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Deaths', fight.startTime, fight.endTime)
+          : Promise.resolve([]),
       ]);
 
       const fightDurS = (fight.endTime - fight.startTime) / 1000;
       const blTimeS = detectBloodlust(buffs, fight.startTime);
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
+        deaths: raidDeaths.filter(event => event.targetID === player.id),
         fStart: fight.startTime, fEnd: fight.endTime,
       });
       return {

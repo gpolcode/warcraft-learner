@@ -54,9 +54,28 @@ describe('auraUptimePct', () => {
   it('merges overlapping spans, so multi-target dots do not exceed 100%', () => {
     const windows = buildAuraWindows([
       applyDebuff(RUPTURE, 0), applyDebuff(RUPTURE, 10), applyDebuff(RUPTURE, 20),
-      removeDebuff(RUPTURE, 30), removeDebuff(RUPTURE, 30), removeDebuff(RUPTURE, 30),
+      removeDebuff(RUPTURE, 25), removeDebuff(RUPTURE, 35), removeDebuff(RUPTURE, 40),
     ], 0);
-    expect(auraUptimePct(windows, RUPTURE, FIGHT_DUR_MS)).toBe(30);
+    expect(auraUptimePct(windows, RUPTURE, FIGHT_DUR_MS)).toBe(40);
+  });
+
+  // Spans are keyed by spell only, so per-target pairing is lost; the union that a maintain rule reads is not.
+  it('covers the same stretch whether the per-target dots are nested or interleaved', () => {
+    const nested = buildAuraWindows([
+      applyDebuff(RUPTURE, 0, { target: 1 }), applyDebuff(RUPTURE, 10, { target: 2 }),
+      removeDebuff(RUPTURE, 20, { target: 2 }), removeDebuff(RUPTURE, 30, { target: 1 }),
+    ], 0);
+    const interleaved = buildAuraWindows([
+      applyDebuff(RUPTURE, 0, { target: 1 }), applyDebuff(RUPTURE, 10, { target: 2 }),
+      removeDebuff(RUPTURE, 20, { target: 1 }), removeDebuff(RUPTURE, 30, { target: 2 }),
+    ], 0);
+    expect(auraUptimePct(nested, RUPTURE, FIGHT_DUR_MS)).toBe(30);
+    expect(auraUptimePct(interleaved, RUPTURE, FIGHT_DUR_MS)).toBe(30);
+  });
+
+  it('drops a lone remove, so a dot applied before the pull reads as no uptime rather than a full fight of it', () => {
+    const windows = buildAuraWindows([removeDebuff(RUPTURE, 20)], 0);
+    expect(auraUptimePct(windows, RUPTURE, FIGHT_DUR_MS)).toBe(0);
   });
 
   it('is zero for an aura that never went up', () => {

@@ -427,7 +427,7 @@ export class RotationFeatureService {
 
       const rules = benchedRules(bench.value.rules);
       const conditions = rules.map(entry => entry.rule);
-      const [casts, buffs, enemyAuras, damage] = await Promise.all([
+      const [casts, buffs, enemyAuras, damage, raidDeaths] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
         // Unnarrowable, so it costs several raid-wide pages: `Enemies` plus a sourceID returns nothing, and WCL offers no other source filter here.
@@ -437,15 +437,20 @@ export class RotationFeatureService {
         rulesNeed(conditions, 'damage')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId)
           : Promise.resolve([]),
+        // Deaths target the player rather than come from them, so a sourceID filter would drop every one.
+        rulesNeed(conditions, 'deaths')
+          ? this.wclApi.getAllEvents(reportCode, fightId, 'Deaths', fight.startTime, fight.endTime)
+          : Promise.resolve([]),
       ]);
       const debuffs = enemyAuras.filter(event => event.sourceID === playerId);
+      const deaths = raidDeaths.filter(event => event.targetID === playerId);
 
       const offensiveFindings = analyzeRotationFindings({
         fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
         cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
       const ruleCtx = buildRuleContext({
-        casts, buffs, debuffs, damage, fStart: fight.startTime, fEnd: fight.endTime,
+        casts, buffs, debuffs, damage, deaths, fStart: fight.startTime, fEnd: fight.endTime,
       });
       const ruleFindings = evaluateRules(rules, ruleCtx);
       const findings = [...offensiveFindings, ...ruleFindings];

@@ -10,7 +10,7 @@ import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';
 import {
-  cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, damage,
+  cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, damage, death,
 } from '../../../../testing/builders/events';
 import {
   BenchedRule, RuleContext, RuleInputs, RuleStream, RuleThreshold,
@@ -35,7 +35,7 @@ function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_
 const RULE_FIGHT_END_MS = 120_000;
 function ruleCtx(casts: WclEvent[], over: Partial<RuleInputs> = {}): RuleContext {
   return buildRuleContext({
-    casts, buffs: [], debuffs: [], damage: [], fStart: 0, fEnd: RULE_FIGHT_END_MS,
+    casts, buffs: [], debuffs: [], damage: [], deaths: [], fStart: 0, fEnd: RULE_FIGHT_END_MS,
     ...over,
   });
 }
@@ -207,6 +207,23 @@ describe('evaluateAuraUptimeBelow', () => {
     const ctx = ruleCtx([], { buffs: [applyBuff(RUPTURE, 0), removeBuff(RUPTURE, 60)] });
     expect(evaluateAuraUptimeBelow(selfAura, ctx, thr(RUPTURE_MIN_PCT), 'warning')?.measured?.value).toBe(`50 / ${RUPTURE_MIN_PCT}`);
   });
+
+  it('denominates on alive time, so the same 60s of dot reads as full uptime for a player who died at 60s', () => {
+    const DEATH_S = 60;
+    const ctx = ruleCtx([], { debuffs: halfUptime, deaths: [death(DEATH_S)] });
+    expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning')).toBeNull();
+  });
+
+  it('clamps the dot to alive time, so a dot outliving the player cannot read past 100%', () => {
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 115)], deaths: [death(60)] });
+    expect(measureRule(ruptureUptime, ctx)).toBe(100);
+  });
+
+  it('stays silent on a debuff applied before the pull, which arrives as a lone remove', () => {
+    const ctx = ruleCtx([], { debuffs: [removeDebuff(RUPTURE, 20)] });
+    expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning')).toBeNull();
+    expect(ruleApplicable(ruptureUptime, ctx)).toBe(false);
+  });
 });
 
 describe('rule evaluator boundaries', () => {
@@ -279,8 +296,18 @@ describe('evaluateOpeningSequence', () => {
     expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).toBeNull();
   });
 
-  it('is not applicable on a pull with none of the sequence spells', () => {
-    expect(ruleApplicable(opener, ruleCtx([cast(EVISCERATE, 1)]))).toBe(false);
+  it('is judged on neither side of a pull with none of the sequence spells', () => {
+    const ctx = ruleCtx([cast(EVISCERATE, 1)]);
+    const rule: RulebookRule = { severity: 'warning', condition: opener };
+    expect(ruleApplicable(opener, ctx)).toBe(false);
+    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_S))], ctx)).toEqual([]);
+    expect(rulesFollowed([benched(rule, thr(OPENER_WINDOW_S))], ctx)).toEqual([]);
+  });
+
+  it('still flags a first step landing past the window, which is why the gate reads casts and not progress', () => {
+    const ctx = ruleCtx([cast(EVISCERATE, 1), cast(SHADOW_BLADES, 30)]);
+    const rule: RulebookRule = { severity: 'warning', condition: opener };
+    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_S))], ctx)[0].measured?.value).toBe('0 / 3');
   });
 });
 
@@ -325,6 +352,26 @@ describe('evaluateCastAtTargetCount', () => {
     const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]).map(e => ({ ...e, timestamp: 90_000 })) });
     expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR), 'warning')).toBeNull();
   });
+
+  it('counts enemies reached by any ability, since the bound asks how many were up rather than how many this cast struck', () => {
+    const FIELD_CEILING = 2;
+    const capped: CastAtTargetCountCondition = {
+      kind: 'cast_at_target_count', spell_id: EVISCERATE, spell_name: 'Eviscerate', bound: 'max',
+    };
+    const ctx = ruleCtx([cast(EVISCERATE, CAST_S)], {
+      damage: [
+        damage(EVISCERATE, CAST_S + 1, 100, { target: 1 }),
+        ...[1, 2, 3].map(id => damage(RUPTURE, CAST_S + 1, 50, { target: id })),
+      ],
+    });
+    expect(evaluateCastAtTargetCount(capped, ctx, thr(FIELD_CEILING), 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('rounds a sub-target band away, so a field that agrees on 3 still flags a cast at 2', () => {
+    const SUB_TARGET_BAND = 0.3;
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]) });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR, SUB_TARGET_BAND), 'warning')?.measured?.value).toBe('1 / 1');
+  });
 });
 
 describe('evaluateResourceAtCast', () => {
@@ -360,6 +407,13 @@ describe('evaluateResourceAtCast', () => {
     expect(evaluateResourceAtCast(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]), thr(RESOURCE_FLOOR), 'warning')).toBeNull();
     expect(ruleApplicable(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]))).toBe(false);
   });
+
+  it('ignores a pool the event flattened from the target rather than the caster', () => {
+    const RESOURCE_ACTOR_TARGET = 2;
+    const ctx = ruleCtx([{ ...atCombo(10, 1), resourceActor: RESOURCE_ACTOR_TARGET }]);
+    expect(evaluateResourceAtCast(finisherAtMax, ctx, thr(RESOURCE_FLOOR), 'warning')).toBeNull();
+    expect(ruleApplicable(finisherAtMax, ctx)).toBe(false);
+  });
 });
 
 describe('evaluateProcWasted', () => {
@@ -381,6 +435,12 @@ describe('evaluateProcWasted', () => {
 
   it('ignores a span still open at the end of the pull', () => {
     const ctx = ruleCtx([], { buffs: [applyBuff(SHADOW_DANCE, DANCE_START_S)] });
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
+    expect(ruleApplicable(spendDance, ctx)).toBe(false);
+  });
+
+  it('ignores a span the log closes on the pull ending, which the kill took rather than the player wasting', () => {
+    const ctx = ruleCtx([], { buffs: buffWindow(SHADOW_DANCE, 100, RULE_FIGHT_END_MS / 1000) });
     expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
     expect(ruleApplicable(spendDance, ctx)).toBe(false);
   });
@@ -480,14 +540,88 @@ describe('measureRule', () => {
   });
 });
 
+// Every other fixture runs a zero band; these pin which side of the measured value each kind forgives.
+describe('threshold band', () => {
+  it('widens the pairing window, accepting a lead the bare median would flag', () => {
+    const BAND_S = 3;
+    const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, PAIR_WINDOW_S + 2)]);
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S, BAND_S), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S), 'warning')).not.toBeNull();
+  });
+
+  it('narrows the hold window, accepting a charge spent just outside it', () => {
+    const BAND_S = 5;
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 108)]);
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S, BAND_S), 'critical')).toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S), 'critical')).not.toBeNull();
+  });
+
+  it('lowers the uptime bar', () => {
+    const UPTIME_PCT = 90, BAND_PCT = 45;
+    const uptime: AuraUptimeBelowCondition = {
+      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+    };
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
+    expect(evaluateAuraUptimeBelow(uptime, ctx, thr(UPTIME_PCT, BAND_PCT), 'warning')).toBeNull();
+    expect(evaluateAuraUptimeBelow(uptime, ctx, thr(UPTIME_PCT), 'warning')).not.toBeNull();
+  });
+
+  it('lengthens the opener window', () => {
+    const OPENER_WINDOW_S = 12, BAND_S = 5, LATE_STEP_S = 15;
+    const opener: OpeningSequenceCondition = {
+      kind: 'opening_sequence', spell_ids: [SHADOW_BLADES, SECRET_TECHNIQUE],
+      spell_names: ['Shadow Blades', 'Secret Technique'],
+    };
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, LATE_STEP_S)]);
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S, BAND_S), 'warning')).toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).not.toBeNull();
+  });
+
+  it('drops the target floor by a whole target once the field spread reaches one', () => {
+    const TARGET_FLOOR = 3, BAND_TARGETS = 1.2;
+    const blackPowder: CastAtTargetCountCondition = {
+      kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
+    };
+    const ctx = ruleCtx([cast(BLACK_POWDER, 10)],
+      { damage: [1, 2].map(id => damage(BLACK_POWDER, 11, 100, { target: id })) });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR, BAND_TARGETS), 'warning')).toBeNull();
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR), 'warning')).not.toBeNull();
+  });
+
+  it('lowers the resource floor', () => {
+    const POOL_FLOOR_FRAC = 1, BAND_FRAC = 0.5, SPENT_POINTS = 3;
+    const finisher: ResourceAtCastCondition = {
+      kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
+      resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'min',
+    };
+    const ctx = ruleCtx([cast(EVISCERATE, 10,
+      { resources: [{ amount: SPENT_POINTS, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] })]);
+    expect(evaluateResourceAtCast(finisher, ctx, thr(POOL_FLOOR_FRAC, BAND_FRAC), 'warning')).toBeNull();
+    expect(evaluateResourceAtCast(finisher, ctx, thr(POOL_FLOOR_FRAC), 'warning')).not.toBeNull();
+  });
+});
+
 describe('ruleThreshold', () => {
   const PARSES = 4;
 
-  it('takes the median of what the parses measured and a band no tighter than a tenth of it', () => {
+  it('takes the median of what the parses measured and their deviation as the band', () => {
+    const SPREAD_DEVIATION = 0.8165;
     const { threshold, sample_count } = ruleThreshold([4, 5, 6, 5], PARSES);
     expect(sample_count).toBe(PARSES);
     expect(threshold?.value).toBe(5);
-    expect(threshold?.band).toBeGreaterThanOrEqual(0.5);
+    expect(threshold?.band).toBeCloseTo(SPREAD_DEVIATION, 4);
+  });
+
+  it('floors the band at a tenth of the median, so a field that agrees exactly still tolerates jitter', () => {
+    expect(ruleThreshold([5, 5, 5, 5], PARSES).threshold).toEqual({ value: 5, band: 0.5 });
+  });
+
+  it('accepts exactly half the parses supplying a magnitude', () => {
+    const PAIR_DEVIATION = 0.7071;
+    const { threshold, sample_count } = ruleThreshold([5, 6, null, null], PARSES);
+    expect(sample_count).toBe(2);
+    expect(threshold?.value).toBe(5.5);
+    expect(threshold?.band).toBeCloseTo(PAIR_DEVIATION, 4);
   });
 
   it('refuses a threshold when fewer than half the parses could supply one', () => {
@@ -538,8 +672,12 @@ describe('rulesNeed', () => {
   const cases: { name: string; rules: RulebookRule[]; stream: RuleStream; needed: boolean }[] = [
     { name: 'an on-target uptime rule reads enemy auras', rules: [uptime('target')], stream: 'enemyAuras', needed: true },
     { name: 'an on-self uptime rule leaves them unfetched', rules: [uptime('self')], stream: 'enemyAuras', needed: false },
+    { name: 'an on-self uptime rule still reads deaths, which bound its denominator', rules: [uptime('self')], stream: 'deaths', needed: true },
     { name: 'a target-count rule reads damage', rules: [targetCount], stream: 'damage', needed: true },
-    { name: 'a rulebook with no rules reads neither', rules: [], stream: 'damage', needed: false },
+    { name: 'a target-count rule leaves deaths unfetched', rules: [targetCount], stream: 'deaths', needed: false },
+    { name: 'a rulebook with no rules leaves damage unfetched', rules: [], stream: 'damage', needed: false },
+    { name: 'a rulebook with no rules leaves enemy auras unfetched', rules: [], stream: 'enemyAuras', needed: false },
+    { name: 'a rulebook with no rules leaves deaths unfetched', rules: [], stream: 'deaths', needed: false },
   ];
 
   it.each(cases)('$name', ({ rules, stream, needed }) => {

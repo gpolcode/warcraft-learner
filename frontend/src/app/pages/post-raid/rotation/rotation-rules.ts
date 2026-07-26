@@ -58,6 +58,8 @@ export interface RuleContext {
   castEvents: WclEvent[];
   fStart: number;
   fightDurationS: number;
+  /** Fight start to the player's first death, so a corpse is never coached for what it could not maintain. */
+  aliveDurationS: number;
   selfAuras: AuraWindows;
   targetAuras: AuraWindows;
   damage: WclEvent[];
@@ -68,16 +70,21 @@ export interface RuleInputs {
   buffs: WclEvent[];
   debuffs: WclEvent[];
   damage: WclEvent[];
+  /** The player's own `death` events. */
+  deaths: WclEvent[];
   fStart: number;
   fEnd: number;
 }
 
 export function buildRuleContext(input: RuleInputs): RuleContext {
+  const fightDurationS = (input.fEnd - input.fStart) / 1000;
+  const deathTimes = input.deaths.map(event => (event.timestamp - input.fStart) / 1000);
   return {
     castTimes: buildCastTimes(input.casts, input.fStart),
     castEvents: input.casts,
     fStart: input.fStart,
-    fightDurationS: (input.fEnd - input.fStart) / 1000,
+    fightDurationS,
+    aliveDurationS: deathTimes.length ? Math.min(...deathTimes) : fightDurationS,
     selfAuras: buildAuraWindows(input.buffs, input.fStart),
     targetAuras: buildAuraWindows(input.debuffs, input.fStart),
     damage: input.damage,
@@ -178,7 +185,8 @@ export function evaluateCastOutsideBuff(
 
 function uptimePct(cond: AuraUptimeBelowCondition, ctx: RuleContext): number {
   const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
-  return auraUptimePct(windows, cond.aura_spell_id, ctx.fightDurationS * 1000);
+  // Alive time, since the top parses this is measured against do not die and so give no relief for the dead stretch.
+  return auraUptimePct(windows, cond.aura_spell_id, ctx.aliveDurationS * 1000);
 }
 
 export function evaluateAuraUptimeBelow(
@@ -228,13 +236,13 @@ export function evaluateOpeningSequence(
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(progress.pullS * 1000),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${Math.round(windowS)}s the top parses take; ${cond.spell_names[progress.matched]} did not follow in order.`,
+    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${Math.round(windowS)}s the top parses take.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
   };
 }
 
-/** Every damaged enemy counts, not only the ones the judged ability struck: scoping to the ability would make `max` unfireable. */
+/** Every enemy the player was damaging, since both bounds ask how many were up to be hit, not how many this ability struck. */
 function targetsAtCast(damage: WclEvent[], fStart: number, castTimeS: number): number {
   const fromMs = fStart + castTimeS * 1000;
   const toMs = fromMs + TARGET_COUNT_WINDOW_S * 1000;
@@ -257,8 +265,8 @@ export function evaluateCastAtTargetCount(
 ): AnalysisFinding | null {
   const judged = targetCountsPerCast(cond, ctx);
   if (!judged.length) return null;
-  const limit = cond.bound === 'min'
-    ? Math.floor(lenient(threshold, 'down')) : Math.ceil(lenient(threshold, 'up'));
+  // Rounded, since truncating a sub-target band away from a whole-target threshold costs a full target of slack and the rule then fires a target late.
+  const limit = Math.round(lenient(threshold, cond.bound === 'min' ? 'down' : 'up'));
   const violations = judged.filter(({ targets }) => cond.bound === 'min' ? targets < limit : targets > limit);
   if (!violations.length) return null;
   const wording = cond.bound === 'min' ? `under ${limit}` : `over ${limit}`;
@@ -305,9 +313,10 @@ export function evaluateResourceAtCast(
   };
 }
 
-/** Closed spans only: one still up at the pull's end has not been wasted yet. */
+/** A proc still up when the pull ends has not been wasted, whether the log closed its span at the kill or left it open. */
 function closedProcSpans(cond: ProcWastedCondition, ctx: RuleContext): [number, number | null][] {
-  return (ctx.selfAuras.get(cond.buff_spell_id) ?? []).filter(([, end]) => end != null);
+  return (ctx.selfAuras.get(cond.buff_spell_id) ?? [])
+    .filter(([, end]) => end != null && end < ctx.fightDurationS * 1000);
 }
 
 export function evaluateProcWasted(
@@ -339,12 +348,12 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
 };
 
 /** The optional event streams a rule reads beyond the always-fetched casts and buffs. */
-export type RuleStream = 'enemyAuras' | 'damage';
+export type RuleStream = 'enemyAuras' | 'damage' | 'deaths';
 
 /** Exhaustive by design: a new condition kind cannot compile until it declares the streams it reads. */
 function streamsFor(cond: RuleCondition): RuleStream[] {
   switch (cond.kind) {
-    case 'aura_uptime_below': return cond.on === 'target' ? ['enemyAuras'] : [];
+    case 'aura_uptime_below': return cond.on === 'target' ? ['enemyAuras', 'deaths'] : ['deaths'];
     case 'cast_at_target_count': return ['damage'];
     case 'cast_without_prior':
     case 'hold_cooldown_for_anchor':
@@ -475,6 +484,8 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
 export function evaluateRules(benched: BenchedRule[], ctx: RuleContext): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   for (const { rule, threshold } of benched) {
+    // The gate rulesFollowed uses, so a rule the pull never tested lands in neither state instead of reading as broken.
+    if (!ruleApplicable(rule.condition, ctx)) continue;
     const finding = evaluateCondition(rule.condition, ctx, threshold, rule.severity, rule.action);
     // One authored name in both states, so a rule does not read as two different rules.
     if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description ?? finding.label });
