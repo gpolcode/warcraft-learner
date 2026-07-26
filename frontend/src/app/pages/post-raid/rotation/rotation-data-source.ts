@@ -28,7 +28,7 @@ export interface RotationBench {
   per_cd_benchmarks: Record<string, PerCdBenchmark>;
   /** Rulebook major cooldown metadata needed to drive the findings + plan. */
   major_cooldowns: RulebookCooldown[];
-  /** Rulebook rotation rules, each with what the encounter's top parses did with it. */
+  /** Rulebook rules with the magnitude this encounter measured, so the runtime never re-measures the field. */
   rules: BenchedRule[];
   /** Cooldown name -> spell id, for header / row icons. */
   cd_spell_ids: Record<string, number>;

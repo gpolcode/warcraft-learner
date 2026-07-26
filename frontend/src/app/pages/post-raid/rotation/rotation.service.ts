@@ -17,16 +17,6 @@ import {
 } from './rotation-rules';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 
-// Re-exported so callers can import the engine and the slice's analysis from either module.
-export type { Severity, CastTimes, RuleContext, RuleInputs, RuleStream, BenchedRule, RuleThreshold } from './rotation-rules';
-export {
-  buildCastTimes, buildRuleContext, evaluateRules, rulesFollowed, ruleSeverity, ruleLabel,
-  rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold, ruleApplicable, evaluateCondition,
-  RULE_TYPE_LABEL,
-  evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
-  evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
-} from './rotation-rules';
-
 export type AbilityIcons = Record<number, { icon: string; name: string }>;
 
 export interface RotationFindingRow {
@@ -440,8 +430,7 @@ export class RotationFeatureService {
       const [casts, buffs, enemyAuras, damage] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-        // Raid-wide and unnarrowable: no sourceID (Enemies + sourceID returns nothing) and no server-side
-        // source filter, so it costs several pages and is fetched only when a rule reads enemy auras.
+        // Unnarrowable, so it costs several raid-wide pages: `Enemies` plus a sourceID returns nothing, and WCL offers no other source filter here.
         rulesNeed(conditions, 'enemyAuras')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
           : Promise.resolve([]),

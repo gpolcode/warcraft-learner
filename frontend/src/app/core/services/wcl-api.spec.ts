@@ -68,8 +68,7 @@ describe('WclApiService', () => {
   });
 
   describe('getAllEvents', () => {
-    // WCL overshoots the requested limit on long pulls: a 34-minute fight returned 22k rows in one
-    // page. Accumulating a page by spreading it into push overflows the call stack at that size.
+    // Well past the ~22k rows a 34-minute pull returned in one page, and past the argument count push tolerates when a page is spread into it.
     const OVERSIZED_PAGE = 200_000;
 
     function servePage(transport: RecordingTransport, count: number, nextPageTimestamp?: number) {

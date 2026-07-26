@@ -53,8 +53,7 @@ export interface WclEvent {
   // Also flattened onto the event by `includeResources: true`; used to pick the
   // boss (highest observed maxHitPoints) when building position benches.
   maxHitPoints?: number;
-  // The actor's power pools at the event, present with `includeResources: true`;
-  // `type` is WCL's power-type id (4 = combo points).
+  // Flattened onto the event by `includeResources: true`; `type` is WCL's power-type id (4 = combo points).
   classResources?: { amount: number; max?: number; type: number }[];
 }
 

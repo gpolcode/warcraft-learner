@@ -1,12 +1,4 @@
-/**
- * Functional core of the rulebook rule engine. A rulebook rule names only what to look at; every
- * magnitude it is judged against is measured from the encounter's own top parses, so a fight the
- * field plays differently moves the bar instead of failing the player against a static number.
- *
- * Colocated rather than shared because it is rotation-slice domain logic, and separate from
- * `rotation.service.ts` so the ingest transform can measure top parses with the same code the
- * runtime judges the player with.
- */
+// Separate from rotation.service.ts so the ingest transform measures top parses with the same code the runtime judges the player with.
 import { median, deviation } from 'd3-array';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import {
@@ -40,7 +32,6 @@ const THRESHOLD_BAND_MIN_FRAC = 0.1;
 /** A threshold needs this share of the sampled parses to be measurable, matching the other consensus gates. */
 const THRESHOLD_SAMPLE_FRAC = 0.5;
 
-/** A rulebook rule plus the magnitude measured from this encounter's top parses. */
 export interface BenchedRule {
   rule: RulebookRule;
   /** Null when the kind needs no magnitude, or when too few parses could supply one. */
@@ -243,11 +234,7 @@ export function evaluateOpeningSequence(
   };
 }
 
-/**
- * Distinct enemies the player damaged in the window opened by a cast. Every damaged enemy counts,
- * not only the ones the judged ability struck, because the bound describes the fight state that
- * should drive the choice - scoping to the ability would make `max` unfireable.
- */
+/** Every damaged enemy counts, not only the ones the judged ability struck: scoping to the ability would make `max` unfireable. */
 function targetsAtCast(damage: WclEvent[], fStart: number, castTimeS: number): number {
   const fromMs = fStart + castTimeS * 1000;
   const toMs = fromMs + TARGET_COUNT_WINDOW_S * 1000;
@@ -285,10 +272,7 @@ export function evaluateCastAtTargetCount(
   };
 }
 
-/**
- * Resource at each cast as a share of its own cap. Measuring the fraction rather than the raw amount
- * keeps one threshold meaningful across pools whose scales differ by orders of magnitude.
- */
+/** A share of the pool's own cap, so one threshold stays meaningful across pools whose scales differ by orders of magnitude. */
 function resourceFractionPerCast(cond: ResourceAtCastCondition, ctx: RuleContext): { timeS: number; frac: number }[] {
   const judged: { timeS: number; frac: number }[] = [];
   for (const event of ctx.castEvents) {
@@ -384,17 +368,12 @@ export function rulesNeed(rules: RulebookRule[], stream: RuleStream): boolean {
   return rules.some(rule => streamsFor(rule.condition).includes(stream));
 }
 
-/** Guards the engine against a rulebook file that does not conform: the schema requires a condition, unregenerated files predate it. */
+/** A deployed rulebook file can still carry a rule with no condition, which the engine has nothing to judge. */
 export function judgeableRules(rules: RulebookRule[]): RulebookRule[] {
   return rules.filter(rule => rule.condition != null);
 }
 
-/**
- * What one pull contributes to a rule's threshold, or null when it cannot inform one. Exhaustive, so
- * a new kind must state where its magnitude comes from rather than silently defaulting to none.
- * The pair that returns null needs no magnitude at all: buff membership and proc consumption read
- * the same on every encounter.
- */
+/** Exhaustive, so a new kind must state where its magnitude comes from rather than silently defaulting to none. */
 export function measureRule(cond: RuleCondition, ctx: RuleContext): number | null {
   switch (cond.kind) {
     case 'cast_without_prior': {
@@ -447,7 +426,7 @@ function needsThreshold(cond: RuleCondition): boolean {
   }
 }
 
-/** Aggregates one rule's per-parse measurements; null when too few parses could supply one. */
+/** Null when too few parses could supply a magnitude, so a thin sample never sets the bar. */
 export function ruleThreshold(
   samples: (number | null)[], parseCount: number,
 ): { threshold: RuleThreshold | null; sample_count: number } {
@@ -460,7 +439,6 @@ export function ruleThreshold(
   return { threshold: { value, band }, sample_count: measured.length };
 }
 
-/** The rules this encounter can actually judge: judgeable, and carrying any magnitude their kind needs. */
 export function benchedRules(benched: BenchedRule[]): BenchedRule[] {
   return benched.filter(entry => entry.rule.condition != null
     && (!needsThreshold(entry.rule.condition) || entry.threshold != null));
