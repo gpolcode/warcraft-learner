@@ -13,16 +13,16 @@ import {
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
 import {
-  buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, consensusRules, RULE_TYPE_LABEL,
+  buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
 } from './rotation-rules';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 
 // Re-exported so callers can import the engine and the slice's analysis from either module.
-export type { Severity, CastTimes, RuleContext, RuleInputs, RuleStream, BenchedRule, RuleOutcome } from './rotation-rules';
+export type { Severity, CastTimes, RuleContext, RuleInputs, RuleStream, BenchedRule, RuleThreshold } from './rotation-rules';
 export {
   buildCastTimes, buildRuleContext, evaluateRules, rulesFollowed, ruleSeverity, ruleLabel,
-  rulesNeed, judgeableRules, consensusRules, judgeRules, ruleConsensus, ruleApplicable, evaluateCondition,
-  RULE_TYPE_LABEL, RULE_CONSENSUS_PCT,
+  rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold, ruleApplicable, evaluateCondition,
+  RULE_TYPE_LABEL,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
   evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
 } from './rotation-rules';
@@ -435,16 +435,17 @@ export class RotationFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       if (!fight) return permanent('Fight not found in this report.', 'rotation.player-view');
 
-      const rules = consensusRules(bench.value.rules);
+      const rules = benchedRules(bench.value.rules);
+      const conditions = rules.map(entry => entry.rule);
       const [casts, buffs, enemyAuras, damage] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
         // Raid-wide and unnarrowable: no sourceID (Enemies + sourceID returns nothing) and no server-side
         // source filter, so it costs several pages and is fetched only when a rule reads enemy auras.
-        rulesNeed(rules, 'enemyAuras')
+        rulesNeed(conditions, 'enemyAuras')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
           : Promise.resolve([]),
-        rulesNeed(rules, 'damage')
+        rulesNeed(conditions, 'damage')
           ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId)
           : Promise.resolve([]),
       ]);

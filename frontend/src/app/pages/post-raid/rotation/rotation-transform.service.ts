@@ -15,7 +15,7 @@ import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import {
-  BenchedRule, RuleOutcome, buildRuleContext, judgeRules, ruleConsensus, judgeableRules, rulesNeed,
+  BenchedRule, buildRuleContext, measureRule, ruleThreshold, judgeableRules, rulesNeed,
 } from './rotation-rules';
 import { RotationBench } from './rotation-data-source';
 
@@ -204,12 +204,15 @@ interface ParseRotation {
   durationS: number;
   encounterName: string;
   /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
-  ruleOutcomes: RuleOutcome[];
+  ruleSamples: (number | null)[];
 }
 
-/** Pairs each rule with what the top parses did, so nothing has to key rules across the two arrays. */
-export function benchRules(rules: RulebookRule[], perParse: RuleOutcome[][]): BenchedRule[] {
-  return rules.map((rule, i) => ({ rule, ...ruleConsensus(perParse.map(outcomes => outcomes[i])) }));
+/** Pairs each rule with the magnitude its encounter measured, so nothing has to key rules across two arrays. */
+export function benchRules(rules: RulebookRule[], perParse: (number | null)[][]): BenchedRule[] {
+  return rules.map((rule, i) => ({
+    rule,
+    ...ruleThreshold(perParse.map(samples => samples[i]), perParse.length),
+  }));
 }
 
 @Injectable({ providedIn: 'root' })
@@ -231,7 +234,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       if (!rankings.length) return missing('No top parses for this encounter.');
 
       const perParse: CdSummary[][] = [];
-      const ruleOutcomes: RuleOutcome[][] = [];
+      const ruleSamples: (number | null)[][] = [];
       const gapLists: number[][] = [];
       const durations: number[] = [];
       let encounterName = '';
@@ -239,7 +242,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         const parse = await this.computeParse(ranking, cooldowns, judgeable);
         if (!parse) continue;
         perParse.push(parse.summaries);
-        ruleOutcomes.push(parse.ruleOutcomes);
+        ruleSamples.push(parse.ruleSamples);
         gapLists.push(parse.gapListMs);
         durations.push(parse.durationS);
         encounterName ||= parse.encounterName;
@@ -261,7 +264,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         top_efficiency_stddev: topEfficiencyStddev,
         per_cd_benchmarks: aggregateCdBenchmarks(perParse, cooldowns),
         major_cooldowns: cooldowns,
-        rules: benchRules(judgeable, ruleOutcomes),
+        rules: benchRules(judgeable, ruleSamples),
         cd_spell_ids,
         // A real icon for every cooldown + defensive by id, so the map is complete (no fallback).
         ability_icons: abilityIcons(await this.wclApi.getAbilities(Object.values(cd_spell_ids))),
@@ -304,7 +307,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         gapListMs: castGapListMs(casts),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
-        ruleOutcomes: judgeRules(rules, ruleCtx),
+        ruleSamples: rules.map(rule => measureRule(rule.condition, ruleCtx)),
       };
     } catch (err) {
       logWarn(`RotationTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);

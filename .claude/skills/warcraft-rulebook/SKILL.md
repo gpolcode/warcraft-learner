@@ -159,9 +159,9 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   entry conditions per hero tree), macro and timing notes, why-it-works mechanics named in the sources.
   "Use on cooldown" with no condition fails the bar whenever the source states one.
 - **`defensives` >= 15s is inclusive** - an ability with exactly a 15s cooldown belongs in the list.
-- **Numbers come from the sources, not from vibes**: windows, thresholds, and target counts in rule
-  conditions must trace to an APL line or a guide sentence, and comparators are copied exactly (an APL
-  `combo_points<=2` means 2, not 1). `cooldown` values come from a source sentence or the table's
+- **Numbers come from the sources, not from vibes**: thresholds and target counts quoted in
+  `usage_rule` and rule `action` must trace to an APL line or a guide sentence, and comparators are
+  copied exactly (an APL `combo_points<=2` means 2, not 1). `cooldown` values come from a source sentence or the table's
   `base_cd_s`; when the sources state an effective (talented) cooldown that differs from the base value,
   the source wins and the base goes in `id_note`.
 - **Every rule needs a `condition`**, and the engine renders nothing else, so advice it cannot check is
@@ -179,6 +179,12 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   | spend A only at N resource, do not overcap | `resource_at_cast` |
   | consume proc B on sight | `proc_wasted` |
 
+- **Never author a magnitude.** A condition names identity and direction only - which spell, which
+  aura, which resource, and which way the rule runs (`position`, `require`, `on`, `bound`). Every
+  number it is judged against (pairing window, hold gap, uptime bar, opener time, target count,
+  resource level) is measured from the encounter's own top parses, so the same rule adapts to a fight
+  the field plays differently instead of failing the player against a guess. Put the source's concrete
+  numbers in the rule's `action` as coaching copy, where they inform without being enforced.
 - **Pick the kind the rule actually means.** A rule about a buff being up wants `cast_outside_buff`,
   not a `cast_without_prior` proximity window that only approximates it. A rule about combo points
   wants `resource_at_cast`, not a cast pairing. `aura_uptime_below` needs `on: "target"` for a dot the

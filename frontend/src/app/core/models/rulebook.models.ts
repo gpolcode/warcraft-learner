@@ -24,14 +24,8 @@ export interface CastWithoutPriorCondition {
   spell_name: string;
   required_spell_id: number;
   required_spell_name: string;
-  window_s?: number;
   /** Where the required cast must sit relative to the judged one; defaults to `before`. */
   position?: 'before' | 'after' | 'either';
-  exception?: {
-    context_spell_id: number;
-    context_window_s?: number;
-    position?: 'before' | 'after';
-  };
 }
 
 export interface HoldCooldownForAnchorCondition {
@@ -40,7 +34,6 @@ export interface HoldCooldownForAnchorCondition {
   spell_names: string[];
   anchor_spell_id: number;
   anchor_spell_name: string;
-  hold_window_s?: number;
 }
 
 export interface CastOutsideBuffCondition {
@@ -57,7 +50,6 @@ export interface AuraUptimeBelowCondition {
   kind: 'aura_uptime_below';
   aura_spell_id: number;
   aura_spell_name: string;
-  min_pct: number;
   /** `target` reads the enemy debuff stream, which is where damage-over-time rules live. */
   on: 'self' | 'target';
 }
@@ -66,15 +58,14 @@ export interface OpeningSequenceCondition {
   kind: 'opening_sequence';
   spell_ids: number[];
   spell_names: string[];
-  window_s: number;
 }
 
 export interface CastAtTargetCountCondition {
   kind: 'cast_at_target_count';
   spell_id: number;
   spell_name: string;
-  min_targets?: number;
-  max_targets?: number;
+  /** `min` flags casts made at too few enemies, `max` casts made at too many. */
+  bound: 'min' | 'max';
 }
 
 export interface ResourceAtCastCondition {
@@ -83,8 +74,8 @@ export interface ResourceAtCastCondition {
   spell_name: string;
   resource_type: number;
   resource_name: string;
-  min_amount?: number;
-  max_amount?: number;
+  /** `min` flags spending below the field's level, `max` flags generating near the cap. */
+  bound: 'min' | 'max';
 }
 
 export interface ProcWastedCondition {
