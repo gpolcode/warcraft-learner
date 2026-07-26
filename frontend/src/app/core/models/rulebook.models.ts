@@ -69,12 +69,6 @@ export interface OpeningSequenceCondition {
   window_s: number;
 }
 
-export interface CooldownUnderusedCondition {
-  kind: 'cooldown_underused';
-  spell_id: number;
-  spell_name: string;
-}
-
 export interface CastAtTargetCountCondition {
   kind: 'cast_at_target_count';
   spell_id: number;
@@ -107,7 +101,6 @@ export type RuleCondition =
   | CastOutsideBuffCondition
   | AuraUptimeBelowCondition
   | OpeningSequenceCondition
-  | CooldownUnderusedCondition
   | CastAtTargetCountCondition
   | ResourceAtCastCondition
   | ProcWastedCondition;

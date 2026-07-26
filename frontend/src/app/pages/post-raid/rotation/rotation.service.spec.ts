@@ -7,7 +7,7 @@ import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import {
   RulebookRule, CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
-  AuraUptimeBelowCondition, OpeningSequenceCondition, CooldownUnderusedCondition,
+  AuraUptimeBelowCondition, OpeningSequenceCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
 } from '../../../core/models/rulebook.models';
 import {
@@ -23,8 +23,9 @@ import {
   RotationFeatureService,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateRules, buildCastTimes,
   buildRuleContext, RuleContext, RuleInputs, ruleApplicable,
-  evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence, evaluateCooldownUnderused,
+  evaluateCastOutsideBuff, evaluateAuraUptimeBelow, evaluateOpeningSequence,
   evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
+  needsEnemyAuras, needsTargetCounts,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
   ruleLabel, rulesFollowed, ruleSeverity,
   checkLostUses, checkFirstCastDelay, checkBloodlustAlignment, checkGaps,
@@ -304,6 +305,46 @@ describe('evaluateAuraUptimeBelow', () => {
   });
 });
 
+describe('rule evaluator boundaries', () => {
+  const dance = buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S);
+
+  it('treats the aura span as end-exclusive for a cast inside it', () => {
+    const insideDance: CastOutsideBuffCondition = {
+      kind: 'cast_outside_buff', spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
+      buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', require: 'inside',
+    };
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S)], { buffs: dance });
+    expect(evaluateCastOutsideBuff(insideDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('uses that same end-exclusive bound for a spent proc, so one cast cannot read both ways', () => {
+    const spendDance: ProcWastedCondition = {
+      kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
+      spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
+    };
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S)], { buffs: dance });
+    expect(evaluateProcWasted(spendDance, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('passes uptime exactly at min_pct (strict below)', () => {
+    const exactly: AuraUptimeBelowCondition = {
+      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', min_pct: 50, on: 'target',
+    };
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
+    expect(evaluateAuraUptimeBelow(exactly, ctx, 'warning')).toBeNull();
+  });
+
+  it('accepts an opener step landing exactly on window_s', () => {
+    const OPENER_WINDOW_S = 12;
+    const opener: OpeningSequenceCondition = {
+      kind: 'opening_sequence', spell_ids: [SHADOW_BLADES, SECRET_TECHNIQUE],
+      spell_names: ['Shadow Blades', 'Secret Technique'], window_s: OPENER_WINDOW_S,
+    };
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S)]);
+    expect(evaluateOpeningSequence(opener, ctx, 'warning')).toBeNull();
+  });
+});
+
 describe('evaluateOpeningSequence', () => {
   const OPENER_WINDOW_S = 12;
   const opener: OpeningSequenceCondition = {
@@ -338,38 +379,6 @@ describe('evaluateOpeningSequence', () => {
   });
 });
 
-describe('evaluateCooldownUnderused', () => {
-  const blades: CooldownUnderusedCondition = {
-    kind: 'cooldown_underused', spell_id: SHADOW_BLADES, spell_name: 'Shadow Blades',
-  };
-  const BLADES_CD = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 120 };
-  // 1 use/min over the 120s context fight expects 2, with a floor of 2 at zero deviation.
-  const benched = { cooldowns: [BLADES_CD], benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0, min: 1, max: 1 } }) } };
-
-  it('flags fewer casts than the top parses averaged', () => {
-    const finding = evaluateCooldownUnderused(blades, ruleCtx([cast(SHADOW_BLADES, 10)], benched), 'warning');
-    expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
-  });
-
-  it('passes when the player matched the bench', () => {
-    const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 80)], benched);
-    expect(evaluateCooldownUnderused(blades, ctx, 'warning')).toBeNull();
-  });
-
-  it('stays silent without a benchmark for the spell', () => {
-    expect(evaluateCooldownUnderused(blades, ruleCtx([]), 'warning')).toBeNull();
-    expect(ruleApplicable(blades, ruleCtx([]))).toBe(false);
-  });
-
-  it('stays silent when too few top parses used the cooldown to judge it', () => {
-    const rare = {
-      cooldowns: [BLADES_CD],
-      benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0, min: 1, max: 1 }, sample_count: 10, used_sample_count: 2 }) },
-    };
-    expect(evaluateCooldownUnderused(blades, ruleCtx([], rare), 'warning')).toBeNull();
-  });
-});
-
 describe('evaluateCastAtTargetCount', () => {
   const MIN_AOE_TARGETS = 3;
   const CAST_S = 10;
@@ -396,6 +405,14 @@ describe('evaluateCastAtTargetCount', () => {
     const ctx = ruleCtx([cast(EVISCERATE, CAST_S)],
       { damage: [1, 2, 3].map(id => damage(EVISCERATE, CAST_S + 1, 100, { target: id })) });
     expect(evaluateCastAtTargetCount(capped, ctx, 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('counts copies of one add separately, since they share a targetID and differ only by instance', () => {
+    const ADD_ID = 7;
+    const copies = [1, 2, 3].map(instance =>
+      ({ ...damage(BLACK_POWDER, CAST_S + 1, 100, { target: ADD_ID }), targetInstance: instance }));
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: copies });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, 'warning')).toBeNull();
   });
 
   it('ignores a cast with no damage recorded near it, rather than reading it as zero targets', () => {
@@ -983,5 +1000,86 @@ describe('RotationFeatureService', () => {
   it('propagates a transient bench outage so the pre-fight plan surfaces a retry error', async () => {
     const service = withSource(transient('WCL is unreachable right now.'));
     expect(await service.loadPlanView('SubtletyRogue', 1)).toEqual(transient('WCL is unreachable right now.'));
+  });
+});
+
+describe('RotationFeatureService fetch shape', () => {
+  const REPORT = { title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } };
+  const PLAYER_ID = 10;
+  const dotUptime: RulebookRule = {
+    condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', min_pct: 90, on: 'target' },
+  };
+  const aoeSwitch: RulebookRule = {
+    condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', min_targets: 3 },
+  };
+
+  function recording(events: WclEvent[] = []) {
+    const calls: { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }[] = [];
+    return {
+      calls,
+      api: {
+        getReport: async () => REPORT,
+        getAllEvents: async (
+          _c: string, _f: number, dataType: string, _s: number, _e: number,
+          sourceId?: number, includeResources = false, hostilityType?: string,
+        ) => {
+          calls.push({ dataType, sourceId, includeResources, hostilityType });
+          return events;
+        },
+      },
+    };
+  }
+
+  it('requests player casts with resources on, which resource_at_cast depends on', async () => {
+    const { calls, api } = recording();
+    await withSource(ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    expect(calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ID, includeResources: true, hostilityType: undefined });
+  });
+
+  it('skips the enemy-aura and damage fetches when no rule reads them', async () => {
+    const { calls, api } = recording();
+    await withSource(ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    expect(calls.some(call => call.dataType === 'Debuffs')).toBe(false);
+    expect(calls.some(call => call.dataType === 'DamageDone')).toBe(false);
+  });
+
+  it('fetches enemy auras with Enemies hostility and no source, the only shape WCL answers', async () => {
+    const { calls, api } = recording();
+    await withSource(ok(bench({ rules: [dotUptime] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    expect(calls).toContainEqual({ dataType: 'Debuffs', sourceId: undefined, includeResources: false, hostilityType: 'Enemies' });
+  });
+
+  it('keeps only the auras the player applied out of the raid-wide enemy stream', async () => {
+    const OTHER_RAIDER = 99;
+    // Partial uptime, so leaving these in would produce a violation row rather than silence.
+    const raidWide = [
+      { ...applyDebuff(RUPTURE, 0), sourceID: OTHER_RAIDER },
+      { ...removeDebuff(RUPTURE, 40), sourceID: OTHER_RAIDER },
+    ];
+    const { api } = recording(raidWide);
+    const result = await withSource(ok(bench({ rules: [dotUptime] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
+  });
+
+  it('fetches the player damage only when a target-count rule needs it', async () => {
+    const { calls, api } = recording();
+    await withSource(ok(bench({ rules: [aoeSwitch] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: false, hostilityType: undefined });
+  });
+});
+
+describe('needsEnemyAuras / needsTargetCounts', () => {
+  it('reads enemy auras only for an on-target uptime rule', () => {
+    const onSelf: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', min_pct: 90, on: 'self' } };
+    const onTarget: RulebookRule = { condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'R', min_pct: 90, on: 'target' } };
+    expect(needsEnemyAuras([onSelf])).toBe(false);
+    expect(needsEnemyAuras([onTarget])).toBe(true);
+  });
+
+  it('reads damage only for a target-count rule', () => {
+    const rule: RulebookRule = { condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'BP', min_targets: 3 } };
+    expect(needsTargetCounts([])).toBe(false);
+    expect(needsTargetCounts([rule])).toBe(true);
   });
 });

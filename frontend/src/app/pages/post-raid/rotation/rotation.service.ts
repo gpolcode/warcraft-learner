@@ -5,7 +5,7 @@ import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import {
   RulebookCooldown, RulebookRule, RuleCondition,
   CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
-  AuraUptimeBelowCondition, OpeningSequenceCondition, CooldownUnderusedCondition,
+  AuraUptimeBelowCondition, OpeningSequenceCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
@@ -159,6 +159,14 @@ const TARGET_COUNT_WINDOW_S = 3;
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster. */
 const RESOURCE_ACTOR_SOURCE = 1;
 
+export function needsEnemyAuras(rules: RulebookRule[]): boolean {
+  return rules.some(rule => rule.condition?.kind === 'aura_uptime_below' && rule.condition.on === 'target');
+}
+
+export function needsTargetCounts(rules: RulebookRule[]): boolean {
+  return rules.some(rule => rule.condition?.kind === 'cast_at_target_count');
+}
+
 /** Everything the rule evaluators read, derived once per player view. */
 export interface RuleContext {
   castTimes: CastTimes;
@@ -262,31 +270,18 @@ export function evaluateOpeningSequence(
   };
 }
 
-export function evaluateCooldownUnderused(
-  cond: CooldownUnderusedCondition, ctx: RuleContext, severity: Severity, remedy?: string,
-): AnalysisFinding | null {
-  const bench = ctx.benchBySpellId.get(cond.spell_id);
-  if (!bench || usedShare(bench) < MIN_USE_SHARE_FRAC) return null;
-  const { expected, floor } = benchExpectedUses(ctx.fightDurationS, bench.uses_per_min);
-  const actual = ctx.castTimes[cond.spell_id]?.length ?? 0;
-  if (expected < 1 || actual >= floor) return null;
-  return {
-    severity, category: 'rule_violation',
-    label: `${cond.spell_name} underused`,
-    message: `${cond.spell_name}: ${actual} casts, top parses average ${expected} on a ${fmtClock(ctx.fightDurationS)} fight.`,
-    measured: { value: `${actual} / ${expected}`, unit: 'cast(s)' },
-    details: remedy ? { remedy } : undefined,
-  };
-}
-
-/** Distinct enemies the player damaged in the window opened by a cast. */
+/**
+ * Distinct enemies the player damaged in the window opened by a cast. Every damaged enemy counts,
+ * not only the ones the judged ability struck, because both bounds describe the fight state that
+ * should drive the choice - scoping to the ability would make `max_targets` unfireable.
+ */
 function targetsAtCast(damage: WclEvent[], fStart: number, castTimeS: number): number {
   const fromMs = fStart + castTimeS * 1000;
   const toMs = fromMs + TARGET_COUNT_WINDOW_S * 1000;
-  const targets = new Set<number>();
+  const targets = new Set<string>();
   for (const event of damage) {
     if (event.timestamp < fromMs || event.timestamp > toMs) continue;
-    if (event.targetID != null) targets.add(event.targetID);
+    if (event.targetID != null) targets.add(`${event.targetID}:${event.targetInstance ?? 0}`);
   }
   return targets.size;
 }
@@ -294,21 +289,21 @@ function targetsAtCast(damage: WclEvent[], fStart: number, castTimeS: number): n
 export function evaluateCastAtTargetCount(
   cond: CastAtTargetCountCondition, ctx: RuleContext, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const primary = [...(ctx.castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
-  const violations = primary.filter(time => {
-    const targets = targetsAtCast(ctx.damage, ctx.fStart, time);
-    if (!targets) return false;
-    return (cond.min_targets != null && targets < cond.min_targets)
-      || (cond.max_targets != null && targets > cond.max_targets);
-  });
+  const judged = [...(ctx.castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b)
+    .map(timeS => ({ timeS, targets: targetsAtCast(ctx.damage, ctx.fStart, timeS) }))
+    .filter(({ targets }) => targets > 0);
+  if (!judged.length) return null;
+  const under = judged.filter(({ targets }) => cond.min_targets != null && targets < cond.min_targets);
+  const over = judged.filter(({ targets }) => cond.max_targets != null && targets > cond.max_targets);
+  const violations = under.length >= over.length ? under : over;
   if (!violations.length) return null;
-  const bound = cond.min_targets != null ? `under ${cond.min_targets}` : `over ${cond.max_targets}`;
+  const bound = violations === under ? `under ${cond.min_targets}` : `over ${cond.max_targets}`;
   return {
     severity, category: 'rule_violation',
-    timestamp_ms: Math.round(violations[0] * 1000),
+    timestamp_ms: Math.round(violations[0].timeS * 1000),
     label: `${cond.spell_name} at ${bound} targets`,
-    message: `${cond.spell_name} cast at ${bound} targets: ${violations.length} of ${primary.length} cast(s).`,
-    measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
+    message: `${cond.spell_name} cast at ${bound} targets: ${violations.length} of ${judged.length} cast(s).`,
+    measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
   };
 }
@@ -329,7 +324,9 @@ export function evaluateResourceAtCast(
     (cond.min_amount != null && amount < cond.min_amount)
     || (cond.max_amount != null && amount > cond.max_amount));
   if (!violations.length) return null;
-  const bound = cond.min_amount != null ? `below ${cond.min_amount}` : `above ${cond.max_amount}`;
+  const belowMin = violations.filter(({ amount }) => cond.min_amount != null && amount < cond.min_amount);
+  const bound = belowMin.length >= violations.length - belowMin.length
+    ? `below ${cond.min_amount}` : `above ${cond.max_amount}`;
   return {
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(violations[0].timeS * 1000),
@@ -347,8 +344,9 @@ export function evaluateProcWasted(
   const spans = (ctx.selfAuras.get(cond.buff_spell_id) ?? []).filter(([, end]) => end != null);
   if (!spans.length) return null;
   const spendTimes = cond.spend_spell_ids.flatMap(spellId => ctx.castTimes[spellId] ?? []);
+  // End-exclusive, matching isInsideAura: the cast sharing a millisecond with removebuff must not read both ways.
   const wasted = spans.filter(([startMs, endMs]) =>
-    !spendTimes.some(time => time * 1000 >= startMs && time * 1000 <= (endMs as number)));
+    !spendTimes.some(time => time * 1000 >= startMs && time * 1000 < (endMs as number)));
   if (!wasted.length) return null;
   return {
     severity, category: 'rule_violation',
@@ -387,7 +385,6 @@ export function evaluateCondition(
     case 'cast_outside_buff': return evaluateCastOutsideBuff(cond, ctx, severity, remedy);
     case 'aura_uptime_below': return evaluateAuraUptimeBelow(cond, ctx, severity, remedy);
     case 'opening_sequence': return evaluateOpeningSequence(cond, ctx, severity, remedy);
-    case 'cooldown_underused': return evaluateCooldownUnderused(cond, ctx, severity, remedy);
     case 'cast_at_target_count': return evaluateCastAtTargetCount(cond, ctx, severity, remedy);
     case 'resource_at_cast': return evaluateResourceAtCast(cond, ctx, severity, remedy);
     case 'proc_wasted': return evaluateProcWasted(cond, ctx, severity, remedy);
@@ -406,14 +403,11 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
       return auraUptimePct(cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras,
         cond.aura_spell_id, ctx.fightDurationS * 1000) > 0;
     case 'opening_sequence': return cond.spell_ids.some(spellId => castCount(spellId) > 0);
-    case 'cooldown_underused': {
-      const bench = ctx.benchBySpellId.get(cond.spell_id);
-      return !!bench && usedShare(bench) >= MIN_USE_SHARE_FRAC
-        && benchExpectedUses(ctx.fightDurationS, bench.uses_per_min).expected >= 1;
-    }
-    case 'cast_at_target_count': return castCount(cond.spell_id) > 0 && ctx.damage.length > 0;
+    case 'cast_at_target_count':
+      return (ctx.castTimes[cond.spell_id] ?? []).some(timeS => targetsAtCast(ctx.damage, ctx.fStart, timeS) > 0);
     case 'resource_at_cast':
       return ctx.castEvents.some(event => event.type === 'cast' && event.abilityGameID === cond.spell_id
+        && (event.resourceActor == null || event.resourceActor === RESOURCE_ACTOR_SOURCE)
         && !!event.classResources?.some(resource => resource.type === cond.resource_type));
     case 'proc_wasted': return (ctx.selfAuras.get(cond.buff_spell_id) ?? []).some(([, end]) => end != null);
   }
@@ -439,7 +433,6 @@ export function ruleLabel(cond: RuleCondition, description?: string): string {
     case 'cast_outside_buff': return `${cond.spell_name} ${cond.require} ${cond.buff_spell_name}`;
     case 'aura_uptime_below': return `${cond.aura_spell_name} uptime`;
     case 'opening_sequence': return `Opener: ${cond.spell_names.join(' > ')}`;
-    case 'cooldown_underused': return `${cond.spell_name} on cooldown`;
     case 'cast_at_target_count': return `${cond.spell_name} target count`;
     case 'resource_at_cast': return `${cond.spell_name} at ${cond.resource_name}`;
     case 'proc_wasted': return `${cond.buff_spell_name} spent`;
@@ -810,14 +803,21 @@ export class RotationFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       if (!fight) return permanent('Fight not found in this report.', 'rotation.player-view');
 
-      const [casts, buffs, debuffs, damage] = await Promise.all([
+      const rules = bench.value.rules;
+      const [casts, buffs, enemyAuras, damage] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
         this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-        this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, playerId),
-        this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
+        // Raid-wide and unnarrowable: no sourceID (Enemies + sourceID returns nothing) and no server-side
+        // source filter, so it costs several pages and is fetched only when a rule reads enemy auras.
+        needsEnemyAuras(rules)
+          ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
+          : Promise.resolve([]),
+        needsTargetCounts(rules)
+          ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId)
+          : Promise.resolve([]),
       ]);
+      const debuffs = enemyAuras.filter(event => event.sourceID === playerId);
 
-      const rules = bench.value.rules;
       const offensiveFindings = analyzeRotationFindings({
         fStart: fight.startTime, fEnd: fight.endTime, castEvents: casts, buffEvents: buffs,
         cooldowns: bench.value.major_cooldowns, bench: bench.value,

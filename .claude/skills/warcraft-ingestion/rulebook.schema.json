@@ -157,7 +157,6 @@
             { "$ref": "#/$defs/castOutsideBuff" },
             { "$ref": "#/$defs/auraUptimeBelow" },
             { "$ref": "#/$defs/openingSequence" },
-            { "$ref": "#/$defs/cooldownUnderused" },
             { "$ref": "#/$defs/castAtTargetCount" },
             { "$ref": "#/$defs/resourceAtCast" },
             { "$ref": "#/$defs/procWasted" }
@@ -295,20 +294,6 @@
           "spell_names": ["Shadow Blades", "Shadow Dance", "Secret Technique"],
           "window_s": 12
         }
-      ]
-    },
-    "cooldownUnderused": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Flag when the player got meaningfully fewer casts of spell_id than the benched top parses did on this encounter. Use for the 'keep X on cooldown' and 'do not sit on X' family. The expectation comes from the bench, so the rule states no number of its own; spell_id must be one of the spec's major_cooldowns or it has no benchmark.",
-      "required": ["kind", "spell_id", "spell_name"],
-      "properties": {
-        "kind": { "const": "cooldown_underused" },
-        "spell_id": { "type": "integer" },
-        "spell_name": { "type": "string" }
-      },
-      "examples": [
-        { "kind": "cooldown_underused", "spell_id": 107574, "spell_name": "Avatar" }
       ]
     },
     "castAtTargetCount": {

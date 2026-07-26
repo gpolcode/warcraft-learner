@@ -175,7 +175,6 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   | only / never cast A while buff B is up | `cast_outside_buff` |
   | keep buff or dot B up | `aura_uptime_below` |
   | open with A then B then C | `opening_sequence` |
-  | keep A on cooldown, do not sit on A | `cooldown_underused` |
   | use A at N+ targets, stop using A above N | `cast_at_target_count` |
   | spend A only at N resource, do not overcap | `resource_at_cast` |
   | consume proc B on sight | `proc_wasted` |
@@ -184,8 +183,11 @@ flattens it is a failed run. Reject and respawn a subagent whose output misses t
   not a `cast_without_prior` proximity window that only approximates it. A rule about combo points
   wants `resource_at_cast`, not a cast pairing. `aura_uptime_below` needs `on: "target"` for a dot the
   player maintains on the boss and `on: "self"` for a personal buff.
-- **`cooldown_underused` has no number of its own** - the expectation comes from the top parses, so its
-  `spell_id` must be one of the spec's `major_cooldowns` or the rule can never fire.
+- **Never write a "keep X on cooldown" rule.** The rotation card already flags lost casts for every
+  `major_cooldowns` entry, benched against the top parses, so such a rule would duplicate a row the
+  player already sees and can contradict it. Put the timing detail in the cooldown's `usage_rule`.
+- **`on: "target"` costs a raid-wide fetch** (WCL cannot narrow enemy auras to one caster), so it is
+  worth it for a spec whose dots are the rotation and wasteful for an incidental debuff.
 - **`cast_without_prior` operands are ordered, and getting them backwards inverts the check.**
   `spell_id` is the ability being judged; `required_spell_id` is its companion, which under the default
   `position: "before"` must already have been cast. For "Secret Technique always inside Shadow Dance",
