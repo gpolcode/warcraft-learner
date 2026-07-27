@@ -5,45 +5,21 @@
     {
       "name": "Celestial Alignment",
       "spell_id": 194223,
-      "cooldown": 90,
+      "cooldown": 180,
       "duration": 15,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "Press as your primary burst window with as much Astral Power available as possible, line it up with Force of Nature (Keeper of the Grove) or Fury of Elune (Elune's Chosen), and spend aggressively for its full duration; this is the baseline cooldown when Incarnation is not talented."
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Press it on the global after Force of Nature with Moonfire and Sunfire freshly recast and trinkets and potion going out alongside it, then spend every point of Astral Power inside the 15 seconds; with Whirling Stars stagger the two charges so each one lands on Convoke the Spirits or Force of Nature."
     },
     {
       "name": "Incarnation: Chosen of Elune",
       "spell_id": 102560,
       "cooldown": 180,
       "duration": 20,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "Replaces Celestial Alignment as the preferred raid burst cooldown for its longer duration and Critical Strike buff; cast instant Starfire to consume Ascendant Fires at the start and spend all your Astral Power across the window, and treat it as a charge cooldown that can be held briefly to line up with mechanics."
-    },
-    {
-      "name": "Eclipse",
-      "spell_id": 79577,
-      "cooldown": 32,
-      "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Treat Eclipse as a damage cooldown: enter it with enough resources to spend all Ascendant Eclipses stacks within your next four GCDs, avoid overcapping to two charges, and pair it with Force of Nature whenever possible (cast Wrath first for Solar, Starfire first for Lunar)."
-    },
-    {
-      "name": "Force of Nature",
-      "spell_id": 205636,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Press off cooldown the GCD before entering Eclipse or Celestial Alignment/Incarnation so the treants overlap your burst window; do not hold it if holding would cost a use. Talent-gated to Keeper of the Grove builds.",
-      "talent_gated": true
-    },
-    {
-      "name": "Fury of Elune",
-      "spell_id": 202770,
-      "cooldown": 60,
-      "duration": 8,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press off cooldown or hold slightly to line up with Lunar Eclipse or Incarnation; with Lunation the cooldown is reduced by your casts, so maintain uptime to keep it flowing. Talent-gated to Elune's Chosen builds.",
+      "opener_priority": 3,
+      "usage_rule": "The replacement for Celestial Alignment: open it after Force of Nature with both dots up and trinkets and potion, then spend Astral Power for the full 20 seconds and overlap Convoke the Spirits inside it.",
+      "id_note": "102560 is the cast id that replaces Celestial Alignment; 394013 is the talent/buff row. Neither was observed in the sampled parse, which played Celestial Alignment.",
       "talent_gated": true
     },
     {
@@ -52,7 +28,49 @@
       "cooldown": 120,
       "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Use as a single-target cooldown during your Celestial Alignment/Incarnation window when Astral Power is below 40, ideally with several targets afflicted by Moonfire so free casts can convert to Moonfire; can be held up to 15 seconds via Control of the Dream. Talent-gated.",
+      "opener_priority": 4,
+      "usage_rule": "Channel it inside Celestial Alignment or Incarnation and under 40 Astral Power, at range rather than in melee; on multiple targets only below 8 enemies and before your other Starfalls, and send it early rather than losing a cast when Celestial Alignment is still more than 50 seconds out.",
+      "talent_gated": true
+    },
+    {
+      "name": "Force of Nature",
+      "spell_id": 205636,
+      "cooldown": 60,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast it on the global before Celestial Alignment or Incarnation; when those are more than 45 seconds away (30 with Early Spring) pair it with your next Eclipse entry instead, and lead with it on AoE so the treants spread Moonfire to up to 8 targets.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fury of Elune",
+      "spell_id": 202770,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Playing Keeper of the Grove, cast it just before you enter Eclipse or open Celestial Alignment so its Astral Power is spent inside the window; playing Elune's Chosen, cast it inside Eclipse as fast as it comes up unless you are saving it for a known damage window.",
+      "id_note": "202770 is the castable talent; 211545 is the follow-up beam. Not pressed in the sampled parse.",
+      "talent_gated": true
+    },
+    {
+      "name": "Solar Eclipse",
+      "spell_id": 1233346,
+      "cooldown": 32,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Enter Solar Eclipse when your filler only reaches one or two targets so Wrath is the empowered spell, and avoid capping the shared Eclipse charges; sit outside Eclipse generating Astral Power only when a priority target is roughly 10 seconds out.",
+      "id_note": "Cast id for the Solar half of the shared 32-second Eclipse button. Lunar Calling removes Solar entry entirely for Elune's Chosen builds.",
+      "talent_gated": true
+    },
+    {
+      "name": "Lunar Eclipse",
+      "spell_id": 1233272,
+      "cooldown": 32,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Enter Lunar Eclipse whenever Starfire consistently hits 3 or more targets, and always on Elune's Chosen; keep both Eclipse charges cycling instead of banking them, and before an Eclipse ends either hold Astral Power for the next entry or dump it if you will be outside Eclipse for several seconds.",
+      "id_note": "Cast id for the Lunar half of the shared 32-second Eclipse button; not pressed in the sampled parse, whose Lunar entries all came from Celestial Alignment granting both states.",
       "talent_gated": true
     }
   ],
@@ -61,83 +79,138 @@
       "name": "Barkskin",
       "spell_id": 22812,
       "cooldown": 60,
-      "duration": 12,
-      "usage_rule": "Press proactively before predictable raid damage or a tankbuster cleave for a 20% damage reduction; its short cooldown allows frequent use, so do not save it for emergencies that may never come."
-    },
-    {
-      "name": "Renewal",
-      "spell_id": 108238,
-      "cooldown": 90,
-      "usage_rule": "Use when your health drops below roughly 50% to instantly restore a large chunk of HP without interrupting your casting. Talent-gated to builds that take Renewal.",
-      "talent_gated": true
+      "duration": 8,
+      "usage_rule": "Your default mitigation at 20% damage reduction (30% with Oakskin) that also stops damage pushing back your casts, so spend it on every telegraphed hit rather than saving it."
     },
     {
       "name": "Survival Instincts",
       "spell_id": 61336,
       "cooldown": 180,
       "duration": 6,
-      "usage_rule": "Reserve for the heaviest spike damage events for its strong damage reduction; pair it with Barkskin on lethal hits when one defensive is not enough."
+      "usage_rule": "50% damage reduction for 6 seconds: hold it for the single largest hit or an overlap Barkskin cannot cover.",
+      "talent_gated": true
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press it for 24% of your health over 3 seconds after taking a chunk of damage; it banks a charge, so do not idle through a full 36-second window of sustained raid damage.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "priority": "high",
-      "description": "Open with DoTs, then burst window",
-      "condition": null,
-      "action": "Pre-cast Wrath into the pull, apply Moonfire and Sunfire, then enter your Eclipse and fire Celestial Alignment or Incarnation with Force of Nature or Fury of Elune so every burst cooldown overlaps from the first window."
+      "severity": "warning",
+      "description": "Moonfire, Sunfire, Force of Nature, Celestial Alignment",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          8921,
+          93402,
+          205636,
+          194223
+        ],
+        "spell_names": [
+          "Moonfire",
+          "Sunfire",
+          "Force of Nature",
+          "Celestial Alignment"
+        ]
+      },
+      "action": "Precast two Wrath at about 4 seconds on the pull timer, apply Moonfire and Sunfire, cast Fury of Elune and then Force of Nature, and open Celestial Alignment or Incarnation with your trinkets and potion; then Starsurge down under 40 Astral Power and channel Convoke the Spirits."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Overlap Eclipse with Force of Nature",
-      "condition": null,
-      "action": "Time your Eclipse entry to coincide with Force of Nature (Keeper of the Grove) so the treants are active during the buffed window; cast Force of Nature on the GCD just before pressing Eclipse."
+      "severity": "warning",
+      "description": "Force of Nature immediately before Celestial Alignment",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 194223,
+        "spell_name": "Celestial Alignment",
+        "required_spell_id": 205636,
+        "required_spell_name": "Force of Nature",
+        "position": "before"
+      },
+      "action": "Cast Force of Nature on the global before Celestial Alignment or Incarnation so the treants and their Moonfires run the whole window; when the big cooldown is more than 45 seconds out (30 with Early Spring), pair Force of Nature with your next Eclipse instead."
     },
     {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Sync Celestial Alignment with treants or Elune",
-      "condition": null,
-      "action": "Always pair Celestial Alignment or Incarnation: Chosen of Elune with Force of Nature (Keeper of the Grove) or Fury of Elune (Elune's Chosen); pressing the major cooldown without its companion is a significant damage loss."
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Convoke the Spirits held for Celestial Alignment",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          391528
+        ],
+        "spell_names": [
+          "Convoke the Spirits"
+        ],
+        "anchor_spell_id": 194223,
+        "anchor_spell_name": "Celestial Alignment"
+      },
+      "action": "Overlap Convoke the Spirits with Celestial Alignment or Incarnation and the Balance of All Things crit window; only send it solo once Celestial Alignment is more than 50 seconds away and you would otherwise lose the cast."
     },
     {
       "type": "rotation",
-      "priority": "critical",
-      "description": "Always be casting; never sit idle",
-      "condition": null,
-      "action": "Bank Astral Power while standing still and dump it with instant Starsurge or Starfall during movement so you never waste a GCD; idle time is the single largest damage loss for the spec."
+      "severity": "warning",
+      "description": "Convoke the Spirits below 40 Astral Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 391528,
+        "spell_name": "Convoke the Spirits",
+        "resource_type": 8,
+        "resource_name": "astral power",
+        "bound": "max"
+      },
+      "action": "Starsurge down under 40 Astral Power before you channel Convoke the Spirits, so the free spenders it rolls are not thrown into a full bar."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Do not overcap Eclipse charges",
-      "condition": null,
-      "action": "Press Eclipse before it reaches two stored charges, entering with enough Astral Power to spend all Ascendant Eclipses stacks within four GCDs; sitting on capped charges wastes cooldown uptime."
+      "severity": "warning",
+      "description": "Wrath never cast at capped Astral Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 190984,
+        "spell_name": "Wrath",
+        "resource_type": 8,
+        "resource_name": "astral power",
+        "bound": "max"
+      },
+      "action": "Never cast Wrath into a full Astral Power bar; spend on Starsurge or Starfall first, even outside Eclipse, and only bank a full bar when you are entering Eclipse on the next global."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Maintain Moonfire and Sunfire uptime",
-      "condition": null,
-      "action": "Keep Moonfire and Sunfire applied and refresh them inside the pandemic window; their ticks feed Shooting Stars and are a major portion of your damage, so never let them fall off the primary target."
+      "severity": "warning",
+      "description": "Touch the Cosmos spent on Starfall or Starsurge",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 450360,
+        "buff_spell_name": "Touch the Cosmos",
+        "spend_spell_ids": [
+          191034,
+          78674
+        ],
+        "spend_spell_names": [
+          "Starfall",
+          "Starsurge"
+        ]
+      },
+      "action": "Consume every Touch the Cosmos proc before it drops: Starfall whenever you are talented into Starweaver or on 3 or more targets, Starsurge otherwise."
     },
     {
       "type": "aoe_switch",
-      "priority": "medium",
-      "description": "Spread DoTs and shift spenders on AoE",
-      "condition": null,
-      "action": "Spread Moonfire to all targets while they gather and apply Sunfire once stacked, then favor Starfall over Starsurge and enter Lunar Eclipse on three or more targets to maximize cleave."
-    },
-    {
-      "type": "rotation",
-      "priority": "low",
-      "description": "Cast instant Starfire inside burst",
-      "condition": null,
-      "action": "While inside Celestial Alignment or Incarnation, cast Starfire instead of Wrath as your generator since it is instant during the window, hits harder, and has a higher chance to proc Touch the Cosmos."
+      "severity": "warning",
+      "description": "Starsurge gives way to Starfall on 3 or more targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 78674,
+        "spell_name": "Starsurge",
+        "bound": "max"
+      },
+      "action": "Spend on Starfall from 3 targets upward, keep Starsurge for one or two targets, and stop using Starsurge procs entirely at 8 or more enemies."
     }
   ],
-  "source_summary": "Balance Druid revolves around chaining Eclipse, a short charge-based damage cooldown, into the major Celestial Alignment or Incarnation: Chosen of Elune burst window and overlapping it with Force of Nature (Keeper of the Grove) or Fury of Elune (Elune's Chosen). Enter every cooldown with enough Astral Power to spend immediately and without overcapping charges, while maintaining Moonfire and Sunfire uptime for Shooting Stars. The defining skill is juggling these cooldowns so they overlap on the same window without losing uses, never sitting idle thanks to instant Astral Power spenders.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:00:49"
+  "source_summary": "Balance Druid output is built around stacking everything into the Celestial Alignment or Incarnation: Chosen of Elune window: Fury of Elune then Force of Nature go out first, Celestial Alignment follows on the next global with trinkets and potion, and Convoke the Spirits is channelled inside it under 40 Astral Power. Outside that window the spec cycles the 32-second Eclipse charges, entering Solar for one or two targets and Lunar from three up, applying and maintaining Moonfire and Sunfire while outside Eclipse and dumping Astral Power on Starsurge or Starfall while inside it. Astral Power is never capped, free Starweaver and Touch the Cosmos procs are consumed on sight, and Eclipse charges are staggered rather than banked so a window is always available when a priority target appears."
 }

@@ -5,49 +5,27 @@
     {
       "name": "Ray of Frost",
       "spell_id": 205021,
-      "cooldown": 75,
-      "duration": 8,
-      "align_with_bloodlust": true,
-      "opener_priority": 2,
-      "usage_rule": "Use early in the opener to get its cooldown rolling and on cooldown thereafter, but only when you can safely complete the full channel; Shimmer to safety rather than canceling it, and save a charge for vulnerability phases or priority adds when Hand of Frost grants a second charge."
-    },
-    {
-      "name": "Comet Storm",
-      "spell_id": 153595,
-      "cooldown": 30,
+      "cooldown": 60,
+      "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Cast on cooldown after Ray of Frost converts it, spending built Freezing stacks; in AoE it Shatters stacks on multiple targets at once, so prioritize Frostfire Empowerment first so Comet Storm consumes more stacks (talent-gated to builds that take it - some Spellslinger builds do not, so zero casts may be normal)."
+      "opener_priority": 1,
+      "usage_rule": "Your main cooldown every 60 seconds: dump Fingers of Frost and your Freezing stacks first (Ice Lance at 6+ on Spellslinger, 10+ on Frostfire) so the channel refills them, and on Spellslinger send it below 3 Icicles or within 25 seconds of your potion."
     },
     {
       "name": "Frozen Orb",
       "spell_id": 84714,
       "cooldown": 60,
+      "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Use on cooldown for its damage and Fingers of Frost generation; in AoE position it to hit as many targets as possible and pair it with Blizzard during Freezing Rain."
+      "usage_rule": "Send it every 60 seconds and decide the cleave angle before it comes off cooldown; it sits above Glacial Spike in every priority and turns Blizzard instant through Freezing Rain."
     },
     {
-      "name": "Time Warp",
-      "spell_id": 80353,
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
       "cooldown": 300,
-      "duration": 40,
-      "align_with_bloodlust": true,
-      "usage_rule": "Use before Ray of Frost at the start of the burst window or when your group needs the haste, typically only once per boss fight; coordinate so it is not wasted on top of another Bloodlust effect."
-    },
-    {
-      "name": "Icy Veins",
-      "spell_id": 12472,
-      "cooldown": 180,
-      "duration": 20,
-      "align_with_bloodlust": true,
-      "usage_rule": "Sync with Time Warp and on-use trinkets at the opener and on cooldown for maximum burst; the Midnight rework deemphasizes it for Frost, so it may not always be on your bars."
-    },
-    {
-      "name": "Shifting Power",
-      "spell_id": 382440,
-      "cooldown": 60,
-      "duration": 4,
+      "duration": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "Channel to reduce your cooldowns when you have nothing higher-priority to cast or are otherwise targetless during an intermission; in AoE only channel it when 3 or more targets are present."
+      "usage_rule": "On Spellslinger pair it with the GCD after Frozen Orb or with Ray of Frost, on Frostfire use it on cooldown, and always burn the last one inside the final 35 seconds of the fight."
     }
   ],
   "defensives": [
@@ -56,99 +34,103 @@
       "spell_id": 45438,
       "cooldown": 240,
       "duration": 10,
-      "usage_rule": "Use to fully immune a lethal hit or to drop a deadly debuff; Glacial Bulwark grants two charges, so script its usage across the fight's biggest damage events."
-    },
-    {
-      "name": "Ice Barrier",
-      "spell_id": 11426,
-      "cooldown": 25,
-      "duration": 60,
-      "usage_rule": "Keep an absorb shield up before incoming damage and refresh it on cooldown; Glacial Bulwark grants two charges so you can pre-shield consecutive damage events."
+      "usage_rule": "Full immunity for 10 seconds: eat a lethal hit or clear a debuff with it, accepting the lost casts and the 30 second Hypothermia lockout."
     },
     {
       "name": "Ice Cold",
       "spell_id": 414658,
       "cooldown": 240,
       "duration": 6,
-      "talent_gated": true,
-      "usage_rule": "Use as a movement-friendly damage reduction when you need to keep dealing damage through a hit instead of going fully immune; talent-gated alternative to the standard Ice Block."
+      "usage_rule": "70% damage reduction for 6 seconds while you keep casting: use it on scripted raid damage you have to cast through.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ice Barrier",
+      "spell_id": 11426,
+      "cooldown": 30,
+      "duration": 60,
+      "usage_rule": "Keep the absorb up at all times against rolling raid damage and refresh it just before a known spike."
     },
     {
       "name": "Alter Time",
       "spell_id": 342245,
       "cooldown": 60,
       "duration": 10,
-      "talent_gated": true,
-      "usage_rule": "Activate before a burst of damage to snapshot your health and position, then let it return you to safety; talent-gated, so zero casts is normal if not taken."
+      "usage_rule": "Press it before a heavy hit and reactivate inside 10 seconds to snap back to your old health and position."
     },
     {
-      "name": "Mirror Image",
-      "spell_id": 55342,
+      "name": "Greater Invisibility",
+      "spell_id": 110959,
       "cooldown": 120,
-      "duration": 40,
-      "talent_gated": true,
-      "usage_rule": "Use to reduce incoming damage and pull threat off yourself during a dangerous window; talent-gated and not part of the standard damage rotation."
+      "duration": 20,
+      "usage_rule": "20 seconds of untargetable invisibility: use it to sidestep a targeted mechanic or drop threat, and remember any action cancels it.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Flurry on every Brain Freeze proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 190446,
+        "buff_spell_name": "Brain Freeze",
+        "spend_spell_ids": [44614],
+        "spend_spell_names": ["Flurry"]
+      },
+      "action": "Spend Brain Freeze with Flurry as it comes, ahead of Frozen Orb and Glacial Spike; on Thermal Void builds send it while Thermal Void is down so the next Ice Lance shatters the extra 4 stacks."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Ice Lance on every Fingers of Frost",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 44544,
+        "buff_spell_name": "Fingers of Frost",
+        "spend_spell_ids": [30455],
+        "spend_spell_names": ["Ice Lance"]
+      },
+      "action": "React to Fingers of Frost with Ice Lance: it shatters a full 4 stacks even on a target with no Freezing, so never let a charge sit, and dump immediately at 2 charges on Spellslinger."
+    },
+    {
       "type": "opener",
-      "priority": "high",
-      "description": "Open by getting Ray of Frost rolling early",
-      "condition": null,
-      "action": "Open with Blizzard for AoE or a Frostbolt/Frostfire Bolt for single target, then cast Ray of Frost as soon as possible so its cooldown starts cycling; the whole opener is built around getting Ray of Frost online early."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Always be casting - never stand idle",
-      "condition": null,
-      "action": "Never stop casting while waiting to decide; if no proc or cooldown is up, cast Frostbolt or Frostfire Bolt as filler, using Ice Lance only when moving, because a suboptimal cast always beats casting nothing."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Spend Brain Freeze with the Flurry Shatter combo",
-      "condition": null,
-      "action": "When Brain Freeze is active, cast Flurry so its Winter's Chill lands before your in-flight Frostbolt, then immediately follow with Ice Lance to Shatter; do not hold the proc unless Thermal Void uptime is at risk."
-    },
-    {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Empty Fingers of Frost before Brain Freeze",
-      "condition": null,
-      "action": "Spend your Fingers of Frost charges with Ice Lance before starting a Brain Freeze Flurry combo so a single Ice Lance does not waste both a Fingers of Frost charge and a Winter's Chill stack at once."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Burst with Time Warp into Ray of Frost",
-      "condition": null,
-      "action": "Pop Time Warp and on-use trinkets just before Ray of Frost so your highest-damage channel and Comet Storm conversion all land inside the haste window."
+      "severity": "info",
+      "description": "Frostbolt, Ray of Frost, Ice Lance opener",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [116, 205021, 30455],
+        "spell_names": ["Frostbolt", "Ray of Frost", "Ice Lance"]
+      },
+      "action": "Precast Frostbolt, open with Ray of Frost, then Ice Lance before falling into the priority; on Frostfire precast Frostfire Bolt at 2 seconds on the countdown and follow it with Ray of Frost."
     },
     {
       "type": "aoe_switch",
-      "priority": "high",
-      "description": "Add Blizzard and spread Frozen Orb at 3+ targets",
-      "condition": null,
-      "action": "At 3 or more targets, weave Blizzard into the rotation (especially during Freezing Rain) and position Frozen Orb to clip the whole pack; Comet Storm and Cone of Cold then Shatter multiple targets at once."
+      "severity": "info",
+      "description": "Blizzard reserved for multi-target",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 190356,
+        "spell_name": "Blizzard",
+        "bound": "min"
+      },
+      "action": "Keep the single-target priority through 2 targets and only bring Blizzard in at 3 or more on Frostfire (4 or more with Freezing Rain, 6 or more without) and 5 or more on Spellslinger; cast it inside Freezing Rain so it is instant, since hardcast Blizzard loses to generating Splinters."
     },
     {
-      "type": "positioning",
-      "priority": "high",
-      "description": "Only channel Ray of Frost when safe to finish",
-      "condition": null,
-      "action": "Plan ahead so you can complete the full Ray of Frost channel without moving; if a mechanic forces you out, Shimmer to safety mid-channel rather than canceling and losing the cast."
-    },
-    {
-      "type": "cd_hold",
-      "priority": "medium",
-      "description": "Hold a Ray of Frost charge for priority windows",
-      "condition": null,
-      "action": "With Hand of Frost granting a second Ray of Frost charge, keep it on cooldown but bank the extra charge for boss vulnerability phases or priority adds instead of dumping both charges back to back."
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Potion of Recklessness paired with Frozen Orb",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1236994,
+        "spell_name": "Potion of Recklessness",
+        "required_spell_id": 84714,
+        "required_spell_name": "Frozen Orb",
+        "position": "before"
+      },
+      "action": "On Spellslinger drink on the GCD right after Frozen Orb, stacking the 30 second stat buff with your trinkets and racial, and hold Ray of Frost so it lands inside the same 25 second window."
     }
   ],
-  "source_summary": "Frost Mage in Midnight builds its burst around Ray of Frost, which deals heavy damage, generates Freezing stacks, and converts into Comet Storm, supported by Frozen Orb on cooldown for sustained damage and Fingers of Frost. The core skill is keeping cooldowns rolling while spending Brain Freeze through the Flurry Shatter combo and never standing idle. Save Time Warp and on-use trinkets for the Ray of Frost burst window, and lean on charged defensives (two charges of Ice Block and Ice Barrier from Glacial Bulwark) to script survival around the fight's biggest hits.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:08:22"
+  "source_summary": "Frost Mage runs two 60 second cooldowns, Ray of Frost as the main channel and Frozen Orb as the AoE follow-up, and both are pressed close to on cooldown rather than pooled for a burst window. Ray of Frost goes out after your Freezing stacks and Fingers of Frost charges have been spent, since the channel refills them, and Frozen Orb is planned around incoming cleave and the instant Blizzard it enables. Potion, trinkets and racials pair with Frozen Orb or Ray of Frost on Spellslinger and go on cooldown on Frostfire, with the rest of the rotation reacting to Brain Freeze and Fingers of Frost procs."
 }

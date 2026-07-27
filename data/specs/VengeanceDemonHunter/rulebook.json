@@ -8,115 +8,185 @@
       "cooldown": 120,
       "duration": 15,
       "align_with_bloodlust": false,
-      "opener_priority": 4,
-      "usage_rule": "Use on cooldown once enemies are grouped, but never reapply while already in Metamorphosis with more than 5 seconds remaining since it overwrites rather than extends the duration."
+      "opener_priority": 2,
+      "usage_rule": "Use it close to on cooldown for the burst and the 40% health gain, hold it while you sit on 2 stacks of Voidfall until Fracture pushes you to 3 and you spend them, and fire the free Untethered Rage casts the moment they proc.",
+      "id_note": "187827 is the Vengeance cast id; 162264 and 200166 share the name and are the Havoc/leap variants. World Killer pulls the effective Annihilator cooldown to roughly 60-80s and Vengeful Beast extends the duration to 20s, so 120/15 are the untalented values."
     },
     {
-      "name": "Fel Devastation",
-      "spell_id": 212084,
-      "cooldown": 40,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use generally on cooldown when you have at least 50 Fury; if running Fiery Demise with Down in Flames, sync it with a Fiery Brand cast for the bonus fire damage."
-    },
-    {
-      "name": "Soul Carver",
-      "spell_id": 207407,
+      "name": "Fiery Brand",
+      "spell_id": 204021,
       "cooldown": 60,
+      "duration": 12,
       "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Send it 5 to 10 seconds before Metamorphosis comes off cooldown so Fiery Demise amplifies the Voidfall meteors and the Metamorphosis burst, and cast it whenever you are close to banking 2 charges.",
       "talent_gated": true,
-      "usage_rule": "Use on cooldown with fewer than 3 Souls so the generated fragments are not wasted, and sync it with Fiery Brand if you are talented into Fiery Demise."
+      "id_note": "204021 is the cast; 207771 is the 40% damage reduction aura. Down in Flames cuts the cooldown to 48s and adds a second charge."
     },
     {
       "name": "Sigil of Spite",
       "spell_id": 390163,
       "cooldown": 60,
       "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "Place it as close to on cooldown as possible for the 3 Soul Fragments, and as Aldrachi Reaver hold it only when a Reaver's Glaive is already stored, since it would be spent activating one you already have.",
+      "talent_gated": true
+    },
+    {
+      "name": "Soul Carver",
+      "spell_id": 207407,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 6,
+      "usage_rule": "Cast it on cooldown at 3 or fewer Soul Fragments so the 6 fragments it shatters do not overcap you.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fel Devastation",
+      "spell_id": 212084,
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "usage_rule": "Channel it at 3 or fewer Soul Fragments and above 85 Fury, lining it up with as many enemies branded by Fiery Brand as you can.",
       "talent_gated": true,
-      "usage_rule": "Use on cooldown to generate Soul Fragments, ideally synced with Fiery Brand if talented into Fiery Demise; as Aldrachi Reaver use it to activate Art of the Glaive when no Reaver's Glaive is available."
+      "id_note": "212084 is the cast id; 212105, 212106, 393831 and 393834 are damage and heal effect ids sharing the name."
+    },
+    {
+      "name": "Sigil of Flame",
+      "spell_id": 204596,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Pre-place it 1 second before the pull and keep it on cooldown from there, timing each cast so its Fury does not overcap you."
+    },
+    {
+      "name": "Immolation Aura",
+      "spell_id": 258920,
+      "cooldown": 30,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Press it on cooldown, and on 3 or more targets time it so the Fallout fragments do not push you past 6 Soul Fragments; macro it with Infernal Strike since they share a 30 second cooldown.",
+      "id_note": "258920 is the Vengeance cast id; the 4279xx family are per-rank damage effect ids sharing the name."
     }
   ],
   "defensives": [
     {
-      "name": "Fiery Brand",
-      "spell_id": 204021,
-      "cooldown": 60,
-      "duration": 10,
-      "usage_rule": "Use on cooldown to reduce incoming damage from the branded target; you can hold it up to 10 seconds for a known large tankbuster, and with Down in Flames sync one charge with offensive cooldowns."
-    },
-    {
       "name": "Demon Spikes",
       "spell_id": 203720,
       "cooldown": 20,
-      "duration": 6,
-      "usage_rule": "Press whenever you have no other defensive active to gain armor and physical damage reduction; its charges recharge with haste so use it freely to keep near-constant uptime while tanking."
+      "duration": 12,
+      "usage_rule": "Keep at least one charge rolling against physical damage and auto-attacks, and macro it to Fracture when you run Feed the Demon.",
+      "id_note": "203720 is the cast; 203819 is the armor and parry aura."
     },
     {
-      "name": "Darkness",
-      "spell_id": 196718,
-      "cooldown": 300,
-      "duration": 8,
-      "usage_rule": "Use on cooldown for the raid's dodge chance, but hold it for heavy group damage phases or multi-hit pulls; cooldown drops to 3 minutes with Pitch Black talented."
+      "name": "Fiery Brand",
+      "spell_id": 204021,
+      "cooldown": 60,
+      "duration": 12,
+      "usage_rule": "40% damage reduction for 12 seconds: spend one charge offensively inside your damage windows and keep the second for a known hit.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fel Devastation",
+      "spell_id": 212084,
+      "cooldown": 40,
+      "usage_rule": "Channel it for the large self-heal when you are taking sustained damage and Demon Spikes is down.",
+      "talent_gated": true
     },
     {
       "name": "Metamorphosis",
       "spell_id": 187827,
       "cooldown": 120,
       "duration": 15,
-      "usage_rule": "Beyond its damage, Metamorphosis grants a large health increase and armor, so it doubles as an emergency survival cooldown when you are taking heavy damage."
+      "usage_rule": "Your biggest defensive at 40% current and maximum health plus 200% Armor for 15 seconds: cover a heavy mechanic with it, or bridge a stretch where Fiery Brand and Demon Spikes are both down."
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop it for a heavy raid-damage window; it gives everyone inside 8 yards a 15% chance to avoid each hit for 8 seconds.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Keep generators on cooldown",
-      "condition": null,
-      "action": "Prioritize Fracture and your other generators on cooldown when a priority conflict arises, since Soul Fragment and Fury generation feed the Hero tree procs that drive your damage."
+      "type": "opener",
+      "severity": "warning",
+      "description": "Opener: Sigil of Flame, Metamorphosis, Fiery Brand",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [204596, 187827, 204021, 258920, 390163],
+        "spell_names": ["Sigil of Flame", "Metamorphosis", "Fiery Brand", "Immolation Aura", "Sigil of Spite"]
+      },
+      "action": "Pre-place Sigil of Flame 1 second before the pull, then Metamorphosis with Infernal Strike, Fiery Brand, Immolation Aura and Sigil of Spite before you settle into builders."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Spend Spirit Bomb at high Soul count",
-      "condition": null,
-      "action": "Always cast Spirit Bomb with 5 or more Souls rather than spending them piecemeal; spending spenders at maximum Soul count gives the most efficiency per global cooldown."
+      "severity": "critical",
+      "description": "Demon Spikes kept rolling",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 203819,
+        "aura_spell_name": "Demon Spikes",
+        "on": "self"
+      },
+      "action": "Keep at least one of the two Demon Spikes charges active at all times against physical damage, and bank the second only when you are heading into downtime with Fiery Brand and Metamorphosis on cooldown."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "Avoid overcapping Fury and Souls",
-      "condition": null,
-      "action": "Build and spend in waves so you do not overcap either resource; weave in Soul Cleave and Spirit Bomb to bleed off Souls and Fury before your generators come back up."
+      "severity": "warning",
+      "description": "Untethered Rage spent on Metamorphosis",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 1270476,
+        "buff_spell_name": "Untethered Rage",
+        "spend_spell_ids": [187827],
+        "spend_spell_names": ["Metamorphosis"]
+      },
+      "action": "Press Metamorphosis as soon as Untethered Rage procs; it is free, does not start the cooldown, and the window is only 10 seconds."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "medium",
-      "description": "Sync fire cooldowns with Fiery Brand",
-      "condition": null,
-      "action": "If you are talented into Fiery Demise, cast Fiery Brand first and then fire Soul Carver, Sigil of Spite, and Fel Devastation into the Fiery Brand window to amplify their fire damage."
+      "severity": "info",
+      "description": "Fiery Brand before Metamorphosis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 187827,
+        "spell_name": "Metamorphosis",
+        "required_spell_id": 204021,
+        "required_spell_name": "Fiery Brand",
+        "position": "before"
+      },
+      "action": "Cast Fiery Brand 5 to 10 seconds before Metamorphosis comes off cooldown so Fiery Demise buffs the Mass Acceleration Voidfall stacks and the Dark Matter burst; a partial overlap is enough."
     },
     {
       "type": "cd_hold",
-      "priority": "medium",
-      "description": "Do not overwrite active Metamorphosis",
-      "condition": null,
-      "action": "Hold Metamorphosis if you are already in a Metamorphosis from a proc with more than 5 seconds left, because recasting overwrites the duration instead of extending it and wastes the cooldown."
-    },
-    {
-      "type": "opener",
-      "priority": "medium",
-      "description": "Open by getting all cooldowns rolling",
-      "condition": null,
-      "action": "Open with Infernal Strike into the pack, then chain Fracture, Immolation Aura, and your sigils to build Souls, reaching a Spirit Bomb and Metamorphosis once enemies are grouped to get every cooldown rolling early."
+      "severity": "info",
+      "description": "Spirit Bomb held for Fiery Brand",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [247454],
+        "spell_names": ["Spirit Bomb"],
+        "anchor_spell_id": 204021,
+        "anchor_spell_name": "Fiery Brand"
+      },
+      "action": "Hold Spirit Bomb for up to roughly 5 seconds when Fiery Brand is about to land so Fiery Demise amplifies it; otherwise fire it on cooldown at 5 or more Soul Fragments."
     },
     {
       "type": "rotation",
-      "priority": "low",
-      "description": "Pause Fracture at full Voidfall stacks",
-      "condition": null,
-      "action": "As Annihilator, avoid pressing Fracture while at full Voidfall stacks or while spending them since you cannot generate; instead lean on Fracture when you are about to proc the third stack."
+      "severity": "info",
+      "description": "Sigil of Flame without overcapping Fury",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 204596,
+        "spell_name": "Sigil of Flame",
+        "resource_type": 17,
+        "resource_name": "fury",
+        "bound": "max"
+      },
+      "action": "Dump into Soul Cleave first when your Fury deficit is 15 or less, then place Sigil of Flame so none of its Fury is lost."
     }
   ],
-  "source_summary": "Vengeance Demon Hunter is a priority-list builder-spender tank where keeping generators like Fracture on cooldown takes precedence over spenders during conflicts, while spenders are weaved in to avoid overcapping Fury and Souls. Offensive cooldowns (Fel Devastation, Soul Carver, Sigil of Spite) are generally used on cooldown and synced with Fiery Brand when running Fiery Demise, and Metamorphosis is pressed once enemies are grouped without overwriting an active proc. Defensives are not individually strong, so Demon Spikes, Fiery Brand, and Darkness are used proactively and as available to smooth incoming damage.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:15:35"
+  "source_summary": "Vengeance treats its defensive cooldowns as damage cooldowns: Metamorphosis and Fiery Brand are used close to on cooldown, partially overlapped so Fiery Demise amplifies the Metamorphosis burst, with charges spread out to keep defensive coverage between them. Sigil of Flame, Sigil of Spite, Soul Carver, Fel Devastation and Immolation Aura are pressed on cooldown around a Fracture into Soul Cleave or Spirit Bomb builder-spender core, held only long enough to avoid overcapping Soul Fragments or Fury. Annihilator adds one gate on top: never enter Metamorphosis at 2 stacks of Voidfall, fish for the third with Fracture and spend it first."
 }

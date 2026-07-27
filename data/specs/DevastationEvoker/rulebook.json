@@ -7,49 +7,42 @@
       "spell_id": 375087,
       "cooldown": 120,
       "duration": 18,
-      "align_with_bloodlust": true,
+      "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Use on cooldown roughly every 2 minutes with Tip the Scales, Eternity Surge, Fire Breath, and your damage potion ready so the window opens with every cooldown chained; press Eternity Surge and Fire Breath inside it to extend the buff via Animosity."
+      "usage_rule": "Send it every 2 minutes on a target that will live 30+ sec, line your potion and on-use trinkets up with it once Rising Fury is at 4+ stacks, and extend the window with empowers while Essence Burst is guaranteed."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 382266,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Always release at empower rank 1, refresh it as soon as the damage over time is refreshable, and stop spending it in the last 6 GCDs before Dragonrage so it is banked to extend the window.",
+      "id_note": "382266 is the observed cast id (67 casts in the sampled parse); the guide and APL reference 357208, with 357209 / 1283718 / 1283719 as further same-name variants."
     },
     {
       "name": "Eternity Surge",
       "spell_id": 359073,
       "cooldown": 30,
       "align_with_bloodlust": false,
-      "opener_priority": 4,
-      "usage_rule": "Empower at Rank 1 in single target and most AoE, cast on cooldown and prioritized inside Dragonrage to extend the buff; use Tip the Scales on it for an instant max-rank cast during the burst window."
-    },
-    {
-      "name": "Fire Breath",
-      "spell_id": 357208,
-      "cooldown": 30,
-      "align_with_bloodlust": false,
-      "opener_priority": 5,
-      "usage_rule": "Empower at Rank 1 and keep the damage-over-time debuff applied, refreshing only when it has 30% or less duration remaining; it has two charges so weave both in and around Dragonrage to feed Consume Flame explosions."
-    },
-    {
-      "name": "Deep Breath",
-      "spell_id": 357210,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "As Scalecommander use on cooldown (including just before Dragonrage), cancel the animation the moment you make contact using the cancel macro, and always fly from minimum range unless you need it for movement; non-Scalecommander builds only press it with Imminent Destruction taken."
+      "usage_rule": "Rank 1 in single target; in AoE match the rank to the pack, 2/4/6 targets per empower level, or fire it instantly with Tip the Scales, then spend the Azure Sweep charges it grants.",
+      "id_note": "359073 is the guide's id and the only Eternity Surge id carrying a parse-cast source; 359077 and 382411 are same-name variants seen only in the APL."
     },
     {
       "name": "Tip the Scales",
       "spell_id": 370553,
       "cooldown": 120,
       "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Off-global cooldown, use inside Dragonrage to instantly cast a max-rank Eternity Surge (preferred) so the empower lands quickly during burst; only use it on Fire Breath as Scalecommander, never as Flameshaper."
+      "usage_rule": "Hold it for Dragonrage and spend it on whichever empower comes up first inside the window, usually Eternity Surge at maximum rank.",
+      "talent_gated": true
     },
     {
-      "name": "Fury of the Aspects",
-      "spell_id": 390386,
-      "cooldown": 300,
-      "duration": 40,
-      "align_with_bloodlust": true,
-      "usage_rule": "This is your Bloodlust effect and is off the global cooldown; coordinate with the group and line it up with Dragonrage, and do not press it if another Bloodlust or Heroism is already planned since it applies Exhaustion."
+      "name": "Deep Breath",
+      "spell_id": 357210,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Scalecommander only: open with it and cancel the moment you reach the target, then send the Strafing Run follow-up 7-8 sec later once you have spent at least two Imminent Destruction charges, and in AoE only once the pack is grouped.",
+      "talent_gated": true,
+      "id_note": "357210 is the targeted castable version; 353759, 433874 and 1236943 are same-name variants referenced by the APL."
     }
   ],
   "defensives": [
@@ -58,82 +51,88 @@
       "spell_id": 363916,
       "cooldown": 90,
       "duration": 12,
-      "usage_rule": "Press before a known burst of incoming damage to cut damage taken by 30%; it has two charges so use it freely on telegraphed hits."
-    },
-    {
-      "name": "Renewing Blaze",
-      "spell_id": 374348,
-      "cooldown": 90,
-      "duration": 8,
-      "usage_rule": "Use when health is dropping to recover a large chunk of the damage you take over its duration as healing; pair it with Obsidian Scales for heavy hits."
+      "usage_rule": "Press it ahead of a known damage spike for 30% reduction over 12 sec; with Renewing Blaze it also heals back everything it prevented."
     },
     {
       "name": "Zephyr",
       "spell_id": 374227,
       "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Pop ahead of a raid-wide magical or area damage event to grant yourself and nearby allies a damage reduction; this is a group-saving defensive, so call it out."
+      "usage_rule": "Save it for raid-wide area damage: 20% area damage reduction and 30% speed for you and the 4 nearest allies for 8 sec.",
+      "talent_gated": true
+    },
+    {
+      "name": "Verdant Embrace",
+      "spell_id": 360995,
+      "cooldown": 24,
+      "usage_rule": "Instant self-heal after taking a hit, and it primes Ancient Flame and Scarlet Adaptation for your next Living Flame.",
+      "id_note": "360995 is the castable 24 sec version; 361195 shares the name."
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "priority": "high",
-      "description": "Opener: pot, Deep Breath, Dragonrage, empowers",
-      "condition": null,
-      "action": "Pre-cast Living Flame, use your damage potion, then (as Scalecommander) Deep Breath into Dragonrage, Tip the Scales, Eternity Surge, and Fire Breath Rank 1 before channeling Disintegrate; this front-loads every cooldown into the first Dragonrage window."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Tip the Scales empowers inside Dragonrage",
-      "condition": null,
-      "action": "Save Tip the Scales for the Dragonrage window and use it on Eternity Surge for an instant max-rank cast; spending it outside of burst or on Fire Breath wastes a major damage cooldown."
+      "severity": "warning",
+      "description": "Dragonrage into Eternity Surge, then Disintegrate",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [375087, 359073, 356995],
+        "spell_names": ["Dragonrage", "Eternity Surge", "Disintegrate"]
+      },
+      "action": "Pre-cast Living Flame, then open Dragonrage, empowers at rank 1, and only then start chaining Disintegrate. Scalecommander leads with a cancelled Deep Breath before Dragonrage."
     },
     {
       "type": "cd_hold",
-      "priority": "high",
-      "description": "Enter Dragonrage with empowers available",
-      "condition": null,
-      "action": "Plan Fire Breath and Eternity Surge charges so at least two empower casts are ready when Dragonrage begins; you need enough empowers during the window to extend the buff with Animosity to its full duration."
+      "severity": "warning",
+      "description": "Bank Fire Breath and Eternity Surge for Dragonrage",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [382266, 359073],
+        "spell_names": ["Fire Breath", "Eternity Surge"],
+        "anchor_spell_id": 375087,
+        "anchor_spell_name": "Dragonrage"
+      },
+      "action": "With Animosity, stop spending empowers roughly 6 GCDs before Dragonrage. Each empower cast inside the window extends it by 5 sec, which is how you reach 34 sec Dragonrages."
     },
     {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Always be casting; fill downtime",
-      "condition": null,
-      "action": "Never stand idle in combat; spend Essence and Essence Burst with Disintegrate or Pyre, then fill with Living Flame and Azure Strike, using Hover to keep casting while moving."
-    },
-    {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Keep Fire Breath DoT up, refresh at <=30%",
-      "condition": null,
-      "action": "Maintain the Fire Breath damage-over-time debuff on the target at all times and only refresh it once it has 30% or less duration remaining so you do not waste pandemic overlap or Consume Flame fuel."
-    },
-    {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Chain Disintegrate after the penultimate tick",
-      "condition": null,
-      "action": "Recast Disintegrate between its second-to-last tick and the end of the channel to chain without clipping; never interrupt a Mass Disintegrate channel early as you lose buff stacks equal to the ticks clipped."
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Tip the Scales inside Dragonrage",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 370553,
+        "spell_name": "Tip the Scales",
+        "buff_spell_id": 375087,
+        "buff_spell_name": "Dragonrage",
+        "require": "inside"
+      },
+      "action": "Both share a 2 minute cooldown, so never spend Tip the Scales outside Dragonrage. Use it on the first empower up in the window, normally Eternity Surge at max rank."
     },
     {
       "type": "aoe_switch",
-      "priority": "medium",
-      "description": "Cast Pyre at 3+ targets with Charged Blast",
-      "condition": null,
-      "action": "At 3 or more targets, spend Essence on Pyre once you reach about 12 stacks of Charged Blast (or at 4+ targets regardless), and avoid casting Pyre in the few seconds before Dragonrage so its three free Pyres inherit your stacks."
+      "severity": "warning",
+      "description": "Pyre replaces Disintegrate on 3+ targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 357211,
+        "spell_name": "Pyre",
+        "bound": "min"
+      },
+      "action": "Spend Essence on Pyre from 3 targets as Flameshaper and from 4 as Scalecommander. Below that, and on any priority target, Disintegrate is the spender."
     },
     {
-      "type": "positioning",
-      "priority": "low",
-      "description": "Use Deep Breath from minimum range",
-      "condition": null,
-      "action": "Always start Deep Breath at minimum range to the target and cancel the flight animation on contact with the cancel macro; gain height first when terrain is uneven so you do not get stopped mid-flight."
+      "type": "rotation",
+      "severity": "info",
+      "description": "Essence Burst spent on Disintegrate or Pyre",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 359618,
+        "buff_spell_name": "Essence Burst",
+        "spend_spell_ids": [356995, 357211],
+        "spend_spell_names": ["Disintegrate", "Pyre"]
+      },
+      "action": "Cash Essence Burst into a free Disintegrate, or Pyre in AoE, before it expires. Inside Dragonrage every filler procs it, so spend it rather than stacking fillers."
     }
   ],
-  "source_summary": "Devastation Evoker revolves around a single two-minute burst window: Dragonrage, into which you stack Tip the Scales, Eternity Surge, and Fire Breath while extending its duration with Animosity, and align your damage potion and Bloodlust. Outside the window, cooldowns are used on cooldown while you build and spend Essence and Essence Burst, and the spec's single biggest damage lever is simply never going idle, using Hover to keep casting through movement. Scalecommander additionally folds Deep Breath into the rotation and tracks Mass Disintegrate, while keeping the Fire Breath debuff applied to fuel Consume Flame.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:03:18"
+  "source_summary": "Dragonrage is the spec's one major cooldown and the whole rotation orbits it: send it every 2 minutes, bank Fire Breath and Eternity Surge for the last few GCDs beforehand so Animosity can extend the window, and spend Tip the Scales inside it on an instant maximum-rank empower. Empowers go out at rank 1 in single target, while Eternity Surge scales its rank to the pack size in AoE and Pyre takes over from Disintegrate as the Essence spender at 3 to 4 targets. Scalecommander adds Deep Breath on cooldown with a cancelled opener cast and a Strafing Run follow-up, and both hero trees lean on Living Flame and Azure Sweep as fillers to keep Essence Burst flowing."
 }

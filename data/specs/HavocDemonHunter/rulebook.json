@@ -3,29 +3,32 @@
   "spec_icon": "ability_demonhunter_specdps",
   "major_cooldowns": [
     {
-      "name": "Eye Beam",
-      "spell_id": 198013,
-      "cooldown": 40,
-      "duration": 2,
+      "name": "Metamorphosis",
+      "spell_id": 200166,
+      "cooldown": 120,
+      "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Press on cooldown to enter the Demonic burst window; with Inertia prep Vengeful Retreat and a movement ability a global beforehand, and never clip the channel with your next global when talented into Blind Fury."
+      "opener_priority": 5,
+      "usage_rule": "Press it only once Blade Dance and Eye Beam are both already on cooldown so Chaotic Transformation resets them, with no Annihilation or Death Sweep Demonsurge procs left unspent, entering on as much Fury as you can hold and leaving with as little as possible.",
+      "id_note": "200166 is the cast id observed in the sampled parse; 191427 is the 2 min talent/tooltip id and 162264 is the demon form aura."
     },
     {
-      "name": "Metamorphosis",
-      "spell_id": 191427,
-      "cooldown": 180,
-      "duration": 30,
-      "align_with_bloodlust": true,
-      "usage_rule": "Cast only after Eye Beam is on cooldown and both Demonsurge empowerments and both Immolation Aura charges are spent, since Chaotic Transformation and Violent Transformation reset those cooldowns; do not macro on-use trinkets directly into Meta because much of the burst happens before it."
+      "name": "Eye Beam",
+      "spell_id": 198013,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Cast it as often as possible for the Demonic window and Cycle of Hatred stacks, which ramp the cooldown down to 22.5 and then 20 seconds, and only commit when you can finish the full channel since the Furious Gaze and Eternal Hunt follow-ups are lost otherwise.",
+      "id_note": "Demonic Intensity replaces it with Abyssal Gaze (452497) during Metamorphosis; both share this cooldown."
     },
     {
       "name": "The Hunt",
       "spell_id": 370965,
-      "cooldown": 90,
+      "cooldown": 60,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "As Fel-Scarred press on cooldown for raw damage; as Aldrachi Reaver always spend any in-hand Reaver's Glaive first and wait until Eye Beam is up within 10 seconds before casting, as it also procs Inertia when talented."
+      "opener_priority": 4,
+      "usage_rule": "Send it every minute outside Essence Break windows and follow it straight into Eye Beam to spend the Empowered Eye Beam buff, holding it on Aldrachi Reaver until any active Reaver's Glaive is consumed.",
+      "id_note": "base_cd_s is 90; the Eternal Hunt apex talent taken by both hero trees cuts it to 60, which matches the 8 casts in the sampled parse."
     },
     {
       "name": "Essence Break",
@@ -33,8 +36,8 @@
       "cooldown": 40,
       "duration": 4,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Cast while already in Metamorphosis form right after Eye Beam to stack damage amplifiers, then spend only Death Sweep and Annihilation until the debuff falls; talent-gated so absent casts are normal for builds that drop it."
+      "usage_rule": "Open the 4 second window inside Metamorphosis at 35 or more Fury with Blade Dance about to come up, then fill every global with Death Sweep and Annihilation - Eternal Hunt buys you two Death Sweeps if you cast it after Eye Beam.",
+      "talent_gated": true
     },
     {
       "name": "Immolation Aura",
@@ -42,15 +45,20 @@
       "cooldown": 30,
       "duration": 6,
       "align_with_bloodlust": false,
-      "usage_rule": "Keep on cooldown for Fury generation and Flamebound/Ragefire damage; with A Fire Inside it gains a second charge, so avoid overcapping charges before burst windows."
+      "opener_priority": 1,
+      "usage_rule": "Keep it rolling on 3 or more targets for Ragefire and as backup Fury generation, never sit at 2 charges with A Fire Inside, and drain to zero charges before Metamorphosis since Demonic Intensity refunds both for a double Consuming Fire.",
+      "id_note": "258920 is the cast id; 427912 is the self aura. A Fire Inside cuts the cooldown by 6 and adds a second charge."
     },
     {
-      "name": "Vengeful Retreat",
-      "spell_id": 198793,
-      "cooldown": 20,
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
+      "cooldown": 120,
+      "duration": 20,
       "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Fire it under 2 seconds before Eye Beam when Metamorphosis is less than 6 seconds out, or alongside The Hunt when Eye Beam is more than 6 seconds away, and never inside an Essence Break window.",
       "talent_gated": true,
-      "usage_rule": "Line up to every Eye Beam to proc Initiative, and with Inertia press it roughly a global before Eye Beam then follow with Felblade or Fel Rush to trigger the damage amp; talent-gated since only momentum-style builds weave it for damage."
+      "id_note": "On-use trinket, not an ability; talent_gated so players without it are not flagged."
     }
   ],
   "defensives": [
@@ -59,83 +67,107 @@
       "spell_id": 198589,
       "cooldown": 60,
       "duration": 10,
-      "usage_rule": "Press before predictable physical or magical burst for a 20% damage reduction plus 50% dodge against physical attacks; its short cooldown lets you use it freely on incoming tankbuster-style hits."
+      "usage_rule": "25% damage reduction for 10 seconds, so pre-press it for scripted raid damage that lands inside a burst window you do not want to walk out of."
     },
     {
       "name": "Darkness",
       "spell_id": 196718,
       "cooldown": 300,
       "duration": 8,
-      "usage_rule": "Drop on the raid before a heavy AoE magical or avoidable damage event so allies inside gain a chance to fully avoid each hit; coordinate timing with other raid cooldowns."
-    },
-    {
-      "name": "Netherwalk",
-      "spell_id": 196555,
-      "cooldown": 180,
-      "duration": 5,
-      "talent_gated": true,
-      "usage_rule": "Use as a 5-second full damage immunity to soak or survive a lethal mechanic; talent-gated, so it replaces Blur only on builds that take it."
+      "usage_rule": "Drop the 8 second avoidance bubble on a known heavy raid-wide hit and coordinate the placement with the healers, since it covers everyone standing in it.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "priority": "critical",
-      "description": "Open Eye Beam then The Hunt before Meta",
-      "condition": null,
-      "action": "Open with Eye Beam followed by The Hunt to land the full Demonic burst window, then chain Death Sweep and Annihilation; cast Metamorphosis only after Eye Beam is on cooldown so Chaotic Transformation does not waste the reset."
-    },
-    {
-      "type": "cd_hold",
-      "priority": "high",
-      "description": "Hold Metamorphosis until empowerments spent",
-      "condition": null,
-      "action": "Do not cast Metamorphosis until Eye Beam is on cooldown, both Death Sweep and Annihilation Demonsurge empowerments are used, and both Immolation Aura charges are down; casting early wastes the Chaotic and Violent Transformation resets."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Essence Break right after Eye Beam",
-      "condition": null,
-      "action": "Cast Essence Break only while in Metamorphosis form and immediately after Eye Beam, then use exclusively Death Sweep and Annihilation until the 4-second debuff expires to capture the full amplified window."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Vengeful Retreat lines up with Eye Beam",
-      "condition": null,
-      "action": "Press Vengeful Retreat about one global before Eye Beam comes off cooldown to feed Initiative and, on Inertia builds, follow with Felblade or Fel Rush to proc the damage amp; if you desync, hold it for the next Eye Beam."
+      "severity": "warning",
+      "description": "Open Eye Beam into The Hunt, then Metamorphosis",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          198013,
+          370965,
+          200166
+        ],
+        "spell_names": [
+          "Eye Beam",
+          "The Hunt",
+          "Metamorphosis"
+        ]
+      },
+      "action": "Pre-pull Immolation Aura, then open Eye Beam into The Hunt and Felblade, and only press Vengeful Retreat straight into Metamorphosis once Eye Beam and Blade Dance are both on cooldown."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Spend Reaver's Glaive before The Hunt",
-      "condition": null,
-      "action": "As Aldrachi Reaver always throw an in-hand Reaver's Glaive before casting The Hunt, since The Hunt only generates a new glaive when you do not already have one; spending both empowerments first avoids overwriting them."
+      "severity": "warning",
+      "description": "Eye Beam spent before every Metamorphosis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 200166,
+        "spell_name": "Metamorphosis",
+        "required_spell_id": 198013,
+        "required_spell_name": "Eye Beam",
+        "position": "before"
+      },
+      "action": "Spend Eye Beam and Blade Dance before you press Metamorphosis - Chaotic Transformation resets both, so pressing it early throws away two free casts."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "The Hunt into an empowered Eye Beam",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 370965,
+        "spell_name": "The Hunt",
+        "required_spell_id": 198013,
+        "required_spell_name": "Eye Beam",
+        "position": "after"
+      },
+      "action": "Follow every The Hunt with Eye Beam to cash in the Empowered Eye Beam buff Eternal Hunt grants, which doubles that beam's damage and widens it."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Essence Break only inside Metamorphosis",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 258860,
+        "spell_name": "Essence Break",
+        "buff_spell_id": 162264,
+        "buff_spell_name": "Metamorphosis",
+        "require": "inside"
+      },
+      "action": "Hold Essence Break for demon form at 35 or more Fury; the bonus Haste fits roughly 4 casts into the 4 second window, and Eternal Hunt lets two of them be Death Sweep."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Avoid Fury waste, keep buttons on cooldown",
-      "condition": null,
-      "action": "Spend Chaos Strike or Annihilation to avoid Fury overcap while always reserving enough Fury for Blade Dance and Death Sweep on cooldown; keep Immolation Aura, Eye Beam, and Felblade rolling and drop to Throw Glaive or Fel Rush only as filler."
+      "severity": "info",
+      "description": "Vengeful Retreat before every Eye Beam",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 198013,
+        "spell_name": "Eye Beam",
+        "required_spell_id": 198793,
+        "required_spell_name": "Vengeful Retreat",
+        "position": "before"
+      },
+      "action": "Time Vengeful Retreat right before each Eye Beam window and return with Felblade, or Fel Rush if it is down, so Initiative and Inertia are both live for the beam."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "Do not clip Eye Beam with Blind Fury",
-      "condition": null,
-      "action": "When talented into Blind Fury, let the Eye Beam channel finish instead of spamming the button; clipping it early loses Eye Beam damage and prevents Furious Gaze from triggering."
-    },
-    {
-      "type": "aoe_switch",
-      "priority": "medium",
-      "description": "Spend Rending Strike before Blade Dance in AoE",
-      "condition": null,
-      "action": "As Aldrachi Reaver at 2 or more targets, when Rending Strike and Glaive Flurry are both up cast Chaos Strike to consume Rending Strike before pressing Blade Dance, maximizing Fury of the Aldrachi and Wounded Quarry funnel damage."
+      "severity": "info",
+      "description": "Metamorphosis entered with pooled Fury",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 200166,
+        "spell_name": "Metamorphosis",
+        "resource_type": 17,
+        "resource_name": "fury",
+        "bound": "min"
+      },
+      "action": "Bank Fury going into Metamorphosis so you can spend aggressively on Annihilation and Death Sweep from the first global, and aim to exit demon form near empty."
     }
   ],
-  "source_summary": "Havoc Demon Hunter follows a priority list built around chaining short cooldowns into the Eye Beam Demonic window, where Annihilation and Death Sweep replace your spenders. Metamorphosis is held until Eye Beam, both Immolation Aura charges, and the Demonsurge empowerments are spent so Chaotic and Violent Transformation reset them, and Essence Break is layered on top after Eye Beam for maximum amplification. Vengeful Retreat is synced to every Eye Beam for Inertia and Initiative, while The Hunt is pressed on cooldown with Reaver's Glaive spent first on Aldrachi Reaver builds.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:09:20"
+  "source_summary": "Havoc is built around a 2 minute Metamorphosis burst that is only pressed with Blade Dance and Eye Beam already on cooldown, so Chaotic Transformation refunds both, and around the 20 second Eye Beam cycle that Cycle of Hatred ramps from 30 down to 20 seconds. The Hunt is a 1 minute enabler whose Eternal Hunt buff must be spent on the next Eye Beam, Essence Break is a 4 second window held for demon form and filled with Death Sweep and Annihilation, and Vengeful Retreat is timed just before each beam to carry Initiative and Inertia into it. Immolation Aura is kept off 2 charges for Ragefire and drained to zero before Metamorphosis so Demonic Intensity can refill it into Consuming Fire."
 }

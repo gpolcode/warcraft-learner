@@ -5,28 +5,48 @@
     {
       "name": "Dancing Rune Weapon",
       "spell_id": 49028,
-      "cooldown": 120,
+      "cooldown": 90,
       "duration": 12,
-      "align_with_bloodlust": true,
-      "opener_priority": 4,
-      "usage_rule": "Press on cooldown after Reaper's Mark in the opener, then keep it rolling on cooldown throughout the fight; cast Marrowrend inside it to bank bonus Bone Shield and use it as the primary burst and survivability window."
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Send it every 90 seconds, always after Reaper's Mark, and line it up with burn phases together with a potion; never sit on it longer than 15 seconds for its parry.",
+      "id_note": "Cast id. Guide states Reaper's Mark and Dancing Rune Weapon align every 90 seconds; tooltip base is 120s. Duration 12s with Everlasting Bond, 8s base. Aura id is 81256."
     },
     {
       "name": "Reaper's Mark",
       "spell_id": 439843,
       "cooldown": 45,
       "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "talent_gated": true,
-      "usage_rule": "As Deathbringer, cast on cooldown ahead of Dancing Rune Weapon so the two stay synced for the whole fight, and do not run yourself out of runes around the 45-second mark when it is about to return; talent-gated to the Deathbringer hero tree."
+      "opener_priority": 1,
+      "usage_rule": "Deathbringer only: cast on cooldown with Death and Decay already ticking under the target, and always immediately before Dancing Rune Weapon so the rune weapons do not waste duplicated casts.",
+      "id_note": "Cast id, not pressed in the sampled San'layn parse. Reaper's Onslaught cuts the 45s base to 30s.",
+      "talent_gated": true
     },
     {
       "name": "Consumption",
-      "spell_id": 274156,
+      "spell_id": 1263824,
       "cooldown": 45,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Use on cooldown when talented, empowering it fully in AoE for maximum value; talent-gated, so it is normal to have zero casts on builds that do not take it."
+      "usage_rule": "Empower to rank 1 and press it on cooldown while Dancing Rune Weapon is down; skip it when Blood Plague has more than 40 seconds left and no Dance of Midnight proc is active.",
+      "id_note": "Cast id, not pressed in the sampled parse.",
+      "talent_gated": true
+    },
+    {
+      "name": "Raise Dead",
+      "spell_id": 46585,
+      "cooldown": 120,
+      "duration": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fire it off the global on cooldown, macroed with Reaper's Mark in the opener as Deathbringer."
+    },
+    {
+      "name": "Death and Decay",
+      "spell_id": 43265,
+      "cooldown": 30,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Pre-place it before the pull with no target selected, keep its buff up whenever you are fighting 4 or more targets, spend every Crimson Scourge proc with it, and get it ticking under the target before Reaper's Mark.",
+      "id_note": "Cast id; the standing buff aura is 188290."
     }
   ],
   "defensives": [
@@ -35,111 +55,158 @@
       "spell_id": 55233,
       "cooldown": 90,
       "duration": 10,
-      "usage_rule": "Use proactively ahead of heavy incoming damage to boost your maximum health and the healing of your Death Strikes; it is your highest-impact defensive, so keep it close to on cooldown rather than hoarding it."
+      "usage_rule": "Plan it onto a specific hit for 30% extra maximum health and 30% increased healing received, and cast Anti-Magic Shell or Tombstone under it since those shields stay 30% larger after it fades."
     },
     {
       "name": "Icebound Fortitude",
       "spell_id": 48792,
-      "cooldown": 180,
+      "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Press before a large physical or magical hit for a flat 30% damage reduction and stun immunity; reserve it for tankbusters or moments Vampiric Blood alone cannot cover."
+      "usage_rule": "Save its 30% flat reduction for pre-planned tank busters, stun mechanics, and any ability that scales off raw damage taken before absorbs and self-healing."
     },
     {
       "name": "Anti-Magic Shell",
       "spell_id": 48707,
       "cooldown": 60,
       "duration": 5,
-      "usage_rule": "Use to absorb a telegraphed burst of magic damage and to generate Runic Power from the absorbed damage; press it just before the magic hit lands rather than reactively."
-    },
-    {
-      "name": "Rune Tap",
-      "spell_id": 194679,
-      "cooldown": 25,
-      "duration": 3,
-      "usage_rule": "Spend a charge for a 20% damage reduction on predictable melee swings or smaller hits; its short recharge lets you use it frequently to smooth out steady tank damage."
+      "usage_rule": "Time it onto the magic hit whose debuff you want to avoid, since a full absorb blocks the application, and make sure incidental magic damage is not eating the shell first.",
+      "id_note": "Cast id. Anti-Magic Barrier cuts the 60s base to 40s and extends the 5s duration by 40%."
     },
     {
       "name": "Lichborne",
       "spell_id": 49039,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Use to gain immunity to charm, fear, and sleep effects, or as an extra layer of survivability when combined with Death Coil self-healing during dangerous windows."
+      "usage_rule": "Press it for the 10 second Charm, Fear and Sleep immunity; the added Leech is a bonus, not the reason."
     },
     {
       "name": "Anti-Magic Zone",
       "spell_id": 51052,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Drop it on planned magic raid damage and count it in your own cooldown plan: it is a 15% magic reduction for you as well as the group.",
+      "talent_gated": true
+    },
+    {
+      "name": "Death Pact",
+      "spell_id": 48743,
       "cooldown": 120,
+      "usage_rule": "Emergency heal for 50% of your maximum health; it absorbs incoming healing for 15 seconds afterwards, so do not press it into a window where you need the healers.",
+      "talent_gated": true
+    },
+    {
+      "name": "Tombstone",
+      "spell_id": 219809,
+      "cooldown": 60,
       "duration": 8,
-      "usage_rule": "Drop on the raid before a wide magic-damage event to reduce incoming magic damage for everyone standing inside; coordinate placement with your group so allies stack in it."
+      "usage_rule": "Burn 5 Bone Shield charges for a 30% maximum health absorb, ideally under Vampiric Blood, and only when you can rebuild the charges straight after.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
-      "type": "rotation",
-      "priority": "critical",
-      "description": "Spend Runic Power on Death Strike, never overcap",
-      "condition": null,
-      "action": "Cast Death Strike whenever you need the healing or sit above roughly 75 Runic Power so you never overcap; banked Runic Power converts directly into survivability, so wasting it is the single biggest mistake the spec can make."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Keep at least 5 Bone Shield charges up",
-      "condition": null,
-      "action": "Maintain at least 5 charges of Bone Shield at all times and refresh with Marrowrend (or Death's Caress at range) before it drops; on Deathbringer let Exterminate charges handle most refreshes, but add a generator near the halfway point between Dancing Rune Weapon casts if needed."
-    },
-    {
       "type": "opener",
-      "priority": "high",
-      "description": "Opener: Death's Caress, pre-place D&D, then Mark and DRW",
-      "condition": null,
-      "action": "Pull with Death's Caress, pre-place Death and Decay while it is in flight, then cast Reaper's Mark (Deathbringer) followed immediately by Dancing Rune Weapon, a Blood Boil, and a Death Strike before settling into normal priority."
+      "severity": "warning",
+      "description": "Death's Caress into Dancing Rune Weapon at the pull",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [195292, 49028],
+        "spell_names": ["Death's Caress", "Dancing Rune Weapon"]
+      },
+      "action": "Pre-place Death and Decay with no target selected, open with Death's Caress just before the pull for 2 Bone Shield charges and instant Blood Plague, then send Dancing Rune Weapon."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Keep Reaper's Mark cast just before Dancing Rune Weapon",
+      "severity": "warning",
+      "description": "Reaper's Mark before Dancing Rune Weapon",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 49028,
-        "spell_name": "Dancing Rune Weapon",
-        "required_spell_id": 439843,
-        "required_spell_name": "Reaper's Mark",
-        "window_s": 6,
+        "spell_id": 439843,
+        "spell_name": "Reaper's Mark",
+        "required_spell_id": 49028,
+        "required_spell_name": "Dancing Rune Weapon",
+        "position": "after"
+      },
+      "action": "The two align every 90 seconds: cast Reaper's Mark first, then Dancing Rune Weapon, so you do not waste duplicated casts."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Death and Decay before Reaper's Mark",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 439843,
+        "spell_name": "Reaper's Mark",
+        "required_spell_id": 43265,
+        "required_spell_name": "Death and Decay",
         "position": "before"
       },
-      "action": "As Deathbringer, cast Reaper's Mark immediately before Dancing Rune Weapon so the two cooldowns return together and stay synced for the rest of the fight; do not desync them by firing Dancing Rune Weapon first."
+      "action": "Get Death and Decay ticking under the target before Reaper's Mark; it is the largest guaranteed source of stacks before the mark detonates."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Sync racials and potion with Dancing Rune Weapon",
-      "condition": null,
-      "action": "Use your damage racials (Blood Fury, Berserking, Fireblood, Ancestral Call) and your combat potion when Dancing Rune Weapon comes off cooldown so your burst stacks inside the parry window, or dump them in the final seconds of the fight."
-    },
-    {
-      "type": "positioning",
-      "priority": "medium",
-      "description": "Stand in your own Death and Decay",
-      "condition": null,
-      "action": "Cast Death and Decay where you intend to tank and stay inside it to keep its buff active; refresh it whenever you are not currently affected by it or gain a Crimson Scourge proc, especially in AoE where leaving it is a real loss."
-    },
-    {
-      "type": "aoe_switch",
-      "priority": "medium",
-      "description": "Lead with Blood Boil and Death and Decay in AoE",
-      "condition": null,
-      "action": "On multiple targets, prioritize keeping Death and Decay down and use Blood Boil to spread Blood Plague to every target before filling with Heart Strike; fully empower Consumption when talented for its AoE burst."
+      "severity": "critical",
+      "description": "Bone Shield kept up by Marrowrend and Death's Caress",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 195181,
+        "aura_spell_name": "Bone Shield",
+        "on": "self"
+      },
+      "action": "Never let the 30 second buff lapse: refresh with Marrowrend below 6 charges, or Death's Caress when you are out of melee range, and stay at 5 or more charges for the Ossuary discount."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "Use Death Grip to refresh Bone Shield when high",
-      "condition": null,
-      "action": "When you are already at 8 or more Bone Shield charges and can safely taunt the target, use Death Grip as an effective full Bone Shield refresh instead of spending a rune on Marrowrend."
+      "severity": "warning",
+      "description": "Coagulopathy refreshed by Death Strike",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 391481,
+        "aura_spell_name": "Coagulopathy",
+        "on": "self"
+      },
+      "action": "Press Death Strike before Coagulopathy expires to keep the stack rolling; each of its 4 stacks adds 10% Blood Plague damage over 15 seconds."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Death Strike spent at high Runic Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 49998,
+        "spell_name": "Death Strike",
+        "resource_type": 6,
+        "resource_name": "runic power",
+        "bound": "min"
+      },
+      "action": "Spend Death Strike above 70 Runic Power, or earlier when you need the heal or Coagulopathy is about to fade; never idle near the cap."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Crimson Scourge procs spent on Death and Decay",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 81141,
+        "buff_spell_name": "Crimson Scourge",
+        "spend_spell_ids": [43265],
+        "spend_spell_names": ["Death and Decay"]
+      },
+      "action": "Dump every Crimson Scourge proc into a free Death and Decay; inside Gift of the San'layn hold it until Visceral Strength has dropped."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Vampiric Strike pressed on every proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 433899,
+        "buff_spell_name": "Vampiric Strike",
+        "spend_spell_ids": [433895],
+        "spend_spell_names": ["Vampiric Strike"]
+      },
+      "action": "Press the converted Heart Strike as soon as the proc lands: it refreshes Essence of the Blood Queen and extends Blood Plague by 3 seconds through Infliction of Sorrow."
     }
   ],
-  "source_summary": "Blood Death Knight has a single core offensive cooldown in Dancing Rune Weapon, which doubles as a major survivability and burst window and is kept on cooldown for the whole fight. The spec revolves around converting runes into Runic Power and spending that Runic Power on Death Strike for self-healing while maintaining Bone Shield, with Deathbringer builds syncing Reaper's Mark to Dancing Rune Weapon. Defensive cooldowns are used proactively and frequently rather than hoarded, and damage racials and potions are stacked into the Dancing Rune Weapon window.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:01:54"
+  "source_summary": "Blood is built around a 90 second Dancing Rune Weapon window that carries both hero trees: Deathbringer opens Reaper's Mark into Dancing Rune Weapon with Death and Decay already ticking, while San'layn treats the Gift of the San'layn window as a near-pure Death Strike and Vampiric Strike chain after a single Blood Boil. Around it the priority is maintenance and proc spending: Bone Shield at 5 or more charges, Coagulopathy refreshed by Death Strike above 70 Runic Power, Crimson Scourge dumped into a free Death and Decay, and Consumption empowered to rank 1 whenever the rune weapon is down. Defensive cooldowns are planned per mechanic rather than pressed reactively, with Vampiric Blood inflating Anti-Magic Shell and Tombstone shields cast under it and Icebound Fortitude reserved for raw damage-taken mechanics."
 }

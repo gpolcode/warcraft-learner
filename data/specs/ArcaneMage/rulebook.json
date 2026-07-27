@@ -9,7 +9,8 @@
       "duration": 15,
       "align_with_bloodlust": true,
       "opener_priority": 1,
-      "usage_rule": "Open the burst window with Arcane Surge; it spends all your mana for a 35% spell damage buff and a massive mana refund, so never sit on it because holding it starves the rest of your rotation of mana."
+      "usage_rule": "Your primary cooldown: build to 20 Arcane Salvo stacks with Arcane Blast, then send it and take the 35% spell damage and the mana refill for 15 seconds, delaying it only for an imminent Time Warp, a burst mechanic, or incoming adds.",
+      "id_note": "365350 is the cast; 365362 is the buff aura. Base cooldown listed as 1.5 min in the tooltip, guide states 90 seconds."
     },
     {
       "name": "Touch of the Magi",
@@ -18,130 +19,151 @@
       "duration": 12,
       "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Cast Touch of the Magi inside the Arcane Surge window (mid-air after an Arcane Barrage as Spellslinger, or late in Surge to cover Arcane Soul as Sunfury), then dump as much damage as possible into the target before the debuff detonates."
-    },
-    {
-      "name": "Evocation",
-      "spell_id": 12051,
-      "cooldown": 90,
-      "duration": 2,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use Evocation only when you are out of mana, have no procs to spend, and Arcane Surge is not coming up shortly, since Surge will refund your mana for free."
+      "usage_rule": "Apply it right after Arcane Surge and again the moment it comes back 45 seconds later, always on a target that survives all 12 seconds, since it has exactly half Arcane Surge's cooldown and any delay pushes your next Surge back.",
+      "id_note": "321507 is the current cast id; 210824 and 210833 share the name and were not observed."
     },
     {
       "name": "Presence of Mind",
       "spell_id": 205025,
-      "cooldown": 60,
-      "duration": 10,
+      "cooldown": 45,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Use Presence of Mind to fire instant Arcane Blasts during heavy movement or to squeeze extra casts into a burst window; talent-gated, so zero casts is fine if you did not take it."
+      "usage_rule": "Press it to keep casting Arcane Blast while moving, or to rebuild from under 2 Arcane Charges when you have no Clearcasting and Arcane Orb is not close to a charge.",
+      "talent_gated": true
+    },
+    {
+      "name": "Evocation",
+      "spell_id": 12051,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Channel it only under 10% mana with Arcane Surge down, Touch of the Magi not active and Arcane Surge more than 10 seconds away, and cancel the channel once you are back near full.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mirror Image",
+      "spell_id": 55342,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast it just before the pull so the images are free damage during your opener, and in combat to dump threat or soak a hit.",
+      "talent_gated": true
+    },
+    {
+      "name": "Time Warp",
+      "spell_id": 80353,
+      "cooldown": 300,
+      "duration": 40,
+      "align_with_bloodlust": false,
+      "usage_rule": "Follow the raid's assigned timing; with no call, send it right after combat starts so it covers everyone's opening cooldowns, but only when targets stay up for the full 40 seconds.",
+      "talent_gated": true
     }
   ],
   "defensives": [
     {
-      "name": "Ice Block",
-      "spell_id": 45438,
-      "cooldown": 240,
-      "duration": 10,
-      "usage_rule": "Press Ice Block to fully immune a lethal hit or to drop a dangerous debuff; it stuns you so use it only when you can afford to stop casting."
+      "name": "Prismatic Barrier",
+      "spell_id": 235450,
+      "cooldown": 30,
+      "duration": 60,
+      "usage_rule": "Keep it rolling ahead of magic damage: it absorbs a chunk of your health and cuts magic damage taken by 15% for a full minute."
     },
     {
       "name": "Alter Time",
       "spell_id": 342245,
       "cooldown": 60,
       "duration": 10,
-      "usage_rule": "Activate Alter Time before a large incoming hit to rewind back to your starting health and position when it expires, or double-tap it as a short mobility blink."
+      "usage_rule": "Set it at full health before a known hit and recast within 10 seconds to snap back to that health and position.",
+      "id_note": "342245 is the initial cast with the 1 min cooldown; 342247 is the return cast, 342246 the aura."
     },
     {
       "name": "Greater Invisibility",
-      "spell_id": 110959,
+      "spell_id": 110960,
       "cooldown": 120,
-      "duration": 12,
-      "usage_rule": "Use Greater Invisibility to wipe threat, drop targeted mechanics, and gain a 60% damage reduction for several seconds after the fade."
+      "duration": 20,
+      "usage_rule": "Drops all threat and makes you untargetable for 20 seconds, so use it to shed a stacking debuff or an add that has fixated you.",
+      "id_note": "110960 is the id observed in Casts; the 120 s base cooldown comes from the 110959 row."
     },
     {
-      "name": "Mirror Image",
-      "spell_id": 55342,
-      "cooldown": 120,
-      "duration": 40,
-      "talent_gated": true,
-      "usage_rule": "Summon Mirror Image to reduce damage taken while the copies are active; talent-gated, so having zero casts is normal if you did not take it."
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Full immunity for 10 seconds for a hit that would otherwise kill you, accepting that you cannot cast or move during it.",
+      "talent_gated": true
     },
     {
-      "name": "Prismatic Barrier",
-      "spell_id": 235450,
-      "cooldown": 25,
-      "duration": 60,
-      "usage_rule": "Keep Prismatic Barrier up as a must-cast absorb shield; its cast time is only 0.5s now, so refresh it proactively before predictable magic damage."
+      "name": "Ice Cold",
+      "spell_id": 414658,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Takes 70% off all damage for 6 seconds while you keep casting, which is the pick for scripted raid damage you have to stand in.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "priority": "critical",
-      "description": "Open with Arcane Surge then Touch of the Magi",
-      "condition": null,
-      "action": "Pop stat trinkets and potions, cast Arcane Surge, then cast Arcane Barrage and follow it with Touch of the Magi mid-air so Touch lands inside the Surge buff window."
+      "severity": "warning",
+      "description": "Open Arcane Blast, Arcane Surge, Touch of the Magi",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [30451, 365350, 321507],
+        "spell_names": ["Arcane Blast", "Arcane Surge", "Touch of the Magi"]
+      },
+      "action": "Build to 20 Arcane Salvo stacks with Arcane Blast, fire any 15 second or longer stat effects, then Arcane Surge and Touch of the Magi. Skip the Salvo build only when the pull demands instant burst."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Touch of the Magi inside Arcane Surge",
+      "severity": "critical",
+      "description": "Touch of the Magi follows every Arcane Surge",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 321507,
-        "spell_name": "Touch of the Magi",
-        "required_spell_id": 365350,
-        "required_spell_name": "Arcane Surge",
-        "window_s": 15
+        "spell_id": 365350,
+        "spell_name": "Arcane Surge",
+        "required_spell_id": 321507,
+        "required_spell_name": "Touch of the Magi",
+        "position": "after"
       },
-      "action": "Always line your first Touch of the Magi up with the Arcane Surge window so both cooldowns detonate together; only the off-Surge 45-second Touch is cast on its own."
+      "action": "Cast Touch of the Magi inside every Arcane Surge window so the 12 second accumulation runs under the 35% damage buff, then Arcane Barrage into it with about 5 seconds of Surge left."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Never sit on Arcane Surge or Touch of the Magi",
-      "condition": null,
-      "action": "Send Arcane Surge and Touch of the Magi as close to on cooldown as possible; both are short cooldowns and holding them starves your mana and Arcane Salvo, cascading into lost damage."
+      "severity": "critical",
+      "description": "Arcane Barrage at 4 Arcane Charges",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 44425,
+        "spell_name": "Arcane Barrage",
+        "resource_type": 16,
+        "resource_name": "arcane charges",
+        "bound": "min"
+      },
+      "action": "Spend Arcane Barrage at 4 Arcane Charges with 20 or more Arcane Salvo stacks (25 as Sunfury). Barraging on low Charges throws away both its damage and the mana reset."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Spend Arcane Charges with Barrage to manage mana",
-      "condition": null,
-      "action": "When mana runs low, cast Arcane Barrage at 4 Arcane Charges to throttle your spend and keep casting; running out of mana is fine, just Barrage and continue the priority."
-    },
-    {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Dump Arcane Salvo with Barrage at max stacks",
-      "condition": null,
-      "action": "Cast Arcane Barrage at max Arcane Salvo stacks (around 20-25 depending on build) with 4 Arcane Charges to convert stored Salvo into a hard-hitting, cleaving Barrage."
-    },
-    {
-      "type": "cd_hold",
-      "priority": "medium",
-      "description": "Hold Salvo and Barrage for incoming Touch",
-      "condition": null,
-      "action": "If Touch of the Magi or Arcane Surge will be ready within about 4 seconds, hold your big Arcane Barrage so the spend lands inside the cooldown window instead of just before it."
+      "severity": "info",
+      "description": "Arcane Orb after Arcane Barrage",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 153626,
+        "spell_name": "Arcane Orb",
+        "required_spell_id": 44425,
+        "required_spell_name": "Arcane Barrage",
+        "position": "before"
+      },
+      "action": "Follow Arcane Barrage with Arcane Orb while you hold Clearcasting to rebuild Charges and Salvo, and otherwise use Orb at 0 to 2 Arcane Charges rather than sitting on the charge."
     },
     {
       "type": "aoe_switch",
-      "priority": "medium",
-      "description": "Add Arcane Orb and Pulse on multiple targets",
-      "condition": null,
-      "action": "On 3 or more targets, weave Arcane Orb after Barrage with Clearcasting and use Arcane Pulse to accelerate Arcane Salvo and Arcane Charge generation across the pack."
-    },
-    {
-      "type": "rotation",
-      "priority": "low",
-      "description": "Keep Prismatic Barrier active",
-      "condition": null,
-      "action": "Refresh Prismatic Barrier whenever it falls off; the 0.5s cast costs almost no uptime and a dead mage deals zero damage."
+      "severity": "info",
+      "description": "Arcane Explosion only on big packs",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1449,
+        "spell_name": "Arcane Explosion",
+        "bound": "min"
+      },
+      "action": "Only use Arcane Explosion to rebuild Charges under 2 stacks on 4 or more targets; below that, Arcane Blast or Arcane Pulse is the filler."
     }
   ],
-  "source_summary": "Arcane Mage is a cooldown-driven spec built around stacking Arcane Surge and Touch of the Magi into a single burst window, then funneling mana and Arcane Salvo into hard-hitting Arcane Barrages. Because Surge refunds mana and both core cooldowns are short, the guiding principle is to never sit on them and to keep firing them as often as the fight allows. Between windows, manage mana by spending Arcane Charges with Barrage and hold big Salvo dumps for the next Touch or Surge.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 19:58:55"
+  "source_summary": "Arcane runs on a 90 second Arcane Surge, with Touch of the Magi applied inside every Surge window and again on its own 45 second cooldown, which is exactly half of Surge's, so any Touch delay drags the next Surge with it. The opener builds 20 Arcane Salvo stacks with Arcane Blast, stacks 15 second or longer trinkets, racials and potions ahead of Arcane Surge, then Touch of the Magi. Between cooldowns the loop is building 4 Arcane Charges and maximum Arcane Salvo, then spending both with Arcane Barrage, using Arcane Orb and Clearcasting to rebuild and Arcane Surge or Evocation to recover mana."
 }

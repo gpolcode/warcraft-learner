@@ -5,29 +5,31 @@
     {
       "name": "Avenging Wrath",
       "spell_id": 31884,
-      "cooldown": 60,
+      "cooldown": 120,
       "duration": 20,
-      "align_with_bloodlust": true,
+      "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Activate this off-GCD damage buff before your other cooldowns so the entire burst window benefits, and stack it early; with the Radiant Glory talent it is applied automatically by Wake of Ashes instead of being pressed."
+      "usage_rule": "Lead every burst window with it, since it raises damage and Critical Strike for 20s and empowers Judgment into Hammer of Wrath, so line stat trinkets and your potion up inside it and hold it while Algeth'ar Puzzle Box is under 5s from ready.",
+      "id_note": "31884 is the cast id observed in the sampled parse; the guide links the 384376 passive and the APL references 454351.",
+      "talent_gated": true
     },
     {
       "name": "Execution Sentence",
       "spell_id": 343527,
-      "cooldown": 30,
-      "duration": 12,
+      "cooldown": 60,
+      "duration": 10,
       "align_with_bloodlust": false,
       "opener_priority": 3,
-      "usage_rule": "Cast it before piling damage into the target so as much output as possible lands in its window, and make sure buffs like Avenging Wrath are still active when the final hit detonates since it scales off effects present on landing, not on cast."
+      "usage_rule": "Cast it with Wake of Ashes under a GCD from ready and Avenging Wrath more than 15s out, only on targets living longer than 10s, and keep using your AoE abilities normally through its 10s window.",
+      "talent_gated": true
     },
     {
       "name": "Wake of Ashes",
       "spell_id": 255937,
       "cooldown": 30,
-      "duration": 4,
       "align_with_bloodlust": false,
       "opener_priority": 4,
-      "usage_rule": "Use on cooldown inside your burst window with at least 2 Holy Power banked so you can immediately follow it with Hammer of Light; with Radiant Glory cast it inside the Execution Sentence window since it auto-triggers Avenging Wrath."
+      "usage_rule": "Send it once Execution Sentence has gone out or is more than 4s away and Avenging Wrath is more than 6s off, then spend the free Hammer of Light it grants immediately; overcapping Holy Power on the cast is acceptable."
     },
     {
       "name": "Divine Toll",
@@ -35,144 +37,148 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "opener_priority": 5,
-      "usage_rule": "Cast on cooldown during your burst window after Wake of Ashes and Hammer of Light to fire a volley of Holy Power generating Judgments at all nearby targets."
+      "usage_rule": "Fire it after Wake of Ashes when Avenging Wrath is more than 15s away, or when adds arrive within 10s, for Judgment on up to 5 targets."
     },
     {
-      "name": "Crusade",
-      "spell_id": 231895,
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
       "cooldown": 120,
-      "duration": 27,
-      "align_with_bloodlust": true,
-      "talent_gated": true,
-      "usage_rule": "If talented over Avenging Wrath, press at pull and ramp its stacks quickly by chaining Holy Power generators; sync with Bloodlust and on-use trinkets for maximum overlap."
-    },
-    {
-      "name": "Final Reckoning",
-      "spell_id": 343721,
-      "cooldown": 60,
-      "duration": 12,
+      "duration": 20,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "If talented, drop it on the target before your burst so all damage dealt during the window is amplified; on AoE place it where the most targets will be hit."
+      "opener_priority": 1,
+      "usage_rule": "Channel it pre-pull when equipped, and in combat channel it while Avenging Wrath is coming up rather than after, since the 2s channel otherwise eats time inside the window.",
+      "id_note": "On-use trinket; the ability table lists spell 383781 under the truncated name 'Algeth'ar Puzzle'. talent_gated is set so builds without the trinket are not flagged for zero casts.",
+      "talent_gated": true
     }
   ],
   "defensives": [
-    {
-      "name": "Shield of Vengeance",
-      "spell_id": 184662,
-      "cooldown": 90,
-      "duration": 15,
-      "usage_rule": "Press proactively before incoming damage to absorb a large amount and release a burst of damage when it expires, so it doubles as a near free DPS cooldown."
-    },
     {
       "name": "Divine Shield",
       "spell_id": 642,
       "cooldown": 300,
       "duration": 8,
-      "usage_rule": "Use to fully immune unavoidable lethal damage or to drop a deadly debuff; cancel it early once the threat passes to minimize the Forbearance lockout on Lay on Hands and Blessing of Protection."
+      "usage_rule": "Full immunity for 8s: save it for a lethal mechanic or to drop a stacking debuff, and remember it leaves Forbearance for 30s."
     },
     {
       "name": "Divine Protection",
-      "spell_id": 498,
+      "spell_id": 403876,
       "cooldown": 60,
       "duration": 8,
-      "usage_rule": "Press before predictable magic or mixed damage events for a 20% damage reduction; its short cooldown means you can use it on most repeating raid hits."
-    },
-    {
-      "name": "Lay on Hands",
-      "spell_id": 633,
-      "cooldown": 600,
-      "usage_rule": "Reserve for an emergency when you or an ally is about to die, fully restoring their health; it triggers Forbearance, so it cannot be chained with Divine Shield or Blessing of Protection."
+      "usage_rule": "20% damage reduction for 8s on a 1 min cooldown, usable while stunned, so spend it on every predictable raid damage window rather than saving it.",
+      "id_note": "403876 is the Retribution cast id observed in the parse; 498 is the baseline Paladin version of the same button."
     },
     {
       "name": "Blessing of Protection",
       "spell_id": 1022,
       "cooldown": 300,
       "duration": 10,
-      "usage_rule": "Cast on yourself or an ally to immune all physical damage during a heavy melee hit; it does not block magic and triggers Forbearance on the target."
+      "usage_rule": "Physical immunity for 10s on yourself or an ally to survive a melee or bleed mechanic; it causes Forbearance, so it locks out Divine Shield and Lay on Hands.",
+      "id_note": "Table row is name-verified but not pressed in the sampled parse; still a real castable ability."
     },
     {
-      "name": "Blessing of Spellwarding",
-      "spell_id": 204018,
-      "cooldown": 180,
-      "duration": 10,
-      "talent_gated": true,
-      "usage_rule": "If talented in place of Blessing of Protection, cast to immune a dangerous magical hit on yourself or an ally; it shares Forbearance and does not block physical damage."
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "usage_rule": "Emergency full heal for yourself or a dying ally when no external will land in time; causes Forbearance for 30s."
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "priority": "high",
-      "description": "Open with Blade of Justice into wings and burst",
-      "condition": null,
-      "action": "Open with Blade of Justice, then Avenging Wrath and on-use trinkets, then Execution Sentence, Wake of Ashes, Hammer of Light and Divine Toll before settling into the normal priority."
+      "severity": "warning",
+      "description": "Blade of Justice into Avenging Wrath opener",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          184575,
+          31884,
+          343527,
+          255937,
+          427453,
+          375576
+        ],
+        "spell_names": [
+          "Blade of Justice",
+          "Avenging Wrath",
+          "Execution Sentence",
+          "Wake of Ashes",
+          "Hammer of Light",
+          "Divine Toll"
+        ]
+      },
+      "action": "Open Blade of Justice, Avenging Wrath, Execution Sentence, Wake of Ashes, the free Hammer of Light, two Final Verdicts, then Divine Toll, with Algeth'ar Puzzle Box channelled pre-pull."
     },
     {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Stack all cooldowns inside Avenging Wrath",
-      "condition": null,
-      "action": "Activate Avenging Wrath first, then fire Execution Sentence, Wake of Ashes and Divine Toll inside its window so every cooldown and your trinkets overlap into one burst."
-    },
-    {
-      "type": "cooldown_pairing",
-      "priority": "high",
-      "description": "Hammer of Light right after Wake of Ashes",
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Hammer of Light after every Wake of Ashes",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 427453,
-        "spell_name": "Hammer of Light",
+        "spell_id": 255937,
+        "spell_name": "Wake of Ashes",
+        "required_spell_id": 427453,
+        "required_spell_name": "Hammer of Light",
+        "position": "after"
+      },
+      "action": "Spend the free Hammer of Light that Wake of Ashes grants before any other button; it sits at the top of the priority in both single-target and AoE."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Execution Sentence right before Wake of Ashes",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 343527,
+        "spell_name": "Execution Sentence",
         "required_spell_id": 255937,
         "required_spell_name": "Wake of Ashes",
-        "window_s": 6
+        "position": "after"
       },
-      "action": "Bank at least 2 Holy Power before Wake of Ashes so you can immediately cast Hammer of Light afterward; the free Light's Deliverance proc is the exception and can be spent without Wake of Ashes."
+      "action": "Cast Execution Sentence with Wake of Ashes under a GCD from ready so its 10s window absorbs that damage, and only with Avenging Wrath more than 15s out."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Never overcap Holy Power",
-      "condition": null,
-      "action": "Spend Holy Power with Final Verdict or Divine Storm before it would overcap; generating above what you need wastes the spec's primary damage resource."
+      "severity": "warning",
+      "description": "Blade of Justice on every Art of War proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 406086,
+        "buff_spell_name": "Art of War",
+        "spend_spell_ids": [
+          184575
+        ],
+        "spend_spell_names": [
+          "Blade of Justice"
+        ]
+      },
+      "action": "React to Art of War with Blade of Justice ahead of your spender; wasting 1 Holy Power is correct here so a second proc cannot overwrite Light Within."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "Spend Art of War procs immediately",
-      "condition": null,
-      "action": "When Art of War procs, cast Hammer of Wrath or Blade of Justice as soon as possible so the proc is not wasted and you keep Light Within and Holy Power flowing."
-    },
-    {
-      "type": "cd_hold",
-      "priority": "medium",
-      "description": "Briefly hold free Hammer of Light for wings",
-      "condition": null,
-      "action": "If a free Hammer of Light proc lands just before Avenging Wrath comes off cooldown, hold it a few seconds to fit it into the window, but always spend it before the proc, Avenging Wrath or Execution Sentence expires."
-    },
-    {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Use trinkets with wings, do not over-delay",
-      "condition": null,
-      "action": "Fire on-use stat trinkets with Avenging Wrath before your other cooldowns, holding instant trinkets only a few seconds for the extra crit; never delay a desynced trinket or Avenging Wrath a full 30 seconds to line them up."
+      "severity": "info",
+      "description": "Judgment held at capped Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 20271,
+        "spell_name": "Judgment",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "max"
+      },
+      "action": "Do not press Judgment at 5 Holy Power just to start its 11s cooldown; spend first, and check whether a generator will refill you within a GCD before topping up."
     },
     {
       "type": "aoe_switch",
-      "priority": "high",
-      "description": "Swap to Divine Storm on 3+ targets",
-      "condition": null,
-      "action": "On 3 or more targets spend Holy Power on Divine Storm instead of Final Verdict; with Tempest of the Lightbringer and no Jurisdiction, switch to the AoE priority at 2 targets."
-    },
-    {
-      "type": "positioning",
-      "priority": "medium",
-      "description": "Stay in melee to keep generating",
-      "condition": null,
-      "action": "Maintain melee range so Blade of Justice, Judgment and your strikes are always available; out of range you stop generating Holy Power and lose burst-window casts."
+      "severity": "warning",
+      "description": "Divine Storm on three or more targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 53385,
+        "spell_name": "Divine Storm",
+        "bound": "min"
+      },
+      "action": "Swap your spender to Divine Storm at 3 or more targets, or at 2 with Tempest of the Lightbringer and no Jurisdiction; on any target count an Empyrean Power proc makes it free."
     }
   ],
-  "source_summary": "Retribution Paladin concentrates its damage into a recurring burst window built around Avenging Wrath (or Crusade), into which Execution Sentence, Wake of Ashes and Divine Toll are stacked so most output lands while the buffs are active. Between windows the spec is a Holy Power economy: generate without overcapping, spend Art of War procs instantly, and follow Wake of Ashes with Hammer of Light. Trinkets and Bloodlust are aligned to Avenging Wrath, but cooldowns are otherwise used on cooldown rather than heavily delayed to force perfect overlap.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:14:22"
+  "source_summary": "Retribution stacks its damage into Avenging Wrath: press it first, put stat trinkets, the potion and any instant on-use damage inside its 20s window, and channel Algeth'ar Puzzle Box before it rather than during. Execution Sentence goes out with Wake of Ashes under a GCD from ready so the sentence collects that damage, and Wake of Ashes is then followed immediately by the free Hammer of Light it grants. Outside cooldowns the loop is Holy Power efficiency: react to Art of War with Blade of Justice, avoid generating at 5 Holy Power, and switch the spender to Divine Storm at 3 or more targets."
 }

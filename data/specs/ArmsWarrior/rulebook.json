@@ -3,73 +3,78 @@
   "spec_icon": "ability_warrior_savageblow",
   "major_cooldowns": [
     {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown, with or just before Colossus Smash, since Anger Management shortens both and keeps the two windows paired."
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 152277,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "Drop it just before Colossus Smash, inside the last 2 seconds of that cooldown, since it gets no cooldown reduction of its own and its Cleave buff only pays off overlapped with Crushing Combo.",
+      "id_note": "Guide links Ravager as both 152277 and 228920; the ability table only carries 152277, marked name-verified with no casts in the sampled Slayer parse. The 45 s cooldown is the live value, not stated in the sources."
+    },
+    {
       "name": "Colossus Smash",
       "spell_id": 167105,
       "cooldown": 45,
       "duration": 10,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Keep on cooldown at all times as the spec's central debuff window; never delay it without a strong reason such as an incoming add wave, since delaying it desyncs every other cooldown."
-    },
-    {
-      "name": "Warbreaker",
-      "spell_id": 262161,
-      "cooldown": 45,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "When talented this replaces Colossus Smash, applying the same armor-shred debuff to all nearby targets; use it on cooldown exactly as you would Colossus Smash (talent_gated alternative to Colossus Smash)."
-    },
-    {
-      "name": "Avatar",
-      "spell_id": 107574,
-      "cooldown": 90,
-      "duration": 20,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "Press shortly before or together with Colossus Smash so its damage bonus overlaps the debuff window; Anger Management cooldown reduction keeps it roughly aligned with Colossus Smash, so use it on cooldown."
+      "opener_priority": 3,
+      "usage_rule": "Your one burst window: press it strictly on cooldown, track the real timer rather than the 45 second tooltip because Anger Management cuts it hard, and fill every global inside the 10 second debuff.",
+      "id_note": "167105 is the cast id; 208086 is the matching aura used by the rules."
     },
     {
       "name": "Bladestorm",
-      "spell_id": 227847,
+      "spell_id": 446035,
       "cooldown": 90,
       "duration": 6,
       "align_with_bloodlust": false,
-      "usage_rule": "Used by Slayer builds during the Colossus Smash window for single- and multi-target damage; its unique cooldown reduction means it will not always realign, so plan whether to use or save it before each Colossus Smash."
-    },
-    {
-      "name": "Ravager",
-      "spell_id": 228920,
-      "cooldown": 90,
-      "duration": 12,
-      "align_with_bloodlust": false,
+      "opener_priority": 4,
       "talent_gated": true,
-      "usage_rule": "Colossus builds drop it just before Colossus Smash so its ticks land inside the debuff window; talent_gated since not every build takes it."
+      "usage_rule": "Use it on cooldown or timed onto an add pack, entering it early in Colossus Smash so its triggered effects overlap the debuff; the three-stack Imminent Demise glow is not a use indicator.",
+      "id_note": "Guide links Bladestorm as 227847; 446035 is the cast id observed in the sampled parse and is the one used here."
     },
     {
       "name": "Demolish",
       "spell_id": 436358,
       "cooldown": 45,
       "align_with_bloodlust": false,
+      "opener_priority": 5,
       "talent_gated": true,
-      "usage_rule": "Colossus hero-talent finisher used during Colossus Smash at 10 stacks of Colossal Might, optionally delayed to the last seconds of the debuff to build extra stacks; talent_gated to the Colossus tree."
-    },
-    {
-      "name": "Champion's Spear",
-      "spell_id": 376079,
-      "cooldown": 90,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "A talented class-tree throw used inside the Colossus Smash window for burst and to tether enemies in place; talent-gated since it is an optional class talent and is primarily a damage cooldown despite its utility framing."
+      "usage_rule": "Channel it inside Colossus Smash rather than on cooldown, ideally at 10 stacks of Colossal Might with more than 2 seconds of debuff left, and use the channel to eat a stun or knockback since off-GCD buttons still work through it.",
+      "id_note": "Colossus hero talent; name-verified castable, not pressed in the sampled Slayer parse."
     },
     {
       "name": "Sweeping Strikes",
       "spell_id": 260708,
       "cooldown": 30,
-      "duration": 15,
+      "duration": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "On 2 or more targets, press it to cleave your single-target rotation onto a second enemy; with Broad Strokes talented, only cast it manually after the auto-granted charges expire to avoid overcapping."
+      "usage_rule": "On two or more targets, refresh it whenever it is down and Colossus Smash is more than 10 seconds away, so its 12 cleaved abilities are not wasted outside the burst window."
+    },
+    {
+      "name": "Wrecking Throw",
+      "spell_id": 384110,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Ranged filler while you are out of melee, and your second priority behind Colossus Smash against anything with an absorb shield, where the 500% bonus makes it the biggest single hit in the kit."
+    },
+    {
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Drink it with more than 8 seconds left on the Colossus Smash debuff, or in the last 25 seconds of the fight."
     }
   ],
   "defensives": [
@@ -78,54 +83,52 @@
       "spell_id": 118038,
       "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Pop proactively before heavy physical or parry-able melee damage; it grants a large parry chance plus damage reduction for 8 seconds."
-    },
-    {
-      "name": "Rallying Cry",
-      "spell_id": 97462,
-      "cooldown": 180,
-      "duration": 10,
-      "usage_rule": "Use as a raid-wide emergency button before a large group-wide hit, granting you and nearby allies a temporary maximum-health and effective-health buffer."
+      "usage_rule": "Your primary survivability button at 30% damage reduction and 100% parry; save it for direct physical damage, where it can carry you through a short tanking stint."
     },
     {
       "name": "Spell Reflection",
       "spell_id": 23920,
       "cooldown": 25,
       "duration": 5,
-      "usage_rule": "Press just before a targeted magic cast or projectile to reflect it and reduce incoming magic damage during the short window."
+      "usage_rule": "Raise it into a spell aimed at you to reflect it outright and take 20% less magic damage for 5 seconds; it can be pressed during a Demolish channel."
     },
     {
-      "name": "Defensive Stance",
-      "spell_id": 197690,
-      "cooldown": 15,
-      "usage_rule": "Toggle on during sustained heavy damage for a flat damage reduction, then toggle back to your damage stance once the danger passes."
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Treat it as a raid cooldown for a scripted damage event rather than a personal one, and pre-plan it since it costs a global."
     },
     {
       "name": "Impending Victory",
       "spell_id": 202168,
       "cooldown": 25,
       "talent_gated": true,
-      "usage_rule": "Cast when below full health to deal damage and instantly heal a chunk of your maximum health; talent_gated as it replaces Victory Rush only when talented."
+      "usage_rule": "Cheap 30% max-health self-heal to top up between damage events instead of holding it."
+    },
+    {
+      "name": "Berserker Rage",
+      "spell_id": 18499,
+      "cooldown": 60,
+      "duration": 6,
+      "usage_rule": "Break and stay immune to Fear, Sap and some incapacitate effects for 6 seconds."
     }
   ],
   "rules": [
     {
-      "type": "cooldown_pairing",
-      "priority": "critical",
-      "description": "Bladestorm only inside Colossus Smash",
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Charge, Avatar, Rend, Colossus Smash, Mortal Strike",
       "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 227847,
-        "spell_name": "Bladestorm",
-        "required_spell_id": 167105,
-        "required_spell_name": "Colossus Smash",
-        "window_s": 10
+        "kind": "opening_sequence",
+        "spell_ids": [100, 107574, 772, 167105, 12294],
+        "spell_names": ["Charge", "Avatar", "Rend", "Colossus Smash", "Mortal Strike"]
       },
-      "action": "Always cast Bladestorm during an active Colossus Smash debuff so its hits are amplified by the armor shred; firing Bladestorm outside the window is a major DPS loss."
+      "action": "Pull with Charge, then Avatar, then Rend for the bleed, then Colossus Smash, then Mortal Strike; slot Ravager just before Colossus Smash and Bladestorm or Demolish straight after it."
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
+      "severity": "warning",
       "description": "Avatar with or just before Colossus Smash",
       "condition": {
         "kind": "cast_without_prior",
@@ -133,55 +136,77 @@
         "spell_name": "Avatar",
         "required_spell_id": 167105,
         "required_spell_name": "Colossus Smash",
-        "window_s": 6,
-        "position": "either"
+        "position": "after"
       },
-      "action": "Press Avatar in the same window as Colossus Smash so its damage bonus overlaps the debuff; let Anger Management keep the two aligned rather than drifting them apart."
+      "action": "Press Avatar with or immediately before Colossus Smash; Anger Management pulls both cooldowns down together, so a solo Avatar means you drifted one of them."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Bladestorm inside Colossus Smash",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 446035,
+        "spell_name": "Bladestorm",
+        "buff_spell_id": 208086,
+        "buff_spell_name": "Colossus Smash",
+        "require": "inside"
+      },
+      "action": "Start Bladestorm early in the 10 second Colossus Smash window so the whole channel and every effect it triggers is amplified; only break that for a timed add pack."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Demolish inside Colossus Smash",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 436358,
+        "spell_name": "Demolish",
+        "buff_spell_id": 208086,
+        "buff_spell_name": "Colossus Smash",
+        "require": "inside"
+      },
+      "action": "Hold Demolish for Colossus Smash instead of pressing it on cooldown, at 10 stacks of Colossal Might with over 2 seconds of debuff remaining."
     },
     {
       "type": "rotation",
-      "priority": "critical",
-      "description": "Keep Colossus Smash and Avatar on cooldown",
-      "condition": null,
-      "action": "Use Colossus Smash, Avatar, and Bladestorm or Demolish on cooldown as much as possible; delaying any one of them desyncs the rest, so only hold a cooldown for an imminent add wave or burst phase."
+      "severity": "warning",
+      "description": "Execute consumes every Sudden Death proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 52437,
+        "buff_spell_name": "Sudden Death",
+        "spend_spell_ids": [281000],
+        "spend_spell_names": ["Execute"]
+      },
+      "action": "Cash every Sudden Death into Execute; it stacks to 2 so you have room to finish a Mortal Strike first, but never sit on it long enough to overcap."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Maximize uptime and avoid wasting Rage",
-      "condition": null,
-      "action": "Stay on target to keep auto-attacks flowing since they generate most of your Rage, and spend Rage on Mortal Strike and Execute rather than letting it cap or decay between pulls."
-    },
-    {
-      "type": "opener",
-      "priority": "medium",
-      "description": "Open with Charge into Avatar plus Colossus Smash",
-      "condition": null,
-      "action": "Open every pull with Charge for the extra Rage, then immediately go into Avatar and Colossus Smash followed by your hero-talent burst (Bladestorm or Demolish) inside the debuff window."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Execute only during Sudden Death outside Execute phase",
-      "condition": null,
-      "action": "Above the Execute health threshold, only cast Execute when Sudden Death procs; otherwise spend Rage on Mortal Strike and Slam, then switch to spamming Execute once the target drops into Execute range."
+      "severity": "info",
+      "description": "Execute spent at high Rage",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Execute scales with the Rage it consumes, so fire it above 40 Rage outside Sudden Death and above 75 with Deep Wounds talented; a free Sudden Death Execute is always fine."
     },
     {
       "type": "aoe_switch",
-      "priority": "high",
-      "description": "Sweeping Strikes and Cleave at 2+ targets",
-      "condition": null,
-      "action": "On 2 or more targets, maintain Sweeping Strikes to mirror your single-target damage and weave Cleave into the rotation; on Colossus, keep Rend applied and route Demolish through the Colossus Smash window."
-    },
-    {
-      "type": "positioning",
-      "priority": "medium",
-      "description": "Stay in melee and use mobility to keep uptime",
-      "condition": null,
-      "action": "Use Charge after a target finishes moving and Heroic Leap to exit damage at the last moment, minimizing time off target so Rage generation and GCD usage never stall."
+      "severity": "warning",
+      "description": "Cleave on three or more targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 845,
+        "spell_name": "Cleave",
+        "bound": "min"
+      },
+      "action": "From 3 targets up, Cleave is the top button and stays on cooldown; it auto-casts Slam or Heroic Strike and feeds Reap the Storm and Colossal Might, so do not spend those globals on single-target fillers."
     }
   ],
-  "source_summary": "Arms Warrior has a relatively flat damage profile that is not concentrated entirely into burst windows, so the defining skill is simply keeping Colossus Smash, Avatar, and the hero-talent cooldown (Bladestorm for Slayer or Demolish for Colossus) on cooldown and overlapped with the Colossus Smash debuff. Cooldowns should be aligned when timers allow but never delayed more than roughly 10-15% of their duration, since losing a full use almost always outweighs the gain from stacking. Between cooldowns, the priority is maximizing target uptime to fuel Rage and avoiding Rage waste so the rotation never stalls.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 19:59:45"
+  "source_summary": "Arms revolves around one frequent burst window: Colossus Smash goes out on cooldown, shortened well below its tooltip by Anger Management, with Avatar aligned to it and every available global crammed into the 10 second debuff. Slayer feeds Bladestorm into that window and cashes Sudden Death procs into Execute, while Colossus holds Demolish for Colossus Smash and drops Ravager just before it for the Crushing Combo overlap. Everything else is Rage discipline: keep Mortal Strike and, on 3 or more targets, Cleave on cooldown, and never spend so low that the next Mortal Strike is delayed."
 }

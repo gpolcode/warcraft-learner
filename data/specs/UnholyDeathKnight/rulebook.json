@@ -5,45 +5,30 @@
     {
       "name": "Army of the Dead",
       "spell_id": 42650,
-      "cooldown": 180,
+      "cooldown": 90,
       "duration": 30,
-      "align_with_bloodlust": true,
+      "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Cast pre-pull as your single biggest cooldown and trigger for Raise Abomination, Summon Gargoyle, and Apocalypse Now, then keep it on cooldown and synced with Bloodlust and your on-use trinket."
+      "usage_rule": "Send it on cooldown and macro your on-use trinket, racial and potion to it, pairing it with every second Dark Transformation; it opens a 30 second Forbidden Knowledge window that turns Death Coil into Necrotic Coil and Epidemic into Graveyard.",
+      "id_note": "42650 is the cast id (6 casts sampled); 1242223 is the Forbidden Knowledge buff it grants, whose 30s duration is used here."
     },
     {
       "name": "Dark Transformation",
       "spell_id": 1233448,
-      "cooldown": 60,
-      "duration": 20,
+      "cooldown": 45,
+      "duration": 15,
       "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Press on cooldown and macro it into Army of the Dead so Commander of the Dead stays synced; with Outnumber, time it to add spawns for the Lesser Ghoul Sweeping Claws cleave."
+      "usage_rule": "Press it the moment it comes up on the 45 second cycle, entering the window with 6-8 stacks of Lesser Ghoul so the window is spent on Putrefy and Soul Reaper rather than on building with Festering Strike.",
+      "id_note": "1233448 is the current cast id; 1235391 is the self aura and 63560 the legacy id."
     },
     {
-      "name": "Apocalypse",
-      "spell_id": 275699,
-      "cooldown": 90,
+      "name": "Putrefy",
+      "spell_id": 1247378,
+      "cooldown": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "Cast on cooldown to burst your stacked Festering Wounds and summon ghouls; this entry is talent-gated."
-    },
-    {
-      "name": "Summon Gargoyle",
-      "spell_id": 49206,
-      "cooldown": 180,
-      "duration": 25,
-      "align_with_bloodlust": true,
-      "talent_gated": true,
-      "usage_rule": "Summon during your Army of the Dead burst window so its damage scales with your cooldown buffs; only taken in the Gargoyle build."
-    },
-    {
-      "name": "Unholy Assault",
-      "spell_id": 207289,
-      "cooldown": 75,
-      "duration": 20,
-      "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Use to generate burst Festering Wounds and a haste buff inside your cooldown window; only taken in builds that talent it."
+      "opener_priority": 3,
+      "usage_rule": "Concentrate every charge inside Dark Transformation where Commander of the Dead buffs it, and sit on charges rather than spending them in the gap before the next window; above 35% health press it manually, below 35% let Soul Reaper trigger it."
     }
   ],
   "defensives": [
@@ -52,98 +37,132 @@
       "spell_id": 48707,
       "cooldown": 60,
       "duration": 5,
-      "usage_rule": "Press proactively before incoming magic damage to absorb it and generate Runic Power; use it on cooldown as a damage filler when no big magic hit is expected."
+      "usage_rule": "Time it onto a known raid magic hit: it absorbs up to 30% of your maximum health in magic damage and converts the absorb into Runic Power, but on progression the mitigation comes first."
     },
     {
       "name": "Icebound Fortitude",
       "spell_id": 48792,
-      "cooldown": 180,
+      "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Use for a major 30% damage reduction and stun immunity ahead of heavy physical tankbusters or unavoidable raid damage."
+      "usage_rule": "Use it for 30% damage reduction on heavy physical hits and for the stun immunity on scripted stun mechanics."
     },
     {
       "name": "Lichborne",
       "spell_id": 49039,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Activate to become immune to charm, fear, and sleep effects and to enable Death Coil self-healing during dangerous windows."
+      "usage_rule": "Press it to break or pre-empt charm, fear and sleep effects, and for 6% extra Leech while it runs."
     },
     {
       "name": "Death Pact",
       "spell_id": 48743,
       "cooldown": 120,
       "duration": 15,
-      "talent_gated": true,
-      "usage_rule": "Press as an emergency heal for a large instant chunk of health when you drop low; only available when talented."
+      "usage_rule": "Emergency heal for a large chunk of maximum health; the healing absorb it leaves behind means you press it when you are about to die, not as a top-up.",
+      "id_note": "48743 is the classic Death Pact talent cast; 443609 is a lower-value variant with the same name. Verify which one Unholy fires if casts go unmatched.",
+      "talent_gated": true
     },
     {
       "name": "Anti-Magic Zone",
       "spell_id": 51052,
-      "cooldown": 120,
-      "duration": 8,
-      "talent_gated": true,
-      "usage_rule": "Drop on the group before a heavy raid-wide magic hit to reduce magic damage taken for everyone standing inside; only available when talented."
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Drop it under the raid for a scheduled magic burst; it cuts magic damage taken by 15% for everyone standing in it.",
+      "id_note": "51052 is the talented cast id (4 min cooldown); 145629 is the aura seen in the parse.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
-      "type": "cooldown_pairing",
-      "priority": "critical",
-      "description": "Sync Dark Transformation with Army of the Dead",
-      "condition": null,
-      "action": "Macro Dark Transformation into Army of the Dead and press the first Dark Transformation as soon as it is available after each Army cast so Commander of the Dead empowers all your summoned pets."
-    },
-    {
       "type": "opener",
-      "priority": "high",
-      "description": "Opener: Army pre-pull then burst sequence",
-      "condition": null,
-      "action": "Raise your ghoul and cast Army of the Dead before the pull, then open with Dark Transformation, your on-use trinket and combat potion, two Death Coil or Necrotic Coil casts, and Putrefy."
+      "severity": "warning",
+      "description": "Open Outbreak, Festering Strike, Army, Dark Transformation",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [77575, 85948, 42650, 1233448, 1247378],
+        "spell_names": ["Outbreak", "Festering Strike", "Army of the Dead", "Dark Transformation", "Putrefy"]
+      },
+      "action": "Open with Outbreak, then 2x Festering Strike, then Army of the Dead plus Dark Transformation with trinket, racial and potion macroed in, then start dumping Putrefy charges."
     },
     {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Spend Sudden Doom procs immediately",
-      "condition": null,
-      "action": "Cast Death Coil (or Epidemic in AoE) the moment you gain a Sudden Doom proc; it is your strongest non-cooldown button and feeds your Unholy talent interactions."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Maintain Lesser Ghoul stacks for Scourge Strike",
-      "condition": null,
-      "action": "Cast Festering Strike whenever you have no Lesser Ghoul stacks, then spend the stacks with Scourge Strike so Scourge Strike keeps summoning ghouls."
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Army of the Dead paired with Dark Transformation",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 42650,
+        "spell_name": "Army of the Dead",
+        "required_spell_id": 1233448,
+        "required_spell_name": "Dark Transformation",
+        "position": "after"
+      },
+      "action": "Send Dark Transformation with every Army of the Dead. They align on a 45 second cycle, so Army goes out with every second Dark Transformation and any delay pushes the whole 90 second burst plan back."
     },
     {
       "type": "cd_hold",
-      "priority": "medium",
-      "description": "Hold a Putrefy charge for Dark Transformation",
-      "condition": null,
-      "action": "When playing Reaping, bank one Putrefy charge for each Dark Transformation window to save the global and rune you would otherwise spend re-applying it."
+      "severity": "warning",
+      "description": "Putrefy charges spent inside Dark Transformation",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1247378,
+        "spell_name": "Putrefy",
+        "buff_spell_id": 1235391,
+        "buff_spell_name": "Dark Transformation",
+        "require": "inside"
+      },
+      "action": "Hold Putrefy for Dark Transformation and empty your charges inside the window, where Commander of the Dead buffs them. Do not spend charges in the gap after the window ends, even sitting at 3 stacks."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Soul Reaper inside Dark Transformation",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 343294,
+        "spell_name": "Soul Reaper",
+        "buff_spell_id": 1235391,
+        "buff_spell_name": "Dark Transformation",
+        "require": "inside"
+      },
+      "action": "Only press Soul Reaper during Dark Transformation: on the free Reaping cast, or on a target below 35% health. With Blightfall, hold it until roughly 5 seconds before the window ends so the plague damage debuff overlaps your Blightfall."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "Skip manual Putrefy below 35% with Soul Reaper",
-      "condition": null,
-      "action": "While the target is under 35% health with Soul Reaper and Reaping talented, stop hard-casting Putrefy and let Soul Reaper consume your charges instead."
+      "severity": "warning",
+      "description": "Sudden Doom spent on Death Coil or Epidemic",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 81340,
+        "buff_spell_name": "Sudden Doom",
+        "spend_spell_ids": [47541, 1242174, 207317],
+        "spend_spell_names": ["Death Coil", "Necrotic Coil", "Epidemic"]
+      },
+      "action": "Spend Sudden Doom on sight with Death Coil, or Epidemic at 3+ targets. With Harbinger of Doom you may bank up to 2 charges, but never let one expire."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Festering Scythe buff stays up",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 1241077,
+        "aura_spell_name": "Festering Scythe",
+        "on": "self"
+      },
+      "action": "Track the Festering Scythe buff and refresh it with Festering Strike into Festering Scythe the moment it drops; the normal priority does not maintain it on its own and Forbidden Knowledge proc rate scales with its uptime."
     },
     {
       "type": "aoe_switch",
-      "priority": "high",
-      "description": "Use Death and Decay and Epidemic at 3+ targets",
-      "condition": null,
-      "action": "At three or more stacked targets, lay Death and Decay when enemies will stay in it and prioritize Epidemic over Death Coil to spend Runic Power as cleave."
-    },
-    {
-      "type": "positioning",
-      "priority": "medium",
-      "description": "Stand inside your own Death and Decay",
-      "condition": null,
-      "action": "Stay inside your Death and Decay during AoE so your Scourge Strike and ghoul attacks gain its cleave; reposition it with the targets if they move."
+      "severity": "info",
+      "description": "Epidemic over Death Coil in AoE",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 207317,
+        "spell_name": "Epidemic",
+        "bound": "min"
+      },
+      "action": "Swap your Runic Power spender from Death Coil to Epidemic at 3+ targets, and at 6+ targets while Forbidden Knowledge is up. Below that, Death Coil hits harder."
     }
   ],
-  "source_summary": "Unholy Death Knight is a burst-focused spec whose damage is concentrated in cooldown windows, so the defining skill is keeping Army of the Dead and Dark Transformation on cooldown and synced together for Commander of the Dead. Between windows you manage Runes, Runic Power, and Lesser Ghoul stacks: spend Sudden Doom procs instantly, keep Festering Strike feeding Scourge Strike, and bank Putrefy charges for Dark Transformation. Align your biggest summons with Bloodlust, trinkets, and potions so every pet benefits from your stacked burst.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:15:27"
+  "source_summary": "Unholy stacks everything onto a 45 second cycle: Dark Transformation goes out the moment it is up, with Army of the Dead joining every second window along with trinket, racial and potion. Putrefy charges and Soul Reaper are concentrated inside those windows, where Commander of the Dead multiplies them, while Army opens a 30 second Forbidden Knowledge window that upgrades Death Coil into Necrotic Coil and Epidemic into Graveyard. Between windows the job is plague upkeep with Outbreak, active Festering Scythe maintenance, Lesser Ghoul stacks cycled between Festering Strike and Scourge Strike, and Sudden Doom procs spent before they expire."
 }

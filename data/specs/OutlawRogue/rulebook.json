@@ -1,147 +1,223 @@
 {
   "spec": "OutlawRogue",
-  "spec_icon": "inv_sword_30",
+  "spec_icon": "ability_rogue_waylay",
   "major_cooldowns": [
     {
       "name": "Adrenaline Rush",
       "spell_id": 13750,
       "cooldown": 180,
-      "duration": 20,
-      "align_with_bloodlust": true,
+      "duration": 15,
+      "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Cast on cooldown at 2 or fewer combo points and keep it as close to 100% uptime as possible since Restless Blades reduces its cooldown; pre-pot and align with Bloodlust for the strongest window."
+      "usage_rule": "Send it on cooldown at low combo points, spam through the Energy overcap it causes, and never delay it to line up with Bloodlust or Time Warp."
     },
     {
       "name": "Roll the Bones",
-      "spell_id": 315508,
+      "spell_id": 1214909,
       "cooldown": 45,
+      "duration": 30,
       "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Cast on cooldown whenever Roll the Bones is at stage 1 or lower, rerolling weak results to chase a higher-stage buff; never let the buff drop."
+      "usage_rule": "Roll on cooldown while the buff is down or stuck at Stage 1, and reroll a Stage 2 only when Loaded Dice is up and Between the Eyes is ready.",
+      "id_note": "1214909 is the cast id observed in current logs; the guide text links 315508 for the same ability."
+    },
+    {
+      "name": "Between the Eyes",
+      "spell_id": 315341,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Fire it on cooldown at 6 or more combo points to keep its damage buff rolling; with Supercharger and Zero In, hold it once Adrenaline Rush is inside 30 seconds and send it during the Rush."
+    },
+    {
+      "name": "Blade Rush",
+      "spell_id": 271877,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Press it on cooldown like a builder: always at 2 or more targets, and on single target when you are more than 2 seconds from capping Energy or wearing the 2-piece.",
+      "talent_gated": true
+    },
+    {
+      "name": "Blade Flurry",
+      "spell_id": 13877,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Keep it up whenever a second target is in cleave range, pressed at low combo points so the combo points from Deft Maneuvers are not wasted."
+    },
+    {
+      "name": "Killing Spree",
+      "spell_id": 51690,
+      "cooldown": 180,
+      "align_with_bloodlust": false,
+      "opener_priority": 6,
+      "usage_rule": "Send it at 6 or more combo points once your other cooldowns are down, avoid it while Supercharger is active, and cancel the channel the moment you cap Energy.",
+      "talent_gated": true
     },
     {
       "name": "Keep It Rolling",
       "spell_id": 381989,
       "cooldown": 360,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Use whenever Roll the Bones is at stage 2 or higher to lock in a strong combination; its effective cooldown is far shorter than 6 minutes thanks to Restless Blades, so do not hold it long."
+      "usage_rule": "Extend a Stage 3 or better Roll the Bones; at Stage 2 use it anyway unless a Loaded Dice proc or an imminent Adrenaline Rush will hand you a better roll shortly.",
+      "talent_gated": true
     },
     {
-      "name": "Blade Rush",
-      "spell_id": 271877,
-      "cooldown": 45,
+      "name": "Preparation",
+      "spell_id": 1277933,
+      "cooldown": 240,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Cast on cooldown for single target unless it would overcap energy within the next global, and always use it in AoE."
+      "opener_priority": 5,
+      "usage_rule": "Press it once Between the Eyes is on cooldown and Adrenaline Rush is more than 30 seconds out, or inside the last 30 seconds of the fight, to reset Adrenaline Rush, Between the Eyes, Blade Flurry, Blade Rush and Killing Spree.",
+      "talent_gated": true
     },
     {
-      "name": "Killing Spree",
-      "spell_id": 51690,
-      "cooldown": 120,
-      "duration": 2,
-      "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Cast at 5 or more combo points on the Trickster build, cancelling early if you are about to overcap energy; avoid casting when the animation lock would put you in danger of a mechanic."
-    },
-    {
-      "name": "Vanish",
-      "spell_id": 1856,
-      "cooldown": 120,
-      "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "On Hidden Opportunity builds, use on cooldown when you have no Audacity or Opportunity proc to gain a free empowered Ambush; on other builds reserve it for utility or mechanic immunity."
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "duration": 30,
+      "align_with_bloodlust": true,
+      "usage_rule": "Drink it on the pull alongside your racial and on-use trinkets, and re-use it under Bloodlust, inside Adrenaline Rush, or in the last 30 seconds of the fight.",
+      "id_note": "Damage potion cast id from the sampled parse; a different potion choice logs a different id.",
+      "talent_gated": true
     }
   ],
   "defensives": [
-    {
-      "name": "Crimson Vial",
-      "spell_id": 185311,
-      "cooldown": 30,
-      "duration": 4,
-      "usage_rule": "Press whenever your health dips below 50% to restore a chunk of HP; its short cooldown means you can use it freely throughout the fight."
-    },
     {
       "name": "Feint",
       "spell_id": 1966,
       "cooldown": 15,
       "duration": 6,
-      "usage_rule": "Press proactively right before any telegraphed AoE damage event; the short cooldown allows near-constant uptime during AoE-heavy phases."
+      "usage_rule": "Press it into every raid-wide hit for 40% less area damage, and with Elusiveness it also cuts 20% off non-area damage."
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Heal 20% of your maximum health through chip damage; the cooldown is short enough that sitting on it is pure waste."
     },
     {
       "name": "Cloak of Shadows",
       "spell_id": 31224,
       "cooldown": 120,
       "duration": 5,
-      "usage_rule": "Use to immune or purge a dangerous magical ability or debuff; press it proactively since the window is only 5 seconds."
+      "usage_rule": "Save it for magic damage, for clearing debuffs that would drag you out of melee, and for soaking anything that does not pierce immunities."
     },
     {
       "name": "Evasion",
       "spell_id": 5277,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Use ahead of a burst of physical damage or a physical tankbuster cleave for near-total dodge over 10 seconds."
+      "usage_rule": "Use it while facing physical melee damage; with Elusiveness it also reduces damage taken by 20%."
     }
   ],
   "rules": [
     {
       "type": "rotation",
-      "priority": "critical",
-      "description": "Keep Adrenaline Rush on cooldown",
-      "condition": null,
-      "action": "Cast Adrenaline Rush every time it is available at 2 or fewer combo points; maximizing its uptime is the single biggest driver of Outlaw damage because Restless Blades shortens its own cooldown."
+      "severity": "critical",
+      "description": "Slice and Dice up for the whole fight",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 315496,
+        "aura_spell_name": "Slice and Dice",
+        "on": "self"
+      },
+      "action": "Apply Slice and Dice before the pull and refresh it with a finisher before it drops; losing the 50% attack speed stalls your whole Energy engine."
     },
     {
       "type": "rotation",
-      "priority": "critical",
-      "description": "Maintain Roll the Bones, reroll weak buffs",
-      "condition": null,
-      "action": "Never let Roll the Bones expire; recast it on cooldown when you are at stage 1 or lower and reroll until you reach a higher stage."
-    },
-    {
-      "type": "opener",
-      "priority": "high",
-      "description": "Opener: Adrenaline Rush into Roll the Bones",
-      "condition": null,
-      "action": "Open with Adrenaline Rush, then Roll the Bones and Slice and Dice, fire Keep It Rolling if you land stage 3 or higher, use Blade Rush, build to 6 combo points with Sinister Strike and Pistol Shot, then cast Between the Eyes and resume the normal priority."
-    },
-    {
-      "type": "cd_hold",
-      "priority": "high",
-      "description": "Hold Keep It Rolling for a strong Roll the Bones",
-      "condition": null,
-      "action": "Do not press Keep It Rolling until Roll the Bones is at stage 2 or higher so you duplicate a strong buff set rather than a single weak buff."
+      "severity": "warning",
+      "description": "Between the Eyes at 6+ combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 315341,
+        "spell_name": "Between the Eyes",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Only fire Between the Eyes at 6 or more combo points. It is your damage-buff finisher, so dumping it low costs both the hit and the buff."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Spend combo points without overcapping",
-      "condition": null,
-      "action": "Cast Between the Eyes at 6 or more combo points and Dispatch as your filler finisher; never sit at max combo points where Sinister Strike or Pistol Shot would overcap and waste resources."
+      "severity": "warning",
+      "description": "Dispatch as your 5+ combo point finisher",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 2098,
+        "spell_name": "Dispatch",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Use Dispatch as your default finisher at 5 or more combo points, 6 or more as Fatebound, and only when Between the Eyes and Killing Spree are unavailable."
     },
     {
       "type": "rotation",
-      "priority": "medium",
-      "description": "React to Opportunity and Audacity procs",
-      "condition": null,
-      "action": "Spend Opportunity with Pistol Shot when it reaches high stacks or is about to expire, and immediately use Ambush when Audacity is active; weave these procs in without dropping your action-per-second pace."
+      "severity": "warning",
+      "description": "Killing Spree at 6+ combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 51690,
+        "spell_name": "Killing Spree",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Channel Killing Spree at 6 or more combo points only, and cancel it if you cap Energy during the channel."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Pistol Shot only with Opportunity",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 185763,
+        "spell_name": "Pistol Shot",
+        "buff_spell_id": 195627,
+        "buff_spell_name": "Opportunity",
+        "require": "inside"
+      },
+      "action": "Only fire Pistol Shot with Opportunity up: spend immediately at 6 stacks, and at 3 stacks only while you sit at 1 to 3 combo points."
     },
     {
       "type": "aoe_switch",
-      "priority": "high",
-      "description": "Activate Blade Flurry at 2 or more targets",
-      "condition": null,
-      "action": "Turn on Blade Flurry as soon as there are 2 or more targets and it is not active, and refresh it at 4 or fewer combo points when 4 or more targets are in range so cleave damage never lapses."
+      "severity": "warning",
+      "description": "Blade Flurry with a second target in range",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 13877,
+        "spell_name": "Blade Flurry",
+        "bound": "min"
+      },
+      "action": "Keep Blade Flurry up from 2 targets upward, pressed at low combo points for the full Deft Maneuvers benefit; at 3 or more targets it doubles as a builder."
     },
     {
-      "type": "positioning",
-      "priority": "medium",
-      "description": "Stay in melee range of the target",
-      "condition": null,
-      "action": "Remain in melee range so your generators and finishers connect every global; Outlaw has no rear-positioning requirement but loses heavy uptime when forced out of range."
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Preparation after Between the Eyes",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1277933,
+        "spell_name": "Preparation",
+        "required_spell_id": 315341,
+        "required_spell_name": "Between the Eyes",
+        "position": "before"
+      },
+      "action": "Hold Preparation until Between the Eyes is spent and on cooldown and Adrenaline Rush is more than 30 seconds away, then press it to reset both."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Blade Rush, Between the Eyes, Killing Spree",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [271877, 315341, 51690],
+        "spell_names": ["Blade Rush", "Between the Eyes", "Killing Spree"]
+      },
+      "action": "After the pre-pull Adrenaline Rush, Roll the Bones and Slice and Dice, open with Blade Rush, send Between the Eyes at 6+ combo points, and save Killing Spree until everything else is on cooldown."
     }
   ],
-  "source_summary": "Outlaw Rogue has no single burst window and instead relies on keeping Adrenaline Rush and Roll the Bones at maximum uptime, since Restless Blades continuously shortens their cooldowns through finisher spending. The core loop is to use every offensive cooldown on cooldown, maintain a strong Roll the Bones buff (rerolling weak results and duplicating good ones with Keep It Rolling), and spend combo points on Between the Eyes and Dispatch without overcapping. In AoE, the only change is adding Blade Flurry to the on-cooldown list to spread cleave damage.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:11:33"
+  "source_summary": "Outlaw runs on Adrenaline Rush and Between the Eyes: press Adrenaline Rush on cooldown at low combo points, keep Roll the Bones at Stage 2 or better, and spend Between the Eyes on cooldown at 6+ combo points to hold its damage buff, with Preparation resetting the pair once both are down. Blade Rush is used like a builder on cooldown, Blade Flurry goes up from two targets, and Killing Spree is saved for 6+ combo points once the rest of the kit is spent. Keep It Rolling extends a Stage 3 or better roll, and Slice and Dice plus Opportunity-buffed Pistol Shots carry the moment-to-moment rotation."
 }

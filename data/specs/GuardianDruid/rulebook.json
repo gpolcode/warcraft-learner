@@ -7,28 +7,39 @@
       "spell_id": 102558,
       "cooldown": 180,
       "duration": 30,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "Use as often as possible and try to cram in as many Mangle and Thrash casts as you can during the window while spending Rage on Maul or Raze; it is a large damage boost and also a strong defensive that grants a health increase."
-    },
-    {
-      "name": "Berserk",
-      "spell_id": 50334,
-      "cooldown": 180,
-      "duration": 15,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "talent_gated": true,
-      "usage_rule": "Talent-gated alternative to Incarnation taken on Berserk builds; use on cooldown to push out maximum Mangle, Thrash, and Maul casts during the window."
+      "align_with_bloodlust": false,
+      "usage_rule": "Your main cooldown: send it off cooldown as an offensive burst, since rage spent pulls it back to a 2-3 minute cycle, and only bank it when a known lethal window is coming.",
+      "id_note": "102558 is the cast id observed in the parse; the guide links 394786, which is the talent node.",
+      "talent_gated": true
     },
     {
       "name": "Lunar Beam",
       "spell_id": 204066,
-      "cooldown": 75,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast it with Incarnation whenever Incarnation is ready, otherwise only when Incarnation is more than 60 seconds out (30 with Lunation), and line it up with Red Moon if the two are close.",
+      "id_note": "204066 is the cast id that also carries the self aura; 204069, 414613 and 1270292 share the name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Red Moon",
+      "spell_id": 1252871,
+      "cooldown": 30,
       "duration": 8,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Talent-gated; use on cooldown when Incarnation or Berserk is up or more than 30-60 seconds away, and pop your potion while it is active for a damage and self-heal boost."
+      "usage_rule": "Single-target only: cast it with Mangle off cooldown and no Red Moon already ticking, then keep hitting Mangle, since each Mangle extends it by 1 second and returns 8 rage.",
+      "id_note": "1252871 is the cast id; 1253582 shares the name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Sundering Roar",
+      "spell_id": 1253799,
+      "cooldown": 60,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it once Thrash is at 3 or more stacks (4 with one point of Flashing Claws, 5 with two), so the Thrash reset and the extra 5 stacks land on a full bleed.",
+      "id_note": "Not pressed in the sampled parse; the ability table verifies it as a real castable id.",
+      "talent_gated": true
     },
     {
       "name": "Convoke the Spirits",
@@ -36,25 +47,37 @@
       "cooldown": 120,
       "duration": 4,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Talent-gated burst; use on cooldown while in Bear Form, ideally lined up with Lunar Beam on Lunation builds for a strong damage spike."
+      "usage_rule": "Channel it in Bear Form, and with Lunation hold it for Lunar Beam being active or more than 15 seconds away.",
+      "id_note": "Not pressed in the sampled parse; the ability table verifies it as a real castable id.",
+      "talent_gated": true
     },
     {
       "name": "Heart of the Wild",
-      "spell_id": 319454,
-      "cooldown": 300,
-      "duration": 45,
+      "spell_id": 1261867,
+      "cooldown": 120,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Talent-gated; weave into Cat Form for a large single-target DoT (Feral Frenzy) damage increase, or use in caster form for the Wild Growth group heal when raid healing is needed."
+      "usage_rule": "Shift to Cat Form every 2 minutes and cast it there for the single-target damage-over-time, switching to Moonkin Form only on pulls of 6 or more.",
+      "id_note": "1261867 is the verified castable id; the guide's catweaving section links 319454.",
+      "talent_gated": true
     },
     {
-      "name": "Red Moon",
-      "spell_id": 1253582,
-      "cooldown": 30,
+      "name": "Wild Guardian",
+      "spell_id": 1269658,
+      "cooldown": 180,
       "align_with_bloodlust": false,
-      "talent_gated": true,
-      "usage_rule": "Talent-gated; cast on cooldown as a top-priority button when Mangle is available and Red Moon is not already ticking on the target."
+      "usage_rule": "Available after each Berserk or Incarnation: spend it while Ravage is up, or inside Lunar Beam when you are not playing Ravage.",
+      "id_note": "1269658 is the cast id granted by Incarnation; 1269616 is its aura and 1269619 the talent node. Cooldown tracks Incarnation, which grants it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Bristling Fur",
+      "spell_id": 155835,
+      "cooldown": 40,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it into incoming damage while Mangle and Thrash are both on cooldown and rage is under 40 (60 with Killing Blow), never while Ravage is up.",
+      "id_note": "Not pressed in the sampled parse; the ability table verifies it as a real castable id.",
+      "talent_gated": true
     }
   ],
   "defensives": [
@@ -63,89 +86,95 @@
       "spell_id": 61336,
       "cooldown": 180,
       "duration": 6,
-      "usage_rule": "Your biggest damage reduction at 50% on a long cooldown; save it for the most dangerous periods of a pull or encounter rather than using it on cooldown."
+      "usage_rule": "Your biggest button at 50% damage reduction with 2 baseline charges: plan it onto the fight's known lethal hits rather than overlapping it with Barkskin.",
+      "talent_gated": true
     },
     {
       "name": "Barkskin",
       "spell_id": 22812,
       "cooldown": 60,
-      "duration": 12,
-      "usage_rule": "Use frequently for its damage reduction during periods of incoming damage; it can be cast freely while in Bear Form and should rarely be held."
+      "duration": 8,
+      "usage_rule": "20% damage reduction you should keep rolling near on cooldown in Bear Form to smooth constant intake, holding it only when a big hit is inside the next few seconds."
     },
     {
       "name": "Frenzied Regeneration",
       "spell_id": 22842,
       "cooldown": 36,
       "duration": 3,
-      "usage_rule": "Press whenever your health dips low to recover a meaningful chunk of HP; its short cooldown lets you use it often throughout the fight."
-    },
-    {
-      "name": "Ironfur",
-      "spell_id": 192081,
-      "cooldown": 15,
-      "duration": 7,
-      "usage_rule": "An extremely short cooldown Rage spender for physical mitigation; press it before large physical hits or heavy melee swings but avoid overusing it, since wasted Ironfur drains the Rage needed for damage and is a significant DPS loss (cooldown shown is its GCD/charge cadence rather than a fixed timer)."
+      "usage_rule": "Heals 24% of your health over 3 seconds, so use it against bleed and magic damage where Ironfur armor does nothing.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "rotation",
-      "priority": "critical",
-      "description": "Keep Mangle and Thrash on cooldown",
-      "condition": null,
-      "action": "Cast Mangle and Thrash as often as possible so the rotation flows smoothly and your Rage generation stays high; these short-cooldown buttons are the backbone of Guardian's damage."
+      "severity": "warning",
+      "description": "Raze at high rage for Harnessed Rage",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 400254,
+        "spell_name": "Raze",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Dump rage into Raze above 80 rage: Harnessed Rage doubles its chance to proc Gore, which resets Mangle and feeds the whole loop."
     },
     {
       "type": "rotation",
-      "priority": "high",
-      "description": "Maintain 3-5 stacks of Thrash",
-      "condition": null,
-      "action": "Refresh Thrash before the DoT falls off and keep it at 3-5 stacks on your targets at all times to sustain your area damage and Rage income."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Maintain Moonfire on the primary target",
-      "condition": null,
-      "action": "Keep Moonfire applied to your primary target and refresh it with Galactic Guardian procs whenever they are available."
-    },
-    {
-      "type": "rotation",
-      "priority": "high",
-      "description": "Spend Rage on Maul, do not waste it on Ironfur",
-      "condition": null,
-      "action": "Spend Rage on Maul or Raze offensively and stay above 80 Rage for Harnessed Rage; only press Ironfur when you actually need physical mitigation, since unnecessary Ironfur drains Rage and forces low-value Swipe filler."
-    },
-    {
-      "type": "opener",
-      "priority": "high",
-      "description": "Opener: DoTs first, then big cooldowns",
-      "condition": null,
-      "action": "Open by getting Moonfire and Thrash rolling and casting Red Moon and Mangle on cooldown, then fire your major cooldowns and settle into the standard priority."
+      "severity": "warning",
+      "description": "Mangle only below the rage cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 33917,
+        "spell_name": "Mangle",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "max"
+      },
+      "action": "Spend into Raze or Ironfur before pressing Mangle above 88 rage (83 with Soul of the Forest) so its 10 to 15 rage is not thrown away."
     },
     {
       "type": "cd_hold",
-      "priority": "medium",
-      "description": "Pair major cooldowns when no uses are lost",
-      "condition": null,
-      "action": "If you fully understand the encounter, time or hold a cooldown to pair it with another as it comes available, but only when doing so costs you zero cooldown uses; otherwise use everything off cooldown."
+      "severity": "warning",
+      "description": "Lunar Beam saved for Incarnation",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [204066],
+        "spell_names": ["Lunar Beam"],
+        "anchor_spell_id": 102558,
+        "anchor_spell_name": "Incarnation: Guardian of Ursoc"
+      },
+      "action": "Send Lunar Beam with Incarnation when Incarnation is ready; otherwise only burn it while Incarnation is more than 60 seconds away (30 with Lunation)."
     },
     {
-      "type": "rotation",
-      "priority": "medium",
-      "description": "Use Survival Instincts for danger windows",
-      "condition": null,
-      "action": "Hold Survival Instincts for the most dangerous damage windows of the encounter rather than pressing it on cooldown, since it is your largest 50% damage reduction on a long timer."
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Red Moon into Mangle",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1252871,
+        "spell_name": "Red Moon",
+        "required_spell_id": 33917,
+        "required_spell_name": "Mangle",
+        "position": "after"
+      },
+      "action": "Only cast Red Moon with Mangle off cooldown and nothing already ticking, then Mangle straight away: every Mangle extends it by 1 second and returns 8 rage."
     },
     {
-      "type": "rotation",
-      "priority": "low",
-      "description": "Swipe only as a last-resort filler",
-      "condition": null,
-      "action": "Cast Swipe only when you have nothing else to press; excessive Swipe generates no Rage and signals you are spending Rage inefficiently, costing you DPS."
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Heart of the Wild in Cat Form",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1261867,
+        "spell_name": "Heart of the Wild",
+        "buff_spell_id": 768,
+        "buff_spell_name": "Cat Form",
+        "require": "inside"
+      },
+      "action": "Rake out of Bear Form to shift to Cat, cast Heart of the Wild there for the single-target damage-over-time, then Mangle to shift straight back; Moonkin Form is only for pulls of 6 or more."
     }
   ],
-  "source_summary": "Guardian Druid has one of the simplest cooldown profiles in the game: keep Mangle and Thrash on cooldown, maintain Moonfire and Thrash stacks, and funnel Rage into Maul or Raze offensively while reserving Ironfur for genuine physical mitigation. The defining offensive cooldown is Incarnation: Guardian of Ursoc (or Berserk), used as often as possible alongside talent-gated tools like Lunar Beam and Convoke the Spirits. Defensively, smooth damage with frequent Barkskin and Ironfur, top off with Frenzied Regeneration, and save Survival Instincts for the encounter's most dangerous moments.",
-  "guide_count": 2,
-  "saved_at": "2026-06-25 20:07:44"
+  "source_summary": "Guardian is a proactive tank whose damage runs on Incarnation: Guardian of Ursoc every 2-3 minutes, with Lunar Beam pulled into it and Red Moon kept ticking by constant Mangle casts. Rage is the pivot: keep it under the cap by spending into Raze above 80 rage for the Harnessed Rage Gore resets, or into Ironfur when the intake is physical. Defensively the sources want Barkskin rolling near on cooldown, Frenzied Regeneration against bleeds and magic, and Survival Instincts planned onto the fight's known lethal hits rather than stacked on top of the other two."
 }
