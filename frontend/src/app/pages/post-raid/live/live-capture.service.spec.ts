@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   ClipRoll, ClipWindow, Segment,
-  absoluteWindowStart, buildClipWindows, fullPullWindow, interSegmentGapMs, segmentSeekOffset, segmentsCover, selectSegments,
+  absoluteWindowStart, buildClipWindows, describeCaptureSource, fullPullWindow, interSegmentGapMs, segmentSeekOffset,
+  segmentsCover, selectSegments,
 } from './live-capture.service';
 import { ClipAnchor } from '../../../core/models/capture.models';
 
@@ -126,6 +127,38 @@ describe('interSegmentGapMs', () => {
   it('is 0 for a single segment and for none', () => {
     expect(interSegmentGapMs([seg(0, 0, 3_000)])).toBe(0);
     expect(interSegmentGapMs([])).toBe(0);
+  });
+});
+
+describe('describeCaptureSource', () => {
+  // Chromium reports these opaque ids as the track label; the window one is what a shared game client looks like.
+  const WINDOW_ID_LABEL = 'window:1:0:s';
+  const SCREEN_ID_LABEL = 'screen:0:0';
+  const TAB_ID_LABEL = 'web-contents-media-stream://5/1';
+  // What a browser that names the surface reports (Firefox on a shared game window).
+  const WINDOW_TITLE_LABEL = 'World of Warcraft';
+
+  it('uses the track label when it is a window title rather than a surface id', () => {
+    expect(describeCaptureSource(WINDOW_TITLE_LABEL, 'window')).toBe(WINDOW_TITLE_LABEL);
+  });
+
+  it('names the surface kind when the label is an opaque surface id', () => {
+    expect(describeCaptureSource(WINDOW_ID_LABEL, 'window')).toBe('the selected window');
+    expect(describeCaptureSource(SCREEN_ID_LABEL, 'monitor')).toBe('your screen');
+    expect(describeCaptureSource(TAB_ID_LABEL, 'browser')).toBe('the selected tab');
+  });
+
+  it('reads the kind off the opaque id when the browser reports no display surface', () => {
+    expect(describeCaptureSource(WINDOW_ID_LABEL)).toBe('the selected window');
+    expect(describeCaptureSource(SCREEN_ID_LABEL)).toBe('your screen');
+  });
+
+  it('names the surface kind when the track carries no label at all', () => {
+    expect(describeCaptureSource('', 'monitor')).toBe('your screen');
+  });
+
+  it('falls back to a neutral phrase when nothing identifies the surface', () => {
+    expect(describeCaptureSource('')).toBe('the selected source');
   });
 });
 

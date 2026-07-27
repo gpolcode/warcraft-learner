@@ -170,6 +170,31 @@ function isPickerDismissal(err: unknown): boolean {
   return err instanceof DOMException && err.name === 'NotAllowedError';
 }
 
+// Source naming
+
+/** Chromium reports the opaque surface id ("window:1:0:s") as the track label; the kind prefix is captured. */
+const OPAQUE_TRACK_LABEL = /^(window|screen|monitor|web-contents-media-stream):/i;
+
+/** How the controls strip names a shared surface, keyed by both `displaySurface` value and opaque-label prefix. */
+const SOURCE_PHRASES: Record<string, string | undefined> = {
+  monitor: 'your screen',
+  screen: 'your screen',
+  window: 'the selected window',
+  browser: 'the selected tab',
+  'web-contents-media-stream': 'the selected tab',
+};
+
+/** Used when neither the label nor `displaySurface` says which kind of surface is shared. */
+const UNKNOWN_SOURCE_PHRASE = 'the selected source';
+
+/** Name the recorded source: the track's window title when it carries one, else a phrase for the surface kind. */
+export function describeCaptureSource(label: string, displaySurface?: string): string {
+  const title = label.trim();
+  const opaqueKind = OPAQUE_TRACK_LABEL.exec(title)?.[1].toLowerCase();
+  if (title && !opaqueKind) return title;
+  return SOURCE_PHRASES[displaySurface ?? ''] ?? SOURCE_PHRASES[opaqueKind ?? ''] ?? UNKNOWN_SOURCE_PHRASE;
+}
+
 // Feature service
 
 @Injectable({ providedIn: 'root' })
@@ -237,7 +262,7 @@ export class LiveCaptureFeatureService {
       this.stream = stream;
       this.captureProfile.set(profile);
       this.mimeType = mimeFor(profile);
-      this.sourceLabel.set(track.label || 'your screen');
+      this.sourceLabel.set(describeCaptureSource(track.label, track.getSettings().displaySurface));
       // Sharing stopped from the browser UI (or the window closed) ends capture cleanly.
       track.addEventListener('ended', () => this.stopRecording());
       this.isCapturing.set(true);
