@@ -59,7 +59,7 @@
       "cooldown": 32,
       "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Enter Solar Eclipse when your filler only reaches one or two targets so Wrath is the empowered spell, and avoid capping the shared Eclipse charges; sit outside Eclipse generating Astral Power only when a priority target is roughly 10 seconds out.",
+      "usage_rule": "Enter Solar Eclipse when your filler only reaches one or two targets, then build with Wrath for the whole 15 seconds; avoid capping the shared Eclipse charges, and sit outside Eclipse generating Astral Power only when a priority target is roughly 10 seconds out.",
       "id_note": "Cast id for the Solar half of the shared 32-second Eclipse button. Lunar Calling removes Solar entry entirely for Elune's Chosen builds.",
       "talent_gated": true
     },
@@ -69,7 +69,7 @@
       "cooldown": 32,
       "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Enter Lunar Eclipse whenever Starfire consistently hits 3 or more targets, and always on Elune's Chosen; keep both Eclipse charges cycling instead of banking them, and before an Eclipse ends either hold Astral Power for the next entry or dump it if you will be outside Eclipse for several seconds.",
+      "usage_rule": "Enter Lunar Eclipse whenever Starfire consistently hits 3 or more targets, and always on Elune's Chosen, then build with Starfire until it ends; keep both Eclipse charges cycling instead of banking them, and before an Eclipse ends either hold Astral Power for the next entry or dump it if you will be outside Eclipse for several seconds.",
       "id_note": "Cast id for the Lunar half of the shared 32-second Eclipse button; not pressed in the sampled parse, whose Lunar entries all came from Celestial Alignment granting both states.",
       "talent_gated": true
     }
@@ -200,6 +200,62 @@
       "action": "Consume every Touch the Cosmos proc before it drops: Starfall whenever you are talented into Starweaver or on 3 or more targets, Starsurge otherwise."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Wrath is the filler inside Solar Eclipse",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 190984,
+        "spell_name": "Wrath",
+        "alternative_spell_ids": [
+          194153
+        ],
+        "alternative_spell_names": [
+          "Starfire"
+        ],
+        "buff_spell_id": 48517,
+        "buff_spell_name": "Eclipse (Solar)",
+        "except_buff_spell_ids": [
+          194223,
+          102560,
+          1263363
+        ],
+        "except_buff_spell_names": [
+          "Celestial Alignment",
+          "Incarnation: Chosen of Elune",
+          "Ascendant Fires"
+        ]
+      },
+      "action": "Build Astral Power with Wrath for the whole Solar Eclipse window: Solar empowers Wrath, not Starfire. Keep Starfire for Lunar Eclipse and for the Ascendant Eclipses proc inside Celestial Alignment or Incarnation."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Starfire is the filler inside Lunar Eclipse",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 194153,
+        "spell_name": "Starfire",
+        "alternative_spell_ids": [
+          190984
+        ],
+        "alternative_spell_names": [
+          "Wrath"
+        ],
+        "buff_spell_id": 48518,
+        "buff_spell_name": "Eclipse (Lunar)",
+        "except_buff_spell_ids": [
+          194223,
+          102560
+        ],
+        "except_buff_spell_names": [
+          "Celestial Alignment",
+          "Incarnation: Chosen of Elune"
+        ]
+      },
+      "action": "Build Astral Power with Starfire while Lunar Eclipse is up, and on every Elune's Chosen build, where Lunar Calling makes Starfire your only filler. Drop back to Wrath only when Starfire will not finish before the window closes."
+    },
+    {
       "type": "aoe_switch",
       "severity": "warning",
       "description": "Starsurge gives way to Starfall on 3 or more targets",
@@ -212,5 +268,5 @@
       "action": "Spend on Starfall from 3 targets upward, keep Starsurge for one or two targets, and stop using Starsurge procs entirely at 8 or more enemies."
     }
   ],
-  "source_summary": "Balance Druid output is built around stacking everything into the Celestial Alignment or Incarnation: Chosen of Elune window: Fury of Elune then Force of Nature go out first, Celestial Alignment follows on the next global with trinkets and potion, and Convoke the Spirits is channelled inside it under 40 Astral Power. Outside that window the spec cycles the 32-second Eclipse charges, entering Solar for one or two targets and Lunar from three up, applying and maintaining Moonfire and Sunfire while outside Eclipse and dumping Astral Power on Starsurge or Starfall while inside it. Astral Power is never capped, free Starweaver and Touch the Cosmos procs are consumed on sight, and Eclipse charges are staggered rather than banked so a window is always available when a priority target appears."
+  "source_summary": "Balance Druid output is built around stacking everything into the Celestial Alignment or Incarnation: Chosen of Elune window: Fury of Elune then Force of Nature go out first, Celestial Alignment follows on the next global with trinkets and potion, and Convoke the Spirits is channelled inside it under 40 Astral Power. Outside that window the spec cycles the 32-second Eclipse charges, entering Solar for one or two targets and Lunar from three up, applying and maintaining Moonfire and Sunfire while outside Eclipse. Eclipse then decides both halves of the filler loop: build with Wrath in Solar and with Starfire in Lunar, and spend on Starsurge on one target or Starfall from three up. Astral Power is never capped, free Starweaver and Touch the Cosmos procs are consumed on sight, and Eclipse charges are staggered rather than banked so a window is always available when a priority target appears."
 }
