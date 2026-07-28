@@ -1,0 +1,182 @@
+{
+  "spec": "ProtectionWarrior",
+  "spec_icon": "ability_warrior_defensivestance",
+  "major_cooldowns": [
+    {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it on cooldown, ideally as you Charge in, and spend your banked Thunder Blast stacks first since Avatar of the Storm hands you 2 more; expect to Rage cap during it, so keep dumping into Ignore Pain or Revenge."
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "talent_gated": true,
+      "usage_rule": "Open with it before the pull connects and press it on cooldown after: it is up to 60 Rage over 12 seconds, and Revenge is worth pressing while it ticks.",
+      "id_note": "228920 is the talent cast id; not pressed in the sampled parse, so casts are unverified but the id is real."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "With Booming Voice it is 20 Rage plus a 20% damage amp, so use it on cooldown and cover your other damage abilities with it; delay it only when you know heavy damage is coming and nothing else is up."
+    },
+    {
+      "name": "Demolish",
+      "spell_id": 436358,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "talent_gated": true,
+      "usage_rule": "Colossus only: press it on cooldown, inside Avatar and Demoralizing Shout when it lines up, and never delay it far enough to lose a cast; position so the 2 second channel hits every target and nothing is behind you.",
+      "id_note": "436358 is the Colossus talent cast id; not pressed in the sampled parse, which ran Mountain Thane."
+    },
+    {
+      "name": "Shield Charge",
+      "spell_id": 385954,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "talent_gated": true,
+      "usage_rule": "Press it on cooldown inside Avatar or Demoralizing Shout, but only spend it offensively when you know you will not need the free Shield Block it grants during the next 45 seconds.",
+      "id_note": "385954 is the id observed in the Casts table; 385952 is the talent id the guide links."
+    },
+    {
+      "name": "Wrecking Throw",
+      "spell_id": 384110,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Throw it on cooldown as filler, unless the fight wants it saved for an absorb shield to break or, with Javelineer, for the 3 second silence."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Your primary mitigation at 30 Rage and 2 charges: keep it up whenever something is actually meleeing you, delay it into known blockable hits or long boss casts, and bank toward 2 charges before you taunt back in."
+    },
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "40% reduction for 8 seconds: pre-plan it for a known spike or a non-blockable damage window rather than reacting to a low health bar."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "usage_rule": "Cuts the damage the pack deals to you by 20% for 8 seconds, so hold it for the heavy melee window when you have nothing else available."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "20% magic reduction for 5 seconds: use it as your magic-damage button, and save the reflect for the rare boss or dungeon spell that can actually be sent back, remembering the buff drops the moment you reflect."
+    },
+    {
+      "name": "Last Stand",
+      "spell_id": 12975,
+      "cooldown": 180,
+      "duration": 8,
+      "talent_gated": true,
+      "usage_rule": "30% max health instantly healed for 8 seconds: press it as the recovery button after a spike lands, or stack it with Shield Wall when you need to eat a hit you cannot mitigate."
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "10% temporary health for the whole group: plan it into a raid-wide damage event rather than pressing it for yourself."
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "talent_gated": true,
+      "usage_rule": "10 Rage for 30% of your max health: press it whenever you are chipped and the Rage is not needed for Shield Block.",
+      "id_note": "202168 is the cast id; 202166 is the matching aura."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shield Block stays up while you are tanking",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 132404,
+        "aura_spell_name": "Shield Block",
+        "on": "self"
+      },
+      "action": "Keep Shield Block up whenever something is meleeing you: 30 Rage, 2 charges on a 16 second recharge, 6 seconds each. Cover the gaps with Shield Wall or Demoralizing Shout."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Avatar, Thunder Clap, Shield Block, then Shield Slam",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [107574, 6343, 2565, 23922],
+        "spell_names": ["Avatar", "Thunder Clap", "Shield Block", "Shield Slam"]
+      },
+      "action": "Open with Ravager and Charge, fire Avatar as you connect, then Thunder Clap and Thunder Blast, Shield Block, Shield Slam and Demoralizing Shout."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Ignore Pain dumps Rage before you cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 190456,
+        "spell_name": "Ignore Pain",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Rage caps at 100 and the overflow is gone. Dump into Ignore Pain once your deficit is 15 or less, or at 70+ Rage with Shield Block up and Shield Slam about to return. It is off the global cooldown, so it costs you nothing to weave, and Shield Block still gets first claim on 30 Rage."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Violent Outburst spent on Shield Slam",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 386478,
+        "buff_spell_name": "Violent Outburst",
+        "spend_spell_ids": [23922],
+        "spend_spell_names": ["Shield Slam"]
+      },
+      "action": "Every 250 Rage spent arms a Violent Outburst worth 200% extra Shield Slam damage, 50% more Rage and a free Ignore Pain. Send Shield Slam as soon as it lights up."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Ravager, Shield Charge, Demolish inside Avatar",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [228920, 385954, 436358],
+        "spell_names": ["Ravager", "Shield Charge", "Demolish"],
+        "anchor_spell_id": 107574,
+        "anchor_spell_name": "Avatar"
+      },
+      "action": "Line your damage abilities up with Avatar, and with Demoralizing Shout on top when both are available. Never hold them long enough to lose a cast over the fight, and keep Shield Charge back when you will need the Shield Block it grants."
+    }
+  ],
+  "source_summary": "Protection Warrior plays a Rage engine: Shield Slam and Thunder Clap on cooldown feed Shield Block first and Ignore Pain with whatever is left, and Revenge soaks the overflow when survivability is covered. Avatar and Demoralizing Shout are the damage amps, so Ravager, Shield Charge and Demolish are aimed into them without ever being delayed far enough to drop a cast. Defensives are planned rather than reactive: Shield Wall and Demoralizing Shout for known spikes, Spell Reflection for magic windows, Last Stand as the recovery button."
+}
