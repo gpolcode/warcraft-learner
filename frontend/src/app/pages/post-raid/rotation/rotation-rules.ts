@@ -5,7 +5,7 @@ import {
   RulebookRule, RuleCondition,
   CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
   AuraUptimeBelowCondition, OpeningSequenceCondition,
-  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
+  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, FillerInBuffCondition,
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { AuraWindows, buildAuraWindows, isInsideAura, auraUptimePct } from '../../../shared/analysis/aura-windows';
@@ -338,6 +338,40 @@ export function evaluateProcWasted(
   };
 }
 
+/** The filler casts the buff windows actually contained, split into the coached one and the ones it should displace. */
+function fillerCastsInBuff(cond: FillerInBuffCondition, ctx: RuleContext): { coached: number[]; total: number } {
+  const suspended = (timeMs: number) =>
+    (cond.except_buff_spell_ids ?? []).some(spellId => isInsideAura(ctx.selfAuras, spellId, timeMs));
+  const inBuff = (spellId: number) => (ctx.castTimes[spellId] ?? [])
+    .filter(time => isInsideAura(ctx.selfAuras, cond.buff_spell_id, time * 1000) && !suspended(time * 1000));
+  const coached = inBuff(cond.spell_id);
+  const alternatives = cond.alternative_spell_ids.flatMap(inBuff);
+  return { coached, total: coached.length + alternatives.length };
+}
+
+/** Share of the filler choice the coached spell won inside the buff, or null when the pull never filled there. */
+function fillerShare(cond: FillerInBuffCondition, ctx: RuleContext): number | null {
+  const { coached, total } = fillerCastsInBuff(cond, ctx);
+  return total ? coached.length / total : null;
+}
+
+export function evaluateFillerInBuff(
+  cond: FillerInBuffCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  const { coached, total } = fillerCastsInBuff(cond, ctx);
+  if (!total) return null;
+  const share = coached.length / total;
+  const floor = lenient(threshold, 'down');
+  if (share >= floor) return null;
+  return {
+    severity, category: 'rule_violation',
+    label: `${cond.spell_name} in ${cond.buff_spell_name}`,
+    message: `${cond.spell_name} was ${Math.round(share * 100)}% of your fillers inside ${cond.buff_spell_name}, where the field runs ${Math.round(threshold.value * 100)}%.`,
+    measured: { value: `${Math.round(share * 100)} / ${Math.round(threshold.value * 100)}`, unit: '% of fillers' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
 /** Short chip label for a rulebook rule `type`, matching the tone of `CAT_LABEL`. */
 export const RULE_TYPE_LABEL: Record<string, string> = {
   cooldown_pairing: 'pairing',
@@ -360,7 +394,8 @@ function streamsFor(cond: RuleCondition): RuleStream[] {
     case 'cast_outside_buff':
     case 'opening_sequence':
     case 'resource_at_cast':
-    case 'proc_wasted': return [];
+    case 'proc_wasted':
+    case 'filler_in_buff': return [];
   }
 }
 
@@ -407,6 +442,7 @@ export function measureRule(cond: RuleCondition, ctx: RuleContext): number | nul
       const fracs = resourceFractionPerCast(cond, ctx).map(entry => entry.frac);
       return fracs.length ? median(fracs) ?? null : null;
     }
+    case 'filler_in_buff': return fillerShare(cond, ctx);
     case 'cast_outside_buff':
     case 'proc_wasted': return null;
   }
@@ -420,7 +456,8 @@ function needsThreshold(cond: RuleCondition): boolean {
     case 'aura_uptime_below':
     case 'opening_sequence':
     case 'cast_at_target_count':
-    case 'resource_at_cast': return true;
+    case 'resource_at_cast':
+    case 'filler_in_buff': return true;
     case 'cast_outside_buff':
     case 'proc_wasted': return false;
   }
@@ -462,6 +499,8 @@ export function evaluateCondition(
       return threshold && evaluateCastAtTargetCount(cond, ctx, threshold, severity, remedy);
     case 'resource_at_cast':
       return threshold && evaluateResourceAtCast(cond, ctx, threshold, severity, remedy);
+    case 'filler_in_buff':
+      return threshold && evaluateFillerInBuff(cond, ctx, threshold, severity, remedy);
   }
 }
 
@@ -478,6 +517,7 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
     case 'cast_at_target_count': return targetCountsPerCast(cond, ctx).length > 0;
     case 'resource_at_cast': return resourceFractionPerCast(cond, ctx).length > 0;
     case 'proc_wasted': return closedProcSpans(cond, ctx).length > 0;
+    case 'filler_in_buff': return fillerCastsInBuff(cond, ctx).total > 0;
   }
 }
 
@@ -504,6 +544,7 @@ export function ruleLabel(cond: RuleCondition, description?: string): string {
     case 'cast_at_target_count': return `${cond.spell_name} target count`;
     case 'resource_at_cast': return `${cond.spell_name} at ${cond.resource_name}`;
     case 'proc_wasted': return `${cond.buff_spell_name} spent`;
+    case 'filler_in_buff': return `${cond.spell_name} in ${cond.buff_spell_name}`;
   }
 }
 

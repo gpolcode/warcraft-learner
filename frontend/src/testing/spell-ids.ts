@@ -40,6 +40,11 @@ export const BLACK_POWDER = 319175;
 // A bleed the rogue maintains on the target, for enemy-debuff fixtures.
 export const RUPTURE = 1943;
 
+// Balance Druid, whose two fillers swap on an Eclipse state - the filler-choice fixtures.
+export const WRATH = 190984;
+export const STARFIRE = 194153;
+export const ECLIPSE_SOLAR = 48517;
+
 // Real WCL quirk: an ability's damage event carries a different id than its cast
 // event, but both share the same name. Shadow Blades is cast as 121471 yet its
 // damage rows show up as 279043 - the name is the only bridge between the two.

@@ -3,11 +3,12 @@ import {
   RulebookRule, RuleSeverity,
   CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
   AuraUptimeBelowCondition, OpeningSequenceCondition,
-  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition,
+  CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, FillerInBuffCondition,
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
+  WRATH, STARFIRE, ECLIPSE_SOLAR,
 } from '../../../../testing/spell-ids';
 import {
   cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, damage, death,
@@ -18,6 +19,7 @@ import {
   rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
   evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
+  evaluateFillerInBuff,
 } from './rotation-rules';
 
 // A zero band keeps the fixture arithmetic exact.
@@ -443,6 +445,96 @@ describe('evaluateProcWasted', () => {
     const ctx = ruleCtx([], { buffs: buffWindow(SHADOW_DANCE, 100, RULE_FIGHT_END_MS / 1000) });
     expect(evaluateProcWasted(spendDance, ctx, 'warning')).toBeNull();
     expect(ruleApplicable(spendDance, ctx)).toBe(false);
+  });
+});
+
+describe('evaluateFillerInBuff', () => {
+  // Fight-relative seconds for an Eclipse (Solar) window long enough to hold several fillers.
+  const SOLAR_START_S = 10, SOLAR_END_S = 40;
+  // What the top parses run: Wrath is nearly every filler they press inside Solar Eclipse.
+  const FIELD_WRATH_SHARE = 0.9;
+  const wrathInSolar: FillerInBuffCondition = {
+    kind: 'filler_in_buff',
+    spell_id: WRATH, spell_name: 'Wrath',
+    alternative_spell_ids: [STARFIRE], alternative_spell_names: ['Starfire'],
+    buff_spell_id: ECLIPSE_SOLAR, buff_spell_name: 'Eclipse (Solar)',
+  };
+  const solar = buffWindow(ECLIPSE_SOLAR, SOLAR_START_S, SOLAR_END_S);
+
+  it('flags a player filling with the wrong spell inside the buff', () => {
+    // One Wrath to three Starfire is a 25% share, under the field's 90%.
+    const ctx = ruleCtx([
+      cast(WRATH, 12), cast(STARFIRE, 14), cast(STARFIRE, 16), cast(STARFIRE, 18),
+    ], { buffs: solar });
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE), 'warning')?.measured)
+      .toEqual({ value: '25 / 90', unit: '% of fillers' });
+  });
+
+  it('passes a player whose share matches the field', () => {
+    const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(WRATH, 16)], { buffs: solar });
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE), 'warning')).toBeNull();
+  });
+
+  it('ignores fillers cast outside the buff, which the rule says nothing about', () => {
+    const ctx = ruleCtx([cast(WRATH, 12), cast(STARFIRE, SOLAR_END_S + 5)], { buffs: solar });
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE), 'warning')).toBeNull();
+  });
+
+  it('accepts a share exactly on the field bar but not one just under it', () => {
+    // Nine Wrath to one Starfire is exactly 90%; eight to two is 80%.
+    const nine = Array.from({ length: 9 }, (_, i) => cast(WRATH, 12 + i));
+    const eight = Array.from({ length: 8 }, (_, i) => cast(WRATH, 12 + i));
+    const onTheBar = ruleCtx([...nine, cast(STARFIRE, 22)], { buffs: solar });
+    const underIt = ruleCtx([...eight, cast(STARFIRE, 22), cast(STARFIRE, 24)], { buffs: solar });
+    expect(evaluateFillerInBuff(wrathInSolar, onTheBar, thr(FIELD_WRATH_SHARE), 'warning')).toBeNull();
+    expect(evaluateFillerInBuff(wrathInSolar, underIt, thr(FIELD_WRATH_SHARE), 'warning')).not.toBeNull();
+  });
+
+  it('is not applicable when the pull never filled inside the buff', () => {
+    expect(ruleApplicable(wrathInSolar, ruleCtx([cast(WRATH, 5)], { buffs: solar }))).toBe(false);
+  });
+
+  it('drops casts made in a state that suspends the choice, so a burst window is not a violation', () => {
+    const CELESTIAL_START_S = 15, CELESTIAL_END_S = 25;
+    const suspendedByCelestial: FillerInBuffCondition = {
+      ...wrathInSolar,
+      except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
+    };
+    const buffs = [...solar, ...buffWindow(SHADOW_DANCE, CELESTIAL_START_S, CELESTIAL_END_S)];
+    // Three Starfire inside the suspending window, one Wrath outside it.
+    const ctx = ruleCtx([
+      cast(WRATH, 12), cast(STARFIRE, 16), cast(STARFIRE, 18), cast(STARFIRE, 20),
+    ], { buffs });
+    expect(evaluateFillerInBuff(suspendedByCelestial, ctx, thr(FIELD_WRATH_SHARE), 'warning')).toBeNull();
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE), 'warning')).not.toBeNull();
+  });
+
+  it('is not applicable when every filler inside the buff sat in a suspending state', () => {
+    const suspendedThroughout: FillerInBuffCondition = {
+      ...wrathInSolar,
+      except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
+    };
+    const buffs = [...solar, ...buffWindow(SHADOW_DANCE, SOLAR_START_S, SOLAR_END_S)];
+    const ctx = ruleCtx([cast(WRATH, 12), cast(STARFIRE, 16)], { buffs });
+    expect(ruleApplicable(suspendedThroughout, ctx)).toBe(false);
+    expect(measureRule(suspendedThroughout, ctx)).toBeNull();
+  });
+
+  it('measures the share the pull ran, and nothing when it never filled inside the buff', () => {
+    const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(STARFIRE, 16), cast(STARFIRE, 18)], { buffs: solar });
+    expect(measureRule(wrathInSolar, ctx)).toBe(0.5);
+    expect(measureRule(wrathInSolar, ruleCtx([], { buffs: solar }))).toBeNull();
+  });
+
+  it('forgives the band below the field share', () => {
+    const BAND = 0.2;
+    const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(WRATH, 16), cast(STARFIRE, 18)], { buffs: solar });
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE, BAND), 'warning')).toBeNull();
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, thr(FIELD_WRATH_SHARE), 'warning')).not.toBeNull();
+  });
+
+  it('labels the rule as "<filler> in <buff>"', () => {
+    expect(ruleLabel(wrathInSolar)).toBe('Wrath in Eclipse (Solar)');
   });
 });
 

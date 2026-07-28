@@ -86,6 +86,20 @@ export interface ProcWastedCondition {
   spend_spell_names: string[];
 }
 
+export interface FillerInBuffCondition {
+  kind: 'filler_in_buff';
+  spell_id: number;
+  spell_name: string;
+  /** The fillers it competes with, so the check reads a share of the choice rather than a raw count. */
+  alternative_spell_ids: number[];
+  alternative_spell_names: string[];
+  buff_spell_id: number;
+  buff_spell_name: string;
+  /** States that suspend the choice, so a burst window or proc that makes the other filler correct is not counted against it. */
+  except_buff_spell_ids?: number[];
+  except_buff_spell_names?: string[];
+}
+
 export type RuleCondition =
   | CastWithoutPriorCondition
   | HoldCooldownForAnchorCondition
@@ -94,7 +108,8 @@ export type RuleCondition =
   | OpeningSequenceCondition
   | CastAtTargetCountCondition
   | ResourceAtCastCondition
-  | ProcWastedCondition;
+  | ProcWastedCondition
+  | FillerInBuffCondition;
 
 /** The tiers the findings table renders, authored directly so nothing translates between vocabularies. */
 export type RuleSeverity = 'critical' | 'warning' | 'info';
