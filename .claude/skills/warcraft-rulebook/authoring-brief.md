@@ -74,6 +74,9 @@ flattens it is a failed run.
   | spend A only at N resource, do not overcap | `resource_at_cast` |
   | consume proc B on sight | `proc_wasted` |
   | build with A while buff B is up, with something else otherwise | `filler_in_buff` |
+  | spend A only at N stacks of buff B, do not cap B | `spend_at_stacks` |
+  | refresh damage-over-time D late, do not clip it | `aura_clipped` |
+  | A replaces the filler below N% target health | `filler_below_health` |
 
 - **Never author a magnitude.** A condition names identity and direction only - which spell, which
   aura, which resource, and which way the rule runs (`position`, `require`, `on`, `bound`). Every

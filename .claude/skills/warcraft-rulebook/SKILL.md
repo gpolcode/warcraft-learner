@@ -277,8 +277,9 @@ all the files**, not a command per file per check:
   transposed pair that the schema cannot see, since both fields are individually well-typed. Compare with
   any trailing parenthetical stripped: WCL suffixes multi-part spells (`Stasis (Store)`) where the
   in-game name, which is what the player is shown, has no suffix.
-- **no magnitudes in conditions**: assert no numeric value in any condition outside the id and
-  `resource_type` fields, and no `rules[].description` over 60 characters.
+- **no magnitudes in conditions**: assert no numeric value in any condition outside the id fields,
+  `resource_type` and `health_pct`, and no `rules[].description` over 60 characters. Those two are
+  game constants read from a tooltip, not field behaviour the encounter has to measure.
 - unresolved-name follow-up: for any ability name a subagent reported as missing from its table, find the
   id (Wowhead spell search), verify it with a WCL `ability(id:...)` query, and patch it in.
 
