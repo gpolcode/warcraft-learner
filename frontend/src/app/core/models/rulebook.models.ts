@@ -122,6 +122,9 @@ export interface AuraClippedCondition {
   cast_spell_name: string;
   /** `target` reads the enemy debuff stream, which is where damage-over-time rules live. */
   on: 'self' | 'target';
+  /** States that suspend the rule, so a cooldown the sources say to re-snapshot under is not counted against it. */
+  except_buff_spell_ids?: number[];
+  except_buff_spell_names?: string[];
 }
 
 export interface FillerBelowHealthCondition {

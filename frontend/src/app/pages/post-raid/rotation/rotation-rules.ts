@@ -1,5 +1,6 @@
 // Separate from rotation.service.ts so the ingest transform measures top parses with the same code the runtime judges the player with.
 import { median, deviation } from 'd3-array';
+import { round } from '../../../shared/analysis/analysis-math';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import {
   RulebookRule, RuleCondition,
@@ -11,7 +12,7 @@ import {
 import { WclEvent } from '../../../core/models/wcl.models';
 import {
   AuraWindows, AuraStacks, TargetedAuraSpans, AuraSpan,
-  buildAuraWindows, buildAuraStacks, buildTargetedAuraSpans, isInsideAura, stacksAt, auraUptimePct,
+  buildAuraWindows, buildAuraStacks, buildTargetedAuraSpans, isInsideAura, isUnderAura, stacksAt, auraUptimePct,
 } from '../../../shared/analysis/aura-windows';
 
 export type Severity = AnalysisFinding['severity'];
@@ -25,11 +26,11 @@ const RESOURCE_ACTOR_SOURCE = 1;
 /** The other half of the same field: 2 means the snapshot describes whoever was hit. */
 const RESOURCE_ACTOR_TARGET = 2;
 
-/** How far back a cast may read the last damage event for target health, since health is sampled on hits rather than casts. */
-const HEALTH_SAMPLE_WINDOW_S = 6;
+/** How far back a cast may read its target's last health snapshot, since health is sampled on hits rather than casts. Health falls fast in execute range, so this stays short. */
+const HEALTH_SAMPLE_WINDOW_S = 2;
 
-/** A re-application this soon after a cast is that cast landing, so a proc refresh is not read as a button press. */
-const HARD_CAST_WINDOW_S = 1.5;
+/** A re-application this soon AFTER a cast is that cast landing: measured deltas run 0-28ms, so this covers projectile flight without reaching the next proc. */
+const HARD_CAST_WINDOW_S = 0.25;
 
 /** A magnitude the encounter supplies in place of a number nobody should author. */
 export interface RuleThreshold {
@@ -75,10 +76,16 @@ export interface RuleContext {
   aliveDurationS: number;
   selfAuras: AuraWindows;
   targetAuras: AuraWindows;
-  selfStacks: AuraStacks;
-  selfAuraSpans: TargetedAuraSpans;
-  targetAuraSpans: TargetedAuraSpans;
   damage: WclEvent[];
+  /** Built on first read: only three of the twelve kinds want these, and a pull pays a full extra pass over its streams for each. */
+  readonly selfStacks: AuraStacks;
+  readonly selfAuraSpans: TargetedAuraSpans;
+  readonly targetAuraSpans: TargetedAuraSpans;
+}
+
+function lazy<T>(build: () => T): () => T {
+  let value: T | undefined;
+  return () => (value ??= build());
 }
 
 export interface RuleInputs {
@@ -95,6 +102,9 @@ export interface RuleInputs {
 export function buildRuleContext(input: RuleInputs): RuleContext {
   const fightDurationS = (input.fEnd - input.fStart) / 1000;
   const deathTimes = input.deaths.map(event => (event.timestamp - input.fStart) / 1000);
+  const selfStacks = lazy(() => buildAuraStacks(input.buffs, input.fStart));
+  const selfAuraSpans = lazy(() => buildTargetedAuraSpans(input.buffs, input.fStart));
+  const targetAuraSpans = lazy(() => buildTargetedAuraSpans(input.debuffs, input.fStart));
   return {
     castTimes: buildCastTimes(input.casts, input.fStart),
     castEvents: input.casts,
@@ -103,10 +113,10 @@ export function buildRuleContext(input: RuleInputs): RuleContext {
     aliveDurationS: deathTimes.length ? Math.min(...deathTimes) : fightDurationS,
     selfAuras: buildAuraWindows(input.buffs, input.fStart),
     targetAuras: buildAuraWindows(input.debuffs, input.fStart),
-    selfStacks: buildAuraStacks(input.buffs, input.fStart),
-    selfAuraSpans: buildTargetedAuraSpans(input.buffs, input.fStart),
-    targetAuraSpans: buildTargetedAuraSpans(input.debuffs, input.fStart),
     damage: input.damage,
+    get selfStacks() { return selfStacks(); },
+    get selfAuraSpans() { return selfAuraSpans(); },
+    get targetAuraSpans() { return targetAuraSpans(); },
   };
 }
 
@@ -279,24 +289,49 @@ function targetCountsPerCast(cond: CastAtTargetCountCondition, ctx: RuleContext)
     .filter(({ targets }) => targets > 0);
 }
 
-export function evaluateCastAtTargetCount(
-  cond: CastAtTargetCountCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
+/** One value read off each cast, judged against the bound. Shared by every per-cast kind so they cannot drift apart in maths or in voice. */
+interface BoundedCasts {
+  values: { timeS: number; value: number }[];
+  bound: 'min' | 'max';
+  /** Snaps the limit before it is compared, for a scale that only has whole steps. */
+  quantize?: (value: number) => number;
+  /** Applied to both the limit and the field figure, so the two numbers in the copy always read on one scale. */
+  format: (value: number) => string;
+  label: (limit: string) => string;
+  what: (limit: string) => string;
+}
+
+function evaluateBoundedPerCast(
+  judged: BoundedCasts, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const judged = targetCountsPerCast(cond, ctx);
-  if (!judged.length) return null;
-  // Rounded, since truncating a sub-target band away from a whole-target threshold costs a full target of slack and the rule then fires a target late.
-  const limit = Math.round(lenient(threshold, cond.bound === 'min' ? 'down' : 'up'));
-  const violations = judged.filter(({ targets }) => cond.bound === 'min' ? targets < limit : targets > limit);
+  if (!judged.values.length) return null;
+  const quantize = judged.quantize ?? ((value: number) => value);
+  const limit = quantize(lenient(threshold, judged.bound === 'min' ? 'down' : 'up'));
+  const violations = judged.values.filter(({ value }) => judged.bound === 'min' ? value < limit : value > limit);
   if (!violations.length) return null;
-  const wording = cond.bound === 'min' ? `under ${limit}` : `over ${limit}`;
+  const shown = judged.format(limit);
   return {
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(violations[0].timeS * 1000),
-    label: `${cond.spell_name} at ${wording} targets`,
-    message: `${cond.spell_name} cast at ${wording} targets, where the field uses it around ${Math.round(threshold.value)}: ${violations.length} of ${judged.length} cast(s).`,
-    measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
+    label: judged.label(shown),
+    message: `${judged.what(shown)}, ${violations.length} of ${judged.values.length} cast(s). Top: ${judged.format(threshold.value)}.`,
+    measured: { value: `${violations.length} / ${judged.values.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
   };
+}
+
+export function evaluateCastAtTargetCount(
+  cond: CastAtTargetCountCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
+): AnalysisFinding | null {
+  return evaluateBoundedPerCast({
+    values: targetCountsPerCast(cond, ctx).map(({ timeS, targets }) => ({ timeS, value: targets })),
+    bound: cond.bound,
+    // Rounded, since truncating a sub-target band away from a whole-target threshold costs a full target of slack and the rule then fires a target late.
+    quantize: Math.round,
+    format: value => String(Math.round(value)),
+    label: limit => `${cond.spell_name} at ${cond.bound === 'min' ? 'under' : 'over'} ${limit} targets`,
+    what: limit => `${cond.spell_name} cast at ${cond.bound === 'min' ? 'under' : 'over'} ${limit} targets`,
+  }, threshold, severity, remedy);
 }
 
 /** A share of the pool's own cap, so one threshold stays meaningful across pools whose scales differ by orders of magnitude. */
@@ -315,21 +350,14 @@ function resourceFractionPerCast(cond: ResourceAtCastCondition, ctx: RuleContext
 export function evaluateResourceAtCast(
   cond: ResourceAtCastCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const judged = resourceFractionPerCast(cond, ctx);
-  if (!judged.length) return null;
-  const limit = cond.bound === 'min' ? lenient(threshold, 'down') : lenient(threshold, 'up');
-  const violations = judged.filter(({ frac }) => cond.bound === 'min' ? frac < limit : frac > limit);
-  if (!violations.length) return null;
   const wording = cond.bound === 'min' ? 'below' : 'above';
-  const pct = Math.round(limit * 100);
-  return {
-    severity, category: 'rule_violation',
-    timestamp_ms: Math.round(violations[0].timeS * 1000),
-    label: `${cond.spell_name} at ${wording} ${pct}% ${cond.resource_name}`,
-    message: `${cond.spell_name} cast ${wording} ${pct}% ${cond.resource_name}, where the field spends at ${Math.round(threshold.value * 100)}%: ${violations.length} of ${judged.length} cast(s).`,
-    measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
-    details: remedy ? { remedy } : undefined,
-  };
+  return evaluateBoundedPerCast({
+    values: resourceFractionPerCast(cond, ctx).map(({ timeS, frac }) => ({ timeS, value: frac })),
+    bound: cond.bound,
+    format: value => `${Math.round(value * 100)}%`,
+    label: limit => `${cond.spell_name} at ${wording} ${limit} ${cond.resource_name}`,
+    what: limit => `${cond.spell_name} cast ${wording} ${limit} ${cond.resource_name}`,
+  }, threshold, severity, remedy);
 }
 
 /** A proc still up when the pull ends has not been wasted, whether the log closed its span at the kill or left it open. */
@@ -357,37 +385,54 @@ export function evaluateProcWasted(
   };
 }
 
-/** The filler casts the buff windows actually contained, split into the coached one and the ones it should displace. */
-function fillerCastsInBuff(cond: FillerInBuffCondition, ctx: RuleContext): { coached: number[]; total: number } {
-  const inBuff = (spellId: number) => (ctx.castTimes[spellId] ?? []).filter(time =>
-    isInsideAura(ctx.selfAuras, cond.buff_spell_id, time * 1000)
-    && !suspendedAt(cond.except_buff_spell_ids, ctx, time * 1000));
-  const coached = inBuff(cond.spell_id);
-  const alternatives = cond.alternative_spell_ids.flatMap(inBuff);
-  return { coached, total: coached.length + alternatives.length };
+/** The filler casts a gate actually admitted, split into the coached spell and the ones it should displace. Shared by both filler kinds so the two can only differ in their gate. */
+interface FillerSplit {
+  coached: number[];
+  alternatives: number[];
+  total: number;
 }
 
-/** Share of the filler choice the coached spell won inside the buff, or null when the pull never filled there. */
-function fillerShare(cond: FillerInBuffCondition, ctx: RuleContext): number | null {
-  const { coached, total } = fillerCastsInBuff(cond, ctx);
-  return total ? coached.length / total : null;
+function splitFillers(
+  coachedId: number, alternativeIds: number[], castTimesS: (spellId: number) => number[],
+): FillerSplit {
+  const coached = castTimesS(coachedId);
+  const alternatives = alternativeIds.flatMap(castTimesS).sort((a, b) => a - b);
+  return { coached, alternatives, total: coached.length + alternatives.length };
+}
+
+/** Share of the filler choice the coached spell won, or null when the pull never filled under that gate. */
+function fillerShare(split: FillerSplit): number | null {
+  return split.total ? split.coached.length / split.total : null;
+}
+
+function fillerFinding(
+  split: FillerSplit, threshold: RuleThreshold, severity: Severity,
+  spellName: string, where: string, remedy?: string,
+): AnalysisFinding | null {
+  const share = fillerShare(split);
+  if (share == null || share >= lenient(threshold, 'down')) return null;
+  return {
+    severity, category: 'rule_violation',
+    timestamp_ms: split.alternatives.length ? Math.round(split.alternatives[0] * 1000) : undefined,
+    label: `${spellName} ${where}`,
+    message: `${spellName} was ${Math.round(share * 100)}% of your fillers ${where}. Top: ${Math.round(threshold.value * 100)}%.`,
+    measured: { value: `${Math.round(share * 100)} / ${Math.round(threshold.value * 100)}`, unit: '% of fillers' },
+    details: remedy ? { remedy } : undefined,
+  };
+}
+
+function fillerCastsInBuff(cond: FillerInBuffCondition, ctx: RuleContext): FillerSplit {
+  return splitFillers(cond.spell_id, cond.alternative_spell_ids, spellId =>
+    (ctx.castTimes[spellId] ?? []).filter(time =>
+      isUnderAura(ctx.selfAuras, cond.buff_spell_id, time * 1000)
+      && !suspendedAt(cond.except_buff_spell_ids, ctx, time * 1000)));
 }
 
 export function evaluateFillerInBuff(
   cond: FillerInBuffCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { coached, total } = fillerCastsInBuff(cond, ctx);
-  if (!total) return null;
-  const share = coached.length / total;
-  const floor = lenient(threshold, 'down');
-  if (share >= floor) return null;
-  return {
-    severity, category: 'rule_violation',
-    label: `${cond.spell_name} in ${cond.buff_spell_name}`,
-    message: `${cond.spell_name} was ${Math.round(share * 100)}% of your fillers inside ${cond.buff_spell_name}, where the field runs ${Math.round(threshold.value * 100)}%.`,
-    measured: { value: `${Math.round(share * 100)} / ${Math.round(threshold.value * 100)}`, unit: '% of fillers' },
-    details: remedy ? { remedy } : undefined,
-  };
+  return fillerFinding(fillerCastsInBuff(cond, ctx), threshold, severity,
+    cond.spell_name, `in ${cond.buff_spell_name}`, remedy);
 }
 
 /** Casts made while a suspending state was up, which the rule has agreed not to judge. */
@@ -406,22 +451,25 @@ function stackCountsPerCast(cond: SpendAtStacksCondition, ctx: RuleContext): { t
 export function evaluateSpendAtStacks(
   cond: SpendAtStacksCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const judged = stackCountsPerCast(cond, ctx);
-  if (!judged.length) return null;
-  // Rounded for the same reason the target-count bound is: a sub-stack band against a whole-stack bar donates a full stack of slack.
-  const limit = Math.round(lenient(threshold, cond.bound === 'min' ? 'down' : 'up'));
-  const violations = judged.filter(({ stacks }) => cond.bound === 'min' ? stacks < limit : stacks > limit);
-  if (!violations.length) return null;
-  const wording = cond.bound === 'min' ? `under ${limit}` : `over ${limit}`;
-  const verb = cond.bound === 'min' ? 'spends' : 'generates';
-  return {
-    severity, category: 'rule_violation',
-    timestamp_ms: Math.round(violations[0].timeS * 1000),
-    label: `${cond.spell_name} at ${wording} ${cond.buff_spell_name}`,
-    message: `${cond.spell_name} cast at ${wording} ${cond.buff_spell_name}, where the field ${verb} at ${Math.round(threshold.value)}: ${violations.length} of ${judged.length} cast(s).`,
-    measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
-    details: remedy ? { remedy } : undefined,
-  };
+  // Over the bar is overcapping, which is what a player sees; under it is spending cheap.
+  const wording = cond.bound === 'min' ? 'under' : 'over';
+  const tail = cond.bound === 'min' ? '' : ', overcapping';
+  return evaluateBoundedPerCast({
+    values: stackCountsPerCast(cond, ctx).map(({ timeS, stacks }) => ({ timeS, value: stacks })),
+    bound: cond.bound,
+    // Rounded for the same reason the target-count bound is: a sub-stack band against a whole-stack bar donates a full stack of slack.
+    quantize: Math.round,
+    format: value => String(Math.round(value)),
+    label: limit => `${cond.spell_name} at ${wording} ${limit} ${cond.buff_spell_name}`,
+    what: limit => `${cond.spell_name} cast at ${wording} ${limit} ${cond.buff_spell_name}${tail}`,
+  }, threshold, severity, remedy);
+}
+
+type ClosedSpan = AuraSpan & { endMs: number };
+
+/** Narrows in one place, so the spans that ran to an end are handled without asserting on every read. */
+function closedSpans(perTarget: Map<string, AuraSpan[]>): ClosedSpan[] {
+  return [...perTarget.values()].flat().filter((span): span is ClosedSpan => span.endMs != null);
 }
 
 function clipSpans(cond: AuraClippedCondition, ctx: RuleContext): Map<string, AuraSpan[]> {
@@ -429,87 +477,75 @@ function clipSpans(cond: AuraClippedCondition, ctx: RuleContext): Map<string, Au
   return source.get(cond.aura_spell_id) ?? new Map();
 }
 
-/** The longest span the aura was allowed to run out on, which is its real duration at this player's haste. */
-function naturalDurationMs(cond: AuraClippedCondition, ctx: RuleContext): number | null {
-  const expiries = [...clipSpans(cond, ctx).values()].flat()
-    .filter(span => !span.endedByRefresh && span.endMs != null)
-    .map(span => (span.endMs as number) - span.startMs);
-  return expiries.length ? Math.max(...expiries) : null;
-}
-
 /** Only a re-application the player cast counts, since most refreshes in a log are procs rather than presses. */
-function hardCastRefreshes(cond: AuraClippedCondition, ctx: RuleContext): AuraSpan[] {
+function hardCastRefreshes(cond: AuraClippedCondition, ctx: RuleContext): ClosedSpan[] {
   const castTimes = ctx.castTimes[cond.cast_spell_id] ?? [];
-  return [...clipSpans(cond, ctx).values()].flat()
-    .filter(span => span.endedByRefresh && span.endMs != null)
-    .filter(span => castTimes.some(time => Math.abs(time * 1000 - (span.endMs as number)) <= HARD_CAST_WINDOW_S * 1000));
+  // One-sided: a cast after the refresh cannot have caused it.
+  const cast = (atMs: number) => castTimes.some(time =>
+    atMs - time * 1000 >= 0 && atMs - time * 1000 <= HARD_CAST_WINDOW_S * 1000);
+  return closedSpans(clipSpans(cond, ctx))
+    .filter(span => span.endedByRefresh && cast(span.endMs)
+      && !suspendedAt(cond.except_buff_spell_ids, ctx, span.endMs));
 }
 
-/** Share of the aura's own duration still on the clock when the player re-applied it. */
-function remainingFractions(cond: AuraClippedCondition, ctx: RuleContext): number[] {
-  const durationMs = naturalDurationMs(cond, ctx);
-  if (durationMs == null || durationMs <= 0) return [];
+/** Seconds the aura had been running when the player re-applied it, which needs no duration and so cannot be skewed by a death-truncated span or a pandemic-extended one. */
+function elapsedAtRefresh(cond: AuraClippedCondition, ctx: RuleContext): { timeS: number; elapsedS: number }[] {
   return hardCastRefreshes(cond, ctx)
-    .map(span => (durationMs - ((span.endMs as number) - span.startMs)) / durationMs)
-    .map(frac => Math.min(1, Math.max(0, frac)));
+    .map(span => ({ timeS: span.endMs / 1000, elapsedS: (span.endMs - span.startMs) / 1000 }))
+    .sort((a, b) => a.timeS - b.timeS);
 }
 
 export function evaluateAuraClipped(
   cond: AuraClippedCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const judged = remainingFractions(cond, ctx);
+  const judged = elapsedAtRefresh(cond, ctx);
   if (!judged.length) return null;
-  const limit = lenient(threshold, 'up');
-  const clipped = judged.filter(frac => frac > limit);
+  const floor = lenient(threshold, 'down');
+  const clipped = judged.filter(({ elapsedS }) => elapsedS < floor);
   if (!clipped.length) return null;
   return {
     severity, category: 'rule_violation',
+    timestamp_ms: Math.round(clipped[0].timeS * 1000),
     label: `${cond.aura_spell_name} clipped`,
-    message: `${cond.aura_spell_name} refreshed with ${Math.round(Math.max(...clipped) * 100)}% still running ${clipped.length} of ${judged.length} time(s), where the field waits until ${Math.round(threshold.value * 100)}%.`,
+    message: `${cond.aura_spell_name} re-applied a median ${round(median(clipped.map(entry => entry.elapsedS)) ?? 0, 1)}s in, ${clipped.length} of ${judged.length} refresh(es). Top: ${round(threshold.value, 1)}s.`,
     measured: { value: `${clipped.length} / ${judged.length}`, unit: 'refresh(es)' },
     details: remedy ? { remedy } : undefined,
   };
 }
 
-/** Health rides on damage events rather than casts, so a cast reads the last hit that landed before it. */
-function targetHealthFracAt(ctx: RuleContext, castTimeS: number): number | null {
-  const atMs = ctx.fStart + castTimeS * 1000;
-  let best: number | null = null;
+const enemyKey = (event: WclEvent) => `${event.targetID ?? 0}:${event.targetInstance ?? 0}`;
+
+/** Health rides on damage rows rather than casts, so a cast reads the latest snapshot of THE ENEMY IT NAMED - a tick on a dying add otherwise licenses an execute against a full-health boss. */
+function targetHealthFracAt(ctx: RuleContext, cast: WclEvent): number | null {
+  const key = enemyKey(cast);
+  let latest: { atMs: number; frac: number } | null = null;
   for (const event of ctx.damage) {
-    if (event.timestamp > atMs || event.timestamp < atMs - HEALTH_SAMPLE_WINDOW_S * 1000) continue;
-    if (event.resourceActor !== RESOURCE_ACTOR_TARGET) continue;
+    if (event.timestamp > cast.timestamp || event.timestamp < cast.timestamp - HEALTH_SAMPLE_WINDOW_S * 1000) continue;
+    if (event.resourceActor !== RESOURCE_ACTOR_TARGET || enemyKey(event) !== key) continue;
     if (event.hitPoints == null || !event.maxHitPoints) continue;
-    best = event.hitPoints / event.maxHitPoints;
+    if (!latest || event.timestamp >= latest.atMs) latest = { atMs: event.timestamp, frac: event.hitPoints / event.maxHitPoints };
   }
-  return best;
+  return latest?.frac ?? null;
 }
 
 /** The filler casts made under the execute threshold, split into the coached one and the ones it should displace. */
-function fillersBelowHealth(cond: FillerBelowHealthCondition, ctx: RuleContext): { coached: number; total: number } {
+function fillersBelowHealth(cond: FillerBelowHealthCondition, ctx: RuleContext): FillerSplit {
   const gate = cond.health_pct / 100;
-  const belowGate = (spellId: number) => (ctx.castTimes[spellId] ?? []).filter(timeS => {
-    if (suspendedAt(cond.except_buff_spell_ids, ctx, timeS * 1000)) return false;
-    const frac = targetHealthFracAt(ctx, timeS);
-    return frac != null && frac <= gate;
-  }).length;
-  const coached = belowGate(cond.spell_id);
-  return { coached, total: coached + cond.alternative_spell_ids.reduce((sum, id) => sum + belowGate(id), 0) };
+  return splitFillers(cond.spell_id, cond.alternative_spell_ids, spellId => ctx.castEvents
+    .filter(event => {
+      if (event.type !== 'cast' || event.abilityGameID !== spellId) return false;
+      if (suspendedAt(cond.except_buff_spell_ids, ctx, event.timestamp - ctx.fStart)) return false;
+      const frac = targetHealthFracAt(ctx, event);
+      return frac != null && frac <= gate;
+    })
+    .map(event => (event.timestamp - ctx.fStart) / 1000));
 }
 
 export function evaluateFillerBelowHealth(
   cond: FillerBelowHealthCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { coached, total } = fillersBelowHealth(cond, ctx);
-  if (!total) return null;
-  const share = coached / total;
-  if (share >= lenient(threshold, 'down')) return null;
-  return {
-    severity, category: 'rule_violation',
-    label: `${cond.spell_name} under ${cond.health_pct}%`,
-    message: `${cond.spell_name} was ${Math.round(share * 100)}% of your fillers under ${cond.health_pct}% health, where the field runs ${Math.round(threshold.value * 100)}%.`,
-    measured: { value: `${Math.round(share * 100)} / ${Math.round(threshold.value * 100)}`, unit: '% of fillers' },
-    details: remedy ? { remedy } : undefined,
-  };
+  return fillerFinding(fillersBelowHealth(cond, ctx), threshold, severity,
+    cond.spell_name, `under ${cond.health_pct}% health`, remedy);
 }
 
 /** Short chip label for a rulebook rule `type`, matching the tone of `CAT_LABEL`. */
@@ -585,20 +621,19 @@ export function measureRule(cond: RuleCondition, ctx: RuleContext): number | nul
       const fracs = resourceFractionPerCast(cond, ctx).map(entry => entry.frac);
       return fracs.length ? median(fracs) ?? null : null;
     }
-    case 'filler_in_buff': return fillerShare(cond, ctx);
+    case 'filler_in_buff': return fillerShare(fillerCastsInBuff(cond, ctx));
     case 'spend_at_stacks': {
+      // The cheapest spend the parse allowed, not its typical one: a median would put half the field's own casts on the wrong side of the bar.
       const counts = stackCountsPerCast(cond, ctx).map(entry => entry.stacks);
-      return counts.length ? median(counts) ?? null : null;
+      if (!counts.length) return null;
+      return cond.bound === 'min' ? Math.min(...counts) : Math.max(...counts);
     }
     case 'aura_clipped': {
-      // How much duration the field is content to throw away, which is the bar a clip has to clear.
-      const fracs = remainingFractions(cond, ctx);
-      return fracs.length ? median(fracs) ?? null : null;
+      // The earliest the parse re-applied, which is the same forgiving extreme read from the other end.
+      const elapsed = elapsedAtRefresh(cond, ctx).map(entry => entry.elapsedS);
+      return elapsed.length ? Math.min(...elapsed) : null;
     }
-    case 'filler_below_health': {
-      const { coached, total } = fillersBelowHealth(cond, ctx);
-      return total ? coached / total : null;
-    }
+    case 'filler_below_health': return fillerShare(fillersBelowHealth(cond, ctx));
     case 'cast_outside_buff':
     case 'proc_wasted': return null;
   }
@@ -684,7 +719,7 @@ export function ruleApplicable(cond: RuleCondition, ctx: RuleContext): boolean {
     case 'proc_wasted': return closedProcSpans(cond, ctx).length > 0;
     case 'filler_in_buff': return fillerCastsInBuff(cond, ctx).total > 0;
     case 'spend_at_stacks': return stackCountsPerCast(cond, ctx).length > 0;
-    case 'aura_clipped': return remainingFractions(cond, ctx).length > 0;
+    case 'aura_clipped': return elapsedAtRefresh(cond, ctx).length > 0;
     case 'filler_below_health': return fillersBelowHealth(cond, ctx).total > 0;
   }
 }
@@ -715,7 +750,7 @@ export function ruleLabel(cond: RuleCondition, description?: string): string {
     case 'filler_in_buff': return `${cond.spell_name} in ${cond.buff_spell_name}`;
     case 'spend_at_stacks': return `${cond.spell_name} at ${cond.buff_spell_name}`;
     case 'aura_clipped': return `${cond.aura_spell_name} clipped`;
-    case 'filler_below_health': return `${cond.spell_name} under ${cond.health_pct}%`;
+    case 'filler_below_health': return `${cond.spell_name} under ${cond.health_pct}% health`;
   }
 }
 

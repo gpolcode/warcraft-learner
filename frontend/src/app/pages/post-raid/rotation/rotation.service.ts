@@ -322,6 +322,7 @@ export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingR
     what: finding.label,
     chip: finding.rule_type ? RULE_TYPE_LABEL[finding.rule_type] : undefined,
     measured: finding.measured ?? { value: '-' },
+    timestampMs: finding.timestamp_ms ?? null,
     fix: finding.details?.remedy,
   }));
 }

@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildAuraWindows, isInsideAura, auraUptimePct } from './aura-windows';
-import { applyBuff, removeBuff, applyDebuff, removeDebuff } from '../../../testing/builders/events';
-import { CLOAK_OF_SHADOWS, RUPTURE } from '../../../testing/spell-ids';
+import {
+  buildAuraWindows, buildAuraStacks, buildTargetedAuraSpans, isInsideAura, isUnderAura, stacksAt, auraUptimePct,
+} from './aura-windows';
+import {
+  applyBuff, removeBuff, applyBuffStack, applyDebuff, removeDebuff, refreshDebuff,
+} from '../../../testing/builders/events';
+import { CLOAK_OF_SHADOWS, RUPTURE, MAELSTROM_WEAPON } from '../../../testing/spell-ids';
 
 // Spans are carried in raw fight-relative milliseconds; the fixtures take fight-relative seconds.
 const MS_PER_S = 1000;
@@ -37,6 +41,63 @@ describe('isInsideAura', () => {
     expect(isInsideAura(windows, CLOAK_OF_SHADOWS, (REMOVE_S + 1) * MS_PER_S)).toBe(false);
     expect(isInsideAura(windows, CLOAK_OF_SHADOWS, (APPLY_S - 1) * MS_PER_S)).toBe(false);
     expect(isInsideAura(windows, RUPTURE, APPLY_S * MS_PER_S)).toBe(false);
+  });
+});
+
+describe('isUnderAura', () => {
+  const windows = buildAuraWindows([applyBuff(CLOAK_OF_SHADOWS, APPLY_S), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0);
+
+  it('excludes the apply instant and keeps the remove one, since the cast that grants a state shares its timestamp', () => {
+    expect(isUnderAura(windows, CLOAK_OF_SHADOWS, APPLY_S * MS_PER_S)).toBe(false);
+    expect(isUnderAura(windows, CLOAK_OF_SHADOWS, REMOVE_S * MS_PER_S)).toBe(true);
+    expect(isUnderAura(windows, CLOAK_OF_SHADOWS, (APPLY_S + 1) * MS_PER_S)).toBe(true);
+  });
+});
+
+describe('buildAuraStacks and stacksAt', () => {
+  const FIRST_S = 5, SECOND_S = 6, DROP_S = 9;
+  const events = [
+    applyBuff(MAELSTROM_WEAPON, FIRST_S),
+    applyBuffStack(MAELSTROM_WEAPON, SECOND_S, 2),
+    removeBuff(MAELSTROM_WEAPON, DROP_S),
+  ];
+  const stacks = buildAuraStacks(events, 0);
+
+  it('treats a bare apply as one stack and a stack event as the new total', () => {
+    expect(stacks.get(MAELSTROM_WEAPON)).toEqual([[FIRST_S * MS_PER_S, 1], [SECOND_S * MS_PER_S, 2], [DROP_S * MS_PER_S, 0]]);
+  });
+
+  it('reads the count going INTO a moment, so a spend logged on the cast timestamp does not erase it', () => {
+    expect(stacksAt(stacks, MAELSTROM_WEAPON, DROP_S * MS_PER_S)).toBe(2);
+    expect(stacksAt(stacks, MAELSTROM_WEAPON, (DROP_S + 1) * MS_PER_S)).toBe(0);
+    expect(stacksAt(stacks, MAELSTROM_WEAPON, FIRST_S * MS_PER_S)).toBe(0);
+    expect(stacksAt(stacks, MAELSTROM_WEAPON, (FIRST_S + 1) * MS_PER_S)).toBe(1);
+  });
+
+  it('is zero for an aura the pull never applied', () => {
+    expect(stacksAt(stacks, RUPTURE, DROP_S * MS_PER_S)).toBe(0);
+  });
+});
+
+describe('buildTargetedAuraSpans', () => {
+  const OTHER = 42, REFRESH_S = 12;
+
+  it('splits a span at a refresh and marks how it ended', () => {
+    const spans = buildTargetedAuraSpans([
+      applyDebuff(RUPTURE, APPLY_S), refreshDebuff(RUPTURE, REFRESH_S), removeDebuff(RUPTURE, REMOVE_S),
+    ], 0);
+    expect(spans.get(RUPTURE)?.get('0:0')).toEqual([
+      { startMs: APPLY_S * MS_PER_S, endMs: REFRESH_S * MS_PER_S, endedByRefresh: true },
+      { startMs: REFRESH_S * MS_PER_S, endMs: REMOVE_S * MS_PER_S, endedByRefresh: false },
+    ]);
+  });
+
+  it('keeps each enemy on its own list, since a clip is only visible per target', () => {
+    const spans = buildTargetedAuraSpans([
+      applyDebuff(RUPTURE, APPLY_S), applyDebuff(RUPTURE, REFRESH_S, { target: OTHER }),
+    ], 0);
+    expect(spans.get(RUPTURE)?.size).toBe(2);
+    expect(spans.get(RUPTURE)?.get(`${OTHER}:0`)).toEqual([{ startMs: REFRESH_S * MS_PER_S, endMs: null, endedByRefresh: false }]);
   });
 });
 

@@ -46,14 +46,19 @@ export function buildAuraStacks(events: WclEvent[], fightStartMs: number): AuraS
   return stacks;
 }
 
-/** The count in force at that moment, which is zero before the aura is ever applied. */
+/** The count in force going INTO that moment: WCL logs a consuming cast and the stack it spends on one timestamp, so a same-millisecond change belongs to the cast rather than preceding it. */
 export function stacksAt(stacks: AuraStacks, spellId: number, timeMs: number): number {
   let count = 0;
   for (const [at, value] of stacks.get(spellId) ?? []) {
-    if (at > timeMs) break;
+    if (at >= timeMs) break;
     count = value;
   }
   return count;
+}
+
+/** Half-open on the opening edge: the cast that grants a state shares its applybuff timestamp, and it was cast to enter the state rather than under it. */
+export function isUnderAura(windows: AuraWindows, spellId: number, timeMs: number): boolean {
+  return (windows.get(spellId) ?? []).some(([start, end]) => timeMs > start && (end == null || timeMs <= end));
 }
 
 /** One unbroken application on one target. `endedByRefresh` separates a re-application from an expiry, which read the same in the stream. */

@@ -496,6 +496,15 @@ describe('evaluateFillerInBuff', () => {
     expect(ruleApplicable(wrathInSolar, ruleCtx([cast(WRATH, 5)], { buffs: solar }))).toBe(false);
   });
 
+  it('excludes the cast that enters the state, which shares the applybuff timestamp but was cast outside it', () => {
+    // The Starfire that grants Solar lands on the same millisecond as the buff, and it was not cast under it.
+    const entering = ruleCtx([cast(STARFIRE, SOLAR_START_S)], { buffs: solar });
+    expect(ruleApplicable(wrathInSolar, entering)).toBe(false);
+    // The removal millisecond stays inside: a cast that consumes the state was made under it.
+    const closing = ruleCtx([cast(STARFIRE, SOLAR_END_S)], { buffs: solar });
+    expect(ruleApplicable(wrathInSolar, closing)).toBe(true);
+  });
+
   it('drops casts made in a state that suspends the choice, so a burst window is not a violation', () => {
     const CELESTIAL_START_S = 15, CELESTIAL_END_S = 25;
     const suspendedByCelestial: FillerInBuffCondition = {
@@ -549,26 +558,43 @@ describe('evaluateSpendAtStacks', () => {
     buff_spell_id: MAELSTROM_WEAPON, buff_spell_name: 'Maelstrom Weapon',
     bound: 'min',
   };
-  // Stacks climb one per second from the first application, so a cast time reads as its own stack count.
+  // One stack lands each second from t=1.
   const climbing = [applyBuff(MAELSTROM_WEAPON, 1), ...Array.from({ length: 9 }, (_, i) => applyBuffStack(MAELSTROM_WEAPON, i + 2, i + 2))];
+  // The count read is the one in force GOING INTO the cast, so a cast one second after the Nth stack holds N.
+  const holding = (stacks: number) => stacks + 1;
 
   it('flags a spender pressed below the count the field waits for', () => {
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, 4)], { buffs: climbing });
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3))], { buffs: climbing });
     expect(evaluateSpendAtStacks(spendAtStacks, ctx, thr(FIELD_STACKS), 'warning')?.measured)
       .toEqual({ value: '1 / 1', unit: 'cast(s)' });
   });
 
-  it('passes a spender pressed at the field count, and at the boundary below it', () => {
-    const onCount = ruleCtx([cast(LIGHTNING_BOLT, FIELD_STACKS)], { buffs: climbing });
+  it('passes a spender pressed at the field count, and flags one a stack below it', () => {
+    const onCount = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_STACKS))], { buffs: climbing });
+    const underIt = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_STACKS - 1))], { buffs: climbing });
     expect(evaluateSpendAtStacks(spendAtStacks, onCount, thr(FIELD_STACKS), 'warning')).toBeNull();
+    expect(evaluateSpendAtStacks(spendAtStacks, underIt, thr(FIELD_STACKS), 'warning')).not.toBeNull();
+  });
+
+  it('reads the count going into the cast, since a spend and the cast that spends it share one timestamp', () => {
+    const SPEND_AT_S = 6, STACKS_HELD = SPEND_AT_S - 1;
+    const buffs = [
+      applyBuff(MAELSTROM_WEAPON, 1),
+      ...Array.from({ length: STACKS_HELD - 1 }, (_, i) => applyBuffStack(MAELSTROM_WEAPON, i + 2, i + 2)),
+      removeBuff(MAELSTROM_WEAPON, SPEND_AT_S),
+    ];
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, SPEND_AT_S)], { buffs });
+    // Reading the post-consumption value would see 0 here and flag every spend in the log.
+    expect(measureRule(spendAtStacks, ctx)).toBe(STACKS_HELD);
   });
 
   it('inverts for bound "max", flagging a generator pressed while the buff is nearly capped', () => {
     const generateAtCap: SpendAtStacksCondition = { ...spendAtStacks, bound: 'max' };
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, 10)], { buffs: climbing });
-    // The field generates at 3; a cast at 10 stacks is over that.
+    // The field generates at 3; this cast holds 9.
     const FIELD_GENERATES_AT = 3;
-    expect(evaluateSpendAtStacks(generateAtCap, ctx, thr(FIELD_GENERATES_AT), 'warning')).not.toBeNull();
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
+    expect(evaluateSpendAtStacks(generateAtCap, ctx, thr(FIELD_GENERATES_AT), 'warning')?.message)
+      .toContain('overcapping');
     expect(evaluateSpendAtStacks(spendAtStacks, ctx, thr(FIELD_GENERATES_AT), 'warning')).toBeNull();
   });
 
@@ -577,7 +603,7 @@ describe('evaluateSpendAtStacks', () => {
       ...spendAtStacks, except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Ascendance'],
     };
     const buffs = [...climbing, ...buffWindow(SHADOW_DANCE, 3, 6)];
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, 4)], { buffs });
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3))], { buffs });
     expect(evaluateSpendAtStacks(suspended, ctx, thr(FIELD_STACKS), 'warning')).toBeNull();
     expect(evaluateSpendAtStacks(spendAtStacks, ctx, thr(FIELD_STACKS), 'warning')).not.toBeNull();
   });
@@ -586,9 +612,11 @@ describe('evaluateSpendAtStacks', () => {
     expect(ruleApplicable(spendAtStacks, ruleCtx([cast(LIGHTNING_BOLT, 4)]))).toBe(false);
   });
 
-  it('measures the count the pull spent at, and nothing when it never cast the spender', () => {
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, 4), cast(LIGHTNING_BOLT, 6)], { buffs: climbing });
-    expect(measureRule(spendAtStacks, ctx)).toBe(5);
+  it('benches the cheapest spend the pull allowed, not its typical one', () => {
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
+    // A median would bench 6 here and put the parse's own 3-stack cast on the wrong side of the bar.
+    expect(measureRule(spendAtStacks, ctx)).toBe(3);
+    expect(measureRule({ ...spendAtStacks, bound: 'max' }, ctx)).toBe(9);
     expect(measureRule(spendAtStacks, ruleCtx([], { buffs: climbing }))).toBeNull();
   });
 
@@ -598,65 +626,77 @@ describe('evaluateSpendAtStacks', () => {
 });
 
 describe('evaluateAuraClipped', () => {
-  // A full unclipped Moonfire, which is what the pull's own natural expiry establishes as its duration.
-  const DOT_DURATION_S = 16;
-  // Where the field refreshes: a fifth of the duration still on the clock.
-  const FIELD_REMAINING = 0.2;
+  // Where the field refreshes: it lets the dot run this long before re-applying.
+  const FIELD_ELAPSED_S = 12;
   const moonfireClipped: AuraClippedCondition = {
     kind: 'aura_clipped',
     aura_spell_id: MOONFIRE_DOT, aura_spell_name: 'Moonfire',
     cast_spell_id: MOONFIRE, cast_spell_name: 'Moonfire', on: 'target',
   };
-  const naturalExpiry = [applyDebuff(MOONFIRE_DOT, 0), removeDebuff(MOONFIRE_DOT, DOT_DURATION_S)];
-  // Re-applied 4s in, so three quarters of the duration was thrown away.
-  const CLIP_AT_S = 20, CLIP_ELAPSED_S = 4;
+  const APPLY_AT_S = 20, CLIPPED_ELAPSED_S = 4;
+  // The dot goes up, then is re-applied `elapsed` seconds later.
+  const reapplied = (elapsed: number) => [applyDebuff(MOONFIRE_DOT, APPLY_AT_S), refreshDebuff(MOONFIRE_DOT, APPLY_AT_S + elapsed)];
 
-  it('flags a refresh the player cast with most of the duration still running', () => {
-    const debuffs = [...naturalExpiry, applyDebuff(MOONFIRE_DOT, CLIP_AT_S), refreshDebuff(MOONFIRE_DOT, CLIP_AT_S + CLIP_ELAPSED_S)];
-    const ctx = ruleCtx([cast(MOONFIRE, CLIP_AT_S + CLIP_ELAPSED_S)], { debuffs });
-    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_REMAINING), 'warning')?.measured)
+  it('flags a refresh the player cast well before the field would have', () => {
+    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
+    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_S), 'warning')?.measured)
       .toEqual({ value: '1 / 1', unit: 'refresh(es)' });
   });
 
+  it('accepts a refresh exactly at the field bar but not one a second inside it', () => {
+    const at = (elapsed: number) =>
+      ruleCtx([cast(MOONFIRE, APPLY_AT_S + elapsed)], { debuffs: reapplied(elapsed) });
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S), thr(FIELD_ELAPSED_S), 'warning')).toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S - 1), thr(FIELD_ELAPSED_S), 'warning')).not.toBeNull();
+  });
+
   it('ignores a refresh no cast produced, since most refreshes in a log are procs', () => {
-    const debuffs = [...naturalExpiry, applyDebuff(MOONFIRE_DOT, CLIP_AT_S), refreshDebuff(MOONFIRE_DOT, CLIP_AT_S + CLIP_ELAPSED_S)];
-    const ctx = ruleCtx([], { debuffs });
-    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_REMAINING), 'warning')).toBeNull();
+    const ctx = ruleCtx([], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
+    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_S), 'warning')).toBeNull();
     expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
   });
 
-  it('accepts a refresh exactly at the field bar but not one just above it', () => {
-    // Refreshing with exactly 20% left means 12.8s of the 16s elapsed.
-    const onBar = DOT_DURATION_S * (1 - FIELD_REMAINING);
-    const at = (elapsed: number) => ({
-      debuffs: [...naturalExpiry, applyDebuff(MOONFIRE_DOT, CLIP_AT_S), refreshDebuff(MOONFIRE_DOT, CLIP_AT_S + elapsed)],
+  it('ignores a cast that came after the refresh, which cannot have caused it', () => {
+    const LATER_S = 0.1;
+    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATER_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
+    expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
+  });
+
+  it('drops a refresh made in a state that suspends the rule', () => {
+    const suspended: AuraClippedCondition = {
+      ...moonfireClipped, except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
+    };
+    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S)], {
+      debuffs: reapplied(CLIPPED_ELAPSED_S),
+      buffs: buffWindow(SHADOW_DANCE, APPLY_AT_S, APPLY_AT_S + 10),
     });
-    expect(evaluateAuraClipped(moonfireClipped, ruleCtx([cast(MOONFIRE, CLIP_AT_S + onBar)], at(onBar)), thr(FIELD_REMAINING), 'warning')).toBeNull();
-    expect(evaluateAuraClipped(moonfireClipped, ruleCtx([cast(MOONFIRE, CLIP_AT_S + onBar - 1)], at(onBar - 1)), thr(FIELD_REMAINING), 'warning')).not.toBeNull();
+    expect(ruleApplicable(suspended, ctx)).toBe(false);
+    expect(ruleApplicable(moonfireClipped, ctx)).toBe(true);
   });
 
   it('keeps each enemy on its own clock, so a second target is not measured against the first', () => {
-    // The dot goes up on one enemy at 20 and another at 30; only the second is refreshed, 4s in.
     const OTHER_ENEMY = 77, SECOND_APPLY_S = 30;
     const debuffs = [
-      ...naturalExpiry,
-      applyDebuff(MOONFIRE_DOT, CLIP_AT_S),
+      applyDebuff(MOONFIRE_DOT, APPLY_AT_S),
       applyDebuff(MOONFIRE_DOT, SECOND_APPLY_S, { target: OTHER_ENEMY }),
-      refreshDebuff(MOONFIRE_DOT, SECOND_APPLY_S + CLIP_ELAPSED_S, { target: OTHER_ENEMY }),
+      refreshDebuff(MOONFIRE_DOT, SECOND_APPLY_S + CLIPPED_ELAPSED_S, { target: OTHER_ENEMY }),
     ];
-    const ctx = ruleCtx([cast(MOONFIRE, SECOND_APPLY_S + CLIP_ELAPSED_S)], { debuffs });
-    // Its own clock reads 4s elapsed; measured against the first enemy's application it would read 14s.
-    expect(measureRule(moonfireClipped, ctx)).toBeCloseTo((DOT_DURATION_S - CLIP_ELAPSED_S) / DOT_DURATION_S);
+    const ctx = ruleCtx([cast(MOONFIRE, SECOND_APPLY_S + CLIPPED_ELAPSED_S)], { debuffs });
+    // Its own clock reads 4s; measured against the first enemy's application it would read 14s.
+    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
   });
 
-  it('measures the duration share the pull threw away, and nothing without a natural expiry to size it', () => {
-    const debuffs = [...naturalExpiry, applyDebuff(MOONFIRE_DOT, CLIP_AT_S), refreshDebuff(MOONFIRE_DOT, CLIP_AT_S + CLIP_ELAPSED_S)];
-    const ctx = ruleCtx([cast(MOONFIRE, CLIP_AT_S + CLIP_ELAPSED_S)], { debuffs });
-    expect(measureRule(moonfireClipped, ctx)).toBeCloseTo((DOT_DURATION_S - CLIP_ELAPSED_S) / DOT_DURATION_S);
-    const noExpiry = ruleCtx([cast(MOONFIRE, CLIP_AT_S + CLIP_ELAPSED_S)], {
-      debuffs: [applyDebuff(MOONFIRE_DOT, CLIP_AT_S), refreshDebuff(MOONFIRE_DOT, CLIP_AT_S + CLIP_ELAPSED_S)],
-    });
-    expect(measureRule(moonfireClipped, noExpiry)).toBeNull();
+  it('benches the earliest the pull re-applied, and nothing when it never did', () => {
+    const LATE_ELAPSED_S = 10;
+    const debuffs = [
+      ...reapplied(CLIPPED_ELAPSED_S),
+      refreshDebuff(MOONFIRE_DOT, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
+    ];
+    const ctx = ruleCtx([
+      cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S), cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
+    ], { debuffs });
+    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
+    expect(measureRule(moonfireClipped, ruleCtx([]))).toBeNull();
   });
 
   it('labels the rule as "<aura> clipped"', () => {
@@ -674,40 +714,51 @@ describe('evaluateFillerBelowHealth', () => {
     alternative_spell_ids: [SLAM], alternative_spell_names: ['Slam'],
     health_pct: EXECUTE_PCT,
   };
-  // Health is read off the last hit that landed, so each cast needs a damage row before it.
-  const hitAt = (atS: number, healthPct: number) => damage(SHADOW_BLADES_DAMAGE, atS, 1, { targetHealthPct: healthPct });
+  // Health rides on damage rows, so each cast reads the last hit on the enemy it named.
+  const hitAt = (atS: number, healthPct: number, target?: number) =>
+    damage(SHADOW_BLADES_DAMAGE, atS, 1, { targetHealthPct: healthPct, ...(target !== undefined && { target }) });
   const EXECUTE_RANGE_PCT = 15, HEALTHY_PCT = 80;
+  const HIT_S = 100;
 
   it('flags a player still pressing the wrong filler under the threshold', () => {
-    const ctx = ruleCtx([cast(EXECUTE, 101), cast(SLAM, 102), cast(SLAM, 103)],
-      { damage: [hitAt(100, EXECUTE_RANGE_PCT)] });
+    const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(SLAM, HIT_S + 1), cast(SLAM, HIT_S + 1.5)],
+      { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
     expect(evaluateFillerBelowHealth(executeBelow, ctx, thr(FIELD_EXECUTE_SHARE), 'warning')?.measured)
       .toEqual({ value: '33 / 95', unit: '% of fillers' });
   });
 
   it('passes a player converting every filler under the threshold', () => {
-    const ctx = ruleCtx([cast(EXECUTE, 101), cast(EXECUTE, 102)], { damage: [hitAt(100, EXECUTE_RANGE_PCT)] });
+    const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(EXECUTE, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
     expect(evaluateFillerBelowHealth(executeBelow, ctx, thr(FIELD_EXECUTE_SHARE), 'warning')).toBeNull();
   });
 
   it('ignores fillers cast above the threshold, which the rule says nothing about', () => {
-    const ctx = ruleCtx([cast(SLAM, 11)], { damage: [hitAt(10, HEALTHY_PCT)] });
+    const ctx = ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] });
     expect(evaluateFillerBelowHealth(executeBelow, ctx, thr(FIELD_EXECUTE_SHARE), 'warning')).toBeNull();
     expect(ruleApplicable(executeBelow, ctx)).toBe(false);
   });
 
+  it('reads the health of the enemy the cast named, not whichever enemy was hit last', () => {
+    const BOSS = 1, DYING_ADD = 2;
+    // The add is at 15% and the boss at 80%; a Slam into the boss must not count as an execute-range filler.
+    const ctx = ruleCtx([cast(SLAM, HIT_S + 1, { target: BOSS })], {
+      damage: [hitAt(HIT_S, HEALTHY_PCT, BOSS), hitAt(HIT_S + 0.5, EXECUTE_RANGE_PCT, DYING_ADD)],
+    });
+    expect(ruleApplicable(executeBelow, ctx)).toBe(false);
+  });
+
   it('is not applicable on a pull with no health reading to place the casts', () => {
-    expect(ruleApplicable(executeBelow, ruleCtx([cast(SLAM, 101)]))).toBe(false);
+    expect(ruleApplicable(executeBelow, ruleCtx([cast(SLAM, HIT_S)]))).toBe(false);
   });
 
   it('measures the share the pull converted, and nothing when it never reached the threshold', () => {
-    const ctx = ruleCtx([cast(EXECUTE, 101), cast(SLAM, 102)], { damage: [hitAt(100, EXECUTE_RANGE_PCT)] });
+    const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(SLAM, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
     expect(measureRule(executeBelow, ctx)).toBe(0.5);
-    expect(measureRule(executeBelow, ruleCtx([cast(SLAM, 11)], { damage: [hitAt(10, HEALTHY_PCT)] }))).toBeNull();
+    expect(measureRule(executeBelow, ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] }))).toBeNull();
   });
 
-  it('labels the rule as "<spell> under <pct>%"', () => {
-    expect(ruleLabel(executeBelow)).toBe('Execute under 20%');
+  it('labels the rule as "<spell> under <pct>% health"', () => {
+    expect(ruleLabel(executeBelow)).toBe('Execute under 20% health');
   });
 });
 

@@ -413,7 +413,9 @@
         "aura_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "cast_spell_id": { "type": "integer", "description": "The cast that applies the aura. Usually shares its name with the aura and differs in id, so take both from the table rather than reusing one." },
         "cast_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
-        "on": { "enum": ["self", "target"], "description": "target reads the enemy debuff stream, which is where damage-over-time rules live; self reads the player's own buffs." }
+        "on": { "enum": ["self", "target"], "description": "target reads the enemy debuff stream, which is where damage-over-time rules live; self reads the player's own buffs." },
+        "except_buff_spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "Optional. Aura ids for the states that suspend the rule, whose refreshes are excluded entirely. Name the cooldowns the sources say to re-snapshot the effect under, or the rule reads correct play as a violation." },
+        "except_buff_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of except_buff_spell_ids and in the same order." }
       },
       "examples": [
         {
