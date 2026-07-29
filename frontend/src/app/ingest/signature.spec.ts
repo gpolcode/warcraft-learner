@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  encounterSignature, encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, specVersion,
+  encounterSignature, encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion,
   signatureMatches, stampSignature, stampBurstFile, parseKey, readInaccessibleParses,
   isFutureVersion,
   type SignatureRanking,
@@ -9,28 +9,6 @@ import { ok, missing, transient, permanent, type Result, type LoadError } from '
 
 const rankings = (...rows: [string, number][]): SignatureRanking[] =>
   rows.map(([report_code, fight_id]) => ({ report_code, fight_id }));
-
-describe('specVersion', () => {
-  const INGEST_V = 12;
-  const rulebook = { spec: 'BalanceDruid', rules: [{ severity: 'warning' }] };
-
-  it('changes when the rulebook changes, so an edited rule re-ingests that spec with no global bump', () => {
-    const edited = { ...rulebook, rules: [{ severity: 'critical' }] };
-    expect(specVersion(INGEST_V, rulebook)).not.toBe(specVersion(INGEST_V, edited));
-  });
-
-  it('is stable for the same rulebook, so an unchanged spec still skips', () => {
-    expect(specVersion(INGEST_V, rulebook)).toBe(specVersion(INGEST_V, { ...rulebook }));
-  });
-
-  it('still changes when the ingest version does, so a transform change invalidates every spec', () => {
-    expect(specVersion(INGEST_V, rulebook)).not.toBe(specVersion(INGEST_V + 1, rulebook));
-  });
-
-  it('carries a missing rulebook without throwing, since an un-authored spec is not an error', () => {
-    expect(specVersion(INGEST_V, null)).toMatch(/^12:[0-9a-f]{16}$/);
-  });
-});
 
 describe('encounterSignature', () => {
   it('produces a 16-char lowercase hex hash', () => {

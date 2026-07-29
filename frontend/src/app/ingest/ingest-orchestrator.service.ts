@@ -26,7 +26,7 @@ import { type WclQueryClient, BudgetExceededError } from './wcl-client';
 import { INGEST_VERSION } from './ingest-version';
 import { specsForRun, orderEncountersByMissingFirst, type SpecOrderEntry } from './ordering';
 import {
-  encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, signatureMatches, specVersion,
+  encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, signatureMatches,
   stampSignature, stampBurstFile, readInaccessibleParses,
   type SignatureRanking, type SignedFile,
 } from './signature';
@@ -240,13 +240,9 @@ export class IngestOrchestratorService {
   /** Returns true when the run stopped on the WCL budget (remaining specs resume next run). */
   private async ingestSpec(
     client: ApiWclClient, spec: string,
-    encounters: IngestEncounter[], protectedIds: Set<number>, ingestVersion: string,
+    encounters: IngestEncounter[], protectedIds: Set<number>, version: string,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
-
-    // The rulebook feeds every slice this run writes, so it signs alongside the ingest version: editing a rule re-ingests this spec and nothing else.
-    const rulebookResult = await this.dataFile.getRulebook(spec);
-    const version = specVersion(ingestVersion, rulebookResult.ok ? rulebookResult.value : null);
 
     // Feeds the missing-first order - a file-server-only signal, zero WCL budget.
     const presentIds = new Set(
