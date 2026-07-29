@@ -1,10 +1,11 @@
 import { WclEvent } from '../../core/models/wcl.models';
 import { getOrInsert } from './analysis-math';
+import { targetKey } from './wcl-projections';
 
-/** Map<spell_id, [[startMs, endMs | null], ...]> in fight-relative milliseconds. An open end means the aura outlived the fight. */
+/** Fight-relative milliseconds; an open end means the aura outlived the fight. */
 export type AuraWindows = Map<number, [number, number | null][]>;
 
-/** Builds spans from an apply/remove stream; handles buffs and debuffs, so one call covers `Buffs` or `Debuffs` events. */
+/** Buffs and debuffs carry the same apply/remove shape, so one call covers either stream. */
 export function buildAuraWindows(events: WclEvent[], fightStartMs: number): AuraWindows {
   const windows: AuraWindows = new Map();
   for (const event of events) {
@@ -23,42 +24,40 @@ export function buildAuraWindows(events: WclEvent[], fightStartMs: number): Aura
   return windows;
 }
 
-/** End-inclusive: a consuming cast shares the removal millisecond 38% of the time, so excluding it misreads correct play. */
-export function isInsideAura(windows: AuraWindows, spellId: number, timeMs: number): boolean {
+/** Up at that instant, both edges counted: a consuming cast shares the removal millisecond 38% of the time. */
+export function auraUpAt(windows: AuraWindows, spellId: number, timeMs: number): boolean {
   return (windows.get(spellId) ?? []).some(([start, end]) => timeMs >= start && (end == null || timeMs <= end));
 }
 
-/** Map<spell_id, [[atMs, stacks], ...]> in fight-relative milliseconds, ordered, recording every change to the count. */
-export type AuraStacks = Map<number, [number, number][]>;
+/** Up going INTO that instant: the cast that grants a state shares its applybuff timestamp, which `auraUpAt` would credit it with. */
+export function auraAlreadyUpAt(windows: AuraWindows, spellId: number, timeMs: number): boolean {
+  return (windows.get(spellId) ?? []).some(([start, end]) => timeMs > start && (end == null || timeMs <= end));
+}
+
+/** One aura's stack changes as `[atMs, count]`, in order. */
+export type StackTimeline = [number, number][];
 
 /** A bare apply carries no count and means one; every stack event carries the new total. */
-export function buildAuraStacks(events: WclEvent[], fightStartMs: number): AuraStacks {
-  const stacks: AuraStacks = new Map();
+export function buildStackTimeline(events: WclEvent[], fightStartMs: number, spellId: number): StackTimeline {
+  const timeline: StackTimeline = [];
   for (const event of events) {
-    const spellId = event.abilityGameID;
-    if (spellId == null) continue;
+    if (event.abilityGameID !== spellId) continue;
     const timeMs = event.timestamp - fightStartMs;
-    const at = (count: number) => getOrInsert(stacks, spellId, () => []).push([timeMs, count]);
-    if (event.type === 'applybuff' || event.type === 'applydebuff') at(event.stack ?? 1);
-    else if (event.type.endsWith('buffstack') || event.type.endsWith('debuffstack')) at(event.stack ?? 0);
-    else if (event.type === 'removebuff' || event.type === 'removedebuff') at(0);
+    if (event.type === 'applybuff' || event.type === 'applydebuff') timeline.push([timeMs, event.stack ?? 1]);
+    else if (event.type.endsWith('buffstack') || event.type.endsWith('debuffstack')) timeline.push([timeMs, event.stack ?? 0]);
+    else if (event.type === 'removebuff' || event.type === 'removedebuff') timeline.push([timeMs, 0]);
   }
-  return stacks;
+  return timeline;
 }
 
 /** The count in force going INTO that moment: WCL logs a consuming cast and the stack it spends on one timestamp, so a same-millisecond change belongs to the cast rather than preceding it. */
-export function stacksAt(stacks: AuraStacks, spellId: number, timeMs: number): number {
+export function stacksAt(timeline: StackTimeline, timeMs: number): number {
   let count = 0;
-  for (const [at, value] of stacks.get(spellId) ?? []) {
+  for (const [at, value] of timeline) {
     if (at >= timeMs) break;
     count = value;
   }
   return count;
-}
-
-/** Half-open on the opening edge: the cast that grants a state shares its applybuff timestamp, and it was cast to enter the state rather than under it. */
-export function isUnderAura(windows: AuraWindows, spellId: number, timeMs: number): boolean {
-  return (windows.get(spellId) ?? []).some(([start, end]) => timeMs > start && (end == null || timeMs <= end));
 }
 
 /** One unbroken application on one target. `endedByRefresh` separates a re-application from an expiry, which read the same in the stream. */
@@ -68,18 +67,15 @@ export interface AuraSpan {
   endedByRefresh: boolean;
 }
 
-/** Map<spell_id, Map<`targetID:targetInstance`, spans>>, since a clip is only visible per target. */
-export type TargetedAuraSpans = Map<number, Map<string, AuraSpan[]>>;
+/** One aura's spans per target, since a clip is only visible against the application it replaced. */
+export type AuraSpansByTarget = Map<string, AuraSpan[]>;
 
-/** Keyed per target because copies of one NPC share a targetID and only the instance separates them. */
-export function buildTargetedAuraSpans(events: WclEvent[], fightStartMs: number): TargetedAuraSpans {
-  const spans: TargetedAuraSpans = new Map();
+export function buildAuraSpansByTarget(events: WclEvent[], fightStartMs: number, spellId: number): AuraSpansByTarget {
+  const spans: AuraSpansByTarget = new Map();
   for (const event of events) {
-    const spellId = event.abilityGameID;
-    if (spellId == null) continue;
+    if (event.abilityGameID !== spellId) continue;
     const timeMs = event.timestamp - fightStartMs;
-    const perTarget = getOrInsert(spans, spellId, () => new Map<string, AuraSpan[]>());
-    const list = getOrInsert(perTarget, `${event.targetID ?? 0}:${event.targetInstance ?? 0}`, () => []);
+    const list = getOrInsert(spans, targetKey(event), (): AuraSpan[] => []);
     const open = list.length && list[list.length - 1].endMs == null ? list[list.length - 1] : null;
     if (event.type === 'applybuff' || event.type === 'applydebuff') {
       if (!open) list.push({ startMs: timeMs, endMs: null, endedByRefresh: false });

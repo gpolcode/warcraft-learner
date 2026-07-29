@@ -46,11 +46,7 @@ function rankingFingerprint(rankings: SignatureRanking[]): string {
     .join('|');
 }
 
-/**
- * sha256 (first 16 hex) of the ingest version + the sorted parse-set fingerprint. Callers fold the
- * spec's rulebook into `version` via {@link specVersion}, so editing a rule re-ingests that spec
- * without a global bump.
- */
+/** sha256 (first 16 hex) of the version + the sorted parse-set fingerprint; callers pass `specVersion` so a rulebook edit re-ingests one spec. */
 export function encounterSignature(version: string, rankings: SignatureRanking[]): string {
   return bytesToHex(sha256(utf8ToBytes(`${version}\n${rankingFingerprint(rankings)}`))).slice(0, 16);
 }

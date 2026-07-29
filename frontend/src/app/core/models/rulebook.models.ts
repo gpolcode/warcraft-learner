@@ -141,6 +141,7 @@ export interface FillerBelowHealthCondition {
   except_buff_spell_names?: string[];
 }
 
+/** Spell ids drive every check; a `*_names` field the engine never renders is there for the rulebook generator's offline id/name cross-check. */
 export type RuleCondition =
   | CastWithoutPriorCondition
   | HoldCooldownForAnchorCondition

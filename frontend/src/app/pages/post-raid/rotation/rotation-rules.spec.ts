@@ -376,6 +376,27 @@ describe('evaluateCastAtTargetCount', () => {
     const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]) });
     expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR, SUB_TARGET_BAND), 'warning')?.measured?.value).toBe('1 / 1');
   });
+
+  it('counts damage landing on the cast millisecond, which an instant ability does', () => {
+    const onTheCast = [1, 2, 3].map(id => damage(BLACK_POWDER, CAST_S, 100, { target: id }));
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: onTheCast });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR), 'warning')).toBeNull();
+  });
+
+  it('bisects a sorted index, so a row logged out of order does not shift the window', () => {
+    const EARLY_S = 1;
+    const OTHER_ENEMY = 9;
+    const rows = [...hits([1, 2]), damage(BLACK_POWDER, EARLY_S, 100, { target: OTHER_ENEMY }), ...hits([3])];
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: rows });
+    expect(evaluateCastAtTargetCount(blackPowder, ctx, thr(TARGET_FLOOR), 'warning')).toBeNull();
+  });
+
+  it('folds rows that name no target into one enemy rather than dropping them', () => {
+    const FIELD_CEILING = 0;  // any enemy at all is over this ceiling
+    const capped: CastAtTargetCountCondition = { ...blackPowder, bound: 'max' };
+    const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: [damage(BLACK_POWDER, CAST_S + 1, 100)] });
+    expect(evaluateCastAtTargetCount(capped, ctx, thr(FIELD_CEILING), 'warning')?.measured?.value).toBe('1 / 1');
+  });
 });
 
 describe('evaluateResourceAtCast', () => {
@@ -405,6 +426,13 @@ describe('evaluateResourceAtCast', () => {
     const ctx = ruleCtx([cast(BLACK_POWDER, 10,
       { resources: [{ amount: MAX_COMBO_POINTS, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] })]);
     expect(evaluateResourceAtCast(noOvercap, ctx, thr(FIELD_CEILING_FRAC), 'warning')?.measured?.value).toBe('1 / 1');
+  });
+
+  it('says the same thing in the chip and the sentence, so the two cannot drift', () => {
+    const ctx = ruleCtx([atCombo(10, 3)]);
+    const finding = evaluateResourceAtCast(finisherAtMax, ctx, thr(RESOURCE_FLOOR), 'warning');
+    expect(finding?.label).toBe('Eviscerate below 100% combo points');
+    expect(finding?.message).toContain('Eviscerate cast below 100% combo points');
   });
 
   it('is not applicable when the casts carry no resource snapshot', () => {
@@ -749,6 +777,18 @@ describe('evaluateFillerBelowHealth', () => {
 
   it('is not applicable on a pull with no health reading to place the casts', () => {
     expect(ruleApplicable(executeBelow, ruleCtx([cast(SLAM, HIT_S)]))).toBe(false);
+  });
+
+  it('reads the newest snapshot at or before the cast, so a stale row does not outrank a fresh one', () => {
+    const ctx = ruleCtx([cast(SLAM, HIT_S + 1)],
+      { damage: [hitAt(HIT_S + 0.5, EXECUTE_RANGE_PCT), hitAt(HIT_S, HEALTHY_PCT)] });
+    expect(ruleApplicable(executeBelow, ctx)).toBe(true);
+  });
+
+  it('ignores a snapshot older than the sample window, since health falls fast in execute range', () => {
+    const STALE_S = 3;
+    const ctx = ruleCtx([cast(SLAM, HIT_S + STALE_S)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
+    expect(ruleApplicable(executeBelow, ctx)).toBe(false);
   });
 
   it('measures the share the pull converted, and nothing when it never reached the threshold', () => {

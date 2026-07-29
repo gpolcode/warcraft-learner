@@ -114,28 +114,28 @@ The rule engine is the slice's functional core in `rotation-rules.ts`, separate 
 
 #### Rule condition kinds
 
-`streamsFor`, `measureRule`, `needsThreshold`, `evaluateCondition`, `ruleLabel` and `ruleApplicable` all switch exhaustively over the `RuleCondition` union, so a new kind cannot compile until it declares its streams, its magnitude, its label and its applicability.
+This table is also the code: `RULE_KINDS` in `rotation-rules.ts` is a mapped type keyed by `kind`, so a new kind cannot compile until it declares its streams, its magnitude (`measure: null` for a kind that judges without one), its evaluator, its applicability and its label - all five in one block. `measureRule`, `evaluateCondition`, `ruleApplicable`, `ruleLabel` and `rulesNeed` are one-line lookups into it.
 
 | kind | what it reads | what the encounter measures | extra streams |
 |---|---|---|---|
 | `cast_without_prior` | cast times, honouring `position` of `before` (default) / `after` / `either` | widest lead the parse needed | - |
 | `hold_cooldown_for_anchor` | cast times against non-opener anchor casts | tightest gap it kept clear | - |
-| `cast_outside_buff` | `isInsideAura` on the self-buff stream | nothing: absolute, so use it only for a rare cast | - |
+| `cast_outside_buff` | `auraUpAt` on the self-buff stream | nothing: absolute, so use it only for a rare cast | - |
 | `aura_uptime_below` | `auraUptimePct` over the fight the player was alive for | uptime the parse held | `enemyAuras`, `deaths` when `on: target`; `deaths` otherwise |
 | `opening_sequence` | ordered cast times from the pull start | opener completion time | - |
 | `cast_at_target_count` | distinct `targetID:targetInstance` damaged within `TARGET_COUNT_WINDOW_S` of the cast | median targets engaged | `damage` |
 | `resource_at_cast` | the pre-cost `classResources` snapshot on the cast | median resource as a share of its own cap | - |
 | `proc_wasted` | closed proc spans against the spend casts | nothing: absolute | - |
-| `filler_in_buff` | `isUnderAura`, half-open so the cast that enters a state is not counted under it | share of the fillers the coached builder won | - |
+| `filler_in_buff` | `auraAlreadyUpAt`, half-open so the cast that enters a state is not counted under it | share of the fillers the coached builder won | - |
 | `spend_at_stacks` | `stacksAt`, the count in force going INTO the cast | cheapest spend (`min`) or richest generate (`max`) the parse allowed | - |
-| `aura_clipped` | per-target spans from `buildTargetedAuraSpans`, only refreshes within `HARD_CAST_WINDOW_S` AFTER a cast | earliest the parse re-applied, in seconds | `enemyAuras` when `on: target` |
+| `aura_clipped` | per-target spans from `buildAuraSpansByTarget`, only refreshes within `HARD_CAST_WINDOW_S` AFTER a cast | earliest the parse re-applied, in seconds | `enemyAuras` when `on: target` |
 | `filler_below_health` | the named enemy's latest `hitPoints` snapshot within `HEALTH_SAMPLE_WINDOW_S` | share of the fillers converted under `health_pct` | `damage`, `targetHealth` |
 
 The four kinds that judge a repeated in-rotation decision - `filler_in_buff`, `filler_below_health`, `spend_at_stacks` and `aura_clipped` - take `except_buff_spell_ids`, which drops the casts made in a state that suspends the rule.
 
 **The `measured` column carries one of two grammars, chosen by how the kind judges.** A per-cast kind reports violations against opportunities (`4 / 11`, unit `cast(s)` or `refresh(es)`); a share kind reports the player against the field (`25 / 90`, unit `% of fillers`). Pick the one matching how the kind judges rather than inventing a third.
 
-The player fetch is `Casts` (with `includeResources`) plus `Buffs` always, and `Debuffs` / `DamageDone` only when `rulesNeed` says a rule reads them - the enemy-aura stream is raid-wide and costs several pages, since WCL answers no narrower shape. `targetHealth` is not a fetch of its own: it rides on `damage`, asking for the heavier `includeResources` form, which is the only shape carrying the struck actor's `hitPoints`. `RuleContext` builds `selfStacks`, `selfAuraSpans` and `targetAuraSpans` lazily, so a spec whose rules read none of them pays no extra pass over its streams.
+The player fetch is `Casts` (with `includeResources`) plus `Buffs` always, and `Debuffs` / `DamageDone` only when `rulesNeed` says a rule reads them - the enemy-aura stream is raid-wide and costs several pages, since WCL answers no narrower shape. `targetHealth` is not a fetch of its own: it rides on `damage`, asking for the heavier `includeResources` form, which is the only shape carrying the struck actor's `hitPoints`. `RuleContext` exposes its heavier reads as accessors - `stacks(id)`, `selfSpans(id)`, `targetSpans(id)`, `damageIndex()`, `targetHealth(key)` - each built on first call and memoised, the aura ones per spell id, so a spec pays only for the auras its rulebook names. The two damage indexes are time-ordered and bisected, so a per-cast read is a slice rather than a scan of every damage row.
    - **Defensive** (`defensive.service.ts`) - lost/held/hold-suggestion findings per defensive (the lost/first-cast checks share the rotation use-share gate; hold suggestions are prior-relative, sharing rotation's `shared/analysis/hold-targets.ts` implementation - the hold-target cast index is 1-based on both sides) plus **Defensive Windows**: the consensus windows where most top parses use a rulebook defensive on a big incoming-damage hit, annotating each window's card with coverage and mitigation quality (a window whose damage taken exceeds the top-parse band with no defensive used is labeled as needing a defensive). No findings-table entry is emitted for windows.
    - **Burst** (`burst.service.ts`) - **Burst Windows**: the recurring damage-density bursts (measured from DamageDone, not cooldown durations) that most top parses share, with the player's window damage computed from their own log.
    - **Gear** (`gear.service.ts`) - the player's combatant-info gear (talents/trinkets/enchants) vs the bench; bench-only on `/pre`.
