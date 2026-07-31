@@ -46,11 +46,7 @@ export function extractCode(url: string): string {
   return m ? m[1] : url.trim();
 }
 
-/**
- * Pull the target fight id out of a WCL report URL's `fight=` parameter, when it names a
- * specific pull. WCL's `fight=last` keyword (and any non-numeric value) yields null, so the
- * caller falls back to the latest pull.
- */
+/** Pull a specific fight id out of a WCL report URL's `fight=` parameter; null for `last` or non-numeric. */
 export function extractFightId(url: string): number | null {
   const m = url.match(/[#?&]fight=(\d+)/);
   const id = m ? Number(m[1]) : NaN;
@@ -391,7 +387,6 @@ export class PostRaidComponent {
       if (seq !== this._loadSeq) return;
       this._applyReport(report);
 
-      // Honor a fight id pasted in the URL when it points at a boss pull; otherwise the latest.
       const requestedId = extractFightId(rawInput);
       const requestedFight = requestedId != null ? this.fights().find(f => f.id === requestedId) : undefined;
       const targetFight = requestedFight ?? this.fights()[this.fights().length - 1];
