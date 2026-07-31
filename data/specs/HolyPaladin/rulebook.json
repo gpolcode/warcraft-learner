@@ -1,0 +1,145 @@
+{
+  "spec": "HolyPaladin",
+  "spec_icon": "spell_holy_holybolt",
+  "major_cooldowns": [
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 120,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Your main cooldown: send it as often as possible, lining the 30 second window up with a long damage window rather than a single spike, and keep the standard Holy Shock and spender rotation running underneath it.",
+      "id_note": "Cast id from the parse (5 casts). Ids 384376 and 454351 share the name and are talent/aura rows. Guide states the 2 minute cooldown and 30 second duration."
+    },
+    {
+      "name": "Avenging Crusader",
+      "spell_id": 394088,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Replaces Avenging Wrath: while it is up, press Judgment and Crusader Strike on cooldown so their damage heals allies, and still dump Holy Power into Light of Dawn before you cap.",
+      "id_note": "Id 394088 is name-verified only and was not pressed in the sampled parse, which ran the Avenging Wrath build; the guide describes it as a button. No source gives its cooldown, only that it is much shorter than Avenging Wrath's 2 minutes; tooltip gives the 15 second duration."
+    },
+    {
+      "name": "Divine Toll",
+      "spell_id": 375576,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Keep it on cooldown and cast it at an ally when you want the 5 Holy Shocks to heal, since targeting an enemy sends them at enemies first; on Herald of the Sun it is your Dawnlight generator.",
+      "id_note": "Shares a choice node with Holy Prism and is replaced by Holy Armaments on Lightsmith, so builds exist with zero casts."
+    },
+    {
+      "name": "Holy Prism",
+      "spell_id": 114165,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Keep it on cooldown and cast it on an enemy so it does the AoE healing around you; on Herald of the Sun it is a Dawnlight generator.",
+      "id_note": "Not pressed in the sampled parse but a real castable ability; shares a choice node with Divine Toll."
+    },
+    {
+      "name": "Sacred Weapon",
+      "spell_id": 432472,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Lightsmith only: keep both Holy Armaments charges moving, casting Sacred Weapon on yourself for the healing bonus while the extra armament lands on another healer.",
+      "id_note": "Guide refers to this id as Holy Armaments(spell=432472). Cooldown from the tooltip's 1 minute recharge, 2 charges. The table's Holy Bulwark row (227817) carries an encounter tooltip, so it is not used here."
+    },
+    {
+      "name": "Aura Mastery",
+      "spell_id": 31821,
+      "cooldown": 180,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Keep Devotion Aura selected and press this just before a heavy raid hit for the 12% party-wide damage reduction, or on the mechanic your healing roster assigned it to.",
+      "id_note": "Cast id from the parse; 317929 is the passive row of the same name."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Full immunity for 8 seconds: use it to survive a hit that would kill you or to keep casting through unavoidable damage, remembering the 30 second Forbearance it leaves behind.",
+      "id_note": "Cast id from the parse; 1246384 is an encounter version of the name."
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "20% damage reduction on a 1 minute cooldown, so spend it freely on every telegraphed hit you take; it is usable while stunned.",
+      "id_note": "Cast id from the parse; 403876 is the same-name row that was not pressed."
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Physical immunity for 10 seconds on yourself or an ally, best saved for a melee-damage mechanic; it causes Forbearance, so it locks out Divine Shield and Lay on Hands on that target.",
+      "talent_gated": true
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Cuts an ally's damage taken by 30% for 12 seconds at the cost of taking it yourself, so pair it with a tank hit or a soak and keep your own health topped while it runs.",
+      "talent_gated": true
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "usage_rule": "Emergency full heal for yourself or a dying ally; it applies Forbearance, so it cannot follow Divine Shield or Blessing of Protection on the same target.",
+      "id_note": "Cast id from the parse; 471195 shares the name."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Infusion of Light into Flash of Light or Judgment",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 54149,
+        "buff_spell_name": "Infusion of Light",
+        "spend_spell_ids": [19750, 275773],
+        "spend_spell_names": ["Flash of Light", "Judgment"]
+      },
+      "action": "Consume every Infusion of Light: use Flash of Light whenever healing is needed, since the proc makes it instant and increases its healing by 200%, and only spend it on Judgment when no healing is needed and you want the extra Holy Power."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Dawnlight spent after Divine Toll or Holy Prism",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 431522,
+        "buff_spell_name": "Dawnlight",
+        "spend_spell_ids": [85222, 156322, 85673],
+        "spend_spell_names": ["Light of Dawn", "Eternal Flame", "Word of Glory"]
+      },
+      "action": "On Herald of the Sun, follow every Divine Toll or Holy Prism with Holy Power spenders: the next 2 spenders apply Dawnlight, so sitting on the charges throws that healing away."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shield of the Righteous only at high Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 53600,
+        "spell_name": "Shield of the Righteous",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "min"
+      },
+      "action": "Dump Holy Power into Shield of the Righteous only at 4-5 Holy Power and only when no healing is needed; below that, keep the Holy Power banked for Light of Dawn or Word of Glory when damage lands unexpectedly."
+    }
+  ],
+  "source_summary": "Holy Paladin runs a fast, uninterrupted rotation: cast Holy Shock on cooldown, keep Divine Toll, Holy Prism or Holy Armaments and Beacon of Virtue rolling, and never let Holy Power cap, spending it on Light of Dawn in raid or Eternal Flame and Word of Glory in Mythic+. Avenging Wrath is the main 2 minute cooldown and wants a long damage window rather than a single spike, while Aura Mastery is banked for an assigned raid hit and Avenging Crusader builds swap into a Judgment and Crusader Strike rotation for its duration. Mana is the limiter, so Holy Light is rationed to the moments that need it and Shield of the Righteous is a downtime dump that returns mana."
+}
