@@ -76,12 +76,7 @@
       "description": "Voidform into Power Infusion, then spend Insanity",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [
-          228260,
-          10060,
-          335467,
-          1242173
-        ],
+        "spell_ids": [228260, 10060, 335467, 1242173],
         "spell_names": [
           "Voidform",
           "Power Infusion",
@@ -154,6 +149,36 @@
         "on": "target"
       },
       "action": "Target 90%+ Shadow Word: Madness uptime: refresh at under a GCD remaining or once your Insanity deficit is 35 or less. The DoT rolls its remaining damage into the new ticks, so an early refresh to dodge an Insanity cap costs nothing."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadow Word: Madness refreshed late, not clipped",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 335467,
+        "aura_spell_name": "Shadow Word: Madness",
+        "cast_spell_id": 335467,
+        "cast_spell_name": "Shadow Word: Madness",
+        "on": "target"
+      },
+      "action": "Let Shadow Word: Madness run down to under a GCD remaining, or your Insanity deficit to 35 or less, before recasting it: the remaining damage rolls into the new ticks at no cost, so refreshing early only trims your Mastery: Shadow Weaving uptime."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadow Word: Death replaces Mind Flay in execute",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 32379,
+        "spell_name": "Shadow Word: Death",
+        "alternative_spell_ids": [15407],
+        "alternative_spell_names": [
+          "Mind Flay"
+        ],
+        "health_pct": 20
+      },
+      "action": "Below 20% target health, let Shadow Word: Death take over from Mind Flay: it hits harder in execute range and keeps its own cooldown moving instead of sitting idle."
     }
   ],
   "source_summary": "Shadow Priest builds Insanity with short-cooldown spells and spends it on Shadow Word: Madness while Vampiric Touch and Shadow Word: Pain never fall off, since Mastery: Shadow Weaving scales with all three DoTs on the target. Voidform and Power Infusion are the 2 minute burst pair and are cast together with stat racials, on-use trinkets and the potion; Halo (Archon) and Void Torrent (Voidweaver) fill the shorter cooldown layer and are used whenever they will not cost a short-cooldown cast. Tentacle Slam is the DoT-spreading cooldown and should never sit capped on charges, especially inside a burst window."

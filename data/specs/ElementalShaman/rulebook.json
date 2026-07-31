@@ -116,6 +116,20 @@
     {
       "type": "rotation",
       "severity": "warning",
+      "description": "Refresh Flame Shock late, never clip it",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 188389,
+        "aura_spell_name": "Flame Shock",
+        "cast_spell_id": 188389,
+        "cast_spell_name": "Flame Shock",
+        "on": "target"
+      },
+      "action": "Refresh Flame Shock only inside its pandemic window, at 5 seconds or less remaining, so the leftover time carries into the new 18 seconds; both numbers double while Fire Elemental is out."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
       "description": "Lava Surge procs spent on Lava Burst",
       "condition": {
         "kind": "proc_wasted",
@@ -128,17 +142,17 @@
     },
     {
       "type": "rotation",
-      "severity": "warning",
-      "description": "Spend before Lightning Bolt overcaps Maelstrom",
+      "severity": "info",
+      "description": "Elemental Blast not at capped Tempest stacks",
       "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 188196,
-        "spell_name": "Lightning Bolt",
-        "resource_type": 11,
-        "resource_name": "maelstrom",
+        "kind": "spend_at_stacks",
+        "spell_id": 117014,
+        "spell_name": "Elemental Blast",
+        "buff_spell_id": 454015,
+        "buff_spell_name": "Tempest",
         "bound": "max"
       },
-      "action": "Cast Elemental Blast or Earth Shock when or before your next filler would push you over the Maelstrom cap; overload procs mean anything within 8 Maelstrom of the cap is already a waste."
+      "action": "In multi-target, cast Elemental Blast and Earthquake at 1 stack of Tempest or fewer; at 2 stacks send Tempest first, as long as Stormkeeper is under 4 stacks."
     },
     {
       "type": "aoe_switch",

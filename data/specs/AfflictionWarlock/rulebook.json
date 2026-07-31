@@ -71,6 +71,47 @@
     {
       "type": "rotation",
       "severity": "warning",
+      "description": "Agony refreshed inside its pandemic window",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 980,
+        "aura_spell_name": "Agony",
+        "cast_spell_id": 980,
+        "cast_spell_name": "Agony",
+        "on": "target"
+      },
+      "action": "Refresh Agony at under 5.4 seconds remaining, 4.5 with Creeping Death: an early refresh throws the leftover duration away and costs a global you owe Malefic Grasp. The one deliberate exception is topping Agony up immediately before Summon Darkglare so nothing needs refreshing inside the window."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Malefic Grasp fills the Summon Darkglare window",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 1261153,
+        "spell_name": "Malefic Grasp",
+        "alternative_spell_ids": [
+          198590,
+          686
+        ],
+        "alternative_spell_names": [
+          "Drain Soul",
+          "Shadow Bolt"
+        ],
+        "buff_spell_id": 205180,
+        "buff_spell_name": "Summon Darkglare",
+        "except_buff_spell_ids": [
+          264571
+        ],
+        "except_buff_spell_names": [
+          "Nightfall"
+        ]
+      },
+      "action": "Channel Malefic Grasp, not Drain Soul or Shadow Bolt, for every global of the 20 second Darkglare window that is not an Unstable Affliction, and keep the most recent Unstable Affliction ticking so it is still up to be hit. Break the channel early only for a Nightfall proc."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
       "description": "Cascading Calamity kept up by Unstable Affliction",
       "condition": {
         "kind": "aura_uptime_below",

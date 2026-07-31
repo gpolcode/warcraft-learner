@@ -107,6 +107,20 @@
       "action": "Press Kill Command before Boomstick so the 3 sec channel is Tipped; on Sentinel also wait until Sentinel's Mark has fallen off the target."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Takedown spent at max Tip of the Spear stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 1250646,
+        "spell_name": "Takedown",
+        "buff_spell_id": 260286,
+        "buff_spell_name": "Tip of the Spear",
+        "bound": "min"
+      },
+      "action": "Enter Takedown with 2 Tip of the Spear stacks, pressing Kill Command right before it to set them up without overcapping (0 stacks if you run Twin Fangs)."
+    },
+    {
       "type": "opener",
       "severity": "warning",
       "description": "Open Kill Command into Takedown, then Boomstick",

@@ -162,6 +162,20 @@
         "bound": "min"
       },
       "action": "Swap your Runic Power spender from Death Coil to Epidemic at 3+ targets, and at 6+ targets while Forbidden Knowledge is up. Below that, Death Coil hits harder."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Festering Strike stopped near full Lesser Ghoul",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 85948,
+        "spell_name": "Festering Strike",
+        "buff_spell_id": 1254252,
+        "buff_spell_name": "Lesser Ghoul",
+        "bound": "max"
+      },
+      "action": "Festering Strike builds Lesser Ghoul and Scourge Strike spends it, so stop building once you are near the cap. Aim to sit between 2 and 4 stacks (4 and 6 with the ranged-flex talent); a Festering Strike thrown at a full count is wasted."
     }
   ],
   "source_summary": "Unholy stacks everything onto a 45 second cycle: Dark Transformation goes out the moment it is up, with Army of the Dead joining every second window along with trinket, racial and potion. Putrefy charges and Soul Reaper are concentrated inside those windows, where Commander of the Dead multiplies them, while Army opens a 30 second Forbidden Knowledge window that upgrades Death Coil into Necrotic Coil and Epidemic into Graveyard. Between windows the job is plague upkeep with Outbreak, active Festering Scythe maintenance, Lesser Ghoul stacks cycled between Festering Strike and Scourge Strike, and Sudden Doom procs spent before they expire."

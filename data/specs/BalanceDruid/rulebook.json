@@ -183,6 +183,33 @@
     {
       "type": "rotation",
       "severity": "warning",
+      "description": "Wrath as the filler while Eclipse (Solar) is up",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 190984,
+        "spell_name": "Wrath",
+        "alternative_spell_ids": [
+          194153
+        ],
+        "alternative_spell_names": [
+          "Starfire"
+        ],
+        "buff_spell_id": 48517,
+        "buff_spell_name": "Eclipse (Solar)",
+        "except_buff_spell_ids": [
+          102560,
+          1263363
+        ],
+        "except_buff_spell_names": [
+          "Incarnation: Chosen of Elune",
+          "Ascendant Fires"
+        ]
+      },
+      "action": "Build Astral Power with Wrath as your default filler while Eclipse (Solar) is up; the one exception is a deliberate Starfire cast inside Celestial Alignment or Incarnation: Chosen of Elune to proc the instant Ascendant Eclipses."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
       "description": "Touch the Cosmos spent on Starfall or Starsurge",
       "condition": {
         "kind": "proc_wasted",

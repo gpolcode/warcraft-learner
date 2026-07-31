@@ -127,16 +127,18 @@
     {
       "type": "rotation",
       "severity": "critical",
-      "description": "Arcane Barrage at 4 Arcane Charges",
+      "description": "Arcane Barrage at maximum Arcane Salvo",
       "condition": {
-        "kind": "resource_at_cast",
+        "kind": "spend_at_stacks",
         "spell_id": 44425,
         "spell_name": "Arcane Barrage",
-        "resource_type": 16,
-        "resource_name": "arcane charges",
-        "bound": "min"
+        "buff_spell_id": 1242974,
+        "buff_spell_name": "Arcane Salvo",
+        "bound": "min",
+        "except_buff_spell_ids": [365362],
+        "except_buff_spell_names": ["Arcane Surge"]
       },
-      "action": "Spend Arcane Barrage at 4 Arcane Charges with 20 or more Arcane Salvo stacks (25 as Sunfury). Barraging on low Charges throws away both its damage and the mana reset."
+      "action": "Spend Arcane Barrage at 4 Arcane Charges with 20 Arcane Salvo stacks, 25 as Sunfury. Intuition only pays out at maximum stacks, so an early Barrage throws away both its damage and the mana reset."
     },
     {
       "type": "rotation",

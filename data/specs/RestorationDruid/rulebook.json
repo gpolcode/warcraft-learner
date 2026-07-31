@@ -177,6 +177,39 @@
         "position": "before"
       },
       "action": "When Nature's Swiftness is up, press it right before Convoke the Spirits. Convoke does not consume the buff, so every Regrowth it rolls heals 60% more."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Regrowth chained at high Abundance stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 8936,
+        "spell_name": "Regrowth",
+        "buff_spell_id": 207640,
+        "buff_spell_name": "Abundance",
+        "bound": "min",
+        "except_buff_spell_ids": [132158],
+        "except_buff_spell_names": ["Nature's Swiftness"]
+      },
+      "action": "Chain Rejuvenation first to build Abundance stacks, then chain Regrowth once stacks are high. Casting Regrowth with low Abundance wastes its crit chance and mana discount and is the main cause of mana trouble. Cast Regrowth immediately regardless of stacks when someone drops low and Nature's Swiftness is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Rejuvenation over Regrowth during Innervate",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 774,
+        "spell_name": "Rejuvenation",
+        "alternative_spell_ids": [8936],
+        "alternative_spell_names": ["Regrowth"],
+        "buff_spell_id": 29166,
+        "buff_spell_name": "Innervate",
+        "except_buff_spell_ids": [132158],
+        "except_buff_spell_names": ["Nature's Swiftness"]
+      },
+      "action": "During Innervate's 8 free seconds, chain Rejuvenation rather than Regrowth: Abundance already makes Regrowth cheap outside the window, so the free casts are worth more spent building Rejuvenation stacks. Cast Regrowth anyway if someone drops low and you have Nature's Swiftness up."
     }
   ],
   "source_summary": "Restoration Druid healing is heal-over-time maintenance plus the Abundance cycle: keep Lifebloom on yourself and Efflorescence under the group, Swiftmend on cooldown into Rejuvenation, Wild Growth often, then chain Regrowth while Rejuvenation stacks are high. The big cooldowns are ramp tools rather than panic buttons: build a wide Rejuvenation and Wild Growth carpet before Tranquility so its 10 second extension and Convoke the Spirits' 2 second extensions hold the ramp open, and pick Convoke or Incarnation: Tree of Life for the fight's damage pattern. Innervate starts around 80% mana and is used every cooldown into Rejuvenation casts, Nature's Swiftness answers spike damage with an instant Regrowth or pre-buffs Convoke, and Ironbark goes out often rather than being saved."

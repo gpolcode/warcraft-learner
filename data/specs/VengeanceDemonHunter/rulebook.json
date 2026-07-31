@@ -186,6 +186,20 @@
         "bound": "max"
       },
       "action": "Dump into Soul Cleave first when your Fury deficit is 15 or less, then place Sigil of Flame so none of its Fury is lost."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spirit Bomb spent at high Soul Fragments",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 247454,
+        "spell_name": "Spirit Bomb",
+        "buff_spell_id": 203981,
+        "buff_spell_name": "Soul Fragments",
+        "bound": "min"
+      },
+      "action": "Bank Soul Fragments to at least 5 before firing Spirit Bomb (the bar drops to 3-4 during Fiery Demise or Metamorphosis); firing it early on a low fragment count gives up most of its damage scaling."
     }
   ],
   "source_summary": "Vengeance treats its defensive cooldowns as damage cooldowns: Metamorphosis and Fiery Brand are used close to on cooldown, partially overlapped so Fiery Demise amplifies the Metamorphosis burst, with charges spread out to keep defensive coverage between them. Sigil of Flame, Sigil of Spite, Soul Carver, Fel Devastation and Immolation Aura are pressed on cooldown around a Fracture into Soul Cleave or Spirit Bomb builder-spender core, held only long enough to avoid overcapping Soul Fragments or Fury. Annihilator adds one gate on top: never enter Metamorphosis at 2 stacks of Voidfall, fish for the third with Fracture and spend it first."

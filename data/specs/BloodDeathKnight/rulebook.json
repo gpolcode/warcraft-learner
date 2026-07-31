@@ -206,6 +206,23 @@
         "spend_spell_names": ["Vampiric Strike"]
       },
       "action": "Press the converted Heart Strike as soon as the proc lands: it refreshes Essence of the Blood Queen and extends Blood Plague by 3 seconds through Infliction of Sorrow."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Vampiric Strike as the filler in Gift of the San'layn",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 433895,
+        "spell_name": "Vampiric Strike",
+        "alternative_spell_ids": [206930],
+        "alternative_spell_names": ["Heart Strike"],
+        "buff_spell_id": 434153,
+        "buff_spell_name": "Gift of the San'layn",
+        "except_buff_spell_ids": [1265968, 1265982],
+        "except_buff_spell_names": ["Boiling Point", "Boiling Point"]
+      },
+      "action": "Inside Gift of the San'layn cast one Blood Boil for the rune weapon plague copies, then chain Vampiric Strike and Death Strike until it fades; only break the chain to game Hemostasis in AoE or a Visceral Strength window."
     }
   ],
   "source_summary": "Blood is built around a 90 second Dancing Rune Weapon window that carries both hero trees: Deathbringer opens Reaper's Mark into Dancing Rune Weapon with Death and Decay already ticking, while San'layn treats the Gift of the San'layn window as a near-pure Death Strike and Vampiric Strike chain after a single Blood Boil. Around it the priority is maintenance and proc spending: Bone Shield at 5 or more charges, Coagulopathy refreshed by Death Strike above 70 Runic Power, Crimson Scourge dumped into a free Death and Decay, and Consumption empowered to rank 1 whenever the rune weapon is down. Defensive cooldowns are planned per mechanic rather than pressed reactively, with Vampiric Blood inflating Anti-Magic Shell and Tombstone shields cast under it and Icebound Fortitude reserved for raw damage-taken mechanics."

@@ -113,6 +113,26 @@
     {
       "type": "rotation",
       "severity": "warning",
+      "description": "Rip refreshed late, never clipped",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 1079,
+        "aura_spell_name": "Rip",
+        "cast_spell_id": 1079,
+        "cast_spell_name": "Rip",
+        "on": "target",
+        "except_buff_spell_ids": [
+          5217
+        ],
+        "except_buff_spell_names": [
+          "Tiger's Fury"
+        ]
+      },
+      "action": "Let Rip run down into its last 7.2 seconds before you refresh it. Overwrite it earlier only to re-snapshot under Tiger's Fury; otherwise wait, because a clipped Rip throws away duration you already paid 5 combo points for."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
       "description": "Ferocious Bite only once Rip is ticking",
       "condition": {
         "kind": "cast_without_prior",

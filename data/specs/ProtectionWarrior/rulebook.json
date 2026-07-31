@@ -176,6 +176,20 @@
         "anchor_spell_name": "Avatar"
       },
       "action": "Line your damage abilities up with Avatar, and with Demoralizing Shout on top when both are available. Never hold them long enough to lose a cast over the fight, and keep Shield Charge back when you will need the Shield Block it grants."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute replaces Revenge below execute range",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 163201,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [6572],
+        "alternative_spell_names": ["Revenge"],
+        "health_pct": 20
+      },
+      "action": "Execute takes over from Revenge once the target drops into execute range (20%, higher with Massacre talented): use it whenever Shield Slam and Thunder Clap are both on cooldown."
     }
   ],
   "source_summary": "Protection Warrior plays a Rage engine: Shield Slam and Thunder Clap on cooldown feed Shield Block first and Ignore Pain with whatever is left, and Revenge soaks the overflow when survivability is covered. Avatar and Demoralizing Shout are the damage amps, so Ravager, Shield Charge and Demolish are aimed into them without ever being delayed far enough to drop a cast. Defensives are planned rather than reactive: Shield Wall and Demoralizing Shout for known spikes, Spell Reflection for magic windows, Last Stand as the recovery button."

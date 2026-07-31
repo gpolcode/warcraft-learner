@@ -149,6 +149,34 @@
         "bound": "max"
       },
       "action": "Shadowburn stays your best spender up to 6 targets with Conflagration of Chaos, 5 once Destructive Rapidity is also talented, and 3 without Conflagration of Chaos. Fiendish Cruelty adds one target to each count on Diabolist. Above the cutoff, sink shards into Rain of Fire instead."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Conflagrate before Backdraft stacks cap",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 17962,
+        "spell_name": "Conflagrate",
+        "buff_spell_id": 117828,
+        "buff_spell_name": "Backdraft",
+        "bound": "max"
+      },
+      "action": "Spend Backdraft on a hasted Incinerate or Chaos Bolt before recasting Conflagrate: single target only takes it at 0 stacks, multitarget below 2. Do not sit on 2 Conflagrate charges either, dump one into a long Chaos Bolt cast."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadowburn replaces Chaos Bolt in execute",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 17877,
+        "spell_name": "Shadowburn",
+        "alternative_spell_ids": [116858],
+        "alternative_spell_names": ["Chaos Bolt"],
+        "health_pct": 20
+      },
+      "action": "Below 20% target health, Shadowburn takes over from Chaos Bolt as your spender. It refunds its Soul Shard when the target dies inside the debuff, and Havoc can trigger a second refund."
     }
   ],
   "source_summary": "Destruction generates Soul Shards with Incinerate and Conflagrate and dumps them into Chaos Bolt and Shadowburn, so the cooldown plan is built around Summon Infernal: send it on cooldown and stack potion, trinkets and racials inside its 30 sec window. Cataclysm is treated as a mass Immolate applicator rather than burst, used on cooldown in multitarget and held for dot refreshes in single target, while Havoc is banked with shards and Conflagrate charges for an incoming add. Hellcaller adds Malevolence as a second window to spend into, and Diabolist turns spender casts into Diabolic Ritual procs that pay out Ruination."

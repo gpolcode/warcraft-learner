@@ -170,16 +170,17 @@
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Pistol Shot only with Opportunity",
+      "description": "Pistol Shot as filler while Opportunity is up",
       "condition": {
-        "kind": "cast_outside_buff",
+        "kind": "filler_in_buff",
         "spell_id": 185763,
         "spell_name": "Pistol Shot",
+        "alternative_spell_ids": [193315],
+        "alternative_spell_names": ["Sinister Strike"],
         "buff_spell_id": 195627,
-        "buff_spell_name": "Opportunity",
-        "require": "inside"
+        "buff_spell_name": "Opportunity"
       },
-      "action": "Only fire Pistol Shot with Opportunity up: spend immediately at 6 stacks, and at 3 stacks only while you sit at 1 to 3 combo points."
+      "action": "Build with Pistol Shot whenever Opportunity is up: spend it immediately at 6 stacks, and at 3 stacks only while you sit at 1 to 3 combo points. Fall back to Sinister Strike the rest of the time."
     },
     {
       "type": "aoe_switch",

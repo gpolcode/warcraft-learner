@@ -131,11 +131,12 @@
       "severity": "warning",
       "description": "Spend Stormstream Totem procs before HST recharges",
       "condition": {
-        "kind": "proc_wasted",
+        "kind": "spend_at_stacks",
+        "spell_id": 1267068,
+        "spell_name": "Stormstream Totem",
         "buff_spell_id": 1267089,
         "buff_spell_name": "Stormstream Totem",
-        "spend_spell_ids": [1267068],
-        "spend_spell_names": ["Stormstream Totem"]
+        "bound": "min"
       },
       "action": "The proc lasts 60 seconds and stacks twice, so hold it for a real damage window, but spend it before both Healing Stream Totem charges are ready or you lose a totem cast."
     },

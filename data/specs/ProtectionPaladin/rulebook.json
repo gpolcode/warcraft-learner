@@ -141,6 +141,22 @@
     {
       "type": "rotation",
       "severity": "info",
+      "description": "Consecration refreshed late, not clipped",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 188370,
+        "aura_spell_name": "Consecration",
+        "cast_spell_id": 26573,
+        "cast_spell_name": "Consecration",
+        "on": "self",
+        "except_buff_spell_ids": [460822],
+        "except_buff_spell_names": ["Divine Guidance"]
+      },
+      "action": "Only refresh Consecration once nothing else is available, or immediately when Divine Guidance reaches 5 stacks; its 12 second duration comfortably outlasts the 9 second cooldown, so recasting any earlier for any other reason just clips uptime you already banked."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
       "description": "Shield of the Righteous at high Holy Power",
       "condition": {
         "kind": "resource_at_cast",

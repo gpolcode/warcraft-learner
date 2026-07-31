@@ -91,6 +91,22 @@
     },
     {
       "type": "rotation",
+      "severity": "warning",
+      "description": "Garrote refreshed late, never clipped early",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 703,
+        "aura_spell_name": "Garrote",
+        "cast_spell_id": 703,
+        "cast_spell_name": "Garrote",
+        "on": "target",
+        "except_buff_spell_ids": [392401, 392403],
+        "except_buff_spell_names": ["Improved Garrote", "Improved Garrote"]
+      },
+      "action": "Let Garrote run to its pandemic window before you refresh it: only the last 30% of the new duration carries over, so an early re-apply throws away ticks and, worse, overwrites an empowered bleed with an unempowered one. The exception is Improved Garrote from Stealth or Vanish, where you overwrite on sight to snapshot the buffed version, twice on the opener for full pandemic value."
+    },
+    {
+      "type": "rotation",
       "severity": "critical",
       "description": "Rupture stays up on your main target",
       "condition": {

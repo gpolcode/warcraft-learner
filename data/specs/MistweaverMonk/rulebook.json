@@ -81,20 +81,6 @@
     {
       "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Thunder Focus Tea spent on Renewing Mist",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 116680,
-        "spell_name": "Thunder Focus Tea",
-        "required_spell_id": 115151,
-        "required_spell_name": "Renewing Mist",
-        "position": "after"
-      },
-      "action": "Follow almost every Thunder Focus Tea with Renewing Mist for the 10 second duration extension and the Secret Infusion haste; only spend it on Enveloping Mist when one target needs the instant burst heal."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
       "description": "Blackout Kick right after Invoke Chi-Ji",
       "condition": {
         "kind": "cast_without_prior",
@@ -156,6 +142,20 @@
         "bound": "min"
       },
       "action": "Save Spinning Crane Kick for 4 or more enemies, where Way of the Crane turns it into the bulk of your throughput; on fewer targets use Tiger Palm into Blackout Kick instead."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Mana Tea spent at full stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 115294,
+        "spell_name": "Mana Tea",
+        "buff_spell_id": 115867,
+        "buff_spell_name": "Mana Tea",
+        "bound": "min"
+      },
+      "action": "Hold Mana Tea until you are at 20 stacks in both raid and Mythic+ priority; do not spend it early and do not let the stacks sit capped once you reach 20."
     }
   ],
   "source_summary": "Mistweaver plays a reactive priority built on rolling Renewing Mist and never capping its charges, with Thunder Focus Tea going out on Renewing Mist most of the time for the duration extension and the Secret Infusion haste. Raid cooldowns are ramps rather than on-cooldown presses: buff haste and dump Renewing Mist charges before the damage, then pop Invoke Yu'lon and chain Enveloping Mists into a Rising Sun Kick extension, or use Invoke Chi-Ji opened by a Blackout Kick when mana matters more. Revival or Restoral covers a stacked spike or a raid-wide dispel, while Life Cocoon is the off-global answer to a single player about to die."

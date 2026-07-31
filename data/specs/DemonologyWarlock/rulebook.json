@@ -129,6 +129,23 @@
       "action": "Demonbolt generates 2 Soul Shards, so only spend a Demonic Core on it below 4 shards; at 4 or 5 shards cast Hand of Gul'dan first."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Demonbolt as the filler on Demonic Core",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 264178,
+        "spell_name": "Demonbolt",
+        "alternative_spell_ids": [686],
+        "alternative_spell_names": ["Shadow Bolt"],
+        "buff_spell_id": 264173,
+        "buff_spell_name": "Demonic Core",
+        "except_buff_spell_ids": [433891],
+        "except_buff_spell_names": ["Infernal Bolt"]
+      },
+      "action": "With a Demonic Core banked and fewer than 4 Soul Shards, press Demonbolt instead of Shadow Bolt; it is instant, generates 2 shards and covers movement. Shadow Bolt is the filler only when no Core is up, and Infernal Bolt takes over at 2 or fewer shards."
+    },
+    {
       "type": "aoe_switch",
       "severity": "info",
       "description": "Implosion on multiple targets",

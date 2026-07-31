@@ -132,6 +132,40 @@
         "spend_spell_names": ["Disintegrate", "Pyre"]
       },
       "action": "Cash Essence Burst into a free Disintegrate, or Pyre in AoE, before it expires. Inside Dragonrage every filler procs it, so spend it rather than stacking fillers."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Living Flame is the filler under Leaping Flames",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 361469,
+        "spell_name": "Living Flame",
+        "alternative_spell_ids": [362969],
+        "alternative_spell_names": ["Azure Strike"],
+        "buff_spell_id": 370901,
+        "buff_spell_name": "Leaping Flames",
+        "except_buff_spell_ids": [375087],
+        "except_buff_spell_names": ["Dragonrage"]
+      },
+      "action": "Cast Living Flame at least once between every Fire Breath so no Leaping Flames goes unconsumed. Azure Strike is the filler only when you are moving with no Hover."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Living Flame over Azure Strike on Burnout",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 361469,
+        "spell_name": "Living Flame",
+        "alternative_spell_ids": [362969],
+        "alternative_spell_names": ["Azure Strike"],
+        "buff_spell_id": 375802,
+        "buff_spell_name": "Burnout",
+        "except_buff_spell_ids": [375087],
+        "except_buff_spell_names": ["Dragonrage"]
+      },
+      "action": "Burnout makes Living Flame free and instant, so it is the filler for every stack. Drop to Azure Strike only with neither Burnout nor Leaping Flames up."
     }
   ],
   "source_summary": "Dragonrage is the spec's one major cooldown and the whole rotation orbits it: send it every 2 minutes, bank Fire Breath and Eternity Surge for the last few GCDs beforehand so Animosity can extend the window, and spend Tip the Scales inside it on an instant maximum-rank empower. Empowers go out at rank 1 in single target, while Eternity Surge scales its rank to the pack size in AoE and Pyre takes over from Disintegrate as the Essence spender at 3 to 4 targets. Scalecommander adds Deep Breath on cooldown with a cancelled opener cast and a Strafing Run follow-up, and both hero trees lean on Living Flame and Azure Sweep as fillers to keep Essence Burst flowing."

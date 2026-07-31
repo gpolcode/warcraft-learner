@@ -112,16 +112,17 @@
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Soul Immolation outside Void Metamorphosis",
+      "description": "Devour, not Soul Immolation, inside Void Metamorphosis",
       "condition": {
-        "kind": "cast_outside_buff",
-        "spell_id": 1241937,
-        "spell_name": "Soul Immolation",
+        "kind": "filler_in_buff",
+        "spell_id": 1217610,
+        "spell_name": "Devour",
+        "alternative_spell_ids": [473662, 1241937],
+        "alternative_spell_names": ["Consume", "Soul Immolation"],
         "buff_spell_id": 1217607,
-        "buff_spell_name": "Void Metamorphosis",
-        "require": "outside"
+        "buff_spell_name": "Void Metamorphosis"
       },
-      "action": "Keep Soul Immolation for globals outside the form, where it replaces a Consume; inside Void Metamorphosis, Devour is far stronger, so bank the charge for when the window ends."
+      "action": "Every filler global inside the form goes to Devour; Soul Immolation only beats a Consume global outside Void Metamorphosis, so bank the charge for when the window ends."
     },
     {
       "type": "cooldown_pairing",

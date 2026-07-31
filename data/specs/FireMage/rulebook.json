@@ -96,7 +96,10 @@
         "buff_spell_id": 48108,
         "buff_spell_name": "Hot Streak!",
         "spend_spell_ids": [11366, 1254851],
-        "spend_spell_names": ["Pyroblast", "Flamestrike"]
+        "spend_spell_names": [
+          "Pyroblast",
+          "Flamestrike"
+        ]
       },
       "action": "Consume every Hot Streak: instant Pyroblast in single target, Flamestrike from 4 targets up. Outside Combustion, chain it behind a Fireball or Frostfire Bolt so both land together and fish for the next crit."
     },
@@ -139,6 +142,22 @@
         "require": "inside"
       },
       "action": "Press Fire Blast on Heating Up to convert it into a Hot Streak, weaving it into a hard cast so nothing is clipped. Spend ahead of the proc only to avoid sitting at capped charges, and keep converting inside Combustion and Hyperthermia since Hot Streak still doubles the Ignite."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Scorch replaces Fireball below 30% health",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 2948,
+        "spell_name": "Scorch",
+        "alternative_spell_ids": [133],
+        "alternative_spell_names": [
+          "Fireball"
+        ],
+        "health_pct": 30
+      },
+      "action": "Below 30% target health, Scorch becomes your Hot Streak builder in place of Fireball. Above 30% it is a movement filler only, and on a Frostfire build Frostfire Bolt stays the filler all the way down."
     },
     {
       "type": "cooldown_pairing",

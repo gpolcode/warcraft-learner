@@ -65,7 +65,7 @@
   "rules": [
     {
       "type": "cooldown_pairing",
-      "priority": "critical",
+      "severity": "critical",
       "description": "Secret Technique inside Shadow Dance",
       "condition": {
         "kind": "cast_outside_buff",
@@ -79,7 +79,7 @@
     },
     {
       "type": "cooldown_pairing",
-      "priority": "high",
+      "severity": "warning",
       "description": "Shadow Blades paired with Shadow Dance",
       "condition": {
         "kind": "cast_without_prior",
@@ -93,7 +93,7 @@
     },
     {
       "type": "cd_hold",
-      "priority": "medium",
+      "severity": "info",
       "description": "Hold Shadow Dance and Secret Technique for Blades",
       "condition": {
         "kind": "hold_cooldown_for_anchor",
@@ -106,7 +106,7 @@
     },
     {
       "type": "opener",
-      "priority": "high",
+      "severity": "warning",
       "description": "Open Shadowstrike into Shadow Dance and Shadow Blades",
       "condition": {
         "kind": "opening_sequence",
@@ -117,7 +117,7 @@
     },
     {
       "type": "rotation",
-      "priority": "high",
+      "severity": "warning",
       "description": "Eviscerate at 6 or more combo points",
       "condition": {
         "kind": "resource_at_cast",
@@ -131,7 +131,7 @@
     },
     {
       "type": "rotation",
-      "priority": "high",
+      "severity": "warning",
       "description": "Darkest Night spent on Eviscerate",
       "condition": {
         "kind": "proc_wasted",
@@ -144,7 +144,7 @@
     },
     {
       "type": "aoe_switch",
-      "priority": "medium",
+      "severity": "info",
       "description": "Black Powder from 2 targets up",
       "condition": {
         "kind": "cast_at_target_count",
@@ -156,7 +156,7 @@
     },
     {
       "type": "aoe_switch",
-      "priority": "medium",
+      "severity": "info",
       "description": "Backstab only below 2 targets",
       "condition": {
         "kind": "cast_at_target_count",
@@ -165,6 +165,21 @@
         "bound": "max"
       },
       "action": "Backstab is your filler on a single target only. From 2 targets up, build with Shuriken Storm instead, and with Shadowstrike while Shadow Dance is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadowstrike over Backstab in Shadow Dance",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185438,
+        "spell_name": "Shadowstrike",
+        "alternative_spell_ids": [53],
+        "alternative_spell_names": ["Backstab"],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance"
+      },
+      "action": "Shadow Dance turns Shadowstrike on, and it builds more and teleports you behind the target, so it is your single-target builder for the whole window. Fall back to Backstab only once Shadow Dance drops."
     }
   ],
   "source_summary": "Subtlety packs almost all of its damage into stacked cooldown windows built around Secret Technique, so Shadow Dance is only pressed when Secret Technique is ready and Shadow Blades goes out alongside a Shadow Dance charge, with a second Shadow Dance spent inside the Shadow Blades window. Because the three do not line up naturally, both Shadow Dance and Secret Technique are delayed slightly when Shadow Blades is about to come off cooldown, and Shadow Dance is never pressed during a global cooldown. Outside those windows the spec builds with Backstab or Shuriken Storm and finishes at 6 or more combo points, using Eviscerate on one target and Black Powder from 2 targets up."

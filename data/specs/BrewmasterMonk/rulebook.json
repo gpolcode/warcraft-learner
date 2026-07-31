@@ -91,16 +91,21 @@
     },
     {
       "type": "rotation",
-      "severity": "warning",
-      "description": "Consume Blackout Combo with Tiger Palm",
+      "severity": "info",
+      "description": "Breath of Fire fills Invoke Niuzao windows",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 228563,
-        "buff_spell_name": "Blackout Combo",
-        "spend_spell_ids": [100780],
-        "spend_spell_names": ["Tiger Palm"]
+        "kind": "filler_in_buff",
+        "spell_id": 115181,
+        "spell_name": "Breath of Fire",
+        "alternative_spell_ids": [100780, 322729],
+        "alternative_spell_names": [
+          "Tiger Palm",
+          "Spinning Crane Kick"
+        ],
+        "buff_spell_id": 132578,
+        "buff_spell_name": "Invoke Niuzao, the Black Ox"
       },
-      "action": "Spend almost every Blackout Combo on Tiger Palm for the 100% damage buff. Comboing Keg Smash instead is only worth it when you are desperate for a Purifying Brew charge that is seconds away."
+      "action": "As Shado-Pan, spend the whole 25 second Niuzao window cycling Keg Smash and Breath of Fire instead of filling with Tiger Palm: Keg Smash resets Breath of Fire through Sal'salabim's Strength and every Breath of Fire under the celestial triggers another set of Flurry Strikes."
     },
     {
       "type": "rotation",
@@ -111,7 +116,9 @@
         "buff_spell_id": 1265307,
         "buff_spell_name": "Empty Barrel",
         "spend_spell_ids": [121253],
-        "spend_spell_names": ["Keg Smash"]
+        "spend_spell_names": [
+          "Keg Smash"
+        ]
       },
       "action": "You can only hold 1 Empty Barrel, so cast Keg Smash as soon as one appears; that cast is free and resets Keg Smash again through Bring Me Another."
     },
@@ -136,7 +143,13 @@
       "condition": {
         "kind": "opening_sequence",
         "spell_ids": [121253, 205523, 115181, 325153, 132578],
-        "spell_names": ["Keg Smash", "Blackout Kick", "Breath of Fire", "Exploding Keg", "Invoke Niuzao, the Black Ox"]
+        "spell_names": [
+          "Keg Smash",
+          "Blackout Kick",
+          "Breath of Fire",
+          "Exploding Keg",
+          "Invoke Niuzao, the Black Ox"
+        ]
       },
       "action": "Open Keg Smash, Blackout Kick, Breath of Fire, Tiger Palm, then Exploding Keg and Invoke Niuzao in either order. Establish Shuffle first; pre-pull Breath of Fire at 3 seconds and Chi Burst at 1 second."
     },

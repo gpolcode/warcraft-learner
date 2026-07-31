@@ -163,6 +163,44 @@
     {
       "type": "rotation",
       "severity": "critical",
+      "description": "Killing Machine procs spent on Obliterate",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 49020,
+        "spell_name": "Obliterate",
+        "alternative_spell_ids": [49143, 49184, 207230, 194913],
+        "alternative_spell_names": [
+          "Frost Strike",
+          "Howling Blast",
+          "Frostscythe",
+          "Glacial Advance"
+        ],
+        "buff_spell_id": 51124,
+        "buff_spell_name": "Killing Machine",
+        "except_buff_spell_ids": [59052],
+        "except_buff_spell_names": ["Rime"]
+      },
+      "action": "Obliterate is your filler while Killing Machine is up: press it at 3+ Runes, and consume immediately at two stacks. Under 3 Runes spend a Rime Howling Blast or a 70+ Runic Power Frost Strike first, and swap to Frostscythe from 3 targets."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Empower Rune Weapon without capping Killing Machine",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 47568,
+        "spell_name": "Empower Rune Weapon",
+        "buff_spell_id": 51124,
+        "buff_spell_name": "Killing Machine",
+        "bound": "max",
+        "except_buff_spell_ids": [51271],
+        "except_buff_spell_names": ["Pillar of Frost"]
+      },
+      "action": "Press Empower Rune Weapon when you hold no Killing Machine and cannot spend Runic Power, or when its second charge is about to cap; never generate a proc while you already sit at two stacks. Inside Pillar of Frost with Obliteration it is free value, so send it there at one stack and 2 or fewer Runes."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
       "description": "Rime procs spent on Howling Blast",
       "condition": {
         "kind": "proc_wasted",

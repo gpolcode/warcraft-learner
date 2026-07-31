@@ -148,6 +148,22 @@
       "action": "Fire Execute while Sudden Death is up. It stacks to 2 so you may hold one briefly, but never let it expire unspent: as Slayer each spend also pulls Bladestorm's cooldown forward by your Executioner stacks."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute replaces your fillers below 20%",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 280735,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [335096, 335097, 23881, 85288, 190411],
+        "alternative_spell_names": ["Bloodbath", "Crushing Blow", "Bloodthirst", "Raging Blow", "Whirlwind"],
+        "health_pct": 20,
+        "except_buff_spell_ids": [1719],
+        "except_buff_spell_names": ["Recklessness"]
+      },
+      "action": "Below 20% target health, 35% with Massacre, Execute takes over as the filler and outranks Bloodbath, Crushing Blow, Bloodthirst, Raging Blow and Whirlwind. In AoE inside Recklessness, Bloodbath and Whirlwind come first."
+    },
+    {
       "type": "cooldown_pairing",
       "severity": "warning",
       "description": "Bladestorm only while Enraged",

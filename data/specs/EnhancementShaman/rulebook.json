@@ -189,6 +189,59 @@
         ]
       },
       "action": "Hold a Sundering charge for each Surging Totem so the Whirling Earth mote doubles its damage and spawns the Searing Totem before it expires."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Lava Lash is the Hot Hand window filler",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 60103,
+        "spell_name": "Lava Lash",
+        "alternative_spell_ids": [
+          187874,
+          17364,
+          470057
+        ],
+        "alternative_spell_names": [
+          "Crash Lightning",
+          "Stormstrike",
+          "Voltaic Blaze"
+        ],
+        "buff_spell_id": 215785,
+        "buff_spell_name": "Hot Hand",
+        "except_buff_spell_ids": [
+          466772,
+          114051
+        ],
+        "except_buff_spell_names": [
+          "Doom Winds",
+          "Ascendance"
+        ]
+      },
+      "action": "Inside Hot Hand, Lava Lash is your strike of choice: it is up every third GCD, or every second if you land a Maelstrom Weapon spender in between for the Elemental Tempo cooldown reduction, with Crash Lightning, Stormstrike and Voltaic Blaze filling the gaps. Under Doom Winds or Ascendance, weave Stormstrike, Crash Lightning and Windstrike instead so Thorim's Invocation discharges."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Lightning Bolt spent at full Maelstrom Weapon",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 188196,
+        "spell_name": "Lightning Bolt",
+        "buff_spell_id": 344179,
+        "buff_spell_name": "Maelstrom Weapon",
+        "bound": "min",
+        "except_buff_spell_ids": [
+          466772,
+          114051
+        ],
+        "except_buff_spell_names": [
+          "Doom Winds",
+          "Ascendance"
+        ]
+      },
+      "action": "Spend at 10 Maelstrom Weapon stacks, 9+ at the lowest in normal play, and drop to 5+ only when Elemental Tempo will reset Lava Lash within the next GCD. Never hard cast below 5: the cast time resets your swing timer and throws away the damage bonus."
     }
   ],
   "source_summary": "Enhancement runs a one minute burst loop: Surging Totem with Sundering and Lava Lash to open a Hot Hand window, then Doom Winds (or Ascendance every 2 minutes, which replaces it) so Thorim's Invocation discharges a Maelstrom Weapon spender on every Stormstrike, Windstrike and Crash Lightning. Sundering is pressed every 30 sec for the Surging Elements Haste and the Primordial Storm follow-up, which is spent at 10 Maelstrom Weapon stacks. Crash Lightning is a maintenance buff held up at all times, spenders are never hard cast below 5 stacks, and trinkets, potion and racials are stacked into whichever burst window is active."

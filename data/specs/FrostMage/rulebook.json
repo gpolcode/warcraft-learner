@@ -84,15 +84,17 @@
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Ice Lance on every Fingers of Frost",
+      "description": "Ice Lance over Frostbolt on Fingers of Frost",
       "condition": {
-        "kind": "proc_wasted",
+        "kind": "filler_in_buff",
+        "spell_id": 30455,
+        "spell_name": "Ice Lance",
+        "alternative_spell_ids": [116],
+        "alternative_spell_names": ["Frostbolt"],
         "buff_spell_id": 44544,
-        "buff_spell_name": "Fingers of Frost",
-        "spend_spell_ids": [30455],
-        "spend_spell_names": ["Ice Lance"]
+        "buff_spell_name": "Fingers of Frost"
       },
-      "action": "React to Fingers of Frost with Ice Lance: it shatters a full 4 stacks even on a target with no Freezing, so never let a charge sit, and dump immediately at 2 charges on Spellslinger."
+      "action": "While Fingers of Frost is up, Ice Lance is your filler instead of Frostbolt: it hits as if it consumed the target's maximum Freezing even at zero stacks, so never let a charge sit and dump at once when you reach 2."
     },
     {
       "type": "opener",

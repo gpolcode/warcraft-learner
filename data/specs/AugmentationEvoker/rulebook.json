@@ -113,6 +113,20 @@
       "action": "Refresh Ebon Might at 3 or fewer seconds left, and extend it between refreshes with Eruption and your empowers so it never drops."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Refresh Ebon Might late, never clip it",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 395296,
+        "aura_spell_name": "Ebon Might",
+        "cast_spell_id": 395152,
+        "cast_spell_name": "Ebon Might",
+        "on": "self"
+      },
+      "action": "Recast Ebon Might at 3 or fewer seconds remaining; refreshing any earlier throws away the pandemic, which carries up to 30% of the duration into the next cast."
+    },
+    {
       "type": "opener",
       "severity": "warning",
       "description": "Ebon Might into Prescience, then Breath of Eons",

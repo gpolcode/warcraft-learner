@@ -138,6 +138,23 @@
         "on": "self"
       },
       "action": "Cast Holy Word: Serenity, Sanctify and Chastise the moment they come up instead of banking charges; each summon refreshes the 9 sec Naaru and empowers the one already out."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Prayer of Healing over Flash Heal on Surge of Light",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 596,
+        "spell_name": "Prayer of Healing",
+        "alternative_spell_ids": [2061],
+        "alternative_spell_names": ["Flash Heal"],
+        "buff_spell_id": 114255,
+        "buff_spell_name": "Surge of Light",
+        "except_buff_spell_ids": [200183],
+        "except_buff_spell_names": ["Apotheosis"]
+      },
+      "action": "Spend Surge of Light procs on Prayer of Healing over Flash Heal: the group heal gets more value from the free cast and the mana discount. Save Flash Heal for emergencies outside Apotheosis; during Apotheosis, send Surge of Light into Flash Heal instead for the extra Holy Word cooldown reduction."
     }
   ],
   "source_summary": "Holy Priest has no fixed rotation: the guide builds everything around pressing the short-cooldown Holy Words and Prayer of Mending as rotational spells so Serendipity cooldown reduction and Divine Image keep compounding. Apotheosis is the throughput window, taken with the Holy Words drained and opened by Halo for Manifested Power and Resonant Energy, with Power Infusion chained behind it. Divine Hymn is reserved for scripted raid-wide damage and Guardian Spirit is pre-placed on the tank before a known lethal hit."

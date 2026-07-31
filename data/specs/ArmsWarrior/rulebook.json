@@ -196,6 +196,20 @@
       "action": "Execute scales with the Rage it consumes, so fire it above 40 Rage outside Sudden Death and above 75 with Deep Wounds talented; a free Sudden Death Execute is always fine."
     },
     {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute replaces Slam below 35% health",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [1464],
+        "alternative_spell_names": ["Slam"],
+        "health_pct": 35
+      },
+      "action": "Once the target drops below 35%, switch to the Execute rotation: Execute is the filler and Slam should all but disappear, with only Heroic Strike and Mortal Strike still ahead of it."
+    },
+    {
       "type": "aoe_switch",
       "severity": "warning",
       "description": "Cleave on three or more targets",

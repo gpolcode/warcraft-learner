@@ -83,16 +83,17 @@
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Arcane Shot only with Precise Shots up",
+      "description": "Spend Precise Shots with Arcane Shot, not raw fillers",
       "condition": {
-        "kind": "cast_outside_buff",
+        "kind": "filler_in_buff",
         "spell_id": 185358,
         "spell_name": "Arcane Shot",
+        "alternative_spell_ids": [56641, 212431],
+        "alternative_spell_names": ["Steady Shot", "Explosive Shot"],
         "buff_spell_id": 260242,
-        "buff_spell_name": "Precise Shots",
-        "require": "inside"
+        "buff_spell_name": "Precise Shots"
       },
-      "action": "Cast Arcane Shot only with Precise Shots active: it hits 50% harder and costs 60% less Focus. The one accepted exception is a first Multi-Shot pressed purely to turn on Trick Shots."
+      "action": "While Precise Shots is active, spend it rather than raw-filling with Steady Shot or Explosive Shot: Arcane Shot hits 50% harder and costs 60% less Focus with the buff up, and spending it fuels Spotter's Mark. On Dark Ranger, Black Arrow can take the spend instead; at three or more targets, Multi-Shot does."
     },
     {
       "type": "rotation",
@@ -104,7 +105,23 @@
         "aura_spell_name": "Bulletstorm",
         "on": "self"
       },
-      "action": "Keep Bulletstorm rolling with Rapid Fire and avoid Aimed Shot without it. Do not refresh with Rapid Fire when that would replace more stacks than it builds; a Double Tap Rapid Fire yields 18 stacks instead of 10."
+      "action": "Keep Bulletstorm rolling with Rapid Fire and avoid casting Aimed Shot without it up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Rapid Fire held so Bulletstorm stacks do not drop",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 257044,
+        "spell_name": "Rapid Fire",
+        "buff_spell_id": 389020,
+        "buff_spell_name": "Bulletstorm",
+        "bound": "max",
+        "except_buff_spell_ids": [260402],
+        "except_buff_spell_names": ["Double Tap"]
+      },
+      "action": "Do not recast Rapid Fire while it would hand you fewer Bulletstorm stacks than you already hold. A Double Tap Rapid Fire is always worth it: it yields 18 stacks against the base 10."
     },
     {
       "type": "cooldown_pairing",
@@ -119,6 +136,20 @@
         "position": "before"
       },
       "action": "Fire Rapid Fire immediately before Trueshot so the window opens on full Bulletstorm stacks, then press Trueshot right ahead of an Aimed Shot. On single target, spend Volley's Double Tap on that Rapid Fire for 18 stacks."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Final Trueshot held for full Bullseye stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 288613,
+        "spell_name": "Trueshot",
+        "buff_spell_id": 204090,
+        "buff_spell_name": "Bullseye",
+        "bound": "min"
+      },
+      "action": "Hold your last Trueshot of the fight until Bullseye reaches its 30-stack cap below 20% target health; earlier Trueshots should not wait on it."
     },
     {
       "type": "opener",
