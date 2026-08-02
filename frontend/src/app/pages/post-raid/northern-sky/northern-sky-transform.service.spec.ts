@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { ok, missing } from '../../../core/result';
-import { NorthernSkyTransformService, cooldownCastTimes, consensusCastTimes } from './northern-sky-transform.service';
+import { NorthernSkyTransformService, cooldownCastTimes } from './northern-sky-transform.service';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
 import { cast } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
@@ -13,40 +13,9 @@ describe('cooldownCastTimes', () => {
     const casts = [cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)];
     expect(cooldownCastTimes(casts, SHADOW_BLADES, 0)).toEqual([10, 30]);
   });
-});
 
-describe('consensusCastTimes', () => {
-  // sampleCount 2 -> minParses = max(2, ceil(0.5 * 2)) = 2.
-  it('emits the median of the first use when a majority of parses reached it', () => {
-    const casts = [{ time_s: 10, parse: 0 }, { time_s: 12, parse: 1 }];
-    expect(consensusCastTimes(casts, 2)).toEqual([11]);
-  });
-
-  it('drops a use ordinal too few parses reached', () => {
-    // Only parse 0 has any cast, so the 1st-use ordinal holds one parse (< 2) and is dropped.
-    expect(consensusCastTimes([{ time_s: 10, parse: 0 }, { time_s: 12, parse: 0 }], 2)).toEqual([]);
-  });
-
-  it('aligns by ordinal: a parse\'s extra early use without majority support is dropped', () => {
-    // Ordinal 0: median(10, 14) = 12. Ordinal 1: only parse 0's 12s, below the majority, dropped.
-    const casts = [{ time_s: 10, parse: 0 }, { time_s: 12, parse: 0 }, { time_s: 14, parse: 1 }];
-    expect(consensusCastTimes(casts, 2)).toEqual([12]);
-  });
-
-  it('emits one median per ordinal both parses reached, ascending', () => {
-    // 1st uses (10, 11) -> 10.5; 2nd uses (90, 92) -> 91.
-    const casts = [
-      { time_s: 10, parse: 0 }, { time_s: 11, parse: 1 },
-      { time_s: 90, parse: 0 }, { time_s: 92, parse: 1 },
-    ];
-    expect(consensusCastTimes(casts, 2)).toEqual([10.5, 91]);
-  });
-
-  it('surfaces a reactive ability a majority use at spread times (would not time-cluster)', () => {
-    // sampleCount 3 -> minParses = max(2, ceil(1.5)) = 2. No two casts are near each other, but
-    // all three parses use it once, so the 1st-use ordinal still yields a consensus time.
-    const casts = [{ time_s: 30, parse: 0 }, { time_s: 120, parse: 1 }, { time_s: 200, parse: 2 }];
-    expect(consensusCastTimes(casts, 3)).toEqual([120]);
+  it('rounds each cast time to one decimal', () => {
+    expect(cooldownCastTimes([cast(SHADOW_BLADES, 3.612)], SHADOW_BLADES, 0)).toEqual([3.6]);
   });
 });
 
@@ -58,13 +27,16 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
   };
 }
 
-// Both top parses cast Shadow Blades at 10s, Shadow Dance at 40s, and Evasion (defensive) at 70s.
+// P1 (id 10) is the #1 parse; P2 (id 20) casts at different times so a leak from it would be visible.
 const wclFake = {
   getRankings: async () => ({
     rankings: [{ name: 'P1', report: { code: 'r1', fightID: 1 } }, { name: 'P2', report: { code: 'r2', fightID: 2 } }],
   }),
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
-  getAllEvents: async () => [cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 40), cast(EVASION, 70)],
+  getAllEvents: async (_c: string, _f: number, _t: string, _s: number, _e: number, playerId: number) =>
+    playerId === 10
+      ? [cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 190), cast(SHADOW_DANCE, 40), cast(EVASION, 70)]
+      : [cast(SHADOW_BLADES, 5), cast(SHADOW_DANCE, 44), cast(EVASION, 66)],
   getAbilities: async (ids: number[]) => Object.fromEntries(ids.map(id => [id, { id, icon: `icon_${id}`, name: `name_${id}` }])),
 };
 const filesFake = {
@@ -79,7 +51,7 @@ const filesFake = {
 };
 
 describe('NorthernSkyTransformService (live, in-browser)', () => {
-  it('bakes the consensus timeline for cooldowns and defensives, and the icons', async () => {
+  it('bakes the #1 log\'s own cast schedule for cooldowns and defensives, with icons', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
@@ -89,12 +61,34 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.sample_count).toBe(2);
     expect(bench.value.encounter_name).toBe('Boss');
+    // Both of P1's Shadow Blades casts survive intact - a real schedule, not a cross-parse median.
     expect(bench.value.abilities).toEqual([
-      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [10] },
+      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [10, 190] },
       { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, kind: 'cooldown', cast_times_s: [40] },
       { spell_id: EVASION, name: 'Evasion', icon: `icon_${EVASION}`, kind: 'defensive', cast_times_s: [70] },
+    ]);
+  });
+
+  it('backfills to the next parse when the #1 log is unfetchable', async () => {
+    const backfill = {
+      ...wclFake,
+      // r1 has no P1 actor, so its parse is dropped and P2's log is used instead.
+      getReport: async (code: string) => (code === 'r1' ? reportFor(99, 'Other', 1) : reportFor(20, 'P2', 2)),
+    };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: WclApiService, useValue: backfill as unknown as WclApiService },
+        { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
+      ],
+    });
+    const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1);
+    expect(bench.ok).toBe(true);
+    if (!bench.ok) return;
+    expect(bench.value.abilities).toEqual([
+      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [5] },
+      { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, kind: 'cooldown', cast_times_s: [44] },
+      { spell_id: EVASION, name: 'Evasion', icon: `icon_${EVASION}`, kind: 'defensive', cast_times_s: [66] },
     ]);
   });
 

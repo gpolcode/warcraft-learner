@@ -10,7 +10,7 @@ const ENCOUNTER_ID = 3009;
 function bench(over: Partial<NorthernSkyBench> = {}): NorthernSkyBench {
   return {
     spec: 'SubtletyRogue', encounter_id: ENCOUNTER_ID, encounter_name: 'Boss',
-    sample_count: 5, abilities: [], ...over,
+    abilities: [], ...over,
   };
 }
 

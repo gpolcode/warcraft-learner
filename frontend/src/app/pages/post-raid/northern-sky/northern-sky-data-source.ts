@@ -15,7 +15,6 @@ export interface NorthernSkyBench {
   spec: string;
   encounter_id: number;
   encounter_name: string;
-  sample_count: number;
   abilities: NorthernSkyAbility[];
 }
 
