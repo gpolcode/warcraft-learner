@@ -8,9 +8,6 @@ import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-
 import { cast } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 
-// Blizzard specialization id for Subtlety Rogue - the value baked as `spec_id` for the note tag.
-const SUBTLETY_SPEC_ID = 261;
-
 describe('cooldownCastTimes', () => {
   it('collects a cooldown\'s cast times in fight-relative seconds, sorted, ignoring other ids', () => {
     const casts = [cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)];
@@ -20,29 +17,36 @@ describe('cooldownCastTimes', () => {
 
 describe('consensusCastTimes', () => {
   // sampleCount 2 -> minParses = max(2, ceil(0.5 * 2)) = 2.
-  it('keeps a use two distinct parses share, emitting the median time', () => {
+  it('emits the median of the first use when a majority of parses reached it', () => {
     const casts = [{ time_s: 10, parse: 0 }, { time_s: 12, parse: 1 }];
     expect(consensusCastTimes(casts, 2)).toEqual([11]);
   });
 
-  it('drops a use only one parse made, even when a second cast is nearby', () => {
-    // Both casts belong to parse 0, so the cluster holds one distinct parse (< 2) and is dropped.
+  it('drops a use ordinal too few parses reached', () => {
+    // Only parse 0 has any cast, so the 1st-use ordinal holds one parse (< 2) and is dropped.
     expect(consensusCastTimes([{ time_s: 10, parse: 0 }, { time_s: 12, parse: 0 }], 2)).toEqual([]);
   });
 
-  it('counts a parse once and takes its earliest cast when it double-casts in the window', () => {
-    // parse 0 casts at 10 and 12 (earliest 10), parse 1 at 14 -> median(10, 14) = 12.
+  it('aligns by ordinal: a parse\'s extra early use without majority support is dropped', () => {
+    // Ordinal 0: median(10, 14) = 12. Ordinal 1: only parse 0's 12s, below the majority, dropped.
     const casts = [{ time_s: 10, parse: 0 }, { time_s: 12, parse: 0 }, { time_s: 14, parse: 1 }];
     expect(consensusCastTimes(casts, 2)).toEqual([12]);
   });
 
-  it('emits separate uses for clusters beyond the merge window, ascending', () => {
-    // Two far-apart uses (~10s and ~90s), each shared by both parses.
+  it('emits one median per ordinal both parses reached, ascending', () => {
+    // 1st uses (10, 11) -> 10.5; 2nd uses (90, 92) -> 91.
     const casts = [
       { time_s: 10, parse: 0 }, { time_s: 11, parse: 1 },
       { time_s: 90, parse: 0 }, { time_s: 92, parse: 1 },
     ];
     expect(consensusCastTimes(casts, 2)).toEqual([10.5, 91]);
+  });
+
+  it('surfaces a reactive ability a majority use at spread times (would not time-cluster)', () => {
+    // sampleCount 3 -> minParses = max(2, ceil(1.5)) = 2. No two casts are near each other, but
+    // all three parses use it once, so the 1st-use ordinal still yields a consensus time.
+    const casts = [{ time_s: 30, parse: 0 }, { time_s: 120, parse: 1 }, { time_s: 200, parse: 2 }];
+    expect(consensusCastTimes(casts, 3)).toEqual([120]);
   });
 });
 
@@ -75,7 +79,7 @@ const filesFake = {
 };
 
 describe('NorthernSkyTransformService (live, in-browser)', () => {
-  it('bakes the consensus timeline for cooldowns and defensives, the spec id, and the icons', async () => {
+  it('bakes the consensus timeline for cooldowns and defensives, and the icons', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
@@ -86,7 +90,6 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
     expect(bench.value.sample_count).toBe(2);
-    expect(bench.value.spec_id).toBe(SUBTLETY_SPEC_ID);
     expect(bench.value.encounter_name).toBe('Boss');
     expect(bench.value.abilities).toEqual([
       { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [10] },

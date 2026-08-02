@@ -4,6 +4,8 @@ import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench } from './northern-sky-data-
 
 /** Every exported line carries this difficulty; the export targets Mythic plans. */
 const MYTHIC_DIFFICULTY = 'Mythic';
+// The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
+const EVERYONE_TAG = 'everyone';
 
 /**
  * Build the Northern Sky (NSRT) note for the selected abilities: a plain-text header line plus
@@ -17,7 +19,7 @@ export function buildNorthernSkyNote(bench: NorthernSkyBench, selectedSpellIds: 
   for (const ability of bench.abilities) {
     if (!selectedSpellIds.has(ability.spell_id)) continue;
     for (const time_s of ability.cast_times_s) {
-      lines.push({ time_s, text: `time:${time_s};tag:${bench.spec_id};spellid:${ability.spell_id};text:${ability.name}` });
+      lines.push({ time_s, text: `time:${time_s};tag:${EVERYONE_TAG};spellid:${ability.spell_id};text:${ability.name}` });
     }
   }
   lines.sort((a, b) => a.time_s - b.time_s);

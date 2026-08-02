@@ -14,8 +14,6 @@ export interface NorthernSkyAbility {
 /** The tailored Northern Sky export bench for one encounter, read from `data/specs/{spec}/northern-sky/{enc}.json`. */
 export interface NorthernSkyBench {
   spec: string;
-  /** Blizzard specialization id, baked at ingest for the note's `tag:` field. */
-  spec_id: number;
   encounter_id: number;
   encounter_name: string;
   sample_count: number;

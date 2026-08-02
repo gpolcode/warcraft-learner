@@ -5,13 +5,11 @@ import { SHADOW_BLADES, SHADOW_DANCE } from '../../../../testing/spell-ids';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench } from './northern-sky-data-source';
 import { NorthernSkyFeatureService, buildNorthernSkyNote } from './northern-sky.service';
 
-// Blizzard specialization id for Subtlety Rogue, baked into the bench for the note tag.
-const SUBTLETY_SPEC_ID = 261;
 const ENCOUNTER_ID = 3009;
 
 function bench(over: Partial<NorthernSkyBench> = {}): NorthernSkyBench {
   return {
-    spec: 'SubtletyRogue', spec_id: SUBTLETY_SPEC_ID, encounter_id: ENCOUNTER_ID, encounter_name: 'Boss',
+    spec: 'SubtletyRogue', encounter_id: ENCOUNTER_ID, encounter_name: 'Boss',
     sample_count: 5, abilities: [], ...over,
   };
 }
@@ -24,12 +22,12 @@ describe('buildNorthernSkyNote', () => {
     expect(buildNorthernSkyNote(model, new Set())).toBe(HEADER);
   });
 
-  it('emits one line per cast time, tagged with the spec id, with no phase field', () => {
+  it('emits one line per cast time, tagged everyone, with no phase field', () => {
     const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10, 40] }] });
     expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
-      `time:10;tag:${SUBTLETY_SPEC_ID};spellid:${SHADOW_BLADES};text:Shadow Blades`,
-      `time:40;tag:${SUBTLETY_SPEC_ID};spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
     ].join('\n'));
   });
 
@@ -40,8 +38,8 @@ describe('buildNorthernSkyNote', () => {
     ] });
     expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES, SHADOW_DANCE]))).toBe([
       HEADER,
-      `time:10;tag:${SUBTLETY_SPEC_ID};spellid:${SHADOW_DANCE};text:Evasion`,
-      `time:40;tag:${SUBTLETY_SPEC_ID};spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `time:10;tag:everyone;spellid:${SHADOW_DANCE};text:Evasion`,
+      `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
     ].join('\n'));
   });
 
@@ -52,7 +50,7 @@ describe('buildNorthernSkyNote', () => {
     ] });
     expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
-      `time:10;tag:${SUBTLETY_SPEC_ID};spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
     ].join('\n'));
   });
 });

@@ -6,11 +6,10 @@ import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
-import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
+import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
-import { blizzardSpecId } from './spec-ids';
 
 /** A rulebook cooldown or defensive reduced to what the export needs, tagged with its kind. */
 interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbility['kind']; }
@@ -19,12 +18,10 @@ interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbili
 const TOP_PARSE_COUNT = 10;
 // Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one.
 const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
-/** Cast times within this many seconds cluster into one shared use. */
-const CLUSTER_MERGE_S = 15;
-/** A use is exported only when at least this share of sampled parses share it. */
+/** A use ordinal is exported only when at least this share of sampled parses reached it. */
 const CONSENSUS_FRAC = 0.5;
-/** A cluster always needs at least this many distinct parses to count as consensus. */
-const MIN_CLUSTER_PARSES = 2;
+/** A use ordinal always needs at least this many parses to count as consensus. */
+const MIN_CONSENSUS_PARSES = 2;
 
 interface TimedCast { time_s: number; parse: number; }
 
@@ -37,23 +34,22 @@ export function cooldownCastTimes(casts: WclEvent[], spellId: number, fightStart
 }
 
 /**
- * The consensus cast times for one cooldown across parses: cluster all casts by time, keep a
- * cluster only when enough distinct parses share it, and emit the median of each kept cluster's
- * one-per-parse representative time. A parse double-casting inside a window counts once.
+ * The consensus cast times for one ability across parses, aligned by use ordinal (1st use, 2nd
+ * use, ...) rather than absolute time - reactive defensives fire at spread times, so time
+ * clustering would drop them. Emits the median time of each ordinal a majority of parses reached.
  */
 export function consensusCastTimes(casts: TimedCast[], sampleCount: number): number[] {
-  const minParses = Math.max(MIN_CLUSTER_PARSES, Math.ceil(CONSENSUS_FRAC * sampleCount));
-  const times: number[] = [];
-  for (const cluster of groupByTime(casts, CLUSTER_MERGE_S)) {
-    const earliestByParse = new Map<number, number>();
-    for (const cast of cluster) {
-      const prev = earliestByParse.get(cast.parse);
-      if (prev === undefined || cast.time_s < prev) earliestByParse.set(cast.parse, cast.time_s);
-    }
-    if (earliestByParse.size < minParses) continue;
-    times.push(round(median([...earliestByParse.values()]) ?? 0));
+  const minParses = Math.max(MIN_CONSENSUS_PARSES, Math.ceil(CONSENSUS_FRAC * sampleCount));
+  const byParse = new Map<number, number[]>();
+  for (const cast of casts) getOrInsert(byParse, cast.parse, () => []).push(cast.time_s);
+  const perParse = [...byParse.values()].map(times => [...times].sort((a, b) => a - b));
+  const maxUses = Math.max(0, ...perParse.map(times => times.length));
+  const result: number[] = [];
+  for (let ordinal = 0; ordinal < maxUses; ordinal++) {
+    const nth = perParse.filter(times => ordinal < times.length).map(times => times[ordinal]);
+    if (nth.length >= minParses) result.push(round(median(nth) ?? 0));
   }
-  return times.sort((a, b) => a - b);
+  return result.sort((a, b) => a - b);
 }
 
 @Injectable({ providedIn: 'root' })
@@ -103,7 +99,6 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
 
       return ok({
         spec,
-        spec_id: blizzardSpecId(spec),
         encounter_id: encounterId,
         encounter_name: encounterName,
         sample_count: sampleCount,
