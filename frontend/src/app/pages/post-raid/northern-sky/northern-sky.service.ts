@@ -2,17 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { Result, LoadError } from '../../../core/result';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench } from './northern-sky-data-source';
 
-/** Every exported line carries this difficulty; the export targets Mythic plans. */
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
 const EVERYONE_TAG = 'everyone';
 
-/**
- * Build the Northern Sky (NSRT) note for the selected abilities: a plain-text header line plus
- * one `time:...;tag:...;spellid:...;text:...` reminder per selected ability per consensus cast
- * time, all lines sorted chronologically. Difficulty is fixed to Mythic and the phase field is
- * omitted. An empty selection yields the header alone.
- */
+// Assembles the plain-text NSRT note (Mythic, no phase) chronologically for the selected abilities.
 export function buildNorthernSkyNote(bench: NorthernSkyBench, selectedSpellIds: ReadonlySet<number>): string {
   const header = `EncounterID:${bench.encounter_id};Name:${bench.encounter_name};Difficulty:${MYTHIC_DIFFICULTY}`;
   const lines: { time_s: number; text: string }[] = [];

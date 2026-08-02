@@ -1,13 +1,12 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../core/data-source/data-source';
 
-/** One rulebook ability (major cooldown or defensive) the top parses used, with its consensus cast times. */
 export interface NorthernSkyAbility {
   spell_id: number;
   name: string;
   icon: string;
   kind: 'cooldown' | 'defensive';
-  /** Consensus cast times (seconds from pull) most top parses share, ascending. */
+  /** Seconds from pull, ascending. */
   cast_times_s: number[];
 }
 

@@ -11,21 +11,17 @@ import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/a
 import { DataSource } from '../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 
-/** A rulebook cooldown or defensive reduced to what the export needs, tagged with its kind. */
 interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbility['kind']; }
 
-/** How many top parses to sample. */
 const TOP_PARSE_COUNT = 10;
 // Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one.
 const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
-/** A use ordinal is exported only when at least this share of sampled parses reached it. */
+// An ordinal survives only when this share of sampled parses reached it, floored at MIN_CONSENSUS_PARSES.
 const CONSENSUS_FRAC = 0.5;
-/** A use ordinal always needs at least this many parses to count as consensus. */
 const MIN_CONSENSUS_PARSES = 2;
 
 interface TimedCast { time_s: number; parse: number; }
 
-/** Cast times of one cooldown in one parse, relative to the pull, ascending. */
 export function cooldownCastTimes(casts: WclEvent[], spellId: number, fightStartMs: number): number[] {
   return casts
     .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
@@ -33,11 +29,7 @@ export function cooldownCastTimes(casts: WclEvent[], spellId: number, fightStart
     .sort((a, b) => a - b);
 }
 
-/**
- * The consensus cast times for one ability across parses, aligned by use ordinal (1st use, 2nd
- * use, ...) rather than absolute time - reactive defensives fire at spread times, so time
- * clustering would drop them. Emits the median time of each ordinal a majority of parses reached.
- */
+// Aligned by use ordinal, not absolute time, so reactive defensives that fire at spread times still survive.
 export function consensusCastTimes(casts: TimedCast[], sampleCount: number): number[] {
   const minParses = Math.max(MIN_CONSENSUS_PARSES, Math.ceil(CONSENSUS_FRAC * sampleCount));
   const byParse = new Map<number, number[]>();
