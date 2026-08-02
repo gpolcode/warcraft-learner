@@ -88,6 +88,8 @@
       <wl-bench-empty-banner variant="pre" [encounter]="selectedEncounter()?.name ?? ''"></wl-bench-empty-banner>
     }
 
+    <wl-northern-sky-export [spec]="selectedSpec()" [encounterId]="selectedEncId()" (availableChange)="northernSkyAvailable.set($event)"></wl-northern-sky-export>
+
     <wl-gear [spec]="selectedSpec()" [encounterId]="selectedEncId()" (availableChange)="gearAvailable.set($event)"></wl-gear>
 
     <wl-rotation-cd-plan [spec]="selectedSpec()" [encounterId]="selectedEncId()" (availableChange)="cdPlanAvailable.set($event)"></wl-rotation-cd-plan>
@@ -95,8 +97,6 @@
     <wl-defensive-plan [spec]="selectedSpec()" [encounterId]="selectedEncId()" (availableChange)="defensivePlanAvailable.set($event)"></wl-defensive-plan>
 
     <wl-burst-windows [spec]="selectedSpec()" [encounterId]="selectedEncId()" [showMap]="mapReady()" (openMap)="onOpenMap($event)" (availableChange)="burstAvailable.set($event)"></wl-burst-windows>
-
-    <wl-northern-sky-export [spec]="selectedSpec()" [encounterId]="selectedEncId()" (availableChange)="northernSkyAvailable.set($event)"></wl-northern-sky-export>
   }
 
   <wl-map-panel></wl-map-panel>

@@ -28,16 +28,33 @@
         <div class="text-[13px] text-[var(--success)]">Copied to clipboard.</div>
       }
 
-      <div class="flex flex-col gap-1.5">
-        @for (cooldown of cooldowns(); track cooldown.spell_id) {
-          <mat-checkbox [checked]="isSelected(cooldown.spell_id)" (change)="toggle(cooldown.spell_id, $event.checked)">
-            <span class="inline-flex items-center gap-2">
-              <wl-game-icon [id]="cooldown.spell_id" [icon]="cooldown.icon" [name]="cooldown.name"></wl-game-icon>
-              <span class="text-[12px] text-[var(--muted)]">&times;{{ cooldown.cast_times_s.length }}</span>
-            </span>
-          </mat-checkbox>
-        }
-      </div>
+      @if (cooldowns().length > 0) {
+        <div class="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">Cooldowns</div>
+        <div class="flex flex-col gap-1.5">
+          @for (ability of cooldowns(); track ability.spell_id) {
+            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
+              <span class="inline-flex items-center gap-2">
+                <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
+                <span class="text-[12px] text-[var(--muted)]">&times;{{ ability.cast_times_s.length }}</span>
+              </span>
+            </mat-checkbox>
+          }
+        </div>
+      }
+
+      @if (defensives().length > 0) {
+        <div class="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">Defensives</div>
+        <div class="flex flex-col gap-1.5">
+          @for (ability of defensives(); track ability.spell_id) {
+            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
+              <span class="inline-flex items-center gap-2">
+                <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
+                <span class="text-[12px] text-[var(--muted)]">&times;{{ ability.cast_times_s.length }}</span>
+              </span>
+            </mat-checkbox>
+          }
+        </div>
+      }
     </div>
   </wl-flyover-panel>
 }

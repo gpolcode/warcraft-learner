@@ -4,7 +4,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { ok, missing } from '../../../core/result';
 import { NorthernSkyTransformService, cooldownCastTimes, consensusCastTimes } from './northern-sky-transform.service';
-import { SHADOW_BLADES, SHADOW_DANCE } from '../../../../testing/spell-ids';
+import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
 import { cast } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 
@@ -54,13 +54,13 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
   };
 }
 
-// Both top parses cast Shadow Blades at 10s and Shadow Dance at 40s, so each is a two-parse consensus use.
+// Both top parses cast Shadow Blades at 10s, Shadow Dance at 40s, and Evasion (defensive) at 70s.
 const wclFake = {
   getRankings: async () => ({
     rankings: [{ name: 'P1', report: { code: 'r1', fightID: 1 } }, { name: 'P2', report: { code: 'r2', fightID: 2 } }],
   }),
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
-  getAllEvents: async () => [cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 40)],
+  getAllEvents: async () => [cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 40), cast(EVASION, 70)],
   getAbilities: async (ids: number[]) => Object.fromEntries(ids.map(id => [id, { id, icon: `icon_${id}`, name: `name_${id}` }])),
 };
 const filesFake = {
@@ -70,11 +70,12 @@ const filesFake = {
       { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 },
       { name: 'Shadow Dance', spell_id: SHADOW_DANCE, cooldown: 60 },
     ],
+    defensives: [{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }],
   })),
 };
 
 describe('NorthernSkyTransformService (live, in-browser)', () => {
-  it('bakes the per-cooldown consensus timeline, the spec id, and the icons from the top parses', async () => {
+  it('bakes the consensus timeline for cooldowns and defensives, the spec id, and the icons', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
@@ -87,13 +88,14 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
     expect(bench.value.sample_count).toBe(2);
     expect(bench.value.spec_id).toBe(SUBTLETY_SPEC_ID);
     expect(bench.value.encounter_name).toBe('Boss');
-    expect(bench.value.cooldowns).toEqual([
-      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, cast_times_s: [10] },
-      { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, cast_times_s: [40] },
+    expect(bench.value.abilities).toEqual([
+      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [10] },
+      { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, kind: 'cooldown', cast_times_s: [40] },
+      { spell_id: EVASION, name: 'Evasion', icon: `icon_${EVASION}`, kind: 'defensive', cast_times_s: [70] },
     ]);
   });
 
-  it('returns missing when the spec rulebook has no cooldowns', async () => {
+  it('returns missing when the spec rulebook has no cooldowns or defensives', async () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: WclApiService, useValue: wclFake as unknown as WclApiService },

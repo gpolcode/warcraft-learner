@@ -31,9 +31,11 @@ export class NorthernSkyExportComponent {
   protected readonly open = signal(false);
   protected readonly copied = signal(false);
 
-  protected readonly cooldowns = computed(() => this.bench()?.cooldowns ?? []);
-  protected readonly available = computed(() => this.cooldowns().length > 0);
-  protected readonly allSelected = computed(() => this.cooldowns().every(cooldown => !this.excluded().has(cooldown.spell_id)));
+  protected readonly abilities = computed(() => this.bench()?.abilities ?? []);
+  protected readonly cooldowns = computed(() => this.abilities().filter(ability => ability.kind === 'cooldown'));
+  protected readonly defensives = computed(() => this.abilities().filter(ability => ability.kind === 'defensive'));
+  protected readonly available = computed(() => this.abilities().length > 0);
+  protected readonly allSelected = computed(() => this.abilities().every(ability => !this.excluded().has(ability.spell_id)));
 
   private readonly loader = new LatestLoad();
 
@@ -63,14 +65,14 @@ export class NorthernSkyExportComponent {
   }
 
   protected toggleAll(): void {
-    const next = this.allSelected() ? new Set(this.cooldowns().map(cooldown => cooldown.spell_id)) : new Set<number>();
+    const next = this.allSelected() ? new Set(this.abilities().map(ability => ability.spell_id)) : new Set<number>();
     this.persist(next);
   }
 
   protected copyNote(): void {
     const bench = this.bench();
     if (!bench) return;
-    const selected = new Set(this.cooldowns().map(cooldown => cooldown.spell_id).filter(id => !this.excluded().has(id)));
+    const selected = new Set(this.abilities().map(ability => ability.spell_id).filter(id => !this.excluded().has(id)));
     this.clipboard.copy(buildNorthernSkyNote(bench, selected));
     this.copied.set(true);
   }

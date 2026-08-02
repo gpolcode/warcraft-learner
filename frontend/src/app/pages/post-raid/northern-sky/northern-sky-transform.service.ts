@@ -3,15 +3,17 @@ import { median } from 'd3-array';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { RulebookCooldown } from '../../../core/models/rulebook.models';
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
-import { NorthernSkyBench, NorthernSkyCooldown } from './northern-sky-data-source';
+import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 import { blizzardSpecId } from './spec-ids';
+
+/** A rulebook cooldown or defensive reduced to what the export needs, tagged with its kind. */
+interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbility['kind']; }
 
 /** How many top parses to sample. */
 const TOP_PARSE_COUNT = 10;
@@ -62,22 +64,25 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   async getBench(spec: string, encounterId: number): Promise<Result<NorthernSkyBench, LoadError>> {
     const rulebook = await this.dataFiles.getRulebook(spec);
     if (!rulebook.ok) return rulebook;
-    const cooldowns = (rulebook.value.major_cooldowns ?? []).filter(cooldown => cooldown.spell_id);
-    if (!cooldowns.length) return missing('Not yet ingested.');
+    const abilities: ExportAbility[] = [
+      ...(rulebook.value.major_cooldowns ?? []).map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
+      ...(rulebook.value.defensives ?? []).map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
+    ].filter(ability => ability.spell_id);
+    if (!abilities.length) return missing('Not yet ingested.');
 
     try {
       const rankings = toParseRankings(unwrapRankings(await this.wclApi.getRankings(spec, encounterId)), CANDIDATE_POOL_COUNT);
       if (!rankings.length) return missing('Not yet ingested.');
 
-      const castsByCooldown = new Map<number, TimedCast[]>();
+      const castsBySpellId = new Map<number, TimedCast[]>();
       let sampleCount = 0;
       let encounterName = '';
       for (const ranking of rankings) {
-        const parse = await this.parseCastTimes(ranking, cooldowns);
+        const parse = await this.parseCastTimes(ranking, abilities);
         if (!parse) continue;
-        for (const cooldown of cooldowns) {
-          const times = parse.timesBySpellId.get(cooldown.spell_id) ?? [];
-          const bucket = getOrInsert(castsByCooldown, cooldown.spell_id, () => []);
+        for (const ability of abilities) {
+          const times = parse.timesBySpellId.get(ability.spell_id) ?? [];
+          const bucket = getOrInsert(castsBySpellId, ability.spell_id, () => []);
           for (const time_s of times) bucket.push({ time_s, parse: sampleCount });
         }
         encounterName ||= parse.encounterName;
@@ -86,10 +91,10 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       }
       if (!sampleCount) return missing('Not yet ingested.');
 
-      const built: NorthernSkyCooldown[] = [];
-      for (const cooldown of cooldowns) {
-        const cast_times_s = consensusCastTimes(castsByCooldown.get(cooldown.spell_id) ?? [], sampleCount);
-        if (cast_times_s.length) built.push({ spell_id: cooldown.spell_id, name: cooldown.name, icon: '', cast_times_s });
+      const built: NorthernSkyAbility[] = [];
+      for (const ability of abilities) {
+        const cast_times_s = consensusCastTimes(castsBySpellId.get(ability.spell_id) ?? [], sampleCount);
+        if (cast_times_s.length) built.push({ spell_id: ability.spell_id, name: ability.name, icon: '', kind: ability.kind, cast_times_s });
       }
       if (!built.length) return missing('Not yet ingested.');
 
@@ -102,7 +107,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
         encounter_id: encounterId,
         encounter_name: encounterName,
         sample_count: sampleCount,
-        cooldowns: built,
+        abilities: built,
       });
     } catch (cause) {
       logWarn('NorthernSkyTransformService.getBench', cause);
@@ -112,7 +117,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
 
   private async parseCastTimes(
     ranking: { player: string; report_code: string; fight_id: number },
-    cooldowns: RulebookCooldown[],
+    abilities: ExportAbility[],
   ): Promise<{ timesBySpellId: Map<number, number[]>; encounterName: string } | null> {
     try {
       const report = await this.wclApi.getReport(ranking.report_code);
@@ -122,7 +127,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
 
       const casts = await this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id);
       const timesBySpellId = new Map<number, number[]>();
-      for (const cooldown of cooldowns) timesBySpellId.set(cooldown.spell_id, cooldownCastTimes(casts, cooldown.spell_id, fight.startTime));
+      for (const ability of abilities) timesBySpellId.set(ability.spell_id, cooldownCastTimes(casts, ability.spell_id, fight.startTime));
       return { timesBySpellId, encounterName: fight.name ?? '' };
     } catch (cause) {
       logWarn(`NorthernSkyTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
