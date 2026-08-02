@@ -36,9 +36,6 @@ test('selecting class, spec, and encounter loads that spec\'s plan', async () =>
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
   const heading = card.getByText('Northern Sky export', { exact: true });
-  // Ingest publishes this slice's bench only after the feature reaches main, so until then the card
-  // has no data and stays hidden. Once data/specs/**/northern-sky is on gh-pages, drop this guard
-  // and pin an exact ability name + its × cast-count from a render dump (see the warcraft-e2e skill).
   const published = await heading.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
   test.skip(!published, 'northern-sky bench not published yet');
   await shows(card, 'Top-parse cooldown timings as a Northern Sky note.');
