@@ -1,9 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ok } from '../../../core/result';
-import { SHADOW_BLADES, SHADOW_DANCE } from '../../../../testing/spell-ids';
-import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench } from './northern-sky-data-source';
-import { NorthernSkyFeatureService, buildNorthernSkyNote } from './northern-sky.service';
+import { ok, missing, transient } from '../../../core/result';
+import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
+import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
+import {
+  NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
+  toggleExclusion, toggleAllExclusion,
+} from './northern-sky.service';
 
 const ENCOUNTER_ID = 3009;
 
@@ -12,6 +15,10 @@ function bench(over: Partial<NorthernSkyBench> = {}): NorthernSkyBench {
     spec: 'SubtletyRogue', encounter_id: ENCOUNTER_ID, encounter_name: 'Boss',
     abilities: [], ...over,
   };
+}
+
+function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_s: number[]): NorthernSkyAbility {
+  return { spell_id, name: `n${spell_id}`, icon: '', kind, cast_times_s };
 }
 
 const HEADER = `EncounterID:${ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
@@ -53,6 +60,65 @@ describe('buildNorthernSkyNote', () => {
       `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
     ].join('\n'));
   });
+
+  it('emits the header alone for a bench with no abilities', () => {
+    expect(buildNorthernSkyNote(bench(), new Set())).toBe(HEADER);
+  });
+
+  it('emits no line for a selected ability that has no cast times', () => {
+    expect(buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
+  });
+});
+
+describe('abilitiesByKind', () => {
+  it('splits abilities into cooldowns and defensives, preserving order', () => {
+    const cd1 = ability(SHADOW_BLADES, 'cooldown', [10]);
+    const def = ability(EVASION, 'defensive', [20]);
+    const cd2 = ability(SHADOW_DANCE, 'cooldown', [30]);
+    expect(abilitiesByKind([cd1, def, cd2])).toEqual({ cooldowns: [cd1, cd2], defensives: [def] });
+  });
+});
+
+describe('selectedIds', () => {
+  it('includes every ability the user has not excluded (a new ability defaults on)', () => {
+    const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
+    expect(selectedIds(abilities, new Set([SHADOW_DANCE]))).toEqual(new Set([SHADOW_BLADES]));
+  });
+});
+
+describe('isAllSelected', () => {
+  const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
+  it('is true when nothing is excluded', () => expect(isAllSelected(abilities, new Set())).toBe(true));
+  it('is false when any ability is excluded', () => expect(isAllSelected(abilities, new Set([SHADOW_DANCE]))).toBe(false));
+  it('is false for an empty list', () => expect(isAllSelected([], new Set())).toBe(false));
+});
+
+describe('toggleExclusion', () => {
+  it('unchecking adds the id to the exclusion set', () => {
+    expect(toggleExclusion(new Set(), SHADOW_BLADES, false)).toEqual(new Set([SHADOW_BLADES]));
+  });
+
+  it('checking removes the id from the exclusion set', () => {
+    expect(toggleExclusion(new Set([SHADOW_BLADES]), SHADOW_BLADES, true)).toEqual(new Set());
+  });
+
+  it('does not mutate the input set', () => {
+    const original = new Set([SHADOW_BLADES]);
+    toggleExclusion(original, SHADOW_DANCE, false);
+    expect(original).toEqual(new Set([SHADOW_BLADES]));
+  });
+});
+
+describe('toggleAllExclusion', () => {
+  const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
+
+  it('excludes every ability when all are currently selected', () => {
+    expect(toggleAllExclusion(abilities, new Set())).toEqual(new Set([SHADOW_BLADES, SHADOW_DANCE]));
+  });
+
+  it('clears all exclusions when some are currently deselected', () => {
+    expect(toggleAllExclusion(abilities, new Set([SHADOW_BLADES]))).toEqual(new Set());
+  });
 });
 
 describe('NorthernSkyFeatureService', () => {
@@ -63,5 +129,19 @@ describe('NorthernSkyFeatureService', () => {
     });
     const result = await TestBed.inject(NorthernSkyFeatureService).getExport('SubtletyRogue', ENCOUNTER_ID);
     expect(result).toEqual(ok(model));
+  });
+
+  it('propagates a missing bench so the export waiting state shows', async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: NORTHERN_SKY_DATA_SOURCE, useValue: { getBench: async () => missing('Not yet ingested.') } }],
+    });
+    expect(await TestBed.inject(NorthernSkyFeatureService).getExport('SubtletyRogue', ENCOUNTER_ID)).toEqual(missing('Not yet ingested.'));
+  });
+
+  it('propagates a transient bench outage so the export surfaces a retry error', async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: NORTHERN_SKY_DATA_SOURCE, useValue: { getBench: async () => transient('WCL is unreachable right now.') } }],
+    });
+    expect(await TestBed.inject(NorthernSkyFeatureService).getExport('SubtletyRogue', ENCOUNTER_ID)).toEqual(transient('WCL is unreachable right now.'));
   });
 });

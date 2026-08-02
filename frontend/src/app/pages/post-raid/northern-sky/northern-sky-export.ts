@@ -8,7 +8,10 @@ import { GameIconComponent } from '../../../shared/components/game-icon/game-ico
 import { SelectionStore } from '../../../core/services/selection-store';
 import { LatestLoad } from '../../../shared/latest-load';
 import { NorthernSkyBench } from './northern-sky-data-source';
-import { NorthernSkyFeatureService, buildNorthernSkyNote } from './northern-sky.service';
+import {
+  NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
+  toggleExclusion, toggleAllExclusion,
+} from './northern-sky.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,10 +35,11 @@ export class NorthernSkyExportComponent {
   protected readonly copied = signal(false);
 
   protected readonly abilities = computed(() => this.bench()?.abilities ?? []);
-  protected readonly cooldowns = computed(() => this.abilities().filter(ability => ability.kind === 'cooldown'));
-  protected readonly defensives = computed(() => this.abilities().filter(ability => ability.kind === 'defensive'));
+  private readonly grouped = computed(() => abilitiesByKind(this.abilities()));
+  protected readonly cooldowns = computed(() => this.grouped().cooldowns);
+  protected readonly defensives = computed(() => this.grouped().defensives);
   protected readonly available = computed(() => this.abilities().length > 0);
-  protected readonly allSelected = computed(() => this.abilities().every(ability => !this.excluded().has(ability.spell_id)));
+  protected readonly allSelected = computed(() => isAllSelected(this.abilities(), this.excluded()));
 
   private readonly loader = new LatestLoad();
 
@@ -58,22 +62,17 @@ export class NorthernSkyExportComponent {
   }
 
   protected toggle(spellId: number, checked: boolean): void {
-    const next = new Set(this.excluded());
-    if (checked) next.delete(spellId);
-    else next.add(spellId);
-    this.persist(next);
+    this.persist(toggleExclusion(this.excluded(), spellId, checked));
   }
 
   protected toggleAll(): void {
-    const next = this.allSelected() ? new Set(this.abilities().map(ability => ability.spell_id)) : new Set<number>();
-    this.persist(next);
+    this.persist(toggleAllExclusion(this.abilities(), this.excluded()));
   }
 
   protected copyNote(): void {
     const bench = this.bench();
     if (!bench) return;
-    const selected = new Set(this.abilities().map(ability => ability.spell_id).filter(id => !this.excluded().has(id)));
-    this.clipboard.copy(buildNorthernSkyNote(bench, selected));
+    this.clipboard.copy(buildNorthernSkyNote(bench, selectedIds(this.abilities(), this.excluded())));
     this.copied.set(true);
   }
 

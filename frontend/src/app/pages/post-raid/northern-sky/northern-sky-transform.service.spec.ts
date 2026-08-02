@@ -17,6 +17,10 @@ describe('cooldownCastTimes', () => {
   it('rounds each cast time to one decimal', () => {
     expect(cooldownCastTimes([cast(SHADOW_BLADES, 3.612)], SHADOW_BLADES, 0)).toEqual([3.6]);
   });
+
+  it('returns [] when the ability was never cast', () => {
+    expect(cooldownCastTimes([cast(SHADOW_DANCE, 5)], SHADOW_BLADES, 0)).toEqual([]);
+  });
 });
 
 function reportFor(playerId: number, playerName: string, fightId: number) {
@@ -100,5 +104,26 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
       ],
     });
     expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
+  });
+
+  it('propagates a failed rulebook read unchanged', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
+        { provide: DataFileApiService, useValue: { getRulebook: async () => missing('Not yet ingested.') } as unknown as DataFileApiService },
+      ],
+    });
+    expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
+  });
+
+  it('returns a load error when a WCL fetch throws', async () => {
+    const throwing = { ...wclFake, getRankings: async () => { throw new Error('WCL down'); } };
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: WclApiService, useValue: throwing as unknown as WclApiService },
+        { provide: DataFileApiService, useValue: filesFake as unknown as DataFileApiService },
+      ],
+    });
+    expect((await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).ok).toBe(false);
   });
 });
