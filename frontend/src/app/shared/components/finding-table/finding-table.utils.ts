@@ -1,4 +1,4 @@
-import { AnalysisFinding } from '../../../core/models/analysis.models';
+import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
 
 /** Displayed "What" label for a finding whose cooldown could not be identified (no cd_name). */
@@ -37,6 +37,11 @@ export interface FindingRow {
   what?: string;
   measured: FindingMeasure;
   fix?: string;
+  /** Per-instance detail behind the summary count; absent rows render with no expand chevron. */
+  occurrences?: FindingOccurrence[];
+  occurrenceTarget?: string;
+  /** Present only alongside `occurrences` for a timeline-style row (aura uptime). */
+  timeline?: FindingTimeline;
 }
 
 /** A cooldown used on plan, shown as a compact success chip rather than a row. */

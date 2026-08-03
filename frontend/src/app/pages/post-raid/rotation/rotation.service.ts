@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
-import { AnalysisFinding } from '../../../core/models/analysis.models';
+import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookCooldown } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
@@ -30,6 +30,11 @@ export interface RotationFindingRow {
   what?: string;
   measured: { value: string; unit?: string };
   fix?: string;
+  /** Per-instance detail behind the summary count; rule rows only. */
+  occurrences?: FindingOccurrence[];
+  occurrenceTarget?: string;
+  /** Present only alongside `occurrences` for a timeline-style row (aura uptime). */
+  timeline?: FindingTimeline;
 }
 
 export interface RotationOnPlanChip {
@@ -324,6 +329,9 @@ export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingR
     measured: finding.measured ?? { value: '-' },
     timestampMs: finding.timestamp_ms ?? null,
     fix: finding.details?.remedy,
+    occurrences: finding.occurrences,
+    occurrenceTarget: finding.occurrenceTarget,
+    timeline: finding.timeline,
   }));
 }
 
