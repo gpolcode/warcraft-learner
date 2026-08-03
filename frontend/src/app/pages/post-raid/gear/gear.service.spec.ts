@@ -10,7 +10,7 @@ import {
   buildCharacterGear, emptyGearView,
 } from './gear.service';
 
-const STANDARD_KEY = 'v3:1.11.1,2.22.1';
+const STANDARD_KEY = 'v3:11.1,22.1';
 
 function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   return {
@@ -33,8 +33,8 @@ function toRawEvent(gear: CharacterGear): WclCombatantInfo {
   }
   const body = (gear.talent_key ?? '').replace(/^v3:/, '');
   const talentTree = body ? body.split(',').map(pick => {
-    const [nodeID, id, rank] = pick.split('.').map(Number);
-    return { nodeID, id, rank };
+    const [id, rank] = pick.split('.').map(Number);
+    return { id, rank };
   }) : [];
   return { sourceID: 10, gear: items, talentTree };
 }
