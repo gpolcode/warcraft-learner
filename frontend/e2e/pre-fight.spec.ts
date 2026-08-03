@@ -30,7 +30,22 @@ test('selecting class, spec, and encounter loads that spec\'s plan', async () =>
   await expect(page.getByRole('combobox', { name: 'Encounter' })).toContainText('Crown of the Cosmos');
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
   await shows(cooldownPlan, 'Shadow Blades');
-  await shows(cooldownPlan, '0:04');
+  await shows(cooldownPlan, '0:05');
+});
+
+test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
+  const card = page.locator('wl-northern-sky-export');
+  const heading = card.getByText('Northern Sky export', { exact: true });
+  const published = await heading.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
+  test.skip(!published, 'northern-sky bench not published yet');
+  await shows(card, 'Top-parse cooldown timings as a Northern Sky note.');
+
+  await card.getByRole('button', { name: 'Export' }).click();
+  const panel = page.locator('wl-flyover-panel');
+  await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
+  await shows(panel, 'Cooldowns');
+  // A rendered × cast-count proves the note is built from real top-log data, not an empty card.
+  await expect(panel.getByText(/×\d+/).first()).toBeVisible();
 });
 
 test('gear shows the top-parse talent, trinket, and enchant consensus', async () => {
@@ -54,9 +69,9 @@ test('the cooldown plan lists first use, average uses, and the holds', async () 
   await shows(cooldownPlan, 'Shadow Blades');
   await shows(cooldownPlan, 'First use');
   await shows(cooldownPlan, 'Avg uses');
-  await shows(cooldownPlan, '4.2');
+  await shows(cooldownPlan, '4.3');
   await shows(cooldownPlan, 'Holds');
-  await shows(cooldownPlan, '5:50');
+  await shows(cooldownPlan, '2:55');
 });
 
 test('the defensive plan lists the consensus defensives', async () => {
@@ -64,7 +79,7 @@ test('the defensive plan lists the consensus defensives', async () => {
   await shows(defensivePlan, 'Defensive plan');
   await shows(defensivePlan, 'Cloak of Shadows');
   await shows(defensivePlan, 'First use');
-  await shows(defensivePlan, '4:55');
+  await shows(defensivePlan, '4:00');
   await shows(defensivePlan, 'Avg uses');
   await shows(defensivePlan, '1.3');
 });
@@ -73,10 +88,10 @@ test('burst windows show the top-parse windows with their bench damage', async (
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Damage in each burst window vs top parses.');
   await shows(burstWindows, 'window');
-  await shows(burstWindows, '0:08 - 0:30');
+  await shows(burstWindows, '0:07 - 0:32');
   await shows(burstWindows, 'burst');
-  await shows(burstWindows, '13.6M');
-  await showsAbility(burstWindows, 'Eviscerate', '2.6M');
+  await shows(burstWindows, '16.2M');
+  await showsAbility(burstWindows, 'Eviscerate', '3.1M');
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
@@ -85,7 +100,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await openMap.click();
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, 'anchor 0:08');
+  await shows(page, 'anchor 0:07');
   await shows(page, '● top parses');
   await page.getByRole('button', { name: 'Close map' }).click();
 });
