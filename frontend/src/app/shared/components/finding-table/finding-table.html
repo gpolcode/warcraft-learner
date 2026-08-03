@@ -84,7 +84,7 @@
           <wl-collapsible-text>{{ row.fix }}</wl-collapsible-text>
         </div>
 
-        <div class="flex items-center justify-center self-start md:self-center">
+        <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
           @if (row.occurrences?.length) {
             <button mat-icon-button
               [attr.aria-expanded]="openIndex() === $index"

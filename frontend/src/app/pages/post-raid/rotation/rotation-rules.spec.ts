@@ -1046,8 +1046,8 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12), cast(SECRET_TECHNIQUE, 40)]);
     const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 12_000, ok: true, label: '2s', detail: 'Shadow Dance landed 2s from this cast - the field pairs them inside 5s.' },
-      { atMs: 40_000, ok: false, label: '30s', detail: 'Shadow Dance landed 30s from this cast - the field pairs them inside 5s.' },
+      { atMs: 12_000, ok: true, label: '2s', detail: 'Shadow Dance landed 2s from this cast.' },
+      { atMs: 40_000, ok: false, label: '30s', detail: 'Shadow Dance landed 30s from this cast.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field pairs inside 5s');
   });
@@ -1056,7 +1056,7 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]);
     const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S), 'critical');
     expect(finding?.occurrences).toEqual([
-      { atMs: 110_000, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades - the field holds inside 15s.' },
+      { atMs: 110_000, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades.' },
       { atMs: 120_000, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('gap to Shadow Blades at cast');
@@ -1125,8 +1125,8 @@ describe('occurrence strips', () => {
     });
     const finding = evaluateCastAtTargetCount(blackPowder, ctx, thr(3), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 10_000, ok: false, label: '2', detail: 'Black Powder cast at 2 - the field waits for 3.' },
-      { atMs: 30_000, ok: true, label: '3', detail: 'Black Powder cast at 3 - the field waits for 3.' },
+      { atMs: 10_000, ok: false, label: '2', detail: 'Black Powder cast at 2.' },
+      { atMs: 30_000, ok: true, label: '3', detail: 'Black Powder cast at 3.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 3+');
   });
@@ -1141,8 +1141,8 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([atCombo(10, 3), atCombo(20, MAX_COMBO_POINTS)]);
     const finding = evaluateResourceAtCast(finisher, ctx, thr(1), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 10_000, ok: false, label: '60%', detail: 'Eviscerate cast at 60% - the field waits for 100%.' },
-      { atMs: 20_000, ok: true, label: '100%', detail: 'Eviscerate cast at 100% - the field waits for 100%.' },
+      { atMs: 10_000, ok: false, label: '60%', detail: 'Eviscerate cast at 60%.' },
+      { atMs: 20_000, ok: true, label: '100%', detail: 'Eviscerate cast at 100%.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 100%+');
   });
@@ -1190,8 +1190,8 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, 6), cast(LIGHTNING_BOLT, 10)], { buffs });
     const finding = evaluateSpendAtStacks(spendAtStacks, ctx, thr(8), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 6_000, ok: false, label: '5', detail: 'Lightning Bolt cast at 5 - the field waits for 8.' },
-      { atMs: 10_000, ok: true, label: '9', detail: 'Lightning Bolt cast at 9 - the field waits for 8.' },
+      { atMs: 6_000, ok: false, label: '5', detail: 'Lightning Bolt cast at 5.' },
+      { atMs: 10_000, ok: true, label: '9', detail: 'Lightning Bolt cast at 9.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 8+');
   });
@@ -1206,8 +1206,8 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(MOONFIRE, 24), cast(MOONFIRE, 36)], { debuffs });
     const finding = evaluateAuraClipped(moonfireClipped, ctx, thr(12), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 24_000, ok: false, label: '4s', detail: 'Refreshed with 4s still remaining - the field waits for 12s.' },
-      { atMs: 36_000, ok: true, label: '12s', detail: 'Refreshed with 12s still remaining - the field waits for 12s.' },
+      { atMs: 24_000, ok: false, label: '4s', detail: 'Refreshed with 4s still remaining.' },
+      { atMs: 36_000, ok: true, label: '12s', detail: 'Refreshed with 12s still remaining.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 12s remaining');
   });
@@ -1243,5 +1243,25 @@ describe('occurrence strips', () => {
     expect(occurrences[0].atMs).toBe(1_000);
     const timestamps = occurrences.map(o => o.atMs);
     expect(timestamps).toEqual([...timestamps].sort((a, b) => (a ?? 0) - (b ?? 0)));
+  });
+
+  it('never drops a violation from the sampled strip, even when scattered among far more passing casts', () => {
+    const OVER_CAP_CASTS = 40;
+    const CAST_SPACING_S = 10; // wider than TARGET_COUNT_WINDOW_S (3s) so each cast's window sees only its own damage.
+    const violationCastIndexes = new Set([2, 4, 7]);
+    const blackPowder: CastAtTargetCountCondition = {
+      kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
+    };
+    const castTimesS = Array.from({ length: OVER_CAP_CASTS }, (_, i) => (i + 1) * CAST_SPACING_S);
+    const casts = castTimesS.map(atS => cast(BLACK_POWDER, atS));
+    const dmg = castTimesS.flatMap((atS, i) => {
+      const targetIds = violationCastIndexes.has(i) ? [1, 2] : [1, 2, 3];
+      return targetIds.map(targetId => damage(BLACK_POWDER, atS + 0.5, 100, { target: targetId }));
+    });
+    const finding = evaluateCastAtTargetCount(blackPowder, ruleCtx(casts, { damage: dmg }), thr(3), 'warning');
+    const occurrences = finding!.occurrences!;
+    expect(occurrences.length).toBe(24);
+    const failingAtMs = occurrences.filter(occ => !occ.ok).map(occ => occ.atMs);
+    expect(failingAtMs).toEqual([...violationCastIndexes].map(i => castTimesS[i] * 1000));
   });
 });

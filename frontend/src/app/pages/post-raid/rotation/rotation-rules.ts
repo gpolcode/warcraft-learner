@@ -37,11 +37,20 @@ const HARD_CAST_WINDOW_S = 0.25;
 /** Cap on a finding's occurrence strip - a fight can carry far more casts than a chip row should render. */
 const MAX_OCCURRENCES = 24;
 
-/** Evenly thins a list down to at most MAX_OCCURRENCES, keeping chronological order. */
+/** Evenly picks `count` items from `items`, keeping chronological order. */
+function evenSample<T>(items: T[], count: number): T[] {
+  const step = items.length / count;
+  return Array.from({ length: count }, (_, i) => items[Math.floor(i * step)]);
+}
+
+/** Thins to at most MAX_OCCURRENCES without ever dropping a failing occurrence in favor of a passing one - a violation finding must keep showing its violations. */
 function sampleOccurrences(occurrences: FindingOccurrence[]): FindingOccurrence[] {
   if (occurrences.length <= MAX_OCCURRENCES) return occurrences;
-  const step = occurrences.length / MAX_OCCURRENCES;
-  return Array.from({ length: MAX_OCCURRENCES }, (_, i) => occurrences[Math.floor(i * step)]);
+  const bad = occurrences.filter(occ => !occ.ok);
+  if (bad.length >= MAX_OCCURRENCES) return evenSample(bad, MAX_OCCURRENCES);
+  const good = occurrences.filter(occ => occ.ok);
+  const kept = new Set<FindingOccurrence>([...bad, ...evenSample(good, MAX_OCCURRENCES - bad.length)]);
+  return occurrences.filter(occ => kept.has(occ));
 }
 
 /** A magnitude the encounter supplies in place of a number nobody should author. */
@@ -209,7 +218,7 @@ function castWithoutPriorOccurrences(
       label: lead == null ? 'none' : `${round(lead, 0)}s`,
       detail: lead == null
         ? `No ${cond.required_spell_name} paired with this cast.`
-        : `${cond.required_spell_name} landed ${round(lead, 0)}s from this cast - the field pairs them inside ${round(win, 0)}s.`,
+        : `${cond.required_spell_name} landed ${round(lead, 0)}s from this cast.`,
     };
   }));
 }
@@ -259,7 +268,7 @@ function holdForAnchorOccurrences(
         label: gap == null ? 'clear' : `${round(gap, 0)}s`,
         detail: gap == null
           ? `${spellName} cast with no ${cond.anchor_spell_name} ahead to hold for.`
-          : `${spellName} cast ${round(gap, 0)}s before ${cond.anchor_spell_name} - the field holds inside ${round(holdWindowS, 0)}s.`,
+          : `${spellName} cast ${round(gap, 0)}s before ${cond.anchor_spell_name}.`,
       });
     }
   });
@@ -513,7 +522,7 @@ function evaluateBoundedPerCast(
       const label = judged.scale.format(value);
       return {
         atMs: Math.round(timeS * 1000), ok, label,
-        detail: `${judged.subject} cast at ${label} - the field ${judged.bound === 'min' ? 'waits for' : 'stays under'} ${limitLabel}.`,
+        detail: `${judged.subject} cast at ${label}.`,
       };
     })),
     occurrenceTarget: judged.bound === 'min' ? `field waits for ${limitLabel}+` : `field stays under ${limitLabel}`,
@@ -755,7 +764,7 @@ export function evaluateAuraClipped(
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.map(({ timeS, elapsedS }): FindingOccurrence => ({
       atMs: Math.round(timeS * 1000), ok: elapsedS >= floor, label: `${round(elapsedS, 1)}s`,
-      detail: `Refreshed with ${round(elapsedS, 1)}s still remaining - the field waits for ${floorLabel}s.`,
+      detail: `Refreshed with ${round(elapsedS, 1)}s still remaining.`,
     }))),
     occurrenceTarget: `field waits for ${floorLabel}s remaining`,
   };

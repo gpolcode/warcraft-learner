@@ -8,11 +8,7 @@ export interface TimelineBand {
   widthPct: number;
 }
 
-/**
- * The expandable detail behind a rule finding's summary count: a strip of per-instance
- * moment chips, plus a fight-timeline bar when the finding carries one (aura uptime).
- * Presentational leaf - inputs only, its own local selection state.
- */
+/** The expandable detail behind a rule finding's summary count: a moment-chip strip, plus a timeline bar when the finding carries one. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',

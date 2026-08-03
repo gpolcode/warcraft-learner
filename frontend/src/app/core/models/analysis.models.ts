@@ -1,8 +1,4 @@
-/**
- * One instance behind a rule finding's summary count - the moment a chip in the
- * expandable strip renders. `atMs` is fight-relative and formatted by the template's
- * own pipe, never pre-formatted here (see the all-formatting-through-pipes rule).
- */
+/** One instance behind a rule finding's summary count - the moment a chip in the expandable strip renders. */
 export interface FindingOccurrence {
   /** Fight-relative ms; absent when there is nothing to point at (e.g. an opener step never reached). */
   atMs?: number;
