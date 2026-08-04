@@ -37,7 +37,6 @@ const HARD_CAST_WINDOW_S = 0.25;
 /** Cap on a finding's occurrence strip - a fight can carry far more casts than a chip row should render. */
 const MAX_OCCURRENCES = 24;
 
-/** Evenly picks `count` items from `items`, keeping chronological order. */
 function evenSample<T>(items: T[], count: number): T[] {
   const step = items.length / count;
   return Array.from({ length: count }, (_, i) => items[Math.floor(i * step)]);
@@ -641,7 +640,7 @@ function fillerFinding(
   };
 }
 
-/** One per-instance chip for each coached/alternative cast, time-ordered - shared by both filler kinds. */
+/** Shared by both filler kinds so their chip logic cannot drift apart. */
 function fillerOccurrences(
   coachedId: number, coachedName: string, alternativeIds: number[], alternativeNames: string[],
   timesFor: (spellId: number) => number[],

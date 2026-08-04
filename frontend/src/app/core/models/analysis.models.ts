@@ -1,19 +1,14 @@
-/** One instance behind a rule finding's summary count - the moment a chip in the expandable strip renders. */
 export interface FindingOccurrence {
-  /** Fight-relative ms; absent when there is nothing to point at (e.g. an opener step never reached). */
   atMs?: number;
   ok: boolean;
-  /** Chip value, e.g. "21s", "3", "up", "28%", or a short step/ability name. */
   label: string;
-  /** Shown under the chip in place of a formatted timestamp when `atMs` is absent. */
+  /** Rendered only when `atMs` is absent - never alongside it. */
   note?: string;
-  /** Full sentence for the selected-occurrence readout, describing this specific instance. */
   detail: string;
-  /** A reference marker (e.g. the anchor cast a hold-for rule holds against) rather than a judged instance. */
+  /** Excludes this entry from the ok/violation tone the template otherwise applies. */
   marker?: boolean;
 }
 
-/** Merged up-spans behind an uptime finding's timeline bar (aura_uptime_below only). */
 export interface FindingTimeline {
   segmentsMs: [number, number][];
   fightDurationMs: number;
@@ -40,11 +35,9 @@ export interface AnalysisFinding {
     cd_name?: string;
     remedy?: string;
   };
-  /** Per-instance detail behind the summary count, driving the expandable moment strip. Rule findings only. */
   occurrences?: FindingOccurrence[];
-  /** The strip's "Target: ..." caption. */
   occurrenceTarget?: string;
-  /** Present only alongside `occurrences` for a timeline-style kind (aura_uptime_below). */
+  /** Only aura_uptime_below sets this; every other kind renders occurrences with no timeline. */
   timeline?: FindingTimeline;
 }
 

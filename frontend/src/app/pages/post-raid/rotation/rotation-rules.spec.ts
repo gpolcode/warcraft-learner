@@ -1245,23 +1245,21 @@ describe('occurrence strips', () => {
     expect(timestamps).toEqual([...timestamps].sort((a, b) => (a ?? 0) - (b ?? 0)));
   });
 
-  it('never drops a violation from the sampled strip, even when scattered among far more passing casts', () => {
-    const OVER_CAP_CASTS = 40;
-    const CAST_SPACING_S = 10; // wider than TARGET_COUNT_WINDOW_S (3s) so each cast's window sees only its own damage.
-    const violationCastIndexes = new Set([2, 4, 7]);
-    const blackPowder: CastAtTargetCountCondition = {
-      kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
+  it('never drops a violation from the sampled strip, even when passing casts alone exceed the cap', () => {
+    const finisher: ResourceAtCastCondition = {
+      kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
+      resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'min',
     };
-    const castTimesS = Array.from({ length: OVER_CAP_CASTS }, (_, i) => (i + 1) * CAST_SPACING_S);
-    const casts = castTimesS.map(atS => cast(BLACK_POWDER, atS));
-    const dmg = castTimesS.flatMap((atS, i) => {
-      const targetIds = violationCastIndexes.has(i) ? [1, 2] : [1, 2, 3];
-      return targetIds.map(targetId => damage(BLACK_POWDER, atS + 0.5, 100, { target: targetId }));
-    });
-    const finding = evaluateCastAtTargetCount(blackPowder, ruleCtx(casts, { damage: dmg }), thr(3), 'warning');
+    const atCombo = (atS: number, amount: number) =>
+      cast(EVISCERATE, atS, { resources: [{ amount, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] });
+    const FAIL_AT_S = [5, 15, 25];
+    const fails = FAIL_AT_S.map(atS => atCombo(atS, 1));
+    const PASSING_CASTS = 30; // clears MAX_OCCURRENCES (24) so sampling kicks in
+    const passes = Array.from({ length: PASSING_CASTS }, (_, i) => atCombo(100 + i, MAX_COMBO_POINTS));
+    const finding = evaluateResourceAtCast(finisher, ruleCtx([...fails, ...passes]), thr(1), 'warning');
     const occurrences = finding!.occurrences!;
     expect(occurrences.length).toBe(24);
     const failingAtMs = occurrences.filter(occ => !occ.ok).map(occ => occ.atMs);
-    expect(failingAtMs).toEqual([...violationCastIndexes].map(i => castTimesS[i] * 1000));
+    expect(failingAtMs).toEqual(FAIL_AT_S.map(atS => atS * 1000));
   });
 });

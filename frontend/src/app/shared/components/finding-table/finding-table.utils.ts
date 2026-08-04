@@ -37,10 +37,9 @@ export interface FindingRow {
   what?: string;
   measured: FindingMeasure;
   fix?: string;
-  /** Per-instance detail behind the summary count; absent rows render with no expand chevron. */
+  /** Absent (or empty) renders the row with no expand chevron. */
   occurrences?: FindingOccurrence[];
   occurrenceTarget?: string;
-  /** Present only alongside `occurrences` for a timeline-style row (aura uptime). */
   timeline?: FindingTimeline;
 }
 

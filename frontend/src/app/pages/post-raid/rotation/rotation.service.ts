@@ -30,10 +30,8 @@ export interface RotationFindingRow {
   what?: string;
   measured: { value: string; unit?: string };
   fix?: string;
-  /** Per-instance detail behind the summary count; rule rows only. */
   occurrences?: FindingOccurrence[];
   occurrenceTarget?: string;
-  /** Present only alongside `occurrences` for a timeline-style row (aura uptime). */
   timeline?: FindingTimeline;
 }
 

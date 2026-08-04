@@ -2,13 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, input, signal } from '@an
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 
-/** One up-span positioned as a percentage of the fight, for the timeline bar (aura uptime only). */
 export interface TimelineBand {
   leftPct: number;
   widthPct: number;
 }
 
-/** The expandable detail behind a rule finding's summary count: a moment-chip strip, plus a timeline bar when the finding carries one. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',
