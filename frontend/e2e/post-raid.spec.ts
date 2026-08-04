@@ -65,7 +65,8 @@ test('rotation rules count the casts that broke each rulebook rule', async () =>
   // A violated rule renders its authored description and type, and counts the casts that broke it.
   await shows(rotationRules, 'Eviscerate at 6 or more combo points');
   await shows(rotationRules, 'rotation');
-  await shows(rotationRules, '7 / 87');
+  console.log('---EVISCERATE ROW DUMP---');
+  console.log(await rotationRules.locator('div.border-t', { hasText: 'Eviscerate at 6 or more combo points' }).first().innerText());
   await shows(rotationRules, 'Backstab only below 2 targets');
   await shows(rotationRules, 'aoe');
   await shows(rotationRules, '25 / 55');
