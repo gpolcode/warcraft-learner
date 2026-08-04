@@ -3,8 +3,8 @@ import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 
 export interface TimelineBand {
-  leftPct: number;
-  widthPct: number;
+  leftPercentage: number;
+  widthPercentage: number;
 }
 
 @Component({
@@ -34,8 +34,8 @@ export class FindingOccurrencesComponent {
     const t = this.timeline();
     if (!t || t.fightDurationMs <= 0) return [];
     return t.segmentsMs.map(([start, end]) => ({
-      leftPct: (start / t.fightDurationMs) * 100,
-      widthPct: ((end - start) / t.fightDurationMs) * 100,
+      leftPercentage: (start / t.fightDurationMs) * 100,
+      widthPercentage: ((end - start) / t.fightDurationMs) * 100,
     }));
   });
 

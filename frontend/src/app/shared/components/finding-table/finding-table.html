@@ -85,7 +85,7 @@
         </div>
 
         <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
-          @if (row.occurrences?.length) {
+          @if (row.occurrences.length) {
             <button mat-icon-button
               [attr.aria-expanded]="openIndex() === $index"
               [attr.aria-label]="openIndex() === $index ? 'Hide instances' : 'Show instances'"
@@ -97,10 +97,10 @@
 
       </div>
 
-      @if (row.occurrences?.length && openIndex() === $index) {
+      @if (row.occurrences.length && openIndex() === $index) {
         <div class="px-4 pb-4 pt-2 md:pl-[54px] border-t border-dashed border-[var(--border)]">
           <wl-finding-occurrences
-            [occurrences]="row.occurrences!"
+            [occurrences]="row.occurrences"
             [target]="row.occurrenceTarget ?? ''"
             [timeline]="row.timeline">
           </wl-finding-occurrences>

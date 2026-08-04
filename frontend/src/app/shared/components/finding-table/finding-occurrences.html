@@ -2,7 +2,7 @@
   <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Uptime across the fight</div>
   <div class="relative h-[22px] rounded-md bg-[var(--bg)] overflow-hidden mb-3" aria-hidden="true">
     @for (seg of segments(); track $index) {
-      <div class="absolute inset-y-0 rounded-md bg-[var(--success)]/65" [style.left.%]="seg.leftPct" [style.width.%]="seg.widthPct"></div>
+      <div class="absolute inset-y-0 rounded-md bg-[var(--success)]/65" [style.left.%]="seg.leftPercentage" [style.width.%]="seg.widthPercentage"></div>
     }
   </div>
   @if (t.segmentsMs.length) {

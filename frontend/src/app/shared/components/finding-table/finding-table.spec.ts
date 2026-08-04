@@ -4,8 +4,8 @@ import { FindingTableComponent } from './finding-table';
 
 describe('FindingTableComponent', () => {
   const rows = [
-    { severity: 'warning' as const, icon: '', measured: { value: '1 / 2' } },
-    { severity: 'warning' as const, icon: '', measured: { value: '3 / 4' } },
+    { severity: 'warning' as const, icon: '', measured: { value: '1 / 2' }, occurrences: [] },
+    { severity: 'warning' as const, icon: '', measured: { value: '3 / 4' }, occurrences: [] },
   ];
 
   it('opens no row by default, so the table renders collapsed', () => {

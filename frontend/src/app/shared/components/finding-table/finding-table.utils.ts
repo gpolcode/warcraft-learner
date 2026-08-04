@@ -37,8 +37,8 @@ export interface FindingRow {
   what?: string;
   measured: FindingMeasure;
   fix?: string;
-  /** Absent (or empty) renders the row with no expand chevron. */
-  occurrences?: FindingOccurrence[];
+  /** Empty renders the row with no expand chevron. */
+  occurrences: FindingOccurrence[];
   occurrenceTarget?: string;
   timeline?: FindingTimeline;
 }
@@ -78,6 +78,7 @@ export function rowsFromEntries(entries: FindingEntry[], catLabel: Record<string
         chip: catLabel[f.category],
         measured: f.measured ?? { value: '-' },
         fix: f.details?.remedy,
+        occurrences: f.occurrences ?? [],
       });
     }
   }

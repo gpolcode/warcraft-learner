@@ -30,7 +30,7 @@ export interface RotationFindingRow {
   what?: string;
   measured: { value: string; unit?: string };
   fix?: string;
-  occurrences?: FindingOccurrence[];
+  occurrences: FindingOccurrence[];
   occurrenceTarget?: string;
   timeline?: FindingTimeline;
 }
@@ -327,7 +327,7 @@ export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingR
     measured: finding.measured ?? { value: '-' },
     timestampMs: finding.timestamp_ms ?? null,
     fix: finding.details?.remedy,
-    occurrences: finding.occurrences,
+    occurrences: finding.occurrences ?? [],
     occurrenceTarget: finding.occurrenceTarget,
     timeline: finding.timeline,
   }));
@@ -350,6 +350,7 @@ export function buildOffensiveRows(
         chip: CAT_LABEL[finding.category],
         measured: finding.measured ?? { value: '-' },
         fix: finding.details?.remedy,
+        occurrences: finding.occurrences ?? [],
       });
     }
   }

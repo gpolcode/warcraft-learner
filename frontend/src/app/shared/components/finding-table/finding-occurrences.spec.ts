@@ -40,8 +40,8 @@ describe('FindingOccurrencesComponent', () => {
       timeline: { segmentsMs: [[0, 25_000], [75_000, 100_000]], fightDurationMs: 100_000 },
     });
     expect(vm.segments()).toEqual([
-      { leftPct: 0, widthPct: 25 },
-      { leftPct: 75, widthPct: 25 },
+      { leftPercentage: 0, widthPercentage: 25 },
+      { leftPercentage: 75, widthPercentage: 25 },
     ]);
   });
 });
