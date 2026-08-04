@@ -88,8 +88,10 @@ test('a broken rule renders the rulebook remedy, and a followed one only its nam
 
 test('a rule row expands into a chip strip of the instances behind its count', async () => {
   const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
+  // The button's accessible name flips to "Hide instances" once clicked, so the filter matches
+  // either name - otherwise re-resolving `row` after the click would land on a different row.
   const row = rotationRules.locator('div.border-t')
-    .filter({ has: page.getByRole('button', { name: 'Show instances' }) }).first();
+    .filter({ has: page.getByRole('button', { name: /instances/i }) }).first();
   await row.getByRole('button', { name: 'Show instances' }).click();
   const strip = row.locator('wl-finding-occurrences');
   await expect(strip).toBeVisible();
