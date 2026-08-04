@@ -95,7 +95,7 @@ test('a rule row expands into a chip strip of the instances behind its count', a
   const strip = evisRow.locator('wl-finding-occurrences');
   await expect(strip).toBeVisible();
   await shows(strip, 'Target:');
-  await expect(strip.getByRole('button')).toHaveCount(24);
+  await expect(strip.getByRole('option')).toHaveCount(24);
   await evisRow.getByRole('button', { name: 'Hide instances' }).click();
   await expect(strip).not.toBeVisible();
 });
