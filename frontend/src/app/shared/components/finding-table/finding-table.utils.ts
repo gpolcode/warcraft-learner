@@ -78,7 +78,7 @@ export function rowsFromEntries(entries: FindingEntry[], catLabel: Record<string
         chip: catLabel[f.category],
         measured: f.measured ?? { value: '-' },
         fix: f.details?.remedy,
-        occurrences: f.occurrences ?? [],
+        occurrences: f.occurrences,
       });
     }
   }

@@ -35,7 +35,7 @@ export interface AnalysisFinding {
     cd_name?: string;
     remedy?: string;
   };
-  occurrences?: FindingOccurrence[];
+  occurrences: FindingOccurrence[];
   occurrenceTarget?: string;
   /** Only aura_uptime_below sets this; every other kind renders occurrences with no timeline. */
   timeline?: FindingTimeline;

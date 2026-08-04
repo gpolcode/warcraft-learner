@@ -637,6 +637,7 @@ function fillerFinding(
     message: `${spellName} was ${Math.round(share * 100)}% of your fillers ${where}. Top: ${Math.round(threshold.value * 100)}%.`,
     measured: { value: `${Math.round(share * 100)} / ${Math.round(threshold.value * 100)}`, unit: '% of fillers' },
     details: remedy ? { remedy } : undefined,
+    occurrences: [],
   };
 }
 
