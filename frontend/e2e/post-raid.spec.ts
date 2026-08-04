@@ -85,6 +85,21 @@ test('a broken rule renders the rulebook remedy, and a followed one only its nam
   await shows(rotationRules, 'Open Shadowstrike into Shadow Dance and Shadow Blades');
 });
 
+test('a rule row expands into a chip strip of the instances behind its count', async () => {
+  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
+  // Same row pinned above at "7 / 87": 87 judged casts is over MAX_OCCURRENCES (24), so the strip is sampled -
+  // proving the sampler keeps every one of the 7 failing casts rather than only the ones an even spacing would land on.
+  const evisRow = rotationRules.locator('div.border-t', { hasText: 'Eviscerate at 6 or more combo points' }).first();
+  const toggle = evisRow.getByRole('button', { name: 'Show instances' });
+  await toggle.click();
+  const strip = evisRow.locator('wl-finding-occurrences');
+  await expect(strip).toBeVisible();
+  await shows(strip, 'Target:');
+  await expect(strip.getByRole('button')).toHaveCount(24);
+  await evisRow.getByRole('button', { name: 'Hide instances' }).click();
+  await expect(strip).not.toBeVisible();
+});
+
 test('offensives flag the lost cooldown casts and the holds', async () => {
   const offensives = page.locator('wl-finding-table').filter({ hasText: 'Offensive cooldowns vs top parses.' });
   await shows(offensives, 'Shadow Blades');
