@@ -65,8 +65,7 @@ test('rotation rules count the casts that broke each rulebook rule', async () =>
   // A violated rule renders its authored description and type, and counts the casts that broke it.
   await shows(rotationRules, 'Eviscerate at 6 or more combo points');
   await shows(rotationRules, 'rotation');
-  console.log('---EVISCERATE ROW DUMP---');
-  console.log(await rotationRules.locator('div.border-t', { hasText: 'Eviscerate at 6 or more combo points' }).first().innerText());
+  await shows(rotationRules, '2 / 87');
   await shows(rotationRules, 'Backstab only below 2 targets');
   await shows(rotationRules, 'aoe');
   await shows(rotationRules, '25 / 55');
@@ -88,8 +87,8 @@ test('a broken rule renders the rulebook remedy, and a followed one only its nam
 
 test('a rule row expands into a chip strip of the instances behind its count', async () => {
   const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
-  // Same row pinned above at "7 / 87": 87 judged casts is over MAX_OCCURRENCES (24), so the strip is sampled -
-  // proving the sampler keeps every one of the 7 failing casts rather than only the ones an even spacing would land on.
+  // Same row pinned above at "2 / 87": 87 judged casts is over MAX_OCCURRENCES (24), so the strip is sampled -
+  // proving the sampler keeps every one of the 2 failing casts rather than only the ones an even spacing would land on.
   const evisRow = rotationRules.locator('div.border-t', { hasText: 'Eviscerate at 6 or more combo points' }).first();
   const toggle = evisRow.getByRole('button', { name: 'Show instances' });
   await toggle.click();
