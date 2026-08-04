@@ -431,8 +431,8 @@ describe('evaluateResourceAtCast', () => {
   it('says the same thing in the chip and the sentence, so the two cannot drift', () => {
     const ctx = ruleCtx([atCombo(10, 3)]);
     const finding = evaluateResourceAtCast(finisherAtMax, ctx, thr(RESOURCE_FLOOR), 'warning');
-    expect(finding?.label).toBe('Eviscerate below 100% combo points');
-    expect(finding?.message).toContain('Eviscerate cast below 100% combo points');
+    expect(finding?.label).toBe('Eviscerate below 5/5 combo points');
+    expect(finding?.message).toContain('Eviscerate cast below 5/5 combo points');
   });
 
   it('is not applicable when the casts carry no resource snapshot', () => {
@@ -1146,7 +1146,7 @@ describe('occurrence strips', () => {
     expect(finding?.occurrenceTarget).toBe('field waits for 3+');
   });
 
-  it('resource_at_cast: a chip per cast, the resource share as the label', () => {
+  it('resource_at_cast: a chip per cast, the raw amount over its own cap as the label (a small pool reads as a count, not a percent)', () => {
     const finisher: ResourceAtCastCondition = {
       kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
       resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'min',
@@ -1156,8 +1156,25 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([atCombo(10, 3), atCombo(20, MAX_COMBO_POINTS)]);
     const finding = evaluateResourceAtCast(finisher, ctx, thr(1), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atMs: 10_000, ok: false, label: '60%', detail: 'Eviscerate cast at 60%.' },
-      { atMs: 20_000, ok: true, label: '100%', detail: 'Eviscerate cast at 100%.' },
+      { atMs: 10_000, ok: false, label: '3/5', detail: 'Eviscerate cast at 3/5.' },
+      { atMs: 20_000, ok: true, label: '5/5', detail: 'Eviscerate cast at 5/5.' },
+    ]);
+    expect(finding?.occurrenceTarget).toBe('field waits for 5/5+');
+  });
+
+  it('resource_at_cast: a large pool (mana) still reads as a percent, since WCL reports it as a five/six-digit number', () => {
+    const innervate: ResourceAtCastCondition = {
+      kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Innervate',
+      resource_type: COMBO_POINT_TYPE, resource_name: 'mana', bound: 'min',
+    };
+    const MANA_MAX = 250_000;
+    const atMana = (atS: number, amount: number) =>
+      cast(EVISCERATE, atS, { resources: [{ amount, max: MANA_MAX, type: COMBO_POINT_TYPE }] });
+    const ctx = ruleCtx([atMana(10, MANA_MAX * 0.6), atMana(20, MANA_MAX)]);
+    const finding = evaluateResourceAtCast(innervate, ctx, thr(1), 'warning');
+    expect(finding?.occurrences).toEqual([
+      { atMs: 10_000, ok: false, label: '60%', detail: 'Innervate cast at 60%.' },
+      { atMs: 20_000, ok: true, label: '100%', detail: 'Innervate cast at 100%.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 100%+');
   });

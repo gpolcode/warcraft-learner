@@ -545,26 +545,39 @@ export function evaluateCastAtTargetCount(
   }, threshold, severity, remedy);
 }
 
-/** A share of the pool's own cap, so one threshold stays meaningful across pools whose scales differ by orders of magnitude. */
-function resourceFractionPerCast(cond: ResourceAtCastCondition, ctx: RuleContext): { timeS: number; frac: number }[] {
-  const judged: { timeS: number; frac: number }[] = [];
+/** A share of the pool's own cap, so one bench threshold stays meaningful across pools whose scales differ by orders of magnitude - the runtime side converts back to the player's own amount/max for display. */
+function resourceFractionPerCast(
+  cond: ResourceAtCastCondition, ctx: RuleContext,
+): { timeS: number; frac: number; amount: number; max: number }[] {
+  const judged: { timeS: number; frac: number; amount: number; max: number }[] = [];
   for (const event of ctx.castEvents) {
     if (event.type !== 'cast' || event.abilityGameID !== cond.spell_id) continue;
     if (event.resourceActor != null && event.resourceActor !== RESOURCE_ACTOR_SOURCE) continue;
     const pool = event.classResources?.find(resource => resource.type === cond.resource_type);
     if (!pool?.max) continue;
-    judged.push({ timeS: (event.timestamp - ctx.fStart) / 1000, frac: pool.amount / pool.max });
+    judged.push({ timeS: (event.timestamp - ctx.fStart) / 1000, frac: pool.amount / pool.max, amount: pool.amount, max: pool.max });
   }
   return judged;
+}
+
+/** WCL reports mana as a five/six-digit pool - every other resource this kind judges tops out near 100 - so only mana renders as a percent; everything else reads as a raw count against its own cap. */
+const RAW_COUNT_MAX_POOL = 200;
+
+function rawCountScale(max: number): Scale {
+  return { quantize: fraction => Math.round(fraction * max), format: value => `${Math.round(value)}/${max}` };
 }
 
 export function evaluateResourceAtCast(
   cond: ResourceAtCastCondition, ctx: RuleContext, threshold: RuleThreshold, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
+  const judged = resourceFractionPerCast(cond, ctx);
+  if (!judged.length) return null;
+  const max = judged[0].max;
+  const raw = max <= RAW_COUNT_MAX_POOL;
   return evaluateBoundedPerCast({
-    values: resourceFractionPerCast(cond, ctx).map(({ timeS, frac }) => ({ timeS, value: frac })),
+    values: judged.map(({ timeS, frac, amount }) => ({ timeS, value: raw ? amount : frac })),
     bound: cond.bound,
-    scale: PERCENT,
+    scale: raw ? rawCountScale(max) : PERCENT,
     subject: cond.spell_name,
     phrase: limit => `${cond.bound === 'min' ? 'below' : 'above'} ${limit} ${cond.resource_name}`,
   }, threshold, severity, remedy);
