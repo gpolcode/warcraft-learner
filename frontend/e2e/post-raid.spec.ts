@@ -1,5 +1,5 @@
 import { expect, test, Page } from '@playwright/test';
-import { shows } from './support';
+import { shows, showsAbility } from './support';
 
 // Figures compared against the top-parse bench are re-pinned from a render dump when the dataset moves (see the warcraft-e2e skill).
 const REPORT_URL = 'https://www.warcraftlogs.com/reports/YkVMTyfmFLtXZ1NQ?fight=last';
@@ -114,25 +114,53 @@ test('offensives flag the lost cooldown casts and the holds', async () => {
 test('burst windows compare the player damage against the top-parse windows', async () => {
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Damage in each burst window vs top parses.');
-  console.log('---BURST DUMP START---');
-  console.log(await burstWindows.innerText());
-  console.log('---BURST DUMP END---');
+  // The card opens on the player's worst window.
+  await shows(burstWindows, 'window');
+  await shows(burstWindows, '3:22 - 3:26');
+  await shows(burstWindows, 'burst');
+  await shows(burstWindows, '1K');
+  await shows(burstWindows, '-100%');
+  await showsAbility(burstWindows, 'Secret Technique', '525K');
+  await shows(burstWindows, 'missed');
+  await shows(burstWindows, '0 / 1');
 });
 
-test('defensives stay on plan and benchmark the damage taken', async () => {
+test('defensives flag a held cooldown and benchmark the damage taken', async () => {
   const defensives = page.locator('wl-defensive');
   await shows(defensives, 'Defensive cooldowns vs top parses.');
-  console.log('---DEFENSIVES DUMP START---');
-  console.log(await defensives.innerText());
-  console.log('---DEFENSIVES DUMP END---');
+  await shows(defensives, 'Feint');
+  await shows(defensives, 'held');
+  await shows(defensives, '121s');
+  await shows(defensives, 'avg 38s');
+  await shows(defensives, 'On plan');
+  await shows(defensives, 'Crimson Vial');
+  await shows(defensives, 'Cloak of Shadows');
+  await shows(defensives, 'Damage taken in top-parse defensive windows vs top parses.');
+  await shows(defensives, '0:57 - 1:03');
+  await shows(defensives, '507K');
+  await shows(defensives, '+246%');
 });
 
 test('gear lists the top-parse talent builds and how the alt build differs, plus trinkets and enchants', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Gear vs top parses.');
-  console.log('---GEAR DUMP START---');
-  console.log(await gear.innerText());
-  console.log('---GEAR DUMP END---');
+  await shows(gear, 'Talents');
+  await shows(gear, 'Your build');
+  // The talent builds are listed in the post-raid card, most common first: 50% / 20% / 10%.
+  await shows(gear, 'Most common build');
+  await shows(gear, '50%');
+  await shows(gear, 'Alt build 1');
+  await shows(gear, 'Added');
+  await shows(gear, 'Ethereal Cloak');
+  await shows(gear, 'Dropped');
+  await shows(gear, 'Flawless Form');
+  await shows(gear, 'Alt build 2');
+  await shows(gear, 'of top parsers');
+  await shows(gear, 'Trinkets');
+  await shows(gear, 'Light Company Guidon');
+  await shows(gear, 'Gaze of the Alnseer');
+  await shows(gear, 'Enchants');
+  await shows(gear, 'All enchants');
 });
 
 test('the positioning map opens anchored on the death', async () => {
