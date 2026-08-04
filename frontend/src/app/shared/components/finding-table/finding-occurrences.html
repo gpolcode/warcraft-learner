@@ -12,25 +12,34 @@
   <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Instances</div>
 }
 
-<div class="flex flex-wrap gap-[7px]">
-  @for (occ of occurrences(); track $index) {
-    @let tone = occ.marker
-      ? 'text-[var(--gold)] border-[var(--gold)]/40 bg-[var(--gold)]/6'
-      : (occ.ok ? 'text-[var(--success)] border-[var(--border)]' : 'text-[var(--critical)] border-[var(--border)]');
-    @let barTone = occ.ok ? 'bg-[var(--success)]' : 'bg-[var(--critical)]';
-    @let active = activeIndex() === $index;
-    <button type="button" class="flex flex-col items-center gap-1 shrink-0" (click)="select($index)">
-      <div [class]="'relative flex items-center justify-center min-w-10 h-[34px] px-[7px] rounded-md bg-[var(--bg)] border text-[11.5px] font-semibold whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-[var(--accent)]' : '')">
-        {{ occ.label }}
-        @if (!occ.marker) {
-          <span [class]="'absolute bottom-0 left-0 right-0 h-[3px] rounded-b-md ' + barTone"></span>
-        }
+<div
+  role="listbox"
+  tabindex="0"
+  [attr.aria-activedescendant]="activeOptionId()"
+  (keydown)="onKeydown($event)">
+  <div class="flex flex-wrap items-start gap-1.5">
+    @for (occ of occurrences(); track $index) {
+      @let tone = occ.marker ? 'text-[var(--gold)]' : (occ.ok ? 'text-[var(--success)]' : 'text-[var(--critical)]');
+      @let barTone = occ.marker ? 'bg-[var(--gold)]' : (occ.ok ? 'bg-[var(--success)]' : 'bg-[var(--critical)]');
+      @let active = activeIndex() === $index;
+      <div class="flex flex-col items-center gap-1.5 shrink-0">
+        <button
+          type="button"
+          role="option"
+          tabindex="-1"
+          [id]="optionId($index)"
+          [class]="'relative flex items-center justify-center min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-[var(--bg)] border border-[var(--border)] text-[11.5px] font-semibold whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-[var(--gold)]' : ' focus:outline-none')"
+          [attr.aria-selected]="active"
+          (click)="select($index)">
+          {{ occ.label }}
+          <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
+        </button>
+        <span [class]="'tabular-nums text-[10px] ' + (active ? 'text-[var(--gold)]' : 'text-[var(--muted)]')">
+          {{ occ.atMs != null ? (occ.atMs / 1000 | formatDuration) : occ.note }}
+        </span>
       </div>
-      <span class="text-[9.5px] text-[var(--muted)]">
-        {{ occ.atMs != null ? (occ.atMs / 1000 | formatDuration) : occ.note }}
-      </span>
-    </button>
-  }
+    }
+  </div>
 </div>
 
 @if (target()) {

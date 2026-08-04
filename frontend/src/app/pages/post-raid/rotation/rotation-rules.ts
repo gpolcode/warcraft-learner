@@ -357,6 +357,9 @@ function mergedUpSpans(windows: AuraWindows, spellId: number, boundMs: number): 
 /** Longest gaps in a merged coverage timeline, since those - not uniform drift - are what a maintain miss usually is. */
 const MAX_UPTIME_GAPS = 3;
 
+/** Below this, a gap is travel time or event-ordering noise rather than a missed refresh - and would render as a nonsensical "0s" chip anyway. */
+const MIN_UPTIME_GAP_MS = 1000;
+
 function uptimeGaps(merged: [number, number][], boundMs: number): [number, number][] {
   const gaps: [number, number][] = [];
   let cursor = 0;
@@ -365,7 +368,9 @@ function uptimeGaps(merged: [number, number][], boundMs: number): [number, numbe
     cursor = Math.max(cursor, end);
   }
   if (cursor < boundMs) gaps.push([cursor, boundMs]);
-  return gaps.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0])).slice(0, MAX_UPTIME_GAPS).sort((a, b) => a[0] - b[0]);
+  return gaps
+    .filter(([start, end]) => end - start >= MIN_UPTIME_GAP_MS)
+    .sort((a, b) => (b[1] - b[0]) - (a[1] - a[0])).slice(0, MAX_UPTIME_GAPS).sort((a, b) => a[0] - b[0]);
 }
 
 export function evaluateAuraUptimeBelow(

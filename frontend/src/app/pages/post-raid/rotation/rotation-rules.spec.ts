@@ -1096,6 +1096,21 @@ describe('occurrence strips', () => {
     ]);
   });
 
+  it('aura_uptime_below: drops a sub-second gap from the chip strip, since it would render as a nonsensical "0s"', () => {
+    const uptime: AuraUptimeBelowCondition = {
+      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+    };
+    const FIGHT_END_MS = 20_000;
+    // Up 0.3-10s and 15-20s over a 20s fight: a 0.3s opening gap (travel-time noise, not a maintain miss) plus a real 5s gap.
+    const debuffs = [applyDebuff(RUPTURE, 0.3), removeDebuff(RUPTURE, 10), applyDebuff(RUPTURE, 15)];
+    const ctx = ruleCtx([], { debuffs, fEnd: FIGHT_END_MS });
+    const finding = evaluateAuraUptimeBelow(uptime, ctx, thr(90), 'warning');
+    expect(finding?.timeline).toEqual({ segmentsMs: [[300, 10_000], [15_000, 20_000]], fightDurationMs: FIGHT_END_MS });
+    expect(finding?.occurrences).toEqual([
+      { atMs: 10_000, ok: false, label: '5s', detail: 'Rupture was down here for 5s.' },
+    ]);
+  });
+
   it('opening_sequence: a chip per authored step, a missed one carrying a "not reached" note instead of a time', () => {
     const opener: OpeningSequenceCondition = {
       kind: 'opening_sequence',
