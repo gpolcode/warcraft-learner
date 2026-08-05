@@ -26,7 +26,7 @@ const BOSS_GAME_ID = 6666;  // stable gameID the boss actor maps to
 const ADD_GAME_ID = 5555;   // stable gameID the add actor maps to
 
 const CLOAK = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5 };
-const FIGHT_DUR_S = 300;  // standard fight length used across the per-parse summary fixtures
+const FIGHT_DUR_MS = 300_000;  // standard fight length used across the per-parse summary fixtures
 
 describe('defensiveSpellIds', () => {
   it('maps defensive names to spell ids, skipping missing ids', () => {
@@ -53,7 +53,7 @@ describe('summarizeDefensiveCasts', () => {
       applyBuff(CLOAK_OF_SHADOWS, FIRST_USE_MS / 1000), removeBuff(CLOAK_OF_SHADOWS, FIRST_REMOVE_MS / 1000),
       applyBuff(CLOAK_OF_SHADOWS, SECOND_USE_MS / 1000), removeBuff(CLOAK_OF_SHADOWS, SECOND_REMOVE_MS / 1000),
     ], 0);
-    const summaries = summarizeDefensiveCasts([CLOAK], windows, [], 0, FIGHT_DUR_S);
+    const summaries = summarizeDefensiveCasts([CLOAK], windows, [], 0, FIGHT_DUR_MS);
     expect(summaries).toHaveLength(1);
     expect(summaries[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 2, first_cast_ms: FIRST_USE_MS, cast_pattern: 'hold' });
     // cast_index is 1-based (the 2nd use), matching rotation + the runtime's -1 decode.
@@ -61,7 +61,7 @@ describe('summarizeDefensiveCasts', () => {
   });
 
   it('falls back to explicit casts when no buff windows exist', () => {
-    const summaries = summarizeDefensiveCasts([CLOAK], new Map(), [cast(CLOAK_OF_SHADOWS, 12)], 0, 300);
+    const summaries = summarizeDefensiveCasts([CLOAK], new Map(), [cast(CLOAK_OF_SHADOWS, 12)], 0, 300_000);
     expect(summaries[0]).toMatchObject({ uses: 1, first_cast_ms: 12_000, cast_pattern: 'on_cooldown' });
   });
 });
@@ -101,7 +101,7 @@ describe('findParseDefensiveWindows', () => {
     const buffApply = { ...applyBuff(CLOAK_OF_SHADOWS, 0), timestamp: APPLY_MS };
     const hit = { ...damageTaken(BOSS_HIT, 0, HIT_DAMAGE, { source: BOSS_ACTOR }), timestamp: APPLY_MS };
     const windows = buildAuraWindows([buffApply], 0);
-    const result = findParseDefensiveWindows([hit], 0, FIGHT_DUR_S * 1000, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
+    const result = findParseDefensiveWindows([hit], 0, FIGHT_DUR_MS, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
     expect(result).toHaveLength(1);
     expect(result[0].window_damage).toBe(HIT_DAMAGE);
   });
@@ -218,22 +218,22 @@ describe('clusterDefensiveWindows', () => {
 describe('buildDefensiveBenchmark', () => {
   it('derives first-cast / gap / uses-per-min and the total/used sample split', () => {
     const TOTAL_PARSES = 3;   // 2 users of 3 sampled parses
-    const FIRST_A_S = 10, SECOND_A_S = 140;   // gap 130
-    const FIRST_B_S = 20, SECOND_B_S = 160;   // gap 140
-    const EXPECTED_AVG_FIRST_CAST_S = (FIRST_A_S + FIRST_B_S) / 2;                 // 15
-    const EXPECTED_AVG_GAP_S = ((SECOND_A_S - FIRST_A_S) + (SECOND_B_S - FIRST_B_S)) / 2; // 135
+    const FIRST_A_MS = 10_000, SECOND_A_MS = 140_000;   // gap 130_000
+    const FIRST_B_MS = 20_000, SECOND_B_MS = 160_000;   // gap 140_000
+    const EXPECTED_AVG_FIRST_CAST_MS = (FIRST_A_MS + FIRST_B_MS) / 2;                    // 15_000
+    const EXPECTED_AVG_GAP_MS = ((SECOND_A_MS - FIRST_A_MS) + (SECOND_B_MS - FIRST_B_MS)) / 2; // 135_000
     const USERS = 2;
     const USES_A = 2, USES_B = 3;                 // distinct so avg_uses (2.5) differs from the user count (2)
     const EXPECTED_AVG_USES = (USES_A + USES_B) / 2;
     const summaries: ParseDefensiveSummary[] = [
-      { name: 'C', cast_times_ms: [FIRST_A_S * 1000, SECOND_A_S * 1000], first_cast_ms: FIRST_A_S * 1000, uses: USES_A, fight_duration_s: FIGHT_DUR_S, hold_windows: [], cast_pattern: 'on_cooldown' },
-      { name: 'C', cast_times_ms: [FIRST_B_S * 1000, SECOND_B_S * 1000], first_cast_ms: FIRST_B_S * 1000, uses: USES_B, fight_duration_s: FIGHT_DUR_S, hold_windows: [], cast_pattern: 'on_cooldown' },
+      { name: 'C', cast_times_ms: [FIRST_A_MS, SECOND_A_MS], first_cast_ms: FIRST_A_MS, uses: USES_A, fight_duration_ms: FIGHT_DUR_MS, hold_windows: [], cast_pattern: 'on_cooldown' },
+      { name: 'C', cast_times_ms: [FIRST_B_MS, SECOND_B_MS], first_cast_ms: FIRST_B_MS, uses: USES_B, fight_duration_ms: FIGHT_DUR_MS, hold_windows: [], cast_pattern: 'on_cooldown' },
     ];
     const benchmark = buildDefensiveBenchmark(summaries, CLOAK.cooldown * 1000, TOTAL_PARSES);
     expect(benchmark.sample_count).toBe(TOTAL_PARSES);   // total parses
     expect(benchmark.used_sample_count).toBe(USERS);     // users-only
-    expect(benchmark.avg_first_cast_ms).toBe(EXPECTED_AVG_FIRST_CAST_S * 1000);
-    expect(benchmark.avg_gap_ms).toBe(EXPECTED_AVG_GAP_S * 1000);
+    expect(benchmark.avg_first_cast_ms).toBe(EXPECTED_AVG_FIRST_CAST_MS);
+    expect(benchmark.avg_gap_ms).toBe(EXPECTED_AVG_GAP_MS);
     expect(benchmark.avg_uses).toBe(EXPECTED_AVG_USES);
     // uses/min per parse: 2/300*60 = 0.4 and 3/300*60 = 0.6 -> mean 0.5, min 0.4, max 0.6.
     expect(benchmark.uses_per_min).toMatchObject({ avg: 0.5, min: 0.4, max: 0.6 });
@@ -244,8 +244,8 @@ describe('aggregateDefensiveBenchmarks', () => {
   it('builds per-defensive benchmarks with total vs used sample counts + the summary', () => {
     const USES_A = 1, USES_B = 3;
     const EXPECTED_AVG_USES = (USES_A + USES_B) / 2;
-    const parseA: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_ms: [10_000], first_cast_ms: 10_000, uses: USES_A, fight_duration_s: FIGHT_DUR_S, hold_windows: [], cast_pattern: 'on_cooldown' }];
-    const parseB: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_ms: [20_000], first_cast_ms: 20_000, uses: USES_B, fight_duration_s: FIGHT_DUR_S, hold_windows: [], cast_pattern: 'on_cooldown' }];
+    const parseA: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_ms: [10_000], first_cast_ms: 10_000, uses: USES_A, fight_duration_ms: FIGHT_DUR_MS, hold_windows: [], cast_pattern: 'on_cooldown' }];
+    const parseB: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_ms: [20_000], first_cast_ms: 20_000, uses: USES_B, fight_duration_ms: FIGHT_DUR_MS, hold_windows: [], cast_pattern: 'on_cooldown' }];
     const parseC: ParseDefensiveSummary[] = []; // this parse never used Cloak
     const TOTAL_PARSES = 3, USERS = 2;
     const out = aggregateDefensiveBenchmarks([parseA, parseB, parseC], [CLOAK]);

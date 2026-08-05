@@ -35,12 +35,12 @@ describe('summarizeCooldownCasts', () => {
   const cooldowns = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
 
   it('counts casts, first cast, BL alignment and offset', () => {
-    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32)], cooldowns, 0, 200, 30_000);
+    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32)], cooldowns, 0, 200_000, 30_000);
     expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_ms: 32_000, bl_aligned: true, bl_offset_ms: 2_000 });
   });
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
-    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], cooldowns, 0, 200, null);
+    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], cooldowns, 0, 200_000, null);
     expect(summaries[0].cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
     expect(summaries[0].hold_windows[0]).toMatchObject({ cast_index: 2, actual_ms: 110_000, delay_ms: 20_000 });
@@ -49,16 +49,16 @@ describe('summarizeCooldownCasts', () => {
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
     // cast 2 held (0 -> 200, well past reset); cast 3 is on cooldown after it (200 -> 290).
     const summaries = summarizeCooldownCasts(
-      [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], cooldowns, 0, 400, null);
+      [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], cooldowns, 0, 400_000, null);
     expect(summaries[0].hold_windows).toHaveLength(1);
     expect(summaries[0].hold_windows[0].cast_index).toBe(2);
   });
 
   it('does not flag a hold exactly at the threshold (strict)', () => {
     // prior 0 + cd 90 + 8s threshold = 98; a cast at 98 has delay exactly 8 -> not a hold.
-    const atBoundary = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], cooldowns, 0, 200, null);
+    const atBoundary = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], cooldowns, 0, 200_000, null);
     expect(atBoundary[0].hold_windows).toHaveLength(0);
-    const past = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], cooldowns, 0, 200, null);
+    const past = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], cooldowns, 0, 200_000, null);
     expect(past[0].hold_windows).toHaveLength(1);
   });
 });
@@ -75,7 +75,7 @@ describe('buildCdBenchmark', () => {
   const entry = (firstCast: number, uses: number, dur: number, blOffset: number | null, blAligned: boolean, times: number[]): CdSummary => ({
     name: 'Shadow Blades', total_uses: uses, first_cast_ms: firstCast * 1000, bl_aligned: blAligned,
     bl_offset_ms: blOffset != null ? blOffset * 1000 : null,
-    cast_times_ms: times.map(t => t * 1000), hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: dur,
+    cast_times_ms: times.map(t => t * 1000), hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_ms: dur * 1000,
   });
   const withHolders = (holding: number, total: number): CdSummary[] => [
     ...Array.from({ length: holding }, () => ({ ...entry(0, 1, 200, null, false, [0]), cast_pattern: 'hold' as const })),
@@ -106,7 +106,7 @@ describe('buildCdBenchmark', () => {
     const usedParse = entry(5, 2, 120, 2, true, [5, 95]);
     const unusedParse: CdSummary = {
       name: 'Shadow Blades', total_uses: 0, first_cast_ms: null, bl_aligned: false, bl_offset_ms: null,
-      cast_times_ms: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
+      cast_times_ms: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_ms: 120_000,
     };
     const bench = buildCdBenchmark([usedParse, unusedParse], EFFECTIVE_CD_MS);
     expect(bench.sample_count).toBe(TOTAL_PARSES);
@@ -135,7 +135,7 @@ describe('buildCdBenchmark', () => {
 
 describe('computeEfficiencyThresholds', () => {
   it('derives a p90 downtime floor and per-parse efficiency mean', () => {
-    const result = computeEfficiencyThresholds([[500, 600, 700, 5000]], [100]);
+    const result = computeEfficiencyThresholds([[500, 600, 700, 5000]], [100_000]);
     // d3 p90 quantile of [500,600,700,5000]: 700 + 0.7*(5000-700) = 3710 ms.
     expect(result.downtimeThresholdMs).toBe(3710);
     // only the 5000ms gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
@@ -143,7 +143,7 @@ describe('computeEfficiencyThresholds', () => {
   });
 
   it('falls back to the default floor with no gaps', () => {
-    const result = computeEfficiencyThresholds([[]], [100]);
+    const result = computeEfficiencyThresholds([[]], [100_000]);
     expect(result.downtimeThresholdMs).toBe(1500);
     expect(result.topAvgEfficiency).toBe(0);
   });
@@ -153,7 +153,7 @@ describe('aggregateCdBenchmarks', () => {
   it('groups per-parse summaries by cooldown name', () => {
     const summary = (name: string): CdSummary => ({
       name, total_uses: 1, first_cast_ms: 5_000, bl_aligned: false, bl_offset_ms: null,
-      cast_times_ms: [5_000], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
+      cast_times_ms: [5_000], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_ms: 120_000,
     });
     const result = aggregateCdBenchmarks(
       [[summary('Shadow Blades')], [summary('Shadow Blades')]],

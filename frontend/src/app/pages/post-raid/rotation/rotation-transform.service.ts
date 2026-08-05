@@ -34,6 +34,15 @@ const BL_WINDOW_AFTER_S = 55;
 /** p90 of pooled cast gaps is the downtime floor. */
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
+/** Fallback cooldown (seconds) when a rulebook entry's own value is falsy. */
+const DEFAULT_CD_S = 90;
+/** Denominator for a per-minute rate against an ms fight duration. */
+const MS_PER_MIN = 60_000;
+
+/** Rulebook cooldown (seconds) -> the one ms conversion point every consumer shares. */
+function cooldownMs(cooldown: RulebookCooldown): number {
+  return (cooldown.cooldown ?? DEFAULT_CD_S) * 1000;
+}
 
 export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDefensive[]): Record<string, number> {
   const map: Record<string, number> = {};
@@ -60,12 +69,12 @@ export interface CdSummary {
   cast_times_ms: number[];
   hold_windows: HoldWindow[];
   cast_pattern: 'hold' | 'on_cooldown';
-  fight_duration_s: number;
+  fight_duration_ms: number;
 }
 
 export function summarizeCooldownCasts(
   castEvents: WclEvent[], cooldowns: RulebookCooldown[],
-  fightStartMs: number, fightDurS: number, blTimeMs: number | null,
+  fightStartMs: number, fightDurationMs: number, blTimeMs: number | null,
 ): CdSummary[] {
   return cooldowns.map(cooldown => {
     const castTimesMs = castEvents
@@ -85,7 +94,7 @@ export function summarizeCooldownCasts(
       }
     }
 
-    const holdWindows = detectHoldWindows(castTimesMs, (cooldown.cooldown ?? 90) * 1000);
+    const holdWindows = detectHoldWindows(castTimesMs, cooldownMs(cooldown));
 
     return {
       name: cooldown.name,
@@ -96,7 +105,7 @@ export function summarizeCooldownCasts(
       cast_times_ms: castTimesMs.map(timeMs => Math.round(timeMs)),
       hold_windows: holdWindows,
       cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-      fight_duration_s: fightDurS,
+      fight_duration_ms: fightDurationMs,
     };
   });
 }
@@ -111,8 +120,8 @@ export function castGapListMs(castEvents: WclEvent[]): number[] {
 function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
   const usesPerMin: number[] = [];
   for (const entry of entries) {
-    if (entry.fight_duration_s > 0 && entry.cast_times_ms.length) {
-      usesPerMin.push(Math.round((entry.cast_times_ms.length / entry.fight_duration_s) * 60 * 1000) / 1000);
+    if (entry.fight_duration_ms > 0 && entry.cast_times_ms.length) {
+      usesPerMin.push(Math.round((entry.cast_times_ms.length / entry.fight_duration_ms) * MS_PER_MIN * 1000) / 1000);
     }
   }
   if (!usesPerMin.length) return { avg: 0, stddev: 0, min: 0, max: 0 };
@@ -135,8 +144,8 @@ export function buildCdBenchmark(entries: CdSummary[], effectiveCdMs: number): P
   const blOffsets = entries.map(entry => entry.bl_offset_ms).filter((value): value is number => value != null);
   const blCount = entries.filter(entry => entry.bl_aligned).length;
   const upmList = entries
-    .filter(entry => entry.fight_duration_s > 0)
-    .map(entry => entry.total_uses / (entry.fight_duration_s / 60));
+    .filter(entry => entry.fight_duration_ms > 0)
+    .map(entry => entry.total_uses / (entry.fight_duration_ms / MS_PER_MIN));
   const usesPerMin = benchUsesPerMin(entries);
 
   return {
@@ -158,7 +167,7 @@ export function buildCdBenchmark(entries: CdSummary[], effectiveCdMs: number): P
 }
 
 export function computeEfficiencyThresholds(
-  gapLists: number[][], durations: number[],
+  gapLists: number[][], durationsMs: number[],
 ): { downtimeThresholdMs: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
   const allGaps = gapLists.flat().sort((a, b) => a - b);
   let downtimeThresholdMs = DEFAULT_DOWNTIME_THRESHOLD_MS;
@@ -168,10 +177,10 @@ export function computeEfficiencyThresholds(
   const efficiencies: number[] = [];
   for (let i = 0; i < gapLists.length; i++) {
     const gaps = gapLists[i];
-    const durationS = durations[i] ?? 0;
-    if (gaps.length && durationS > 0) {
-      const downtimeS = gaps.filter(gap => gap > downtimeThresholdMs).reduce((sum, gap) => sum + gap, 0) / 1000;
-      efficiencies.push(round(Math.max(0, (1 - downtimeS / durationS) * 100)));
+    const durationMs = durationsMs[i] ?? 0;
+    if (gaps.length && durationMs > 0) {
+      const downtimeMs = gaps.filter(gap => gap > downtimeThresholdMs).reduce((sum, gap) => sum + gap, 0);
+      efficiencies.push(round(Math.max(0, (1 - downtimeMs / durationMs) * 100)));
     }
   }
   return {
@@ -184,7 +193,7 @@ export function computeEfficiencyThresholds(
 export function aggregateCdBenchmarks(
   perParse: CdSummary[][], cooldowns: RulebookCooldown[],
 ): Record<string, PerCdBenchmark> {
-  const cdMsByName = new Map(cooldowns.map(cooldown => [cooldown.name, (cooldown.cooldown ?? 90) * 1000]));
+  const cdMsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldownMs(cooldown)]));
   const byCd = new Map<string, CdSummary[]>();
   for (const summaries of perParse) {
     for (const summary of summaries) {
@@ -193,7 +202,7 @@ export function aggregateCdBenchmarks(
   }
   const result: Record<string, PerCdBenchmark> = {};
   for (const [name, entries] of byCd.entries()) {
-    result[name] = buildCdBenchmark(entries, cdMsByName.get(name) ?? 90 * 1000);
+    result[name] = buildCdBenchmark(entries, cdMsByName.get(name) ?? DEFAULT_CD_S * 1000);
   }
   return result;
 }
@@ -201,7 +210,7 @@ export function aggregateCdBenchmarks(
 interface ParseRotation {
   summaries: CdSummary[];
   gapListMs: number[];
-  durationS: number;
+  durationMs: number;
   encounterName: string;
   /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
   ruleSamples: (number | null)[];
@@ -236,7 +245,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       const perParse: CdSummary[][] = [];
       const ruleSamples: (number | null)[][] = [];
       const gapLists: number[][] = [];
-      const durations: number[] = [];
+      const durationsMs: number[] = [];
       let encounterName = '';
       for (const ranking of rankings) {
         const parse = await this.computeParse(ranking, cooldowns, judgeable);
@@ -244,13 +253,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
         perParse.push(parse.summaries);
         ruleSamples.push(parse.ruleSamples);
         gapLists.push(parse.gapListMs);
-        durations.push(parse.durationS);
+        durationsMs.push(parse.durationMs);
         encounterName ||= parse.encounterName;
         if (perParse.length >= TOP_PARSE_COUNT) break;
       }
       if (!perParse.length) return missing('No usable top parses for this encounter.');
 
-      const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
+      const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durationsMs);
 
       const cd_spell_ids = rotationCdSpellIds(cooldowns, defensives);
       return ok({
@@ -258,7 +267,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         encounter_id: encounterId,
         encounter_name: encounterName,
         sample_count: perParse.length,
-        avg_duration_ms: durations.length ? Math.round((mean(durations) ?? 0) * 1000) : 0,
+        avg_duration_ms: durationsMs.length ? Math.round(mean(durationsMs) ?? 0) : 0,
         downtime_threshold_ms: downtimeThresholdMs,
         top_avg_efficiency: topAvgEfficiency,
         top_efficiency_stddev: topEfficiencyStddev,
@@ -301,7 +310,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
           : Promise.resolve([]),
       ]);
 
-      const fightDurS = (fight.endTime - fight.startTime) / 1000;
+      const fightDurationMs = fight.endTime - fight.startTime;
       const blTimeMs = detectBloodlust(buffs, fight.startTime);
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
@@ -309,9 +318,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
         fStart: fight.startTime, fEnd: fight.endTime,
       });
       return {
-        summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeMs),
+        summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurationMs, blTimeMs),
         gapListMs: castGapListMs(casts),
-        durationS: fightDurS,
+        durationMs: fightDurationMs,
         encounterName: fight.name ?? '',
         ruleSamples: rules.map(rule => measureRule(rule.condition, ruleCtx)),
       };

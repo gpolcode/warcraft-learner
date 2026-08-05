@@ -40,6 +40,8 @@ const CLUSTER_MERGE_MS = 20_000;
 const ABILITY_BREAKDOWN_TOP_N = 6;
 /** No ingestable bench (empty rulebook, no top parses, or no fetchable sample); reported as `missing`. */
 const NO_DEFENSIVE_BENCH_MESSAGE = 'Not yet ingested.';
+/** Denominator for a per-minute rate against an ms fight duration. */
+const MS_PER_MIN = 60_000;
 
 /** Defensive name -> spell id, for the defensive window header icons. */
 export function defensiveSpellIds(defensives: RulebookDefensive[]): Record<string, number> {
@@ -66,7 +68,7 @@ export interface ParseDefensiveSummary {
   cast_times_ms: number[];
   first_cast_ms: number | null;
   uses: number;
-  fight_duration_s: number;
+  fight_duration_ms: number;
   hold_windows: HoldWindow[];
   cast_pattern: 'hold' | 'on_cooldown';
 }
@@ -100,7 +102,7 @@ export function summarizeDefensiveCasts(
   buffWindows: Map<number, [number, number | null][]>,
   castEvents: WclEvent[],
   fightStartMs: number,
-  fightDurationS: number,
+  fightDurationMs: number,
 ): ParseDefensiveSummary[] {
   const summaries: ParseDefensiveSummary[] = [];
   for (const defensive of defensives) {
@@ -127,7 +129,7 @@ export function summarizeDefensiveCasts(
         cast_times_ms: castTimesMs,
         first_cast_ms: castTimesMs[0],
         uses: castTimesMs.length,
-        fight_duration_s: fightDurationS,
+        fight_duration_ms: fightDurationMs,
         hold_windows: holdWindows,
         cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
       });
@@ -307,11 +309,11 @@ export function buildDefensiveBenchmark(
     for (let j = 1; j < times.length; j++) gaps.push(times[j] - times[j - 1]);
   }
   const usesPerMinList = summaries
-    .filter(summary => summary.fight_duration_s && summary.uses)
-    .map(summary => summary.uses / (summary.fight_duration_s / 60));
+    .filter(summary => summary.fight_duration_ms && summary.uses)
+    .map(summary => summary.uses / (summary.fight_duration_ms / MS_PER_MIN));
   const benchUsesPerMin = summaries
-    .filter(summary => summary.fight_duration_s > 0 && summary.uses > 0)
-    .map(summary => Math.round(summary.uses / summary.fight_duration_s * 60 * 1000) / 1000);
+    .filter(summary => summary.fight_duration_ms > 0 && summary.uses > 0)
+    .map(summary => Math.round(summary.uses / summary.fight_duration_ms * MS_PER_MIN * 1000) / 1000);
 
   return {
     sample_count: totalParses,
@@ -451,7 +453,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       const fightDurationMs = fight.endTime - fight.startTime;
       const buffWindows = buildAuraWindows(buffs, fight.startTime);
       const windows = findParseDefensiveWindows(dmgTaken, fight.startTime, fightDurationMs, buffWindows, defensives, gameIdByActorId);
-      const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationMs / 1000);
+      const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationMs);
       return { windows, summaries, encounterName: fight.name ?? '' };
     } catch (err) {
       logWarn(`DefensiveTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
