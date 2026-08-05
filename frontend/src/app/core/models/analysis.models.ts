@@ -58,7 +58,7 @@ export interface AbilityBreakdown {
 }
 
 export interface BurstWindow {
-  time_s: number;
+  time_ms: number;
   dmg_avg: number;
   dmg_min: number;
   dmg_max: number;
@@ -67,7 +67,7 @@ export interface BurstWindow {
   common_defensives?: string[];
   avg_targets?: number;
   ability_breakdown: AbilityBreakdown[];
-  window_length_s: number;
+  window_length_ms: number;
   defensive_name?: string;
   spell_id?: number;
   /** Map reference for defensive windows: gameID of the enemy dealing the window's main damage. */
@@ -81,14 +81,14 @@ export interface BurstWindow {
 }
 
 export interface PlayerBurstWindow {
-  time_s?: number;
+  time_ms?: number;
   window_damage: number;
   ability_breakdown?: { spell_id: number; damage: number; casts?: number }[];
 }
 
 export interface DefensiveWindow {
-  start_s: number;
-  end_s: number;
+  start_ms: number;
+  end_ms: number;
   dmg_during: number;
 }
 

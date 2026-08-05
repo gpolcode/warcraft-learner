@@ -73,23 +73,23 @@ export function buildDefensiveUsageWindows(
   spellId: number,
   buffSpans: [number, number | null][],
   castEvents: WclEvent[],
-  dmgInWindow: (startS: number, endS: number) => number,
+  dmgInWindow: (startMs: number, endMs: number) => number,
   rel: (timestampMs: number) => number,
   fStart: number,
   fEnd: number,
-  fightEndS: number,
+  fightEndMs: number,
 ): DefensiveUsageWindow[] {
-  const windows = buffSpans.map(([windowStartS, windowEndS]) => {
+  const windows = buffSpans.map(([windowStartMs, windowEndMs]) => {
     // An open buff (no remove) runs to fight end, never a rulebook duration.
-    const end = windowEndS ?? fightEndS;
-    return { start_s: Math.round(windowStartS * 10) / 10, end_s: Math.round(end * 10) / 10, dmg_during: Math.round(dmgInWindow(windowStartS, end)) };
-  }); // NOTE: windows stay seconds - shared BurstWindow-style card/coverage matching, not a finding.
+    const end = windowEndMs ?? fightEndMs;
+    return { start_ms: Math.round(windowStartMs), end_ms: Math.round(end), dmg_during: Math.round(dmgInWindow(windowStartMs, end)) };
+  });
   if (windows.length) return windows;
   return castEvents
     .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId && cast.timestamp >= fStart && cast.timestamp <= fEnd)
     .map(cast => {
-      const timeS = rel(cast.timestamp) / 1000;
-      return { start_s: Math.round(timeS * 10) / 10, end_s: Math.round(timeS * 10) / 10, dmg_during: 0 };
+      const timeMs = rel(cast.timestamp);
+      return { start_ms: Math.round(timeMs), end_ms: Math.round(timeMs), dmg_during: 0 };
     });
 }
 
@@ -108,25 +108,25 @@ export function analyzeDefensives(
   const buffWin: Record<number, [number, number | null][]> = {};
   for (const event of buffEvents) {
     const spellId = event.abilityGameID;
-    const timeS = rel(event.timestamp) / 1000;
-    if (event.type === 'applybuff') (buffWin[spellId] ??= []).push([timeS, null]);
+    const timeMs = rel(event.timestamp);
+    if (event.type === 'applybuff') (buffWin[spellId] ??= []).push([timeMs, null]);
     else if (event.type === 'removebuff') {
       for (let i = (buffWin[spellId]?.length ?? 0) - 1; i >= 0; i--) {
-        if (buffWin[spellId][i][1] === null) { buffWin[spellId][i][1] = timeS; break; }
+        if (buffWin[spellId][i][1] === null) { buffWin[spellId][i][1] = timeMs; break; }
       }
     }
   }
-  const dmgInWindow = (windowStartS: number, windowEndS: number): number =>
+  const dmgInWindow = (windowStartMs: number, windowEndMs: number): number =>
     dmgTaken.reduce((sum, event) => {
-      const timeS = rel(event.timestamp) / 1000;
-      return timeS >= windowStartS && timeS <= windowEndS ? sum + dmgOf(event) : sum;
+      const timeMs = rel(event.timestamp);
+      return timeMs >= windowStartMs && timeMs <= windowEndMs ? sum + dmgOf(event) : sum;
     }, 0);
 
-  const fightEndS = (fEnd - fStart) / 1000;
+  const fightEndMs = fEnd - fStart;
   return defensives.map(defensive => {
     const spellId = defensive.spell_id;
-    const windows = buildDefensiveUsageWindows(spellId, buffWin[spellId] || [], castEvents, dmgInWindow, rel, fStart, fEnd, fightEndS);
-    const cast_times_ms = windows.map(window => Math.round(window.start_s * 1000)).sort((a, b) => a - b);
+    const windows = buildDefensiveUsageWindows(spellId, buffWin[spellId] || [], castEvents, dmgInWindow, rel, fStart, fEnd, fightEndMs);
+    const cast_times_ms = windows.map(window => window.start_ms).sort((a, b) => a - b);
     const entry: PlayerDefensive = { name: defensive.name, spell_id: spellId, cooldown: defensive.cooldown, uses: windows.length, cast_times_ms, windows };
     if (defensive.talent_gated) entry.talent_gated = true;
     return entry;
@@ -231,8 +231,8 @@ export function computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEv
     .sort((a, b) => a.timestamp - b.timestamp);
 
   return topDefWindows.map(window => {
-    const inWindow = (tsS: number): boolean => tsS >= window.time_s && tsS < window.time_s + window.window_length_s;
-    const winEvents = sorted.filter(event => inWindow((event.timestamp - fStart) / 1000));
+    const inWindow = (tsMs: number): boolean => tsMs >= window.time_ms && tsMs < window.time_ms + window.window_length_ms;
+    const winEvents = sorted.filter(event => inWindow(event.timestamp - fStart));
     const winTotal = winEvents.reduce((sum, event) => sum + dmgOf(event), 0);
     const byAbility: Record<number, number> = {};
     for (const event of winEvents) {
@@ -244,21 +244,21 @@ export function computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEv
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([sid, damage]) => ({ spell_id: parseInt(sid, 10), damage: Math.round(damage) }));
-    return { time_s: window.time_s, window_damage: Math.round(winTotal), ability_breakdown };
+    return { time_ms: window.time_ms, window_damage: Math.round(winTotal), ability_breakdown };
   });
 }
 
-/** Slack (s) around a top window within which a player defensive still "covers" it. */
-const WINDOW_NEAR_S = 3;
+/** Slack around a top window within which a player defensive still "covers" it. */
+const WINDOW_NEAR_MS = 3000;
 
-/** True when any player defensive span overlaps [time_s - near, end + near]. */
+/** True when any player defensive span overlaps [time_ms - near, end + near]. */
 export function playerCoveredWindow(
-  window: BurstWindow, playerDefensive: PlayerDefensive | undefined, nearS = WINDOW_NEAR_S,
+  window: BurstWindow, playerDefensive: PlayerDefensive | undefined, nearMs = WINDOW_NEAR_MS,
 ): boolean {
   if (!playerDefensive) return false;
-  const lo = window.time_s - nearS;
-  const hi = window.time_s + window.window_length_s + nearS;
-  return playerDefensive.windows.some(span => span.start_s <= hi && span.end_s >= lo);
+  const lo = window.time_ms - nearMs;
+  const hi = window.time_ms + window.window_length_ms + nearMs;
+  return playerDefensive.windows.some(span => span.start_ms <= hi && span.end_ms >= lo);
 }
 
 /** Annotations naming whether the expected defensive was pressed; do not set the status. */
@@ -309,15 +309,15 @@ export function defensiveDetailRows(
 /** Map anchor for a defensive window: when to seek and the dominant enemy. */
 export function defensiveMapAnchor(window: BurstWindow): DefensiveMapAnchor {
   return {
-    timeS: window.time_s,
+    timeS: window.time_ms / 1000,
     refGameId: window.ref_game_id ?? null,
-    windowLengthS: window.window_length_s,
+    windowLengthS: window.window_length_ms / 1000,
   };
 }
 
 /** Clip anchor for a defensive window: its span plus the stable memoization key. */
 export function defensiveClipAnchor(window: BurstWindow, index: number): ClipAnchor {
-  return { timeS: window.time_s, windowLengthS: window.window_length_s, key: `defensive-${index}` };
+  return { timeS: window.time_ms / 1000, windowLengthS: window.window_length_ms / 1000, key: `defensive-${index}` };
 }
 
 /** Point anchor keyed by the exact cast millisecond, so two findings in one second stay distinct. */
@@ -329,7 +329,7 @@ export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
   playerDefensives: PlayerDefensive[];
-  fightDurationS: number;
+  fightDurationMs: number;
   abilities: AbilityIcons;
 }
 
@@ -338,13 +338,13 @@ export interface DefensiveWindowsInput {
  * A window starting past the player's fight length is "not reached" and muted.
  */
 export function buildDefensiveWindows(
-  { topWindows, playerWindows, playerDefensives, fightDurationS, abilities }: DefensiveWindowsInput,
+  { topWindows, playerWindows, playerDefensives, fightDurationMs, abilities }: DefensiveWindowsInput,
 ): { windows: ComparisonWindow[]; anchors: DefensiveMapAnchor[]; clipAnchors: ClipAnchor[] } {
   const windows: ComparisonWindow[] = [];
   const anchors: DefensiveMapAnchor[] = [];
   const clipAnchors: ClipAnchor[] = [];
   topWindows.forEach((window, index) => {
-    const notReached = window.time_s > fightDurationS;
+    const notReached = window.time_ms > fightDurationMs;
     const playerWindow = notReached ? null : (playerWindows[index] ?? null);
     const playerDamage = playerWindow?.window_damage ?? null;
     const defensiveName = window.defensive_name ?? window.common_defensives?.[0] ?? '';
@@ -354,8 +354,8 @@ export function buildDefensiveWindows(
     const labels = window.spell_id == null && defensiveName ? [defensiveName] : [];
     if (note) labels.push(note);
     windows.push({
-      timeStartS: window.time_s,
-      timeEndS: window.time_s + window.window_length_s,
+      timeStartS: window.time_ms / 1000,
+      timeEndS: (window.time_ms + window.window_length_ms) / 1000,
       spells: windowSpells(window.spell_id != null ? [window.spell_id] : [], abilities),
       labels,
       status,
@@ -378,7 +378,7 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
     const benchmark = benchmarks[defensive.name];
     const windowsS = windows
       .filter(window => (window.defensive_name ?? window.common_defensives?.[0]) === defensive.name)
-      .map(window => window.time_s)
+      .map(window => window.time_ms / 1000)
       .sort((a, b) => a - b);
     const holds = benchmark?.majority_hold && benchmark.hold_targets
       ? Object.entries(benchmark.hold_targets)
@@ -427,7 +427,7 @@ export class DefensiveFeatureService {
       if (!fight) return ok({ findings: [], spellIdsByName: bench.value.cd_spell_ids, iconByName: {}, windows: [], anchors: [], clipAnchors: [] });
       const fStart = fight.startTime;
       const fEnd = fight.endTime;
-      const fightDurationS = (fEnd - fStart) / 1000;
+      const fightDurationMs = fEnd - fStart;
 
       const [casts, buffs, dtEvents] = await Promise.all([
         this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fStart, fEnd, playerId),
@@ -437,7 +437,7 @@ export class DefensiveFeatureService {
 
       const playerDefensives = analyzeDefensives(bench.value.defensives, casts, buffs, dtEvents, fStart, fEnd);
       const findings = bench.value.defensives.length && playerDefensives.length
-        ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationS)
+        ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationMs / 1000)
         : [];
 
       const playerWindows = computePlayerDefensiveWindows(bench.value.defensive_windows, dtEvents, fStart);
@@ -446,7 +446,7 @@ export class DefensiveFeatureService {
         iconByName[name] = bench.value.ability_icons[spellId].icon;
       }
       const { windows, anchors, clipAnchors } = buildDefensiveWindows({
-        topWindows: bench.value.defensive_windows, playerWindows, playerDefensives, fightDurationS, abilities: bench.value.ability_icons,
+        topWindows: bench.value.defensive_windows, playerWindows, playerDefensives, fightDurationMs, abilities: bench.value.ability_icons,
       });
       return ok({ findings, spellIdsByName: bench.value.cd_spell_ids, iconByName, windows, anchors, clipAnchors });
     } catch (cause) {

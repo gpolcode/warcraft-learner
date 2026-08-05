@@ -24,18 +24,18 @@ export function getOrInsert<K, V>(map: Map<K, V>, key: K, makeDefault: () => V):
   return value;
 }
 
-/** Group windows whose time is within `mergeS` of the running cluster median. */
-export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: number): T[][] {
-  const sorted = [...windows].sort((a, b) => a.time_s - b.time_s);
+/** Group windows whose time is within `mergeMs` of the running cluster median. */
+export function groupByTime<T extends { time_ms: number }>(windows: T[], mergeMs: number): T[][] {
+  const sorted = [...windows].sort((a, b) => a.time_ms - b.time_ms);
   const clusters: T[][] = [];
   let openTimes: number[] = [];
   for (const window of sorted) {
-    if (clusters.length && Math.abs(window.time_s - (median(openTimes) ?? 0)) <= mergeS) {
+    if (clusters.length && Math.abs(window.time_ms - (median(openTimes) ?? 0)) <= mergeMs) {
       clusters[clusters.length - 1].push(window);
-      openTimes.push(window.time_s);
+      openTimes.push(window.time_ms);
     } else {
       clusters.push([window]);
-      openTimes = [window.time_s];
+      openTimes = [window.time_ms];
     }
   }
   return clusters;

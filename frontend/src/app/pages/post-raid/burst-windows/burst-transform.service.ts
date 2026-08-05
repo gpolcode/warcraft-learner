@@ -8,7 +8,7 @@ import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation, quantile } from 'd3-array';
-import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
+import { groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { abilityIcons, normalizeAbilityId, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
@@ -26,12 +26,11 @@ const SIGNIFICANCE_PCT = 0.015;
 const CLUSTER_MIN_FRAC = 0.4;
 /** "At least half the member parses" - ability/cd inclusion in a cluster. */
 const MEMBER_MAJORITY_FRAC = 0.5;
-/** Windows within this many seconds cluster together. */
-const CLUSTER_MERGE_S = 15;
+/** Windows within this many ms cluster together. */
+const CLUSTER_MERGE_MS = 15_000;
 
 /** Sub-window bin width: damage is bucketed into 1s bins. */
 const BIN_MS = 1000;
-const BIN_S = BIN_MS / 1000;
 /** Rolling-rate window: each bin's rate sums itself + the next ROLL_BINS-1 bins. */
 const ROLL_BINS = 3;
 /** A bin is "dense" when its rolling rate is at least this multiple of the mean rolling rate. */
@@ -48,21 +47,21 @@ export function cdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDe
   return map;
 }
 
-interface CdTiming { name: string; castTimesS: number[]; }
+interface CdTiming { name: string; castTimesMs: number[]; }
 
 export function cdTimings(casts: WclEvent[], cooldowns: RulebookCooldown[], fightStartMs: number): CdTiming[] {
   return cooldowns.map(cooldown => ({
     name: cooldown.name,
-    castTimesS: casts
+    castTimesMs: casts
       .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => (cast.timestamp - fightStartMs) / 1000)
+      .map(cast => cast.timestamp - fightStartMs)
       .sort((a, b) => a - b),
   }));
 }
 
 export interface ParseWindow {
-  time_s: number;
-  window_length_s: number;
+  time_ms: number;
+  window_length_ms: number;
   window_damage: number;
   active_cds: string[];
   ability_breakdown: { spell_id: number; damage: number; casts: number; is_passive: boolean }[];
@@ -218,10 +217,10 @@ export function findParseWindows(scan: ParseWindowScan): ParseWindow[] {
   for (const run of denseRuns) {
     const trimmed = trimRunToDamage(run, damagePerBin);
     if (!trimmed) continue;
-    const windowStartS = trimmed.startBin * BIN_S;
-    const windowEndS = (trimmed.endBin + 1) * BIN_S;
-    const startMs = fightStartMs + windowStartS * 1000;
-    const endMs = fightStartMs + windowEndS * 1000;
+    const windowStartMs = trimmed.startBin * BIN_MS;
+    const windowEndMs = (trimmed.endBin + 1) * BIN_MS;
+    const startMs = fightStartMs + windowStartMs;
+    const endMs = fightStartMs + windowEndMs;
     // The fight-closing window counts the fight-end hit bucketDamagePerBin clamps into the last bin; interior windows stay half-open.
     const closesFight = trimmed.endBin === binCount - 1;
     const windowHits = hits.filter(hit => hit[0] >= startMs && (closesFight ? hit[0] <= endMs : hit[0] < endMs));
@@ -232,19 +231,19 @@ export function findParseWindows(scan: ParseWindowScan): ParseWindow[] {
 
     // Attribute (never bound by) the cooldowns whose cast lands inside the window.
     const active_cds = timings
-      .filter(timing => timing.castTimesS.some(castS => castS >= windowStartS && castS < windowEndS))
+      .filter(timing => timing.castTimesMs.some(castMs => castMs >= windowStartMs && castMs < windowEndMs))
       .map(timing => timing.name);
 
     windows.push({
-      time_s: round(windowStartS),
-      window_length_s: round(windowEndS - windowStartS),
+      time_ms: windowStartMs,
+      window_length_ms: windowEndMs - windowStartMs,
       window_damage: windowDmg,
       active_cds,
       ability_breakdown,
       parse_index: 0, // stamped per-parse in getBench
     });
   }
-  return windows.sort((a, b) => a.time_s - b.time_s);
+  return windows.sort((a, b) => a.time_ms - b.time_ms);
 }
 
 /** Keep each parse's biggest window (by window_damage), so a cluster counts DISTINCT parses. */
@@ -257,10 +256,10 @@ export function dedupeByParse(cluster: ParseWindow[]): ParseWindow[] {
   return [...byParse.values()];
 }
 
-// Groups windows whose start is within CLUSTER_MERGE_S and keeps only a burst a majority of parses share.
-export function clusterParseWindows(windows: ParseWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
+// Groups windows whose start is within CLUSTER_MERGE_MS and keeps only a burst a majority of parses share.
+export function clusterParseWindows(windows: ParseWindow[], sampleCount: number, mergeMs = CLUSTER_MERGE_MS): BurstWindow[] {
   const result: BurstWindow[] = [];
-  for (const cluster of groupByTime(windows, mergeS)) {
+  for (const cluster of groupByTime(windows, mergeMs)) {
     // Reduce to one window per parse so the consensus gate and damage stats count DISTINCT parses:
     // a parse landing two dense runs near the cluster counts once.
     const members = dedupeByParse(cluster);
@@ -300,17 +299,17 @@ export function clusterParseWindows(windows: ParseWindow[], sampleCount: number,
       .map(([name]) => name);
 
     result.push({
-      time_s: round(median(members.map(member => member.time_s)) ?? 0),
+      time_ms: Math.round(median(members.map(member => member.time_ms)) ?? 0),
       dmg_avg: Math.round((mean(damages) ?? 0)),
       dmg_stddev: Math.round((deviation(damages) ?? 0)),
       dmg_min: Math.round(Math.min(...damages)),
       dmg_max: Math.round(Math.max(...damages)),
       common_cds,
-      window_length_s: round(mean(members.map(member => member.window_length_s)) ?? 0),
+      window_length_ms: Math.round(mean(members.map(member => member.window_length_ms)) ?? 0),
       ability_breakdown,
     });
   }
-  return result.sort((a, b) => a.time_s - b.time_s);
+  return result.sort((a, b) => a.time_ms - b.time_ms);
 }
 
 @Injectable({ providedIn: 'root' })

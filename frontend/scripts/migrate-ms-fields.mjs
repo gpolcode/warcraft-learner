@@ -7,8 +7,9 @@
  * re-derive every already-ingested encounter (spending WCL budget) just to relabel
  * numbers that are already correct. It:
  *
- *   1. Rewrites each `rotation/{enc}.json` and `defensive/{enc}.json` payload's
- *      seconds-suffixed fields to their millisecond equivalents (rename + x1000).
+ *   1. Rewrites each `rotation/{enc}.json`, `defensive/{enc}.json`, and `burst/{enc}.json`
+ *      payload's seconds-suffixed fields to their millisecond equivalents (rename + x1000),
+ *      including the burst/defensive window arrays (`windows` / `defensive_windows`).
  *   2. Re-stamps every slice file for that encounter (burst/rotation/defensive/gear/
  *      positions/northern-sky, whichever exist) with a fresh `source_signature` +
  *      `ingest_version`, computed the same way the ingest orchestrator's cheap
@@ -210,6 +211,17 @@ function migratePerDefensiveBenchmark(benchmark) {
   };
 }
 
+/** True when a burst/defensive window entry still carries the old seconds field (idempotency guard). */
+function isOldShapeWindow(window) {
+  return Object.prototype.hasOwnProperty.call(window, 'time_s');
+}
+
+function migrateWindow(window) {
+  if (!isOldShapeWindow(window)) return window;
+  const { time_s, window_length_s, ...rest } = window;
+  return { ...rest, time_ms: Math.round(time_s * 1000), window_length_ms: Math.round(window_length_s * 1000) };
+}
+
 function migrateBenchedRules(rules) {
   if (!rules) return rules;
   return rules.map(entry => {
@@ -234,14 +246,22 @@ function migrateRotationBench(bench) {
 
 function migrateDefensiveBench(bench) {
   const entries = Object.entries(bench.per_defensive_benchmarks ?? {});
-  if (!entries.some(([, b]) => isOldShapeBenchmark(b))) return { bench, changed: false };
+  const benchmarksChanged = entries.some(([, b]) => isOldShapeBenchmark(b));
+  const windowsChanged = (bench.defensive_windows ?? []).some(isOldShapeWindow);
+  if (!benchmarksChanged && !windowsChanged) return { bench, changed: false };
   return {
     bench: {
       ...bench,
       per_defensive_benchmarks: Object.fromEntries(entries.map(([name, b]) => [name, migratePerDefensiveBenchmark(b)])),
+      defensive_windows: (bench.defensive_windows ?? []).map(migrateWindow),
     },
     changed: true,
   };
+}
+
+function migrateBurstBench(bench) {
+  if (!(bench.windows ?? []).some(isOldShapeWindow)) return { bench, changed: false };
+  return { bench: { ...bench, windows: bench.windows.map(migrateWindow) }, changed: true };
 }
 
 // --- File-tree walk ---
@@ -267,12 +287,15 @@ function listEncounterIds(specDir, slice) {
 async function migrateEncounter(specDir, spec, specMeta, encounterId, { dryRun }) {
   const rotationPath = path.join(specDir, 'rotation', `${encounterId}.json`);
   const defensivePath = path.join(specDir, 'defensive', `${encounterId}.json`);
+  const burstPath = path.join(specDir, 'burst', `${encounterId}.json`);
   const rotation = readJson(rotationPath);
   const defensive = readJson(defensivePath);
+  const burst = readJson(burstPath);
 
   let fieldsChanged = false;
   let migratedRotation = rotation;
   let migratedDefensive = defensive;
+  let migratedBurst = burst;
   if (rotation) {
     const result = migrateRotationBench(rotation);
     migratedRotation = result.bench;
@@ -283,9 +306,12 @@ async function migrateEncounter(specDir, spec, specMeta, encounterId, { dryRun }
     migratedDefensive = result.bench;
     fieldsChanged ||= result.changed;
   }
+  if (burst) {
+    const result = migrateBurstBench(burst);
+    migratedBurst = result.bench;
+    fieldsChanged ||= result.changed;
+  }
 
-  const burstPath = path.join(specDir, 'burst', `${encounterId}.json`);
-  const burst = readJson(burstPath);
   const alreadyCurrent = burst?.ingest_version >= NEW_INGEST_VERSION;
 
   if (!fieldsChanged && alreadyCurrent) return 'skipped (already current)';
@@ -307,9 +333,10 @@ async function migrateEncounter(specDir, spec, specMeta, encounterId, { dryRun }
 
   if (migratedRotation) writeJson(rotationPath, restamp(migratedRotation, signature));
   if (migratedDefensive) writeJson(defensivePath, restamp(migratedDefensive, signature));
+  if (migratedBurst) writeJson(burstPath, restamp(migratedBurst, signature));
   if (signature) {
     for (const slice of SLICES_TO_RESTAMP) {
-      if (slice === 'rotation' || slice === 'defensive') continue; // already written above
+      if (slice === 'rotation' || slice === 'defensive' || slice === 'burst') continue; // already written above
       const slicePath = path.join(specDir, slice, `${encounterId}.json`);
       const data = readJson(slicePath);
       if (data) writeJson(slicePath, restamp(data, signature));

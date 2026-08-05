@@ -34,8 +34,8 @@ const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
 const CONSENSUS_FRAC = 0.5;
 /** "At least this share of member parses" - ability inclusion in a cluster. */
 const MEMBER_MAJORITY_FRAC = 0.5;
-/** Defensive windows within this many seconds cluster together. */
-const CLUSTER_MERGE_S = 20;
+/** Defensive windows within this many ms cluster together. */
+const CLUSTER_MERGE_MS = 20_000;
 /** Keep only the top-N damage sources in a window's ability breakdown (UI row cap). */
 const ABILITY_BREAKDOWN_TOP_N = 6;
 /** No ingestable bench (empty rulebook, no top parses, or no fetchable sample); reported as `missing`. */
@@ -71,10 +71,15 @@ export interface ParseDefensiveSummary {
   cast_pattern: 'hold' | 'on_cooldown';
 }
 
+/** Rulebook cooldown (seconds) -> the one ms conversion point every consumer shares. */
+function defensiveCooldownMs(defensive: RulebookDefensive): number {
+  return defensive.cooldown * 1000;
+}
+
 /** One parse's defensive window before cross-parse clustering. */
 export interface ParseDefWindow {
-  time_s: number;
-  window_length_s: number;
+  time_ms: number;
+  window_length_ms: number;
   window_damage: number;
   /** window_damage as a share of the parse's total damage taken (mitigation magnitude). */
   pct_of_total: number;
@@ -100,7 +105,7 @@ export function summarizeDefensiveCasts(
   const summaries: ParseDefensiveSummary[] = [];
   for (const defensive of defensives) {
     const spellId = defensive.spell_id;
-    const cooldownMs = defensive.cooldown * 1000;
+    const cooldownMs = defensiveCooldownMs(defensive);
     const castTimesMs: number[] = [];
 
     for (const buffWindow of (buffWindows.get(spellId) ?? [])) castTimesMs.push(Math.round(buffWindow[0]));
@@ -154,7 +159,7 @@ export function windowDamageBreakdown(windowHits: WindowHit[]): { spell_id: numb
  * never a rulebook duration), its damage taken, its share of parse total, and dominant enemy.
  */
 export function findParseDefensiveWindows(
-  damageTaken: WclEvent[], fightStartMs: number, fightDurationS: number,
+  damageTaken: WclEvent[], fightStartMs: number, fightDurationMs: number,
   buffWindows: Map<number, [number, number | null][]>,
   defensives: RulebookDefensive[],
   gameIdByActorId: Map<number, number>,
@@ -165,7 +170,6 @@ export function findParseDefensiveWindows(
     .sort((a, b) => a[0] - b[0]);
   if (!hits.length) return [];
   const total = hits.reduce((sum, hit) => sum + hit[1], 0);
-  const fightDurationMs = fightDurationS * 1000;
 
   const result: ParseDefWindow[] = [];
   for (const defensive of defensives) {
@@ -189,8 +193,8 @@ export function findParseDefensiveWindows(
       const refGameId = topSource != null ? (gameIdByActorId.get(topSource) ?? null) : null;
 
       result.push({
-        time_s: round(startMs / 1000),
-        window_length_s: round((endMs - startMs) / 1000),
+        time_ms: startMs,
+        window_length_ms: endMs - startMs,
         window_damage: windowDmg,
         pct_of_total: total > 0 ? windowDmg / total : 0,
         parse_index: 0,
@@ -201,7 +205,7 @@ export function findParseDefensiveWindows(
       });
     }
   }
-  return result.sort((a, b) => a.time_s - b.time_s);
+  return result.sort((a, b) => a.time_ms - b.time_ms);
 }
 
 /** Absolute damage stats (avg/stddev/min/max, rounded) over a cluster's window damages. */
@@ -242,7 +246,7 @@ export function clusterAbilityBreakdown(cluster: ParseDefWindow[]): BurstWindow[
 }
 
 /** Clusters per-parse windows into the bench `BurstWindow[]`, one per consensus of distinct parses. */
-export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
+export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: number, mergeMs = CLUSTER_MERGE_MS): BurstWindow[] {
   if (!windows.length) return [];
   const byDefensive = new Map<string, ParseDefWindow[]>();
   for (const window of windows) {
@@ -252,7 +256,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
   const minParses = Math.max(2, sampleCount * CONSENSUS_FRAC);
   const result: BurstWindow[] = [];
   for (const [defensiveName, group] of byDefensive.entries()) {
-    for (const cluster of groupByTime(group, mergeS)) {
+    for (const cluster of groupByTime(group, mergeMs)) {
       // A majority of DISTINCT parses must defend here.
       const distinctParses = new Set(cluster.map(member => member.parse_index)).size;
       if (distinctParses < minParses) continue;
@@ -267,10 +271,10 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
       const ref_game_id = [...refCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
 
       result.push({
-        time_s: round(median(cluster.map(member => member.time_s)) ?? 0),
+        time_ms: Math.round(median(cluster.map(member => member.time_ms)) ?? 0),
         ...clusterDamageStats(damages),
         dmg_pct_avg: round((mean(shares) ?? 0), 3),
-        window_length_s: round(mean(cluster.map(member => member.window_length_s)) ?? 0),
+        window_length_ms: Math.round(mean(cluster.map(member => member.window_length_ms)) ?? 0),
         defensive_name: defensiveName,
         spell_id: cluster[0].spell_id,
         common_defensives: [defensiveName],
@@ -280,7 +284,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
       });
     }
   }
-  return result.sort((a, b) => a.time_s - b.time_s);
+  return result.sort((a, b) => a.time_ms - b.time_ms);
 }
 
 /**
@@ -351,7 +355,7 @@ export function aggregateDefensiveBenchmarks(
   for (const defensive of defensives) {
     const summaries = byName.get(defensive.name);
     if (!summaries?.length) continue; // no sampled parse used this defensive
-    perDefensiveBenchmarks[defensive.name] = buildDefensiveBenchmark(summaries, defensive.cooldown * 1000, totalParses);
+    perDefensiveBenchmarks[defensive.name] = buildDefensiveBenchmark(summaries, defensiveCooldownMs(defensive), totalParses);
     const uses = summaries.map(summary => summary.uses);
     topDefensivesSummary.push({
       spell_id: defensive.spell_id,
@@ -444,10 +448,10 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageTaken', fight.startTime, fight.endTime, player.id),
       ]);
 
-      const fightDurationS = (fight.endTime - fight.startTime) / 1000;
+      const fightDurationMs = fight.endTime - fight.startTime;
       const buffWindows = buildAuraWindows(buffs, fight.startTime);
-      const windows = findParseDefensiveWindows(dmgTaken, fight.startTime, fightDurationS, buffWindows, defensives, gameIdByActorId);
-      const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationS);
+      const windows = findParseDefensiveWindows(dmgTaken, fight.startTime, fightDurationMs, buffWindows, defensives, gameIdByActorId);
+      const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationMs / 1000);
       return { windows, summaries, encounterName: fight.name ?? '' };
     } catch (err) {
       logWarn(`DefensiveTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);

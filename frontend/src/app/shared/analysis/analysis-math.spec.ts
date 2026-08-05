@@ -31,18 +31,18 @@ describe('getOrInsert', () => {
 });
 
 describe('groupByTime', () => {
-  const MERGE_S = 5;
-  it('keeps windows within mergeS of the running median in one cluster', () => {
-    // 0 and 4 cluster (median 2); 6 is within 5 of that median, so all three merge.
-    const clusters = groupByTime([{ time_s: 0 }, { time_s: 4 }, { time_s: 6 }], MERGE_S);
+  const MERGE_MS = 5000;
+  it('keeps windows within mergeMs of the running median in one cluster', () => {
+    // 0 and 4000 cluster (median 2000); 6000 is within 5000 of that median, so all three merge.
+    const clusters = groupByTime([{ time_ms: 0 }, { time_ms: 4000 }, { time_ms: 6000 }], MERGE_MS);
     expect(clusters).toHaveLength(1);
     expect(clusters[0]).toHaveLength(3);
   });
-  it('opens a new cluster when a window is beyond mergeS of the median', () => {
-    // 0 and 4 cluster (median 2); 20 is > 5 from the median, so it splits off.
-    const clusters = groupByTime([{ time_s: 0 }, { time_s: 4 }, { time_s: 20 }], MERGE_S);
+  it('opens a new cluster when a window is beyond mergeMs of the median', () => {
+    // 0 and 4000 cluster (median 2000); 20000 is > 5000 from the median, so it splits off.
+    const clusters = groupByTime([{ time_ms: 0 }, { time_ms: 4000 }, { time_ms: 20000 }], MERGE_MS);
     expect(clusters).toHaveLength(2);
-    expect(clusters[1]).toEqual([{ time_s: 20 }]);
+    expect(clusters[1]).toEqual([{ time_ms: 20000 }]);
   });
 });
 

@@ -24,10 +24,9 @@ import {
   evaluateFillerInBuff, evaluateSpendAtStacks, evaluateAuraClipped, evaluateFillerBelowHealth,
 } from './rotation-rules';
 
-// A zero band keeps the fixture arithmetic exact. Kept in seconds for building event fixtures;
-// the *_MS companions are what the four time-based kinds' thresholds are measured in.
-const PAIR_WINDOW_S = 5, HOLD_WINDOW_S = 15;
-const PAIR_WINDOW_MS = PAIR_WINDOW_S * 1000, HOLD_WINDOW_MS = HOLD_WINDOW_S * 1000;
+// A zero band keeps the fixture arithmetic exact. The four time-based kinds measure their
+// threshold in milliseconds; event fixtures still build in seconds (the builder's own unit).
+const PAIR_WINDOW_MS = 5_000, HOLD_WINDOW_MS = 15_000;
 function thr(value: number, band = 0): RuleThreshold {
   return { value, band };
 }
@@ -264,19 +263,18 @@ describe('rule evaluator boundaries', () => {
   });
 
   it('accepts an opener step landing exactly on window_s', () => {
-    const OPENER_WINDOW_S = 12;
+    const OPENER_WINDOW_MS = 12_000;
     const opener: OpeningSequenceCondition = {
       kind: 'opening_sequence', spell_ids: [SHADOW_BLADES, SECRET_TECHNIQUE],
       spell_names: ['Shadow Blades', 'Secret Technique'],
     };
-    const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S * 1000), 'warning')).toBeNull();
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, OPENER_WINDOW_MS / 1000)]);
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')).toBeNull();
   });
 });
 
 describe('evaluateOpeningSequence', () => {
-  const OPENER_WINDOW_S = 12;
-  const OPENER_WINDOW_MS = OPENER_WINDOW_S * 1000;
+  const OPENER_WINDOW_MS = 12_000;
   const opener: OpeningSequenceCondition = {
     kind: 'opening_sequence',
     spell_ids: [SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE],
@@ -294,7 +292,7 @@ describe('evaluateOpeningSequence', () => {
   });
 
   it('flags a step that lands past the opener window', () => {
-    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S + 5)]);
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, OPENER_WINDOW_MS / 1000 + 5)]);
     expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')?.measured?.value).toBe('2 / 3');
   });
 
@@ -658,8 +656,7 @@ describe('evaluateSpendAtStacks', () => {
 
 describe('evaluateAuraClipped', () => {
   // Where the field refreshes: it lets the dot run this long before re-applying.
-  const FIELD_ELAPSED_S = 12;
-  const FIELD_ELAPSED_MS = FIELD_ELAPSED_S * 1000;
+  const FIELD_ELAPSED_MS = 12_000;
   const moonfireClipped: AuraClippedCondition = {
     kind: 'aura_clipped',
     aura_spell_id: MOONFIRE_DOT, aura_spell_name: 'Moonfire',
@@ -678,8 +675,8 @@ describe('evaluateAuraClipped', () => {
   it('accepts a refresh exactly at the field bar but not one a second inside it', () => {
     const at = (elapsed: number) =>
       ruleCtx([cast(MOONFIRE, APPLY_AT_S + elapsed)], { debuffs: reapplied(elapsed) });
-    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S), thr(FIELD_ELAPSED_MS), 'warning')).toBeNull();
-    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S - 1), thr(FIELD_ELAPSED_MS), 'warning')).not.toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_MS / 1000), thr(FIELD_ELAPSED_MS), 'warning')).toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_MS / 1000 - 1), thr(FIELD_ELAPSED_MS), 'warning')).not.toBeNull();
   });
 
   it('ignores a refresh no cast produced, since most refreshes in a log are procs', () => {
@@ -904,7 +901,7 @@ describe('measureRule', () => {
 describe('threshold band', () => {
   it('widens the pairing window, accepting a lead the bare median would flag', () => {
     const BAND_MS = 3 * 1000;
-    const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, PAIR_WINDOW_S + 2)]);
+    const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, PAIR_WINDOW_MS / 1000 + 2)]);
     expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_MS, BAND_MS), 'warning')).toBeNull();
     expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_MS), 'warning')).not.toBeNull();
   });

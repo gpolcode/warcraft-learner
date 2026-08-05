@@ -81,19 +81,19 @@ export function burstDetailRows(
 }
 
 export function burstMapAnchor(window: BurstWindow): BurstMapAnchor {
-  return { timeS: window.time_s, windowLengthS: window.window_length_s };
+  return { timeS: window.time_ms / 1000, windowLengthS: window.window_length_ms / 1000 };
 }
 
 /** The `key` is the stable id clips are memoized under. */
 export function burstClipAnchor(window: BurstWindow, index: number): ClipAnchor {
-  return { timeS: window.time_s, windowLengthS: window.window_length_s, key: `burst-${index}` };
+  return { timeS: window.time_ms / 1000, windowLengthS: window.window_length_ms / 1000, key: `burst-${index}` };
 }
 
 /** A window whose start is past the player's fight length is "not reached" and shown muted. */
 export function buildBurstView(
   topWindows: BurstWindow[],
   playerWindows: PlayerBurstWindow[],
-  fightDurationS: number,
+  fightDurationMs: number,
   cdSpellIds: Record<string, number>,
   abilities: AbilityIcons,
   benchOnly = false,
@@ -102,14 +102,14 @@ export function buildBurstView(
   const anchors: BurstMapAnchor[] = [];
   const clipAnchors: ClipAnchor[] = [];
   topWindows.forEach((window, index) => {
-    const notReached = window.time_s > fightDurationS;
+    const notReached = window.time_ms > fightDurationMs;
     const playerWindow = notReached ? null : (playerWindows[index] ?? null);
     const playerDamage = playerWindow?.window_damage ?? null;
     const { status, icon } = burstWindowStatus(playerDamage, window.dmg_avg, window.dmg_min, window.dmg_stddev, notReached, benchOnly);
     const { spellIds, labels } = splitCommonCds(window.common_cds, cdSpellIds);
     windows.push({
-      timeStartS: window.time_s,
-      timeEndS: window.time_s + window.window_length_s,
+      timeStartS: window.time_ms / 1000,
+      timeEndS: (window.time_ms + window.window_length_ms) / 1000,
       spells: windowSpells(spellIds, abilities),
       labels,
       status,
@@ -127,7 +127,7 @@ function eventDamage(event: WclEvent): number {
   return (event.amount || 0) + (event.absorbed || 0);
 }
 
-// Half-open window boundary: an event at exactly `time_s + window_length_s` falls OUTSIDE. Casts are
+// Half-open window boundary: an event at exactly `time_ms + window_length_ms` falls OUTSIDE. Casts are
 // attributed by ability NAME, not spell id, because a damage event's `abilityGameID` often differs.
 function playerWindowAggregate(
   window: BurstWindow,
@@ -136,8 +136,8 @@ function playerWindowAggregate(
   fightStartMs: number,
   nameOf: (spellId: number) => string,
 ): PlayerBurstWindow {
-  const inWindow = (tsS: number): boolean => tsS >= window.time_s && tsS < window.time_s + window.window_length_s;
-  const winEvents = sortedDmg.filter(event => inWindow((event.timestamp - fightStartMs) / 1000));
+  const inWindow = (tsMs: number): boolean => tsMs >= window.time_ms && tsMs < window.time_ms + window.window_length_ms;
+  const winEvents = sortedDmg.filter(event => inWindow(event.timestamp - fightStartMs));
   const winTotal = winEvents.reduce((sum, event) => sum + eventDamage(event), 0);
   const byAbility: Record<number, number> = {};
   for (const event of winEvents) {
@@ -148,7 +148,7 @@ function playerWindowAggregate(
   }
   const castsByName = new Map<string, number>();
   for (const event of casts) {
-    if (inWindow((event.timestamp - fightStartMs) / 1000)) {
+    if (inWindow(event.timestamp - fightStartMs)) {
       const name = nameOf(event.abilityGameID!);
       castsByName.set(name, (castsByName.get(name) ?? 0) + 1);
     }
@@ -159,7 +159,7 @@ function playerWindowAggregate(
       const spell_id = parseInt(sid, 10);
       return { spell_id, damage: Math.round(dmg), casts: castsByName.get(nameOf(spell_id)) ?? 0 };
     });
-  return { time_s: window.time_s, window_damage: Math.round(winTotal), ability_breakdown };
+  return { time_ms: window.time_ms, window_damage: Math.round(winTotal), ability_breakdown };
 }
 
 export function findPlayerBurstWindows(
@@ -204,8 +204,8 @@ export class BurstFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
       ]);
       const playerWindows = findPlayerBurstWindows(bench.value.windows, damage, casts, fight.startTime, abilityNames);
-      const fightDurationS = (fight.endTime - fight.startTime) / 1000;
-      return ok(buildBurstView(bench.value.windows, playerWindows, fightDurationS, bench.value.cd_spell_ids, bench.value.ability_icons));
+      const fightDurationMs = fight.endTime - fight.startTime;
+      return ok(buildBurstView(bench.value.windows, playerWindows, fightDurationMs, bench.value.cd_spell_ids, bench.value.ability_icons));
     } catch (cause) {
       logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);
       return toLoadError(cause, 'burst.player-view');

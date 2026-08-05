@@ -56,14 +56,14 @@ describe('splitCommonCds', () => {
 
 describe('burstMapAnchor', () => {
   it('carries the window seek time', () => {
-    const window = { time_s: 12, window_length_s: 18, common_cds: ['Shadow Blades', 'Mystery'] } as BurstWindow;
+    const window = { time_ms: 12_000, window_length_ms: 18_000, common_cds: ['Shadow Blades', 'Mystery'] } as BurstWindow;
     expect(burstMapAnchor(window)).toEqual({ timeS: 12, windowLengthS: 18 });
   });
 });
 
 describe('burstClipAnchor', () => {
   it('carries the window span and a stable indexed key', () => {
-    const window = { time_s: 12, window_length_s: 18 } as BurstWindow;
+    const window = { time_ms: 12_000, window_length_ms: 18_000 } as BurstWindow;
     expect(burstClipAnchor(window, 2)).toEqual({ timeS: 12, windowLengthS: 18, key: 'burst-2' });
   });
 });
@@ -80,7 +80,7 @@ describe('burstDetailRows', () => {
 
   it('joins the player normalized melee and synthetic damage onto the bench auto-attack and fallback rows', () => {
     const window: BurstWindow = {
-      time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+      time_ms: 10_000, window_length_ms: 20_000, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
     };
     const [playerWindow] = findPlayerBurstWindows(
       [window],
@@ -112,7 +112,7 @@ describe('burstDetailRows', () => {
 
 describe('buildBurstView', () => {
   const window: BurstWindow = {
-    time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
+    time_ms: 10_000, window_length_ms: 20_000, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     common_cds: ['Shadow Blades'],
     ability_breakdown: [
       { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 },
@@ -122,9 +122,9 @@ describe('buildBurstView', () => {
 
   it('pairs each window with the player damage at the same index', () => {
     const player: PlayerBurstWindow[] = [
-      { time_s: 10, window_damage: 950, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] },
+      { time_ms: 10_000, window_damage: 950, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] },
     ];
-    const view = buildBurstView([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
+    const view = buildBurstView([window], player, 300_000, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(view.windows).toHaveLength(1);
     expect(view.windows[0].overview.playerPct).toBe(950);
     expect(view.windows[0].spells).toEqual([{ id: SHADOW_BLADES, icon: 'sb', name: 'Shadow Blades' }]);
@@ -140,14 +140,14 @@ describe('buildBurstView', () => {
         { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 0, is_passive: true },
       ],
     };
-    const view = buildBurstView([passiveWindow], [], 300, {}, abilities, true);
+    const view = buildBurstView([passiveWindow], [], 300_000, {}, abilities, true);
     expect(view.windows[0].detailRows[0].passive).toBe(true);
     // The default (non-passive) bench ability stays passive=false.
-    expect(buildBurstView([window], [], 300, {}, abilities, true).windows[0].detailRows[0].passive).toBe(false);
+    expect(buildBurstView([window], [], 300_000, {}, abilities, true).windows[0].detailRows[0].passive).toBe(false);
   });
 
   it('mutes and drops player data for a window the fight never reached', () => {
-    const view = buildBurstView([window], [], 5, {}, abilities);
+    const view = buildBurstView([window], [], 5_000, {}, abilities);
     expect(view.windows[0].status).toBe('muted');
     expect(view.windows[0].overview.playerPct).toBeNull();
   });
@@ -162,7 +162,7 @@ describe('buildBurstView', () => {
 
 describe('findPlayerBurstWindows', () => {
   const window: BurstWindow = {
-    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+    time_ms: 10_000, window_length_ms: 20_000, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
   };
 
   it('sums player damage inside the window (amount + absorbed) and counts casts by ability name', () => {
@@ -250,7 +250,7 @@ const benchFixture: BurstBench = {
   cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
   ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } },
   windows: [{
-    time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
+    time_ms: 10_000, window_length_ms: 20_000, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     common_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }],
   }],
