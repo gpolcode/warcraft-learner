@@ -63,8 +63,8 @@ export function defensivePlanMeta(defensives: RulebookDefensive[]): DefensivePla
 /** One parse's defensive usage summary (buff-window-centric, cast fallback). */
 export interface ParseDefensiveSummary {
   name: string;
-  cast_times_s: number[];
-  first_cast_s: number | null;
+  cast_times_ms: number[];
+  first_cast_ms: number | null;
   uses: number;
   fight_duration_s: number;
   hold_windows: HoldWindow[];
@@ -100,28 +100,28 @@ export function summarizeDefensiveCasts(
   const summaries: ParseDefensiveSummary[] = [];
   for (const defensive of defensives) {
     const spellId = defensive.spell_id;
-    const cooldownS = defensive.cooldown;
-    const castTimes: number[] = [];
+    const cooldownMs = defensive.cooldown * 1000;
+    const castTimesMs: number[] = [];
 
-    for (const buffWindow of (buffWindows.get(spellId) ?? [])) castTimes.push(round(buffWindow[0] / 1000));
+    for (const buffWindow of (buffWindows.get(spellId) ?? [])) castTimesMs.push(Math.round(buffWindow[0]));
 
-    if (castTimes.length === 0) {
+    if (castTimesMs.length === 0) {
       for (const cast of castEvents) {
         if (cast.type === 'cast' && cast.abilityGameID === spellId) {
-          castTimes.push(round((cast.timestamp - fightStartMs) / 1000));
+          castTimesMs.push(Math.round(cast.timestamp - fightStartMs));
         }
       }
     }
 
-    castTimes.sort((a, b) => a - b);
-    const holdWindows = detectHoldWindows(castTimes, cooldownS);
+    castTimesMs.sort((a, b) => a - b);
+    const holdWindows = detectHoldWindows(castTimesMs, cooldownMs);
 
-    if (castTimes.length) {
+    if (castTimesMs.length) {
       summaries.push({
         name: defensive.name,
-        cast_times_s: castTimes,
-        first_cast_s: castTimes[0],
-        uses: castTimes.length,
+        cast_times_ms: castTimesMs,
+        first_cast_ms: castTimesMs[0],
+        uses: castTimesMs.length,
         fight_duration_s: fightDurationS,
         hold_windows: holdWindows,
         cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
@@ -285,7 +285,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
 
 /**
  * Cast indices a majority of parses held past reset, with the prior-relative band the runtime
- * compares the player's own gap against. `effectiveCd` is the cooldown (cadence zero-point);
+ * compares the player's own gap against. `effectiveCdMs` is the cooldown (cadence zero-point);
  * `totalParses` is every sampled parse (not users-only), so the consensus denominator matches.
  */
 
@@ -294,12 +294,12 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
  * so `sample_count` (total) and `used_sample_count` (users) drive the runtime use-share gate.
  */
 export function buildDefensiveBenchmark(
-  summaries: ParseDefensiveSummary[], effectiveCd: number, totalParses: number,
+  summaries: ParseDefensiveSummary[], effectiveCdMs: number, totalParses: number,
 ): PerDefensiveBenchmark {
-  const firstCasts = summaries.map(summary => summary.first_cast_s).filter((value): value is number => value != null);
+  const firstCasts = summaries.map(summary => summary.first_cast_ms).filter((value): value is number => value != null);
   const gaps: number[] = [];
   for (const summary of summaries) {
-    const times = summary.cast_times_s;
+    const times = summary.cast_times_ms;
     for (let j = 1; j < times.length; j++) gaps.push(times[j] - times[j - 1]);
   }
   const usesPerMinList = summaries
@@ -312,11 +312,11 @@ export function buildDefensiveBenchmark(
   return {
     sample_count: totalParses,
     used_sample_count: summaries.length,
-    avg_first_cast_s: firstCasts.length ? round((mean(firstCasts) ?? 0)) : 0,
-    stddev_first_cast_s: firstCasts.length ? round((deviation(firstCasts) ?? 0)) : 0,
-    avg_gap_s: gaps.length ? round((mean(gaps) ?? 0)) : null,
-    stddev_gap_s: gaps.length ? round((deviation(gaps) ?? 0)) : null,
-    hold_targets: buildHoldTargets(summaries, effectiveCd, totalParses),
+    avg_first_cast_ms: firstCasts.length ? Math.round(mean(firstCasts) ?? 0) : 0,
+    stddev_first_cast_ms: firstCasts.length ? Math.round(deviation(firstCasts) ?? 0) : 0,
+    avg_gap_ms: gaps.length ? Math.round(mean(gaps) ?? 0) : null,
+    stddev_gap_ms: gaps.length ? Math.round(deviation(gaps) ?? 0) : null,
+    hold_targets: buildHoldTargets(summaries, effectiveCdMs, totalParses),
     avg_uses: summaries.length ? round(mean(summaries.map(summary => summary.uses)) ?? 0) : 0,
     avg_uses_per_min: usesPerMinList.length ? Math.round((mean(usesPerMinList) ?? 0) * 100) / 100 : 0,
     uses_per_min: benchUsesPerMin.length
@@ -351,7 +351,7 @@ export function aggregateDefensiveBenchmarks(
   for (const defensive of defensives) {
     const summaries = byName.get(defensive.name);
     if (!summaries?.length) continue; // no sampled parse used this defensive
-    perDefensiveBenchmarks[defensive.name] = buildDefensiveBenchmark(summaries, defensive.cooldown, totalParses);
+    perDefensiveBenchmarks[defensive.name] = buildDefensiveBenchmark(summaries, defensive.cooldown * 1000, totalParses);
     const uses = summaries.map(summary => summary.uses);
     topDefensivesSummary.push({
       spell_id: defensive.spell_id,

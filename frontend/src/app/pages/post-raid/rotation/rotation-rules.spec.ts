@@ -24,14 +24,16 @@ import {
   evaluateFillerInBuff, evaluateSpendAtStacks, evaluateAuraClipped, evaluateFillerBelowHealth,
 } from './rotation-rules';
 
-// A zero band keeps the fixture arithmetic exact.
+// A zero band keeps the fixture arithmetic exact. Kept in seconds for building event fixtures;
+// the *_MS companions are what the four time-based kinds' thresholds are measured in.
 const PAIR_WINDOW_S = 5, HOLD_WINDOW_S = 15;
+const PAIR_WINDOW_MS = PAIR_WINDOW_S * 1000, HOLD_WINDOW_MS = HOLD_WINDOW_S * 1000;
 function thr(value: number, band = 0): RuleThreshold {
   return { value, band };
 }
 
 // A rule whose magnitude this encounter measured, so fixtures about something else are not gated on it.
-function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_S)): BenchedRule {
+function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_MS)): BenchedRule {
   return { rule, threshold, sample_count: threshold == null ? 0 : 10 };
 }
 
@@ -59,7 +61,7 @@ const HOLD_DANCE_FOR_BLADES: HoldCooldownForAnchorCondition = {
 describe('rule engine', () => {
   it('flags Secret Technique cast with no Shadow Dance in window', () => {
     const castTimes = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)]);
-    const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_S), 'warning', 'do x');
+    const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_MS), 'warning', 'do x');
     expect(finding).not.toBeNull();
     expect(finding!.measured).toEqual({ value: '1 / 1', unit: 'cast(s)' });
     expect(finding!.details?.remedy).toBe('do x');
@@ -67,44 +69,44 @@ describe('rule engine', () => {
 
   it('passes when Shadow Dance precedes Secret Technique inside the window', () => {
     const castTimes = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12)]);
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_S), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_MS), 'warning')).toBeNull();
   });
 
   it('flags Shadow Dance spent in the hold window before Shadow Blades', () => {
     // Shadow Blades at 10 and 120; the second (120) is the one evaluated; Shadow Dance at 110 is within 15s.
     const castTimes = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]);
-    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, castTimes, thr(HOLD_WINDOW_S), 'critical');
+    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, castTimes, thr(HOLD_WINDOW_MS), 'critical');
     expect(finding).not.toBeNull();
     expect(finding!.measured).toEqual({ value: '1', unit: 'charge(s)' });
   });
 
   it('flags a required cast that only follows the judged one, because position defaults to before', () => {
     const castTimes = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_S), 'warning')).not.toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, castTimes, thr(PAIR_WINDOW_MS), 'warning')).not.toBeNull();
   });
 
   it('accepts a required cast on either side when position is either', () => {
     const paired: CastWithoutPriorCondition = { ...SECRET_TECH_NEEDS_DANCE, position: 'either' };
     const danceAfter = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
     const danceBefore = ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]);
-    expect(evaluateCastWithoutPrior(paired, danceAfter, thr(PAIR_WINDOW_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(paired, danceBefore, thr(PAIR_WINDOW_S), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(paired, danceAfter, thr(PAIR_WINDOW_MS), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(paired, danceBefore, thr(PAIR_WINDOW_MS), 'warning')).toBeNull();
   });
 
   it('requires the companion to follow when position is after', () => {
     const followUp: CastWithoutPriorCondition = { ...SECRET_TECH_NEEDS_DANCE, position: 'after' };
     const danceAfter = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
     const danceBefore = ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]);
-    expect(evaluateCastWithoutPrior(followUp, danceAfter, thr(PAIR_WINDOW_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(followUp, danceBefore, thr(PAIR_WINDOW_S), 'warning')).not.toBeNull();
+    expect(evaluateCastWithoutPrior(followUp, danceAfter, thr(PAIR_WINDOW_MS), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(followUp, danceBefore, thr(PAIR_WINDOW_MS), 'warning')).not.toBeNull();
   });
 
   it('accepts a companion exactly on the window edge but not past it', () => {
     // window_s is 5, so a Shadow Dance at 5 covers a Secret Technique at 10 and one at 4.9 does not.
     const onEdge = ruleCtx([cast(SHADOW_DANCE, 5), cast(SECRET_TECHNIQUE, 10)]);
     const pastEdge = ruleCtx([cast(SHADOW_DANCE, 4.9), cast(SECRET_TECHNIQUE, 10)]);
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, onEdge, thr(PAIR_WINDOW_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, pastEdge, thr(PAIR_WINDOW_S), 'warning')).not.toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, onEdge, thr(PAIR_WINDOW_MS), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, pastEdge, thr(PAIR_WINDOW_MS), 'warning')).not.toBeNull();
   });
 
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
@@ -268,12 +270,13 @@ describe('rule evaluator boundaries', () => {
       spell_names: ['Shadow Blades', 'Secret Technique'],
     };
     const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S * 1000), 'warning')).toBeNull();
   });
 });
 
 describe('evaluateOpeningSequence', () => {
   const OPENER_WINDOW_S = 12;
+  const OPENER_WINDOW_MS = OPENER_WINDOW_S * 1000;
   const opener: OpeningSequenceCondition = {
     kind: 'opening_sequence',
     spell_ids: [SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE],
@@ -282,36 +285,36 @@ describe('evaluateOpeningSequence', () => {
 
   it('passes the sequence cast in order inside the window', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, 5)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')).toBeNull();
   });
 
   it('flags a sequence cast out of order, reporting the steps reached', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SECRET_TECHNIQUE, 3), cast(SHADOW_DANCE, 5)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')?.measured).toEqual({ value: '2 / 3', unit: 'step(s)' });
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')?.measured).toEqual({ value: '2 / 3', unit: 'step(s)' });
   });
 
   it('flags a step that lands past the opener window', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S + 5)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')?.measured?.value).toBe('2 / 3');
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')?.measured?.value).toBe('2 / 3');
   });
 
   it('tolerates unrelated casts between the steps', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(EVISCERATE, 2), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, 5)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')).toBeNull();
   });
 
   it('is judged on neither side of a pull with none of the sequence spells', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1)]);
     const rule: RulebookRule = { severity: 'warning', condition: opener };
     expect(ruleApplicable(opener, ctx)).toBe(false);
-    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_S))], ctx)).toEqual([]);
-    expect(rulesFollowed([benched(rule, thr(OPENER_WINDOW_S))], ctx)).toEqual([]);
+    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_MS))], ctx)).toEqual([]);
+    expect(rulesFollowed([benched(rule, thr(OPENER_WINDOW_MS))], ctx)).toEqual([]);
   });
 
   it('still flags a first step landing past the window, which is why the gate reads casts and not progress', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1), cast(SHADOW_BLADES, 30)]);
     const rule: RulebookRule = { severity: 'warning', condition: opener };
-    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_S))], ctx)[0].measured?.value).toBe('0 / 3');
+    expect(evaluateRules([benched(rule, thr(OPENER_WINDOW_MS))], ctx)[0].measured?.value).toBe('0 / 3');
   });
 });
 
@@ -656,6 +659,7 @@ describe('evaluateSpendAtStacks', () => {
 describe('evaluateAuraClipped', () => {
   // Where the field refreshes: it lets the dot run this long before re-applying.
   const FIELD_ELAPSED_S = 12;
+  const FIELD_ELAPSED_MS = FIELD_ELAPSED_S * 1000;
   const moonfireClipped: AuraClippedCondition = {
     kind: 'aura_clipped',
     aura_spell_id: MOONFIRE_DOT, aura_spell_name: 'Moonfire',
@@ -667,20 +671,20 @@ describe('evaluateAuraClipped', () => {
 
   it('flags a refresh the player cast well before the field would have', () => {
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
-    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_S), 'warning')?.measured)
+    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_MS), 'warning')?.measured)
       .toEqual({ value: '1 / 1', unit: 'refresh(es)' });
   });
 
   it('accepts a refresh exactly at the field bar but not one a second inside it', () => {
     const at = (elapsed: number) =>
       ruleCtx([cast(MOONFIRE, APPLY_AT_S + elapsed)], { debuffs: reapplied(elapsed) });
-    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S), thr(FIELD_ELAPSED_S), 'warning')).toBeNull();
-    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S - 1), thr(FIELD_ELAPSED_S), 'warning')).not.toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S), thr(FIELD_ELAPSED_MS), 'warning')).toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S - 1), thr(FIELD_ELAPSED_MS), 'warning')).not.toBeNull();
   });
 
   it('ignores a refresh no cast produced, since most refreshes in a log are procs', () => {
     const ctx = ruleCtx([], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
-    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_S), 'warning')).toBeNull();
+    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_MS), 'warning')).toBeNull();
     expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
   });
 
@@ -711,7 +715,7 @@ describe('evaluateAuraClipped', () => {
     ];
     const ctx = ruleCtx([cast(MOONFIRE, SECOND_APPLY_S + CLIPPED_ELAPSED_S)], { debuffs });
     // Its own clock reads 4s; measured against the first enemy's application it would read 14s.
-    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
+    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S * 1000);
   });
 
   it('benches the earliest the pull re-applied, and nothing when it never did', () => {
@@ -723,7 +727,7 @@ describe('evaluateAuraClipped', () => {
     const ctx = ruleCtx([
       cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S), cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
     ], { debuffs });
-    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
+    expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S * 1000);
     expect(measureRule(moonfireClipped, ruleCtx([]))).toBeNull();
   });
 
@@ -825,20 +829,20 @@ describe('rulesFollowed', () => {
 
   it('lists the rule when Shadow Dance is held clear of Shadow Blades', () => {
     // Shadow Blades at 10 and 120; the held Shadow Dance at 50 is outside [105,120).
-    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)])))
+    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_MS))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)])))
       .toEqual(['Hold Shadow Dance for Shadow Blades']);
   });
 
   it('omits the rule when Shadow Dance is spent in the hold window before Shadow Blades', () => {
-    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]))).toEqual([]);
+    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_MS))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]))).toEqual([]);
   });
 
   it('omits the rule when the held cooldown was never cast', () => {
-    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120)]))).toEqual([]);
+    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_MS))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120)]))).toEqual([]);
   });
 
   it('omits the rule with only a single Shadow Blades cast', () => {
-    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)]))).toEqual([]);
+    expect(rulesFollowed([benched(holdDanceForBlades, thr(HOLD_WINDOW_MS))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)]))).toEqual([]);
   });
 
 });
@@ -864,7 +868,7 @@ describe('measureRule', () => {
       cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 10 + TIGHT_LEAD_S),
       cast(SHADOW_DANCE, 40), cast(SECRET_TECHNIQUE, 40 + LOOSE_LEAD_S),
     ]);
-    expect(measureRule(SECRET_TECH_NEEDS_DANCE, ctx)).toBe(LOOSE_LEAD_S);
+    expect(measureRule(SECRET_TECH_NEEDS_DANCE, ctx)).toBe(LOOSE_LEAD_S * 1000);
   });
 
   it('measures nothing from a pull where the cast never paired at all', () => {
@@ -876,7 +880,7 @@ describe('measureRule', () => {
     const ctx = ruleCtx([
       cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 90), cast(SHADOW_BLADES, 90 + CLEAR_GAP_S),
     ]);
-    expect(measureRule(HOLD_DANCE_FOR_BLADES, ctx)).toBe(CLEAR_GAP_S);
+    expect(measureRule(HOLD_DANCE_FOR_BLADES, ctx)).toBe(CLEAR_GAP_S * 1000);
   });
 
   it('measures the uptime the pull held for an aura rule', () => {
@@ -899,17 +903,17 @@ describe('measureRule', () => {
 // Every other fixture runs a zero band; these pin which side of the measured value each kind forgives.
 describe('threshold band', () => {
   it('widens the pairing window, accepting a lead the bare median would flag', () => {
-    const BAND_S = 3;
+    const BAND_MS = 3 * 1000;
     const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, PAIR_WINDOW_S + 2)]);
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S, BAND_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S), 'warning')).not.toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_MS, BAND_MS), 'warning')).toBeNull();
+    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_MS), 'warning')).not.toBeNull();
   });
 
   it('narrows the hold window, accepting a charge spent just outside it', () => {
-    const BAND_S = 5;
+    const BAND_MS = 5 * 1000;
     const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 108)]);
-    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S, BAND_S), 'critical')).toBeNull();
-    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S), 'critical')).not.toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_MS, BAND_MS), 'critical')).toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_MS), 'critical')).not.toBeNull();
   });
 
   it('lowers the uptime bar', () => {
@@ -923,14 +927,14 @@ describe('threshold band', () => {
   });
 
   it('lengthens the opener window', () => {
-    const OPENER_WINDOW_S = 12, BAND_S = 5, LATE_STEP_S = 15;
+    const OPENER_WINDOW_MS = 12 * 1000, BAND_MS = 5 * 1000, LATE_STEP_S = 15;
     const opener: OpeningSequenceCondition = {
       kind: 'opening_sequence', spell_ids: [SHADOW_BLADES, SECRET_TECHNIQUE],
       spell_names: ['Shadow Blades', 'Secret Technique'],
     };
     const ctx = ruleCtx([cast(SHADOW_BLADES, 0), cast(SECRET_TECHNIQUE, LATE_STEP_S)]);
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S, BAND_S), 'warning')).toBeNull();
-    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).not.toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS, BAND_MS), 'warning')).toBeNull();
+    expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning')).not.toBeNull();
   });
 
   it('drops the target floor by a whole target once the field spread reaches one', () => {
@@ -1044,7 +1048,7 @@ describe('rulesNeed', () => {
 describe('occurrence strips', () => {
   it('cast_without_prior: a chip per judged cast, its lead as the label', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12), cast(SECRET_TECHNIQUE, 40)]);
-    const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_S), 'warning');
+    const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(PAIR_WINDOW_MS), 'warning');
     expect(finding?.occurrences).toEqual([
       { atMs: 12_000, ok: true, label: '2s', detail: 'Shadow Dance landed 2s from this cast.' },
       { atMs: 40_000, ok: false, label: '30s', detail: 'Shadow Dance landed 30s from this cast.' },
@@ -1054,7 +1058,7 @@ describe('occurrence strips', () => {
 
   it('hold_cooldown_for_anchor: marks the anchor cast and reads each charge\'s gap to it', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]);
-    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_S), 'critical');
+    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_WINDOW_MS), 'critical');
     expect(finding?.occurrences).toEqual([
       { atMs: 110_000, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades.' },
       { atMs: 120_000, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
@@ -1118,8 +1122,8 @@ describe('occurrence strips', () => {
       spell_names: ['Shadow Blades', 'Shadow Dance', 'Secret Technique'],
     };
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SECRET_TECHNIQUE, 3)]);
-    const OPENER_WINDOW_S = 12;
-    const finding = evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning');
+    const OPENER_WINDOW_MS = 12 * 1000;
+    const finding = evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_MS), 'warning');
     expect(finding?.occurrences).toEqual([
       { atMs: 1_000, ok: true, label: 'Shadow Blades', detail: 'Shadow Blades landed on time in its slot.' },
       { ok: false, label: 'Shadow Dance', note: 'not reached', detail: 'Shadow Dance was never reached in the opener window.' },
@@ -1236,7 +1240,7 @@ describe('occurrence strips', () => {
     };
     const debuffs = [applyDebuff(MOONFIRE_DOT, 20), refreshDebuff(MOONFIRE_DOT, 24), refreshDebuff(MOONFIRE_DOT, 36)];
     const ctx = ruleCtx([cast(MOONFIRE, 24), cast(MOONFIRE, 36)], { debuffs });
-    const finding = evaluateAuraClipped(moonfireClipped, ctx, thr(12), 'warning');
+    const finding = evaluateAuraClipped(moonfireClipped, ctx, thr(12_000), 'warning');
     expect(finding?.occurrences).toEqual([
       { atMs: 24_000, ok: false, label: '4s', detail: 'Refreshed with 4s still remaining.' },
       { atMs: 36_000, ok: true, label: '12s', detail: 'Refreshed with 12s still remaining.' },

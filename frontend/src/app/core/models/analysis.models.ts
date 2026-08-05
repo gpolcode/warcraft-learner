@@ -97,8 +97,8 @@ export interface PlayerDefensive {
   name: string;
   cooldown: number;
   uses: number;
-  cast_times_s?: number[];
-  first_cast_s?: number;
+  cast_times_ms?: number[];
+  first_cast_ms?: number;
   windows: DefensiveWindow[];
   talent_gated?: boolean;
 }

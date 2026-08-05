@@ -45,7 +45,7 @@ export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: Ru
 export function detectBloodlust(buffEvents: WclEvent[], fightStartMs: number): number | null {
   for (const event of buffEvents) {
     if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID)) {
-      return (event.timestamp - fightStartMs) / 1000;
+      return event.timestamp - fightStartMs;
     }
   }
   return null;
@@ -54,10 +54,10 @@ export function detectBloodlust(buffEvents: WclEvent[], fightStartMs: number): n
 export interface CdSummary {
   name: string;
   total_uses: number;
-  first_cast_s: number | null;
+  first_cast_ms: number | null;
   bl_aligned: boolean;
-  bl_offset_s: number | null;
-  cast_times_s: number[];
+  bl_offset_ms: number | null;
+  cast_times_ms: number[];
   hold_windows: HoldWindow[];
   cast_pattern: 'hold' | 'on_cooldown';
   fight_duration_s: number;
@@ -65,35 +65,35 @@ export interface CdSummary {
 
 export function summarizeCooldownCasts(
   castEvents: WclEvent[], cooldowns: RulebookCooldown[],
-  fightStartMs: number, fightDurS: number, blTimeS: number | null,
+  fightStartMs: number, fightDurS: number, blTimeMs: number | null,
 ): CdSummary[] {
   return cooldowns.map(cooldown => {
-    const castTimesS = castEvents
+    const castTimesMs = castEvents
       .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => (cast.timestamp - fightStartMs) / 1000)
+      .map(cast => cast.timestamp - fightStartMs)
       .sort((a, b) => a - b);
 
     let blAligned = false;
-    let blOffsetS: number | null = null;
-    if (blTimeS != null && castTimesS.length) {
-      const windowOffsets = castTimesS
-        .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
-        .map(timeS => timeS - blTimeS);
-      blAligned = windowOffsets.length > 0;
-      if (windowOffsets.length) {
-        blOffsetS = round(windowOffsets.reduce((best, offset) => (Math.abs(offset) < Math.abs(best) ? offset : best)));
+    let blOffsetMs: number | null = null;
+    if (blTimeMs != null && castTimesMs.length) {
+      const windowOffsetsMs = castTimesMs
+        .filter(timeMs => blTimeMs - BL_WINDOW_BEFORE_S * 1000 <= timeMs && timeMs <= blTimeMs + BL_WINDOW_AFTER_S * 1000)
+        .map(timeMs => timeMs - blTimeMs);
+      blAligned = windowOffsetsMs.length > 0;
+      if (windowOffsetsMs.length) {
+        blOffsetMs = Math.round(windowOffsetsMs.reduce((best, offset) => (Math.abs(offset) < Math.abs(best) ? offset : best)));
       }
     }
 
-    const holdWindows = detectHoldWindows(castTimesS, cooldown.cooldown ?? 90);
+    const holdWindows = detectHoldWindows(castTimesMs, (cooldown.cooldown ?? 90) * 1000);
 
     return {
       name: cooldown.name,
-      total_uses: castTimesS.length,
-      first_cast_s: castTimesS.length ? round(castTimesS[0]) : null,
+      total_uses: castTimesMs.length,
+      first_cast_ms: castTimesMs.length ? Math.round(castTimesMs[0]) : null,
       bl_aligned: blAligned,
-      bl_offset_s: blOffsetS,
-      cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
+      bl_offset_ms: blOffsetMs,
+      cast_times_ms: castTimesMs.map(timeMs => Math.round(timeMs)),
       hold_windows: holdWindows,
       cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
       fight_duration_s: fightDurS,
@@ -111,8 +111,8 @@ export function castGapListMs(castEvents: WclEvent[]): number[] {
 function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
   const usesPerMin: number[] = [];
   for (const entry of entries) {
-    if (entry.fight_duration_s > 0 && entry.cast_times_s.length) {
-      usesPerMin.push(Math.round((entry.cast_times_s.length / entry.fight_duration_s) * 60 * 1000) / 1000);
+    if (entry.fight_duration_s > 0 && entry.cast_times_ms.length) {
+      usesPerMin.push(Math.round((entry.cast_times_ms.length / entry.fight_duration_s) * 60 * 1000) / 1000);
     }
   }
   if (!usesPerMin.length) return { avg: 0, stddev: 0, min: 0, max: 0 };
@@ -125,14 +125,14 @@ function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
 }
 
 
-export function buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
-  const firstCasts = entries.map(entry => entry.first_cast_s).filter((value): value is number => value != null);
+export function buildCdBenchmark(entries: CdSummary[], effectiveCdMs: number): PerCdBenchmark {
+  const firstCasts = entries.map(entry => entry.first_cast_ms).filter((value): value is number => value != null);
   const gaps: number[] = [];
   for (const entry of entries) {
-    const times = entry.cast_times_s;
+    const times = entry.cast_times_ms;
     for (let i = 1; i < times.length; i++) gaps.push(times[i] - times[i - 1]);
   }
-  const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
+  const blOffsets = entries.map(entry => entry.bl_offset_ms).filter((value): value is number => value != null);
   const blCount = entries.filter(entry => entry.bl_aligned).length;
   const upmList = entries
     .filter(entry => entry.fight_duration_s > 0)
@@ -142,18 +142,18 @@ export function buildCdBenchmark(entries: CdSummary[], effectiveCd: number): Per
   return {
     sample_count: entries.length,
     used_sample_count: entries.filter(entry => entry.total_uses > 0).length,
-    avg_first_cast_s: firstCasts.length ? round((mean(firstCasts) ?? 0)) : 0,
-    stddev_first_cast_s: firstCasts.length ? round((deviation(firstCasts) ?? 0)) : 0,
-    avg_gap_s: gaps.length ? round((mean(gaps) ?? 0)) : null,
-    stddev_gap_s: gaps.length ? round((deviation(gaps) ?? 0)) : null,
-    avg_bl_offset_s: blOffsets.length ? round((mean(blOffsets) ?? 0)) : null,
-    stddev_bl_offset_s: blOffsets.length ? round((deviation(blOffsets) ?? 0)) : null,
+    avg_first_cast_ms: firstCasts.length ? Math.round(mean(firstCasts) ?? 0) : 0,
+    stddev_first_cast_ms: firstCasts.length ? Math.round(deviation(firstCasts) ?? 0) : 0,
+    avg_gap_ms: gaps.length ? Math.round(mean(gaps) ?? 0) : null,
+    stddev_gap_ms: gaps.length ? Math.round(deviation(gaps) ?? 0) : null,
+    avg_bl_offset_ms: blOffsets.length ? Math.round(mean(blOffsets) ?? 0) : null,
+    stddev_bl_offset_ms: blOffsets.length ? Math.round(deviation(blOffsets) ?? 0) : null,
     avg_uses: entries.length ? round(mean(entries.map(entry => entry.total_uses)) ?? 0) : 0,
     avg_uses_per_min: upmList.length ? round((mean(upmList) ?? 0), 2) : 0,
     uses_per_min: usesPerMin,
     bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
     majority_hold: entries.filter(entry => entry.cast_pattern === 'hold').length >= entries.length * HOLD_CONSENSUS_FRAC,
-    hold_targets: buildHoldTargets(entries, effectiveCd),
+    hold_targets: buildHoldTargets(entries, effectiveCdMs),
   };
 }
 
@@ -184,7 +184,7 @@ export function computeEfficiencyThresholds(
 export function aggregateCdBenchmarks(
   perParse: CdSummary[][], cooldowns: RulebookCooldown[],
 ): Record<string, PerCdBenchmark> {
-  const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown ?? 90]));
+  const cdMsByName = new Map(cooldowns.map(cooldown => [cooldown.name, (cooldown.cooldown ?? 90) * 1000]));
   const byCd = new Map<string, CdSummary[]>();
   for (const summaries of perParse) {
     for (const summary of summaries) {
@@ -193,7 +193,7 @@ export function aggregateCdBenchmarks(
   }
   const result: Record<string, PerCdBenchmark> = {};
   for (const [name, entries] of byCd.entries()) {
-    result[name] = buildCdBenchmark(entries, cdSecondsByName.get(name) ?? 90);
+    result[name] = buildCdBenchmark(entries, cdMsByName.get(name) ?? 90 * 1000);
   }
   return result;
 }
@@ -258,7 +258,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         encounter_id: encounterId,
         encounter_name: encounterName,
         sample_count: perParse.length,
-        avg_duration_s: durations.length ? round((mean(durations) ?? 0)) : 0,
+        avg_duration_ms: durations.length ? Math.round((mean(durations) ?? 0) * 1000) : 0,
         downtime_threshold_ms: downtimeThresholdMs,
         top_avg_efficiency: topAvgEfficiency,
         top_efficiency_stddev: topEfficiencyStddev,
@@ -302,14 +302,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
       ]);
 
       const fightDurS = (fight.endTime - fight.startTime) / 1000;
-      const blTimeS = detectBloodlust(buffs, fight.startTime);
+      const blTimeMs = detectBloodlust(buffs, fight.startTime);
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
         deaths: raidDeaths.filter(event => event.targetID === player.id),
         fStart: fight.startTime, fEnd: fight.endTime,
       });
       return {
-        summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeS),
+        summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeMs),
         gapListMs: castGapListMs(casts),
         durationS: fightDurS,
         encounterName: fight.name ?? '',

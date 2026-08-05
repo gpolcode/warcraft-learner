@@ -23,7 +23,8 @@ const CLOAK_META = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, coold
 /** The common per-defensive benchmark shape; each site overrides only the fields it documents. */
 function defBench(overrides: Partial<PerDefensiveBenchmark> = {}): PerDefensiveBenchmark {
   return {
-    sample_count: 5, used_sample_count: 5, avg_first_cast_s: 10, stddev_first_cast_s: 2, avg_gap_s: 60, stddev_gap_s: 5,
+    sample_count: 5, used_sample_count: 5, avg_first_cast_ms: 10_000, stddev_first_cast_ms: 2_000,
+    avg_gap_ms: 60_000, stddev_gap_ms: 5_000,
     hold_targets: {}, avg_uses: 2, avg_uses_per_min: 0.4, uses_per_min: { avg: 0.4, stddev: 0.05, min: 0.3, max: 0.5 },
     majority_hold: false,
     ...overrides,
@@ -39,7 +40,7 @@ describe('analyzeDefensives', () => {
       0, 300_000,
     );
     expect(out).toHaveLength(1);
-    expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
+    expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_ms: [10_000] });
     expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 15, dmg_during: 500 });
   });
 });
@@ -80,26 +81,26 @@ describe('buildDefensiveUsageWindows', () => {
 });
 
 describe('gapDelayFindings', () => {
-  // avg_gap 60, stddev 5 -> +2sigma band is 70; a gap must STRICTLY exceed 70 to flag.
-  const AVG_GAP_S = 60;
-  const STDDEV_GAP_S = 5;
+  // avg_gap 60000ms, stddev 5000ms -> +2sigma band is 70000ms; a gap must STRICTLY exceed it to flag.
+  const AVG_GAP_MS = 60_000;
+  const STDDEV_GAP_MS = 5_000;
   const benchWithGap = (overrides: Partial<PerDefensiveBenchmark> = {}): PerDefensiveBenchmark =>
-    defBench({ avg_gap_s: AVG_GAP_S, stddev_gap_s: STDDEV_GAP_S, ...overrides });
+    defBench({ avg_gap_ms: AVG_GAP_MS, stddev_gap_ms: STDDEV_GAP_MS, ...overrides });
 
   it('flags a gap beyond the +2sigma band', () => {
-    const GAP_OVER = 71; // 71 > 70
-    const out = gapDelayFindings('Cloak of Shadows', [0, GAP_OVER], benchWithGap());
+    const GAP_OVER_MS = 71_000; // 71000 > 70000
+    const out = gapDelayFindings('Cloak of Shadows', [0, GAP_OVER_MS], benchWithGap());
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ severity: 'warning', category: 'cooldown_delay' });
   });
 
   it('does not flag a gap exactly at the band (strict boundary)', () => {
-    const GAP_AT_BAND = AVG_GAP_S + 2 * STDDEV_GAP_S; // 70, not an outlier
-    expect(gapDelayFindings('Cloak of Shadows', [0, GAP_AT_BAND], benchWithGap())).toEqual([]);
+    const GAP_AT_BAND_MS = AVG_GAP_MS + 2 * STDDEV_GAP_MS; // 70000, not an outlier
+    expect(gapDelayFindings('Cloak of Shadows', [0, GAP_AT_BAND_MS], benchWithGap())).toEqual([]);
   });
 
   it('emits nothing when the bench has no gap statistic', () => {
-    expect(gapDelayFindings('Cloak of Shadows', [0, 999], benchWithGap({ avg_gap_s: null, stddev_gap_s: null }))).toEqual([]);
+    expect(gapDelayFindings('Cloak of Shadows', [0, 999_000], benchWithGap({ avg_gap_ms: null, stddev_gap_ms: null }))).toEqual([]);
   });
 });
 
@@ -107,18 +108,18 @@ describe('analyzeOneDefensive', () => {
   // Full use-share bench (10/10 top parses used it), so no check is use-share gated.
   const bench = defBench({ sample_count: 10, used_sample_count: 10 });
   const player = (overrides: Partial<PlayerDefensive>): PlayerDefensive =>
-    ({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_s: [], windows: [], ...overrides });
+    ({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_ms: [], windows: [], ...overrides });
   const FIGHT_DUR_S = 300;
 
   it('flags a never-used defensive as a critical lost cooldown', () => {
-    const out = analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), bench, 300);
+    const out = analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), bench, 300);
     expect(out[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
   });
 
   it('flags a late first use as a warning', () => {
-    // First use is well past avg 10 + 2*stddev 2 = 14s -> a first-cast delay warning.
-    const LATE_FIRST_S = 40;
-    const out = analyzeOneDefensive(player({ uses: 1, cast_times_s: [LATE_FIRST_S] }), bench, FIGHT_DUR_S);
+    // First use is well past avg 10000 + 2*stddev 2000 = 14000ms -> a first-cast delay warning.
+    const LATE_FIRST_MS = 40_000;
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), bench, FIGHT_DUR_S);
     expect(out.some(finding => finding.severity === 'warning' && finding.category === 'cooldown_delay')).toBe(true);
   });
 
@@ -129,18 +130,18 @@ describe('analyzeOneDefensive', () => {
 
   it('does not flag an unused defensive that only a minority of top parses use (use-share gate)', () => {
     // The player matching the top parses by not pressing it is not a lost cast.
-    expect(analyzeOneDefensive(player({ uses: 0, cast_times_s: [] }), minorityUse, FIGHT_DUR_S)).toEqual([]);
+    expect(analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), minorityUse, FIGHT_DUR_S)).toEqual([]);
   });
 
   it('does not flag a late first use of a minority-use defensive (use-share gate)', () => {
-    // First use is well past avg 10 + 2*stddev 2 = 14s, but the first-cast check is gated off.
-    const LATE_FIRST_S = 40;
-    const out = analyzeOneDefensive(player({ uses: 1, cast_times_s: [LATE_FIRST_S] }), minorityUse, FIGHT_DUR_S);
+    // First use is well past avg 10000 + 2*stddev 2000 = 14000ms, but the first-cast check is gated off.
+    const LATE_FIRST_MS = 40_000;
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), minorityUse, FIGHT_DUR_S);
     expect(out.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 
   it('returns a success (no issues) when usage matches', () => {
-    const out = analyzeOneDefensive(player({ uses: 2, cast_times_s: [10, 70] }), bench, 300);
+    const out = analyzeOneDefensive(player({ uses: 2, cast_times_ms: [10_000, 70_000] }), bench, 300);
     expect(out.some(finding => finding.severity === 'success')).toBe(true);
   });
 
@@ -149,7 +150,7 @@ describe('analyzeOneDefensive', () => {
   });
 
   it('records a no-bench success only when used', () => {
-    expect(analyzeOneDefensive(player({ uses: 1, cast_times_s: [10] }), undefined, 300)[0]).toMatchObject({ severity: 'success' });
+    expect(analyzeOneDefensive(player({ uses: 1, cast_times_ms: [10_000] }), undefined, 300)[0]).toMatchObject({ severity: 'success' });
     expect(analyzeOneDefensive(player({ uses: 0 }), undefined, 300)).toEqual([]);
   });
 });
@@ -160,7 +161,7 @@ describe('analyzeDefensiveFindings', () => {
 
   it('flags a never-used defensive as a critical lost cooldown', () => {
     const findings = analyzeDefensiveFindings(
-      [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_s: [], windows: [] }],
+      [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_ms: [], windows: [] }],
       bench, 300,
     );
     expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown', cd_name: 'Cloak of Shadows' });
@@ -357,7 +358,7 @@ describe('buildDefensivePlanRows', () => {
       defensives: [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5, usage_rule: 'Use it', talent_gated: false }],
       ability_icons: { [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } },
       per_defensive_benchmarks: {
-        'Cloak of Shadows': defBench({ avg_first_cast_s: 12, avg_gap_s: null, stddev_gap_s: null }),
+        'Cloak of Shadows': defBench({ avg_first_cast_ms: 12_000, avg_gap_ms: null, stddev_gap_ms: null }),
       },
       defensive_windows: [{ time_s: 30, window_length_s: 5, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, defensive_name: 'Cloak of Shadows', common_cds: ['Cloak of Shadows'], ability_breakdown: [] }],
     });

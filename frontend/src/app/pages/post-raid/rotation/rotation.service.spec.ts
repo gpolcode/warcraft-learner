@@ -25,14 +25,14 @@ import {
 // The check* and analyzeOneCooldown functions take cast times in ms.
 const ONE_SEC_MS = 1000;
 
-// A zero band keeps the fixture arithmetic exact.
-const PAIR_WINDOW_S = 5;
+// A zero band keeps the fixture arithmetic exact. cast_without_prior's threshold is milliseconds.
+const PAIR_WINDOW_MS = 5_000;
 function thr(value: number, band = 0): RuleThreshold {
   return { value, band };
 }
 
 // A rule whose magnitude this encounter measured, so fixtures about something else are not gated on it.
-function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_S)): BenchedRule {
+function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_MS)): BenchedRule {
   return { rule, threshold, sample_count: threshold == null ? 0 : 10 };
 }
 // Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
@@ -46,9 +46,9 @@ function scan(over: Partial<RotationScanInput> & { bench: RotationBench }): Rota
 
 function cdBench(over: Partial<PerCdBenchmark> = {}): PerCdBenchmark {
   return {
-    avg_first_cast_s: 5, stddev_first_cast_s: 2,
-    avg_gap_s: 90, stddev_gap_s: 5,
-    avg_bl_offset_s: 0, stddev_bl_offset_s: 2,
+    avg_first_cast_ms: 5_000, stddev_first_cast_ms: 2_000,
+    avg_gap_ms: 90_000, stddev_gap_ms: 5_000,
+    avg_bl_offset_ms: 0, stddev_bl_offset_ms: 2_000,
     avg_uses: 2, avg_uses_per_min: 1,
     uses_per_min: { avg: 1, stddev: 0.1, min: 0.9, max: 1.1 },
     bl_pct: 100, majority_hold: false, hold_targets: {}, sample_count: 5, used_sample_count: 5,
@@ -59,7 +59,7 @@ function cdBench(over: Partial<PerCdBenchmark> = {}): PerCdBenchmark {
 function bench(over: Partial<RotationBench> = {}): RotationBench {
   return {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 5,
-    avg_duration_s: 120, downtime_threshold_ms: 1500, top_avg_efficiency: 90, top_efficiency_stddev: 3,
+    avg_duration_ms: 120_000, downtime_threshold_ms: 1500, top_avg_efficiency: 90, top_efficiency_stddev: 3,
     per_cd_benchmarks: { 'Shadow Blades': cdBench() },
     major_cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, align_with_bloodlust: true }],
     rules: [],
@@ -117,7 +117,7 @@ describe('analyzeRotationFindings', () => {
 describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
   const holdBench = bench({
     per_cd_benchmarks: { 'Shadow Blades': cdBench({
-      hold_targets: { '2': { target_s: 130, stddev_s: 5, delay_s: 30, delay_stddev_s: 3, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } },
+      hold_targets: { '2': { target_ms: 130_000, stddev_ms: 5_000, delay_ms: 30_000, delay_stddev_ms: 3_000, band_ms: 5_000, effective_cd_ms: 90_000, count: 4, total_samples: 5 } },
     }) },
   });
 
@@ -163,7 +163,7 @@ describe('checkLostUses', () => {
 });
 
 describe('checkFirstCastDelay', () => {
-  // cdBench: avg_first_cast_s 5, stddev 2 -> outlier above 5 + 2*2 = 9s.
+  // cdBench: avg_first_cast_ms 5000, stddev 2000 -> outlier above 5000 + 2*2000 = 9000ms (9s).
 
   it('flags a first cast more than 2 sigma past the top open', () => {
     // first cast at 10s > 9s threshold.
@@ -182,44 +182,46 @@ describe('checkFirstCastDelay', () => {
 
 describe('checkBloodlustAlignment', () => {
   const BL_AT_S = 10;
+  const BL_AT_MS = BL_AT_S * ONE_SEC_MS;
   // BL window: 30s before BL to 40s duration + 15s trail -> [-30, +55] around BL_AT_S = [-20, 65].
 
   it('flags a BL miss when the cooldown lands outside the window and parsers align it', () => {
     // cast at 100s is outside [-20, 65]; wantsBL true.
-    const out = checkBloodlustAlignment('Shadow Blades', [100 * ONE_SEC_MS], cdBench(), BL_AT_S, true);
+    const out = checkBloodlustAlignment('Shadow Blades', [100 * ONE_SEC_MS], cdBench(), BL_AT_MS, true);
     expect(out.blAligned).toBe(false);
     expect(out.findings[0]?.measured).toEqual({ value: 'missed', unit: 'BL' });
   });
 
   it('does not flag a miss when parsers do not align it', () => {
-    const out = checkBloodlustAlignment('Shadow Blades', [100 * ONE_SEC_MS], cdBench(), BL_AT_S, false);
+    const out = checkBloodlustAlignment('Shadow Blades', [100 * ONE_SEC_MS], cdBench(), BL_AT_MS, false);
     expect(out.blAligned).toBe(false);
     expect(out.findings).toEqual([]);
   });
 
   it('flags an in-window offset more than 2 sigma off the top offset', () => {
-    // avg_bl_offset 0, stddev 2 -> outlier beyond |offset| > 4. Cast at BL+5s -> offset 5.
-    const out = checkBloodlustAlignment('Shadow Blades', [(BL_AT_S + 5) * ONE_SEC_MS], cdBench(), BL_AT_S, true);
+    // avg_bl_offset 0, stddev 2000ms -> outlier beyond |offset| > 4000ms. Cast at BL+5s -> offset 5000ms.
+    const out = checkBloodlustAlignment('Shadow Blades', [(BL_AT_S + 5) * ONE_SEC_MS], cdBench(), BL_AT_MS, true);
     expect(out.blAligned).toBe(true);
     expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in BL' });
   });
 
   it('does not flag an in-window offset exactly at the 2-sigma boundary (strict)', () => {
-    // offset exactly 4 == 2*stddev; strict so not flagged.
-    const out = checkBloodlustAlignment('Shadow Blades', [(BL_AT_S + 4) * ONE_SEC_MS], cdBench(), BL_AT_S, true);
+    // offset exactly 4000ms == 2*stddev; strict so not flagged.
+    const out = checkBloodlustAlignment('Shadow Blades', [(BL_AT_S + 4) * ONE_SEC_MS], cdBench(), BL_AT_MS, true);
     expect(out.blAligned).toBe(true);
     expect(out.findings).toEqual([]);
   });
 
   it('stamps the judged cast, not the earliest in-window cast', () => {
-    // avg_bl_offset -8, stddev 2 -> in-band [-12, -4]. Two in-window casts: an early one at
-    // offset -8 (in-band) and a later one at offset -2 (closest to zero, so judged, and a late
-    // outlier). The finding must anchor the judged late cast, not the earlier in-band one.
+    // avg_bl_offset -8000ms, stddev 2000ms -> in-band [-12000, -4000]. Two in-window casts: an
+    // early one at offset -8000ms (in-band) and a later one at offset -2000ms (closest to zero,
+    // so judged, and a late outlier). The finding must anchor the judged late cast, not the
+    // earlier in-band one.
     const EARLY_IN_BAND_MS = (BL_AT_S - 8) * ONE_SEC_MS;
     const LATE_JUDGED_MS = (BL_AT_S - 2) * ONE_SEC_MS;
     const out = checkBloodlustAlignment(
       'Shadow Blades', [EARLY_IN_BAND_MS, LATE_JUDGED_MS],
-      cdBench({ avg_bl_offset_s: -8, stddev_bl_offset_s: 2 }), BL_AT_S, true);
+      cdBench({ avg_bl_offset_ms: -8_000, stddev_bl_offset_ms: 2_000 }), BL_AT_MS, true);
     expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in BL' });
     expect(out.findings[0]?.timestamp_ms).toBe(LATE_JUDGED_MS);
   });
@@ -231,7 +233,7 @@ describe('checkBloodlustAlignment', () => {
 });
 
 describe('checkGaps', () => {
-  // cdBench: avg_gap_s 90, stddev 5 -> outlier above 90 + 2*5 = 100s.
+  // cdBench: avg_gap_ms 90000, stddev 5000 -> outlier above 90000 + 2*5000 = 100000ms (100s).
 
   it('flags a gap more than 2 sigma above the top gap', () => {
     // gap 0 -> 110 == 110s > 100s.
@@ -244,7 +246,7 @@ describe('checkGaps', () => {
   });
 
   it('returns nothing when the bench has no gap stats', () => {
-    expect(checkGaps('Shadow Blades', [0, 200 * ONE_SEC_MS], cdBench({ avg_gap_s: null, stddev_gap_s: null }))).toEqual([]);
+    expect(checkGaps('Shadow Blades', [0, 200 * ONE_SEC_MS], cdBench({ avg_gap_ms: null, stddev_gap_ms: null }))).toEqual([]);
   });
 });
 
@@ -302,13 +304,13 @@ describe('analyzeOneCooldown', () => {
 
   it('reports success when a cooldown is used cleanly and BL-aligned', () => {
     // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
-    const result = analyzeOneCooldown(cd, [6 * ONE_SEC_MS], single, 120, 6);
+    const result = analyzeOneCooldown(cd, [6 * ONE_SEC_MS], single, 120, 6 * ONE_SEC_MS);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success?.message).toContain('BL-aligned');
   });
 
   it('reports an issue (no success) when the opener is late', () => {
-    const result = analyzeOneCooldown(cd, [40 * ONE_SEC_MS], single, 120, 38);
+    const result = analyzeOneCooldown(cd, [40 * ONE_SEC_MS], single, 120, 38 * ONE_SEC_MS);
     expect(result?.success).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
@@ -394,8 +396,8 @@ describe('buildCdPlan', () => {
       { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, opener_priority: 1, align_with_bloodlust: true, usage_rule: 'open' },
     ];
     const benchmarks = {
-      'Shadow Blades': cdBench({ majority_hold: true, hold_targets: { '2': { target_s: 100, stddev_s: 5, delay_s: 10, delay_stddev_s: 2, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } } }),
-      'Vanish': cdBench({ avg_first_cast_s: 20 }),
+      'Shadow Blades': cdBench({ majority_hold: true, hold_targets: { '2': { target_ms: 100_000, stddev_ms: 5_000, delay_ms: 10_000, delay_stddev_ms: 2_000, band_ms: 5_000, effective_cd_ms: 90_000, count: 4, total_samples: 5 } } }),
+      'Vanish': cdBench({ avg_first_cast_ms: 20_000 }),
     };
     const plan = buildCdPlan(cooldowns, benchmarks, abilities);
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
@@ -431,8 +433,8 @@ describe('buildCdPlan', () => {
   });
 
   it('nulls the per-use first-cast and uses/min for a cd no top parse used (use-share gate)', () => {
-    // used_sample_count 0 -> the transform emits avg_first_cast_s 0, a no-data sentinel, not a 0:00 open.
-    const unused = cdBench({ used_sample_count: 0, avg_first_cast_s: 0, avg_uses: 0, uses_per_min: { avg: 0, stddev: 0, min: 0, max: 0 } });
+    // used_sample_count 0 -> the transform emits avg_first_cast_ms 0, a no-data sentinel, not a 0:00 open.
+    const unused = cdBench({ used_sample_count: 0, avg_first_cast_ms: 0, avg_uses: 0, uses_per_min: { avg: 0, stddev: 0, min: 0, max: 0 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
     expect(plan[0].firstCastS).toBeNull();
     expect(plan[0].usesPerMin).toBeNull();
@@ -441,10 +443,10 @@ describe('buildCdPlan', () => {
   });
 
   it('nulls the per-use fields when only a minority of top parses use the cd (use-share gate)', () => {
-    // 2/10 = 20%, below the majority gate, so even a real avg_first_cast_s is unrepresentative of the plan.
+    // 2/10 = 20%, below the majority gate, so even a real avg_first_cast_ms is unrepresentative of the plan.
     const TOTAL_SAMPLED = 10;
     const MINORITY_USERS = 2;
-    const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_s: 20 });
+    const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_ms: 20_000 });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
     expect(plan[0].firstCastS).toBeNull();
     expect(plan[0].usesPerMin).toBeNull();
@@ -454,7 +456,7 @@ describe('buildCdPlan', () => {
     // Default cdBench: used_sample_count 5 of sample_count 5 -> full use share, so the gate passes.
     const FIRST_CAST_S = 8;
     const USES_PER_MIN = 1.2;
-    const used = cdBench({ avg_first_cast_s: FIRST_CAST_S, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
+    const used = cdBench({ avg_first_cast_ms: FIRST_CAST_S * 1000, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
     expect(plan[0].firstCastS).toBe(FIRST_CAST_S);
     expect(plan[0].usesPerMin).toBe(USES_PER_MIN);

@@ -23,8 +23,8 @@ describe('rotationCdSpellIds', () => {
 });
 
 describe('detectBloodlust', () => {
-  it('returns the first BL apply time in seconds', () => {
-    expect(detectBloodlust([applyBuff(999, 5), applyBuff(BLOODLUST, 30)], 0)).toBe(30);
+  it('returns the first BL apply time in ms', () => {
+    expect(detectBloodlust([applyBuff(999, 5), applyBuff(BLOODLUST, 30)], 0)).toBe(30_000);
   });
   it('returns null when no BL buff present', () => {
     expect(detectBloodlust([applyBuff(999, 5)], 0)).toBeNull();
@@ -35,15 +35,15 @@ describe('summarizeCooldownCasts', () => {
   const cooldowns = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
 
   it('counts casts, first cast, BL alignment and offset', () => {
-    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32)], cooldowns, 0, 200, 30);
-    expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_s: 32, bl_aligned: true, bl_offset_s: 2 });
+    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32)], cooldowns, 0, 200, 30_000);
+    expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_ms: 32_000, bl_aligned: true, bl_offset_ms: 2_000 });
   });
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
     const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], cooldowns, 0, 200, null);
     expect(summaries[0].cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
-    expect(summaries[0].hold_windows[0]).toMatchObject({ cast_index: 2, actual_s: 110, delay_s: 20 });
+    expect(summaries[0].hold_windows[0]).toMatchObject({ cast_index: 2, actual_ms: 110_000, delay_ms: 20_000 });
   });
 
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
@@ -70,9 +70,12 @@ describe('castGapListMs', () => {
 });
 
 describe('buildCdBenchmark', () => {
+  const EFFECTIVE_CD_MS = 90_000;
+  // Factory params stay in seconds for readability; the fields they populate are ms.
   const entry = (firstCast: number, uses: number, dur: number, blOffset: number | null, blAligned: boolean, times: number[]): CdSummary => ({
-    name: 'Shadow Blades', total_uses: uses, first_cast_s: firstCast, bl_aligned: blAligned, bl_offset_s: blOffset,
-    cast_times_s: times, hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: dur,
+    name: 'Shadow Blades', total_uses: uses, first_cast_ms: firstCast * 1000, bl_aligned: blAligned,
+    bl_offset_ms: blOffset != null ? blOffset * 1000 : null,
+    cast_times_ms: times.map(t => t * 1000), hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: dur,
   });
   const withHolders = (holding: number, total: number): CdSummary[] => [
     ...Array.from({ length: holding }, () => ({ ...entry(0, 1, 200, null, false, [0]), cast_pattern: 'hold' as const })),
@@ -83,18 +86,18 @@ describe('buildCdBenchmark', () => {
     const bench = buildCdBenchmark([
       entry(5, 2, 120, 2, true, [5, 95]),
       entry(7, 2, 120, 4, true, [7, 97]),
-    ], 90);
+    ], EFFECTIVE_CD_MS);
     expect(bench.sample_count).toBe(2);
     expect(bench.used_sample_count).toBe(2);
-    expect(bench.avg_first_cast_s).toBe(6);
-    expect(bench.avg_bl_offset_s).toBe(3);
+    expect(bench.avg_first_cast_ms).toBe(6_000);
+    expect(bench.avg_bl_offset_ms).toBe(3_000);
     expect(bench.bl_pct).toBe(100);
     expect(bench.avg_uses).toBe(2);
     // 2 casts over a 120s fight -> 1.0 uses/min for both parses.
     expect(bench.uses_per_min.avg).toBe(1);
-    // inter-cast gaps [95-5, 97-7] = [90, 90] -> mean 90, stddev 0.
-    expect(bench.avg_gap_s).toBe(90);
-    expect(bench.stddev_gap_s).toBe(0);
+    // inter-cast gaps [95-5, 97-7] = [90, 90]s -> mean 90000ms, stddev 0.
+    expect(bench.avg_gap_ms).toBe(90_000);
+    expect(bench.stddev_gap_ms).toBe(0);
   });
 
   it('counts used_sample_count as the parses with at least one use (use-share gate)', () => {
@@ -102,31 +105,31 @@ describe('buildCdBenchmark', () => {
     const USERS = 1;  // one parse used it, one never did
     const usedParse = entry(5, 2, 120, 2, true, [5, 95]);
     const unusedParse: CdSummary = {
-      name: 'Shadow Blades', total_uses: 0, first_cast_s: null, bl_aligned: false, bl_offset_s: null,
-      cast_times_s: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
+      name: 'Shadow Blades', total_uses: 0, first_cast_ms: null, bl_aligned: false, bl_offset_ms: null,
+      cast_times_ms: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     };
-    const bench = buildCdBenchmark([usedParse, unusedParse], 90);
+    const bench = buildCdBenchmark([usedParse, unusedParse], EFFECTIVE_CD_MS);
     expect(bench.sample_count).toBe(TOTAL_PARSES);
     expect(bench.used_sample_count).toBe(USERS);
   });
 
   it('leaves gap + BL fields null when not applicable', () => {
-    const bench = buildCdBenchmark([entry(5, 1, 120, null, false, [5])], 90);
-    expect(bench.avg_gap_s).toBeNull();
-    expect(bench.avg_bl_offset_s).toBeNull();
+    const bench = buildCdBenchmark([entry(5, 1, 120, null, false, [5])], EFFECTIVE_CD_MS);
+    expect(bench.avg_gap_ms).toBeNull();
+    expect(bench.avg_bl_offset_ms).toBeNull();
     expect(bench.bl_pct).toBe(0);
   });
 
   it('sets majority_hold at an exact consensus tie, aligning it with hold_targets', () => {
     const TOTAL_PARSES = 10;
     const HOLDERS_AT_TIE = 5;  // exactly HOLD_CONSENSUS_FRAC of 10 -> the consensus boundary is inclusive
-    expect(buildCdBenchmark(withHolders(HOLDERS_AT_TIE, TOTAL_PARSES), 90).majority_hold).toBe(true);
+    expect(buildCdBenchmark(withHolders(HOLDERS_AT_TIE, TOTAL_PARSES), EFFECTIVE_CD_MS).majority_hold).toBe(true);
   });
 
   it('clears majority_hold when fewer than the consensus fraction hold', () => {
     const TOTAL_PARSES = 10;
     const HOLDERS_BELOW = 4;  // below HOLD_CONSENSUS_FRAC of 10
-    expect(buildCdBenchmark(withHolders(HOLDERS_BELOW, TOTAL_PARSES), 90).majority_hold).toBe(false);
+    expect(buildCdBenchmark(withHolders(HOLDERS_BELOW, TOTAL_PARSES), EFFECTIVE_CD_MS).majority_hold).toBe(false);
   });
 });
 
@@ -149,8 +152,8 @@ describe('computeEfficiencyThresholds', () => {
 describe('aggregateCdBenchmarks', () => {
   it('groups per-parse summaries by cooldown name', () => {
     const summary = (name: string): CdSummary => ({
-      name, total_uses: 1, first_cast_s: 5, bl_aligned: false, bl_offset_s: null,
-      cast_times_s: [5], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
+      name, total_uses: 1, first_cast_ms: 5_000, bl_aligned: false, bl_offset_ms: null,
+      cast_times_ms: [5_000], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     });
     const result = aggregateCdBenchmarks(
       [[summary('Shadow Blades')], [summary('Shadow Blades')]],

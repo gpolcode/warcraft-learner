@@ -83,7 +83,7 @@ export function buildDefensiveUsageWindows(
     // An open buff (no remove) runs to fight end, never a rulebook duration.
     const end = windowEndS ?? fightEndS;
     return { start_s: Math.round(windowStartS * 10) / 10, end_s: Math.round(end * 10) / 10, dmg_during: Math.round(dmgInWindow(windowStartS, end)) };
-  });
+  }); // NOTE: windows stay seconds - shared BurstWindow-style card/coverage matching, not a finding.
   if (windows.length) return windows;
   return castEvents
     .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId && cast.timestamp >= fStart && cast.timestamp <= fEnd)
@@ -126,8 +126,8 @@ export function analyzeDefensives(
   return defensives.map(defensive => {
     const spellId = defensive.spell_id;
     const windows = buildDefensiveUsageWindows(spellId, buffWin[spellId] || [], castEvents, dmgInWindow, rel, fStart, fEnd, fightEndS);
-    const cast_times_s = windows.map(window => window.start_s).sort((a, b) => a - b);
-    const entry: PlayerDefensive = { name: defensive.name, spell_id: spellId, cooldown: defensive.cooldown, uses: windows.length, cast_times_s, windows };
+    const cast_times_ms = windows.map(window => Math.round(window.start_s * 1000)).sort((a, b) => a - b);
+    const entry: PlayerDefensive = { name: defensive.name, spell_id: spellId, cooldown: defensive.cooldown, uses: windows.length, cast_times_ms, windows };
     if (defensive.talent_gated) entry.talent_gated = true;
     return entry;
   });
@@ -135,18 +135,18 @@ export function analyzeDefensives(
 
 /** Warning findings for each gap between casts that exceeds the top-parse +2σ band. */
 export function gapDelayFindings(
-  name: string, castTimesS: number[], defBench: PerDefensiveBenchmark,
+  name: string, castTimesMs: number[], defBench: PerDefensiveBenchmark,
 ): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
-  if (defBench.avg_gap_s == null || defBench.stddev_gap_s == null) return findings;
-  const avgGapS = defBench.avg_gap_s;
-  for (let i = 1; i < castTimesS.length; i++) {
-    const gap = castTimesS[i] - castTimesS[i - 1];
-    if (isOutlierAbove(gap, avgGapS, defBench.stddev_gap_s)) {
+  if (defBench.avg_gap_ms == null || defBench.stddev_gap_ms == null) return findings;
+  const avgGapMs = defBench.avg_gap_ms;
+  for (let i = 1; i < castTimesMs.length; i++) {
+    const gapMs = castTimesMs[i] - castTimesMs[i - 1];
+    if (isOutlierAbove(gapMs, avgGapMs, defBench.stddev_gap_ms)) {
       findings.push({ severity: 'warning', category: 'cooldown_delay', cd_name: name,
-        timestamp_ms: Math.round(castTimesS[i] * 1000),
-        measured: { value: `${gap.toFixed(0)}s`, unit: `avg ${avgGapS.toFixed(0)}s` },
-        message: `${name} at ${fmtClock(castTimesS[i])}: ${gap.toFixed(0)}s gap, top ${avgGapS.toFixed(0)}s.`,
+        timestamp_ms: Math.round(castTimesMs[i]),
+        measured: { value: `${(gapMs / 1000).toFixed(0)}s`, unit: `avg ${(avgGapMs / 1000).toFixed(0)}s` },
+        message: `${name} at ${fmtClock(castTimesMs[i] / 1000)}: ${(gapMs / 1000).toFixed(0)}s gap, top ${(avgGapMs / 1000).toFixed(0)}s.`,
         details: { remedy: `Use ${name} sooner after it resets.` }, occurrences: [] });
     }
   }
@@ -160,7 +160,7 @@ export function analyzeOneDefensive(
   defBench: PerDefensiveBenchmark | undefined,
   fightDurS: number,
 ): AnalysisFinding[] {
-  const { name, uses, cast_times_s } = defensive;
+  const { name, uses, cast_times_ms } = defensive;
 
   if (defensive.talent_gated && uses === 0) return [];
 
@@ -190,17 +190,17 @@ export function analyzeOneDefensive(
   }
 
   const suggestions: AnalysisFinding[] = [];
-  if (cast_times_s?.length) {
-    const firstS = cast_times_s[0];
-    if (majorityUse && isOutlierAbove(firstS, defBench.avg_first_cast_s, defBench.stddev_first_cast_s)) {
+  if (cast_times_ms?.length) {
+    const firstMs = cast_times_ms[0];
+    if (majorityUse && isOutlierAbove(firstMs, defBench.avg_first_cast_ms, defBench.stddev_first_cast_ms)) {
       issues.push({ severity: 'warning', category: 'cooldown_delay', cd_name: name,
-        timestamp_ms: Math.round(firstS * 1000),
-        measured: { value: `+${(firstS - defBench.avg_first_cast_s).toFixed(0)}s`, unit: `top ${fmtClock(defBench.avg_first_cast_s)}` },
-        message: `${name} first used at ${fmtClock(firstS)}, ${(firstS - defBench.avg_first_cast_s).toFixed(0)}s late. Top: ${fmtClock(defBench.avg_first_cast_s)}.`,
+        timestamp_ms: Math.round(firstMs),
+        measured: { value: `+${((firstMs - defBench.avg_first_cast_ms) / 1000).toFixed(0)}s`, unit: `top ${fmtClock(defBench.avg_first_cast_ms / 1000)}` },
+        message: `${name} first used at ${fmtClock(firstMs / 1000)}, ${((firstMs - defBench.avg_first_cast_ms) / 1000).toFixed(0)}s late. Top: ${fmtClock(defBench.avg_first_cast_ms / 1000)}.`,
         details: { remedy: `Use ${name} earlier.` }, occurrences: [] });
     }
-    issues.push(...gapDelayFindings(name, cast_times_s, defBench));
-    suggestions.push(...holdSuggestionFindings(name, cast_times_s, defBench.hold_targets));
+    issues.push(...gapDelayFindings(name, cast_times_ms, defBench));
+    suggestions.push(...holdSuggestionFindings(name, cast_times_ms, defBench.hold_targets));
   }
 
   const result = issues.length
@@ -383,7 +383,7 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
     const holds = benchmark?.majority_hold && benchmark.hold_targets
       ? Object.entries(benchmark.hold_targets)
           .sort((a, b) => Number(a[0]) - Number(b[0]))
-          .map(([idx, hold]) => ({ castIndex: Number(idx), targetS: hold.target_s }))
+          .map(([idx, hold]) => ({ castIndex: Number(idx), targetS: hold.target_ms / 1000 }))
       : [];
     const spellId = defensive.spell_id ?? null;
     const ability = spellId != null ? bench.ability_icons[spellId] : undefined;
@@ -393,7 +393,7 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
       spellId,
       icon: ability?.icon ?? '',
       uses: benchmark?.avg_uses ?? null,
-      firstCastS: benchmark?.avg_first_cast_s ?? null,
+      firstCastS: benchmark?.avg_first_cast_ms != null ? benchmark.avg_first_cast_ms / 1000 : null,
       windowsS,
       holds,
       rule: defensive.usage_rule ?? null,

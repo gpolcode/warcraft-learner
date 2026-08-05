@@ -20,14 +20,14 @@ export interface UsesPerMin {
 
 /**
  * Per-cast-index hold target: a cooldown cast index where a majority of top parses
- * deliberately hold past the natural reset. `target_s` is the absolute clock median,
+ * deliberately hold past the natural reset. `target_ms` is the absolute clock median,
  * which the plan surfaces for display; `count`/`total_samples` drive the "X/Y hold" copy.
  */
 export interface HoldTarget {
   /** Absolute clock target (median cast time), for display ("hold to 3:20"). */
-  target_s: number;
+  target_ms: number;
   /** Std-dev of the absolute target. */
-  stddev_s: number;
+  stddev_ms: number;
   count: number;
   total_samples: number;
 }
@@ -38,26 +38,26 @@ export interface HoldTarget {
  * ideal schedule). Both the rotation and defensive benches write these.
  */
 export interface CdHoldTarget extends HoldTarget {
-  /** Prior-relative hold past natural reset (median of actual - (prior + effective_cd_s)). */
-  delay_s: number;
-  /** Std-dev of `delay_s`. */
-  delay_stddev_s: number;
-  /** Tolerance half-width the runtime compares against: max(delay_stddev_s, floor). */
-  band_s: number;
-  /** Cadence zero-point used for `delay_s` (nominal rulebook cooldown). */
-  effective_cd_s: number;
+  /** Prior-relative hold past natural reset (median of actual - (prior + effective_cd_ms)). */
+  delay_ms: number;
+  /** Std-dev of `delay_ms`. */
+  delay_stddev_ms: number;
+  /** Tolerance half-width the runtime compares against: max(delay_stddev_ms, floor). */
+  band_ms: number;
+  /** Cadence zero-point used for `delay_ms` (nominal rulebook cooldown). */
+  effective_cd_ms: number;
 }
 
 /** Rotation + defensive hold targets (base + prior-relative band). */
 export type CdHoldTargets = Record<string, CdHoldTarget>;
 
 export interface PerCdBenchmark {
-  avg_first_cast_s: number;
-  stddev_first_cast_s: number;
-  avg_gap_s: number | null;
-  stddev_gap_s: number | null;
-  avg_bl_offset_s: number | null;
-  stddev_bl_offset_s: number | null;
+  avg_first_cast_ms: number;
+  stddev_first_cast_ms: number;
+  avg_gap_ms: number | null;
+  stddev_gap_ms: number | null;
+  avg_bl_offset_ms: number | null;
+  stddev_bl_offset_ms: number | null;
   avg_uses: number;
   avg_uses_per_min: number;
   uses_per_min: UsesPerMin;
@@ -80,10 +80,10 @@ export interface PerDefensiveBenchmark {
   sample_count: number;
   /** Parses (of `sample_count`) that used this defensive at least once (use-share gate). */
   used_sample_count: number;
-  avg_first_cast_s: number;
-  stddev_first_cast_s: number;
-  avg_gap_s: number | null;
-  stddev_gap_s: number | null;
+  avg_first_cast_ms: number;
+  stddev_first_cast_ms: number;
+  avg_gap_ms: number | null;
+  stddev_gap_ms: number | null;
   hold_targets: CdHoldTargets;
   avg_uses: number;
   avg_uses_per_min: number;
