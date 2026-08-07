@@ -4,6 +4,12 @@ import { WowheadTooltipsService } from '../../../core/services/wowhead-tooltips'
 
 export type GameIconKind = 'spell' | 'item';
 
+// WCL logs some abilities under a combat-log spell id that has no Wowhead page (a 301 to
+// "not found"); the player-facing spell page lives under a different id. Remap only the link,
+// since the WCL id is still what icon/name lookups and cast matching key off of.
+// Ravager (Arms/Fury Warrior): WCL logs casts as 152277, Wowhead's page is 228920.
+const WOWHEAD_SPELL_ID_OVERRIDES: Readonly<Record<number, number>> = { 152277: 228920 };
+
 /**
  * Renders a WoW spell or item as an icon + name that links to Wowhead.
  *
@@ -67,5 +73,8 @@ export class GameIconComponent {
     return file ? `https://wow.zamimg.com/images/wow/icons/small/${file}.jpg` : null;
   });
 
-  protected readonly wowheadUrl = computed(() => `https://www.wowhead.com/${this.kind()}=${this.id()}`);
+  protected readonly wowheadUrl = computed(() => {
+    const id = this.kind() === 'spell' ? (WOWHEAD_SPELL_ID_OVERRIDES[this.id()] ?? this.id()) : this.id();
+    return `https://www.wowhead.com/${this.kind()}=${id}`;
+  });
 }
