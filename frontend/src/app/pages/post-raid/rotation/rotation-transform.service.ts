@@ -10,7 +10,7 @@ import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
 import {
   HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets, detectHoldWindows,
 } from '../../../shared/analysis/hold-targets';
-import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { abilityIcons, relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
@@ -33,7 +33,7 @@ const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
 /** p90 of pooled cast gaps is the downtime floor. */
 const DOWNTIME_PERCENTILE = 0.9;
-const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
+const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
 
 export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDefensive[]): Record<string, number> {
   const map: Record<string, number> = {};
@@ -45,7 +45,7 @@ export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: Ru
 export function detectBloodlust(buffEvents: WclEvent[], fightStartMs: number): number | null {
   for (const event of buffEvents) {
     if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID)) {
-      return (event.timestamp - fightStartMs) / 1000;
+      return relativeS(event.timestamp, fightStartMs);
     }
   }
   return null;
@@ -70,7 +70,7 @@ export function summarizeCooldownCasts(
   return cooldowns.map(cooldown => {
     const castTimesS = castEvents
       .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => (cast.timestamp - fightStartMs) / 1000)
+      .map(cast => relativeS(cast.timestamp, fightStartMs))
       .sort((a, b) => a - b);
 
     let blAligned = false;
@@ -101,10 +101,10 @@ export function summarizeCooldownCasts(
   });
 }
 
-export function castGapListMs(castEvents: WclEvent[]): number[] {
+export function castGapListS(castEvents: WclEvent[]): number[] {
   const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.timestamp - b.timestamp);
   const gaps: number[] = [];
-  for (let i = 1; i < completed.length; i++) gaps.push(Math.round(completed[i].timestamp - completed[i - 1].timestamp));
+  for (let i = 1; i < completed.length; i++) gaps.push(round((completed[i].timestamp - completed[i - 1].timestamp) / 1000, 3));
   return gaps.sort((a, b) => a - b);
 }
 
@@ -112,7 +112,7 @@ function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
   const usesPerMin: number[] = [];
   for (const entry of entries) {
     if (entry.fight_duration_s > 0 && entry.cast_times_s.length) {
-      usesPerMin.push(Math.round((entry.cast_times_s.length / entry.fight_duration_s) * 60 * 1000) / 1000);
+      usesPerMin.push(round((entry.cast_times_s.length / entry.fight_duration_s) * 60, 3));
     }
   }
   if (!usesPerMin.length) return { avg: 0, stddev: 0, min: 0, max: 0 };
@@ -159,23 +159,23 @@ export function buildCdBenchmark(entries: CdSummary[], effectiveCd: number): Per
 
 export function computeEfficiencyThresholds(
   gapLists: number[][], durations: number[],
-): { downtimeThresholdMs: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
+): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
   const allGaps = gapLists.flat().sort((a, b) => a - b);
-  let downtimeThresholdMs = DEFAULT_DOWNTIME_THRESHOLD_MS;
+  let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
   if (allGaps.length) {
-    downtimeThresholdMs = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_MS;
+    downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
   }
   const efficiencies: number[] = [];
   for (let i = 0; i < gapLists.length; i++) {
     const gaps = gapLists[i];
     const durationS = durations[i] ?? 0;
     if (gaps.length && durationS > 0) {
-      const downtimeS = gaps.filter(gap => gap > downtimeThresholdMs).reduce((sum, gap) => sum + gap, 0) / 1000;
+      const downtimeS = gaps.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
       efficiencies.push(round(Math.max(0, (1 - downtimeS / durationS) * 100)));
     }
   }
   return {
-    downtimeThresholdMs: Math.round(downtimeThresholdMs),
+    downtimeThresholdS: round(downtimeThresholdS, 3),
     topAvgEfficiency: efficiencies.length ? round((mean(efficiencies) ?? 0)) : 0,
     topEfficiencyStddev: efficiencies.length ? round((deviation(efficiencies) ?? 0)) : 0,
   };
@@ -200,7 +200,7 @@ export function aggregateCdBenchmarks(
 
 interface ParseRotation {
   summaries: CdSummary[];
-  gapListMs: number[];
+  gapListS: number[];
   durationS: number;
   encounterName: string;
   /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
@@ -243,14 +243,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
         if (!parse) continue;
         perParse.push(parse.summaries);
         ruleSamples.push(parse.ruleSamples);
-        gapLists.push(parse.gapListMs);
+        gapLists.push(parse.gapListS);
         durations.push(parse.durationS);
         encounterName ||= parse.encounterName;
         if (perParse.length >= TOP_PARSE_COUNT) break;
       }
       if (!perParse.length) return missing('No usable top parses for this encounter.');
 
-      const { downtimeThresholdMs, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
+      const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(gapLists, durations);
 
       const cd_spell_ids = rotationCdSpellIds(cooldowns, defensives);
       return ok({
@@ -259,7 +259,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         encounter_name: encounterName,
         sample_count: perParse.length,
         avg_duration_s: durations.length ? round((mean(durations) ?? 0)) : 0,
-        downtime_threshold_ms: downtimeThresholdMs,
+        downtime_threshold_s: downtimeThresholdS,
         top_avg_efficiency: topAvgEfficiency,
         top_efficiency_stddev: topEfficiencyStddev,
         per_cd_benchmarks: aggregateCdBenchmarks(perParse, cooldowns),
@@ -301,16 +301,16 @@ export class RotationTransformService implements DataSource<RotationBench> {
           : Promise.resolve([]),
       ]);
 
-      const fightDurS = (fight.endTime - fight.startTime) / 1000;
+      const fightDurS = relativeS(fight.endTime, fight.startTime);
       const blTimeS = detectBloodlust(buffs, fight.startTime);
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
         deaths: raidDeaths.filter(event => event.targetID === player.id),
-        fStart: fight.startTime, fEnd: fight.endTime,
+        fStartMs: fight.startTime, fEndMs: fight.endTime,
       });
       return {
         summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeS),
-        gapListMs: castGapListMs(casts),
+        gapListS: castGapListS(casts),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
         ruleSamples: rules.map(rule => measureRule(rule.condition, ruleCtx)),

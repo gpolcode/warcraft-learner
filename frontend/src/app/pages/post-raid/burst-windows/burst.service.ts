@@ -7,7 +7,7 @@ import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
-import { normalizeAbilityId, windowSpells } from '../../../shared/analysis/wcl-projections';
+import { normalizeAbilityId, relativeS, windowSpells } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
 
 export type AbilityIcons = Record<number, { icon: string; name: string }>;
@@ -137,7 +137,7 @@ function playerWindowAggregate(
   nameOf: (spellId: number) => string,
 ): PlayerBurstWindow {
   const inWindow = (tsS: number): boolean => tsS >= window.time_s && tsS < window.time_s + window.window_length_s;
-  const winEvents = sortedDmg.filter(event => inWindow((event.timestamp - fightStartMs) / 1000));
+  const winEvents = sortedDmg.filter(event => inWindow(relativeS(event.timestamp, fightStartMs)));
   const winTotal = winEvents.reduce((sum, event) => sum + eventDamage(event), 0);
   const byAbility: Record<number, number> = {};
   for (const event of winEvents) {
@@ -148,7 +148,7 @@ function playerWindowAggregate(
   }
   const castsByName = new Map<string, number>();
   for (const event of casts) {
-    if (inWindow((event.timestamp - fightStartMs) / 1000)) {
+    if (inWindow(relativeS(event.timestamp, fightStartMs))) {
       const name = nameOf(event.abilityGameID!);
       castsByName.set(name, (castsByName.get(name) ?? 0) + 1);
     }
@@ -204,7 +204,7 @@ export class BurstFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
       ]);
       const playerWindows = findPlayerBurstWindows(bench.value.windows, damage, casts, fight.startTime, abilityNames);
-      const fightDurationS = (fight.endTime - fight.startTime) / 1000;
+      const fightDurationS = relativeS(fight.endTime, fight.startTime);
       return ok(buildBurstView(bench.value.windows, playerWindows, fightDurationS, bench.value.cd_spell_ids, bench.value.ability_icons));
     } catch (cause) {
       logWarn(`BurstFeatureService.loadPlayerView ${reportCode}:${fightId}`, cause);

@@ -17,7 +17,7 @@ import { ParsePositions, PlayerPosRow, PosRow } from '../../../core/models/posit
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
-import { toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { DataSource } from '../../../core/data-source/data-source';
 import { MapData } from './map-data-source';
@@ -64,7 +64,7 @@ export function collectPositionSamples(events: WclEvent[], fightStartMs: number)
     let samples = byActor.get(actorId);
     if (!samples) { samples = []; byActor.set(actorId, samples); }
     samples.push({
-      t: (event.timestamp - fightStartMs) / 1000,
+      t: relativeS(event.timestamp, fightStartMs),
       x: event.x!, y: event.y!,
       facing: typeof event.facing === 'number' ? event.facing : null,
       mapID: typeof event.mapID === 'number' ? event.mapID : null,
@@ -259,7 +259,7 @@ export class MapTransformService implements DataSource<MapData> {
         enemyMetaById,
         posEvents,
         fightStartMs: fight.startTime,
-        durationS: (fight.endTime - fight.startTime) / 1000,
+        durationS: relativeS(fight.endTime, fight.startTime),
       });
       return { positions, encounterName: fight.name ?? '' };
     } catch (cause) {

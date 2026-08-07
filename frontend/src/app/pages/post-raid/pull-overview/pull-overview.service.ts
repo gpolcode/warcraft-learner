@@ -4,14 +4,13 @@ import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../core/model
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
+import { relativeS } from '../../../shared/analysis/wcl-projections';
 
 /**
  * Pull overview - the first, always-on card on the post-raid page. Summarizes one pull from the
  * player's OWN log (WCL, no bench): DPS, pull time, boss % reached, the player's deaths, and the
  * kill/wipe outcome. Injects only `WclApiService`; no bench, no `*_DATA_SOURCE`, no transform.
  */
-
-const MS_PER_S = 1000;
 
 export type PullResult = 'kill' | 'wipe';
 
@@ -61,7 +60,7 @@ export function wipeTimeS(
   for (const event of timeline) {
     if (event.died) dead.add(event.player);
     else dead.delete(event.player);
-    if (dead.size >= WIPE_DEATHS) return (event.t - fightStartMs) / MS_PER_S;
+    if (dead.size >= WIPE_DEATHS) return relativeS(event.t, fightStartMs);
   }
   return fightDurationS;
 }
@@ -128,7 +127,7 @@ export function buildDeathRows(
       const abilityId = event.killingAbilityGameID ?? 0;
       return {
         index: i + 1,
-        timeS: (event.timestamp - fightStartMs) / MS_PER_S,
+        timeS: relativeS(event.timestamp, fightStartMs),
         ability: abilityId ? (names.get(abilityId) ?? '') : '',
       };
     });

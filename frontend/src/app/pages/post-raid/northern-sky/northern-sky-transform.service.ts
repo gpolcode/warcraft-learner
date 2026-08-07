@@ -6,7 +6,7 @@ import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { round } from '../../../shared/analysis/analysis-math';
-import { abilityIcons, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { abilityIcons, relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 
@@ -18,7 +18,7 @@ const CANDIDATE_POOL_COUNT = 10;
 export function cooldownCastTimes(casts: WclEvent[], spellId: number, fightStartMs: number): number[] {
   return casts
     .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
-    .map(cast => round((cast.timestamp - fightStartMs) / 1000))
+    .map(cast => round(relativeS(cast.timestamp, fightStartMs)))
     .sort((a, b) => a - b);
 }
 

@@ -46,17 +46,17 @@ describe('analyzeDefensives', () => {
 
 describe('buildDefensiveUsageWindows', () => {
   // The buff/cast fight window the fixtures live inside.
-  const F_START = 0;
-  const F_END = 300_000;
+  const F_START_MS = 0;
+  const F_END_MS = 300_000;
   const FIGHT_END_S = 300;
-  const rel = (ts: number): number => ts - F_START;
+  const rel = (timestampMs: number): number => (timestampMs - F_START_MS) / 1000;
   // A constant damage-in-window function so each span's dmg_during is predictable.
   const FIXED_DMG = 500;
   const dmg = (): number => FIXED_DMG;
 
   it('builds a measured buff span with damage taken, open buff running to fight end', () => {
     const BUFF_START_S = 10;
-    const out = buildDefensiveUsageWindows(CLOAK_OF_SHADOWS, [[BUFF_START_S, null]], [], dmg, rel, F_START, F_END, FIGHT_END_S);
+    const out = buildDefensiveUsageWindows(CLOAK_OF_SHADOWS, [[BUFF_START_S, null]], [], dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S);
     expect(out).toEqual([{ start_s: BUFF_START_S, end_s: FIGHT_END_S, dmg_during: FIXED_DMG }]);
   });
 
@@ -64,16 +64,16 @@ describe('buildDefensiveUsageWindows', () => {
     const CAST_S = 20;
     const out = buildDefensiveUsageWindows(
       CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, CAST_S)],
-      dmg, rel, F_START, F_END, FIGHT_END_S,
+      dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S,
     );
     expect(out).toEqual([{ start_s: CAST_S, end_s: CAST_S, dmg_during: 0 }]);
   });
 
   it('ignores a cast outside the fight bounds (boundary)', () => {
-    const PAST_END_S = 301; // > FIGHT_END_S, so its timestamp is past F_END
+    const PAST_END_S = 301; // > FIGHT_END_S, so its timestamp is past F_END_MS
     const out = buildDefensiveUsageWindows(
       CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, PAST_END_S)],
-      dmg, rel, F_START, F_END, FIGHT_END_S,
+      dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S,
     );
     expect(out).toEqual([]);
   });
@@ -283,12 +283,12 @@ describe('defensiveClipAnchor', () => {
 });
 
 describe('defensiveFindingClipAnchor', () => {
-  it('is a point anchor at the cast time, keyed by the exact millisecond', () => {
-    expect(defensiveFindingClipAnchor(30_200)).toEqual({ timeS: 30.2, windowLengthS: 0, key: 'defensive-find-30200' });
+  it('is a point anchor at the cast time, keyed by the exact second', () => {
+    expect(defensiveFindingClipAnchor(30.2)).toEqual({ timeS: 30.2, windowLengthS: 0, key: 'defensive-find-30.2' });
   });
 
   it('keeps two findings within the same second on distinct clip keys', () => {
-    expect(defensiveFindingClipAnchor(30_200).key).not.toBe(defensiveFindingClipAnchor(30_600).key);
+    expect(defensiveFindingClipAnchor(30.2).key).not.toBe(defensiveFindingClipAnchor(30.6).key);
   });
 });
 

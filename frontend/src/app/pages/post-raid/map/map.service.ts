@@ -10,6 +10,7 @@ import { EncounterPositions, ReferenceSelector } from '../../../core/models/posi
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
+import { relativeS } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 
@@ -86,7 +87,7 @@ export function buildActorTimelines(events: WclEvent[], fightStartMs: number): M
     let samples = byActor.get(id);
     if (!samples) { samples = []; byActor.set(id, samples); }
     samples.push({
-      t: (event.timestamp - fightStartMs) / 1000,
+      t: relativeS(event.timestamp, fightStartMs),
       x: event.x! * RAW_TO_YARDS,
       y: event.y! * RAW_TO_YARDS,
       facing: typeof event.facing === 'number' ? event.facing * FACING_TO_RAD : undefined,

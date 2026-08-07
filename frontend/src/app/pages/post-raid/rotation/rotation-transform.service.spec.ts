@@ -4,7 +4,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import {
   RotationTransformService,
-  detectBloodlust, summarizeCooldownCasts, castGapListMs,
+  detectBloodlust, summarizeCooldownCasts, castGapListS,
   buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks, rotationCdSpellIds,
   CdSummary,
 } from './rotation-transform.service';
@@ -63,9 +63,9 @@ describe('summarizeCooldownCasts', () => {
   });
 });
 
-describe('castGapListMs', () => {
-  it('returns sorted inter-cast gaps in ms', () => {
-    expect(castGapListMs([cast(1, 0), cast(1, 3), cast(1, 1)])).toEqual([1000, 2000]);
+describe('castGapListS', () => {
+  it('returns sorted inter-cast gaps in seconds', () => {
+    expect(castGapListS([cast(1, 0), cast(1, 3), cast(1, 1)])).toEqual([1, 2]);
   });
 });
 
@@ -132,16 +132,16 @@ describe('buildCdBenchmark', () => {
 
 describe('computeEfficiencyThresholds', () => {
   it('derives a p90 downtime floor and per-parse efficiency mean', () => {
-    const result = computeEfficiencyThresholds([[500, 600, 700, 5000]], [100]);
-    // d3 p90 quantile of [500,600,700,5000]: 700 + 0.7*(5000-700) = 3710 ms.
-    expect(result.downtimeThresholdMs).toBe(3710);
-    // only the 5000ms gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
+    const result = computeEfficiencyThresholds([[0.5, 0.6, 0.7, 5]], [100]);
+    // d3 p90 quantile of [0.5,0.6,0.7,5]: 0.7 + 0.7*(5-0.7) = 3.71s.
+    expect(result.downtimeThresholdS).toBe(3.71);
+    // only the 5s gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
     expect(result.topAvgEfficiency).toBe(95);
   });
 
   it('falls back to the default floor with no gaps', () => {
     const result = computeEfficiencyThresholds([[]], [100]);
-    expect(result.downtimeThresholdMs).toBe(1500);
+    expect(result.downtimeThresholdS).toBe(1.5);
     expect(result.topAvgEfficiency).toBe(0);
   });
 });

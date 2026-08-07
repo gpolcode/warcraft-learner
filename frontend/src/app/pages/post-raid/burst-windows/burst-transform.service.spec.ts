@@ -68,16 +68,16 @@ describe('bucketDamagePerBin', () => {
     const SECOND_HIT = 200;
     const LATE_HIT = 50;
     const BIN_COUNT = 3;
-    // hit timestamps in ms (DamageHit = [ts, dmg, abilityId]); ts 1000-1999 -> bin 1.
+    // hit times in fight-relative seconds (DamageHit = [atS, dmg, abilityId]); atS 1-1.999 -> bin 1.
     const hits: [number, number, number][] = [
-      [1000, FIRST_HIT, EVISCERATE], [1500, SECOND_HIT, EVISCERATE], [999_000, LATE_HIT, EVISCERATE],
+      [1, FIRST_HIT, EVISCERATE], [1.5, SECOND_HIT, EVISCERATE], [999, LATE_HIT, EVISCERATE],
     ];
-    expect(bucketDamagePerBin(hits, 0, BIN_COUNT)).toEqual([0, FIRST_HIT + SECOND_HIT, LATE_HIT]);
+    expect(bucketDamagePerBin(hits, BIN_COUNT)).toEqual([0, FIRST_HIT + SECOND_HIT, LATE_HIT]);
   });
 
   it('clamps a pre-fight hit (negative offset) into bin 0', () => {
     const PRE_FIGHT_HIT = 70;
-    expect(bucketDamagePerBin([[-5000, PRE_FIGHT_HIT, EVISCERATE]], 0, 2)).toEqual([PRE_FIGHT_HIT, 0]);
+    expect(bucketDamagePerBin([[-5, PRE_FIGHT_HIT, EVISCERATE]], 2)).toEqual([PRE_FIGHT_HIT, 0]);
   });
 });
 
@@ -150,12 +150,12 @@ describe('windowAbilityBreakdown', () => {
     // counting must key by NAME: a by-id count would miss the cast and report 0.
     const bridgeNameOf = (spellId: number): string =>
       new Map([[SHADOW_BLADES, 'Shadow Blades'], [SHADOW_BLADES_DAMAGE, 'Shadow Blades'], [BLACK_POWDER, 'Black Powder']]).get(spellId) ?? `Spell ${spellId}`;
-    // DamageHit = [ts, dmg, abilityId]; window is [1000ms, 3000ms).
-    const windowHits: [number, number, number][] = [[1000, SB_DMG, SHADOW_BLADES_DAMAGE], [1500, BP_DMG, BLACK_POWDER]];
-    // CastRow = [ts, abilityId]; the Shadow Blades cast carries the CAST id, distinct from the damage id.
-    const castRows: [number, number][] = [[1200, SHADOW_BLADES], [9000, BLACK_POWDER]];
+    // DamageHit = [atS, dmg, abilityId]; window is [1s, 3s).
+    const windowHits: [number, number, number][] = [[1, SB_DMG, SHADOW_BLADES_DAMAGE], [1.5, BP_DMG, BLACK_POWDER]];
+    // CastRow = [atS, abilityId]; the Shadow Blades cast carries the CAST id, distinct from the damage id.
+    const castRows: [number, number][] = [[1.2, SHADOW_BLADES], [9, BLACK_POWDER]];
     const castNamesInParse = new Set(['Shadow Blades']);
-    const breakdown = windowAbilityBreakdown(windowHits, castRows, 1000, 3000, bridgeNameOf, castNamesInParse);
+    const breakdown = windowAbilityBreakdown(windowHits, castRows, 1, 3, bridgeNameOf, castNamesInParse);
     expect(breakdown).toEqual([
       { spell_id: SHADOW_BLADES_DAMAGE, damage: SB_DMG, casts: 1, is_passive: false },
       // Black Powder was never cast in the parse -> passive, and 0 in-window casts.
@@ -165,10 +165,10 @@ describe('windowAbilityBreakdown', () => {
 
   it('excludes a cast exactly on the half-open window end', () => {
     const HIT_DMG = 500;
-    const windowHits: [number, number, number][] = [[1000, HIT_DMG, EVISCERATE]];
-    // A cast at exactly endMs (3000) is excluded; one just inside (2999) counts.
-    const castRows: [number, number][] = [[3000, EVISCERATE], [2999, EVISCERATE]];
-    const breakdown = windowAbilityBreakdown(windowHits, castRows, 1000, 3000, nameOf, new Set(['Eviscerate']));
+    const windowHits: [number, number, number][] = [[1, HIT_DMG, EVISCERATE]];
+    // A cast at exactly endS (3) is excluded; one just inside (2.999) counts.
+    const castRows: [number, number][] = [[3, EVISCERATE], [2.999, EVISCERATE]];
+    const breakdown = windowAbilityBreakdown(windowHits, castRows, 1, 3, nameOf, new Set(['Eviscerate']));
     expect(breakdown[0].casts).toBe(1);
   });
 
@@ -176,9 +176,9 @@ describe('windowAbilityBreakdown', () => {
     const ABILITY_COUNT = 8;
     // Eight abilities, descending damage; only the top 6 survive.
     const windowHits: [number, number, number][] = Array.from(
-      { length: ABILITY_COUNT }, (_, index) => [1000, (ABILITY_COUNT - index) * 100, index + 1] as [number, number, number],
+      { length: ABILITY_COUNT }, (_, index) => [1, (ABILITY_COUNT - index) * 100, index + 1] as [number, number, number],
     );
-    const breakdown = windowAbilityBreakdown(windowHits, [], 1000, 3000, nameOf, new Set());
+    const breakdown = windowAbilityBreakdown(windowHits, [], 1, 3, nameOf, new Set());
     expect(breakdown).toHaveLength(6);
     expect(breakdown[0].damage).toBe(ABILITY_COUNT * 100);
   });
@@ -186,8 +186,8 @@ describe('windowAbilityBreakdown', () => {
   it('folds distinct synthetic ids that normalize together into one summed row', () => {
     const SYNTH_A = -3, SYNTH_B = -7;  // distinct negatives, both normalize to the synthetic catch-all
     const DMG_A = 600, DMG_B = 400;
-    const windowHits: [number, number, number][] = [[1000, DMG_A, SYNTH_A], [1500, DMG_B, SYNTH_B]];
-    expect(windowAbilityBreakdown(windowHits, [], 1000, 3000, nameOf, new Set())).toEqual([
+    const windowHits: [number, number, number][] = [[1, DMG_A, SYNTH_A], [1.5, DMG_B, SYNTH_B]];
+    expect(windowAbilityBreakdown(windowHits, [], 1, 3, nameOf, new Set())).toEqual([
       { spell_id: WCL_SYNTHETIC_SOURCE_FALLBACK_ID, damage: DMG_A + DMG_B, casts: 0, is_passive: true },
     ]);
   });
@@ -283,7 +283,7 @@ describe('findParseWindows', () => {
 
   it('counts a killing-blow hit at exactly fight end in the fight-closing window', () => {
     const KILLING_BLOW_DMG = 5000;
-    // LONG_FIGHT_MS (300_000) is an exact BIN_MS multiple, so the killing blow at fightEndMs clamps into the last bin.
+    // LONG_FIGHT_MS (300_000) is an exact BIN_S (in ms) multiple, so the killing blow at fightEndMs clamps into the last bin.
     const events = [...burstAt(296), damage(EVISCERATE, 300, KILLING_BLOW_DMG)];
     const closing = scanWindows(events, LONG_FIGHT_MS).find(window => window.time_s === 296);
     expect(closing?.window_damage).toBe(4 * BIN_DAMAGE + KILLING_BLOW_DMG);
