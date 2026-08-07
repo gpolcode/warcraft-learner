@@ -75,18 +75,43 @@ invoke four things that do not exist. It will either ignore them or hallucinate 
 is to make the table name only project skills, and to fence the Claude built-ins into a clearly
 labelled Claude-only column or section.
 
-### 1.4 `warcraft-rulebook` is the one non-portable skill
+### 1.4 `warcraft-rulebook` ports, and its isolation gets stronger
 
-It orchestrates a fan-out: the main agent preps sources, then dispatches one isolated authoring
-subagent per spec, each reading only prepped scratchpad files. That depends on Claude Code's Task
-tool. Copilot's closest primitives are custom agents in `.github/agents/*.agent.md` (max 30,000
-character prompt) and VS Code's experimental `context: fork` frontmatter, neither of which gives a
-skill the ability to fan out N isolated workers from inside its own procedure.
+The skill orchestrates a fan-out: the main agent preps sources, then dispatches one authoring worker
+per spec, each reading only prepped scratchpad files. Copilot supports this directly through two
+mechanisms, and both enforce the worker's boundary rather than asking for it.
 
-The skill's actual content splits cleanly, though: the source URLs, tier and branch discovery, WCL
-grounding queries, the schema contract, the authoring brief, the output path, and the publish recipe
-are all mechanical and portable. Only the "dispatch N subagents" step is not. So the portable
-fallback is the same procedure run sequentially, one spec at a time.
+**Delegation.** Copilot exposes an `agent` tool (aliased `custom-agent` and `Task`) whose whole
+purpose is invoking another custom agent to accomplish a task. Custom agents live in
+`.github/agents/NAME.agent.md`, body up to 30,000 characters, with frontmatter fields `name`,
+`description`, `target` (`vscode`, `github-copilot`, or both), `tools`, `model`,
+`disable-model-invocation`, `user-invocable`, and `mcp-servers`.
+
+**Enforced tool scope.** `tools` is an allowlist, not advice: unset means all tools, `[]` means none,
+and a list means only those. The aliases are `execute` (shell), `read`, `edit` (write), `search`,
+`web` (fetch and search), `agent`, and `todo`. So an authoring worker declared `tools: ["read",
+"edit"]` cannot shell out, cannot reach the network, and cannot spawn further agents, as a property
+of the runtime.
+
+That matters here because the current worker contract, "No URLs, no credentials, no network access",
+is a sentence in a prompt. On Copilot the same contract is a two-item allowlist. The prompt-level
+isolation the skill asks for becomes a boundary the model cannot cross even if it decides to.
+
+Copilot CLI tightens it further for headless runs. One process per spec gives a genuinely fresh
+context, and the flags scope what that process can touch: `--agent NAME` selects the worker,
+`--add-dir` (repeatable) limits its filesystem view, `--allow-tool` and `--deny-tool` take a
+parenthesised syntax (`write(out/**)`, `shell(git:*)`, `url(github.com)`), `--no-ask-user` stops it
+pausing for input, and `-p` with `-s` and `--output-format json` gives a machine-readable result.
+Credentials stay absent by simply not exporting them into the child process.
+
+One capability does not port: sending a correction to a worker that still holds its context, which
+Step 4 uses to fix a single bad rule cheaply. A delegated Copilot agent's context does not survive
+for follow-up messaging, so the replacement is a cold single-spec re-run with the defect appended to
+the prompt. That is more expensive per correction and otherwise equivalent.
+
+VS Code additionally supports `context: fork` in SKILL.md frontmatter, which runs a skill in a
+dedicated subagent and returns only its final result. It solves context pollution rather than tool
+isolation, and it is VS Code only, so it is worth knowing about and not worth depending on.
 
 ### 1.5 Path-scoped instructions: deliberately not adopted
 
@@ -110,9 +135,9 @@ AGENTS.md                  # symlink -> CLAUDE.md  (new)
 CLAUDE.md                  # unchanged content, router table rewritten tool-neutral
 .claude/skills/**          # unchanged; read natively by both tools
   warcraft-rulebook/
-    SKILL.md               # portable procedure + one fenced "parallel fan-out" section
+    SKILL.md               # dispatch step rewritten around the worker contract
 .github/agents/
-  rulebook-author.agent.md # new; Copilot equivalent of the authoring subagent
+  rulebook-author.agent.md # new; the authoring worker, read + edit tools only
 scripts/
   check-agent-config.mjs   # new; CI guard on the contract above
 docs/
@@ -162,27 +187,55 @@ it is already tool-neutral.
 Acceptance: no occurrence of `Plan agent`, `/code-review`, `/simplify`, `/verify`, or `/run` in
 `CLAUDE.md` outside a section explicitly marked Claude Code only.
 
-### Phase 3 - split `warcraft-rulebook` into portable procedure plus Claude-only fan-out
+### Phase 3 - give `warcraft-rulebook` a declared worker and a tool-neutral dispatch step
 
-1. Restructure `SKILL.md` so Steps 1 and 2 (spec selection, token, source prep, grounding) and Steps
-   4 onward (validation, output path, gh-pages publish) are written as a plain sequential procedure
-   with no mention of subagents.
-2. Confine the dispatch mechanics to a single section, for example "Step 3 - author the rulebooks",
-   which states the sequential default first and then, under a clearly labelled Claude Code
-   subsection, the parallel fan-out with the Task tool. A Copilot session that ignores the fenced
-   subsection still completes the job correctly, just serially.
-3. Update the skill `description` so it no longer promises a fan-out as the only mode. Keep it under
-   1024 characters.
-4. `authoring-brief.md` is already source-agnostic; its two `subagent` references become
-   "authoring agent". Its `.claude/` path reference to the schema stays, since that path is correct
-   on both tools.
-5. Add `.github/agents/rulebook-author.agent.md` carrying the authoring brief verbatim in its body,
-   so Copilot users get a first-class single-spec authoring agent. Keep the brief itself as the one
-   source of truth and have the agent file point at it rather than restating it, unless Copilot's
-   agent loader needs the text inline, in which case the CI check in Phase 4 covers the duplication.
+The target is one worker definition both tools honour, and a skill that names the worker and its
+input and output contract without naming a dispatch mechanism.
 
-Acceptance: reading `SKILL.md` top to bottom while ignoring every section marked Claude Code only
-still yields a complete, runnable procedure.
+1. Add `.github/agents/rulebook-author.agent.md`. Frontmatter:
+
+   ```yaml
+   name: rulebook-author
+   description: Authors one spec's rulebook.json from prepped local source files.
+   tools: ["read", "edit"]
+   user-invocable: false
+   ```
+
+   `tools: ["read", "edit"]` is the enforcement that replaces the current prompt-level "no network,
+   no credentials" clause. `user-invocable: false` keeps it out of the `/` menu, since it is a worker
+   driven by the orchestrator rather than something a human picks. Body: the contents of
+   `authoring-brief.md`, which is 9,935 characters and fits the 30,000 character limit with room to
+   spare.
+
+2. Decide the brief's single source of truth. The brief is currently `authoring-brief.md`, handed to
+   the worker by path so what the worker receives cannot drift from what the skill enforces. Copilot
+   loads an agent's instructions from the agent file's body, so the two options are to inline the
+   brief into `rulebook-author.agent.md` and delete `authoring-brief.md`, or to keep both and assert
+   equality in CI. Prefer inlining: one file, no drift, and the skill keeps working by naming the
+   agent instead of a path.
+
+3. Rewrite Step 3 of `SKILL.md` around the contract rather than the mechanism. It should state what
+   the worker gets (brief, folder key, `[className, specName]`, icon stem, the three scratchpad
+   paths, the output path, and nothing about any other spec or any existing rulebook), what it
+   returns (the file plus a one-line report), and that one worker handles exactly one spec. Dispatch
+   becomes a short note that this runs once per spec, in parallel where the tool allows it. Both
+   tools then read the same step and each does the right thing.
+
+4. Replace `SendMessage` in Step 4 with a tool-neutral instruction: send the defect back to the
+   worker if it still holds context, otherwise re-run that single spec with the defect appended.
+
+5. Update the skill `description` so it describes per-spec isolated authoring rather than a fan-out,
+   keeping it under 1024 characters.
+
+6. Optionally, move Steps 1, 2, 4 and 5 out of prose and into scripts. They are mechanical (curl the
+   APLs and guides, one WCL token, the ability table, schema validation via the existing
+   `rulebook.schema.json`, the gh-pages worktree publish) and are the only places credentials appear.
+   Scripting them removes the token from every agent context and leaves the agent doing the one job
+   that needs a model. This is the largest quality win available here and is independent of which
+   tool runs the skill.
+
+Acceptance: the skill names no tool-specific dispatch primitive; the worker's tool allowlist, not its
+prompt, is what prevents network access.
 
 ### Phase 4 - CI guard so the contract cannot silently rot
 
@@ -211,7 +264,15 @@ the PR:
    confirm `warcraft-architecture` loads without being named.
 3. Open a throwaway PR touching `frontend/src/**` and confirm Copilot code review's comments reflect
    the project rules (no hardcoded colours, no em-dashes, comment discipline).
-4. The same three checks on Claude Code, to confirm Phase 2 and 3 rewrites did not regress it.
+4. Author one spec end to end through `rulebook-author` and confirm the worker cannot reach the
+   network, by checking that the run produces the file with `tools: ["read", "edit"]` in place.
+5. The same checks on Claude Code, to confirm the Phase 2 and 3 rewrites did not regress it.
+
+Confirm the Copilot CLI flag names against `copilot --help` on the installed version before scripting
+anything around them. Published references disagree on the tool-scoping flags, listing both
+`--allow-tool` / `--deny-tool` and `--available-tools` / `--excluded-tools`, and the CLI ships changes
+often. The `tools` frontmatter allowlist is the stable part of the isolation and does not depend on
+resolving this.
 
 ## 4. Effort and risk
 
@@ -219,7 +280,7 @@ the PR:
 |---|---|---|
 | 1 root file | one symlink plus one line | low; symlink degrades visibly on Windows checkouts |
 | 2 router table | one table rewrite | low; prose only |
-| 3 rulebook split | one skill restructure plus one new agent file | medium; the only behaviour change, and it makes the Claude path optional rather than removing it |
+| 3 rulebook worker | one skill step rewrite plus one new agent file | medium; the only behaviour change. Losing mid-context correction costs a cold re-run per defect; the enforced tool allowlist is a net gain |
 | 4 CI guard | one script plus one workflow step | low |
 | 5 verification | manual, one session per tool | low |
 
