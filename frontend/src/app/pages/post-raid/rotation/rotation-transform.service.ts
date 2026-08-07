@@ -36,7 +36,6 @@ const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
 /** Fallback cooldown when a rulebook entry's own value is falsy. */
 const DEFAULT_CD_MS = 90_000;
-/** Denominator for a per-minute rate against an ms fight duration. */
 const MS_PER_MIN = 60_000;
 
 /** Rulebook cooldown (seconds) -> the one ms conversion point every consumer shares. */

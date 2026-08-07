@@ -24,8 +24,7 @@ import {
   evaluateFillerInBuff, evaluateSpendAtStacks, evaluateAuraClipped, evaluateFillerBelowHealth,
 } from './rotation-rules';
 
-// A zero band keeps the fixture arithmetic exact. The four time-based kinds measure their
-// threshold in milliseconds, matching the event fixtures (also ms, the builder's own unit).
+// A zero band keeps the fixture arithmetic exact.
 const PAIR_WINDOW_MS = 5_000, HOLD_WINDOW_MS = 15_000;
 function thr(value: number, band = 0): RuleThreshold {
   return { value, band };

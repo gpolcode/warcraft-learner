@@ -7,7 +7,6 @@ import {
 } from '../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS, RUPTURE, MAELSTROM_WEAPON } from '../../../testing/spell-ids';
 
-// Spans are carried in raw fight-relative milliseconds; the fixtures match that unit.
 const APPLY_MS = 10_000, REMOVE_MS = 15_000;
 const FIGHT_DUR_MS = 100_000;
 

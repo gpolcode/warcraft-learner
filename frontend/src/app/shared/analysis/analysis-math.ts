@@ -67,7 +67,6 @@ export function closestToZero(values: number[]): number {
   return values.reduce((best, value) => (Math.abs(value) < Math.abs(best) ? value : best));
 }
 
-/** Denominator for a per-minute rate against an ms fight duration. */
 const MS_PER_MIN = 60_000;
 
 /** Data-driven expected + floor uses for a fight from the top-parse uses/min. */

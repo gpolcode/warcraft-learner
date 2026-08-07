@@ -40,7 +40,6 @@ const CLUSTER_MERGE_MS = 20_000;
 const ABILITY_BREAKDOWN_TOP_N = 6;
 /** No ingestable bench (empty rulebook, no top parses, or no fetchable sample); reported as `missing`. */
 const NO_DEFENSIVE_BENCH_MESSAGE = 'Not yet ingested.';
-/** Denominator for a per-minute rate against an ms fight duration. */
 const MS_PER_MIN = 60_000;
 
 /** Defensive name -> spell id, for the defensive window header icons. */
