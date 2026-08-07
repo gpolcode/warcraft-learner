@@ -1,0 +1,143 @@
+{
+  "spec": "DevourerDemonHunter",
+  "spec_icon": "classicon_demonhunter_void",
+  "major_cooldowns": [
+    {
+      "name": "Void Metamorphosis",
+      "spell_id": 1217607,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "talent_gated": true,
+      "usage_rule": "Enter as soon as you hit 50 Soul Fragments (35 with Soul Glutton) with Souls still on the ground and Voidblade plus The Hunt already spent, then hold the form by pausing Fury drain with Void Ray and Collapsing Star and aim for 4-5 Collapsing Stars per window, never letting gathered Souls sit past 40.",
+      "id_note": "1217607 is the Void Metamorphosis form aura (7 applications in the sampled parse); no cast event for the form exists in that parse, hence talent_gated to suppress a false never-used finding. The form has no fixed cooldown: entry is gated on 50 Soul Fragments (35 with Soul Glutton), and 60s is the observed window cadence in the sampled parse."
+    },
+    {
+      "name": "Soul Immolation",
+      "spell_id": 1241937,
+      "cooldown": 30,
+      "duration": 5,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Press it any time no Soul Immolation is active and you are outside Void Metamorphosis, starting 3 seconds before the pull, since 30 Fury and 3 Soul Fragments beat a Consume global.",
+      "id_note": "Table base_cd_s is 60 with 1 charge; the guide takes Tempered Soul in all builds, which cuts it to 30s and adds a second charge."
+    },
+    {
+      "name": "Voidblade",
+      "spell_id": 1245412,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "talent_gated": true,
+      "usage_rule": "Send it right before entering Void Metamorphosis so the Devourer's Bite amp covers Collapsing Star and a Moment of Craving Cull, then follow it with Pierce the Veil inside the form for the first Voidsurge; Collapsing Star knocks 10 seconds off it with Voidrush."
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 1246167,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "talent_gated": true,
+      "usage_rule": "Spend it immediately before Void Metamorphosis, which resets its cooldown and returns it as Predator's Wake, then press that inside the window for a Voidsurge trigger and a pause in Fury drain."
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "Drink it inside your first Void Metamorphosis while the Fury drain is still under 30 per second, paired with your on-use trinket, and take the second charge in the last 30 seconds of the fight."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Pre-empt a telegraphed hit with the 25% damage reduction; it costs no rotational global, so never sit on it through avoidable damage.",
+      "id_note": "198589 is the cast id; 212800 is the matching self aura."
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "talent_gated": true,
+      "usage_rule": "Drop it under the group for a stack-and-soak mechanic, giving everyone inside 8 yards a 15% chance to avoid each attack for 8 seconds.",
+      "id_note": "196718 is the castable talent; 209426 is the ground-area aura. Not pressed in the sampled parse."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Soul Immolation into Consume, Reap, Void Ray",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [1241937, 473662, 1226019, 473728],
+        "spell_names": ["Soul Immolation", "Consume", "Reap", "Void Ray"]
+      },
+      "action": "Pre-cast Soul Immolation 3 seconds before the pull, Consume twice, re-apply Soul Immolation, Consume twice more, then Reap into Void Ray and repeat that pair until you have the Souls for Void Metamorphosis."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Void Ray at 100 Fury outside Void Metamorphosis",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 473728,
+        "spell_name": "Void Ray",
+        "resource_type": 17,
+        "resource_name": "fury",
+        "bound": "min"
+      },
+      "action": "Outside Void Metamorphosis, Void Ray costs 100 Fury and has no cooldown, so bank to 100 and fire it the moment you get there; inside the form it is free on a 16 second hasted cooldown (14 with Voidpurge) and goes out on cooldown to pause Fury drain."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Consume without capping Fury",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 473662,
+        "spell_name": "Consume",
+        "resource_type": 17,
+        "resource_name": "fury",
+        "bound": "max"
+      },
+      "action": "Fury caps at 120 as Annihilator and 140 as Void-Scarred, and every point wasted is a lost Void Ray; spend into Void Ray at 100 rather than filling with another Consume near the cap."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Devour, not Soul Immolation, inside Void Metamorphosis",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 1217610,
+        "spell_name": "Devour",
+        "alternative_spell_ids": [473662, 1241937],
+        "alternative_spell_names": ["Consume", "Soul Immolation"],
+        "buff_spell_id": 1217607,
+        "buff_spell_name": "Void Metamorphosis"
+      },
+      "action": "Every filler global inside the form goes to Devour; Soul Immolation only beats a Consume global outside Void Metamorphosis, so bank the charge for when the window ends."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Potion of Recklessness inside Void Metamorphosis",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1236994,
+        "spell_name": "Potion of Recklessness",
+        "buff_spell_id": 1217607,
+        "buff_spell_name": "Void Metamorphosis",
+        "require": "inside"
+      },
+      "action": "Hold the potion until you are transformed and the Fury drain is still under 30 per second, then send it with your on-use trinket; the only exception is the final 30 seconds of the fight."
+    }
+  ],
+  "source_summary": "Devourer has no timed burst button: Void Metamorphosis is bought with 50 Soul Fragments (35 with Soul Glutton) and lasts until Fury drains to zero, so the whole rotation is Fury and Soul generation feeding into it. Enter with Souls banked on the ground and Voidblade plus The Hunt already spent, stack your potion and on-use trinket on the window, then extend it with Void Ray and Collapsing Star to land 4-5 increasingly hard Stars before the form drops. Outside the window the loop is Consume filler into Reap, Void Ray at 100 Fury, and Soul Immolation on cooldown to rebuild toward the next transformation."
+}

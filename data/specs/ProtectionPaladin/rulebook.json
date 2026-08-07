@@ -1,0 +1,173 @@
+{
+  "spec": "ProtectionPaladin",
+  "spec_icon": "ability_paladin_shieldofthetemplar",
+  "major_cooldowns": [
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Press it once Divine Toll is within 10 seconds of ready, then spend the 20 second window dumping Holy Power while Judgment is empowered into Hammer of Wrath."
+    },
+    {
+      "name": "Divine Toll",
+      "spell_id": 375576,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Hold it for Avenging Wrath and cast it once that buff is up so Divine Resonance fires a free Avenger's Shield every 5 seconds for 15 seconds; without Righteous Protector send it when Avenging Wrath is under 30 seconds out."
+    },
+    {
+      "name": "Sacred Weapon",
+      "spell_id": 432472,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Lightsmith only: put the armament out whenever Avenging Wrath is not active, refreshing it when the buff has under 6 seconds left.",
+      "id_note": "Holy Armaments cast the guide names as Sacred Weapon; name-verified but not observed in the sampled Templar parse.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Cover routine tank damage with its 20% reduction and rotate it between Ardent Defender windows; usable while stunned.",
+      "id_note": "Class-tree defensive, not pressed in the sampled parse. 498 is the base cast id; 403876 is the Shield of Vengeance variant.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ardent Defender",
+      "spell_id": 31850,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Use it freely on its 1.5 minute cooldown for any predictable spike or low-health moment; the 30% reduction also turns the next killing blow into a reset to 20% health."
+    },
+    {
+      "name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Plan this one around named mechanics rather than pressing it on sight, since 50% reduction for 8 seconds only comes back every 3 minutes, or every other pull with Empyrean Authority's second charge."
+    },
+    {
+      "name": "Blessing of Spellwarding",
+      "spell_id": 204018,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Immunity to magic damage for 10 seconds on yourself or an ally; it shares its cooldown with Blessing of Protection and does not clear existing debuffs.",
+      "talent_gated": true
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Full immunity for lethal hits or for dropping a debuff with a cancelaura macro; enemies ignore you while it is up, so hold aggro with Hand of Reckoning or take Final Stand, and mind the 30 second Forbearance."
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "usage_rule": "Emergency full heal: heal yourself with Word of Glory instead and save this to rescue another player, since it applies Forbearance for 30 seconds."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Avenging Wrath into Divine Toll and Hammer of Light",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [31884, 375576, 427453],
+        "spell_names": ["Avenging Wrath", "Divine Toll", "Hammer of Light"]
+      },
+      "action": "Pre-place Consecration and pull with Hand of Reckoning, then open Avenging Wrath into Divine Toll and Hammer of Light before falling into the priority."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Divine Toll inside Avenging Wrath",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "buff_spell_id": 31884,
+        "buff_spell_name": "Avenging Wrath",
+        "require": "inside"
+      },
+      "action": "Hold Divine Toll for Avenging Wrath and press Avenging Wrath when Divine Toll is within 10 seconds of ready, so both 60 second Divine Tolls per Wrath cycle land inside the window."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Avenger's Shield consumes every Vanguard proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 1268810,
+        "buff_spell_name": "Vanguard",
+        "spend_spell_ids": [31935],
+        "spend_spell_names": ["Avenger's Shield"]
+      },
+      "action": "Judgment and Hammer of Wrath grant Vanguard; spend it with Avenger's Shield above everything except your cooldowns, since it returns up to 3 Holy Power and empowers the next Shield of the Righteous."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shield of the Righteous armor buff stays up",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 132403,
+        "aura_spell_name": "Shield of the Righteous",
+        "on": "self"
+      },
+      "action": "Keep the armor buff active for nearly all of combat: chain Holy Power spends while tanking and pool Holy Power during downtime so the next pack is covered."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Stand in Consecration at all times",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 188370,
+        "aura_spell_name": "Consecration",
+        "on": "self"
+      },
+      "action": "Recast Consecration the moment you are not standing in it, and use it as the filler when everything else is on cooldown to refresh the 12 second duration."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Consecration refreshed late, not clipped",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 188370,
+        "aura_spell_name": "Consecration",
+        "cast_spell_id": 26573,
+        "cast_spell_name": "Consecration",
+        "on": "self",
+        "except_buff_spell_ids": [460822],
+        "except_buff_spell_names": ["Divine Guidance"]
+      },
+      "action": "Only refresh Consecration once nothing else is available, or immediately when Divine Guidance reaches 5 stacks; its 12 second duration comfortably outlasts the 9 second cooldown, so recasting any earlier for any other reason just clips uptime you already banked."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shield of the Righteous at high Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 53600,
+        "spell_name": "Shield of the Righteous",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "min"
+      },
+      "action": "Spend between 3 and 5 Holy Power, favouring 4 or 5 so a dump at exactly 3 does not leave you empty for the next hit, and never press a generator while sitting at 5."
+    }
+  ],
+  "source_summary": "Protection Paladin cooldown play is built around lining Divine Toll up with Avenging Wrath: press Avenging Wrath once Divine Toll is within 10 seconds of ready, then convert the flood of free Avenger's Shields into Shield of the Righteous and Hammer of Light. Everything outside that window is a priority filler list whose job is keeping Consecration underfoot and the Shield of the Righteous armor buff up. Defensively, Ardent Defender is spent freely on its 90 second cooldown while Guardian of Ancient Kings, Divine Shield and Blessing of Spellwarding are planned against named mechanics."
+}

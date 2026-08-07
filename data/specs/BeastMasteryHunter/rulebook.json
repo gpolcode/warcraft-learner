@@ -1,0 +1,129 @@
+{
+  "spec": "BeastMasteryHunter",
+  "spec_icon": "ability_hunter_bestialdiscipline",
+  "major_cooldowns": [
+    {
+      "name": "Bestial Wrath",
+      "spell_id": 19574,
+      "cooldown": 30,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it every 30 sec with both Barbed Shot charges already dumped and never straight out of a Cobra Shot, since it buffs all of your and your pet's damage by 20% for 15 sec and arms Howl of the Pack Leader for your next Kill Command.",
+      "id_note": "19574 is the observed cast id. The tooltip lists a 1.5 min base cooldown; the guide states the 30 sec value the current rotation is built on, and the sampled parse (19 casts, 49% Bestial Wrath uptime) matches 30 sec. Same-name ids 186254, 344572, 1235388 and 1285912 are talent or aura rows."
+    },
+    {
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Pre-cast it about 2 sec before the pull, then hold every later use until Bestial Wrath is within 2 sec of coming off cooldown.",
+      "id_note": "383781 is the trinket's on-use cast id; WCL reports the name as 'Algeth'ar Puzzle'.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press it into a known raid hit rather than after it, for 30% less damage taken on you and your pet across the 6 sec window."
+    },
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Save it for mechanics that would otherwise kill you: 8 sec of full miss immunity and 30% damage reduction, at the cost of every attack you would have made."
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "usage_rule": "Use it once you are actually low to heal 30% of your health and fully top your pet, not pre-emptively.",
+      "id_note": "109304 is the observed cast id; 128594 shares the name."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Barbed Shot into Bestial Wrath, then Kill Command",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          217200,
+          19574,
+          34026
+        ],
+        "spell_names": [
+          "Barbed Shot",
+          "Bestial Wrath",
+          "Kill Command"
+        ]
+      },
+      "action": "Dump both Barbed Shot charges, then Bestial Wrath, then Kill Command, Barbed Shot, Kill Command. Pre-cast Algeth'ar Puzzle Box about 2 sec before the pull and fire your potion and racials with Bestial Wrath ready."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Barbed Shot charges dumped before Bestial Wrath",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 19574,
+        "spell_name": "Bestial Wrath",
+        "required_spell_id": 217200,
+        "required_spell_name": "Barbed Shot",
+        "position": "before"
+      },
+      "action": "Empty every Barbed Shot charge in the seconds before each Bestial Wrath, and do not spend the last GCD before it on Cobra Shot."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Kill Command with Nature's Ally up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 34026,
+        "spell_name": "Kill Command",
+        "buff_spell_id": 1276720,
+        "buff_spell_name": "Nature's Ally",
+        "require": "inside"
+      },
+      "action": "Weave Barbed Shot, Cobra Shot or Black Arrow between Kill Commands so each one lands with the 30% Nature's Ally buff, and never press Kill Command twice in a row on single target. In AoE, Kill Command goes on cooldown regardless."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Kill Command charge held for Bestial Wrath",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [
+          34026
+        ],
+        "spell_names": [
+          "Kill Command"
+        ],
+        "anchor_spell_id": 19574,
+        "anchor_spell_name": "Bestial Wrath"
+      },
+      "action": "Bank a Kill Command charge once Bestial Wrath is within about 3 sec, so the first Kill Command inside the window lands immediately and places your Stampede and Howl of the Pack Leader beast. Never let it sit at 2 charges to do it."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Wild Thrash from two targets up",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1264359,
+        "spell_name": "Wild Thrash",
+        "bound": "min"
+      },
+      "action": "From 2 targets up, press Wild Thrash on cooldown even if the second target is only briefly alive; it is what turns on Beast Cleave for your pet."
+    }
+  ],
+  "source_summary": "Beast Mastery runs on one offensive cooldown: Bestial Wrath every 30 sec, entered with both Barbed Shot charges already spent and opened with a Kill Command so the Howl of the Pack Leader beast and the Stampede line land inside the window. Everything else is filler sequencing, with Kill Command cast only under Nature's Ally or Howl and Barbed Shot, Black Arrow and Cobra Shot woven between Kill Commands so the 30% buff is never wasted. On-use trinkets, potions and racials all ride Bestial Wrath, and Wild Thrash takes over the priority from two targets up."
+}
