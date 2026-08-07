@@ -7,7 +7,7 @@ description: warcraft-learner testing conventions and harness. Covers how tests 
 
 The goals are readability, speed, and trivial testability: a test reads like a statement of the business rule, runs in milliseconds, and needs no ceremony.
 
-**Framework and layout.** Tests use [Vitest](https://vitest.dev) via Angular's official `@angular/build:unit-test` builder (configured in `angular.json`). jsdom is the DOM environment and the builder initializes the `TestBed` environment itself. The app is zoneless (no zone.js); component tests opt into zoneless change detection per-`TestBed` through the `mountVm` harness, so there is no global setup file. The builder needs Node `>= 22.22.3` (the Angular CLI floor). The `npm test` command (see CLAUDE.md) is one suite: every spec under `src/**` - including the ingest specs under `src/app/ingest/` - runs through the Angular builder.
+**Framework and layout.** Tests use [Vitest](https://vitest.dev) via Angular's official `@angular/build:unit-test` builder (configured in `angular.json`). jsdom is the DOM environment and the builder initializes the `TestBed` environment itself. The app is zoneless (no zone.js); component tests opt into zoneless change detection per-`TestBed` through the `mountVm` harness, so there is no global setup file. The builder needs Node `>= 22.22.3` (the Angular CLI floor). The `npm test` command (see AGENTS.md) is one suite: every spec under `src/**` - including the ingest specs under `src/app/ingest/` - runs through the Angular builder.
 
 The `src/**` specs cannot run under a bare `npx vitest` - they need the `@angular/build:unit-test` builder to set up the Angular TestBed (the pure ingest specs simply don't touch it).
 

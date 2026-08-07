@@ -71,7 +71,7 @@ See: [references/solid-principles.md](references/solid-principles.md)
 **Structure:**
 - One level of indentation per method
 - No `else` keyword when possible (early returns)
-- When validating untrusted strings against an object/map, use `Object.hasOwn(...)` (or `Object.prototype.hasOwnProperty.call(...)`) — do not use the `in` operator, which matches prototype keys
+- When validating untrusted strings against an object/map, use `Object.hasOwn(...)` (or `Object.prototype.hasOwnProperty.call(...)`) - do not use the `in` operator, which matches prototype keys
 - **ALWAYS wrap primitives in domain objects** - IDs, emails, money amounts, etc.
 - First-class collections (wrap arrays in classes)
 - One dot per line (Law of Demeter)

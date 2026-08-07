@@ -7,7 +7,7 @@ description: warcraft-learner ingestion pipeline. Covers the in-app orchestrator
 
 Ingestion is the Angular app itself, booted with the `ingest` build configuration - there is no separate ingestion codebase. The orchestrator and its discovery helpers live in `frontend/src/app/ingest/**` (bundled only by the ingest configuration, so the production shell never carries them). Two plain-Node scripts under `frontend/scripts/` support it and carry **zero ingestion logic**: `ingest-server.js` (an Express file store on :3000 - REST over `public/data/`: `GET`/`PUT`/`DELETE /api/data/{path}` plus `GET /api/dirs/{path}` listings, path-contained, atomic writes) and `ingest-headless.mjs` (the CI harness). Rulebook generation is the **warcraft-rulebook** skill; this skill covers how ingestion consumes rulebooks.
 
-Two entry points (both listed in CLAUDE.md):
+Two entry points (both listed in AGENTS.md):
 - `npm run start:ingest` - interactive: runs the file server + `ng serve --configuration ingest`; open http://localhost:4200 and watch the browser console. Run `npm run data:pull` first so signature-skip has the current published data to compare against.
 - `npm run ingest` - headless (what `ingest-parses.yml` runs hourly): the harness starts both processes, drives the app in headless Chromium (Playwright), pipes the app console to stdout, waits for the orchestrator's `globalThis.__INGEST_DONE__` summary and exits 0/1. WCL auth is the environment file's embedded public pair (see the warcraft-wcl-data skill).
 

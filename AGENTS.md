@@ -4,7 +4,7 @@ A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs c
 
 ## How this file works
 
-This file is the always-on **router**: the few rules that apply on every turn, plus a table that tells you which **skill** to load before each kind of work. The detailed conventions (frontend, architecture, testing, ingestion, WCL/data, copy/branding) live in skills under `.claude/skills/` and load **on demand** - so each task only pulls in the context it needs. Load the matching skill before you start; do not work from memory of a topic that has a skill.
+This file is the always-on **router**: the few rules that apply on every turn, plus a table that tells you which **skill** to load before each kind of work. It is named `AGENTS.md` so Copilot's cloud agent, code review, and CLI read it as repository agent instructions with no extra configuration; in VS Code it needs `chat.useAgentsMdFile` on. The detailed conventions (frontend, architecture, testing, ingestion, WCL/data, copy/branding) live in skills under `.agents/skills/` and load **on demand** - Copilot matches a skill's `description` against the task at hand, so each task only pulls in the context it needs. Load the matching skill before you start; do not work from memory of a topic that has a skill.
 
 ## Always-on rules
 
@@ -37,7 +37,9 @@ frontend/        # the entire Angular 22 app
   e2e/           # Playwright happy-path suite for both pages (one WCL analysis per run - see warcraft-e2e)
   public/data/specs/  # static ingested data (slices, encounters, positions, rulebooks) - NOT tracked on main; see below
 .github/workflows/  # deploy-pages (shell + PR previews), ingest-parses (hourly), test
-.claude/skills/   # on-demand skills (rulebook schema in warcraft-ingestion/, generation in warcraft-rulebook/)
+.github/agents/   # rulebook-author.agent.md - the isolated per-spec authoring worker (read+edit tools only)
+.agents/skills/   # on-demand skills (rulebook schema in warcraft-ingestion/, generation in warcraft-rulebook/)
+scripts/          # repo-root: check-agent-config.mjs, the CI guard on this file, .agents/skills/, and .github/agents/
 ```
 
 The ~100 MB of minified bench data under `frontend/public/data/specs/**` is **not tracked on `main`** (gitignored). The deployed site is composed on **`gh-pages`** from disjoint single-owner folders at the site root: `data/specs/` (shared dataset, written by `ingest-parses`), and `main/` (prod shell), `pr-N/` (per-PR shells) plus a root `index.html` redirecting to `/main/` (all written by `deploy-pages`). Every environment ships only the shell and reads the one shared dataset via an absolute `dataBaseHref`, so code deploys never re-push data. Both writers share one `gh-pages` concurrency group (serialized single-commit force-pushes). Each `deploy-pages` run replaces only the folders its trigger owns in a gh-pages worktree - push: the shell + root files; PR events / dispatch: the root `pr-*` dirs wholesale, rebuilt from all open PRs - so closed previews vanish structurally (no cleanup workflow). Local dev: `npm run data:pull` (from `frontend/`) fetches the data from `origin/gh-pages`.
@@ -56,22 +58,22 @@ The ~100 MB of minified bench data under `frontend/public/data/specs/**` is **no
 
 ## Development workflow router
 
-Load the matching skill(s) **before** you start that step. The `warcraft-*` skills are this project's rules; `angular-developer` and `solid` are generic references (project rules win on conflict); `/code-review`, `/simplify`, `/verify`, `/run` are built-in skills.
+Load the matching skill(s) **before** you start that step. The `warcraft-*` skills are this project's rules; `angular-developer` and `solid` are generic references (project rules win on conflict). Copilot loads a skill automatically once its `description` matches the task, or you can select it explicitly from the `/` menu - either way, load it before starting the row's work, not from memory.
 
 | When you are... | Load before you start |
 |---|---|
-| Planning / scoping any change | the `Plan` agent + **warcraft-architecture** (+ the domain skill for the area) |
+| Planning / scoping any change | **warcraft-architecture** (+ the domain skill for the area) |
 | Designing / building Angular UI (components, templates, styling, pipes, services) | **angular-developer** + **warcraft-frontend** |
 | Writing user-facing copy, findings, microcopy, or anything branded (titles, nav, banners, READMEs, favicon) | **warcraft-copy** |
 | Working on a vertical slice, a transform, analysis math, or layer boundaries | **warcraft-architecture** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
 | Working on the live slice (live-sync, screen recording, the clip replay flyover) | **warcraft-frontend** + **warcraft-architecture** |
-| Generating or refreshing a spec's `rulebook.json` (one, some, or all specs) | **warcraft-rulebook** |
+| Generating or refreshing a spec's `rulebook.json` (one, some, or all specs) | **warcraft-rulebook** (dispatches the `rulebook-author` custom agent once per spec - see `.github/agents/rulebook-author.agent.md`) |
 | Ingestion (`src/app/ingest/**`, the `scripts/` file server + harness), `data/specs` file shapes, rulebook consumption/schema, or `INGEST_VERSION` | **warcraft-ingestion** |
 | Writing or changing unit tests (`src/**/*.spec.ts`) or the test setup | **warcraft-testing** |
 | Writing or changing e2e tests (`frontend/e2e/**`, `playwright.config.ts`, the e2e workflow) | **warcraft-e2e** |
-| General refactor / code-quality cleanup | **solid** + `/simplify` (project rules win on conflict) |
-| Reviewing code, a diff, or a PR | `/code-review` + **solid** + the domain skill(s) for the changed area |
-| Verifying a change runs / manual end-to-end check | `/verify` or `/run` |
+| General refactor / code-quality cleanup | **solid** (project rules win on conflict) |
+| Reviewing code, a diff, or a PR | **solid** + the domain skill(s) for the changed area - Copilot code review reads the same skills automatically |
+| Verifying a change runs / manual end-to-end check | run the relevant command from the Commands table above |
 
 On any conflict between a skill and this file, or between a generic skill (`angular-developer`, `solid`) and a `warcraft-*` project skill, the **project skill / this file wins**.

@@ -32,7 +32,7 @@ The app is a fully static Angular SPA. It talks directly to the Warcraft Logs AP
 
 ## Documentation
 
-See [`CLAUDE.md`](./CLAUDE.md) for the full technical reference: architecture, data models, the ingestion and rulebook workflow, GitHub Actions automation, and how the analysis thresholds work.
+See [`AGENTS.md`](./AGENTS.md) for the full technical reference: architecture, data models, the ingestion and rulebook workflow, GitHub Actions automation, and how the analysis thresholds work.
 
 ## License
 

@@ -1,6 +1,6 @@
 ---
 name: warcraft-rulebook
-description: Generate or refresh warcraft-learner spec rulebooks on demand (no stored guide corpus, no CLI). The main agent preps stripped SimulationCraft APLs, rotation guide text, and a WCL-verified ability-id table per spec, then fans out one isolated authoring subagent per spec that works only from those local files. Load this whenever creating or refreshing rulebook.json for one, several, or all specs - at a new patch or tier, or when onboarding a new spec. Knows the SimC and guide source URLs and their per-tier discovery, the WCL grounding queries, the spec icon lookup, the schema contract, the authoring brief, the output path, and the gh-pages publish recipe.
+description: Generate or refresh warcraft-learner spec rulebooks on demand (no stored guide corpus, no CLI). The orchestrator preps stripped SimulationCraft APLs, rotation guide text, and a WCL-verified ability-id table per spec, then dispatches the `rulebook-author` custom agent once per spec to turn those local files into that spec's rulebook.json. Load this whenever creating or refreshing rulebook.json for one, several, or all specs - at a new patch or tier, or when onboarding a new spec. Knows the SimC and guide source URLs and their per-tier discovery, the WCL grounding queries, the spec icon lookup, the schema contract, the authoring brief, the output path, and the gh-pages publish recipe.
 ---
 
 # warcraft-learner rulebook generation
@@ -12,13 +12,15 @@ major offensive cooldowns, personal defensives, its checkable usage rules - each
 rulebook fresh from the sources below and overwrite the existing file - never read, copy, or patch the old
 `rulebook.json`.
 
-Division of labor: the **main agent** does everything mechanical - source fetching, stripping, spell-id
-grounding, schema validation, publishing. The **authoring subagents** do exactly one thing: transform a
-spec's prepped local source files into its rulebook JSON. Subagents make no network calls and never see
-credentials; every byte they read comes from the scratchpad files the main agent prepared. This keeps each
-subagent focused, cheap, and retryable.
+Division of labor: the **orchestrator** does everything mechanical - source fetching, stripping, spell-id
+grounding, schema validation, publishing. The **`rulebook-author` custom agent**
+(`.github/agents/rulebook-author.agent.md`) does exactly one thing: transform a spec's prepped local
+source files into its rulebook JSON. Its `tools` allowlist is `read` and `edit` only, so it has no network
+access and never sees credentials as a property of the agent definition, not a request in its prompt;
+every byte it reads comes from the scratchpad files the orchestrator prepared. This keeps each run
+focused, cheap, and retryable.
 
-The schema is the authoritative shape: **`.claude/skills/warcraft-ingestion/rulebook.schema.json`**. Read
+The schema is the authoritative shape: **`.agents/skills/warcraft-ingestion/rulebook.schema.json`**. Read
 it first and make the output conform to it - the schema is the only contract, since ingestion consumes
 rulebooks directly (no code-side validation). The field meanings live in the schema's own `description`
 strings; follow them exactly (especially: `usage_rule` is user-facing coaching copy and must never carry
@@ -27,7 +29,7 @@ spell-id uncertainty; put that in `id_note`).
 ## Step 1 - pick the specs and get one WCL token
 
 Get a single WCL client-credentials token up front and reuse it for everything in Step 2 - one OAuth
-handshake per session, never one per spec or per subagent. Credentials: the embedded public pair
+handshake per session, never one per spec or per dispatch. Credentials: the embedded public pair
 in `frontend/src/environments/wcl-public-client.ts`. POST
 `grant_type=client_credentials` to `https://www.warcraftlogs.com/oauth/token`, then POST GraphQL to
 `https://www.warcraftlogs.com/api/v2/client` with `Authorization: Bearer <token>`.
@@ -43,10 +45,10 @@ Each `spec.slug + class.slug` is the folder key (e.g. `Subtlety` + `Rogue` -> `S
 class, a role ("healers"), or explicit names - resolve to folder keys, and confirm the list before
 starting the prep.
 
-## Step 2 - prep the sources (main agent, per spec)
+## Step 2 - prep the sources (orchestrator, per spec)
 
-All fetching, stripping, and grounding is mechanical shell work the main agent runs itself (parallel
-`curl` across specs is fine); it needs no subagents and no deep reasoning. For each selected spec, write
+All fetching, stripping, and grounding is mechanical shell work the orchestrator runs itself (parallel
+`curl` across specs is fine); it needs no agent dispatch and no deep reasoning. For each selected spec, write
 the three files of 2a, 2b and 2d into the scratchpad; 2c is one lookup covering every spec at once. Never
 author spell ids from memory - the ability table is where every id comes from.
 
@@ -71,12 +73,12 @@ Discover `<branch>` and `<TIER>` **once per session** and reuse them for every s
 
 `api.github.com` is blocked behind some egress proxies, so the contents API is not a reliable way to list
 the tier dir; probe `raw.githubusercontent.com` paths directly instead. When a base spec file 404s under
-every form, that spec has no profile this tier and the subagent works from the guide and the table alone.
+every form, that spec has no profile this tier and the agent works from the guide and the table alone.
 
 The APL is already plain text; save it as-is. Its conditions (e.g.
 `racial_sync,value=buff.shadow_blades.up&buff.shadow_dance.up`, `if=cooldown.X.remains`, combo-point and
 charge gates) are the raw material for `major_cooldowns`, `align_with_bloodlust`, `opener_priority`, and
-the rule conditions - the subagent needs them verbatim.
+the rule conditions - the agent needs them verbatim.
 
 **The bottom of each action list is the filler, and it is the spec's most-pressed decision.** SimC splits
 the rotation into sub-lists per hero tree and target count (`actions.ec_st`, `actions.kotg_st`,
@@ -143,16 +145,16 @@ resolves specs too new for the guides to describe. Confirm each stem with a HEAD
 
 ### 2d. `<spec>.abilities.tsv` - the WCL-verified ability-id table
 
-Build one `name <tab> spell_id <tab> icon <tab> base_cd_s <tab> note` table per spec; the subagent picks
+Build one `name <tab> spell_id <tab> icon <tab> base_cd_s <tab> note` table per spec; the agent picks
 **every** id it writes from this table, so grounding happens here, once, at prep time - ingestion does not
 re-check ids.
 
 The `note` column is what makes the table usable rather than merely correct. A spec routinely has several
-live ids sharing one name, and the subagent cannot tell them apart from the name: the cast id and the aura
+live ids sharing one name, and the agent cannot tell them apart from the name: the cast id and the aura
 id differ (Improved Garrote casts nothing and its logged buff is not its talent id), a reworked ability
 keeps its old id alive alongside the new one (both Crimson Tempest ids return "Crimson Tempest"), and a
 talent id is not what shows up in a log. Say in the note which one each row is - cast, aura, talent,
-retired - and **in how many of the sampled top parses it appeared**. Tell the subagent which kind each
+retired - and **in how many of the sampled top parses it appeared**. Tell the agent which kind each
 field wants: cast ids for `major_cooldowns`, `defensives` and cast-based rules, aura ids for every
 `cast_outside_buff`, `aura_uptime_below`, `proc_wasted` and `filler_in_buff`.
 
@@ -217,57 +219,58 @@ parse counts in the notes are counted against.
    actually applies one to enemies before using it for `aura_uptime_below` with `on: "target"`.
 4. Fill `base_cd_s` from the Wowhead tooltip endpoint - `https://nether.wowhead.com/tooltip/spell/<id>`
    returns JSON whose `tooltip` HTML carries "`N sec/min cooldown`". Tooltip cooldowns are **base,
-   pre-talent** values; they anchor the subagent's `cooldown` numbers, which otherwise have no source at
+   pre-talent** values; they anchor the agent's `cooldown` numbers, which otherwise have no source at
    all. The same tooltip text carries the **buff/dot duration and the effect percentages**, so parse those
    in the same pass - they are what makes a `usage_rule` concrete. Fetch the whole id set from **one
    script** that requests concurrently and prints one line per id; a shell loop of backgrounded `curl`
    subshells re-prints its own body for every job it reaps and buries the results in noise.
 
-## Step 3 - fan out one isolated authoring subagent per spec
+## Step 3 - dispatch the rulebook-author agent, once per spec
 
-**Always spawn one subagent per selected spec - even when only a single spec is chosen.** The main agent
-never authors a rulebook inline. **Each subagent runs in a clean, empty context with exactly one job:
-transform its spec's prepped local files into that spec's rulebook.** Give it only: the path to
-`authoring-brief.md` next to this file + its folder key + `[className, specName]` + its spec icon stem +
-the three scratchpad file paths + the output path - nothing about any other spec, and nothing about the
-existing rulebook. No URLs, no credentials, no network access. Subagents share no context and must never
-see or reference another spec, so rulebooks cannot mix (a Fury Warrior rulebook contains only Fury Warrior
-abilities, never Arms).
+**Dispatch `rulebook-author` once per selected spec - even when only a single spec is chosen.** The
+orchestrator never authors a rulebook inline. **Each dispatch runs with exactly one job: transform its
+spec's prepped local files into that spec's rulebook.** Give it only: its folder key + `[className,
+specName]` + its spec icon stem + the three scratchpad file paths + the output path - nothing about any
+other spec, and nothing about the existing rulebook. The agent's `tools: ["read", "edit"]` allowlist is
+what keeps it off the network and away from credentials, so the prompt does not need to ask for that.
+Each dispatch shares no context with the others and must never see or reference another spec, so
+rulebooks cannot mix (a Fury Warrior rulebook contains only Fury Warrior abilities, never Arms).
 
-Launch them in waves and refill as they report: concurrency is capped per session (20 by default), and an
-account or session limit can kill a whole wave in flight. A killed subagent usually leaves a complete,
-plausible file behind, so a wave that reports failures still needs Step 4 run over every file.
+Dispatch as many at once as the environment allows, refilling as they report; a run killed mid-way
+usually leaves a complete, plausible file behind, so a batch that reports failures still needs Step 4 run
+over every file.
 
-Each subagent (starting from a clean slate - it does not read or reuse the existing `rulebook.json`):
+Each dispatch (starting from a clean slate - it does not read or reuse the existing `rulebook.json`):
 
-1. Reads the brief and the schema, then its `.simc.txt` (if present), `.guide.txt`, and `.abilities.tsv`.
+1. Reads its own instructions and the schema, then its `.simc.txt` (if present), `.guide.txt`, and
+   `.abilities.tsv`.
 2. Extracts the rulebook JSON to the schema: all `major_cooldowns`, all `defensives`, the spec's
    checkable `rules`, `source_summary`, `spec_icon`. Spec-only abilities - never another spec of the
    same class.
 3. Takes every `spell_id` from the ability table. An ability the sources name but the table lacks goes
-   into the report **by name** - the subagent never guesses an id and never writes an unverified one.
+   into the report **by name** - it never guesses an id and never writes an unverified one.
 4. Writes the file (Step 4 shape) and returns a one-line report: spec, cooldown/defensive/rule counts,
    and any ability names it could not resolve from the table. Nothing else - no prose narration.
 
-### The authoring brief
+### The rulebook-author agent
 
-The subagent's instructions live in **`authoring-brief.md`** next to this file: the input contract, the
-output shape, and the quality bar the output is judged against. Hand the subagent that path rather than
-restating any of it, so what the agents receive cannot drift from what this skill enforces. Reject and
-respawn a subagent whose output misses the bar.
+Its instructions live in **`.github/agents/rulebook-author.agent.md`**: the input contract, the output
+shape, and the quality bar the output is judged against, plus the `tools` allowlist that enforces the
+isolation - so what the agent can do cannot drift from what this skill requires. Reject and re-dispatch
+a run whose output misses the bar.
 
-## Step 4 - validate and write (main agent)
+## Step 4 - validate and write (orchestrator)
 
-The subagent writes (overwriting any existing file) to `frontend/public/data/specs/{spec}/rulebook.json`,
+Each dispatch writes (overwriting any existing file) to `frontend/public/data/specs/{spec}/rulebook.json`,
 pretty-printed, `spec` set to the folder key, the **required** `spec_icon` set to the captured stem (never
 empty), and no `guide_count`/`saved_at`.
 
-The main agent then validates locally, once, over **every file on disk for the selected specs** rather
-than the ones the reports claim: a subagent killed by an API or session limit routinely leaves a complete,
+The orchestrator then validates locally, once, over **every file on disk for the selected specs** rather
+than the ones the reports claim: a run killed by an API or session limit routinely leaves a complete,
 plausible file behind, and its failure notice says nothing about it. Run the checks as **one script over
 all the files**, not a command per file per check:
 
-- schema check: `python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('<file>')), json.load(open('.claude/skills/warcraft-ingestion/rulebook.schema.json')))"`
+- schema check: `python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('<file>')), json.load(open('.agents/skills/warcraft-ingestion/rulebook.schema.json')))"`
   (`pip install jsonschema` first if the import fails).
 - dash scan: no U+2014 / U+2013 / U+2212 anywhere in the file.
 - **id cross-check**: walk every `spell_id` in `major_cooldowns`, `defensives` and each condition's id
@@ -280,12 +283,12 @@ all the files**, not a command per file per check:
 - **no magnitudes in conditions**: assert no numeric value in any condition outside the id fields,
   `resource_type` and `health_pct`, and no `rules[].description` over 60 characters. Those two are
   game constants read from a tooltip, not field behaviour the encounter has to measure.
-- unresolved-name follow-up: for any ability name a subagent reported as missing from its table, find the
+- unresolved-name follow-up: for any ability name an agent reported as missing from its table, find the
   id (Wowhead spell search), verify it with a WCL `ability(id:...)` query, and patch it in.
 
 Then read the file. The mechanical checks pass on a rulebook whose coaching copy is wrong, so spot-check
 that each number in a `usage_rule` or `action` traces to an APL line or a guide sentence, and run the
-top-parse sanity check from the brief over the rules.
+top-parse sanity check from the rulebook-author agent's quality bar over the rules.
 
 **Replay every `filler_in_buff` rule against the sampled parses before keeping it**, since it is the one
 kind whose defects are invisible on the page: for each parse count the coached filler and its
@@ -296,10 +299,10 @@ parse's violating casts, find the buff they all sit under, and add it. A rule me
 parses is not a defect: the encounter declines to bench it and the runtime drops it, which is the right
 outcome for a hero-talent build this field does not play.
 
-When a rule fails these, send the defect back to
-that spec's subagent with `SendMessage` - it still holds its context and can fix one rule without
-re-authoring the file, which is far cheaper than a cold respawn. Reserve a fresh subagent for output that
-misses the bar broadly.
+When a rule fails these, send the defect back to that spec's dispatch if it still holds context - it can
+fix one rule without re-authoring the file, which is far cheaper than a cold re-run. Otherwise re-dispatch
+`rulebook-author` for that spec alone with the defect appended to its prompt. Reserve a fresh dispatch for
+output that misses the bar broadly.
 
 Ingestion consumes the rulebook directly with no code-side check, so this validation pass is the last gate.
 

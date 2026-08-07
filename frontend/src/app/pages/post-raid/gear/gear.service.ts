@@ -1,4 +1,4 @@
-// Self-containment exception (blessed by CLAUDE.md): this slice MAY import the cross-slice
+// Self-containment exception (blessed by AGENTS.md): this slice MAY import the cross-slice
 // presentational helper `shared/gear/gear-comparison.ts`; all gear math is delegated to it.
 import { Injectable, inject } from '@angular/core';
 import { CharacterGear, WclCombatantInfo } from '../../../core/models/wcl.models';

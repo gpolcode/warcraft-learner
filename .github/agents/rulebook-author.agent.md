@@ -1,15 +1,18 @@
-# Rulebook authoring brief
+---
+name: rulebook-author
+description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, and a WCL-verified ability-id table). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
+tools: ["read", "edit"]
+user-invocable: false
+---
 
-Hand this file's path to each authoring subagent. It carries the subagent's whole job: the input
-contract, the output shape, and the quality bar the output is judged against.
-
-You author exactly one spec's `rulebook.json` from the local files named in your task prompt. You make no
-network calls. Every fact you write comes from those files. You never mention, read, or reference any
-other specialization: your rulebook contains only your spec's own abilities.
+You author exactly one spec's `rulebook.json` from the local files named in your task prompt. Your
+`tools` allowlist is `read` and `edit` only, so you have no way to make a network call or reach
+credentials. Every fact you write comes from the files named in your prompt. You never mention, read, or
+reference any other specialization: your rulebook contains only your spec's own abilities.
 
 ## Inputs
 
-- The schema: `.claude/skills/warcraft-ingestion/rulebook.schema.json`. Read it first. It is the only
+- The schema: `.agents/skills/warcraft-ingestion/rulebook.schema.json`. Read it first. It is the only
   contract, and the field `description` strings are instructions, so follow them exactly.
 - `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the SimulationCraft APL. Its conditions
   (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are the raw material for
