@@ -85,9 +85,9 @@ describe('burstDetailRows', () => {
     const [playerWindow] = findPlayerBurstWindows(
       [window],
       [
-        damage(WCL_MELEE_EVENT_ABILITY_ID, 12, MELEE_HIT),
-        damage(WCL_MELEE_EVENT_ABILITY_ID, 15, MELEE_HIT),
-        damage(PET_MELEE_ID, 13, SYNTHETIC_HIT),
+        damage(WCL_MELEE_EVENT_ABILITY_ID, 12_000, MELEE_HIT),
+        damage(WCL_MELEE_EVENT_ABILITY_ID, 15_000, MELEE_HIT),
+        damage(PET_MELEE_ID, 13_000, SYNTHETIC_HIT),
       ],
       [],
       0,
@@ -168,8 +168,8 @@ describe('findPlayerBurstWindows', () => {
   it('sums player damage inside the window (amount + absorbed) and counts casts by ability name', () => {
     const out = findPlayerBurstWindows(
       [window],
-      [damage(SHADOW_BLADES_DAMAGE, 12, 500, { absorbed: 100 }), damage(SHADOW_BLADES_DAMAGE, 15, 400), damage(1, 999, 5000)],
-      [cast(SHADOW_BLADES, 11), cast(SHADOW_BLADES, 13)],
+      [damage(SHADOW_BLADES_DAMAGE, 12_000, 500, { absorbed: 100 }), damage(SHADOW_BLADES_DAMAGE, 15_000, 400), damage(1, 999_000, 5000)],
+      [cast(SHADOW_BLADES, 11_000), cast(SHADOW_BLADES, 13_000)],
       0,
       // Bridge the damage id and the cast id to one name so the damage row counts the casts by NAME, not id.
       new Map([[SHADOW_BLADES_DAMAGE, 'Shadow Blades'], [SHADOW_BLADES, 'Shadow Blades']]),
@@ -183,10 +183,10 @@ describe('findPlayerBurstWindows', () => {
     const out = findPlayerBurstWindows(
       [window],
       [
-        damage(WCL_MELEE_EVENT_ABILITY_ID, 12, MELEE_HIT),
-        damage(WCL_MELEE_EVENT_ABILITY_ID, 15, MELEE_HIT),
-        damage(PET_MELEE_ID, 13, SYNTHETIC_HIT),
-        damage(ENVIRONMENTAL_ID, 16, SYNTHETIC_HIT),
+        damage(WCL_MELEE_EVENT_ABILITY_ID, 12_000, MELEE_HIT),
+        damage(WCL_MELEE_EVENT_ABILITY_ID, 15_000, MELEE_HIT),
+        damage(PET_MELEE_ID, 13_000, SYNTHETIC_HIT),
+        damage(ENVIRONMENTAL_ID, 16_000, SYNTHETIC_HIT),
       ],
       [],
       0,
@@ -200,7 +200,7 @@ describe('findPlayerBurstWindows', () => {
   });
 
   it('excludes an event at exactly the window end (half-open)', () => {
-    const out = findPlayerBurstWindows([window], [damage(SHADOW_BLADES_DAMAGE, 30, 800)], [], 0, new Map());
+    const out = findPlayerBurstWindows([window], [damage(SHADOW_BLADES_DAMAGE, 30_000, 800)], [], 0, new Map());
     expect(out[0].window_damage).toBe(0);
   });
 
@@ -209,11 +209,11 @@ describe('findPlayerBurstWindows', () => {
     const FILLER_BASE_ID = 900_000; // synthetic ids distinct from the bench ability
     const FILLER_DAMAGE = 1_000; // each filler out-damages the bench hit, ranking it last
     const BENCH_HIT_DAMAGE = 50; // the player's damage on the bench ability, ranked past the filler abilities
-    const AT_S = 15; // inside the [10, 30) window
-    const fillerHits = Array.from({ length: FILLER_COUNT }, (_, i) => damage(FILLER_BASE_ID + i, AT_S, FILLER_DAMAGE));
+    const AT_MS = 15_000; // inside the [10, 30) window
+    const fillerHits = Array.from({ length: FILLER_COUNT }, (_, i) => damage(FILLER_BASE_ID + i, AT_MS, FILLER_DAMAGE));
     const out = findPlayerBurstWindows(
       [window],
-      [...fillerHits, damage(SHADOW_BLADES_DAMAGE, AT_S, BENCH_HIT_DAMAGE)],
+      [...fillerHits, damage(SHADOW_BLADES_DAMAGE, AT_MS, BENCH_HIT_DAMAGE)],
       [],
       0,
       new Map([[SHADOW_BLADES_DAMAGE, 'Eviscerate']]),
@@ -231,7 +231,7 @@ const wclFake = {
     masterData: { actors: [], abilities: [{ gameID: SHADOW_BLADES_DAMAGE, name: 'Eviscerate', icon: 'inv' }] },
   }),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
-    dataType === 'Casts' ? [cast(SHADOW_BLADES, 11)] : [damage(SHADOW_BLADES_DAMAGE, 12, 950)],
+    dataType === 'Casts' ? [cast(SHADOW_BLADES, 11_000)] : [damage(SHADOW_BLADES_DAMAGE, 12_000, 950)],
 };
 
 function withBench(bench: Result<BurstBench, LoadError>, wcl: unknown = wclFake): BurstFeatureService {

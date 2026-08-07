@@ -1,6 +1,6 @@
 // Separate from rotation.service.ts so the ingest transform measures top parses with the same code the runtime judges the player with.
 import { median, deviation } from 'd3-array';
-import { getOrInsert, round } from '../../../shared/analysis/analysis-math';
+import { getOrInsert, secondsLabel } from '../../../shared/analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../core/models/analysis.models';
 import {
   RulebookRule, RuleCondition,
@@ -215,10 +215,10 @@ function castWithoutPriorOccurrences(
     const ok = lead != null && lead <= winMs;
     return {
       atMs: Math.round(time), ok,
-      label: lead == null ? 'none' : `${round(lead / 1000, 0)}s`,
+      label: lead == null ? 'none' : `${secondsLabel(lead)}s`,
       detail: lead == null
         ? `No ${cond.required_spell_name} paired with this cast.`
-        : `${cond.required_spell_name} landed ${round(lead / 1000, 0)}s from this cast.`,
+        : `${cond.required_spell_name} landed ${secondsLabel(lead)}s from this cast.`,
     };
   }));
 }
@@ -237,11 +237,11 @@ export function evaluateCastWithoutPrior(
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(violations[0]),
     label: `${cond.spell_name} without ${cond.required_spell_name}`,
-    message: `${cond.spell_name} without ${cond.required_spell_name} inside ${Math.round(winMs / 1000)}s: ${violations.length} of ${primary.length} cast(s).`,
+    message: `${cond.spell_name} without ${cond.required_spell_name} inside ${secondsLabel(winMs)}s: ${violations.length} of ${primary.length} cast(s).`,
     measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: castWithoutPriorOccurrences(cond, castTimes, winMs),
-    occurrenceTarget: `field pairs inside ${round(winMs / 1000, 0)}s`,
+    occurrenceTarget: `field pairs inside ${secondsLabel(winMs)}s`,
   };
 }
 
@@ -265,10 +265,10 @@ function holdForAnchorOccurrences(
       const ok = gap == null || gap > holdWindowMs;
       judged.push({
         atMs: Math.round(castTime), ok,
-        label: gap == null ? 'clear' : `${round(gap / 1000, 0)}s`,
+        label: gap == null ? 'clear' : `${secondsLabel(gap)}s`,
         detail: gap == null
           ? `${spellName} cast with no ${cond.anchor_spell_name} ahead to hold for.`
-          : `${spellName} cast ${round(gap / 1000, 0)}s before ${cond.anchor_spell_name}.`,
+          : `${spellName} cast ${secondsLabel(gap)}s before ${cond.anchor_spell_name}.`,
       });
     }
   });
@@ -296,7 +296,7 @@ export function evaluateHoldForAnchor(
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(firstCastMs),
     label: `${spellNames} held before ${cond.anchor_spell_name}`,
-    message: `${spellNames} used in the ${Math.round(holdWindowMs / 1000)}s the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} charge(s).`,
+    message: `${spellNames} used in the ${secondsLabel(holdWindowMs)}s the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} charge(s).`,
     measured: { value: `${violations.length}`, unit: 'charge(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: holdForAnchorOccurrences(cond, ctx, anchorTimes, holdWindowMs),
@@ -392,8 +392,8 @@ export function evaluateAuraUptimeBelow(
     measured: { value: `${Math.round(pct)} / ${Math.round(threshold.value)}`, unit: '% uptime' },
     details: remedy ? { remedy } : undefined,
     occurrences: gaps.map(([start, end]): FindingOccurrence => ({
-      atMs: Math.round(start), ok: false, label: `${round((end - start) / 1000, 0)}s`,
-      detail: `${cond.aura_spell_name} was down here for ${round((end - start) / 1000, 0)}s.`,
+      atMs: Math.round(start), ok: false, label: `${secondsLabel(end - start)}s`,
+      detail: `${cond.aura_spell_name} was down here for ${secondsLabel(end - start)}s.`,
     })),
     timeline: { segmentsMs: merged, fightDurationMs: boundMs },
   };
@@ -458,7 +458,7 @@ export function evaluateOpeningSequence(
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(progress.pullMs),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${Math.round(windowMs / 1000)}s the top parses take.`,
+    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${secondsLabel(windowMs)}s the top parses take.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: openingSequenceOccurrences(cond, ctx, progress.pullMs, progress.pullMs + windowMs),
@@ -773,17 +773,17 @@ export function evaluateAuraClipped(
   const floorMs = lenient(threshold, 'down');
   const clipped = judged.filter(({ elapsedMs }) => elapsedMs < floorMs);
   if (!clipped.length) return null;
-  const floorLabel = round(floorMs / 1000, 1);
+  const floorLabel = secondsLabel(floorMs, 1);
   return {
     severity, category: 'rule_violation',
     timestamp_ms: Math.round(clipped[0].timeMs),
     label: `${cond.aura_spell_name} clipped`,
-    message: `${cond.aura_spell_name} re-applied a median ${round((median(clipped.map(entry => entry.elapsedMs)) ?? 0) / 1000, 1)}s in, ${clipped.length} of ${judged.length} refresh(es). Top: ${round(threshold.value / 1000, 1)}s.`,
+    message: `${cond.aura_spell_name} re-applied a median ${secondsLabel(median(clipped.map(entry => entry.elapsedMs)) ?? 0, 1)}s in, ${clipped.length} of ${judged.length} refresh(es). Top: ${secondsLabel(threshold.value, 1)}s.`,
     measured: { value: `${clipped.length} / ${judged.length}`, unit: 'refresh(es)' },
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.map(({ timeMs, elapsedMs }): FindingOccurrence => ({
-      atMs: Math.round(timeMs), ok: elapsedMs >= floorMs, label: `${round(elapsedMs / 1000, 1)}s`,
-      detail: `Refreshed with ${round(elapsedMs / 1000, 1)}s still remaining.`,
+      atMs: Math.round(timeMs), ok: elapsedMs >= floorMs, label: `${secondsLabel(elapsedMs, 1)}s`,
+      detail: `Refreshed with ${secondsLabel(elapsedMs, 1)}s still remaining.`,
     }))),
     occurrenceTarget: `field waits for ${floorLabel}s remaining`,
   };

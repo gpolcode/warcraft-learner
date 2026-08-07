@@ -24,10 +24,10 @@ describe('rotationCdSpellIds', () => {
 
 describe('detectBloodlust', () => {
   it('returns the first BL apply time in ms', () => {
-    expect(detectBloodlust([applyBuff(999, 5), applyBuff(BLOODLUST, 30)], 0)).toBe(30_000);
+    expect(detectBloodlust([applyBuff(999, 5_000), applyBuff(BLOODLUST, 30_000)], 0)).toBe(30_000);
   });
   it('returns null when no BL buff present', () => {
-    expect(detectBloodlust([applyBuff(999, 5)], 0)).toBeNull();
+    expect(detectBloodlust([applyBuff(999, 5_000)], 0)).toBeNull();
   });
 });
 
@@ -35,12 +35,12 @@ describe('summarizeCooldownCasts', () => {
   const cooldowns = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
 
   it('counts casts, first cast, BL alignment and offset', () => {
-    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32)], cooldowns, 0, 200_000, 30_000);
+    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 32_000)], cooldowns, 0, 200_000, 30_000);
     expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_ms: 32_000, bl_aligned: true, bl_offset_ms: 2_000 });
   });
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
-    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], cooldowns, 0, 200_000, null);
+    const summaries = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110_000)], cooldowns, 0, 200_000, null);
     expect(summaries[0].cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
     expect(summaries[0].hold_windows[0]).toMatchObject({ cast_index: 2, actual_ms: 110_000, delay_ms: 20_000 });
@@ -49,23 +49,23 @@ describe('summarizeCooldownCasts', () => {
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
     // cast 2 held (0 -> 200, well past reset); cast 3 is on cooldown after it (200 -> 290).
     const summaries = summarizeCooldownCasts(
-      [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], cooldowns, 0, 400_000, null);
+      [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200_000), cast(SHADOW_BLADES, 290_000)], cooldowns, 0, 400_000, null);
     expect(summaries[0].hold_windows).toHaveLength(1);
     expect(summaries[0].hold_windows[0].cast_index).toBe(2);
   });
 
   it('does not flag a hold exactly at the threshold (strict)', () => {
     // prior 0 + cd 90 + 8s threshold = 98; a cast at 98 has delay exactly 8 -> not a hold.
-    const atBoundary = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], cooldowns, 0, 200_000, null);
+    const atBoundary = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98_000)], cooldowns, 0, 200_000, null);
     expect(atBoundary[0].hold_windows).toHaveLength(0);
-    const past = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], cooldowns, 0, 200_000, null);
+    const past = summarizeCooldownCasts([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98_100)], cooldowns, 0, 200_000, null);
     expect(past[0].hold_windows).toHaveLength(1);
   });
 });
 
 describe('castGapListMs', () => {
   it('returns sorted inter-cast gaps in ms', () => {
-    expect(castGapListMs([cast(1, 0), cast(1, 3), cast(1, 1)])).toEqual([1000, 2000]);
+    expect(castGapListMs([cast(1, 0), cast(1, 3_000), cast(1, 1_000)])).toEqual([1000, 2000]);
   });
 });
 
@@ -187,7 +187,7 @@ const wclFake = {
   }),
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
-    dataType === 'Casts' ? [cast(SHADOW_BLADES, 5), cast(UNTRACKED_SPELL_ID, 8)] : [applyBuff(BLOODLUST, 6)],
+    dataType === 'Casts' ? [cast(SHADOW_BLADES, 5_000), cast(UNTRACKED_SPELL_ID, 8_000)] : [applyBuff(BLOODLUST, 6_000)],
   // Raw gameData.ability map (id-keyed { id, icon, name }); the transform projects it.
   getAbilities: async (ids: number[]) =>
     Object.fromEntries(ids.map(id => [id, { id, icon: 'sb', name: 'Shadow Blades' }])),

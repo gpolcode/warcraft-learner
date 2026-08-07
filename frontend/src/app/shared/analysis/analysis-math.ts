@@ -57,8 +57,8 @@ export function isOutlierBelow(value: number, mean: number, stddev: number, sigm
 }
 
 /** Cast efficiency percentage given total downtime in gaps (clamped to >= 0). */
-export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): number {
-  return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
+export function castEfficiencyPct(totalDowntimeMs: number, fightDurationMs: number): number {
+  return Math.max(0, (1 - totalDowntimeMs / fightDurationMs) * 100);
 }
 
 /** The value closest to zero (smallest absolute value) - the primary BL offset. */
@@ -67,19 +67,28 @@ export function closestToZero(values: number[]): number {
   return values.reduce((best, value) => (Math.abs(value) < Math.abs(best) ? value : best));
 }
 
+/** Denominator for a per-minute rate against an ms fight duration. */
+const MS_PER_MIN = 60_000;
+
 /** Data-driven expected + floor uses for a fight from the top-parse uses/min. */
 export function benchExpectedUses(
-  fightDurS: number, upm: { avg: number; stddev: number },
+  fightDurationMs: number, upm: { avg: number; stddev: number },
 ): { expected: number; floor: number } {
-  const fightMin = fightDurS / 60;
+  const fightMin = fightDurationMs / MS_PER_MIN;
   const expected = Math.round(upm.avg * fightMin);
   const floor = Math.max(0, Math.round(expected - upm.stddev * fightMin));
   return { expected, floor };
 }
 
-/** Format seconds as `mm:ss` (zero-padded). */
-export function fmtClock(seconds: number): string {
-  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+/** Format an ms duration as `mm:ss` (zero-padded). */
+export function fmtClock(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  return `${String(Math.floor(totalSeconds / 60)).padStart(2, '0')}:${String(totalSeconds % 60).padStart(2, '0')}`;
+}
+
+/** Format an ms duration as a bare seconds number (e.g. "12" or "4.5", no trailing zero) for "Xs" finding text. */
+export function secondsLabel(ms: number, decimals = 0): string {
+  return String(round(ms / 1000, decimals));
 }
 
 const SEVERITY_ORDER: Record<AnalysisFinding['severity'], number> = {

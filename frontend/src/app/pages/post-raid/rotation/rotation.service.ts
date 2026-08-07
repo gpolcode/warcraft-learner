@@ -10,7 +10,7 @@ import { toLoadError } from '../../../core/http-load-error';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
-  closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
+  closestToZero, benchExpectedUses, fmtClock, secondsLabel, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
 import {
   buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
@@ -45,12 +45,12 @@ export interface CdPlanRow {
   name: string;
   spellId: number | null;
   icon: string;
-  firstCastS: number | null;
+  firstCastMs: number | null;
   uses: number | null;
   usesPerMin: number | null;
   bloodlust: boolean;
   bloodlustPct: number | null;
-  holds: { castIndex: number; targetS: number }[];
+  holds: { castIndex: number; targetMs: number }[];
   rule: string | null;
 }
 
@@ -68,10 +68,10 @@ export interface RotationPlanView {
 }
 
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
-const BLOODLUST_DURATION_S = 40;
-// A cast from BL_WINDOW_LEAD_S before BL through BL_WINDOW_TRAIL_S after it expires counts as aligned.
-const BL_WINDOW_LEAD_S = 30;
-const BL_WINDOW_TRAIL_S = 15;
+const BLOODLUST_DURATION_MS = 40_000;
+// A cast from BL_WINDOW_LEAD_MS before BL through BL_WINDOW_TRAIL_MS after it expires counts as aligned.
+const BL_WINDOW_LEAD_MS = 30_000;
+const BL_WINDOW_TRAIL_MS = 15_000;
 /** A cooldown counts as Bloodlust-aligned when at least this share (%) of top parses align it. */
 const BL_CONSENSUS_PCT = 50;
 
@@ -93,12 +93,12 @@ export interface RotationScanInput {
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; }
 
 export function checkLostUses(
-  cdName: string, actual: number, expected: number, floor: number, fightDurS: number,
+  cdName: string, actual: number, expected: number, floor: number, fightDurationMs: number,
 ): AnalysisFinding | null {
   if (actual === 0 && expected >= 1) return {
     severity: 'critical', category: 'lost_cooldown', cd_name: cdName,
     measured: { value: `0 / ${expected}`, unit: 'cast(s)' },
-    message: `${cdName} unused. Expected ${expected} on a ${fmtClock(fightDurS)} fight.`,
+    message: `${cdName} unused. Expected ${expected} on a ${fmtClock(fightDurationMs)} fight.`,
     details: { remedy: `Use ${cdName} ${expected}x this fight.` }, occurrences: [] };
   if (actual > 0 && actual < floor) return {
     severity: 'critical', category: 'lost_cooldown', cd_name: cdName,
@@ -114,12 +114,12 @@ export function checkFirstCastDelay(
   if (!castTimesMs.length) return null;
   const firstMs = castTimesMs[0];
   if (!isOutlierAbove(firstMs, cdBench.avg_first_cast_ms, cdBench.stddev_first_cast_ms)) return null;
-  const lateS = ((firstMs - cdBench.avg_first_cast_ms) / 1000).toFixed(0);
+  const lateS = secondsLabel(firstMs - cdBench.avg_first_cast_ms);
   return {
     severity: 'warning', category: 'cooldown_delay', cd_name: cdName,
     timestamp_ms: castTimesMs[0],
-    measured: { value: `+${lateS}s`, unit: `top ${fmtClock(cdBench.avg_first_cast_ms / 1000)}` },
-    message: `${cdName} opened at ${fmtClock(firstMs / 1000)}, ${lateS}s late. Top: ${fmtClock(cdBench.avg_first_cast_ms / 1000)}.`,
+    measured: { value: `+${lateS}s`, unit: `top ${fmtClock(cdBench.avg_first_cast_ms)}` },
+    message: `${cdName} opened at ${fmtClock(firstMs)}, ${lateS}s late. Top: ${fmtClock(cdBench.avg_first_cast_ms)}.`,
     details: { remedy: `Open with ${cdName} earlier.` }, occurrences: [] };
 }
 
@@ -128,14 +128,14 @@ export function checkBloodlustAlignment(
 ): { blAligned: boolean; findings: AnalysisFinding[] } {
   if (blTimeMs === null || !castTimesMs.length) return { blAligned: false, findings: [] };
   const inWindow = castTimesMs.filter(timeMs =>
-    timeMs >= blTimeMs - BL_WINDOW_LEAD_S * 1000 && timeMs <= blTimeMs + (BLOODLUST_DURATION_S + BL_WINDOW_TRAIL_S) * 1000);
+    timeMs >= blTimeMs - BL_WINDOW_LEAD_MS && timeMs <= blTimeMs + BLOODLUST_DURATION_MS + BL_WINDOW_TRAIL_MS);
   const blAligned = inWindow.length > 0;
   const findings: AnalysisFinding[] = [];
   if (!blAligned && wantsBL) {
     findings.push({ severity: 'critical', category: 'cooldown_alignment', cd_name: cdName,
       timestamp_ms: castTimesMs[0],
       measured: { value: 'missed', unit: 'BL' },
-      message: `${cdName} missed Bloodlust (BL at ${fmtClock(blTimeMs / 1000)}, first cast at ${fmtClock(castTimesMs[0] / 1000)}).`,
+      message: `${cdName} missed Bloodlust (BL at ${fmtClock(blTimeMs)}, first cast at ${fmtClock(castTimesMs[0])}).`,
       details: { remedy: `Align ${cdName} with Bloodlust.` }, occurrences: [] });
   } else if (blAligned && cdBench.avg_bl_offset_ms != null && cdBench.stddev_bl_offset_ms != null) {
     const offsetsMs = inWindow.map(timeMs => timeMs - blTimeMs);
@@ -162,16 +162,16 @@ export function checkGaps(cdName: string, castTimesMs: number[], cdBench: PerCdB
     if (isOutlierAbove(gapMs, cdBench.avg_gap_ms, cdBench.stddev_gap_ms)) findings.push({
       severity: 'warning', category: 'cooldown_delay', cd_name: cdName,
       timestamp_ms: castTimesMs[i],
-      measured: { value: `${(gapMs / 1000).toFixed(0)}s`, unit: `avg ${(cdBench.avg_gap_ms / 1000).toFixed(0)}s` },
-      message: `${cdName} at ${fmtClock(castTimesMs[i] / 1000)}: ${(gapMs / 1000).toFixed(0)}s gap, top ${(cdBench.avg_gap_ms / 1000).toFixed(0)}s.`,
-      details: { remedy: `Press ${cdName} sooner - top gap ${(cdBench.avg_gap_ms / 1000).toFixed(0)}s.` }, occurrences: [] });
+      measured: { value: `${secondsLabel(gapMs)}s`, unit: `avg ${secondsLabel(cdBench.avg_gap_ms)}s` },
+      message: `${cdName} at ${fmtClock(castTimesMs[i])}: ${secondsLabel(gapMs)}s gap, top ${secondsLabel(cdBench.avg_gap_ms)}s.`,
+      details: { remedy: `Press ${cdName} sooner - top gap ${secondsLabel(cdBench.avg_gap_ms)}s.` }, occurrences: [] });
   }
   return findings;
 }
 
 
 export function checkCastEfficiency(
-  castTimesMs: number[], fightDurS: number, bench: RotationBench,
+  castTimesMs: number[], fightDurationMs: number, bench: RotationBench,
 ): AnalysisFinding | null {
   if (castTimesMs.length < 2 || bench.downtime_threshold_ms == null) return null;
   let totalDtMs = 0;
@@ -179,26 +179,26 @@ export function checkCastEfficiency(
     const gapMs = castTimesMs[i] - castTimesMs[i - 1];
     if (gapMs > bench.downtime_threshold_ms) totalDtMs += gapMs;
   }
-  const totalDtS = totalDtMs / 1000;
   const topE = bench.top_avg_efficiency;
   const topSD = bench.top_efficiency_stddev;
-  const effPct = castEfficiencyPct(totalDtS, fightDurS);
+  const effPct = castEfficiencyPct(totalDtMs, fightDurationMs);
   // Flag only more than 1 sigma below the top-parse efficiency, so beating the top parses never
   // trips a warning. Always a warning, never critical.
   const WARN_SIGMAS_BELOW = 1;
   if (!isOutlierBelow(effPct, topE, topSD, WARN_SIGMAS_BELOW)) return null;
+  const idleS = secondsLabel(totalDtMs, 1);
   return {
     severity: 'warning', category: 'cast_efficiency',
     label: 'Low cast efficiency',
     measured: { value: `${effPct.toFixed(1)}%`, unit: `top ${topE.toFixed(0)}%` },
-    message: `${effPct.toFixed(1)}% cast efficiency, ${totalDtS.toFixed(1)}s idle. Top: ${topE.toFixed(0)}%.`,
-    details: { remedy: `Fill ${totalDtS.toFixed(1)}s of gaps. Top: ${topE.toFixed(0)}%.` }, occurrences: [] };
+    message: `${effPct.toFixed(1)}% cast efficiency, ${idleS}s idle. Top: ${topE.toFixed(0)}%.`,
+    details: { remedy: `Fill ${idleS}s of gaps. Top: ${topE.toFixed(0)}%.` }, occurrences: [] };
 }
 
 /** `castTimesMs` are fight-relative (ms, ascending). Null when the cooldown is talent-gated and unused. */
 export function analyzeOneCooldown(
   cd: RulebookCooldown, castTimesMs: number[], cdBench: PerCdBenchmark | undefined,
-  fightDurS: number, blTimeMs: number | null,
+  fightDurationMs: number, blTimeMs: number | null,
 ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
   const cdName = cd.name;
   const actual = castTimesMs.length;
@@ -213,14 +213,14 @@ export function analyzeOneCooldown(
 
   // BL alignment is data-driven: a cooldown "wants BL" when most top parses align it.
   const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
-  const { expected, floor } = benchExpectedUses(fightDurS, cdBench.uses_per_min);
+  const { expected, floor } = benchExpectedUses(fightDurationMs, cdBench.uses_per_min);
 
   const issues: AnalysisFinding[] = [];
   // Judge lost/unused casts and a late opener only when a MAJORITY of top parses used this cooldown:
   // a situational cd most parses skip has a noisy expected count and a meaningless avg_first_cast_ms,
   // so flagging it would punish the player for correctly matching the parses.
   if (usedShare(cdBench) >= MIN_USE_SHARE_FRAC) {
-    const lost = checkLostUses(cdName, actual, expected, floor, fightDurS);
+    const lost = checkLostUses(cdName, actual, expected, floor, fightDurationMs);
     if (lost) issues.push(lost);
     const lateOpener = checkFirstCastDelay(cdName, castTimesMs, cdBench);
     if (lateOpener) issues.push(lateOpener);
@@ -239,7 +239,7 @@ export function analyzeOneCooldown(
 
 export function analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
   const { fStart, fEnd, castEvents, buffEvents, cooldowns, bench } = input;
-  const fightDurS = (fEnd - fStart) / 1000;
+  const fightDurationMs = fEnd - fStart;
   const casts = castEvents
     .filter(event => event.type === 'cast' && event.timestamp >= fStart && event.timestamp <= fEnd)
     .sort((a, b) => a.timestamp - b.timestamp);
@@ -259,14 +259,14 @@ export function analyzeRotationFindings(input: RotationScanInput): AnalysisFindi
     const castTimesMs = casts
       .filter(cast => cast.abilityGameID === cd.spell_id)
       .map(cast => cast.timestamp - fStart);
-    const result = analyzeOneCooldown(cd, castTimesMs, perCdBench[cd.name], fightDurS, blTimeMs);
+    const result = analyzeOneCooldown(cd, castTimesMs, perCdBench[cd.name], fightDurationMs, blTimeMs);
     if (!result) continue;
     if (result.scan.issues.length) findings.push(...result.scan.issues);
     else if (result.success) findings.push(result.success);
     if (castTimesMs.length) findings.push(...result.scan.holds);
   }
 
-  const efficiency = checkCastEfficiency(casts.map(cast => cast.timestamp - fStart), fightDurS, bench);
+  const efficiency = checkCastEfficiency(casts.map(cast => cast.timestamp - fStart), fightDurationMs, bench);
   if (efficiency) findings.push(efficiency);
 
   sortBySeverity(findings);
@@ -393,7 +393,7 @@ export function buildCdPlan(
     const holds = cdBench?.majority_hold && cdBench.hold_targets
       ? Object.entries(cdBench.hold_targets)
           .sort((a, b) => Number(a[0]) - Number(b[0]))
-          .map(([idx, target]) => ({ castIndex: Number(idx), targetS: target.target_ms / 1000 }))
+          .map(([idx, target]) => ({ castIndex: Number(idx), targetMs: target.target_ms }))
       : [];
     const spellId = cd.spell_id ?? null;
     const ability = spellId != null ? abilities[spellId] : undefined;
@@ -404,7 +404,7 @@ export function buildCdPlan(
       name: cd.name,
       spellId,
       icon: ability?.icon ?? '',
-      firstCastS: usedByMajority ? cdBench!.avg_first_cast_ms / 1000 : null,
+      firstCastMs: usedByMajority ? cdBench!.avg_first_cast_ms : null,
       uses: cdBench?.avg_uses ?? null,
       usesPerMin: usedByMajority ? cdBench!.uses_per_min.avg : null,
       bloodlust: (cdBench?.bl_pct ?? 0) >= BL_CONSENSUS_PCT,

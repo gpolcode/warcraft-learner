@@ -84,15 +84,15 @@ export function holdSuggestionFindings(
     if (index < 1 || index >= castTimesMs.length) continue;
     const playerDelayMs = castTimesMs[index] - castTimesMs[index - 1] - target.effective_cd_ms;
     if (playerDelayMs < target.delay_ms - target.band_ms) {
-      const castS = castTimesMs[index] / 1000;
-      const targetS = target.target_ms / 1000;
+      const castMs = castTimesMs[index];
+      const targetMs = target.target_ms;
       findings.push({
         severity: 'info',
         category: 'hold_suggestion',
         timestamp_ms: Math.round(castTimesMs[index]),
-        measured: { value: fmtClock(castS), unit: `top ${fmtClock(targetS)}` },
-        message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count}/${target.total_samples} top parses hold to ${fmtClock(targetS)}.`,
-        details: { remedy: `Hold ${name} to ${fmtClock(targetS)}.`, cd_name: name },
+        measured: { value: fmtClock(castMs), unit: `top ${fmtClock(targetMs)}` },
+        message: `${name} cast ${idxStr} at ${fmtClock(castMs)}. ${target.count}/${target.total_samples} top parses hold to ${fmtClock(targetMs)}.`,
+        details: { remedy: `Hold ${name} to ${fmtClock(targetMs)}.`, cd_name: name },
         occurrences: [],
       });
     }

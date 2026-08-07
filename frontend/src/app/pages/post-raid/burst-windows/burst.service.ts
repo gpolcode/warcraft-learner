@@ -108,8 +108,8 @@ export function buildBurstView(
     const { status, icon } = burstWindowStatus(playerDamage, window.dmg_avg, window.dmg_min, window.dmg_stddev, notReached, benchOnly);
     const { spellIds, labels } = splitCommonCds(window.common_cds, cdSpellIds);
     windows.push({
-      timeStartS: window.time_ms / 1000,
-      timeEndS: (window.time_ms + window.window_length_ms) / 1000,
+      timeStartMs: window.time_ms,
+      timeEndMs: window.time_ms + window.window_length_ms,
       spells: windowSpells(spellIds, abilities),
       labels,
       status,

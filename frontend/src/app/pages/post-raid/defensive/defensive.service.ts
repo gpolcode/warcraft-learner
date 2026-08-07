@@ -12,7 +12,7 @@ import { Result, LoadError, ok } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import {
-  benchExpectedUses, fmtClock, isOutlierAbove, sortBySeverity,
+  benchExpectedUses, fmtClock, secondsLabel, isOutlierAbove, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
 import { normalizeAbilityId, windowSpells } from '../../../shared/analysis/wcl-projections';
 import {
@@ -43,9 +43,9 @@ export interface DefensivePlanRow {
   /** Empty string when there is no art. */
   icon: string;
   uses: number | null;
-  firstCastS: number | null;
-  windowsS: number[];
-  holds: { castIndex: number; targetS: number }[];
+  firstCastMs: number | null;
+  windowsMs: number[];
+  holds: { castIndex: number; targetMs: number }[];
   rule: string | null;
 }
 
@@ -145,8 +145,8 @@ export function gapDelayFindings(
     if (isOutlierAbove(gapMs, avgGapMs, defBench.stddev_gap_ms)) {
       findings.push({ severity: 'warning', category: 'cooldown_delay', cd_name: name,
         timestamp_ms: Math.round(castTimesMs[i]),
-        measured: { value: `${(gapMs / 1000).toFixed(0)}s`, unit: `avg ${(avgGapMs / 1000).toFixed(0)}s` },
-        message: `${name} at ${fmtClock(castTimesMs[i] / 1000)}: ${(gapMs / 1000).toFixed(0)}s gap, top ${(avgGapMs / 1000).toFixed(0)}s.`,
+        measured: { value: `${secondsLabel(gapMs)}s`, unit: `avg ${secondsLabel(avgGapMs)}s` },
+        message: `${name} at ${fmtClock(castTimesMs[i])}: ${secondsLabel(gapMs)}s gap, top ${secondsLabel(avgGapMs)}s.`,
         details: { remedy: `Use ${name} sooner after it resets.` }, occurrences: [] });
     }
   }
@@ -158,7 +158,7 @@ export function gapDelayFindings(
 export function analyzeOneDefensive(
   defensive: PlayerDefensive,
   defBench: PerDefensiveBenchmark | undefined,
-  fightDurS: number,
+  fightDurationMs: number,
 ): AnalysisFinding[] {
   const { name, uses, cast_times_ms } = defensive;
 
@@ -170,7 +170,7 @@ export function analyzeOneDefensive(
       : [];
   }
 
-  const { expected, floor } = benchExpectedUses(fightDurS, defBench.uses_per_min);
+  const { expected, floor } = benchExpectedUses(fightDurationMs, defBench.uses_per_min);
   const issues: AnalysisFinding[] = [];
 
   // Lost-use and late-first-use checks need a majority of top parses to use this defensive:
@@ -180,7 +180,7 @@ export function analyzeOneDefensive(
   if (majorityUse && uses === 0 && expected >= 1) {
     issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
       measured: { value: `0 / ${expected}`, unit: 'use(s)' },
-      message: `${name} unused. Expected ${expected} on a ${fmtClock(fightDurS)} fight.`,
+      message: `${name} unused. Expected ${expected} on a ${fmtClock(fightDurationMs)} fight.`,
       details: { remedy: `Use ${name} ${expected}x this fight.` }, occurrences: [] });
   } else if (majorityUse && uses > 0 && uses < floor) {
     issues.push({ severity: 'critical', category: 'lost_cooldown', cd_name: name, timestamp_ms: undefined,
@@ -193,10 +193,11 @@ export function analyzeOneDefensive(
   if (cast_times_ms?.length) {
     const firstMs = cast_times_ms[0];
     if (majorityUse && isOutlierAbove(firstMs, defBench.avg_first_cast_ms, defBench.stddev_first_cast_ms)) {
+      const lateS = secondsLabel(firstMs - defBench.avg_first_cast_ms);
       issues.push({ severity: 'warning', category: 'cooldown_delay', cd_name: name,
         timestamp_ms: Math.round(firstMs),
-        measured: { value: `+${((firstMs - defBench.avg_first_cast_ms) / 1000).toFixed(0)}s`, unit: `top ${fmtClock(defBench.avg_first_cast_ms / 1000)}` },
-        message: `${name} first used at ${fmtClock(firstMs / 1000)}, ${((firstMs - defBench.avg_first_cast_ms) / 1000).toFixed(0)}s late. Top: ${fmtClock(defBench.avg_first_cast_ms / 1000)}.`,
+        measured: { value: `+${lateS}s`, unit: `top ${fmtClock(defBench.avg_first_cast_ms)}` },
+        message: `${name} first used at ${fmtClock(firstMs)}, ${lateS}s late. Top: ${fmtClock(defBench.avg_first_cast_ms)}.`,
         details: { remedy: `Use ${name} earlier.` }, occurrences: [] });
     }
     issues.push(...gapDelayFindings(name, cast_times_ms, defBench));
@@ -214,11 +215,11 @@ export function analyzeOneDefensive(
 export function analyzeDefensiveFindings(
   playerDefensives: PlayerDefensive[],
   perDefBench: Record<string, PerDefensiveBenchmark>,
-  fightDurS: number,
+  fightDurationMs: number,
 ): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   for (const defensive of playerDefensives) {
-    findings.push(...analyzeOneDefensive(defensive, perDefBench[defensive.name], fightDurS));
+    findings.push(...analyzeOneDefensive(defensive, perDefBench[defensive.name], fightDurationMs));
   }
   sortBySeverity(findings);
   return findings;
@@ -354,8 +355,8 @@ export function buildDefensiveWindows(
     const labels = window.spell_id == null && defensiveName ? [defensiveName] : [];
     if (note) labels.push(note);
     windows.push({
-      timeStartS: window.time_ms / 1000,
-      timeEndS: (window.time_ms + window.window_length_ms) / 1000,
+      timeStartMs: window.time_ms,
+      timeEndMs: window.time_ms + window.window_length_ms,
       spells: windowSpells(window.spell_id != null ? [window.spell_id] : [], abilities),
       labels,
       status,
@@ -376,14 +377,14 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
   const windows = bench.defensive_windows ?? [];
   return bench.defensives.map(defensive => {
     const benchmark = benchmarks[defensive.name];
-    const windowsS = windows
+    const windowsMs = windows
       .filter(window => (window.defensive_name ?? window.common_defensives?.[0]) === defensive.name)
-      .map(window => window.time_ms / 1000)
+      .map(window => window.time_ms)
       .sort((a, b) => a - b);
     const holds = benchmark?.majority_hold && benchmark.hold_targets
       ? Object.entries(benchmark.hold_targets)
           .sort((a, b) => Number(a[0]) - Number(b[0]))
-          .map(([idx, hold]) => ({ castIndex: Number(idx), targetS: hold.target_ms / 1000 }))
+          .map(([idx, hold]) => ({ castIndex: Number(idx), targetMs: hold.target_ms }))
       : [];
     const spellId = defensive.spell_id ?? null;
     const ability = spellId != null ? bench.ability_icons[spellId] : undefined;
@@ -393,12 +394,12 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
       spellId,
       icon: ability?.icon ?? '',
       uses: benchmark?.avg_uses ?? null,
-      firstCastS: benchmark?.avg_first_cast_ms != null ? benchmark.avg_first_cast_ms / 1000 : null,
-      windowsS,
+      firstCastMs: benchmark?.avg_first_cast_ms ?? null,
+      windowsMs,
       holds,
       rule: defensive.usage_rule ?? null,
     };
-  }).filter(row => row.uses != null || row.firstCastS != null || row.windowsS.length || row.holds.length || row.rule);
+  }).filter(row => row.uses != null || row.firstCastMs != null || row.windowsMs.length || row.holds.length || row.rule);
 }
 
 @Injectable({ providedIn: 'root' })
@@ -437,7 +438,7 @@ export class DefensiveFeatureService {
 
       const playerDefensives = analyzeDefensives(bench.value.defensives, casts, buffs, dtEvents, fStart, fEnd);
       const findings = bench.value.defensives.length && playerDefensives.length
-        ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationMs / 1000)
+        ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationMs)
         : [];
 
       const playerWindows = computePlayerDefensiveWindows(bench.value.defensive_windows, dtEvents, fStart);

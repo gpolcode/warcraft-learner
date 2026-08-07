@@ -29,19 +29,19 @@ const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
 /** Bloodlust / Heroism / Time Warp and equivalents. */
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
 /** BL window: a CD counts as aligned if cast 30s before to 55s after BL start. */
-const BL_WINDOW_BEFORE_S = 30;
-const BL_WINDOW_AFTER_S = 55;
+const BL_WINDOW_BEFORE_MS = 30_000;
+const BL_WINDOW_AFTER_MS = 55_000;
 /** p90 of pooled cast gaps is the downtime floor. */
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_MS = 1500;
-/** Fallback cooldown (seconds) when a rulebook entry's own value is falsy. */
-const DEFAULT_CD_S = 90;
+/** Fallback cooldown when a rulebook entry's own value is falsy. */
+const DEFAULT_CD_MS = 90_000;
 /** Denominator for a per-minute rate against an ms fight duration. */
 const MS_PER_MIN = 60_000;
 
 /** Rulebook cooldown (seconds) -> the one ms conversion point every consumer shares. */
 function cooldownMs(cooldown: RulebookCooldown): number {
-  return (cooldown.cooldown ?? DEFAULT_CD_S) * 1000;
+  return cooldown.cooldown != null ? cooldown.cooldown * 1000 : DEFAULT_CD_MS;
 }
 
 export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDefensive[]): Record<string, number> {
@@ -86,7 +86,7 @@ export function summarizeCooldownCasts(
     let blOffsetMs: number | null = null;
     if (blTimeMs != null && castTimesMs.length) {
       const windowOffsetsMs = castTimesMs
-        .filter(timeMs => blTimeMs - BL_WINDOW_BEFORE_S * 1000 <= timeMs && timeMs <= blTimeMs + BL_WINDOW_AFTER_S * 1000)
+        .filter(timeMs => blTimeMs - BL_WINDOW_BEFORE_MS <= timeMs && timeMs <= blTimeMs + BL_WINDOW_AFTER_MS)
         .map(timeMs => timeMs - blTimeMs);
       blAligned = windowOffsetsMs.length > 0;
       if (windowOffsetsMs.length) {
@@ -202,7 +202,7 @@ export function aggregateCdBenchmarks(
   }
   const result: Record<string, PerCdBenchmark> = {};
   for (const [name, entries] of byCd.entries()) {
-    result[name] = buildCdBenchmark(entries, cdMsByName.get(name) ?? DEFAULT_CD_S * 1000);
+    result[name] = buildCdBenchmark(entries, cdMsByName.get(name) ?? DEFAULT_CD_MS);
   }
   return result;
 }

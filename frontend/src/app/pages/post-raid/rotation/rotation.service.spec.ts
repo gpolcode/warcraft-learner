@@ -84,8 +84,8 @@ describe('analyzeRotationFindings', () => {
   });
 
   it('emits a success when used on cd and BL-aligned', () => {
-    const casts = [cast(SHADOW_BLADES, 6)];
-    const buffs = [applyBuff(BLOODLUST, 6)];
+    const casts = [cast(SHADOW_BLADES, 6_000)];
+    const buffs = [applyBuff(BLOODLUST, 6_000)];
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } }) } });
     const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: single }));
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
@@ -94,8 +94,8 @@ describe('analyzeRotationFindings', () => {
   });
 
   it('flags a late opener', () => {
-    const casts = [cast(SHADOW_BLADES, 40)];
-    const buffs = [applyBuff(BLOODLUST, 38)];
+    const casts = [cast(SHADOW_BLADES, 40_000)];
+    const buffs = [applyBuff(BLOODLUST, 38_000)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: bench() }));
     expect(findings.some(f => f.category === 'cooldown_delay')).toBe(true);
   });
@@ -103,9 +103,9 @@ describe('analyzeRotationFindings', () => {
   it('gives the cast-efficiency finding a label and a remedy so the row is not blank', () => {
     // A 24s idle gap on the 120s scan fight = 80% efficiency, below the 87% (top avg 90 minus
     // 1 sigma) warn threshold.
-    const FIRST_CAST_S = 6;
-    const LATE_CAST_S = 30;
-    const casts = [cast(SHADOW_BLADES, FIRST_CAST_S), cast(SHADOW_BLADES, LATE_CAST_S)];
+    const FIRST_CAST_MS = 6_000;
+    const LATE_CAST_MS = 30_000;
+    const casts = [cast(SHADOW_BLADES, FIRST_CAST_MS), cast(SHADOW_BLADES, LATE_CAST_MS)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: bench() }));
     const efficiency = findings.find(f => f.category === 'cast_efficiency');
     expect(efficiency).toBeDefined();
@@ -123,42 +123,42 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
 
   it('flags an under-hold below the consensus band', () => {
     // gap 100, effective_cd 90 -> playerDelay 10 < (delay 30 - band 5 = 25).
-    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100)];
+    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100_000)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: holdBench }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(true);
   });
 
   it('does not flag a player exactly at the band edge (strict)', () => {
     // gap 115 -> playerDelay 25, exactly delay - band; strict < so not flagged.
-    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115)];
+    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115_000)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: holdBench }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 
   it('does not flag an over-hold', () => {
-    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
+    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160_000)];
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: holdBench }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 });
 
 describe('checkLostUses', () => {
-  const FIGHT_S = 120;
+  const FIGHT_DUR_MS = 120_000;
 
   it('flags a critical when a cooldown is never used but expected', () => {
     // 0 casts, expected 2 -> lost.
-    const finding = checkLostUses('Shadow Blades', 0, 2, 2, FIGHT_S);
+    const finding = checkLostUses('Shadow Blades', 0, 2, 2, FIGHT_DUR_MS);
     expect(finding?.severity).toBe('critical');
   });
 
   it('flags a critical when used below the floor', () => {
     // 1 cast, floor 2 -> 1 lost.
-    expect(checkLostUses('Shadow Blades', 1, 2, 2, FIGHT_S)?.category).toBe('lost_cooldown');
+    expect(checkLostUses('Shadow Blades', 1, 2, 2, FIGHT_DUR_MS)?.category).toBe('lost_cooldown');
   });
 
   it('does not flag a cast exactly at the floor (strict)', () => {
     // 2 casts, floor 2 -> actual < floor is false.
-    expect(checkLostUses('Shadow Blades', 2, 2, 2, FIGHT_S)).toBeNull();
+    expect(checkLostUses('Shadow Blades', 2, 2, 2, FIGHT_DUR_MS)).toBeNull();
   });
 });
 
@@ -251,45 +251,45 @@ describe('checkGaps', () => {
 });
 
 describe('checkCastEfficiency', () => {
-  const FIGHT_DUR_S = 120;
+  const FIGHT_DUR_MS = 120_000;
   // bench(): top_avg_efficiency 90%, top_efficiency_stddev 3% -> warn strictly below 87% (top - 1 sigma).
-  // efficiency% = (1 - idleS / FIGHT_DUR_S) * 100. Each idle span is a single gap > the 1.5s downtime floor.
-  const IDLE_BELOW_BAND_S = 20;   // -> 83.3%, below the 87% warn threshold
-  const IDLE_FAR_BELOW_S = 60;    // -> 50%, far below the band
+  // efficiency% = (1 - idleMs / FIGHT_DUR_MS) * 100. Each idle span is a single gap > the 1.5s downtime floor.
+  const IDLE_BELOW_BAND_MS = 20_000;   // -> 83.3%, below the 87% warn threshold
+  const IDLE_FAR_BELOW_MS = 60_000;    // -> 50%, far below the band
   const IDLE_ABOVE_AVG_MS = 1600; // just over the 1.5s downtime floor -> 98.7%, above top avg
 
   it('flags low cast efficiency more than 1 sigma below the top parses', () => {
-    const finding = checkCastEfficiency([0, IDLE_BELOW_BAND_S * ONE_SEC_MS], FIGHT_DUR_S, bench());
+    const finding = checkCastEfficiency([0, IDLE_BELOW_BAND_MS], FIGHT_DUR_MS, bench());
     expect(finding?.category).toBe('cast_efficiency');
     expect(finding?.severity).toBe('warning');
     expect(finding?.details?.remedy).toBeTruthy();
   });
 
   it('never escalates to critical, however far below', () => {
-    expect(checkCastEfficiency([0, IDLE_FAR_BELOW_S * ONE_SEC_MS], FIGHT_DUR_S, bench())?.severity).toBe('warning');
+    expect(checkCastEfficiency([0, IDLE_FAR_BELOW_MS], FIGHT_DUR_MS, bench())?.severity).toBe('warning');
   });
 
   it('does not flag efficiency exactly at the 1-sigma boundary (strict), but flags one bin below', () => {
     // Binary-exact bench: top avg 80%, stddev 5% -> warn strictly below 75%.
     const boundaryBench = bench({ top_avg_efficiency: 80, top_efficiency_stddev: 5 });
-    const BOUNDARY_FIGHT_S = 128;
+    const BOUNDARY_FIGHT_MS = 128_000;
     // 32s idle -> exactly 75% = top - 1 sigma: strict boundary, no finding.
-    expect(checkCastEfficiency([0, 32 * ONE_SEC_MS], BOUNDARY_FIGHT_S, boundaryBench)).toBeNull();
+    expect(checkCastEfficiency([0, 32_000], BOUNDARY_FIGHT_MS, boundaryBench)).toBeNull();
     // 33s idle -> 74.21875% < 75%: one bin below the boundary, warns.
-    expect(checkCastEfficiency([0, 33 * ONE_SEC_MS], BOUNDARY_FIGHT_S, boundaryBench)?.severity).toBe('warning');
+    expect(checkCastEfficiency([0, 33_000], BOUNDARY_FIGHT_MS, boundaryBench)?.severity).toBe('warning');
   });
 
   it('does not flag when the player beats the top parses', () => {
-    expect(checkCastEfficiency([0, IDLE_ABOVE_AVG_MS], FIGHT_DUR_S, bench())).toBeNull();
+    expect(checkCastEfficiency([0, IDLE_ABOVE_AVG_MS], FIGHT_DUR_MS, bench())).toBeNull();
   });
 
   it('returns null with fewer than two casts', () => {
-    expect(checkCastEfficiency([0], FIGHT_DUR_S, bench())).toBeNull();
+    expect(checkCastEfficiency([0], FIGHT_DUR_MS, bench())).toBeNull();
   });
 });
 
 describe('analyzeOneCooldown', () => {
-  const FIGHT_DUR_S = 120;
+  const FIGHT_DUR_MS = 120_000;
   const UPM = { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 };  // top-parse uses-per-minute
   const cd = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, align_with_bloodlust: true };
   const single = cdBench({ uses_per_min: UPM });
@@ -299,25 +299,25 @@ describe('analyzeOneCooldown', () => {
   const rareUse = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, uses_per_min: UPM });
 
   it('skips a talent-gated cooldown that was never used', () => {
-    expect(analyzeOneCooldown({ ...cd, talent_gated: true }, [], single, 120, null)).toBeNull();
+    expect(analyzeOneCooldown({ ...cd, talent_gated: true }, [], single, FIGHT_DUR_MS, null)).toBeNull();
   });
 
   it('reports success when a cooldown is used cleanly and BL-aligned', () => {
     // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
-    const result = analyzeOneCooldown(cd, [6 * ONE_SEC_MS], single, 120, 6 * ONE_SEC_MS);
+    const result = analyzeOneCooldown(cd, [6 * ONE_SEC_MS], single, FIGHT_DUR_MS, 6 * ONE_SEC_MS);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success?.message).toContain('BL-aligned');
   });
 
   it('reports an issue (no success) when the opener is late', () => {
-    const result = analyzeOneCooldown(cd, [40 * ONE_SEC_MS], single, 120, 38 * ONE_SEC_MS);
+    const result = analyzeOneCooldown(cd, [40 * ONE_SEC_MS], single, FIGHT_DUR_MS, 38 * ONE_SEC_MS);
     expect(result?.success).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
 
   it('does not flag an unused cooldown that only a minority of top parses use (use-share gate)', () => {
     // Matching the top parses by not pressing it is not a lost cast.
-    const result = analyzeOneCooldown(cd, [], rareUse, FIGHT_DUR_S, null);
+    const result = analyzeOneCooldown(cd, [], rareUse, FIGHT_DUR_MS, null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success).toBeNull();
   });
@@ -325,7 +325,7 @@ describe('analyzeOneCooldown', () => {
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
     // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
     const LATE_OPENER_S = 40;
-    const result = analyzeOneCooldown(cd, [LATE_OPENER_S * ONE_SEC_MS], rareUse, FIGHT_DUR_S, null);
+    const result = analyzeOneCooldown(cd, [LATE_OPENER_S * ONE_SEC_MS], rareUse, FIGHT_DUR_MS, null);
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 });
@@ -401,7 +401,7 @@ describe('buildCdPlan', () => {
     };
     const plan = buildCdPlan(cooldowns, benchmarks, abilities);
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
-    expect(plan[0].holds).toEqual([{ castIndex: 2, targetS: 100 }]);
+    expect(plan[0].holds).toEqual([{ castIndex: 2, targetMs: 100_000 }]);
     expect(plan[0].bloodlust).toBe(true);
     expect(plan[0].bloodlustPct).toBe(100);
   });
@@ -436,7 +436,7 @@ describe('buildCdPlan', () => {
     // used_sample_count 0 -> the transform emits avg_first_cast_ms 0, a no-data sentinel, not a 0:00 open.
     const unused = cdBench({ used_sample_count: 0, avg_first_cast_ms: 0, avg_uses: 0, uses_per_min: { avg: 0, stddev: 0, min: 0, max: 0 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
-    expect(plan[0].firstCastS).toBeNull();
+    expect(plan[0].firstCastMs).toBeNull();
     expect(plan[0].usesPerMin).toBeNull();
     // avg_uses is a population average over all parses, so it stays truthful and is not gated.
     expect(plan[0].uses).toBe(0);
@@ -448,17 +448,17 @@ describe('buildCdPlan', () => {
     const MINORITY_USERS = 2;
     const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_ms: 20_000 });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
-    expect(plan[0].firstCastS).toBeNull();
+    expect(plan[0].firstCastMs).toBeNull();
     expect(plan[0].usesPerMin).toBeNull();
   });
 
   it('keeps the per-use fields when a majority of top parses use the cd', () => {
     // Default cdBench: used_sample_count 5 of sample_count 5 -> full use share, so the gate passes.
-    const FIRST_CAST_S = 8;
+    const FIRST_CAST_MS = 8_000;
     const USES_PER_MIN = 1.2;
-    const used = cdBench({ avg_first_cast_ms: FIRST_CAST_S * 1000, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
+    const used = cdBench({ avg_first_cast_ms: FIRST_CAST_MS, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
-    expect(plan[0].firstCastS).toBe(FIRST_CAST_S);
+    expect(plan[0].firstCastMs).toBe(FIRST_CAST_MS);
     expect(plan[0].usesPerMin).toBe(USES_PER_MIN);
   });
 });
@@ -506,7 +506,7 @@ describe('RotationFeatureService', () => {
     const wcl = {
       getReport: async () => ({ title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } }),
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
-        dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
+        dataType === 'Casts' ? [cast(SHADOW_DANCE, 10_000), cast(SECRET_TECHNIQUE, 30_000)] : [],
     };
     const rule: RulebookRule = { severity: 'critical', condition: SECRET_TECH_NEEDS_DANCE };
     const service = withSource(ok(bench({ rules: [benched(rule)] })), wcl);
@@ -527,7 +527,7 @@ describe('RotationFeatureService', () => {
         masterData: { actors: [], abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }] },
       }),
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
-        dataType === 'Casts' ? [cast(SHADOW_BLADES, 6)] : [applyBuff(BLOODLUST, 6)],
+        dataType === 'Casts' ? [cast(SHADOW_BLADES, 6_000)] : [applyBuff(BLOODLUST, 6_000)],
     };
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 } }) } });
     const service = withSource(ok(single), wcl);
@@ -590,7 +590,7 @@ describe('RotationFeatureService fetch shape', () => {
   }
 
   const UPTIME_BAR_PCT = 90;
-  const DOT_END_S = 60;
+  const DOT_END_MS = 60_000;
 
   /** Rupture held over the first half of the pull, plus whatever deaths the raid took. */
   function dotThenDeath(deaths: WclEvent[]) {
@@ -599,7 +599,7 @@ describe('RotationFeatureService fetch shape', () => {
       getAllEvents: async (_c: string, _f: number, dataType: string) => {
         if (dataType === 'Debuffs') return [
           { ...applyDebuff(RUPTURE, 0), sourceID: PLAYER_ID },
-          { ...removeDebuff(RUPTURE, DOT_END_S), sourceID: PLAYER_ID },
+          { ...removeDebuff(RUPTURE, DOT_END_MS), sourceID: PLAYER_ID },
         ];
         return dataType === 'Deaths' ? deaths : [];
       },
@@ -631,7 +631,7 @@ describe('RotationFeatureService fetch shape', () => {
     // A third of the pull against a 90% bar, so leaving these in would produce a violation row rather than silence.
     const raidWide = [
       { ...applyDebuff(RUPTURE, 0), sourceID: OTHER_RAIDER },
-      { ...removeDebuff(RUPTURE, 40), sourceID: OTHER_RAIDER },
+      { ...removeDebuff(RUPTURE, 40_000), sourceID: OTHER_RAIDER },
     ];
     const { api } = recording(raidWide);
     const result = await withSource(ok(bench({ rules: [benched(dotUptime, thr(UPTIME_BAR_PCT))] })), api)
@@ -647,9 +647,9 @@ describe('RotationFeatureService fetch shape', () => {
   });
 
   it('judges dot uptime against the time the player was alive', async () => {
-    const DEATH_S = 60;
+    const DEATH_MS = 60_000;
     const result = await withSource(ok(bench({ rules: [benched(dotUptime, thr(UPTIME_BAR_PCT))] })),
-      dotThenDeath([death(DEATH_S, { target: PLAYER_ID })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+      dotThenDeath([death(DEATH_MS, { target: PLAYER_ID })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
   });
@@ -657,7 +657,7 @@ describe('RotationFeatureService fetch shape', () => {
   it('keeps another raider death out of the alive window, so the same dot still reads as dropped', async () => {
     const OTHER_RAIDER = 99;
     const result = await withSource(ok(bench({ rules: [benched(dotUptime, thr(UPTIME_BAR_PCT))] })),
-      dotThenDeath([death(10, { target: OTHER_RAIDER })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+      dotThenDeath([death(10_000, { target: OTHER_RAIDER })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(true);
   });

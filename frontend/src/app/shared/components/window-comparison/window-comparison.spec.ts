@@ -5,8 +5,8 @@ import { mountVm } from '../../../../testing/component-harness';
 
 function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): ComparisonWindow {
   return {
-    timeStartS: 0,
-    timeEndS: 10,
+    timeStartMs: 0,
+    timeEndMs: 10_000,
     spells: [],
     labels: [],
     status,
@@ -251,51 +251,51 @@ describe('WindowComparisonComponent showCasts', () => {
 });
 
 describe('WindowComparisonComponent timelineCells', () => {
-  // GAP_SLOT_SECONDS = 20: each dashed pacing slot stands for 20s of pause
+  // GAP_SLOT_MS = 20_000: each dashed pacing slot stands for 20s of pause
   // (next.start - this.end), floored, so a sub-20s pause is the same burst (0 slots)
   // and longer lulls add proportionally more slots with no cap.
-  const SLOT_SECONDS = 20;
+  const SLOT_MS = 20_000;
 
   type Cell = { kind: 'window'; index: number } | { kind: 'gap'; id: string };
 
-  const winSpan = (timeStartS: number, timeEndS: number): ComparisonWindow => ({
+  const winSpan = (timeStartMs: number, timeEndMs: number): ComparisonWindow => ({
     ...win({}),
-    timeStartS,
-    timeEndS,
+    timeStartMs,
+    timeEndMs,
   });
 
   // One mount whose `windows` input is re-set per case (mountVm's TestBed configures
   // once, so a test never mounts twice). Two windows: the first ends at 0, the second
-  // starts at `pauseS`, so the gap count is a direct function of the pause between them.
+  // starts at `pauseMs`, so the gap count is a direct function of the pause between them.
   const gapCounter = () => {
     const { vm, setInput } = mountVm(WindowComparisonComponent, { windows: [] as ComparisonWindow[] });
     const cells = vm['timelineCells'] as () => Cell[];
-    return (pauseS: number): number => {
-      setInput('windows', [winSpan(0, 0), winSpan(pauseS, pauseS + 10)]);
+    return (pauseMs: number): number => {
+      setInput('windows', [winSpan(0, 0), winSpan(pauseMs, pauseMs + 10_000)]);
       return cells().filter(c => c.kind === 'gap').length;
     };
   };
 
   it('emits no gap slots for a pause under one slot (same burst)', () => {
     const gaps = gapCounter();
-    expect(gaps(SLOT_SECONDS - 1)).toBe(0);
-    expect(gaps(SLOT_SECONDS)).toBe(1);
+    expect(gaps(SLOT_MS - 1)).toBe(0);
+    expect(gaps(SLOT_MS)).toBe(1);
   });
 
   it('adds one more slot per further 20s of pause', () => {
     const gaps = gapCounter();
-    expect(gaps(2 * SLOT_SECONDS - 1)).toBe(1);
-    expect(gaps(2 * SLOT_SECONDS)).toBe(2);
-    expect(gaps(3 * SLOT_SECONDS)).toBe(3);
+    expect(gaps(2 * SLOT_MS - 1)).toBe(1);
+    expect(gaps(2 * SLOT_MS)).toBe(2);
+    expect(gaps(3 * SLOT_MS)).toBe(3);
   });
 
   it('is uncapped, so a long lull keeps adding slots', () => {
-    expect(gapCounter()(10 * SLOT_SECONDS)).toBe(10);
+    expect(gapCounter()(10 * SLOT_MS)).toBe(10);
   });
 
   it('interleaves window and gap cells in fight order', () => {
     // 0->0 (start), then a 40s pause (2 slots) to the second window.
-    const { vm } = mountVm(WindowComparisonComponent, { windows: [winSpan(0, 0), winSpan(2 * SLOT_SECONDS, 2 * SLOT_SECONDS + 10)] });
+    const { vm } = mountVm(WindowComparisonComponent, { windows: [winSpan(0, 0), winSpan(2 * SLOT_MS, 2 * SLOT_MS + 10_000)] });
     const cells = (vm['timelineCells'] as () => Cell[])();
     expect(cells.map(c => c.kind)).toEqual(['window', 'gap', 'gap', 'window']);
     expect(cells.filter(c => c.kind === 'window').map(c => (c as { index: number }).index)).toEqual([0, 1]);

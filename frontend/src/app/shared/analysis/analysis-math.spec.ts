@@ -1,6 +1,6 @@
 import {
   round, getOrInsert, groupByTime, isOutlierAbove, isOutlierBeyond, isOutlierBelow,
-  castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
+  castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, secondsLabel, sortBySeverity,
 } from './analysis-math';
 import { AnalysisFinding } from '../../core/models/analysis.models';
 
@@ -85,12 +85,12 @@ describe('isOutlierBelow', () => {
 });
 
 describe('castEfficiencyPct', () => {
-  const FIGHT_DUR_S = 100;
+  const FIGHT_DUR_MS = 100_000;
   it('reports the share of fight time spent casting', () => {
-    expect(castEfficiencyPct(20, FIGHT_DUR_S)).toBe(80);
+    expect(castEfficiencyPct(20_000, FIGHT_DUR_MS)).toBe(80);
   });
   it('clamps to zero when downtime exceeds the fight', () => {
-    expect(castEfficiencyPct(150, FIGHT_DUR_S)).toBe(0);
+    expect(castEfficiencyPct(150_000, FIGHT_DUR_MS)).toBe(0);
   });
 });
 
@@ -104,18 +104,30 @@ describe('closestToZero', () => {
 });
 
 describe('benchExpectedUses', () => {
-  const FIGHT_DUR_S = 120; // 2 minutes
+  const FIGHT_DUR_MS = 120_000; // 2 minutes
   it('scales avg uses/min by the fight length', () => {
-    expect(benchExpectedUses(FIGHT_DUR_S, { avg: 2, stddev: 0 }).expected).toBe(4);
+    expect(benchExpectedUses(FIGHT_DUR_MS, { avg: 2, stddev: 0 }).expected).toBe(4);
   });
   it('floors the -1 sigma estimate at zero', () => {
-    expect(benchExpectedUses(FIGHT_DUR_S, { avg: 1, stddev: 5 }).floor).toBe(0);
+    expect(benchExpectedUses(FIGHT_DUR_MS, { avg: 1, stddev: 5 }).floor).toBe(0);
   });
 });
 
 describe('fmtClock', () => {
   it('zero-pads minutes and seconds', () => {
-    expect(fmtClock(65)).toBe('01:05');
+    expect(fmtClock(65_000)).toBe('01:05');
+  });
+});
+
+describe('secondsLabel', () => {
+  it('drops a trailing zero rather than padding to the requested precision', () => {
+    expect(secondsLabel(4_000, 1)).toBe('4');
+  });
+  it('rounds to the requested decimal count when the value needs it', () => {
+    expect(secondsLabel(4_500, 1)).toBe('4.5');
+  });
+  it('defaults to whole seconds', () => {
+    expect(secondsLabel(12_400)).toBe('12');
   });
 });
 

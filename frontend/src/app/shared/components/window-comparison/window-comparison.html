@@ -53,13 +53,13 @@
                 [id]="optionId(cell.index)"
                 [class]="'relative flex items-center justify-center w-10 h-10 rounded-lg overflow-hidden bg-[var(--bg)] border border-[var(--border)] ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-[var(--gold)]' : ' focus:outline-none')"
                 [attr.aria-selected]="active"
-                [attr.aria-label]="(w.timeStartS | formatDuration)"
+                [attr.aria-label]="(w.timeStartMs | formatMsDuration)"
                 (click)="select(cell.index)">
                 <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
                 <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
               </button>
               <span [class]="'tabular-nums text-[10px] ' + (active ? 'text-[var(--gold)]' : 'text-[var(--muted)]')">
-                {{ w.timeStartS | formatDuration }}
+                {{ w.timeStartMs | formatMsDuration }}
               </span>
             </div>
           }
@@ -83,7 +83,7 @@
         <div class="flex flex-col shrink-0">
           <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">window</span>
           <span class="text-[13px] font-semibold tabular-nums text-[var(--text)] whitespace-nowrap">
-            {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
+            {{ w.timeStartMs | formatMsDuration }} - {{ w.timeEndMs | formatMsDuration }}
           </span>
         </div>
         <!-- Burst value: player damage when reached, top-parse damage for bench-only, else the not-reached label. -->

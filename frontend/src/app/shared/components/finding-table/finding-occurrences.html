@@ -35,7 +35,7 @@
           <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
         </button>
         <span [class]="'tabular-nums text-[10px] ' + (active ? 'text-[var(--gold)]' : 'text-[var(--muted)]')">
-          {{ occ.atMs != null ? (occ.atMs / 1000 | formatDuration) : occ.note }}
+          {{ occ.atMs != null ? (occ.atMs | formatMsDuration) : occ.note }}
         </span>
       </div>
     }
@@ -51,7 +51,7 @@
 @if (active(); as occ) {
   <div class="mt-[11px] text-[13px] text-[var(--muted)] leading-[1.5]">
     @if (occ.atMs != null) {
-      <span class="text-[var(--accent)] font-semibold mr-0.5">{{ occ.atMs / 1000 | formatDuration }}</span>
+      <span class="text-[var(--accent)] font-semibold mr-0.5">{{ occ.atMs | formatMsDuration }}</span>
     }
     {{ occ.detail }}
   </div>

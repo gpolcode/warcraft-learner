@@ -10,16 +10,16 @@ import { rulebook } from '../../../../testing/builders/rulebook';
 
 describe('cooldownCastTimes', () => {
   it('collects a cooldown\'s cast times in fight-relative seconds, sorted, ignoring other ids', () => {
-    const casts = [cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)];
+    const casts = [cast(SHADOW_BLADES, 30_000), cast(SHADOW_BLADES, 10_000), cast(SHADOW_DANCE, 5_000)];
     expect(cooldownCastTimes(casts, SHADOW_BLADES, 0)).toEqual([10, 30]);
   });
 
   it('rounds each cast time to one decimal', () => {
-    expect(cooldownCastTimes([cast(SHADOW_BLADES, 3.612)], SHADOW_BLADES, 0)).toEqual([3.6]);
+    expect(cooldownCastTimes([cast(SHADOW_BLADES, 3_612)], SHADOW_BLADES, 0)).toEqual([3.6]);
   });
 
   it('returns [] when the ability was never cast', () => {
-    expect(cooldownCastTimes([cast(SHADOW_DANCE, 5)], SHADOW_BLADES, 0)).toEqual([]);
+    expect(cooldownCastTimes([cast(SHADOW_DANCE, 5_000)], SHADOW_BLADES, 0)).toEqual([]);
   });
 });
 
@@ -39,8 +39,8 @@ const wclFake = {
   getReport: async (code: string) => (code === 'r1' ? reportFor(10, 'P1', 1) : reportFor(20, 'P2', 2)),
   getAllEvents: async (_c: string, _f: number, _t: string, _s: number, _e: number, playerId: number) =>
     playerId === 10
-      ? [cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 190), cast(SHADOW_DANCE, 40), cast(EVASION, 70)]
-      : [cast(SHADOW_BLADES, 5), cast(SHADOW_DANCE, 44), cast(EVASION, 66)],
+      ? [cast(SHADOW_BLADES, 10_000), cast(SHADOW_BLADES, 190_000), cast(SHADOW_DANCE, 40_000), cast(EVASION, 70_000)]
+      : [cast(SHADOW_BLADES, 5_000), cast(SHADOW_DANCE, 44_000), cast(EVASION, 66_000)],
   getAbilities: async (ids: number[]) => Object.fromEntries(ids.map(id => [id, { id, icon: `icon_${id}`, name: `name_${id}` }])),
 };
 const filesFake = {

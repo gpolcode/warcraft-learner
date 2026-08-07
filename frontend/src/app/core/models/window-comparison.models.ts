@@ -34,8 +34,8 @@ export interface WindowSpell {
 export type WindowStatus = 'good' | 'warn' | 'bad' | 'muted' | 'info';
 
 export interface ComparisonWindow {
-  timeStartS: number;
-  timeEndS: number;
+  timeStartMs: number;
+  timeEndMs: number;
   /** Known cooldowns as header chips (id + baked icon + name). */
   spells: WindowSpell[];
   /** Cooldown names with no spell id, rendered as plain text. */

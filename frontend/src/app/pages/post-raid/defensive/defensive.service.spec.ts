@@ -36,7 +36,7 @@ describe('analyzeDefensives', () => {
   it('builds buff-window-centric uses with damage taken during each window', () => {
     const out = analyzeDefensives(
       [CLOAK_META],
-      [], [applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], [damageTaken(700, 12, 500)],
+      [], [applyBuff(CLOAK_OF_SHADOWS, 10_000), removeBuff(CLOAK_OF_SHADOWS, 15_000)], [damageTaken(700, 12_000, 500)],
       0, 300_000,
     );
     expect(out).toHaveLength(1);
@@ -62,18 +62,18 @@ describe('buildDefensiveUsageWindows', () => {
   });
 
   it('falls back to point casts (zero span, no damage) only when there is no buff span', () => {
-    const CAST_S = 20;
+    const CAST_MS = 20_000;
     const out = buildDefensiveUsageWindows(
-      CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, CAST_S)],
+      CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, CAST_MS)],
       dmg, rel, F_START, F_END, FIGHT_END_MS,
     );
-    expect(out).toEqual([{ start_ms: CAST_S * 1000, end_ms: CAST_S * 1000, dmg_during: 0 }]);
+    expect(out).toEqual([{ start_ms: CAST_MS, end_ms: CAST_MS, dmg_during: 0 }]);
   });
 
   it('ignores a cast outside the fight bounds (boundary)', () => {
-    const PAST_END_S = 301; // > fight end, so its timestamp is past F_END
+    const PAST_END_MS = 301_000; // > fight end, so its timestamp is past F_END
     const out = buildDefensiveUsageWindows(
-      CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, PAST_END_S)],
+      CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, PAST_END_MS)],
       dmg, rel, F_START, F_END, FIGHT_END_MS,
     );
     expect(out).toEqual([]);
@@ -109,17 +109,17 @@ describe('analyzeOneDefensive', () => {
   const bench = defBench({ sample_count: 10, used_sample_count: 10 });
   const player = (overrides: Partial<PlayerDefensive>): PlayerDefensive =>
     ({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_ms: [], windows: [], ...overrides });
-  const FIGHT_DUR_S = 300;
+  const FIGHT_DUR_MS = 300_000;
 
   it('flags a never-used defensive as a critical lost cooldown', () => {
-    const out = analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), bench, 300);
+    const out = analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), bench, FIGHT_DUR_MS);
     expect(out[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
   });
 
   it('flags a late first use as a warning', () => {
     // First use is well past avg 10000 + 2*stddev 2000 = 14000ms -> a first-cast delay warning.
     const LATE_FIRST_MS = 40_000;
-    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), bench, FIGHT_DUR_S);
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), bench, FIGHT_DUR_MS);
     expect(out.some(finding => finding.severity === 'warning' && finding.category === 'cooldown_delay')).toBe(true);
   });
 
@@ -130,28 +130,28 @@ describe('analyzeOneDefensive', () => {
 
   it('does not flag an unused defensive that only a minority of top parses use (use-share gate)', () => {
     // The player matching the top parses by not pressing it is not a lost cast.
-    expect(analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), minorityUse, FIGHT_DUR_S)).toEqual([]);
+    expect(analyzeOneDefensive(player({ uses: 0, cast_times_ms: [] }), minorityUse, FIGHT_DUR_MS)).toEqual([]);
   });
 
   it('does not flag a late first use of a minority-use defensive (use-share gate)', () => {
     // First use is well past avg 10000 + 2*stddev 2000 = 14000ms, but the first-cast check is gated off.
     const LATE_FIRST_MS = 40_000;
-    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), minorityUse, FIGHT_DUR_S);
+    const out = analyzeOneDefensive(player({ uses: 1, cast_times_ms: [LATE_FIRST_MS] }), minorityUse, FIGHT_DUR_MS);
     expect(out.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 
   it('returns a success (no issues) when usage matches', () => {
-    const out = analyzeOneDefensive(player({ uses: 2, cast_times_ms: [10_000, 70_000] }), bench, 300);
+    const out = analyzeOneDefensive(player({ uses: 2, cast_times_ms: [10_000, 70_000] }), bench, FIGHT_DUR_MS);
     expect(out.some(finding => finding.severity === 'success')).toBe(true);
   });
 
   it('skips a talent-gated defensive that was never used', () => {
-    expect(analyzeOneDefensive(player({ uses: 0, talent_gated: true }), bench, 300)).toEqual([]);
+    expect(analyzeOneDefensive(player({ uses: 0, talent_gated: true }), bench, FIGHT_DUR_MS)).toEqual([]);
   });
 
   it('records a no-bench success only when used', () => {
-    expect(analyzeOneDefensive(player({ uses: 1, cast_times_ms: [10_000] }), undefined, 300)[0]).toMatchObject({ severity: 'success' });
-    expect(analyzeOneDefensive(player({ uses: 0 }), undefined, 300)).toEqual([]);
+    expect(analyzeOneDefensive(player({ uses: 1, cast_times_ms: [10_000] }), undefined, FIGHT_DUR_MS)[0]).toMatchObject({ severity: 'success' });
+    expect(analyzeOneDefensive(player({ uses: 0 }), undefined, FIGHT_DUR_MS)).toEqual([]);
   });
 });
 
@@ -162,7 +162,7 @@ describe('analyzeDefensiveFindings', () => {
   it('flags a never-used defensive as a critical lost cooldown', () => {
     const findings = analyzeDefensiveFindings(
       [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 0, cast_times_ms: [], windows: [] }],
-      bench, 300,
+      bench, 300_000,
     );
     expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown', cd_name: 'Cloak of Shadows' });
   });
@@ -173,15 +173,15 @@ describe('computePlayerDefensiveWindows', () => {
     const top: BurstWindow[] = [
       { time_ms: 10_000, window_length_ms: 5_000, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [] },
     ];
-    const out = computePlayerDefensiveWindows(top, [damageTaken(700, 12, 400, { absorbed: 150 }), damageTaken(701, 14, 100), damageTaken(700, 15, 999)], 0);
+    const out = computePlayerDefensiveWindows(top, [damageTaken(700, 12_000, 400, { absorbed: 150 }), damageTaken(701, 14_000, 100), damageTaken(700, 15_000, 999)], 0);
     // (400 + 150 absorbed) + 100 = 650; the event at exactly 15 (== end) is excluded (half-open).
     expect(out[0].window_damage).toBe(650);
     expect(out[0].ability_breakdown![0]).toMatchObject({ spell_id: 700, damage: 550 });
   });
 
   it('folds melee and synthetic-negative ability ids to normalized spell ids so the bench detail join resolves', () => {
-    const WIN_START_S = 10;
-    const WIN_LEN_S = 5;
+    const WIN_START_MS = 10_000;
+    const WIN_LEN_MS = 5_000;
     const MELEE_HIT_A = 400;
     const MELEE_HIT_B = 100;
     const SYNTH_NEG_ID_A = -32;   // WCL synthesizes distinct negative ids for sourceless hits
@@ -192,17 +192,17 @@ describe('computePlayerDefensiveWindows', () => {
     const SYNTH_TOTAL = SYNTH_HIT_A + SYNTH_HIT_B;
     // The bench breakdown stores NORMALIZED spell ids, so the player fold must match or the join renders null.
     const top: BurstWindow[] = [{
-      time_ms: WIN_START_S * 1000, window_length_ms: WIN_LEN_S * 1000, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [],
+      time_ms: WIN_START_MS, window_length_ms: WIN_LEN_MS, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [],
       ability_breakdown: [
         { spell_id: WOW_AUTO_ATTACK_SPELL_ID, avg_damage: 0, min_damage: 0, max_damage: 0, count: 1 },
         { spell_id: WCL_SYNTHETIC_SOURCE_FALLBACK_ID, avg_damage: 0, min_damage: 0, max_damage: 0, count: 1 },
       ],
     }];
     const [playerWindow] = computePlayerDefensiveWindows(top, [
-      damageTaken(WCL_MELEE_EVENT_ABILITY_ID, WIN_START_S + 1, MELEE_HIT_A),
-      damageTaken(WCL_MELEE_EVENT_ABILITY_ID, WIN_START_S + 2, MELEE_HIT_B),
-      damageTaken(SYNTH_NEG_ID_A, WIN_START_S + 2, SYNTH_HIT_A),
-      damageTaken(SYNTH_NEG_ID_B, WIN_START_S + 3, SYNTH_HIT_B),
+      damageTaken(WCL_MELEE_EVENT_ABILITY_ID, WIN_START_MS + 1000, MELEE_HIT_A),
+      damageTaken(WCL_MELEE_EVENT_ABILITY_ID, WIN_START_MS + 2000, MELEE_HIT_B),
+      damageTaken(SYNTH_NEG_ID_A, WIN_START_MS + 2000, SYNTH_HIT_A),
+      damageTaken(SYNTH_NEG_ID_B, WIN_START_MS + 3000, SYNTH_HIT_B),
     ], 0);
 
     const breakdown = playerWindow.ability_breakdown!;
@@ -364,7 +364,7 @@ describe('buildDefensivePlanRows', () => {
     });
     const rows = buildDefensivePlanRows(bench);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak', uses: 2, firstCastS: 12, windowsS: [30], rule: 'Use it' });
+    expect(rows[0]).toMatchObject({ name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak', uses: 2, firstCastMs: 12_000, windowsMs: [30_000], rule: 'Use it' });
   });
 
   it('falls back to an empty icon for a defensive whose spell id is not in the ability map', () => {
@@ -422,9 +422,9 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const wcl = {
       getReport: async () => report,
       getAllEvents: async (_c: string, _f: number, dataType: string) => {
-        if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
+        if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30_000), removeBuff(CLOAK_OF_SHADOWS, 35_000)];
         if (dataType === 'Casts') return [];
-        return [damageTaken(700, 32, 1150)]; // DamageTaken inside window
+        return [damageTaken(700, 32_000, 1150)]; // DamageTaken inside window
       },
     };
     const service = serviceWith(ok(fullBench()), wcl);
@@ -463,7 +463,7 @@ describe('DefensiveFeatureService.loadPlan (pre-fight)', () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.rows).toHaveLength(1);
-      expect(result.value.rows[0]).toMatchObject({ name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, uses: 2, firstCastS: 10, windowsS: [30] });
+      expect(result.value.rows[0]).toMatchObject({ name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, uses: 2, firstCastMs: 10_000, windowsMs: [30_000] });
     }
   });
 

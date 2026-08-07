@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { GameIconComponent } from '../game-icon/game-icon';
 import { CollapsibleTextComponent } from '../collapsible-text/collapsible-text';
 import { FindingOccurrencesComponent } from './finding-occurrences';
-import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
+import { FormatMsDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from './finding-table.utils';
 
 // Re-export so callers can import types + helpers from either this file or the utils module.
@@ -18,7 +18,7 @@ export { rowsFromEntries, onPlanFromEntries, bucketFindings, CAT_LABEL } from '.
   host: { class: 'block' },
   imports: [
     MatIconModule, MatButtonModule, GameIconComponent, CollapsibleTextComponent, FindingOccurrencesComponent,
-    FormatDurationPipe,
+    FormatMsDurationPipe,
   ],
   templateUrl: './finding-table.html',
 })

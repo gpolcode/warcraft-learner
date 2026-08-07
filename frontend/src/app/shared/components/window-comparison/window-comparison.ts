@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { GameIconComponent } from '../game-icon/game-icon';
 import { CompactAbilityRowComponent } from '../compact-ability-row/compact-ability-row';
-import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
+import { FormatMsDurationPipe } from '../../pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../pipes/format-damage-pipe';
 import { SignedPercentPipe } from '../../pipes/signed-percent-pipe';
 import { RangeRow, ComparisonWindow } from '../../../core/models/window-comparison.models';
@@ -21,7 +21,7 @@ let nextInstanceSeq = 0;
   selector: 'wl-window-comparison',
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
-  imports: [MatIconModule, MatButtonModule, GameIconComponent, CompactAbilityRowComponent, FormatDurationPipe, FormatDamagePipe, SignedPercentPipe],
+  imports: [MatIconModule, MatButtonModule, GameIconComponent, CompactAbilityRowComponent, FormatMsDurationPipe, FormatDamagePipe, SignedPercentPipe],
   templateUrl: './window-comparison.html',
 })
 export class WindowComparisonComponent {
@@ -38,10 +38,10 @@ export class WindowComparisonComponent {
   /** Emits the active window index when its clip button is clicked; the page forwards it. */
   readonly openClip = output<number>();
 
-  // Each dashed pacing slot stands for this many seconds of pause before the next
+  // Each dashed pacing slot stands for this many ms of pause before the next
   // window, so a sub-slot pause is the same burst (0 slots) and longer lulls add
   // proportionally more slots.
-  private static readonly GAP_SLOT_SECONDS = 20;
+  private static readonly GAP_SLOT_MS = 20_000;
 
   protected readonly selectedIndex = computed(() => {
     const windows = this.windows();
@@ -93,14 +93,14 @@ export class WindowComparisonComponent {
       cells.push({ kind: 'window', index: i });
       const next = windows[i + 1];
       if (!next) return;
-      const slots = this.gapSlots(next.timeStartS - w.timeEndS);
+      const slots = this.gapSlots(next.timeStartMs - w.timeEndMs);
       for (let s = 0; s < slots; s++) cells.push({ kind: 'gap', id: `${i}-${s}` });
     });
     return cells;
   });
 
-  private gapSlots(pauseS: number): number {
-    return Math.max(0, Math.floor(pauseS / WindowComparisonComponent.GAP_SLOT_SECONDS));
+  private gapSlots(pauseMs: number): number {
+    return Math.max(0, Math.floor(pauseMs / WindowComparisonComponent.GAP_SLOT_MS));
   }
 
   protected select(i: number): void {
