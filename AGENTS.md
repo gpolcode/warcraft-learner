@@ -39,7 +39,6 @@ frontend/        # the entire Angular 22 app
 .github/workflows/  # deploy-pages (shell + PR previews), ingest-parses (hourly), test
 .github/agents/   # rulebook-author.agent.md - the isolated per-spec authoring worker (read+edit tools only)
 .agents/skills/   # on-demand skills (rulebook schema in warcraft-ingestion/, generation in warcraft-rulebook/)
-scripts/          # repo-root: check-agent-config.mjs, the CI guard on this file, .agents/skills/, and .github/agents/
 ```
 
 The ~100 MB of minified bench data under `frontend/public/data/specs/**` is **not tracked on `main`** (gitignored). The deployed site is composed on **`gh-pages`** from disjoint single-owner folders at the site root: `data/specs/` (shared dataset, written by `ingest-parses`), and `main/` (prod shell), `pr-N/` (per-PR shells) plus a root `index.html` redirecting to `/main/` (all written by `deploy-pages`). Every environment ships only the shell and reads the one shared dataset via an absolute `dataBaseHref`, so code deploys never re-push data. Both writers share one `gh-pages` concurrency group (serialized single-commit force-pushes). Each `deploy-pages` run replaces only the folders its trigger owns in a gh-pages worktree - push: the shell + root files; PR events / dispatch: the root `pr-*` dirs wholesale, rebuilt from all open PRs - so closed previews vanish structurally (no cleanup workflow). Local dev: `npm run data:pull` (from `frontend/`) fetches the data from `origin/gh-pages`.
