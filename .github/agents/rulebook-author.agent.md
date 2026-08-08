@@ -14,9 +14,9 @@ reference any other specialization: your rulebook contains only your spec's own 
 
 - The schema: `.agents/skills/warcraft-rulebook/rulebook.schema.json`. Read it first. It is the only
   contract, and the field `description` strings are instructions, so follow them exactly.
-- `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the SimulationCraft APL. Its conditions
-  (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are the raw material for
-  cooldown timing, opener order, and rule conditions.
+- `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the stripped SimulationCraft action
+  lists. Its conditions (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are
+  the raw material for cooldown timing, opener order, and rule conditions.
 - `<spec>.guide.txt`: the stripped rotation guide, current patch. Abilities appear inline as
   `Name(spell=12345)`. It carries the openers, the single-target and AoE priorities, cooldown usage, and
   the hero-talent variants.
@@ -124,6 +124,31 @@ flattens it is a failed run.
   Secret Technique is `spell_id` and Shadow Dance is `required_spell_id`. Set `position: "either"` only
   when the rule text genuinely says pair or sync rather than naming an order, and `"after"` when the
   companion must follow. Read the rule's own `action` back against the condition before writing it.
+
+## Authoring checklist
+
+Answer these four questions for every rule before you write it:
+
+1. **Judged spell**: which `spell_id` is the engine evaluating?
+2. **State / buff / resource**: which aura, resource, or companion cast does the rule measure?
+3. **Excluded windows**: which `except_buff_spell_ids` suspend the rule so correct burst/proc casts are
+   not flagged?
+4. **Top-parse failure**: what concrete cast pattern in a top parse would make this rule fire?
+
+If you cannot answer 4, the rule is not measurable - leave it out rather than wrapping advice in a
+condition.
+
+### Resource bounds
+
+`resource_at_cast` uses `bound` to pick which side of the threshold is wrong:
+
+- `bound="min"`: flags casts at or below the threshold (low resource). Use this for "press X at low
+  combo points", "only cast X at N or fewer", and any "only at N" instruction.
+- `bound="max"`: flags casts at or above the threshold (high resource / overcap). Use this for "do not
+  cast X at 5+ combo points", "do not overcap", and any "never above N" instruction.
+
+If the source says "press X only at N resource", use `bound="min"` because the rule judges the cast
+that meets the threshold from below, not from above.
 
 ## Writing rules (project-wide, non-negotiable)
 
