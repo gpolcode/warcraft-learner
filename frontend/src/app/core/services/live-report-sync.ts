@@ -16,8 +16,8 @@ import { filter, map } from 'rxjs/operators';
 
 /** How often the live-sync polling fires (in ms) - the RxJS `interval()`/`Date.now()` timer unit. */
 export const POLL_INTERVAL_MS = 12_000;
-/** Same cadence in seconds, for display (e.g. the "Polling every Xs" status line). */
-export const POLL_INTERVAL_S = POLL_INTERVAL_MS / 1000;
+/** Same cadence in seconds, for display (e.g. the "Polling every Xs" status line) - keep in sync with POLL_INTERVAL_MS. */
+export const POLL_INTERVAL_S = 12;
 
 @Injectable({ providedIn: 'root' })
 export class LiveReportSyncService {

@@ -6,11 +6,7 @@ import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { relativeS } from '../../../shared/analysis/wcl-projections';
 
-/**
- * Pull overview - the first, always-on card on the post-raid page. Summarizes one pull from the
- * player's OWN log (WCL, no bench): DPS, pull time, boss % reached, the player's deaths, and the
- * kill/wipe outcome. Injects only `WclApiService`; no bench, no `*_DATA_SOURCE`, no transform.
- */
+/** Pull overview - the first, always-on post-raid card; summarizes one pull from the player's OWN log, no bench, no `*_DATA_SOURCE`, no transform. */
 
 export type PullResult = 'kill' | 'wipe';
 
