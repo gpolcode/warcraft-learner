@@ -5,6 +5,8 @@ description: warcraft-learner user-facing writing and branding rules. Covers the
 
 # warcraft-learner copy and branding
 
+**Deliverable:** every string a user sees follows the voice rules below - fact then fix, no hedging, no statistics clutter, quiet success states - and the product name stays exactly `warcraft-learner`.
+
 ## Branding & naming
 
 - **The product name is always `warcraft-learner`** - lowercase, hyphenated, exactly that casing. Never "Warcraft Learner", "WarcraftLearner", or any other variant. This applies to the page `<title>`, nav wordmark, CLI banners, READMEs, and any new user-facing copy.
