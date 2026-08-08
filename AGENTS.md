@@ -23,7 +23,7 @@ WclApiService -> *TransformService          data/specs/** -> DataFileApiService
      (:3000) -> data/specs/**                     -> *FeatureService -> *Component
 ```
 
-The layer rules, the bench-driven analysis principles, and the live-slice exception are in **warcraft-architecture**; the gh-pages deploy/data model is in **warcraft-ingestion**.
+The deployed site is composed on **`gh-pages`** from disjoint single-owner folders: `data/specs/` (shared dataset, written by `ingest-parses`), `main/` (prod shell), `pr-N/` (per-PR shells), and a root `index.html` redirect (all written by `deploy-pages`). Code deploys never re-push data; both writers share one concurrency group. Local dev: `npm run data:pull`.
 
 ```
 frontend/        # the entire Angular 22 app
@@ -45,7 +45,7 @@ frontend/        # the entire Angular 22 app
 | `npm start` | Angular dev server on http://localhost:4200 |
 | `npm run build` | Production build to `../static/angular/` |
 | `npm test` | `ng test` (Vitest, the one unit-test suite) |
-| `npm run e2e` | Playwright e2e suite over both pages (`npm run data:pull` first - see warcraft-e2e) |
+| `npm run e2e` | Playwright e2e suite over both pages (`npm run data:pull` first) |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `npm run start:ingest` | Interactive ingestion: the file server + `ng serve --configuration ingest` |
@@ -53,22 +53,15 @@ frontend/        # the entire Angular 22 app
 
 ## Development workflow router
 
-Load the matching skill(s) **before** you start that step. Feature work starts at **warcraft-feature-work**, which lists what a complete change delivers and points at the domain skill per surface - load only the ones your change touches.
+Load the matching skill(s) **before** you start that step. The `warcraft-*` skills are this project's rules; `angular-developer` is the generic Angular reference (project rules win on conflict). Copilot loads a skill automatically once its `description` matches the task, or you can select it explicitly from the `/` menu - either way, load it before starting the row's work, not from memory.
 
 | When you are... | Load |
 |---|---|
-| Building or changing any user-facing feature (finding, rule kind, slice, page, card) | **warcraft-feature-work** first, then the domain skills it points to |
-| Planning / scoping any change | **warcraft-feature-work** + **warcraft-architecture** |
-| Working on slice structure, a transform, analysis math, or layer boundaries | **warcraft-architecture** |
-| Designing / building Angular UI (components, templates, styling, pipes, services) | **angular-developer** + **warcraft-frontend** |
-| Writing or changing any string a user sees (findings, remedies, labels, titles, nav, READMEs, favicon) | **warcraft-copy** |
+| Building or changing any code (finding, rule kind, slice, page, component) | **warcraft-change** |
+| Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
-| Writing or changing code that fetches or renders a fallible load | **warcraft-error-handling** |
-| Generating or refreshing a spec's `rulebook.json` (one, some, or all specs) | **warcraft-rulebook** (dispatches the `rulebook-author` custom agent once per spec) |
-| Touching ingestion (`src/app/ingest/**`, `scripts/`), `data/specs` file shapes, the rulebook schema, or `INGEST_VERSION` | **warcraft-ingestion** |
-| Writing or changing unit tests (`src/**/*.spec.ts`) or the test setup | **warcraft-testing** |
-| Writing or changing e2e tests (`frontend/e2e/**`, `playwright.config.ts`, the e2e workflow) | **warcraft-e2e** |
-| Reviewing code, a diff, or a PR | the domain skill(s) for the changed area - Copilot code review reads the same skills automatically |
+| Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |
+| Reviewing code, a diff, or a PR | **warcraft-change** (the self-review checklist applies) |
 | Verifying a change runs / manual end-to-end check | run the relevant command from the Commands table above |
 
 On any conflict between a skill and this file, or between the generic skill (`angular-developer`) and a `warcraft-*` project skill, the **project skill / this file wins**.

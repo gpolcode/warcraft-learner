@@ -32,7 +32,7 @@ The app is a fully static Angular SPA. It talks directly to the Warcraft Logs AP
 
 ## Documentation
 
-See [`AGENTS.md`](./AGENTS.md) for the development entry point: architecture at a glance, commands, and the router into the on-demand skills under [`.agents/skills/`](./.agents/skills/) that hold the detailed conventions (frontend, architecture, testing, ingestion, WCL/data, copy, rulebook generation).
+See [`AGENTS.md`](./AGENTS.md) for the development entry point: architecture at a glance, commands, and the router into the on-demand skills under [`.agents/skills/`](./.agents/skills/) that hold the detailed conventions (change contract, writing, WCL/data, rulebook generation).
 
 ## License
 

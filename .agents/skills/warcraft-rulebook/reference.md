@@ -102,7 +102,7 @@ The `note` column is what makes the table usable rather than merely correct. A s
 
 Run the checks as **one script over all the files**, not a command per file per check:
 
-- schema check: `python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('<file>')), json.load(open('.agents/skills/warcraft-ingestion/rulebook.schema.json')))"` (`pip install jsonschema` first if the import fails).
+- schema check: `python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('<file>')), json.load(open('.agents/skills/warcraft-rulebook/rulebook.schema.json')))"` (`pip install jsonschema` first if the import fails).
 - dash scan: no U+2014 / U+2013 / U+2212 anywhere in the file.
 - **id cross-check**: walk every `spell_id` in `major_cooldowns`, `defensives` and each condition's id fields (including the `spell_ids` / `spend_spell_ids` / `alternative_spell_ids` / `except_buff_spell_ids` arrays) and assert the id is in that spec's table **and** that the name written beside it matches the table's name for that id. This catches a transposed pair that the schema cannot see, since both fields are individually well-typed. Compare with any trailing parenthetical stripped: WCL suffixes multi-part spells (`Stasis (Store)`) where the in-game name, which is what the player is shown, has no suffix.
 - **no magnitudes in conditions**: assert no numeric value in any condition outside the id fields, `resource_type` and `health_pct`, and no `rules[].description` over 60 characters. Those two are game constants read from a tooltip, not field behaviour the encounter has to measure.
