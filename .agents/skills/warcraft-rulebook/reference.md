@@ -125,28 +125,6 @@ The `note` column is what makes the table usable rather than merely correct. A s
    list. Keep aura ids for every buff token named in an APL condition (`buff.X.up`) even if the name only
    appears inside a condition. The goal is ~40 relevant rows, not every verified candidate.
 
-## 2e. `replay.py` and `<spec>.casts.jsonl` - self-validation data for filler rules
-
-For specs with filler choices, prepare a local replay script and the sampled parse data it needs before
-you dispatch the agent. The script reads the draft rulebook and the sampled parse cast/aura data and
-prints any `filler_in_buff` rule that a sampled parse fails. It must not make network calls - all data is
-local.
-
-Collect the cast data from the same parses used for the ability table. For each sampled parse pull:
-
-```
-table(dataType:Casts   fightIDs:[F] sourceID:S)
-table(dataType:Buffs   fightIDs:[F] sourceID:S)
-```
-
-Write one JSON line per parse to `<spec>.casts.jsonl`. Each line should contain the player's ordered cast
-sequence (ability id and timestamp) and the active aura windows. The agent runs `python3 replay.py
-<output-path>` against this file; the script reports which rule fails in which parse so the agent can add
-the missing `except_buff_spell_ids` state or drop the rule.
-
-Provide the same `replay.py` to every spec that needs it, or keep a per-spec variant if the logic differs.
-Include the script path and the `<spec>.casts.jsonl` path in the agent dispatch.
-
 ## Validation recipes (Step 4)
 
 Run the checks as **one script over all the files**, not a command per file per check:
@@ -159,14 +137,7 @@ Run the checks as **one script over all the files**, not a command per file per 
 
 Then read the file. The mechanical checks pass on a rulebook whose coaching copy is wrong, so spot-check that each number in a `usage_rule` or `action` traces to an APL line or a guide sentence, and run the top-parse sanity check from the rulebook-author agent's quality bar over the rules.
 
-**Re-run the `filler_in_buff` replay as an orchestrator check**, because the agent can miss a parse
-that it did not sample. Use the same `replay.py` and `<spec>.casts.jsonl`: for each parse count the
-coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids`
-window, take the share, then bench it the way the engine does (median, band `max(stddev, 0.1 * median)`)
-and check no parse falls under `median - band`. A parse that fails is telling you a state is missing from
-the exclusions - read that parse's violating casts, find the buff they all sit under, and add it. A rule
-measurable on under half the parses is not a defect: the encounter declines to bench it and the runtime
-drops it, which is the right outcome for a hero-talent build this field does not play.
+**Replay every `filler_in_buff` rule against the sampled parses before keeping it**, since it is the one kind whose defects are invisible on the page: for each parse count the coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids` window, take the share, then bench it the way the engine does (median, band `max(stddev, 0.1 * median)`) and check no parse falls under `median - band`. A parse that fails is telling you a state is missing from the exclusions - read that parse's violating casts, find the buff they all sit under, and add it. A rule measurable on under half the parses is not a defect: the encounter declines to bench it and the runtime drops it, which is the right outcome for a hero-talent build this field does not play.
 
 When a rule fails these, send the defect back to that spec's dispatch if it still holds context - it can fix one rule without re-authoring the file, which is far cheaper than a cold re-run. Otherwise re-dispatch `rulebook-author` for that spec alone with the defect appended to its prompt. Reserve a fresh dispatch for output that misses the bar broadly.
 

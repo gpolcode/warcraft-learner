@@ -1,15 +1,14 @@
 ---
 name: rulebook-author
-description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, a WCL-verified ability-id table, and a local filler-rule replay script). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
-tools: ["read", "edit", "bash"]
+description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, and a WCL-verified ability-id table). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
+tools: ["read", "edit"]
 user-invocable: false
 ---
 
 You author exactly one spec's `rulebook.json` from the local files named in your task prompt. Your
-`tools` allowlist is `read`, `edit`, and `bash` (used only to run the provided `replay.py`), so you have
-no way to make a network call or reach credentials. Every fact you write comes from the files named in
-your prompt. You never mention, read, or reference any other specialization: your rulebook contains only
-your spec's own abilities.
+`tools` allowlist is `read` and `edit` only, so you have no way to make a network call or reach
+credentials. Every fact you write comes from the files named in your prompt. You never mention, read, or
+reference any other specialization: your rulebook contains only your spec's own abilities.
 
 ## Inputs
 
@@ -36,9 +35,6 @@ your spec's own abilities.
     the current cast id, the row with uptime is the aura.
   The note's parse count is evidence, not proof: an id seen in none of the sampled parses may still be a
   real button whose build was not represented.
-- `replay.py` and `<spec>.casts.jsonl` (when the spec has filler choices): a local replay script plus the
-  sampled parse cast/aura data the script reads. Run the script against the draft rulebook before
-  finalizing and fix or drop any `filler_in_buff` rule it reports as broken.
 
 ## Output
 
@@ -48,14 +44,6 @@ and `spec_icon` to the stem given in your prompt. Never write `guide_count` or `
 
 Report one line: spec key, the major_cooldowns / defensives / rules counts, and any ability name the
 sources called for that your table did not contain. No prose narration.
-
-## Self-validation before returning
-
-If `replay.py` and `<spec>.casts.jsonl` are in your prompt, run `python3 replay.py <output-path>` after
-you finish the draft and before you report completion. Read the output. For every `filler_in_buff` rule
-it flags, either add the missing `except_buff_spell_ids` state or delete the rule. Then re-run until the
-script reports no broken filler rules or you have removed every rule it cannot validate. Do not return a
-rulebook with a known-broken filler rule.
 
 ## The quality bar
 
@@ -109,8 +97,7 @@ flattens it is a failed run.
   accuses every top parse over the handful of correct off-state casts every log contains. Fill
   `except_buff_spell_ids` with the states that suspend the choice - a burst window that grants both
   states at once, a proc the sources say to press the other filler under - since those casts are correct
-  play and counting them is what turns a true rule into a false one. After writing the rulebook, run
-  `python3 replay.py <output-path>` and fix or drop any `filler_in_buff` rule the sampled parses fail.
+  play and counting them is what turns a true rule into a false one.
 - **Pick the kind the rule actually means.** A rule about a buff being up wants `cast_outside_buff`,
   not a `cast_without_prior` proximity window that only approximates it. A rule about combo points
   wants `resource_at_cast`, not a cast pairing. `aura_uptime_below` needs `on: "target"` for a dot the
