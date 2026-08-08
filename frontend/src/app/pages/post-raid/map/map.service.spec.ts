@@ -220,13 +220,9 @@ describe('MapFeatureService', () => {
   });
 });
 
-/** One recorded getAllEvents call, reduced to the fields that decide what WCL returns. */
 interface RecordedFetch { dataType: string; sourceId?: number; includeResources?: boolean; hostilityType?: string; }
 
-/**
- * Records every `getAllEvents` call so tests can assert when the deferred fetch fires and what it
- * asks for. Returns no events, so no overlay is built (overlay content is covered above).
- */
+/** Returns no events, so no overlay is built (overlay content is covered above). */
 class RecordingWclApi {
   readonly calls: RecordedFetch[] = [];
   get getAllEventsCalls(): number { return this.calls.length; }
@@ -242,7 +238,6 @@ class RecordingWclApi {
 /** A minimal fight; prepare only reads id / encounterID / startTime / endTime. */
 const sampleFight = { id: 1, encounterID: 3144, startTime: 0, endTime: 10_000, name: 'Test', kill: true } as WclFight;
 
-/** This pull's player actor, whose casts are one of the two position-event streams. */
 const PLAYER_ACTOR_ID = 5;
 
 /** Drain microtasks + the macrotask queue so a fire-and-forget async load settles. */

@@ -1,7 +1,6 @@
 import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
 
-/** Displayed "What" label for a finding whose cooldown could not be identified (no cd_name). */
 export const UNKNOWN_COOLDOWN_LABEL = 'Unknown cooldown';
 
 const UNKNOWN_COOLDOWN_CONTEXT = 'finding-table.unknown-cooldown';
@@ -19,10 +18,7 @@ export interface FindingMeasure {
   unit?: string;
 }
 
-/**
- * One row of the flat finding table (severity · What · Measured · Fix).
- * Rule rows carry a plain `what` label; cooldown rows carry a spell identity.
- */
+/** One row of the flat finding table; rule rows carry a plain `what` label, cooldown rows carry a spell identity. */
 export interface FindingRow {
   severity: 'critical' | 'warning' | 'info';
   name?: string;
@@ -86,13 +82,10 @@ export function onPlanFromEntries(entries: FindingEntry[]): OnPlanChip[] {
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; success?: AnalysisFinding; }
 
 export interface BucketOptions {
-  /** Resolves a cooldown/defensive name to its spell id for icon rendering. */
   spellId: (name: string) => number | null;
-  /** Resolves a cooldown/defensive name to its baked icon filename (empty when none). */
   icon: (name: string) => string;
 }
 
-/** Group findings by cooldown/defensive name into `FindingEntry[]`. */
 export function bucketFindings(
   findings: AnalysisFinding[],
   options: BucketOptions,
@@ -107,8 +100,7 @@ export function bucketFindings(
     } else if (finding.cd_name) {
       (byName[finding.cd_name] ??= { issues: [], holds: [] }).issues.push(finding);
     } else {
-      // Surface a nameless finding under an explicit label so the coaching feedback is never
-      // dropped, and log it so a report can reproduce it.
+      // Surface a nameless finding under an explicit label so the coaching feedback is never dropped.
       logWarn(UNKNOWN_COOLDOWN_CONTEXT, finding);
       (byName[UNKNOWN_COOLDOWN_LABEL] ??= { issues: [], holds: [] }).issues.push(finding);
     }

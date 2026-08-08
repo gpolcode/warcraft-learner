@@ -17,7 +17,6 @@ import { rulebook } from '../../../../testing/builders/rulebook';
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
 
-/** Call `findParseWindows` with the common fixed-fight defaults, overriding per case. */
 function scanWindows(
   damageEvents: WclEvent[], fightLenS: number,
   overrides: { timings?: ReturnType<typeof cdTimings>; casts?: WclEvent[]; abilityNames?: Map<number, string> } = {},
@@ -27,23 +26,17 @@ function scanWindows(
     timings: overrides.timings ?? [], casts: timed(overrides.casts ?? [], 0), abilityNames: overrides.abilityNames ?? new Map(),
   });
 }
-/** A flat damage stream: `amount` at every second in [0, seconds). */
 function uniformDamage(spellId: number, seconds: number, amount: number): WclEvent[] {
   return Array.from({ length: seconds }, (_, i) => damage(spellId, i, amount));
 }
 
-// Fight lengths used by the window-detection fixtures.
 const LONG_FIGHT_S = 300;
 const HUNDRED_S_FIGHT_S = 100;
-// Per-second damage that makes a bin comfortably "dense" on a long fight.
 const BIN_DAMAGE = 1000;
-// On a HUNDRED_S_FIGHT (100 bins) carrying TOTAL_DAMAGE, the density threshold works out
-// to THRESHOLD_MULT (1.6) x mean rolling damage = 1.6 * (TOTAL_DAMAGE / 100) * 3 =
-// DENSITY_THRESHOLD; the quantile floor is 0 since the rolling-damage distribution is mostly zeros.
+// DENSITY_THRESHOLD = THRESHOLD_MULT (1.6) x mean rolling damage on a HUNDRED_S_FIGHT carrying TOTAL_DAMAGE.
 const TOTAL_DAMAGE = 1000;
 const DENSITY_THRESHOLD = 48;
 
-/** A 4-bin damage burst (BIN_DAMAGE at startS..startS+3) from the Shadow Blades damage id. */
 function burstAt(startS: number): WclEvent[] {
   return [0, 1, 2, 3].map(offset => damage(SHADOW_BLADES_DAMAGE, startS + offset, BIN_DAMAGE));
 }
@@ -65,13 +58,11 @@ describe('cdTimings', () => {
 });
 
 describe('bucketDamagePerBin', () => {
-  // Three hits in one 1s bin (bin 1) sum; an out-of-range hit clamps into the last bin.
   it('sums hits into their fight-relative bin and clamps out-of-range hits', () => {
     const FIRST_HIT = 100;
     const SECOND_HIT = 200;
     const LATE_HIT = 50;
     const BIN_COUNT = 3;
-    // hit times in fight-relative seconds (DamageHit = [atS, dmg, abilityId]); atS 1-1.999 -> bin 1.
     const hits: [number, number, number][] = [
       [1, FIRST_HIT, EVISCERATE], [1.5, SECOND_HIT, EVISCERATE], [999, LATE_HIT, EVISCERATE],
     ];
@@ -85,7 +76,6 @@ describe('bucketDamagePerBin', () => {
 });
 
 describe('forwardRollingDamage', () => {
-  // Each bin sums itself + the next ROLL_BINS-1; near the end the window truncates.
   it('sums each bin with the next rollBins-1, truncating at the array end', () => {
     const ROLL = 3;
     const perBin = [1, 2, 3, 4];
@@ -149,8 +139,7 @@ describe('windowAbilityBreakdown', () => {
   it('ranks abilities by window damage, counts casts by name, and flags passive abilities', () => {
     const SB_DMG = 600;
     const BP_DMG = 400;
-    // The cast id (SHADOW_BLADES) and the damage id (SHADOW_BLADES_DAMAGE) share one name, so cast
-    // counting must key by NAME: a by-id count would miss the cast and report 0.
+    // Cast counting must key by NAME: SHADOW_BLADES (cast id) and SHADOW_BLADES_DAMAGE (damage id) share one name.
     const bridgeNameOf = (spellId: number): string =>
       new Map([[SHADOW_BLADES, 'Shadow Blades'], [SHADOW_BLADES_DAMAGE, 'Shadow Blades'], [BLACK_POWDER, 'Black Powder']]).get(spellId) ?? `Spell ${spellId}`;
     // DamageHit = [atS, dmg, abilityId]; window is [1s, 3s).

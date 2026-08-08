@@ -1,11 +1,4 @@
-/**
- * Work-ordering for the ingestion orchestrator.
- *
- * Each run is bounded by the WCL hourly point budget: when it runs out, the loop stops and
- * the next run resumes. To stop stale specs from starving, these pure helpers order the work
- * so a budget-bounded run fixes the most out-of-date data first. The orchestrator supplies
- * cheap disk signals (zero WCL budget); the ordering itself is pure and total.
- */
+// Each run is bounded by the WCL hourly point budget, so these pure helpers order work to fix the most out-of-date data first.
 
 /** Spec pinned to the front of its bracket, ahead of the rest of the order. */
 export const PRIORITY_SPEC = 'SubtletyRogue';
@@ -13,25 +6,13 @@ export const PRIORITY_SPEC = 'SubtletyRogue';
 /** Cap on how many specs one run ingests, so a single run stays within the WCL point budget. */
 export const SPEC_LIMIT = 10;
 
-/** One spec's ordering inputs - all derived from cheap disk reads. */
 export interface SpecOrderEntry {
   spec: string;
-  /** Burst files on disk (0 = never ingested). */
   dataCount: number;
-  /** True only when every on-disk file is at the current INGEST_VERSION. */
   onCurrentVersion: boolean;
 }
 
-/**
- * Specs ordered so a budget-bounded run fixes the most out-of-date data first:
- *   1. empty specs (never ingested),
- *   2. old-version specs (data not fully at the current INGEST_VERSION),
- *   3. current-version specs,
- * PRIORITY_SPEC is pinned to the front of its own bracket, so it is always refreshed first among
- * specs in the same version group. Otherwise the order within each group is randomized, so that
- * over many runs every spec in a group gets a turn at the front rather than the alphabetically
- * earliest always winning the budget. `random` is injected to keep the function pure and testable.
- */
+/** Order within each version group is randomized per call so every spec gets a turn at the front over many runs. */
 export function orderSpecsByVersion(
   entries: readonly SpecOrderEntry[],
   random: () => number = Math.random,
@@ -53,7 +34,6 @@ export function orderSpecsByVersion(
     .map(entry => entry.spec);
 }
 
-/** Specs for one run: version-ordered, then capped to SPEC_LIMIT so a single run stays within the WCL point budget. */
 export function specsForRun(
   entries: readonly SpecOrderEntry[],
   random: () => number = Math.random,
@@ -61,11 +41,7 @@ export function specsForRun(
   return orderSpecsByVersion(entries, random).slice(0, SPEC_LIMIT);
 }
 
-/**
- * Encounters ordered so the ones missing an on-disk slice come first (never-ingested before
- * already-present), keeping the original relative order within each group. So a partially
- * ingested spec fills its remaining bosses before re-checking the ones already done.
- */
+/** So a partially ingested spec fills its remaining bosses before re-checking the ones already done. */
 export function orderEncountersByMissingFirst<T extends { id: number }>(
   encounters: readonly T[],
   presentIds: ReadonlySet<number>,
