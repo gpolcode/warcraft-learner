@@ -12,7 +12,7 @@ query { gameData { classes { name slug specs { name slug } } } }
 
 Each `spec.slug + class.slug` is the folder key (e.g. `Subtlety` + `Rogue` -> `SubtletyRogue`; `Devourer` + `DemonHunter` -> `DevourerDemonHunter`). Ask the user which specs to do - accept "all", a class, a role ("healers"), or explicit names - resolve to folder keys, and confirm the list before starting the prep.
 
-Steps 1 and 3 (of the SKILL.md flow) both need one **rankable encounter id**, so resolve it once per session. Query `worldData{expansions{id name zones{id name encounters{id name}}}}` and read the current expansion's zones; never dump `worldData{zones{...}}`, which returns every zone ever and costs far more output than it answers. The newest raid zone usually returns `"Fight data doesn't exist yet. Try again later."` from `characterRankings` because the tier has not opened, and a zone can appear two or three times (live, PTR, beta) with different ids. So probe a few encounter ids for a non-empty `rankings` array and take the first that answers, falling back to the previous tier's zone. Record which encounter you used: it is what the parse counts in the notes are counted against.
+Steps 1 and 3 (of the SKILL.md flow) both need one **rankable encounter id**, so resolve it once per session. Query `worldData{expansions{id name zones{id name encounters{id name}}}}` and read the current expansion's zones; never dump `worldData{zones{...}}`, which returns every zone ever. The newest raid zone usually has no fight data yet and a zone can appear two or three times (live, PTR, beta) with different ids, so probe a few encounter ids for a non-empty `rankings` array and take the first that answers, falling back to the previous tier's zone. Record which encounter you used: the parse counts in the notes are counted against it.
 
 ## 2a. `<spec>.simc.txt` - the SimulationCraft APL
 
@@ -24,32 +24,22 @@ https://raw.githubusercontent.com/simulationcraft/simc/<branch>/profiles/<TIER>/
 
 Discover `<branch>` and `<TIER>` **once per session** and reuse them for every spec:
 
-- `<branch>` is SimC's **current-expansion branch** - `midnight` now. **Never use `main` or the repo default: they carry no current profiles (`.../simc/main/profiles/...` 404s).** If unsure of the name, it is the current WoW expansion lowercased with no spaces; confirm it resolves before fetching.
-- `<TIER>` is the highest tier profile dir on that branch, e.g. **`MID1`**. Probe `https://raw.githubusercontent.com/simulationcraft/simc/<branch>/profiles/<TIER>/...` for `MID1`, `MID2`, ... and take the highest that resolves. The path moves every tier; discover it, do not hard-trust it.
-- `<ClassName>_<SpecName>` are **underscore-separated words**, so a two-word class or spec keeps its space as an underscore: `Rogue_Subtlety`, `Hunter_Beast_Mastery`, `Death_Knight_Frost`, `Demon_Hunter_Havoc`. Probing a wrong form 404s cleanly, so probe the underscore form first.
+- `<branch>` is SimC's **current-expansion branch** - `midnight` now. **Never use `main` or the repo default: they carry no current profiles (`.../simc/main/profiles/...` 404s).** If unsure, it is the current WoW expansion lowercased with no spaces; confirm it resolves before fetching.
+- `<TIER>` is the highest tier profile dir on that branch, e.g. **`MID1`**. Probe `MID1`, `MID2`, ... and take the highest that resolves. The path moves every tier; discover it, do not hard-trust it.
+- `<ClassName>_<SpecName>` are **underscore-separated words** (`Rogue_Subtlety`, `Hunter_Beast_Mastery`, `Death_Knight_Frost`). A wrong form 404s cleanly, so probe the underscore form first.
 
-`api.github.com` is blocked behind some egress proxies, so the contents API is not a reliable way to list the tier dir; probe `raw.githubusercontent.com` paths directly instead. When a base spec file 404s under every form, that spec has no profile this tier and the agent works from the guide and the table alone.
-
-The APL is plain text; save it as-is, then strip it before dispatch. Its conditions (e.g.
-`racial_sync,value=buff.shadow_blades.up&buff.shadow_dance.up`, `if=cooldown.X.remains`, combo-point and
-charge gates) are the raw material for `major_cooldowns`, `align_with_bloodlust`, `opener_priority`, and
-the rule conditions - the agent needs them verbatim.
+`api.github.com` is blocked behind some egress proxies; probe `raw.githubusercontent.com` paths directly. When a base spec file 404s under every form, that spec has no profile this tier and the agent works from the guide and the table alone.
 
 **Strip the file to action lists only.** Drop the header block (talents, gear, consumables, trinkets,
 legendaries), comments, and empty lines. Keep every line that starts with `actions` or `actions.`,
-including the sub-list definitions and the terminal unconditioned filler. Stripping saves tokens and
-keeps the agent focused on rotation logic.
+including the sub-list definitions, and keep its conditions (`if=`, `buff.X.up`,
+`cooldown.X.remains`, resource gates) verbatim - they are the raw material for `major_cooldowns`,
+`align_with_bloodlust`, `opener_priority`, and the rule conditions.
 
-**The bottom of each action list is the filler, and it is the spec's most-pressed decision.** SimC splits
-the rotation into sub-lists per hero tree and target count (`actions.ec_st`, `actions.kotg_st`,
-`actions.aoe`), and each one ends in a **terminal unconditioned action** - the button pressed whenever
-nothing above it is available. The lines just above it are the gates that swap in a different filler
-(`starfire,if=action.starfire.execute_time<buff.eclipse.remains` then a bare `wrath`). Together they are
-the `filler_in_buff` rules, and the states in those gates - the buff that decides the choice, and the
-burst window or proc that suspends it - are ability ids the table must carry, so add every buff named in
-a filler gate to the ability-table candidate list. Never trim these lines when saving the file: a
-rulebook that describes a spec's cooldowns but not which button fills between them has missed the
-rotation.
+**Never trim the filler lines** - the terminal unconditioned action at the bottom of each sub-list
+and the gates just above it. They are the `filler_in_buff` raw material, and every buff named in a
+filler gate goes on the ability-table candidate list. What the agent does with them is defined in
+`rulebook-author.agent.md`.
 
 ## 2b. `<spec>.guide.txt` - the rotation guide, stripped to text
 
@@ -68,7 +58,7 @@ https://www.wowhead.com/guide/classes/<class-kebab>/<spec-kebab>/<subpage>-pve-<
 
 The pages are server-rendered but hundreds of KB, so keep the `guide-body` block, drop tags, and save the text. The priority lists, openers and AoE sequences ship a second time inside a `WH.markup.printHtml("...")` JS string literal where each ability is a `[spell=<id>]` code: extract the longest such literal per page, resolve the codes to `Name(spell=<id>)` with one batched `gameData` query, and append that block. Plain `href="...wowhead.com/spell=<id>"` anchors are nearly absent from these pages, so do not rely on them.
 
-**Wowhead's guide pages return 403 to some egress** (CloudFront blocks datacenter ranges). This is not a signal about the whole domain: `nether.wowhead.com`, which serves the tooltips, is a different host and stays reachable, so a working tooltip fetch says nothing about the guide pages. When the guide pages are blocked, take Icy Veins, whose rotation pages track the same patch and attach ids as `data-wowhead="spell=<id>"` on every ability:
+**Wowhead's guide pages return 403 to some egress** (CloudFront blocks datacenter ranges), while `nether.wowhead.com` tooltips - a different host - stay reachable, so a working tooltip fetch says nothing about the guide pages. When the guide pages are blocked, take Icy Veins, whose rotation pages track the same patch and attach ids as `data-wowhead="spell=<id>"` on every ability:
 
 ```
 https://www.icy-veins.com/wow/<spec-kebab>-<class-kebab>-pve-<dps|healing|tank>-rotation-cooldowns-abilities
@@ -97,7 +87,7 @@ Join `SpellIconFileID` to `ID` and lowercase the filename without its extension.
 
 Build one `name <tab> spell_id <tab> icon <tab> base_cd_s <tab> note` table per spec; the agent picks **every** id it writes from this table, so grounding happens here, once, at prep time - ingestion does not re-check ids.
 
-The `note` column is what makes the table usable rather than merely correct. A spec routinely has several live ids sharing one name, and the agent cannot tell them apart from the name: the cast id and the aura id differ (Improved Garrote casts nothing and its logged buff is not its talent id), a reworked ability keeps its old id alive alongside the new one (both Crimson Tempest ids return "Crimson Tempest"), and a talent id is not what shows up in a log. Say in the note which one each row is - cast, aura, talent, retired - and **in how many of the sampled top parses it appeared**. Tell the agent which kind each field wants: cast ids for `major_cooldowns`, `defensives` and cast-based rules, aura ids for every `cast_outside_buff`, `aura_uptime_below`, `proc_wasted` and `filler_in_buff`.
+The `note` column is what makes the table usable rather than merely correct. A spec routinely has several live ids sharing one name, and the agent cannot tell them apart from the name: the cast id and the aura id differ (Improved Garrote casts nothing and its logged buff is not its talent id), a reworked ability keeps its old id alive alongside the new one (both Crimson Tempest ids return "Crimson Tempest"), and a talent id is not what shows up in a log. Write the note in the vocabulary the agent's Inputs section defines (`CAST` / `SELF AURA` / `TARGET AURA` / `NOT observed` / `SAME NAME as id(s) X,Y`), with the sampled-parse count.
 
 **A guide's inline id for a state buff is frequently not the id the logs carry**, and the name gate cannot tell: Balance Druid's guide writes `Eclipse (Solar)(spell=326053)`, `ability(id:326053)` answers "Eclipse (Solar)", and every log in the tier records the buff as **48517**. A rule built on the advertised id matches nothing and silently reads as followed on every pull. So an aura id only earns its row by appearing in a parse's `Buffs` or `Debuffs` table; when a guide names one the tables do not, keep the observed id and record the guide's in the note.
 
@@ -116,7 +106,7 @@ The `note` column is what makes the table usable rather than merely correct. A s
 
    An id in `Casts` is a cast id; an id in `Buffs`/`Debuffs` is an aura id; a name-verified id in none of them is a talent or an unplayed build, and the note must say so rather than implying it is castable. When a name maps to two live ids, the one in `Casts` is the current one.
 
-   **One parse is not enough evidence.** Cast tables are routinely partial - a spec's logs can carry a dozen entries and omit core buttons entirely - and any single player's build leaves out abilities the spec generally presses, so a lone sample silently deletes real cooldowns from the rulebook. Sampling several turns a hard absence into a soft one: an id missing from every parse is evidence, missing from one is noise, and the count in the note lets the author weigh it. Sampling is nearly free - a full 40-spec run at 5 parses each stays well inside the 3600 points/hour budget - so spend it here.
+   **One parse is not enough evidence.** Cast tables are routinely partial and any single player's build leaves out abilities the spec generally presses, so a lone sample silently deletes real cooldowns from the rulebook. An id missing from every parse is evidence, missing from one is noise, and the count in the note lets the author weigh it. Sampling is nearly free - a full 40-spec run at 5 parses each stays well inside the 3600 points/hour budget - so spend it here.
 
    `Debuffs` filtered by `sourceID` does not reliably narrow to auras that source applied; it can return auras sitting on the player instead. Treat those ids as auras, and confirm from the guide that the spec actually applies one to enemies before using it for `aura_uptime_below` with `on: "target"`.
 4. Fill `base_cd_s` from the Wowhead tooltip endpoint - `https://nether.wowhead.com/tooltip/spell/<id>` returns JSON whose `tooltip` HTML carries "`N sec/min cooldown`". Tooltip cooldowns are **base, pre-talent** values; they anchor the agent's `cooldown` numbers, which otherwise have no source at all. The same tooltip text carries the **buff/dot duration and the effect percentages**, so parse those in the same pass - they are what makes a `usage_rule` concrete. Fetch the whole id set from **one script** that requests concurrently and prints one line per id; a shell loop of backgrounded `curl` subshells re-prints its own body for every job it reaps and buries the results in noise.
@@ -137,9 +127,9 @@ Run the checks as **one script over all the files**, not a command per file per 
 
 Then read the file. The mechanical checks pass on a rulebook whose coaching copy is wrong, so spot-check that each number in a `usage_rule` or `action` traces to an APL line or a guide sentence, and run the top-parse sanity check from the rulebook-author agent's quality bar over the rules.
 
-**Replay every `filler_in_buff` rule against the sampled parses before keeping it**, since it is the one kind whose defects are invisible on the page: for each parse count the coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids` window, take the share, then bench it the way the engine does (median, band `max(stddev, 0.1 * median)`) and check no parse falls under `median - band`. A parse that fails is telling you a state is missing from the exclusions - read that parse's violating casts, find the buff they all sit under, and add it. A rule measurable on under half the parses is not a defect: the encounter declines to bench it and the runtime drops it, which is the right outcome for a hero-talent build this field does not play.
+**Replay every `filler_in_buff` rule against the sampled parses before keeping it** - its defects are invisible on the page. For each parse count the coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids` window, take the share, bench it the way the engine does (median, band `max(stddev, 0.1 * median)`), and check no parse falls under `median - band`. A failing parse means a state is missing from the exclusions: read that parse's violating casts, find the buff they all sit under, and add it. A rule measurable on under half the parses is not a defect - the encounter declines to bench it and the runtime drops it, the right outcome for a hero-talent build the field does not play.
 
-When a rule fails these, send the defect back to that spec's dispatch if it still holds context - it can fix one rule without re-authoring the file, which is far cheaper than a cold re-run. Otherwise re-dispatch `rulebook-author` for that spec alone with the defect appended to its prompt. Reserve a fresh dispatch for output that misses the bar broadly.
+When a rule fails these, send the defect back to that spec's dispatch if it still holds context - fixing one rule in-place is far cheaper than a cold re-run. Otherwise re-dispatch `rulebook-author` for that spec alone with the defect appended to its prompt; reserve a fresh dispatch for output that misses the bar broadly.
 
 ## Publish recipe (Step 5)
 
@@ -159,6 +149,6 @@ git branch -D <temp-branch>
 
 Open the PR with **base `gh-pages`** (push to `gh-pages` directly only when the user explicitly says so). Once merged, the hourly ingest overlays `data/specs` from `gh-pages` before each run and rebuilds that spec's benches over its next passes; the site reads the same tree directly. The gh-pages writers publish tree-based single commits, so the file content persists across their force-pushes.
 
-The worktree commits on a **temp branch pushed to the publish branch's remote ref** because the publish branch name is often already checked out on `main` history - a session handed a branch to work on cannot reuse that name for a `gh-pages` worktree, and `git worktree add -b` fails outright on the collision. Pushing a temp branch to `refs/heads/<publish-branch>` sidesteps it; the local pointer is then irrelevant, since the PR reads the remote. Verify with `git log origin/<publish-branch> -1` rather than the local ref, which still sits on `main` history and will make history-checking tooling report the repo's merge commits as if they were yours.
+The worktree commits on a **temp branch pushed to the publish branch's remote ref** because the publish branch name is often already checked out on `main` history and `git worktree add -b` fails outright on the collision. Pushing a temp branch to `refs/heads/<publish-branch>` sidesteps it; the local pointer is irrelevant since the PR reads the remote. Verify with `git log origin/<publish-branch> -1`, not the local ref - it still sits on `main` history and makes history-checking tooling report the repo's merge commits as yours.
 
-**Keeping the PR current needs a cherry-pick, never a plain rebase.** Each `gh-pages` writer force-pushes a single **parentless** commit, so a rebase onto the new tip replays the orphaned publish commit and reverts whatever that writer just shipped. Cut a fresh worktree from the new `origin/gh-pages`, cherry-pick your own commit onto it, and push it with `--force-with-lease=refs/heads/<publish-branch>:<old-sha>`. Then confirm 0 behind / 1 ahead of `origin/gh-pages`, a diff of only rulebook files, and the other writers' directories intact.
+**Keeping the PR current needs a cherry-pick, never a plain rebase.** Each `gh-pages` writer force-pushes a single **parentless** commit, so a rebase onto the new tip replays the orphaned publish commit and reverts whatever that writer just shipped. Cut a fresh worktree from the new `origin/gh-pages`, cherry-pick your own commit onto it, and push with `--force-with-lease=refs/heads/<publish-branch>:<old-sha>`. Then confirm 0 behind / 1 ahead of `origin/gh-pages`, a diff of only rulebook files, and the other writers' directories intact.
