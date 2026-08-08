@@ -10,7 +10,7 @@ import {
   SpendAtStacksCondition, AuraClippedCondition, FillerBelowHealthCondition,
 } from '../../../core/models/rulebook.models';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { relativeS, targetKey } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, withRelativeS, targetKey } from '../../../shared/analysis/wcl-projections';
 import {
   AuraWindows, AuraSpan, AuraSpansByTarget, StackTimeline,
   buildAuraWindows, buildStackTimeline, buildAuraSpansByTarget,
@@ -76,11 +76,11 @@ export interface BenchedRule {
 
 export type CastTimes = Record<number, number[]>;
 
-export function buildCastTimes(casts: WclEvent[], fStartMs: number): CastTimes {
+export function buildCastTimes(casts: TimedEvent[]): CastTimes {
   const castTimes: CastTimes = {};
   for (const cast of casts) {
     if (cast.type === 'cast' && cast.abilityGameID) {
-      (castTimes[cast.abilityGameID] ??= []).push(relativeS(cast.timestamp, fStartMs));
+      (castTimes[cast.abilityGameID] ??= []).push(cast.atS);
     }
   }
   return castTimes;
@@ -95,8 +95,7 @@ type HealthRow = [number, number];
 /** Everything the rule evaluators read, derived once per pull. */
 export interface RuleContext {
   castTimes: CastTimes;
-  castEvents: WclEvent[];
-  fStartMs: number;
+  castEvents: TimedEvent[];
   fightDurationS: number;
   /** Fight start to the player's first death, so a corpse is never coached for what it could not maintain. */
   aliveDurationS: number;
@@ -121,16 +120,16 @@ function perSpell<T extends object>(build: (spellId: number) => T): (spellId: nu
   return spellId => getOrInsert(cache, spellId, () => build(spellId));
 }
 
-function buildDamageIndex(damage: WclEvent[], fStartMs: number): DamageRow[] {
-  return damage.map((event): DamageRow => [relativeS(event.timestamp, fStartMs), targetKey(event)]).sort((a, b) => a[0] - b[0]);
+function buildDamageIndex(damage: TimedEvent[]): DamageRow[] {
+  return damage.map((event): DamageRow => [event.atS, targetKey(event)]).sort((a, b) => a[0] - b[0]);
 }
 
 /** Only the resource-bearing rows carry health, and only for whoever was hit. */
-function buildHealthIndex(damage: WclEvent[], fStartMs: number): Map<string, HealthRow[]> {
+function buildHealthIndex(damage: TimedEvent[]): Map<string, HealthRow[]> {
   const index = new Map<string, HealthRow[]>();
   for (const event of damage) {
     if (event.resourceActor !== RESOURCE_ACTOR_TARGET || event.hitPoints == null || !event.maxHitPoints) continue;
-    getOrInsert(index, targetKey(event), (): HealthRow[] => []).push([relativeS(event.timestamp, fStartMs), event.hitPoints / event.maxHitPoints]);
+    getOrInsert(index, targetKey(event), (): HealthRow[] => []).push([event.atS, event.hitPoints / event.maxHitPoints]);
   }
   for (const rows of index.values()) rows.sort((a, b) => a[0] - b[0]);
   return index;
@@ -157,22 +156,26 @@ export interface RuleInputs {
   fightDurationS: number;
 }
 
+// The one point every event stream crosses the ms wire boundary; every RuleContext field below is seconds-only.
 export function buildRuleContext(input: RuleInputs): RuleContext {
-  const { fightDurationS } = input;
-  const deathTimes = input.deaths.map(event => relativeS(event.timestamp, input.fStartMs));
-  const health = lazy(() => buildHealthIndex(input.damage, input.fStartMs));
+  const { fightDurationS, fStartMs } = input;
+  const casts = withRelativeS(input.casts, fStartMs);
+  const buffs = withRelativeS(input.buffs, fStartMs);
+  const debuffs = withRelativeS(input.debuffs, fStartMs);
+  const damage = withRelativeS(input.damage, fStartMs);
+  const deathTimes = withRelativeS(input.deaths, fStartMs).map(event => event.atS);
+  const health = lazy(() => buildHealthIndex(damage));
   return {
-    castTimes: buildCastTimes(input.casts, input.fStartMs),
-    castEvents: input.casts,
-    fStartMs: input.fStartMs,
+    castTimes: buildCastTimes(casts),
+    castEvents: casts,
     fightDurationS,
     aliveDurationS: deathTimes.length ? Math.min(...deathTimes) : fightDurationS,
-    selfAuras: buildAuraWindows(input.buffs, input.fStartMs),
-    targetAuras: buildAuraWindows(input.debuffs, input.fStartMs),
-    stacks: perSpell(spellId => buildStackTimeline(input.buffs, input.fStartMs, spellId)),
-    selfSpans: perSpell(spellId => buildAuraSpansByTarget(input.buffs, input.fStartMs, spellId)),
-    targetSpans: perSpell(spellId => buildAuraSpansByTarget(input.debuffs, input.fStartMs, spellId)),
-    damageIndex: lazy(() => buildDamageIndex(input.damage, input.fStartMs)),
+    selfAuras: buildAuraWindows(buffs),
+    targetAuras: buildAuraWindows(debuffs),
+    stacks: perSpell(spellId => buildStackTimeline(buffs, spellId)),
+    selfSpans: perSpell(spellId => buildAuraSpansByTarget(buffs, spellId)),
+    targetSpans: perSpell(spellId => buildAuraSpansByTarget(debuffs, spellId)),
+    damageIndex: lazy(() => buildDamageIndex(damage)),
     targetHealth: key => health().get(key) ?? [],
   };
 }
@@ -554,7 +557,7 @@ function resourceFractionPerCast(
     if (event.resourceActor != null && event.resourceActor !== RESOURCE_ACTOR_SOURCE) continue;
     const pool = event.classResources?.find(resource => resource.type === cond.resource_type);
     if (!pool?.max) continue;
-    judged.push({ timeS: relativeS(event.timestamp, ctx.fStartMs), frac: pool.amount / pool.max, amount: pool.amount, max: pool.max });
+    judged.push({ timeS: event.atS, frac: pool.amount / pool.max, amount: pool.amount, max: pool.max });
   }
   return judged;
 }
@@ -787,8 +790,8 @@ export function evaluateAuraClipped(
 }
 
 /** Health rides on damage rows rather than casts, so a cast reads the latest snapshot of THE ENEMY IT NAMED - a tick on a dying add otherwise licenses an execute against a full-health boss. */
-function targetHealthFracAt(ctx: RuleContext, cast: WclEvent): number | null {
-  const castS = relativeS(cast.timestamp, ctx.fStartMs);
+function targetHealthFracAt(ctx: RuleContext, cast: TimedEvent): number | null {
+  const castS = cast.atS;
   const rows = ctx.targetHealth(targetKey(cast));
   const latest = partitionPoint(rows.length, index => rows[index][0] > castS) - 1;
   if (latest < 0 || rows[latest][0] < castS - HEALTH_SAMPLE_WINDOW_S) return null;
@@ -800,11 +803,11 @@ function fillerBelowHealthTimesFor(cond: FillerBelowHealthCondition, ctx: RuleCo
   return spellId => ctx.castEvents
     .filter(event => {
       if (event.type !== 'cast' || event.abilityGameID !== spellId) return false;
-      if (suspendedAt(cond.except_buff_spell_ids, ctx, relativeS(event.timestamp, ctx.fStartMs))) return false;
+      if (suspendedAt(cond.except_buff_spell_ids, ctx, event.atS)) return false;
       const frac = targetHealthFracAt(ctx, event);
       return frac != null && frac <= gate;
     })
-    .map(event => relativeS(event.timestamp, ctx.fStartMs));
+    .map(event => event.atS);
 }
 
 function fillersBelowHealth(cond: FillerBelowHealthCondition, ctx: RuleContext): FillerSplit {

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
+import { ParseRanking } from '../../../core/models/wcl.models';
 import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
@@ -10,7 +10,7 @@ import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
 import {
   HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets, detectHoldWindows,
 } from '../../../shared/analysis/hold-targets';
-import { abilityIcons, relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, abilityIcons, relativeS, toParseRankings, unwrapRankings, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
@@ -42,10 +42,10 @@ export function rotationCdSpellIds(cooldowns: RulebookCooldown[], defensives: Ru
   return map;
 }
 
-export function detectBloodlust(buffEvents: WclEvent[], fightStartMs: number): number | null {
+export function detectBloodlust(buffEvents: TimedEvent[]): number | null {
   for (const event of buffEvents) {
     if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID)) {
-      return relativeS(event.timestamp, fightStartMs);
+      return event.atS;
     }
   }
   return null;
@@ -64,13 +64,13 @@ export interface CdSummary {
 }
 
 export function summarizeCooldownCasts(
-  castEvents: WclEvent[], cooldowns: RulebookCooldown[],
-  fightStartMs: number, fightDurS: number, blTimeS: number | null,
+  castEvents: TimedEvent[], cooldowns: RulebookCooldown[],
+  fightDurS: number, blTimeS: number | null,
 ): CdSummary[] {
   return cooldowns.map(cooldown => {
     const castTimesS = castEvents
       .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => relativeS(cast.timestamp, fightStartMs))
+      .map(cast => cast.atS)
       .sort((a, b) => a - b);
 
     let blAligned = false;
@@ -101,10 +101,10 @@ export function summarizeCooldownCasts(
   });
 }
 
-export function castGapListS(castEvents: WclEvent[]): number[] {
-  const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.timestamp - b.timestamp);
+export function castGapListS(castEvents: TimedEvent[]): number[] {
+  const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
   const gaps: number[] = [];
-  for (let i = 1; i < completed.length; i++) gaps.push(round(relativeS(completed[i].timestamp, completed[i - 1].timestamp), 3));
+  for (let i = 1; i < completed.length; i++) gaps.push(round(completed[i].atS - completed[i - 1].atS, 3));
   return gaps.sort((a, b) => a - b);
 }
 
@@ -302,15 +302,17 @@ export class RotationTransformService implements DataSource<RotationBench> {
       ]);
 
       const fightDurS = relativeS(fight.endTime, fight.startTime);
-      const blTimeS = detectBloodlust(buffs, fight.startTime);
+      const castsTimed = withRelativeS(casts, fight.startTime);
+      const buffsTimed = withRelativeS(buffs, fight.startTime);
+      const blTimeS = detectBloodlust(buffsTimed);
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
         deaths: raidDeaths.filter(event => event.targetID === player.id),
         fStartMs: fight.startTime, fightDurationS: fightDurS,
       });
       return {
-        summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeS),
-        gapListS: castGapListS(casts),
+        summaries: summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
+        gapListS: castGapListS(castsTimed),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
         ruleSamples: rules.map(rule => measureRule(rule.condition, ruleCtx)),

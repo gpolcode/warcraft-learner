@@ -7,7 +7,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, ParseRanking, WclReport } from '../../../core/models/wcl.models';
+import { ParseRanking, WclReport } from '../../../core/models/wcl.models';
 import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow, TopDefensiveSummary } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
@@ -18,7 +18,7 @@ import { mean, median, deviation } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { HoldWindow, buildHoldTargets, detectHoldWindows } from '../../../shared/analysis/hold-targets';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
-import { abilityIcons, normalizeAbilityId, relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, abilityIcons, normalizeAbilityId, relativeS, toParseRankings, unwrapRankings, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
@@ -93,8 +93,7 @@ export interface ParseDefWindow {
 export function summarizeDefensiveCasts(
   defensives: RulebookDefensive[],
   buffWindows: Map<number, [number, number | null][]>,
-  castEvents: WclEvent[],
-  fightStartMs: number,
+  castEvents: TimedEvent[],
   fightDurationS: number,
 ): ParseDefensiveSummary[] {
   const summaries: ParseDefensiveSummary[] = [];
@@ -108,7 +107,7 @@ export function summarizeDefensiveCasts(
     if (castTimes.length === 0) {
       for (const cast of castEvents) {
         if (cast.type === 'cast' && cast.abilityGameID === spellId) {
-          castTimes.push(round(relativeS(cast.timestamp, fightStartMs)));
+          castTimes.push(round(cast.atS));
         }
       }
     }
@@ -154,14 +153,14 @@ export function windowDamageBreakdown(windowHits: WindowHit[]): { spell_id: numb
  * never a rulebook duration), its damage taken, its share of parse total, and dominant enemy.
  */
 export function findParseDefensiveWindows(
-  damageTaken: WclEvent[], fightStartMs: number, fightDurationS: number,
+  damageTaken: TimedEvent[], fightDurationS: number,
   buffWindows: Map<number, [number, number | null][]>,
   defensives: RulebookDefensive[],
   gameIdByActorId: Map<number, number>,
 ): ParseDefWindow[] {
   const hits = damageTaken
     .filter(event => event.type === 'damage' && (event.amount ?? 0) + (event.absorbed ?? 0) > 0)
-    .map(event => [relativeS(event.timestamp, fightStartMs), (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID ?? 0, event.sourceID ?? null] as WindowHit)
+    .map(event => [event.atS, (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID ?? 0, event.sourceID ?? null] as WindowHit)
     .sort((a, b) => a[0] - b[0]);
   if (!hits.length) return [];
   const total = hits.reduce((sum, hit) => sum + hit[1], 0);
@@ -442,9 +441,9 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       ]);
 
       const fightDurationS = relativeS(fight.endTime, fight.startTime);
-      const buffWindows = buildAuraWindows(buffs, fight.startTime);
-      const windows = findParseDefensiveWindows(dmgTaken, fight.startTime, fightDurationS, buffWindows, defensives, gameIdByActorId);
-      const summaries = summarizeDefensiveCasts(defensives, buffWindows, casts, fight.startTime, fightDurationS);
+      const buffWindows = buildAuraWindows(withRelativeS(buffs, fight.startTime));
+      const windows = findParseDefensiveWindows(withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId);
+      const summaries = summarizeDefensiveCasts(defensives, buffWindows, withRelativeS(casts, fight.startTime), fightDurationS);
       return { windows, summaries, encounterName: fight.name ?? '' };
     } catch (err) {
       logWarn(`DefensiveTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);

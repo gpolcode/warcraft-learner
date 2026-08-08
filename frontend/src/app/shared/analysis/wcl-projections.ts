@@ -17,6 +17,14 @@ export function relativeS(laterMs: number, earlierMs: number): number {
   return (laterMs - earlierMs) / 1000;
 }
 
+/** A WCL event stamped with its fight-relative second; `timestamp` (ms) stays for callers that still need the wire value. */
+export type TimedEvent = WclEvent & { atS: number };
+
+/** Stamps a WCL event stream with `atS` in one pass, so nothing past this point needs `fightStartMs` again. */
+export function withRelativeS(events: WclEvent[], fightStartMs: number): TimedEvent[] {
+  return events.map(event => ({ ...event, atS: relativeS(event.timestamp, fightStartMs) }));
+}
+
 // WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>", unfetchable since it can never match a report actor.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 

@@ -10,9 +10,12 @@ import {
   windowAbilityBreakdown, BinRun,
 } from './burst-transform.service';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
-import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../shared/analysis/wcl-projections';
+import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { cast, damage } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
+
+/** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
+const timed = withRelativeS;
 
 /** Call `findParseWindows` with the common fixed-fight defaults, overriding per case. */
 function scanWindows(
@@ -20,8 +23,8 @@ function scanWindows(
   overrides: { timings?: ReturnType<typeof cdTimings>; casts?: WclEvent[]; abilityNames?: Map<number, string> } = {},
 ): ParseWindow[] {
   return findParseWindows({
-    damage: damageEvents, fightStartMs: 0, fightLenS,
-    timings: overrides.timings ?? [], casts: overrides.casts ?? [], abilityNames: overrides.abilityNames ?? new Map(),
+    damage: timed(damageEvents, 0), fightLenS,
+    timings: overrides.timings ?? [], casts: timed(overrides.casts ?? [], 0), abilityNames: overrides.abilityNames ?? new Map(),
   });
 }
 /** A flat damage stream: `amount` at every second in [0, seconds). */
@@ -56,7 +59,7 @@ describe('cdSpellIds', () => {
 
 describe('cdTimings', () => {
   it('collects per-cooldown cast times in fight-relative seconds (no duration read)', () => {
-    const timings = cdTimings([cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(999, 5)], [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], 0);
+    const timings = cdTimings(timed([cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(999, 5)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     expect(timings).toEqual([{ name: 'Shadow Blades', castTimesS: [10, 30] }]);
   });
 });
@@ -301,14 +304,14 @@ describe('findParseWindows', () => {
 
   it('attributes a cooldown whose cast lands inside the window', () => {
     // Window is [10s, 14s); a Shadow Blades cast at 10s is inside.
-    const timings = cdTimings([cast(SHADOW_BLADES, 10)], [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], 0);
+    const timings = cdTimings(timed([cast(SHADOW_BLADES, 10)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     const windows = scanWindows(burstAt(10), LONG_FIGHT_S, { timings, casts: [cast(SHADOW_BLADES, 10)] });
     expect(windows[0].active_cds).toEqual(['Shadow Blades']);
   });
 
   it('does not attribute a cooldown cast on the half-open window end', () => {
     // A cast at 14s sits exactly on the window end -> not attributed.
-    const timings = cdTimings([cast(SHADOW_BLADES, 14)], [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], 0);
+    const timings = cdTimings(timed([cast(SHADOW_BLADES, 14)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     const windows = scanWindows(burstAt(10), LONG_FIGHT_S, { timings, casts: [cast(SHADOW_BLADES, 14)] });
     expect(windows[0].active_cds).toEqual([]);
   });

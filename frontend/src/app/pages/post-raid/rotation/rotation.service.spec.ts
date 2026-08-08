@@ -5,12 +5,13 @@ import { WclTransportError } from '../../../core/services/wcl-transport';
 import { Result, LoadError, ok, missing, transient } from '../../../core/result';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
-import { RulebookRule, CastWithoutPriorCondition } from '../../../core/models/rulebook.models';
+import { RulebookRule, RulebookCooldown, CastWithoutPriorCondition } from '../../../core/models/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, VANISH, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';
 import { cast, applyBuff, applyDebuff, removeDebuff, death } from '../../../../testing/builders/events';
 import { WclEvent } from '../../../core/models/wcl.models';
+import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BenchedRule, RuleThreshold } from './rotation-rules';
@@ -32,12 +33,17 @@ function thr(value: number, band = 0): RuleThreshold {
 function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_S)): BenchedRule {
   return { rule, threshold, sample_count: threshold == null ? 0 : 10 };
 }
-// Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
-function scan(over: Partial<RotationScanInput> & { bench: RotationBench }): RotationScanInput {
+// Build a RotationScanInput for a 0..120s fight - keeps the call sites terse. Events build against a
+// fight-start of 0, so stamping is a pass-through to seconds.
+function scan(over: {
+  bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: RulebookCooldown[];
+}): RotationScanInput {
   return {
-    fStartMs: 0, fightDurationS: 120, castEvents: [], buffEvents: [],
-    cooldowns: over.bench.major_cooldowns,
-    ...over,
+    bench: over.bench,
+    fightDurationS: over.fightDurationS ?? 120,
+    castEvents: withRelativeS(over.castEvents ?? [], 0),
+    buffEvents: withRelativeS(over.buffEvents ?? [], 0),
+    cooldowns: over.cooldowns ?? over.bench.major_cooldowns,
   };
 }
 

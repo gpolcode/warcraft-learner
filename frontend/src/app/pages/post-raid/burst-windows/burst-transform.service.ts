@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
-import { WclEvent, ParseRanking } from '../../../core/models/wcl.models';
+import { ParseRanking } from '../../../core/models/wcl.models';
 import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { logWarn } from '../../../core/log';
@@ -9,7 +9,7 @@ import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import { mean, median, deviation, quantile } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
-import { abilityIcons, normalizeAbilityId, relativeS, toParseRankings, unwrapRankings } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, abilityIcons, normalizeAbilityId, relativeS, toParseRankings, unwrapRankings, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
@@ -49,12 +49,12 @@ export function cdSpellIds(cooldowns: RulebookCooldown[], defensives: RulebookDe
 
 interface CdTiming { name: string; castTimesS: number[]; }
 
-export function cdTimings(casts: WclEvent[], cooldowns: RulebookCooldown[], fightStartMs: number): CdTiming[] {
+export function cdTimings(casts: TimedEvent[], cooldowns: RulebookCooldown[]): CdTiming[] {
   return cooldowns.map(cooldown => ({
     name: cooldown.name,
     castTimesS: casts
       .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => relativeS(cast.timestamp, fightStartMs))
+      .map(cast => cast.atS)
       .sort((a, b) => a - b),
   }));
 }
@@ -171,21 +171,20 @@ export function windowAbilityBreakdown(
 }
 
 export interface ParseWindowScan {
-  damage: WclEvent[];
-  fightStartMs: number;
+  damage: TimedEvent[];
   fightLenS: number;
   timings: CdTiming[];
-  casts: WclEvent[];
+  casts: TimedEvent[];
   abilityNames: Map<number, string>;
 }
 
 // Windows are the parse's damage-density bursts (where the damage lands), not cooldown-duration
 // spans: bucket DamageDone into 1s bins, take a rolling rate, and cluster the bins that run dense.
 export function findParseWindows(scan: ParseWindowScan): ParseWindow[] {
-  const { damage, fightStartMs, fightLenS, timings, casts, abilityNames } = scan;
+  const { damage, fightLenS, timings, casts, abilityNames } = scan;
   const hits = damage
     .filter(event => event.type === 'damage' && (event.amount ?? 0) + (event.absorbed ?? 0) > 0)
-    .map(event => [relativeS(event.timestamp, fightStartMs), (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID] as DamageHit)
+    .map(event => [event.atS, (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID] as DamageHit)
     .sort((a, b) => a[0] - b[0]);
   if (!hits.length || fightLenS <= 0) return [];
   const total = hits.reduce((sum, hit) => sum + hit[1], 0);
@@ -206,7 +205,7 @@ export function findParseWindows(scan: ParseWindowScan): ParseWindow[] {
 
   const castRows = casts
     .filter(event => event.type === 'cast' && event.abilityGameID)
-    .map(event => [relativeS(event.timestamp, fightStartMs), event.abilityGameID] as CastRow);
+    .map(event => [event.atS, event.abilityGameID] as CastRow);
   const nameOf = (spellId: number): string => abilityNames.get(spellId) ?? `Spell ${spellId}`;
   // Every ability name ever cast in the parse. A name absent here is passive (proc/auto/pet damage),
   // as opposed to an active ability that merely had no cast inside a given window.
@@ -381,9 +380,11 @@ export class BurstTransformService implements DataSource<BurstBench> {
         this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
       ]);
 
-      const timings = cdTimings(casts, cooldowns, fight.startTime);
+      const castsTimed = withRelativeS(casts, fight.startTime);
+      const timings = cdTimings(castsTimed, cooldowns);
       const windows = findParseWindows({
-        damage, fightStartMs: fight.startTime, fightLenS: relativeS(fight.endTime, fight.startTime), timings, casts, abilityNames,
+        damage: withRelativeS(damage, fight.startTime), fightLenS: relativeS(fight.endTime, fight.startTime),
+        timings, casts: castsTimed, abilityNames,
       });
       return { windows, encounterName: fight.name ?? '' };
     } catch (cause) {

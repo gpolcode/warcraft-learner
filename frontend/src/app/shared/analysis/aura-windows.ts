@@ -1,17 +1,16 @@
-import { WclEvent } from '../../core/models/wcl.models';
 import { getOrInsert } from './analysis-math';
-import { relativeS, targetKey } from './wcl-projections';
+import { TimedEvent, targetKey } from './wcl-projections';
 
 /** Fight-relative seconds; an open end means the aura outlived the fight. */
 export type AuraWindows = Map<number, [number, number | null][]>;
 
 /** Buffs and debuffs carry the same apply/remove shape, so one call covers either stream. */
-export function buildAuraWindows(events: WclEvent[], fightStartMs: number): AuraWindows {
+export function buildAuraWindows(events: TimedEvent[]): AuraWindows {
   const windows: AuraWindows = new Map();
   for (const event of events) {
     const spellId = event.abilityGameID;
     if (spellId == null) continue;
-    const timeS = relativeS(event.timestamp, fightStartMs);
+    const timeS = event.atS;
     if (event.type === 'applybuff' || event.type === 'applydebuff') {
       getOrInsert(windows, spellId, () => []).push([timeS, null]);
     } else if (event.type === 'removebuff' || event.type === 'removedebuff') {
@@ -38,11 +37,11 @@ export function auraAlreadyUpAt(windows: AuraWindows, spellId: number, timeS: nu
 export type StackTimeline = [number, number][];
 
 /** A bare apply carries no count and means one; every stack event carries the new total. */
-export function buildStackTimeline(events: WclEvent[], fightStartMs: number, spellId: number): StackTimeline {
+export function buildStackTimeline(events: TimedEvent[], spellId: number): StackTimeline {
   const timeline: StackTimeline = [];
   for (const event of events) {
     if (event.abilityGameID !== spellId) continue;
-    const timeS = relativeS(event.timestamp, fightStartMs);
+    const timeS = event.atS;
     if (event.type === 'applybuff' || event.type === 'applydebuff') timeline.push([timeS, event.stack ?? 1]);
     else if (event.type.endsWith('buffstack') || event.type.endsWith('debuffstack')) timeline.push([timeS, event.stack ?? 0]);
     else if (event.type === 'removebuff' || event.type === 'removedebuff') timeline.push([timeS, 0]);
@@ -70,11 +69,11 @@ export interface AuraSpan {
 /** One aura's spans per target, since a clip is only visible against the application it replaced. */
 export type AuraSpansByTarget = Map<string, AuraSpan[]>;
 
-export function buildAuraSpansByTarget(events: WclEvent[], fightStartMs: number, spellId: number): AuraSpansByTarget {
+export function buildAuraSpansByTarget(events: TimedEvent[], spellId: number): AuraSpansByTarget {
   const spans: AuraSpansByTarget = new Map();
   for (const event of events) {
     if (event.abilityGameID !== spellId) continue;
-    const timeS = relativeS(event.timestamp, fightStartMs);
+    const timeS = event.atS;
     const list = getOrInsert(spans, targetKey(event), (): AuraSpan[] => []);
     const open = list.length && list[list.length - 1].endS == null ? list[list.length - 1] : null;
     if (event.type === 'applybuff' || event.type === 'applydebuff') {

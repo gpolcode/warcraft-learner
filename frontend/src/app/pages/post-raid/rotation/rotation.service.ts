@@ -3,7 +3,6 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookCooldown } from '../../../core/models/rulebook.models';
-import { WclEvent } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
@@ -12,7 +11,7 @@ import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../shared/analysis/analysis-math';
-import { relativeS } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import {
   buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
 } from './rotation-rules';
@@ -83,10 +82,9 @@ function usedShare(bench: PerCdBenchmark): number {
 }
 
 export interface RotationScanInput {
-  fStartMs: number;
   fightDurationS: number;
-  castEvents: WclEvent[];
-  buffEvents: WclEvent[];
+  castEvents: TimedEvent[];
+  buffEvents: TimedEvent[];
   cooldowns: RulebookCooldown[];
   bench: RotationBench;
 }
@@ -238,21 +236,18 @@ export function analyzeOneCooldown(
 }
 
 export function analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
-  const { fStartMs, fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench } = input;
-  const inFight = (timestampMs: number): boolean => {
-    const timeS = relativeS(timestampMs, fStartMs);
-    return timeS >= 0 && timeS <= fightDurS;
-  };
+  const { fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench } = input;
+  const inFight = (event: TimedEvent): boolean => event.atS >= 0 && event.atS <= fightDurS;
   const casts = castEvents
-    .filter(event => event.type === 'cast' && inFight(event.timestamp))
-    .sort((a, b) => a.timestamp - b.timestamp);
+    .filter(event => event.type === 'cast' && inFight(event))
+    .sort((a, b) => a.atS - b.atS);
 
   const findings: AnalysisFinding[] = [];
 
   let blTimeS: number | null = null;
   for (const event of buffEvents) {
-    if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID) && inFight(event.timestamp)) {
-      blTimeS = relativeS(event.timestamp, fStartMs);
+    if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID) && inFight(event)) {
+      blTimeS = event.atS;
       break;
     }
   }
@@ -261,7 +256,7 @@ export function analyzeRotationFindings(input: RotationScanInput): AnalysisFindi
   for (const cd of cooldowns) {
     const castTimesS = casts
       .filter(cast => cast.abilityGameID === cd.spell_id)
-      .map(cast => relativeS(cast.timestamp, fStartMs));
+      .map(cast => cast.atS);
     const result = analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], fightDurS, blTimeS);
     if (!result) continue;
     if (result.scan.issues.length) findings.push(...result.scan.issues);
@@ -269,7 +264,7 @@ export function analyzeRotationFindings(input: RotationScanInput): AnalysisFindi
     if (castTimesS.length) findings.push(...result.scan.holds);
   }
 
-  const efficiency = checkCastEfficiency(casts.map(cast => relativeS(cast.timestamp, fStartMs)), fightDurS, bench);
+  const efficiency = checkCastEfficiency(casts.map(cast => cast.atS), fightDurS, bench);
   if (efficiency) findings.push(efficiency);
 
   sortBySeverity(findings);
@@ -458,7 +453,7 @@ export class RotationFeatureService {
       const fightDurationS = relativeS(fight.endTime, fight.startTime);
 
       const offensiveFindings = analyzeRotationFindings({
-        fStartMs: fight.startTime, fightDurationS, castEvents: casts, buffEvents: buffs,
+        fightDurationS, castEvents: withRelativeS(casts, fight.startTime), buffEvents: withRelativeS(buffs, fight.startTime),
         cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
       const ruleCtx = buildRuleContext({
