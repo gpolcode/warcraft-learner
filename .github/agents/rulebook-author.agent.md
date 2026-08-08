@@ -12,7 +12,7 @@ reference any other specialization: your rulebook contains only your spec's own 
 
 ## Inputs
 
-- The schema: `.agents/skills/warcraft-ingestion/rulebook.schema.json`. Read it first. It is the only
+- The schema: `.agents/skills/warcraft-rulebook/rulebook.schema.json`. Read it first. It is the only
   contract, and the field `description` strings are instructions, so follow them exactly.
 - `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the SimulationCraft APL. Its conditions
   (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are the raw material for
