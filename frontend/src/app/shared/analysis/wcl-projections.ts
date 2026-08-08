@@ -12,19 +12,12 @@ export function targetKey(event: WclEvent): string {
   return `${event.targetID ?? 0}:${event.targetInstance ?? 0}`;
 }
 
-/**
- * WCL event/fight timestamps are report-relative milliseconds - the one native-ms value this app
- * reads from the wire. Every consumer converts immediately on receipt via this one function rather
- * than re-deriving `(timestampMs - fightStartMs) / 1000` ad hoc, so a fight-relative second is the
- * only time unit business logic ever sees.
- */
-export function relativeS(timestampMs: number, fightStartMs: number): number {
-  return (timestampMs - fightStartMs) / 1000;
+/** Seconds between two WCL report-relative ms values (event-to-fight-start, fight duration, or a gap between two casts). */
+export function relativeS(laterMs: number, earlierMs: number): number {
+  return (laterMs - earlierMs) / 1000;
 }
 
-// WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>",
-// which can never match a report actor (real names are letters only), so the parse
-// is unfetchable. Drop these before mapping.
+// WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>", unfetchable since it can never match a report actor.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 
 // WCL reports the physical auto-attack as event ability id 1; the real spell is Auto Attack

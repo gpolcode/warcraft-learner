@@ -173,7 +173,7 @@ export function windowAbilityBreakdown(
 export interface ParseWindowScan {
   damage: WclEvent[];
   fightStartMs: number;
-  fightEndMs: number;
+  fightLenS: number;
   timings: CdTiming[];
   casts: WclEvent[];
   abilityNames: Map<number, string>;
@@ -182,8 +182,7 @@ export interface ParseWindowScan {
 // Windows are the parse's damage-density bursts (where the damage lands), not cooldown-duration
 // spans: bucket DamageDone into 1s bins, take a rolling rate, and cluster the bins that run dense.
 export function findParseWindows(scan: ParseWindowScan): ParseWindow[] {
-  const { damage, fightStartMs, fightEndMs, timings, casts, abilityNames } = scan;
-  const fightLenS = relativeS(fightEndMs, fightStartMs);
+  const { damage, fightStartMs, fightLenS, timings, casts, abilityNames } = scan;
   const hits = damage
     .filter(event => event.type === 'damage' && (event.amount ?? 0) + (event.absorbed ?? 0) > 0)
     .map(event => [relativeS(event.timestamp, fightStartMs), (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID] as DamageHit)
@@ -384,7 +383,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
 
       const timings = cdTimings(casts, cooldowns, fight.startTime);
       const windows = findParseWindows({
-        damage, fightStartMs: fight.startTime, fightEndMs: fight.endTime, timings, casts, abilityNames,
+        damage, fightStartMs: fight.startTime, fightLenS: relativeS(fight.endTime, fight.startTime), timings, casts, abilityNames,
       });
       return { windows, encounterName: fight.name ?? '' };
     } catch (cause) {

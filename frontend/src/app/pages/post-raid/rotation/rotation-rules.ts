@@ -154,11 +154,11 @@ export interface RuleInputs {
   /** The player's own, not the raid's. */
   deaths: WclEvent[];
   fStartMs: number;
-  fEndMs: number;
+  fightDurationS: number;
 }
 
 export function buildRuleContext(input: RuleInputs): RuleContext {
-  const fightDurationS = relativeS(input.fEndMs, input.fStartMs);
+  const { fightDurationS } = input;
   const deathTimes = input.deaths.map(event => relativeS(event.timestamp, input.fStartMs));
   const health = lazy(() => buildHealthIndex(input.damage, input.fStartMs));
   return {

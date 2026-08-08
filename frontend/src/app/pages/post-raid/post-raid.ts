@@ -427,7 +427,7 @@ export class PostRaidComponent {
       const action = livePollActionOf(probedFights, this.selectedFightId(), this.ready());
       if (action === 'none') { this.liveCapture.setStatus('No boss pulls found.'); return; }
       if (action === 'skip') {
-        this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()} · Polling every ${POLL_INTERVAL_S}s`);
+        this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()}, polling every ${POLL_INTERVAL_S}s`);
         return;
       }
 

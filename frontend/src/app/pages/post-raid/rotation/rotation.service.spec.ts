@@ -35,7 +35,7 @@ function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_
 // Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
 function scan(over: Partial<RotationScanInput> & { bench: RotationBench }): RotationScanInput {
   return {
-    fStartMs: 0, fEndMs: 120_000, castEvents: [], buffEvents: [],
+    fStartMs: 0, fightDurationS: 120, castEvents: [], buffEvents: [],
     cooldowns: over.bench.major_cooldowns,
     ...over,
   };

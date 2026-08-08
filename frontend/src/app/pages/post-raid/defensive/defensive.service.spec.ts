@@ -36,7 +36,7 @@ describe('analyzeDefensives', () => {
     const out = analyzeDefensives(
       [CLOAK_META],
       [], [applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], [damageTaken(700, 12, 500)],
-      0, 300_000,
+      0, 300,
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
@@ -47,7 +47,6 @@ describe('analyzeDefensives', () => {
 describe('buildDefensiveUsageWindows', () => {
   // The buff/cast fight window the fixtures live inside.
   const F_START_MS = 0;
-  const F_END_MS = 300_000;
   const FIGHT_END_S = 300;
   const rel = (timestampMs: number): number => (timestampMs - F_START_MS) / 1000;
   // A constant damage-in-window function so each span's dmg_during is predictable.
@@ -56,7 +55,7 @@ describe('buildDefensiveUsageWindows', () => {
 
   it('builds a measured buff span with damage taken, open buff running to fight end', () => {
     const BUFF_START_S = 10;
-    const out = buildDefensiveUsageWindows(CLOAK_OF_SHADOWS, [[BUFF_START_S, null]], [], dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S);
+    const out = buildDefensiveUsageWindows(CLOAK_OF_SHADOWS, [[BUFF_START_S, null]], [], dmg, rel, FIGHT_END_S);
     expect(out).toEqual([{ start_s: BUFF_START_S, end_s: FIGHT_END_S, dmg_during: FIXED_DMG }]);
   });
 
@@ -64,16 +63,16 @@ describe('buildDefensiveUsageWindows', () => {
     const CAST_S = 20;
     const out = buildDefensiveUsageWindows(
       CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, CAST_S)],
-      dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S,
+      dmg, rel, FIGHT_END_S,
     );
     expect(out).toEqual([{ start_s: CAST_S, end_s: CAST_S, dmg_during: 0 }]);
   });
 
   it('ignores a cast outside the fight bounds (boundary)', () => {
-    const PAST_END_S = 301; // > FIGHT_END_S, so its timestamp is past F_END_MS
+    const PAST_END_S = 301; // > FIGHT_END_S
     const out = buildDefensiveUsageWindows(
       CLOAK_OF_SHADOWS, [], [cast(CLOAK_OF_SHADOWS, PAST_END_S)],
-      dmg, rel, F_START_MS, F_END_MS, FIGHT_END_S,
+      dmg, rel, FIGHT_END_S,
     );
     expect(out).toEqual([]);
   });

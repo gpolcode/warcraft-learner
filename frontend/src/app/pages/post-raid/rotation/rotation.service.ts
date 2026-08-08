@@ -84,7 +84,7 @@ function usedShare(bench: PerCdBenchmark): number {
 
 export interface RotationScanInput {
   fStartMs: number;
-  fEndMs: number;
+  fightDurationS: number;
   castEvents: WclEvent[];
   buffEvents: WclEvent[];
   cooldowns: RulebookCooldown[];
@@ -238,17 +238,20 @@ export function analyzeOneCooldown(
 }
 
 export function analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
-  const { fStartMs, fEndMs, castEvents, buffEvents, cooldowns, bench } = input;
-  const fightDurS = relativeS(fEndMs, fStartMs);
+  const { fStartMs, fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench } = input;
+  const inFight = (timestampMs: number): boolean => {
+    const timeS = relativeS(timestampMs, fStartMs);
+    return timeS >= 0 && timeS <= fightDurS;
+  };
   const casts = castEvents
-    .filter(event => event.type === 'cast' && event.timestamp >= fStartMs && event.timestamp <= fEndMs)
+    .filter(event => event.type === 'cast' && inFight(event.timestamp))
     .sort((a, b) => a.timestamp - b.timestamp);
 
   const findings: AnalysisFinding[] = [];
 
   let blTimeS: number | null = null;
   for (const event of buffEvents) {
-    if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID) && event.timestamp >= fStartMs && event.timestamp <= fEndMs) {
+    if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID) && inFight(event.timestamp)) {
       blTimeS = relativeS(event.timestamp, fStartMs);
       break;
     }
@@ -452,13 +455,14 @@ export class RotationFeatureService {
       ]);
       const debuffs = enemyAuras.filter(event => event.sourceID === playerId);
       const deaths = raidDeaths.filter(event => event.targetID === playerId);
+      const fightDurationS = relativeS(fight.endTime, fight.startTime);
 
       const offensiveFindings = analyzeRotationFindings({
-        fStartMs: fight.startTime, fEndMs: fight.endTime, castEvents: casts, buffEvents: buffs,
+        fStartMs: fight.startTime, fightDurationS, castEvents: casts, buffEvents: buffs,
         cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
       const ruleCtx = buildRuleContext({
-        casts, buffs, debuffs, damage, deaths, fStartMs: fight.startTime, fEndMs: fight.endTime,
+        casts, buffs, debuffs, damage, deaths, fStartMs: fight.startTime, fightDurationS,
       });
       const ruleFindings = evaluateRules(rules, ruleCtx);
       const findings = [...offensiveFindings, ...ruleFindings];

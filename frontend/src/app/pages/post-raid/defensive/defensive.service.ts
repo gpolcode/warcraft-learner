@@ -75,8 +75,6 @@ export function buildDefensiveUsageWindows(
   castEvents: WclEvent[],
   dmgInWindow: (startS: number, endS: number) => number,
   rel: (timestampMs: number) => number,
-  fStartMs: number,
-  fEndMs: number,
   fightEndS: number,
 ): DefensiveUsageWindow[] {
   const windows = buffSpans.map(([windowStartS, windowEndS]) => {
@@ -86,11 +84,10 @@ export function buildDefensiveUsageWindows(
   });
   if (windows.length) return windows;
   return castEvents
-    .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId && cast.timestamp >= fStartMs && cast.timestamp <= fEndMs)
-    .map(cast => {
-      const timeS = rel(cast.timestamp);
-      return { start_s: Math.round(timeS * 10) / 10, end_s: Math.round(timeS * 10) / 10, dmg_during: 0 };
-    });
+    .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
+    .map(cast => rel(cast.timestamp))
+    .filter(timeS => timeS >= 0 && timeS <= fightEndS)
+    .map(timeS => ({ start_s: Math.round(timeS * 10) / 10, end_s: Math.round(timeS * 10) / 10, dmg_during: 0 }));
 }
 
 /** Per-defensive usage windows (buff-window-centric, point-cast fallback). */
@@ -100,7 +97,7 @@ export function analyzeDefensives(
   buffEvents: WclEvent[],
   dtEvents: WclEvent[],
   fStartMs: number,
-  fEndMs: number,
+  fightEndS: number,
 ): PlayerDefensive[] {
   if (!defensives.length) return [];
   const rel = (timestampMs: number): number => relativeS(timestampMs, fStartMs);
@@ -122,10 +119,9 @@ export function analyzeDefensives(
       return timeS >= windowStartS && timeS <= windowEndS ? sum + dmgOf(event) : sum;
     }, 0);
 
-  const fightEndS = relativeS(fEndMs, fStartMs);
   return defensives.map(defensive => {
     const spellId = defensive.spell_id;
-    const windows = buildDefensiveUsageWindows(spellId, buffWin[spellId] || [], castEvents, dmgInWindow, rel, fStartMs, fEndMs, fightEndS);
+    const windows = buildDefensiveUsageWindows(spellId, buffWin[spellId] || [], castEvents, dmgInWindow, rel, fightEndS);
     const cast_times_s = windows.map(window => window.start_s).sort((a, b) => a - b);
     const entry: PlayerDefensive = { name: defensive.name, spell_id: spellId, cooldown: defensive.cooldown, uses: windows.length, cast_times_s, windows };
     if (defensive.talent_gated) entry.talent_gated = true;
@@ -435,7 +431,7 @@ export class DefensiveFeatureService {
         this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fStartMs, fEndMs, playerId),
       ]);
 
-      const playerDefensives = analyzeDefensives(bench.value.defensives, casts, buffs, dtEvents, fStartMs, fEndMs);
+      const playerDefensives = analyzeDefensives(bench.value.defensives, casts, buffs, dtEvents, fStartMs, fightDurationS);
       const findings = bench.value.defensives.length && playerDefensives.length
         ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationS)
         : [];

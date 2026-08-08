@@ -104,7 +104,7 @@ export function summarizeCooldownCasts(
 export function castGapListS(castEvents: WclEvent[]): number[] {
   const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.timestamp - b.timestamp);
   const gaps: number[] = [];
-  for (let i = 1; i < completed.length; i++) gaps.push(round((completed[i].timestamp - completed[i - 1].timestamp) / 1000, 3));
+  for (let i = 1; i < completed.length; i++) gaps.push(round(relativeS(completed[i].timestamp, completed[i - 1].timestamp), 3));
   return gaps.sort((a, b) => a - b);
 }
 
@@ -306,7 +306,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       const ruleCtx = buildRuleContext({
         casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
         deaths: raidDeaths.filter(event => event.targetID === player.id),
-        fStartMs: fight.startTime, fEndMs: fight.endTime,
+        fStartMs: fight.startTime, fightDurationS: fightDurS,
       });
       return {
         summaries: summarizeCooldownCasts(casts, cooldowns, fight.startTime, fightDurS, blTimeS),
