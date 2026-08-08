@@ -306,9 +306,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
       const buffsTimed = withRelativeS(buffs, fight.startTime);
       const blTimeS = detectBloodlust(buffsTimed);
       const ruleCtx = buildRuleContext({
-        casts, buffs, damage, debuffs: enemyAuras.filter(event => event.sourceID === player.id),
-        deaths: raidDeaths.filter(event => event.targetID === player.id),
-        fStartMs: fight.startTime, fightDurationS: fightDurS,
+        casts: castsTimed, buffs: buffsTimed, damage: withRelativeS(damage, fight.startTime),
+        debuffs: withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
+        deaths: withRelativeS(raidDeaths.filter(event => event.targetID === player.id), fight.startTime),
+        fightDurationS: fightDurS,
       });
       return {
         summaries: summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),

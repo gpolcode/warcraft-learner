@@ -448,16 +448,19 @@ export class RotationFeatureService {
           ? this.wclApi.getAllEvents(reportCode, fightId, 'Deaths', fight.startTime, fight.endTime)
           : Promise.resolve([]),
       ]);
-      const debuffs = enemyAuras.filter(event => event.sourceID === playerId);
-      const deaths = raidDeaths.filter(event => event.targetID === playerId);
       const fightDurationS = relativeS(fight.endTime, fight.startTime);
+      const castsTimed = withRelativeS(casts, fight.startTime);
+      const buffsTimed = withRelativeS(buffs, fight.startTime);
+      const debuffsTimed = withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), fight.startTime);
+      const deathsTimed = withRelativeS(raidDeaths.filter(event => event.targetID === playerId), fight.startTime);
 
       const offensiveFindings = analyzeRotationFindings({
-        fightDurationS, castEvents: withRelativeS(casts, fight.startTime), buffEvents: withRelativeS(buffs, fight.startTime),
+        fightDurationS, castEvents: castsTimed, buffEvents: buffsTimed,
         cooldowns: bench.value.major_cooldowns, bench: bench.value,
       });
       const ruleCtx = buildRuleContext({
-        casts, buffs, debuffs, damage, deaths, fStartMs: fight.startTime, fightDurationS,
+        casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: withRelativeS(damage, fight.startTime), deaths: deathsTimed,
+        fightDurationS,
       });
       const ruleFindings = evaluateRules(rules, ruleCtx);
       const findings = [...offensiveFindings, ...ruleFindings];

@@ -33,8 +33,7 @@ function thr(value: number, band = 0): RuleThreshold {
 function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_WINDOW_S)): BenchedRule {
   return { rule, threshold, sample_count: threshold == null ? 0 : 10 };
 }
-// Build a RotationScanInput for a 0..120s fight - keeps the call sites terse. Events build against a
-// fight-start of 0, so stamping is a pass-through to seconds.
+// Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
 function scan(over: {
   bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: RulebookCooldown[];
 }): RotationScanInput {

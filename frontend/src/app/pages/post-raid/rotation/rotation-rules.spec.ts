@@ -16,13 +16,14 @@ import {
   cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, refreshDebuff, applyBuffStack, damage, death,
 } from '../../../../testing/builders/events';
 import {
-  BenchedRule, RuleContext, RuleInputs, RuleStream, RuleThreshold,
+  BenchedRule, RuleContext, RuleStream, RuleThreshold,
   buildRuleContext, evaluateRules, rulesFollowed, ruleLabel, ruleApplicable,
   rulesNeed, judgeableRules, benchedRules, measureRule, ruleThreshold,
   evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
   evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
   evaluateFillerInBuff, evaluateSpendAtStacks, evaluateAuraClipped, evaluateFillerBelowHealth,
 } from './rotation-rules';
+import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 
 // A zero band keeps the fixture arithmetic exact.
 const PAIR_WINDOW_S = 5, HOLD_WINDOW_S = 15;
@@ -37,10 +38,15 @@ function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_
 
 // Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
 const RULE_FIGHT_END_S = 120;
-function ruleCtx(casts: WclEvent[], over: Partial<RuleInputs> = {}): RuleContext {
+interface RuleCtxOverrides { buffs: WclEvent[]; debuffs: WclEvent[]; damage: WclEvent[]; deaths: WclEvent[]; fightDurationS: number }
+function ruleCtx(casts: WclEvent[], over: Partial<RuleCtxOverrides> = {}): RuleContext {
   return buildRuleContext({
-    casts, buffs: [], debuffs: [], damage: [], deaths: [], fStartMs: 0, fightDurationS: RULE_FIGHT_END_S,
-    ...over,
+    casts: withRelativeS(casts, 0),
+    buffs: withRelativeS(over.buffs ?? [], 0),
+    debuffs: withRelativeS(over.debuffs ?? [], 0),
+    damage: withRelativeS(over.damage ?? [], 0),
+    deaths: withRelativeS(over.deaths ?? [], 0),
+    fightDurationS: over.fightDurationS ?? RULE_FIGHT_END_S,
   });
 }
 

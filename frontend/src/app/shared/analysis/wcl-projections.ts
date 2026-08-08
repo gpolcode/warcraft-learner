@@ -12,12 +12,10 @@ export function targetKey(event: WclEvent): string {
   return `${event.targetID ?? 0}:${event.targetInstance ?? 0}`;
 }
 
-/** Seconds between two WCL report-relative ms values (event-to-fight-start, fight duration, or a gap between two casts). */
 export function relativeS(laterMs: number, earlierMs: number): number {
   return (laterMs - earlierMs) / 1000;
 }
 
-/** A WCL event stamped with its fight-relative second; `timestamp` (ms) stays for callers that still need the wire value. */
 export type TimedEvent = WclEvent & { atS: number };
 
 /** Stamps a WCL event stream with `atS` in one pass, so nothing past this point needs `fightStartMs` again. */

@@ -9,8 +9,7 @@ import {
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, FillerInBuffCondition,
   SpendAtStacksCondition, AuraClippedCondition, FillerBelowHealthCondition,
 } from '../../../core/models/rulebook.models';
-import { WclEvent } from '../../../core/models/wcl.models';
-import { TimedEvent, withRelativeS, targetKey } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, targetKey } from '../../../shared/analysis/wcl-projections';
 import {
   AuraWindows, AuraSpan, AuraSpansByTarget, StackTimeline,
   buildAuraWindows, buildStackTimeline, buildAuraSpansByTarget,
@@ -146,24 +145,18 @@ function partitionPoint(length: number, past: (index: number) => boolean): numbe
 }
 
 export interface RuleInputs {
-  casts: WclEvent[];
-  buffs: WclEvent[];
-  debuffs: WclEvent[];
-  damage: WclEvent[];
+  casts: TimedEvent[];
+  buffs: TimedEvent[];
+  debuffs: TimedEvent[];
+  damage: TimedEvent[];
   /** The player's own, not the raid's. */
-  deaths: WclEvent[];
-  fStartMs: number;
+  deaths: TimedEvent[];
   fightDurationS: number;
 }
 
-// The one point every event stream crosses the ms wire boundary; every RuleContext field below is seconds-only.
 export function buildRuleContext(input: RuleInputs): RuleContext {
-  const { fightDurationS, fStartMs } = input;
-  const casts = withRelativeS(input.casts, fStartMs);
-  const buffs = withRelativeS(input.buffs, fStartMs);
-  const debuffs = withRelativeS(input.debuffs, fStartMs);
-  const damage = withRelativeS(input.damage, fStartMs);
-  const deathTimes = withRelativeS(input.deaths, fStartMs).map(event => event.atS);
+  const { casts, buffs, debuffs, damage, deaths, fightDurationS } = input;
+  const deathTimes = deaths.map(event => event.atS);
   const health = lazy(() => buildHealthIndex(damage));
   return {
     castTimes: buildCastTimes(casts),

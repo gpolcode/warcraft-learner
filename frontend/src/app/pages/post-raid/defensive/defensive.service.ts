@@ -418,19 +418,17 @@ export class DefensiveFeatureService {
       const fight = report.fights.find(entry => entry.id === fightId);
       // A selected fight not yet present (e.g. mid live-sync) is informational, not a failure.
       if (!fight) return ok({ findings: [], spellIdsByName: bench.value.cd_spell_ids, iconByName: {}, windows: [], anchors: [], clipAnchors: [] });
-      const fStartMs = fight.startTime;
-      const fEndMs = fight.endTime;
-      const fightDurationS = relativeS(fEndMs, fStartMs);
+      const fightDurationS = relativeS(fight.endTime, fight.startTime);
 
       const [casts, buffs, dtEvents] = await Promise.all([
-        this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fStartMs, fEndMs, playerId),
-        this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fStartMs, fEndMs, playerId),
-        this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fStartMs, fEndMs, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
+        this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
       ]);
 
-      const dtEventsTimed = withRelativeS(dtEvents, fStartMs);
+      const dtEventsTimed = withRelativeS(dtEvents, fight.startTime);
       const playerDefensives = analyzeDefensives(
-        bench.value.defensives, withRelativeS(casts, fStartMs), withRelativeS(buffs, fStartMs), dtEventsTimed, fightDurationS,
+        bench.value.defensives, withRelativeS(casts, fight.startTime), withRelativeS(buffs, fight.startTime), dtEventsTimed, fightDurationS,
       );
       const findings = bench.value.defensives.length && playerDefensives.length
         ? analyzeDefensiveFindings(playerDefensives, bench.value.per_defensive_benchmarks, fightDurationS)
