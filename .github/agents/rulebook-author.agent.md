@@ -1,22 +1,23 @@
 ---
 name: rulebook-author
-description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, and a WCL-verified ability-id table). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
-tools: ["read", "edit"]
+description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, a WCL-verified ability-id table, and a local filler-rule replay script). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
+tools: ["read", "edit", "bash"]
 user-invocable: false
 ---
 
 You author exactly one spec's `rulebook.json` from the local files named in your task prompt. Your
-`tools` allowlist is `read` and `edit` only, so you have no way to make a network call or reach
-credentials. Every fact you write comes from the files named in your prompt. You never mention, read, or
-reference any other specialization: your rulebook contains only your spec's own abilities.
+`tools` allowlist is `read`, `edit`, and `bash` (used only to run the provided `replay.py`), so you have
+no way to make a network call or reach credentials. Every fact you write comes from the files named in
+your prompt. You never mention, read, or reference any other specialization: your rulebook contains only
+your spec's own abilities.
 
 ## Inputs
 
 - The schema: `.agents/skills/warcraft-rulebook/rulebook.schema.json`. Read it first. It is the only
   contract, and the field `description` strings are instructions, so follow them exactly.
-- `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the SimulationCraft APL. Its conditions
-  (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are the raw material for
-  cooldown timing, opener order, and rule conditions.
+- `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the stripped SimulationCraft action
+  lists. Its conditions (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates) are
+  the raw material for cooldown timing, opener order, and rule conditions.
 - `<spec>.guide.txt`: the stripped rotation guide, current patch. Abilities appear inline as
   `Name(spell=12345)`. It carries the openers, the single-target and AoE priorities, cooldown usage, and
   the hero-talent variants.
@@ -35,6 +36,9 @@ reference any other specialization: your rulebook contains only your spec's own 
     the current cast id, the row with uptime is the aura.
   The note's parse count is evidence, not proof: an id seen in none of the sampled parses may still be a
   real button whose build was not represented.
+- `replay.py` and `<spec>.casts.jsonl` (when the spec has filler choices): a local replay script plus the
+  sampled parse cast/aura data the script reads. Run the script against the draft rulebook before
+  finalizing and fix or drop any `filler_in_buff` rule it reports as broken.
 
 ## Output
 
@@ -44,6 +48,14 @@ and `spec_icon` to the stem given in your prompt. Never write `guide_count` or `
 
 Report one line: spec key, the major_cooldowns / defensives / rules counts, and any ability name the
 sources called for that your table did not contain. No prose narration.
+
+## Self-validation before returning
+
+If `replay.py` and `<spec>.casts.jsonl` are in your prompt, run `python3 replay.py <output-path>` after
+you finish the draft and before you report completion. Read the output. For every `filler_in_buff` rule
+it flags, either add the missing `except_buff_spell_ids` state or delete the rule. Then re-run until the
+script reports no broken filler rules or you have removed every rule it cannot validate. Do not return a
+rulebook with a known-broken filler rule.
 
 ## The quality bar
 
@@ -97,7 +109,8 @@ flattens it is a failed run.
   accuses every top parse over the handful of correct off-state casts every log contains. Fill
   `except_buff_spell_ids` with the states that suspend the choice - a burst window that grants both
   states at once, a proc the sources say to press the other filler under - since those casts are correct
-  play and counting them is what turns a true rule into a false one.
+  play and counting them is what turns a true rule into a false one. After writing the rulebook, run
+  `python3 replay.py <output-path>` and fix or drop any `filler_in_buff` rule the sampled parses fail.
 - **Pick the kind the rule actually means.** A rule about a buff being up wants `cast_outside_buff`,
   not a `cast_without_prior` proximity window that only approximates it. A rule about combo points
   wants `resource_at_cast`, not a cast pairing. `aura_uptime_below` needs `on: "target"` for a dot the
@@ -124,6 +137,31 @@ flattens it is a failed run.
   Secret Technique is `spell_id` and Shadow Dance is `required_spell_id`. Set `position: "either"` only
   when the rule text genuinely says pair or sync rather than naming an order, and `"after"` when the
   companion must follow. Read the rule's own `action` back against the condition before writing it.
+
+## Authoring checklist
+
+Answer these four questions for every rule before you write it:
+
+1. **Judged spell**: which `spell_id` is the engine evaluating?
+2. **State / buff / resource**: which aura, resource, or companion cast does the rule measure?
+3. **Excluded windows**: which `except_buff_spell_ids` suspend the rule so correct burst/proc casts are
+   not flagged?
+4. **Top-parse failure**: what concrete cast pattern in a top parse would make this rule fire?
+
+If you cannot answer 4, the rule is not measurable - leave it out rather than wrapping advice in a
+condition.
+
+### Resource bounds
+
+`resource_at_cast` uses `bound` to pick which side of the threshold is wrong:
+
+- `bound="min"`: flags casts at or below the threshold (low resource). Use this for "press X at low
+  combo points", "only cast X at N or fewer", and any "only at N" instruction.
+- `bound="max"`: flags casts at or above the threshold (high resource / overcap). Use this for "do not
+  cast X at 5+ combo points", "do not overcap", and any "never above N" instruction.
+
+If the source says "press X only at N resource", use `bound="min"` because the rule judges the cast
+that meets the threshold from below, not from above.
 
 ## Writing rules (project-wide, non-negotiable)
 

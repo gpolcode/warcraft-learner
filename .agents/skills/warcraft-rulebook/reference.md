@@ -30,9 +30,26 @@ Discover `<branch>` and `<TIER>` **once per session** and reuse them for every s
 
 `api.github.com` is blocked behind some egress proxies, so the contents API is not a reliable way to list the tier dir; probe `raw.githubusercontent.com` paths directly instead. When a base spec file 404s under every form, that spec has no profile this tier and the agent works from the guide and the table alone.
 
-The APL is already plain text; save it as-is. Its conditions (e.g. `racial_sync,value=buff.shadow_blades.up&buff.shadow_dance.up`, `if=cooldown.X.remains`, combo-point and charge gates) are the raw material for `major_cooldowns`, `align_with_bloodlust`, `opener_priority`, and the rule conditions - the agent needs them verbatim.
+The APL is plain text; save it as-is, then strip it before dispatch. Its conditions (e.g.
+`racial_sync,value=buff.shadow_blades.up&buff.shadow_dance.up`, `if=cooldown.X.remains`, combo-point and
+charge gates) are the raw material for `major_cooldowns`, `align_with_bloodlust`, `opener_priority`, and
+the rule conditions - the agent needs them verbatim.
 
-**The bottom of each action list is the filler, and it is the spec's most-pressed decision.** SimC splits the rotation into sub-lists per hero tree and target count (`actions.ec_st`, `actions.kotg_st`, `actions.aoe`), and each one ends in a **terminal unconditioned action** - the button pressed whenever nothing above it is available. The lines just above it are the gates that swap in a different filler (`starfire,if=action.starfire.execute_time<buff.eclipse.remains` then a bare `wrath`). Together they are the `filler_in_buff` rules, and the states in those gates - the buff that decides the choice, and the burst window or proc that suspends it - are ability ids the table must carry, so add every buff named in a filler gate to the ability-table candidate list. Never trim these lines when saving the file: a rulebook that describes a spec's cooldowns but not which button fills between them has missed the rotation.
+**Strip the file to action lists only.** Drop the header block (talents, gear, consumables, trinkets,
+legendaries), comments, and empty lines. Keep every line that starts with `actions` or `actions.`,
+including the sub-list definitions and the terminal unconditioned filler. Stripping saves tokens and
+keeps the agent focused on rotation logic.
+
+**The bottom of each action list is the filler, and it is the spec's most-pressed decision.** SimC splits
+the rotation into sub-lists per hero tree and target count (`actions.ec_st`, `actions.kotg_st`,
+`actions.aoe`), and each one ends in a **terminal unconditioned action** - the button pressed whenever
+nothing above it is available. The lines just above it are the gates that swap in a different filler
+(`starfire,if=action.starfire.execute_time<buff.eclipse.remains` then a bare `wrath`). Together they are
+the `filler_in_buff` rules, and the states in those gates - the buff that decides the choice, and the
+burst window or proc that suspends it - are ability ids the table must carry, so add every buff named in
+a filler gate to the ability-table candidate list. Never trim these lines when saving the file: a
+rulebook that describes a spec's cooldowns but not which button fills between them has missed the
+rotation.
 
 ## 2b. `<spec>.guide.txt` - the rotation guide, stripped to text
 
@@ -57,7 +74,13 @@ The pages are server-rendered but hundreds of KB, so keep the `guide-body` block
 https://www.icy-veins.com/wow/<spec-kebab>-<class-kebab>-pve-<dps|healing|tank>-rotation-cooldowns-abilities
 ```
 
-Strip from its `guide-page-content` block, rewriting each `<span data-wowhead="spell=<id>">Name</span>` to `Name(spell=<id>)` first so the ids survive tag removal. Healers use `healing`, not `healer`.
+Strip from its `guide-page-content` block, rewriting each `<span data-wowhead="spell=<id>">Name</span>` to
+`Name(spell=<id>)` first so the ids survive tag removal. Healers use `healing`, not `healer`.
+
+**Keep only the rotation and cooldowns sections.** After tag removal, drop paragraphs about talents, stat
+priority, BiS lists, encounter navigation, macros outside rotation, and non-rotation mechanics. Keep the
+opener, single-target rotation, AoE rotation, cooldown usage, and hero-talent variant sections. The
+stripped file should be a few KB of text with ability ids inline, nothing more.
 
 ## 2c. spec icon stems - one lookup for every spec
 
@@ -97,6 +120,32 @@ The `note` column is what makes the table usable rather than merely correct. A s
 
    `Debuffs` filtered by `sourceID` does not reliably narrow to auras that source applied; it can return auras sitting on the player instead. Treat those ids as auras, and confirm from the guide that the spec actually applies one to enemies before using it for `aura_uptime_below` with `on: "target"`.
 4. Fill `base_cd_s` from the Wowhead tooltip endpoint - `https://nether.wowhead.com/tooltip/spell/<id>` returns JSON whose `tooltip` HTML carries "`N sec/min cooldown`". Tooltip cooldowns are **base, pre-talent** values; they anchor the agent's `cooldown` numbers, which otherwise have no source at all. The same tooltip text carries the **buff/dot duration and the effect percentages**, so parse those in the same pass - they are what makes a `usage_rule` concrete. Fetch the whole id set from **one script** that requests concurrently and prints one line per id; a shell loop of backgrounded `curl` subshells re-prints its own body for every job it reaps and buries the results in noise.
+5. **Filter the table before dispatch.** Drop any row whose name does not appear in the stripped APL
+   action tokens, the stripped guide's `Name(spell=...)` references, or the defensive/cooldown candidate
+   list. Keep aura ids for every buff token named in an APL condition (`buff.X.up`) even if the name only
+   appears inside a condition. The goal is ~40 relevant rows, not every verified candidate.
+
+## 2e. `replay.py` and `<spec>.casts.jsonl` - self-validation data for filler rules
+
+For specs with filler choices, prepare a local replay script and the sampled parse data it needs before
+you dispatch the agent. The script reads the draft rulebook and the sampled parse cast/aura data and
+prints any `filler_in_buff` rule that a sampled parse fails. It must not make network calls - all data is
+local.
+
+Collect the cast data from the same parses used for the ability table. For each sampled parse pull:
+
+```
+table(dataType:Casts   fightIDs:[F] sourceID:S)
+table(dataType:Buffs   fightIDs:[F] sourceID:S)
+```
+
+Write one JSON line per parse to `<spec>.casts.jsonl`. Each line should contain the player's ordered cast
+sequence (ability id and timestamp) and the active aura windows. The agent runs `python3 replay.py
+<output-path>` against this file; the script reports which rule fails in which parse so the agent can add
+the missing `except_buff_spell_ids` state or drop the rule.
+
+Provide the same `replay.py` to every spec that needs it, or keep a per-spec variant if the logic differs.
+Include the script path and the `<spec>.casts.jsonl` path in the agent dispatch.
 
 ## Validation recipes (Step 4)
 
@@ -110,7 +159,14 @@ Run the checks as **one script over all the files**, not a command per file per 
 
 Then read the file. The mechanical checks pass on a rulebook whose coaching copy is wrong, so spot-check that each number in a `usage_rule` or `action` traces to an APL line or a guide sentence, and run the top-parse sanity check from the rulebook-author agent's quality bar over the rules.
 
-**Replay every `filler_in_buff` rule against the sampled parses before keeping it**, since it is the one kind whose defects are invisible on the page: for each parse count the coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids` window, take the share, then bench it the way the engine does (median, band `max(stddev, 0.1 * median)`) and check no parse falls under `median - band`. A parse that fails is telling you a state is missing from the exclusions - read that parse's violating casts, find the buff they all sit under, and add it. A rule measurable on under half the parses is not a defect: the encounter declines to bench it and the runtime drops it, which is the right outcome for a hero-talent build this field does not play.
+**Re-run the `filler_in_buff` replay as an orchestrator check**, because the agent can miss a parse
+that it did not sample. Use the same `replay.py` and `<spec>.casts.jsonl`: for each parse count the
+coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids`
+window, take the share, then bench it the way the engine does (median, band `max(stddev, 0.1 * median)`)
+and check no parse falls under `median - band`. A parse that fails is telling you a state is missing from
+the exclusions - read that parse's violating casts, find the buff they all sit under, and add it. A rule
+measurable on under half the parses is not a defect: the encounter declines to bench it and the runtime
+drops it, which is the right outcome for a hero-talent build this field does not play.
 
 When a rule fails these, send the defect back to that spec's dispatch if it still holds context - it can fix one rule without re-authoring the file, which is far cheaper than a cold re-run. Otherwise re-dispatch `rulebook-author` for that spec alone with the defect appended to its prompt. Reserve a fresh dispatch for output that misses the bar broadly.
 
