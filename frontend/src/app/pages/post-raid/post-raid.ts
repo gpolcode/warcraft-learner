@@ -40,13 +40,11 @@ import { Result, LoadError, permanent } from '../../core/result';
 import { toLoadError } from '../../core/http-load-error';
 import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 
-/** Pull a report code out of a WCL report URL, or pass through a bare code. */
 export function extractCode(url: string): string {
   const m = url.match(/\/reports\/([a-zA-Z0-9]+)/);
   return m ? m[1] : url.trim();
 }
 
-/** Pull a specific fight id out of a WCL report URL's `fight=` parameter; null for `last` or non-numeric. */
 export function extractFightId(url: string): number | null {
   const m = url.match(/[#?&]fight=(\d+)/);
   const id = m ? Number(m[1]) : NaN;
@@ -79,7 +77,6 @@ export function buildFights(fights: WclReport['fights'] = []): WclFight[] {
     });
 }
 
-/** Project the report's master-data actors into player rows, sorted by name. */
 export function buildPlayers(actors: WclReport['masterData']['actors'] = []): WclPlayer[] {
   return (actors || [])
     .map(a => ({ id: a.id, name: a.name, spec: a.subType || 'Unknown', server: a.server || '' }))

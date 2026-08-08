@@ -4,10 +4,8 @@ import { logWarn } from '../../../core/log';
 /** Displayed "What" label for a finding whose cooldown could not be identified (no cd_name). */
 export const UNKNOWN_COOLDOWN_LABEL = 'Unknown cooldown';
 
-/** logWarn context for a surfaced finding that carries no identifiable cooldown. */
 const UNKNOWN_COOLDOWN_CONTEXT = 'finding-table.unknown-cooldown';
 
-/** Maps a finding category to the short label shown as a meta chip. */
 export const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
   cooldown_delay: 'held',
@@ -16,7 +14,6 @@ export const CAT_LABEL: Record<string, string> = {
   hold_suggestion: 'hold',
 };
 
-/** The prominent "Measured" cell: a value over its unit (e.g. "1 / 15" + "cast(s)"). */
 export interface FindingMeasure {
   value: string;
   unit?: string;
@@ -43,7 +40,6 @@ export interface FindingRow {
   timeline?: FindingTimeline;
 }
 
-/** A cooldown used on plan, shown as a compact success chip rather than a row. */
 export interface OnPlanChip {
   name: string;
   spellId: number | null;
@@ -51,7 +47,6 @@ export interface OnPlanChip {
   icon: string;
 }
 
-/** One collapsed spell entry: a cooldown / defensive and the findings it gathered. */
 export interface FindingEntry {
   name: string;
   spellId: number | null;
@@ -63,7 +58,6 @@ export interface FindingEntry {
   findings: AnalysisFinding[];
 }
 
-/** Flatten cooldown entries with issues into one table row per finding. */
 export function rowsFromEntries(entries: FindingEntry[], catLabel: Record<string, string>): FindingRow[] {
   const rows: FindingRow[] = [];
   for (const entry of entries) {
@@ -85,12 +79,10 @@ export function rowsFromEntries(entries: FindingEntry[], catLabel: Record<string
   return rows;
 }
 
-/** Cooldowns without any issue become "on plan" chips. */
 export function onPlanFromEntries(entries: FindingEntry[]): OnPlanChip[] {
   return entries.filter(e => !e.hasIssue).map(e => ({ name: e.name, spellId: e.spellId, icon: e.icon }));
 }
 
-/** Grouping of a cooldown/defensive's findings before they collapse into a `FindingEntry`. */
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; success?: AnalysisFinding; }
 
 export interface BucketOptions {

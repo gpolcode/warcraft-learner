@@ -6,8 +6,6 @@
  * than the stringly-typed `Record<string, unknown>` fallback.
  */
 
-// Variable interfaces
-
 export interface ReportQueryVars { code: string }
 export interface PlayerDetailsQueryVars { code: string; fightIDs: number[] }
 export interface EventsQueryVars {
@@ -25,8 +23,6 @@ export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sour
 export interface RankingsQueryVars { encounterID: number; className: string; specName: string; partition?: number }
 export interface TableQueryVars { code: string; fightIDs: number[]; dataType: string }
 export interface ResurrectsQueryVars { code: string; fightIDs: number[]; filter: string; startTime: number; endTime: number }
-
-// Query strings
 
 export const REPORT_Q = `
 query($code:String!){reportData{report(code:$code){

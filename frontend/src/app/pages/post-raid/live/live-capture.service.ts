@@ -91,8 +91,6 @@ export const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
 /** Grace period before a downloaded clip's object URL is revoked, so the browser can read the blob. */
 const DOWNLOAD_URL_TTL_MS = 10_000;
 
-// Pure functions
-
 /** Absolute wall-clock start (unix epoch ms) of a bench offset. */
 export function absoluteWindowStart(reportStartTime: number, fightStartTime: number, timeS: number): number {
   return reportStartTime + fightStartTime + timeS * 1000;
@@ -149,8 +147,6 @@ export function segmentsCover(segments: Segment[], fromMs: number, toMs: number)
   return segments.some(segment => segment.end > fromMs && segment.start < toMs);
 }
 
-// Media type helpers
-
 /**
  * Most specific supported recording mime: profile codec, then VP8, then bare WebM. MSE
  * assembly re-declares this via `addSourceBuffer`, which rejects bare `video/webm`, so a
@@ -170,14 +166,11 @@ function isPickerDismissal(err: unknown): boolean {
   return err instanceof DOMException && err.name === 'NotAllowedError';
 }
 
-// Feature service
-
 @Injectable({ providedIn: 'root' })
 export class LiveCaptureFeatureService {
   // Live-sync on/off. Lives here because this is the only service that reads it.
   private readonly liveActive = signal(false);
 
-  // Recording engine state
   readonly isCapturing = signal(false);
   readonly isStarting = signal(false);
   readonly sourceLabel = signal('');
@@ -199,11 +192,9 @@ export class LiveCaptureFeatureService {
   private segIdx = 0;
   private mimeType = 'video/webm';
 
-  // Live-sync toggle + status (rendered by wl-live-controls)
   readonly liveEnabled = this.liveActive.asReadonly();
   readonly status = signal('');
 
-  // Clip flyover state
   readonly open = signal(false);
   readonly handle = signal<ClipHandle | null>(null);
   /** True once the clip player's `<video>` fails to decode (MSE assembly and the single-blob fallback both failed). */
@@ -216,8 +207,6 @@ export class LiveCaptureFeatureService {
 
   setLive(on: boolean): void { this.liveActive.set(on); }
   setStatus(message: string): void { this.status.set(message); }
-
-  // Recording engine
 
   /** Opt in to recording: prompt for a window, then run the rolling-buffer loop. */
   async startRecording(profile: CaptureProfile = DEFAULT_CAPTURE_PROFILE): Promise<void> {
@@ -293,8 +282,6 @@ export class LiveCaptureFeatureService {
     recorder.start();
     setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, SEG_MS);
   }
-
-  // Clip flyover
 
   /**
    * Capture the correlation context for the resolved fight so a clip button can map a

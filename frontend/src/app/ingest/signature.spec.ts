@@ -126,7 +126,7 @@ describe('inaccessible-aware skip key', () => {
     // Y (accessible) enters at rank 5, pushing T to rank 11 (out of the top 10).
     const poolB = pool('a', 'b', 'c', 'd', 'Y', 'e', 'f', 'g', 'h', 'i', 'T', 'u', 'v');
 
-    // Top-10 accessible is now a..i + Y (u no longer needed) -> differs from stampA -> recompute.
+    // Top-10 accessible is now a..i + Y (u is unnecessary) -> differs from stampA -> recompute.
     expect(skipKey(poolB, stampA.inaccessible_parses)).not.toBe(stampA.signature);
 
     // The recompute reaches 10 accessible without fetching T (now rank 11), so T is pruned

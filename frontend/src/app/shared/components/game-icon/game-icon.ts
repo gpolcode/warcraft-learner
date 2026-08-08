@@ -56,7 +56,7 @@ export class GameIconComponent {
 
   // The URL whose image last failed to load; the template hides that img so a
   // broken art request degrades to name-only. A changed `icon` yields a new URL
-  // that no longer matches, so the image is retried.
+  // that differs, so the image is retried.
   protected readonly failedSrc = signal<string | null>(null);
 
   // The icon may arrive with or without a trailing image extension (WCL's

@@ -12,7 +12,7 @@ export interface BurstBench {
   encounter_id: number;
   encounter_name: string;
   sample_count: number;
-  /** Clustered top-parse burst windows (the same shape the worker used to emit). */
+  /** Clustered top-parse burst windows (the same shape the worker emits). */
   windows: BurstWindow[];
   /** Cooldown / defensive name -> spell id, for the window header icons. */
   cd_spell_ids: Record<string, number>;

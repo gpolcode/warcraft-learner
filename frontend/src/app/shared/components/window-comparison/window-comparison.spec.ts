@@ -159,7 +159,7 @@ describe('WindowComparisonComponent selection reset on windows swap', () => {
     (vm['select'] as (i: number) => void)(MANUAL_PICK);
     expect((vm['activeIndex'] as () => number)()).toBe(MANUAL_PICK);
 
-    // A shorter List B no longer has index 3, so the stale pick would blank the detail pane.
+    // A shorter List B lacks index 3, so the stale pick would blank the detail pane.
     const WORST_IN_LIST_B = 1; // lowest player/top ratio when higher is better
     const listB = [
       win({ playerPct: 95, topAvg: 100 }), // ratio 0.95
