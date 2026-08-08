@@ -2,7 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { Subscription, exhaustMap, timer } from 'rxjs';
-import { LiveReportSyncService, POLL_INTERVAL_MS } from './live-report-sync';
+import { LiveReportSyncService, POLL_INTERVAL_S } from './live-report-sync';
+
+/** vi's fake timers are ms-based, so the interval is converted once here for the arithmetic below. */
+const POLL_INTERVAL_MS = POLL_INTERVAL_S * 1000;
 
 /** Half an interval: a delay clearly shorter than the refocus cooldown. */
 const HALF_INTERVAL_MS = POLL_INTERVAL_MS / 2;
