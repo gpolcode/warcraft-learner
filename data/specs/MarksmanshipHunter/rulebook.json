@@ -1,0 +1,179 @@
+{
+  "spec": "MarksmanshipHunter",
+  "spec_icon": "ability_hunter_focusedaim",
+  "major_cooldowns": [
+    {
+      "name": "Trueshot",
+      "spell_id": 288613,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Press it only while Double Tap is down, entering it off the back of a Rapid Fire and immediately before an Aimed Shot, and hold the last one of the fight until Bullseye is at 30 stacks below 20% target health.",
+      "id_note": "Base cooldown 120s; the guide states 90s with Calling the Shots and 120s with Unerring Vision. Duration 15s, 19s as Sentinel.",
+      "talent_gated": false
+    },
+    {
+      "name": "Volley",
+      "spell_id": 260243,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it whenever Double Tap is down, and never adjacent to Trueshot: fit an Aimed Shot or Rapid Fire between the two so the Double Tap it grants is not wasted.",
+      "talent_gated": true
+    },
+    {
+      "name": "Explosive Shot",
+      "spell_id": 212431,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Low-priority filler when nothing else is available; with Shrapnel Shot fire it outside Trueshot while Lock and Load is down and Aimed Shot is at one charge or less.",
+      "talent_gated": true
+    },
+    {
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Pre-cast it about 4.5 seconds before the pull, then use it with Trueshot, firing it when Trueshot is within 5 seconds of coming up.",
+      "id_note": "On-use trinket, only present when the player carries it.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Your default 30% damage reduction: press it into every telegraphed raid hit rather than saving it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Full immunity for lethal mechanics only, and expect to lose 8 seconds of damage since you cannot attack through it."
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "usage_rule": "Heals 30% of your health instantly; press it after an unavoidable hit instead of waiting on healers."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Arcane Shot or Black Arrow spends Precise Shots",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 260242,
+        "buff_spell_name": "Precise Shots",
+        "spend_spell_ids": [185358, 466930, 257620],
+        "spend_spell_names": ["Arcane Shot", "Black Arrow", "Multi-Shot"]
+      },
+      "action": "Follow every Aimed Shot and Rapid Fire with a Precise Shots spender: Arcane Shot or Black Arrow on single target, Multi-Shot on three or more. Precise Shots does not stack, and spending it fuels Spotter's Mark."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Precise Shots with Arcane Shot, not raw fillers",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185358,
+        "spell_name": "Arcane Shot",
+        "alternative_spell_ids": [56641, 212431],
+        "alternative_spell_names": ["Steady Shot", "Explosive Shot"],
+        "buff_spell_id": 260242,
+        "buff_spell_name": "Precise Shots"
+      },
+      "action": "While Precise Shots is active, spend it rather than raw-filling with Steady Shot or Explosive Shot: Arcane Shot hits 50% harder and costs 60% less Focus with the buff up, and spending it fuels Spotter's Mark. On Dark Ranger, Black Arrow can take the spend instead; at three or more targets, Multi-Shot does."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Bulletstorm kept up for Aimed Shot",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 389020,
+        "aura_spell_name": "Bulletstorm",
+        "on": "self"
+      },
+      "action": "Keep Bulletstorm rolling with Rapid Fire and avoid casting Aimed Shot without it up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Rapid Fire held so Bulletstorm stacks do not drop",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 257044,
+        "spell_name": "Rapid Fire",
+        "buff_spell_id": 389020,
+        "buff_spell_name": "Bulletstorm",
+        "bound": "max",
+        "except_buff_spell_ids": [260402],
+        "except_buff_spell_names": ["Double Tap"]
+      },
+      "action": "Do not recast Rapid Fire while it would hand you fewer Bulletstorm stacks than you already hold. A Double Tap Rapid Fire is always worth it: it yields 18 stacks against the base 10."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Trueshot entered off the back of Rapid Fire",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 288613,
+        "spell_name": "Trueshot",
+        "required_spell_id": 257044,
+        "required_spell_name": "Rapid Fire",
+        "position": "before"
+      },
+      "action": "Fire Rapid Fire immediately before Trueshot so the window opens on full Bulletstorm stacks, then press Trueshot right ahead of an Aimed Shot. On single target, spend Volley's Double Tap on that Rapid Fire for 18 stacks."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Final Trueshot held for full Bullseye stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 288613,
+        "spell_name": "Trueshot",
+        "buff_spell_id": 204090,
+        "buff_spell_name": "Bullseye",
+        "bound": "min"
+      },
+      "action": "Hold your last Trueshot of the fight until Bullseye reaches its 30-stack cap below 20% target health; earlier Trueshots should not wait on it."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Aimed Shot, Volley, Rapid Fire, Trueshot",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [19434, 260243, 257044, 288613],
+        "spell_names": ["Aimed Shot", "Volley", "Rapid Fire", "Trueshot"]
+      },
+      "action": "Pre-cast Aimed Shot 2.5 seconds before the pull with Hunter's Mark already up, then Black Arrow and a second Aimed Shot, Volley for Double Tap, Rapid Fire to spend it for 18 Bulletstorm stacks, then Trueshot with potion and racials."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Multi-Shot replaces Arcane Shot on AoE",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 257620,
+        "spell_name": "Multi-Shot",
+        "bound": "min"
+      },
+      "action": "From three targets, spend Precise Shots with Multi-Shot instead of Arcane Shot: it needs three hits to grant Trick Shots, which every Aimed Shot and Rapid Fire wants up."
+    }
+  ],
+  "source_summary": "Trueshot is the whole cooldown plan: enter it off the back of a Rapid Fire and immediately before an Aimed Shot, only while Double Tap is down, and hold the final one for 30 stacks of Bullseye below 20% target health. Volley is a 45-second damage button and Double Tap generator that must be separated from Trueshot by an Aimed Shot or Rapid Fire, and on-use buff trinkets such as the Algeth'ar Puzzle Box are pre-cast before the pull and then chained to Trueshot. Between cooldowns the rotation is Precise Shots weaving: every Aimed Shot and Rapid Fire is followed by a spender while Bulletstorm stacks are kept alive for the Aimed Shots inside the burst window."
+}

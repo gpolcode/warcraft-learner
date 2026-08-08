@@ -1,0 +1,186 @@
+{
+  "spec": "SubtletyRogue",
+  "spec_icon": "ability_stealth",
+  "major_cooldowns": [
+    {
+      "name": "Shadow Dance",
+      "spell_id": 185313,
+      "cooldown": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Press it only when Secret Technique is ready, entering at 0 or 1 combo points as Deathstalker and at 6 or 7 as Trickster, then spend the second charge inside Shadow Blades once roughly 8 seconds of Shadow Blades remain, and never fire it during a global cooldown because Deepening Shadows adds only a sliver of duration.",
+      "id_note": "Table lists 2 charges at 20s recharge each; cooldown here is the per-charge recharge."
+    },
+    {
+      "name": "Shadow Blades",
+      "spell_id": 121471,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Send it with a Shadow Dance charge and Secret Technique ready so all three stack, and fit a second Shadow Dance inside the window before it ends, since it doubles the combo point generation of your builders and echoes 20% of the damage done during it as shadow damage."
+    },
+    {
+      "name": "Secret Technique",
+      "spell_id": 280719,
+      "cooldown": 25,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Your first finisher inside every Shadow Dance, cast as soon as the window opens at 6 or more combo points, so stop finishing 3 to 4 seconds before it comes off cooldown rather than delaying the Shadow Dance macro, and as Trickster macro it with Coup de Grace to beat that ability's 1.2 second global.",
+      "id_note": "Table base_cd_s 25.0; the guide notes this is the spec's only static cooldown and that haste reduces it."
+    },
+    {
+      "name": "Vanish",
+      "spell_id": 1856,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use it on cooldown outside Shadow Dance at 2 or fewer combo points with at least 50 energy, and spend the stealth immediately on Shadowstrike."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "usage_rule": "Press it just before a raid-wide hit lands, since it is cheap enough to use on every area damage event rather than being saved."
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "usage_rule": "Top yourself up on chip damage between cooldown windows, where the energy cost hurts your rotation least."
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "usage_rule": "Save it for stretches of heavy melee-range physical damage, since it does nothing against magic."
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "usage_rule": "Use it to wipe a lethal magic debuff off yourself or to walk through a scripted magic hit."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "severity": "critical",
+      "description": "Secret Technique inside Shadow Dance",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 280719,
+        "spell_name": "Secret Technique",
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "require": "inside"
+      },
+      "action": "Cast Secret Technique as your first finisher inside Shadow Dance, at 6 or more combo points, as soon as the window opens. Only open Shadow Dance when Secret Technique is off cooldown."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Shadow Blades paired with Shadow Dance",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 121471,
+        "spell_name": "Shadow Blades",
+        "required_spell_id": 185313,
+        "required_spell_name": "Shadow Dance",
+        "position": "either"
+      },
+      "action": "Only send Shadow Blades when you have a Shadow Dance charge ready, and fit a second Shadow Dance inside its window once about 8 seconds of Shadow Blades remain."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Hold Shadow Dance and Secret Technique for Blades",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [185313, 280719],
+        "spell_names": ["Shadow Dance", "Secret Technique"],
+        "anchor_spell_id": 121471,
+        "anchor_spell_name": "Shadow Blades"
+      },
+      "action": "The three cooldowns do not line up on their own, so when Shadow Blades is a few seconds from ready, delay Shadow Dance and Secret Technique slightly and send them all together."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Shadowstrike into Shadow Dance and Shadow Blades",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [185438, 185313, 121471, 280719],
+        "spell_names": ["Shadowstrike", "Shadow Dance", "Shadow Blades", "Secret Technique"]
+      },
+      "action": "Open with Shadowstrike from Stealth, then Shadow Dance, then Shadow Blades, then Secret Technique as your first finisher. Fire on-use trinkets one second ahead of Shadow Dance."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Eviscerate at 6 or more combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 196819,
+        "spell_name": "Eviscerate",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Only finish with Eviscerate at 6 or more combo points. Below that keep building, and stop finishing 3 to 4 seconds before Secret Technique comes off cooldown."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Darkest Night spent on Eviscerate",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "spend_spell_ids": [196819],
+        "spend_spell_names": ["Eviscerate"]
+      },
+      "action": "As Deathstalker, a Darkest Night Eviscerate outranks every other finisher, so spend the proc before it expires and try to have Ancient Arts up for it on up to 4 targets."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Black Powder from 2 targets up",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 319175,
+        "spell_name": "Black Powder",
+        "bound": "min"
+      },
+      "action": "Swap your finisher to Black Powder from 2 targets up. At exactly 2 targets Eviscerate is equally valid, and Black Powder clearly wins from 3 targets."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Backstab only below 2 targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 53,
+        "spell_name": "Backstab",
+        "bound": "max"
+      },
+      "action": "Backstab is your filler on a single target only. From 2 targets up, build with Shuriken Storm instead, and with Shadowstrike while Shadow Dance is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadowstrike over Backstab in Shadow Dance",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185438,
+        "spell_name": "Shadowstrike",
+        "alternative_spell_ids": [53],
+        "alternative_spell_names": ["Backstab"],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance"
+      },
+      "action": "Shadow Dance turns Shadowstrike on, and it builds more and teleports you behind the target, so it is your single-target builder for the whole window. Fall back to Backstab only once Shadow Dance drops."
+    }
+  ],
+  "source_summary": "Subtlety packs almost all of its damage into stacked cooldown windows built around Secret Technique, so Shadow Dance is only pressed when Secret Technique is ready and Shadow Blades goes out alongside a Shadow Dance charge, with a second Shadow Dance spent inside the Shadow Blades window. Because the three do not line up naturally, both Shadow Dance and Secret Technique are delayed slightly when Shadow Blades is about to come off cooldown, and Shadow Dance is never pressed during a global cooldown. Outside those windows the spec builds with Backstab or Shuriken Storm and finishes at 6 or more combo points, using Eviscerate on one target and Black Powder from 2 targets up."
+}

@@ -1,0 +1,161 @@
+{
+  "spec": "HolyPriest",
+  "spec_icon": "spell_holy_guardianspirit",
+  "major_cooldowns": [
+    {
+      "name": "Apotheosis",
+      "spell_id": 200183,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it with 0 or 1 charge of each Holy Word banked, ideally seconds after a Halo, then dump Holy Words, Prayer of Mending and Surge of Light Flash Heals into the window for triple Holy Word cooldown reduction.",
+      "id_note": "Eternal Sanctity extends the 20 sec base duration by 12 sec; Sustained Potency adds up to 6 sec more from Halo."
+    },
+    {
+      "name": "Divine Hymn",
+      "spell_id": 64843,
+      "cooldown": 180,
+      "align_with_bloodlust": false,
+      "usage_rule": "Save it for scripted raid-wide damage and start the channel early enough that the last pulse or two lands as the hit goes out, and do not clip the 5 sec channel.",
+      "id_note": "Base cooldown 180 sec; Seraphic Crescendo cuts it to 120 sec. Aura id is 64844."
+    },
+    {
+      "name": "Guardian Spirit",
+      "spell_id": 47788,
+      "cooldown": 180,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "usage_rule": "Pre-place it on the tank before a known lethal hit rather than reacting to the health bar, and call it so it does not overlap another healer's external."
+    },
+    {
+      "name": "Power Infusion",
+      "spell_id": 10060,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Follow Apotheosis with it whenever you have no assigned window, so the 20% haste lands on the Holy Word dump."
+    },
+    {
+      "name": "Halo",
+      "spell_id": 120517,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Send it in the last seconds before Apotheosis or Divine Hymn for the Surge of Light proc and Resonant Energy stacks, and never hold it longer than 30 sec waiting for them.",
+      "id_note": "120517 is the cast; 449840 is the self aura."
+    },
+    {
+      "name": "Holy Word: Serenity",
+      "spell_id": 2050,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Treat it as rotational and spend it on any injured ally the moment it is up: Flash Heal takes 6 sec off it, Prayer of Mending another 4 with Voice of Harmony, and sitting at the Miracle Worker charge cap throws that cooldown reduction away."
+    },
+    {
+      "name": "Holy Word: Sanctify",
+      "spell_id": 34861,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Drop it on any injured cluster as soon as it is available; Prayer of Healing shaves 6 sec off it and banking charges only wastes Serendipity cooldown reduction.",
+      "id_note": "Ultimate Serenity redirects Sanctify's cooldown reduction and talents into Holy Word: Serenity, so builds taking it show few or no Sanctify casts."
+    },
+    {
+      "name": "Holy Word: Chastise",
+      "spell_id": 88625,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "talent_gated": true,
+      "usage_rule": "Cast it on cooldown for damage and, with Divine Image, a few seconds ahead of a known burst of raid damage so the Naaru is already out."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press it as the spike lands: it adds 25% maximum health for 10 sec and heals you for that amount instantly."
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Use it the moment loose adds turn on you; the threat drop is on a 30 sec cooldown, so there is no reason to bank it."
+    }
+  ],
+  "rules": [
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Halo just before Apotheosis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 200183,
+        "spell_name": "Apotheosis",
+        "required_spell_id": 120517,
+        "required_spell_name": "Halo",
+        "position": "before"
+      },
+      "action": "Cast Halo in the seconds before Apotheosis so Manifested Power's Surge of Light proc and the Resonant Energy stacks are already live when the window opens. Do not hold Halo more than 30 sec to line them up."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Halo just before Divine Hymn",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 64843,
+        "spell_name": "Divine Hymn",
+        "required_spell_id": 120517,
+        "required_spell_name": "Halo",
+        "position": "before"
+      },
+      "action": "Open the Divine Hymn window with Halo whenever both are ready, so the channel pulses into Resonant Energy stacks. If Halo has already been sitting for 30 sec, send it rather than waiting for Hymn."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Surge of Light on Prayer of Healing",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 114255,
+        "buff_spell_name": "Surge of Light",
+        "spend_spell_ids": [596, 2061],
+        "spend_spell_names": ["Prayer of Healing", "Flash Heal"]
+      },
+      "action": "Consume every Surge of Light proc: with Spiritwell send it into Prayer of Healing for the Empowered Surges bonus, otherwise into Flash Heal. It stacks to 2, so a proc on a full stack is lost mana and healing."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Keep a Divine Image Naaru active",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 405963,
+        "aura_spell_name": "Divine Image",
+        "on": "self"
+      },
+      "action": "Cast Holy Word: Serenity, Sanctify and Chastise the moment they come up instead of banking charges; each summon refreshes the 9 sec Naaru and empowers the one already out."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Prayer of Healing over Flash Heal on Surge of Light",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 596,
+        "spell_name": "Prayer of Healing",
+        "alternative_spell_ids": [2061],
+        "alternative_spell_names": ["Flash Heal"],
+        "buff_spell_id": 114255,
+        "buff_spell_name": "Surge of Light",
+        "except_buff_spell_ids": [200183],
+        "except_buff_spell_names": ["Apotheosis"]
+      },
+      "action": "Spend Surge of Light procs on Prayer of Healing over Flash Heal: the group heal gets more value from the free cast and the mana discount. Save Flash Heal for emergencies outside Apotheosis; during Apotheosis, send Surge of Light into Flash Heal instead for the extra Holy Word cooldown reduction."
+    }
+  ],
+  "source_summary": "Holy Priest has no fixed rotation: the guide builds everything around pressing the short-cooldown Holy Words and Prayer of Mending as rotational spells so Serendipity cooldown reduction and Divine Image keep compounding. Apotheosis is the throughput window, taken with the Holy Words drained and opened by Halo for Manifested Power and Resonant Energy, with Power Infusion chained behind it. Divine Hymn is reserved for scripted raid-wide damage and Guardian Spirit is pre-placed on the tank before a known lethal hit."
+}
