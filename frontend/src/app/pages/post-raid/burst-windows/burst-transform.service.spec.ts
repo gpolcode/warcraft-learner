@@ -186,8 +186,7 @@ describe('windowAbilityBreakdown', () => {
 });
 
 describe('findParseWindows', () => {
-  // A contiguous burst (damage at 10,11,12,13) on a long fight forms one dense run,
-  // trimmed to the bins that actually carry damage, so it measures [10s, 14s).
+  // A contiguous burst (damage at 10,11,12,13) forms one dense run, trimmed to the bins with damage: [10s, 14s).
   it('detects and measures a damage-density burst as a single window (amount + absorbed)', () => {
     const ABSORBED = 400;
     // The first bin's hit is shielded (amount + absorbed), so the window-damage sum must count absorbed.
@@ -212,9 +211,7 @@ describe('findParseWindows', () => {
     expect(scanWindows([damage(SHADOW_BLADES_DAMAGE, 10, BIN_DAMAGE)], 0)).toEqual([]);
   });
 
-  // An isolated spike's rolling damage equals its own value; the dense comparison is
-  // strict `>=`, and the window then trims to the spike's own bin (t=10). The anchor at
-  // t=50 holds the remaining damage so TOTAL_DAMAGE (and thus the threshold) stays fixed.
+  // An isolated spike's rolling damage equals its own value, so the strict `>=` dense check keeps it at its own bin (t=10).
   it('keeps a spike whose rolling damage is exactly at the density threshold', () => {
     const spikeAtThreshold = [damage(EVISCERATE, 10, DENSITY_THRESHOLD), damage(BLACK_POWDER, 50, TOTAL_DAMAGE - DENSITY_THRESHOLD)];
     const windows = scanWindows(spikeAtThreshold, HUNDRED_S_FIGHT_S);
@@ -258,8 +255,7 @@ describe('findParseWindows', () => {
   });
 
   it('excludes a hit exactly on the window end (half-open)', () => {
-    // Burst 10..13 -> window [10s, 14s). A small probe at exactly 14s is too small to
-    // extend the dense run, so the window geometry is fixed and the 14s hit is excluded.
+    // Burst 10..13 -> window [10s, 14s); a small probe at exactly 14s is too small to extend the dense run.
     const windows = scanWindows([...burstAt(10), damage(BLACK_POWDER, 14, 10)], LONG_FIGHT_S);
     expect(windows).toHaveLength(1);
     expect(windows[0]).toMatchObject({ window_length_s: 4, window_damage: 4 * BIN_DAMAGE });
@@ -321,8 +317,7 @@ describe('findParseWindows', () => {
 
 describe('clusterParseWindows', () => {
   const ABILITY_DAMAGE = 600;
-  // parse_index defaults to timeS so each window in a test is a distinct parse (the common
-  // case); pass it explicitly to model one parse contributing several windows to a cluster.
+  // parse_index defaults to timeS (each window is a distinct parse); pass it explicitly for one parse's several windows.
   const window = (timeS: number, isPassive = false, parseIndex = timeS): ParseWindow => ({
     time_s: timeS, window_length_s: 6, window_damage: BIN_DAMAGE, active_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: ABILITY_DAMAGE, casts: 2, is_passive: isPassive }],
@@ -350,8 +345,7 @@ describe('clusterParseWindows', () => {
     expect(clusterParseWindows([window(10), window(11)], 2)[0]).not.toHaveProperty('avg_targets');
   });
 
-  // Consensus gate: survive only when a cluster holds at least max(2, CLUSTER_MIN_FRAC *
-  // sampleCount) member parses. With sampleCount = 10 the floor is 4.
+  // Consensus gate: survive only with at least max(2, CLUSTER_MIN_FRAC * sampleCount) member parses (floor 4 at sampleCount 10).
   it('keeps a cluster present in enough parses', () => {
     const four = [window(10), window(11), window(12), window(13)];
     expect(clusterParseWindows(four, 10)).toHaveLength(1);
@@ -375,15 +369,12 @@ describe('clusterParseWindows', () => {
       .toMatchObject({ is_passive: false });
   });
 
-  // Consensus counts DISTINCT parses, not windows: two dense runs from one parse within
-  // CLUSTER_MERGE_S of a cluster count once toward the gate.
+  // Consensus counts DISTINCT parses, not windows: two dense runs from one parse count once toward the gate.
   const PARSE_A = 0;
   const PARSE_B = 1;
 
   it('counts distinct parses, not windows, at the consensus gate', () => {
-    // sampleCount 6 -> consensus floor max(2, CLUSTER_MIN_FRAC 0.4 * 6) = 2.4. The cluster has
-    // 3 windows but only 2 distinct parses (PARSE_A contributes two): counting distinct parses,
-    // 2 < 2.4, so the cluster is dropped.
+    // sampleCount 6 -> consensus floor 2.4; the cluster has 3 windows but only 2 distinct parses, so it's dropped.
     const SAMPLE_COUNT = 6;
     const cluster = [window(10, false, PARSE_A), window(11, false, PARSE_A), window(12, false, PARSE_B)];
     expect(clusterParseWindows(cluster, SAMPLE_COUNT)).toHaveLength(0);
@@ -439,8 +430,7 @@ function reportFor(playerId: number, playerName: string, fightId: number) {
   };
 }
 
-// A damage-density burst at 10,11,12s overlaps the Shadow Blades cast at 10s, so each
-// parse yields one measured window with Shadow Blades attributed inside it.
+// A damage-density burst at 10,11,12s overlaps the Shadow Blades cast at 10s, attributing it inside the measured window.
 const burstDamage = [damage(SHADOW_BLADES_DAMAGE, 10, BIN_DAMAGE), damage(SHADOW_BLADES_DAMAGE, 11, BIN_DAMAGE), damage(SHADOW_BLADES_DAMAGE, 12, BIN_DAMAGE)];
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.

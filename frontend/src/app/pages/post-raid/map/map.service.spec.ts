@@ -303,8 +303,7 @@ describe('MapFeatureService deferred overlay', () => {
     expect(api.calls).toHaveLength(EXPECTED_FETCH_COUNT);
     // Player casts: own source, positions on, default (Friendlies) hostility.
     expect(api.calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ACTOR_ID, includeResources: true, hostilityType: undefined });
-    // Enemy casts: no source filter, positions on, explicit Enemies hostility (the query
-    // defaults to Friendlies, so an enemy-side fetch without it returns nothing).
+    // Enemy casts: explicit Enemies hostility, since the query defaults to Friendlies.
     expect(api.calls).toContainEqual({ dataType: 'Casts', sourceId: undefined, includeResources: true, hostilityType: 'Enemies' });
     // The boss and add trails come from those enemy casts, so nothing fetches DamageDone.
     expect(api.calls.some(call => call.dataType === 'DamageDone')).toBe(false);
@@ -368,8 +367,7 @@ describe('MapFeatureService deferred overlay', () => {
     service.openAt({ timeS: 1 });
     await settle();
 
-    // The bench loaded fine, but the player's own trail fetch failed: no live overlay,
-    // the spinner clears, and the failure is visible instead of a blank map.
+    // The bench loaded fine, but the player's own trail fetch failed: no live overlay, spinner clears, failure surfaces.
     expect(service.live()).toBeNull();
     expect(service.overlayLoading()).toBe(false);
     const error = service.error();

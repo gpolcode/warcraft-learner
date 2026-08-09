@@ -20,8 +20,7 @@ export function orderSpecsByVersion(
   const group = (entry: SpecOrderEntry): number =>
     entry.dataCount === 0 ? 0 : entry.onCurrentVersion ? 2 : 1;
   const priority = (entry: SpecOrderEntry): number => (entry.spec === PRIORITY_SPEC ? 0 : 1);
-  // One fixed random key per entry keeps the comparator a valid total order (unlike calling
-  // random() inside the comparator), while shuffling entries that tie on group and priority.
+  // One fixed random key per entry keeps the comparator a valid total order, unlike calling random() inside it.
   const shuffleKey = new Map(entries.map(entry => [entry, random()] as const));
   return entries
     .slice()

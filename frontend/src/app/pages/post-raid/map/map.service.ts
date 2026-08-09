@@ -229,8 +229,7 @@ export class MapFeatureService {
       if (overlay) {
         this.error.set(null);
       } else {
-        // The overlay loaded, but the player produced no position samples: an unusable analysis, not
-        // a still-loading map. Surface it as permanent so the map does not sit silently on bench trails.
+        // The overlay loaded with no position samples for the player: surface as permanent, not a still-loading map.
         const failure = permanent('No position data for you in this pull.', 'map.no-player-positions');
         if (!failure.ok && failure.error.kind === 'permanent') {
           logWarn(failure.error.id, failure.error.context);

@@ -250,7 +250,6 @@ describe('checkGaps', () => {
 describe('checkCastEfficiency', () => {
   const FIGHT_DUR_S = 120;
   // bench(): top_avg_efficiency 90%, top_efficiency_stddev 3% -> warn strictly below 87% (top - 1 sigma).
-  // efficiency% = (1 - idleS / FIGHT_DUR_S) * 100. Each idle span is a single gap > the 1.5s downtime floor.
   const IDLE_BELOW_BAND_S = 20;   // -> 83.3%, below the 87% warn threshold
   const IDLE_FAR_BELOW_S = 60;    // -> 50%, far below the band
   const IDLE_ABOVE_AVG_S = 1.6; // just over the 1.5s downtime floor -> 98.7%, above top avg

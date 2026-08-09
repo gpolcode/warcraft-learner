@@ -23,8 +23,7 @@ export interface CurrentContent {
   protectedIds: Set<number>;
 }
 
-// BudgetExceeded propagates (a clean stop); other per-spec probe errors are logged and
-// treated as zero so one flaky spec cannot sink a live zone.
+// BudgetExceeded propagates (a clean stop); other per-spec probe errors are logged as zero so one flaky spec can't sink a live zone.
 async function isZoneLive(client: WclQueryClient, zoneEncounters: IngestEncounter[], specWcl: SpecWclMap): Promise<boolean> {
   const probeEncounter = zoneEncounters[0];
   if (!probeEncounter) return false;

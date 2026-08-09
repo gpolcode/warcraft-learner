@@ -7,8 +7,7 @@ import { WclFight } from '../../../core/models/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 
-// All wall-clock fields are unix-epoch milliseconds: recorder and WCL timeline share one clock, so
-// `report.startTime + fight.startTime` maps directly onto a segment's `start`/`end` with no skew term.
+// All wall-clock fields are unix-epoch milliseconds, so `report.startTime + fight.startTime` maps directly onto a segment.
 
 export interface CaptureProfile {
   codec: 'vp9' | 'vp8';
