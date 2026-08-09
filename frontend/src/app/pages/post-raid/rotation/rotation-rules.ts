@@ -1059,7 +1059,7 @@ export function ruleThreshold(
   return { threshold: { value, band }, sample_count: measured.length };
 }
 
-/** A stack floor that rounds to zero is one no cast can fall under, so keeping the rule would list every player as on plan without judging anything. */
+/** A floor no cast can fall under would list every player on plan for a rule it never tested. */
 function benchCanFlag(cond: RuleCondition, threshold: RuleThreshold): boolean {
   if (cond.kind !== 'spend_at_stacks' || cond.bound !== 'min') return true;
   return boundLimit(WHOLE_STEPS, 'min', threshold) > 0;

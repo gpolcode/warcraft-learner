@@ -706,8 +706,8 @@ describe('evaluateSpendAtStacks', () => {
 
   it('benches a real floor from a parse that never spent cheap, and a floor of zero from one that did', () => {
     const disciplined = ruleCtx([cast(LIGHTNING_BOLT, holding(8)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    // A cast before the buff's first application reads zero stacks, which is the floor the whole parse then benches.
-    const oneCheapCast = ruleCtx([cast(LIGHTNING_BOLT, 0.5), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
+    const BEFORE_FIRST_STACK_S = 0.5;
+    const oneCheapCast = ruleCtx([cast(LIGHTNING_BOLT, BEFORE_FIRST_STACK_S), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
     expect(measureRule(spendAtStacks, disciplined)).toBe(8);
     expect(measureRule(spendAtStacks, oneCheapCast)).toBe(0);
   });
