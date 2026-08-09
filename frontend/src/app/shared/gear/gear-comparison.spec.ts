@@ -309,11 +309,9 @@ const TALENTS: SpecTalents = {
   22: { name: 'Beta', icon: 'icon_b', spellId: 222 },
   33: { name: 'Gamma', icon: 'icon_c', spellId: 333 },
   44: { name: 'Hero Tree', icon: '' },
-  // A tiered slot: three alike-named entries worth 1, 2 and 1 of the slot's 4 points.
   55: { name: 'Tiered', icon: 'icon_t', spellId: 551 },
   56: { name: 'Tiered', icon: 'icon_t', spellId: 552 },
   57: { name: 'Tiered', icon: 'icon_t', spellId: 553 },
-  // A choice slot naming both of its entries alike.
   66: { name: 'Twin', icon: 'icon_w', spellId: 661 },
   67: { name: 'Twin', icon: 'icon_w', spellId: 662 },
 };
