@@ -4,16 +4,17 @@ const BANNED = [
   { char: '—', label: 'em dash (U+2014)' },
   { char: '–', label: 'en dash (U+2013)' },
   { char: '−', label: 'minus sign (U+2212)' },
+  { char: '·', label: 'middle dot (U+00B7)' },
 ];
 
 /** @type {import('eslint').Rule.RuleModule} */
 export default {
   meta: {
     type: 'problem',
-    docs: { description: 'disallow em dash, en dash, and Unicode minus characters anywhere in the file' },
+    docs: { description: 'disallow em dash, en dash, minus sign, and middle dot characters anywhere in the file' },
     schema: [],
     messages: {
-      banned: 'Found a {{label}}. CLAUDE.md bans these everywhere - use a plain ASCII hyphen (-) or rephrase.',
+      banned: 'Found a {{label}}. CLAUDE.md bans these everywhere - use a plain ASCII character or rephrase.',
     },
   },
   create(context) {

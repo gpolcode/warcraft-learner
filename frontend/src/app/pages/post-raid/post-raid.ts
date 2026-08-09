@@ -369,7 +369,7 @@ export class PostRaidComponent {
       this.playerControl.setValue(pickLivePlayerId(visible, currentName));
       await this.resolveSelection();
       if (this._pollSuperseded(code)) return;
-      this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} · ${latest.name}`);
+      this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} - ${latest.name}`);
     } catch (err) {
       logWarn('PostRaidComponent._pollOnce', err);
       if (this._pollSuperseded(code)) return;
