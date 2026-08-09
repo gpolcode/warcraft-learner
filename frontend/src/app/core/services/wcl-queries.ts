@@ -21,7 +21,7 @@ export const REPORT_Q = `
 query($code:String!){reportData{report(code:$code){
   title
   startTime
-  fights(killType:All){id name startTime endTime kill encounterID friendlyPlayers fightPercentage}
+  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage}
   masterData{
     actors(type:"Player"){id name subType server}
     enemies:actors(type:"NPC"){id name gameID}
@@ -31,7 +31,7 @@ query($code:String!){reportData{report(code:$code){
 
 export const REPORT_FIGHTS_Q = `
 query($code:String!){reportData{report(code:$code){
-  fights(killType:All){id name startTime endTime kill encounterID friendlyPlayers fightPercentage}
+  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage}
 }}}`;
 
 export const PLAYER_DETAILS_Q = `
