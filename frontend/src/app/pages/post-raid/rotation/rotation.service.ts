@@ -310,9 +310,14 @@ export function partitionRotationFindings(findings: AnalysisFinding[]): Partitio
   return { ruleFindings, byName, successNames };
 }
 
+/** Rule and cd findings share the 5-value `AnalysisFinding['severity']`; row severity keeps only its 3 renderable tiers. */
+function rowSeverity(severity: AnalysisFinding['severity']): RotationFindingRow['severity'] {
+  return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
+}
+
 export function buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingRow[] {
   return ruleFindings.map(finding => ({
-    severity: finding.severity === 'critical' ? 'critical' : finding.severity === 'info' ? 'info' : 'warning',
+    severity: rowSeverity(finding.severity),
     name: '',
     icon: '',
     what: finding.label,
@@ -335,7 +340,7 @@ export function buildOffensiveRows(
     const { spellId, icon, rowName } = resolveCd(name, cdSpellIds, abilities);
     for (const finding of [...bucket.issues, ...bucket.holds]) {
       offensiveRows.push({
-        severity: finding.severity === 'critical' ? 'critical' : 'warning',
+        severity: rowSeverity(finding.severity),
         name: rowName,
         spellId,
         icon,
