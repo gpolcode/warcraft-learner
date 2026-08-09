@@ -76,11 +76,13 @@ export default defineConfig([
   {
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
+    plugins: { local },
     rules: {
       '@angular-eslint/template/prefer-control-flow': 'error', // native @if/@for/@switch over *ngIf/*ngFor
       // Keep strict equality, but allow the deliberate `x != null` / `x == null`
       // idiom (matches both null and undefined) the templates use for optional fields.
       '@angular-eslint/template/eqeqeq': ['error', { allowNullOrUndefined: true }],
+      'local/single-line-comment': 'error',
     },
   },
 ]);
