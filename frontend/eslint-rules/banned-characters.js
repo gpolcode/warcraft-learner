@@ -14,7 +14,7 @@ export default {
     docs: { description: 'disallow em dash, en dash, minus sign, and middle dot characters anywhere in the file' },
     schema: [],
     messages: {
-      banned: 'Found a {{label}}. CLAUDE.md bans these everywhere - use a plain ASCII character or rephrase.',
+      banned: 'Found a {{label}}. AGENTS.md bans these everywhere - use a plain ASCII character or rephrase.',
     },
   },
   create(context) {

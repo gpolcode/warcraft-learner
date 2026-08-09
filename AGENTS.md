@@ -4,7 +4,7 @@ A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs c
 
 ## How this file works
 
-This file is the always-on **router**: the few rules that apply on every turn, the commands, and a table that tells you which **skill** to load before each kind of work. The detailed conventions live in skills under `.claude/skills/` and load **on demand** - a skill is matched by its `description`, so each task only pulls in the context it needs. Load the matching skill before you start; do not work from memory of a topic that has a skill.
+This file is the always-on **router**: the few rules that apply on every turn, the commands, and a table that tells you which **skill** to load before each kind of work. The detailed conventions live in skills under `.agents/skills/` and load **on demand** - Copilot matches a skill's `description` against the task, so each task only pulls in the context it needs. Load the matching skill before you start; do not work from memory of a topic that has a skill.
 
 ## Always-on rules
 
@@ -34,8 +34,8 @@ frontend/        # the entire Angular 22 app
   e2e/           # Playwright happy-path suite (one WCL analysis per run)
   public/data/specs/  # static ingested data - not tracked on main; lives on gh-pages
 .github/workflows/  # deploy-pages, ingest-parses (hourly), test, e2e
-.claude/agents/   # rulebook-author.md - the isolated per-spec authoring worker
-.claude/skills/   # on-demand skills (see the router below)
+.github/agents/   # rulebook-author.agent.md - the isolated per-spec authoring worker
+.agents/skills/   # on-demand skills (see the router below)
 ```
 
 ## Commands (run from `frontend/`)
@@ -53,7 +53,7 @@ frontend/        # the entire Angular 22 app
 
 ## Development workflow router
 
-Load the matching skill(s) **before** you start that step. The `warcraft-*` skills are this project's rules; `angular-developer` is the generic Angular reference (project rules win on conflict). A skill loads automatically once its `description` matches the task, or you can name it explicitly - either way, load it before starting the row's work, not from memory.
+Load the matching skill(s) **before** you start that step. The `warcraft-*` skills are this project's rules; `angular-developer` is the generic Angular reference (project rules win on conflict). Copilot loads a skill automatically once its `description` matches the task, or you can select it explicitly from the `/` menu - either way, load it before starting the row's work, not from memory.
 
 | When you are... | Load |
 |---|---|
