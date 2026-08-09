@@ -4,8 +4,11 @@ import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
 import singleLineComment from './eslint-rules/single-line-comment.js';
+import noBannedDashCharacters from './eslint-rules/no-banned-dash-characters.js';
 
-const local = { rules: { 'single-line-comment': singleLineComment } };
+const local = {
+  rules: { 'single-line-comment': singleLineComment, 'no-banned-dash-characters': noBannedDashCharacters },
+};
 
 export default defineConfig([
   {
@@ -22,6 +25,7 @@ export default defineConfig([
       // Empty private constructors are the idiomatic "force the static factory" guard.
       '@typescript-eslint/no-empty-function': ['error', { allow: ['private-constructors'] }],
       'local/single-line-comment': 'error',
+      'local/no-banned-dash-characters': 'error',
     },
   },
   {
@@ -71,6 +75,7 @@ export default defineConfig([
     rules: {
       'no-console': 'off',
       'local/single-line-comment': 'error',
+      'local/no-banned-dash-characters': 'error',
     },
   },
   {
@@ -83,6 +88,7 @@ export default defineConfig([
       // idiom (matches both null and undefined) the templates use for optional fields.
       '@angular-eslint/template/eqeqeq': ['error', { allowNullOrUndefined: true }],
       'local/single-line-comment': 'error',
+      'local/no-banned-dash-characters': 'error',
     },
   },
 ]);
