@@ -10,7 +10,7 @@ import { LatestLoad } from '../../../shared/latest-load';
 import { NorthernSkyBench } from './northern-sky-data-source';
 import {
   NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
-  toggleExclusion, toggleAllExclusion,
+  toggleExclusion, toggleAllExclusion, isPanelOpen,
 } from './northern-sky.service';
 
 @Component({
@@ -39,6 +39,7 @@ export class NorthernSkyExportComponent {
   protected readonly defensives = computed(() => this.grouped().defensives);
   protected readonly available = computed(() => this.abilities().length > 0);
   protected readonly allSelected = computed(() => isAllSelected(this.abilities(), this.excluded()));
+  protected readonly panelOpen = computed(() => isPanelOpen(this.open(), this.available()));
 
   private readonly loader = new LatestLoad();
 
