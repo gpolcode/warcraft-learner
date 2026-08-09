@@ -310,7 +310,6 @@ export function partitionRotationFindings(findings: AnalysisFinding[]): Partitio
   return { ruleFindings, byName, successNames };
 }
 
-/** Rule and cd findings share the 5-value `AnalysisFinding['severity']`; row severity keeps only its 3 renderable tiers. */
 function rowSeverity(severity: AnalysisFinding['severity']): RotationFindingRow['severity'] {
   return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
 }
