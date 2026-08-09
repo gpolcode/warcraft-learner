@@ -18,7 +18,6 @@ export default defineConfig([
     extends: [eslint.configs.recommended, tseslint.configs.recommended, tseslint.configs.stylistic],
     plugins: { local },
     rules: {
-      // Style-guide enforcement (mapped from the former frontend/.claude/CLAUDE.md).
       '@typescript-eslint/no-explicit-any': 'error', // ban `any`, use `unknown`
       // Allow the underscore-prefix convention for deliberately-unused args/vars.
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],

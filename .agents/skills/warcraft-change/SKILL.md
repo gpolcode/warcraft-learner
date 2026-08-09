@@ -29,7 +29,7 @@ Deliver: the pure check in the slice's colocated functions, a `FindingOccurrence
 
 ### New rule-engine kind
 
-Deliver: the kind's block in `RULE_KINDS` (`rotation-rules.ts` - streams, measure, evaluator, applicability, label; the mapped type will not compile with one missing), per-instance `occurrences` on the finding (extend `evaluateBoundedPerCast` or `fillerOccurrences` before writing a bespoke builder), boundary-paired specs. The kind must also be declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`) - bump `INGEST_VERSION`.
+Deliver: the kind's block in `RULE_KINDS` (`rotation-rules.ts` - streams, measure, evaluator, applicability, label; the mapped type will not compile with one missing), per-instance `occurrences` on the finding (extend `evaluateBoundedPerCast` or `fillerOccurrences` before writing a bespoke builder), boundary-paired specs. The kind must also be declared in the rulebook schema (`.agents/skills/warcraft-rulebook/rulebook.schema.json`) - bump `INGEST_VERSION`.
 
 ### New vertical slice
 

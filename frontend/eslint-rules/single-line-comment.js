@@ -1,7 +1,7 @@
 // @ts-check
 
 const MESSAGE =
-  'Comments must fit on a single line. Re-read the comment rule in CLAUDE.md (the mistake test) before adding this back.';
+  'Comments must fit on a single line. Re-read the comment rule in AGENTS.md (the mistake test) before adding this back.';
 
 function isOwnLine(sourceCode, comment) {
   const linesBefore = sourceCode.lines[comment.loc.start.line - 1].slice(0, comment.loc.start.column);
