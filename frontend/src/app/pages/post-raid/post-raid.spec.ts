@@ -76,13 +76,13 @@ describe('isValidReportCode', () => {
 });
 
 describe('isKeystoneReport', () => {
-  const KEYSTONE_LEVEL = 23;          // a real observed +23 run
-  const DUNGEON_ENCOUNTER_ID = 112526; // Algeth'ar Academy, a Mythic+ dungeon encounter
-  const RAID_ENCOUNTER_ID = 3176;      // Imperator Averzian, a raid boss
+  const KEYSTONE_LEVEL = 23;
+  const DUNGEON_ENCOUNTER_ID = 112526;
+  const RAID_ENCOUNTER_ID = 3176;
 
   it('reports a keystone run from the one dungeon-boss fight that carries a level', () => {
     expect(isKeystoneReport([
-      fight({ id: 1, encounterID: 0 }), // the run's trash segment: no keystone level
+      fight({ id: 1, encounterID: 0 }),
       fight({ id: 2, encounterID: DUNGEON_ENCOUNTER_ID, keystoneLevel: KEYSTONE_LEVEL }),
     ])).toBe(true);
   });
@@ -454,7 +454,6 @@ describe('PostRaidComponent keystone report', () => {
     expect((vm['notice'] as () => string)()).toBe(MYTHIC_PLUS_NOTICE);
     expect((vm['fights'] as () => WclFight[])()).toEqual([]);
     expect((vm['players'] as () => WclPlayer[])()).toEqual([]);
-    // Empty report code: no card ever mounts, and live sync has nothing to poll.
     expect((vm['reportCode'] as () => string)()).toBe('');
     expect(getPlayerDetails).not.toHaveBeenCalled();
     expect((vm['loadingReport'] as () => boolean)()).toBe(false);

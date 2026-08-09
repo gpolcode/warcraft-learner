@@ -58,7 +58,6 @@ export function isValidReportCode(code: string): boolean {
 
 export const MYTHIC_PLUS_NOTICE = 'Mythic+ runs are not supported. Paste a raid report.';
 
-// Only the dungeon-boss fights of a keystone run carry `keystoneLevel`; its trash segments leave it null.
 export function isKeystoneReport(fights: WclReport['fights'] = []): boolean {
   return (fights || []).some(f => (f.keystoneLevel ?? 0) > 0);
 }
@@ -318,7 +317,6 @@ export class PostRaidComponent {
       this.loadingMsg.set('Fetching report from Warcraft Logs…');
       const report = await this.wclApi.getReport(code);
       if (seq !== this._loadSeq) return;
-      // Before _applyReport, so the fight and player dropdowns never populate for a run nothing downstream analyzes.
       if (isKeystoneReport(report.fights)) { this.notice.set(MYTHIC_PLUS_NOTICE); return; }
       this._applyReport(report);
 
