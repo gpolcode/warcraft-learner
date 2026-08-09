@@ -48,7 +48,6 @@ export class FindingOccurrencesComponent {
     return `${this.instanceId}-opt-${index}`;
   }
 
-  /** Lets the active option's aria-describedby point screen readers at the detail sentence below the strip. */
   readonly detailId = `${this.instanceId}-detail`;
 
   // The listbox keeps focus; aria-activedescendant points screen readers at the active chip.
