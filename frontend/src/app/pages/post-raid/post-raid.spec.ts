@@ -5,6 +5,8 @@ import { TestBed } from '@angular/core/testing';
 import { EMPTY, Subscription } from 'rxjs';
 import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../../core/models/wcl.models';
 import { WclApiService } from '../../core/services/wcl-api';
+import { DataFileApiService } from '../../core/services/data-file-api';
+import { ok } from '../../core/result';
 import { SelectionStore } from '../../core/services/selection-store';
 import { LiveReportSyncService } from '../../core/services/live-report-sync';
 import { MapFeatureService } from './map/map.service';
@@ -12,7 +14,7 @@ import { LiveCaptureFeatureService } from './live/live-capture.service';
 import {
   PostRaidComponent,
   specOf, extractCode, extractFightId, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId,
-  livePollActionOf, isKeystoneReport, MYTHIC_PLUS_NOTICE,
+  livePollActionOf, isIngestedEncounter, unsupportedEncounterNotice,
 } from './post-raid';
 
 function fight(p: Partial<WclFight>): WclFight {
@@ -20,6 +22,11 @@ function fight(p: Partial<WclFight>): WclFight {
 }
 function player(p: Partial<WclPlayer>): WclPlayer {
   return { id: 0, name: '', spec: '', server: '', ...p };
+}
+function ingestedFiles(encounterIds: number[]): DataFileApiService {
+  return {
+    getEncounters: () => Promise.resolve(ok(encounterIds.map(id => ({ id, name: '', sample_count: 1 })))),
+  } as unknown as DataFileApiService;
 }
 
 describe('extractCode', () => {
@@ -75,28 +82,25 @@ describe('isValidReportCode', () => {
   });
 });
 
-describe('isKeystoneReport', () => {
-  const KEYSTONE_LEVEL = 23;
-  const DUNGEON_ENCOUNTER_ID = 112526;
+describe('isIngestedEncounter', () => {
   const RAID_ENCOUNTER_ID = 3176;
+  const DUNGEON_ENCOUNTER_ID = 112526;
+  const ingested = [{ id: RAID_ENCOUNTER_ID, name: 'Vorasius', sample_count: 12 }];
 
-  it('reports a keystone run from the one dungeon-boss fight that carries a level', () => {
-    expect(isKeystoneReport([
-      fight({ id: 1, encounterID: 0 }),
-      fight({ id: 2, encounterID: DUNGEON_ENCOUNTER_ID, keystoneLevel: KEYSTONE_LEVEL }),
-    ])).toBe(true);
+  it('accepts an encounter the spec has ingested data for', () => {
+    expect(isIngestedEncounter(ingested, RAID_ENCOUNTER_ID)).toBe(true);
   });
 
-  it('does not report a raid log, where no fight carries a keystone level', () => {
-    expect(isKeystoneReport([
-      fight({ id: 1, encounterID: 0 }),
-      fight({ id: 2, encounterID: RAID_ENCOUNTER_ID, keystoneLevel: null }),
-    ])).toBe(false);
+  it('accepts an ingested encounter that has no samples yet', () => {
+    expect(isIngestedEncounter([{ id: RAID_ENCOUNTER_ID, name: 'Vorasius', sample_count: 0 }], RAID_ENCOUNTER_ID)).toBe(true);
   });
 
-  it('handles a missing/empty fight list', () => {
-    expect(isKeystoneReport(undefined)).toBe(false);
-    expect(isKeystoneReport([])).toBe(false);
+  it('rejects an encounter outside the ingested set', () => {
+    expect(isIngestedEncounter(ingested, DUNGEON_ENCOUNTER_ID)).toBe(false);
+  });
+
+  it('rejects everything when the spec has no ingested encounters', () => {
+    expect(isIngestedEncounter([], RAID_ENCOUNTER_ID)).toBe(false);
   });
 });
 
@@ -254,6 +258,7 @@ describe('specOf', () => {
 
 describe('PostRaidComponent sticky player name', () => {
   const REPORT_CODE = 'grBQ3vTHXAtPa4JK';                         // a valid 16-character report code
+  const BOSS_ENCOUNTER_ID = 3176;
   const ABSENT_STICKY_NAME = 'Ghost';                            // a sticky character not present in the loaded report
   const FALLBACK_PLAYER = { id: 1, name: 'Anya', spec: 'SubtletyRogue' }; // alphabetically first -> the auto-select fallback
   const PICKED_PLAYER = { id: 2, name: 'Bram', spec: 'FrostMage' };       // the player the user explicitly switches to
@@ -269,7 +274,7 @@ describe('PostRaidComponent sticky player name', () => {
     return {
       title: 'Test', startTime: 0,
       fights: [fight({
-        id: 10, name: 'Boss', encounterID: 100, startTime: 0, endTime: 10_000, kill: true,
+        id: 10, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 0, endTime: 10_000, kill: true,
         friendlyPlayers: [FALLBACK_PLAYER.id, PICKED_PLAYER.id],
       })],
       masterData: {
@@ -295,6 +300,7 @@ describe('PostRaidComponent sticky player name', () => {
         provideZonelessChangeDetection(),
         PostRaidComponent,
         { provide: WclApiService, useValue: wclApi },
+        { provide: DataFileApiService, useValue: ingestedFiles([BOSS_ENCOUNTER_ID]) },
         { provide: MapFeatureService, useValue: mapFeature },
         { provide: LiveCaptureFeatureService, useValue: liveCapture },
         { provide: LiveReportSyncService, useValue: liveSync },
@@ -339,6 +345,7 @@ describe('PostRaidComponent sticky player name', () => {
 
 describe('PostRaidComponent fight selection from URL', () => {
   const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
+  const BOSS_ENCOUNTER_ID = 3176;
   const EARLIER_FIGHT_ID = 10;
   const LATEST_FIGHT_ID = 12;
   const PLAYER = { id: 1, name: 'Anya', spec: 'SubtletyRogue' };
@@ -351,8 +358,8 @@ describe('PostRaidComponent fight selection from URL', () => {
     return {
       title: 'Test', startTime: 0,
       fights: [
-        fight({ id: EARLIER_FIGHT_ID, name: 'Boss', encounterID: 100, startTime: 0, endTime: 10_000, friendlyPlayers: [PLAYER.id] }),
-        fight({ id: LATEST_FIGHT_ID, name: 'Boss', encounterID: 100, startTime: 20_000, endTime: 30_000, friendlyPlayers: [PLAYER.id] }),
+        fight({ id: EARLIER_FIGHT_ID, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 0, endTime: 10_000, friendlyPlayers: [PLAYER.id] }),
+        fight({ id: LATEST_FIGHT_ID, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 20_000, endTime: 30_000, friendlyPlayers: [PLAYER.id] }),
       ],
       masterData: { actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }], enemies: [], abilities: [] },
     };
@@ -374,6 +381,7 @@ describe('PostRaidComponent fight selection from URL', () => {
         provideZonelessChangeDetection(),
         PostRaidComponent,
         { provide: WclApiService, useValue: wclApi },
+        { provide: DataFileApiService, useValue: ingestedFiles([BOSS_ENCOUNTER_ID]) },
         { provide: MapFeatureService, useValue: mapFeature },
         { provide: LiveCaptureFeatureService, useValue: liveCapture },
         { provide: LiveReportSyncService, useValue: liveSync },
@@ -408,19 +416,24 @@ describe('PostRaidComponent fight selection from URL', () => {
   });
 });
 
-describe('PostRaidComponent keystone report', () => {
+describe('PostRaidComponent unsupported encounter', () => {
   const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
-  const KEYSTONE_LEVEL = 23;
-  const DUNGEON_ENCOUNTER_ID = 112526;
+  const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: 3176 };
+  const DUNGEON_FIGHT = { id: 2, name: 'Nexus-Point Xenas', encounterID: 112526 };
   const PLAYER = { id: 1, name: 'Anya', spec: 'Rogue' };
+  const EXPECTED_SPEC = 'SubtletyRogue';
 
-  function keystoneReport(): WclReport {
+  const groups: PlayerDetailGroups = {
+    dps: [{ id: PLAYER.id, type: 'Rogue', name: PLAYER.name, specs: [{ spec: 'Subtlety' }] }],
+  };
+
+  function mixedReport(): WclReport {
     return {
-      title: 'Mythic+ Season 1', startTime: 0,
-      fights: [fight({
-        id: 2, name: "Algeth'ar Academy", encounterID: DUNGEON_ENCOUNTER_ID, keystoneLevel: KEYSTONE_LEVEL,
-        startTime: 0, endTime: 10_000, kill: true, friendlyPlayers: [PLAYER.id],
-      })],
+      title: 'Mixed night', startTime: 0,
+      fights: [
+        fight({ ...DUNGEON_FIGHT, startTime: 0, endTime: 10_000, kill: true, friendlyPlayers: [PLAYER.id] }),
+        fight({ ...RAID_FIGHT, startTime: 20_000, endTime: 30_000, kill: true, friendlyPlayers: [PLAYER.id] }),
+      ],
       masterData: {
         actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }],
         enemies: [], abilities: [],
@@ -428,35 +441,72 @@ describe('PostRaidComponent keystone report', () => {
     };
   }
 
-  function mount(): { vm: Record<string, unknown>; getPlayerDetails: ReturnType<typeof vi.fn> } {
-    const getPlayerDetails = vi.fn();
-    const wclApi = { getReport: () => Promise.resolve(keystoneReport()), getPlayerDetails } as unknown as WclApiService;
+  function mount(): { vm: Record<string, unknown>; prepareMap: ReturnType<typeof vi.fn> } {
+    const wclApi = {
+      getReport: () => Promise.resolve(mixedReport()),
+      getPlayerDetails: () => Promise.resolve(groups),
+    } as unknown as WclApiService;
+    const prepareMap = vi.fn(() => Promise.resolve());
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         PostRaidComponent,
         { provide: WclApiService, useValue: wclApi },
-        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: vi.fn(() => Promise.resolve()), ready: () => false, openAt: vi.fn() } },
+        { provide: DataFileApiService, useValue: ingestedFiles([RAID_FIGHT.encounterID]) },
+        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: prepareMap, ready: () => false, openAt: vi.fn() } },
         { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
         { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
         { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
       ],
     });
-    return { vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown>, getPlayerDetails };
+    return { vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown>, prepareMap };
   }
 
-  it('stops at the notice and loads nothing further for a Mythic+ run', async () => {
-    const { vm, getPlayerDetails } = mount();
+  async function selectFight(vm: Record<string, unknown>, fightId: number): Promise<void> {
+    (vm['fightControl'] as FormControl<number | null>).setValue(fightId);
+    await (vm['onFightChange'] as () => Promise<void>)();
+  }
+
+  async function load(vm: Record<string, unknown>): Promise<void> {
     (vm['reportControl'] as FormControl<string>).setValue(REPORT_CODE);
-
     await (vm['loadReport'] as () => Promise<void>)();
+  }
 
-    expect((vm['notice'] as () => string)()).toBe(MYTHIC_PLUS_NOTICE);
-    expect((vm['fights'] as () => WclFight[])()).toEqual([]);
-    expect((vm['players'] as () => WclPlayer[])()).toEqual([]);
-    expect((vm['reportCode'] as () => string)()).toBe('');
-    expect(getPlayerDetails).not.toHaveBeenCalled();
-    expect((vm['loadingReport'] as () => boolean)()).toBe(false);
+  it('lists the keystone fight and analyzes the raid pull the report also holds', async () => {
+    const { vm, prepareMap } = mount();
+
+    await load(vm);
+
+    expect((vm['fights'] as () => WclFight[])().map(f => f.id)).toEqual([DUNGEON_FIGHT.id, RAID_FIGHT.id]);
+    expect((vm['selectedFightId'] as () => number | null)()).toBe(RAID_FIGHT.id);
+    expect((vm['spec'] as () => string)()).toBe(EXPECTED_SPEC);
+    expect((vm['notice'] as () => string)()).toBe('');
+    expect(prepareMap).toHaveBeenCalled();
+  });
+
+  it('stops at the notice and prepares nothing when an unbenched encounter is selected', async () => {
+    const { vm, prepareMap } = mount();
+    await load(vm);
+    prepareMap.mockClear();
+
+    await selectFight(vm, DUNGEON_FIGHT.id);
+
+    expect((vm['notice'] as () => string)()).toBe(unsupportedEncounterNotice(DUNGEON_FIGHT.name));
+    expect((vm['spec'] as () => string)()).toBe('');
+    expect((vm['ready'] as () => boolean)()).toBe(false);
+    expect(prepareMap).not.toHaveBeenCalled();
+    expect((vm['loadingAnalysis'] as () => boolean)()).toBe(false);
+  });
+
+  it('clears the notice when the selection moves back to a supported encounter', async () => {
+    const { vm } = mount();
+    await load(vm);
+    await selectFight(vm, DUNGEON_FIGHT.id);
+
+    await selectFight(vm, RAID_FIGHT.id);
+
+    expect((vm['notice'] as () => string)()).toBe('');
+    expect((vm['spec'] as () => string)()).toBe(EXPECTED_SPEC);
   });
 });
 
@@ -508,6 +558,7 @@ describe('PostRaidComponent live-sync poll', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: WclApiService, useValue: wcl },
+        { provide: DataFileApiService, useValue: ingestedFiles([BOSS_ENCOUNTER_ID]) },
         { provide: MapFeatureService, useValue: mapFeature },
         { provide: SelectionStore, useValue: selectionStore },
         { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
@@ -634,6 +685,7 @@ describe('PostRaidComponent loadReport latest-wins', () => {
         provideZonelessChangeDetection(),
         PostRaidComponent,
         { provide: WclApiService, useValue: api },
+        { provide: DataFileApiService, useValue: ingestedFiles([ENCOUNTER_ID]) },
         { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: vi.fn(() => Promise.resolve()), ready: () => false, openAt: vi.fn() } },
         { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
         { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },

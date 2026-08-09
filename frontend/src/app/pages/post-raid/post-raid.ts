@@ -12,8 +12,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { WclApiService } from '../../core/services/wcl-api';
+import { DataFileApiService } from '../../core/services/data-file-api';
 import { LiveReportSyncService, POLL_INTERVAL_S } from '../../core/services/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups } from '../../core/models/wcl.models';
+import { EncounterEntry } from '../../core/models/encounter.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -56,10 +58,12 @@ export function isValidReportCode(code: string): boolean {
   return /^[a-zA-Z0-9]{16}$/.test(code);
 }
 
-export const MYTHIC_PLUS_NOTICE = 'Mythic+ runs are not supported. Paste a raid report.';
+export function unsupportedEncounterNotice(fightName: string): string {
+  return `${fightName} is not supported. Pick a current-tier raid boss.`;
+}
 
-export function isKeystoneReport(fights: WclReport['fights'] = []): boolean {
-  return (fights || []).some(f => (f.keystoneLevel ?? 0) > 0);
+export function isIngestedEncounter(entries: EncounterEntry[], encounterId: number): boolean {
+  return entries.some(entry => entry.id === encounterId);
 }
 
 export function buildFights(fights: WclReport['fights'] = []): WclFight[] {
@@ -154,6 +158,7 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
 })
 export class PostRaidComponent {
   private readonly wclApi = inject(WclApiService);
+  private readonly files = inject(DataFileApiService);
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
@@ -285,7 +290,7 @@ export class PostRaidComponent {
   }
 
   // Folding `missing` to the notice keeps the shell exhaustive over the taxonomy without leaking a raw string.
-  private _showError(result: Result<never, LoadError>): void {
+  private _showError(result: Result<unknown, LoadError>): void {
     if (result.ok) return; // toLoadError / permanent never return ok; this narrows the union
     if (result.error.kind === 'missing') this.notice.set(result.error.message);
     else this.loadError.set(result.error);
@@ -317,7 +322,6 @@ export class PostRaidComponent {
       this.loadingMsg.set('Fetching report from Warcraft Logs…');
       const report = await this.wclApi.getReport(code);
       if (seq !== this._loadSeq) return;
-      if (isKeystoneReport(report.fights)) { this.notice.set(MYTHIC_PLUS_NOTICE); return; }
       this._applyReport(report);
 
       const requestedId = extractFightId(rawInput);
@@ -411,6 +415,7 @@ export class PostRaidComponent {
     this.mapFeature.clear();
     this.liveCapture.clear();
     if (!fightId || !playerId) return;
+    this.notice.set('');
 
     this.loadingAnalysis.set(true);
     this.loadingMsg.set('Fetching player data from Warcraft Logs…');
@@ -420,6 +425,14 @@ export class PostRaidComponent {
       const spec = specOf(groups, playerId);
       // Unmappable spec is a semantic dead end, not retriable: permanent, not transient.
       if (!spec) { this._showError(permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return; }
+
+      const fight = this.fights().find(f => f.id === fightId);
+      const encounters = await this.files.getEncounters(spec);
+      if (!encounters.ok) { this._showError(encounters); return; }
+      if (!isIngestedEncounter(encounters.value, fight?.encounterID ?? 0)) {
+        this.notice.set(unsupportedEncounterNotice(fight?.name ?? ''));
+        return;
+      }
       this.spec.set(spec);
 
       // Marks every card busy before they mount/reload, so the spinner stays up with no gap where the cards render empty.
@@ -430,7 +443,6 @@ export class PostRaidComponent {
       this.gearBusy.set(true);
       this.loadingMsg.set('Fetching analysis data from Warcraft Logs…');
 
-      const fight = this.fights().find(f => f.id === fightId);
       if (fight) {
         void this.mapFeature.prepare(this.reportCode(), fight, playerId, spec, this._enemies);
         this.liveCapture.prepare(this.reportCode(), this.reportStartTime(), fight);
