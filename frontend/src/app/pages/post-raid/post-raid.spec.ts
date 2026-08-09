@@ -12,7 +12,7 @@ import { LiveCaptureFeatureService } from './live/live-capture.service';
 import {
   PostRaidComponent,
   specOf, extractCode, extractFightId, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId,
-  livePollActionOf,
+  livePollActionOf, isKeystoneReport, MYTHIC_PLUS_NOTICE,
 } from './post-raid';
 
 function fight(p: Partial<WclFight>): WclFight {
@@ -72,6 +72,31 @@ describe('isValidReportCode', () => {
 
   it('rejects a 16-character string containing non-alphanumeric characters', () => {
     expect(isValidReportCode('grBQ3vTHXAtPa4J-')).toBe(false);
+  });
+});
+
+describe('isKeystoneReport', () => {
+  const KEYSTONE_LEVEL = 23;          // a real observed +23 run
+  const DUNGEON_ENCOUNTER_ID = 112526; // Algeth'ar Academy, a Mythic+ dungeon encounter
+  const RAID_ENCOUNTER_ID = 3176;      // Imperator Averzian, a raid boss
+
+  it('reports a keystone run from the one dungeon-boss fight that carries a level', () => {
+    expect(isKeystoneReport([
+      fight({ id: 1, encounterID: 0 }), // the run's trash segment: no keystone level
+      fight({ id: 2, encounterID: DUNGEON_ENCOUNTER_ID, keystoneLevel: KEYSTONE_LEVEL }),
+    ])).toBe(true);
+  });
+
+  it('does not report a raid log, where no fight carries a keystone level', () => {
+    expect(isKeystoneReport([
+      fight({ id: 1, encounterID: 0 }),
+      fight({ id: 2, encounterID: RAID_ENCOUNTER_ID, keystoneLevel: null }),
+    ])).toBe(false);
+  });
+
+  it('handles a missing/empty fight list', () => {
+    expect(isKeystoneReport(undefined)).toBe(false);
+    expect(isKeystoneReport([])).toBe(false);
   });
 });
 
@@ -380,6 +405,59 @@ describe('PostRaidComponent fight selection from URL', () => {
     const component = mount();
     await loadReport(component, `https://www.warcraftlogs.com/reports/${REPORT_CODE}#fight=999`);
     expect((component['selectedFightId'] as () => number | null)()).toBe(LATEST_FIGHT_ID);
+  });
+});
+
+describe('PostRaidComponent keystone report', () => {
+  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
+  const KEYSTONE_LEVEL = 23;
+  const DUNGEON_ENCOUNTER_ID = 112526;
+  const PLAYER = { id: 1, name: 'Anya', spec: 'Rogue' };
+
+  function keystoneReport(): WclReport {
+    return {
+      title: 'Mythic+ Season 1', startTime: 0,
+      fights: [fight({
+        id: 2, name: "Algeth'ar Academy", encounterID: DUNGEON_ENCOUNTER_ID, keystoneLevel: KEYSTONE_LEVEL,
+        startTime: 0, endTime: 10_000, kill: true, friendlyPlayers: [PLAYER.id],
+      })],
+      masterData: {
+        actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }],
+        enemies: [], abilities: [],
+      },
+    };
+  }
+
+  function mount(): { vm: Record<string, unknown>; getPlayerDetails: ReturnType<typeof vi.fn> } {
+    const getPlayerDetails = vi.fn();
+    const wclApi = { getReport: () => Promise.resolve(keystoneReport()), getPlayerDetails } as unknown as WclApiService;
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        PostRaidComponent,
+        { provide: WclApiService, useValue: wclApi },
+        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: vi.fn(() => Promise.resolve()), ready: () => false, openAt: vi.fn() } },
+        { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
+        { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
+        { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
+      ],
+    });
+    return { vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown>, getPlayerDetails };
+  }
+
+  it('stops at the notice and loads nothing further for a Mythic+ run', async () => {
+    const { vm, getPlayerDetails } = mount();
+    (vm['reportControl'] as FormControl<string>).setValue(REPORT_CODE);
+
+    await (vm['loadReport'] as () => Promise<void>)();
+
+    expect((vm['notice'] as () => string)()).toBe(MYTHIC_PLUS_NOTICE);
+    expect((vm['fights'] as () => WclFight[])()).toEqual([]);
+    expect((vm['players'] as () => WclPlayer[])()).toEqual([]);
+    // Empty report code: no card ever mounts, and live sync has nothing to poll.
+    expect((vm['reportCode'] as () => string)()).toBe('');
+    expect(getPlayerDetails).not.toHaveBeenCalled();
+    expect((vm['loadingReport'] as () => boolean)()).toBe(false);
   });
 });
 

@@ -10,6 +10,8 @@ export interface WclFight {
   friendlyPlayers: number[];
   /** Boss health % remaining when the pull ended (WCL `fightPercentage`); ~0 on a kill. */
   fightPercentage: number;
+  /** Set only on a Mythic+ dungeon-boss fight; null on every raid fight and on a keystone run's trash. */
+  keystoneLevel?: number | null;
 }
 
 export interface WclPlayer {
