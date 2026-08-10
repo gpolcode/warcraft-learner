@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 
@@ -22,7 +22,11 @@ export class FindingOccurrencesComponent {
   readonly target = input<string>('');
   readonly timeline = input<FindingTimeline | undefined>(undefined);
 
-  private readonly selectedIndex = signal<number | null>(null);
+  // The strip is reused across findings, so a stale manual pick must not survive an occurrences swap.
+  private readonly selectedIndex = linkedSignal<FindingOccurrence[], number | null>({
+    source: this.occurrences,
+    computation: () => null,
+  });
 
   /** Defaults to the first failing instance, so opening a finding points straight at a moment worth reading. */
   private readonly firstBadIndex = computed(() => {
