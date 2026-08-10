@@ -13,7 +13,7 @@ import {
   SHADOW_BLADES_DAMAGE,
 } from '../../../../testing/spell-ids';
 import {
-  cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, refreshDebuff, applyBuffStack, damage, death,
+  cast, applyBuff, removeBuff, buffWindow, applyDebuff, removeDebuff, refreshDebuff, applyBuffStack, damage,
 } from '../../../../testing/builders/events';
 import {
   BenchedRule, RuleContext, RuleStream, RuleThreshold,
@@ -41,14 +41,13 @@ function benched(rule: RulebookRule, threshold: RuleThreshold | null = thr(PAIR_
 
 // Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
 const RULE_FIGHT_END_S = 120;
-interface RuleCtxOverrides { buffs: WclEvent[]; debuffs: WclEvent[]; damage: WclEvent[]; deaths: WclEvent[]; fightDurationS: number }
+interface RuleCtxOverrides { buffs: WclEvent[]; debuffs: WclEvent[]; damage: WclEvent[]; fightDurationS: number }
 function ruleCtx(casts: WclEvent[], over: Partial<RuleCtxOverrides> = {}): RuleContext {
   return buildRuleContext({
     casts: withRelativeS(casts, 0),
     buffs: withRelativeS(over.buffs ?? [], 0),
     debuffs: withRelativeS(over.debuffs ?? [], 0),
     damage: withRelativeS(over.damage ?? [], 0),
-    deaths: withRelativeS(over.deaths ?? [], 0),
     fightDurationS: over.fightDurationS ?? RULE_FIGHT_END_S,
   });
 }
@@ -190,6 +189,19 @@ describe('evaluateCastOutsideBuff', () => {
   it('is not applicable when the judged spell was never cast', () => {
     expect(ruleApplicable(insideDance, ruleCtx([], { buffs: dance }))).toBe(false);
   });
+
+  it('reads an opener cast inside a buff pre-cast before the pull as inside it', () => {
+    const OPENER_S = 2;  // well before DANCE_END_S, inside the back-filled pre-pull window
+    const preCastDance = [removeBuff(SHADOW_DANCE, DANCE_END_S)];
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, OPENER_S)], { buffs: preCastDance });
+    expect(evaluateCastOutsideBuff(insideDance, ctx, FIELD_NEVER, 'warning')).toBeNull();
+  });
+
+  it('still flags a cast made after that pre-cast buff has already fallen', () => {
+    const preCastDance = [removeBuff(SHADOW_DANCE, DANCE_END_S)];
+    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S + 5)], { buffs: preCastDance });
+    expect(evaluateCastOutsideBuff(insideDance, ctx, FIELD_NEVER, 'warning')?.measured?.value).toBe('1 / 1');
+  });
 });
 
 describe('evaluateAuraUptimeBelow', () => {
@@ -221,21 +233,20 @@ describe('evaluateAuraUptimeBelow', () => {
     expect(evaluateAuraUptimeBelow(selfAura, ctx, thr(RUPTURE_MIN_PCT), 'warning')?.measured?.value).toBe(`50 / ${RUPTURE_MIN_PCT}`);
   });
 
-  it('denominates on alive time, so the same 60s of dot reads as full uptime for a player who died at 60s', () => {
-    const DEATH_S = 60;
-    const ctx = ruleCtx([], { debuffs: halfUptime, deaths: [death(DEATH_S)] });
-    expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning')).toBeNull();
+  it('measures uptime over the whole fight, so a 30s dot on a 120s pull reads 25%', () => {
+    // 30 / 120 = 25%.
+    const DOT_END_S = 30;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, DOT_END_S)] });
+    const finding = evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning');
+    expect(finding?.measured).toEqual({ value: `25 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
   });
 
-  it('clamps the dot to alive time, so a dot outliving the player cannot read past 100%', () => {
-    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 115)], deaths: [death(60)] });
-    expect(measureRule(ruptureUptime, ctx)).toBe(100);
-  });
-
-  it('stays silent on a debuff applied before the pull, which arrives as a lone remove', () => {
-    const ctx = ruleCtx([], { debuffs: [removeDebuff(RUPTURE, 20)] });
-    expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning')).toBeNull();
-    expect(ruleApplicable(ruptureUptime, ctx)).toBe(false);
+  it('reads a debuff applied before the pull as up from fight start, since it arrives as a lone remove', () => {
+    const PRE_PULL_REMOVE_S = 20;  // fight runs 0..120s, so this back-fills to 20/120 = 17% uptime
+    const ctx = ruleCtx([], { debuffs: [removeDebuff(RUPTURE, PRE_PULL_REMOVE_S)] });
+    expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning')?.measured?.value)
+      .toBe(`17 / ${RUPTURE_MIN_PCT}`);
+    expect(ruleApplicable(ruptureUptime, ctx)).toBe(true);
   });
 });
 
@@ -302,6 +313,13 @@ describe('evaluateOpeningSequence', () => {
   it('flags a step that lands past the opener window', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, OPENER_WINDOW_S + 5)]);
     expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')?.measured?.value).toBe('2 / 3');
+  });
+
+  it('renders the window limit with one decimal, matching the pair and hold sentences', () => {
+    const WINDOW_LIMIT_S = 12.4;
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S + 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, thr(WINDOW_LIMIT_S), 'warning')?.message)
+      .toBe('Opener reached 2 of 3 steps in the 12.4s the top parses take.');
   });
 
   it('tolerates unrelated casts between the steps', () => {
@@ -800,6 +818,12 @@ describe('evaluateAuraClipped', () => {
     expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
   });
 
+  it('ignores a bare refresh with no known prior application, since the true elapsed time is unknown', () => {
+    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S)], { debuffs: [refreshDebuff(MOONFIRE_DOT, APPLY_AT_S)] });
+    expect(evaluateAuraClipped(moonfireClipped, ctx, thr(FIELD_ELAPSED_S), 'warning')).toBeNull();
+    expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
+  });
+
   it('ignores a cast that came after the refresh, which cannot have caused it', () => {
     const LATER_S = 0.1;
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATER_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
@@ -1217,12 +1241,9 @@ describe('rulesNeed', () => {
   const cases: { name: string; rules: RulebookRule[]; stream: RuleStream; needed: boolean }[] = [
     { name: 'an on-target uptime rule reads enemy auras', rules: [uptime('target')], stream: 'enemyAuras', needed: true },
     { name: 'an on-self uptime rule leaves them unfetched', rules: [uptime('self')], stream: 'enemyAuras', needed: false },
-    { name: 'an on-self uptime rule still reads deaths, which bound its denominator', rules: [uptime('self')], stream: 'deaths', needed: true },
     { name: 'a target-count rule reads damage', rules: [targetCount], stream: 'damage', needed: true },
-    { name: 'a target-count rule leaves deaths unfetched', rules: [targetCount], stream: 'deaths', needed: false },
     { name: 'a rulebook with no rules leaves damage unfetched', rules: [], stream: 'damage', needed: false },
     { name: 'a rulebook with no rules leaves enemy auras unfetched', rules: [], stream: 'enemyAuras', needed: false },
-    { name: 'a rulebook with no rules leaves deaths unfetched', rules: [], stream: 'deaths', needed: false },
   ];
 
   it.each(cases)('$name', ({ rules, stream, needed }) => {
@@ -1249,6 +1270,50 @@ describe('occurrence strips', () => {
       { atS: 120, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('gap to Shadow Blades at cast');
+  });
+
+  it('cast_without_prior: the chip and the window limit both read one decimal, so a lead just past it reads visibly larger', () => {
+    const WINDOW_LIMIT_S = 12;
+    const OVER_LIMIT_LEAD_S = 12.4;
+    const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S), cast(SECRET_TECHNIQUE, OVER_LIMIT_LEAD_S)]);
+    const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(WINDOW_LIMIT_S), 'warning');
+    expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
+    expect(finding?.message).toBe('Secret Technique without Shadow Dance inside 12s: 1 of 2 cast(s).');
+    expect(finding?.occurrenceTarget).toBe('field pairs inside 12s');
+    expect(finding?.occurrences).toEqual([
+      { atS: WINDOW_LIMIT_S, ok: true, label: '12s', detail: 'Shadow Dance landed 12s from this cast.' },
+      { atS: OVER_LIMIT_LEAD_S, ok: false, label: '12.4s', detail: 'Shadow Dance landed 12.4s from this cast.' },
+    ]);
+  });
+
+  it('hold_cooldown_for_anchor: the chip and the window limit both read one decimal, so a violation gap reads visibly smaller than the limit', () => {
+    const HOLD_LIMIT_S = 12;
+    const ANCHOR_S = 100;
+    const CLEARED_GAP_S = 12.4;
+    const VIOLATION_GAP_S = 11.6;
+    const ctx = ruleCtx([
+      cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S),
+      cast(SHADOW_DANCE, ANCHOR_S - CLEARED_GAP_S), cast(SHADOW_DANCE, ANCHOR_S - VIOLATION_GAP_S),
+    ]);
+    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, thr(HOLD_LIMIT_S), 'critical');
+    expect(finding?.measured).toEqual({ value: '1', unit: 'charge(s)' });
+    expect(finding?.message).toBe('Shadow Dance used in the 12s the field keeps clear before Shadow Blades: 1 charge(s).');
+    expect(finding?.occurrences).toEqual([
+      { atS: ANCHOR_S - CLEARED_GAP_S, ok: true, label: '12.4s', detail: 'Shadow Dance cast 12.4s before Shadow Blades.' },
+      { atS: ANCHOR_S - VIOLATION_GAP_S, ok: false, label: '11.6s', detail: 'Shadow Dance cast 11.6s before Shadow Blades.' },
+      { atS: ANCHOR_S, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
+    ]);
+  });
+
+  it('hold_cooldown_for_anchor: a gap that clears the window by a fraction is ok; the window is inclusive at its own edge', () => {
+    const HOLD_LIMIT_S = 12;
+    const ANCHOR_S = 100;
+    const CLEARED_GAP_S = 12.4;
+    const AT_LIMIT_GAP_S = 12;
+    const clearedCtx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S), cast(SHADOW_DANCE, ANCHOR_S - CLEARED_GAP_S)]);
+    const atLimitCtx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S), cast(SHADOW_DANCE, ANCHOR_S - AT_LIMIT_GAP_S)]);
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, clearedCtx, thr(HOLD_LIMIT_S), 'critical')).toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, atLimitCtx, thr(HOLD_LIMIT_S), 'critical')).not.toBeNull();
   });
 
   it('cast_outside_buff: a chip per cast, the buff state as the label', () => {
@@ -1297,6 +1362,20 @@ describe('occurrence strips', () => {
     expect(finding?.timeline).toEqual({ segmentsS: [[0.3, 10], [15, 20]], fightDurationS: FIGHT_END_S });
     expect(finding?.occurrences).toEqual([
       { atS: 10, ok: false, label: '5s', detail: 'Rupture was down here for 5s.' },
+    ]);
+  });
+
+  it('aura_uptime_below: draws the timeline against the full fight, so a dead stretch still reads as a downtime gap', () => {
+    const uptime: AuraUptimeBelowCondition = {
+      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+    };
+    // Up 0-40s and 90-120s of the 120s fight: one 50s gap.
+    const debuffs = [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 40), applyDebuff(RUPTURE, 90)];
+    const ctx = ruleCtx([], { debuffs });
+    const finding = evaluateAuraUptimeBelow(uptime, ctx, thr(90), 'warning');
+    expect(finding?.timeline).toEqual({ segmentsS: [[0, 40], [90, 120]], fightDurationS: RULE_FIGHT_END_S });
+    expect(finding?.occurrences).toEqual([
+      { atS: 40, ok: false, label: '50s', detail: 'Rupture was down here for 50s.' },
     ]);
   });
 
