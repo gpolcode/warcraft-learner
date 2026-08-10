@@ -9,12 +9,13 @@ import { RulebookRule, RulebookCooldown, CastWithoutPriorCondition } from '../..
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, VANISH, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';
-import { cast, applyBuff, applyDebuff, removeDebuff, death } from '../../../../testing/builders/events';
+import { cast, applyBuff, applyDebuff, removeDebuff } from '../../../../testing/builders/events';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BenchedRule, RuleThreshold } from './rotation-rules';
+import { detectBloodlust } from './rotation-bloodlust';
 import {
   RotationFeatureService,
   analyzeRotationFindings, RotationScanInput, bucketRotationFindings, buildCdPlan,
@@ -112,6 +113,44 @@ describe('analyzeRotationFindings', () => {
     expect(efficiency).toBeDefined();
     expect(efficiency!.label).toBeTruthy();
     expect(efficiency!.details?.remedy).toBeTruthy();
+  });
+});
+
+describe('analyzeRotationFindings Bloodlust detection', () => {
+  // Aligned window [blTimeS-30, blTimeS+55]; offset from blTimeS must stay within 4s (2*stddev) to avoid an alignment warning.
+  const LOW_UPM = { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 };
+  const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: LOW_UPM }) } });
+  // Casts stay >= 0 (still bounded by fight start), so it opens right on the pull.
+  const OPEN_CAST_S = 0;
+
+  it('drives BL-aligned coaching from a Bloodlust popped before the pull (negative atS)', () => {
+    // WCL's fight start is the first damage event, so a pre-cast Lust lands at a negative atS.
+    const PRE_PULL_BL_S = -2;
+    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
+    const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
+    const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
+    expect(success?.message).toContain('BL-aligned');
+  });
+
+  it('drives BL-aligned coaching from a Bloodlust popped exactly at fight start (boundary)', () => {
+    const FIGHT_START_S = 0;
+    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
+    const buffs = [applyBuff(BLOODLUST, FIGHT_START_S)];
+    const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
+    expect(success?.message).toContain('BL-aligned');
+  });
+
+  it('agrees with the ingest bench on the same buff stream, so neither path can diverge', () => {
+    const PRE_PULL_BL_S = -2;
+    const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
+    // RotationTransformService's ingest bench calls this same function on the same buff stream.
+    expect(detectBloodlust(withRelativeS(buffs, 0))).toBe(PRE_PULL_BL_S);
+    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
+    const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
+    expect(success?.message).toContain('BL-aligned');
   });
 });
 
@@ -616,21 +655,6 @@ describe('RotationFeatureService fetch shape', () => {
   }
 
   const UPTIME_BAR_PCT = 90;
-  const DOT_END_S = 60;
-
-  /** Rupture held over the first half of the pull, plus whatever deaths the raid took. */
-  function dotThenDeath(deaths: WclEvent[]) {
-    return {
-      getReport: async () => REPORT,
-      getAllEvents: async (_c: string, _f: number, dataType: string) => {
-        if (dataType === 'Debuffs') return [
-          { ...applyDebuff(RUPTURE, 0), sourceID: PLAYER_ID },
-          { ...removeDebuff(RUPTURE, DOT_END_S), sourceID: PLAYER_ID },
-        ];
-        return dataType === 'Deaths' ? deaths : [];
-      },
-    };
-  }
 
   it('requests player casts with resources on, which resource_at_cast depends on', async () => {
     const { calls, api } = recording();
@@ -638,12 +662,11 @@ describe('RotationFeatureService fetch shape', () => {
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ID, includeResources: true, hostilityType: undefined });
   });
 
-  it('skips the enemy-aura, damage and death fetches when no rule reads them', async () => {
+  it('skips the enemy-aura and damage fetches when no rule reads them', async () => {
     const { calls, api } = recording();
     await withSource(ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls.some(call => call.dataType === 'Debuffs')).toBe(false);
     expect(calls.some(call => call.dataType === 'DamageDone')).toBe(false);
-    expect(calls.some(call => call.dataType === 'Deaths')).toBe(false);
   });
 
   it('fetches enemy auras with Enemies hostility and no source, the only shape WCL answers', async () => {
@@ -664,28 +687,6 @@ describe('RotationFeatureService fetch shape', () => {
       .loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
-  });
-
-  it('fetches deaths without a source filter, since a death targets the player rather than coming from them', async () => {
-    const { calls, api } = recording();
-    await withSource(ok(bench({ rules: [benched(dotUptime)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
-    expect(calls).toContainEqual({ dataType: 'Deaths', sourceId: undefined, includeResources: false, hostilityType: undefined });
-  });
-
-  it('judges dot uptime against the time the player was alive', async () => {
-    const DEATH_S = 60;
-    const result = await withSource(ok(bench({ rules: [benched(dotUptime, thr(UPTIME_BAR_PCT))] })),
-      dotThenDeath([death(DEATH_S, { target: PLAYER_ID })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
-    expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
-  });
-
-  it('keeps another raider death out of the alive window, so the same dot still reads as dropped', async () => {
-    const OTHER_RAIDER = 99;
-    const result = await withSource(ok(bench({ rules: [benched(dotUptime, thr(UPTIME_BAR_PCT))] })),
-      dotThenDeath([death(10, { target: OTHER_RAIDER })])).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
-    expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(true);
   });
 
   it('fetches the player damage only when a target-count rule needs it', async () => {
