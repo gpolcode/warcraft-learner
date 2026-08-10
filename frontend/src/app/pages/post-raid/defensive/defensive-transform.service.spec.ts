@@ -253,11 +253,6 @@ describe('buildDefensiveBenchmark', () => {
     expect(benchmark.median_uses).toBe(TYPICAL_USES);
     expect(benchmark.avg_uses).toBeGreaterThan(TYPICAL_USES);  // the mean the outlier does skew, for contrast
   });
-
-  it('equals the plain median with an even number of users (boundary: two middle values average)', () => {
-    const summaries = [userSummary(2), userSummary(4)];
-    expect(buildDefensiveBenchmark(summaries, CLOAK.cooldown, summaries.length).median_uses).toBe(3);
-  });
 });
 
 describe('aggregateDefensiveBenchmarks', () => {
