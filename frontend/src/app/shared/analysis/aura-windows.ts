@@ -20,10 +20,10 @@ export function buildAuraWindows(events: TimedEvent[]): AuraWindows {
     const timeS = event.atS;
     if (event.type === 'applybuff' || event.type === 'applydebuff') {
       getOrInsert(windows, spellId, () => []).push([timeS, null]);
+    // WCL emits no synthetic apply for an aura already up at the pull, so a bare remove or refresh is the only trace it leaves.
     } else if (event.type === 'removebuff' || event.type === 'removedebuff') {
       const spans = getOrInsert(windows, spellId, () => []);
       const open = lastOpen(spans);
-      // WCL emits no synthetic apply for an aura already up at the pull, so a bare remove is the only trace it leaves.
       if (open) open[1] = timeS; else spans.push([0, timeS]);
     } else if (event.type === 'refreshbuff' || event.type === 'refreshdebuff') {
       const spans = getOrInsert(windows, spellId, () => []);

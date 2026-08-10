@@ -80,6 +80,9 @@ describe('auraAlreadyUpAt', () => {
   it('reads a back-filled remove as already up before it, with no apply instant to exclude', () => {
     const preCast = buildAuraWindows(timed([removeDebuff(RUPTURE, REMOVE_S)], 0));
     expect(auraAlreadyUpAt(preCast, RUPTURE, REMOVE_S - 1)).toBe(true);
+    // A cast logged at exactly fight start is not credited: 0 is the span's own start instant, excluded like any apply.
+    expect(auraAlreadyUpAt(preCast, RUPTURE, 0)).toBe(false);
+    expect(auraAlreadyUpAt(preCast, RUPTURE, REMOVE_S + 1)).toBe(false);
   });
 });
 
@@ -108,7 +111,7 @@ describe('buildStackTimeline and stacksAt', () => {
     expect(stacksAt(buildStackTimeline(events, RUPTURE), DROP_S)).toBe(0);
   });
 
-  it('reads the stack count before the first known event as unknown, never inferred from a bare stack change', () => {
+  it('reads zero stacks before the first known event, never inferring a count from a bare stack change', () => {
     const midFightStack = buildStackTimeline(timed([applyBuffStack(MAELSTROM_WEAPON, SECOND_S, 2)], 0), MAELSTROM_WEAPON);
     expect(stacksAt(midFightStack, SECOND_S - 1)).toBe(0);
   });
@@ -180,8 +183,9 @@ describe('auraUptimePct', () => {
   });
 
   it('counts a lone remove as uptime from fight start, since a pre-pull aura leaves no apply', () => {
-    const windows = buildAuraWindows(timed([removeDebuff(RUPTURE, 20)], 0));
-    expect(auraUptimePct(windows, RUPTURE, FIGHT_DUR_S)).toBe(20);
+    const PREPULL_REMOVE_S = 20; // the back-filled [0, 20] span is 20/100 of FIGHT_DUR_S -> 20% uptime
+    const windows = buildAuraWindows(timed([removeDebuff(RUPTURE, PREPULL_REMOVE_S)], 0));
+    expect(auraUptimePct(windows, RUPTURE, FIGHT_DUR_S)).toBe(PREPULL_REMOVE_S);
   });
 
   it('is zero for an aura that never went up', () => {
