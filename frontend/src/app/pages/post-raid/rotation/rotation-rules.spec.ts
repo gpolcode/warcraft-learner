@@ -717,20 +717,30 @@ describe('evaluateSpendAtStacks', () => {
     expect(ruleApplicable(spendAtStacks, ruleCtx([cast(LIGHTNING_BOLT, 4)]))).toBe(false);
   });
 
-  it('benches the cheapest spend the pull allowed, not its typical one', () => {
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    // A median would bench 6 here and put the parse's own 3-stack cast on the wrong side of the bar.
-    expect(measureRule(spendAtStacks, ctx)).toBe(3);
-    expect(measureRule({ ...spendAtStacks, bound: 'max' }, ctx)).toBe(9);
-    expect(measureRule(spendAtStacks, ruleCtx([], { buffs: climbing }))).toBeNull();
+  it('benches the median stack count across several spends, unmoved by one outlying spend', () => {
+    // Stack counts of 3, 4, and a 9-stack outlier; sorted, the middle value is 4.
+    const MEDIAN_STACKS = 4, OUTLIER_STACKS = 9;
+    const ctx = ruleCtx([
+      cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(MEDIAN_STACKS)), cast(LIGHTNING_BOLT, holding(OUTLIER_STACKS)),
+    ], { buffs: climbing });
+    expect(measureRule(spendAtStacks, ctx)).toBe(MEDIAN_STACKS);
   });
 
-  it('benches a real floor from a parse that never spent cheap, and a floor of zero from one that did', () => {
-    const disciplined = ruleCtx([cast(LIGHTNING_BOLT, holding(8)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    const BEFORE_FIRST_STACK_S = 0.5;
-    const oneCheapCast = ruleCtx([cast(LIGHTNING_BOLT, BEFORE_FIRST_STACK_S), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(measureRule(spendAtStacks, disciplined)).toBe(8);
-    expect(measureRule(spendAtStacks, oneCheapCast)).toBe(0);
+  it('measures a single spend exactly, the boundary where a median is well defined', () => {
+    const ONLY_STACKS = 5;
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(ONLY_STACKS))], { buffs: climbing });
+    expect(measureRule(spendAtStacks, ctx)).toBe(ONLY_STACKS);
+  });
+
+  it('measures the same stack count for bound "min" and bound "max", since bound selects the comparison direction, not the reduction', () => {
+    const MEDIAN_OF_PAIR = 6;  // (3 + 9) / 2
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
+    expect(measureRule(spendAtStacks, ctx)).toBe(MEDIAN_OF_PAIR);
+    expect(measureRule({ ...spendAtStacks, bound: 'max' }, ctx)).toBe(MEDIAN_OF_PAIR);
+  });
+
+  it('measures nothing from a pull that never cast the spender while the buff was up', () => {
+    expect(measureRule(spendAtStacks, ruleCtx([], { buffs: climbing }))).toBeNull();
   });
 
   it('flags a spend below the benched floor and passes one exactly on it', () => {
@@ -806,16 +816,28 @@ describe('evaluateAuraClipped', () => {
     expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
   });
 
-  it('benches the earliest the pull re-applied, and nothing when it never did', () => {
-    const LATE_ELAPSED_S = 10;
+  it('benches the median elapsed time across several refreshes, unmoved by one outlier', () => {
+    // Elapsed times of 4s, 10s, and a 50s outlier; sorted, the middle value is 10.
+    const SECOND_ELAPSED_S = 10, OUTLIER_ELAPSED_S = 50;
     const debuffs = [
       ...reapplied(CLIPPED_ELAPSED_S),
-      refreshDebuff(MOONFIRE_DOT, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
+      refreshDebuff(MOONFIRE_DOT, APPLY_AT_S + CLIPPED_ELAPSED_S + SECOND_ELAPSED_S),
+      refreshDebuff(MOONFIRE_DOT, APPLY_AT_S + CLIPPED_ELAPSED_S + SECOND_ELAPSED_S + OUTLIER_ELAPSED_S),
     ];
     const ctx = ruleCtx([
-      cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S), cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
+      cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S),
+      cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + SECOND_ELAPSED_S),
+      cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + SECOND_ELAPSED_S + OUTLIER_ELAPSED_S),
     ], { debuffs });
+    expect(measureRule(moonfireClipped, ctx)).toBe(SECOND_ELAPSED_S);
+  });
+
+  it('measures a single refresh exactly, the boundary where a median is well defined', () => {
+    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
     expect(measureRule(moonfireClipped, ctx)).toBe(CLIPPED_ELAPSED_S);
+  });
+
+  it('measures nothing from a pull that never re-applied the aura', () => {
     expect(measureRule(moonfireClipped, ruleCtx([]))).toBeNull();
   });
 
@@ -963,12 +985,26 @@ describe('measureRule', () => {
     expect(measureRule(SECRET_TECH_NEEDS_DANCE, ruleCtx([cast(SECRET_TECHNIQUE, 10)]))).toBeNull();
   });
 
-  it('measures the gap a hold rule keeps clear before a non-opener anchor', () => {
+  it('measures the gap a hold rule keeps clear before a non-opener anchor, the boundary where a single charge sets the median', () => {
     const CLEAR_GAP_S = 30;
     const ctx = ruleCtx([
       cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 90), cast(SHADOW_BLADES, 90 + CLEAR_GAP_S),
     ]);
     expect(measureRule(HOLD_DANCE_FOR_BLADES, ctx)).toBe(CLEAR_GAP_S);
+  });
+
+  it('measures the median gap across several charges before an anchor, unmoved by one outlying gap', () => {
+    // Gaps of 5s, 6s, and a 100s outlier; sorted, the middle value is 6.
+    const ANCHOR_S = 200, MEDIAN_GAP_S = 6, OUTLIER_GAP_S = 100;
+    const ctx = ruleCtx([
+      cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S),
+      cast(SHADOW_DANCE, ANCHOR_S - 5), cast(SHADOW_DANCE, ANCHOR_S - MEDIAN_GAP_S), cast(SHADOW_DANCE, ANCHOR_S - OUTLIER_GAP_S),
+    ]);
+    expect(measureRule(HOLD_DANCE_FOR_BLADES, ctx)).toBe(MEDIAN_GAP_S);
+  });
+
+  it('measures nothing when no charge was ever spent ahead of an anchor', () => {
+    expect(measureRule(HOLD_DANCE_FOR_BLADES, ruleCtx([cast(SHADOW_BLADES, 10)]))).toBeNull();
   });
 
   it('measures the uptime the pull held for an aura rule', () => {
@@ -1123,6 +1159,20 @@ describe('ruleThreshold', () => {
 
   it('refuses a threshold when no parse could supply one', () => {
     expect(ruleThreshold([null, null], 2)).toEqual({ threshold: null, sample_count: 0 });
+  });
+
+  it('keeps the judging limit above the domain floor when the parses cluster tightly, as medians tend to', () => {
+    // Four parses within 1 of each other: the deviation stays well under the median.
+    const { threshold } = ruleThreshold([9, 10, 11, 10], PARSES);
+    expect(threshold!.band).toBeLessThan(threshold!.value);
+    expect(threshold!.value - threshold!.band).toBeGreaterThan(0);
+  });
+
+  it('collapses the judging limit to the domain floor when the parses genuinely disagree, a real bimodal field', () => {
+    // Two parses near 2, two near 40: the deviation grows as large as the median itself.
+    const { threshold } = ruleThreshold([2, 3, 40, 41], PARSES);
+    expect(threshold!.band).toBeGreaterThanOrEqual(threshold!.value);
+    expect(Math.max(0, threshold!.value - threshold!.band)).toBe(0);
   });
 });
 

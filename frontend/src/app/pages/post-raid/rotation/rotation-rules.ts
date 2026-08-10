@@ -926,12 +926,11 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   hold_cooldown_for_anchor: {
     streams: () => [],
     measure: (cond, ctx) => {
-      // The closest the parse came to spending before an anchor, which is the gap it kept clear.
       const gaps = holdAnchors(cond, ctx.castTimes).flatMap(anchorTime => cond.spell_ids
         .flatMap(spellId => ctx.castTimes[spellId] ?? [])
         .filter(castTime => castTime < anchorTime)
         .map(castTime => anchorTime - castTime));
-      return gaps.length ? Math.min(...gaps) : null;
+      return gaps.length ? median(gaps) ?? null : null;
     },
     evaluate: withThreshold(evaluateHoldForAnchor),
     applicable: (cond, ctx) => holdAnchors(cond, ctx.castTimes).length > 0
@@ -999,10 +998,9 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   spend_at_stacks: {
     streams: () => [],
     measure: (cond, ctx) => {
-      // The cheapest spend the parse allowed, not its typical one: a median would put half the field's own casts on the wrong side of the bar.
+      // `bound` sets the comparison direction in evaluateSpendAtStacks; this reduction is the same for both directions.
       const counts = stackCountsPerCast(cond, ctx).map(entry => entry.stacks);
-      if (!counts.length) return null;
-      return cond.bound === 'min' ? Math.min(...counts) : Math.max(...counts);
+      return counts.length ? median(counts) ?? null : null;
     },
     evaluate: withThreshold(evaluateSpendAtStacks),
     applicable: (cond, ctx) => stackCountsPerCast(cond, ctx).length > 0,
@@ -1011,9 +1009,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   aura_clipped: {
     streams: cond => cond.on === 'target' ? ['enemyAuras'] : [],
     measure: (cond, ctx) => {
-      // The earliest the parse re-applied, the same forgiving extreme read from the other end.
       const elapsed = elapsedAtRefresh(cond, ctx).map(entry => entry.elapsedS);
-      return elapsed.length ? Math.min(...elapsed) : null;
+      return elapsed.length ? median(elapsed) ?? null : null;
     },
     evaluate: withThreshold(evaluateAuraClipped),
     applicable: (cond, ctx) => elapsedAtRefresh(cond, ctx).length > 0,
