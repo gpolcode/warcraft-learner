@@ -58,7 +58,7 @@ export function buildStackTimeline(events: TimedEvent[], spellId: number): Stack
   return { groundedFromStart, entries };
 }
 
-/** The count in force going INTO that moment, or null before the aura's first recorded trace when a bare remove/stack event opens it and nothing earlier is known; WCL logs a consuming cast and the stack it spends on one timestamp, so a same-instant change belongs to the cast rather than preceding it. */
+/** The count in force going INTO that moment, or null when `groundedFromStart` is false and nothing earlier is known; WCL logs a consuming cast and the stack it spends on one timestamp, so a same-instant change belongs to the cast rather than preceding it. */
 export function stacksAt(timeline: StackTimeline, timeS: number): number | null {
   let count: number | null = timeline.groundedFromStart ? 0 : null;
   for (const [at, value] of timeline.entries) {
