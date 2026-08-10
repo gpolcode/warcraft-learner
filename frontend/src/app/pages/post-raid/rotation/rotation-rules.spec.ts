@@ -123,6 +123,16 @@ describe('rule engine', () => {
     expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, pastFloor, band(HOLD_WINDOW_S), 'critical')).not.toBeNull();
   });
 
+  it('flags the far side: a charge held far longer than the field\'s own window before the anchor', () => {
+    const FIELD_LO = 10, FIELD_HI = 40;
+    const heldTooLong = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 50)]);
+    const atHi = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 160)]);
+    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, heldTooLong, band(FIELD_LO, FIELD_HI), 'critical', 'do x');
+    expect(finding).not.toBeNull();
+    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, atHi, band(FIELD_LO, FIELD_HI), 'critical', 'do x')).toBeNull();
+  });
+
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
     const description = 'Secret Technique always inside Shadow Dance';
     const rule: RulebookRule = { severity: 'warning', description, condition: SECRET_TECH_NEEDS_DANCE };
@@ -455,6 +465,16 @@ describe('evaluateCastAtTargetCount', () => {
     const ctx = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: [damage(BLACK_POWDER, CAST_S + 1, 100)] });
     expect(evaluateCastAtTargetCount(capped, ctx, band(FIELD_CEILING), 'warning')?.measured?.value).toBe('1 / 1');
   });
+
+  it('flags the far side: a cast at far more targets than the field ever sees, and passes one at its own ceiling', () => {
+    const FIELD_LO = 2, FIELD_HI = 5;
+    const overCast = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2, 3, 4, 5, 6, 7, 8]) });
+    const atHi = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2, 3, 4, 5]) });
+    const finding = evaluateCastAtTargetCount(blackPowder, overCast, band(FIELD_LO, FIELD_HI), 'warning', 'do x');
+    expect(finding).not.toBeNull();
+    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateCastAtTargetCount(blackPowder, atHi, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
+  });
 });
 
 describe('evaluateResourceAtCast', () => {
@@ -496,8 +516,9 @@ describe('evaluateResourceAtCast', () => {
   it('quantizes the pool fraction back to the resource\'s own cap before it names the field\'s mark', () => {
     const TOP_FRAC = 0.8;  // a fraction other than 0 or 1, so quantizing must actually round it
     const ctx = ruleCtx([atCombo(10, 3), atCombo(20, MAX_COMBO_POINTS)]);
-    const finding = evaluateResourceAtCast(finisherAtMax, ctx, band(TOP_FRAC), 'warning');
-    expect(finding?.message).toBe('Eviscerate cast below 4/5 combo points, 1 of 2 cast(s). Top: 4/5.');
+    // hi pinned at the pool's own cap so the full-pool cast does not itself trip the far side.
+    const finding = evaluateResourceAtCast(finisherAtMax, ctx, band(TOP_FRAC, 1), 'warning');
+    expect(finding?.message).toBe('Eviscerate cast below 4/5 combo points, 1 of 2 cast(s). Top: 4-5/5.');
   });
 
   it('names the field\'s mark as a percent for a large pool (mana), the other branch of the scale', () => {
@@ -510,8 +531,8 @@ describe('evaluateResourceAtCast', () => {
     const atMana = (atS: number, amount: number) =>
       cast(EVISCERATE, atS, { resources: [{ amount, max: MANA_MAX, type: COMBO_POINT_TYPE }] });
     const ctx = ruleCtx([atMana(10, MANA_MAX * 0.6), atMana(20, MANA_MAX)]);
-    const finding = evaluateResourceAtCast(innervate, ctx, band(TOP_FRAC), 'warning');
-    expect(finding?.message).toBe('Innervate cast below 75% mana, 1 of 2 cast(s). Top: 75%.');
+    const finding = evaluateResourceAtCast(innervate, ctx, band(TOP_FRAC, 1), 'warning');
+    expect(finding?.message).toBe('Innervate cast below 75% mana, 1 of 2 cast(s). Top: 75-100%.');
   });
 
   it('is not applicable when the casts carry no resource snapshot', () => {
@@ -547,7 +568,8 @@ describe('evaluateResourceAtCast', () => {
 
     it('subtracts the neighbour\'s cost, so the pool it emptied does not read as full', () => {
       const ctx = ruleCtx([finisher, cast(BLACK_POWDER, SPENT_AT_S + 1)]);
-      expect(evaluateResourceAtCast(noOvercap, ctx, band(OVERCAP_CEILING_FRAC), 'warning')).toBeNull();
+      // lo pinned at 0 so the emptied pool does not itself trip the far side.
+      expect(evaluateResourceAtCast(noOvercap, ctx, band(0, OVERCAP_CEILING_FRAC), 'warning')).toBeNull();
     });
 
     it('reads nothing from a neighbour further back than the sample window', () => {
@@ -571,6 +593,16 @@ describe('evaluateResourceAtCast', () => {
       const ctx = ruleCtx([energyCast, cast(BLACK_POWDER, SPENT_AT_S + 1)]);
       expect(ruleApplicable(noOvercap, ctx)).toBe(false);
     });
+  });
+
+  it('flags the far side: a finisher spent at the pool\'s own cap, over the field\'s own ceiling', () => {
+    const FIELD_LO_FRAC = 0.4, FIELD_HI_FRAC = 0.8;
+    const overCap = ruleCtx([atCombo(10, MAX_COMBO_POINTS)]);
+    const atHi = ruleCtx([atCombo(10, 4)]);
+    const finding = evaluateResourceAtCast(finisherAtMax, overCap, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x');
+    expect(finding).not.toBeNull();
+    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateResourceAtCast(finisherAtMax, atHi, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x')).toBeNull();
   });
 });
 
@@ -775,9 +807,10 @@ describe('evaluateSpendAtStacks', () => {
     // The field generates at 3; this cast holds 9.
     const FIELD_GENERATES_AT = 3;
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(evaluateSpendAtStacks(generateAtCap, ctx, band(FIELD_GENERATES_AT), 'warning')?.message)
+    // The ceiling assertion pins lo at 0 so 9 cannot also trip the far side; the floor assertion pins hi past 9 for the same reason.
+    expect(evaluateSpendAtStacks(generateAtCap, ctx, band(0, FIELD_GENERATES_AT), 'warning')?.message)
       .toContain('overcapping');
-    expect(evaluateSpendAtStacks(spendAtStacks, ctx, band(FIELD_GENERATES_AT), 'warning')).toBeNull();
+    expect(evaluateSpendAtStacks(spendAtStacks, ctx, band(FIELD_GENERATES_AT, MAELSTROM_WEAPON_MAX_STACKS), 'warning')).toBeNull();
   });
 
   it('drops casts made in a state that suspends the rule', () => {
@@ -856,6 +889,16 @@ describe('evaluateSpendAtStacks', () => {
 
   it('labels the rule as "<spender> at <buff>"', () => {
     expect(ruleLabel(spendAtStacks)).toBe('Lightning Bolt at Maelstrom Weapon');
+  });
+
+  it('flags the far side: a spender held to the buff\'s own cap, over the field\'s own ceiling', () => {
+    const FIELD_LO = 3, FIELD_HI = 8;
+    const overCap = ruleCtx([cast(LIGHTNING_BOLT, holding(MAELSTROM_WEAPON_MAX_STACKS))], { buffs: climbing });
+    const atHi = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_HI))], { buffs: climbing });
+    const finding = evaluateSpendAtStacks(spendAtStacks, overCap, band(FIELD_LO, FIELD_HI), 'warning', 'do x');
+    expect(finding).not.toBeNull();
+    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateSpendAtStacks(spendAtStacks, atHi, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
   });
 });
 
@@ -1058,8 +1101,9 @@ describe('rulesFollowed', () => {
   });
 
   it('lists the rule when Shadow Dance is held clear of Shadow Blades', () => {
-    // Shadow Blades at 10 and 120; the held Shadow Dance at 50 is outside [105,120).
-    expect(rulesFollowed([benched(holdDanceForBlades, band(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)])))
+    // Shadow Blades at 10 and 120; the held Shadow Dance at 50 is outside [105,120) and inside the field's own ceiling.
+    const wideCeiling = band(HOLD_WINDOW_S, 100);
+    expect(rulesFollowed([benched(holdDanceForBlades, wideCeiling)], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 50)])))
       .toEqual(['Hold Shadow Dance for Shadow Blades']);
   });
 
@@ -1337,7 +1381,7 @@ describe('occurrence strips', () => {
       { atS: 110, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades.' },
       { atS: 120, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field keeps 15s clear before Shadow Blades');
+    expect(finding?.occurrenceTarget).toBe('field keeps clear 15s before Shadow Blades');
   });
 
   it('cast_without_prior: the chip and the window limit both read one decimal, so a lead just past it reads visibly larger', () => {
@@ -1479,7 +1523,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '2', detail: 'Black Powder cast at 2.' },
       { atS: 30, ok: true, label: '3', detail: 'Black Powder cast at 3.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field waits for 3+');
+    expect(finding?.occurrenceTarget).toBe('field stays inside 3');
   });
 
   it('resource_at_cast: a chip per cast, the raw amount over its own cap as the label (a small pool reads as a count, not a percent)', () => {
@@ -1495,7 +1539,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '3/5', detail: 'Eviscerate cast at 3/5.' },
       { atS: 20, ok: true, label: '5/5', detail: 'Eviscerate cast at 5/5.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field waits for 5/5+');
+    expect(finding?.occurrenceTarget).toBe('field stays inside 5/5');
   });
 
   it('resource_at_cast: a large pool (mana) still reads as a percent, since WCL reports it as a five/six-digit number', () => {
@@ -1512,7 +1556,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '60%', detail: 'Innervate cast at 60%.' },
       { atS: 20, ok: true, label: '100%', detail: 'Innervate cast at 100%.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field waits for 100%+');
+    expect(finding?.occurrenceTarget).toBe('field stays inside 100%');
   });
 
   it('proc_wasted: a chip per proc span, used vs wasted as the label', () => {

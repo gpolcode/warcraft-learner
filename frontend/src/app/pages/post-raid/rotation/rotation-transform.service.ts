@@ -200,11 +200,9 @@ interface ParseRotation {
   gapListS: number[];
   durationS: number;
   encounterName: string;
-  /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
   ruleSamples: ParseRuleSamples;
 }
 
-/** Pools each rule's instances across parses at its own index, so nothing has to key rules across two arrays. */
 export function benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
   return rules.map((rule, i) => ({
     rule,
