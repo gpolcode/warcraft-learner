@@ -219,6 +219,7 @@ describe('evaluateCastOutsideBuff', () => {
     const preCastDance = [removeBuff(SHADOW_DANCE, DANCE_END_S)];
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_END_S + 5)], { buffs: preCastDance });
     expect(evaluateCastOutsideBuff(insideDance, ctx, FIELD_NEVER, 'warning')?.measured?.value).toBe('1 / 1');
+  });
 
   it('flags the far side: an off-side share under the field\'s own low end', () => {
     // A single on-side cast reads a 0% off-side share, under a field whose own low end sits at 50%.
@@ -349,7 +350,7 @@ describe('evaluateOpeningSequence', () => {
     const WINDOW_LIMIT_S = 12.4;
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S + 5)]);
     expect(evaluateOpeningSequence(opener, ctx, band(WINDOW_LIMIT_S), 'warning')?.message)
-      .toBe('Opener reached 2 of 3 steps in the 12.4s the top parses take.');
+      .toBe('Opener reached 2 of 3 steps in the 12.4s the field takes.');
   });
 
   it('tolerates unrelated casts between the steps', () => {
@@ -1197,7 +1198,7 @@ describe('sampleRule', () => {
 describe('ruleBand', () => {
   const instanceCond: SpendAtStacksCondition = {
     kind: 'spend_at_stacks', spell_id: LIGHTNING_BOLT, spell_name: 'Lightning Bolt',
-    buff_spell_id: MAELSTROM_WEAPON, buff_spell_name: 'Maelstrom Weapon', bound: 'min',
+    buff_spell_id: MAELSTROM_WEAPON, buff_spell_name: 'Maelstrom Weapon', bound: 'min', max_stacks: 10,
   };
   const parseCond: AuraUptimeBelowCondition = {
     kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
@@ -1390,7 +1391,7 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S), cast(SECRET_TECHNIQUE, OVER_LIMIT_LEAD_S)]);
     const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(WINDOW_LIMIT_S), 'warning');
     expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
-    expect(finding?.message).toBe('Secret Technique without Shadow Dance inside 12s: 1 of 2 cast(s).');
+    expect(finding?.message).toBe('Secret Technique without Shadow Dance: 1 of 2 cast(s). Top: paired inside 12s.');
     expect(finding?.occurrenceTarget).toBe('field pairs inside 12s');
     expect(finding?.occurrences).toEqual([
       { atS: WINDOW_LIMIT_S, ok: true, label: '12s', detail: 'Shadow Dance landed 12s from this cast.' },
@@ -1407,9 +1408,9 @@ describe('occurrence strips', () => {
       cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S),
       cast(SHADOW_DANCE, ANCHOR_S - CLEARED_GAP_S), cast(SHADOW_DANCE, ANCHOR_S - VIOLATION_GAP_S),
     ]);
-    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_LIMIT_S), 'critical');
-    expect(finding?.measured).toEqual({ value: '1', unit: 'charge(s)' });
-    expect(finding?.message).toBe('Shadow Dance used in the 12s the field keeps clear before Shadow Blades: 1 charge(s).');
+    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_LIMIT_S, HOLD_LIMIT_S + 5), 'critical');
+    expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'charge(s)' });
+    expect(finding?.message).toBe('Shadow Dance used in the 12s the field keeps clear before Shadow Blades: 1 of 2 cast(s).');
     expect(finding?.occurrences).toEqual([
       { atS: ANCHOR_S - CLEARED_GAP_S, ok: true, label: '12.4s', detail: 'Shadow Dance cast 12.4s before Shadow Blades.' },
       { atS: ANCHOR_S - VIOLATION_GAP_S, ok: false, label: '11.6s', detail: 'Shadow Dance cast 11.6s before Shadow Blades.' },
@@ -1417,15 +1418,19 @@ describe('occurrence strips', () => {
     ]);
   });
 
-  it('hold_cooldown_for_anchor: a gap that clears the window by a fraction is ok; the window is inclusive at its own edge', () => {
+  it('hold_cooldown_for_anchor: a gap that clears the window is ok, and the low edge itself is strict', () => {
     const HOLD_LIMIT_S = 12;
     const ANCHOR_S = 100;
     const CLEARED_GAP_S = 12.4;
     const AT_LIMIT_GAP_S = 12;
-    const clearedCtx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S), cast(SHADOW_DANCE, ANCHOR_S - CLEARED_GAP_S)]);
-    const atLimitCtx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S), cast(SHADOW_DANCE, ANCHOR_S - AT_LIMIT_GAP_S)]);
-    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, clearedCtx, band(HOLD_LIMIT_S), 'critical')).toBeNull();
-    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, atLimitCtx, band(HOLD_LIMIT_S), 'critical')).not.toBeNull();
+    const UNDER_LIMIT_GAP_S = 11.6;
+    // hi well above the cleared gap, so a compliant hold does not itself trip the far side.
+    const field = band(HOLD_LIMIT_S, HOLD_LIMIT_S + 5);
+    const held = (gapS: number) =>
+      ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, ANCHOR_S), cast(SHADOW_DANCE, ANCHOR_S - gapS)]);
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, held(CLEARED_GAP_S), field, 'critical')).toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, held(AT_LIMIT_GAP_S), field, 'critical')).toBeNull();
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, held(UNDER_LIMIT_GAP_S), field, 'critical')).not.toBeNull();
   });
 
   it('cast_outside_buff: a chip per cast, the buff state as the label', () => {
@@ -1600,13 +1605,14 @@ describe('occurrence strips', () => {
     };
     const buffs = [applyBuff(MAELSTROM_WEAPON, 1), applyBuffStack(MAELSTROM_WEAPON, 5, 5), applyBuffStack(MAELSTROM_WEAPON, 9, 9)];
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, 6), cast(LIGHTNING_BOLT, 10)], { buffs });
-    const finding = evaluateSpendAtStacks(spendAtStacks, ctx, band(8), 'warning');
+    // hi at 9 (not the degenerate 8-8) so the second cast, one above the floor, does not itself trip the far side.
+    const finding = evaluateSpendAtStacks(spendAtStacks, ctx, band(8, 9), 'warning');
     expect(finding?.occurrences).toEqual([
       { atS: 6, ok: false, label: '5/10', detail: 'Lightning Bolt cast at 5/10.' },
       { atS: 10, ok: true, label: '9/10', detail: 'Lightning Bolt cast at 9/10.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field waits for 8/10+');
-    expect(finding?.message).toBe('Lightning Bolt cast at under 8/10 Maelstrom Weapon, 1 of 2 cast(s). Top: 8/10.');
+    expect(finding?.occurrenceTarget).toBe('field stays inside 8-9/10');
+    expect(finding?.message).toBe('Lightning Bolt cast at under 8/10 Maelstrom Weapon, 1 of 2 cast(s). Top: 8-9/10.');
   });
 
   it('aura_clipped: a chip per hard-cast refresh, the elapsed time as the label', () => {

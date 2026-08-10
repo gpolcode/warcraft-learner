@@ -264,11 +264,11 @@ export function evaluateCastWithoutPrior(
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0], 3),
     label: `${cond.spell_name} without ${cond.required_spell_name}`,
-    message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s). Top: paired inside ${round(hi, 0)}s.`,
+    message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s). Top: paired inside ${round(hi, 1)}s.`,
     measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: castWithoutPriorOccurrences(cond, castTimes, hi),
-    occurrenceTarget: `field pairs inside ${round(hi, 0)}s`,
+    occurrenceTarget: `field pairs inside ${round(hi, 1)}s`,
   };
 }
 
@@ -292,7 +292,7 @@ function gapToNextAnchor(
 }
 
 function spanS(lo: number, hi: number): string {
-  return lo === hi ? `${round(lo, 0)}s` : `${round(lo, 0)}-${round(hi, 0)}s`;
+  return lo === hi ? `${round(lo, 1)}s` : `${round(lo, 1)}-${round(hi, 1)}s`;
 }
 
 function holdForAnchorOccurrences(
@@ -304,8 +304,8 @@ function holdForAnchorOccurrences(
     detail: `${cond.anchor_spell_name} cast here.`,
   }));
   chips.push(...judged.map(({ timeS, spellName, gapS }): FindingOccurrence => ({
-    atS: round(timeS, 3), ok: gapS >= lo && gapS <= hi, label: `${round(gapS, 0)}s`,
-    detail: `${spellName} cast ${round(gapS, 0)}s before ${cond.anchor_spell_name}.`,
+    atS: round(timeS, 3), ok: gapS >= lo && gapS <= hi, label: `${round(gapS, 1)}s`,
+    detail: `${spellName} cast ${round(gapS, 1)}s before ${cond.anchor_spell_name}.`,
   })));
   chips.sort((a, b) => (a.atS ?? 0) - (b.atS ?? 0));
   return sampleOccurrences(chips);
@@ -330,7 +330,7 @@ export function evaluateHoldForAnchor(
     label: farSide ? `${spellNames} held past ${cond.anchor_spell_name}` : `${spellNames} held before ${cond.anchor_spell_name}`,
     message: farSide
       ? `${spellNames} held past the field's ${spanS(lo, hi)} window before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`
-      : `${spellNames} used in the ${round(lo, 0)}s the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`,
+      : `${spellNames} used in the ${round(lo, 1)}s the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'charge(s)' },
     details: farSide ? undefined : (remedy ? { remedy } : undefined),
     occurrences: holdForAnchorOccurrences(cond, anchorTimes, judged, lo, hi),
@@ -508,7 +508,7 @@ export function evaluateOpeningSequence(
     severity, category: 'rule_violation',
     timestamp_s: round(progress.pullS, 3),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${Math.round(hi)}s the field takes.`,
+    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${round(hi, 1)}s the field takes.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: openingSequenceOccurrences(cond, ctx, progress.pullS, progress.pullS + hi),
@@ -846,6 +846,7 @@ export function evaluateSpendAtStacks(
     subject: cond.spell_name,
     phrase: limit => `at ${wording} ${limit} ${cond.buff_spell_name}`,
     tail: cond.bound === 'max' ? ', overcapping' : undefined,
+    twoSided: true,
   }, band, severity, remedy);
 }
 
@@ -1088,7 +1089,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   spend_at_stacks: {
     streams: () => [],
     pooling: 'instance',
-    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: false }),
+    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: true }),
     domain: cond => ({ min: 0, max: cond.max_stacks, step: 1 }),
     sample: (cond, ctx) => stackCountsPerCast(cond, ctx).map(entry => entry.stacks),
     evaluate: withBand(evaluateSpendAtStacks),
