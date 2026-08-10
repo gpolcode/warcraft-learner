@@ -5,14 +5,15 @@ import { DataFileApiService } from '../../../core/services/data-file-api';
 import {
   RotationTransformService,
   summarizeCooldownCasts, castGapListS,
-  buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks, rotationCdSpellIds,
-  CdSummary,
+  buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks, rotationCdSpellIds, benchRules,
+  CdSummary, ParseRuleSamples,
 } from './rotation-transform.service';
-import { SHADOW_BLADES, BLOODLUST, CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
+import { SHADOW_BLADES, BLOODLUST, CLOAK_OF_SHADOWS, RUPTURE } from '../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { ok, missing } from '../../../core/result';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { RulebookRule } from '../../../core/models/rulebook.models';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -180,6 +181,47 @@ describe('aggregateCdBenchmarks', () => {
       [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     expect(Object.keys(result)).toEqual(['Shadow Blades']);
     expect(result['Shadow Blades'].sample_count).toBe(2);
+  });
+});
+
+describe('benchRules', () => {
+  const dotUptime = (): RulebookRule => ({
+    severity: 'warning',
+    condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
+  });
+  const ruleA = dotUptime(), ruleB = dotUptime(), ruleC = dotUptime();
+
+  it('pools each rule\'s instances across parses at its own index; an empty sample leaves that parse out of the rule\'s pool and count while other rules still see its other samples', () => {
+    const perParse: ParseRuleSamples[] = [
+      [[10], [], [1]],
+      [[20], [30], []],
+      [[30], [], []],
+      [[40], [], []],
+      [[50], [], []],
+    ];
+    const benched = benchRules([ruleA, ruleB, ruleC], perParse);
+
+    // Rule A: every one of the 5 parses contributed its own instance.
+    expect(benched[0].rule).toBe(ruleA);
+    expect(benched[0].parse_count).toBe(5);
+    expect(benched[0].sample_count).toBe(5);
+    expect(benched[0].band).not.toBeNull();
+
+    // Rule B: only the second parse's sample was non-empty, below the parse floor.
+    expect(benched[1].parse_count).toBe(1);
+    expect(benched[1].band).toBeNull();
+
+    // Rule C: only the first parse's sample was non-empty.
+    expect(benched[2].parse_count).toBe(1);
+    expect(benched[2].band).toBeNull();
+  });
+
+  it('returns a null band, with no contributing parses, for a rule index with no samples anywhere', () => {
+    const perParse: ParseRuleSamples[] = [[[]], [[]], [[]], [[]], [[]]];
+    const [entry] = benchRules([ruleA], perParse);
+    expect(entry.band).toBeNull();
+    expect(entry.parse_count).toBe(0);
+    expect(entry.sample_count).toBe(0);
   });
 });
 

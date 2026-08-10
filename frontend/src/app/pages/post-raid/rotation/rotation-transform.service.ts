@@ -15,7 +15,7 @@ import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import {
-  BenchedRule, buildRuleContext, measureRule, ruleThreshold, judgeableRules, rulesNeed,
+  BenchedRule, buildRuleContext, sampleRule, ruleBand, judgeableRules, rulesNeed,
 } from './rotation-rules';
 import { detectBloodlust } from './rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
@@ -192,20 +192,23 @@ export function aggregateCdBenchmarks(
   return result;
 }
 
+/** One parse's measured instances for each judged rule, index-aligned with the rules. */
+export type ParseRuleSamples = number[][];
+
 interface ParseRotation {
   summaries: CdSummary[];
   gapListS: number[];
   durationS: number;
   encounterName: string;
   /** Index-aligned with the rules passed in, so the caller can aggregate per rule. */
-  ruleSamples: (number | null)[];
+  ruleSamples: ParseRuleSamples;
 }
 
-/** Pairs each rule with the magnitude its encounter measured, so nothing has to key rules across two arrays. */
-export function benchRules(rules: RulebookRule[], perParse: (number | null)[][]): BenchedRule[] {
+/** Pools each rule's instances across parses at its own index, so nothing has to key rules across two arrays. */
+export function benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
   return rules.map((rule, i) => ({
     rule,
-    ...ruleThreshold(perParse.map(samples => samples[i]), perParse.length),
+    ...ruleBand(rule.condition, perParse.map(samples => samples[i] ?? [])),
   }));
 }
 
@@ -228,7 +231,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       if (!rankings.length) return missing('No top parses for this encounter.');
 
       const perParse: CdSummary[][] = [];
-      const ruleSamples: (number | null)[][] = [];
+      const ruleSamples: ParseRuleSamples[] = [];
       const gapLists: number[][] = [];
       const durations: number[] = [];
       let encounterName = '';
@@ -308,7 +311,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         gapListS: castGapListS(castsTimed),
         durationS: fightDurS,
         encounterName: fight.name ?? '',
-        ruleSamples: rules.map(rule => measureRule(rule.condition, ruleCtx)),
+        ruleSamples: rules.map(rule => sampleRule(rule.condition, ruleCtx)),
       };
     } catch (err) {
       logWarn(`RotationTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
