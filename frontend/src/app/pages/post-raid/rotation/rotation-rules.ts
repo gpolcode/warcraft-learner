@@ -350,11 +350,11 @@ export function evaluateHoldForAnchor(
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0].timeS, 3),
     label: `${spellNames} held before ${cond.anchor_spell_name}`,
-    message: `${spellNames} used in the ${SECONDS.format(lo)} the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`,
+    message: `${spellNames} used inside ${SECONDS.format(lo)} of ${cond.anchor_spell_name}, closer than the field runs: ${violations.length} of ${judged.length} cast(s).`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'charge(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: holdForAnchorOccurrences(cond, anchorTimes, judged, lo),
-    occurrenceTarget: `field keeps clear ${SECONDS.format(lo)} before ${cond.anchor_spell_name}`,
+    occurrenceTarget: `field rarely spends inside ${SECONDS.format(lo)} of ${cond.anchor_spell_name}`,
   };
 }
 
@@ -1050,6 +1050,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     pooling: 'instance',
     // Spending above a floor has a live far side: sitting at the cap is wasted generation. A ceiling rule has none - spending at empty costs nothing.
     judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: cond.bound === 'min' }),
+    // Declares no step on purpose: the real one is 1/max of the player's own pool, which bake cannot know, so tolerance carries up to one display step of slack rather than snapping to a cap the field cannot supply.
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => resourceFractionPerCast(cond, ctx).map(entry => entry.frac),
     evaluate: withBand(evaluateResourceAtCast),

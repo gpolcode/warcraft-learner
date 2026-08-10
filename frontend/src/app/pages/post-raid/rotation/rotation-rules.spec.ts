@@ -1403,7 +1403,7 @@ describe('occurrence strips', () => {
       { atS: 110, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades.' },
       { atS: 120, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field keeps clear 15s before Shadow Blades');
+    expect(finding?.occurrenceTarget).toBe('field rarely spends inside 15s of Shadow Blades');
   });
 
   it('cast_without_prior: the chip and the window limit both read one decimal, so a lead just past it reads visibly larger', () => {
@@ -1431,7 +1431,7 @@ describe('occurrence strips', () => {
     ]);
     const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_LIMIT_S, HOLD_LIMIT_S + 5), 'critical');
     expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'charge(s)' });
-    expect(finding?.message).toBe('Shadow Dance used in the 12s the field keeps clear before Shadow Blades: 1 of 2 cast(s).');
+    expect(finding?.message).toBe('Shadow Dance used inside 12s of Shadow Blades, closer than the field runs: 1 of 2 cast(s).');
     expect(finding?.occurrences).toEqual([
       { atS: ANCHOR_S - CLEARED_GAP_S, ok: true, label: '12.4s', detail: 'Shadow Dance cast 12.4s before Shadow Blades.' },
       { atS: ANCHOR_S - VIOLATION_GAP_S, ok: false, label: '11.6s', detail: 'Shadow Dance cast 11.6s before Shadow Blades.' },
