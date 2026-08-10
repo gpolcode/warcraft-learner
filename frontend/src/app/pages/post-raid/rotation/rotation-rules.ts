@@ -520,6 +520,9 @@ const WHOLE_STEPS: Scale = { quantize: Math.round, format: value => String(Math.
 
 const PERCENT: Scale = { quantize: value => Math.round(value * 100) / 100, format: value => `${Math.round(value * 100)}%` };
 
+/** Identity scale for a kind whose evaluator compares the measured value unquantized. */
+const RAW: Scale = { quantize: value => value, format: String };
+
 /** Shared by every per-cast kind so they cannot drift apart in maths or in voice. */
 interface BoundedCasts {
   values: { timeS: number; value: number }[];
@@ -891,6 +894,15 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
 /** The optional event streams a rule reads beyond the always-fetched casts and buffs. `targetHealth` rides on `damage`, asking for its heavier resource-bearing form. */
 export type RuleStream = 'enemyAuras' | 'damage' | 'deaths' | 'targetHealth';
 
+/** The interval a measured value can land in, so a limit outside it is a rule that can never fire. */
+interface LimitDomain {
+  bound: 'min' | 'max';
+  /** The scale the evaluator quantizes with, so the gate tests the limit that judges the cast. */
+  scale: Scale;
+  floor?: number;
+  ceiling?: number;
+}
+
 /** One kind's facts in one block, so adding a kind is one edit rather than one per dispatch site. */
 interface KindSpec<C extends RuleCondition> {
   streams: (cond: C) => RuleStream[];
@@ -901,6 +913,8 @@ interface KindSpec<C extends RuleCondition> {
   ) => AnalysisFinding | null;
   applicable: (cond: C, ctx: RuleContext) => boolean;
   label: (cond: C) => string;
+  /** Null where the violation predicate does not compare against the limit, so no limit can kill it. */
+  limit: (cond: C) => LimitDomain | null;
 }
 
 /** Lifts an evaluator that needs a magnitude, so a rule the encounter could not bench judges nothing. */
@@ -910,7 +924,7 @@ function withThreshold<C extends RuleCondition>(
   return (cond, ctx, threshold, severity, remedy) => threshold && evaluate(cond, ctx, threshold, severity, remedy);
 }
 
-/** Keyed by kind, so a new condition cannot compile until it declares all five. */
+/** Keyed by kind, so a new condition cannot compile until it declares all six. */
 const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition, { kind: K }>> } = {
   cast_without_prior: {
     streams: () => [],
@@ -922,6 +936,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateCastWithoutPrior),
     applicable: (cond, ctx) => castCount(ctx, cond.spell_id) > 0,
     label: cond => `${cond.spell_name} with ${cond.required_spell_name}`,
+    // An unpaired cast violates at any window width, however wide the field's own pairing window measures.
+    limit: () => null,
   },
   hold_cooldown_for_anchor: {
     streams: () => [],
@@ -937,6 +953,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     applicable: (cond, ctx) => holdAnchors(cond, ctx.castTimes).length > 0
       && cond.spell_ids.some(spellId => castCount(ctx, spellId) > 0),
     label: cond => `${cond.spell_names.join('/')} held for ${cond.anchor_spell_name}`,
+    limit: () => ({ bound: 'min', scale: RAW, floor: 0 }),
   },
   cast_outside_buff: {
     streams: () => [],
@@ -945,6 +962,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateCastOutsideBuff),
     applicable: (cond, ctx) => castCount(ctx, cond.spell_id) > 0,
     label: cond => `${cond.spell_name} ${cond.require} ${cond.buff_spell_name}`,
+    limit: () => ({ bound: 'max', scale: RAW, ceiling: 1 }),
   },
   aura_uptime_below: {
     streams: cond => cond.on === 'target' ? ['enemyAuras', 'deaths'] : ['deaths'],
@@ -952,6 +970,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateAuraUptimeBelow),
     applicable: (cond, ctx) => uptimePct(cond, ctx) > 0,
     label: cond => `${cond.aura_spell_name} uptime`,
+    limit: () => ({ bound: 'min', scale: RAW, floor: 0 }),
   },
   opening_sequence: {
     streams: () => [],
@@ -960,6 +979,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateOpeningSequence),
     applicable: (cond, ctx) => cond.spell_ids.some(spellId => castCount(ctx, spellId) > 0),
     label: cond => `Opener: ${cond.spell_names.join(' > ')}`,
+    // A missing or out-of-order step violates at any window width, however wide the field's own opener measures.
+    limit: () => null,
   },
   cast_at_target_count: {
     streams: () => ['damage'],
@@ -970,6 +991,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateCastAtTargetCount),
     applicable: (cond, ctx) => targetCountsPerCast(cond, ctx).length > 0,
     label: cond => `${cond.spell_name} target count`,
+    // targetCountsPerCast filters to targets > 0, so the judged domain starts at one, not zero.
+    limit: cond => ({ bound: cond.bound, scale: WHOLE_STEPS, floor: 1 }),
   },
   resource_at_cast: {
     streams: () => [],
@@ -980,6 +1003,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateResourceAtCast),
     applicable: (cond, ctx) => resourceFractionPerCast(cond, ctx).length > 0,
     label: cond => `${cond.spell_name} at ${cond.resource_name}`,
+    // Gated in fraction space: the runtime's raw-count scale depends on the player's own pool cap, which the bench does not have.
+    limit: cond => ({ bound: cond.bound, scale: PERCENT, floor: 0, ceiling: 1 }),
   },
   proc_wasted: {
     streams: () => [],
@@ -988,6 +1013,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateProcWasted),
     applicable: (cond, ctx) => closedProcSpans(cond, ctx).length > 0,
     label: cond => `${cond.buff_spell_name} spent`,
+    limit: () => ({ bound: 'max', scale: RAW, ceiling: 1 }),
   },
   filler_in_buff: {
     streams: () => [],
@@ -995,6 +1021,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateFillerInBuff),
     applicable: (cond, ctx) => fillerCastsInBuff(cond, ctx).total > 0,
     label: cond => `${cond.spell_name} in ${cond.buff_spell_name}`,
+    limit: () => ({ bound: 'min', scale: RAW, floor: 0 }),
   },
   spend_at_stacks: {
     streams: () => [],
@@ -1007,6 +1034,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateSpendAtStacks),
     applicable: (cond, ctx) => stackCountsPerCast(cond, ctx).length > 0,
     label: cond => `${cond.spell_name} at ${cond.buff_spell_name}`,
+    // The max bound's ceiling is a buff's own stack cap, which the condition does not declare, so it is left undeclared rather than guessed.
+    limit: cond => ({ bound: cond.bound, scale: WHOLE_STEPS, floor: 0 }),
   },
   aura_clipped: {
     streams: cond => cond.on === 'target' ? ['enemyAuras'] : [],
@@ -1018,6 +1047,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateAuraClipped),
     applicable: (cond, ctx) => elapsedAtRefresh(cond, ctx).length > 0,
     label: cond => `${cond.aura_spell_name} clipped`,
+    limit: () => ({ bound: 'min', scale: RAW, floor: 0 }),
   },
   filler_below_health: {
     streams: () => ['damage', 'targetHealth'],
@@ -1025,6 +1055,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     evaluate: withThreshold(evaluateFillerBelowHealth),
     applicable: (cond, ctx) => fillersBelowHealth(cond, ctx).total > 0,
     label: cond => `${cond.spell_name} under ${cond.health_pct}% health`,
+    limit: () => ({ bound: 'min', scale: RAW, floor: 0 }),
   },
 };
 
@@ -1059,10 +1090,14 @@ export function ruleThreshold(
   return { threshold: { value, band }, sample_count: measured.length };
 }
 
-/** A floor no cast can fall under would list every player on plan for a rule it never tested. */
+/** A limit outside the kind's declared domain would list every player on plan for a rule it never tested. */
 function benchCanFlag(cond: RuleCondition, threshold: RuleThreshold): boolean {
-  if (cond.kind !== 'spend_at_stacks' || cond.bound !== 'min') return true;
-  return boundLimit(WHOLE_STEPS, 'min', threshold) > 0;
+  const domain = specFor(cond).limit(cond);
+  if (!domain) return true;
+  const limit = boundLimit(domain.scale, domain.bound, threshold);
+  return domain.bound === 'min'
+    ? limit > (domain.floor ?? -Infinity)
+    : limit < (domain.ceiling ?? Infinity);
 }
 
 export function benchedRules(benched: BenchedRule[]): BenchedRule[] {

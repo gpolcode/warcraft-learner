@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  RulebookRule, RuleSeverity,
+  RulebookRule, RuleSeverity, RuleCondition,
   CastWithoutPriorCondition, HoldCooldownForAnchorCondition, CastOutsideBuffCondition,
   AuraUptimeBelowCondition, OpeningSequenceCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, FillerInBuffCondition,
@@ -1179,6 +1179,114 @@ describe('benchedRules', () => {
     expect(rulesFollowed(vacuous, ctx)).toEqual(['spend at stacks']);
     expect(evaluateRules(benchedRules(vacuous), ctx)).toEqual([]);
     expect(rulesFollowed(benchedRules(vacuous), ctx)).toEqual([]);
+  });
+
+  describe('limit domain per kind', () => {
+    const ruleFor = (condition: RuleCondition): RulebookRule => ({ severity: 'warning', description: 'test rule', condition });
+
+    // A RAW-scale, min-bound, floor-0 kind: a lenient-down limit exactly on the floor is dead, any limit above it is alive.
+    const RAW_FLOOR_DEAD = thr(0);
+    const RAW_FLOOR_ALIVE = thr(1);
+
+    // Both ceiling kinds gate a share, so a limit of exactly 1 (100%) is dead and just under it is alive.
+    const SHARE_CEILING_DEAD = thr(1);
+    const SHARE_JUST_UNDER_ONE = 0.999;  // strictly under the ceiling, clearing evaluateBoundedPerCast's strict `<`
+    const SHARE_CEILING_ALIVE = thr(SHARE_JUST_UNDER_ONE);
+
+    const wrathInSolar: FillerInBuffCondition = {
+      kind: 'filler_in_buff', spell_id: WRATH, spell_name: 'Wrath',
+      alternative_spell_ids: [STARFIRE], alternative_spell_names: ['Starfire'],
+      buff_spell_id: ECLIPSE_SOLAR, buff_spell_name: 'Eclipse (Solar)',
+    };
+    const executeBelow: FillerBelowHealthCondition = {
+      kind: 'filler_below_health', spell_id: EXECUTE, spell_name: 'Execute',
+      alternative_spell_ids: [SLAM], alternative_spell_names: ['Slam'], health_pct: 20,
+    };
+    const moonfireClipped: AuraClippedCondition = {
+      kind: 'aura_clipped', aura_spell_id: MOONFIRE_DOT, aura_spell_name: 'Moonfire',
+      cast_spell_id: MOONFIRE, cast_spell_name: 'Moonfire', on: 'target',
+    };
+    const ruptureUptime: AuraUptimeBelowCondition = {
+      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+    };
+    const insideDance: CastOutsideBuffCondition = {
+      kind: 'cast_outside_buff', spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
+      buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', require: 'inside',
+    };
+    const spendDance: ProcWastedCondition = {
+      kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
+      spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
+    };
+
+    const floorCases: { name: string; condition: RuleCondition }[] = [
+      { name: 'hold_cooldown_for_anchor', condition: HOLD_DANCE_FOR_BLADES },
+      { name: 'aura_uptime_below', condition: ruptureUptime },
+      { name: 'filler_in_buff', condition: wrathInSolar },
+      { name: 'filler_below_health', condition: executeBelow },
+      { name: 'aura_clipped', condition: moonfireClipped },
+    ];
+
+    it.each(floorCases)('drops $name at a floor of exactly zero, and keeps one step inside it', ({ condition }) => {
+      expect(benchedRules([benched(ruleFor(condition), RAW_FLOOR_DEAD)])).toEqual([]);
+      expect(benchedRules([benched(ruleFor(condition), RAW_FLOOR_ALIVE)])).toHaveLength(1);
+    });
+
+    const ceilingCases: { name: string; condition: RuleCondition }[] = [
+      { name: 'cast_outside_buff', condition: insideDance },
+      { name: 'proc_wasted', condition: spendDance },
+    ];
+
+    it.each(ceilingCases)('drops $name at a share ceiling of exactly 1, and keeps one just under it', ({ condition }) => {
+      expect(benchedRules([benched(ruleFor(condition), SHARE_CEILING_DEAD)])).toEqual([]);
+      expect(benchedRules([benched(ruleFor(condition), SHARE_CEILING_ALIVE)])).toHaveLength(1);
+    });
+
+    // targetCountsPerCast filters to targets > 0, so the judged domain starts at one, not zero.
+    const TARGET_COUNT_FLOOR_DEAD = thr(1);
+    const TARGET_COUNT_FLOOR_ALIVE = thr(2);
+
+    it('drops a target-count floor of exactly one and keeps a floor of two', () => {
+      const minTargets: CastAtTargetCountCondition = {
+        kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
+      };
+      expect(benchedRules([benched(ruleFor(minTargets), TARGET_COUNT_FLOOR_DEAD)])).toEqual([]);
+      expect(benchedRules([benched(ruleFor(minTargets), TARGET_COUNT_FLOOR_ALIVE)])).toHaveLength(1);
+    });
+
+    // resource_at_cast gates in fraction space, so its floor and ceiling sit at 0 and 1 regardless of the pool.
+    const RESOURCE_FRAC_STEP = 0.01;  // PERCENT's own quantization step
+    const RESOURCE_FRAC_FLOOR_DEAD = thr(0);
+    const RESOURCE_FRAC_FLOOR_ALIVE = thr(RESOURCE_FRAC_STEP);
+    const RESOURCE_FRAC_CEILING_DEAD = thr(1);
+    const RESOURCE_FRAC_CEILING_ALIVE = thr(1 - RESOURCE_FRAC_STEP);
+
+    it('gates a resource floor in fraction space, dropping zero and keeping the step above it', () => {
+      const minResource: ResourceAtCastCondition = {
+        kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
+        resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'min',
+      };
+      expect(benchedRules([benched(ruleFor(minResource), RESOURCE_FRAC_FLOOR_DEAD)])).toEqual([]);
+      expect(benchedRules([benched(ruleFor(minResource), RESOURCE_FRAC_FLOOR_ALIVE)])).toHaveLength(1);
+    });
+
+    it('gates a resource ceiling in fraction space, dropping exactly one and keeping the step below it', () => {
+      const maxResource: ResourceAtCastCondition = {
+        kind: 'resource_at_cast', spell_id: BLACK_POWDER, spell_name: 'Black Powder',
+        resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'max',
+      };
+      expect(benchedRules([benched(ruleFor(maxResource), RESOURCE_FRAC_CEILING_DEAD)])).toEqual([]);
+      expect(benchedRules([benched(ruleFor(maxResource), RESOURCE_FRAC_CEILING_ALIVE)])).toHaveLength(1);
+    });
+
+    it('keeps cast_without_prior and opening_sequence at any window width, since they can always fire', () => {
+      const EXTREME_WINDOW_S = 1e6;  // far past any real pairing or opener window, yet the rule stays testable
+      const opener = ruleFor({
+        kind: 'opening_sequence', spell_ids: [SHADOW_BLADES, SECRET_TECHNIQUE],
+        spell_names: ['Shadow Blades', 'Secret Technique'],
+      });
+      expect(benchedRules([benched(needsMagnitude, thr(EXTREME_WINDOW_S))])).toHaveLength(1);
+      expect(benchedRules([benched(opener, thr(EXTREME_WINDOW_S))])).toHaveLength(1);
+    });
   });
 });
 
