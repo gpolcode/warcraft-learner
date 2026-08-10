@@ -47,7 +47,7 @@ describe('analyzeDefensives', () => {
     expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 15, dmg_during: 500 });
   });
 
-  // Shares buildAuraWindows with the ingest path, so a defensive already up at the pull backfills identically for both.
+  // Composition only: back-fill semantics are specced on buildAuraWindows.
   it('reads a bare removeBuff with no preceding apply as one use starting at 0:00', () => {
     const REMOVE_S = 15;
     const out = analyzeDefensives(
