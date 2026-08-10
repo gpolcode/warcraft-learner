@@ -4,6 +4,13 @@ import { TimedEvent, targetKey } from './wcl-projections';
 /** Fight-relative seconds; an open end means the aura outlived the fight. */
 export type AuraWindows = Map<number, [number, number | null][]>;
 
+function lastOpen(spans: [number, number | null][]): [number, number | null] | undefined {
+  for (let i = spans.length - 1; i >= 0; i--) {
+    if (spans[i][1] == null) return spans[i];
+  }
+  return undefined;
+}
+
 /** Buffs and debuffs carry the same apply/remove shape, so one call covers either stream. */
 export function buildAuraWindows(events: TimedEvent[]): AuraWindows {
   const windows: AuraWindows = new Map();
@@ -14,10 +21,13 @@ export function buildAuraWindows(events: TimedEvent[]): AuraWindows {
     if (event.type === 'applybuff' || event.type === 'applydebuff') {
       getOrInsert(windows, spellId, () => []).push([timeS, null]);
     } else if (event.type === 'removebuff' || event.type === 'removedebuff') {
-      const spans = windows.get(spellId) ?? [];
-      for (let i = spans.length - 1; i >= 0; i--) {
-        if (spans[i][1] == null) { spans[i][1] = timeS; break; }
-      }
+      const spans = getOrInsert(windows, spellId, () => []);
+      const open = lastOpen(spans);
+      // WCL emits no synthetic apply for an aura already up at the pull, so a bare remove is the only trace it leaves.
+      if (open) open[1] = timeS; else spans.push([0, timeS]);
+    } else if (event.type === 'refreshbuff' || event.type === 'refreshdebuff') {
+      const spans = getOrInsert(windows, spellId, () => []);
+      if (!lastOpen(spans)) spans.push([0, null]);
     }
   }
   return windows;
