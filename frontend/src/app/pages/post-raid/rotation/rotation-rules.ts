@@ -484,7 +484,7 @@ export function evaluateOpeningSequence(
     severity, category: 'rule_violation',
     timestamp_s: round(progress.pullS, 3),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${Math.round(windowS)}s the top parses take.`,
+    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${round(windowS, 1)}s the top parses take.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: openingSequenceOccurrences(cond, ctx, progress.pullS, progress.pullS + windowS),

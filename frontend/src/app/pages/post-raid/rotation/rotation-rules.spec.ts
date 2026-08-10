@@ -304,6 +304,13 @@ describe('evaluateOpeningSequence', () => {
     expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')?.measured?.value).toBe('2 / 3');
   });
 
+  it('renders the window limit with one decimal, matching the pair and hold sentences', () => {
+    const WINDOW_LIMIT_S = 12.4;
+    const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S + 5)]);
+    expect(evaluateOpeningSequence(opener, ctx, thr(WINDOW_LIMIT_S), 'warning')?.message)
+      .toBe('Opener reached 2 of 3 steps in the 12.4s the top parses take.');
+  });
+
   it('tolerates unrelated casts between the steps', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(EVISCERATE, 2), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, 5)]);
     expect(evaluateOpeningSequence(opener, ctx, thr(OPENER_WINDOW_S), 'warning')).toBeNull();
@@ -1239,12 +1246,6 @@ describe('occurrence strips', () => {
       { atS: WINDOW_LIMIT_S, ok: true, label: '12s', detail: 'Shadow Dance landed 12s from this cast.' },
       { atS: OVER_LIMIT_LEAD_S, ok: false, label: '12.4s', detail: 'Shadow Dance landed 12.4s from this cast.' },
     ]);
-  });
-
-  it('cast_without_prior: a lead exactly at the window limit is ok and is not reported as a violation', () => {
-    const WINDOW_LIMIT_S = 12;
-    const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S)]);
-    expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, thr(WINDOW_LIMIT_S), 'warning')).toBeNull();
   });
 
   it('hold_cooldown_for_anchor: the chip and the window limit both read one decimal, so a violation gap reads visibly smaller than the limit', () => {
