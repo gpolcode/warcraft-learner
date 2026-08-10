@@ -220,17 +220,10 @@ describe('evaluateAuraUptimeBelow', () => {
     expect(evaluateAuraUptimeBelow(selfAura, ctx, thr(RUPTURE_MIN_PCT), 'warning')?.measured?.value).toBe(`50 / ${RUPTURE_MIN_PCT}`);
   });
 
-  it('measures uptime over the whole fight, so a death that ends the dot early drags the percentage down', () => {
-    // Up 0-30s of the 120s fight, dead (and unable to refresh) the rest: 30 / 120 = 25%.
-    const DEATH_S = 30;
-    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, DEATH_S)] });
-    const finding = evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning');
-    expect(finding?.measured).toEqual({ value: `25 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
-  });
-
-  it('reads the identical percentage for the same span on a pull where the player never dies', () => {
-    // Same 30s up-span over the same 120s fight as the death case above: the context carries no way to tell the two apart.
-    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 30)] });
+  it('measures uptime over the whole fight, so a 30s dot on a 120s pull reads 25%', () => {
+    // 30 / 120 = 25%.
+    const DOT_END_S = 30;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, DOT_END_S)] });
     const finding = evaluateAuraUptimeBelow(ruptureUptime, ctx, thr(RUPTURE_MIN_PCT), 'warning');
     expect(finding?.measured).toEqual({ value: `25 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
   });
@@ -1280,7 +1273,7 @@ describe('occurrence strips', () => {
     const uptime: AuraUptimeBelowCondition = {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };
-    // Up 0-40s, dead (dot fallen off, unable to refresh) 40-90s, battle-rezzed and redotted 90-120s.
+    // Up 0-40s and 90-120s of the 120s fight: one 50s gap.
     const debuffs = [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 40), applyDebuff(RUPTURE, 90)];
     const ctx = ruleCtx([], { debuffs });
     const finding = evaluateAuraUptimeBelow(uptime, ctx, thr(90), 'warning');

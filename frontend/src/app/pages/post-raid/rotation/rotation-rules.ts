@@ -358,7 +358,6 @@ export function evaluateCastOutsideBuff(
 
 function uptimePct(cond: AuraUptimeBelowCondition, ctx: RuleContext): number {
   const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
-  // Whole fight, not alive time: clipping to a death would let a boss immune phase timed with it inflate uptime.
   return auraUptimePct(windows, cond.aura_spell_id, ctx.fightDurationS);
 }
 
