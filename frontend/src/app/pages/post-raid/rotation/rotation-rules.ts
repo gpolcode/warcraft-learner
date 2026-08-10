@@ -58,8 +58,6 @@ function sampleOccurrences(occurrences: FindingOccurrence[]): FindingOccurrence[
 export interface RuleBand {
   lo: number;
   hi: number;
-  /** Never a judging limit - only what the copy calls the field's typical. */
-  typical: number;
   /** The share of its own instances all but the sloppiest top parse keeps outside [lo, hi], so the field's own spread is never itself a finding. */
   tolerance: number;
 }
@@ -71,9 +69,9 @@ const BAND_HIGH_Q = 0.9;
 const TOLERANCE_Q = 0.9;
 /** Past this the field's own parses sit outside the band it defines more often than not, so there is no shared behaviour to judge. */
 const MAX_TOLERANCE = 0.5;
-/** Below this a percentile is one parse's habit rather than the field's. */
-const MIN_MEASURED_PARSES = 5;
-/** An instance-pooled band needs a pool a percentile can land inside. */
+/** Below this the pool is one parse's habit rather than the field's. */
+export const MIN_MEASURED_PARSES = 5;
+/** Under this a percentile only interpolates between two neighbours and names the second-worst parse, so the band falls back to the pool's own min/max - which every parse-pooled band does, capped at one value per top parse. */
 const MIN_POOLED_INSTANCES = 20;
 
 export interface BenchedRule {
@@ -81,8 +79,6 @@ export interface BenchedRule {
   /** Null when the pool was too thin, the field too scattered, or the authored edge unviolatable, which drops the rule rather than judging against a guess. */
   band: RuleBand | null;
   sample_count: number;
-  /** Parses that contributed at least one instance. */
-  parse_count: number;
 }
 
 export type CastTimes = Record<number, number[]>;
@@ -196,7 +192,7 @@ export function buildRuleContext(input: RuleInputs): RuleContext {
   };
 }
 
-interface RuleJudging {
+export interface RuleJudging {
   primary: 'below' | 'above';
   /** True where the metric is a choice the player makes in both directions, so landing far outside either edge is a mistake. */
   twoSided: boolean;
@@ -212,6 +208,40 @@ function outOfBand(value: number, lo: number, hi: number, judging: RuleJudging):
 
 function exceedsTolerance(out: number, total: number, band: RuleBand): boolean {
   return out > 0 && out > total * band.tolerance;
+}
+
+interface Scale {
+  quantize: (value: number) => number;
+  format: (value: number) => string;
+  /** How the field's two edges read as one range, since a `/5` unit belongs on the range rather than on each end. */
+  span: (lo: number, hi: number) => string;
+}
+
+/** Targets and stacks come in whole units, and a fractional bar donates a full unit of slack that fires the rule a unit late. */
+const WHOLE_STEPS: Scale = {
+  quantize: Math.round, format: value => String(Math.round(value)),
+  span: (lo, hi) => lo === hi ? String(lo) : `${lo}-${hi}`,
+};
+
+const PERCENT: Scale = {
+  quantize: value => Math.round(value * 100) / 100, format: value => `${Math.round(value * 100)}%`,
+  span: (lo, hi) => lo === hi ? `${Math.round(lo * 100)}%` : `${Math.round(lo * 100)}-${Math.round(hi * 100)}%`,
+};
+
+/** A share already carried in percentage points rather than as a fraction. */
+const PERCENT_POINTS: Scale = {
+  quantize: Math.round, format: value => `${Math.round(value)}%`,
+  span: (lo, hi) => lo === hi ? `${Math.round(lo)}%` : `${Math.round(lo)}-${Math.round(hi)}%`,
+};
+
+const SECONDS: Scale = {
+  quantize: value => round(value, 1), format: value => `${round(value, 1)}s`,
+  span: (lo, hi) => lo === hi ? `${round(lo, 1)}s` : `${round(lo, 1)}-${round(hi, 1)}s`,
+};
+
+/** The band's edges in the metric's display steps, so the number in the copy is the number that judged the instance. */
+function bandLimits(scale: Scale, band: RuleBand): { lo: number; hi: number } {
+  return { lo: scale.quantize(band.lo), hi: scale.quantize(band.hi) };
 }
 
 function castCount(ctx: RuleContext, spellId: number): number {
@@ -249,26 +279,26 @@ function castWithoutPriorOccurrences(
 }
 
 export function evaluateCastWithoutPrior(
-  cond: CastWithoutPriorCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: CastWithoutPriorCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const hi = band.hi;
+  const { lo, hi } = bandLimits(SECONDS, band);
   const castTimes = ctx.castTimes;
   const primary = [...(castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b);
   const leads = leadPerCast(cond, castTimes);
   const violations = primary.filter((_, i) => {
     const lead = leads[i];
-    return lead == null || lead > hi;
+    return lead == null || outOfBand(lead, lo, hi, judging);
   });
   if (!exceedsTolerance(violations.length, primary.length, band)) return null;
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0], 3),
     label: `${cond.spell_name} without ${cond.required_spell_name}`,
-    message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s). Top: paired inside ${round(hi, 1)}s.`,
+    message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s). Top: paired inside ${SECONDS.format(hi)}.`,
     measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: castWithoutPriorOccurrences(cond, castTimes, hi),
-    occurrenceTarget: `field pairs inside ${round(hi, 1)}s`,
+    occurrenceTarget: `field pairs inside ${SECONDS.format(hi)}`,
   };
 }
 
@@ -291,50 +321,40 @@ function gapToNextAnchor(
   }).sort((a, b) => a.timeS - b.timeS);
 }
 
-function spanS(lo: number, hi: number): string {
-  return lo === hi ? `${round(lo, 1)}s` : `${round(lo, 1)}-${round(hi, 1)}s`;
-}
-
 function holdForAnchorOccurrences(
   cond: HoldCooldownForAnchorCondition, anchorTimes: number[],
-  judged: { timeS: number; spellName: string; gapS: number }[], lo: number, hi: number,
+  judged: { timeS: number; spellName: string; gapS: number }[], lo: number,
 ): FindingOccurrence[] {
   const chips: FindingOccurrence[] = anchorTimes.map(anchorTime => ({
     atS: round(anchorTime, 3), ok: true, label: cond.anchor_spell_name, marker: true,
     detail: `${cond.anchor_spell_name} cast here.`,
   }));
   chips.push(...judged.map(({ timeS, spellName, gapS }): FindingOccurrence => ({
-    atS: round(timeS, 3), ok: gapS >= lo && gapS <= hi, label: `${round(gapS, 1)}s`,
-    detail: `${spellName} cast ${round(gapS, 1)}s before ${cond.anchor_spell_name}.`,
+    atS: round(timeS, 3), ok: gapS >= lo, label: SECONDS.format(gapS),
+    detail: `${spellName} cast ${SECONDS.format(gapS)} before ${cond.anchor_spell_name}.`,
   })));
   chips.sort((a, b) => (a.atS ?? 0) - (b.atS ?? 0));
   return sampleOccurrences(chips);
 }
 
 export function evaluateHoldForAnchor(
-  cond: HoldCooldownForAnchorCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: HoldCooldownForAnchorCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
-  const judging: RuleJudging = { primary: 'below', twoSided: true };
+  const { lo, hi } = bandLimits(SECONDS, band);
   const anchorTimes = holdAnchors(cond, ctx.castTimes);
   const judged = gapToNextAnchor(cond, ctx);
   const violations = judged.filter(entry => outOfBand(entry.gapS, lo, hi, judging));
   if (!exceedsTolerance(violations.length, judged.length, band)) return null;
-  const farViolations = violations.filter(entry => entry.gapS > hi);
-  // A pull with both a near-side and a far-side violation keeps the primary phrasing (and its remedy) live, since the authored action still answers those casts.
-  const farSide = farViolations.length === violations.length;
   const spellNames = [...new Set(violations.map(entry => entry.spellName))].join('/');
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0].timeS, 3),
-    label: farSide ? `${spellNames} held past ${cond.anchor_spell_name}` : `${spellNames} held before ${cond.anchor_spell_name}`,
-    message: farSide
-      ? `${spellNames} held past the field's ${spanS(lo, hi)} window before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`
-      : `${spellNames} used in the ${round(lo, 1)}s the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`,
+    label: `${spellNames} held before ${cond.anchor_spell_name}`,
+    message: `${spellNames} used in the ${SECONDS.format(lo)} the field keeps clear before ${cond.anchor_spell_name}: ${violations.length} of ${judged.length} cast(s).`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'charge(s)' },
-    details: farSide ? undefined : (remedy ? { remedy } : undefined),
-    occurrences: holdForAnchorOccurrences(cond, anchorTimes, judged, lo, hi),
-    occurrenceTarget: `field keeps clear ${spanS(lo, hi)} before ${cond.anchor_spell_name}`,
+    details: remedy ? { remedy } : undefined,
+    occurrences: holdForAnchorOccurrences(cond, anchorTimes, judged, lo),
+    occurrenceTarget: `field keeps clear ${SECONDS.format(lo)} before ${cond.anchor_spell_name}`,
   };
 }
 
@@ -364,24 +384,20 @@ function offSideShare(cond: CastOutsideBuffCondition, ctx: RuleContext): number 
 }
 
 export function evaluateCastOutsideBuff(
-  cond: CastOutsideBuffCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: CastOutsideBuffCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
+  const { lo, hi } = bandLimits(PERCENT, band);
   const { judged, violations } = castsOffBuffSide(cond, ctx);
   if (!judged.length) return null;
-  const share = violations.length / judged.length;
-  if (!(share > hi || share < lo)) return null;
+  if (!outOfBand(violations.length / judged.length, lo, hi, judging)) return null;
   const relation = cond.require === 'inside' ? 'without' : 'during';
-  const farSide = share < lo;
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0] ?? judged[0], 3),
     label: `${cond.spell_name} ${relation} ${cond.buff_spell_name}`,
-    message: farSide
-      ? `${cond.spell_name} ${relation} ${cond.buff_spell_name} on ${PERCENT.format(share)} of casts, under the field's ${PERCENT.span(lo, hi)}.`
-      : `${cond.spell_name} ${relation} ${cond.buff_spell_name}: ${violations.length} of ${judged.length} cast(s). Top: ${PERCENT.span(lo, hi)}.`,
+    message: `${cond.spell_name} ${relation} ${cond.buff_spell_name}: ${violations.length} of ${judged.length} cast(s). Top: ${PERCENT.span(lo, hi)}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
-    details: farSide ? undefined : (remedy ? { remedy } : undefined),
+    details: remedy ? { remedy } : undefined,
     occurrences: castOutsideBuffOccurrences(cond, ctx, judged),
     occurrenceTarget: `field runs ${PERCENT.span(lo, hi)} ${relation} ${cond.buff_spell_name}`,
   };
@@ -427,19 +443,19 @@ function uptimeGaps(merged: [number, number][], boundS: number): [number, number
 }
 
 export function evaluateAuraUptimeBelow(
-  cond: AuraUptimeBelowCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: AuraUptimeBelowCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
+  const { lo, hi } = bandLimits(PERCENT_POINTS, band);
   const pct = uptimePct(cond, ctx);
   // Zero uptime reads as a build that skips the aura rather than a mistake, which the app does not guess at.
-  if (pct <= 0 || pct >= lo) return null;
+  if (pct <= 0 || !outOfBand(pct, lo, hi, judging)) return null;
   const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
   const merged = mergedUpSpans(windows, cond.aura_spell_id, ctx.fightDurationS);
   const gaps = uptimeGaps(merged, ctx.fightDurationS);
   return {
     severity, category: 'rule_violation',
     label: `${cond.aura_spell_name} uptime`,
-    message: `${cond.aura_spell_name} up ${Math.round(pct)}% of the fight; the field holds ${Math.round(lo)}-${Math.round(hi)}%.`,
+    message: `${cond.aura_spell_name} up ${PERCENT_POINTS.format(pct)} of the fight; the field holds ${PERCENT_POINTS.span(lo, hi)}.`,
     measured: { value: `${Math.round(pct)} / ${Math.round(lo)}`, unit: '% uptime' },
     details: remedy ? { remedy } : undefined,
     occurrences: gaps.map(([start, end]): FindingOccurrence => ({
@@ -499,16 +515,16 @@ function openingSequenceOccurrences(
 }
 
 export function evaluateOpeningSequence(
-  cond: OpeningSequenceCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: OpeningSequenceCondition, ctx: RuleContext, band: RuleBand, _judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const hi = band.hi;
+  const hi = bandLimits(SECONDS, band).hi;
   const progress = openerProgress(cond, ctx, hi);
   if (!progress || progress.completedS != null) return null;
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(progress.pullS, 3),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${round(hi, 1)}s the field takes.`,
+    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${SECONDS.format(hi)} the field takes.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: openingSequenceOccurrences(cond, ctx, progress.pullS, progress.pullS + hi),
@@ -533,94 +549,63 @@ function targetCountsPerCast(cond: CastAtTargetCountCondition, ctx: RuleContext)
     .filter(({ targets }) => targets > 0);
 }
 
-/** A quantity's own steps: the limit snaps to them before it is compared, so the number in the copy is the number that judged the cast. */
-interface Scale {
-  quantize: (value: number) => number;
-  format: (value: number) => string;
-  /** How the field's two edges read as one range, since a `/5` unit belongs on the range rather than on each end. */
-  span: (lo: number, hi: number) => string;
-}
-
-/** Targets and stacks come in whole units, and a fractional bar donates a full unit of slack that fires the rule a unit late. */
-const WHOLE_STEPS: Scale = {
-  quantize: Math.round, format: value => String(Math.round(value)),
-  span: (lo, hi) => lo === hi ? String(lo) : `${lo}-${hi}`,
-};
-
-const PERCENT: Scale = {
-  quantize: value => Math.round(value * 100) / 100, format: value => `${Math.round(value * 100)}%`,
-  span: (lo, hi) => lo === hi ? `${Math.round(lo * 100)}%` : `${Math.round(lo * 100)}-${Math.round(hi * 100)}%`,
-};
-
 /** Shared by every per-cast kind so they cannot drift apart in maths or in voice. */
 interface BoundedCasts {
   values: { timeS: number; value: number }[];
-  bound: 'min' | 'max';
   scale: Scale;
   /** The chip and the sentence both build off this and `phrase`, so neither can drift from the other. */
   subject: string;
   phrase: (limit: string) => string;
   /** Sentence-only, for a consequence the chip has no room for. */
   tail?: string;
-  twoSided: boolean;
-}
-
-/** The band's edges in the metric's display steps, so the number in the copy is the number that judged the instance. */
-function bandLimits(scale: Scale, band: RuleBand): { lo: number; hi: number } {
-  return { lo: scale.quantize(band.lo), hi: scale.quantize(band.hi) };
+  /** Names the mistake on the edge away from `primary`, for the kinds where overshooting is its own waste. */
+  farPhrase?: (limit: string) => string;
 }
 
 function evaluateBoundedPerCast(
-  judged: BoundedCasts, band: RuleBand, severity: Severity, remedy?: string,
+  judged: BoundedCasts, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   if (!judged.values.length) return null;
   const { lo, hi } = bandLimits(judged.scale, band);
-  const limit = judged.bound === 'min' ? lo : hi;
-  const judging: RuleJudging = { primary: judged.bound === 'min' ? 'below' : 'above', twoSided: judged.twoSided };
+  const nearLimit = judging.primary === 'below' ? lo : hi;
+  const farLimit = judging.primary === 'below' ? hi : lo;
   const violations = judged.values.filter(({ value }) => outOfBand(value, lo, hi, judging));
   if (!exceedsTolerance(violations.length, judged.values.length, band)) return null;
-  const farViolations = judging.twoSided
-    ? violations.filter(({ value }) => judging.primary === 'below' ? value > hi : value < lo)
-    : [];
+  const past = (value: number) => judging.primary === 'below' ? value > hi : value < lo;
   // A pull with both a near-side and a far-side violation keeps the primary phrasing (and its remedy) live, since the authored action still answers those casts.
-  const farSide = judging.twoSided && farViolations.length === violations.length;
-  const phrase = judged.phrase(judged.scale.format(limit));
-  const limitLabel = judged.scale.format(limit);
-  const farWord = judging.primary === 'below' ? 'over' : 'under';
+  const farSide = judging.twoSided && judged.farPhrase != null && violations.every(({ value }) => past(value));
+  const phrase = farSide
+    ? judged.farPhrase!(judged.scale.format(farLimit))
+    : judged.phrase(judged.scale.format(nearLimit));
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0].timeS, 3),
-    label: farSide ? `${judged.subject} outside ${judged.scale.span(lo, hi)}` : `${judged.subject} ${phrase}`,
-    message: farSide
-      ? `${judged.subject} cast ${violations.length} of ${judged.values.length} cast(s), ${farWord} the field's ${judged.scale.span(lo, hi)}.`
-      : `${judged.subject} cast ${phrase}${judged.tail ?? ''}, ${violations.length} of ${judged.values.length} cast(s). Top: ${judged.scale.span(lo, hi)}.`,
+    label: `${judged.subject} ${phrase}`,
+    message: `${judged.subject} cast ${phrase}${farSide ? '' : (judged.tail ?? '')}, ${violations.length} of ${judged.values.length} cast(s). Top: ${judged.scale.span(lo, hi)}.`,
     measured: { value: `${violations.length} / ${judged.values.length}`, unit: 'cast(s)' },
-    details: farSide ? undefined : (remedy ? { remedy } : undefined),
+    details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.values.map(({ timeS, value }): FindingOccurrence => {
-      const ok = judged.twoSided ? (value >= lo && value <= hi) : (judged.bound === 'min' ? value >= limit : value <= limit);
       const label = judged.scale.format(value);
       return {
-        atS: round(timeS, 3), ok, label,
+        atS: round(timeS, 3), ok: !outOfBand(value, lo, hi, judging), label,
         detail: `${judged.subject} cast at ${label}.`,
       };
     })),
-    occurrenceTarget: judged.twoSided
+    occurrenceTarget: judging.twoSided
       ? `field stays inside ${judged.scale.span(lo, hi)}`
-      : (judged.bound === 'min' ? `field waits for ${limitLabel}+` : `field stays under ${limitLabel}`),
+      : (judging.primary === 'below' ? `field waits for ${judged.scale.format(lo)}+` : `field stays under ${judged.scale.format(hi)}`),
   };
 }
 
 export function evaluateCastAtTargetCount(
-  cond: CastAtTargetCountCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: CastAtTargetCountCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   return evaluateBoundedPerCast({
     values: targetCountsPerCast(cond, ctx).map(({ timeS, targets }) => ({ timeS, value: targets })),
-    bound: cond.bound,
     scale: WHOLE_STEPS,
     subject: cond.spell_name,
     phrase: limit => `at ${cond.bound === 'min' ? 'under' : 'over'} ${limit} targets`,
-    twoSided: true,
-  }, band, severity, remedy);
+  }, band, judging, severity, remedy);
 }
 
 function resourceAt(rows: readonly ResourceRow[], castS: number): { amount: number; max: number } | null {
@@ -658,7 +643,7 @@ function rawCountScale(max: number): Scale {
 }
 
 export function evaluateResourceAtCast(
-  cond: ResourceAtCastCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: ResourceAtCastCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   const judged = resourceFractionPerCast(cond, ctx);
   if (!judged.length) return null;
@@ -666,12 +651,11 @@ export function evaluateResourceAtCast(
   const raw = max <= RAW_COUNT_MAX_POOL;
   return evaluateBoundedPerCast({
     values: judged.map(({ timeS, frac, amount }) => ({ timeS, value: raw ? amount : frac })),
-    bound: cond.bound,
     scale: raw ? rawCountScale(max) : PERCENT,
     subject: cond.spell_name,
     phrase: limit => `${cond.bound === 'min' ? 'below' : 'above'} ${limit} ${cond.resource_name}`,
-    twoSided: true,
-  }, band, severity, remedy);
+    farPhrase: limit => `at ${limit} ${cond.resource_name}, capped`,
+  }, band, judging, severity, remedy);
 }
 
 /** A proc still up when the pull ends has not been wasted, whether the log closed its span at the kill or left it open. */
@@ -693,25 +677,21 @@ function wastedProcShare(cond: ProcWastedCondition, ctx: RuleContext): number | 
 }
 
 export function evaluateProcWasted(
-  cond: ProcWastedCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: ProcWastedCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
+  const { lo, hi } = bandLimits(PERCENT, band);
   const spans = closedProcSpans(cond, ctx);
   if (!spans.length) return null;
   const spent = procSpent(cond, ctx);
   const wasted = spans.filter(span => !spent(span));
-  const share = wasted.length / spans.length;
-  if (!(share > hi || share < lo)) return null;
-  const farSide = share < lo;
+  if (!outOfBand(wasted.length / spans.length, lo, hi, judging)) return null;
   return {
     severity, category: 'rule_violation',
     timestamp_s: round((wasted[0] ?? spans[0])[0], 3),
     label: `${cond.buff_spell_name} wasted`,
-    message: farSide
-      ? `${cond.buff_spell_name} expired unspent ${PERCENT.format(share)} of the time, under the field's ${PERCENT.span(lo, hi)}.`
-      : `${cond.buff_spell_name} expired unspent ${wasted.length} of ${spans.length} time(s). Top: ${PERCENT.span(lo, hi)}.`,
+    message: `${cond.buff_spell_name} expired unspent ${wasted.length} of ${spans.length} time(s). Top: ${PERCENT.span(lo, hi)}.`,
     measured: { value: `${wasted.length} / ${spans.length}`, unit: 'proc(s)' },
-    details: farSide ? undefined : (remedy ? { remedy } : undefined),
+    details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(spans.map((span): FindingOccurrence => {
       const used = spent(span);
       return {
@@ -749,23 +729,19 @@ function fillerShare(split: FillerSplit): number | null {
 }
 
 function fillerFinding(
-  split: FillerSplit, band: RuleBand, severity: Severity,
+  split: FillerSplit, band: RuleBand, judging: RuleJudging, severity: Severity,
   spellName: string, where: string, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
+  const { lo, hi } = bandLimits(PERCENT, band);
   const share = fillerShare(split);
-  if (share == null || !(share < lo || share > hi)) return null;
-  const farSide = share > hi;
-  const edge = farSide ? hi : lo;
+  if (share == null || !outOfBand(share, lo, hi, judging)) return null;
   return {
     severity, category: 'rule_violation',
     timestamp_s: split.firstAlternativeS == null ? undefined : round(split.firstAlternativeS, 3),
     label: `${spellName} ${where}`,
-    message: farSide
-      ? `${spellName} was ${PERCENT.format(share)} of your fillers ${where}, over the field's ${PERCENT.span(lo, hi)}.`
-      : `${spellName} was ${PERCENT.format(share)} of your fillers ${where}. Top: ${PERCENT.span(lo, hi)}.`,
-    measured: { value: `${Math.round(share * 100)} / ${Math.round(edge * 100)}`, unit: '% of fillers' },
-    details: farSide ? undefined : (remedy ? { remedy } : undefined),
+    message: `${spellName} was ${PERCENT.format(share)} of your fillers ${where}. Top: ${PERCENT.span(lo, hi)}.`,
+    measured: { value: `${Math.round(share * 100)} / ${Math.round(lo * 100)}`, unit: '% of fillers' },
+    details: remedy ? { remedy } : undefined,
     occurrences: [],
   };
 }
@@ -802,9 +778,9 @@ function fillerCastsInBuff(cond: FillerInBuffCondition, ctx: RuleContext): Fille
 }
 
 export function evaluateFillerInBuff(
-  cond: FillerInBuffCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: FillerInBuffCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const finding = fillerFinding(fillerCastsInBuff(cond, ctx), band, severity,
+  const finding = fillerFinding(fillerCastsInBuff(cond, ctx), band, judging, severity,
     cond.spell_name, `in ${cond.buff_spell_name}`, remedy);
   if (!finding) return null;
   return {
@@ -813,7 +789,7 @@ export function evaluateFillerInBuff(
       cond.spell_id, cond.spell_name, cond.alternative_spell_ids, cond.alternative_spell_names,
       fillerInBuffTimesFor(cond, ctx),
     ),
-    occurrenceTarget: `field runs ${PERCENT.span(band.lo, band.hi)} ${cond.spell_name} inside ${cond.buff_spell_name}`,
+    occurrenceTarget: `field runs ${PERCENT.span(bandLimits(PERCENT, band).lo, bandLimits(PERCENT, band).hi)} ${cond.spell_name} inside ${cond.buff_spell_name}`,
   };
 }
 
@@ -832,7 +808,7 @@ function stackCountsPerCast(cond: SpendAtStacksCondition, ctx: RuleContext): { t
 }
 
 export function evaluateSpendAtStacks(
-  cond: SpendAtStacksCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: SpendAtStacksCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   // Over the bar is overcapping, which is what a player sees; under it is spending cheap.
   const wording = cond.bound === 'min' ? 'under' : 'over';
@@ -841,13 +817,12 @@ export function evaluateSpendAtStacks(
   const scale: Scale = { quantize: WHOLE_STEPS.quantize, format: capScale.format, span: capScale.span };
   return evaluateBoundedPerCast({
     values: stackCountsPerCast(cond, ctx).map(({ timeS, stacks }) => ({ timeS, value: stacks })),
-    bound: cond.bound,
     scale,
     subject: cond.spell_name,
     phrase: limit => `at ${wording} ${limit} ${cond.buff_spell_name}`,
     tail: cond.bound === 'max' ? ', overcapping' : undefined,
-    twoSided: true,
-  }, band, severity, remedy);
+    farPhrase: limit => `at ${limit} ${cond.buff_spell_name}, capped`,
+  }, band, judging, severity, remedy);
 }
 
 type ClosedSpan = AuraSpan & { endS: number };
@@ -879,26 +854,26 @@ function elapsedAtRefresh(cond: AuraClippedCondition, ctx: RuleContext): { timeS
 }
 
 export function evaluateAuraClipped(
-  cond: AuraClippedCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: AuraClippedCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const { lo, hi } = band;
+  const { lo, hi } = bandLimits(SECONDS, band);
   const judged = elapsedAtRefresh(cond, ctx);
   if (!judged.length) return null;
-  const clipped = judged.filter(({ elapsedS }) => elapsedS < lo || elapsedS > hi);
+  const clipped = judged.filter(({ elapsedS }) => outOfBand(elapsedS, lo, hi, judging));
   if (!exceedsTolerance(clipped.length, judged.length, band)) return null;
   const outValues = clipped.map(entry => entry.elapsedS);
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(clipped[0].timeS, 3),
     label: `${cond.aura_spell_name} clipped`,
-    message: `${cond.aura_spell_name} re-applied a median ${round(median(outValues) ?? 0, 1)}s in, ${clipped.length} of ${judged.length} refresh(es) outside the field's ${round(lo, 1)}-${round(hi, 1)}s.`,
+    message: `${cond.aura_spell_name} re-applied a median ${SECONDS.format(median(outValues) ?? 0)} in, ${clipped.length} of ${judged.length} refresh(es) before the field's ${SECONDS.format(lo)}.`,
     measured: { value: `${clipped.length} / ${judged.length}`, unit: 'refresh(es)' },
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.map(({ timeS, elapsedS }): FindingOccurrence => ({
-      atS: round(timeS, 3), ok: elapsedS >= lo && elapsedS <= hi, label: `${round(elapsedS, 1)}s`,
-      detail: `Refreshed ${round(elapsedS, 1)}s into the aura.`,
+      atS: round(timeS, 3), ok: !outOfBand(elapsedS, lo, hi, judging), label: SECONDS.format(elapsedS),
+      detail: `Refreshed ${SECONDS.format(elapsedS)} into the aura.`,
     }))),
-    occurrenceTarget: `field refreshes ${round(lo, 1)}-${round(hi, 1)}s in`,
+    occurrenceTarget: `field refreshes ${SECONDS.span(lo, hi)} in`,
   };
 }
 
@@ -928,9 +903,9 @@ function fillersBelowHealth(cond: FillerBelowHealthCondition, ctx: RuleContext):
 }
 
 export function evaluateFillerBelowHealth(
-  cond: FillerBelowHealthCondition, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string,
+  cond: FillerBelowHealthCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  const finding = fillerFinding(fillersBelowHealth(cond, ctx), band, severity,
+  const finding = fillerFinding(fillersBelowHealth(cond, ctx), band, judging, severity,
     cond.spell_name, `under ${cond.health_pct}% health`, remedy);
   if (!finding) return null;
   return {
@@ -939,7 +914,7 @@ export function evaluateFillerBelowHealth(
       cond.spell_id, cond.spell_name, cond.alternative_spell_ids, cond.alternative_spell_names,
       fillerBelowHealthTimesFor(cond, ctx),
     ),
-    occurrenceTarget: `field runs ${PERCENT.span(band.lo, band.hi)} ${cond.spell_name} under ${cond.health_pct}% health`,
+    occurrenceTarget: `field runs ${PERCENT.span(bandLimits(PERCENT, band).lo, bandLimits(PERCENT, band).hi)} ${cond.spell_name} under ${cond.health_pct}% health`,
   };
 }
 
@@ -955,26 +930,43 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
 /** The optional event streams a rule reads beyond the always-fetched casts and buffs. `targetHealth` rides on `damage`, asking for its heavier resource-bearing form. */
 export type RuleStream = 'enemyAuras' | 'damage' | 'targetHealth';
 
+/** The measured quantity's own bounds and step, so an edge with no room past it is recognised as unviolatable. `max: null` is a genuinely unbounded metric. */
+interface RuleDomain {
+  min: number;
+  max: number | null;
+  step?: number;
+}
+
+export interface RuleSample {
+  values: number[];
+  /** Instances the runtime counts as violations but that carry no measurable value, so tolerance is read off the population the runtime actually judges. */
+  unmeasuredOut: number;
+}
+
 /** One kind's facts in one block, so adding a kind is one edit rather than one per dispatch site. */
 interface KindSpec<C extends RuleCondition> {
   streams: (cond: C) => RuleStream[];
   pooling: RulePooling;
+  /** The one declaration of which way this metric is judged: the evaluator is handed this, never its own copy. */
   judging: (cond: C) => RuleJudging;
-  /** The measured quantity's own bounds and step, so an edge with no room past it is recognised as unviolatable. */
-  domain: (cond: C) => { min: number; max: number | null; step?: number };
+  /** Null where the rulebook has not declared the bounds this kind needs, which drops the rule rather than reading unknown as unbounded. */
+  domain: (cond: C) => RuleDomain | null;
   /** Every instance this parse measured, pooled across parses to build the band. Empty when the pull never produced one. */
   sample: (cond: C, ctx: RuleContext) => number[];
+  unmeasured?: (cond: C, ctx: RuleContext) => number;
   evaluate: (
-    cond: C, ctx: RuleContext, band: RuleBand | null, severity: Severity, remedy?: string,
+    cond: C, ctx: RuleContext, band: RuleBand | null, judging: RuleJudging, severity: Severity, remedy?: string,
   ) => AnalysisFinding | null;
   applicable: (cond: C, ctx: RuleContext) => boolean;
   label: (cond: C) => string;
 }
 
 function withBand<C extends RuleCondition>(
-  evaluate: (cond: C, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string) => AnalysisFinding | null,
+  evaluate: (
+    cond: C, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
+  ) => AnalysisFinding | null,
 ): KindSpec<C>['evaluate'] {
-  return (cond, ctx, band, severity, remedy) => band && evaluate(cond, ctx, band, severity, remedy);
+  return (cond, ctx, band, judging, severity, remedy) => band && evaluate(cond, ctx, band, judging, severity, remedy);
 }
 
 /** Keyed by kind, so a new condition cannot compile until it declares every field. */
@@ -985,6 +977,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
     judging: () => ({ primary: 'above', twoSided: false }),
     domain: () => ({ min: 0, max: null }),
     sample: (cond, ctx) => leadPerCast(cond, ctx.castTimes).filter((lead): lead is number => lead != null),
+    // An unpaired cast is the violation this kind is named for, but it has no lead to pool, so it reaches tolerance this way instead.
+    unmeasured: (cond, ctx) => leadPerCast(cond, ctx.castTimes).filter(lead => lead == null).length,
     evaluate: withBand(evaluateCastWithoutPrior),
     applicable: (cond, ctx) => castCount(ctx, cond.spell_id) > 0,
     label: cond => `${cond.spell_name} with ${cond.required_spell_name}`,
@@ -992,7 +986,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   hold_cooldown_for_anchor: {
     streams: () => [],
     pooling: 'instance',
-    judging: () => ({ primary: 'below', twoSided: true }),
+    // A large gap is a charge spent right after the previous anchor, which is the prompt play, not a hold.
+    judging: () => ({ primary: 'below', twoSided: false }),
     domain: () => ({ min: 0, max: null }),
     sample: (cond, ctx) => gapToNextAnchor(cond, ctx).map(entry => entry.gapS),
     evaluate: withBand(evaluateHoldForAnchor),
@@ -1003,7 +998,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   cast_outside_buff: {
     streams: () => [],
     pooling: 'parse',
-    judging: () => ({ primary: 'above', twoSided: true }),
+    judging: () => ({ primary: 'above', twoSided: false }),
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => {
       const share = offSideShare(cond, ctx);
@@ -1043,7 +1038,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   cast_at_target_count: {
     streams: () => ['damage'],
     pooling: 'instance',
-    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: true }),
+    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: false }),
     domain: () => ({ min: 1, max: null, step: 1 }),
     sample: (cond, ctx) => targetCountsPerCast(cond, ctx).map(entry => entry.targets),
     evaluate: withBand(evaluateCastAtTargetCount),
@@ -1053,7 +1048,8 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   resource_at_cast: {
     streams: () => [],
     pooling: 'instance',
-    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: true }),
+    // Spending above a floor has a live far side: sitting at the cap is wasted generation. A ceiling rule has none - spending at empty costs nothing.
+    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: cond.bound === 'min' }),
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => resourceFractionPerCast(cond, ctx).map(entry => entry.frac),
     evaluate: withBand(evaluateResourceAtCast),
@@ -1063,7 +1059,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   proc_wasted: {
     streams: () => [],
     pooling: 'parse',
-    judging: () => ({ primary: 'above', twoSided: true }),
+    judging: () => ({ primary: 'above', twoSided: false }),
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => {
       const share = wastedProcShare(cond, ctx);
@@ -1076,7 +1072,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   filler_in_buff: {
     streams: () => [],
     pooling: 'parse',
-    judging: () => ({ primary: 'below', twoSided: true }),
+    judging: () => ({ primary: 'below', twoSided: false }),
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => {
       const share = fillerShare(fillerCastsInBuff(cond, ctx));
@@ -1089,8 +1085,9 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   spend_at_stacks: {
     streams: () => [],
     pooling: 'instance',
-    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: true }),
-    domain: cond => ({ min: 0, max: cond.max_stacks, step: 1 }),
+    // Spending above a floor has a live far side: sitting at the cap wastes generation. A ceiling rule has none - spending at zero stacks costs nothing.
+    judging: cond => ({ primary: cond.bound === 'min' ? 'below' : 'above', twoSided: cond.bound === 'min' }),
+    domain: cond => cond.max_stacks == null ? null : { min: 0, max: cond.max_stacks, step: 1 },
     sample: (cond, ctx) => stackCountsPerCast(cond, ctx).map(entry => entry.stacks),
     evaluate: withBand(evaluateSpendAtStacks),
     applicable: (cond, ctx) => stackCountsPerCast(cond, ctx).length > 0,
@@ -1099,7 +1096,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   aura_clipped: {
     streams: cond => cond.on === 'target' ? ['enemyAuras'] : [],
     pooling: 'instance',
-    judging: () => ({ primary: 'below', twoSided: true }),
+    judging: () => ({ primary: 'below', twoSided: false }),
     domain: () => ({ min: 0, max: null }),
     sample: (cond, ctx) => elapsedAtRefresh(cond, ctx).map(entry => entry.elapsedS),
     evaluate: withBand(evaluateAuraClipped),
@@ -1109,7 +1106,7 @@ const RULE_KINDS: { [K in RuleCondition['kind']]: KindSpec<Extract<RuleCondition
   filler_below_health: {
     streams: () => ['damage', 'targetHealth'],
     pooling: 'parse',
-    judging: () => ({ primary: 'below', twoSided: true }),
+    judging: () => ({ primary: 'below', twoSided: false }),
     domain: () => ({ min: 0, max: 1 }),
     sample: (cond, ctx) => {
       const share = fillerShare(fillersBelowHealth(cond, ctx));
@@ -1135,45 +1132,71 @@ export function judgeableRules(rules: RulebookRule[]): RulebookRule[] {
   return rules.filter(rule => rule.condition != null);
 }
 
-export function sampleRule(cond: RuleCondition, ctx: RuleContext): number[] {
-  return specFor(cond).sample(cond, ctx);
+/** The one place a kind's judging is decided, so bake, runtime and specs cannot each answer it differently. */
+export function ruleJudging(cond: RuleCondition): RuleJudging {
+  return specFor(cond).judging(cond);
 }
 
-export function ruleBand(cond: RuleCondition, perParse: number[][]): {
-  band: RuleBand | null; sample_count: number; parse_count: number;
+export function sampleRule(cond: RuleCondition, ctx: RuleContext): RuleSample {
+  const spec = specFor(cond);
+  return { values: spec.sample(cond, ctx), unmeasuredOut: spec.unmeasured?.(cond, ctx) ?? 0 };
+}
+
+export function ruleBand(cond: RuleCondition, perParse: RuleSample[]): {
+  band: RuleBand | null; sample_count: number;
 } {
   const spec = specFor(cond);
-  const contributing = perParse.filter(instances => instances.length > 0);
-  const pooled = contributing.flat().sort((a, b) => a - b);
-  const counts = { sample_count: pooled.length, parse_count: contributing.length };
-  const minPooled = spec.pooling === 'instance' ? MIN_POOLED_INSTANCES : MIN_MEASURED_PARSES;
-  if (contributing.length < MIN_MEASURED_PARSES || pooled.length < minPooled) return { band: null, ...counts };
+  const contributing = perParse.filter(sample => sample.values.length > 0);
+  const pooled = contributing.flatMap(sample => sample.values).sort((a, b) => a - b);
+  const counts = { sample_count: pooled.length };
+  const domain = spec.domain(cond);
+  // A domain the rulebook never declared is not an unbounded one; with no cap there is no far edge to judge against.
+  if (domain == null || contributing.length < MIN_MEASURED_PARSES) return { band: null, ...counts };
 
   const judging = spec.judging(cond);
-  const lo = quantile(pooled, BAND_LOW_Q) ?? 0;
-  const hi = quantile(pooled, BAND_HIGH_Q) ?? 0;
-  const tolerance = spec.pooling === 'instance' ? outShareTolerance(contributing, lo, hi, judging) : 0;
-  const band: RuleBand = { lo, hi, typical: median(pooled) ?? 0, tolerance };
-  if (tolerance >= MAX_TOLERANCE || !bandCanFlag(spec.domain(cond), band, judging)) return { band: null, ...counts };
+  const { lo, hi } = bandEdges(pooled);
+  const snap = snapper(domain);
+  const tolerance = spec.pooling === 'instance'
+    ? outShareTolerance(perParse.filter(s => s.values.length + s.unmeasuredOut > 0), snap(lo), snap(hi), judging)
+    : 0;
+  const band: RuleBand = { lo, hi, tolerance };
+  if (tolerance >= MAX_TOLERANCE || !bandCanFlag(domain, band, judging)) return { band: null, ...counts };
   return { band, ...counts };
 }
 
-function outShareTolerance(perParse: number[][], lo: number, hi: number, judging: RuleJudging): number {
+/** A thick pool has a tail to read a percentile off; a thin one only has its own extremes, and reading p10 off ten points just names the second-worst parse. */
+function bandEdges(pooled: number[]): { lo: number; hi: number } {
+  if (pooled.length >= MIN_POOLED_INSTANCES) {
+    return { lo: quantile(pooled, BAND_LOW_Q) ?? 0, hi: quantile(pooled, BAND_HIGH_Q) ?? 0 };
+  }
+  return { lo: pooled[0] ?? 0, hi: pooled[pooled.length - 1] ?? 0 };
+}
+
+/** The metric's display step, so every bake-side check judges the same edge the runtime's `Scale` rounds to. */
+function snapper(domain: RuleDomain): (value: number) => number {
+  const step = domain.step ?? 0;
+  return step ? (value: number) => Math.round(value / step) * step : (value: number) => value;
+}
+
+/** Read over every instance the runtime judges, measured or not, so tolerance cannot be calibrated on a narrower population than it defends. */
+function outShareTolerance(perParse: RuleSample[], lo: number, hi: number, judging: RuleJudging): number {
   const shares = perParse
-    .map(instances => instances.filter(value => outOfBand(value, lo, hi, judging)).length / instances.length)
+    .map(({ values, unmeasuredOut }) => {
+      const judged = values.length + unmeasuredOut;
+      const out = values.filter(value => outOfBand(value, lo, hi, judging)).length + unmeasuredOut;
+      return judged ? out / judged : 0;
+    })
     .sort((a, b) => a - b);
   return quantile(shares, TOLERANCE_Q) ?? 0;
 }
 
-/** An edge with nothing past it in the metric's own domain would list every player on plan for a rule it never tested. */
-function bandCanFlag(
-  domain: { min: number; max: number | null; step?: number }, band: RuleBand, judging: RuleJudging,
-): boolean {
-  const step = domain.step ?? 0;
-  const snap = (value: number) => step ? Math.round(value / step) * step : value;
-  return judging.primary === 'below'
-    ? snap(band.lo) > domain.min
-    : domain.max == null || snap(band.hi) < domain.max;
+/** An edge with nothing past it in the metric's own domain would list every player on plan for a rule it never tested. Two-sided judging survives on either edge alone. */
+function bandCanFlag(domain: RuleDomain, band: RuleBand, judging: RuleJudging): boolean {
+  const snap = snapper(domain);
+  const lowLive = snap(band.lo) > domain.min;
+  const highLive = domain.max != null && snap(band.hi) < domain.max;
+  if (judging.twoSided) return lowLive || highLive;
+  return judging.primary === 'below' ? lowLive : domain.max == null || highLive;
 }
 
 export function benchedRules(benched: BenchedRule[]): BenchedRule[] {
@@ -1183,7 +1206,8 @@ export function benchedRules(benched: BenchedRule[]): BenchedRule[] {
 export function evaluateCondition(
   cond: RuleCondition, ctx: RuleContext, band: RuleBand | null, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
-  return specFor(cond).evaluate(cond, ctx, band, severity, remedy);
+  const spec = specFor(cond);
+  return spec.evaluate(cond, ctx, band, spec.judging(cond), severity, remedy);
 }
 
 /** Whether the pull gave the player any chance to break the rule; without this a rule reads as followed on a fight it never came up in. */

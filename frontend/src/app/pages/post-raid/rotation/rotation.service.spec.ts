@@ -27,12 +27,12 @@ import {
 // A zero tolerance keeps the fixture arithmetic exact.
 const PAIR_WINDOW_S = 5;
 function band(lo: number, hi = lo, tolerance = 0): RuleBand {
-  return { lo, hi, typical: lo, tolerance };
+  return { lo, hi, tolerance };
 }
 
 // A rule whose band this encounter measured, so fixtures about something else are not gated on it.
 function benched(rule: RulebookRule, ruleBand: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
-  return { rule, band: ruleBand, sample_count: ruleBand == null ? 0 : 10, parse_count: ruleBand == null ? 0 : 10 };
+  return { rule, band: ruleBand, sample_count: ruleBand == null ? 0 : 10 };
 }
 // Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
 function scan(over: {

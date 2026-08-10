@@ -19,16 +19,48 @@ import {
   BenchedRule, RuleContext, RuleStream, RuleBand,
   buildRuleContext, evaluateRules, rulesFollowed, ruleLabel, ruleApplicable,
   rulesNeed, judgeableRules, benchedRules, sampleRule, ruleBand,
-  evaluateCastWithoutPrior, evaluateHoldForAnchor, evaluateCastOutsideBuff, evaluateAuraUptimeBelow,
-  evaluateOpeningSequence, evaluateCastAtTargetCount, evaluateResourceAtCast, evaluateProcWasted,
-  evaluateFillerInBuff, evaluateSpendAtStacks, evaluateAuraClipped, evaluateFillerBelowHealth,
+  ruleJudging, RuleJudging, RuleSample, Severity,
+  evaluateCastWithoutPrior as rawCastWithoutPrior,
+  evaluateHoldForAnchor as rawHoldForAnchor,
+  evaluateCastOutsideBuff as rawCastOutsideBuff,
+  evaluateAuraUptimeBelow as rawAuraUptimeBelow,
+  evaluateOpeningSequence as rawOpeningSequence,
+  evaluateCastAtTargetCount as rawCastAtTargetCount,
+  evaluateResourceAtCast as rawResourceAtCast,
+  evaluateProcWasted as rawProcWasted,
+  evaluateFillerInBuff as rawFillerInBuff,
+  evaluateSpendAtStacks as rawSpendAtStacks,
+  evaluateAuraClipped as rawAuraClipped,
+  evaluateFillerBelowHealth as rawFillerBelowHealth,
 } from './rotation-rules';
+import { RuleCondition } from '../../../core/models/rulebook.models';
+import { AnalysisFinding } from '../../../core/models/analysis.models';
+
+/** Each evaluator is called with the judging its own kind declares, so a spec can never assert against a side the table does not use. */
+function judged<C extends RuleCondition>(
+  evaluate: (c: C, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string) => AnalysisFinding | null,
+) {
+  return (c: C, ctx: RuleContext, band: RuleBand, severity: Severity, remedy?: string) =>
+    evaluate(c, ctx, band, ruleJudging(c), severity, remedy);
+}
+const evaluateCastWithoutPrior = judged(rawCastWithoutPrior);
+const evaluateHoldForAnchor = judged(rawHoldForAnchor);
+const evaluateCastOutsideBuff = judged(rawCastOutsideBuff);
+const evaluateAuraUptimeBelow = judged(rawAuraUptimeBelow);
+const evaluateOpeningSequence = judged(rawOpeningSequence);
+const evaluateCastAtTargetCount = judged(rawCastAtTargetCount);
+const evaluateResourceAtCast = judged(rawResourceAtCast);
+const evaluateProcWasted = judged(rawProcWasted);
+const evaluateFillerInBuff = judged(rawFillerInBuff);
+const evaluateSpendAtStacks = judged(rawSpendAtStacks);
+const evaluateAuraClipped = judged(rawAuraClipped);
+const evaluateFillerBelowHealth = judged(rawFillerBelowHealth);
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 
 // Zero tolerance keeps the fixture arithmetic exact; hi defaults to lo for the one-sided kinds this factory feeds most often.
 const PAIR_WINDOW_S = 5, HOLD_WINDOW_S = 15;
 function band(lo: number, hi = lo, tolerance = 0): RuleBand {
-  return { lo, hi, typical: lo, tolerance };
+  return { lo, hi, tolerance };
 }
 
 // The share kinds judge a violation share against [lo, hi]; a field that never breaks the rule flags any nonzero share.
@@ -36,7 +68,7 @@ const FIELD_NEVER = band(0);
 
 // A rule whose band this encounter measured, so fixtures about something else are not gated on it.
 function benched(rule: RulebookRule, ruleBandValue: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
-  return { rule, band: ruleBandValue, sample_count: ruleBandValue == null ? 0 : 10, parse_count: ruleBandValue == null ? 0 : 10 };
+  return { rule, band: ruleBandValue, sample_count: ruleBandValue == null ? 0 : 10 };
 }
 
 // Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
@@ -123,14 +155,13 @@ describe('rule engine', () => {
     expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, pastFloor, band(HOLD_WINDOW_S), 'critical')).not.toBeNull();
   });
 
-  it('flags the far side: a charge held far longer than the field\'s own window before the anchor', () => {
+  it('leaves a charge spent far earlier than the field alone, since a long gap is a prompt spend rather than a hold', () => {
     const FIELD_LO = 10, FIELD_HI = 40;
-    const heldTooLong = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 50)]);
-    const atHi = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 160)]);
-    const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, heldTooLong, band(FIELD_LO, FIELD_HI), 'critical', 'do x');
-    expect(finding).not.toBeNull();
-    expect(finding?.details?.remedy).toBeUndefined();
-    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, atHi, band(FIELD_LO, FIELD_HI), 'critical', 'do x')).toBeNull();
+    const spentEarly = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 50)]);
+    const atLo = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 200), cast(SHADOW_DANCE, 20)]);
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, spentEarly, band(FIELD_LO, FIELD_HI), 'critical', 'do x')).toBeNull();
+    // Exactly on the floor is inside the field's window; only under it is a hold.
+    expect(evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, atLo, band(FIELD_LO, FIELD_HI), 'critical', 'do x')).toBeNull();
   });
 
   it('evaluateRules names a violated rule by its description, matching how rulesFollowed names it', () => {
@@ -221,17 +252,10 @@ describe('evaluateCastOutsideBuff', () => {
     expect(evaluateCastOutsideBuff(insideDance, ctx, FIELD_NEVER, 'warning')?.measured?.value).toBe('1 / 1');
   });
 
-  it('flags the far side: an off-side share under the field\'s own low end', () => {
+  it('leaves an off-side share under the field\'s own low end alone, since beating the field is not a mistake', () => {
     // A single on-side cast reads a 0% off-side share, under a field whose own low end sits at 50%.
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
-    const finding = evaluateCastOutsideBuff(insideDance, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.message).toContain("under the field's 50-90%");
-  });
-
-  it('omits the remedy on a far-side finding, since the authored action answers the near side', () => {
-    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
-    const finding = evaluateCastOutsideBuff(insideDance, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateCastOutsideBuff(insideDance, ctx, band(0.5, 0.9), 'warning', 'do x')).toBeNull();
   });
 });
 
@@ -467,14 +491,13 @@ describe('evaluateCastAtTargetCount', () => {
     expect(evaluateCastAtTargetCount(capped, ctx, band(FIELD_CEILING), 'warning')?.measured?.value).toBe('1 / 1');
   });
 
-  it('flags the far side: a cast at far more targets than the field ever sees, and passes one at its own ceiling', () => {
+  it('leaves a cast at far more targets than the field alone, since clearing a floor costs nothing', () => {
     const FIELD_LO = 2, FIELD_HI = 5;
     const overCast = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2, 3, 4, 5, 6, 7, 8]) });
-    const atHi = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2, 3, 4, 5]) });
-    const finding = evaluateCastAtTargetCount(blackPowder, overCast, band(FIELD_LO, FIELD_HI), 'warning', 'do x');
-    expect(finding).not.toBeNull();
-    expect(finding?.details?.remedy).toBeUndefined();
-    expect(evaluateCastAtTargetCount(blackPowder, atHi, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
+    const atLo = ruleCtx([cast(BLACK_POWDER, CAST_S)], { damage: hits([1, 2]) });
+    expect(evaluateCastAtTargetCount(blackPowder, overCast, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
+    // Exactly on the floor is inside the field's range; only under it flags.
+    expect(evaluateCastAtTargetCount(blackPowder, atLo, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
   });
 });
 
@@ -601,8 +624,9 @@ describe('evaluateResourceAtCast', () => {
     const overCap = ruleCtx([atCombo(10, MAX_COMBO_POINTS)]);
     const atHi = ruleCtx([atCombo(10, 4)]);
     const finding = evaluateResourceAtCast(finisherAtMax, overCap, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x');
-    expect(finding).not.toBeNull();
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(finding?.message).toContain('capped');
+    // Spending sooner is what the authored action asks for, and it answers a capped pool too.
+    expect(finding?.details?.remedy).toBe('do x');
     expect(evaluateResourceAtCast(finisherAtMax, atHi, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x')).toBeNull();
   });
 });
@@ -636,16 +660,9 @@ describe('evaluateProcWasted', () => {
     expect(ruleApplicable(spendDance, ctx)).toBe(false);
   });
 
-  it('flags the far side: a wasted share under the field\'s own low end', () => {
+  it('leaves a wasted share under the field\'s own low end alone, since wasting fewer procs is not a mistake', () => {
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
-    const finding = evaluateProcWasted(spendDance, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.message).toContain("under the field's 50-90%");
-  });
-
-  it('omits the remedy on a far-side finding, since the authored action answers the near side', () => {
-    const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2)], { buffs: dance });
-    const finding = evaluateProcWasted(spendDance, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateProcWasted(spendDance, ctx, band(0.5, 0.9), 'warning', 'do x')).toBeNull();
   });
 });
 
@@ -729,13 +746,13 @@ describe('evaluateFillerInBuff', () => {
     const buffs = [...solar, ...buffWindow(SHADOW_DANCE, SOLAR_START_S, SOLAR_END_S)];
     const ctx = ruleCtx([cast(WRATH, 12), cast(STARFIRE, 16)], { buffs });
     expect(ruleApplicable(suspendedThroughout, ctx)).toBe(false);
-    expect(sampleRule(suspendedThroughout, ctx)).toEqual([]);
+    expect(sampleRule(suspendedThroughout, ctx).values).toEqual([]);
   });
 
   it('samples the share the pull ran, and nothing when it never filled inside the buff', () => {
     const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(STARFIRE, 16), cast(STARFIRE, 18)], { buffs: solar });
-    expect(sampleRule(wrathInSolar, ctx)).toEqual([0.5]);
-    expect(sampleRule(wrathInSolar, ruleCtx([], { buffs: solar }))).toEqual([]);
+    expect(sampleRule(wrathInSolar, ctx).values).toEqual([0.5]);
+    expect(sampleRule(wrathInSolar, ruleCtx([], { buffs: solar })).values).toEqual([]);
   });
 
   it('a lower field floor forgives a share a tighter one would flag', () => {
@@ -745,16 +762,9 @@ describe('evaluateFillerInBuff', () => {
     expect(evaluateFillerInBuff(wrathInSolar, ctx, fieldFloor, 'warning')).not.toBeNull();
   });
 
-  it('flags the far side: a coached share over the field\'s own high end', () => {
+  it('leaves a coached share over the field\'s own high end alone, since running the coached filler more is not a mistake', () => {
     const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(WRATH, 16)], { buffs: solar });
-    const finding = evaluateFillerInBuff(wrathInSolar, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.message).toContain("over the field's 50-90%");
-  });
-
-  it('omits the remedy on a far-side finding, since the authored action answers the near side', () => {
-    const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(WRATH, 16)], { buffs: solar });
-    const finding = evaluateFillerInBuff(wrathInSolar, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateFillerInBuff(wrathInSolar, ctx, band(0.5, 0.9), 'warning', 'do x')).toBeNull();
   });
 
   it('labels the rule as "<filler> in <buff>"', () => {
@@ -800,7 +810,7 @@ describe('evaluateSpendAtStacks', () => {
     ];
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, SPEND_AT_S)], { buffs });
     // Reading the post-consumption value would see 0 here and flag every spend in the log.
-    expect(sampleRule(spendAtStacks, ctx)).toEqual([STACKS_HELD]);
+    expect(sampleRule(spendAtStacks, ctx).values).toEqual([STACKS_HELD]);
   });
 
   it('inverts for bound "max", flagging a generator pressed while the buff is nearly capped', () => {
@@ -854,14 +864,14 @@ describe('evaluateSpendAtStacks', () => {
 
   it('samples every spend\'s own stack count, so the field-wide pool - not a per-parse reduction - finds the floor', () => {
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(sampleRule(spendAtStacks, ctx)).toEqual([3, 9]);
-    expect(sampleRule(spendAtStacks, ruleCtx([], { buffs: climbing }))).toEqual([]);
+    expect(sampleRule(spendAtStacks, ctx).values).toEqual([3, 9]);
+    expect(sampleRule(spendAtStacks, ruleCtx([], { buffs: climbing })).values).toEqual([]);
   });
 
   it('samples a cast made before the first stack landed as zero, not as unmeasured', () => {
     const BEFORE_FIRST_STACK_S = 0.5;
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, BEFORE_FIRST_STACK_S), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(sampleRule(spendAtStacks, ctx)).toEqual([0, 9]);
+    expect(sampleRule(spendAtStacks, ctx).values).toEqual([0, 9]);
   });
 
   it('flags a spend below the field floor and passes one exactly on it', () => {
@@ -897,8 +907,8 @@ describe('evaluateSpendAtStacks', () => {
     const overCap = ruleCtx([cast(LIGHTNING_BOLT, holding(MAELSTROM_WEAPON_MAX_STACKS))], { buffs: climbing });
     const atHi = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_HI))], { buffs: climbing });
     const finding = evaluateSpendAtStacks(spendAtStacks, overCap, band(FIELD_LO, FIELD_HI), 'warning', 'do x');
-    expect(finding).not.toBeNull();
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(finding?.message).toContain('capped');
+    expect(finding?.details?.remedy).toBe('do x');
     expect(evaluateSpendAtStacks(spendAtStacks, atHi, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
   });
 });
@@ -927,13 +937,10 @@ describe('evaluateAuraClipped', () => {
     expect(evaluateAuraClipped(moonfireClipped, at(FIELD_ELAPSED_S - 1), band(FIELD_ELAPSED_S), 'warning')).not.toBeNull();
   });
 
-  it('flags the far side: a refresh well after the field\'s own high end', () => {
+  it('leaves a refresh later than the field\'s own high end alone, since letting the aura run is not clipping it', () => {
     const LATE_ELAPSED_S = 20;
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + LATE_ELAPSED_S)], { debuffs: reapplied(LATE_ELAPSED_S) });
-    const finding = evaluateAuraClipped(moonfireClipped, ctx, band(4, 12), 'warning', 'do x');
-    expect(finding?.message).toContain("outside the field's 4-12s");
-    // No side to contradict in a side-neutral sentence, so the remedy stays.
-    expect(finding?.details?.remedy).toBe('do x');
+    expect(evaluateAuraClipped(moonfireClipped, ctx, band(4, 12), 'warning', 'do x')).toBeNull();
   });
 
   it('ignores a refresh no cast produced, since most refreshes in a log are procs', () => {
@@ -975,7 +982,7 @@ describe('evaluateAuraClipped', () => {
     ];
     const ctx = ruleCtx([cast(MOONFIRE, SECOND_APPLY_S + CLIPPED_ELAPSED_S)], { debuffs });
     // Its own clock reads 4s; measured against the first enemy's application it would read 14s.
-    expect(sampleRule(moonfireClipped, ctx)).toEqual([CLIPPED_ELAPSED_S]);
+    expect(sampleRule(moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S]);
   });
 
   it('samples the earliest and latest the pull re-applied, and nothing when it never did', () => {
@@ -987,8 +994,8 @@ describe('evaluateAuraClipped', () => {
     const ctx = ruleCtx([
       cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S), cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
     ], { debuffs });
-    expect(sampleRule(moonfireClipped, ctx)).toEqual([CLIPPED_ELAPSED_S, LATE_ELAPSED_S]);
-    expect(sampleRule(moonfireClipped, ruleCtx([]))).toEqual([]);
+    expect(sampleRule(moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S, LATE_ELAPSED_S]);
+    expect(sampleRule(moonfireClipped, ruleCtx([])).values).toEqual([]);
   });
 
   it('labels the rule as "<aura> clipped"', () => {
@@ -1059,20 +1066,13 @@ describe('evaluateFillerBelowHealth', () => {
 
   it('samples the share the pull converted, and nothing when it never reached the threshold', () => {
     const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(SLAM, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
-    expect(sampleRule(executeBelow, ctx)).toEqual([0.5]);
-    expect(sampleRule(executeBelow, ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] }))).toEqual([]);
+    expect(sampleRule(executeBelow, ctx).values).toEqual([0.5]);
+    expect(sampleRule(executeBelow, ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] })).values).toEqual([]);
   });
 
-  it('flags the far side: a coached share over the field\'s own high end', () => {
+  it('leaves a coached share over the field\'s own high end alone, since converting more often is not a mistake', () => {
     const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(EXECUTE, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
-    const finding = evaluateFillerBelowHealth(executeBelow, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.message).toContain("over the field's 50-90%");
-  });
-
-  it('omits the remedy on a far-side finding, since the authored action answers the near side', () => {
-    const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(EXECUTE, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
-    const finding = evaluateFillerBelowHealth(executeBelow, ctx, band(0.5, 0.9), 'warning', 'do x');
-    expect(finding?.details?.remedy).toBeUndefined();
+    expect(evaluateFillerBelowHealth(executeBelow, ctx, band(0.5, 0.9), 'warning', 'do x')).toBeNull();
   });
 
   it('labels the rule as "<spell> under <pct>% health"', () => {
@@ -1142,11 +1142,12 @@ describe('sampleRule', () => {
       cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 10 + TIGHT_LEAD_S),
       cast(SHADOW_DANCE, 40), cast(SECRET_TECHNIQUE, 40 + LOOSE_LEAD_S),
     ]);
-    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ctx)).toEqual([TIGHT_LEAD_S, LOOSE_LEAD_S]);
+    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ctx).values).toEqual([TIGHT_LEAD_S, LOOSE_LEAD_S]);
   });
 
-  it('samples nothing from a pull where the cast never paired at all', () => {
-    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ruleCtx([cast(SECRET_TECHNIQUE, 10)]))).toEqual([]);
+  it('measures no lead for an unpaired cast, but still reports it as an instance the parse judged', () => {
+    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ruleCtx([cast(SECRET_TECHNIQUE, 10)])))
+      .toEqual({ values: [], unmeasuredOut: 1 });
   });
 
   it('samples the gap each judged cast keeps clear before its next non-opener anchor', () => {
@@ -1154,7 +1155,7 @@ describe('sampleRule', () => {
     const ctx = ruleCtx([
       cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 90), cast(SHADOW_BLADES, 90 + CLEAR_GAP_S),
     ]);
-    expect(sampleRule(HOLD_DANCE_FOR_BLADES, ctx)).toEqual([CLEAR_GAP_S]);
+    expect(sampleRule(HOLD_DANCE_FOR_BLADES, ctx).values).toEqual([CLEAR_GAP_S]);
   });
 
   it('samples the uptime the pull held for an aura rule', () => {
@@ -1162,7 +1163,7 @@ describe('sampleRule', () => {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
-    expect(sampleRule(uptime, ctx)).toEqual([50]);
+    expect(sampleRule(uptime, ctx).values).toEqual([50]);
   });
 
   it('samples the share of procs the parse let expire, so a lasting state is not read as a wasted proc', () => {
@@ -1172,7 +1173,7 @@ describe('sampleRule', () => {
     };
     const buffs = [...buffWindow(SHADOW_DANCE, 10, 20), ...buffWindow(SHADOW_DANCE, 30, 40)];
     const HALF_WASTED = 0.5;
-    expect(sampleRule(proc, ruleCtx([cast(SECRET_TECHNIQUE, 12)], { buffs }))).toEqual([HALF_WASTED]);
+    expect(sampleRule(proc, ruleCtx([cast(SECRET_TECHNIQUE, 12)], { buffs })).values).toEqual([HALF_WASTED]);
   });
 
   it('samples nothing for a proc that never closed a span, so the parse abstains rather than voting zero', () => {
@@ -1180,7 +1181,7 @@ describe('sampleRule', () => {
       kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
       spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
     };
-    expect(sampleRule(proc, ruleCtx([]))).toEqual([]);
+    expect(sampleRule(proc, ruleCtx([])).values).toEqual([]);
   });
 
   it('samples the share of casts the parse put on the wrong side of a buff', () => {
@@ -1191,11 +1192,13 @@ describe('sampleRule', () => {
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2), cast(SECRET_TECHNIQUE, DANCE_END_S + 5)],
       { buffs: buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S) });
     const HALF_OFF_SIDE = 0.5;
-    expect(sampleRule(insideDance, ctx)).toEqual([HALF_OFF_SIDE]);
+    expect(sampleRule(insideDance, ctx).values).toEqual([HALF_OFF_SIDE]);
   });
 });
 
 describe('ruleBand', () => {
+  const sample = (values: number[], unmeasuredOut = 0): RuleSample => ({ values, unmeasuredOut });
+  const samples = (perParse: number[][]) => perParse.map(values => sample(values));
   const instanceCond: SpendAtStacksCondition = {
     kind: 'spend_at_stacks', spell_id: LIGHTNING_BOLT, spell_name: 'Lightning Bolt',
     buff_spell_id: MAELSTROM_WEAPON, buff_spell_name: 'Maelstrom Weapon', bound: 'min', max_stacks: 10,
@@ -1205,51 +1208,65 @@ describe('ruleBand', () => {
   };
 
   it('pools every instance across parses into one field, not each parse\'s own median', () => {
-    // 5 parses x 4 instances = 20 pooled: 16 at 1 and 4 at 100. Pooling medians ([100,1,1,1,1]) would read a far higher p90.
-    const perParse = [[100, 100, 100, 100], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]];
+    // 5 parses x 4 instances = 20 pooled: 16 at 1 and 4 at 100. Pooling medians ([100,1,1,1,1]) would read a far lower p90.
+    const perParse = samples([[100, 100, 100, 100], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]);
     const result = ruleBand(instanceCond, perParse);
     expect(result.sample_count).toBe(20);
     expect(result.band?.hi).toBe(100);
-    expect(result.band?.typical).toBe(1);
+    expect(result.band?.lo).toBe(1);
   });
 
-  it('counts sample_count as pooled instances and parse_count as contributing parses, for an instance-pooled kind', () => {
-    const perParse = Array.from({ length: 5 }, () => [1, 2, 3, 4, 5]);
-    const result = ruleBand(instanceCond, perParse);
-    expect(result.sample_count).toBe(25);
-    expect(result.parse_count).toBe(5);
+  it('counts sample_count as pooled instances, for an instance-pooled kind', () => {
+    const perParse = samples(Array.from({ length: 5 }, () => [1, 2, 3, 4, 5]));
+    expect(ruleBand(instanceCond, perParse).sample_count).toBe(25);
   });
 
-  it('counts parse_count only from parses that contributed at least one instance', () => {
-    const perParse = [[1], [2], [3], [], [4], [5]];
-    const result = ruleBand(parseCond, perParse);
-    expect(result.parse_count).toBe(5);
+  it('leaves a parse that measured nothing out of the pool', () => {
+    const result = ruleBand(parseCond, samples([[1], [2], [3], [], [4], [5]]));
     expect(result.sample_count).toBe(5);
   });
 
-  it('bars an instance-pooled band below MIN_POOLED_INSTANCES even with enough contributing parses', () => {
-    const perParse = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]];  // 5 parses, 10 pooled instances
+  it('reads a pool at MIN_POOLED_INSTANCES off its percentiles, and a thinner one off its own min and max', () => {
+    // 5 parses x 4 instances = 20 pooled, values 1..20 dealt round-robin so no one parse owns an extreme.
+    const thick = samples(Array.from({ length: 5 }, (_, p) => [0, 5, 10, 15].map(i => p + i + 1)));
+    const thickBand = ruleBand(instanceCond, thick).band;
+    expect(thickBand?.lo).toBeGreaterThan(1);
+    expect(thickBand?.hi).toBeLessThan(20);
+    // 10 pooled: a percentile here would just name the second-worst parse, so the edges are the field's own extremes.
+    const thin = samples([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]]);
+    expect(ruleBand(instanceCond, thin).band).toMatchObject({ lo: 1, hi: 10 });
+  });
+
+  it('bars a band below MIN_MEASURED_PARSES', () => {
+    expect(ruleBand(parseCond, samples([[1], [2], [3], [4]])).band).toBeNull();
+    expect(ruleBand(parseCond, samples([[1], [2], [3], [4], [5]])).band).not.toBeNull();
+  });
+
+  it('drops a rule whose kind needs bounds the rulebook never declared, rather than reading unknown as unbounded', () => {
+    const noCap = { ...instanceCond, max_stacks: undefined } as unknown as SpendAtStacksCondition;
+    const perParse = samples(Array.from({ length: 5 }, () => [1, 2, 3, 4, 5]));
+    expect(ruleBand(noCap, perParse).band).toBeNull();
+    expect(ruleBand(instanceCond, perParse).band).not.toBeNull();
+  });
+
+  it('keeps a two-sided rule whose near edge is degenerate, since its far edge still judges', () => {
+    // Every spend at zero stacks: the floor has nothing under it, but the cap above it is still reachable.
+    const perParse = samples(Array.from({ length: 5 }, () => [0, 0, 0, 0, 0]));
+    expect(ruleBand(instanceCond, perParse).band).toMatchObject({ lo: 0, hi: 0 });
+  });
+
+  it('drops a two-sided rule only once BOTH edges are degenerate', () => {
+    // p10 lands on the domain floor and p90 on the cap, so neither side has room left to flag.
+    const perParse = samples(Array.from({ length: 5 }, () => [0, 0, 0, 10, 10]));
     expect(ruleBand(instanceCond, perParse).band).toBeNull();
   });
 
-  it('bars a parse-pooled band below MIN_MEASURED_PARSES', () => {
-    const fourParses = [[1], [2], [3], [4]];
-    const fiveParses = [[1], [2], [3], [4], [5]];
-    expect(ruleBand(parseCond, fourParses).band).toBeNull();
-    expect(ruleBand(parseCond, fiveParses).band).not.toBeNull();
-  });
-
-  it('drops a below-judged rule whose floor lands exactly at the domain minimum, since no cast can fall under it', () => {
-    const perParse = Array.from({ length: 5 }, () => [0, 0, 0, 0, 0]);
-    expect(ruleBand(instanceCond, perParse).band).toBeNull();
-  });
-
-  it('drops an above-judged rule whose ceiling lands exactly at the domain maximum, since no cast can clear it', () => {
+  it('drops a one-sided rule whose only edge lands on the domain maximum, since no cast can clear it', () => {
     const genAtCap: ResourceAtCastCondition = {
       kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
       resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'max',
     };
-    const perParse = Array.from({ length: 5 }, () => [1, 1, 1, 1, 1]);
+    const perParse = samples(Array.from({ length: 5 }, () => [1, 1, 1, 1, 1]));
     expect(ruleBand(genAtCap, perParse).band).toBeNull();
   });
 
@@ -1257,9 +1274,7 @@ describe('ruleBand', () => {
     // 8 clean parses in-band, 2 fully out: the p90 of per-parse shares [0*8,1,1] lands on the top pair.
     const bad = [0];
     const good = [100, 100, 100];
-    const perParse = [bad, bad, good, good, good, good, good, good, good, good];
-    const result = ruleBand(instanceCond, perParse);
-    expect(result.parse_count).toBe(10);
+    const result = ruleBand(instanceCond, samples([bad, bad, good, good, good, good, good, good, good, good]));
     expect(result.sample_count).toBe(2 + 8 * 3);
     expect(result.band).toBeNull();
   });
@@ -1267,30 +1282,36 @@ describe('ruleBand', () => {
   it('measures tolerance as the p90 of each contributing parse\'s own out-of-band share', () => {
     const oneOffParse = [0, 0, 50, 50];
     const cleanParse = [50, 50, 50, 50];
-    const perParse = [oneOffParse, cleanParse, cleanParse, cleanParse, cleanParse];
-    const result = ruleBand(instanceCond, perParse);
+    const result = ruleBand(instanceCond, samples([oneOffParse, cleanParse, cleanParse, cleanParse, cleanParse]));
     expect(result.band?.tolerance).toBeCloseTo(0.3, 5);
   });
 
-  it('pins tolerance at exactly 0 for a parse-pooled kind, even when the min and max sit outside its own [p10, p90]', () => {
+  it('counts an instance the parse judged but could not measure as out of band, so tolerance defends the population the runtime judges', () => {
+    const pairedCond: CastWithoutPriorCondition = SECRET_TECH_NEEDS_DANCE;
+    // Every parse pairs 3 casts tightly and leaves 1 unpaired: the field's own unpaired rate has to reach tolerance.
+    const perParse = Array.from({ length: 5 }, () => sample([1, 1, 1], 1));
+    const measuredOnly = Array.from({ length: 5 }, () => sample([1, 1, 1]));
+    expect(ruleBand(pairedCond, perParse).band?.tolerance).toBeCloseTo(0.25, 5);
+    expect(ruleBand(pairedCond, measuredOnly).band?.tolerance).toBe(0);
+  });
+
+  it('pins tolerance at exactly 0 for a parse-pooled kind, whose parses each contribute one value', () => {
     const wasted: ProcWastedCondition = {
       kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
       spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],
     };
-    // 10 parses, one share each, spread widely: the min and max necessarily fall outside [p10, p90] of the pool.
-    const perParse = Array.from({ length: 10 }, (_, i) => [i / 10]);
-    const result = ruleBand(wasted, perParse);
-    expect(result.band?.tolerance).toBe(0);
+    const perParse = samples(Array.from({ length: 10 }, (_, i) => [i / 10]));
+    expect(ruleBand(wasted, perParse).band?.tolerance).toBe(0);
   });
 
-  it('collapses lo, hi and typical to the same value when every parse agrees exactly', () => {
+  it('collapses lo and hi to the same value when every parse agrees exactly', () => {
     const blackPowder: CastAtTargetCountCondition = {
       kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
     };
     const UNANIMOUS_TARGETS = 5;
-    const perParse = Array.from({ length: 5 }, () => Array.from({ length: 4 }, () => UNANIMOUS_TARGETS));
+    const perParse = samples(Array.from({ length: 5 }, () => Array.from({ length: 4 }, () => UNANIMOUS_TARGETS)));
     expect(ruleBand(blackPowder, perParse).band).toEqual({
-      lo: UNANIMOUS_TARGETS, hi: UNANIMOUS_TARGETS, typical: UNANIMOUS_TARGETS, tolerance: 0,
+      lo: UNANIMOUS_TARGETS, hi: UNANIMOUS_TARGETS, tolerance: 0,
     });
   });
 });
@@ -1528,7 +1549,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '2', detail: 'Black Powder cast at 2.' },
       { atS: 30, ok: true, label: '3', detail: 'Black Powder cast at 3.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field stays inside 3');
+    expect(finding?.occurrenceTarget).toBe('field waits for 3+');
   });
 
   it('resource_at_cast: a chip per cast, the raw amount over its own cap as the label (a small pool reads as a count, not a percent)', () => {

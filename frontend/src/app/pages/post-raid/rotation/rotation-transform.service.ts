@@ -15,7 +15,7 @@ import { DataSource } from '../../../core/data-source/data-source';
 import { Result, LoadError, ok, missing } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
 import {
-  BenchedRule, buildRuleContext, sampleRule, ruleBand, judgeableRules, rulesNeed,
+  BenchedRule, RuleSample, MIN_MEASURED_PARSES, buildRuleContext, sampleRule, ruleBand, judgeableRules, rulesNeed,
 } from './rotation-rules';
 import { detectBloodlust } from './rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
@@ -25,8 +25,8 @@ export { toParseRankings } from '../../../shared/analysis/wcl-projections';
 
 /** How many top parses to sample. */
 const TOP_PARSE_COUNT = 10;
-/** Under this a median is one player's habit rather than the field's, so the encounter benches nothing until its pool fills. */
-const MIN_PARSE_COUNT = 3;
+/** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
+const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
 // Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one.
 const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
 /** BL window: a CD counts as aligned if cast 30s before to 55s after BL start. */
@@ -192,8 +192,8 @@ export function aggregateCdBenchmarks(
   return result;
 }
 
-/** One parse's measured instances for each judged rule, index-aligned with the rules. */
-export type ParseRuleSamples = number[][];
+/** One parse's contribution for each judged rule, index-aligned with the rules. */
+export type ParseRuleSamples = RuleSample[];
 
 interface ParseRotation {
   summaries: CdSummary[];
@@ -206,7 +206,7 @@ interface ParseRotation {
 export function benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
   return rules.map((rule, i) => ({
     rule,
-    ...ruleBand(rule.condition, perParse.map(samples => samples[i] ?? [])),
+    ...ruleBand(rule.condition, perParse.map(samples => samples[i] ?? { values: [], unmeasuredOut: 0 })),
   }));
 }
 
