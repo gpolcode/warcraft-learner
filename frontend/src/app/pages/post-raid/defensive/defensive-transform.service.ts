@@ -276,6 +276,8 @@ export function buildDefensiveBenchmark(
     stddev_gap_s: gaps.length ? round((deviation(gaps) ?? 0)) : null,
     hold_targets: buildHoldTargets(summaries, effectiveCd, totalParses),
     avg_uses: summaries.length ? round(mean(summaries.map(summary => summary.uses)) ?? 0) : 0,
+    // `summaries` is already users-only (see the comment above), so the median needs no further filtering.
+    median_uses: summaries.length ? round(median(summaries.map(summary => summary.uses)) ?? 0) : 0,
     avg_uses_per_min: usesPerMinList.length ? Math.round((mean(usesPerMinList) ?? 0) * 100) / 100 : 0,
     uses_per_min: benchUsesPerMin.length
       ? {
