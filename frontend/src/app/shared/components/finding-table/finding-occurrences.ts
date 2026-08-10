@@ -22,7 +22,6 @@ export class FindingOccurrencesComponent {
   readonly target = input<string>('');
   readonly timeline = input<FindingTimeline | undefined>(undefined);
 
-  // The strip is reused across findings, so a stale manual pick must not survive an occurrences swap.
   private readonly selectedIndex = linkedSignal<FindingOccurrence[], number | null>({
     source: this.occurrences,
     computation: () => null,

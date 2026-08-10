@@ -50,4 +50,11 @@ describe('FindingTableComponent', () => {
     setInput('subtitle', 'Updated subtitle');
     expect(vm.openIndex()).toBe(1);
   });
+
+  it('keeps the open row when rows is set to the same array reference', () => {
+    const { vm, setInput } = mountVm(FindingTableComponent, { heading: 'Rules', rows });
+    vm.toggle(1);
+    setInput('rows', rows);
+    expect(vm.openIndex()).toBe(1);
+  });
 });
