@@ -681,6 +681,14 @@ describe('evaluateSpendAtStacks', () => {
     expect(evaluateSpendAtStacks(spendAtStacks, underIt, thr(FIELD_STACKS), 'warning')).not.toBeNull();
   });
 
+  it('a spend exactly at the declared cap passes exactly as it does with no cap declared', () => {
+    const MAELSTROM_WEAPON_MAX_STACKS = 10; // top of the `climbing` fixture, standing in for the buff's own cap.
+    const capped: SpendAtStacksCondition = { ...spendAtStacks, max_stacks: MAELSTROM_WEAPON_MAX_STACKS };
+    const atCap = ruleCtx([cast(LIGHTNING_BOLT, holding(MAELSTROM_WEAPON_MAX_STACKS))], { buffs: climbing });
+    expect(evaluateSpendAtStacks(spendAtStacks, atCap, thr(FIELD_STACKS), 'warning')).toBeNull();
+    expect(evaluateSpendAtStacks(capped, atCap, thr(FIELD_STACKS), 'warning')).toBeNull();
+  });
+
   it('reads the count going into the cast, since a spend and the cast that spends it share one timestamp', () => {
     const SPEND_AT_S = 6, STACKS_HELD = SPEND_AT_S - 1;
     const buffs = [
@@ -1391,6 +1399,26 @@ describe('occurrence strips', () => {
       { atS: 10, ok: true, label: '9', detail: 'Lightning Bolt cast at 9.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('field waits for 8+');
+  });
+
+  it('spend_at_stacks: with a declared cap, the chip label and sentence read as a count against it', () => {
+    const MAELSTROM_WEAPON_MAX_STACKS = 10; // the buff's own cap, read from its tooltip.
+    const spendAtStacksCapped: SpendAtStacksCondition = {
+      kind: 'spend_at_stacks',
+      spell_id: LIGHTNING_BOLT, spell_name: 'Lightning Bolt',
+      buff_spell_id: MAELSTROM_WEAPON, buff_spell_name: 'Maelstrom Weapon',
+      bound: 'min', max_stacks: MAELSTROM_WEAPON_MAX_STACKS,
+    };
+    const buffs = [applyBuff(MAELSTROM_WEAPON, 1), applyBuffStack(MAELSTROM_WEAPON, 5, 5), applyBuffStack(MAELSTROM_WEAPON, 9, 9)];
+    const ctx = ruleCtx([cast(LIGHTNING_BOLT, 6), cast(LIGHTNING_BOLT, 10)], { buffs });
+    const finding = evaluateSpendAtStacks(spendAtStacksCapped, ctx, thr(8), 'warning');
+    // Same two casts as the undeclared-cap case above - only the label and sentence pick up the cap.
+    expect(finding?.occurrences).toEqual([
+      { atS: 6, ok: false, label: '5/10', detail: 'Lightning Bolt cast at 5/10.' },
+      { atS: 10, ok: true, label: '9/10', detail: 'Lightning Bolt cast at 9/10.' },
+    ]);
+    expect(finding?.occurrenceTarget).toBe('field waits for 8/10+');
+    expect(finding?.message).toBe('Lightning Bolt cast at under 8/10 Maelstrom Weapon, 1 of 2 cast(s). Top: 8/10.');
   });
 
   it('aura_clipped: a chip per hard-cast refresh, the elapsed time as the label', () => {
