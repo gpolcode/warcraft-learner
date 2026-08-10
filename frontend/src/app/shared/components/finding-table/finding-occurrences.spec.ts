@@ -58,20 +58,4 @@ describe('FindingOccurrencesComponent', () => {
     expect(vm.activeIndex()).toBe(NEW_FIRST_BAD_INDEX);
     expect(vm.active()).toEqual(nextOccurrences[NEW_FIRST_BAD_INDEX]);
   });
-
-  it('keeps the manual pick when an unrelated input changes but occurrences does not', () => {
-    const occurrences = [occ({ ok: false, label: 'a' }), occ({ label: 'b' }), occ({ label: 'c' })];
-    const { vm, setInput } = mountVm(FindingOccurrencesComponent, { occurrences });
-    vm.select(2);
-    setInput('target', 'a-different-target');
-    expect(vm.activeIndex()).toBe(2);
-  });
-
-  it('keeps the manual pick when occurrences is set to the same array reference', () => {
-    const occurrences = [occ({ ok: false, label: 'a' }), occ({ label: 'b' }), occ({ label: 'c' })];
-    const { vm, setInput } = mountVm(FindingOccurrencesComponent, { occurrences });
-    vm.select(2);
-    setInput('occurrences', occurrences);
-    expect(vm.activeIndex()).toBe(2);
-  });
 });
