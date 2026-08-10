@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { detectBloodlust } from './rotation-bloodlust';
 import { BLOODLUST } from '../../../../testing/spell-ids';
-import { applyBuff } from '../../../../testing/builders/events';
+import { applyBuff, removeBuff } from '../../../../testing/builders/events';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
@@ -26,5 +26,10 @@ describe('detectBloodlust', () => {
 
   it('returns null when no BL buff present', () => {
     expect(detectBloodlust(timed([applyBuff(999, 5)], 0))).toBeNull();
+  });
+
+  it('detects a Bloodlust whose only trace is a bare remove, back-filled to fight start', () => {
+    const REMOVE_S = 40;
+    expect(detectBloodlust(timed([removeBuff(BLOODLUST, REMOVE_S)], 0))).toBe(0);
   });
 });

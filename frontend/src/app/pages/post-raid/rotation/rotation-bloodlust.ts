@@ -1,15 +1,14 @@
-// Colocated with rotation.service.ts and rotation-transform.service.ts so the runtime and the ingest bench detect Bloodlust with the same code.
 import { TimedEvent } from '../../../shared/analysis/wcl-projections';
+import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 
 /** Bloodlust / Heroism / Time Warp and equivalents. */
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
 
-// A cast just before the pull still covers the opener, so this intentionally does not bound by fight start.
+// Returns whatever start buildAuraWindows finds, negative included: a Lust cast before the pull still covers the opener.
 export function detectBloodlust(buffEvents: TimedEvent[]): number | null {
-  for (const event of buffEvents) {
-    if (event.type === 'applybuff' && BLOODLUST_IDS.has(event.abilityGameID)) {
-      return event.atS;
-    }
-  }
-  return null;
+  const windows = buildAuraWindows(buffEvents);
+  const starts = [...BLOODLUST_IDS]
+    .map(id => windows.get(id)?.[0]?.[0])
+    .filter((start): start is number => start != null);
+  return starts.length ? Math.min(...starts) : null;
 }
