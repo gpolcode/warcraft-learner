@@ -17,8 +17,6 @@ function mount(copySucceeds: boolean) {
   ]);
   return {
     messageOnDiscord: () => (vm['messageOnDiscord'] as () => void).call(vm),
-    toggleFeedback: () => (vm['toggleFeedback'] as () => void).call(vm),
-    feedbackOpen: () => (vm['feedbackOpen'] as () => boolean)(),
     copiedState: () => (vm['discordCopied'] as () => boolean)(),
     failedState: () => (vm['discordCopyFailed'] as () => boolean)(),
     copied,
@@ -51,17 +49,5 @@ describe('PageNavComponent Discord handle', () => {
     expect(nav.copied).toEqual([DISCORD_HANDLE]);
     expect(nav.copiedState()).toBe(false);
     expect(nav.failedState()).toBe(true);
-  });
-
-  it('clears the confirmation when the submenu is toggled shut', () => {
-    const nav = mount(true);
-    nav.toggleFeedback();
-    nav.messageOnDiscord();
-
-    nav.toggleFeedback();
-
-    expect(nav.feedbackOpen()).toBe(false);
-    expect(nav.copiedState()).toBe(false);
-    expect(nav.failedState()).toBe(false);
   });
 });

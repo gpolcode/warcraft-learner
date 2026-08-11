@@ -56,7 +56,6 @@ export class PageNavComponent {
 
   // Mobile: modal drawer, closed by default. Desktop: permanent drawer that collapses to an icons-only rail restored from the last session.
   protected readonly mobileOpen = signal(false);
-  protected readonly feedbackOpen = signal(false);
   protected readonly discordCopied = signal(false);
   protected readonly discordCopyFailed = signal(false);
   protected readonly desktopCollapsed = signal(this.navState.loadCollapsed());
@@ -101,22 +100,15 @@ export class PageNavComponent {
   }
 
   // Space scrolls an href-less anchor by default, so keyboard activation goes through here rather than straight to the action.
-  protected activate(event: Event, action: 'toggleFeedback' | 'messageOnDiscord'): void {
+  protected activateDiscord(event: Event): void {
     event.preventDefault();
-    if (action === 'toggleFeedback') this.toggleFeedback();
-    else this.messageOnDiscord();
+    this.messageOnDiscord();
   }
 
   protected messageOnDiscord(): void {
     window.open(DISCORD_URL, '_blank', 'noopener');
     this.discordCopied.set(this.clipboard.copy(DISCORD_HANDLE));
     this.discordCopyFailed.set(!this.discordCopied());
-  }
-
-  protected toggleFeedback(): void {
-    this.feedbackOpen.update(open => !open);
-    this.discordCopied.set(false);
-    this.discordCopyFailed.set(false);
   }
 
   protected onOpenedChange(opened: boolean): void {

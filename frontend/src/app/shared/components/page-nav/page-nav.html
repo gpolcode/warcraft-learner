@@ -58,44 +58,29 @@
               <span matListItemTitle>View on GitHub</span>
             }
           </a>
-          <a mat-list-item role="button" tabindex="0" (click)="toggleFeedback()"
-             (keydown.enter)="activate($event, 'toggleFeedback')" (keydown.space)="activate($event, 'toggleFeedback')"
-             [attr.aria-expanded]="feedbackOpen()" aria-label="Feedback or a bug"
-             [matTooltip]="railCollapsed() ? 'Feedback or a bug' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>feedback</mat-icon>
+          <a mat-list-item [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
+             aria-label="Report an issue on GitHub"
+             [matTooltip]="railCollapsed() ? 'Report an issue' : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>bug_report</mat-icon>
             @if (!railCollapsed()) {
-              <span matListItemTitle>Feedback or a bug</span>
-            }
-            @if (!railCollapsed()) {
-              <mat-icon matListItemMeta>{{ feedbackOpen() ? 'expand_less' : 'expand_more' }}</mat-icon>
+              <span matListItemTitle>Report an issue</span>
             }
           </a>
-
-          @if (feedbackOpen()) {
-            <a mat-list-item [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
-               aria-label="Open a GitHub issue"
-               [matTooltip]="railCollapsed() ? 'Open a GitHub issue' : ''" matTooltipPosition="right">
-              <mat-icon matListItemIcon>bug_report</mat-icon>
-              @if (!railCollapsed()) {
-                <span matListItemTitle>Open a GitHub issue</span>
+          <a mat-list-item role="button" tabindex="0" (click)="messageOnDiscord()"
+             (keydown.enter)="activateDiscord($event)" (keydown.space)="activateDiscord($event)"
+             [attr.aria-label]="'Message me on Discord, ' + discordHandle"
+             [matTooltip]="railCollapsed() ? 'Message on Discord' : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>chat</mat-icon>
+            @if (!railCollapsed()) {
+              @if (discordCopied()) {
+                <span matListItemTitle>Handle copied</span>
+              } @else if (discordCopyFailed()) {
+                <span matListItemTitle>Copy failed</span>
+              } @else {
+                <span matListItemTitle>Discord: {{ discordHandle }}</span>
               }
-            </a>
-            <a mat-list-item role="button" tabindex="0" (click)="messageOnDiscord()"
-               (keydown.enter)="activate($event, 'messageOnDiscord')" (keydown.space)="activate($event, 'messageOnDiscord')"
-               [attr.aria-label]="'Message me on Discord, ' + discordHandle"
-               [matTooltip]="railCollapsed() ? 'Message me on Discord, ' + discordHandle : ''" matTooltipPosition="right">
-              <mat-icon matListItemIcon>chat</mat-icon>
-              @if (!railCollapsed()) {
-                @if (discordCopied()) {
-                  <span matListItemTitle>Handle copied. Search {{ discordHandle }} in Discord.</span>
-                } @else if (discordCopyFailed()) {
-                  <span matListItemTitle>Opened Discord. My handle is {{ discordHandle }}.</span>
-                } @else {
-                  <span matListItemTitle>Message on Discord: {{ discordHandle }}</span>
-                }
-              }
-            </a>
-          }
+            }
+          </a>
         </mat-nav-list>
       </div>
     </div>
