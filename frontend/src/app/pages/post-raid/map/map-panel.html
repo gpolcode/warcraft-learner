@@ -1,9 +1,12 @@
-@if (map.open()) {
-  <wl-flyover-panel
-    heading="Positioning"
-    [loadingText]="map.overlayLoading() ? 'Loading your trail...' : ''"
-    closeLabel="Close map"
-    (closed)="map.close()">
-    <wl-map-canvas />
-  </wl-flyover-panel>
+<!-- Deferred so the canvas and its flyover stay out of the landing chunk; the inner @if is what closes the panel again. -->
+@defer (when map.open()) {
+  @if (map.open()) {
+    <wl-flyover-panel
+      heading="Positioning"
+      [loadingText]="map.overlayLoading() ? 'Loading your trail...' : ''"
+      closeLabel="Close map"
+      (closed)="map.close()">
+      <wl-map-canvas />
+    </wl-flyover-panel>
+  }
 }

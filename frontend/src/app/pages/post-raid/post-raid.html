@@ -2,7 +2,7 @@
     <mat-card appearance="outlined" class="mb-5 p-4">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Warcraft Logs Report URL or Code</mat-label>
-        <input matInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
+        <input #reportInput matInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
                (keydown.enter)="loadReport()" (paste)="onPaste()" />
         <!-- Unconditional: `@if`-gating this leaves the field red with no message (MAT_ERROR misses a conditional child). -->
         <mat-error>Paste a Warcraft Logs report URL or a 16-character report code.</mat-error>
@@ -82,72 +82,75 @@
       <wl-loading-spinner [message]="loadingMsg()"></wl-loading-spinner>
     }
 
-    @if (ready() && !loadingAnalysis()) {
-      <!-- Mounted but hidden via display:none until loaded: @if-gating on cardsBusy() would unmount the cards mid-load. -->
-      <div class="flex flex-col gap-6" [class.hidden]="cardsBusy()">
-        @if (!benchAvailable()) {
-          <wl-bench-empty-banner variant="post" [encounter]="selectedFight()?.name ?? ''"></wl-bench-empty-banner>
-        }
+    <!-- Deferred so the cards and their rulebook math stay out of the landing chunk; the inner @if is what unmounts them when a second report loads. -->
+    @defer (when showCards(); prefetch on interaction(reportInput)) {
+      @if (showCards()) {
+        <!-- Mounted but hidden via display:none until loaded: @if-gating on cardsBusy() would unmount the cards mid-load. -->
+        <div class="flex flex-col gap-6" [class.hidden]="cardsBusy()">
+          @if (!benchAvailable()) {
+            <wl-bench-empty-banner variant="post" [encounter]="selectedFight()?.name ?? ''"></wl-bench-empty-banner>
+          }
 
-        <wl-pull-overview
-          [report]="reportCode()"
-          [fight]="selectedFight()!"
-          [player]="selectedPlayerId()!"
-          [showMap]="mapReady()"
-          [showClip]="clipReady()"
-          (openMap)="onOpenMap($event)"
-          (openClip)="onOpenClip($event)"
-          (busyChange)="pullOverviewBusy.set($event)">
-        </wl-pull-overview>
+          <wl-pull-overview
+            [report]="reportCode()"
+            [fight]="selectedFight()!"
+            [player]="selectedPlayerId()!"
+            [showMap]="mapReady()"
+            [showClip]="clipReady()"
+            (openMap)="onOpenMap($event)"
+            (openClip)="onOpenClip($event)"
+            (busyChange)="pullOverviewBusy.set($event)">
+          </wl-pull-overview>
 
-        <wl-rotation
-          [spec]="spec()"
-          [encounterId]="selectedEncounterId()"
-          [reportCode]="reportCode()"
-          [fightId]="selectedFightId()!"
-          [playerId]="selectedPlayerId()!"
-          (busyChange)="rotationBusy.set($event)"
-          (availableChange)="rotationAvailable.set($event)">
-        </wl-rotation>
+          <wl-rotation
+            [spec]="spec()"
+            [encounterId]="selectedEncounterId()"
+            [reportCode]="reportCode()"
+            [fightId]="selectedFightId()!"
+            [playerId]="selectedPlayerId()!"
+            (busyChange)="rotationBusy.set($event)"
+            (availableChange)="rotationAvailable.set($event)">
+          </wl-rotation>
 
-        <wl-burst-windows
-          [spec]="spec()"
-          [encounterId]="selectedEncounterId()"
-          [report]="reportCode()"
-          [fight]="selectedFightId()!"
-          [player]="selectedPlayerId()!"
-          [showMap]="mapReady()"
-          [showClip]="clipReady()"
-          (openMap)="onOpenMap($event)"
-          (openClip)="onOpenClip($event)"
-          (busyChange)="burstBusy.set($event)"
-          (availableChange)="burstAvailable.set($event)">
-        </wl-burst-windows>
+          <wl-burst-windows
+            [spec]="spec()"
+            [encounterId]="selectedEncounterId()"
+            [report]="reportCode()"
+            [fight]="selectedFightId()!"
+            [player]="selectedPlayerId()!"
+            [showMap]="mapReady()"
+            [showClip]="clipReady()"
+            (openMap)="onOpenMap($event)"
+            (openClip)="onOpenClip($event)"
+            (busyChange)="burstBusy.set($event)"
+            (availableChange)="burstAvailable.set($event)">
+          </wl-burst-windows>
 
-        <wl-defensive
-          [spec]="spec()"
-          [encounterId]="selectedEncounterId()"
-          [report]="reportCode()"
-          [fight]="selectedFightId()!"
-          [player]="selectedPlayerId()!"
-          [showMap]="mapReady()"
-          [showClip]="clipReady()"
-          (openMap)="onDefensiveOpenMap($event)"
-          (openClip)="onOpenClip($event)"
-          (busyChange)="defensiveBusy.set($event)"
-          (availableChange)="defensiveAvailable.set($event)">
-        </wl-defensive>
+          <wl-defensive
+            [spec]="spec()"
+            [encounterId]="selectedEncounterId()"
+            [report]="reportCode()"
+            [fight]="selectedFightId()!"
+            [player]="selectedPlayerId()!"
+            [showMap]="mapReady()"
+            [showClip]="clipReady()"
+            (openMap)="onDefensiveOpenMap($event)"
+            (openClip)="onOpenClip($event)"
+            (busyChange)="defensiveBusy.set($event)"
+            (availableChange)="defensiveAvailable.set($event)">
+          </wl-defensive>
 
-        <wl-gear
-          [spec]="spec()"
-          [encounterId]="selectedEncounterId()"
-          [report]="reportCode()"
-          [fight]="selectedFightId()!"
-          [player]="selectedPlayerId()!"
-          (busyChange)="gearBusy.set($event)"
-          (availableChange)="gearAvailable.set($event)">
-        </wl-gear>
-      </div>
+          <wl-gear
+            [spec]="spec()"
+            [encounterId]="selectedEncounterId()"
+            [report]="reportCode()"
+            [fight]="selectedFightId()!"
+            [player]="selectedPlayerId()!"
+            (busyChange)="gearBusy.set($event)"
+            (availableChange)="gearAvailable.set($event)">
+          </wl-gear>
+        </div>
+      }
     }
 
     <wl-map-panel></wl-map-panel>

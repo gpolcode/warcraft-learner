@@ -1,5 +1,8 @@
-@if (clip.open()) {
-  <wl-flyover-panel heading="Replay" closeLabel="Close replay" (closed)="clip.close()">
-    <wl-clip-player />
-  </wl-flyover-panel>
+<!-- Deferred so the player and its flyover stay out of the landing chunk; the inner @if is what closes the panel again. -->
+@defer (when clip.open()) {
+  @if (clip.open()) {
+    <wl-flyover-panel heading="Replay" closeLabel="Close replay" (closed)="clip.close()">
+      <wl-clip-player />
+    </wl-flyover-panel>
+  }
 }

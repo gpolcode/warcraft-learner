@@ -245,6 +245,8 @@ export class PostRaidComponent {
   protected readonly ready = computed(() =>
     !!this.spec() && !!this.reportCode() && !!this.selectedFightId() && !!this.selectedPlayerId() && !!this.selectedEncounterId());
 
+  protected readonly showCards = computed(() => this.ready() && !this.loadingAnalysis());
+
   protected readonly mapReady = this.mapFeature.ready;
 
   protected onOpenMap(anchor: MapAnchor): void {
