@@ -68,12 +68,11 @@ describe('PreFightComponent stale-encounter reset', () => {
 });
 
 describe('PreFightComponent encounter load latest-wins', () => {
-  const SLOW_SPEC = 'SubtletyRogue';  // selected first, its response arrives last
+  const SLOW_SPEC = 'SubtletyRogue';
   const NEWER_SPEC = 'FrostMage';
   const SLOW_ENCOUNTER: EncounterEntry = { id: 3129, name: 'Boss Slow', sample_count: 9 };
   const NEWER_ENCOUNTER: EncounterEntry = { id: 3131, name: 'Boss Newer', sample_count: 4 };
 
-  /** Parks every getEncounters call so each spec's response settles exactly when the test says so. */
   class ParkedEncounterSelection {
     private readonly resolvers = new Map<string, (result: Result<EncounterEntry[], LoadError>) => void>();
 
@@ -90,10 +89,8 @@ describe('PreFightComponent encounter load latest-wins', () => {
     }
   }
 
-  // LatestLoad applies through a promise chain; a macrotask flush lets its callbacks land before assertions run.
   const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
 
-  // Constructs the shell directly (no view attached) so the spec selection runs without rendering the card templates.
   function setup(): { api: ParkedEncounterSelection; vm: Record<string, unknown> } {
     const api = new ParkedEncounterSelection();
     TestBed.configureTestingModule({
