@@ -9,10 +9,13 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavStateStore } from '../../../core/services/nav-state-store';
 
 const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
+const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new`;
+const DISCORD_HANDLE = 'elsahr';
 const MOBILE_QUERY = '(max-width: 600px)';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -38,8 +41,11 @@ const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 })
 export class PageNavComponent {
   protected readonly githubUrl = GITHUB_URL;
+  protected readonly newIssueUrl = NEW_ISSUE_URL;
+  protected readonly discordHandle = DISCORD_HANDLE;
   private readonly breakpoints = inject(BreakpointObserver);
   private readonly navState = inject(NavStateStore);
+  private readonly clipboard = inject(Clipboard);
 
   protected readonly isMobile = toSignal(
     this.breakpoints.observe(MOBILE_QUERY).pipe(map(result => result.matches)),
@@ -48,6 +54,9 @@ export class PageNavComponent {
 
   // Mobile: modal drawer, closed by default. Desktop: permanent drawer that collapses to an icons-only rail restored from the last session.
   protected readonly mobileOpen = signal(false);
+  protected readonly feedbackOpen = signal(false);
+  protected readonly discordCopied = signal(false);
+  protected readonly discordCopyFailed = signal(false);
   protected readonly desktopCollapsed = signal(this.navState.loadCollapsed());
 
   protected readonly sidenavMode = computed<'over' | 'side'>(() =>
@@ -87,6 +96,24 @@ export class PageNavComponent {
     if (this.isMobile()) {
       this.mobileOpen.set(false);
     }
+  }
+
+  // Space scrolls an href-less anchor by default, so keyboard activation goes through here rather than straight to the action.
+  protected activate(event: Event, action: 'toggleFeedback' | 'copyDiscordHandle'): void {
+    event.preventDefault();
+    if (action === 'toggleFeedback') this.toggleFeedback();
+    else this.copyDiscordHandle();
+  }
+
+  protected copyDiscordHandle(): void {
+    this.discordCopied.set(this.clipboard.copy(DISCORD_HANDLE));
+    this.discordCopyFailed.set(!this.discordCopied());
+  }
+
+  protected toggleFeedback(): void {
+    this.feedbackOpen.update(open => !open);
+    this.discordCopied.set(false);
+    this.discordCopyFailed.set(false);
   }
 
   protected onOpenedChange(opened: boolean): void {

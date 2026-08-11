@@ -58,6 +58,44 @@
               <span matListItemTitle>View on GitHub</span>
             }
           </a>
+          <a mat-list-item role="button" tabindex="0" (click)="toggleFeedback()"
+             (keydown.enter)="activate($event, 'toggleFeedback')" (keydown.space)="activate($event, 'toggleFeedback')"
+             [attr.aria-expanded]="feedbackOpen()" aria-label="Feedback or a bug"
+             [matTooltip]="railCollapsed() ? 'Feedback or a bug' : ''" matTooltipPosition="right">
+            <mat-icon matListItemIcon>feedback</mat-icon>
+            @if (!railCollapsed()) {
+              <span matListItemTitle>Feedback or a bug</span>
+            }
+            @if (!railCollapsed()) {
+              <mat-icon matListItemMeta>{{ feedbackOpen() ? 'expand_less' : 'expand_more' }}</mat-icon>
+            }
+          </a>
+
+          @if (feedbackOpen()) {
+            <a mat-list-item [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
+               aria-label="Open a GitHub issue"
+               [matTooltip]="railCollapsed() ? 'Open a GitHub issue' : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon svgIcon="github"></mat-icon>
+              @if (!railCollapsed()) {
+                <span matListItemTitle>Open a GitHub issue</span>
+              }
+            </a>
+            <a mat-list-item role="button" tabindex="0" (click)="copyDiscordHandle()"
+               (keydown.enter)="activate($event, 'copyDiscordHandle')" (keydown.space)="activate($event, 'copyDiscordHandle')"
+               [attr.aria-label]="'Copy my Discord handle, ' + discordHandle"
+               [matTooltip]="railCollapsed() ? 'Copy my Discord handle, ' + discordHandle : ''" matTooltipPosition="right">
+              <mat-icon matListItemIcon>content_copy</mat-icon>
+              @if (!railCollapsed()) {
+                @if (discordCopied()) {
+                  <span matListItemTitle>Discord handle copied.</span>
+                } @else if (discordCopyFailed()) {
+                  <span matListItemTitle>Copy failed. My handle is {{ discordHandle }}.</span>
+                } @else {
+                  <span matListItemTitle>Discord: {{ discordHandle }}</span>
+                }
+              }
+            </a>
+          }
         </mat-nav-list>
       </div>
     </div>
