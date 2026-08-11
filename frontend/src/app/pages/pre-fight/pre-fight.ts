@@ -77,7 +77,6 @@ export class PreFightComponent implements OnInit {
     this.gearAvailable() || this.cdPlanAvailable() || this.defensivePlanAvailable()
     || this.burstAvailable() || this.northernSkyAvailable());
 
-  // Starts true, and the spinner stays up until every card emits busyChange(false), so the cards never show empty between mount and first data.
   protected readonly gearBusy = signal(true);
   protected readonly cdPlanBusy = signal(true);
   protected readonly defensivePlanBusy = signal(true);
@@ -171,7 +170,6 @@ export class PreFightComponent implements OnInit {
     const encId = this.encControl.value;
     const spec = this.specControl.value;
     this.mapFeature.clear();
-    // Re-arm before the cards mount or reload, so the spinner covers every pick and not just the first.
     this.gearBusy.set(true);
     this.cdPlanBusy.set(true);
     this.defensivePlanBusy.set(true);

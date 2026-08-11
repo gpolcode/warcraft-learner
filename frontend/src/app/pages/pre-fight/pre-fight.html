@@ -88,7 +88,6 @@
       <wl-loading-spinner message="Loading the plan…"></wl-loading-spinner>
     }
 
-    <!-- Mounted but hidden via display:none until loaded: @if-gating on cardsBusy() would unmount the cards mid-load. -->
     <div class="flex flex-col gap-4" [class.hidden]="cardsBusy()">
       @if (!benchAvailable()) {
         <wl-bench-empty-banner variant="pre" [encounter]="selectedEncounter()?.name ?? ''"></wl-bench-empty-banner>
