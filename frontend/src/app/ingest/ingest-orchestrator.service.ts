@@ -214,7 +214,6 @@ export class IngestOrchestratorService {
       const displayVersion = storedVersions.length ? Math.min(...storedVersions) : null;
       return { spec, entry, displayVersion };
     }));
-    // The headless harness forwards the PRIORITY_SPECS env var here as a query param; interactive runs may set it by hand.
     const prioritySpecs = parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
     const specs = specsForRun(orderInputs.map(input => input.entry), Math.random, prioritySpecs);
     const displayBySpec = new Map(orderInputs.map(input => [input.spec, input] as const));
