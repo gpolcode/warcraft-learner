@@ -79,7 +79,10 @@ async function main() {
   const page = await context.newPage();
   page.on('console', message => console.log(`[app] ${message.text()}`));
   page.on('pageerror', err => console.error(`[app] pageerror: ${err.message}`));
-  await page.goto(APP_URL);
+  // The app validates PRIORITY_SPECS itself and falls back on missing/malformed input.
+  const prioritySpecs = process.env.PRIORITY_SPECS;
+  const appUrl = prioritySpecs ? `${APP_URL}?prioritySpecs=${encodeURIComponent(prioritySpecs)}` : APP_URL;
+  await page.goto(appUrl);
 
   // Bound the wait so a bootstrap failure fails fast instead of hanging the job and stalling the shared gh-pages group.
   try {

@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import {
-  orderSpecsByVersion, specsForRun, orderEncountersByMissingFirst, PRIORITY_SPEC, SPEC_LIMIT,
+  orderSpecsByVersion, specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs,
+  DEFAULT_PRIORITY_SPECS, SPEC_LIMIT,
   type SpecOrderEntry,
 } from './ordering';
+
+const PRIORITY_SPEC = DEFAULT_PRIORITY_SPECS[0];
 
 const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry => ({
   dataCount: 5,
@@ -76,6 +79,37 @@ describe('orderSpecsByVersion', () => {
     // One more spec than the cap: specsForRun orders then slices, so the run never exceeds SPEC_LIMIT.
     const entries = Array.from({ length: SPEC_LIMIT + 1 }, (_, i) => entry({ spec: `Spec${i}` }));
     expect(specsForRun(entries, () => 0.5)).toHaveLength(SPEC_LIMIT);
+  });
+
+  it('pins a custom priority list in order, ahead of the randomized rest', () => {
+    const order = orderSpecsByVersion(
+      [entry({ spec: 'OutlawRogue' }), entry({ spec: 'ArmsWarrior' }), entry({ spec: 'SubtletyRogue' })],
+      () => 0,
+      ['ArmsWarrior', 'SubtletyRogue'],
+    );
+    expect(order).toEqual(['ArmsWarrior', 'SubtletyRogue', 'OutlawRogue']);
+  });
+});
+
+describe('parsePrioritySpecs', () => {
+  it('splits a comma-separated list, trimming whitespace', () => {
+    expect(parsePrioritySpecs('SubtletyRogue, ArmsWarrior')).toEqual(['SubtletyRogue', 'ArmsWarrior']);
+  });
+
+  it('falls back to the default for missing input', () => {
+    expect(parsePrioritySpecs(undefined)).toEqual(DEFAULT_PRIORITY_SPECS);
+    expect(parsePrioritySpecs(null)).toEqual(DEFAULT_PRIORITY_SPECS);
+    expect(parsePrioritySpecs('')).toEqual(DEFAULT_PRIORITY_SPECS);
+  });
+
+  it('falls back to the default for a blank or malformed list', () => {
+    expect(parsePrioritySpecs('  , , ')).toEqual(DEFAULT_PRIORITY_SPECS);
+    expect(parsePrioritySpecs('["SubtletyRogue"]')).toEqual(DEFAULT_PRIORITY_SPECS);
+    expect(parsePrioritySpecs('SubtletyRogue;ArmsWarrior')).toEqual(DEFAULT_PRIORITY_SPECS);
+  });
+
+  it('rejects the whole list when any single token is malformed', () => {
+    expect(parsePrioritySpecs('SubtletyRogue,Arms Warrior')).toEqual(DEFAULT_PRIORITY_SPECS);
   });
 });
 
