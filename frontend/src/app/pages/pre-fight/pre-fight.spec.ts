@@ -18,7 +18,6 @@ const NEW_SPEC = 'SubtletyRogue';
 const BENCHED_ENCOUNTER: EncounterEntry = { id: SELECTED_ENCOUNTER_ID, name: 'Boss A', sample_count: 12 };
 const OTHER_BENCHED_ENCOUNTER: EncounterEntry = { id: OTHER_ENCOUNTER_ID, name: 'Boss B', sample_count: 9 };
 
-// One busy signal per feature card the template gates behind the spinner.
 const CARD_BUSY_SIGNALS = ['northernSkyBusy', 'gearBusy', 'cdPlanBusy', 'defensivePlanBusy', 'burstBusy'];
 
 function providers(encounters: EncounterEntry[]): unknown[] {
