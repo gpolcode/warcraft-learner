@@ -99,9 +99,8 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
 test('rotation rules count the casts that broke each rulebook rule, and name the ones followed', async () => {
   const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
   await shows(rotationRules, 'Rotation Rules');
-  // Each row's Fix is the rule's authored action, carried through the bench file untouched.
   await showsFindingRows(rotationRules);
-  // A rule the pull followed lands here instead of in a row, so the two together cover the rulebook.
+  // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
   await showsOnPlan(rotationRules);
 });
 
@@ -136,7 +135,7 @@ test('burst windows compare the player damage against the top-parse windows', as
   await shows(burstWindows, DAMAGE);
   await shows(burstWindows, PERCENT);
   await showsEntity(burstWindows);
-  // Which top-parse abilities the player landed in the window moves with the pull, so each row is pinned to its cast count, cast or not.
+  // A pull can land every top-parse ability, so a row is pinned to the cast count it carries either way.
   const abilities = burstWindows.locator('wl-compact-ability-row');
   const count = await abilities.count();
   expect(count).toBeGreaterThan(0);
