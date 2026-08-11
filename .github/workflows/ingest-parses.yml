@@ -58,7 +58,7 @@ jobs:
         run: npm ci
 
       # Ingestion self-selects the live raids from WCL and prunes what falls outside; no per-patch edits.
-      # PRIORITY_SPECS repo variable: comma-separated folder keys (e.g. "SubtletyRogue,ArmsWarrior"), first = highest priority.
+      # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see ordering.ts parsePrioritySpecs).
       - name: Run parse ingestion
         working-directory: frontend
         env:

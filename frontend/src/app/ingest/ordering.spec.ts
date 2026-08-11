@@ -5,8 +5,6 @@ import {
   type SpecOrderEntry,
 } from './ordering';
 
-const PRIORITY_SPEC = DEFAULT_PRIORITY_SPECS[0];
-
 const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry => ({
   dataCount: 5,
   onCurrentVersion: true,
@@ -42,26 +40,41 @@ describe('orderSpecsByVersion', () => {
     expect(order).toEqual(['Charlie', 'Bravo', 'Alpha']);
   });
 
+  it('has no priority spec by default: order comes from the shuffle alone', () => {
+    const keys = [0.9, 0.1, 0.5]; // Outlaw, Subtlety, Assassination
+    let next = 0;
+    const order = orderSpecsByVersion(
+      [entry({ spec: 'OutlawRogue' }), entry({ spec: 'SubtletyRogue' }), entry({ spec: 'AssassinationRogue' })],
+      () => keys[next++],
+    );
+    expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue', 'OutlawRogue']);
+  });
+
   it('pins the priority spec first within its bracket, ahead of the randomized rest', () => {
     const order = orderSpecsByVersion(
       [
         entry({ spec: 'OutlawRogue' }),
-        entry({ spec: PRIORITY_SPEC }),
+        entry({ spec: 'SubtletyRogue' }),
         entry({ spec: 'AssassinationRogue' }),
       ],
       () => 0,
+      ['SubtletyRogue'],
     );
-    expect(order[0]).toBe(PRIORITY_SPEC);
+    expect(order[0]).toBe('SubtletyRogue');
     expect(order.slice(1).sort()).toEqual(['AssassinationRogue', 'OutlawRogue']);
   });
 
   it('does not pull the priority spec ahead of an earlier (emptier/older-version) bracket', () => {
-    const order = orderSpecsByVersion([
-      entry({ spec: PRIORITY_SPEC, onCurrentVersion: true }),
-      entry({ spec: 'EmptySpec', dataCount: 0, onCurrentVersion: false }),
-      entry({ spec: 'OldSpec', onCurrentVersion: false }),
-    ]);
-    expect(order).toEqual(['EmptySpec', 'OldSpec', PRIORITY_SPEC]);
+    const order = orderSpecsByVersion(
+      [
+        entry({ spec: 'SubtletyRogue', onCurrentVersion: true }),
+        entry({ spec: 'EmptySpec', dataCount: 0, onCurrentVersion: false }),
+        entry({ spec: 'OldSpec', onCurrentVersion: false }),
+      ],
+      Math.random,
+      ['SubtletyRogue'],
+    );
+    expect(order).toEqual(['EmptySpec', 'OldSpec', 'SubtletyRogue']);
   });
 
   it('does not mutate the input', () => {

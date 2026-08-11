@@ -1,14 +1,14 @@
 // Each run is bounded by the WCL hourly point budget, so these pure helpers order work to fix the most out-of-date data first.
 
-/** Specs pinned to the front of their bracket, in priority order, ahead of the rest of the order. */
-export const DEFAULT_PRIORITY_SPECS: readonly string[] = ['SubtletyRogue'];
+// Empty by default: with no repo variable set, no spec is pinned and the version brackets alone decide order.
+export const DEFAULT_PRIORITY_SPECS: readonly string[] = [];
 
 /** Cap on how many specs one run ingests, so a single run stays within the WCL point budget. */
 export const SPEC_LIMIT = 10;
 
 const SPEC_TOKEN = /^[A-Za-z]+$/;
 
-/** Parses `PRIORITY_SPECS`: comma-separated folder keys, first = highest priority; missing/malformed falls back to the default. */
+// Malformed input falls back to DEFAULT_PRIORITY_SPECS rather than throwing, so a typo'd repo variable can't break a run.
 export function parsePrioritySpecs(raw: string | null | undefined): readonly string[] {
   if (!raw) return DEFAULT_PRIORITY_SPECS;
   const tokens = raw.split(',').map(token => token.trim()).filter(token => token.length > 0);
