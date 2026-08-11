@@ -22,6 +22,20 @@ function player(p: Partial<WclPlayer>): WclPlayer {
   return { id: 0, name: '', spec: '', server: '', ...p };
 }
 
+const settle = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
+
+function postRaidProviders(wclApi: unknown, prepareMap = vi.fn(() => Promise.resolve())): unknown[] {
+  return [
+    provideZonelessChangeDetection(),
+    PostRaidComponent,
+    { provide: WclApiService, useValue: wclApi },
+    { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: prepareMap, ready: () => false, openAt: vi.fn() } },
+    { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
+    { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
+    { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
+  ];
+}
+
 describe('extractCode', () => {
   it('pulls the report code out of a WCL report URL', () => {
     expect(extractCode('https://www.warcraftlogs.com/reports/grBQ3vTHXAtPa4JK#fight=1')).toBe('grBQ3vTHXAtPa4JK');
@@ -438,13 +452,7 @@ describe('PostRaidComponent keystone fight', () => {
     const prepareMap = vi.fn(() => Promise.resolve());
     TestBed.configureTestingModule({
       providers: [
-        provideZonelessChangeDetection(),
-        PostRaidComponent,
-        { provide: WclApiService, useValue: wclApi },
-        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: prepareMap, ready: () => false, openAt: vi.fn() } },
-        { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
-        { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
-        { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
+        ...postRaidProviders(wclApi, prepareMap),
       ],
     });
     return { vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown>, prepareMap, getPlayerDetails };
@@ -688,19 +696,11 @@ describe('PostRaidComponent selection latest-wins', () => {
     settleDetails(fightId: number, groups: PlayerDetailGroups): void { this.detailResolvers.get(fightId)!(groups); }
   }
 
-  const settle = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
-
   function setup(): { api: FakeWclApi; vm: SelectionHandle } {
     const api = new FakeWclApi();
     TestBed.configureTestingModule({
       providers: [
-        provideZonelessChangeDetection(),
-        PostRaidComponent,
-        { provide: WclApiService, useValue: api },
-        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: vi.fn(() => Promise.resolve()), ready: () => false, openAt: vi.fn() } },
-        { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
-        { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
-        { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
+        ...postRaidProviders(api),
       ],
     });
     const vm = TestBed.inject(PostRaidComponent) as unknown as SelectionHandle;
@@ -815,21 +815,12 @@ describe('PostRaidComponent loadReport latest-wins', () => {
     settlePlayerDetails(groups: PlayerDetailGroups): void { this.playerDetailResolvers.shift()!(groups); }
   }
 
-  // setTimeout, not just a microtask flush, so each awaited loadReport step settles.
-  const settle = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
-
   // Constructs the shell directly (no view attached) so loadReport runs without rendering the card templates.
   function setup(): { api: FakeWclApi; vm: Record<string, unknown> } {
     const api = new FakeWclApi();
     TestBed.configureTestingModule({
       providers: [
-        provideZonelessChangeDetection(),
-        PostRaidComponent,
-        { provide: WclApiService, useValue: api },
-        { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: vi.fn(() => Promise.resolve()), ready: () => false, openAt: vi.fn() } },
-        { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
-        { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
-        { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
+        ...postRaidProviders(api),
       ],
     });
     return { api, vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown> };
