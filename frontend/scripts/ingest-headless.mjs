@@ -79,7 +79,6 @@ async function main() {
   const page = await context.newPage();
   page.on('console', message => console.log(`[app] ${message.text()}`));
   page.on('pageerror', err => console.error(`[app] pageerror: ${err.message}`));
-  // The app validates PRIORITY_SPECS itself and falls back on missing/malformed input.
   const prioritySpecs = process.env.PRIORITY_SPECS;
   const appUrl = prioritySpecs ? `${APP_URL}?prioritySpecs=${encodeURIComponent(prioritySpecs)}` : APP_URL;
   await page.goto(appUrl);
