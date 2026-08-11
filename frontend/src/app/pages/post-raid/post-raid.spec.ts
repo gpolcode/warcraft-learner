@@ -643,19 +643,19 @@ interface SelectionHandle {
 }
 
 describe('PostRaidComponent selection latest-wins', () => {
-  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';       // a valid 16-character report code
+  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
   const BOSS_ENCOUNTER_ID = 3176;
   const KEYSTONE_ENCOUNTER_ID = 112526;
   const RAID_MYTHIC_DIFFICULTY = 5;
   const MYTHIC_PLUS_DIFFICULTY = 10;
   const KEYSTONE_PULL = { id: 9, name: 'Nexus-Point Xenas' };
   const EARLIER_PULL_ID = 11;
-  const LATER_PULL_ID = 12;                     // the last pull by start time, so a fresh load auto-selects it
+  const LATER_PULL_ID = 12;
   const PLAYER_ID = 7;
   const PLAYER_NAME = 'Anya';
   const CLASS_NAME = 'Rogue';
-  const EARLIER_SPEC_NAME = 'Subtlety';         // the spec the slow earlier resolve carries
-  const LATER_SPEC_NAME = 'Assassination';      // the spec the winning selection must land
+  const EARLIER_SPEC_NAME = 'Subtlety';
+  const LATER_SPEC_NAME = 'Assassination';
   const LATER_SPEC = LATER_SPEC_NAME + CLASS_NAME;
 
   const detailsFor = (spec: string): PlayerDetailGroups => ({
@@ -688,10 +688,8 @@ describe('PostRaidComponent selection latest-wins', () => {
     settleDetails(fightId: number, groups: PlayerDetailGroups): void { this.detailResolvers.get(fightId)!(groups); }
   }
 
-  // setTimeout, not just a microtask flush, so each awaited resolve step settles.
   const settle = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
 
-  // Constructs the shell directly (no view attached) so the selection path runs without rendering the card templates.
   function setup(): { api: FakeWclApi; vm: SelectionHandle } {
     const api = new FakeWclApi();
     TestBed.configureTestingModule({

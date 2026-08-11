@@ -221,7 +221,6 @@ export class PostRaidComponent {
   /** Monotonic load tag: a slow earlier loadReport must not overwrite a newer one's state. */
   private _loadSeq = 0;
 
-  /** Monotonic selection tag: a slow earlier resolveSelection must not overwrite a newer selection's state. */
   private _selectionSeq = 0;
 
   protected readonly visiblePlayers = computed(() =>
@@ -317,7 +316,6 @@ export class PostRaidComponent {
     this.players.set([]);
     this.spec.set('');
     this.playerDetailGroups.set({});
-    // Retires any in-flight resolveSelection: its late writes describe the report being replaced.
     this._selectionSeq++;
     this.mapFeature.clear();
     this.liveCapture.clear();
@@ -412,13 +410,11 @@ export class PostRaidComponent {
 
   // The feature cards self-load from their spec/encounterId/selection inputs; this only does the cross-cutting work a shell owns.
   protected async resolveSelection(): Promise<void> {
-    // Tagged ahead of the early returns so a selection that resolves to nothing still retires the in-flight resolve.
     const seq = ++this._selectionSeq;
     this.loadError.set(null);
     const fightId = this.selectedFightId();
     const playerId = this.selectedPlayerId();
     this.spec.set('');
-    // This selection owns the spinner from here: the resolve it supersedes skips its own finally.
     this.loadingAnalysis.set(false);
     this.mapFeature.clear();
     this.liveCapture.clear();
