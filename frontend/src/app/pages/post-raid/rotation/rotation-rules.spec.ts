@@ -374,7 +374,7 @@ describe('evaluateOpeningSequence', () => {
     const WINDOW_LIMIT_S = 12.4;
     const ctx = ruleCtx([cast(SHADOW_BLADES, 1), cast(SHADOW_DANCE, 3), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S + 5)]);
     expect(evaluateOpeningSequence(opener, ctx, band(WINDOW_LIMIT_S), 'warning')?.message)
-      .toBe('Opener reached 2 of 3 steps in the 12.4s the field takes.');
+      .toBe('Your opener got 2 of 3 steps out. Top raiders finish all 3 within 12.4s.');
   });
 
   it('tolerates unrelated casts between the steps', () => {
@@ -534,7 +534,7 @@ describe('evaluateResourceAtCast', () => {
     const ctx = ruleCtx([atCombo(10, 3)]);
     const finding = evaluateResourceAtCast(finisherAtMax, ctx, band(RESOURCE_FLOOR), 'warning');
     expect(finding?.label).toBe('Eviscerate below 5/5 combo points');
-    expect(finding?.message).toContain('Eviscerate cast below 5/5 combo points');
+    expect(finding?.message).toContain('Eviscerate casts were spent below 5/5 combo points');
   });
 
   it('quantizes the pool fraction back to the resource\'s own cap before it names the field\'s mark', () => {
@@ -542,7 +542,7 @@ describe('evaluateResourceAtCast', () => {
     const ctx = ruleCtx([atCombo(10, 3), atCombo(20, MAX_COMBO_POINTS)]);
     // hi pinned at the pool's own cap so the full-pool cast does not itself trip the far side.
     const finding = evaluateResourceAtCast(finisherAtMax, ctx, band(TOP_FRAC, 1), 'warning');
-    expect(finding?.message).toBe('Eviscerate cast below 4/5 combo points, 1 of 2 cast(s). Top: 4-5/5.');
+    expect(finding?.message).toBe('1 of 2 Eviscerate casts were spent below 4/5 combo points. Spend at 4/5 or more.');
   });
 
   it('names the field\'s mark as a percent for a large pool (mana), the other branch of the scale', () => {
@@ -556,7 +556,7 @@ describe('evaluateResourceAtCast', () => {
       cast(EVISCERATE, atS, { resources: [{ amount, max: MANA_MAX, type: COMBO_POINT_TYPE }] });
     const ctx = ruleCtx([atMana(10, MANA_MAX * 0.6), atMana(20, MANA_MAX)]);
     const finding = evaluateResourceAtCast(innervate, ctx, band(TOP_FRAC, 1), 'warning');
-    expect(finding?.message).toBe('Innervate cast below 75% mana, 1 of 2 cast(s). Top: 75-100%.');
+    expect(finding?.message).toBe('1 of 2 Innervate casts were spent below 75% mana. Spend at 75% or more.');
   });
 
   it('is not applicable when the casts carry no resource snapshot', () => {
@@ -624,7 +624,7 @@ describe('evaluateResourceAtCast', () => {
     const overCap = ruleCtx([atCombo(10, MAX_COMBO_POINTS)]);
     const atHi = ruleCtx([atCombo(10, 4)]);
     const finding = evaluateResourceAtCast(finisherAtMax, overCap, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x');
-    expect(finding?.message).toContain('capped');
+    expect(finding?.message).toBe('1 of 1 Eviscerate casts were spent above 4/5 combo points. Spend before you cap.');
     // Spending sooner is what the authored action asks for, and it answers a capped pool too.
     expect(finding?.details?.remedy).toBe('do x');
     expect(evaluateResourceAtCast(finisherAtMax, atHi, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x')).toBeNull();
@@ -907,7 +907,7 @@ describe('evaluateSpendAtStacks', () => {
     const overCap = ruleCtx([cast(LIGHTNING_BOLT, holding(MAELSTROM_WEAPON_MAX_STACKS))], { buffs: climbing });
     const atHi = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_HI))], { buffs: climbing });
     const finding = evaluateSpendAtStacks(spendAtStacks, overCap, band(FIELD_LO, FIELD_HI), 'warning', 'do x');
-    expect(finding?.message).toContain('capped');
+    expect(finding?.message).toBe('1 of 1 Lightning Bolt casts were held past 8/10 stacks of Maelstrom Weapon. Spend before you cap.');
     expect(finding?.details?.remedy).toBe('do x');
     expect(evaluateSpendAtStacks(spendAtStacks, atHi, band(FIELD_LO, FIELD_HI), 'warning', 'do x')).toBeNull();
   });
@@ -1326,7 +1326,7 @@ describe('unanimous field', () => {
     const oneOff = ruleCtx([cast(BLACK_POWDER, 10)], { damage: [1, 2, 3, 4].map(id => damage(BLACK_POWDER, 11, 100, { target: id })) });
     expect(evaluateCastAtTargetCount(blackPowder, onIt, unanimous, 'warning')).toBeNull();
     const finding = evaluateCastAtTargetCount(blackPowder, oneOff, unanimous, 'warning');
-    expect(finding?.message).toContain('Top: 5.');
+    expect(finding?.message).toBe('1 of 1 Black Powder casts hit fewer than 5 targets. Wait for 5 or more.');
   });
 });
 
@@ -1393,7 +1393,7 @@ describe('occurrence strips', () => {
       { atS: 12, ok: true, label: '2s', detail: 'Shadow Dance landed 2s from this cast.' },
       { atS: 40, ok: false, label: '30s', detail: 'Shadow Dance landed 30s from this cast.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field pairs inside 5s');
+    expect(finding?.occurrenceTarget).toBe('within 5s of Shadow Dance');
   });
 
   it('hold_cooldown_for_anchor: marks the anchor cast and reads each charge\'s gap to it', () => {
@@ -1403,7 +1403,7 @@ describe('occurrence strips', () => {
       { atS: 110, ok: false, label: '10s', detail: 'Shadow Dance cast 10s before Shadow Blades.' },
       { atS: 120, ok: true, label: 'Shadow Blades', marker: true, detail: 'Shadow Blades cast here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field rarely spends inside 15s of Shadow Blades');
+    expect(finding?.occurrenceTarget).toBe('saved when Shadow Blades is within 15s');
   });
 
   it('cast_without_prior: the chip and the window limit both read one decimal, so a lead just past it reads visibly larger', () => {
@@ -1412,8 +1412,8 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S), cast(SECRET_TECHNIQUE, OVER_LIMIT_LEAD_S)]);
     const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(WINDOW_LIMIT_S), 'warning');
     expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'cast(s)' });
-    expect(finding?.message).toBe('Secret Technique without Shadow Dance: 1 of 2 cast(s). Top: paired inside 12s.');
-    expect(finding?.occurrenceTarget).toBe('field pairs inside 12s');
+    expect(finding?.message).toBe('1 of 2 Secret Technique casts had no Shadow Dance before them. Cast it within 12s of Shadow Dance.');
+    expect(finding?.occurrenceTarget).toBe('within 12s of Shadow Dance');
     expect(finding?.occurrences).toEqual([
       { atS: WINDOW_LIMIT_S, ok: true, label: '12s', detail: 'Shadow Dance landed 12s from this cast.' },
       { atS: OVER_LIMIT_LEAD_S, ok: false, label: '12.4s', detail: 'Shadow Dance landed 12.4s from this cast.' },
@@ -1431,7 +1431,7 @@ describe('occurrence strips', () => {
     ]);
     const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_LIMIT_S, HOLD_LIMIT_S + 5), 'critical');
     expect(finding?.measured).toEqual({ value: '1 / 2', unit: 'charge(s)' });
-    expect(finding?.message).toBe('Shadow Dance used inside 12s of Shadow Blades, closer than the field runs: 1 of 2 cast(s).');
+    expect(finding?.message).toBe('Shadow Dance was used right before Shadow Blades 1 of 2 times. Save it when Shadow Blades is within 12s.');
     expect(finding?.occurrences).toEqual([
       { atS: ANCHOR_S - CLEARED_GAP_S, ok: true, label: '12.4s', detail: 'Shadow Dance cast 12.4s before Shadow Blades.' },
       { atS: ANCHOR_S - VIOLATION_GAP_S, ok: false, label: '11.6s', detail: 'Shadow Dance cast 11.6s before Shadow Blades.' },
@@ -1465,7 +1465,7 @@ describe('occurrence strips', () => {
       { atS: 22, ok: true, label: 'up', detail: 'Shadow Dance was up at this cast.' },
       { atS: 35, ok: false, label: 'down', detail: 'Shadow Dance was down at this cast.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field runs 0% without Shadow Dance');
+    expect(finding?.occurrenceTarget).toBe('Shadow Dance up every cast');
   });
 
   it('aura_uptime_below: a timeline of merged up-spans, plus a chip for each of the largest gaps', () => {
@@ -1549,7 +1549,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '2', detail: 'Black Powder cast at 2.' },
       { atS: 30, ok: true, label: '3', detail: 'Black Powder cast at 3.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field waits for 3+');
+    expect(finding?.occurrenceTarget).toBe('Wait for 3 or more.');
   });
 
   it('resource_at_cast: a chip per cast, the raw amount over its own cap as the label (a small pool reads as a count, not a percent)', () => {
@@ -1565,7 +1565,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '3/5', detail: 'Eviscerate cast at 3/5.' },
       { atS: 20, ok: true, label: '5/5', detail: 'Eviscerate cast at 5/5.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field stays inside 5/5');
+    expect(finding?.occurrenceTarget).toBe('Spend at 5/5 or more.');
   });
 
   it('resource_at_cast: a large pool (mana) still reads as a percent, since WCL reports it as a five/six-digit number', () => {
@@ -1582,7 +1582,7 @@ describe('occurrence strips', () => {
       { atS: 10, ok: false, label: '60%', detail: 'Innervate cast at 60%.' },
       { atS: 20, ok: true, label: '100%', detail: 'Innervate cast at 100%.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field stays inside 100%');
+    expect(finding?.occurrenceTarget).toBe('Spend at 100% or more.');
   });
 
   it('proc_wasted: a chip per proc span, used vs wasted as the label', () => {
@@ -1597,7 +1597,7 @@ describe('occurrence strips', () => {
       { atS: 20, ok: true, label: 'used', detail: 'Shadow Dance was spent before it expired.' },
       { atS: 40, ok: false, label: 'wasted', detail: 'Shadow Dance expired unspent here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field lets 0% expire');
+    expect(finding?.occurrenceTarget).toBe('spent every time');
   });
 
   it('filler_in_buff: a chip per filler cast inside the buff, coached vs alternative as the label', () => {
@@ -1614,7 +1614,7 @@ describe('occurrence strips', () => {
       { atS: 14, ok: false, label: 'Starfire', detail: 'Starfire was pressed instead of Wrath here.' },
       { atS: 20, ok: false, label: 'Starfire', detail: 'Starfire was pressed instead of Wrath here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field runs 90-100% Wrath inside Eclipse (Solar)');
+    expect(finding?.occurrenceTarget).toBe('90% or more Wrath during Eclipse (Solar)');
   });
 
   it('spend_at_stacks: a chip per cast, the count against the cap as the label', () => {
@@ -1632,8 +1632,8 @@ describe('occurrence strips', () => {
       { atS: 6, ok: false, label: '5/10', detail: 'Lightning Bolt cast at 5/10.' },
       { atS: 10, ok: true, label: '9/10', detail: 'Lightning Bolt cast at 9/10.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field stays inside 8-9/10');
-    expect(finding?.message).toBe('Lightning Bolt cast at under 8/10 Maelstrom Weapon, 1 of 2 cast(s). Top: 8-9/10.');
+    expect(finding?.occurrenceTarget).toBe('Spend at 8/10 or more.');
+    expect(finding?.message).toBe('1 of 2 Lightning Bolt casts were spent under 8/10 stacks of Maelstrom Weapon. Spend at 8/10 or more.');
   });
 
   it('aura_clipped: a chip per hard-cast refresh, the elapsed time as the label', () => {
@@ -1649,7 +1649,7 @@ describe('occurrence strips', () => {
       { atS: 24, ok: false, label: '4s', detail: 'Refreshed 4s into the aura.' },
       { atS: 36, ok: true, label: '12s', detail: 'Refreshed 12s into the aura.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field refreshes 10-12s in');
+    expect(finding?.occurrenceTarget).toBe('let it run at least 10s');
   });
 
   it('filler_below_health: a chip per filler cast under the health gate, coached vs alternative as the label', () => {
@@ -1667,7 +1667,7 @@ describe('occurrence strips', () => {
       { atS: 100.5, ok: true, label: 'Execute', detail: 'Execute was the coached filler here.' },
       { atS: 101, ok: false, label: 'Slam', detail: 'Slam was pressed instead of Execute here.' },
     ]);
-    expect(finding?.occurrenceTarget).toBe('field runs 95-100% Execute under 20% health');
+    expect(finding?.occurrenceTarget).toBe('95% or more Execute under 20% health');
   });
 
   it('caps a finding at MAX_OCCURRENCES, keeping chronological order', () => {

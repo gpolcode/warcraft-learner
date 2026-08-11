@@ -244,6 +244,11 @@ function bandLimits(scale: Scale, band: RuleBand): { lo: number; hi: number } {
   return { lo: scale.quantize(band.lo), hi: scale.quantize(band.hi) };
 }
 
+/** A share as odds, since "1 in 10" lands faster than "10%" for a miss or waste rate. */
+function oneIn(share: number): string {
+  return `1 in ${Math.max(2, Math.round(1 / share))}`;
+}
+
 function castCount(ctx: RuleContext, spellId: number): number {
   return ctx.castTimes[spellId]?.length ?? 0;
 }
@@ -294,11 +299,11 @@ export function evaluateCastWithoutPrior(
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0], 3),
     label: `${cond.spell_name} without ${cond.required_spell_name}`,
-    message: `${cond.spell_name} without ${cond.required_spell_name}: ${violations.length} of ${primary.length} cast(s). Top: paired inside ${SECONDS.format(hi)}.`,
+    message: `${violations.length} of ${primary.length} ${cond.spell_name} casts had no ${cond.required_spell_name} before them. Cast it within ${SECONDS.format(hi)} of ${cond.required_spell_name}.`,
     measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: castWithoutPriorOccurrences(cond, castTimes, hi),
-    occurrenceTarget: `field pairs inside ${SECONDS.format(hi)}`,
+    occurrenceTarget: `within ${SECONDS.format(hi)} of ${cond.required_spell_name}`,
   };
 }
 
@@ -350,11 +355,11 @@ export function evaluateHoldForAnchor(
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0].timeS, 3),
     label: `${spellNames} held before ${cond.anchor_spell_name}`,
-    message: `${spellNames} used inside ${SECONDS.format(lo)} of ${cond.anchor_spell_name}, closer than the field runs: ${violations.length} of ${judged.length} cast(s).`,
+    message: `${spellNames} was used right before ${cond.anchor_spell_name} ${violations.length} of ${judged.length} times. Save it when ${cond.anchor_spell_name} is within ${SECONDS.format(lo)}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'charge(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: holdForAnchorOccurrences(cond, anchorTimes, judged, lo),
-    occurrenceTarget: `field rarely spends inside ${SECONDS.format(lo)} of ${cond.anchor_spell_name}`,
+    occurrenceTarget: `saved when ${cond.anchor_spell_name} is within ${SECONDS.format(lo)}`,
   };
 }
 
@@ -395,11 +400,11 @@ export function evaluateCastOutsideBuff(
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0] ?? judged[0], 3),
     label: `${cond.spell_name} ${relation} ${cond.buff_spell_name}`,
-    message: `${cond.spell_name} ${relation} ${cond.buff_spell_name}: ${violations.length} of ${judged.length} cast(s). Top: ${PERCENT.span(lo, hi)}.`,
+    message: `${violations.length} of ${judged.length} ${cond.spell_name} casts landed ${relation} ${cond.buff_spell_name}. Top raiders ${hi <= 0 ? 'never miss it' : `miss at most ${oneIn(hi)}`}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: castOutsideBuffOccurrences(cond, ctx, judged),
-    occurrenceTarget: `field runs ${PERCENT.span(lo, hi)} ${relation} ${cond.buff_spell_name}`,
+    occurrenceTarget: `${cond.buff_spell_name} ${cond.require === 'inside' ? 'up' : 'down'} ${hi <= 0 ? 'every cast' : `on all but ${oneIn(hi)}`}`,
   };
 }
 
@@ -455,7 +460,7 @@ export function evaluateAuraUptimeBelow(
   return {
     severity, category: 'rule_violation',
     label: `${cond.aura_spell_name} uptime`,
-    message: `${cond.aura_spell_name} up ${PERCENT_POINTS.format(pct)} of the fight; the field holds ${PERCENT_POINTS.span(lo, hi)}.`,
+    message: `${cond.aura_spell_name} was up ${PERCENT_POINTS.format(pct)} of the fight. Aim for ${PERCENT_POINTS.format(lo)} or more.`,
     measured: { value: `${Math.round(pct)} / ${Math.round(lo)}`, unit: '% uptime' },
     details: remedy ? { remedy } : undefined,
     occurrences: gaps.map(([start, end]): FindingOccurrence => ({
@@ -524,7 +529,7 @@ export function evaluateOpeningSequence(
     severity, category: 'rule_violation',
     timestamp_s: round(progress.pullS, 3),
     label: `Opener: ${cond.spell_names.join(' > ')}`,
-    message: `Opener reached ${progress.matched} of ${cond.spell_ids.length} steps in the ${SECONDS.format(hi)} the field takes.`,
+    message: `Your opener got ${progress.matched} of ${cond.spell_ids.length} steps out. Top raiders finish all ${cond.spell_ids.length} within ${SECONDS.format(hi)}.`,
     measured: { value: `${progress.matched} / ${cond.spell_ids.length}`, unit: 'step(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: openingSequenceOccurrences(cond, ctx, progress.pullS, progress.pullS + hi),
@@ -553,13 +558,15 @@ function targetCountsPerCast(cond: CastAtTargetCountCondition, ctx: RuleContext)
 interface BoundedCasts {
   values: { timeS: number; value: number }[];
   scale: Scale;
-  /** The chip and the sentence both build off this and `phrase`, so neither can drift from the other. */
   subject: string;
+  /** Short noun phrase for the table row; `phrase` is the verb phrase the sentence needs, and `advice` the fix both share. */
+  label: (limit: string) => string;
   phrase: (limit: string) => string;
-  /** Sentence-only, for a consequence the chip has no room for. */
-  tail?: string;
+  advice: (limit: string) => string;
   /** Names the mistake on the edge away from `primary`, for the kinds where overshooting is its own waste. */
+  farLabel?: (limit: string) => string;
   farPhrase?: (limit: string) => string;
+  farAdvice?: string;
 }
 
 function evaluateBoundedPerCast(
@@ -577,11 +584,13 @@ function evaluateBoundedPerCast(
   const phrase = farSide
     ? judged.farPhrase!(judged.scale.format(farLimit))
     : judged.phrase(judged.scale.format(nearLimit));
+  const advice = farSide ? judged.farAdvice! : judged.advice(judged.scale.format(nearLimit));
+  const label = farSide ? judged.farLabel!(judged.scale.format(farLimit)) : judged.label(judged.scale.format(nearLimit));
   return {
     severity, category: 'rule_violation',
     timestamp_s: round(violations[0].timeS, 3),
-    label: `${judged.subject} ${phrase}`,
-    message: `${judged.subject} cast ${phrase}${farSide ? '' : (judged.tail ?? '')}, ${violations.length} of ${judged.values.length} cast(s). Top: ${judged.scale.span(lo, hi)}.`,
+    label: `${judged.subject} ${label}`,
+    message: `${violations.length} of ${judged.values.length} ${judged.subject} casts ${phrase}. ${advice}`,
     measured: { value: `${violations.length} / ${judged.values.length}`, unit: 'cast(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.values.map(({ timeS, value }): FindingOccurrence => {
@@ -591,9 +600,7 @@ function evaluateBoundedPerCast(
         detail: `${judged.subject} cast at ${label}.`,
       };
     })),
-    occurrenceTarget: judging.twoSided
-      ? `field stays inside ${judged.scale.span(lo, hi)}`
-      : (judging.primary === 'below' ? `field waits for ${judged.scale.format(lo)}+` : `field stays under ${judged.scale.format(hi)}`),
+    occurrenceTarget: judged.advice(judged.scale.format(nearLimit)),
   };
 }
 
@@ -604,7 +611,9 @@ export function evaluateCastAtTargetCount(
     values: targetCountsPerCast(cond, ctx).map(({ timeS, targets }) => ({ timeS, value: targets })),
     scale: WHOLE_STEPS,
     subject: cond.spell_name,
-    phrase: limit => `at ${cond.bound === 'min' ? 'under' : 'over'} ${limit} targets`,
+    label: limit => `at ${cond.bound === 'min' ? 'under' : 'over'} ${limit} targets`,
+    phrase: limit => cond.bound === 'min' ? `hit fewer than ${limit} targets` : `hit more than ${limit} targets`,
+    advice: limit => cond.bound === 'min' ? `Wait for ${limit} or more.` : `Use it on ${limit} or fewer.`,
   }, band, judging, severity, remedy);
 }
 
@@ -653,8 +662,12 @@ export function evaluateResourceAtCast(
     values: judged.map(({ timeS, frac, amount }) => ({ timeS, value: raw ? amount : frac })),
     scale: raw ? rawCountScale(max) : PERCENT,
     subject: cond.spell_name,
-    phrase: limit => `${cond.bound === 'min' ? 'below' : 'above'} ${limit} ${cond.resource_name}`,
-    farPhrase: limit => `at ${limit} ${cond.resource_name}, capped`,
+    label: limit => `${cond.bound === 'min' ? 'below' : 'above'} ${limit} ${cond.resource_name}`,
+    phrase: limit => `were spent ${cond.bound === 'min' ? 'below' : 'above'} ${limit} ${cond.resource_name}`,
+    advice: limit => cond.bound === 'min' ? `Spend at ${limit} or more.` : `Spend at ${limit} or less.`,
+    farLabel: limit => `above ${limit} ${cond.resource_name}`,
+    farPhrase: limit => `were spent above ${limit} ${cond.resource_name}`,
+    farAdvice: 'Spend before you cap.',
   }, band, judging, severity, remedy);
 }
 
@@ -689,7 +702,7 @@ export function evaluateProcWasted(
     severity, category: 'rule_violation',
     timestamp_s: round((wasted[0] ?? spans[0])[0], 3),
     label: `${cond.buff_spell_name} wasted`,
-    message: `${cond.buff_spell_name} expired unspent ${wasted.length} of ${spans.length} time(s). Top: ${PERCENT.span(lo, hi)}.`,
+    message: `${cond.buff_spell_name} expired unused ${wasted.length} of ${spans.length} times. Top raiders ${hi <= 0 ? 'never waste it' : `waste at most ${oneIn(hi)}`}.`,
     measured: { value: `${wasted.length} / ${spans.length}`, unit: 'proc(s)' },
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(spans.map((span): FindingOccurrence => {
@@ -699,7 +712,7 @@ export function evaluateProcWasted(
         detail: used ? `${cond.buff_spell_name} was spent before it expired.` : `${cond.buff_spell_name} expired unspent here.`,
       };
     })),
-    occurrenceTarget: `field lets ${PERCENT.span(lo, hi)} expire`,
+    occurrenceTarget: `spent ${hi <= 0 ? 'every time' : `on all but ${oneIn(hi)}`}`,
   };
 }
 
@@ -739,7 +752,7 @@ function fillerFinding(
     severity, category: 'rule_violation',
     timestamp_s: split.firstAlternativeS == null ? undefined : round(split.firstAlternativeS, 3),
     label: `${spellName} ${where}`,
-    message: `${spellName} was ${PERCENT.format(share)} of your fillers ${where}. Top: ${PERCENT.span(lo, hi)}.`,
+    message: `${spellName} was only ${PERCENT.format(share)} of your fillers ${where}. Aim for ${PERCENT.format(lo)} or more.`,
     measured: { value: `${Math.round(share * 100)} / ${Math.round(lo * 100)}`, unit: '% of fillers' },
     details: remedy ? { remedy } : undefined,
     occurrences: [],
@@ -781,7 +794,7 @@ export function evaluateFillerInBuff(
   cond: FillerInBuffCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   const finding = fillerFinding(fillerCastsInBuff(cond, ctx), band, judging, severity,
-    cond.spell_name, `in ${cond.buff_spell_name}`, remedy);
+    cond.spell_name, `during ${cond.buff_spell_name}`, remedy);
   if (!finding) return null;
   return {
     ...finding,
@@ -789,7 +802,7 @@ export function evaluateFillerInBuff(
       cond.spell_id, cond.spell_name, cond.alternative_spell_ids, cond.alternative_spell_names,
       fillerInBuffTimesFor(cond, ctx),
     ),
-    occurrenceTarget: `field runs ${PERCENT.span(bandLimits(PERCENT, band).lo, bandLimits(PERCENT, band).hi)} ${cond.spell_name} inside ${cond.buff_spell_name}`,
+    occurrenceTarget: `${PERCENT.format(bandLimits(PERCENT, band).lo)} or more ${cond.spell_name} during ${cond.buff_spell_name}`,
   };
 }
 
@@ -819,9 +832,12 @@ export function evaluateSpendAtStacks(
     values: stackCountsPerCast(cond, ctx).map(({ timeS, stacks }) => ({ timeS, value: stacks })),
     scale,
     subject: cond.spell_name,
-    phrase: limit => `at ${wording} ${limit} ${cond.buff_spell_name}`,
-    tail: cond.bound === 'max' ? ', overcapping' : undefined,
-    farPhrase: limit => `at ${limit} ${cond.buff_spell_name}, capped`,
+    label: limit => `at ${wording} ${limit} ${cond.buff_spell_name}`,
+    phrase: limit => `were spent ${wording} ${limit} stacks of ${cond.buff_spell_name}${cond.bound === 'max' ? ', overcapping' : ''}`,
+    advice: limit => cond.bound === 'min' ? `Spend at ${limit} or more.` : `Spend at ${limit} or less.`,
+    farLabel: limit => `past ${limit} ${cond.buff_spell_name}`,
+    farPhrase: limit => `were held past ${limit} stacks of ${cond.buff_spell_name}`,
+    farAdvice: 'Spend before you cap.',
   }, band, judging, severity, remedy);
 }
 
@@ -866,14 +882,14 @@ export function evaluateAuraClipped(
     severity, category: 'rule_violation',
     timestamp_s: round(clipped[0].timeS, 3),
     label: `${cond.aura_spell_name} clipped`,
-    message: `${cond.aura_spell_name} re-applied a median ${SECONDS.format(median(outValues) ?? 0)} in, ${clipped.length} of ${judged.length} refresh(es) before the field's ${SECONDS.format(lo)}.`,
+    message: `You refreshed ${cond.aura_spell_name} early ${clipped.length} of ${judged.length} times, on average ${SECONDS.format(median(outValues) ?? 0)} in. Let it run at least ${SECONDS.format(lo)}.`,
     measured: { value: `${clipped.length} / ${judged.length}`, unit: 'refresh(es)' },
     details: remedy ? { remedy } : undefined,
     occurrences: sampleOccurrences(judged.map(({ timeS, elapsedS }): FindingOccurrence => ({
       atS: round(timeS, 3), ok: !outOfBand(elapsedS, lo, hi, judging), label: SECONDS.format(elapsedS),
       detail: `Refreshed ${SECONDS.format(elapsedS)} into the aura.`,
     }))),
-    occurrenceTarget: `field refreshes ${SECONDS.span(lo, hi)} in`,
+    occurrenceTarget: `let it run at least ${SECONDS.format(lo)}`,
   };
 }
 
@@ -914,7 +930,7 @@ export function evaluateFillerBelowHealth(
       cond.spell_id, cond.spell_name, cond.alternative_spell_ids, cond.alternative_spell_names,
       fillerBelowHealthTimesFor(cond, ctx),
     ),
-    occurrenceTarget: `field runs ${PERCENT.span(bandLimits(PERCENT, band).lo, bandLimits(PERCENT, band).hi)} ${cond.spell_name} under ${cond.health_pct}% health`,
+    occurrenceTarget: `${PERCENT.format(bandLimits(PERCENT, band).lo)} or more ${cond.spell_name} under ${cond.health_pct}% health`,
   };
 }
 
