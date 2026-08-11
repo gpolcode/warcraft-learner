@@ -16,6 +16,8 @@ import { NavStateStore } from '../../../core/services/nav-state-store';
 const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
 const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new`;
 const DISCORD_HANDLE = 'elsahr';
+// Discord has no username-addressable profile URL (only numeric user ids), so this opens the app's own DM list rather than a dead link.
+const DISCORD_URL = 'https://discord.com/channels/@me';
 const MOBILE_QUERY = '(max-width: 600px)';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -99,13 +101,14 @@ export class PageNavComponent {
   }
 
   // Space scrolls an href-less anchor by default, so keyboard activation goes through here rather than straight to the action.
-  protected activate(event: Event, action: 'toggleFeedback' | 'copyDiscordHandle'): void {
+  protected activate(event: Event, action: 'toggleFeedback' | 'messageOnDiscord'): void {
     event.preventDefault();
     if (action === 'toggleFeedback') this.toggleFeedback();
-    else this.copyDiscordHandle();
+    else this.messageOnDiscord();
   }
 
-  protected copyDiscordHandle(): void {
+  protected messageOnDiscord(): void {
+    window.open(DISCORD_URL, '_blank', 'noopener');
     this.discordCopied.set(this.clipboard.copy(DISCORD_HANDLE));
     this.discordCopyFailed.set(!this.discordCopied());
   }
