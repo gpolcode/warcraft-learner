@@ -174,7 +174,11 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   const trinkets = gear.locator('div.border-t').filter({ hasText: 'Trinkets' }).first();
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
   const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
-  await shows(enchants, 'All enchants');
+  // The enchant verdict moves with the bench: issue rows, the on-plan strip, or no data at all.
+  await expect(enchants.locator('wl-collapsible-text').first()
+    .or(enchants.getByText('On plan').first())
+    .or(enchants.getByText('No enchant data.').first())
+    .first()).toBeVisible();
 });
 
 test('the positioning map opens anchored on the death', async () => {
