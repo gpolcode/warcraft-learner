@@ -9,7 +9,7 @@
       name="description"
       content="Diagnostic tool for Mythic raiders. warcraft-learner grades your Warcraft Logs parses against spec-specific rulebooks and benchmarks them against top parses."
     />
-    <!-- Mirrors index.html, adding http://localhost:3000 to connect-src for the ingest file server; only the ingest build ships this. -->
+    <!-- Mirrors index.html, adding connect-src for the ingest file server (localhost:3000) and the raidbots talent dump the transform services fetch; the dev and ingest configurations serve this, never the hosted build. -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://wow.zamimg.com; style-src 'self' 'unsafe-inline' https://wow.zamimg.com; font-src 'self'; img-src 'self' data: https://wow.zamimg.com https://assets.rpglogs.com; connect-src 'self' http://localhost:3000 https://www.warcraftlogs.com https://www.wowhead.com https://nether.wowhead.com https://www.raidbots.com; media-src 'self' blob:; base-uri 'self'; object-src 'none'"
