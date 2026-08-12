@@ -26,11 +26,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     // withInterceptorsFromDi() admits the DI-registered ng-http-caching interceptor into the same chain.
     provideHttpClient(withFetch(), withInterceptors([retryTransientInterceptor]), withInterceptorsFromDi()),
-    provideAppInitializer(async () => {
+    provideAppInitializer(() => {
       const dataFile = inject(DataFileApiService);
-      // A failed read degrades to an empty universe rather than blocking the app.
-      const specMeta = await dataFile.getSpecMeta();
-      hydrateSpecMeta(specMeta.ok ? specMeta.value : []);
+      // Awaiting would block first paint, which reads no spec-meta.
+      void dataFile.getSpecMeta().then(specMeta => hydrateSpecMeta(specMeta.ok ? specMeta.value : []));
     }),
     provideWclCaching(),
     provideEnvironmentInitializer(() => {

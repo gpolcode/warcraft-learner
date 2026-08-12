@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
@@ -18,7 +18,7 @@ import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../shared/pipes/spec-icon-pipe';
 import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
-import { classList, specsForClass, specMetaOf } from '../../core/spec-meta';
+import { classList, specsForClass, resolveSpecMeta } from '../../core/spec-meta';
 import { RotationCdPlanComponent } from '../post-raid/rotation/rotation-cd-plan';
 import { DefensivePlanComponent } from '../post-raid/defensive/defensive-plan';
 import { BurstWindowsComponent } from '../post-raid/burst-windows/burst-windows';
@@ -96,13 +96,19 @@ export class PreFightComponent implements OnInit {
     this.mapFeature.openAt(anchor);
   }
 
+  constructor() {
+    // classes() fills only once the spec index and spec-meta have both landed, in either order.
+    effect(() => {
+      if (this.classes().length) this.classControl.enable({ emitEvent: false });
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     try {
       const specs = await this.encounterSelection.getSpecs();
       if (specs.ok) {
         this.specs.set(specs.value);
-        if (this.classes().length) this.classControl.enable({ emitEvent: false });
       } else {
         this.surfaceLoadError(specs.error);
       }
@@ -111,7 +117,7 @@ export class PreFightComponent implements OnInit {
     }
 
     const autoSpec = this.selectionStore.loadPreFight()?.spec ?? '';
-    const meta = specMetaOf(autoSpec);
+    const meta = await resolveSpecMeta(autoSpec);
     if (autoSpec && meta && this.specs().some(specEntry => specEntry.spec === autoSpec)) {
       this.classControl.setValue(meta.className);
       this.specControl.enable({ emitEvent: false });

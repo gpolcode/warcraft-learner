@@ -11,7 +11,7 @@ import {
   ReportQueryVars, PlayerDetailsQueryVars,
   EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars, ResurrectsQueryVars,
 } from './wcl-queries';
-import { specMetaOf } from '../spec-meta';
+import { resolveSpecMeta } from '../spec-meta';
 
 @Injectable({ providedIn: 'root' })
 export class WclApiService {
@@ -157,7 +157,7 @@ export class WclApiService {
 
   // Returned as-is (`null` for an unknown spec, since no query can be built); consumers unwrap both forms (see `unwrapRankings` / `toParseRankings`), and an omitted `partition` leaves the variable null, which is what makes WCL fall back to the zone's current one.
   async getRankings(spec: string, encounterId: number, partition?: number | null): Promise<WclRankingsBlob | null> {
-    const meta = specMetaOf(spec);
+    const meta = await resolveSpecMeta(spec);
     if (!meta) return null;
     const vars: RankingsQueryVars = { encounterID: encounterId, className: meta.className, specName: meta.specName };
     if (partition != null) vars.partition = partition;

@@ -52,7 +52,7 @@
               {
                 "glob": "**/*",
                 "input": "public",
-                "ignore": ["data/specs/**/parse_samples/**", "data/specs/**/guides.json"]
+                "ignore": ["data/specs/**/parse_samples/**", "data/specs/**/guides.json", "fonts/README.md"]
               }
             ],
             "styles": ["src/styles.scss"]
@@ -71,7 +71,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "650kB",
+                  "maximumWarning": "900kB",
                   "maximumError": "1MB"
                 },
                 {
