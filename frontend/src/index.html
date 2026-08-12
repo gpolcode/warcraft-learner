@@ -22,7 +22,7 @@
     <!-- Absolute because the spec universe is one copy at the gh-pages root, shared by every environment folder (see environment.ts). -->
     <link rel="preload" href="/data/specs/spec-meta.json" as="fetch" crossorigin />
 
-    <!-- Font faces sit here, not in styles.scss: only an inline style resolves url() against <base href>, which differs per environment folder. Regenerating a file: public/fonts/README.md. -->
+    <!-- Font faces sit here, not in styles.scss: only an inline style resolves url() against <base href>, which differs per environment folder. -->
     <style>
       @font-face {
         font-family: 'Schibsted Grotesk';
@@ -54,20 +54,7 @@
   </head>
   <body>
     <wl-root>
-      <div aria-hidden="true">
-        <div class="wl-boot-bar">
-          <svg class="wl-boot-mark" viewBox="0 0 32 32" focusable="false">
-            <path d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z" />
-            <g class="wl-boot-mark-cut">
-              <rect x="9.5" y="18" width="3" height="4" rx="1" />
-              <rect x="14.5" y="14" width="3" height="8" rx="1" />
-              <rect x="19.5" y="10" width="3" height="12" rx="1" />
-            </g>
-          </svg>
-          <span>warcraft-learner</span>
-        </div>
-        <div class="wl-boot-spinner"></div>
-      </div>
+      <span>warcraft-learner is loading...</span>
     </wl-root>
   </body>
 </html>
