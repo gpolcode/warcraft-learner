@@ -33,7 +33,11 @@ export function findingRows(table: Locator): Locator {
 export async function showsFindingRows(table: Locator, chip?: RegExp): Promise<void> {
   const rows = findingRows(table);
   const count = await rows.count();
-  expect(count).toBeGreaterThan(0);
+  // A refresh can put every verdict on plan; zero rows is a valid card state, an empty strip is not.
+  if (count === 0) {
+    await showsOnPlan(table);
+    return;
+  }
   for (let i = 0; i < count; i++) {
     const row = rows.nth(i);
     if (chip) await expect(row.locator('span.rounded-sm')).toHaveText(chip);
