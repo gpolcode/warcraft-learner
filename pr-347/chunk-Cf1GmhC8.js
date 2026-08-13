@@ -1,0 +1,1 @@
+import {s as a}from'./main-BS3F3ATR.js';var e$1=class e{token=0;run(c,t){let n=++this.token;c.then(o=>{n===this.token&&t.apply(o);}).catch(o=>a(t.context,o)).finally(()=>{n===this.token&&t.settled?.();});}};export{e$1 as e};//# sourceMappingURL=chunk-Cf1GmhC8.js.map

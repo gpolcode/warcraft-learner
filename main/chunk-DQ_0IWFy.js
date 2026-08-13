@@ -1,0 +1,1 @@
+import {be as hE}from'./main-BS3F3ATR.js';var o=(()=>{class t{transform(r){return r==null?"":r>=1e6||Math.round(r/1e3)>=1e3?`${(r/1e6).toFixed(1)}M`:r>=1e3?`${Math.round(r/1e3)}K`:String(Math.round(r))}static \u0275fac=function(i){return new(i||t)};static \u0275pipe=hE({name:"formatDamage",type:t,pure:true})}return t})();export{o};//# sourceMappingURL=chunk-DQ_0IWFy.js.map
