@@ -10,5 +10,4 @@ export interface DataFileTransport {
   list(relDir: string): Promise<string[]>;
 }
 
-// Nothing here may import `environments/environment`: the environment files read this token while building their provider arrays, and an import cycle leaves it undefined there, silently dropping the ingest transport override.
 export const DATA_FILE_TRANSPORT = new InjectionToken<DataFileTransport>('DATA_FILE_TRANSPORT');

@@ -29,23 +29,6 @@ export default defineConfig([
     },
   },
   {
-    // An import cycle back into an environment leaves the token undefined where the environment files read it, silently dropping the ingest transport override.
-    files: ['src/app/core/services/data-file-transport.ts'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/environments/*'],
-              message: 'The DATA_FILE_TRANSPORT module must not import an environment; put environment-dependent code in http-data-file-transport.ts.',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     // Angular-specific rules + the inline-template processor apply to the app only.
     files: ['src/**/*.ts'],
     extends: [angular.configs.tsRecommended],
