@@ -9,7 +9,6 @@
       name="description"
       content="Diagnostic tool for Mythic raiders. warcraft-learner grades your Warcraft Logs parses against spec-specific rulebooks and benchmarks them against top parses."
     />
-    <!-- Mirrors index.html, adding connect-src for the ingest file server (localhost:3000) and the raidbots talent dump the transform services fetch; the dev and ingest configurations serve this, never the hosted build. -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://wow.zamimg.com; style-src 'self' 'unsafe-inline' https://wow.zamimg.com; font-src 'self'; img-src 'self' data: https://wow.zamimg.com https://assets.rpglogs.com; connect-src 'self' http://localhost:3000 https://www.warcraftlogs.com https://www.wowhead.com https://nether.wowhead.com https://www.raidbots.com; media-src 'self' blob:; base-uri 'self'; object-src 'none'"
@@ -17,13 +16,10 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <!-- Discoverable in the first response: each would otherwise be requested only once the bundle that needs it has parsed. -->
     <link rel="preload" href="fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="fonts/material-symbols-outlined-subset.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Absolute because the spec universe is one copy at the gh-pages root, shared by every environment folder (see environment.ts). -->
     <link rel="preload" href="/data/specs/spec-meta.json" as="fetch" crossorigin />
 
-    <!-- Font faces sit here, not in styles.scss: only an inline style resolves url() against <base href>, which differs per environment folder. -->
     <style>
       @font-face {
         font-family: 'Schibsted Grotesk';
@@ -47,7 +43,6 @@
         font-family: 'Material Symbols Outlined';
         font-style: normal;
         font-weight: 400;
-        /* fallback, not block: the ligature name is never shown for longer than the 100ms the preloaded file needs. */
         font-display: fallback;
         src: url(fonts/material-symbols-outlined-subset.woff2) format('woff2');
       }
