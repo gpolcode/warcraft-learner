@@ -3,13 +3,13 @@
   "spec_icon": "spell_nature_magicimmunity",
   "major_cooldowns": [
     {
-      "name": "Spirit Link Totem",
-      "spell_id": 98008,
+      "name": "Ascendance",
+      "spell_id": 114052,
       "cooldown": 180,
-      "duration": 6,
+      "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Drop it to split an overwhelming hit on one player across the group, or to level everyone to the same health percentage just before a raid-wide hit; it also gives 10% damage reduction inside its 10 yard radius, 15% with Spouting Spirits, plus a large burst heal one second after it lands.",
-      "id_note": "98008 is the cast id; 325174 is the aura."
+      "usage_rule": "Ramp with your Riptides for two Tidal Waves stacks and drop Unleash Life plus Healing Rain or Surging Totem right before you press it, then fill the window with Chain Heal and your totems.",
+      "id_note": "114052 is the id seen both as a cast and as the self aura; 114050 and 114051 share the name."
     },
     {
       "name": "Healing Tide Totem",
@@ -17,51 +17,34 @@
       "cooldown": 180,
       "duration": 10,
       "align_with_bloodlust": false,
-      "usage_rule": "The Totemic raid cooldown on a choice node with Ascendance: instant and free to move or keep casting afterwards, it pulses every 2 seconds and reaches full output with at least 5 allies inside 40 yards, so drop it into stacked raid damage rather than spot pressure.",
+      "usage_rule": "Pre-plan it for the fight's heaviest raid-wide damage, where it also fires a free Chain Heal for Totemic.",
+      "id_note": "108280 was not pressed in the sampled parses but is castable per its tooltip; it shares a talent choice node with the other big cooldowns.",
       "talent_gated": true
     },
     {
-      "name": "Ascendance",
-      "spell_id": 114052,
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
       "cooldown": 180,
-      "duration": 15,
+      "duration": 6,
       "align_with_bloodlust": false,
-      "usage_rule": "The Farseer raid cooldown on a choice node with Healing Tide Totem: enter it with targets already damaged so the window pays off, then spam Chain Heal for 3 extra jumps at only 10% loss per jump and Healing Wave for guaranteed crits plus a second ally at 50%; react instantly to free Deeply Rooted Elements procs.",
-      "id_note": "114052 is the Restoration (Water Ascendant) cast id; 114050/114051/1219480 are the Elemental and Enhancement versions.",
-      "talent_gated": true
-    },
-    {
-      "name": "Spiritwalker's Grace",
-      "spell_id": 79206,
-      "cooldown": 120,
-      "duration": 15,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press it for periods of heavy movement where throughput matters, or to reposition without dropping a cast; it is castable while casting, so it never costs a global."
+      "usage_rule": "Drop it just before a big group hit so the damage reduction is live, and keep it as an emergency save when one player is about to die."
     },
     {
       "name": "Nature's Swiftness",
       "spell_id": 378081,
       "cooldown": 60,
       "align_with_bloodlust": false,
-      "usage_rule": "Press it on cooldown for the free Stormstream Totem proc and spend the instant, mana-free cast on Chain Heal.",
-      "id_note": "378081 is the Shaman cast and aura id; 132158 is the Druid spell of the same name."
+      "usage_rule": "Press it on cooldown for the guaranteed Stormstream Totem and spend the buff immediately, because the cooldown only starts once you consume it.",
+      "id_note": "378081 is the observed cast id; 132158 shares the name."
     },
     {
       "name": "Ancestral Swiftness",
       "spell_id": 443454,
       "cooldown": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "The Farseer upgrade that replaces Nature's Swiftness at half the cooldown: press it on cooldown to spawn an Ancestor, proc Stormstream Totem, and make the next spell instant, free, and 10% stronger.",
+      "usage_rule": "As Farseer press it on cooldown for the ancestor and the Stormstream Totem, and consume it with Chain Heal.",
+      "id_note": "443454 is the Farseer replacement for Nature's Swiftness; not pressed in the sampled parses, which are Totemic builds, but castable per its tooltip.",
       "talent_gated": true
-    },
-    {
-      "name": "Healing Stream Totem",
-      "spell_id": 5394,
-      "cooldown": 30,
-      "duration": 15,
-      "align_with_bloodlust": false,
-      "usage_rule": "Use it for emergency healing and whenever you are at maximum charges so none are wasted, and keep it rolling under Ascendance.",
-      "id_note": "5394 is the cast id; 52042 is the healing event."
     },
     {
       "name": "Stormstream Totem",
@@ -69,29 +52,25 @@
       "cooldown": 30,
       "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "The apex payoff, procced by Riptide and by Nature's Swiftness or Ancestral Swiftness: it does not consume regular Healing Stream Totem charges once fully unlocked, so hold it for a real damage window but spend it before both Healing Stream Totem charges come back up.",
-      "id_note": "1267068 is the cast id; 1267089 is the proc aura and 1267016 the talent node.",
-      "talent_gated": true
+      "usage_rule": "Cast it once the proc is up, holding it only long enough to line the totem up with incoming damage since the buff caps at two stacks.",
+      "id_note": "1267068 is the observed cast id; 1267089 is the proc aura and 1267093 is the talent. The 30s value is the table's base cooldown, but the real gate is the Swiftness proc."
     },
     {
-      "name": "Bloodlust",
-      "spell_id": 2825,
-      "cooldown": 300,
-      "duration": 40,
+      "name": "Healing Stream Totem",
+      "spell_id": 5394,
+      "cooldown": 30,
+      "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Give the raid 30% haste for 40 seconds, normally at the pull while everyone still has their own cooldowns, unless the encounter plan calls for a later burn window.",
-      "id_note": "Horde faction spell; Alliance shaman cast Heroism (32182).",
-      "talent_gated": true
+      "usage_rule": "Drop it whenever a charge is up so you never sit capped, and delay it only while you are holding a Stormstream Totem for incoming damage.",
+      "id_note": "5394 is the observed cast id; 426214 shares the name."
     },
     {
-      "name": "Heroism",
-      "spell_id": 32182,
-      "cooldown": 300,
-      "duration": 40,
+      "name": "Spiritwalker's Grace",
+      "spell_id": 79206,
+      "cooldown": 120,
+      "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "The Alliance version of the same 30% haste buff: cast it at the pull alongside the raid's damage cooldowns unless the encounter plan calls for a later burn window.",
-      "id_note": "Alliance faction spell; Horde shaman cast Bloodlust (2825).",
-      "talent_gated": true
+      "usage_rule": "Press it for forced movement so you keep casting, and start a cast on its last second to finish that cast while already moving."
     }
   ],
   "defensives": [
@@ -100,15 +79,25 @@
       "spell_id": 108271,
       "cooldown": 120,
       "duration": 12,
-      "usage_rule": "Take 40% less damage for 12 seconds; press it the moment you expect to be hit hard, while you still have plenty of health rather than after the hit lands."
+      "usage_rule": "Press it as a big hit lands on you rather than after your health is already low.",
+      "id_note": "108271 is the observed cast id; 292158 shares the name with a 90s tooltip cooldown."
     },
     {
-      "name": "Earth Elemental",
-      "spell_id": 198103,
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
       "cooldown": 180,
-      "duration": 30,
-      "usage_rule": "With Primordial Bond it stops taunting and instead gives you 15% extra maximum health for its duration; without it, summon it to tank non-boss enemies or take pressure off the tank.",
-      "id_note": "198103 is the cast id; 188616 is the summon event.",
+      "duration": 15,
+      "usage_rule": "Drop it ahead of predictable damage on you for a large absorb that refreshes while the totem lives.",
+      "id_note": "108270 was not pressed in the sampled parses but is castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Earthen Wall Totem",
+      "spell_id": 198838,
+      "cooldown": 60,
+      "duration": 15,
+      "usage_rule": "Drop it under the group before a heavy physical hit so it soaks damage for everyone standing in it.",
+      "id_note": "198838 was not pressed in the sampled parses but is castable per its tooltip.",
       "talent_gated": true
     }
   ],
@@ -116,43 +105,56 @@
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend Unleash Life on Chain Heal or Healing Wave",
+      "description": "Spend every Stormstream Totem proc",
       "condition": {
         "kind": "proc_wasted",
-        "buff_spell_id": 73685,
-        "buff_spell_name": "Unleash Life",
-        "spend_spell_ids": [1064, 77472, 61295],
-        "spend_spell_names": ["Chain Heal", "Healing Wave", "Riptide"]
+        "buff_spell_id": 1267089,
+        "buff_spell_name": "Stormstream Totem",
+        "spend_spell_ids": [1267068],
+        "spend_spell_names": ["Stormstream Totem"]
       },
-      "action": "Cast Unleash Life on an injured ally on cooldown for its direct heal, then spend the follow-up buff straight away on Chain Heal or Healing Wave, which also gain the reduced cast time; Riptide is already instant and gains the least."
+      "action": "Drop the totem while the proc is up; it refunds the Healing Stream charge, so it never costs you one."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend Stormstream Totem procs before HST recharges",
-      "condition": {
-        "kind": "spend_at_stacks",
-        "spell_id": 1267068,
-        "spell_name": "Stormstream Totem",
-        "buff_spell_id": 1267089,
-        "buff_spell_name": "Stormstream Totem",
-        "bound": "min"
-      },
-      "action": "The proc lasts 60 seconds and stacks twice, so hold it for a real damage window, but spend it before both Healing Stream Totem charges are ready or you lose a totem cast."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Spend Nature's Swiftness on Chain Heal",
+      "description": "Consume Swiftness right after you press it",
       "condition": {
         "kind": "proc_wasted",
         "buff_spell_id": 378081,
         "buff_spell_name": "Nature's Swiftness",
-        "spend_spell_ids": [1064, 77472],
-        "spend_spell_names": ["Chain Heal", "Healing Wave"]
+        "spend_spell_ids": [1064, 77472, 73920],
+        "spend_spell_names": ["Chain Heal", "Healing Wave", "Healing Rain"]
       },
-      "action": "Press Nature's Swiftness on cooldown for the Stormstream Totem proc and put the free instant cast into Chain Heal, or Healing Wave when a single player is the problem; never let the buff expire unused."
+      "action": "Follow the press with a Chain Heal; the cooldown does not start until the buff is spent."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Ascendance with Tidal Waves stacked",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 114052,
+        "spell_name": "Ascendance",
+        "buff_spell_id": 53390,
+        "buff_spell_name": "Tidal Waves",
+        "bound": "min",
+        "max_stacks": 2
+      },
+      "action": "Dump your available Riptides just before you press it so the window opens with Tidal Waves banked."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Healing Rain on the group",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 1307888,
+        "aura_spell_name": "Healing Rain",
+        "on": "self"
+      },
+      "action": "Recast it as it expires, and move Surging Totem so it stays under at least five players."
     }
   ],
-  "source_summary": "Restoration Shaman leans on one 3 minute raid cooldown chosen by hero tree - Healing Tide Totem for Totemic, Ascendance for Farseer - backed by Spirit Link Totem for spike damage that can be split or pre-levelled across the group. The short cooldowns carry the rest: Healing Stream Totem never sitting at capped charges, Unleash Life on cooldown with its buff spent on Chain Heal or Healing Wave, and Nature's Swiftness or Ancestral Swiftness pressed on cooldown to generate Stormstream Totem procs. Mana is the real constraint, so track it against the boss health bar, damage with Lightning Bolt and Flame Shock during quiet phases, and hold Spiritwalker's Grace for movement-heavy windows where throughput cannot drop."
+  "source_summary": "Restoration Shaman lives on short cooldowns pressed early and often, with Chain Heal and Healing Wave filling the gaps according to how many allies are hurt and how much mana is left. Nature's Swiftness or its Farseer version Ancestral Swiftness is the engine, since every press guarantees a Stormstream Totem, so it goes out on cooldown and both the buff and the resulting totem get spent quickly. Ascendance is the one big throughput window and wants a ramp of Riptides for Tidal Waves plus Unleash Life and Healing Rain or Surging Totem before it, while Spirit Link Totem and Healing Tide Totem are pre-planned for the fight's damage spikes."
 }

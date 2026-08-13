@@ -8,8 +8,8 @@
       "cooldown": 180,
       "duration": 6,
       "align_with_bloodlust": false,
-      "usage_rule": "Ramp into it: land as many Rejuvenations as you can plus a Wild Growth, then channel it on the fight's heaviest damage and chain Regrowth through the 10 second heal-over-time extension it leaves behind.",
-      "id_note": "740 is the cast id; 157982 shares the name and is not the pressed button."
+      "usage_rule": "Ramp with Wild Growth and as many Regrowth heal-over-time effects as you can, then channel it on the fight's most dangerous moment so every one of them gets extended.",
+      "id_note": "Cast id seen in 5/5 sampled parses; tooltip duration 6s from the ability table."
     },
     {
       "name": "Convoke the Spirits",
@@ -17,18 +17,26 @@
       "cooldown": 120,
       "duration": 4,
       "align_with_bloodlust": false,
-      "usage_rule": "Send it often on the most dangerous moments, with Rejuvenations already out so its 45% chance to extend every heal-over-time effect by 2 seconds has something to extend, and press Nature's Swiftness first to buff the Regrowths it rolls without consuming the buff.",
-      "talent_gated": true,
-      "id_note": "Choice node opposite Incarnation: Tree of Life."
+      "usage_rule": "Cast Wild Growth first, then send it in caster form in raid, or in Cat Form in dungeons when the group is safe and you want damage.",
+      "id_note": "Guide text cites 323764, which is not observed; 391528 is the cast id in 5/5 sampled parses."
     },
     {
       "name": "Incarnation: Tree of Life",
       "spell_id": 33891,
-      "cooldown": 180,
+      "cooldown": 100,
+      "duration": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "Take it for long healing phases such as a 30 second burn, press it before a Rejuvenation ramp so those casts are cheap, and keep Wild Growth and free-cast Regrowth flowing so you are actively healing for the whole window.",
-      "talent_gated": true,
-      "id_note": "Choice node opposite Convoke the Spirits; not pressed in the sampled parse."
+      "usage_rule": "Press it 10-12 seconds before major damage so you can spam discounted Rejuvenations, and channel Tranquility inside it since that pauses the tree duration.",
+      "id_note": "Base tooltip cooldown is 180s; the guide states Grove Guardian cooldown reduction brings it to about 1:40 with good play. Not observed in the sampled parses, which ran the Convoke build.",
+      "talent_gated": true
+    },
+    {
+      "name": "Nature's Swiftness",
+      "spell_id": 132158,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Self-cast it into Regrowth on dangerous damage with Overgrowth, since it refreshes your own heal-over-time effects and splashes your other Regrowth targets.",
+      "id_note": "Cast id in 5/5 parses; the same name also exists as 378081, which is not observed."
     },
     {
       "name": "Innervate",
@@ -36,24 +44,7 @@
       "cooldown": 180,
       "duration": 8,
       "align_with_bloodlust": false,
-      "usage_rule": "Self-cast it starting around 80% mana and fit as many into the fight as you can, lining the 8 free seconds up with a Rejuvenation ramp rather than Regrowth, which Abundance already makes cheap."
-    },
-    {
-      "name": "Nature's Swiftness",
-      "spell_id": 132158,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "usage_rule": "Spend it on an instant, 60% stronger Regrowth to save someone dropping low, or press it just before Convoke the Spirits to buff every Regrowth the channel rolls since Convoke does not consume it.",
-      "id_note": "132158 is the Druid cast; 378081 shares the name and is the Shaman version."
-    },
-    {
-      "name": "Ironbark",
-      "spell_id": 102342,
-      "cooldown": 90,
-      "duration": 12,
-      "align_with_bloodlust": false,
-      "usage_rule": "Drop the 20% damage reduction on anyone about to take heavy damage; it is off the global cooldown and comes back fast, so using it often beats saving it for a perfect moment.",
-      "id_note": "Not pressed in the sampled parse but a real castable ability."
+      "usage_rule": "Use it during a heavy healing stretch and spend the free mana on Wild Growth and Regrowth rather than banking it."
     }
   ],
   "defensives": [
@@ -62,82 +53,109 @@
       "spell_id": 22812,
       "cooldown": 60,
       "duration": 8,
-      "usage_rule": "Your personal 20% damage reduction on a short cooldown: press it any time you are in danger, and note it also stops damage from pushing back your casts."
+      "usage_rule": "Press it on any avoidable hit or rolling damage on you, since it costs no global cooldown and never interrupts your healing."
     },
     {
       "name": "Survival Instincts",
       "spell_id": 61336,
       "cooldown": 180,
       "duration": 6,
-      "usage_rule": "Save the 50% reduction for a hit Barkskin cannot cover.",
-      "talent_gated": true,
-      "id_note": "Not pressed in the sampled parse but a real castable ability."
+      "usage_rule": "Save it for the single biggest hit you have to eat and pair it with a heal on yourself.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
     },
     {
-      "name": "Frenzied Regeneration",
-      "spell_id": 22842,
-      "cooldown": 36,
-      "duration": 3,
-      "usage_rule": "Shift to Bear and heal 24% of your health over 3 seconds when sustained damage is on you and you cannot spare casts on yourself.",
-      "talent_gated": true,
-      "id_note": "Requires Bear Form and 10 Rage; only 1 application in the sampled parse."
+      "name": "Ironbark",
+      "spell_id": 102342,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Put it on the tank or whoever is about to take a big hit, and keep it moving so it is never idle through a damage window."
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "usage_rule": "Press it when your own health dips low so you can keep healing the group instead of stopping to heal yourself.",
+      "id_note": "Same name as 283762; neither was pressed in the sampled parses, both castable per tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Cenarion Ward",
+      "spell_id": 102351,
+      "cooldown": 30,
+      "duration": 30,
+      "usage_rule": "Place it on yourself or the tank ahead of a known hit so the burst heal fires the moment damage lands.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "rotation",
-      "severity": "warning",
-      "description": "Swiftmend followed by Rejuvenation",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 18562,
-        "spell_name": "Swiftmend",
-        "required_spell_id": 774,
-        "required_spell_name": "Rejuvenation",
-        "position": "after"
-      },
-      "action": "Swiftmend on cooldown and follow it with Rejuvenation: Soul of the Forest plus Power of the Archdruid put that Rejuvenation on 3 targets. Follow with Regrowth instead only when the group is already struggling to stay alive."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Lifebloom rolling on yourself",
+      "severity": "critical",
+      "description": "Keep Lifebloom rolling on yourself",
       "condition": {
         "kind": "aura_uptime_below",
-        "aura_spell_id": 33763,
+        "aura_spell_id": 1227806,
         "aura_spell_name": "Lifebloom",
         "on": "self"
       },
-      "action": "Keep Lifebloom on yourself at all times in raid: you stack healing modifiers on yourself, so your Everbloom bloom is far larger, and Lifetreading parks Efflorescence under your own feet. In dungeons put it on the tank or whoever is taking heavy damage."
+      "action": "Refresh Lifebloom on yourself inside its last 4.5 seconds so it blooms without ever dropping."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Efflorescence parked under the group",
+      "description": "Keep Efflorescence down at all times",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 1232285,
         "aura_spell_name": "Efflorescence",
         "on": "self"
       },
-      "action": "Keep Efflorescence down under a clump of players for its full 30 seconds, and have it and Lifebloom up before a known damage event lands."
+      "action": "Drop it under your Lifebloom target, or under yourself for control, and replace it the moment it expires."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Innervate pressed near full mana",
+      "description": "Hold five Rejuvenations to keep Abundance up",
       "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 29166,
-        "spell_name": "Innervate",
-        "resource_type": 0,
-        "resource_name": "mana",
-        "bound": "min"
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 207640,
+        "aura_spell_name": "Abundance",
+        "on": "self"
       },
-      "action": "Press your first Innervate around 80% mana and keep using it every cooldown. Sitting on it until you are empty costs you whole casts of it over a fight, and most mana problems are that plus too few Regrowths."
+      "action": "Batch your Rejuvenations onto the group before damage, and press Swiftmend first so the next one spreads three."
     },
     {
-      "type": "rotation",
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Wild Growth before Convoke the Spirits",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 391528,
+        "spell_name": "Convoke the Spirits",
+        "required_spell_id": 48438,
+        "required_spell_name": "Wild Growth",
+        "position": "before"
+      },
+      "action": "Send Wild Growth first so a Flourish extension from Convoke has fresh heal-over-time effects to stretch."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Wild Growth before your Tranquility ramp",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 740,
+        "spell_name": "Tranquility",
+        "required_spell_id": 48438,
+        "required_spell_name": "Wild Growth",
+        "position": "before"
+      },
+      "action": "Ramp with Wild Growth and as many Regrowth heal-over-time effects as you can, then channel Tranquility to extend them."
+    },
+    {
+      "type": "cooldown_pairing",
       "severity": "warning",
       "description": "Nature's Swiftness into Regrowth",
       "condition": {
@@ -148,69 +166,8 @@
         "required_spell_name": "Regrowth",
         "position": "after"
       },
-      "action": "Follow Nature's Swiftness with Regrowth on the target that dropped low: it is instant and heals 60% more. Keep casting Regrowth on them until they are safe."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Wild Growth into the Tranquility ramp",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 740,
-        "spell_name": "Tranquility",
-        "required_spell_id": 48438,
-        "required_spell_name": "Wild Growth",
-        "position": "before"
-      },
-      "action": "Plan the Tranquility ramp before the fight: get 12 or more Rejuvenations out in raid, 3 to 5 in a key, plus a Wild Growth, then channel Tranquility so all of it is extended by 10 seconds and your follow-up Regrowths cost nothing at max Abundance."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Nature's Swiftness before Convoke the Spirits",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 391528,
-        "spell_name": "Convoke the Spirits",
-        "required_spell_id": 132158,
-        "required_spell_name": "Nature's Swiftness",
-        "position": "before"
-      },
-      "action": "When Nature's Swiftness is up, press it right before Convoke the Spirits. Convoke does not consume the buff, so every Regrowth it rolls heals 60% more."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Regrowth chained at high Abundance stacks",
-      "condition": {
-        "kind": "spend_at_stacks",
-        "spell_id": 8936,
-        "spell_name": "Regrowth",
-        "buff_spell_id": 207640,
-        "buff_spell_name": "Abundance",
-        "bound": "min",
-        "except_buff_spell_ids": [132158],
-        "except_buff_spell_names": ["Nature's Swiftness"]
-      },
-      "action": "Chain Rejuvenation first to build Abundance stacks, then chain Regrowth once stacks are high. Casting Regrowth with low Abundance wastes its crit chance and mana discount and is the main cause of mana trouble. Cast Regrowth immediately regardless of stacks when someone drops low and Nature's Swiftness is up."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Rejuvenation over Regrowth during Innervate",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 774,
-        "spell_name": "Rejuvenation",
-        "alternative_spell_ids": [8936],
-        "alternative_spell_names": ["Regrowth"],
-        "buff_spell_id": 29166,
-        "buff_spell_name": "Innervate",
-        "except_buff_spell_ids": [132158],
-        "except_buff_spell_names": ["Nature's Swiftness"]
-      },
-      "action": "During Innervate's 8 free seconds, chain Rejuvenation rather than Regrowth: Abundance already makes Regrowth cheap outside the window, so the free casts are worth more spent building Rejuvenation stacks. Cast Regrowth anyway if someone drops low and you have Nature's Swiftness up."
+      "action": "Follow it immediately with Regrowth on whoever is lowest, or on yourself with Overgrowth."
     }
   ],
-  "source_summary": "Restoration Druid healing is heal-over-time maintenance plus the Abundance cycle: keep Lifebloom on yourself and Efflorescence under the group, Swiftmend on cooldown into Rejuvenation, Wild Growth often, then chain Regrowth while Rejuvenation stacks are high. The big cooldowns are ramp tools rather than panic buttons: build a wide Rejuvenation and Wild Growth carpet before Tranquility so its 10 second extension and Convoke the Spirits' 2 second extensions hold the ramp open, and pick Convoke or Incarnation: Tree of Life for the fight's damage pattern. Innervate starts around 80% mana and is used every cooldown into Rejuvenation casts, Nature's Swiftness answers spike damage with an instant Regrowth or pre-buffs Convoke, and Ironbark goes out often rather than being saved."
+  "source_summary": "Restoration Druid stacks heal-over-time effects and then spends them: keep Lifebloom, Efflorescence and five Rejuvenations rolling so Abundance turns Regrowth into your cheap main heal, and press Swiftmend on cooldown for its blooms and procs even into full overheal. Pre-plan Tranquility and either Convoke the Spirits or Incarnation: Tree of Life onto the fight's known damage windows instead of saving them, and lead each with Wild Growth so any Flourish extension has heal-over-time effects to stretch. Nature's Swiftness into Regrowth covers spot damage, while Innervate and downtime Wrath casts fund the expensive Wild Growths."
 }

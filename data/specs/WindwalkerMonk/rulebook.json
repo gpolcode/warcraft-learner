@@ -8,18 +8,9 @@
       "cooldown": 90,
       "duration": 15,
       "align_with_bloodlust": true,
-      "opener_priority": 3,
-      "usage_rule": "Two charges let you bank one, so spend it on Bloodlust, stat trinkets or an Invoke Xuen window rather than on sight: it resets Rising Sun Kick, hands you 2 Chi, cuts every Chi spender by 1 and makes Blackout Kick your free filler for 15 seconds.",
-      "id_note": "1249625 is both the cast and the self-aura id in the sampled parse. Tooltip gives a 1.5 min recharge with 2 charges; talents can bring it to 60, 70 or 80 seconds."
-    },
-    {
-      "name": "Celestial Conduit",
-      "spell_id": 443028,
-      "cooldown": 90,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "usage_rule": "Channel it inside Zenith and after Invoke Xuen, spaced away from Strike of the Windlord and Whirling Dragon Punch so its Heart of the Jade Serpent does not overwrite the one those casts give you.",
-      "talent_gated": true
+      "opener_priority": 2,
+      "usage_rule": "Bank one of the two charges and send Zenith with your potion, racial, trinkets and Bloodlust, then fill with free Blackout Kick to pull Rising Sun Kick and Fists of Fury back faster.",
+      "id_note": "1249625 is both the cast and the self buff in the ability table; talents can shorten the listed 90s base to 60, 70 or 80 seconds."
     },
     {
       "name": "Invoke Xuen, the White Tiger",
@@ -27,47 +18,55 @@
       "cooldown": 120,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Press it as the setup for Celestial Conduit and the Zenith window that follows, planning a GCD ahead so you are not summoning Xuen when you want to be attacking.",
+      "opener_priority": 1,
+      "usage_rule": "Plan a spare global for Invoke Xuen so you can channel Celestial Conduit inside its window instead of losing damage to the summon.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Celestial Conduit",
+      "spell_id": 443028,
+      "cooldown": 90,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "usage_rule": "Space Celestial Conduit between your Strike of the Windlord and Whirling Dragon Punch casts so its Heart of the Jade Serpent does not overlap theirs.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; 443038 shares the name with no cooldown.",
       "talent_gated": true
     },
     {
       "name": "Strike of the Windlord",
       "spell_id": 392983,
       "cooldown": 35,
+      "duration": 6,
       "align_with_bloodlust": false,
-      "opener_priority": 4,
-      "usage_rule": "Send it high in the priority inside Zenith, but not while the Celestial Conduit instance of Heart of the Jade Serpent is still running, since the two do not stack.",
-      "talent_gated": true,
-      "id_note": "Not pressed in the sampled parse but name-verified as a real castable ability."
+      "usage_rule": "Send Strike of the Windlord as soon as it is up, but hold it while the Heart of the Jade Serpent from Celestial Conduit is still running.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
     },
     {
       "name": "Whirling Dragon Punch",
       "spell_id": 152175,
       "cooldown": 35,
       "align_with_bloodlust": false,
-      "opener_priority": 5,
-      "usage_rule": "Fire it as soon as its window opens, above Tiger Palm in the priority and inside Zenith, and keep it staggered against Celestial Conduit so their Heart of the Jade Serpent buffs do not collide.",
-      "talent_gated": true,
-      "id_note": "152175 is the cast id; 196742 is the self-aura and 158221/451767 share the name."
+      "usage_rule": "Press Whirling Dragon Punch the moment Rising Sun Kick and Fists of Fury are both on cooldown, and skip it while the Heart of the Jade Serpent from Celestial Conduit is up.",
+      "talent_gated": true
     },
     {
       "name": "Touch of Death",
       "spell_id": 322109,
       "cooldown": 180,
+      "duration": 10,
       "align_with_bloodlust": false,
-      "usage_rule": "Use it as soon as it is up whenever it does not delay a bigger ability, after Fortifying Brew where possible since it snapshots your maximum health, and against a target holding less health than your maximum for the full-damage version."
+      "usage_rule": "Fire Touch of Death as soon as you can fit it without delaying a higher priority button, and press Fortifying Brew first when you can so it snapshots more health."
     },
     {
-      "name": "Algeth'ar Puzzle",
-      "spell_id": 383781,
-      "cooldown": 120,
-      "duration": 20,
+      "name": "Slicing Winds",
+      "spell_id": 1217413,
+      "cooldown": 30,
       "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Start the 2 second channel before the pull, then line later uses up within 2 seconds of Invoke Xuen so its Mastery buff covers the Zenith burst window.",
-      "talent_gated": true,
-      "id_note": "On-use trinket rather than a talent; talent_gated is set so builds without it are not scored as missing casts."
+      "usage_rule": "Pre-cast Slicing Winds before the pull, then press it whenever nothing higher on the priority is ready.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
     }
   ],
   "defensives": [
@@ -76,29 +75,54 @@
       "spell_id": 122470,
       "cooldown": 90,
       "duration": 10,
-      "usage_rule": "Drop it into predictable damage to absorb up to 50% of your maximum health for 10 seconds and redirect 70% of it back at the target, and press Fortifying Brew first since the absorb snapshots your maximum health."
+      "usage_rule": "Drop Touch of Karma into predictable incoming damage so the absorbed hit is redirected back at your target."
     },
     {
       "name": "Fortifying Brew",
       "spell_id": 115203,
       "cooldown": 360,
       "duration": 15,
-      "usage_rule": "Take 20% less damage for 15 seconds, and where the damage pattern allows, use it just before Touch of Karma or Touch of Death so both snapshot the raised maximum health.",
-      "id_note": "115203 is the cast id; the guide links the talent node 388917 and 120954 is the self-aura."
+      "usage_rule": "Press Fortifying Brew before Touch of Karma or Touch of Death so both snapshot the extra maximum health."
+    },
+    {
+      "name": "Dampen Harm",
+      "spell_id": 122278,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use Dampen Harm ahead of a large hit, since it cuts the biggest attacks the hardest.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; 175395 shares the name with a 90s cooldown.",
+      "talent_gated": true
+    },
+    {
+      "name": "Diffuse Magic",
+      "spell_id": 122783,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Save Diffuse Magic for heavy magic damage and to send a harmful debuff back to its caster.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Zen Meditation",
+      "spell_id": 115176,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Channel Zen Meditation for a telegraphed magic hit and expect any melee swing to break it.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
     },
     {
       "name": "Expel Harm",
       "spell_id": 322101,
       "cooldown": 15,
-      "usage_rule": "Spend 15 Energy on it to clear chip damage between mechanics instead of banking it, since the 15 second cooldown returns well before the next hit.",
-      "id_note": "322101 is the 15 second cast id per its tooltip; 115129 and 451968 share the name and were not observed as casts."
+      "usage_rule": "Press Expel Harm on a spare global to top yourself up between damage events.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Opener: Tiger Palm, Zenith, Fists of Fury, Rising Sun Kick",
+      "description": "Open Tiger Palm into Zenith, Fists of Fury, Rising Sun Kick",
       "condition": {
         "kind": "opening_sequence",
         "spell_ids": [
@@ -114,41 +138,33 @@
           "Rising Sun Kick"
         ]
       },
-      "action": "Open with Tiger Palm to reach 4 Chi, then Zenith with your potion, racial and stat trinket already rolling, then Strike of the Windlord, Fists of Fury and Rising Sun Kick."
-    },
-    {
-      "type": "rotation",
-      "severity": "critical",
-      "description": "Hit Combo up: never repeat the same ability",
-      "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 196741,
-        "aura_spell_name": "Hit Combo",
-        "on": "self"
-      },
-      "action": "Never press the same ability twice in a row: each new ability adds a Hit Combo stack up to 5 and takes the 19% Mastery: Combo Strikes bonus with it."
+      "action": "Lead with Tiger Palm, send Zenith after your stat buffs, then Fists of Fury into Rising Sun Kick."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend Dance of Chi-Ji with Spinning Crane Kick",
+      "description": "Blackout Kick is your filler inside Zenith",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 325202,
-        "buff_spell_name": "Dance of Chi-Ji",
-        "spend_spell_ids": [
-          101546
+        "kind": "filler_in_buff",
+        "spell_id": 100784,
+        "spell_name": "Blackout Kick",
+        "alternative_spell_ids": [
+          100780
         ],
-        "spend_spell_names": [
-          "Spinning Crane Kick"
-        ]
+        "alternative_spell_names": [
+          "Tiger Palm"
+        ],
+        "buff_spell_id": 1249625,
+        "buff_spell_name": "Zenith",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
       },
-      "action": "Cash every Dance of Chi-Ji proc into a free Spinning Crane Kick, and send it once it has under 4 seconds left rather than risking a second proc overwriting the stack."
+      "action": "Fill with free Blackout Kick while Zenith is up and press Tiger Palm only when you are short on Chi."
     },
     {
       "type": "rotation",
-      "severity": "info",
-      "description": "Spend Blackout Kick! procs with Blackout Kick",
+      "severity": "warning",
+      "description": "Spend every Blackout Kick! proc",
       "condition": {
         "kind": "proc_wasted",
         "buff_spell_id": 116768,
@@ -160,12 +176,12 @@
           "Blackout Kick"
         ]
       },
-      "action": "Consume Blackout Kick! with a free Blackout Kick. It banks 2 stacks, so at 2 stacks press it before the next Tiger Palm overwrites one."
+      "action": "Work the free Blackout Kick in before the proc expires rather than stacking it."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Tiger Palm to refill Chi, never at the cap",
+      "description": "Tiger Palm only when you need the Chi",
       "condition": {
         "kind": "resource_at_cast",
         "spell_id": 100780,
@@ -174,36 +190,34 @@
         "resource_name": "chi",
         "bound": "max"
       },
-      "action": "Press Tiger Palm below 4 Chi, under 2 stacks of Blackout Kick! and when Energy is about to cap. At high Chi its generation is wasted, and during Zenith it is not your filler at all."
+      "action": "Press Blackout Kick or a spender when Chi is high and keep Tiger Palm for refilling it."
     },
     {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Celestial Conduit only inside Zenith",
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Spinning Crane Kick from three targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 101546,
+        "spell_name": "Spinning Crane Kick",
+        "bound": "min"
+      },
+      "action": "Swap your filler over to Spinning Crane Kick once three or more enemies are in range."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Celestial Conduit outside Heart of the Jade Serpent",
       "condition": {
         "kind": "cast_outside_buff",
         "spell_id": 443028,
         "spell_name": "Celestial Conduit",
-        "buff_spell_id": 1249625,
-        "buff_spell_name": "Zenith",
-        "require": "inside"
+        "buff_spell_id": 443294,
+        "buff_spell_name": "Heart of the Jade Serpent",
+        "require": "outside"
       },
-      "action": "Only channel Celestial Conduit while Zenith is up and you hold more than 1 Chi, and hold it until Heart of the Jade Serpent has under 4 seconds left or is down."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Invoke Xuen before Celestial Conduit",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 443028,
-        "spell_name": "Celestial Conduit",
-        "required_spell_id": 123904,
-        "required_spell_name": "Invoke Xuen, the White Tiger",
-        "position": "before"
-      },
-      "action": "Summon Invoke Xuen first, then channel Celestial Conduit inside the Zenith window it sets up. The window after Xuen is long, so do not burn a GCD on Xuen mid-burst."
+      "action": "Let the Heart of the Jade Serpent from Strike of the Windlord or Whirling Dragon Punch run out before you channel Celestial Conduit."
     }
   ],
-  "source_summary": "Windwalker is built around Zenith, a two-charge 15 second window that resets Rising Sun Kick, hands over 2 Chi, cuts every Chi spender by 1 and turns Blackout Kick into free filler, so it is banked for Bloodlust, stat trinkets and Invoke Xuen rather than pressed on sight. Conduit of the Celestials builds open Invoke Xuen into Zenith and then channel Celestial Conduit, staggering it against Strike of the Windlord and Whirling Dragon Punch so the Heart of the Jade Serpent instances do not overwrite each other. Everything else is priority play: keep Combo Strikes unbroken, cash Dance of Chi-Ji and Blackout Kick! procs before they overstack, and refill Chi with Tiger Palm without capping Chi or Energy."
+  "source_summary": "Windwalker keeps its short cooldowns rolling and builds every burst window around Zenith, which banks two charges so you can line one up with a potion, trinkets, or Bloodlust and then spam free Blackout Kick to reset Rising Sun Kick and Fists of Fury. Conduit of the Celestials adds Invoke Xuen and Celestial Conduit, which have to be staggered against the Heart of the Jade Serpent buff that Strike of the Windlord and Whirling Dragon Punch already grant. Touch of Death goes out as soon as a spare global appears, and pressing Fortifying Brew before it or before Touch of Karma turns a defensive into extra damage."
 }

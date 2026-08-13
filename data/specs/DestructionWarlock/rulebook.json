@@ -6,27 +6,19 @@
       "name": "Summon Infernal",
       "spell_id": 1122,
       "cooldown": 120,
-      "duration": 30,
-      "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Destruction's main cooldown: send it on cooldown and stack your potion, on-use trinkets and racials inside the 30 sec window, since Crashing Chaos empowers your next 8 spenders and Rain of Chaos only rolls while the initial Infernal is out."
-    },
-    {
-      "name": "Cataclysm",
-      "spell_id": 152108,
-      "cooldown": 30,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "In multitarget cast it on cooldown, delaying a few seconds only when that catches more targets; in pure single target it is not a damage gain, so hold it as a cheap refresh for Immolate or Wither as they expire.",
-      "talent_gated": true
-    },
-    {
-      "name": "Soul Fire",
-      "spell_id": 6353,
-      "cooldown": 45,
       "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Pre-cast it at the pull and then take it on cooldown whenever you are below 4 Soul Shards, so its 10 fragments and the free Immolate application both land.",
+      "usage_rule": "Send it on the pull together with your potion, trinkets and racial, and delay it only when the delay costs you no uses."
+    },
+    {
+      "name": "Malevolence",
+      "spell_id": 442726,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Have Wither on every target and shards banked before you press it, then dump every shard into Chaos Bolt or Rain of Fire before the window ends.",
+      "id_note": "442726 is the id seen in casts; 430014 and 446285 share the name and were not observed.",
       "talent_gated": true
     },
     {
@@ -35,18 +27,23 @@
       "cooldown": 30,
       "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Mark the secondary target with several Soul Shards and Conflagrate charges already banked, then dump Chaos Bolt into the 15 sec window; hold it when you know an add lands within 10 sec, and otherwise press it whenever a second target is up and Summon Infernal is not about to come off cooldown.",
+      "usage_rule": "Stick it on the less important target that will survive the full 15 seconds, and press Summon Infernal first whenever both are ready."
+    },
+    {
+      "name": "Soul Fire",
+      "spell_id": 6353,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Precast it just before the pull and then press it every time it comes back while you are below 4 shards.",
       "talent_gated": true
     },
     {
-      "name": "Malevolence",
-      "spell_id": 430014,
-      "cooldown": 60,
-      "duration": 20,
+      "name": "Cataclysm",
+      "spell_id": 152108,
+      "cooldown": 30,
       "align_with_bloodlust": false,
-      "opener_priority": 4,
-      "usage_rule": "Hellcaller's damage window: press it with as many targets carrying Wither as possible and spend Shadowburn and Chaos Bolt inside the 20 sec buff.",
-      "id_note": "Ability table lists 430014 as a name-verified Hellcaller id not observed in the sampled Diabolist parse and carries no base cooldown; the 60s value and the cast id both need a Wowhead check against a Hellcaller log.",
+      "usage_rule": "Blanket Immolate or Wither across the pack with it, and lead into Malevolence off the fresh dots.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; the guide and the APL both call for it.",
       "talent_gated": true
     }
   ],
@@ -56,128 +53,128 @@
       "spell_id": 104773,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Pre-press it for a known raid hit: 25% damage reduction plus immunity to interrupt, silence and pushback keeps your casts rolling straight through the damage."
+      "usage_rule": "Press it into heavy incoming magic damage; it also keeps your casts from being interrupted."
     },
     {
       "name": "Dark Pact",
       "spell_id": 108416,
       "cooldown": 60,
       "duration": 20,
-      "usage_rule": "Shield before the hit lands, while you are still healthy: it spends 20% of current health to absorb 200% of it, so it is worth the least when you are already low.",
+      "usage_rule": "Shield yourself just before a predictable hit, and keep enough health to pay for it.",
       "talent_gated": true
     },
     {
       "name": "Mortal Coil",
       "spell_id": 6789,
       "cooldown": 45,
-      "usage_rule": "Heals 20% of maximum health and horrifies the target for 3 sec, so use it as a routine top-up on any nearby enemy rather than saving it.",
+      "usage_rule": "Use it to heal yourself for a chunk while the target is feared off you.",
       "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "usage_rule": "Pop it when your health drops and a healer cannot reach you in time.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
     }
   ],
   "rules": [
     {
+      "type": "opener",
+      "severity": "info",
+      "description": "Open with Summon Infernal then Conflagrate",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          1122,
+          17962
+        ],
+        "spell_names": [
+          "Summon Infernal",
+          "Conflagrate"
+        ]
+      },
+      "action": "Send Summon Infernal with your trinkets on the pull, then Conflagrate for shards and Backdraft."
+    },
+    {
       "type": "rotation",
-      "severity": "critical",
-      "description": "Immolate never falls off the target",
+      "severity": "warning",
+      "description": "Keep Immolate up on your target",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 157736,
         "aura_spell_name": "Immolate",
         "on": "target"
       },
-      "action": "Keep Immolate on the target at all times; it is your passive shard generation. Refresh inside the last 5.4 sec of the dot, or 6.3 sec with Scalding Flames, so the pandemic window rolls the remainder into the new one."
-    },
-    {
-      "type": "opener",
-      "severity": "warning",
-      "description": "Soul Fire and Cataclysm before Infernal and Chaos Bolt",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [6353, 152108, 17962, 1122, 116858],
-        "spell_names": ["Soul Fire", "Cataclysm", "Conflagrate", "Summon Infernal", "Chaos Bolt"]
-      },
-      "action": "Pre-cast Soul Fire and Cataclysm, apply your dot, then Conflagrate into Summon Infernal, fire trinkets and racials with it, and spend the banked shards on Chaos Bolt."
+      "action": "Refresh Immolate on your main target before it falls off."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Soul Fire only below 4 Soul Shards",
+      "description": "Never overcap Soul Shards on Incinerate",
       "condition": {
         "kind": "resource_at_cast",
-        "spell_id": 6353,
-        "spell_name": "Soul Fire",
+        "spell_id": 29722,
+        "spell_name": "Incinerate",
         "resource_type": 7,
         "resource_name": "soul shards",
         "bound": "max"
       },
-      "action": "Only take Soul Fire while you are below 4 Soul Shards. It hands back 10 fragments, so pressing it near the 5 shard cap throws a full shard away."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Shadowburn on every Fiendish Cruelty proc",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 1245664,
-        "buff_spell_name": "Fiendish Cruelty",
-        "spend_spell_ids": [17877],
-        "spend_spell_names": ["Shadowburn"]
-      },
-      "action": "Fire Shadowburn as soon as Fiendish Cruelty procs. The cast costs no Soul Shards and ignores the 20% health requirement, and the proc only holds for 30 sec."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Ruination spent before the buff expires",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 433885,
-        "buff_spell_name": "Ruination",
-        "spend_spell_ids": [434635],
-        "spend_spell_names": ["Ruination"]
-      },
-      "action": "Cast Ruination as soon as a Pit Lord grants it. It replaces your next Chaos Bolt for far more damage, so send it ahead of any other spender."
-    },
-    {
-      "type": "aoe_switch",
-      "severity": "info",
-      "description": "Shadowburn as the spender up to 6 targets",
-      "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 17877,
-        "spell_name": "Shadowburn",
-        "bound": "max"
-      },
-      "action": "Shadowburn stays your best spender up to 6 targets with Conflagration of Chaos, 5 once Destructive Rapidity is also talented, and 3 without Conflagration of Chaos. Fiendish Cruelty adds one target to each count on Diabolist. Above the cutoff, sink shards into Rain of Fire instead."
+      "action": "Dump a shard into Chaos Bolt or Shadowburn before you generate another."
     },
     {
       "type": "rotation",
       "severity": "info",
-      "description": "Conflagrate before Backdraft stacks cap",
+      "description": "Do not press Conflagrate at capped Backdraft",
       "condition": {
         "kind": "spend_at_stacks",
         "spell_id": 17962,
         "spell_name": "Conflagrate",
         "buff_spell_id": 117828,
         "buff_spell_name": "Backdraft",
-        "bound": "max"
+        "bound": "max",
+        "max_stacks": 2
       },
-      "action": "Spend Backdraft on a hasted Incinerate or Chaos Bolt before recasting Conflagrate: single target only takes it at 0 stacks, multitarget below 2. Do not sit on 2 Conflagrate charges either, dump one into a long Chaos Bolt cast."
+      "action": "Spend your Backdraft stacks on Chaos Bolt or Incinerate before you send Conflagrate again."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Rain of Fire only on bigger packs",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 5740,
+        "spell_name": "Rain of Fire",
+        "bound": "min"
+      },
+      "action": "Spend your shards on Chaos Bolt against a few targets and switch to Rain of Fire once the pack grows."
     },
     {
       "type": "rotation",
-      "severity": "warning",
-      "description": "Shadowburn replaces Chaos Bolt in execute",
+      "severity": "info",
+      "description": "Shadowburn takes over in execute",
       "condition": {
         "kind": "filler_below_health",
         "spell_id": 17877,
         "spell_name": "Shadowburn",
-        "alternative_spell_ids": [116858],
-        "alternative_spell_names": ["Chaos Bolt"],
-        "health_pct": 20
+        "alternative_spell_ids": [
+          116858
+        ],
+        "alternative_spell_names": [
+          "Chaos Bolt"
+        ],
+        "health_pct": 20,
+        "except_buff_spell_ids": [
+          442726,
+          432795
+        ],
+        "except_buff_spell_names": [
+          "Malevolence",
+          "Demonic Art: Pit Lord"
+        ]
       },
-      "action": "Below 20% target health, Shadowburn takes over from Chaos Bolt as your spender. It refunds its Soul Shard when the target dies inside the debuff, and Havoc can trigger a second refund."
+      "action": "Point your shard dumps at Shadowburn instead of Chaos Bolt once the target is in execute range."
     }
   ],
-  "source_summary": "Destruction generates Soul Shards with Incinerate and Conflagrate and dumps them into Chaos Bolt and Shadowburn, so the cooldown plan is built around Summon Infernal: send it on cooldown and stack potion, trinkets and racials inside its 30 sec window. Cataclysm is treated as a mass Immolate applicator rather than burst, used on cooldown in multitarget and held for dot refreshes in single target, while Havoc is banked with shards and Conflagrate charges for an incoming add. Hellcaller adds Malevolence as a second window to spend into, and Diabolist turns spender casts into Diabolic Ritual procs that pay out Ruination."
+  "source_summary": "Destruction generates Soul Shards with Incinerate and Conflagrate and spends them on Chaos Bolt, Shadowburn or Rain of Fire while keeping Immolate or Wither rolling on the target. Summon Infernal is the two-minute anchor and goes out on the pull with potion, trinkets and racials, with Havoc for cleave and Malevolence for stacking Wither layered on top of it. The guides stress never overcapping shards, spending Backdraft stacks on Chaos Bolt, and dumping every shard you can inside the cooldown windows."
 }

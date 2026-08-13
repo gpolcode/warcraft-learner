@@ -8,46 +8,26 @@
       "cooldown": 60,
       "align_with_bloodlust": false,
       "opener_priority": 1,
-      "usage_rule": "Cast it on cooldown in single target and pre-pull it about 3 seconds before the boss, but hold it when Ascendance is up within 10 seconds so it lands one or two GCDs before Ascendance, and never delay it more than 10 seconds; on cleave fights delay it until you can Chain Lightning 5 targets.",
-      "id_note": "191634 is the cast id and its self aura; base cooldown 60s, the Midnight season 1 4pc adds a charge and does not change the cooldown."
+      "usage_rule": "Press it on cooldown and dump the charged casts into Lightning Bolt on one target or Chain Lightning in AoE, syncing it with Ascendance whenever both are close to ready."
     },
     {
       "name": "Ascendance",
       "spell_id": 114050,
       "cooldown": 180,
       "duration": 15,
-      "align_with_bloodlust": true,
-      "opener_priority": 3,
-      "usage_rule": "Line it up with Bloodlust, Heroism or Time Warp, Light's Potential, on-use trinkets, a Stormkeeper cast one or two GCDs earlier and, in multi-target, the Purging Flames buff from Voltaic Blaze; check the boss timers first and pair it with Spiritwalker's Grace when movement threatens the window.",
-      "id_note": "114050 is the Elemental cast id; 1219480 is its self aura and 114052 the Restoration version."
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Send it roughly on cooldown but always after Stormkeeper, and get your extra overload sources out before you enter the window.",
+      "id_note": "114050 is the cast id seen in 5/5 parses; the self aura the log records is 1219480. 114051 and 114052 share the name and are unplayed variants."
     },
     {
       "name": "Ancestral Swiftness",
       "spell_id": 443454,
       "cooldown": 30,
+      "duration": 8,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Press it high in the priority every cooldown, right after Stormkeeper in the opener, so the free instant cast lands on a hard-cast spell for the extra 10% damage.",
-      "id_note": "443454 name-verified and castable; the Farseer replacement for Nature's Swiftness, so it is absent from Stormbringer parses.",
-      "talent_gated": true
-    },
-    {
-      "name": "Nature's Swiftness",
-      "spell_id": 378081,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press it on cooldown high in the priority and spend the free instant on a hard-cast spell, ideally to keep casting through a movement window.",
-      "id_note": "378081 is the Shaman cast id; 132158 is the Druid ability of the same name. Replaced by Ancestral Swiftness on Farseer builds.",
-      "talent_gated": true
-    },
-    {
-      "name": "Fire Elemental",
-      "spell_id": 198067,
-      "cooldown": 120,
-      "duration": 20,
-      "align_with_bloodlust": false,
-      "usage_rule": "Keep it rolling on cooldown and refresh Flame Shock or Voltaic Blaze in the last 3 seconds of the elemental, since Flame Shock's damage and pandemic window are doubled while it is out.",
-      "id_note": "198067 name-verified and castable; not pressed in the sampled Stormbringer parse.",
+      "opener_priority": 3,
+      "usage_rule": "Press it roughly on cooldown right after Stormkeeper to spawn another Ancestor, then follow with Ascendance.",
       "talent_gated": true
     },
     {
@@ -56,7 +36,7 @@
       "cooldown": 120,
       "duration": 15,
       "align_with_bloodlust": false,
-      "usage_rule": "Save it for a movement mechanic that would otherwise cut casts, above all inside Ascendance where it buys full uptime on the window."
+      "usage_rule": "Save it for movement you cannot pre-plan and keep hardcasting through it instead of dropping globals."
     }
   ],
   "defensives": [
@@ -65,32 +45,69 @@
       "spell_id": 108271,
       "cooldown": 120,
       "duration": 12,
-      "usage_rule": "Press it into any telegraphed hit or heavy raid damage for 40% reduction over 12 seconds."
+      "usage_rule": "Press it just before a telegraphed hit or a heavy damage phase, not after the damage lands.",
+      "id_note": "108271 is the cast seen in 3/5 parses; 292158 shares the name at a 90s cooldown and 8s duration and was not observed."
+    },
+    {
+      "name": "Stone Bulwark Totem",
+      "spell_id": 108270,
+      "cooldown": 180,
+      "duration": 15,
+      "usage_rule": "Drop it ahead of incoming damage for a large absorb that keeps refilling while the totem lives.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Guidance",
+      "spell_id": 108281,
+      "cooldown": 120,
+      "usage_rule": "Press it before a burst window so your damage converts into healing on you and your group.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Drop it under the group for a raid hit that lands unevenly so health is shared and reduced.",
+      "id_note": "98008 is the castable id; 325174 shares the name and is the aura seen on players.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healing Stream Totem",
+      "spell_id": 5394,
+      "cooldown": 30,
+      "duration": 15,
+      "usage_rule": "Drop it during rot damage so it ticks on you and nearby allies while you keep casting.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; 426214 shares the name.",
+      "talent_gated": true
     },
     {
       "name": "Earth Elemental",
       "spell_id": 198103,
       "cooldown": 180,
       "duration": 30,
-      "usage_rule": "Summon it to soak threat and body-block damage when adds or a boss swap put you at risk, since it is off the damage priority entirely."
+      "usage_rule": "Summon it when you need a body to soak damage or pull a loose add off you.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Open Stormkeeper, Lava Burst, then Ascendance",
+      "description": "Open Stormkeeper into Lava Burst then Ascendance",
       "condition": {
         "kind": "opening_sequence",
         "spell_ids": [191634, 51505, 114050],
         "spell_names": ["Stormkeeper", "Lava Burst", "Ascendance"]
       },
-      "action": "Pre-cast Stormkeeper about 3 seconds before the pull and Lava Burst about 1.5 seconds out so it lands on contact, then send Ascendance with Light's Potential and your on-use trinkets."
+      "action": "Press Stormkeeper first, weave a Lava Burst, then send Ascendance."
     },
     {
       "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Stormkeeper before every Ascendance",
+      "description": "Ascendance always after Stormkeeper",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 114050,
@@ -99,23 +116,23 @@
         "required_spell_name": "Stormkeeper",
         "position": "before"
       },
-      "action": "Cast Stormkeeper one or two GCDs ahead of Ascendance; hold Stormkeeper when Ascendance is under 10 seconds away, but never bank it longer than 10 seconds."
+      "action": "Fire Stormkeeper first so Ascendance amplifies its extra overloads."
     },
     {
       "type": "rotation",
       "severity": "critical",
-      "description": "Flame Shock stays up on your target",
+      "description": "Keep Flame Shock rolling on the boss",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 188389,
         "aura_spell_name": "Flame Shock",
         "on": "target"
       },
-      "action": "Refresh Flame Shock, or Voltaic Blaze, at 6 seconds or less remaining and use that flexible instant to cover movement; without it Lava Burst loses its guaranteed crit, Inferno Arc's 10% damage and every Lava Surge proc."
+      "action": "Reapply Flame Shock before it expires so Lava Burst keeps its guaranteed crit."
     },
     {
       "type": "rotation",
-      "severity": "warning",
+      "severity": "info",
       "description": "Refresh Flame Shock late, never clip it",
       "condition": {
         "kind": "aura_clipped",
@@ -123,61 +140,67 @@
         "aura_spell_name": "Flame Shock",
         "cast_spell_id": 188389,
         "cast_spell_name": "Flame Shock",
-        "on": "target"
+        "on": "target",
+        "except_buff_spell_ids": [1219480],
+        "except_buff_spell_names": ["Ascendance"]
       },
-      "action": "Refresh Flame Shock only inside its pandemic window, at 5 seconds or less remaining, so the leftover time carries into the new 18 seconds; both numbers double while Fire Elemental is out."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Lava Surge procs spent on Lava Burst",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 77762,
-        "buff_spell_name": "Lava Surge",
-        "spend_spell_ids": [51505],
-        "spend_spell_names": ["Lava Burst"]
-      },
-      "action": "Cast Lava Burst on every Lava Surge proc; it is instant, so spend it while moving rather than hard-casting Lava Burst later."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Elemental Blast not at capped Tempest stacks",
-      "condition": {
-        "kind": "spend_at_stacks",
-        "spell_id": 117014,
-        "spell_name": "Elemental Blast",
-        "buff_spell_id": 454015,
-        "buff_spell_name": "Tempest",
-        "bound": "max"
-      },
-      "action": "In multi-target, cast Elemental Blast and Earthquake at 1 stack of Tempest or fewer; at 2 stacks send Tempest first, as long as Stormkeeper is under 4 stacks."
+      "action": "Wait until Flame Shock is inside its last 30% before you refresh it."
     },
     {
       "type": "aoe_switch",
       "severity": "warning",
-      "description": "Chain Lightning over Lightning Bolt in AoE",
+      "description": "Chain Lightning replaces Lightning Bolt in AoE",
       "condition": {
         "kind": "cast_at_target_count",
         "spell_id": 188443,
         "spell_name": "Chain Lightning",
         "bound": "min"
       },
-      "action": "Swap Lightning Bolt for Chain Lightning from 3 targets on Stormbringer and 2 on Farseer; the exception is a Stormkeeper charge on a priority target, which still wants Lightning Bolt."
+      "action": "Switch your filler to Chain Lightning as soon as the extra targets are up."
     },
     {
-      "type": "aoe_switch",
-      "severity": "info",
-      "description": "Earthquake only on stacked targets",
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Lightning Bolt over Lava Burst in Master of the Elements",
       "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 61882,
-        "spell_name": "Earthquake",
-        "bound": "min"
+        "kind": "filler_in_buff",
+        "spell_id": 188196,
+        "spell_name": "Lightning Bolt",
+        "alternative_spell_ids": [51505],
+        "alternative_spell_names": ["Lava Burst"],
+        "buff_spell_id": 260734,
+        "buff_spell_name": "Master of the Elements",
+        "except_buff_spell_ids": [77762, 1259491],
+        "except_buff_spell_names": ["Lava Surge", "Purging Flames"]
       },
-      "action": "Hold Earthquake for 4 stacked targets on a Stormbringer Elemental Blast build, 3 with Earth Shock or on Farseer, and only when they live its full 6 seconds; keep an Elemental Blast buff up between them."
+      "action": "Spend Master of the Elements on Lightning Bolt or a spender and save Lava Burst for when it is down."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Do not cast Lava Burst near the Maelstrom cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 51505,
+        "spell_name": "Lava Burst",
+        "resource_type": 11,
+        "resource_name": "maelstrom",
+        "bound": "max"
+      },
+      "action": "Dump Maelstrom into Elemental Blast or Earth Shock first when you are close to capping."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Skyfury up for the whole pull",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 462854,
+        "aura_spell_name": "Skyfury",
+        "on": "self"
+      },
+      "action": "Cast Skyfury before the pull and rebuff it after any wipe or reset."
     }
   ],
-  "source_summary": "Elemental builds every window around Ascendance: sync it with Bloodlust, Light's Potential, on-use trinkets and, in AoE, the Purging Flames buff, with Stormkeeper cast one or two GCDs before it. Stormkeeper otherwise goes on cooldown and is only delayed up to 10 seconds for Ascendance or until Chain Lightning hits 5 targets. Between cooldowns the spec is Flame Shock uptime, Lava Surge procs spent on Lava Burst, and spending Maelstrom before the filler overcaps it."
+  "source_summary": "Elemental stacks its cooldowns: Stormkeeper goes out on cooldown and Ascendance follows it so the buffed overloads land inside the window, with Ancestral Swiftness pressed alongside for another Ancestor. Between windows you keep Flame Shock rolling, spend Master of the Elements on Elemental Blast, Earth Shock or Lightning Bolt rather than on Lava Burst, and never let Maelstrom cap. Chain Lightning takes over from Lightning Bolt as the AoE filler, with Earthquake as the spender once the pack is large."
 }

@@ -8,16 +8,18 @@
       "cooldown": 120,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Your main cooldown: enter it with a pandemic-extended Agony so no global is wasted refreshing dots, then spend Unstable Affliction and channel Malefic Grasp for the whole window, emptying your shards before the last 8 seconds."
+      "opener_priority": 1,
+      "usage_rule": "Pool Soul Shards and get Agony plus Corruption or Wither ticking, then summon it before you start chaining Unstable Affliction so its 20% dot amp covers their whole duration.",
+      "id_note": "205180 is the cast id and also shows as the player's Darkglare window aura in the sampled parses."
     },
     {
       "name": "Dark Harvest",
       "spell_id": 1257052,
-      "cooldown": 60,
+      "cooldown": 40,
       "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Cast on cooldown with Agony, Corruption or Unstable Affliction ticking, drop to 2 or fewer Soul Shards first as Soul Harvester so the Succulent Souls do not overcap, and line it up immediately before Summon Darkglare."
+      "usage_rule": "Send it on cooldown whenever its Soul Shards will not overcap you, and sync one into every Darkglare window.",
+      "id_note": "Table base_cd_s is 60; the guide states Cull the Weak reduces it to roughly 40 seconds, so 40 is used here. 1257065 shares the name and was not observed as a cast."
     },
     {
       "name": "Malevolence",
@@ -25,9 +27,9 @@
       "cooldown": 60,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Hellcaller only: press it on cooldown and sync it with Summon Darkglare and Dark Harvest, dumping Unstable Affliction inside the 20 second window.",
-      "id_note": "442726 is the castable 1 min cooldown row; 430014 is the talent node and 446285 the 100 yd variant. Not pressed in the sampled Soul Harvester parse.",
+      "opener_priority": 3,
+      "usage_rule": "Pair it with every Summon Darkglare and send the off minute cast as soon as it is up, since it adds 6 stacks to each active Wither.",
+      "id_note": "Hellcaller capstone; 442726 is castable per its tooltip, 430014 shares the name and looks like the talent or buff. Neither was observed in the sampled parses, which were all Soul Harvester.",
       "talent_gated": true
     }
   ],
@@ -37,41 +39,70 @@
       "spell_id": 104773,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Press it into a telegraphed magic hit or a heavy damage window for 25% reduction, and use it to cast through interrupts, silences and pushback."
+      "usage_rule": "Press it into a big hit or heavy rot; it cuts the damage taken and keeps your casts from being interrupted."
     },
     {
       "name": "Dark Pact",
       "spell_id": 108416,
       "cooldown": 60,
       "duration": 20,
-      "usage_rule": "Trade 20% of your current health for a much larger 20 second shield, pressed at high health ahead of predictable damage and usable while controlled.",
-      "talent_gated": true
+      "usage_rule": "Shield yourself just before predictable raid damage instead of sitting on it."
     },
     {
       "name": "Mortal Coil",
       "spell_id": 6789,
       "cooldown": 45,
-      "usage_rule": "Emergency 20% maximum health heal that also horrifies the target for 3 seconds, so spend it on an add you can afford to send running.",
+      "usage_rule": "Fear a nearby enemy for the instant self heal when you drop low and your bigger buttons are down.",
       "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "usage_rule": "Swallow it as your instant top up when a hit takes you low and the healers are busy.",
+      "id_note": "Consumable created by Create Soulwell; not pressed in the sampled parses but castable per its tooltip."
     }
   ],
   "rules": [
     {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Agony, then Darkglare, then Unstable Affliction",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [980, 205180, 1259790],
+        "spell_names": ["Agony", "Summon Darkglare", "Unstable Affliction"]
+      },
+      "action": "Get Agony ticking, summon Darkglare, then chain Unstable Affliction under it."
+    },
+    {
       "type": "rotation",
       "severity": "critical",
-      "description": "Agony stays up on every target",
+      "description": "Keep Agony up on the boss",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 980,
         "aura_spell_name": "Agony",
         "on": "target"
       },
-      "action": "Never let Agony drop: it is your only Soul Shard generator and it ramps from zero. Refresh inside the pandemic window at under 5.4 seconds remaining, 4.5 seconds with Creeping Death, and hold it on up to 5 targets in AoE."
+      "action": "Reapply it as it enters its pandemic window, and refresh on the move rather than casting nothing."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Agony refreshed inside its pandemic window",
+      "description": "Keep Haunt up on your priority target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 48181,
+        "aura_spell_name": "Haunt",
+        "on": "target"
+      },
+      "action": "Recast it the moment it comes off cooldown, on your priority target in AoE."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Refresh Agony late, do not clip it",
       "condition": {
         "kind": "aura_clipped",
         "aura_spell_id": 980,
@@ -80,51 +111,29 @@
         "cast_spell_name": "Agony",
         "on": "target"
       },
-      "action": "Refresh Agony at under 5.4 seconds remaining, 4.5 with Creeping Death: an early refresh throws the leftover duration away and costs a global you owe Malefic Grasp. The one deliberate exception is topping Agony up immediately before Summon Darkglare so nothing needs refreshing inside the window."
+      "action": "Hold the refresh until it is inside its 4.5 second pandemic window."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Malefic Grasp fills the Summon Darkglare window",
+      "description": "Malefic Grasp is your filler inside Darkglare",
       "condition": {
         "kind": "filler_in_buff",
         "spell_id": 1261153,
         "spell_name": "Malefic Grasp",
-        "alternative_spell_ids": [
-          198590,
-          686
-        ],
-        "alternative_spell_names": [
-          "Drain Soul",
-          "Shadow Bolt"
-        ],
+        "alternative_spell_ids": [198590, 686],
+        "alternative_spell_names": ["Drain Soul", "Shadow Bolt"],
         "buff_spell_id": 205180,
         "buff_spell_name": "Summon Darkglare",
-        "except_buff_spell_ids": [
-          264571
-        ],
-        "except_buff_spell_names": [
-          "Nightfall"
-        ]
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
       },
-      "action": "Channel Malefic Grasp, not Drain Soul or Shadow Bolt, for every global of the 20 second Darkglare window that is not an Unstable Affliction, and keep the most recent Unstable Affliction ticking so it is still up to be hit. Break the channel early only for a Nightfall proc."
+      "action": "Channel Malefic Grasp while Darkglare is out and save Drain Soul or Shadow Bolt for the rest of the fight."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Cascading Calamity kept up by Unstable Affliction",
-      "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 1261125,
-        "aura_spell_name": "Cascading Calamity",
-        "on": "self"
-      },
-      "action": "Cast Unstable Affliction on a target that already has it before the 15 second haste buff expires, and only dump the rest of your shards inside Summon Darkglare or Malevolence."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Dark Harvest after dumping Soul Shards",
+      "description": "Press Dark Harvest below the shard cap",
       "condition": {
         "kind": "resource_at_cast",
         "spell_id": 1257052,
@@ -133,71 +142,47 @@
         "resource_name": "soul shards",
         "bound": "max"
       },
-      "action": "Spend down to 2 or fewer Soul Shards with Unstable Affliction before channeling Dark Harvest, otherwise the shards it generates are wasted. Then enter Summon Darkglare on the shards it just gave you."
+      "action": "Dump a shard or two into Unstable Affliction first so the 3 shards it grants are not wasted."
     },
     {
-      "type": "cooldown_pairing",
+      "type": "rotation",
       "severity": "warning",
-      "description": "Summon Darkglare follows Dark Harvest",
+      "description": "Spend Shard Instability procs",
       "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 205180,
-        "spell_name": "Summon Darkglare",
-        "required_spell_id": 1257052,
-        "required_spell_name": "Dark Harvest",
-        "position": "before"
+        "kind": "proc_wasted",
+        "buff_spell_id": 1260269,
+        "buff_spell_name": "Shard Instability",
+        "spend_spell_ids": [1259790, 27243],
+        "spend_spell_names": ["Unstable Affliction", "Seed of Corruption"]
       },
-      "action": "Channel Dark Harvest first, then summon the Darkglare, so the 3 second channel does not eat globals inside the 20 second amplification window."
-    },
-    {
-      "type": "opener",
-      "severity": "warning",
-      "description": "Haunt and dots before Dark Harvest and Darkglare",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [
-          48181,
-          980,
-          1259790,
-          1257052,
-          205180
-        ],
-        "spell_names": [
-          "Haunt",
-          "Agony",
-          "Unstable Affliction",
-          "Dark Harvest",
-          "Summon Darkglare"
-        ]
-      },
-      "action": "Pre-cast Haunt, apply Agony and your second dot, cast Unstable Affliction down to 2 Soul Shards, then Dark Harvest into Summon Darkglare with trinkets and racials."
+      "action": "Fire Unstable Affliction the moment it procs, or Seed of Corruption when you are in AoE."
     },
     {
       "type": "aoe_switch",
       "severity": "warning",
-      "description": "Seed of Corruption on stacked targets",
+      "description": "Seed of Corruption on multiple targets",
       "condition": {
         "kind": "cast_at_target_count",
         "spell_id": 27243,
         "spell_name": "Seed of Corruption",
         "bound": "min"
       },
-      "action": "From 3 stacked targets, 2 as Soul Harvester, apply and maintain Corruption or Wither with Seed of Corruption instead of hard-casting it, and fire it at 5 Soul Shards or above 2 shards just before Dark Harvest comes up."
+      "action": "Switch to Seed of Corruption from 2 targets as Soul Harvester and 3 as Hellcaller, keeping Agony on a handful of them."
     },
     {
       "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Malevolence paired with Summon Darkglare",
+      "severity": "warning",
+      "description": "Pair Dark Harvest with Summon Darkglare",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 442726,
-        "spell_name": "Malevolence",
-        "required_spell_id": 205180,
-        "required_spell_name": "Summon Darkglare",
+        "spell_id": 205180,
+        "spell_name": "Summon Darkglare",
+        "required_spell_id": 1257052,
+        "required_spell_name": "Dark Harvest",
         "position": "either"
       },
-      "action": "As Hellcaller, line Malevolence up with Summon Darkglare and Dark Harvest rather than pressing it in isolation, and spend Unstable Affliction inside both windows."
+      "action": "Send Dark Harvest inside the same window so its damage and shards land under the dot amp."
     }
   ],
-  "source_summary": "Affliction's output is built on never dropping Agony and stacking every shard spender into Summon Darkglare, the 2 minute amplification window entered with a pandemic-extended Agony so no global is lost refreshing dots. Dark Harvest is channeled on cooldown at 2 or fewer Soul Shards and lined up immediately before the Darkglare summon, with Malevolence synced to the same window on Hellcaller builds. Everything else is maintenance: keep Cascading Calamity rolling with Unstable Affliction, swap to Seed of Corruption once targets stack, and dump the shard bank before the Darkglare window ends."
+  "source_summary": "Affliction stacks its damage into the Summon Darkglare window: pool Soul Shards, get Agony and Corruption or Wither ticking, then summon Darkglare before chaining Unstable Affliction so its 20% dot amp covers every one. Dark Harvest goes out on its roughly 40 second cooldown whenever its shards will not overcap, with one synced into each Darkglare window, and Hellcaller pairs Malevolence with every Darkglare cast. Haunt and Agony stay up all fight, Malefic Grasp is the filler while Darkglare is out with Drain Soul or Shadow Bolt otherwise, and Seed of Corruption takes over once several enemies are up."
 }
