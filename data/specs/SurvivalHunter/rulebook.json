@@ -6,46 +6,29 @@
       "name": "Takedown",
       "spell_id": 1250646,
       "cooldown": 90,
-      "duration": 8,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Survival's primary cooldown: 20% damage and doubled auto-attack speed for only 8 sec, so enter it prepared, with 2 Tip of the Spear stacks from a Kill Command pressed right before it, or with 0 stacks if you run Twin Fangs, and press it again as a filler whenever it drifts off cooldown.",
-      "id_note": "Cast id 1250646, base cooldown 90s per the ability table; the guide notes 2 points of Savagery cut it to 60s."
+      "opener_priority": 1,
+      "usage_rule": "Press it with a Tip of the Spear stack ready, or at zero stacks when you play Twin Fangs, and fire your on-use trinket and any external Power Infusion inside the window.",
+      "id_note": "1250646 is the cast id seen in 5/5 parses and also carries the self buff; 1253859 and 1253862 share the name and were not observed."
     },
     {
       "name": "Boomstick",
       "spell_id": 1261193,
-      "cooldown": 60,
+      "cooldown": 45,
+      "duration": 3,
       "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Send it on cooldown with Tip of the Spear up, and on Sentinel only while the target has no Sentinel's Mark; with Lethal Calibration each Wildfire Bomb hit shaves 2 sec off it, up to 10 sec."
+      "opener_priority": 2,
+      "usage_rule": "Channel it with a Tip of the Spear stack up, stand so the frontal cone covers the pack, and hold it briefly when adds are about to spawn.",
+      "id_note": "Tooltip base cooldown is 60s; the guide states an effective 45s in single target and as low as 15s in AoE with Lethal Calibration. 1261215 shares the name and was not observed."
     },
     {
       "name": "Flamefang Pitch",
       "spell_id": 1251592,
       "cooldown": 60,
+      "duration": 8,
       "align_with_bloodlust": false,
-      "usage_rule": "Cast on cooldown in both single target and AoE; it does not need to be Tipped, so never spend a Tip of the Spear stack setting it up.",
-      "talent_gated": true
-    },
-    {
-      "name": "Moonlight Chakram",
-      "spell_id": 1264949,
-      "cooldown": 90,
-      "align_with_bloodlust": false,
-      "usage_rule": "On Sentinel it replaces the Takedown button for 15 sec after Takedown is pressed: throw it with Tip of the Spear up, early in the window, and never let it expire unused.",
-      "id_note": "Sentinel-only button, not observed in the sampled Pack Leader parse; 1264949 is the castable 40 yd row, while the guide links the talent node 1264902. Cooldown is once per Takedown, so it is tracked at Takedown's 90s.",
-      "talent_gated": true
-    },
-    {
-      "name": "Algeth'ar Puzzle",
-      "spell_id": 383781,
-      "cooldown": 120,
-      "duration": 20,
-      "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Pre-cast it about 2 sec before the pull, 3 sec if you are also pre-casting a bomb, and afterwards only fire it when Takedown is within 5 sec of coming up.",
-      "id_note": "On-use trinket; zero casts is expected for any player not wearing it.",
+      "usage_rule": "Press it once you have room for a full Wildfire Bomb charge of cooldown reduction so none of it is wasted.",
+      "id_note": "Not observed in the sampled parses but castable per its tooltip; the guide lists it as a button in the Pack Leader and Sentinel priorities.",
       "talent_gated": true
     }
   ],
@@ -55,47 +38,62 @@
       "spell_id": 186265,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Full immunity plus 30% damage reduction for 8 sec, but you cannot attack, so save it for a lethal hit you cannot otherwise survive."
+      "usage_rule": "Press it to negate a lethal hit, accepting that you cannot attack while it holds."
     },
     {
       "name": "Survival of the Fittest",
       "spell_id": 264735,
       "cooldown": 90,
       "duration": 6,
-      "usage_rule": "30% damage reduction for you and your pet on a short 6 sec window, so press it into a known raid hit rather than reactively."
+      "usage_rule": "Press it just before a predictable damage spike to cut the hit and your pet's."
     },
     {
       "name": "Exhilaration",
       "spell_id": 109304,
       "cooldown": 120,
-      "usage_rule": "Instant heal for 30% of your health and a full heal for your pet; use it once you are actually low so none of it overheals."
+      "usage_rule": "Press it after you drop low to heal yourself and your pet back up.",
+      "id_note": "109304 is the cast id seen in the parses; 128594 shares the name and was not observed."
     },
     {
       "name": "Roar of Sacrifice",
       "spell_id": 53480,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Cuts 15% of the damage taken by you or an ally for 10 sec at your pet's expense, so keep it for a targeted hit and not for sustained pet-killing damage.",
+      "usage_rule": "Put it on yourself or the player about to eat a big hit to bleed off part of the damage.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
       "talent_gated": true
+    },
+    {
+      "name": "Feign Death",
+      "spell_id": 5384,
+      "cooldown": 30,
+      "usage_rule": "Press it to drop threat or to shed a mechanic that targets you."
     }
   ],
   "rules": [
     {
-      "type": "rotation",
-      "severity": "critical",
-      "description": "Tip of the Spear stays up between Kill Commands",
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with pre-pull bomb, Takedown, then Boomstick",
       "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 260286,
-        "aura_spell_name": "Tip of the Spear",
-        "on": "self"
+        "kind": "opening_sequence",
+        "spell_ids": [
+          259495,
+          1250646,
+          1261193
+        ],
+        "spell_names": [
+          "Wildfire Bomb",
+          "Takedown",
+          "Boomstick"
+        ]
       },
-      "action": "Every ability should be Tipped. Run Kill Command into 2 Tipped abilities and repeat, and press Kill Command whenever you are down to 1 stack or fewer so the buff never sits empty."
+      "action": "Throw Wildfire Bomb one global before the pull timer ends, then Harpoon in and send Takedown ahead of Boomstick."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Boomstick only with Tip of the Spear up",
+      "description": "Boomstick only with Tip of the Spear",
       "condition": {
         "kind": "cast_outside_buff",
         "spell_id": 1261193,
@@ -104,58 +102,49 @@
         "buff_spell_name": "Tip of the Spear",
         "require": "inside"
       },
-      "action": "Press Kill Command before Boomstick so the 3 sec channel is Tipped; on Sentinel also wait until Sentinel's Mark has fallen off the target."
+      "action": "Build a stack with Kill Command before you start the channel."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Takedown spent at max Tip of the Spear stacks",
+      "description": "Kill Command before Tip of the Spear caps",
       "condition": {
         "kind": "spend_at_stacks",
-        "spell_id": 1250646,
-        "spell_name": "Takedown",
+        "spell_id": 259489,
+        "spell_name": "Kill Command",
         "buff_spell_id": 260286,
         "buff_spell_name": "Tip of the Spear",
-        "bound": "min"
+        "bound": "max",
+        "max_stacks": 3
       },
-      "action": "Enter Takedown with 2 Tip of the Spear stacks, pressing Kill Command right before it to set them up without overcapping (0 stacks if you run Twin Fangs)."
+      "action": "Spend stacks on Raptor Strike, Wildfire Bomb, or Boomstick before you generate more."
     },
     {
-      "type": "opener",
-      "severity": "warning",
-      "description": "Open Kill Command into Takedown, then Boomstick",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [
-          259489,
-          1250646,
-          1261193
-        ],
-        "spell_names": [
-          "Kill Command",
-          "Takedown",
-          "Boomstick"
-        ]
-      },
-      "action": "Pre-cast Wildfire Bomb about 1 sec before the pull, then Kill Command, potion and racials, Takedown, Wildfire Bomb, Kill Command, Boomstick, Kill Command. In AoE hold Takedown until the pack is stacked."
-    },
-    {
-      "type": "cd_hold",
+      "type": "rotation",
       "severity": "info",
-      "description": "Algeth'ar Puzzle Box lines up with Takedown",
+      "description": "Kill Command without wasting its Focus",
       "condition": {
-        "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [
-          383781
-        ],
-        "spell_names": [
-          "Algeth'ar Puzzle"
-        ],
-        "anchor_spell_id": 1250646,
-        "anchor_spell_name": "Takedown"
+        "kind": "resource_at_cast",
+        "spell_id": 259489,
+        "spell_name": "Kill Command",
+        "resource_type": 2,
+        "resource_name": "focus",
+        "bound": "max"
       },
-      "action": "Fire the trinket only when Takedown is ready or within 5 sec of coming up, and pre-cast it roughly 2 sec before the pull so its 20 sec of Mastery covers the opener window."
+      "action": "Press two spenders between Kill Commands so the Focus it hands you lands in an empty bar."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Hunter's Mark on the boss",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 257284,
+        "aura_spell_name": "Hunter's Mark",
+        "on": "target"
+      },
+      "action": "Apply it before the pull and put it straight back up after a target swap."
     }
   ],
-  "source_summary": "Survival builds everything around Takedown, an 8 sec window of 20% extra damage entered with 2 Tip of the Spear stacks (or 0 with Twin Fangs) and fed by Kill Command, with potion, racials and on-use trinkets held for it. Boomstick, Wildfire Bomb and Flamefang Pitch go on cooldown around that window, and every ability except Flamefang Pitch and non-Swipe Raptor Strikes should be Tipped first. The hero talents split the tail of the priority: Pack Leader turns the first Kill Command inside Takedown into a placed Stampede line, while Sentinel replaces Takedown with a single Moonlight Chakram that must go out before the window ends."
+  "source_summary": "Survival runs on Kill Command feeding Tip of the Spear stacks and spending them on Takedown, Boomstick, Wildfire Bomb, and Raptor Strike without ever wasting Focus or stacks. Takedown is the burst window, wants a Tip stack up unless you play Twin Fangs, and is where the on-use trinket and any external haste belong. Boomstick is the other hard cooldown and is worth holding a few seconds for incoming adds because its single-target value is low, while Hunter's Mark goes up before the pull and stays up."
 }

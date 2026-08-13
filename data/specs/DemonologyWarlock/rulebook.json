@@ -8,18 +8,8 @@
       "cooldown": 60,
       "duration": 15,
       "align_with_bloodlust": false,
-      "opener_priority": 4,
-      "usage_rule": "Send it at 5 Soul Shards with 2 or more Demonic Core stacks banked and Dreadstalkers already out, then chain Hand of Gul'dan for the whole window since Tyrant gains 10% damage per active Wild Imp and Dreadstalker."
-    },
-    {
-      "name": "Summon Doomguard",
-      "spell_id": 1276672,
-      "cooldown": 120,
-      "duration": 12,
-      "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Open with it and send it on cooldown thereafter; every Demonic Core you consume cuts 3 sec off its cooldown, so it returns faster through heavy Demonbolt windows.",
-      "talent_gated": true
+      "opener_priority": 2,
+      "usage_rule": "Summon it with Call Dreadstalkers already out and a full Soul Shard bar, then spend Hand of Gul'dan inside the window because it gains damage for every demon summoned."
     },
     {
       "name": "Grimoire: Imp Lord",
@@ -27,8 +17,8 @@
       "cooldown": 120,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Fire it on cooldown at the top of the priority, ahead of Grimoire: Fel Ravager and Call Dreadstalkers, so its 20 sec of pet damage feeds the Tyrant setup.",
+      "opener_priority": 1,
+      "usage_rule": "Send it just ahead of your Tyrant window for the damage, and lean on Singe Magic to dispel yourself or a party member while it is down.",
       "talent_gated": true
     },
     {
@@ -37,8 +27,18 @@
       "cooldown": 120,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Cast it immediately after Grimoire: Imp Lord and on cooldown thereafter; it also purges one beneficial magic effect from the target.",
+      "usage_rule": "Take it over Imp Lord when the fight needs the on-demand interrupt, and press it into your Tyrant window for the damage.",
+      "id_note": "Not observed in the sampled parses, which all played Grimoire: Imp Lord; the guide presents the two Grimoires as the same talent choice.",
+      "talent_gated": true
+    },
+    {
+      "name": "Summon Doomguard",
+      "spell_id": 1276672,
+      "cooldown": 120,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Send it on multi-target packs and place it where it reaches the pack, since it only damages five enemies at a time.",
+      "id_note": "Not observed in the sampled parses; both guide priority lists name it as a button and the APL casts it in both hero-talent lists.",
       "talent_gated": true
     },
     {
@@ -46,7 +46,8 @@
       "spell_id": 264130,
       "cooldown": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "Press it at 1 or fewer Demonic Core stacks with at least 2 Wild Imps out to convert them into 2 stacks, and again after the second Hand of Gul'dan of the Tyrant window.",
+      "usage_rule": "Press it once you are down to a single Demonic Core to turn two Wild Imps into cores, and pre-cast it with two imps out before the pull.",
+      "id_note": "Same name as 334581, which is the unobserved passive node; 264130 is the row with the tooltip cooldown. Not pressed in the sampled parses.",
       "talent_gated": true
     }
   ],
@@ -56,54 +57,56 @@
       "spell_id": 104773,
       "cooldown": 180,
       "duration": 8,
-      "usage_rule": "Take 25% less damage for 8 sec on predictable raid damage, and use it to keep casting through interrupts, silences and pushback."
+      "usage_rule": "Press it into a known raid hit for the damage reduction and the interrupt protection on your casts."
     },
     {
       "name": "Dark Pact",
       "spell_id": 108416,
       "cooldown": 60,
       "duration": 20,
-      "usage_rule": "Trade 20% of current health for a 20 sec shield worth far more before incoming damage; it is usable through control impairing effects.",
-      "talent_gated": true
+      "usage_rule": "Shield yourself ahead of predictable damage, and avoid it when your own health is already low since it spends health to absorb."
     },
     {
       "name": "Mortal Coil",
       "spell_id": 6789,
       "cooldown": 45,
-      "usage_rule": "Emergency 20% maximum health heal that also horrifies the target for 3 sec, so it doubles as an escape from an add on you.",
+      "duration": 3,
+      "usage_rule": "Coil a nearby enemy to heal yourself and buy a few seconds of breathing room.",
       "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "usage_rule": "Drop a Soulwell before the pull and use your Healthstone as the emergency heal when a hit takes you low."
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Dreadstalkers, then Tyrant, then Hand of Gul'dan",
+      "description": "Open Imp Lord into Dreadstalkers, Tyrant, Hand of Gul'dan",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [104316, 265187, 105174],
-        "spell_names": ["Call Dreadstalkers", "Summon Demonic Tyrant", "Hand of Gul'dan"]
+        "spell_ids": [
+          1276452,
+          104316,
+          265187,
+          105174
+        ],
+        "spell_names": [
+          "Grimoire: Imp Lord",
+          "Call Dreadstalkers",
+          "Summon Demonic Tyrant",
+          "Hand of Gul'dan"
+        ]
       },
-      "action": "Build to 5 Soul Shards with Shadow Bolt, send Call Dreadstalkers, then Summon Demonic Tyrant, then pack the window with as many Hand of Gul'dan casts as you can."
-    },
-    {
-      "type": "rotation",
-      "severity": "critical",
-      "description": "Summon Demonic Tyrant at 5 Soul Shards",
-      "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 265187,
-        "spell_name": "Summon Demonic Tyrant",
-        "resource_type": 7,
-        "resource_name": "soul shards",
-        "bound": "min"
-      },
-      "action": "Enter the Tyrant window at 5 Soul Shards and at least 2 Demonic Core stacks so you can chain Hand of Gul'dan without pausing to generate."
+      "action": "Send your Grimoire and Call Dreadstalkers before the Tyrant, then spend Hand of Gul'dan inside the window."
     },
     {
       "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Call Dreadstalkers before Summon Demonic Tyrant",
+      "severity": "critical",
+      "description": "Call Dreadstalkers out before Summon Demonic Tyrant",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 265187,
@@ -112,12 +115,26 @@
         "required_spell_name": "Call Dreadstalkers",
         "position": "before"
       },
-      "action": "Send Call Dreadstalkers in the two globals before Summon Demonic Tyrant; each active Wild Imp and Dreadstalker adds 10% to Tyrant damage."
+      "action": "Send Call Dreadstalkers into cooldown first so the Tyrant extends them."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Demonbolt below the Soul Shard cap",
+      "description": "Summon Demonic Tyrant on a full Soul Shard bar",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 265187,
+        "spell_name": "Summon Demonic Tyrant",
+        "resource_type": 7,
+        "resource_name": "soul shards",
+        "bound": "min"
+      },
+      "action": "Bank your shards as the Tyrant comes up and summon on a full bar, then dump them into Hand of Gul'dan."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Do not overcap Soul Shards with Demonbolt",
       "condition": {
         "kind": "resource_at_cast",
         "spell_id": 264178,
@@ -126,37 +143,25 @@
         "resource_name": "soul shards",
         "bound": "max"
       },
-      "action": "Demonbolt generates 2 Soul Shards, so only spend a Demonic Core on it below 4 shards; at 4 or 5 shards cast Hand of Gul'dan first."
+      "action": "Spend into Call Dreadstalkers or Hand of Gul'dan before you press Demonbolt near the cap."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Demonbolt as the filler on Demonic Core",
+      "description": "Spend Ruination the moment it procs",
       "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 264178,
-        "spell_name": "Demonbolt",
-        "alternative_spell_ids": [686],
-        "alternative_spell_names": ["Shadow Bolt"],
-        "buff_spell_id": 264173,
-        "buff_spell_name": "Demonic Core",
-        "except_buff_spell_ids": [433891],
-        "except_buff_spell_names": ["Infernal Bolt"]
+        "kind": "proc_wasted",
+        "buff_spell_id": 433885,
+        "buff_spell_name": "Ruination",
+        "spend_spell_ids": [
+          434635
+        ],
+        "spend_spell_names": [
+          "Ruination"
+        ]
       },
-      "action": "With a Demonic Core banked and fewer than 4 Soul Shards, press Demonbolt instead of Shadow Bolt; it is instant, generates 2 shards and covers movement. Shadow Bolt is the filler only when no Core is up, and Infernal Bolt takes over at 2 or fewer shards."
-    },
-    {
-      "type": "aoe_switch",
-      "severity": "info",
-      "description": "Implosion on multiple targets",
-      "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 196277,
-        "spell_name": "Implosion",
-        "bound": "min"
-      },
-      "action": "Implode at 6 Wild Imps once 3 or more enemies are up, and give the imps a global to land first; single target it is only worth pressing with To Hell and Back."
+      "action": "Fire Ruination as soon as it lights up rather than another Hand of Gul'dan."
     }
   ],
-  "source_summary": "Demonology builds toward Summon Demonic Tyrant on a 1 min cycle, entering the window at 5 Soul Shards and 2 or more Demonic Core stacks with Dreadstalkers and a fresh Wild Imp wave already out, then spending the whole window on Hand of Gul'dan because Tyrant damage recalculates from active summons rather than snapshotting. Grimoire: Imp Lord, Grimoire: Fel Ravager and Summon Doomguard sit above everything else in the priority and open the fight in that order, with Power Siphon topping Demonic Core back up whenever it drops to 1 stack. Implosion enters the priority at 6 Wild Imps on 3 or more targets, or on single target only when To Hell and Back is talented."
+  "source_summary": "Demonology is built around the Summon Demonic Tyrant cycle: get Call Dreadstalkers out and on cooldown first so the Tyrant extends them, summon on a full Soul Shard bar, then dump Hand of Gul'dan inside the window since the Tyrant gains damage for every demon summoned. Grimoire: Imp Lord or Grimoire: Fel Ravager and Summon Doomguard are pressed around that window, and trinkets, racials and potions are synced to the active Tyrant. Between cooldowns you never overcap Soul Shards, spend Demonic Cores on Demonbolt while holding two for the next Tyrant, fill with Shadow Bolt, and add Implosion and Summon Doomguard on multiple targets."
 }

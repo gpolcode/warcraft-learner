@@ -3,46 +3,58 @@
   "spec_icon": "classicon_evoker_devastation",
   "major_cooldowns": [
     {
+      "name": "Deep Breath",
+      "spell_id": 433874,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "As Scalecommander send it on cooldown from minimum range and cancel the animation with the /cancelaura macro the moment you reach the target, and in single target delay the second use until Strafing Run is about to expire.",
+      "id_note": "433874 is the cast id observed in every sampled parse; the guide text references tooltip id 357210, and 357210/1236943 were not observed as casts.",
+      "talent_gated": true
+    },
+    {
       "name": "Dragonrage",
       "spell_id": 375087,
       "cooldown": 120,
       "duration": 18,
       "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Send it every 2 minutes on a target that will live 30+ sec, line your potion and on-use trinkets up with it once Rising Fury is at 4+ stacks, and extend the window with empowers while Essence Burst is guaranteed."
-    },
-    {
-      "name": "Fire Breath",
-      "spell_id": 382266,
-      "cooldown": 30,
-      "align_with_bloodlust": false,
-      "usage_rule": "Always release at empower rank 1, refresh it as soon as the damage over time is refreshable, and stop spending it in the last 6 GCDs before Dragonrage so it is banked to extend the window.",
-      "id_note": "382266 is the observed cast id (67 casts in the sampled parse); the guide and APL reference 357208, with 357209 / 1283718 / 1283719 as further same-name variants."
-    },
-    {
-      "name": "Eternity Surge",
-      "spell_id": 359073,
-      "cooldown": 30,
-      "align_with_bloodlust": false,
-      "usage_rule": "Rank 1 in single target; in AoE match the rank to the pack, 2/4/6 targets per empower level, or fire it instantly with Tip the Scales, then spend the Azure Sweep charges it grants.",
-      "id_note": "359073 is the guide's id and the only Eternity Surge id carrying a parse-cast source; 359077 and 382411 are same-name variants seen only in the APL."
+      "opener_priority": 2,
+      "usage_rule": "Send it about every 2 minutes and press Fire Breath and Eternity Surge inside it so Animosity stretches the window toward 32 seconds."
     },
     {
       "name": "Tip the Scales",
       "spell_id": 370553,
       "cooldown": 120,
       "align_with_bloodlust": false,
-      "usage_rule": "Hold it for Dragonrage and spend it on whichever empower comes up first inside the window, usually Eternity Surge at maximum rank.",
-      "talent_gated": true
+      "opener_priority": 3,
+      "usage_rule": "Press it off the global cooldown inside Dragonrage for an instant max rank Eternity Surge, and as Flameshaper never spend it on Fire Breath."
     },
     {
-      "name": "Deep Breath",
-      "spell_id": 357210,
-      "cooldown": 120,
+      "name": "Eternity Surge",
+      "spell_id": 359073,
+      "cooldown": 30,
       "align_with_bloodlust": false,
-      "usage_rule": "Scalecommander only: open with it and cancel the moment you reach the target, then send the Strafing Run follow-up 7-8 sec later once you have spent at least two Imminent Destruction charges, and in AoE only once the pack is grouped.",
-      "talent_gated": true,
-      "id_note": "357210 is the targeted castable version; 353759, 433874 and 1236943 are same-name variants referenced by the APL."
+      "opener_priority": 4,
+      "usage_rule": "Empower it to rank 1 and press it on cooldown, but save it for Dragonrage when your Dragonrage window runs under 38 seconds."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 357208,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "Always empower it to rank 1 and spend its two charges to keep the dot on your targets, refreshing once the dot sits at 30% duration or less.",
+      "id_note": "357208 is the observed cast id; 357209 is the enemy dot aura and 382266/1283718 were not observed."
+    },
+    {
+      "name": "Fury of the Aspects",
+      "spell_id": 390386,
+      "cooldown": 300,
+      "duration": 40,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fire it when your group calls for the haste window, since it hands everyone Exhaustion for the next 10 minutes.",
+      "id_note": "talent_gated is set so a raid whose Bloodlust comes from another class is not scored as a missed cast.",
+      "talent_gated": true
     }
   ],
   "defensives": [
@@ -50,49 +62,48 @@
       "name": "Obsidian Scales",
       "spell_id": 363916,
       "cooldown": 90,
-      "duration": 12,
-      "usage_rule": "Press it ahead of a known damage spike for 30% reduction over 12 sec; with Renewing Blaze it also heals back everything it prevented."
+      "duration": 8,
+      "usage_rule": "Press it ahead of a known damage spike, since it is your one large flat damage reduction."
     },
     {
       "name": "Zephyr",
       "spell_id": 374227,
       "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Save it for raid-wide area damage: 20% area damage reduction and 30% speed for you and the 4 nearest allies for 8 sec.",
-      "talent_gated": true
+      "usage_rule": "Save it for raid-wide damage so it soaks the hit for nearby allies as well as you."
     },
     {
-      "name": "Verdant Embrace",
-      "spell_id": 360995,
-      "cooldown": 24,
-      "usage_rule": "Instant self-heal after taking a hit, and it primes Ancient Flame and Scarlet Adaptation for your next Living Flame.",
-      "id_note": "360995 is the castable 24 sec version; 361195 shares the name."
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "usage_rule": "Use it to top yourself back up when chip damage has left you low between mechanics.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Dragonrage into Eternity Surge, then Disintegrate",
+      "description": "Open Dragonrage into Tip the Scales and Eternity Surge",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [375087, 359073, 356995],
-        "spell_names": ["Dragonrage", "Eternity Surge", "Disintegrate"]
+        "spell_ids": [375087, 370553, 359073, 357208],
+        "spell_names": ["Dragonrage", "Tip the Scales", "Eternity Surge", "Fire Breath"]
       },
-      "action": "Pre-cast Living Flame, then open Dragonrage, empowers at rank 1, and only then start chaining Disintegrate. Scalecommander leads with a cancelled Deep Breath before Dragonrage."
+      "action": "Lead with Dragonrage, then Tip the Scales off the global into Eternity Surge and a rank 1 Fire Breath."
     },
     {
       "type": "cd_hold",
       "severity": "warning",
-      "description": "Bank Fire Breath and Eternity Surge for Dragonrage",
+      "description": "Save Eternity Surge and Fire Breath for Dragonrage",
       "condition": {
         "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [382266, 359073],
-        "spell_names": ["Fire Breath", "Eternity Surge"],
+        "spell_ids": [359073, 357208],
+        "spell_names": ["Eternity Surge", "Fire Breath"],
         "anchor_spell_id": 375087,
         "anchor_spell_name": "Dragonrage"
       },
-      "action": "With Animosity, stop spending empowers roughly 6 GCDs before Dragonrage. Each empower cast inside the window extends it by 5 sec, which is how you reach 34 sec Dragonrages."
+      "action": "Stop empowering as Dragonrage comes up and press both inside the window so Animosity extends it."
     },
     {
       "type": "cooldown_pairing",
@@ -106,67 +117,80 @@
         "buff_spell_name": "Dragonrage",
         "require": "inside"
       },
-      "action": "Both share a 2 minute cooldown, so never spend Tip the Scales outside Dragonrage. Use it on the first empower up in the window, normally Eternity Surge at max rank."
+      "action": "Hold it until Dragonrage is up, then spend it off the global on Eternity Surge."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep the Fire Breath dot on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 357209,
+        "aura_spell_name": "Fire Breath",
+        "on": "target"
+      },
+      "action": "Reapply rank 1 Fire Breath once the dot is at 30% duration or less, and remember spenders eat it through Consume Flame."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Spend a Hover charge before each Deep Breath",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 433874,
+        "spell_name": "Deep Breath",
+        "required_spell_id": 358267,
+        "required_spell_name": "Hover",
+        "position": "before"
+      },
+      "action": "Burn a Hover charge before you take off so the Slipstream refund has room to land."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Living Flame while Burnout is up",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 361469,
+        "spell_name": "Living Flame",
+        "alternative_spell_ids": [1265872, 362969],
+        "alternative_spell_names": ["Azure Sweep", "Azure Strike"],
+        "buff_spell_id": 375802,
+        "buff_spell_name": "Burnout",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Cash in Burnout on an instant Living Flame before you fall back to Azure Sweep or Azure Strike."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Do not cap Essence Burst with Azure Sweep",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 1265872,
+        "spell_name": "Azure Sweep",
+        "buff_spell_id": 359618,
+        "buff_spell_name": "Essence Burst",
+        "bound": "max",
+        "max_stacks": 2,
+        "except_buff_spell_ids": [375087],
+        "except_buff_spell_names": ["Dragonrage"]
+      },
+      "action": "Dump Essence Burst into Disintegrate first, then press Azure Sweep to build it back."
     },
     {
       "type": "aoe_switch",
-      "severity": "warning",
-      "description": "Pyre replaces Disintegrate on 3+ targets",
+      "severity": "info",
+      "description": "Pyre only at three or more targets",
       "condition": {
         "kind": "cast_at_target_count",
         "spell_id": 357211,
         "spell_name": "Pyre",
         "bound": "min"
       },
-      "action": "Spend Essence on Pyre from 3 targets as Flameshaper and from 4 as Scalecommander. Below that, and on any priority target, Disintegrate is the spender."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Essence Burst spent on Disintegrate or Pyre",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 359618,
-        "buff_spell_name": "Essence Burst",
-        "spend_spell_ids": [356995, 357211],
-        "spend_spell_names": ["Disintegrate", "Pyre"]
-      },
-      "action": "Cash Essence Burst into a free Disintegrate, or Pyre in AoE, before it expires. Inside Dragonrage every filler procs it, so spend it rather than stacking fillers."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Living Flame is the filler under Leaping Flames",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 361469,
-        "spell_name": "Living Flame",
-        "alternative_spell_ids": [362969],
-        "alternative_spell_names": ["Azure Strike"],
-        "buff_spell_id": 370901,
-        "buff_spell_name": "Leaping Flames",
-        "except_buff_spell_ids": [375087],
-        "except_buff_spell_names": ["Dragonrage"]
-      },
-      "action": "Cast Living Flame at least once between every Fire Breath so no Leaping Flames goes unconsumed. Azure Strike is the filler only when you are moving with no Hover."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Living Flame over Azure Strike on Burnout",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 361469,
-        "spell_name": "Living Flame",
-        "alternative_spell_ids": [362969],
-        "alternative_spell_names": ["Azure Strike"],
-        "buff_spell_id": 375802,
-        "buff_spell_name": "Burnout",
-        "except_buff_spell_ids": [375087],
-        "except_buff_spell_names": ["Dragonrage"]
-      },
-      "action": "Burnout makes Living Flame free and instant, so it is the filler for every stack. Drop to Azure Strike only with neither Burnout nor Leaping Flames up."
+      "action": "Keep Pyre for 3 or more targets with Charged Blast stacked, and channel Disintegrate below that."
     }
   ],
-  "source_summary": "Dragonrage is the spec's one major cooldown and the whole rotation orbits it: send it every 2 minutes, bank Fire Breath and Eternity Surge for the last few GCDs beforehand so Animosity can extend the window, and spend Tip the Scales inside it on an instant maximum-rank empower. Empowers go out at rank 1 in single target, while Eternity Surge scales its rank to the pack size in AoE and Pyre takes over from Disintegrate as the Essence spender at 3 to 4 targets. Scalecommander adds Deep Breath on cooldown with a cancelled opener cast and a Strafing Run follow-up, and both hero trees lean on Living Flame and Azure Sweep as fillers to keep Essence Burst flowing."
+  "source_summary": "Devastation is built around Dragonrage roughly every 2 minutes, with rank 1 Fire Breath and Eternity Surge held for the window so Animosity extends it and Tip the Scales spent off the global on an instant max rank Eternity Surge. Scalecommander adds Deep Breath on cooldown, cancelled on contact and preceded by a spent Hover charge for the Slipstream refund, while Flameshaper leans on Fire Breath dot uptime feeding Consume Flame. Everything between cooldowns is spending Essence and Essence Burst on Disintegrate or Pyre and filling with Living Flame, Azure Sweep, and Azure Strike."
 }

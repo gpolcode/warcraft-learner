@@ -7,8 +7,7 @@
       "spell_id": 472433,
       "cooldown": 90,
       "align_with_bloodlust": false,
-      "usage_rule": "The raid ramp anchor: build Atonement with Penance, Power Word: Shield, Plea and Flash Heal, then Evangelism into your Power Word: Radiance casts to reach 20 Atonements before the damage event, and in dungeons bank its two instant Radiance charges for mobility-heavy moments since the buff does not expire.",
-      "talent_gated": true
+      "usage_rule": "Start your ramp 8 seconds before the damage lands and chain the two instant Power Word: Radiance casts it grants."
     },
     {
       "name": "Ultimate Penitence",
@@ -16,27 +15,7 @@
       "cooldown": 240,
       "duration": 6,
       "align_with_bloodlust": false,
-      "usage_rule": "Ramp Atonement onto the group first, then cast it on an enemy target so every bolt converts to Atonement healing; as Voidweaver fire it inside a rift window unless you are holding it to bridge to the next Entropic Rift.",
-      "id_note": "421543 shares the name and is the aura/effect id; 421453 is the cast.",
-      "talent_gated": true
-    },
-    {
-      "name": "Power Word: Barrier",
-      "spell_id": 62618,
-      "cooldown": 180,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "usage_rule": "The alternative to Ultimate Penitence on its choice node: drop it on a stacked group for the 20% damage reduction whenever incoming damage over its 10 seconds is heavy enough to beat the Atonement throughput you give up.",
-      "id_note": "81782 shares the name; 62618 is the castable 3 min version.",
-      "talent_gated": true
-    },
-    {
-      "name": "Power Infusion",
-      "spell_id": 10060,
-      "cooldown": 120,
-      "duration": 15,
-      "align_with_bloodlust": false,
-      "usage_rule": "Never cast it on yourself: with Twins of the Sun Priestess you get the full 20% haste anyway, so align every cast with a damage dealer's cooldowns."
+      "usage_rule": "Save it for a heavy damage window away from Evangelism, leading with Mind Blast as Voidweaver and spell queuing Void Shield just before the cast ends."
     },
     {
       "name": "Mindbender",
@@ -44,16 +23,8 @@
       "cooldown": 60,
       "duration": 12,
       "align_with_bloodlust": false,
-      "usage_rule": "Fires automatically off Evangelism when talented, so plan Evangelism windows around it and feed the pet Mind Blast and Shadow Word: Death casts for Inescapable Torment hits.",
-      "talent_gated": true
-    },
-    {
-      "name": "Pain Suppression",
-      "spell_id": 33206,
-      "cooldown": 180,
-      "duration": 8,
-      "align_with_bloodlust": false,
-      "usage_rule": "40% damage reduction on one ally: put it on the tank for a scripted hit or on a player carrying a heavy damage-over-time effect, and with Protector of the Frail spend the extra charge freely rather than sitting at cap.",
+      "usage_rule": "Send it while your Atonements are out so its damage converts into healing.",
+      "id_note": "Two live Mindbender ids share the name: 123040 (12s tooltip, the Discipline pet) and 200174 (10s). Neither was cast in the sampled parses and the guide never names the pet; Shadowfiend appears only as self aura 1280172 with no cast id in the table.",
       "talent_gated": true
     }
   ],
@@ -63,78 +34,86 @@
       "spell_id": 19236,
       "cooldown": 90,
       "duration": 10,
-      "usage_rule": "Your primary personal: press it ahead of a hit you are worried about surviving, since the maximum-health increase raises your effective health as well as healing you.",
-      "talent_gated": true
+      "usage_rule": "Press it when your own health drops so you can keep casting through the damage."
+    },
+    {
+      "name": "Pain Suppression",
+      "spell_id": 33206,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Drop it on an ally taking heavy damage when you have no healing cooldown available."
+    },
+    {
+      "name": "Power Word: Barrier",
+      "spell_id": 62618,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Place it under the stacked group for a heavy area damage window.",
+      "id_note": "Not cast in the sampled parses but castable per its tooltip."
     },
     {
       "name": "Fade",
       "spell_id": 586,
       "cooldown": 30,
       "duration": 10,
-      "usage_rule": "With Translucent Image this is a 10% damage reduction on a short cooldown, so use it on every avoidable damage event rather than saving it.",
-      "talent_gated": true
-    },
-    {
-      "name": "Vampiric Embrace",
-      "spell_id": 15286,
-      "cooldown": 120,
-      "duration": 12,
-      "usage_rule": "Turn on before a sustained single-target damage window so 40% of your Shadow damage converts into extra healing for the group.",
-      "talent_gated": true
+      "usage_rule": "Press it to shed threat and cut the damage you take while you reposition."
     }
   ],
   "rules": [
     {
-      "type": "opener",
-      "severity": "warning",
-      "description": "Evangelism ramp: Flash Heal, Evangelism, Radiance",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [589, 2061, 472433, 194509, 8092],
-        "spell_names": ["Shadow Word: Pain", "Flash Heal", "Evangelism", "Power Word: Radiance", "Mind Blast"]
-      },
-      "action": "Refresh Shadow Word: Pain so it covers the whole ramp, build Atonement with Penance, Power Word: Shield and Plea, then a single Flash Heal for the double Atonement from Binding Heals, then Evangelism into 1-2 Power Word: Radiance casts to reach 20 Atonements before you turn on damage with Mind Blast and Shadow Word: Death."
-    },
-    {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend Void Shield before the next Penance",
+      "description": "Keep Shadow Word: Pain on your enemies",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 1253591,
-        "buff_spell_name": "Master the Darkness",
-        "spend_spell_ids": [1253593],
-        "spend_spell_names": ["Void Shield"]
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 589,
+        "aura_spell_name": "Shadow Word: Pain",
+        "on": "target"
       },
-      "action": "Cast Void Shield before your next Penance whenever the proc is up. Penance guarantees one proc every three casts, so sitting on it risks overwriting; cast it on yourself for the larger shield and more reflected damage."
+      "action": "Refresh Shadow Word: Pain as it nears expiry and spread it with offensive Penance."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Bank Power Word: Radiance charges for Evangelism",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [194509],
+        "spell_names": ["Power Word: Radiance"],
+        "anchor_spell_id": 472433,
+        "anchor_spell_name": "Evangelism"
+      },
+      "action": "Spend spare charges on mini-ramps but keep two banked as Evangelism comes up."
     },
     {
       "type": "rotation",
       "severity": "info",
-      "description": "Penance consumes Power of the Dark Side",
+      "description": "Shadow Word: Death replaces Smite in execute",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 198069,
-        "buff_spell_name": "Power of the Dark Side",
-        "spend_spell_ids": [47540],
-        "spend_spell_names": ["Penance"]
+        "kind": "filler_below_health",
+        "spell_id": 32379,
+        "spell_name": "Shadow Word: Death",
+        "alternative_spell_ids": [585],
+        "alternative_spell_names": ["Smite"],
+        "health_pct": 20
       },
-      "action": "Send Penance while Power of the Dark Side is up: the proc adds 30% effectiveness, and Mind Blast plus Shadow Word: Pain keep feeding it faster than you can bank it."
+      "action": "Swap your Smite filler to Shadow Word: Death once the target is in execute."
     },
     {
-      "type": "cooldown_pairing",
+      "type": "rotation",
       "severity": "info",
-      "description": "Instant cast during Ultimate Penitence liftoff",
+      "description": "Power Word: Shield at high Weal and Woe stacks",
       "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 421453,
-        "spell_name": "Ultimate Penitence",
-        "required_spell_id": 17,
-        "required_spell_name": "Power Word: Shield",
-        "position": "after"
+        "kind": "spend_at_stacks",
+        "spell_id": 17,
+        "spell_name": "Power Word: Shield",
+        "buff_spell_id": 390787,
+        "buff_spell_name": "Weal and Woe",
+        "bound": "min",
+        "max_stacks": 7
       },
-      "action": "Weave a free instant into the float-up between the Ultimate Penitence cast and its channel: Power Word: Shield normally, or Shadow Word: Death if the target is in execute range. It does not cancel the channel."
+      "action": "Let Weal and Woe stack up before you shield, and cut shield casts when mana is low."
     }
   ],
-  "source_summary": "Discipline heals through damage via Atonement, so the whole cooldown plan is the ramp: stack Atonement with Penance, Power Word: Shield, Plea and a Binding Heals Flash Heal, then Evangelism into Power Word: Radiance to hit 20 Atonements before the damage event, and turn on damage with Mind Blast, Shadow Word: Death and Penance during the window. Ultimate Penitence is a second, larger ramp payoff and is cast on enemies so its bolts convert into Atonement healing, with Power Word: Barrier taken instead when the encounter's damage pattern favours a stacked 20% reduction. Void Shield procs from Master the Darkness carry a large share of throughput and should be spent before the next Penance, while Power Infusion always goes on a damage dealer and Pain Suppression on the tank or a heavily damaged ally."
+  "source_summary": "Discipline is a ramping healer: apply Atonement ahead of a known damage window, then convert damage casts into healing. Evangelism is the main ramp on a 90 second timer, casting a free Power Word: Radiance and making the next two instant, so bank Radiance charges for it and save Ultimate Penitence for a separate heavy damage window. Between ramps keep Shadow Word: Pain up, press Mind Blast, Penance and Void Shield on cooldown, shield at high Weal and Woe stacks, and fill with Smite."
 }

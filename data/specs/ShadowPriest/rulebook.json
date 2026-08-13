@@ -3,31 +3,35 @@
   "spec_icon": "spell_shadow_shadowwordpain",
   "major_cooldowns": [
     {
+      "name": "Halo",
+      "spell_id": 120644,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Open every cooldown window with Halo so its slow damage and its Manifested Power and Sustained Potency procs are already ramping when Voidform starts.",
+      "id_note": "Four live ids share the name Halo; 120644 is the shadow cast id seen in 5/5 sampled parses (21 casts). 453094 is the buff aura.",
+      "talent_gated": true
+    },
+    {
       "name": "Voidform",
       "spell_id": 228260,
       "cooldown": 120,
       "duration": 20,
       "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Send it every 2 minutes once Shadow Word: Pain is on at least as many targets as Vampiric Touch, and pair it with Power Infusion and your on-use trinkets; every Shadow Word: Madness cast inside the window extends it, for roughly 10 extra seconds in practice.",
-      "id_note": "228260 is the cast id; 194249 is the Voidform aura and is what the Power Infusion rule checks."
+      "opener_priority": 2,
+      "usage_rule": "Press Voidform on cooldown once Shadow Word: Pain is on at least as many targets as Vampiric Touch, then prioritize Void Volley inside it so you do not lose a cast.",
+      "id_note": "228260 is the cast id (13 casts in 5/5 parses); 194249 is the Voidform self aura.",
+      "talent_gated": true
     },
     {
       "name": "Power Infusion",
       "spell_id": 10060,
       "cooldown": 120,
       "duration": 15,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Cast it inside Voidform every 2 minutes and sync Fireblood, Berserking, Blood Fury or Ancestral Call to the same window; with Twins of the Sun Priestess cast it on an ally so you get the full buff as well."
-    },
-    {
-      "name": "Halo",
-      "spell_id": 120644,
-      "cooldown": 60,
-      "align_with_bloodlust": false,
-      "usage_rule": "Archon only: cast it on cooldown once every mob is engaged and in range, accepting that its 1 minute cooldown drifts further into each Voidform window over the pull.",
-      "talent_gated": true
+      "align_with_bloodlust": true,
+      "opener_priority": 3,
+      "usage_rule": "Cast Power Infusion as soon as you are in Voidform, and with Twins of the Sun Priestess put the copy on an ally who bursts on the same cadence, never at the cost of your own uses.",
+      "talent_gated": false
     },
     {
       "name": "Void Torrent",
@@ -35,7 +39,8 @@
       "cooldown": 30,
       "duration": 3,
       "align_with_bloodlust": false,
-      "usage_rule": "Voidweaver only: channel it with Shadow Word: Madness active and both DoTs up, early in a burst window so its Insanity fuels the rest of it, and hold it up to 10 seconds in AoE when a pack is about to land.",
+      "usage_rule": "As Voidweaver, cast Void Torrent whenever your dots are up and you are not holding Tentacle Slam, then spend Void Blast and Shadow Word: Madness inside the Entropic Rift it spawns.",
+      "id_note": "Not observed in the sampled parses, which are all Archon builds; 263165 is the castable id per its tooltip, 289577 is the passive twin.",
       "talent_gated": true
     }
   ],
@@ -45,141 +50,127 @@
       "spell_id": 47585,
       "cooldown": 120,
       "duration": 6,
-      "usage_rule": "Press it into a lethal hit or a heavy damage pattern for 75% reduction and a heal over its 6 seconds, accepting that you cannot attack while it is up."
+      "usage_rule": "Press Dispersion to ride out a lethal hit or a heavy damage phase, and place it in a gap between your cooldowns since it stops your casting."
     },
     {
       "name": "Desperate Prayer",
       "spell_id": 19236,
       "cooldown": 90,
       "duration": 10,
-      "usage_rule": "Use it at or below 75% health, typically after Shadow Word: Death backlash, for the instant heal and the raised health ceiling."
+      "usage_rule": "Press Desperate Prayer as soon as you drop below 75% health for the instant heal and the extra health pool."
     },
     {
       "name": "Vampiric Embrace",
       "spell_id": 15286,
       "cooldown": 120,
       "duration": 12,
-      "usage_rule": "Pop it before raid damage lands so your single-target Shadow damage feeds 40% of itself back as healing for 12 seconds."
+      "usage_rule": "Turn on Vampiric Embrace just before heavy raid damage so your damage tops the group up."
     },
     {
       "name": "Fade",
       "spell_id": 586,
       "cooldown": 30,
       "duration": 10,
-      "usage_rule": "Drop threat with it while pulling alongside the tank so you can apply Vampiric Touch and Shadow Word: Pain as the pack gathers, and use it to shed aggro after an early burst window."
+      "usage_rule": "Press Fade ahead of a known hit for its damage reduction and to shed threat after a burst window."
     }
   ],
   "rules": [
     {
-      "type": "opener",
-      "severity": "warning",
-      "description": "Voidform into Power Infusion, then spend Insanity",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [228260, 10060, 335467, 1242173],
-        "spell_names": [
-          "Voidform",
-          "Power Infusion",
-          "Shadow Word: Madness",
-          "Void Volley"
-        ]
-      },
-      "action": "Pre-cast Vampiric Touch and Tentacle Slam, open with Shadow Word: Pain, then Halo as Archon, Voidform, trinkets and potion, Power Infusion, Shadow Word: Madness, Void Volley, and Void Torrent as Voidweaver."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Power Infusion inside Voidform",
-      "condition": {
-        "kind": "cast_outside_buff",
-        "spell_id": 10060,
-        "spell_name": "Power Infusion",
-        "buff_spell_id": 194249,
-        "buff_spell_name": "Voidform",
-        "require": "inside"
-      },
-      "action": "Both are 2 minute cooldowns, so cast Power Infusion inside every Voidform and pull stat racials and on-use trinkets into the same 15 second window."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Shadow Word: Madness before Void Torrent",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 263165,
-        "spell_name": "Void Torrent",
-        "required_spell_id": 335467,
-        "required_spell_name": "Shadow Word: Madness",
-        "position": "before"
-      },
-      "action": "Land Shadow Word: Madness on the target before you channel Void Torrent: every tick re-checks Mastery, so the missing DoT costs damage on the whole 3 second channel."
-    },
-    {
       "type": "rotation",
       "severity": "critical",
-      "description": "Vampiric Touch stays up on the target",
+      "description": "Keep Shadow Word: Madness up on your target",
       "condition": {
         "kind": "aura_uptime_below",
-        "aura_spell_id": 34914,
-        "aura_spell_name": "Vampiric Touch",
+        "aura_spell_id": 335467,
+        "aura_spell_name": "Shadow Word: Madness",
         "on": "target"
       },
-      "action": "Target 99%+ Vampiric Touch uptime on priority targets, refreshing inside the pandemic window at 30% duration remaining, 6.3 seconds with Misery. Prefer Tentacle Slam for the refresh when a charge is up, and skip targets that will not live 12 seconds."
+      "action": "Spend on Shadow Word: Madness before it falls off, and again whenever you are about to cap Insanity."
     },
     {
       "type": "rotation",
-      "severity": "critical",
-      "description": "Shadow Word: Pain stays up on the target",
+      "severity": "warning",
+      "description": "Keep Shadow Word: Pain up on your target",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 589,
         "aura_spell_name": "Shadow Word: Pain",
         "on": "target"
       },
-      "action": "Target 99%+ Shadow Word: Pain uptime, refreshing at 4.8 seconds remaining without Misery or 6.3 with it, and use it as your movement filler when no instant is available."
+      "action": "Reapply Shadow Word: Pain as it falls off, and use it as one of your movement casts."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Shadow Word: Madness stays up on the target",
+      "description": "Keep Vampiric Touch up on your target",
       "condition": {
         "kind": "aura_uptime_below",
-        "aura_spell_id": 335467,
-        "aura_spell_name": "Shadow Word: Madness",
+        "aura_spell_id": 34914,
+        "aura_spell_name": "Vampiric Touch",
         "on": "target"
       },
-      "action": "Target 90%+ Shadow Word: Madness uptime: refresh at under a GCD remaining or once your Insanity deficit is 35 or less. The DoT rolls its remaining damage into the new ticks, so an early refresh to dodge an Insanity cap costs nothing."
+      "action": "Refresh Vampiric Touch with Tentacle Slam, and hard cast it when no charge is coming back in time."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Shadow Word: Madness refreshed late, not clipped",
+      "description": "Mind Flay: Insanity over Mind Flay when it procs",
       "condition": {
-        "kind": "aura_clipped",
-        "aura_spell_id": 335467,
-        "aura_spell_name": "Shadow Word: Madness",
-        "cast_spell_id": 335467,
-        "cast_spell_name": "Shadow Word: Madness",
-        "on": "target"
+        "kind": "filler_in_buff",
+        "spell_id": 391403,
+        "spell_name": "Mind Flay: Insanity",
+        "alternative_spell_ids": [15407],
+        "alternative_spell_names": ["Mind Flay"],
+        "buff_spell_id": 391401,
+        "buff_spell_name": "Mind Flay: Insanity",
+        "except_buff_spell_ids": [194249],
+        "except_buff_spell_names": ["Voidform"]
       },
-      "action": "Let Shadow Word: Madness run down to under a GCD remaining, or your Insanity deficit to 35 or less, before recasting it: the remaining damage rolls into the new ticks at no cost, so refreshing early only trims your Mastery: Shadow Weaving uptime."
+      "action": "Channel Mind Flay: Insanity while its proc is up instead of plain Mind Flay, and cut the channel short for anything higher in the priority."
     },
     {
       "type": "rotation",
+      "severity": "info",
+      "description": "Spend Shadowy Insight on Mind Blast",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 375981,
+        "buff_spell_name": "Shadowy Insight",
+        "spend_spell_ids": [8092],
+        "spend_spell_names": ["Mind Blast"]
+      },
+      "action": "Press Mind Blast as soon as Shadowy Insight procs so the free cast is not lost."
+    },
+    {
+      "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Shadow Word: Death replaces Mind Flay in execute",
+      "description": "Halo before you enter Voidform",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 228260,
+        "spell_name": "Voidform",
+        "required_spell_id": 120644,
+        "required_spell_name": "Halo",
+        "position": "before"
+      },
+      "action": "Send Halo first so its damage and procs are already ramping when you enter Voidform."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shadow Word: Death takes over in execute range",
       "condition": {
         "kind": "filler_below_health",
         "spell_id": 32379,
         "spell_name": "Shadow Word: Death",
         "alternative_spell_ids": [15407],
-        "alternative_spell_names": [
-          "Mind Flay"
-        ],
-        "health_pct": 20
+        "alternative_spell_names": ["Mind Flay"],
+        "health_pct": 20,
+        "except_buff_spell_ids": [194249],
+        "except_buff_spell_names": ["Voidform"]
       },
-      "action": "Below 20% target health, let Shadow Word: Death take over from Mind Flay: it hits harder in execute range and keeps its own cooldown moving instead of sitting idle."
+      "action": "Replace your Mind Flay filler with Shadow Word: Death once the target is in execute range."
     }
   ],
-  "source_summary": "Shadow Priest builds Insanity with short-cooldown spells and spends it on Shadow Word: Madness while Vampiric Touch and Shadow Word: Pain never fall off, since Mastery: Shadow Weaving scales with all three DoTs on the target. Voidform and Power Infusion are the 2 minute burst pair and are cast together with stat racials, on-use trinkets and the potion; Halo (Archon) and Void Torrent (Voidweaver) fill the shorter cooldown layer and are used whenever they will not cost a short-cooldown cast. Tentacle Slam is the DoT-spreading cooldown and should never sit capped on charges, especially inside a burst window."
+  "source_summary": "Shadow builds every cooldown window around Voidform: get Shadow Word: Pain and Vampiric Touch rolling, send Halo first so its slow ramp is already generating, then enter Voidform and follow it with Power Infusion, prioritizing Void Volley inside the window. Between windows the rotation is Shadow Word: Madness uptime without capping Insanity, Mind Blast on cooldown, and reacting to Shadowy Insight and Mind Devourer procs, with Mind Flay as the interruptible filler and Shadow Word: Death in execute range. Voidweaver builds drop Halo for Void Torrent and spend Void Blast inside Entropic Rift."
 }
