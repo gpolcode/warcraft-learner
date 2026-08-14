@@ -22,7 +22,6 @@ const HTML_ENTITIES: Record<string, string> = {
   '&#39;': "'",
 };
 
-// One pass, not chained replaces: chaining turns `&amp;lt;` into `&lt;` and then re-reads that as '<'.
 export function decodeHtmlEntities(text: string): string {
   return text.replace(/&(?:amp|lt|gt|quot|#39);/g, entity => HTML_ENTITIES[entity]);
 }

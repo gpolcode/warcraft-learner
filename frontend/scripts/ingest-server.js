@@ -16,7 +16,6 @@ const ALLOWED_ORIGINS = ['http://localhost:4200', 'http://127.0.0.1:4200'];
 // Reject any other Host so a rebound DNS name resolving to loopback cannot reach the store.
 const ALLOWED_HOSTS = new Set([`localhost:${PORT}`, `127.0.0.1:${PORT}`]);
 
-// Sized far above a full ingest run: tightening this to a "realistic" number is what starts failing runs.
 const REQUESTS_PER_MINUTE = 5_000;
 
 // Monotonic suffix so two concurrent writes to the same path never collide on the temp name.
