@@ -46,6 +46,12 @@ export default defineConfig([
     },
   },
   {
+    // Root config file reachable only via solution references; CI's tsserver fails to match it
+    // to the e2e project and reports every node type as unresolvable, so it lints type-unaware.
+    files: ['playwright.config.ts'],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
     // Test-only relaxations: fakes implement promise-returning interfaces with await-less
     // `async () =>` bodies, and `!` on a value the fixture just built is the intended assertion.
     files: ['src/**/*.spec.ts', 'src/testing/**/*.ts', 'e2e/**/*.ts'],
