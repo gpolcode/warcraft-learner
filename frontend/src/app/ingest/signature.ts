@@ -21,8 +21,16 @@ export function readInaccessibleParses(file: { inaccessible_parses?: string[] } 
 export interface SignedFile {
   source_signature?: string;
   ingest_version: number;
+  // Reporting only: never read by the skip check or the work-ordering.
+  ingested_at?: string;
   // Burst-file-only: parses found permission-denied by the producing run, so the next cheap hash check can exclude them.
   inaccessible_parses?: string[];
+}
+
+/** Bundled so the clock read stays in the orchestrator and the stamp functions stay pure. */
+export interface IngestStamp {
+  version: number;
+  ingestedAt: string;
 }
 
 /** Stable `report_code:fight_id` list, sorted, so ranking order never affects the hash. */
@@ -63,6 +71,10 @@ export function readStoredVersion(file: SignedFile): number {
   return file.ingest_version;
 }
 
+export function readStoredIngestedAt(file: SignedFile): string | null {
+  return file.ingested_at ?? null;
+}
+
 /** Files with no numeric `ingest_version` (manifests, rulebooks) are never future. */
 export function isFutureVersion(parsed: unknown, currentVersion: number): boolean {
   if (typeof parsed !== 'object' || parsed === null) return false;
@@ -75,16 +87,18 @@ export function signatureMatches(stored: string | null, current: string): boolea
 }
 
 /** `source_signature` drives the skip check; the bare `ingest_version` drives the work-ordering. */
-export function stampSignature<T extends object>(data: T, signature: string, version: number): T & SignedFile {
-  return { ...data, source_signature: signature, ingest_version: version };
+export function stampSignature<T extends object>(data: T, signature: string, stamp: IngestStamp): T & SignedFile {
+  return { ...data, source_signature: signature, ingest_version: stamp.version, ingested_at: stamp.ingestedAt };
 }
 
 /** Burst stamp: writes `source_signature` only when no slice failed (a `missing` slice is legitimate empty data), so a transient/permanent failure leaves it unstamped and the next run redoes the encounter. */
 export function stampBurstFile<T extends object>(
-  data: T, signature: string, version: number, inaccessibleParses: string[],
+  data: T, signature: string, stamp: IngestStamp, inaccessibleParses: string[],
   sliceResults: readonly Result<unknown>[],
 ): T & SignedFile {
   const complete = sliceResults.every(result => result.ok || result.error.kind === 'missing');
-  const versioned: T & SignedFile = { ...data, ingest_version: version, inaccessible_parses: inaccessibleParses };
+  const versioned: T & SignedFile = {
+    ...data, ingest_version: stamp.version, ingested_at: stamp.ingestedAt, inaccessible_parses: inaccessibleParses,
+  };
   return complete ? { ...versioned, source_signature: signature } : versioned;
 }

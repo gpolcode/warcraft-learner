@@ -43,11 +43,20 @@ export function orderSpecsByVersion(
     .map(({ entry }) => entry.spec);
 }
 
+export interface SpecRunPlan {
+  /** Every known spec in run order, so the run log can report the ones the cap defers too. */
+  ordered: string[];
+  /** The prefix this run ingests. */
+  selected: string[];
+}
+
+/** One draw of the shuffle feeds both lists, so the reported order is the order the cap was applied to. */
 export function specsForRun(
   entries: readonly SpecOrderEntry[],
   prioritySpecs: readonly string[] = DEFAULT_PRIORITY_SPECS,
-): string[] {
-  return orderSpecsByVersion(entries, prioritySpecs).slice(0, SPEC_LIMIT);
+): SpecRunPlan {
+  const ordered = orderSpecsByVersion(entries, prioritySpecs);
+  return { ordered, selected: ordered.slice(0, SPEC_LIMIT) };
 }
 
 /** So a partially ingested spec fills its remaining bosses before re-checking the ones already done. */
