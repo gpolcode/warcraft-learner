@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclTransportError } from '../../../core/services/wcl-transport';
@@ -23,7 +23,6 @@ import {
   checkCastEfficiency, analyzeOneCooldown,
   partitionRotationFindings, buildRuleRows, buildOffensiveRows, buildOnPlanChips,
 } from './rotation.service';
-import { defined } from '../../../../testing/defined';
 
 // A zero tolerance keeps the fixture arithmetic exact.
 const PAIR_WINDOW_S = 5;
@@ -94,7 +93,8 @@ describe('analyzeRotationFindings', () => {
     const findings = analyzeRotationFindings(scan({ castEvents: casts, buffEvents: buffs, bench: single }));
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success).toBeDefined();
-    expect(defined(success).message).toContain('BL-aligned');
+    assert.exists(success);
+    expect(success.message).toContain('BL-aligned');
   });
 
   it('flags a late opener', () => {
@@ -112,8 +112,10 @@ describe('analyzeRotationFindings', () => {
     const findings = analyzeRotationFindings(scan({ castEvents: casts, bench: bench() }));
     const efficiency = findings.find(f => f.category === 'cast_efficiency');
     expect(efficiency).toBeDefined();
-    expect(defined(efficiency).label).toBeTruthy();
-    expect(defined(efficiency).details?.remedy).toBeTruthy();
+    assert.exists(efficiency);
+    expect(efficiency.label).toBeTruthy();
+    assert.exists(efficiency);
+    expect(efficiency.details?.remedy).toBeTruthy();
   });
 });
 
@@ -376,7 +378,8 @@ describe('bucketRotationFindings', () => {
     ];
     const out = bucketRotationFindings(findings, { 'Shadow Blades': SHADOW_BLADES, 'Vanish': VANISH }, abilities);
     expect(out.ruleRows).toHaveLength(1);
-    expect(defined(out.ruleRows[0]).what).toBe('Shadow Dance without Secret Technique');
+    assert.exists(out.ruleRows[0]);
+    expect(out.ruleRows[0].what).toBe('Shadow Dance without Secret Technique');
     expect(out.offensiveRows).toHaveLength(1);
     expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'held' });
     expect(out.onPlan).toEqual([{ name: 'Vanish', spellId: VANISH, icon: 'vanish' }]);
@@ -393,8 +396,10 @@ describe('rotation finding partition and row builders', () => {
   it('partitions rule findings, per-cd buckets, and success names', () => {
     const partition = partitionRotationFindings([ruleFinding, issueFinding, holdFinding, successFinding]);
     expect(partition.ruleFindings).toEqual([ruleFinding]);
-    expect(defined(partition.byName['Shadow Blades']).issues).toEqual([issueFinding]);
-    expect(defined(partition.byName['Shadow Blades']).holds).toEqual([holdFinding]);
+    assert.exists(partition.byName['Shadow Blades']);
+    expect(partition.byName['Shadow Blades'].issues).toEqual([issueFinding]);
+    assert.exists(partition.byName['Shadow Blades']);
+    expect(partition.byName['Shadow Blades'].holds).toEqual([holdFinding]);
     expect([...partition.successNames]).toEqual(['Vanish']);
   });
 
@@ -457,9 +462,12 @@ describe('buildCdPlan', () => {
     };
     const plan = buildCdPlan(cooldowns, benchmarks, abilities);
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
-    expect(defined(plan[0]).holds).toEqual([{ castIndex: 2, targetS: 100 }]);
-    expect(defined(plan[0]).bloodlust).toBe(true);
-    expect(defined(plan[0]).bloodlustPct).toBe(100);
+    assert.exists(plan[0]);
+    expect(plan[0].holds).toEqual([{ castIndex: 2, targetS: 100 }]);
+    assert.exists(plan[0]);
+    expect(plan[0].bloodlust).toBe(true);
+    assert.exists(plan[0]);
+    expect(plan[0].bloodlustPct).toBe(100);
   });
 
   it('drives the Bloodlust badge from bl_pct, not the rulebook flag', () => {
@@ -472,8 +480,10 @@ describe('buildCdPlan', () => {
       Unaligned: cdBench({ bl_pct: 49 }),  // flag true, but data says not -> badge off
     };
     const plan = buildCdPlan(cooldowns, benchmarks, abilities);
-    const aligned = defined(plan.find(p => p.name === 'Aligned'));
-    const unaligned = defined(plan.find(p => p.name === 'Unaligned'));
+    const aligned = plan.find(p => p.name === 'Aligned');
+    assert.exists(aligned);
+    const unaligned = plan.find(p => p.name === 'Unaligned');
+    assert.exists(unaligned);
     expect(aligned.bloodlust).toBe(true);
     expect(aligned.bloodlustPct).toBe(50);
     expect(unaligned.bloodlust).toBe(false);
@@ -484,8 +494,10 @@ describe('buildCdPlan', () => {
     // SECRET_TECHNIQUE is deliberately absent from `abilities`, so the guarded lookup must not throw.
     const UNMAPPED_SPELL_ID = SECRET_TECHNIQUE;
     const plan = buildCdPlan([{ name: 'Unmapped', spell_id: UNMAPPED_SPELL_ID, cooldown: 60 }], {}, abilities);
-    expect(defined(plan[0]).spellId).toBe(UNMAPPED_SPELL_ID);
-    expect(defined(plan[0]).icon).toBe('');
+    assert.exists(plan[0]);
+    expect(plan[0].spellId).toBe(UNMAPPED_SPELL_ID);
+    assert.exists(plan[0]);
+    expect(plan[0].icon).toBe('');
   });
 
   it('renders the empty state for typical uses when no top parse ever used the cd', () => {
@@ -496,13 +508,18 @@ describe('buildCdPlan', () => {
       uses_per_min: { avg: 0, stddev: 0, min: 0, max: 0 },
     });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
-    expect(defined(plan[0]).firstCastS).toBeNull();
-    expect(defined(plan[0]).usesPerMin).toBeNull();
+    assert.exists(plan[0]);
+    expect(plan[0].firstCastS).toBeNull();
+    assert.exists(plan[0]);
+    expect(plan[0].usesPerMin).toBeNull();
     // No sampled parse ever used it, so the row renders the honest empty state rather than a 0.
-    expect(defined(plan[0]).typicalUses).toBeNull();
+    assert.exists(plan[0]);
+    expect(plan[0].typicalUses).toBeNull();
     // The adoption counts reaching the template are the raw sample counts, not a precomputed "0/5" string.
-    expect(defined(plan[0]).usedSampleCount).toBe(0);
-    expect(defined(plan[0]).sampleCount).toBe(TOTAL_SAMPLED);
+    assert.exists(plan[0]);
+    expect(plan[0].usedSampleCount).toBe(0);
+    assert.exists(plan[0]);
+    expect(plan[0].sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('nulls the per-use fields when only a minority of top parses use the cd (use-share gate)', () => {
@@ -512,12 +529,17 @@ describe('buildCdPlan', () => {
     const MEDIAN_USES = 3;
     const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_s: 20, median_uses: MEDIAN_USES });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
-    expect(defined(plan[0]).firstCastS).toBeNull();
-    expect(defined(plan[0]).usesPerMin).toBeNull();
+    assert.exists(plan[0]);
+    expect(plan[0].firstCastS).toBeNull();
+    assert.exists(plan[0]);
+    expect(plan[0].usesPerMin).toBeNull();
     // Typical uses only gates on any adoption at all, not the majority share, so a minority still surfaces it.
-    expect(defined(plan[0]).typicalUses).toBe(MEDIAN_USES);
-    expect(defined(plan[0]).usedSampleCount).toBe(MINORITY_USERS);
-    expect(defined(plan[0]).sampleCount).toBe(TOTAL_SAMPLED);
+    assert.exists(plan[0]);
+    expect(plan[0].typicalUses).toBe(MEDIAN_USES);
+    assert.exists(plan[0]);
+    expect(plan[0].usedSampleCount).toBe(MINORITY_USERS);
+    assert.exists(plan[0]);
+    expect(plan[0].sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('keeps the per-use fields when a majority of top parses use the cd', () => {
@@ -526,8 +548,10 @@ describe('buildCdPlan', () => {
     const USES_PER_MIN = 1.2;
     const used = cdBench({ avg_first_cast_s: FIRST_CAST_S, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
-    expect(defined(plan[0]).firstCastS).toBe(FIRST_CAST_S);
-    expect(defined(plan[0]).usesPerMin).toBe(USES_PER_MIN);
+    assert.exists(plan[0]);
+    expect(plan[0].firstCastS).toBe(FIRST_CAST_S);
+    assert.exists(plan[0]);
+    expect(plan[0].usesPerMin).toBe(USES_PER_MIN);
   });
 });
 
@@ -610,8 +634,10 @@ describe('RotationFeatureService', () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.rows).toHaveLength(1);
-      expect(defined(result.value.rows[0]).name).toBe('Shadow Blades');
-      expect(defined(result.value.rows[0]).icon).toBe('sb');
+      assert.exists(result.value.rows[0]);
+      expect(result.value.rows[0].name).toBe('Shadow Blades');
+      assert.exists(result.value.rows[0]);
+      expect(result.value.rows[0].icon).toBe('sb');
     }
   });
 

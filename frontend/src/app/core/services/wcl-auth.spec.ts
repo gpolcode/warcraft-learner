@@ -1,9 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { assert, describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { WclAuthService } from './wcl-auth';
-import { defined } from '../../../testing/defined';
 
 /** The client-credentials token endpoint the service posts to (mirrors TOKEN_URL in the source). */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
@@ -100,7 +99,8 @@ describe('WclAuthService', () => {
 
     const requests = httpMock.match(req => req.url === WCL_TOKEN_URL);
     expect(requests.length).toBe(1);
-    defined(requests[0]).flush({ access_token: FIRST_TOKEN, expires_in: TOKEN_LIFETIME_S });
+    assert.exists(requests[0]);
+    requests[0].flush({ access_token: FIRST_TOKEN, expires_in: TOKEN_LIFETIME_S });
 
     expect(await first).toBe(FIRST_TOKEN);
     expect(await second).toBe(FIRST_TOKEN);

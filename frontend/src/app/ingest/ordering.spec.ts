@@ -1,10 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import {
   orderSpecsByVersion, specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs,
   DEFAULT_PRIORITY_SPECS, SPEC_LIMIT,
   type SpecOrderEntry,
 } from './ordering';
-import { defined } from '../../testing/defined';
 
 const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry => ({
   dataCount: 5,
@@ -36,7 +35,11 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'Charlie' }), entry({ spec: 'Alpha' }), entry({ spec: 'Bravo' })],
-      () => defined(keys[next++]),
+      () => {
+        const key = keys[next++];
+        assert.exists(key);
+        return key;
+      },
     );
     expect(order).toEqual(['Charlie', 'Bravo', 'Alpha']);
   });
@@ -46,7 +49,11 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'SubtletyRogue' }), entry({ spec: 'AssassinationRogue' })],
-      () => defined(keys[next++]),
+      () => {
+        const key = keys[next++];
+        assert.exists(key);
+        return key;
+      },
     );
     expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue', 'OutlawRogue']);
   });

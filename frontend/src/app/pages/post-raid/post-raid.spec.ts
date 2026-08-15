@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { assert, describe, it, expect, vi, beforeEach } from 'vitest';
 import { Signal, WritableSignal, provideZonelessChangeDetection, signal } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
@@ -14,7 +14,6 @@ import {
   specOf, extractCode, extractFightId, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId,
   livePollActionOf, isKeystoneFight, unsupportedEncounterNotice,
 } from './post-raid';
-import { defined } from '../../../testing/defined';
 
 function fight(p: Partial<WclFight>): WclFight {
   return { id: 0, name: '', startTime: 0, endTime: 0, kill: false, encounterID: 0, attempt: 0, duration_s: 0, friendlyPlayers: [], fightPercentage: 0, ...p };
@@ -125,7 +124,8 @@ describe('buildFights', () => {
   it('derives a one-decimal duration in seconds from the millisecond span', () => {
     // 94_567 ms -> 945.67 -> round 946 -> 94.6: a non-round span so the rounding step is exercised.
     const [f] = buildFights([fight({ id: 1, encounterID: 100, startTime: 1000, endTime: 95_567 })]);
-    expect(defined(f).duration_s).toBe(94.6);
+    assert.exists(f);
+    expect(f.duration_s).toBe(94.6);
   });
 
   it('handles a missing/undefined fight list', () => {
@@ -689,12 +689,18 @@ describe('PostRaidComponent selection latest-wins', () => {
       return new Promise(resolve => this.detailResolvers.set(fightId, resolve));
     }
     settleReport(): void {
-      defined(this.reportResolver)({
+      const resolve = this.reportResolver;
+      assert.exists(resolve);
+      resolve({
         title: '', startTime: 0, fights: pulls(),
         masterData: { actors: [{ id: PLAYER_ID, name: PLAYER_NAME, subType: CLASS_NAME, server: '' }], enemies: [], abilities: [] },
       });
     }
-    settleDetails(fightId: number, groups: PlayerDetailGroups): void { defined(this.detailResolvers.get(fightId))(groups); }
+    settleDetails(fightId: number, groups: PlayerDetailGroups): void {
+      const resolve = this.detailResolvers.get(fightId);
+      assert.exists(resolve);
+      resolve(groups);
+    }
   }
 
   function setup(): { api: FakeWclApi; vm: SelectionHandle } {
@@ -812,8 +818,16 @@ describe('PostRaidComponent loadReport latest-wins', () => {
     getPlayerDetails(): Promise<PlayerDetailGroups> {
       return new Promise(resolve => this.playerDetailResolvers.push(resolve));
     }
-    settleReport(code: string, report: WclReport): void { defined(this.reportResolvers.get(code))(report); }
-    settlePlayerDetails(groups: PlayerDetailGroups): void { defined(this.playerDetailResolvers.shift())(groups); }
+    settleReport(code: string, report: WclReport): void {
+      const resolve = this.reportResolvers.get(code);
+      assert.exists(resolve);
+      resolve(report);
+    }
+    settlePlayerDetails(groups: PlayerDetailGroups): void {
+      const resolve = this.playerDetailResolvers.shift();
+      assert.exists(resolve);
+      resolve(groups);
+    }
   }
 
   // Constructs the shell directly (no view attached) so loadReport runs without rendering the card templates.

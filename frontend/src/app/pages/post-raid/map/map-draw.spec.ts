@@ -1,11 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { EncounterPositions } from '../../../core/models/positioning.models';
 import { ActorTimeline } from './map.service';
 import {
   positionAt, toReferenceLocal, rowsToTimeline, playerRowsToTimeline,
   buildParseTimelines, parsePointsAt, parseTrailsOf,
 } from './map-draw';
-import { defined } from '../../../../testing/defined';
 
 const timeline = (samples: ActorTimeline['samples']): ActorTimeline => ({ id: 1, samples });
 
@@ -89,7 +88,8 @@ describe('playerRowsToTimeline', () => {
     const tl = playerRowsToTimeline(7, [[1, 250, 500, 3], [2, 0, 0, null]]);
     expect(tl.id).toBe(7);
     expect(tl.samples[0]).toEqual({ t: 1, x: 2.5, y: 5, mapID: 3 });
-    expect(defined(tl.samples[0]).facing).toBeUndefined();
+    assert.exists(tl.samples[0]);
+    expect(tl.samples[0].facing).toBeUndefined();
     expect(tl.samples[1]).toEqual({ t: 2, x: 0, y: 0, mapID: undefined });
   });
 });
@@ -110,8 +110,12 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
   it('builds one player + reference timeline pair per parse, scaled to yards', () => {
     const timelines = buildParseTimelines(positions, { kind: 'boss' });
     expect(timelines).toHaveLength(2);
-    expect(defined(defined(timelines[0]).player.samples[0]).x).toBeCloseTo(5, 6); // 500 raw -> 5 yards
-    expect(defined(defined(timelines[0]).ref.samples[0]).x).toBeCloseTo(0, 6);
+    assert.exists(timelines[0]);
+    assert.exists(timelines[0].player.samples[0]);
+    expect(timelines[0].player.samples[0].x).toBeCloseTo(5, 6); // 500 raw -> 5 yards
+    assert.exists(timelines[0]);
+    assert.exists(timelines[0].ref.samples[0]);
+    expect(timelines[0].ref.samples[0].x).toBeCloseTo(0, 6);
   });
 
   it('skips a parse whose selected reference is absent', () => {
@@ -135,8 +139,10 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
     const timelines = buildParseTimelines(positions, { kind: 'boss' });
     const trails = parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5);
     expect(trails).toHaveLength(2);
-    expect(defined(trails[0]).map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]);
+    assert.exists(trails[0]);
+    expect(trails[0].map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]);
     // player holds 5 yd ahead of the origin boss across the whole window.
-    expect(defined(trails[0]).every(p => p.dist === 5 && p.fwd === 5)).toBe(true);
+    assert.exists(trails[0]);
+    expect(trails[0].every(p => p.dist === 5 && p.fwd === 5)).toBe(true);
   });
 });

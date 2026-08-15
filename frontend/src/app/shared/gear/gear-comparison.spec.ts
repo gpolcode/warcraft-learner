@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import {
   buildBenchEnchantRows,
   buildBenchTrinketRows,
@@ -10,7 +10,6 @@ import {
 import { SpecTalents } from '../../core/models/talent.models';
 import { EncounterGearStats } from '../../core/models/encounter.models';
 import { CharacterGear } from '../../core/models/wcl.models';
-import { defined } from '../../../testing/defined';
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {
   return { talent_builds: [], trinkets: {}, enchants: {}, ...partial };
@@ -26,9 +25,12 @@ describe('buildBenchEnchantRows', () => {
       enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 80 }] },
     }));
     expect(rows).toHaveLength(1);
-    expect(defined(rows[0]).name).toBe('Sophic Devotion');
-    expect(defined(rows[0]).slotName).toBe('Main Hand');
-    expect(defined(rows[0]).pct).toBe(80);
+    assert.exists(rows[0]);
+    expect(rows[0].name).toBe('Sophic Devotion');
+    assert.exists(rows[0]);
+    expect(rows[0].slotName).toBe('Main Hand');
+    assert.exists(rows[0]);
+    expect(rows[0].pct).toBe(80);
   });
 
   it('falls back to Enchant #id when the bench enchant name is empty', () => {
@@ -36,7 +38,8 @@ describe('buildBenchEnchantRows', () => {
     const rows = buildBenchEnchantRows(stats({
       enchants: { 15: [{ id: 8041, name: '', pct: 90 }] },
     }));
-    expect(defined(rows[0]).name).toBe('Enchant #8041');
+    assert.exists(rows[0]);
+    expect(rows[0].name).toBe('Enchant #8041');
   });
 
   it('skips slots below the consensus share of top parsers', () => {
@@ -108,7 +111,8 @@ describe('buildBenchTrinketRows', () => {
       trinkets: { 12: [{ id: 193701, name: 'Box', icon: 'box', pct: 50 }] },
     }));
     expect(rows).toHaveLength(1);
-    expect(defined(rows[0]).slotLabel).toBe('Trinket 1');
+    assert.exists(rows[0]);
+    expect(rows[0].slotLabel).toBe('Trinket 1');
   });
 
   it('returns an empty array when stats or trinkets are absent', () => {

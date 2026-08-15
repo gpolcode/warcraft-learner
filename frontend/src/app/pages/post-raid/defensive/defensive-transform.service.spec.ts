@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
@@ -16,7 +16,6 @@ import { CLOAK_OF_SHADOWS, EVASION } from '../../../../testing/spell-ids';
 import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { ok } from '../../../core/result';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
-import { defined } from '../../../../testing/defined';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -61,7 +60,8 @@ describe('summarizeDefensiveCasts', () => {
     expect(summaries).toHaveLength(1);
     expect(summaries[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 2, first_cast_s: FIRST_USE_S, cast_pattern: 'hold' });
     // cast_index is 1-based (the 2nd use), matching rotation + the runtime's -1 decode.
-    expect(defined(summaries[0]).hold_windows).toEqual([{ cast_index: HELD_INDEX, actual_s: SECOND_USE_S, delay_s: EXPECTED_DELAY_S }]);
+    assert.exists(summaries[0]);
+    expect(summaries[0].hold_windows).toEqual([{ cast_index: HELD_INDEX, actual_s: SECOND_USE_S, delay_s: EXPECTED_DELAY_S }]);
   });
 
   it('falls back to explicit casts when no buff windows exist', () => {
@@ -85,8 +85,10 @@ describe('findParseDefensiveWindows', () => {
     expect(result).toHaveLength(1);
     // window damage = (500 + 250 absorbed) + 200 at the inclusive end = 950; parse total = 950 + 999 = 1949.
     expect(result[0]).toMatchObject({ defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, window_damage: 950, ref_game_id: BOSS_GAME_ID });
-    expect(defined(result[0]).pct_of_total).toBeCloseTo(950 / 1949);
-    expect(defined(result[0]).ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, damage: 750 });
+    assert.exists(result[0]);
+    expect(result[0].pct_of_total).toBeCloseTo(950 / 1949);
+    assert.exists(result[0]);
+    expect(result[0].ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, damage: 750 });
   });
 
   it('runs an open buff to fight end (no rulebook duration)', () => {
@@ -94,8 +96,10 @@ describe('findParseDefensiveWindows', () => {
     const result = findParseDefensiveWindows(
       timed([damageTaken(BOSS_HIT, 50, 400, { source: BOSS_ACTOR })], 0), 300, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
     );
-    expect(defined(result[0]).window_length_s).toBe(290); // 10 -> 300 (fight end), not 10 + duration
-    expect(defined(result[0]).window_damage).toBe(400);
+    assert.exists(result[0]);
+    expect(result[0].window_length_s).toBe(290); // 10 -> 300 (fight end), not 10 + duration
+    assert.exists(result[0]);
+    expect(result[0].window_damage).toBe(400);
   });
 
   it('includes a hit landing at the exact applybuff millisecond', () => {
@@ -107,7 +111,8 @@ describe('findParseDefensiveWindows', () => {
     const windows = buildAuraWindows(timed([buffApply], 0));
     const result = findParseDefensiveWindows(timed([hit], 0), FIGHT_DUR_S, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
     expect(result).toHaveLength(1);
-    expect(defined(result[0]).window_damage).toBe(HIT_DAMAGE);
+    assert.exists(result[0]);
+    expect(result[0].window_damage).toBe(HIT_DAMAGE);
   });
 });
 
@@ -202,8 +207,10 @@ describe('clusterDefensiveWindows', () => {
     const out = clusterDefensiveWindows([window(10, 0), window(11, 1)], 2);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ time_s: 10.5, defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, dmg_avg: 700, ref_game_id: BOSS_GAME_ID });
-    expect(defined(out[0]).common_defensives).toEqual(['Cloak of Shadows']);
-    expect(defined(out[0]).ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, avg_damage: 500, count: 2 });
+    assert.exists(out[0]);
+    expect(out[0].common_defensives).toEqual(['Cloak of Shadows']);
+    assert.exists(out[0]);
+    expect(out[0].ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, avg_damage: 500, count: 2 });
   });
 
   it('keeps a window in exactly half the parses, drops one just below (majority boundary)', () => {
@@ -265,8 +272,10 @@ describe('aggregateDefensiveBenchmarks', () => {
     const parseC: ParseDefensiveSummary[] = []; // this parse never used Cloak
     const TOTAL_PARSES = 3, USERS = 2;
     const out = aggregateDefensiveBenchmarks([parseA, parseB, parseC], [CLOAK]);
-    expect(defined(out.perDefensiveBenchmarks['Cloak of Shadows']).sample_count).toBe(TOTAL_PARSES);   // total
-    expect(defined(out.perDefensiveBenchmarks['Cloak of Shadows']).used_sample_count).toBe(USERS);     // users-only
+    assert.exists(out.perDefensiveBenchmarks['Cloak of Shadows']);
+    expect(out.perDefensiveBenchmarks['Cloak of Shadows'].sample_count).toBe(TOTAL_PARSES);   // total
+    assert.exists(out.perDefensiveBenchmarks['Cloak of Shadows']);
+    expect(out.perDefensiveBenchmarks['Cloak of Shadows'].used_sample_count).toBe(USERS);     // users-only
     expect(out.topDefensivesSummary).toEqual([{ spell_id: CLOAK_OF_SHADOWS, avg_uses: EXPECTED_AVG_USES, min_uses: USES_A, max_uses: USES_B }]);
   });
 });
