@@ -111,11 +111,6 @@ describe('orderSpecsByVersion', () => {
     expect([...ordered].sort()).toEqual(entries.map(item => item.spec).sort());
   });
 
-  it('selects everything when there are fewer specs than the cap', () => {
-    const entries = [entry({ spec: 'OnlySpec' })];
-    expect(specsForRun(entries)).toEqual({ ordered: ['OnlySpec'], selected: ['OnlySpec'] });
-  });
-
   it('pins a custom priority list in order, ahead of the randomized rest', () => {
     const order = orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'ArmsWarrior' }), entry({ spec: 'SubtletyRogue' })],

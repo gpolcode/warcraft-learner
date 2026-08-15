@@ -10,8 +10,8 @@ import { ok, missing, transient, permanent, type Result } from '../core/result';
 const rankings = (...rows: [string, number][]): SignatureRanking[] =>
   rows.map(([report_code, fight_id]) => ({ report_code, fight_id }));
 
-const INGESTED_AT = '2026-08-15T09:30:00.000Z';
-const STAMP: IngestStamp = { version: 1, ingestedAt: INGESTED_AT };
+const INGESTED_AT_S = 1776245400;
+const STAMP: IngestStamp = { version: 1, ingestedAtS: INGESTED_AT_S };
 
 describe('encounterSignature', () => {
   it('produces a 16-char lowercase hex hash', () => {
@@ -230,11 +230,8 @@ describe('readStoredVersion', () => {
 });
 
 describe('readStoredIngestedAt', () => {
-  it('reads ingested_at off a stamped file', () => {
-    expect(readStoredIngestedAt({ ingest_version: 1, ingested_at: INGESTED_AT })).toBe(INGESTED_AT);
-  });
-
-  it('reports null for a file written without the stamp time, so the report shows it as unknown', () => {
+  it('reads ingested_at_s off a stamped file, null when the file predates the stamp', () => {
+    expect(readStoredIngestedAt({ ingest_version: 1, ingested_at_s: INGESTED_AT_S })).toBe(INGESTED_AT_S);
     expect(readStoredIngestedAt({ ingest_version: 1 })).toBeNull();
   });
 });
@@ -273,15 +270,15 @@ describe('signatureMatches', () => {
 });
 
 describe('stampSignature', () => {
-  it('adds source_signature + ingest_version + ingested_at without mutating the original', () => {
+  it('adds source_signature + ingest_version + ingested_at_s without mutating the original', () => {
     const original = { spec: 'X', encounter_id: 1 };
     const stamped = stampSignature(original, 'sig', STAMP);
     expect(stamped).toEqual({
-      spec: 'X', encounter_id: 1, source_signature: 'sig', ingest_version: 1, ingested_at: INGESTED_AT,
+      spec: 'X', encounter_id: 1, source_signature: 'sig', ingest_version: 1, ingested_at_s: INGESTED_AT_S,
     });
     expect(original).not.toHaveProperty('source_signature');
     expect(original).not.toHaveProperty('ingest_version');
-    expect(original).not.toHaveProperty('ingested_at');
+    expect(original).not.toHaveProperty('ingested_at_s');
   });
 
   it('round-trips: a stamped file matches its own signature, version and stamp time', () => {
@@ -289,7 +286,7 @@ describe('stampSignature', () => {
     const stamped = stampSignature({ data: true }, sig, STAMP);
     expect(signatureMatches(readStoredSignature(stamped), sig)).toBe(true);
     expect(readStoredVersion(stamped)).toBe(1);
-    expect(readStoredIngestedAt(stamped)).toBe(INGESTED_AT);
+    expect(readStoredIngestedAt(stamped)).toBe(INGESTED_AT_S);
   });
 });
 
@@ -337,7 +334,7 @@ describe('stampBurstFile', () => {
     const unstamped = stampBurstFile(data, SIGNATURE, STAMP, INACCESSIBLE, withSibling(transient('WCL request failed')));
     for (const file of [stamped, unstamped]) {
       expect(readStoredVersion(file)).toBe(VERSION);
-      expect(readStoredIngestedAt(file)).toBe(INGESTED_AT);
+      expect(readStoredIngestedAt(file)).toBe(INGESTED_AT_S);
       expect(file.inaccessible_parses).toEqual(INACCESSIBLE);
     }
   });
@@ -346,6 +343,6 @@ describe('stampBurstFile', () => {
     stampBurstFile(data, SIGNATURE, STAMP, INACCESSIBLE, ALL_OK);
     expect(data).not.toHaveProperty('source_signature');
     expect(data).not.toHaveProperty('ingest_version');
-    expect(data).not.toHaveProperty('ingested_at');
+    expect(data).not.toHaveProperty('ingested_at_s');
   });
 });

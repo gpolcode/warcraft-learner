@@ -27,7 +27,7 @@ import {
   stampSignature, stampBurstFile, readInaccessibleParses,
   type SignatureRanking, type SignedFile, type IngestStamp,
 } from './signature';
-import { formatSpecReport, parseIngestedAt, SELECTED_MARKER, type SpecReportRow } from './spec-report';
+import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from './spec-report';
 import type { WclRateLimitData, IngestEncounter, WclGameClass } from './models/wcl.models';
 
 const TOP_N = 10;
@@ -45,6 +45,10 @@ export interface IngestRunSummary {
   failed: { spec: string; message: string }[];
   budgetStopped: boolean;
   fatal?: string;
+}
+
+function nowS(): number {
+  return Math.floor(Date.now() / 1000);
 }
 
 function publishSummary(summary: IngestRunSummary): void {
@@ -210,17 +214,17 @@ export class IngestOrchestratorService {
       const versions = stamps.map(file => (file ? readStoredVersion(file) : null));
       const storedVersions = versions.filter((stored): stored is number => stored !== null);
       const storedTimes = stamps
-        .map(file => parseIngestedAt(file ? readStoredIngestedAt(file) : null))
+        .map(file => (file ? readStoredIngestedAt(file) : null))
         .filter((stored): stored is number => stored !== null);
       const entry: SpecOrderEntry = {
         spec,
         dataCount: burstFiles.length,
         onCurrentVersion: burstFiles.length > 0 && versions.every(stored => stored === INGEST_VERSION),
       };
-      // The spec's worst version, but its most recent write - "still on v23" and "last touched 3d ago".
+      // Worst version but most recent write: "still on v23", "last ingested 3h ago".
       const displayVersion = storedVersions.length ? Math.min(...storedVersions) : null;
-      const displayIngestedAt = storedTimes.length ? Math.max(...storedTimes) : null;
-      return { entry, displayVersion, displayIngestedAt };
+      const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
+      return { entry, displayVersion, displayIngestedAtS };
     }));
     const prioritySpecs = parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
     const { ordered, selected } = specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
@@ -229,11 +233,11 @@ export class IngestOrchestratorService {
     const rows: SpecReportRow[] = ordered.map(spec => ({
       spec,
       version: displayBySpec.get(spec)?.displayVersion ?? null,
-      ingestedAtMs: displayBySpec.get(spec)?.displayIngestedAt ?? null,
+      ingestedAtS: displayBySpec.get(spec)?.displayIngestedAtS ?? null,
       selected: selectedSpecs.has(spec),
     }));
     console.log(
-      `Specs (old version first, ${SELECTED_MARKER} = ingested this run):\n${formatSpecReport(rows, Date.now())}`,
+      `Specs (old version first, ${SELECTED_MARKER} = ingested this run):\n${formatSpecReport(rows, nowS())}`,
     );
     return selected;
   }
@@ -325,7 +329,7 @@ export class IngestOrchestratorService {
     const inaccessibleCodes = new Set(this.wclTransport.takeInaccessibleCodes());
     const failedCodes = new Set(this.wclTransport.takeFailedCodes());
     const { signature, inaccessibleParses } = signatureAfterFetch(poolRows, inaccessibleCodes, failedCodes, version, TOP_N);
-    const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAt: new Date().toISOString() };
+    const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
     // Skip on any failure so a slice is never overwritten with partial data.
     const skipNote = (slice: string, error: LoadError): string =>
