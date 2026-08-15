@@ -9,7 +9,6 @@ import { SelectionStore } from '../../core/services/selection-store';
 import { LiveReportSyncService } from '../../core/services/live-report-sync';
 import { MapFeatureService } from './map/map.service';
 import { LiveCaptureFeatureService } from './live/live-capture.service';
-import { flushAsync } from '../../../testing/flush-async';
 import {
   PostRaidComponent,
   specOf, extractCode, extractFightId, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId,
@@ -437,7 +436,6 @@ describe('PostRaidComponent paste', () => {
     return { getReport, vm: TestBed.inject(PostRaidComponent) as unknown as PasteHandle };
   }
 
-  /** A paste of `text` over `[start, end)` of a field already holding `value`. */
   function paste(vm: PasteHandle, text: string, value = '', start = value.length, end = start): void {
     const input = { value, selectionStart: start, selectionEnd: end } as HTMLInputElement;
     const event = { clipboardData: { getData: () => text }, preventDefault: vi.fn() } as unknown as ClipboardEvent;
@@ -449,7 +447,7 @@ describe('PostRaidComponent paste', () => {
 
     paste(vm, PASTED_URL);
 
-    // Synchronous: loadReport reads the control before its first await, so the pasted value is already in hand.
+    // No wait: loadReport reads the control before its first await, which is the whole point here.
     expect(getReport).toHaveBeenCalledWith(REPORT_CODE);
     expect(vm.reportControl.value).toBe(PASTED_URL);
   });
@@ -640,13 +638,15 @@ describe('PostRaidComponent live-sync poll', () => {
   it('drops an in-flight poll when live sync is switched off before its report fetch resolves', async () => {
     const { comp, wcl, liveCapture } = mountPostRaid();
     const pendingReport = defer<WclReport>();
-    wcl.getReportFights.mockResolvedValue([pull1(), pull2()]);
+    const fightsProbe = Promise.resolve([pull1(), pull2()]);
+    wcl.getReportFights.mockReturnValue(fightsProbe);
     wcl.getReport.mockReturnValue(pendingReport.promise);
     seedLoaded(comp, liveCapture);
 
     const pollPromise = comp._pollOnce();
     const checkingStatus = liveCapture.status();
-    await flushAsync();
+    // The poll resumed from this probe before we reach here, so its report fetch has already gone out.
+    await fightsProbe;
     // Exactly one poll runs (the pipeline is torn down), so the guard is the only thing under test.
     expect(wcl.getReportFights).toHaveBeenCalledTimes(1);
     expect(wcl.getReport).toHaveBeenCalledWith(REPORT_A);
@@ -742,19 +742,23 @@ describe('PostRaidComponent selection latest-wins', () => {
   class FakeWclApi {
     private readonly detailResolvers = new Map<number, (groups: PlayerDetailGroups) => void>();
     private reportResolver: ((report: WclReport) => void) | null = null;
+    private reportFetch: Promise<WclReport> | null = null;
     getReport(): Promise<WclReport> {
-      return new Promise(resolve => { this.reportResolver = resolve; });
+      this.reportFetch = new Promise(resolve => { this.reportResolver = resolve; });
+      return this.reportFetch;
     }
     getPlayerDetails(_code: string, fightId: number): Promise<PlayerDetailGroups> {
       return new Promise(resolve => this.detailResolvers.set(fightId, resolve));
     }
-    settleReport(): void {
+    /** Awaiting the parked fetch resumes the caller first, so the load has moved on by the time this returns. */
+    async settleReport(): Promise<void> {
       const resolve = this.reportResolver;
       assert.exists(resolve);
       resolve({
         title: '', startTime: 0, fights: pulls(),
         masterData: { actors: [{ id: PLAYER_ID, name: PLAYER_NAME, subType: CLASS_NAME, server: '' }], enemies: [], abilities: [] },
       });
+      await this.reportFetch;
     }
     settleDetails(fightId: number, groups: PlayerDetailGroups): void {
       const resolve = this.detailResolvers.get(fightId);
@@ -839,9 +843,7 @@ describe('PostRaidComponent selection latest-wins', () => {
     await earlier;
     expect(vm.spec()).toBe('');
 
-    api.settleReport();
-    // `loading` stays pending until the details it goes on to request settle, so only a flush can reach that point.
-    await flushAsync();
+    await api.settleReport();
     api.settleDetails(LATER_PULL_ID, LATER_DETAILS);
     await Promise.all([earlier, loading]);
 
@@ -872,17 +874,22 @@ describe('PostRaidComponent loadReport latest-wins', () => {
 
   class FakeWclApi {
     private readonly reportResolvers = new Map<string, (report: WclReport) => void>();
+    private readonly reportFetches = new Map<string, Promise<WclReport>>();
     private readonly playerDetailResolvers: ((groups: PlayerDetailGroups) => void)[] = [];
     getReport(code: string): Promise<WclReport> {
-      return new Promise(resolve => this.reportResolvers.set(code, resolve));
+      const fetch = new Promise<WclReport>(resolve => this.reportResolvers.set(code, resolve));
+      this.reportFetches.set(code, fetch);
+      return fetch;
     }
     getPlayerDetails(): Promise<PlayerDetailGroups> {
       return new Promise(resolve => this.playerDetailResolvers.push(resolve));
     }
-    settleReport(code: string, report: WclReport): void {
+    /** Awaiting the parked fetch resumes the caller first, so the load has moved on by the time this returns. */
+    async settleReport(code: string, report: WclReport): Promise<void> {
       const resolve = this.reportResolvers.get(code);
       assert.exists(resolve);
       resolve(report);
+      await this.reportFetches.get(code);
     }
     settlePlayerDetails(groups: PlayerDetailGroups): void {
       const resolve = this.playerDetailResolvers.shift();
@@ -918,14 +925,13 @@ describe('PostRaidComponent loadReport latest-wins', () => {
     const loadB = loadReport(); // parks on getReport(B)
 
     // B's report resolves first and advances to its still-pending spec resolve.
-    api.settleReport(CODE_B, reportB);
-    await flushAsync();
+    await api.settleReport(CODE_B, reportB);
     expect(reportCode()).toBe(CODE_B);
     expect(loadingReport()).toBe(true);
 
-    // A's report resolves late: neither its state writes nor its finally may land.
-    api.settleReport(CODE_A, reportA);
-    await flushAsync();
+    // A's report resolves late and A runs to completion: neither its state writes nor its finally may land.
+    await api.settleReport(CODE_A, reportA);
+    await loadA;
     expect(reportCode()).toBe(CODE_B);
     expect(reportStartTime()).toBe(REPORT_B_START);
     expect(fights().map(f => f.id)).toEqual([FIGHT_B_ID]);
@@ -933,7 +939,7 @@ describe('PostRaidComponent loadReport latest-wins', () => {
 
     // B finishes: its own finally clears the spinner and its spec lands.
     api.settlePlayerDetails(detailsB);
-    await flushAsync();
+    await loadB;
     expect(loadingReport()).toBe(false);
     expect(spec()).toBe(EXPECTED_SPEC);
     expect(reportCode()).toBe(CODE_B);

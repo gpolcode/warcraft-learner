@@ -287,9 +287,8 @@ export class PostRaidComponent {
 
   protected onPaste(event: ClipboardEvent, input: HTMLInputElement): void {
     const pasted = event.clipboardData?.getData('text');
-    // A files-only paste reports empty text: leave it to the browser rather than re-running a load on the unchanged value.
     if (!pasted) return;
-    // Applying the paste here instead of letting it commit natively is what lets loadReport() read the final value in this same tick.
+    // Applied here rather than natively so loadReport() reads the final value in this same tick.
     event.preventDefault();
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? start;

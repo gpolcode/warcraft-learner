@@ -9,7 +9,6 @@ const READY_TIMEOUT_MS = 5 * 60_000;
 const READY_POLL_MS = 500;
 const DONE_POLL_MS = 1_000;
 const DONE_TIMEOUT_MS = 15 * 60_000;
-// A child that ignores SIGTERM would otherwise hold the run open forever.
 const KILL_GRACE_MS = 5_000;
 
 const children = [];

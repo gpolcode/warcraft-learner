@@ -7,7 +7,7 @@ import { NorthernSkyExportComponent } from './northern-sky-export';
 import { NorthernSkyFeatureService } from './northern-sky.service';
 import { NorthernSkyAbility, NorthernSkyBench } from './northern-sky-data-source';
 import { SHADOW_BLADES, EVASION } from '../../../../testing/spell-ids';
-import { flushAsync } from '../../../../testing/flush-async';
+import { whenStable } from '../../../../testing/when-stable';
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3009;
@@ -40,7 +40,7 @@ describe('NorthernSkyExportComponent load states', () => {
   it('surfaces a retry error when the bench load hits a transient outage', async () => {
     const { vm } = mount(async () => transient(OUTAGE_MESSAGE));
 
-    await flushAsync();
+    await whenStable();
 
     expect((vm['error'] as () => LoadError | null)()).toEqual({ kind: 'transient', message: OUTAGE_MESSAGE });
     expect((vm['available'] as () => boolean)()).toBe(false);
@@ -49,7 +49,7 @@ describe('NorthernSkyExportComponent load states', () => {
   it('waits without an error when the encounter has no bench yet', async () => {
     const { vm } = mount(async () => missing(NOT_INGESTED_MESSAGE));
 
-    await flushAsync();
+    await whenStable();
 
     expect((vm['error'] as () => LoadError | null)()).toBeNull();
     expect((vm['available'] as () => boolean)()).toBe(false);
@@ -58,7 +58,7 @@ describe('NorthernSkyExportComponent load states', () => {
   it('waits without an error when the bench carries no abilities', async () => {
     const { vm } = mount(async () => ok(bench()));
 
-    await flushAsync();
+    await whenStable();
 
     expect((vm['error'] as () => LoadError | null)()).toBeNull();
     expect((vm['available'] as () => boolean)()).toBe(false);
@@ -67,7 +67,7 @@ describe('NorthernSkyExportComponent load states', () => {
   it('offers the export once the bench carries at least one ability', async () => {
     const { vm } = mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })));
 
-    await flushAsync();
+    await whenStable();
 
     expect((vm['error'] as () => LoadError | null)()).toBeNull();
     expect((vm['available'] as () => boolean)()).toBe(true);
@@ -76,7 +76,7 @@ describe('NorthernSkyExportComponent load states', () => {
   it('clears a previous error once the bench loads successfully', async () => {
     const { vm } = mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })));
 
-    await flushAsync();
+    await whenStable();
 
     expect((vm['error'] as () => LoadError | null)()).toBeNull();
   });
@@ -86,7 +86,7 @@ describe('NorthernSkyExportComponent copyNote', () => {
   it('shows the confirmation and not the failure state on a successful copy', async () => {
     const { vm } = mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })), true);
 
-    await flushAsync();
+    await whenStable();
     (vm['copyNote'])();
 
     expect((vm['copied'] as () => boolean)()).toBe(true);
@@ -96,7 +96,7 @@ describe('NorthernSkyExportComponent copyNote', () => {
   it('shows the failure state and not the confirmation when the clipboard write fails', async () => {
     const { vm } = mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })), false);
 
-    await flushAsync();
+    await whenStable();
     (vm['copyNote'])();
 
     expect((vm['copied'] as () => boolean)()).toBe(false);

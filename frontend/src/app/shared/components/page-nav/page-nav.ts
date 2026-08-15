@@ -73,7 +73,7 @@ export class PageNavComponent {
     effect(onCleanup => {
       this.railCollapsed();
       const frame = requestAnimationFrame(() => this.container()?.updateContentMargins());
-      // Without this a rapid toggle stacks frames, and one surviving destruction measures a torn-down container.
+      // Without this a frame surviving destruction measures a torn-down container.
       onCleanup(() => { cancelAnimationFrame(frame); });
     });
   }

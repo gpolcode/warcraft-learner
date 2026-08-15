@@ -7,7 +7,6 @@ import {
   SpecMetaService, SpecMeta,
   buildUniverse, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
 } from './spec-meta';
-import { flushAsync } from '../../../testing/flush-async';
 
 // The spec universe is hydrated at runtime from the WCL-derived spec-meta.json, so these tests seed fixed specs.
 const SUBTLETY = {
@@ -38,13 +37,14 @@ describe('SpecMetaService', () => {
 
   it('keeps resolve pending until the first hydration lands', async () => {
     const service = serviceWith(() => new Promise(() => undefined));
-    let resolved: unknown = 'pending';
-    void service.resolve('SubtletyRogue').then(meta => { resolved = meta; });
-    await flushAsync();
-    expect(resolved).toBe('pending');
+    const STILL_PENDING = Symbol('still pending');
+    const resolving = service.resolve('SubtletyRogue');
+
+    // Racing an already-resolved promise settles on the next microtask, so it wins iff `resolving` has not.
+    await expect(Promise.race([resolving, Promise.resolve(STILL_PENDING)])).resolves.toBe(STILL_PENDING);
+
     service.hydrate([SUBTLETY]);
-    await flushAsync();
-    expect(resolved).toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
+    await expect(resolving).resolves.toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
   });
 
   it('resolves undefined for an unknown spec once hydrated', async () => {
