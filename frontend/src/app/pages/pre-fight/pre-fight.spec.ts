@@ -10,6 +10,7 @@ import { EncounterSelectionService } from './encounter-selection.service';
 import { MapFeatureService } from '../post-raid/map/map.service';
 import { SelectionStore } from '../../core/services/selection-store';
 import { DataFileApiService } from '../../core/services/data-file-api';
+import { flushAsync } from '../../../testing/flush-async';
 
 // The template gates every feature card on `@if (selectedEncId())`, so 0 closes it.
 const NO_ENCOUNTER = 0;
@@ -109,8 +110,6 @@ describe('PreFightComponent encounter load latest-wins', () => {
     }
   }
 
-  const flush = (): Promise<void> => new Promise(resolve => setTimeout(resolve, 0));
-
   function setup(): { api: ParkedEncounterSelection; vm: Record<string, unknown> } {
     const api = new ParkedEncounterSelection();
     TestBed.configureTestingModule({
@@ -138,12 +137,12 @@ describe('PreFightComponent encounter load latest-wins', () => {
 
     selectSpec(vm, SLOW_SPEC);
     api.settle(SLOW_SPEC, [SLOW_ENCOUNTER]);
-    await flush();
+    await flushAsync();
     expect(encounterIds(vm)).toEqual([SLOW_ENCOUNTER.id]);
 
     selectSpec(vm, NEWER_SPEC);
     api.settle(NEWER_SPEC, [NEWER_ENCOUNTER]);
-    await flush();
+    await flushAsync();
 
     expect(encounterIds(vm)).toEqual([NEWER_ENCOUNTER.id]);
     expect(encEnabled(vm)).toBe(true);
@@ -156,9 +155,9 @@ describe('PreFightComponent encounter load latest-wins', () => {
     selectSpec(vm, SLOW_SPEC);
     selectSpec(vm, NEWER_SPEC);
     api.settle(NEWER_SPEC, [NEWER_ENCOUNTER]);
-    await flush();
+    await flushAsync();
     api.settle(SLOW_SPEC, [SLOW_ENCOUNTER]);
-    await flush();
+    await flushAsync();
 
     expect(encounterIds(vm)).toEqual([NEWER_ENCOUNTER.id]);
     expect(encEnabled(vm)).toBe(true);
@@ -169,11 +168,11 @@ describe('PreFightComponent encounter load latest-wins', () => {
     const { api, vm } = setup();
 
     selectSpec(vm, NEWER_SPEC);
-    await flush();
+    await flushAsync();
     expect(loadingEncounters(vm)).toBe(true);
 
     api.settle(NEWER_SPEC, [NEWER_ENCOUNTER]);
-    await flush();
+    await flushAsync();
     expect(loadingEncounters(vm)).toBe(false);
   });
 });

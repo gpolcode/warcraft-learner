@@ -7,6 +7,7 @@ import {
   SpecMetaService, SpecMeta,
   buildUniverse, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
 } from './spec-meta';
+import { flushAsync } from '../../../testing/flush-async';
 
 // The spec universe is hydrated at runtime from the WCL-derived spec-meta.json, so these tests seed fixed specs.
 const SUBTLETY = {
@@ -29,8 +30,6 @@ function serviceWith(getSpecMeta: () => Promise<Result<SpecMeta[]>>): SpecMetaSe
   return TestBed.inject(SpecMetaService);
 }
 
-const microtask = () => new Promise(resolve => setTimeout(resolve));
-
 describe('SpecMetaService', () => {
   it('hydrates itself from the data file on first injection', async () => {
     const service = serviceWith(async () => ok([SUBTLETY]));
@@ -41,10 +40,10 @@ describe('SpecMetaService', () => {
     const service = serviceWith(() => new Promise(() => undefined));
     let resolved: unknown = 'pending';
     void service.resolve('SubtletyRogue').then(meta => { resolved = meta; });
-    await microtask();
+    await flushAsync();
     expect(resolved).toBe('pending');
     service.hydrate([SUBTLETY]);
-    await microtask();
+    await flushAsync();
     expect(resolved).toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
   });
 

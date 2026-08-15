@@ -285,9 +285,16 @@ export class PostRaidComponent {
     takeUntilDestroyed(),
   ).subscribe();
 
-  protected onPaste(): void {
-    // Defers a tick so loadReport() reads the control's updated value, since the paste commits after this event fires.
-    setTimeout(() => void this.loadReport());
+  protected onPaste(event: ClipboardEvent, input: HTMLInputElement): void {
+    const pasted = event.clipboardData?.getData('text');
+    // A files-only paste reports empty text: leave it to the browser rather than re-running a load on the unchanged value.
+    if (!pasted) return;
+    // Applying the paste here instead of letting it commit natively is what lets loadReport() read the final value in this same tick.
+    event.preventDefault();
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    this.reportControl.setValue(input.value.slice(0, start) + pasted + input.value.slice(end));
+    void this.loadReport();
   }
 
   // Folding `missing` to the notice keeps the shell exhaustive over the taxonomy without leaking a raw string.
