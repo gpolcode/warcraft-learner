@@ -124,7 +124,7 @@ describe('buildFights', () => {
   it('derives a one-decimal duration in seconds from the millisecond span', () => {
     // 94_567 ms -> 945.67 -> round 946 -> 94.6: a non-round span so the rounding step is exercised.
     const [f] = buildFights([fight({ id: 1, encounterID: 100, startTime: 1000, endTime: 95_567 })]);
-    expect(f.duration_s).toBe(94.6);
+    expect(f!.duration_s).toBe(94.6);
   });
 
   it('handles a missing/undefined fight list', () => {
@@ -134,7 +134,7 @@ describe('buildFights', () => {
 });
 
 describe('buildPlayers', () => {
-  const actors = (a: WclReport['masterData']['actors']) => buildPlayers(a);
+  const actors = (a: NonNullable<WclReport['masterData']>['actors']) => buildPlayers(a);
 
   it('maps actors to players, defaults an unknown spec, and sorts by name', () => {
     const players = actors([

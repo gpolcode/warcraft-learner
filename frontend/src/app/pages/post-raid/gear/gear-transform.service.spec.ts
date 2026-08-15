@@ -206,8 +206,8 @@ describe('withTalentDiffs', () => {
 
   it('bakes each alt build\'s diff against the most common build, leaving the most common one empty', () => {
     const out = withTalentDiffs(builds(), ok(talents));
-    expect(out[0].diff).toEqual([]);
-    expect(out[1].diff).toEqual([
+    expect(out[0]!.diff).toEqual([]);
+    expect(out[1]!.diff).toEqual([
       { kind: 'added', talent: talents[11] },
       { kind: 'dropped', talent: talents[10] },
     ]);
@@ -297,7 +297,7 @@ describe('GearTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.talent_builds[1].diff).toEqual([
+    expect(bench.value.talent_builds[1]!.diff).toEqual([
       { kind: 'added', talent: talents[ALT_ENTRY] },
       { kind: 'dropped', talent: talents[BASELINE_ENTRY] },
     ]);
@@ -313,7 +313,7 @@ describe('GearTransformService (live, in-browser)', () => {
     });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
-    if (bench.ok) expect(bench.value.talent_builds.every(build => build.diff.length === 0)).toBe(true);
+    if (bench.ok) expect(bench.value.talent_builds.every(build => (build.diff ?? []).length === 0)).toBe(true);
   });
 
   it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {

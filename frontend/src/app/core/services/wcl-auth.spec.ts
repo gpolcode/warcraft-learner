@@ -99,7 +99,7 @@ describe('WclAuthService', () => {
 
     const requests = httpMock.match(req => req.url === WCL_TOKEN_URL);
     expect(requests.length).toBe(1);
-    requests[0].flush({ access_token: FIRST_TOKEN, expires_in: TOKEN_LIFETIME_S });
+    requests[0]!.flush({ access_token: FIRST_TOKEN, expires_in: TOKEN_LIFETIME_S });
 
     expect(await first).toBe(FIRST_TOKEN);
     expect(await second).toBe(FIRST_TOKEN);

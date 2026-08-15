@@ -44,7 +44,7 @@ describe('analyzeDefensives', () => {
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
-    expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 15, dmg_during: 500 });
+    expect(out[0]!.windows[0]).toMatchObject({ start_s: 10, end_s: 15, dmg_during: 500 });
   });
 
   // Composition only: back-fill semantics are specced on buildAuraWindows.
@@ -56,7 +56,7 @@ describe('analyzeDefensives', () => {
       300,
     );
     expect(out[0]).toMatchObject({ uses: 1, cast_times_s: [0] });
-    expect(out[0].windows[0]).toMatchObject({ start_s: 0, end_s: REMOVE_S });
+    expect(out[0]!.windows[0]).toMatchObject({ start_s: 0, end_s: REMOVE_S });
   });
 });
 
@@ -186,8 +186,8 @@ describe('computePlayerDefensiveWindows', () => {
     ];
     const out = computePlayerDefensiveWindows(top, timed([damageTaken(700, 12, 400, { absorbed: 150 }), damageTaken(701, 14, 100), damageTaken(700, 15, 999)], 0));
     // (400 + 150 absorbed) + 100 = 650; the event at exactly 15 (== end) is excluded (half-open).
-    expect(out[0].window_damage).toBe(650);
-    expect(out[0].ability_breakdown![0]).toMatchObject({ spell_id: 700, damage: 550 });
+    expect(out[0]!.window_damage).toBe(650);
+    expect(out[0]!.ability_breakdown![0]).toMatchObject({ spell_id: 700, damage: 550 });
   });
 
   it('folds melee and synthetic-negative ability ids to normalized spell ids so the bench detail join resolves', () => {
@@ -216,7 +216,7 @@ describe('computePlayerDefensiveWindows', () => {
       damageTaken(SYNTH_NEG_ID_B, WIN_START_S + 3, SYNTH_HIT_B),
     ], 0));
 
-    const breakdown = playerWindow.ability_breakdown!;
+    const breakdown = playerWindow!.ability_breakdown!;
     expect(breakdown).toContainEqual({ spell_id: WOW_AUTO_ATTACK_SPELL_ID, damage: MELEE_TOTAL });
     expect(breakdown).toContainEqual({ spell_id: WCL_SYNTHETIC_SOURCE_FALLBACK_ID, damage: SYNTH_TOTAL });
 
@@ -224,7 +224,7 @@ describe('computePlayerDefensiveWindows', () => {
       [WOW_AUTO_ATTACK_SPELL_ID]: { icon: 'melee', name: 'Auto Attack' },
       [WCL_SYNTHETIC_SOURCE_FALLBACK_ID]: { icon: '', name: 'Unknown Source' },
     };
-    const rows = defensiveDetailRows(top[0].ability_breakdown, playerWindow, abilities);
+    const rows = defensiveDetailRows(top[0]!.ability_breakdown, playerWindow!, abilities);
     expect(rows.find(row => row.spellId === WOW_AUTO_ATTACK_SPELL_ID)?.playerPct).toBe(MELEE_TOTAL);
     expect(rows.find(row => row.spellId === WCL_SYNTHETIC_SOURCE_FALLBACK_ID)?.playerPct).toBe(SYNTH_TOTAL);
   });
@@ -235,15 +235,15 @@ describe('defensiveDetailRows', () => {
     // 900 is intentionally absent from the ability map, so the guarded lookup must not throw.
     const breakdown = [{ spell_id: 900, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }];
     const rows = defensiveDetailRows(breakdown, null, {});
-    expect(rows[0].label).toBe('Ability #900');
-    expect(rows[0].icon).toBe('');
+    expect(rows[0]!.label).toBe('Ability #900');
+    expect(rows[0]!.icon).toBe('');
   });
 
   it('resolves an ability present in the map to its baked name and icon', () => {
     const breakdown = [{ spell_id: 700, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }];
     const rows = defensiveDetailRows(breakdown, null, { 700: { icon: 'hit', name: 'Boss Hit' } });
-    expect(rows[0].label).toBe('Boss Hit');
-    expect(rows[0].icon).toBe('hit');
+    expect(rows[0]!.label).toBe('Boss Hit');
+    expect(rows[0]!.icon).toBe('hit');
   });
 });
 
@@ -334,11 +334,11 @@ describe('buildDefensiveWindows', () => {
     // Covered the window (span 30-35); 1150 is within the band (max 1200 + stddev 100 = 1300) -> good, annotated covered.
     const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, uses: 1, windows: [{ start_s: 30, end_s: 35, dmg_during: 700 }] }];
     const { windows, anchors, clipAnchors } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: playerDef, fightDurationS: 300, abilities });
-    expect(windows[0].overview.playerPct).toBe(1150);
-    expect(windows[0].status).toBe('good');
-    expect(windows[0].labels).toContain('covered');
-    expect(windows[0].spells).toEqual([{ id: CLOAK_OF_SHADOWS, icon: 'cloak', name: 'Cloak of Shadows' }]);
-    expect(windows[0].detailRows[0]).toMatchObject({ spellId: 700, label: 'Boss Hit', icon: 'hit', playerPct: 700, topAvg: 600 });
+    expect(windows[0]!.overview.playerPct).toBe(1150);
+    expect(windows[0]!.status).toBe('good');
+    expect(windows[0]!.labels).toContain('covered');
+    expect(windows[0]!.spells).toEqual([{ id: CLOAK_OF_SHADOWS, icon: 'cloak', name: 'Cloak of Shadows' }]);
+    expect(windows[0]!.detailRows[0]).toMatchObject({ spellId: 700, label: 'Boss Hit', icon: 'hit', playerPct: 700, topAvg: 600 });
     expect(anchors[0]).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
     expect(clipAnchors[0]).toEqual({ timeS: 30, windowLengthS: 5, key: 'defensive-0' });
   });
@@ -347,22 +347,22 @@ describe('buildDefensiveWindows', () => {
     // 1500 > band edge (max 1200 + stddev 100 = 1300); no covering defensive -> bad.
     const player: PlayerBurstWindow[] = [{ time_s: 30, window_damage: 1500, ability_breakdown: [] }];
     const { windows } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: 300, abilities });
-    expect(windows[0].status).toBe('bad');
-    expect(windows[0].labels).toContain('defensive needed, unused');
+    expect(windows[0]!.status).toBe('bad');
+    expect(windows[0]!.labels).toContain('defensive needed, unused');
   });
 
   it('keeps an uncovered within-band window good, annotated no defensive used', () => {
     // 900 is within the band; not pressing a defensive when damage stayed acceptable is not a miss.
     const player: PlayerBurstWindow[] = [{ time_s: 30, window_damage: 900, ability_breakdown: [] }];
     const { windows } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: 300, abilities });
-    expect(windows[0].status).toBe('good');
-    expect(windows[0].labels).toContain('no defensive used');
+    expect(windows[0]!.status).toBe('good');
+    expect(windows[0]!.labels).toContain('no defensive used');
   });
 
   it('mutes and drops player data for a window the fight never reached', () => {
     const { windows } = buildDefensiveWindows({ topWindows: [window], playerWindows: [], playerDefensives: [], fightDurationS: 5, abilities });
-    expect(windows[0].status).toBe('muted');
-    expect(windows[0].overview.playerPct).toBeNull();
+    expect(windows[0]!.status).toBe('muted');
+    expect(windows[0]!.overview.playerPct).toBeNull();
   });
 });
 
@@ -407,8 +407,8 @@ describe('buildDefensivePlanRows', () => {
       ability_icons: {},
     });
     const rows = buildDefensivePlanRows(bench);
-    expect(rows[0].spellId).toBe(CLOAK_OF_SHADOWS);
-    expect(rows[0].icon).toBe('');
+    expect(rows[0]!.spellId).toBe(CLOAK_OF_SHADOWS);
+    expect(rows[0]!.icon).toBe('');
   });
 
   it('renders the empty state for typical uses when no top parse ever used the defensive', () => {
@@ -422,10 +422,10 @@ describe('buildDefensivePlanRows', () => {
     });
     const rows = buildDefensivePlanRows(bench);
     // No sampled parse ever used it, so the row renders the honest empty state rather than a 0.
-    expect(rows[0].typicalUses).toBeNull();
-    expect(rows[0].firstCastS).toBeNull();
-    expect(rows[0].usedSampleCount).toBe(0);
-    expect(rows[0].sampleCount).toBe(TOTAL_SAMPLED);
+    expect(rows[0]!.typicalUses).toBeNull();
+    expect(rows[0]!.firstCastS).toBeNull();
+    expect(rows[0]!.usedSampleCount).toBe(0);
+    expect(rows[0]!.sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('withholds first-cast when only a minority of top parses used the defensive (use-share gate)', () => {
@@ -441,11 +441,11 @@ describe('buildDefensivePlanRows', () => {
       },
     });
     const rows = buildDefensivePlanRows(bench);
-    expect(rows[0].firstCastS).toBeNull();
+    expect(rows[0]!.firstCastS).toBeNull();
     // Typical uses only gates on any adoption at all, not the majority share, so a minority still surfaces it.
-    expect(rows[0].typicalUses).toBe(MEDIAN_USES);
-    expect(rows[0].usedSampleCount).toBe(MINORITY_USERS);
-    expect(rows[0].sampleCount).toBe(TOTAL_SAMPLED);
+    expect(rows[0]!.typicalUses).toBe(MEDIAN_USES);
+    expect(rows[0]!.usedSampleCount).toBe(MINORITY_USERS);
+    expect(rows[0]!.sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('shows first-cast exactly at the majority-share boundary', () => {
@@ -461,7 +461,7 @@ describe('buildDefensivePlanRows', () => {
       },
     });
     const rows = buildDefensivePlanRows(bench);
-    expect(rows[0].firstCastS).toBe(FIRST_CAST_S);
+    expect(rows[0]!.firstCastS).toBe(FIRST_CAST_S);
   });
 });
 
@@ -520,7 +520,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     expect(result.value.spellIdsByName).toEqual({ 'Cloak of Shadows': CLOAK_OF_SHADOWS });
     expect(result.value.iconByName).toEqual({ 'Cloak of Shadows': 'cloak' });
     expect(result.value.windows).toHaveLength(1);
-    expect(result.value.windows[0].overview.playerPct).toBe(1150);
+    expect(result.value.windows[0]!.overview.playerPct).toBe(1150);
     expect(result.value.anchors[0]).toMatchObject({ refGameId: 6666 });
     // 1 use vs avg ~2, but only one buff window -> first cast at 30 (late) gives a warning finding.
     expect(result.value.findings.length).toBeGreaterThan(0);

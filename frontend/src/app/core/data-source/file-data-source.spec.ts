@@ -43,6 +43,6 @@ describe('FileDataSource', () => {
   it('reads the slice directory it was constructed with (map binds "positions")', async () => {
     const { files, calls } = fakeFiles(missing('Not yet ingested.'));
     await new FileDataSource<DummyBench>(files, 'positions').getBench(SPEC, ENCOUNTER_ID);
-    expect(calls[0][2]).toBe('positions');
+    expect(calls[0]![2]).toBe('positions');
   });
 });

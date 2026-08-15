@@ -98,7 +98,7 @@ export function summarizeDefensiveCasts(
       summaries.push({
         name: defensive.name,
         cast_times_s: castTimes,
-        first_cast_s: castTimes[0],
+        first_cast_s: castTimes[0] ?? null,
         uses: castTimes.length,
         fight_duration_s: fightDurationS,
         hold_windows: holdWindows,
@@ -135,7 +135,7 @@ export function findParseDefensiveWindows(
 ): ParseDefWindow[] {
   const hits = damageTaken
     .filter(event => event.type === 'damage' && (event.amount ?? 0) + (event.absorbed ?? 0) > 0)
-    .map(event => [event.atS, (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID ?? 0, event.sourceID ?? null] as WindowHit)
+    .map(event => [event.atS, (event.amount ?? 0) + (event.absorbed ?? 0), event.abilityGameID, event.sourceID ?? null] as WindowHit)
     .sort((a, b) => a[0] - b[0]);
   if (!hits.length) return [];
   const total = hits.reduce((sum, hit) => sum + hit[1], 0);
@@ -222,7 +222,8 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
   for (const [defensiveName, group] of byDefensive.entries()) {
     for (const cluster of groupByTime(group, mergeS)) {
       const distinctParses = new Set(cluster.map(member => member.parse_index)).size;
-      if (distinctParses < minParses) continue;
+      const clusterHead = cluster[0];
+      if (!clusterHead || distinctParses < minParses) continue;
       // Damage-taken share is reported for context (dmg_pct_avg) but does not gate the window.
       const shares = cluster.map(member => member.pct_of_total);
       const damages = cluster.map(member => member.window_damage);
@@ -239,7 +240,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
         dmg_pct_avg: round((mean(shares) ?? 0), 3),
         window_length_s: round(mean(cluster.map(member => member.window_length_s)) ?? 0),
         defensive_name: defensiveName,
-        spell_id: cluster[0].spell_id,
+        spell_id: clusterHead.spell_id,
         common_defensives: [defensiveName],
         common_cds: [defensiveName],
         ref_game_id,
@@ -258,7 +259,11 @@ export function buildDefensiveBenchmark(
   const gaps: number[] = [];
   for (const summary of summaries) {
     const times = summary.cast_times_s;
-    for (let j = 1; j < times.length; j++) gaps.push(times[j] - times[j - 1]);
+    for (let j = 1; j < times.length; j++) {
+      const cur = times[j];
+      const prev = times[j - 1];
+      if (cur != null && prev != null) gaps.push(cur - prev);
+    }
   }
   const usesPerMinList = summaries
     .filter(summary => summary.fight_duration_s && summary.uses)
@@ -406,7 +411,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       const buffWindows = buildAuraWindows(withRelativeS(buffs, fight.startTime));
       const windows = findParseDefensiveWindows(withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId);
       const summaries = summarizeDefensiveCasts(defensives, buffWindows, withRelativeS(casts, fight.startTime), fightDurationS);
-      return { windows, summaries, encounterName: fight.name ?? '' };
+      return { windows, summaries, encounterName: fight.name };
     } catch (err) {
       logWarn(`DefensiveTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
       return null;

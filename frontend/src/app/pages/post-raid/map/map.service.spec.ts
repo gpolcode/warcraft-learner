@@ -79,8 +79,8 @@ describe('listReferenceEnemies', () => {
     const mixed: EncounterPositions = {
       ...positions,
       parses: [
-        { ...positions.parses[0], enemies: [{ game_id: 200, name: 'Add', is_boss: false, samples: [] }] },
-        { ...positions.parses[1], enemies: [{ game_id: 200, name: 'Add', is_boss: true, samples: [] }] },
+        { ...positions.parses[0]!, enemies: [{ game_id: 200, name: 'Add', is_boss: false, samples: [] }] },
+        { ...positions.parses[1]!, enemies: [{ game_id: 200, name: 'Add', is_boss: true, samples: [] }] },
       ],
     };
     expect(listReferenceEnemies(mixed)).toEqual([{ gameId: 200, name: 'Add', isBoss: true }]);

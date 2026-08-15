@@ -35,18 +35,19 @@ function sameMap(a: PosSample, b: PosSample): boolean {
 /** Returns null when `t` is more than `tolerance` seconds past either end of the timeline. */
 export function positionAt(timeline: ActorTimeline | undefined, t: number, tolerance = 3): PosSample | null {
   const samples = timeline?.samples;
-  if (!samples?.length) return null;
-  if (t <= samples[0].t) return t < samples[0].t - tolerance ? null : { ...samples[0], t };
-  const last = samples[samples.length - 1];
+  const first = samples?.[0];
+  const last = samples?.[samples.length - 1];
+  if (!samples || !first || !last) return null;
+  if (t <= first.t) return t < first.t - tolerance ? null : { ...first, t };
   if (t >= last.t) return t > last.t + tolerance ? null : { ...last, t };
 
   let lo = 0, hi = samples.length - 1;
   while (lo < hi) {
     const mid = (lo + hi) >> 1;
-    if (samples[mid].t < t) lo = mid + 1; else hi = mid;
+    if ((samples[mid] ?? last).t < t) lo = mid + 1; else hi = mid;
   }
-  const after = samples[lo];
-  const before = samples[lo - 1];
+  const after = samples[lo] ?? last;
+  const before = samples[lo - 1] ?? first;
   const span = after.t - before.t;
   const fraction = span > 0 ? (t - before.t) / span : 0;
   // Coordinates only compare within one mapID, so a bracket straddling a map swap snaps to the nearer sample.

@@ -95,7 +95,11 @@ export function segmentSeekOffset(window: ClipWindow, firstSegment: { start: num
 /** The assembled timeline is gapless, so a loop length from a wall-clock span shrinks by this much to end on the same footage. */
 export function interSegmentGapMs(segments: { start: number; end: number }[]): number {
   let gaps = 0;
-  for (let i = 1; i < segments.length; i++) gaps += Math.max(0, segments[i].start - segments[i - 1].end);
+  for (let i = 1; i < segments.length; i++) {
+    const cur = segments[i];
+    const prev = segments[i - 1];
+    if (cur && prev) gaps += Math.max(0, cur.start - prev.end);
+  }
   return gaps;
 }
 
@@ -152,8 +156,9 @@ export class LiveCaptureFeatureService {
 
   async startRecording(profile: CaptureProfile = DEFAULT_CAPTURE_PROFILE): Promise<void> {
     if (this.isCapturing() || this.isStarting()) return;
-    // Insecure context or an unsupported browser leaves `getDisplayMedia` absent; say so rather than fail silently.
-    if (!navigator.mediaDevices?.getDisplayMedia) {
+    // Insecure context or an unsupported browser leaves `getDisplayMedia` absent (the dom lib overpromises); say so rather than fail silently.
+    const mediaDevices = navigator.mediaDevices as MediaDevices | undefined;
+    if (typeof mediaDevices?.getDisplayMedia !== 'function') {
       this.captureError.set('screen recording is not available in this browser');
       return;
     }
@@ -163,6 +168,7 @@ export class LiveCaptureFeatureService {
     try {
       stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
       const [track] = stream.getVideoTracks();
+      if (!track) throw new Error('Screen capture produced no video track.');
       await track.applyConstraints({ width: { max: 1920 }, height: { max: profile.maxHeight }, frameRate: { max: profile.fps } });
       this.stream = stream;
       this.captureProfile.set(profile);
@@ -244,7 +250,8 @@ export class LiveCaptureFeatureService {
       logWarn(`LiveCaptureFeatureService.openClip ${anchor.key}`, 'no correlation context (report not resolved)');
       return;
     }
-    this.handle.set(this.resolveHandle(ctx.reportCode, ctx.fight.id, this.clipWindowFor(anchor, ctx)));
+    const window = this.clipWindowFor(anchor, ctx);
+    this.handle.set(window ? this.resolveHandle(ctx.reportCode, ctx.fight.id, window) : null);
   }
 
   download(): void {
@@ -295,12 +302,12 @@ export class LiveCaptureFeatureService {
     this.playbackFailed.set(false);
   }
 
-  private clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow {
+  private clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow | null {
     const { reportStartTime, fight } = ctx;
     // A window plays its exact span; a point-in-time cast gets pre/post roll for context.
     const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
     const [window] = buildClipWindows(reportStartTime, fight.startTime, [anchor], roll);
-    return window;
+    return window ?? null;
   }
 
   private resolveHandle(reportCode: string, fightId: number, window: ClipWindow): ClipHandle | null {

@@ -214,7 +214,7 @@ export class MapCanvasComponent {
       ctx.beginPath();
       trail.forEach((point, index) => {
         const [x, y] = toScreen(point);
-        if (index && point.mapID === trail[index - 1].mapID) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        if (index && point.mapID === trail[index - 1]?.mapID) ctx.lineTo(x, y); else ctx.moveTo(x, y);
       });
       ctx.stroke();
     }
@@ -233,7 +233,7 @@ export class MapCanvasComponent {
       ctx.beginPath();
       liveTrail.forEach((point, index) => {
         const [x, y] = toScreen(point);
-        if (index && point.mapID === liveTrail[index - 1].mapID) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        if (index && point.mapID === liveTrail[index - 1]?.mapID) ctx.lineTo(x, y); else ctx.moveTo(x, y);
       });
       ctx.stroke(); ctx.globalAlpha = 1;
     }

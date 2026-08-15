@@ -31,9 +31,6 @@ export default defineConfig([
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       // tsconfig sets noPropertyAccessFromIndexSignature, which mandates the bracket access this rule would flag.
       '@typescript-eslint/dot-notation': ['error', { allowIndexSignaturePropertyAccess: true }],
-      // Without noUncheckedIndexedAccess, indexing types out the undefined, so guards like
-      // `const next = xs[i + 1]; if (!next) return;` are load-bearing yet read as "always falsy".
-      '@typescript-eslint/no-unnecessary-condition': 'off',
       // A decorator-only class (the root App component) is the Angular idiom, not a namespace stand-in.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       // HttpClient rejects with HttpErrorResponse, which does not extend Error; fakes must throw it too.

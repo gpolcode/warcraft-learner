@@ -375,7 +375,7 @@ describe('bucketRotationFindings', () => {
     ];
     const out = bucketRotationFindings(findings, { 'Shadow Blades': SHADOW_BLADES, 'Vanish': VANISH }, abilities);
     expect(out.ruleRows).toHaveLength(1);
-    expect(out.ruleRows[0].what).toBe('Shadow Dance without Secret Technique');
+    expect(out.ruleRows[0]!.what).toBe('Shadow Dance without Secret Technique');
     expect(out.offensiveRows).toHaveLength(1);
     expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'held' });
     expect(out.onPlan).toEqual([{ name: 'Vanish', spellId: VANISH, icon: 'vanish' }]);
@@ -392,8 +392,8 @@ describe('rotation finding partition and row builders', () => {
   it('partitions rule findings, per-cd buckets, and success names', () => {
     const partition = partitionRotationFindings([ruleFinding, issueFinding, holdFinding, successFinding]);
     expect(partition.ruleFindings).toEqual([ruleFinding]);
-    expect(partition.byName['Shadow Blades'].issues).toEqual([issueFinding]);
-    expect(partition.byName['Shadow Blades'].holds).toEqual([holdFinding]);
+    expect(partition.byName['Shadow Blades']!.issues).toEqual([issueFinding]);
+    expect(partition.byName['Shadow Blades']!.holds).toEqual([holdFinding]);
     expect([...partition.successNames]).toEqual(['Vanish']);
   });
 
@@ -456,9 +456,9 @@ describe('buildCdPlan', () => {
     };
     const plan = buildCdPlan(cooldowns, benchmarks, abilities);
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
-    expect(plan[0].holds).toEqual([{ castIndex: 2, targetS: 100 }]);
-    expect(plan[0].bloodlust).toBe(true);
-    expect(plan[0].bloodlustPct).toBe(100);
+    expect(plan[0]!.holds).toEqual([{ castIndex: 2, targetS: 100 }]);
+    expect(plan[0]!.bloodlust).toBe(true);
+    expect(plan[0]!.bloodlustPct).toBe(100);
   });
 
   it('drives the Bloodlust badge from bl_pct, not the rulebook flag', () => {
@@ -483,8 +483,8 @@ describe('buildCdPlan', () => {
     // SECRET_TECHNIQUE is deliberately absent from `abilities`, so the guarded lookup must not throw.
     const UNMAPPED_SPELL_ID = SECRET_TECHNIQUE;
     const plan = buildCdPlan([{ name: 'Unmapped', spell_id: UNMAPPED_SPELL_ID, cooldown: 60 }], {}, abilities);
-    expect(plan[0].spellId).toBe(UNMAPPED_SPELL_ID);
-    expect(plan[0].icon).toBe('');
+    expect(plan[0]!.spellId).toBe(UNMAPPED_SPELL_ID);
+    expect(plan[0]!.icon).toBe('');
   });
 
   it('renders the empty state for typical uses when no top parse ever used the cd', () => {
@@ -495,13 +495,13 @@ describe('buildCdPlan', () => {
       uses_per_min: { avg: 0, stddev: 0, min: 0, max: 0 },
     });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
-    expect(plan[0].firstCastS).toBeNull();
-    expect(plan[0].usesPerMin).toBeNull();
+    expect(plan[0]!.firstCastS).toBeNull();
+    expect(plan[0]!.usesPerMin).toBeNull();
     // No sampled parse ever used it, so the row renders the honest empty state rather than a 0.
-    expect(plan[0].typicalUses).toBeNull();
+    expect(plan[0]!.typicalUses).toBeNull();
     // The adoption counts reaching the template are the raw sample counts, not a precomputed "0/5" string.
-    expect(plan[0].usedSampleCount).toBe(0);
-    expect(plan[0].sampleCount).toBe(TOTAL_SAMPLED);
+    expect(plan[0]!.usedSampleCount).toBe(0);
+    expect(plan[0]!.sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('nulls the per-use fields when only a minority of top parses use the cd (use-share gate)', () => {
@@ -511,12 +511,12 @@ describe('buildCdPlan', () => {
     const MEDIAN_USES = 3;
     const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_s: 20, median_uses: MEDIAN_USES });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
-    expect(plan[0].firstCastS).toBeNull();
-    expect(plan[0].usesPerMin).toBeNull();
+    expect(plan[0]!.firstCastS).toBeNull();
+    expect(plan[0]!.usesPerMin).toBeNull();
     // Typical uses only gates on any adoption at all, not the majority share, so a minority still surfaces it.
-    expect(plan[0].typicalUses).toBe(MEDIAN_USES);
-    expect(plan[0].usedSampleCount).toBe(MINORITY_USERS);
-    expect(plan[0].sampleCount).toBe(TOTAL_SAMPLED);
+    expect(plan[0]!.typicalUses).toBe(MEDIAN_USES);
+    expect(plan[0]!.usedSampleCount).toBe(MINORITY_USERS);
+    expect(plan[0]!.sampleCount).toBe(TOTAL_SAMPLED);
   });
 
   it('keeps the per-use fields when a majority of top parses use the cd', () => {
@@ -525,8 +525,8 @@ describe('buildCdPlan', () => {
     const USES_PER_MIN = 1.2;
     const used = cdBench({ avg_first_cast_s: FIRST_CAST_S, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1, min: 1, max: 1.4 } });
     const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
-    expect(plan[0].firstCastS).toBe(FIRST_CAST_S);
-    expect(plan[0].usesPerMin).toBe(USES_PER_MIN);
+    expect(plan[0]!.firstCastS).toBe(FIRST_CAST_S);
+    expect(plan[0]!.usesPerMin).toBe(USES_PER_MIN);
   });
 });
 
@@ -609,8 +609,8 @@ describe('RotationFeatureService', () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.value.rows).toHaveLength(1);
-      expect(result.value.rows[0].name).toBe('Shadow Blades');
-      expect(result.value.rows[0].icon).toBe('sb');
+      expect(result.value.rows[0]!.name).toBe('Shadow Blades');
+      expect(result.value.rows[0]!.icon).toBe('sb');
     }
   });
 

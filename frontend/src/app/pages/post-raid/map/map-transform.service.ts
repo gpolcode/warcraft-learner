@@ -63,15 +63,17 @@ export function collectPositionSamples(events: TimedEvent[]): Map<number, RawPos
 interface CadencePoint { t: number; x: number; y: number; nearest: RawPosSample; }
 
 function resamplePoints(samples: RawPosSample[], durationS: number, intervalS: number): CadencePoint[] {
-  if (!samples.length) return [];
-  const first = samples[0].t;
-  const last = samples[samples.length - 1].t;
+  const firstSample = samples[0];
+  const lastSample = samples[samples.length - 1];
+  if (!firstSample || !lastSample) return [];
+  const first = firstSample.t;
+  const last = lastSample.t;
   const out: CadencePoint[] = [];
   let idx = 0;
   for (let t = 0; t <= durationS + 1e-6; t += intervalS) {
     if (t < first - intervalS || t > last + intervalS) continue;
-    while (idx + 1 < samples.length && samples[idx + 1].t <= t) idx++;
-    const before = samples[idx];
+    while (idx + 1 < samples.length && (samples[idx + 1] ?? lastSample).t <= t) idx++;
+    const before = samples[idx] ?? firstSample;
     const after = samples[idx + 1];
     let x = before.x, y = before.y, nearest = before;
     if (after && after.t > before.t && t >= before.t) {
@@ -166,8 +168,8 @@ export function buildParsePositions(input: ParsePositionInput): ParsePositions {
     interval_s: POSITIONS_INTERVAL_S,
     player: resamplePlayerTimeline(playerSamples, durationS, POSITIONS_INTERVAL_S),
     enemies: kept.map(enemy => ({
-      game_id: enemy.meta.gameID ?? null,
-      name: enemy.meta.name ?? '',
+      game_id: enemy.meta.gameID,
+      name: enemy.meta.name,
       is_boss: enemy.actorId === bossId,
       samples: resampleTimeline(enemy.samples, durationS, POSITIONS_INTERVAL_S),
     })).filter(enemy => enemy.is_boss || enemy.samples.length >= MIN_ENEMY_SAMPLES),
@@ -232,7 +234,7 @@ export class MapTransformService implements DataSource<MapData> {
         posEvents: withRelativeS(posEvents, fight.startTime),
         durationS: relativeS(fight.endTime, fight.startTime),
       });
-      return { positions, encounterName: fight.name ?? '' };
+      return { positions, encounterName: fight.name };
     } catch (cause) {
       logWarn(`MapTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
       return null;

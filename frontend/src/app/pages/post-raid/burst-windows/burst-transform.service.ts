@@ -73,7 +73,7 @@ export function bucketDamagePerBin(hits: DamageHit[], binCount: number): number[
   const damagePerBin = new Array<number>(binCount).fill(0);
   for (const [atS, hitDamage] of hits) {
     const binIndex = Math.min(Math.max(Math.floor(atS / BIN_S), 0), binCount - 1);
-    damagePerBin[binIndex] += hitDamage;
+    damagePerBin[binIndex] = (damagePerBin[binIndex] ?? 0) + hitDamage;
   }
   return damagePerBin;
 }
@@ -83,7 +83,7 @@ export function forwardRollingDamage(damagePerBin: number[], rollBins: number): 
   const rollingDamage = new Array<number>(binCount).fill(0);
   for (let binIndex = 0; binIndex < binCount; binIndex++) {
     let rollingSum = 0;
-    for (let ahead = binIndex; ahead <= Math.min(binIndex + rollBins - 1, binCount - 1); ahead++) rollingSum += damagePerBin[ahead];
+    for (let ahead = binIndex; ahead <= Math.min(binIndex + rollBins - 1, binCount - 1); ahead++) rollingSum += damagePerBin[ahead] ?? 0;
     rollingDamage[binIndex] = rollingSum;
   }
   return rollingDamage;
@@ -96,7 +96,7 @@ export function detectDenseRuns(rollingDamage: number[], densityThreshold: numbe
   let runEndBin = -1;
   let subThresholdBins = 0;
   for (let binIndex = 0; binIndex < rollingDamage.length; binIndex++) {
-    if (rollingDamage[binIndex] >= densityThreshold) {
+    if ((rollingDamage[binIndex] ?? 0) >= densityThreshold) {
       if (runStartBin < 0) runStartBin = binIndex;
       runEndBin = binIndex;
       subThresholdBins = 0;
@@ -365,7 +365,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
         damage: withRelativeS(damage, fight.startTime), fightLenS: relativeS(fight.endTime, fight.startTime),
         timings, casts: castsTimed, abilityNames,
       });
-      return { windows, encounterName: fight.name ?? '' };
+      return { windows, encounterName: fight.name };
     } catch (cause) {
       logWarn(`BurstTransformService parse ${ranking.report_code}:${ranking.fight_id}`, cause);
       return null;

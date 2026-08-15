@@ -24,7 +24,7 @@ export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: 
   let openTimes: number[] = [];
   for (const window of sorted) {
     if (clusters.length && Math.abs(window.time_s - (median(openTimes) ?? 0)) <= mergeS) {
-      clusters[clusters.length - 1].push(window);
+      clusters[clusters.length - 1]?.push(window);
       openTimes.push(window.time_s);
     } else {
       clusters.push([window]);
@@ -79,5 +79,5 @@ const SEVERITY_ORDER: Record<AnalysisFinding['severity'], number> = {
 };
 /** Sort findings in place: critical first, success last (stable for equal ranks). */
 export function sortBySeverity(findings: AnalysisFinding[]): void {
-  findings.sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 4) - (SEVERITY_ORDER[b.severity] ?? 4));
+  findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }

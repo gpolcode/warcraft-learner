@@ -35,7 +35,7 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'Charlie' }), entry({ spec: 'Alpha' }), entry({ spec: 'Bravo' })],
-      () => keys[next++],
+      () => keys[next++]!,
     );
     expect(order).toEqual(['Charlie', 'Bravo', 'Alpha']);
   });
@@ -45,7 +45,7 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'SubtletyRogue' }), entry({ spec: 'AssassinationRogue' })],
-      () => keys[next++],
+      () => keys[next++]!,
     );
     expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue', 'OutlawRogue']);
   });

@@ -88,7 +88,7 @@ describe('playerRowsToTimeline', () => {
     const tl = playerRowsToTimeline(7, [[1, 250, 500, 3], [2, 0, 0, null]]);
     expect(tl.id).toBe(7);
     expect(tl.samples[0]).toEqual({ t: 1, x: 2.5, y: 5, mapID: 3 });
-    expect(tl.samples[0].facing).toBeUndefined();
+    expect(tl.samples[0]!.facing).toBeUndefined();
     expect(tl.samples[1]).toEqual({ t: 2, x: 0, y: 0, mapID: undefined });
   });
 });
@@ -109,8 +109,8 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
   it('builds one player + reference timeline pair per parse, scaled to yards', () => {
     const timelines = buildParseTimelines(positions, { kind: 'boss' });
     expect(timelines).toHaveLength(2);
-    expect(timelines[0].player.samples[0].x).toBeCloseTo(5, 6); // 500 raw -> 5 yards
-    expect(timelines[0].ref.samples[0].x).toBeCloseTo(0, 6);
+    expect(timelines[0]!.player.samples[0]!.x).toBeCloseTo(5, 6); // 500 raw -> 5 yards
+    expect(timelines[0]!.ref.samples[0]!.x).toBeCloseTo(0, 6);
   });
 
   it('skips a parse whose selected reference is absent', () => {
@@ -134,8 +134,8 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
     const timelines = buildParseTimelines(positions, { kind: 'boss' });
     const trails = parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5);
     expect(trails).toHaveLength(2);
-    expect(trails[0].map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]);
+    expect(trails[0]!.map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]);
     // player holds 5 yd ahead of the origin boss across the whole window.
-    expect(trails[0].every(p => p.dist === 5 && p.fwd === 5)).toBe(true);
+    expect(trails[0]!.every(p => p.dist === 5 && p.fwd === 5)).toBe(true);
   });
 });

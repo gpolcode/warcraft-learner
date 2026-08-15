@@ -168,27 +168,27 @@ describe('rule engine', () => {
     const description = 'Secret Technique always inside Shadow Dance';
     const rule: RulebookRule = { severity: 'warning', description, condition: SECRET_TECH_NEEDS_DANCE };
     const violated = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
-    expect(violated[0].label).toBe(description);
+    expect(violated[0]!.label).toBe(description);
     expect(rulesFollowed([benched(rule)], ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]))).toEqual([description]);
   });
 
   it('evaluateRules falls back to the synthesized label when a rule has no description', () => {
     const rule: RulebookRule = { severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].label)
+    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]!.label)
       .toBe('Secret Technique without Shadow Dance');
   });
 
   it('evaluateRules carries the rule type onto the finding', () => {
     const rule: RulebookRule = { type: 'cooldown_pairing', severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
     const findings = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
-    expect(findings[0].rule_type).toBe('cooldown_pairing');
+    expect(findings[0]!.rule_type).toBe('cooldown_pairing');
   });
 });
 
 describe('rule severity', () => {
   it.each(['critical', 'warning', 'info'] as RuleSeverity[])('carries an authored %s onto the finding', severity => {
     const rule: RulebookRule = { severity, condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0].severity).toBe(severity);
+    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]!.severity).toBe(severity);
   });
 });
 
@@ -393,7 +393,7 @@ describe('evaluateOpeningSequence', () => {
   it('still flags a first step landing past the window, which is why the gate reads casts and not progress', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1), cast(SHADOW_BLADES, 30)]);
     const rule: RulebookRule = { severity: 'warning', condition: opener };
-    expect(evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0].measured?.value).toBe('0 / 3');
+    expect(evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0]!.measured?.value).toBe('0 / 3');
   });
 });
 
@@ -1680,7 +1680,7 @@ describe('occurrence strips', () => {
     const finding = evaluateCastAtTargetCount(blackPowder, ruleCtx(casts, { damage: dmg }), band(3), 'warning');
     const occurrences = finding!.occurrences;
     expect(occurrences.length).toBe(24);
-    expect(occurrences[0].atS).toBe(1);
+    expect(occurrences[0]!.atS).toBe(1);
     const timestamps = occurrences.map(o => o.atS);
     expect(timestamps).toEqual([...timestamps].sort((a, b) => (a ?? 0) - (b ?? 0)));
   });
