@@ -4,6 +4,7 @@ import {
   absoluteWindowStart, buildClipWindows, fullPullWindow, interSegmentGapMs, segmentSeekOffset, segmentsCover, selectSegments,
 } from './live-capture.service';
 import { ClipAnchor } from '../../../core/models/capture.models';
+import { defined } from '../../../../testing/defined';
 
 const REPORT_START_MS = 1_700_000_000_000;
 const FIGHT_START_MS = 60_000;
@@ -34,13 +35,13 @@ describe('buildClipWindows', () => {
   it('widens each window by pre/post roll around its absolute span', () => {
     const absStart = REPORT_START_MS + FIGHT_START_MS + WINDOW_TIME_S * 1000;
     const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [anchor()], ROLL);
-    expect(window!.fromMs).toBe(absStart - ROLL.preMs);
-    expect(window!.toMs).toBe(absStart + WINDOW_LENGTH_S * 1000 + ROLL.postMs);
+    expect(defined(window).fromMs).toBe(absStart - ROLL.preMs);
+    expect(defined(window).toMs).toBe(absStart + WINDOW_LENGTH_S * 1000 + ROLL.postMs);
   });
 
   it('carries each window key through unchanged', () => {
     const [window] = buildClipWindows(REPORT_START_MS, FIGHT_START_MS, [anchor({ key: 'def3' })], ROLL);
-    expect(window!.key).toBe('def3');
+    expect(defined(window).key).toBe('def3');
   });
 
   it('keeps one clip per window rather than merging them', () => {

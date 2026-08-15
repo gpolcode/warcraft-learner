@@ -11,6 +11,7 @@ import {
   aggregateTalents, aggregateTrinkets, aggregateEnchants,
 } from './gear-transform.service';
 import { talentKeyFromTree, parseTalentKey } from '../../../shared/gear/talent-key';
+import { defined } from '../../../../testing/defined';
 
 // Per-slot caps mirrored from the transform service; the boundary tests build one more than the cap.
 const MAX_TALENT_BUILDS = 3;
@@ -206,8 +207,8 @@ describe('withTalentDiffs', () => {
 
   it('bakes each alt build\'s diff against the most common build, leaving the most common one empty', () => {
     const out = withTalentDiffs(builds(), ok(talents));
-    expect(out[0]!.diff).toEqual([]);
-    expect(out[1]!.diff).toEqual([
+    expect(defined(out[0]).diff).toEqual([]);
+    expect(defined(out[1]).diff).toEqual([
       { kind: 'added', talent: talents[11] },
       { kind: 'dropped', talent: talents[10] },
     ]);
@@ -297,7 +298,7 @@ describe('GearTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.talent_builds[1]!.diff).toEqual([
+    expect(defined(bench.value.talent_builds[1]).diff).toEqual([
       { kind: 'added', talent: talents[ALT_ENTRY] },
       { kind: 'dropped', talent: talents[BASELINE_ENTRY] },
     ]);

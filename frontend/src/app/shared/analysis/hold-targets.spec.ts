@@ -3,6 +3,7 @@ import {
   HOLD_BAND_MIN_S, HoldWindowSource, buildHoldTargets, detectHoldWindows, holdSuggestionFindings,
 } from './hold-targets';
 import { CdHoldTargets } from '../../core/models/encounter.models';
+import { defined } from '../../../testing/defined';
 
 describe('detectHoldWindows', () => {
   const EFFECTIVE_CD_S = 90;
@@ -24,7 +25,7 @@ describe('detectHoldWindows', () => {
     // cast 2 held (0 -> 200); cast 3 on cooldown after it (200 -> 290).
     const holds = detectHoldWindows([0, 200, 290], EFFECTIVE_CD_S);
     expect(holds).toHaveLength(1);
-    expect(holds[0]!.cast_index).toBe(2);
+    expect(defined(holds[0]).cast_index).toBe(2);
   });
 
   it('returns nothing with a single cast', () => {
@@ -47,7 +48,7 @@ describe('buildHoldTargets', () => {
     // 5 of 10 hold index 2 -> meets max(2, 0.5 * 10 = 5).
     const targets = buildHoldTargets([...heldAt(110, 20, 5), ...noHolds(5)], EFFECTIVE_CD_S);
     expect(targets[String(HELD_INDEX)]).toBeDefined();
-    expect(targets[String(HELD_INDEX)]!.count).toBe(5);
+    expect(defined(targets[String(HELD_INDEX)]).count).toBe(5);
   });
 
   it('drops a target below the majority (strict boundary)', () => {
@@ -113,8 +114,8 @@ describe('holdSuggestionFindings', () => {
 
   it('reports the cast clock and the consensus in the message', () => {
     const [finding] = holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets);
-    expect(finding!.message).toContain(`${HELD_COUNT}/${TOTAL_SAMPLED} top parses hold to 02:10`);
-    expect(finding!.details?.cd_name).toBe(NAME);
+    expect(defined(finding).message).toContain(`${HELD_COUNT}/${TOTAL_SAMPLED} top parses hold to 02:10`);
+    expect(defined(finding).details?.cd_name).toBe(NAME);
   });
 
   it('does not suggest at the band edge (strict boundary)', () => {

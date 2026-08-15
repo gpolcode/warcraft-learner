@@ -128,16 +128,17 @@ export function checkFirstCastDelay(
 export function checkBloodlustAlignment(
   cdName: string, castTimesS: number[], cdBench: PerCdBenchmark, blTimeS: number | null, wantsBL: boolean,
 ): { blAligned: boolean; findings: AnalysisFinding[] } {
-  if (blTimeS === null || !castTimesS.length) return { blAligned: false, findings: [] };
+  const firstCastS = castTimesS[0];
+  if (blTimeS === null || firstCastS == null) return { blAligned: false, findings: [] };
   const inWindow = castTimesS.filter(timeS =>
     timeS >= blTimeS - BL_WINDOW_LEAD_S && timeS <= blTimeS + BLOODLUST_DURATION_S + BL_WINDOW_TRAIL_S);
   const blAligned = inWindow.length > 0;
   const findings: AnalysisFinding[] = [];
   if (!blAligned && wantsBL) {
     findings.push({ severity: 'critical', category: 'cooldown_alignment', cd_name: cdName,
-      timestamp_s: castTimesS[0] ?? 0,
+      timestamp_s: firstCastS,
       measured: { value: 'missed', unit: 'BL' },
-      message: `${cdName} missed Bloodlust. Bloodlust started at ${fmtClock(blTimeS)}, ${cdName} at ${fmtClock(castTimesS[0] ?? 0)}.`,
+      message: `${cdName} missed Bloodlust. Bloodlust started at ${fmtClock(blTimeS)}, ${cdName} at ${fmtClock(firstCastS)}.`,
       details: { remedy: `Align ${cdName} with Bloodlust.` }, occurrences: [] });
   } else if (blAligned && cdBench.avg_bl_offset_s != null && cdBench.stddev_bl_offset_s != null) {
     const offsets = inWindow.map(timeS => timeS - blTimeS);

@@ -10,6 +10,7 @@ import { EncounterSelectionService } from './encounter-selection.service';
 import { MapFeatureService } from '../post-raid/map/map.service';
 import { SelectionStore } from '../../core/services/selection-store';
 import { DataFileApiService } from '../../core/services/data-file-api';
+import { defined } from '../../../testing/defined';
 
 // The template gates every feature card on `@if (selectedEncId())`, so 0 closes it.
 const NO_ENCOUNTER = 0;
@@ -103,7 +104,7 @@ describe('PreFightComponent encounter load latest-wins', () => {
     }
 
     settle(spec: string, encounters: EncounterEntry[]): void {
-      this.resolvers.get(spec)!(ok(encounters));
+      defined(this.resolvers.get(spec))(ok(encounters));
     }
   }
 

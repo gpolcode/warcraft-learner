@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { filterEncounters, groupEncountersByZone, protectedEncounterIds, mapClassesToSpecMeta, specWclFromMetas } from './wcl-mappers';
 import type { WclExpansion, IngestEncounter, WclGameClass } from './models/wcl.models';
+import { defined } from '../../testing/defined';
 
 describe('filterEncounters', () => {
   it('uses only the first expansion, excludes beta/ptr zones, and sorts partitions descending', () => {
@@ -47,8 +48,8 @@ describe('groupEncountersByZone', () => {
     ] as IngestEncounter[];
     const groups = groupEncountersByZone(encounters);
     expect([...groups.keys()].sort((a, b) => a - b)).toEqual([46, 54]);
-    expect(groups.get(46)!.map(encounter => encounter.id)).toEqual([1, 2]);
-    expect(groups.get(54)!.map(encounter => encounter.id)).toEqual([3]);
+    expect(defined(groups.get(46)).map(encounter => encounter.id)).toEqual([1, 2]);
+    expect(defined(groups.get(54)).map(encounter => encounter.id)).toEqual([3]);
   });
 });
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { DataFileApiService } from '../services/data-file-api';
 import { FileDataSource } from './file-data-source';
 import { Result, ok, missing } from '../result';
+import { defined } from '../../../testing/defined';
 
 interface DummyBench { encounter_id: number; }
 
@@ -43,6 +44,6 @@ describe('FileDataSource', () => {
   it('reads the slice directory it was constructed with (map binds "positions")', async () => {
     const { files, calls } = fakeFiles(missing('Not yet ingested.'));
     await new FileDataSource<DummyBench>(files, 'positions').getBench(SPEC, ENCOUNTER_ID);
-    expect(calls[0]![2]).toBe('positions');
+    expect(defined(calls[0])[2]).toBe('positions');
   });
 });

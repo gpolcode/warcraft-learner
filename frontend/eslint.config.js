@@ -49,12 +49,11 @@ export default defineConfig([
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
-    // Test-only relaxations: fakes implement promise-returning interfaces with await-less
-    // `async () =>` bodies, and `!` on a value the fixture just built is the intended assertion.
+    // Test-only relaxations: fakes implement promise-returning interfaces with await-less `async () =>` bodies.
+    // `!` stays banned here too - specs assert presence via `defined()` (src/testing/defined.ts) instead.
     files: ['src/**/*.spec.ts', 'src/testing/**/*.ts', 'e2e/**/*.ts'],
     rules: {
       '@typescript-eslint/require-await': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
       // Specs read protected component state via the TS bracket-access loophole (see component-harness.ts).
       '@typescript-eslint/dot-notation': [
         'error',

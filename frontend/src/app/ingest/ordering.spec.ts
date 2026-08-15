@@ -4,6 +4,7 @@ import {
   DEFAULT_PRIORITY_SPECS, SPEC_LIMIT,
   type SpecOrderEntry,
 } from './ordering';
+import { defined } from '../../testing/defined';
 
 const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry => ({
   dataCount: 5,
@@ -35,7 +36,7 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'Charlie' }), entry({ spec: 'Alpha' }), entry({ spec: 'Bravo' })],
-      () => keys[next++]!,
+      () => defined(keys[next++]),
     );
     expect(order).toEqual(['Charlie', 'Bravo', 'Alpha']);
   });
@@ -45,7 +46,7 @@ describe('orderSpecsByVersion', () => {
     let next = 0;
     const order = orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'SubtletyRogue' }), entry({ spec: 'AssassinationRogue' })],
-      () => keys[next++]!,
+      () => defined(keys[next++]),
     );
     expect(order).toEqual(['SubtletyRogue', 'AssassinationRogue', 'OutlawRogue']);
   });

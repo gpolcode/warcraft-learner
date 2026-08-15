@@ -56,6 +56,7 @@ const evaluateSpendAtStacks = judged(rawSpendAtStacks);
 const evaluateAuraClipped = judged(rawAuraClipped);
 const evaluateFillerBelowHealth = judged(rawFillerBelowHealth);
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { defined } from '../../../../testing/defined';
 
 // Zero tolerance keeps the fixture arithmetic exact; hi defaults to lo for the one-sided kinds this factory feeds most often.
 const PAIR_WINDOW_S = 5, HOLD_WINDOW_S = 15;
@@ -101,8 +102,8 @@ describe('rule engine', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)]);
     const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(PAIR_WINDOW_S), 'warning', 'do x');
     expect(finding).not.toBeNull();
-    expect(finding!.measured).toEqual({ value: '1 / 1', unit: 'cast(s)' });
-    expect(finding!.details?.remedy).toBe('do x');
+    expect(defined(finding).measured).toEqual({ value: '1 / 1', unit: 'cast(s)' });
+    expect(defined(finding).details?.remedy).toBe('do x');
   });
 
   it('passes when Shadow Dance precedes Secret Technique inside the window', () => {
@@ -115,7 +116,7 @@ describe('rule engine', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]);
     const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_WINDOW_S), 'critical');
     expect(finding).not.toBeNull();
-    expect(finding!.measured).toEqual({ value: '1 / 1', unit: 'charge(s)' });
+    expect(defined(finding).measured).toEqual({ value: '1 / 1', unit: 'charge(s)' });
   });
 
   it('flags a required cast that only follows the judged one, because position defaults to before', () => {
@@ -168,27 +169,27 @@ describe('rule engine', () => {
     const description = 'Secret Technique always inside Shadow Dance';
     const rule: RulebookRule = { severity: 'warning', description, condition: SECRET_TECH_NEEDS_DANCE };
     const violated = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
-    expect(violated[0]!.label).toBe(description);
+    expect(defined(violated[0]).label).toBe(description);
     expect(rulesFollowed([benched(rule)], ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]))).toEqual([description]);
   });
 
   it('evaluateRules falls back to the synthesized label when a rule has no description', () => {
     const rule: RulebookRule = { severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]!.label)
+    expect(defined(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]).label)
       .toBe('Secret Technique without Shadow Dance');
   });
 
   it('evaluateRules carries the rule type onto the finding', () => {
     const rule: RulebookRule = { type: 'cooldown_pairing', severity: 'warning', condition: SECRET_TECH_NEEDS_DANCE };
     const findings = evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
-    expect(findings[0]!.rule_type).toBe('cooldown_pairing');
+    expect(defined(findings[0]).rule_type).toBe('cooldown_pairing');
   });
 });
 
 describe('rule severity', () => {
   it.each(['critical', 'warning', 'info'] as RuleSeverity[])('carries an authored %s onto the finding', severity => {
     const rule: RulebookRule = { severity, condition: SECRET_TECH_NEEDS_DANCE };
-    expect(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]!.severity).toBe(severity);
+    expect(defined(evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]))[0]).severity).toBe(severity);
   });
 });
 
@@ -393,7 +394,7 @@ describe('evaluateOpeningSequence', () => {
   it('still flags a first step landing past the window, which is why the gate reads casts and not progress', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1), cast(SHADOW_BLADES, 30)]);
     const rule: RulebookRule = { severity: 'warning', condition: opener };
-    expect(evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0]!.measured?.value).toBe('0 / 3');
+    expect(defined(evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0]).measured?.value).toBe('0 / 3');
   });
 });
 
@@ -1678,9 +1679,9 @@ describe('occurrence strips', () => {
     const casts = Array.from({ length: OVER_CAP_CASTS }, (_, i) => cast(BLACK_POWDER, i + 1));
     const dmg = Array.from({ length: OVER_CAP_CASTS }, (_, i) => damage(BLACK_POWDER, i + 1.5, 100, { target: 1 }));
     const finding = evaluateCastAtTargetCount(blackPowder, ruleCtx(casts, { damage: dmg }), band(3), 'warning');
-    const occurrences = finding!.occurrences;
+    const occurrences = defined(finding).occurrences;
     expect(occurrences.length).toBe(24);
-    expect(occurrences[0]!.atS).toBe(1);
+    expect(defined(occurrences[0]).atS).toBe(1);
     const timestamps = occurrences.map(o => o.atS);
     expect(timestamps).toEqual([...timestamps].sort((a, b) => (a ?? 0) - (b ?? 0)));
   });
@@ -1697,7 +1698,7 @@ describe('occurrence strips', () => {
     const PASSING_CASTS = 30; // clears MAX_OCCURRENCES (24) so sampling kicks in
     const passes = Array.from({ length: PASSING_CASTS }, (_, i) => atCombo(100 + i, MAX_COMBO_POINTS));
     const finding = evaluateResourceAtCast(finisher, ruleCtx([...fails, ...passes]), band(1), 'warning');
-    const occurrences = finding!.occurrences;
+    const occurrences = defined(finding).occurrences;
     expect(occurrences.length).toBe(24);
     const failingAtS = occurrences.filter(occ => !occ.ok).map(occ => occ.atS);
     expect(failingAtS).toEqual(FAIL_AT_S);

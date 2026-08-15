@@ -11,6 +11,7 @@ import {
   FACING_OFFSET_RAD,
 } from './map.service';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { defined } from '../../../../testing/defined';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -28,7 +29,7 @@ function posEvent(
 describe('buildActorTimelines', () => {
   it('attributes the flattened position to the source by default (resourceActor 1)', () => {
     const timelines = buildActorTimelines(timed([posEvent({ ts: 1000, source: 7, x: 200, y: 400 })], 0));
-    const tl = timelines.get(7)!;
+    const tl = defined(timelines.get(7));
     expect(tl.samples).toEqual([{ t: 1, x: 2, y: 4, facing: undefined, mapID: undefined }]);
   });
 
@@ -42,7 +43,7 @@ describe('buildActorTimelines', () => {
       posEvent({ ts: 3000, source: 1, x: 300, y: 0, facing: 1000 }),
       posEvent({ ts: 1000, source: 1, x: 100, y: 0, facing: 2000 }),
     ], 0));
-    const samples = timelines.get(1)!.samples;
+    const samples = defined(timelines.get(1)).samples;
     expect(samples.map(s => s.t)).toEqual([1, 3]);
     expect(samples[0]).toMatchObject({ x: 1, facing: 2 });
   });
@@ -79,8 +80,8 @@ describe('listReferenceEnemies', () => {
     const mixed: EncounterPositions = {
       ...positions,
       parses: [
-        { ...positions.parses[0]!, enemies: [{ game_id: 200, name: 'Add', is_boss: false, samples: [] }] },
-        { ...positions.parses[1]!, enemies: [{ game_id: 200, name: 'Add', is_boss: true, samples: [] }] },
+        { ...defined(positions.parses[0]), enemies: [{ game_id: 200, name: 'Add', is_boss: false, samples: [] }] },
+        { ...defined(positions.parses[1]), enemies: [{ game_id: 200, name: 'Add', is_boss: true, samples: [] }] },
       ],
     };
     expect(listReferenceEnemies(mixed)).toEqual([{ gameId: 200, name: 'Add', isBoss: true }]);
@@ -98,9 +99,9 @@ describe('buildLiveOverlay', () => {
     const events = timed([posEvent({ ts: 0, source: 5, x: 100, y: 0 })], 0);
     const overlay = buildLiveOverlay({ positions, events, playerId: 5, enemies: [{ id: 42, name: 'Boss', gameID: 100 }] });
     expect(overlay).not.toBeNull();
-    expect(overlay!.bossActorId).toBe(42);
-    expect(overlay!.refActorByGameId.get(100)).toBe(42);
-    expect(overlay!.playerId).toBe(5);
+    expect(defined(overlay).bossActorId).toBe(42);
+    expect(defined(overlay).refActorByGameId.get(100)).toBe(42);
+    expect(defined(overlay).playerId).toBe(5);
   });
 
   it('returns null when the player has no position samples', () => {
@@ -329,10 +330,10 @@ describe('MapFeatureService deferred overlay', () => {
     const LATEST_ENCOUNTER = 222;
     const staleData: EncounterPositions = { ...sampleData, encounter_id: STALE_ENCOUNTER };
     const latestData: EncounterPositions = { ...sampleData, encounter_id: LATEST_ENCOUNTER };
-    let resolveStale: (() => void) | null = null;
+    const stale: { resolve?: () => void } = {};
     const source: DataSource<MapData> = {
       getBench: (_spec, enc) => enc === STALE_ENCOUNTER
-        ? new Promise<Result<MapData>>(res => { resolveStale = () => { res(ok(staleData)); }; })
+        ? new Promise<Result<MapData>>(res => { stale.resolve = () => { res(ok(staleData)); }; })
         : Promise.resolve(ok(latestData)),
     };
     TestBed.configureTestingModule({ providers: [{ provide: MAP_DATA_SOURCE, useValue: source }] });
@@ -344,7 +345,7 @@ describe('MapFeatureService deferred overlay', () => {
     await service.prepare('code', latestFight, 5, 'SubtletyRogue', []); // supersedes, resolves now
     expect(service.positions()).toBe(latestData);
 
-    resolveStale!(); // the earlier selection finally resolves, out of order
+    defined(stale.resolve)(); // the earlier selection finally resolves, out of order
     await stalePrepare;
     // The stale bench does not overwrite the current selection.
     expect(service.positions()).toBe(latestData);

@@ -15,6 +15,7 @@ import { cast, damage } from '../../../../testing/builders/events';
 import {
   WCL_MELEE_EVENT_ABILITY_ID, WOW_AUTO_ATTACK_SPELL_ID, WCL_SYNTHETIC_SOURCE_FALLBACK_ID, withRelativeS,
 } from '../../../shared/analysis/wcl-projections';
+import { defined } from '../../../../testing/defined';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -77,8 +78,8 @@ describe('burstDetailRows', () => {
     // SHADOW_BLADES_DAMAGE is intentionally left out of the ability map, so the guarded lookup must not throw.
     const breakdown = [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }];
     const rows = burstDetailRows(breakdown, null, {});
-    expect(rows[0]!.label).toBe(`Ability #${SHADOW_BLADES_DAMAGE}`);
-    expect(rows[0]!.icon).toBe('');
+    expect(defined(rows[0]).label).toBe(`Ability #${SHADOW_BLADES_DAMAGE}`);
+    expect(defined(rows[0]).icon).toBe('');
   });
 
   it('joins the player normalized melee and synthetic damage onto the bench auto-attack and fallback rows', () => {
@@ -103,11 +104,11 @@ describe('burstDetailRows', () => {
       [WOW_AUTO_ATTACK_SPELL_ID]: { icon: 'aa', name: 'Auto Attack' },
       [WCL_SYNTHETIC_SOURCE_FALLBACK_ID]: { icon: 'idk', name: 'Synthetic' },
     };
-    const rows = burstDetailRows(benchBreakdown, playerWindow!, abilities);
-    const melee = rows.find(row => row.spellId === WOW_AUTO_ATTACK_SPELL_ID)!;
+    const rows = burstDetailRows(benchBreakdown, defined(playerWindow), abilities);
+    const melee = defined(rows.find(row => row.spellId === WOW_AUTO_ATTACK_SPELL_ID));
     expect(melee.playerPct).toBe(2 * MELEE_HIT);
     expect(melee.playerCasts).toBe(0);
-    const synthetic = rows.find(row => row.spellId === WCL_SYNTHETIC_SOURCE_FALLBACK_ID)!;
+    const synthetic = defined(rows.find(row => row.spellId === WCL_SYNTHETIC_SOURCE_FALLBACK_ID));
     expect(synthetic.playerPct).toBe(SYNTHETIC_HIT);
   });
 });
@@ -128,9 +129,9 @@ describe('buildBurstView', () => {
     ];
     const view = buildBurstView([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(view.windows).toHaveLength(1);
-    expect(view.windows[0]!.overview.playerPct).toBe(950);
-    expect(view.windows[0]!.spells).toEqual([{ id: SHADOW_BLADES, icon: 'sb', name: 'Shadow Blades' }]);
-    expect(view.windows[0]!.detailRows[0]).toMatchObject({ spellId: SHADOW_BLADES_DAMAGE, label: 'Eviscerate', icon: 'evis', playerPct: 550, topAvg: 600 });
+    expect(defined(view.windows[0]).overview.playerPct).toBe(950);
+    expect(defined(view.windows[0]).spells).toEqual([{ id: SHADOW_BLADES, icon: 'sb', name: 'Shadow Blades' }]);
+    expect(defined(view.windows[0]).detailRows[0]).toMatchObject({ spellId: SHADOW_BLADES_DAMAGE, label: 'Eviscerate', icon: 'evis', playerPct: 550, topAvg: 600 });
     expect(view.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
     expect(view.clipAnchors[0]).toEqual({ timeS: 10, windowLengthS: 20, key: 'burst-0' });
   });
@@ -143,22 +144,22 @@ describe('buildBurstView', () => {
       ],
     };
     const view = buildBurstView([passiveWindow], [], 300, {}, abilities, true);
-    expect(view.windows[0]!.detailRows[0]!.passive).toBe(true);
+    expect(defined(defined(view.windows[0]).detailRows[0]).passive).toBe(true);
     // The default (non-passive) bench ability stays passive=false.
-    expect(buildBurstView([window], [], 300, {}, abilities, true).windows[0]!.detailRows[0]!.passive).toBe(false);
+    expect(defined(defined(buildBurstView([window], [], 300, {}, abilities, true).windows[0]).detailRows[0]).passive).toBe(false);
   });
 
   it('mutes and drops player data for a window the fight never reached', () => {
     const view = buildBurstView([window], [], 5, {}, abilities);
-    expect(view.windows[0]!.status).toBe('muted');
-    expect(view.windows[0]!.overview.playerPct).toBeNull();
+    expect(defined(view.windows[0]).status).toBe('muted');
+    expect(defined(view.windows[0]).overview.playerPct).toBeNull();
   });
 
   it('bench-only marks windows neutral info (no player overlay) instead of muted', () => {
     const view = buildBurstView([window], [], Number.POSITIVE_INFINITY, {}, abilities, true);
-    expect(view.windows[0]!.status).toBe('info');
-    expect(view.windows[0]!.statusIcon).toBe('insights');
-    expect(view.windows[0]!.overview.playerPct).toBeNull();
+    expect(defined(view.windows[0]).status).toBe('info');
+    expect(defined(view.windows[0]).statusIcon).toBe('insights');
+    expect(defined(view.windows[0]).overview.playerPct).toBeNull();
   });
 });
 
@@ -176,8 +177,8 @@ describe('findPlayerBurstWindows', () => {
       new Map([[SHADOW_BLADES_DAMAGE, 'Shadow Blades'], [SHADOW_BLADES, 'Shadow Blades']]),
     );
     // (500 + 100 absorbed) + 400 = 1000; the id-1 hit at 999s is outside the [10, 30) window.
-    expect(out[0]!.window_damage).toBe(1000);
-    expect(out[0]!.ability_breakdown![0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, damage: 1000, casts: 2 });
+    expect(defined(out[0]).window_damage).toBe(1000);
+    expect(defined(defined(out[0]).ability_breakdown)[0]).toMatchObject({ spell_id: SHADOW_BLADES_DAMAGE, damage: 1000, casts: 2 });
   });
 
   it('folds synthetic damage ids onto their normalized spells, summing raw ids that collapse together', () => {
@@ -192,7 +193,7 @@ describe('findPlayerBurstWindows', () => {
       [],
       new Map(),
     );
-    const breakdown = out[0]!.ability_breakdown!;
+    const breakdown = defined(defined(out[0]).ability_breakdown);
     expect(breakdown.find(row => row.spell_id === WOW_AUTO_ATTACK_SPELL_ID)?.damage).toBe(2 * MELEE_HIT);
     expect(breakdown.find(row => row.spell_id === WCL_SYNTHETIC_SOURCE_FALLBACK_ID)?.damage).toBe(2 * SYNTHETIC_HIT);
     // No raw synthetic id survives as its own row.
@@ -201,7 +202,7 @@ describe('findPlayerBurstWindows', () => {
 
   it('excludes an event at exactly the window end (half-open)', () => {
     const out = findPlayerBurstWindows([window], timed([damage(SHADOW_BLADES_DAMAGE, 30, 800)], 0), [], new Map());
-    expect(out[0]!.window_damage).toBe(0);
+    expect(defined(out[0]).window_damage).toBe(0);
   });
 
   it('keeps a low-ranked ability the player used so the bench join surfaces its damage', () => {
@@ -218,8 +219,8 @@ describe('findPlayerBurstWindows', () => {
       new Map([[SHADOW_BLADES_DAMAGE, 'Eviscerate']]),
     );
     const benchBreakdown = [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5, avg_casts: 2 }];
-    const rows = burstDetailRows(benchBreakdown, out[0]!, { [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } });
-    expect(rows[0]!.playerPct).toBe(BENCH_HIT_DAMAGE);
+    const rows = burstDetailRows(benchBreakdown, defined(out[0]), { [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } });
+    expect(defined(rows[0]).playerPct).toBe(BENCH_HIT_DAMAGE);
   });
 });
 
@@ -274,9 +275,9 @@ describe('BurstFeatureService', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.windows).toHaveLength(1);
-    expect(result.value.windows[0]!.overview.playerPct).toBeNull();
-    expect(result.value.windows[0]!.status).toBe('info');
-    expect(result.value.windows[0]!.statusIcon).toBe('insights');
+    expect(defined(result.value.windows[0]).overview.playerPct).toBeNull();
+    expect(defined(result.value.windows[0]).status).toBe('info');
+    expect(defined(result.value.windows[0]).statusIcon).toBe('insights');
     expect(result.value.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
   });
 
@@ -285,8 +286,8 @@ describe('BurstFeatureService', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.windows).toHaveLength(1);
-    expect(result.value.windows[0]!.overview.playerPct).toBe(950);
-    expect(result.value.windows[0]!.detailRows[0]!.label).toBe('Eviscerate');
+    expect(defined(result.value.windows[0]).overview.playerPct).toBe(950);
+    expect(defined(defined(result.value.windows[0]).detailRows[0]).label).toBe('Eviscerate');
     expect(result.value.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
   });
 
@@ -303,7 +304,7 @@ describe('BurstFeatureService', () => {
     if (!result.ok) return;
     expect(result.value.windows).toHaveLength(1);
     // No player overlay: the informational bench-only view (benchOnly=true) shows the neutral info glyph.
-    expect(result.value.windows[0]!.status).toBe('info');
-    expect(result.value.windows[0]!.overview.playerPct).toBeNull();
+    expect(defined(result.value.windows[0]).status).toBe('info');
+    expect(defined(result.value.windows[0]).overview.playerPct).toBeNull();
   });
 });

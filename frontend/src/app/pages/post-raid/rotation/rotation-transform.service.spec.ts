@@ -15,6 +15,7 @@ import { ok, missing } from '../../../core/result';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { RulebookRule } from '../../../core/models/rulebook.models';
 import { RuleSample } from './rotation-rules';
+import { defined } from '../../../../testing/defined';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -38,25 +39,25 @@ describe('summarizeCooldownCasts', () => {
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
     const summaries = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], 0), cooldowns, 200, null);
-    expect(summaries[0]!.cast_pattern).toBe('hold');
+    expect(defined(summaries[0]).cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
-    expect(summaries[0]!.hold_windows[0]).toMatchObject({ cast_index: 2, actual_s: 110, delay_s: 20 });
+    expect(defined(summaries[0]).hold_windows[0]).toMatchObject({ cast_index: 2, actual_s: 110, delay_s: 20 });
   });
 
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
     // cast 2 held (0 -> 200, well past reset); cast 3 is on cooldown after it (200 -> 290).
     const summaries = summarizeCooldownCasts(
       timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], 0), cooldowns, 400, null);
-    expect(summaries[0]!.hold_windows).toHaveLength(1);
-    expect(summaries[0]!.hold_windows[0]!.cast_index).toBe(2);
+    expect(defined(summaries[0]).hold_windows).toHaveLength(1);
+    expect(defined(defined(summaries[0]).hold_windows[0]).cast_index).toBe(2);
   });
 
   it('does not flag a hold exactly at the threshold (strict)', () => {
     // prior 0 + cd 90 + 8s threshold = 98; a cast at 98 has delay exactly 8 -> not a hold.
     const atBoundary = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], 0), cooldowns, 200, null);
-    expect(atBoundary[0]!.hold_windows).toHaveLength(0);
+    expect(defined(atBoundary[0]).hold_windows).toHaveLength(0);
     const past = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], 0), cooldowns, 200, null);
-    expect(past[0]!.hold_windows).toHaveLength(1);
+    expect(defined(past[0]).hold_windows).toHaveLength(1);
   });
 });
 
@@ -181,7 +182,7 @@ describe('aggregateCdBenchmarks', () => {
       [[summary('Shadow Blades')], [summary('Shadow Blades')]],
       [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     expect(Object.keys(result)).toEqual(['Shadow Blades']);
-    expect(result['Shadow Blades']!.sample_count).toBe(2);
+    expect(defined(result['Shadow Blades']).sample_count).toBe(2);
   });
 });
 
@@ -204,24 +205,24 @@ describe('benchRules', () => {
     const benched = benchRules([ruleA, ruleB, ruleC], perParse);
 
     // Rule A: every one of the 5 parses contributed its own instance.
-    expect(benched[0]!.rule).toBe(ruleA);
-    expect(benched[0]!.sample_count).toBe(5);
-    expect(benched[0]!.band).not.toBeNull();
+    expect(defined(benched[0]).rule).toBe(ruleA);
+    expect(defined(benched[0]).sample_count).toBe(5);
+    expect(defined(benched[0]).band).not.toBeNull();
 
     // Rule B: only the second parse's sample was non-empty, below the parse floor.
-    expect(benched[1]!.sample_count).toBe(1);
-    expect(benched[1]!.band).toBeNull();
+    expect(defined(benched[1]).sample_count).toBe(1);
+    expect(defined(benched[1]).band).toBeNull();
 
     // Rule C: only the first parse's sample was non-empty.
-    expect(benched[2]!.sample_count).toBe(1);
-    expect(benched[2]!.band).toBeNull();
+    expect(defined(benched[2]).sample_count).toBe(1);
+    expect(defined(benched[2]).band).toBeNull();
   });
 
   it('returns a null band, with no contributing parses, for a rule index with no samples anywhere', () => {
     const perParse: ParseRuleSamples[] = [[sample([])], [sample([])], [sample([])], [sample([])], [sample([])]];
     const [entry] = benchRules([ruleA], perParse);
-    expect(entry!.band).toBeNull();
-    expect(entry!.sample_count).toBe(0);
+    expect(defined(entry).band).toBeNull();
+    expect(defined(entry).sample_count).toBe(0);
   });
 });
 
@@ -285,7 +286,7 @@ describe('RotationTransformService (live, in-browser)', () => {
       expect(bench.sample_count).toBe(MIN_SAMPLE_COUNT);
       expect(bench.encounter_name).toBe('Boss');
       expect(bench.cd_spell_ids).toEqual({ 'Shadow Blades': SHADOW_BLADES });
-      expect(bench.per_cd_benchmarks['Shadow Blades']!.sample_count).toBe(MIN_SAMPLE_COUNT);
+      expect(defined(bench.per_cd_benchmarks['Shadow Blades']).sample_count).toBe(MIN_SAMPLE_COUNT);
       expect(bench.ability_icons[SHADOW_BLADES]).toEqual({ icon: 'sb', name: 'Shadow Blades' });
       expect(bench.major_cooldowns).toHaveLength(1);
     }

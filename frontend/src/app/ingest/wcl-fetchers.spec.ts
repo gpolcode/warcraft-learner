@@ -4,6 +4,7 @@ import { BudgetExceededError } from './wcl-client';
 import type { WclQueryClient } from './wcl-client';
 import type { SpecWclMap } from './wcl-mappers';
 import type { WclRawRanking } from '../core/models/wcl.models';
+import { defined } from '../../testing/defined';
 
 const SPEC_WCL: SpecWclMap = {
   FireMage: ['Mage', 'Fire'],
@@ -131,7 +132,7 @@ describe('getRankingsLite', () => {
     const ranked = await getRankingsLite(client, 'SubtletyRogue', 100, SPEC_WCL, 10, [3, 2]);
     expect(queried).toEqual([3, 2]);
     expect(ranked).toHaveLength(1);
-    expect(ranked[0]!.player).toBe('A');
+    expect(defined(ranked[0]).player).toBe('A');
   });
 
   it('parses characterRankings when returned as a JSON string', async () => {
@@ -139,7 +140,7 @@ describe('getRankingsLite', () => {
       query: () => ({ worldData: { encounter: { name: 'Boss', characterRankings: JSON.stringify({ rankings: [{ name: 'A', report: { code: 'r', fightID: 1 } }] }) } } }),
     });
     const ranked = await getRankingsLite(client, 'SubtletyRogue', 100, SPEC_WCL, 10, []);
-    expect(ranked[0]!.player).toBe('A');
+    expect(defined(ranked[0]).player).toBe('A');
   });
 });
 

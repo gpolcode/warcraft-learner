@@ -296,9 +296,11 @@ export function evaluateCastWithoutPrior(
     return lead == null || outOfBand(lead, lo, hi, judging);
   });
   if (!exceedsTolerance(violations.length, primary.length, band)) return null;
+  const firstViolationS = violations[0];
+  if (firstViolationS == null) return null;
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(violations[0] ?? 0, 3),
+    timestamp_s: round(firstViolationS, 3),
     label: `${cond.spell_name} without ${cond.required_spell_name}`,
     message: `${violations.length} of ${primary.length} ${cond.spell_name} casts had no ${cond.required_spell_name} before them. Cast it within ${SECONDS.format(hi)} of ${cond.required_spell_name}.`,
     measured: { value: `${violations.length} / ${primary.length}`, unit: 'cast(s)' },
@@ -351,10 +353,12 @@ export function evaluateHoldForAnchor(
   const judged = gapToNextAnchor(cond, ctx);
   const violations = judged.filter(entry => outOfBand(entry.gapS, lo, hi, judging));
   if (!exceedsTolerance(violations.length, judged.length, band)) return null;
+  const firstViolation = violations[0];
+  if (firstViolation == null) return null;
   const spellNames = [...new Set(violations.map(entry => entry.spellName))].join('/');
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(violations[0]?.timeS ?? 0, 3),
+    timestamp_s: round(firstViolation.timeS, 3),
     label: `${spellNames} held before ${cond.anchor_spell_name}`,
     message: `${spellNames} was used right before ${cond.anchor_spell_name} ${violations.length} of ${judged.length} times. Save it when ${cond.anchor_spell_name} is within ${SECONDS.format(lo)}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'charge(s)' },
@@ -394,12 +398,13 @@ export function evaluateCastOutsideBuff(
 ): AnalysisFinding | null {
   const { lo, hi } = bandLimits(PERCENT, band);
   const { judged, violations } = castsOffBuffSide(cond, ctx);
-  if (!judged.length) return null;
+  const firstJudged = judged[0];
+  if (firstJudged == null) return null;
   if (!outOfBand(violations.length / judged.length, lo, hi, judging)) return null;
   const relation = cond.require === 'inside' ? 'without' : 'during';
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(violations[0] ?? judged[0] ?? 0, 3),
+    timestamp_s: round(violations[0] ?? firstJudged, 3),
     label: `${cond.spell_name} ${relation} ${cond.buff_spell_name}`,
     message: `${violations.length} of ${judged.length} ${cond.spell_name} casts landed ${relation} ${cond.buff_spell_name}. Top raiders ${hi <= 0 ? 'never miss it' : `miss at most ${oneIn(hi)}`}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
@@ -591,9 +596,11 @@ function evaluateBoundedPerCast(
     : judged.phrase(judged.scale.format(nearLimit));
   const advice = farSide ? farAdvice : judged.advice(judged.scale.format(nearLimit));
   const label = farSide ? farLabel(judged.scale.format(farLimit)) : judged.label(judged.scale.format(nearLimit));
+  const firstViolation = violations[0];
+  if (firstViolation == null) return null;
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(violations[0]?.timeS ?? 0, 3),
+    timestamp_s: round(firstViolation.timeS, 3),
     label: `${judged.subject} ${label}`,
     message: `${violations.length} of ${judged.values.length} ${judged.subject} casts ${phrase}. ${advice}`,
     measured: { value: `${violations.length} / ${judged.values.length}`, unit: 'cast(s)' },
@@ -691,7 +698,8 @@ function procSpent(cond: ProcWastedCondition, ctx: RuleContext): (span: [number,
 
 function wastedProcShare(cond: ProcWastedCondition, ctx: RuleContext): number | null {
   const spans = closedProcSpans(cond, ctx);
-  if (!spans.length) return null;
+  const firstSpan = spans[0];
+  if (firstSpan == null) return null;
   const spent = procSpent(cond, ctx);
   return spans.filter(span => !spent(span)).length / spans.length;
 }
@@ -701,13 +709,14 @@ export function evaluateProcWasted(
 ): AnalysisFinding | null {
   const { lo, hi } = bandLimits(PERCENT, band);
   const spans = closedProcSpans(cond, ctx);
-  if (!spans.length) return null;
+  const firstSpan = spans[0];
+  if (firstSpan == null) return null;
   const spent = procSpent(cond, ctx);
   const wasted = spans.filter(span => !spent(span));
   if (!outOfBand(wasted.length / spans.length, lo, hi, judging)) return null;
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round((wasted[0] ?? spans[0])?.[0] ?? 0, 3),
+    timestamp_s: round((wasted[0] ?? firstSpan)[0], 3),
     label: `${cond.buff_spell_name} wasted`,
     message: `${cond.buff_spell_name} expired unused ${wasted.length} of ${spans.length} times. Top raiders ${hi <= 0 ? 'never waste it' : `waste at most ${oneIn(hi)}`}.`,
     measured: { value: `${wasted.length} / ${spans.length}`, unit: 'proc(s)' },
@@ -887,10 +896,12 @@ export function evaluateAuraClipped(
   if (!judged.length) return null;
   const clipped = judged.filter(({ elapsedS }) => outOfBand(elapsedS, lo, hi, judging));
   if (!exceedsTolerance(clipped.length, judged.length, band)) return null;
+  const firstClipped = clipped[0];
+  if (firstClipped == null) return null;
   const outValues = clipped.map(entry => entry.elapsedS);
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(clipped[0]?.timeS ?? 0, 3),
+    timestamp_s: round(firstClipped.timeS, 3),
     label: `${cond.aura_spell_name} clipped`,
     message: `You refreshed ${cond.aura_spell_name} early ${clipped.length} of ${judged.length} times, on average ${SECONDS.format(median(outValues) ?? 0)} in. Let it run at least ${SECONDS.format(lo)}.`,
     measured: { value: `${clipped.length} / ${judged.length}`, unit: 'refresh(es)' },

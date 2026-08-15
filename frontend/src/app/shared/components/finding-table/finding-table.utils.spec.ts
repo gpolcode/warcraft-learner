@@ -4,6 +4,7 @@ import {
 } from './finding-table.utils';
 import { AnalysisFinding } from '../../../core/models/analysis.models';
 import { SHADOW_BLADES, VANISH } from '../../../../testing/spell-ids';
+import { defined } from '../../../../testing/defined';
 
 const spellId = (_name: string) => null;
 const icon = (_name: string) => '';
@@ -33,9 +34,9 @@ describe('bucketFindings', () => {
     const entries = bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
-    expect(entries[0]!.name).toBe('Shadow Blades');
-    expect(entries[0]!.hasCritical).toBe(true);
-    expect(entries[0]!.hasIssue).toBe(true);
+    expect(defined(entries[0]).name).toBe('Shadow Blades');
+    expect(defined(entries[0]).hasCritical).toBe(true);
+    expect(defined(entries[0]).hasIssue).toBe(true);
   });
 
   it('routes hold_suggestion with details.cd_name to the holds bucket (not issues)', () => {
@@ -50,10 +51,10 @@ describe('bucketFindings', () => {
     const entries = bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
-    expect(entries[0]!.name).toBe('Feint');
-    expect(entries[0]!.hasIssue).toBe(true);
-    expect(entries[0]!.hasCritical).toBe(false);
-    expect(entries[0]!.metaItems).toContain('1 hold');
+    expect(defined(entries[0]).name).toBe('Feint');
+    expect(defined(entries[0]).hasIssue).toBe(true);
+    expect(defined(entries[0]).hasCritical).toBe(false);
+    expect(defined(entries[0]).metaItems).toContain('1 hold');
   });
 
   it('buckets a rule_violation under its cooldown name', () => {
@@ -61,7 +62,7 @@ describe('bucketFindings', () => {
     const entries = bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
-    expect(entries[0]!.name).toBe('Shadow Blades');
+    expect(defined(entries[0]).name).toBe('Shadow Blades');
   });
 
   it('success finding with cd_name creates an entry with hasIssue=false', () => {
@@ -69,9 +70,9 @@ describe('bucketFindings', () => {
     const entries = bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
-    expect(entries[0]!.name).toBe('Shadow Blades');
-    expect(entries[0]!.hasIssue).toBe(false);
-    expect(entries[0]!.hasCritical).toBe(false);
+    expect(defined(entries[0]).name).toBe('Shadow Blades');
+    expect(defined(entries[0]).hasIssue).toBe(false);
+    expect(defined(entries[0]).hasCritical).toBe(false);
   });
 
   it('deduplicates metaItems for same-category issues under one CD', () => {
@@ -81,8 +82,8 @@ describe('bucketFindings', () => {
     ];
     const entries = bucketFindings(findings, { spellId, icon });
 
-    expect(entries[0]!.metaItems).toHaveLength(1);
-    expect(entries[0]!.metaItems[0]).toBe('held');
+    expect(defined(entries[0]).metaItems).toHaveLength(1);
+    expect(defined(entries[0]).metaItems[0]).toBe('held');
   });
 
   it('pluralizes the hold label when there are multiple hold suggestions', () => {
@@ -92,7 +93,7 @@ describe('bucketFindings', () => {
     ];
     const entries = bucketFindings(findings, { spellId, icon });
 
-    expect(entries[0]!.metaItems).toContain('2 holds');
+    expect(defined(entries[0]).metaItems).toContain('2 holds');
   });
 
   it('returns no entries for empty input', () => {
@@ -103,9 +104,9 @@ describe('bucketFindings', () => {
     const finding = f('warning', 'cast_efficiency');
     const entries = bucketFindings([finding], { spellId, icon });
     expect(entries).toHaveLength(1);
-    expect(entries[0]!.name).toBe(UNKNOWN_COOLDOWN_LABEL);
-    expect(entries[0]!.hasIssue).toBe(true);
-    expect(entries[0]!.findings).toContain(finding);
+    expect(defined(entries[0]).name).toBe(UNKNOWN_COOLDOWN_LABEL);
+    expect(defined(entries[0]).hasIssue).toBe(true);
+    expect(defined(entries[0]).findings).toContain(finding);
   });
 
   it('logs a warning carrying the finding so an unidentified cooldown can be reproduced', () => {
@@ -141,9 +142,9 @@ describe('rowsFromEntries', () => {
   it('generates one row per finding for entries with hasIssue=true', () => {
     const rows = rowsFromEntries([issueEntry], CAT_LABEL);
     expect(rows).toHaveLength(1);
-    expect(rows[0]!.name).toBe('Shadow Blades');
-    expect(rows[0]!.chip).toBe('lost cast');
-    expect(rows[0]!.measured).toEqual({ value: '0 / 2', unit: 'cast(s)' });
+    expect(defined(rows[0]).name).toBe('Shadow Blades');
+    expect(defined(rows[0]).chip).toBe('lost cast');
+    expect(defined(rows[0]).measured).toEqual({ value: '0 / 2', unit: 'cast(s)' });
   });
 
   it('skips entries with hasIssue=false', () => {
@@ -156,7 +157,7 @@ describe('rowsFromEntries', () => {
       metaItems: [], findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad', occurrences: [] }],
     };
     const rows = rowsFromEntries([entry], CAT_LABEL);
-    expect(rows[0]!.measured).toEqual({ value: '-' });
+    expect(defined(rows[0]).measured).toEqual({ value: '-' });
   });
 
   it('maps critical to "critical", info to its own "info" state, everything else to "warning"', () => {
@@ -169,9 +170,9 @@ describe('rowsFromEntries', () => {
       ],
     };
     const rows = rowsFromEntries([mixedEntry], CAT_LABEL);
-    expect(rows[0]!.severity).toBe('critical');
-    expect(rows[1]!.severity).toBe('info');
-    expect(rows[2]!.severity).toBe('warning');
+    expect(defined(rows[0]).severity).toBe('critical');
+    expect(defined(rows[1]).severity).toBe('info');
+    expect(defined(rows[2]).severity).toBe('warning');
   });
 });
 

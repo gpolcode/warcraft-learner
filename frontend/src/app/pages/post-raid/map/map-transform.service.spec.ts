@@ -11,6 +11,7 @@ import {
   RawPosSample, EnemyMeta,
 } from './map-transform.service';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { defined } from '../../../../testing/defined';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -48,10 +49,10 @@ describe('collectPositionSamples', () => {
       resEvent({ ts: 2000, source: 1, x: 200, y: 100, maxHp: 5000 }),
       resEvent({ ts: 1000, source: 1, x: 100, y: 50, facing: 1500, mapID: 7, maxHp: 5000 }),
     ], 0));
-    const samples = byActor.get(1)!;
+    const samples = defined(byActor.get(1));
     expect(samples.map(s => s.t)).toEqual([1, 2]);
     expect(samples[0]).toEqual({ t: 1, x: 100, y: 50, facing: 1500, mapID: 7, maxHp: 5000 });
-    expect(samples[1]!.x).toBe(200);
+    expect(defined(samples[1]).x).toBe(200);
   });
 });
 
