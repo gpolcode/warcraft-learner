@@ -12,7 +12,7 @@ export interface EventsQueryVars {
   hostilityType?: 'Friendlies' | 'Enemies';
 }
 export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
-/** `partition` is optional: absent means WCL's current partition (the ingest liveness probe tries newest-first). `difficulty` is required: absent, WCL silently falls back to the zone's top difficulty. */
+/** `partition` is optional: absent means WCL's current partition (the ingest liveness probe tries newest-first). */
 export interface RankingsQueryVars { encounterID: number; className: string; specName: string; partition?: number; difficulty: number }
 export interface TableQueryVars { code: string; fightIDs: number[]; dataType: string }
 export interface ResurrectsQueryVars { code: string; fightIDs: number[]; filter: string; startTime: number; endTime: number }
@@ -61,7 +61,7 @@ query($code:String!,$fightIDs:[Int]!,$filter:String,$startTime:Float,$endTime:Fl
   }}
 }`;
 
-// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first. `$difficulty` is non-null so rankings can never come from another difficulty via WCL's top-difficulty default.
+// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first. An absent `$difficulty` would make WCL substitute the zone's top difficulty.
 export const RANKINGS_Q = `
 query($encounterID:Int!,$className:String!,$specName:String!,$partition:Int,$difficulty:Int!){
   worldData{encounter(id:$encounterID){

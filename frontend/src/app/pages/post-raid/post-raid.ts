@@ -60,7 +60,7 @@ export function isValidReportCode(code: string): boolean {
 const MYTHIC_PLUS_DIFFICULTY = 10;
 const RAID_DIFFICULTY_NAMES: Record<number, string> = { 3: 'Normal', 4: 'Heroic' };
 
-// A fight with no difficulty passes: WCL omits the field on some fights, and a null is not evidence of a lower difficulty.
+// WCL omits difficulty on some fights; a missing one is not evidence of a lower difficulty.
 export function isUnsupportedDifficulty(difficulty: number | null | undefined): boolean {
   return difficulty != null && difficulty !== MYTHIC_DIFFICULTY;
 }
