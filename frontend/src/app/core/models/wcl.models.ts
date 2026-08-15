@@ -14,6 +14,9 @@ export interface WclFight {
   difficulty?: number | null;
 }
 
+/** WCL difficulty id 5: Mythic raid, the only difficulty the app analyzes and benches. */
+export const MYTHIC_DIFFICULTY = 5;
+
 export interface WclPlayer {
   id: number;
   name: string;
