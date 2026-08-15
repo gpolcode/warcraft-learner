@@ -110,7 +110,6 @@ export default defineConfig([
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         fetch: 'readonly',
-        URL: 'readonly',
       },
     },
     rules: {

@@ -37,8 +37,7 @@ export interface ParseGear {
   source_id: number;
 }
 
-export function toParseGear(gear: CharacterGear | null, ranking: ParseRanking, sourceId: number): ParseGear | null {
-  if (!gear) return null;
+export function toParseGear(gear: CharacterGear, ranking: ParseRanking, sourceId: number): ParseGear {
   return {
     talent_key: gear.talent_key ?? '',
     trinkets: (gear.trinkets ?? []).map(trinket => ({ slot: trinket.slot, id: trinket.id, name: trinket.name, icon: trinket.icon ?? '' })),
@@ -223,9 +222,7 @@ export class GearTransformService implements DataSource<GearBench> {
       const characterGear: CharacterGear = {
         talent_key: talentKeyFromTree(event.talentTree), trinkets, enchants,
       };
-      const gear = toParseGear(characterGear, ranking, player.id);
-      if (!gear) return null;
-      return { gear, encounterName: fight.name };
+      return { gear: toParseGear(characterGear, ranking, player.id), encounterName: fight.name };
     } catch (err) {
       logWarn(`GearTransformService parse ${ranking.report_code}:${ranking.fight_id}`, err);
       return null;

@@ -3,7 +3,7 @@
 import { logWarn } from '../core/log';
 import { toParseRankings, unwrapRankings } from '../shared/analysis/wcl-projections';
 import { ENCOUNTERS_Q, RANKINGS_Q, type RankingsQueryVars } from '../core/services/wcl-queries';
-import type { ParseRanking, WclRankingsBlob } from '../core/models/wcl.models';
+import { MYTHIC_DIFFICULTY, type ParseRanking, type WclRankingsBlob } from '../core/models/wcl.models';
 import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
   filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap,
@@ -72,14 +72,14 @@ export async function rankingsFromPartition<T>(
 }
 
 export async function getRankingsLite(
-  client: WclQueryClient, spec: string, encounterId: number, specWcl: SpecWclMap, count = 10, partitionIds: number[] = [],
+  client: WclQueryClient, spec: string, encounterId: number, specWcl: SpecWclMap, count: number, partitionIds: number[],
 ): Promise<ParseRanking[]> {
   const mapping = specWcl[spec];
   if (!mapping) throw new Error(`Unknown spec: ${spec}`);
   const [className, specName] = mapping;
 
   const { rows } = await rankingsFromPartition(partitionIds, async partition => {
-    const variables: RankingsQueryVars = { encounterID: encounterId, className, specName };
+    const variables: RankingsQueryVars = { encounterID: encounterId, className, specName, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) variables.partition = partition;
     const data = await client.query<{ worldData: { encounter: { characterRankings: WclRankingsBlob } } }>(RANKINGS_Q, variables);
     return toParseRankings(unwrapRankings(data.worldData.encounter.characterRankings), count);

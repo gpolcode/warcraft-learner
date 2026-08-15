@@ -54,7 +54,6 @@ export interface BurstWindow {
   dmg_max: number;
   dmg_stddev: number;
   common_cds: string[];
-  common_defensives?: string[];
   ability_breakdown: AbilityBreakdown[];
   window_length_s: number;
   defensive_name?: string;

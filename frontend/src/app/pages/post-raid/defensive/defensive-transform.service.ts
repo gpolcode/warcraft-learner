@@ -16,8 +16,6 @@ import { TimedEvent, abilityIcons, findParseActor, normalizeAbilityId, relativeS
 import { DataSource } from '../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
-// Re-exported so call sites / specs importing it from the transform service keep working.
-export { toParseRankings } from '../../../shared/analysis/wcl-projections';
 
 const TOP_PARSE_COUNT = 10;
 // Over-fetch so a private/unfetchable top parse can be backfilled; the loop break caps actual fetches at TOP_PARSE_COUNT.
@@ -206,7 +204,7 @@ export function clusterAbilityBreakdown(cluster: ParseDefWindow[]): BurstWindow[
     .slice(0, ABILITY_BREAKDOWN_TOP_N);
 }
 
-export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
+export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: number): BurstWindow[] {
   if (!windows.length) return [];
   const byDefensive = new Map<string, ParseDefWindow[]>();
   for (const window of windows) {
@@ -216,7 +214,7 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
   const minParses = Math.max(2, sampleCount * CONSENSUS_FRAC);
   const result: BurstWindow[] = [];
   for (const [defensiveName, group] of byDefensive.entries()) {
-    for (const cluster of groupByTime(group, mergeS)) {
+    for (const cluster of groupByTime(group, CLUSTER_MERGE_S)) {
       const distinctParses = new Set(cluster.map(member => member.parse_index)).size;
       const clusterHead = cluster[0];
       if (!clusterHead || distinctParses < minParses) continue;
@@ -234,7 +232,6 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
         window_length_s: round(mean(cluster.map(member => member.window_length_s)) ?? 0),
         defensive_name: defensiveName,
         spell_id: clusterHead.spell_id,
-        common_defensives: [defensiveName],
         common_cds: [defensiveName],
         ref_game_id,
         ability_breakdown: clusterAbilityBreakdown(cluster),

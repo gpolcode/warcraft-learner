@@ -13,7 +13,7 @@ export interface EventsQueryVars {
 }
 export interface CombatantInfoQueryVars { code: string; fightIDs: number[]; sourceID: number }
 /** `partition` is optional: absent means WCL's current partition (the ingest liveness probe tries newest-first). */
-export interface RankingsQueryVars { encounterID: number; className: string; specName: string; partition?: number }
+export interface RankingsQueryVars { encounterID: number; className: string; specName: string; partition?: number; difficulty: number }
 export interface TableQueryVars { code: string; fightIDs: number[]; dataType: string }
 export interface ResurrectsQueryVars { code: string; fightIDs: number[]; filter: string; startTime: number; endTime: number }
 
@@ -61,11 +61,11 @@ query($code:String!,$fightIDs:[Int]!,$filter:String,$startTime:Float,$endTime:Fl
   }}
 }`;
 
-// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first.
+// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first. An absent `$difficulty` would make WCL substitute the zone's top difficulty.
 export const RANKINGS_Q = `
-query($encounterID:Int!,$className:String!,$specName:String!,$partition:Int){
+query($encounterID:Int!,$className:String!,$specName:String!,$partition:Int,$difficulty:Int!){
   worldData{encounter(id:$encounterID){
-    characterRankings(className:$className,specName:$specName,metric:dps,partition:$partition)
+    characterRankings(className:$className,specName:$specName,metric:dps,partition:$partition,difficulty:$difficulty)
   }}
 }`;
 
@@ -94,20 +94,19 @@ export function buildAbilityIconsQuery(ids: number[]): string {
 // Ingest discovery queries (used only by src/app/ingest, bundled only there)
 
 /** The WCL hourly point budget - the ingest orchestrator's budget gate. */
-export const RATE_LIMIT_Q = `query { rateLimitData { limitPerHour pointsSpentThisHour pointsResetIn } }`;
+export const RATE_LIMIT_Q = `query { rateLimitData { limitPerHour pointsSpentThisHour } }`;
 
 // `class.slug`/`spec.slug` are the exact `className`/`specName` the rankings query takes; the folder key is `spec.slug + class.slug`.
-export const CLASSES_Q = `query { gameData { classes { id name slug specs { id name slug } } } }`;
+export const CLASSES_Q = `query { gameData { classes { name slug specs { name slug } } } }`;
 
 /** The worldData expansion tree the current-raid discovery filters. */
 export const ENCOUNTERS_Q = `
 query {
   worldData {
     expansions {
-      id name
       zones {
         id name frozen
-        partitions { id name }
+        partitions { id }
         encounters { id name }
       }
     }

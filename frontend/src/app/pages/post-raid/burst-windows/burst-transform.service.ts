@@ -13,8 +13,6 @@ import { TimedEvent, abilityIcons, findParseActor, normalizeAbilityId, relativeS
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
-// Re-exported so call sites and specs can import it from this service.
-export { toParseRankings } from '../../../shared/analysis/wcl-projections';
 
 const TOP_PARSE_COUNT = 10;
 // Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one.
@@ -229,9 +227,9 @@ export function dedupeByParse(cluster: ParseWindow[]): ParseWindow[] {
   return [...byParse.values()];
 }
 
-export function clusterParseWindows(windows: ParseWindow[], sampleCount: number, mergeS = CLUSTER_MERGE_S): BurstWindow[] {
+export function clusterParseWindows(windows: ParseWindow[], sampleCount: number): BurstWindow[] {
   const result: BurstWindow[] = [];
-  for (const cluster of groupByTime(windows, mergeS)) {
+  for (const cluster of groupByTime(windows, CLUSTER_MERGE_S)) {
     // Reduces to one window per parse so the consensus gate and damage stats count DISTINCT parses.
     const members = dedupeByParse(cluster);
     if (members.length < Math.max(2, sampleCount * CLUSTER_MIN_FRAC)) continue;
