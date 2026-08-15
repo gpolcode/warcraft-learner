@@ -20,7 +20,8 @@
       (keydown)="onKeydown($event)">
       <div class="flex flex-wrap items-start gap-1.5 px-0.5">
         @for (cell of timelineCells(); track cell.kind === 'window' ? 'w' + cell.index : 'g' + cell.id) {
-          @if (cell.kind === 'window' && windows()[cell.index]; as w) {
+          @if (cell.kind === 'window') {
+            @let w = cell.window;
             @let active = activeIndex() === cell.index;
             @let iconTone =
               w.status === 'good' ? 'text-[var(--success)]' :

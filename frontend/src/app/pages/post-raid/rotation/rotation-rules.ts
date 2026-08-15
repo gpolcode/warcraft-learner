@@ -41,8 +41,11 @@ const MAX_OCCURRENCES = 24;
 
 function evenSample<T>(items: T[], count: number): T[] {
   const step = items.length / count;
-  return Array.from({ length: count }, (_, i) => items[Math.floor(i * step)])
-    .filter((item): item is T => item !== undefined);
+  const out: T[] = [];
+  items.forEach((item, index) => {
+    if (out.length < count && index >= Math.floor(out.length * step)) out.push(item);
+  });
+  return out;
 }
 
 /** Thins to at most MAX_OCCURRENCES without ever dropping a failing occurrence in favor of a passing one - a violation finding must keep showing its violations. */
@@ -155,16 +158,6 @@ function buildHealthIndex(damage: TimedEvent[]): Map<string, HealthRow[]> {
   }
   for (const rows of index.values()) rows.sort((a, b) => a[0] - b[0]);
   return index;
-}
-
-/** First index where the monotone `past` turns true, so a time-ordered index is bisected rather than scanned per cast. */
-function partitionPoint(length: number, past: (index: number) => boolean): number {
-  let lo = 0, hi = length;
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1;
-    if (past(mid)) hi = mid; else lo = mid + 1;
-  }
-  return lo;
 }
 
 export interface RuleInputs {
@@ -398,13 +391,15 @@ export function evaluateCastOutsideBuff(
 ): AnalysisFinding | null {
   const { lo, hi } = bandLimits(PERCENT, band);
   const { judged, violations } = castsOffBuffSide(cond, ctx);
-  const firstJudged = judged[0];
-  if (firstJudged == null) return null;
+  if (!judged.length) return null;
   if (!outOfBand(violations.length / judged.length, lo, hi, judging)) return null;
+  // Above-only judging: an out-of-band miss rate implies at least one offending cast.
+  const firstViolationS = violations[0];
+  if (firstViolationS == null) return null;
   const relation = cond.require === 'inside' ? 'without' : 'during';
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round(violations[0] ?? firstJudged, 3),
+    timestamp_s: round(firstViolationS, 3),
     label: `${cond.spell_name} ${relation} ${cond.buff_spell_name}`,
     message: `${violations.length} of ${judged.length} ${cond.spell_name} casts landed ${relation} ${cond.buff_spell_name}. Top raiders ${hi <= 0 ? 'never miss it' : `miss at most ${oneIn(hi)}`}.`,
     measured: { value: `${violations.length} / ${judged.length}`, unit: 'cast(s)' },
@@ -497,32 +492,29 @@ function openerProgress(
   return { pullS, matched, completedS: matched === cond.spell_ids.length ? cursor - pullS : null };
 }
 
-interface OpenerStepResult { ok: boolean; atS?: number; }
+interface OpenerStepResult { ok: boolean; atS?: number; name: string; }
 
 /** Every step's own result, unlike `openerProgress` which stops walking at the first miss - a later step can still land. */
 function openerSteps(cond: OpeningSequenceCondition, ctx: RuleContext, pullS: number, deadlineS: number): OpenerStepResult[] {
   let cursor = pullS;
-  return cond.spell_ids.map(spellId => {
+  return cond.spell_ids.map((spellId, i) => {
+    const name = cond.spell_names[i] ?? String(spellId);
     const next = (ctx.castTimes[spellId] ?? [])
       .filter(time => time >= cursor && time <= deadlineS)
       .sort((a, b) => a - b)[0];
-    if (next == null) return { ok: false };
+    if (next == null) return { ok: false, name };
     cursor = next;
-    return { ok: true, atS: round(next, 3) };
+    return { ok: true, atS: round(next, 3), name };
   });
 }
 
 function openingSequenceOccurrences(
   cond: OpeningSequenceCondition, ctx: RuleContext, pullS: number, deadlineS: number,
 ): FindingOccurrence[] {
-  const steps = openerSteps(cond, ctx, pullS, deadlineS);
-  return cond.spell_ids.map((spellId, i) => {
-    const name = cond.spell_names[i] ?? String(spellId);
-    const step = steps[i];
-    return step?.ok
-      ? { atS: step.atS, ok: true, label: name, detail: `${name} landed on time in its slot.` }
-      : { ok: false, label: name, note: 'not reached', detail: `${name} was never reached in the opener window.` };
-  });
+  return openerSteps(cond, ctx, pullS, deadlineS).map(step =>
+    step.ok
+      ? { atS: step.atS, ok: true, label: step.name, detail: `${step.name} landed on time in its slot.` }
+      : { ok: false, label: step.name, note: 'not reached', detail: `${step.name} was never reached in the opener window.` });
 }
 
 export function evaluateOpeningSequence(
@@ -548,10 +540,9 @@ function targetsAtCast(damage: readonly DamageRow[], castTimeS: number): number 
   const fromS = castTimeS;
   const toS = fromS + TARGET_COUNT_WINDOW_S;
   const targets = new Set<string>();
-  for (let i = partitionPoint(damage.length, index => (damage[index]?.[0] ?? 0) >= fromS); i < damage.length; i++) {
-    const row = damage[i];
-    if (!row || row[0] > toS) break;
-    targets.add(row[1]);
+  for (const [atS, target] of damage) {
+    if (atS > toS) break;
+    if (atS >= fromS) targets.add(target);
   }
   return targets.size;
 }
@@ -630,10 +621,13 @@ export function evaluateCastAtTargetCount(
 }
 
 function resourceAt(rows: readonly ResourceRow[], castS: number): { amount: number; max: number } | null {
-  const latest = partitionPoint(rows.length, index => (rows[index]?.[0] ?? 0) > castS) - 1;
-  const row = latest >= 0 ? rows[latest] : undefined;
-  if (!row || row[0] < castS - RESOURCE_SAMPLE_WINDOW_S) return null;
-  return { amount: row[1], max: row[2] };
+  let latest: ResourceRow | undefined;
+  for (const row of rows) {
+    if (row[0] > castS) break;
+    latest = row;
+  }
+  if (!latest || latest[0] < castS - RESOURCE_SAMPLE_WINDOW_S) return null;
+  return { amount: latest[1], max: latest[2] };
 }
 
 /** A share of the pool's own cap, so one bench band stays meaningful across pools whose scales differ by orders of magnitude - the runtime side converts back to the player's own amount/max for display. */
@@ -709,14 +703,16 @@ export function evaluateProcWasted(
 ): AnalysisFinding | null {
   const { lo, hi } = bandLimits(PERCENT, band);
   const spans = closedProcSpans(cond, ctx);
-  const firstSpan = spans[0];
-  if (firstSpan == null) return null;
+  if (!spans.length) return null;
   const spent = procSpent(cond, ctx);
   const wasted = spans.filter(span => !spent(span));
   if (!outOfBand(wasted.length / spans.length, lo, hi, judging)) return null;
+  // Above-only judging: an out-of-band waste rate implies at least one wasted proc.
+  const firstWasted = wasted[0];
+  if (firstWasted == null) return null;
   return {
     severity, category: 'rule_violation',
-    timestamp_s: round((wasted[0] ?? firstSpan)[0], 3),
+    timestamp_s: round(firstWasted[0], 3),
     label: `${cond.buff_spell_name} wasted`,
     message: `${cond.buff_spell_name} expired unused ${wasted.length} of ${spans.length} times. Top raiders ${hi <= 0 ? 'never waste it' : `waste at most ${oneIn(hi)}`}.`,
     measured: { value: `${wasted.length} / ${spans.length}`, unit: 'proc(s)' },
@@ -918,10 +914,13 @@ export function evaluateAuraClipped(
 function targetHealthFracAt(ctx: RuleContext, cast: TimedEvent): number | null {
   const castS = cast.atS;
   const rows = ctx.targetHealth(targetKey(cast));
-  const latest = partitionPoint(rows.length, index => (rows[index]?.[0] ?? 0) > castS) - 1;
-  const row = latest >= 0 ? rows[latest] : undefined;
-  if (!row || row[0] < castS - HEALTH_SAMPLE_WINDOW_S) return null;
-  return row[1];
+  let latest: HealthRow | undefined;
+  for (const row of rows) {
+    if (row[0] > castS) break;
+    latest = row;
+  }
+  if (!latest || latest[0] < castS - HEALTH_SAMPLE_WINDOW_S) return null;
+  return latest[1];
 }
 
 function fillerBelowHealthTimesFor(cond: FillerBelowHealthCondition, ctx: RuleContext): (spellId: number) => number[] {

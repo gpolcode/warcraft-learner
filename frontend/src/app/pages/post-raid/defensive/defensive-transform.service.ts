@@ -94,11 +94,12 @@ export function summarizeDefensiveCasts(
     castTimes.sort((a, b) => a - b);
     const holdWindows = detectHoldWindows(castTimes, cooldownS);
 
-    if (castTimes.length) {
+    const firstCastS = castTimes[0];
+    if (firstCastS != null) {
       summaries.push({
         name: defensive.name,
         cast_times_s: castTimes,
-        first_cast_s: castTimes[0] ?? null,
+        first_cast_s: firstCastS,
         uses: castTimes.length,
         fight_duration_s: fightDurationS,
         hold_windows: holdWindows,
@@ -258,11 +259,10 @@ export function buildDefensiveBenchmark(
   const firstCasts = summaries.map(summary => summary.first_cast_s).filter((value): value is number => value != null);
   const gaps: number[] = [];
   for (const summary of summaries) {
-    const times = summary.cast_times_s;
-    for (let j = 1; j < times.length; j++) {
-      const cur = times[j];
-      const prev = times[j - 1];
-      if (cur != null && prev != null) gaps.push(cur - prev);
+    let prev: number | undefined;
+    for (const timeS of summary.cast_times_s) {
+      if (prev != null) gaps.push(timeS - prev);
+      prev = timeS;
     }
   }
   const usesPerMinList = summaries

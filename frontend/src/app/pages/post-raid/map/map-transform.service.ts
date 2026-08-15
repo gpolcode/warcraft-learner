@@ -64,17 +64,21 @@ interface CadencePoint { t: number; x: number; y: number; nearest: RawPosSample;
 
 function resamplePoints(samples: RawPosSample[], durationS: number, intervalS: number): CadencePoint[] {
   const firstSample = samples[0];
-  const lastSample = samples[samples.length - 1];
-  if (!firstSample || !lastSample) return [];
+  if (!firstSample) return [];
   const first = firstSample.t;
-  const last = lastSample.t;
+  const last = samples.reduce((latest, sample) => Math.max(latest, sample.t), first);
   const out: CadencePoint[] = [];
-  let idx = 0;
+  // Cursor over the sample stream: `before` is the latest sample at or before `t`, `after` the next one (absent past the end).
+  const upcoming = samples.slice(1)[Symbol.iterator]();
+  const advance = (): RawPosSample | undefined => {
+    const next = upcoming.next();
+    return next.done ? undefined : next.value;
+  };
+  let before = firstSample;
+  let after = advance();
   for (let t = 0; t <= durationS + 1e-6; t += intervalS) {
     if (t < first - intervalS || t > last + intervalS) continue;
-    while (idx + 1 < samples.length && (samples[idx + 1] ?? lastSample).t <= t) idx++;
-    const before = samples[idx] ?? firstSample;
-    const after = samples[idx + 1];
+    while (after !== undefined && after.t <= t) { before = after; after = advance(); }
     let x = before.x, y = before.y, nearest = before;
     if (after && after.t > before.t && t >= before.t) {
       const fraction = Math.min(1, Math.max(0, (t - before.t) / (after.t - before.t)));

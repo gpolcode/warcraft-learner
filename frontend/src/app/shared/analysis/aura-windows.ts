@@ -5,11 +5,7 @@ import { TimedEvent, targetKey } from './wcl-projections';
 export type AuraWindows = Map<number, [number, number | null][]>;
 
 function lastOpen(spans: [number, number | null][]): [number, number | null] | undefined {
-  for (let i = spans.length - 1; i >= 0; i--) {
-    const span = spans[i];
-    if (span && span[1] == null) return span;
-  }
-  return undefined;
+  return [...spans].reverse().find(span => span[1] == null);
 }
 
 /** Buffs and debuffs carry the same apply/remove shape, so one call covers either stream. */

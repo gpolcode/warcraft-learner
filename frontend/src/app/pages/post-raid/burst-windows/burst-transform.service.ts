@@ -70,23 +70,17 @@ type DamageHit = [number, number, number];
 
 /** A hit before/after the fight span clamps into the first/last bin. */
 export function bucketDamagePerBin(hits: DamageHit[], binCount: number): number[] {
-  const damagePerBin = new Array<number>(binCount).fill(0);
+  const dmgByBin = new Map<number, number>();
   for (const [atS, hitDamage] of hits) {
     const binIndex = Math.min(Math.max(Math.floor(atS / BIN_S), 0), binCount - 1);
-    damagePerBin[binIndex] = (damagePerBin[binIndex] ?? 0) + hitDamage;
+    dmgByBin.set(binIndex, (dmgByBin.get(binIndex) ?? 0) + hitDamage);
   }
-  return damagePerBin;
+  return Array.from({ length: binCount }, (_, binIndex) => dmgByBin.get(binIndex) ?? 0);
 }
 
 export function forwardRollingDamage(damagePerBin: number[], rollBins: number): number[] {
-  const binCount = damagePerBin.length;
-  const rollingDamage = new Array<number>(binCount).fill(0);
-  for (let binIndex = 0; binIndex < binCount; binIndex++) {
-    let rollingSum = 0;
-    for (let ahead = binIndex; ahead <= Math.min(binIndex + rollBins - 1, binCount - 1); ahead++) rollingSum += damagePerBin[ahead] ?? 0;
-    rollingDamage[binIndex] = rollingSum;
-  }
-  return rollingDamage;
+  return damagePerBin.map((_, binIndex) =>
+    damagePerBin.slice(binIndex, binIndex + rollBins).reduce((sum, dmg) => sum + dmg, 0));
 }
 
 // A bin is dense at rolling damage >= densityThreshold (strict); runs bridge across up to mergeGapBins sub-threshold bins.
@@ -95,8 +89,8 @@ export function detectDenseRuns(rollingDamage: number[], densityThreshold: numbe
   let runStartBin = -1;
   let runEndBin = -1;
   let subThresholdBins = 0;
-  for (let binIndex = 0; binIndex < rollingDamage.length; binIndex++) {
-    if ((rollingDamage[binIndex] ?? 0) >= densityThreshold) {
+  for (const [binIndex, damage] of rollingDamage.entries()) {
+    if (damage >= densityThreshold) {
       if (runStartBin < 0) runStartBin = binIndex;
       runEndBin = binIndex;
       subThresholdBins = 0;

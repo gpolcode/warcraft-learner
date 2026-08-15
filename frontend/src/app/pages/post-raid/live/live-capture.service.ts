@@ -62,17 +62,21 @@ export function absoluteWindowStart(reportStartTime: number, fightStartTime: num
   return reportStartTime + fightStartTime + timeS * 1000;
 }
 
+export function buildClipWindow(
+  reportStartTime: number, fightStartTime: number, window: ClipAnchor, roll: ClipRoll,
+): ClipWindow {
+  const absStart = absoluteWindowStart(reportStartTime, fightStartTime, window.timeS);
+  return {
+    fromMs: absStart - roll.preMs,
+    toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
+    key: window.key,
+  };
+}
+
 export function buildClipWindows(
   reportStartTime: number, fightStartTime: number, windows: ClipAnchor[], roll: ClipRoll,
 ): ClipWindow[] {
-  return windows.map(window => {
-    const absStart = absoluteWindowStart(reportStartTime, fightStartTime, window.timeS);
-    return {
-      fromMs: absStart - roll.preMs,
-      toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
-      key: window.key,
-    };
-  });
+  return windows.map(window => buildClipWindow(reportStartTime, fightStartTime, window, roll));
 }
 
 export function fullPullWindow(reportStartTime: number, fightStartTime: number, fightEndTime: number): ClipWindow {
@@ -95,10 +99,10 @@ export function segmentSeekOffset(window: ClipWindow, firstSegment: { start: num
 /** The assembled timeline is gapless, so a loop length from a wall-clock span shrinks by this much to end on the same footage. */
 export function interSegmentGapMs(segments: { start: number; end: number }[]): number {
   let gaps = 0;
-  for (let i = 1; i < segments.length; i++) {
-    const cur = segments[i];
-    const prev = segments[i - 1];
-    if (cur && prev) gaps += Math.max(0, cur.start - prev.end);
+  let prev: { start: number; end: number } | undefined;
+  for (const segment of segments) {
+    if (prev) gaps += Math.max(0, segment.start - prev.end);
+    prev = segment;
   }
   return gaps;
 }
@@ -250,8 +254,7 @@ export class LiveCaptureFeatureService {
       logWarn(`LiveCaptureFeatureService.openClip ${anchor.key}`, 'no correlation context (report not resolved)');
       return;
     }
-    const window = this.clipWindowFor(anchor, ctx);
-    this.handle.set(window ? this.resolveHandle(ctx.reportCode, ctx.fight.id, window) : null);
+    this.handle.set(this.resolveHandle(ctx.reportCode, ctx.fight.id, this.clipWindowFor(anchor, ctx)));
   }
 
   download(): void {
@@ -302,12 +305,11 @@ export class LiveCaptureFeatureService {
     this.playbackFailed.set(false);
   }
 
-  private clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow | null {
+  private clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow {
     const { reportStartTime, fight } = ctx;
     // A window plays its exact span; a point-in-time cast gets pre/post roll for context.
     const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
-    const [window] = buildClipWindows(reportStartTime, fight.startTime, [anchor], roll);
-    return window ?? null;
+    return buildClipWindow(reportStartTime, fight.startTime, anchor, roll);
   }
 
   private resolveHandle(reportCode: string, fightId: number, window: ClipWindow): ClipHandle | null {

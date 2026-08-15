@@ -87,8 +87,8 @@ export function findParseActor(actors: ReportActor[] | undefined, ranking: Parse
   const named = (actors ?? []).filter(actor => actor.name === ranking.player);
   if (named.length < 2) return named[0] ?? null;
   const rankedRealm = realmKey(ranking.server);
-  const onRealm = rankedRealm ? named.filter(actor => realmKey(actor.server) === rankedRealm) : [];
-  return onRealm.length === 1 ? (onRealm[0] ?? null) : null;
+  const [onlyOnRealm, ambiguous] = rankedRealm ? named.filter(actor => realmKey(actor.server) === rankedRealm) : [];
+  return onlyOnRealm !== undefined && ambiguous === undefined ? onlyOnRealm : null;
 }
 
 /** Header chips for a window: each spell id with its baked icon + name. */

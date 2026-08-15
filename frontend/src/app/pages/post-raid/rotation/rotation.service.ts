@@ -160,11 +160,11 @@ export function checkBloodlustAlignment(
 export function checkGaps(cdName: string, castTimesS: number[], cdBench: PerCdBenchmark): AnalysisFinding[] {
   const findings: AnalysisFinding[] = [];
   if (cdBench.avg_gap_s == null || cdBench.stddev_gap_s == null) return findings;
-  for (let i = 1; i < castTimesS.length; i++) {
-    const timeS = castTimesS[i];
-    const prevS = castTimesS[i - 1];
-    if (timeS == null || prevS == null) continue;
-    const gap = timeS - prevS;
+  let prevS: number | undefined;
+  for (const timeS of castTimesS) {
+    const gap = prevS != null ? timeS - prevS : null;
+    prevS = timeS;
+    if (gap == null) continue;
     if (isOutlierAbove(gap, cdBench.avg_gap_s, cdBench.stddev_gap_s)) findings.push({
       severity: 'warning', category: 'cooldown_delay', cd_name: cdName,
       timestamp_s: timeS,
@@ -181,12 +181,13 @@ export function checkCastEfficiency(
 ): AnalysisFinding | null {
   if (castTimesS.length < 2) return null;
   let totalDtS = 0;
-  for (let i = 1; i < castTimesS.length; i++) {
-    const timeS = castTimesS[i];
-    const prevS = castTimesS[i - 1];
-    if (timeS == null || prevS == null) continue;
-    const gap = timeS - prevS;
-    if (gap > bench.downtime_threshold_s) totalDtS += gap;
+  let prevS: number | undefined;
+  for (const timeS of castTimesS) {
+    if (prevS != null) {
+      const gap = timeS - prevS;
+      if (gap > bench.downtime_threshold_s) totalDtS += gap;
+    }
+    prevS = timeS;
   }
   const topE = bench.top_avg_efficiency;
   const topSD = bench.top_efficiency_stddev;

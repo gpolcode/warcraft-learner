@@ -118,11 +118,11 @@ export function gapDelayFindings(
   const findings: AnalysisFinding[] = [];
   if (defBench.avg_gap_s == null || defBench.stddev_gap_s == null) return findings;
   const avgGapS = defBench.avg_gap_s;
-  for (let i = 1; i < castTimesS.length; i++) {
-    const timeS = castTimesS[i];
-    const prevS = castTimesS[i - 1];
-    if (timeS == null || prevS == null) continue;
-    const gap = timeS - prevS;
+  let prevS: number | undefined;
+  for (const timeS of castTimesS) {
+    const gap = prevS != null ? timeS - prevS : null;
+    prevS = timeS;
+    if (gap == null) continue;
     if (isOutlierAbove(gap, avgGapS, defBench.stddev_gap_s)) {
       findings.push({ severity: 'warning', category: 'cooldown_delay', cd_name: name,
         timestamp_s: timeS,
