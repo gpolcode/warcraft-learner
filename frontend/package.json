@@ -14,7 +14,6 @@
     "e2e": "playwright test",
     "lint": "ng lint && eslint scripts e2e playwright.config.ts",
     "knip": "knip",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"e2e/**/*.ts\" \"scripts/**/*.{js,mjs}\"",
     "data:pull": "git -C .. fetch origin gh-pages && rm -rf public/data/specs && git -C .. archive origin/gh-pages data/specs | tar -x -C public"
   },
   "private": true,
@@ -57,7 +56,6 @@
     "jsdom": "^30.0.1",
     "knip": "^6.32.2",
     "playwright": "^1.61.1",
-    "prettier": "^3.9.6",
     "sass": "^1.102.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.66.0",

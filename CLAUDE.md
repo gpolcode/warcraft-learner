@@ -48,7 +48,6 @@ frontend/        # the entire Angular 22 app
 | `npm run e2e` | Playwright e2e suite over both pages (`npm run data:pull` first) |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
-| `npm run format` | Prettier over `src/**`, `e2e/**`, and `scripts/**` (`.prettierrc`) |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `npm run start:ingest` | Interactive ingestion: the file server + `ng serve --configuration ingest` |
 | `npm run ingest` | Headless ingestion (CI entry) |
