@@ -10,7 +10,7 @@ export interface LoadResourceConfig<P, T> {
   /** Applies to an ok result only; a failed load is never available. */
   availableWhen?: (value: T) => boolean;
   initialAvailable?: boolean;
-  busyChange?: OutputEmitterRef<boolean>;
+  busyChange: OutputEmitterRef<boolean>;
   availableChange?: OutputEmitterRef<boolean>;
 }
 
@@ -32,7 +32,7 @@ export function loadResource<P, T>(config: LoadResourceConfig<P, T>): LoadResour
         result = await config.load(params);
       } catch (cause) {
         logWarn(config.context, cause);
-        if (!abortSignal.aborted) config.busyChange?.emit(false);
+        if (!abortSignal.aborted) config.busyChange.emit(false);
         // Undefined leaves the last applied result in place: a load that never produced a `Result` states nothing about the card.
         return undefined;
       }
@@ -40,7 +40,7 @@ export function loadResource<P, T>(config: LoadResourceConfig<P, T>): LoadResour
       if (abortSignal.aborted) return undefined;
       if (!result.ok && result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
       config.availableChange?.emit(availableOf(result));
-      config.busyChange?.emit(false);
+      config.busyChange.emit(false);
       return result;
     },
   });

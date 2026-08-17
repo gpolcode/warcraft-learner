@@ -37,7 +37,7 @@ function deferred<T>(): Deferred<T> {
 interface HarnessOptions {
   availableWhen?: (value: string) => boolean;
   initialAvailable?: boolean;
-  withOutputs?: boolean;
+  withAvailableChange?: boolean;
 }
 
 interface Harness {
@@ -75,8 +75,8 @@ function harness(options: HarnessOptions = {}): Harness {
       context: LOAD_CONTEXT,
       availableWhen: options.availableWhen,
       initialAvailable: options.initialAvailable,
-      busyChange: options.withOutputs === false ? undefined : busyChange,
-      availableChange: options.withOutputs === false ? undefined : availableChange,
+      busyChange,
+      availableChange: options.withAvailableChange === false ? undefined : availableChange,
     });
   });
 
@@ -353,14 +353,14 @@ describe('loadResource availableChange', () => {
     expect(h.availability).toEqual([false]);
   });
 
-  it('settles a load with no outputs wired', async () => {
-    const h = harness({ withOutputs: false });
+  it('settles a load with no availableChange wired', async () => {
+    const h = harness({ withAvailableChange: false });
     h.start();
     h.settle(FIRST_PARAMS, ok(FIRST_VALUE));
     await whenStable();
 
     expect(h.card.value()).toBe(FIRST_VALUE);
-    expect(h.busy).toEqual([]);
+    expect(h.busy).toEqual([false]);
     expect(h.availability).toEqual([]);
   });
 });

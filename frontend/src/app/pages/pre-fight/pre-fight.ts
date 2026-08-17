@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, PendingTasks, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
@@ -13,7 +13,6 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
 import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
-import { LatestLoad } from '../../shared/latest-load';
 import { FormatSpecPipe } from '../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../shared/pipes/spec-icon-pipe';
@@ -47,6 +46,7 @@ export class PreFightComponent implements OnInit {
   private readonly mapFeature = inject(MapFeatureService);
   private readonly selectionStore = inject(SelectionStore);
   private readonly specMeta = inject(SpecMetaService);
+  private readonly pendingTasks = inject(PendingTasks);
 
   protected readonly classControl = new FormControl('', { nonNullable: true });
   protected readonly specControl = new FormControl<string>({ value: '', disabled: true }, { nonNullable: true });
@@ -70,7 +70,7 @@ export class PreFightComponent implements OnInit {
   protected readonly loadingEncounters = signal(false);
   protected readonly error = signal<RenderableLoadError | null>(null);
 
-  private readonly encounterLoader = new LatestLoad();
+  private encounterToken = 0;
 
   // Init true avoids a one-frame banner flash on a benched encounter (pre-fight cards render with no reveal gate).
   protected readonly gearAvailable = signal(true);
@@ -127,7 +127,7 @@ export class PreFightComponent implements OnInit {
       this.classControl.setValue(meta.className);
       this.specControl.enable({ emitEvent: false });
       this.specControl.setValue(autoSpec);
-      this._onSpecSelected(autoSpec);
+      void this._onSpecSelected(autoSpec);
     }
   }
 
@@ -157,29 +157,35 @@ export class PreFightComponent implements OnInit {
     this.encControl.disable({ emitEvent: false });
     this.encounters.set([]);
     if (!spec) return;
-    this._onSpecSelected(spec);
+    void this._onSpecSelected(spec);
   }
 
-  private _onSpecSelected(spec: string): void {
+  private async _onSpecSelected(spec: string): Promise<void> {
     this.error.set(null);
     this.loadingEncounters.set(true);
-    this.encounterLoader.run(this.encounterSelection.getEncounters(spec), {
-      context: 'encounterSelection.getEncounters',
-      apply: encounters => {
-        if (!encounters.ok) {
-          this.surfaceLoadError(encounters.error);
-          this.encControl.disable({ emitEvent: false });
-          return;
-        }
-        this.encounters.set(encounters.value);
-        if (encounters.value.length) {
-          this.encControl.enable({ emitEvent: false });
-        } else {
-          this.encControl.disable({ emitEvent: false });
-        }
-      },
-      settled: () => { this.loadingEncounters.set(false); },
-    });
+    const token = ++this.encounterToken;
+    // Reported to PendingTasks: without it a stability wait resolves while this fire-and-forget load is still in flight.
+    const done = this.pendingTasks.add();
+    try {
+      const encounters = await this.encounterSelection.getEncounters(spec);
+      if (token !== this.encounterToken) return;
+      if (!encounters.ok) {
+        this.surfaceLoadError(encounters.error);
+        this.encControl.disable({ emitEvent: false });
+        return;
+      }
+      this.encounters.set(encounters.value);
+      if (encounters.value.length) {
+        this.encControl.enable({ emitEvent: false });
+      } else {
+        this.encControl.disable({ emitEvent: false });
+      }
+    } catch (cause) {
+      logWarn('encounterSelection.getEncounters', cause);
+    } finally {
+      if (token === this.encounterToken) this.loadingEncounters.set(false);
+      done();
+    }
   }
 
   private surfaceLoadError(error: LoadError): void {
