@@ -88,13 +88,6 @@ export class PreFightComponent implements OnInit {
   protected readonly benchAvailable = this.cards.benchAvailable;
   protected readonly cardsBusy = this.cards.anyBusy;
 
-  // pre-fight.spec.ts reports cards loaded through these names, so deleting them as unused breaks it; each is the deck's own signal.
-  protected readonly northernSkyBusy = this.cards.busy('northernSky');
-  protected readonly gearBusy = this.cards.busy('gear');
-  protected readonly cdPlanBusy = this.cards.busy('cdPlan');
-  protected readonly defensivePlanBusy = this.cards.busy('defensivePlan');
-  protected readonly burstBusy = this.cards.busy('burst');
-
   protected readonly mapReady = this.mapFeature.ready;
 
   protected onOpenMap(anchor: MapAnchor): void {
