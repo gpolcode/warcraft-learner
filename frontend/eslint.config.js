@@ -38,7 +38,7 @@ const layerPolicies = [
   },
   {
     from: [{ element: { type: 'environments' } }],
-    allow: to('core', 'shared', 'slice', 'page', 'ingest', 'environments'),
+    allow: to('core', 'shared', 'slice', 'ingest', 'environments'),
   },
   { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root', 'environments') },
   { from: [{ element: { type: 'testing' } }], allow: to('core', 'shared', 'slice', 'page', 'ingest', 'testing') },
@@ -47,6 +47,29 @@ const layerPolicies = [
     allow: [{ to: { element: { type: 'slice', captured: { sliceName: 'map' } } } }],
     message: 'Pull Overview reads the Map slice anchor type its own cards emit.',
   },
+];
+
+// Exactly 3, 6, or 8 hex digits: the trailing guard keeps `#8041`-style id labels out.
+const HEX_COLOR = String.raw`#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})(?![0-9a-fA-F])`;
+const COLOR_FUNCTION = String.raw`\b(?:rgba?|hsla?)\(`;
+const COLOR_LITERAL = `${HEX_COLOR}|${COLOR_FUNCTION}`;
+
+// Anchored at a token start so module specifiers like './class-icon-pipe' are not class names.
+const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:badge|fill|seg|icon|chip)-`;
+
+const styleFileMessage =
+  'Zero per-component style files: styling is Angular Material + Tailwind utilities over the tokens in src/styles.scss.';
+const colorMessage =
+  'No hardcoded colors: use a src/styles.scss token through a Tailwind arbitrary value or a badge-* class.';
+const classProductionMessage =
+  'Component TS never produces CSS classes: expose semantic state and let the template pick the class.';
+
+const restrictUiSyntax = [
+  { selector: 'Property[key.name=/^styleUrls?$/], Property[key.value=/^styleUrls?$/]', message: styleFileMessage },
+  { selector: `Literal[value=/${COLOR_LITERAL}/]`, message: colorMessage },
+  { selector: `TemplateElement[value.raw=/${COLOR_LITERAL}/]`, message: colorMessage },
+  { selector: `Literal[value=/${DESIGN_SYSTEM_CLASS}/]`, message: classProductionMessage },
+  { selector: `TemplateElement[value.raw=/${DESIGN_SYSTEM_CLASS}/]`, message: classProductionMessage },
 ];
 
 const httpClientImports = [
@@ -187,7 +210,7 @@ export default defineConfig([
       '@angular-eslint/no-uncalled-signals': 'error',
       '@angular-eslint/computed-must-return': 'error',
       '@angular-eslint/use-component-view-encapsulation': 'error',
-      '@angular-eslint/component-max-inline-declarations': ['error', { template: 10 }], // beyond that, templateUrl
+      '@angular-eslint/component-max-inline-declarations': ['error', { template: 10, styles: 0 }], // beyond that, templateUrl
     },
   },
   {
@@ -202,7 +225,21 @@ export default defineConfig([
     rules: {
       'boundaries/dependencies': ['error', { default: 'disallow', policies: layerPolicies }],
       'boundaries/no-unknown-dependencies': 'error',
+      'boundaries/no-unknown-files': 'error',
       'no-restricted-imports': ['error', restrictHttpImports],
+      'no-restricted-globals': [
+        'error',
+        {
+          name: 'fetch',
+          message: 'Only the transports behind WclApiService and DataFileApiService issue HTTP requests.',
+        },
+        {
+          name: 'XMLHttpRequest',
+          message: 'Only the transports behind WclApiService and DataFileApiService issue HTTP requests.',
+        },
+        { name: 'WebSocket', message: 'Live sync polls through WclApiService; the app opens no sockets.' },
+      ],
+      'no-restricted-syntax': ['error', ...restrictUiSyntax],
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
       complexity: ['error', { max: 16 }],
       'max-depth': ['error', { max: 3 }],
@@ -254,6 +291,7 @@ export default defineConfig([
       '@angular-eslint/template/no-empty-control-flow': 'error',
       '@angular-eslint/template/prefer-built-in-pipes': 'error',
       '@angular-eslint/template/prefer-contextual-for-variables': 'error',
+      'max-lines': ['error', { max: 320, skipBlankLines: false, skipComments: false }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
     },
