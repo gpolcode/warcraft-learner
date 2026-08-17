@@ -2,8 +2,6 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpErrorResponse } from '@angular/common/http';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
 import { missing, transient } from '../../../core/result';
 import {
   MapTransformService,
@@ -11,6 +9,8 @@ import {
   RawPosSample, EnemyMeta,
 } from './map-transform.service';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { parseRankings, parseReport } from '../../../../testing/builders/wcl-fixtures';
+import { provideApiFakes } from '../../../../testing/api-fakes';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;
@@ -296,7 +296,6 @@ interface RecordedFetch { dataType: string; sourceId?: number; includeResources?
 describe('MapTransformService.getBench', () => {
   const SPEC = 'SubtletyRogue';
   const ENCOUNTER_ID = 3144;
-  const REPORT_CODE = 'r1';
   const FIGHT_ID = 1;
   const SIX_SEC_MS = 6000;                 // short fight span [0, endTime)
   const PLAYER_ACTOR_ID = 5;
@@ -306,23 +305,17 @@ describe('MapTransformService.getBench', () => {
   const SERVER_UNREACHABLE_STATUS = 503;   // a 5xx maps to `transient` in the taxonomy
   const BENCH_ERROR_ID = 'map.bench';      // repro id a permanent bench failure carries
 
-  const report = {
-    title: 't',
-    fights: [{ id: FIGHT_ID, name: 'Boss', startTime: 0, endTime: SIX_SEC_MS, kill: true, encounterID: ENCOUNTER_ID, friendlyPlayers: [] }],
-    masterData: {
-      actors: [{ id: PLAYER_ACTOR_ID, name: 'P1', subType: 'Rogue', server: '' }],
-      enemies: [{ id: BOSS_ACTOR_ID, name: 'Boss', gameID: BOSS_GAME_ID }],
-      abilities: [],
-    },
-  };
+  const report = parseReport({
+    playerId: PLAYER_ACTOR_ID, fightId: FIGHT_ID, endTimeMs: SIX_SEC_MS, encounterId: ENCOUNTER_ID,
+    enemies: [{ id: BOSS_ACTOR_ID, name: 'Boss', gameID: BOSS_GAME_ID }],
+  });
 
   /** `onFetch` records each position-event fetch so the fetch-shape assertion still sees every call. */
   function serviceWith(
     over: { getRankings?: () => Promise<unknown>; onFetch?: (call: RecordedFetch) => void } = {},
   ): MapTransformService {
     const wclFake = {
-      getRankings: over.getRankings
-        ?? (async () => ({ rankings: [{ name: 'P1', report: { code: REPORT_CODE, fightID: FIGHT_ID } }] })),
+      getRankings: over.getRankings ?? (async () => ({ rankings: parseRankings(1) })),
       getReport: async () => report,
       getAllEvents: async (
         _code: string, _fightId: number, dataType: string, _start: number, _end: number,
@@ -332,12 +325,7 @@ describe('MapTransformService.getBench', () => {
         return [];
       },
     };
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: WclApiService, useValue: wclFake as unknown as WclApiService },
-        { provide: DataFileApiService, useValue: {} as unknown as DataFileApiService },
-      ],
-    });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
     return TestBed.inject(MapTransformService);
   }
 
