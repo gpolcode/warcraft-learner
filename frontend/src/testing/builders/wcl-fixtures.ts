@@ -1,0 +1,103 @@
+/** Factories for the WCL responses a `*TransformService` reads: the ranked top parses, the report behind each one, and the ability map. */
+import { WclAbility, WclRawAbility } from '../../app/core/models/wcl.models';
+
+export interface FixtureActor { id: number; name: string; subType: string; server: string }
+export interface FixtureEnemy { id: number; name: string; gameID: number }
+
+export interface FixtureReport {
+  title: string;
+  fights: {
+    id: number; name: string; startTime: number; endTime: number;
+    kill: boolean; encounterID: number; friendlyPlayers: number[];
+  }[];
+  masterData: { actors: FixtureActor[]; enemies: FixtureEnemy[]; abilities: WclAbility[] };
+}
+
+export interface ReportOverrides {
+  playerId?: number;
+  playerName?: string;
+  playerServer?: string;
+  fightId?: number;
+  fightName?: string;
+  endTimeMs?: number;
+  encounterId?: number;
+  actors?: FixtureActor[];
+  enemies?: FixtureEnemy[];
+  abilities?: WclAbility[];
+}
+
+const DEFAULT_PLAYER_ID = 10;
+const DEFAULT_PLAYER_NAME = 'P1';
+const DEFAULT_FIGHT_ID = 1;
+const DEFAULT_FIGHT_NAME = 'Boss';
+const DEFAULT_ENCOUNTER_ID = 1;
+const DEFAULT_FIGHT_END_MS = 300_000;
+const ACTOR_ID_PER_PARSE = 10;
+
+/** One report holding one fight and the ranked player's actor row; `masterData` defaults to a bare player with no enemies or abilities. */
+export function parseReport(over: ReportOverrides = {}): FixtureReport {
+  const playerId = over.playerId ?? DEFAULT_PLAYER_ID;
+  const playerName = over.playerName ?? DEFAULT_PLAYER_NAME;
+  return {
+    title: 't',
+    fights: [{
+      id: over.fightId ?? DEFAULT_FIGHT_ID,
+      name: over.fightName ?? DEFAULT_FIGHT_NAME,
+      startTime: 0,
+      endTime: over.endTimeMs ?? DEFAULT_FIGHT_END_MS,
+      kill: true,
+      encounterID: over.encounterId ?? DEFAULT_ENCOUNTER_ID,
+      friendlyPlayers: [],
+    }],
+    masterData: {
+      actors: over.actors ?? [{ id: playerId, name: playerName, subType: 'Rogue', server: over.playerServer ?? '' }],
+      enemies: over.enemies ?? [],
+      abilities: over.abilities ?? [],
+    },
+  };
+}
+
+export interface FixtureRanking {
+  name: string;
+  server?: { name: string };
+  report: { code: string; fightID: number };
+}
+
+/** Ranked parse `index`: player `P{index}` on fight `index` of report `r{index}`, the identity {@link reportsByCode} decodes. */
+export function rankingRow(index: number, over: { name?: string; server?: string } = {}): FixtureRanking {
+  return {
+    name: over.name ?? `P${index}`,
+    ...(over.server !== undefined && { server: { name: over.server } }),
+    report: { code: `r${index}`, fightID: index },
+  };
+}
+
+export function parseRankings(count: number): FixtureRanking[] {
+  return Array.from({ length: count }, (_unused, offset) => rankingRow(offset + 1));
+}
+
+const PRIVATE_REPORT_ERROR = 'You do not have permission to view this report.';
+
+/** A `getReport` over the codes {@link parseRankings} mints: `r{n}` answers with fight n and actor `P{n}` at id n*10. */
+export function reportsByCode(
+  over: ReportOverrides & { privateCode?: string } = {},
+): (code: string) => Promise<FixtureReport> {
+  const { privateCode, ...reportOver } = over;
+  return async (code: string) => {
+    if (code === privateCode) throw new Error(PRIVATE_REPORT_ERROR);
+    const index = Number(code.slice(1));
+    return parseReport({
+      playerId: index * ACTOR_ID_PER_PARSE, playerName: `P${index}`, fightId: index, ...reportOver,
+    });
+  };
+}
+
+/** A `getAbilities` over the raw id-keyed `gameData.ability` map; an id absent from `named` answers with a synthetic icon + name. */
+export function abilityLookup(
+  named: Record<number, { icon: string; name: string }> = {},
+): (ids: number[]) => Promise<Record<number, WclRawAbility>> {
+  return async (ids: number[]) => Object.fromEntries(ids.map(id => {
+    const entry = named[id] ?? { icon: `icon_${id}`, name: `name_${id}` };
+    return [id, { id, icon: entry.icon, name: entry.name }];
+  }));
+}
