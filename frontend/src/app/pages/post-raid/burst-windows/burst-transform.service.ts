@@ -7,7 +7,7 @@ import { Result, missing } from '../../../core/result';
 import { mean, median, deviation, quantile } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
 import { TimedEvent, abilityIcons, normalizeAbilityId, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, CANDIDATE_POOL_COUNT, TOP_PARSE_COUNT, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
@@ -289,11 +289,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     return benchFromTopParses(this.wclApi, { spec, encounterId, partition }, {
       logSource: 'BurstTransformService',
       errorId: 'burst.bench',
-      candidatePoolCount: CANDIDATE_POOL_COUNT,
-      sampleTarget: TOP_PARSE_COUNT,
-      minSamples: 1,
       noRankingsMessage: 'Not yet ingested.',
-      tooFewParsesMessage: () => 'Not yet ingested.',
       parse: parse => this.parseWindows(parse, cooldowns),
       bench: async ({ encounterName, parses }) => {
         const allWindows = parses.flatMap(

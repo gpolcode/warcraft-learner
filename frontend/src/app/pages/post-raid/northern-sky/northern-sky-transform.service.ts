@@ -42,9 +42,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       errorId: 'northern-sky.bench',
       candidatePoolCount: CANDIDATE_POOL_COUNT,
       sampleTarget: EXPORTED_PARSE_COUNT,
-      minSamples: EXPORTED_PARSE_COUNT,
       noRankingsMessage: NO_EXPORT_MESSAGE,
-      tooFewParsesMessage: () => NO_EXPORT_MESSAGE,
       parse: parse => this.parseCastTimes(parse, abilities),
       bench: async ({ encounterName, parses }) => {
         const built = parses[0] ?? [];

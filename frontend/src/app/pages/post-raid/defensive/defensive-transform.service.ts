@@ -10,7 +10,7 @@ import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analys
 import { HoldWindow, buildHoldTargets, detectHoldWindows } from '../../../shared/analysis/hold-targets';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 import { TimedEvent, abilityIcons, normalizeAbilityId, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, CANDIDATE_POOL_COUNT, TOP_PARSE_COUNT, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
@@ -310,11 +310,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     return benchFromTopParses(this.wclApi, { spec, encounterId, partition }, {
       logSource: 'DefensiveTransformService',
       errorId: 'defensive.bench',
-      candidatePoolCount: CANDIDATE_POOL_COUNT,
-      sampleTarget: TOP_PARSE_COUNT,
-      minSamples: 1,
       noRankingsMessage: NO_DEFENSIVE_BENCH_MESSAGE,
-      tooFewParsesMessage: () => NO_DEFENSIVE_BENCH_MESSAGE,
       parse: parse => this.parseDefensives(parse, defensives),
       bench: async ({ encounterName, parses }) => {
         const allWindows = parses.flatMap(

@@ -9,7 +9,7 @@ import {
   HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets, detectHoldWindows,
 } from '../../../shared/analysis/hold-targets';
 import { TimedEvent, abilityIcons, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, CANDIDATE_POOL_COUNT, TOP_PARSE_COUNT, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result, missing } from '../../../core/result';
 import {
@@ -217,10 +217,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
 
     return benchFromTopParses(this.wclApi, { spec, encounterId, partition }, {
       logSource: 'RotationTransformService',
-      benchLogSource: `RotationTransformService.getBench ${spec}:${encounterId}`,
       errorId: 'rotation.bench',
-      candidatePoolCount: CANDIDATE_POOL_COUNT,
-      sampleTarget: TOP_PARSE_COUNT,
       minSamples: MIN_PARSE_COUNT,
       noRankingsMessage: 'No top parses for this encounter.',
       tooFewParsesMessage: usable =>

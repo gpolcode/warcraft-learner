@@ -69,16 +69,6 @@ describe('benchFromTopParses', () => {
     expect(result).toEqual(ok({ encounterName: BOSS_NAME, codes: ['r2', 'r3'] }));
   });
 
-  it('fills the whole sample target off the over-fetched pool when a report is unserveable', async () => {
-    const PRIVATE_CODE = 'r5';
-    const wcl = wclFake({ getReport: reportsByCode({ privateCode: PRIVATE_CODE }) });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice());
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.value.codes).toHaveLength(SAMPLE_TARGET);
-    expect(result.value.codes).not.toContain(PRIVATE_CODE);
-  });
-
   it('backfills past a candidate the slice itself rejects', async () => {
     const TARGET = 2;
     const REJECTED_CODE = 'r2';

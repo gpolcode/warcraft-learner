@@ -6,9 +6,10 @@ import { Result, ok, missing } from '../../core/result';
 import { toLoadError } from '../../core/http-load-error';
 import { ReportActor, findParseActor, toParseRankings, unwrapRankings } from './wcl-projections';
 
-export const TOP_PARSE_COUNT = 10;
+const TOP_PARSE_COUNT = 10;
 // Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one; the sample target caps actual fetches at TOP_PARSE_COUNT.
-export const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
+const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
+const MIN_SAMPLE_COUNT = 1;
 
 /** One candidate parse, resolved before the slice's own fetches. */
 export interface BenchParse {
@@ -29,15 +30,14 @@ export interface BenchSlice<TParse, TBench> {
   logSource: string;
   /** Repro id a permanent bench failure carries, e.g. `burst.bench`. */
   errorId: string;
-  candidatePoolCount: number;
+  candidatePoolCount?: number;
   /** Accepted parses to stop sampling at. */
-  sampleTarget: number;
+  sampleTarget?: number;
   /** Fewest accepted parses that still bench. */
-  minSamples: number;
+  minSamples?: number;
   noRankingsMessage: string;
-  tooFewParsesMessage: (accepted: number) => string;
-  /** logWarn source of a bench-level failure; defaults to `<logSource>.getBench`. */
-  benchLogSource?: string;
+  /** Defaults to `noRankingsMessage`. */
+  tooFewParsesMessage?: (accepted: number) => string;
   /** The slice's per-parse fetch and pure aggregation; null drops the parse so the next candidate backfills it. */
   parse: (parse: BenchParse) => Promise<TParse | null>;
   bench: (payload: BenchPayload<TParse>) => Promise<TBench> | TBench;
@@ -50,9 +50,11 @@ export async function benchFromTopParses<TParse, TBench>(
 ): Promise<Result<TBench>> {
   const { spec, encounterId, partition } = query;
   try {
-    const rankings = toParseRankings(unwrapRankings(await wclApi.getRankings(spec, encounterId, partition)), slice.candidatePoolCount);
+    const poolCount = slice.candidatePoolCount ?? CANDIDATE_POOL_COUNT;
+    const rankings = toParseRankings(unwrapRankings(await wclApi.getRankings(spec, encounterId, partition)), poolCount);
     if (!rankings.length) return missing(slice.noRankingsMessage);
 
+    const sampleTarget = slice.sampleTarget ?? TOP_PARSE_COUNT;
     const parses: TParse[] = [];
     let encounterName = '';
     for (const ranking of rankings) {
@@ -60,13 +62,15 @@ export async function benchFromTopParses<TParse, TBench>(
       if (!accepted) continue;
       parses.push(accepted.parse);
       encounterName ||= accepted.encounterName;
-      if (parses.length >= slice.sampleTarget) break;
+      if (parses.length >= sampleTarget) break;
     }
-    if (parses.length < slice.minSamples) return missing(slice.tooFewParsesMessage(parses.length));
+    if (parses.length < (slice.minSamples ?? MIN_SAMPLE_COUNT)) {
+      return missing(slice.tooFewParsesMessage?.(parses.length) ?? slice.noRankingsMessage);
+    }
 
     return ok(await slice.bench({ encounterName, parses }));
   } catch (cause) {
-    logWarn(slice.benchLogSource ?? `${slice.logSource}.getBench`, cause);
+    logWarn(`${slice.logSource}.getBench ${spec}:${encounterId}`, cause);
     return toLoadError(cause, slice.errorId);
   }
 }

@@ -16,9 +16,7 @@ export interface FixtureReport {
 export interface ReportOverrides {
   playerId?: number;
   playerName?: string;
-  playerServer?: string;
   fightId?: number;
-  fightName?: string;
   endTimeMs?: number;
   encounterId?: number;
   actors?: FixtureActor[];
@@ -42,7 +40,7 @@ export function parseReport(over: ReportOverrides = {}): FixtureReport {
     title: 't',
     fights: [{
       id: over.fightId ?? DEFAULT_FIGHT_ID,
-      name: over.fightName ?? DEFAULT_FIGHT_NAME,
+      name: DEFAULT_FIGHT_NAME,
       startTime: 0,
       endTime: over.endTimeMs ?? DEFAULT_FIGHT_END_MS,
       kill: true,
@@ -50,7 +48,7 @@ export function parseReport(over: ReportOverrides = {}): FixtureReport {
       friendlyPlayers: [],
     }],
     masterData: {
-      actors: over.actors ?? [{ id: playerId, name: playerName, subType: 'Rogue', server: over.playerServer ?? '' }],
+      actors: over.actors ?? [{ id: playerId, name: playerName, subType: 'Rogue', server: '' }],
       enemies: over.enemies ?? [],
       abilities: over.abilities ?? [],
     },

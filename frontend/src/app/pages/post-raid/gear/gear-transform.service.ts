@@ -10,7 +10,7 @@ import { buildTalentDiff } from '../../../shared/gear/gear-comparison';
 import { TalentDataService } from '../../../core/services/talent-data';
 import { SpecTalents } from '../../../core/models/talent.models';
 import { getOrInsert } from '../../../shared/analysis/analysis-math';
-import { BenchParse, CANDIDATE_POOL_COUNT, TOP_PARSE_COUNT, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { GearBench } from './gear-data-source';
 
@@ -158,13 +158,8 @@ export class GearTransformService implements DataSource<GearBench> {
   async getBench(spec: string, encounterId: number, partition?: number | null): Promise<Result<GearBench>> {
     return benchFromTopParses(this.wclApi, { spec, encounterId, partition }, {
       logSource: 'GearTransformService',
-      benchLogSource: `GearTransformService bench ${spec}:${encounterId}`,
       errorId: 'gear.bench',
-      candidatePoolCount: CANDIDATE_POOL_COUNT,
-      sampleTarget: TOP_PARSE_COUNT,
-      minSamples: 1,
       noRankingsMessage: 'Not yet ingested.',
-      tooFewParsesMessage: () => 'Not yet ingested.',
       parse: parse => this.fetchParseGear(parse),
       bench: async ({ encounterName, parses }) => {
         const stats = aggregateParseGear(parses);
