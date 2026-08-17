@@ -209,67 +209,8 @@ export default defineConfig([
     },
   },
   {
-    files: [
-      'src/app/core/services/http-*-transport*.ts',
-      'src/app/core/services/talent-data*.ts',
-      'src/app/core/services/wcl-auth*.ts',
-      'src/app/core/interceptors/retry-transient.interceptor.spec.ts',
-      'src/app/ingest/ingest-data-file-transport*.ts',
-      'src/app/app.config.ts',
-    ],
-    rules: { 'no-restricted-imports': 'off' },
-  },
-  {
     files: functionalCoreFiles,
     rules: { 'no-restricted-imports': ['error', restrictAngularImports] },
-  },
-  {
-    files: ['src/**/*.spec.ts'],
-    rules: { 'max-lines': ['error', { max: 1000, skipBlankLines: false, skipComments: false }] },
-  },
-  {
-    files: ['src/app/pages/post-raid/rotation/rotation-rules.ts'],
-    rules: { 'max-lines': ['error', { max: 1300, skipBlankLines: false, skipComments: false }] },
-  },
-  {
-    files: ['src/app/pages/post-raid/rotation/rotation-rules.spec.ts'],
-    rules: { 'max-lines': ['error', { max: 1750, skipBlankLines: false, skipComments: false }] },
-  },
-  {
-    files: ['src/app/pages/post-raid/map/map-canvas.ts'],
-    rules: { complexity: ['error', { max: 24 }] },
-  },
-  {
-    files: ['src/app/shared/gear/gear-comparison.ts'],
-    rules: { complexity: ['error', { max: 22 }] },
-  },
-  {
-    files: ['src/app/pages/post-raid/rotation/rotation.service.ts'],
-    rules: { complexity: ['error', { max: 20 }] },
-  },
-  {
-    files: [
-      'src/app/pages/post-raid/defensive/defensive.service.ts',
-      'src/app/pages/post-raid/gear/gear-transform.service.ts',
-      'src/app/pages/post-raid/rotation/rotation-transform.service.ts',
-    ],
-    rules: { complexity: ['error', { max: 19 }] },
-  },
-  {
-    files: [
-      'src/app/ingest/ingest-orchestrator.service.ts',
-      'src/app/pages/post-raid/defensive/defensive-transform.service.ts',
-    ],
-    rules: { complexity: ['error', { max: 17 }] },
-  },
-  {
-    files: [
-      'src/app/core/services/talent-data.ts',
-      'src/app/pages/post-raid/defensive/defensive-transform.service.ts',
-      'src/app/pages/post-raid/gear/gear-transform.service.ts',
-      'src/app/pages/post-raid/northern-sky/northern-sky-transform.service.ts',
-    ],
-    rules: { 'max-depth': ['error', { max: 4 }] },
   },
   {
     // Plain-JS Node scripts (the ingest file server + headless harness). console is
