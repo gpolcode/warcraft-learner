@@ -31,7 +31,7 @@ frontend/        # the entire Angular 22 app
   src/app/core/  # the two API services, data-source token, models
   src/app/ingest # ingest orchestrator (bundled only by the ingest configuration)
   schema/        # wcl.graphql - the introspected WCL v2 SDL that codegen reads
-  scripts/       # ingest-server.js + ingest-headless.mjs + introspect-wcl.mjs - plain Node, zero ingestion logic
+  scripts/       # ingest-server.js + ingest-headless.mjs + introspect-wcl.mjs + codegen.mjs - plain Node, zero ingestion logic
   e2e/           # Playwright happy-path suite (one WCL analysis per run)
   public/data/specs/  # static ingested data - not tracked on main; lives on gh-pages
 .github/workflows/  # deploy-pages, ingest-parses (hourly), wcl-schema-refresh (weekly), test, e2e
