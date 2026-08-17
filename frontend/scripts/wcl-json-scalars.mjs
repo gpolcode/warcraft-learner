@@ -1,6 +1,5 @@
 // WCL types every payload field as one shared `JSON` scalar, and a single codegen `scalars` entry can only map that to one TypeScript type.
 
-/** Field coordinate -> the scalar it carries in the committed SDL; codegen.yml maps each one to the app model that reads it. */
 export const JSON_FIELD_SCALARS = {
   'Report.playerDetails': 'PlayerDetailsJson',
   'Report.table': 'TableJson',
@@ -24,7 +23,7 @@ function findField(types, typeName, fieldName) {
   return field;
 }
 
-/** Retypes every field in {@link JSON_FIELD_SCALARS} from `JSON` to its own scalar and declares those scalars - a pure function of the introspection payload, so schema:pull stays reproducible. */
+/** Must stay a pure function of the payload: any nondeterminism here makes schema:pull irreproducible. */
 export function nameJsonFieldScalars(introspection) {
   const types = introspection.__schema.types;
   const jsonScalar = types.find(entry => entry.kind === 'SCALAR' && entry.name === JSON_SCALAR);

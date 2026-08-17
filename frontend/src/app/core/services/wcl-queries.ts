@@ -1,4 +1,3 @@
-// Keep query strings here and nowhere else. Every operation is named because codegen (codegen.yml) derives its types from that name.
 
 // The identity tag marks these documents for GraphQL Code Generator; untagging one silently drops its generated types.
 const gql = (document: TemplateStringsArray): string => document.join('');

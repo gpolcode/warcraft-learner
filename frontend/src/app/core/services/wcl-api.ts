@@ -58,7 +58,6 @@ export class WclApiService {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
     const report = result.reportData?.report;
-    // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!report) throw this.reportUnavailable(code);
     return (report.fights ?? []) as WclReport['fights'];
   }
@@ -68,7 +67,6 @@ export class WclApiService {
     const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
     const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
     const playerDetails = result.reportData?.report?.playerDetails?.data?.playerDetails;
-    // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!playerDetails) throw this.reportUnavailable(code);
     return playerDetails;
   }
@@ -96,7 +94,6 @@ export class WclApiService {
       if (hostilityType) vars.hostilityType = hostilityType;
       const result = await this.query<EventsQuery>(EVENTS_Q, vars);
       const page = result.reportData?.report?.events;
-      // Same unserved-report case as getReport; fail typed rather than into a TypeError.
       if (!page) throw this.reportUnavailable(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
       for (const event of page.data ?? []) events.push(event);
@@ -111,7 +108,6 @@ export class WclApiService {
     const vars: CombatantInfoQueryVariables = { code, fightIDs: [fightId], sourceID: playerId };
     const result = await this.query<CombatantInfoQuery>(COMBATANT_INFO_Q, vars);
     const report = result.reportData?.report;
-    // Same unserved-report case as getReport; fail typed rather than folding null into a success [].
     if (!report) throw this.reportUnavailable(code);
     return report.events?.data ?? [];
   }
@@ -131,7 +127,6 @@ export class WclApiService {
       const vars: ResurrectsQueryVariables = { code, fightIDs: [fightId], filter: 'type = "resurrect"', startTime: currentStart, endTime };
       const result = await this.query<ResurrectsQuery>(RESURRECTS_Q, vars);
       const page = result.reportData?.report?.events;
-      // Same unserved-report case as getReport; fail typed rather than into a TypeError.
       if (!page) throw this.reportUnavailable(code);
       for (const event of page.data ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;

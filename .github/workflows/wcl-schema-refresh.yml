@@ -1,8 +1,6 @@
 name: Refresh WCL Schema
 
-# WCL changes its schema without notice, and codegen plus CI's in-sync check both read the
-# COMMITTED SDL, so nothing notices upstream drift until someone re-introspects by hand. This
-# job re-introspects weekly and proposes the refresh as a pull request; it never writes to main.
+# Codegen and CI's in-sync check read only the committed SDL, so upstream WCL drift stays invisible without this re-introspection.
 on:
   schedule:
     - cron: '0 6 * * 1'
@@ -11,7 +9,6 @@ on:
 permissions:
   contents: read
 
-# One refresh at a time: two runs would race on the same branch.
 concurrency:
   group: wcl-schema-refresh
   cancel-in-progress: false
@@ -33,9 +30,7 @@ jobs:
           client-id: ${{ secrets.INGEST_APP_CLIENT_ID }}
           private-key: ${{ secrets.INGEST_APP_PRIVATE_KEY }}
 
-      # The app token pushes the refresh branch and opens its PR: an app-authored PR is what
-      # gets test.yml and e2e.yml to run on it, which a GITHUB_TOKEN-authored one never does.
-      # fetch-depth: 0 keeps the branch push off a shallow clone.
+      # A PR authored with GITHUB_TOKEN never triggers test.yml or e2e.yml; the app token's PR does.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
@@ -79,8 +74,7 @@ jobs:
           fi
           echo 'changed=true' >> "$GITHUB_OUTPUT"
 
-      # continue-on-error: a refresh that breaks the app is exactly what a human must see, so its
-      # outcome rides along in the PR body instead of stopping the PR from being opened.
+      # Dropping continue-on-error would abort a breaking refresh before it opens the PR a human must review.
       - name: Check the app against the refreshed types
         id: verify
         if: steps.drift.outputs.changed == 'true'

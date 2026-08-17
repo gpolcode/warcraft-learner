@@ -11,7 +11,6 @@ const local = {
 };
 
 export default defineConfig([
-  // Codegen output (npm run codegen): its shape is the WCL schema's, not this project's style.
   { ignores: ['src/**/*.generated.ts'] },
   {
     // Base TypeScript rules for all TS (src/**, e2e/**, playwright.config.ts). Angular-specific

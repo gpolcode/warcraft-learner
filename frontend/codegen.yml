@@ -1,5 +1,4 @@
-# Types for the WCL operations only: in codegen v6 `typescript-operations` is self-contained, and adding the
-# `typescript` plugin to the same file re-declares every enum the operations use.
+# Adding the `typescript` plugin alongside re-declares every enum `typescript-operations` already emits.
 schema: schema/wcl.graphql
 documents: src/app/core/services/wcl-queries.ts
 pluckConfig:
@@ -11,7 +10,6 @@ generates:
     config:
       skipTypename: true
       enumsAsTypes: true
-      # One entry per scalar scripts/wcl-json-scalars.mjs splits out of WCL's opaque JSON, so each payload arrives as the model that reads it.
       scalars:
         # Selecting a field still typed as WCL's shared JSON scalar is a compile error at the read site: split it out first.
         JSON: never
@@ -19,5 +17,4 @@ generates:
         TableJson: ../models/wcl.models#WclTableBlob
         RankingsJson: ../models/wcl.models#WclRankingsBlob
         EventDataJson: ../models/wcl.models#WclEventData
-      # Fails the run on a selected scalar with no mapping above, rather than typing it `any`.
       strictScalars: true

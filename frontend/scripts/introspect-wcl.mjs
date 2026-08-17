@@ -1,5 +1,3 @@
-// Refreshes the committed WCL SDL (schema/wcl.graphql) so codegen and CI never need WCL credentials.
-
 import { getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
 import { writeFile, readFile } from 'node:fs/promises';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';

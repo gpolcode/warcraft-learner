@@ -1,4 +1,4 @@
-// The second half of npm run codegen: typescript-operations' internal Exact wrapper is the one place its output would leave `unknown` in the WCL types, and `object` accepts every variables shape it wraps.
+// Skipping this rewrite leaves typescript-operations' Exact wrapper as the one `unknown` in the generated WCL types.
 
 import { readFile, writeFile } from 'node:fs/promises';
 
