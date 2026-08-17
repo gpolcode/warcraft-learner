@@ -4,18 +4,14 @@ import { parseJson } from './json';
 
 const SCHEMA = z.object({ name: z.string() });
 
-/** Stands in for a call site's log context. */
 const CONTEXT = 'parseJson.spec';
 
 const MATCHING_BLOB = '{"name":"Shadowmaster"}';
 
-/** A truncated write leaves a blob JSON.parse rejects outright. */
 const TRUNCATED_BLOB = '{"name":';
 
-/** Parses as JSON, but `name` is a number the schema refuses. */
 const WRONG_SHAPE_BLOB = '{"name":7}';
 
-/** Captures the helper's logWarn output and keeps it out of the test log. */
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }
