@@ -45,11 +45,11 @@ describe('CardDeck busy', () => {
     expect(cards.anyBusy()).toBe(true);
   });
 
-  it('exposes the same signal it folds, so writing through it moves the fold', () => {
+  it('goes busy again when one settled card reloads', () => {
     const cards = deck();
     for (const card of CARDS) cards.setBusy(card.id, false);
 
-    cards.busy('gear').set(true);
+    cards.setBusy('gear', true);
 
     expect(cards.anyBusy()).toBe(true);
   });

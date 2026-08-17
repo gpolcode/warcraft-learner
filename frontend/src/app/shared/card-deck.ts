@@ -27,10 +27,6 @@ export class CardDeck<Id extends string> {
     this.benchAvailable = computed(() => bench.some(state => state()));
   }
 
-  busy(id: Id): WritableSignal<boolean> {
-    return this.busySignals[id];
-  }
-
   setBusy(id: Id, busy: boolean): void {
     this.busySignals[id].set(busy);
   }
