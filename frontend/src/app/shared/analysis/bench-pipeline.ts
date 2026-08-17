@@ -19,7 +19,7 @@ export interface BenchParse {
 }
 
 /** The accepted parses, in acceptance order, plus the encounter name the first of them named. */
-export interface BenchPayload<TParse> {
+interface BenchPayload<TParse> {
   encounterName: string;
   parses: TParse[];
 }
