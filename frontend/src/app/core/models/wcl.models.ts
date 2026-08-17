@@ -110,6 +110,9 @@ export interface PlayerDetailEntry {
 }
 export type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
+// WCL types `playerDetails` as an opaque JSON scalar, so the role groups sitting under `data` are described here rather than by the schema.
+export interface PlayerDetailsBlob { data?: { playerDetails?: PlayerDetailGroups } }
+
 export interface WclRawRanking {
   name?: string;
   server?: { name?: string };

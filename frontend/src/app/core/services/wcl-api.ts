@@ -3,17 +3,25 @@ import { WclAuthService } from './wcl-auth';
 import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import {
   WclReport, WclEvent,
-  PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
+  PlayerDetailGroups, PlayerDetailsBlob, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
   MYTHIC_DIFFICULTY,
 } from '../models/wcl.models';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
   COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
-  ReportQueryVars, PlayerDetailsQueryVars,
-  EventsQueryVars, CombatantInfoQueryVars, RankingsQueryVars, TableQueryVars, ResurrectsQueryVars,
 } from './wcl-queries';
+import type {
+  CombatantInfoQuery, CombatantInfoQueryVariables,
+  EventDataType, EventsQuery, EventsQueryVariables,
+  PlayerDetailsQuery, PlayerDetailsQueryVariables,
+  RankingsQuery, RankingsQueryVariables,
+  ReportFightsQuery, ReportQuery, ReportQueryVariables,
+  ResurrectsQuery, ResurrectsQueryVariables,
+  TableQuery, TableQueryVariables,
+} from './wcl-operations.generated';
 import { SpecMetaService } from './spec-meta';
 
+// WCL declares every selected field nullable and hands playerDetails/table/characterRankings/event rows back as opaque JSON, so each read restates the generated envelope as the app model its callers consume.
 @Injectable({ providedIn: 'root' })
 export class WclApiService {
   private readonly auth = inject(WclAuthService);
@@ -37,33 +45,30 @@ export class WclApiService {
   }
 
   async getReport(code: string): Promise<WclReport> {
-    const vars: ReportQueryVars = { code };
-    const result = await this.query<{ reportData: { report: WclReport | null } | null }>(REPORT_Q, vars);
+    const vars: ReportQueryVariables = { code };
+    const result = await this.query<ReportQuery>(REPORT_Q, vars);
     const report = result.reportData?.report;
     // WCL returns report: null for a code it won't serve (missing, private, expired) with no GraphQL error.
     if (!report) throw this.reportUnavailable(code);
-    return report;
+    return report as unknown as WclReport;
   }
 
   /** Fights-only read of a report - the live-sync poll's new-pull probe. */
   async getReportFights(code: string): Promise<WclReport['fights']> {
-    const vars: ReportQueryVars = { code };
-    const result = await this.query<{ reportData: { report: { fights: WclReport['fights'] | null } | null } | null }>(
-      REPORT_FIGHTS_Q, vars,
-    );
+    const vars: ReportQueryVariables = { code };
+    const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
     const report = result.reportData?.report;
     // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!report) throw this.reportUnavailable(code);
-    return report.fights ?? [];
+    return (report.fights ?? []) as unknown as WclReport['fights'];
   }
 
   /** Raw `playerDetails` groups (dps / healers / tanks / unknown). Consumers map to spec. */
   async getPlayerDetails(code: string, fightId: number): Promise<PlayerDetailGroups> {
-    const vars: PlayerDetailsQueryVars = { code, fightIDs: [fightId] };
-    const result = await this.query<{ reportData: { report: { playerDetails: { data: { playerDetails: PlayerDetailGroups | null } | null } | null } | null } | null }>(
-      PLAYER_DETAILS_Q, vars,
-    );
-    const playerDetails = result.reportData?.report?.playerDetails?.data?.playerDetails;
+    const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
+    const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
+    const blob = result.reportData?.report?.playerDetails as PlayerDetailsBlob | null | undefined;
+    const playerDetails = blob?.data?.playerDetails;
     // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!playerDetails) throw this.reportUnavailable(code);
     return playerDetails;
@@ -84,16 +89,18 @@ export class WclApiService {
     const events: WclEvent[] = [];
     let currentStart = startTime;
     for (;;) {
-      const vars: EventsQueryVars = { code, fightIDs: [fightId], dataType, startTime: currentStart, endTime };
+      const vars: EventsQueryVariables = {
+        code, fightIDs: [fightId], dataType: dataType as EventDataType, startTime: currentStart, endTime,
+      };
       if (sourceId != null) vars.sourceID = sourceId;
       if (includeResources) vars.includeResources = true;
       if (hostilityType) vars.hostilityType = hostilityType;
-      const result = await this.query<{ reportData: { report: { events: { data: WclEvent[] | null; nextPageTimestamp?: number } } } }>(
-        EVENTS_Q, vars,
-      );
-      const page = result.reportData.report.events;
+      const result = await this.query<EventsQuery>(EVENTS_Q, vars);
+      const page = result.reportData?.report?.events;
+      // Same unserved-report case as getReport; fail typed rather than into a TypeError.
+      if (!page) throw this.reportUnavailable(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
-      for (const event of page.data ?? []) events.push(event);
+      for (const event of (page.data as WclEvent[] | null) ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
       currentStart = page.nextPageTimestamp;
     }
@@ -102,23 +109,19 @@ export class WclApiService {
 
   // Returns the events array as WCL returns it (empty when the log carries none); consumers pick the player's event (see `selectCombatantInfo`).
   async getCombatantInfo(code: string, fightId: number, playerId: number): Promise<WclCombatantInfo[]> {
-    const vars: CombatantInfoQueryVars = { code, fightIDs: [fightId], sourceID: playerId };
-    const result = await this.query<{ reportData: { report: { events: { data: WclCombatantInfo[] | null } | null } | null } | null }>(
-      COMBATANT_INFO_Q, vars,
-    );
+    const vars: CombatantInfoQueryVariables = { code, fightIDs: [fightId], sourceID: playerId };
+    const result = await this.query<CombatantInfoQuery>(COMBATANT_INFO_Q, vars);
     const report = result.reportData?.report;
     // Same unserved-report case as getReport; fail typed rather than folding null into a success [].
     if (!report) throw this.reportUnavailable(code);
-    return report.events?.data ?? [];
+    return (report.events?.data as WclCombatantInfo[] | null | undefined) ?? [];
   }
 
   // Consumers pick their player's `data.entries` row by actor id and derive DPS from `total` over the fight duration.
   async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
-    const vars: TableQueryVars = { code, fightIDs: [fightId], dataType: 'DamageDone' };
-    const result = await this.query<{ reportData: { report: { table: WclTableBlob | null } | null } | null }>(
-      TABLE_Q, vars,
-    );
-    return result.reportData?.report?.table ?? null;
+    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
+    const result = await this.query<TableQuery>(TABLE_Q, vars);
+    return (result.reportData?.report?.table as WclTableBlob | null | undefined) ?? null;
   }
 
   // WCL has no `Resurrects` data type, so this scans `All` with a server-side `type` filter (only matches come back).
@@ -126,12 +129,12 @@ export class WclApiService {
     const events: WclEvent[] = [];
     let currentStart = startTime;
     for (;;) {
-      const vars: ResurrectsQueryVars = { code, fightIDs: [fightId], filter: 'type = "resurrect"', startTime: currentStart, endTime };
-      const result = await this.query<{ reportData: { report: { events: { data: WclEvent[] | null; nextPageTimestamp?: number } } } }>(
-        RESURRECTS_Q, vars,
-      );
-      const page = result.reportData.report.events;
-      for (const event of page.data ?? []) events.push(event);
+      const vars: ResurrectsQueryVariables = { code, fightIDs: [fightId], filter: 'type = "resurrect"', startTime: currentStart, endTime };
+      const result = await this.query<ResurrectsQuery>(RESURRECTS_Q, vars);
+      const page = result.reportData?.report?.events;
+      // Same unserved-report case as getReport; fail typed rather than into a TypeError.
+      if (!page) throw this.reportUnavailable(code);
+      for (const event of (page.data as WclEvent[] | null) ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
       currentStart = page.nextPageTimestamp;
     }
@@ -161,11 +164,9 @@ export class WclApiService {
   async getRankings(spec: string, encounterId: number, partition?: number | null): Promise<WclRankingsBlob | null> {
     const meta = await this.specMeta.resolve(spec);
     if (!meta) return null;
-    const vars: RankingsQueryVars = { encounterID: encounterId, className: meta.className, specName: meta.specName, difficulty: MYTHIC_DIFFICULTY };
+    const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) vars.partition = partition;
-    const result = await this.query<{ worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null }>(
-      RANKINGS_Q, vars,
-    );
-    return result.worldData?.encounter?.characterRankings ?? null;
+    const result = await this.query<RankingsQuery>(RANKINGS_Q, vars);
+    return (result.worldData?.encounter?.characterRankings as WclRankingsBlob | null | undefined) ?? null;
   }
 }

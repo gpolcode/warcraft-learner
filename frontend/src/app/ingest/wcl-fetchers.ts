@@ -2,7 +2,10 @@
 
 import { logWarn } from '../core/log';
 import { toParseRankings, unwrapRankings } from '../shared/analysis/wcl-projections';
-import { ENCOUNTERS_Q, RANKINGS_Q, type RankingsQueryVars } from '../core/services/wcl-queries';
+import { ENCOUNTERS_Q, RANKINGS_Q } from '../core/services/wcl-queries';
+import type {
+  EncountersQuery, RankingsQuery, RankingsQueryVariables,
+} from '../core/services/wcl-operations.generated';
 import { MYTHIC_DIFFICULTY, type ParseRanking, type WclRankingsBlob } from '../core/models/wcl.models';
 import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
@@ -44,8 +47,11 @@ async function isZoneLive(client: WclQueryClient, zoneEncounters: IngestEncounte
 
 // The probe runs once per zone here, not per spec, so beta/PTR/test zones cost a handful of queries total.
 export async function getEncounters(client: WclQueryClient, specWcl: SpecWclMap): Promise<CurrentContent> {
-  const data = await client.query<{ worldData: { expansions: WclExpansion[] } }>(ENCOUNTERS_Q);
-  const expansions = data.worldData.expansions;
+  const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
+  // Fail the run rather than ingest nothing: an empty expansion tree would silently protect no encounter and publish an empty summary.
+  if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
+  // The ingest models tolerate the absent `frozen`/`zones` the schema declares non-null, so the generated envelope is restated as them.
+  const expansions = data.worldData.expansions as unknown as WclExpansion[];
   const candidates = filterEncounters(expansions);
   const protectedIds = protectedEncounterIds(expansions);
 
@@ -79,10 +85,11 @@ export async function getRankingsLite(
   const [className, specName] = mapping;
 
   const { rows } = await rankingsFromPartition(partitionIds, async partition => {
-    const variables: RankingsQueryVars = { encounterID: encounterId, className, specName, difficulty: MYTHIC_DIFFICULTY };
+    const variables: RankingsQueryVariables = { encounterID: encounterId, className, specName, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) variables.partition = partition;
-    const data = await client.query<{ worldData: { encounter: { characterRankings: WclRankingsBlob } } }>(RANKINGS_Q, variables);
-    return toParseRankings(unwrapRankings(data.worldData.encounter.characterRankings), count);
+    const data = await client.query<RankingsQuery>(RANKINGS_Q, variables);
+    const blob = data.worldData?.encounter?.characterRankings as WclRankingsBlob | null | undefined;
+    return toParseRankings(unwrapRankings(blob), count);
   });
   return rows;
 }

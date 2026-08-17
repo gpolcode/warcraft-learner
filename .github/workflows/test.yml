@@ -27,6 +27,11 @@ jobs:
         run: npm ci
         working-directory: frontend
 
+      # Reads only the committed schema/wcl.graphql, so this needs no WCL credentials and no network.
+      - name: Check generated GraphQL types are in sync
+        run: npm run codegen && git diff --exit-code src/app/core/services/wcl-operations.generated.ts
+        working-directory: frontend
+
       - name: Lint
         run: npm run lint
         working-directory: frontend

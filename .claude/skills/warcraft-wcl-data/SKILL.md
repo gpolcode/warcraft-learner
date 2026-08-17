@@ -7,6 +7,10 @@ description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model
 
 **What good looks like:** every WCL read anticipates the quirks table below - the bugs listed there have all happened. Check it before fetching a new stream or field.
 
+## Query types are generated
+
+Every operation lives as a named, `gql`-tagged document in `core/services/wcl-queries.ts`; `npm run codegen` validates it against the committed SDL (`frontend/schema/wcl.graphql`) and writes `core/services/wcl-operations.generated.ts`, which the WCL layer uses for response envelopes and query variables. Editing a query without rerunning `codegen` fails CI's in-sync check. Refresh the SDL with `npm run schema:pull` when WCL ships schema changes. The schema types `playerDetails`, `table`, `characterRankings` and event rows as opaque `JSON`, so those payload shapes stay hand-written in `core/models/wcl.models.ts`.
+
 ## Browser auth model (intentional embedded secret)
 
 The browser authenticates to WCL with the **client-credentials** grant against `/api/v2/client`, using a client id + secret **hardcoded in `src/environments/wcl-public-client.ts`** (surfaced through each environment file's `wclClientId`/`wclClientSecret`, read by `core/services/wcl-auth.ts` - and therefore shipped, public, in the static JS bundle). This is a deliberate trade-off, not a leak to fix:

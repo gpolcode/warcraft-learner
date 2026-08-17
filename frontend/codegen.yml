@@ -1,0 +1,15 @@
+# Types for the WCL operations only: in codegen v6 `typescript-operations` is self-contained, and adding the
+# `typescript` plugin to the same file re-declares every enum the operations use.
+schema: schema/wcl.graphql
+documents: src/app/core/services/wcl-queries.ts
+pluckConfig:
+  globalGqlIdentifierName: gql
+generates:
+  src/app/core/services/wcl-operations.generated.ts:
+    plugins:
+      - typescript-operations
+    config:
+      skipTypename: true
+      enumsAsTypes: true
+      scalars:
+        JSON: unknown
