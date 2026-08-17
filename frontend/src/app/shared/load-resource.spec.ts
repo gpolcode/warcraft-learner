@@ -37,7 +37,6 @@ function deferred<T>(): Deferred<T> {
 interface HarnessOptions {
   availableWhen?: (value: string) => boolean;
   initialAvailable?: boolean;
-  /** False drops both outputs, as the pull-overview card does with availableChange. */
   withOutputs?: boolean;
 }
 
@@ -49,7 +48,6 @@ interface Harness {
   started: string[];
   settle: (params: string, result: Result<string>) => void;
   fail: (params: string, cause: unknown) => void;
-  /** Runs the effect that starts the load the current params ask for. */
   start: () => void;
 }
 
@@ -99,7 +97,7 @@ function harness(options: HarnessOptions = {}): Harness {
 // A settled load runs through the loader body, the resource, and the linked signal; fewer turns than this reads state mid-flight.
 const TURNS_TO_APPLY_A_SETTLED_LOAD = 5;
 
-/** Advances past a settled load without waiting on loads still in flight, which is what `whenStable` would block on. */
+/** `whenStable` would block on loads still in flight; this advances past settled ones only. */
 async function drain(): Promise<void> {
   for (let turn = 0; turn < TURNS_TO_APPLY_A_SETTLED_LOAD; turn++) await Promise.resolve();
   TestBed.tick();
@@ -483,7 +481,7 @@ describe('loadResource rejected load', () => {
   });
 });
 
-// The rendered card reads its state every change detection, which is what a reload then retains.
+// Retention is lazy: each case must read the rendered state before reloading, or linkedSignal has nothing to retain.
 describe('loadResource reload retention', () => {
   it('keeps the last value while a reload is in flight', async () => {
     const h = harness();

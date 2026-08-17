@@ -9,21 +9,18 @@ export interface LoadResourceConfig<P, T> {
   context: string;
   /** Applies to an ok result only; a failed load is never available. */
   availableWhen?: (value: T) => boolean;
-  /** What `available` reads before the first load lands. */
   initialAvailable?: boolean;
   busyChange?: OutputEmitterRef<boolean>;
   availableChange?: OutputEmitterRef<boolean>;
 }
 
 export interface LoadResource<T> {
-  /** The loaded value, null while waiting and on a failed load. */
   readonly value: Signal<T | null>;
   readonly available: Signal<boolean>;
   /** Null for a `missing` result, which is the waiting state rather than an error. */
   readonly error: Signal<RenderableLoadError | null>;
 }
 
-/** Wraps a `Result`-returning load in a resource, derives the card's render state from it, and emits the page's busy/available outputs as each load settles. */
 export function loadResource<P, T>(config: LoadResourceConfig<P, T>): LoadResource<T> {
   const availableOf = (result: Result<T>): boolean => result.ok && (config.availableWhen?.(result.value) ?? true);
 
