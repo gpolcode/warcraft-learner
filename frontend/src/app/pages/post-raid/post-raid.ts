@@ -148,10 +148,10 @@ export function specOf(groups: PlayerDetailGroups, playerId: number): string {
   return '';
 }
 
-export type PostRaidCardId = 'pullOverview' | 'rotation' | 'burst' | 'defensive' | 'gear';
+type PostRaidCardId = 'pullOverview' | 'rotation' | 'burst' | 'defensive' | 'gear';
 
 // Pull overview describes the pull itself instead of measuring it against top parses, so it has no bench and never keeps the empty-bench banner away.
-export const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
+const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   { id: 'pullOverview', hasBench: false },
   { id: 'rotation', hasBench: true },
   { id: 'burst', hasBench: true },
