@@ -11,7 +11,6 @@ const local = {
   rules: { 'single-line-comment': singleLineComment, 'banned-characters': bannedCharacters },
 };
 
-// Patterns name folders, never files: a file belongs to the innermost folder element around it.
 const architectureLayers = [
   { type: 'testing', pattern: 'src/testing', partialMatch: false },
   { type: 'environments', pattern: 'src/environments', partialMatch: false },
@@ -26,9 +25,8 @@ const architectureLayers = [
 
 const to = (...types) => types.map((type) => ({ to: { element: { type } } }));
 
-// Last matching policy wins, so the Pull Overview exception sits after the general slice policy.
+// Last match wins: moving the Pull Overview exception above the general slice policy disables it.
 const layerPolicies = [
-  // `environments` is the build-time composition root: core reads the WCL credentials from it.
   { from: [{ element: { type: 'core' } }], allow: to('core', 'environments', 'testing') },
   { from: [{ element: { type: 'shared' } }], allow: to('core', 'shared', 'testing') },
   { from: [{ element: { type: 'slice' } }], allow: to('core', 'shared', 'testing') },
@@ -51,7 +49,6 @@ const layerPolicies = [
   },
 ];
 
-// HttpErrorResponse is absent on purpose: it is an error shape any layer may inspect, not a request.
 const httpClientImports = [
   'HttpClient',
   'HttpBackend',
@@ -84,7 +81,6 @@ const restrictAngularImports = {
   ],
 };
 
-// Slice-local pure modules are listed one by one because they sit beside their Angular service.
 const functionalCoreFiles = [
   'src/app/core/models/**/*.ts',
   'src/app/core/result.ts',
@@ -195,7 +191,6 @@ export default defineConfig([
     },
   },
   {
-    // Layer directions, the HTTP chokepoint, and the growth budgets.
     files: ['src/**/*.ts'],
     plugins: { boundaries },
     settings: {
@@ -206,7 +201,6 @@ export default defineConfig([
     },
     rules: {
       'boundaries/dependencies': ['error', { default: 'disallow', policies: layerPolicies }],
-      // A local import the resolver cannot place is a layer rule that silently stops checking.
       'boundaries/no-unknown-dependencies': 'error',
       'no-restricted-imports': ['error', restrictHttpImports],
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
@@ -215,8 +209,6 @@ export default defineConfig([
     },
   },
   {
-    // The imperative shell that owns request-making: the transports behind the two API services,
-    // the talent and auth fetchers, and the bootstrap that installs the HttpClient providers.
     files: [
       'src/app/core/services/http-*-transport*.ts',
       'src/app/core/services/talent-data*.ts',
