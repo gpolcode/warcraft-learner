@@ -1,5 +1,7 @@
 /** Generic, cross-slice WCL-response projections and window view-row builders, kept here so each slice imports one implementation. No Angular / IO. */
+import { z } from 'zod';
 import { logWarn } from '../../core/log';
+import { parseJson } from '../../core/json';
 import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../../core/models/wcl.models';
 import { WindowSpell } from '../../core/models/window-comparison.models';
 
@@ -35,21 +37,25 @@ export function normalizeAbilityId(id: number): number {
   return id;
 }
 
+// A per-field fallback keeps a row carrying one unreadable value usable instead of voiding the whole ranking list.
+const RAW_RANKING_SCHEMA = z.looseObject({
+  name: z.string().optional().catch(undefined),
+  server: z.looseObject({ name: z.string().optional().catch(undefined) }).optional().catch(undefined),
+  report: z.looseObject({
+    code: z.string().optional().catch(undefined),
+    fightID: z.number().optional().catch(undefined),
+  }).optional().catch(undefined),
+});
+
+const RANKINGS_BLOB_SCHEMA = z.looseObject({ rankings: z.array(RAW_RANKING_SCHEMA).optional() });
+
 /** Unwrap WCL's `characterRankings` envelope (string or already-parsed) into its ranking rows; never throws, always returns an array. */
 export function unwrapRankings(blob: WclRankingsBlob | null | undefined): WclRawRanking[] {
   if (!blob) return [];
-  const parsed = typeof blob === 'string' ? safeParseRankings(blob) : blob;
+  const parsed = typeof blob === 'string'
+    ? parseJson(RANKINGS_BLOB_SCHEMA, blob, 'unwrapRankings: malformed rankings blob')
+    : blob;
   return parsed?.rankings ?? [];
-}
-
-/** Parse a rankings envelope string, warning and returning null on a malformed blob. */
-function safeParseRankings(raw: string): { rankings?: WclRawRanking[] } | null {
-  try {
-    return JSON.parse(raw) as { rankings?: WclRawRanking[] };
-  } catch (err) {
-    logWarn('unwrapRankings: malformed rankings blob', err);
-    return null;
-  }
 }
 
 /** Projects WCL's aliased ability map into an id-keyed `{ icon, name }` record, stripping `.jpg` for the bare filename `wl-game-icon` expects; a null icon becomes '' for name-only render. */
