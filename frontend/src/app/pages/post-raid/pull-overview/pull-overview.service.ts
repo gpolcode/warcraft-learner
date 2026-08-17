@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { z } from 'zod';
+import * as z from '../../../core/zod-mini';
 import { WclApiService } from '../../../core/services/wcl-api';
 import { WclFight, WclReport, WclTableBlob } from '../../../core/models/wcl.models';
 import { logWarn } from '../../../core/log';
@@ -46,9 +46,9 @@ export function wipeTimeS(
 }
 
 const DAMAGE_TABLE_SCHEMA = z.looseObject({
-  data: z.looseObject({
-    entries: z.array(z.looseObject({ id: z.number(), total: z.number() })).optional(),
-  }).optional(),
+  data: z.optional(z.looseObject({
+    entries: z.optional(z.array(z.looseObject({ id: z.number(), total: z.number() }))),
+  })),
 });
 
 // null means an unusable table (absent/unparseable/no entries array); a valid table can still have an empty entry list (a real 0-damage pull).

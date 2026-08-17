@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import * as z from './zod-mini';
 import { logWarn } from './log';
 
 /** Parses an untrusted JSON string against `schema`. A syntax error and a shape mismatch are one outcome - warn under `context`, return null - so callers keep a single malformed-input path. */
-export function parseJson<S extends z.ZodType>(schema: S, raw: string, context: string): z.infer<S> | null {
+export function parseJson<S extends z.ZodMiniType>(schema: S, raw: string, context: string): z.infer<S> | null {
   let value: unknown;
   try {
     value = JSON.parse(raw);

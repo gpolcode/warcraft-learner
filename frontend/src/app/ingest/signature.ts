@@ -1,5 +1,5 @@
 // A tailored file is fresh when the ingest version AND the exact top-parse set that produced it are unchanged, folded into one short hash.
-import { z } from 'zod';
+import * as z from '../core/zod-mini';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import { type Result } from '../core/result';

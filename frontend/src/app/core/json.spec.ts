@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { z } from 'zod';
+import * as z from './zod-mini';
 import { parseJson } from './json';
 
 const SCHEMA = z.object({ name: z.string() });

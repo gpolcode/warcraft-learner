@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { z } from 'zod';
+import * as z from '../zod-mini';
 import { WclTransportError } from './wcl-transport';
 import { environment } from '../../../environments/environment';
 
@@ -10,9 +10,9 @@ const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 const DEFAULT_TOKEN_LIFETIME_S = 3600;
 
 const TOKEN_RESPONSE_SCHEMA = z.looseObject({
-  access_token: z.string().min(1),
+  access_token: z.string().check(z.minLength(1)),
   // An unusable lifetime falls back to the default rather than voiding an otherwise good token.
-  expires_in: z.number().positive().optional().catch(undefined),
+  expires_in: z.catch(z.optional(z.number().check(z.positive())), undefined),
 });
 
 @Injectable({ providedIn: 'root' })

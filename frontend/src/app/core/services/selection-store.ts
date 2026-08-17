@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { z } from 'zod';
+import * as z from '../zod-mini';
 import { logWarn } from '../log';
 import { parseJson } from '../json';
 
 // Only the player NAME is kept: WCL actor ids are per-report (not stable across pulls or logs).
-const POST_RAID_SCHEMA = z.object({ playerName: z.string().nullable() });
+const POST_RAID_SCHEMA = z.object({ playerName: z.nullable(z.string()) });
 export type PostRaidSelection = z.infer<typeof POST_RAID_SCHEMA>;
 
-const PRE_FIGHT_SCHEMA = z.object({ spec: z.string().nullable() });
+const PRE_FIGHT_SCHEMA = z.object({ spec: z.nullable(z.string()) });
 export type PreFightSelection = z.infer<typeof PRE_FIGHT_SCHEMA>;
 
 // Stored as the set of cooldown spell ids the user has DESELECTED, so a cooldown that first appears for a new spec/encounter defaults to checked.
@@ -53,7 +53,7 @@ export class SelectionStore {
     }
   }
 
-  private _load<S extends z.ZodType>(key: string, schema: S, context: string): z.infer<S> | null {
+  private _load<S extends z.ZodMiniType>(key: string, schema: S, context: string): z.infer<S> | null {
     try {
       const stored = localStorage.getItem(key);
       if (!stored) return null;
