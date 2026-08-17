@@ -3,12 +3,109 @@ import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
+import boundaries from 'eslint-plugin-boundaries';
 import singleLineComment from './eslint-rules/single-line-comment.js';
 import bannedCharacters from './eslint-rules/banned-characters.js';
 
 const local = {
   rules: { 'single-line-comment': singleLineComment, 'banned-characters': bannedCharacters },
 };
+
+// Patterns name folders, never files: a file belongs to the innermost folder element around it.
+const architectureLayers = [
+  { type: 'testing', pattern: 'src/testing', partialMatch: false },
+  { type: 'environments', pattern: 'src/environments', partialMatch: false },
+  { type: 'ingest', pattern: 'src/app/ingest', partialMatch: false },
+  { type: 'core', pattern: 'src/app/core', partialMatch: false },
+  { type: 'shared', pattern: 'src/app/shared', partialMatch: false },
+  { type: 'slice', pattern: 'src/app/pages/post-raid/*', partialMatch: false, capture: ['sliceName'] },
+  { type: 'page', pattern: 'src/app/pages/*', partialMatch: false },
+  { type: 'app-root', pattern: 'src/app', partialMatch: false },
+  { type: 'bootstrap', pattern: 'src', partialMatch: false },
+];
+
+const to = (...types) => types.map((type) => ({ to: { element: { type } } }));
+
+// Last matching policy wins, so the Pull Overview exception sits after the general slice policy.
+const layerPolicies = [
+  // `environments` is the build-time composition root: core reads the WCL credentials from it.
+  { from: [{ element: { type: 'core' } }], allow: to('core', 'environments', 'testing') },
+  { from: [{ element: { type: 'shared' } }], allow: to('core', 'shared', 'testing') },
+  { from: [{ element: { type: 'slice' } }], allow: to('core', 'shared', 'testing') },
+  { from: [{ element: { type: 'page' } }], allow: to('core', 'shared', 'slice', 'page', 'testing') },
+  { from: [{ element: { type: 'ingest' } }], allow: to('core', 'shared', 'slice', 'ingest', 'testing') },
+  {
+    from: [{ element: { type: 'app-root' } }],
+    allow: to('core', 'shared', 'page', 'app-root', 'environments', 'testing'),
+  },
+  {
+    from: [{ element: { type: 'environments' } }],
+    allow: to('core', 'shared', 'slice', 'page', 'ingest', 'environments'),
+  },
+  { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root', 'environments') },
+  { from: [{ element: { type: 'testing' } }], allow: to('core', 'shared', 'slice', 'page', 'ingest', 'testing') },
+  {
+    from: [{ element: { type: 'slice', captured: { sliceName: 'pull-overview' } } }],
+    allow: [{ to: { element: { type: 'slice', captured: { sliceName: 'map' } } } }],
+    message: 'Pull Overview reads the Map slice anchor type its own cards emit.',
+  },
+];
+
+// HttpErrorResponse is absent on purpose: it is an error shape any layer may inspect, not a request.
+const httpClientImports = [
+  'HttpClient',
+  'HttpBackend',
+  'HttpHandler',
+  'HttpXhrBackend',
+  'httpResource',
+  'provideHttpClient',
+  'withFetch',
+  'withInterceptors',
+  'withInterceptorsFromDi',
+];
+
+const restrictHttpImports = {
+  paths: [
+    {
+      name: '@angular/common/http',
+      importNames: httpClientImports,
+      message:
+        'Only the transports behind WclApiService and DataFileApiService issue HTTP requests. Go through those two API services instead.',
+    },
+  ],
+};
+
+const restrictAngularImports = {
+  patterns: [
+    {
+      group: ['@angular/*', '@angular/*/*'],
+      message: 'This is functional-core code: keep it pure and framework-free, and inject nothing.',
+    },
+  ],
+};
+
+// Slice-local pure modules are listed one by one because they sit beside their Angular service.
+const functionalCoreFiles = [
+  'src/app/core/models/**/*.ts',
+  'src/app/core/result.ts',
+  'src/app/core/log.ts',
+  'src/app/core/services/wcl-queries.ts',
+  'src/app/shared/analysis/**/*.ts',
+  'src/app/shared/gear/**/*.ts',
+  'src/app/shared/boss-icon.ts',
+  'src/app/shared/components/finding-table/finding-table.utils.ts',
+  'src/app/ingest/models/**/*.ts',
+  'src/app/ingest/ordering.ts',
+  'src/app/ingest/signature.ts',
+  'src/app/ingest/spec-report.ts',
+  'src/app/ingest/wcl-mappers.ts',
+  'src/app/ingest/wcl-fetchers.ts',
+  'src/app/pages/post-raid/gear/gear-extract.ts',
+  'src/app/pages/post-raid/map/map-draw.ts',
+  'src/app/pages/post-raid/map/map-positions.ts',
+  'src/app/pages/post-raid/rotation/rotation-bloodlust.ts',
+  'src/app/pages/post-raid/rotation/rotation-rules.ts',
+];
 
 export default defineConfig([
   { ignores: ['src/**/*.generated.ts'] },
@@ -96,6 +193,91 @@ export default defineConfig([
       '@angular-eslint/use-component-view-encapsulation': 'error',
       '@angular-eslint/component-max-inline-declarations': ['error', { template: 10 }], // beyond that, templateUrl
     },
+  },
+  {
+    // Layer directions, the HTTP chokepoint, and the growth budgets.
+    files: ['src/**/*.ts'],
+    plugins: { boundaries },
+    settings: {
+      'boundaries/elements': architectureLayers,
+      'boundaries/dependency-nodes': ['import', 'dynamic-import', 'export'],
+      // Imports are extensionless; without .ts the resolver misses every target and every rule below silently passes.
+      'import/resolver': { node: { extensions: ['.ts', '.js', '.json'] } },
+    },
+    rules: {
+      'boundaries/dependencies': ['error', { default: 'disallow', policies: layerPolicies }],
+      // A local import the resolver cannot place is a layer rule that silently stops checking.
+      'boundaries/no-unknown-dependencies': 'error',
+      'no-restricted-imports': ['error', restrictHttpImports],
+      'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
+      complexity: ['error', { max: 16 }],
+      'max-depth': ['error', { max: 3 }],
+    },
+  },
+  {
+    // The imperative shell that owns request-making: the transports behind the two API services,
+    // the talent and auth fetchers, and the bootstrap that installs the HttpClient providers.
+    files: [
+      'src/app/core/services/http-*-transport*.ts',
+      'src/app/core/services/talent-data*.ts',
+      'src/app/core/services/wcl-auth*.ts',
+      'src/app/core/interceptors/retry-transient.interceptor.spec.ts',
+      'src/app/ingest/ingest-data-file-transport*.ts',
+      'src/app/app.config.ts',
+    ],
+    rules: { 'no-restricted-imports': 'off' },
+  },
+  {
+    files: functionalCoreFiles,
+    rules: { 'no-restricted-imports': ['error', restrictAngularImports] },
+  },
+  {
+    files: ['src/**/*.spec.ts'],
+    rules: { 'max-lines': ['error', { max: 1000, skipBlankLines: false, skipComments: false }] },
+  },
+  {
+    files: ['src/app/pages/post-raid/rotation/rotation-rules.ts'],
+    rules: { 'max-lines': ['error', { max: 1300, skipBlankLines: false, skipComments: false }] },
+  },
+  {
+    files: ['src/app/pages/post-raid/rotation/rotation-rules.spec.ts'],
+    rules: { 'max-lines': ['error', { max: 1750, skipBlankLines: false, skipComments: false }] },
+  },
+  {
+    files: ['src/app/pages/post-raid/map/map-canvas.ts'],
+    rules: { complexity: ['error', { max: 24 }] },
+  },
+  {
+    files: ['src/app/shared/gear/gear-comparison.ts'],
+    rules: { complexity: ['error', { max: 22 }] },
+  },
+  {
+    files: ['src/app/pages/post-raid/rotation/rotation.service.ts'],
+    rules: { complexity: ['error', { max: 20 }] },
+  },
+  {
+    files: [
+      'src/app/pages/post-raid/defensive/defensive.service.ts',
+      'src/app/pages/post-raid/gear/gear-transform.service.ts',
+      'src/app/pages/post-raid/rotation/rotation-transform.service.ts',
+    ],
+    rules: { complexity: ['error', { max: 19 }] },
+  },
+  {
+    files: [
+      'src/app/ingest/ingest-orchestrator.service.ts',
+      'src/app/pages/post-raid/defensive/defensive-transform.service.ts',
+    ],
+    rules: { complexity: ['error', { max: 17 }] },
+  },
+  {
+    files: [
+      'src/app/core/services/talent-data.ts',
+      'src/app/pages/post-raid/defensive/defensive-transform.service.ts',
+      'src/app/pages/post-raid/gear/gear-transform.service.ts',
+      'src/app/pages/post-raid/northern-sky/northern-sky-transform.service.ts',
+    ],
+    rules: { 'max-depth': ['error', { max: 4 }] },
   },
   {
     // Plain-JS Node scripts (the ingest file server + headless harness). console is
