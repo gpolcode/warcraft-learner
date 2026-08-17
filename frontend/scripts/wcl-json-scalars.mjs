@@ -1,6 +1,6 @@
 // WCL types every payload field as one shared `JSON` scalar, and a single codegen `scalars` entry can only map that to one TypeScript type.
 
-export const JSON_FIELD_SCALARS = {
+const JSON_FIELD_SCALARS = {
   'Report.playerDetails': 'PlayerDetailsJson',
   'Report.table': 'TableJson',
   'Encounter.characterRankings': 'RankingsJson',

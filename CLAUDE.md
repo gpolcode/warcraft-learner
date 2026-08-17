@@ -48,6 +48,7 @@ frontend/        # the entire Angular 22 app
 | `npm test` | `ng test` (Vitest, the one unit-test suite) |
 | `npm run e2e` | Playwright e2e suite over both pages (`npm run data:pull` first) |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
+| `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
 | `npm run codegen` | Regenerate the WCL operation types from the committed `frontend/schema/wcl.graphql` (offline) |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema into `frontend/schema/wcl.graphql` (the weekly `wcl-schema-refresh` workflow does this too, and PRs the drift) |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |

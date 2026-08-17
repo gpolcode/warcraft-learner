@@ -24,7 +24,7 @@ export interface WclPlayer {
   server: string;
 }
 
-export interface WclAbility {
+interface WclAbility {
   gameID: number;
   name: string;
   icon: string;
@@ -105,7 +105,7 @@ export interface WclCombatantInfo {
 export type WclEventData = (WclEvent & WclCombatantInfo)[];
 
 /** One `playerDetails` role entry (dps / healers / tanks / unknown). */
-export interface PlayerDetailEntry {
+interface PlayerDetailEntry {
   id: number;
   type: string;
   name: string;
