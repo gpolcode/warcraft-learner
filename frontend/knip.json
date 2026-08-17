@@ -1,0 +1,25 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/**/*.spec.ts",
+    "scripts/ingest-server.js",
+    "e2e/**/*.spec.ts",
+    "playwright.config.ts"
+  ],
+  "project": [
+    "src/**/*.ts",
+    "scripts/**/*.{js,mjs}",
+    "e2e/**/*.ts",
+    "eslint-rules/*.js"
+  ],
+  "playwright": false,
+  "ignoreDependencies": [
+    "@angular-eslint/builder",
+    "prettier"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignore": [
+    "src/app/shared/components/finding-table/finding-table.ts",
+    "src/testing/index.ts"
+  ]
+}
