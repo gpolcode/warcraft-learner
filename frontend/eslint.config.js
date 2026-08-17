@@ -105,25 +105,17 @@ const restrictAngularImports = {
 };
 
 const functionalCoreFiles = [
+  'src/app/core/*.ts',
   'src/app/core/models/**/*.ts',
-  'src/app/core/result.ts',
-  'src/app/core/log.ts',
-  'src/app/core/services/wcl-queries.ts',
+  'src/app/shared/*.ts',
   'src/app/shared/analysis/**/*.ts',
   'src/app/shared/gear/**/*.ts',
-  'src/app/shared/boss-icon.ts',
-  'src/app/shared/components/finding-table/finding-table.utils.ts',
+  'src/app/ingest/*.ts',
   'src/app/ingest/models/**/*.ts',
-  'src/app/ingest/ordering.ts',
-  'src/app/ingest/signature.ts',
-  'src/app/ingest/spec-report.ts',
-  'src/app/ingest/wcl-mappers.ts',
-  'src/app/ingest/wcl-fetchers.ts',
-  'src/app/pages/post-raid/gear/gear-extract.ts',
-  'src/app/pages/post-raid/map/map-draw.ts',
-  'src/app/pages/post-raid/map/map-positions.ts',
-  'src/app/pages/post-raid/rotation/rotation-bloodlust.ts',
-  'src/app/pages/post-raid/rotation/rotation-rules.ts',
+  // A slice's own folder holds its Angular components and services; only its subfolders are pure math.
+  'src/app/pages/post-raid/*/*/**/*.ts',
+  'src/app/**/*.utils.ts',
+  'src/app/**/*-queries.ts',
 ];
 
 export default defineConfig([
