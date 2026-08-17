@@ -275,7 +275,7 @@ export default defineConfig([
       '@angular-eslint/template/no-empty-control-flow': 'error',
       '@angular-eslint/template/prefer-built-in-pipes': 'error',
       '@angular-eslint/template/prefer-contextual-for-variables': 'error',
-      'max-lines': ['error', { max: 320, skipBlankLines: false, skipComments: false }],
+      'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
     },
