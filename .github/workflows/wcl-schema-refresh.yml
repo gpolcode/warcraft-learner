@@ -33,9 +33,7 @@ jobs:
       # A PR authored with GITHUB_TOKEN never triggers test.yml or e2e.yml; the app token's PR does.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
           token: ${{ steps.app-token.outputs.token }}
-          fetch-depth: 0
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -74,22 +72,10 @@ jobs:
           fi
           echo 'changed=true' >> "$GITHUB_OUTPUT"
 
-      # Dropping continue-on-error would abort a breaking refresh before it opens the PR a human must review.
-      - name: Check the app against the refreshed types
-        id: verify
-        if: steps.drift.outputs.changed == 'true'
-        continue-on-error: true
-        working-directory: frontend
-        run: |
-          npm run lint
-          npm run test:ci
-          npm run build
-
       - name: Open or update the refresh pull request
         if: steps.drift.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
         run: |
           set -euo pipefail
           git switch -c "$REFRESH_BRANCH"
@@ -97,18 +83,13 @@ jobs:
               -c user.email='github-actions[bot]@users.noreply.github.com' \
               commit --quiet -m 'Refresh the WCL schema and generated operation types' -- "$SDL" "$GENERATED"
           git push --force origin "$REFRESH_BRANCH"
-          body=$(printf '%s\n\n%s\n\n%s\n' \
+          body=$(printf '%s\n\n%s\n' \
             'npm run schema:pull re-introspected live WCL and npm run codegen regenerated the operation types from it.' \
-            'Read the SDL diff for a field the app selects that WCL renamed, removed or made nullable, and for a JSON field that needs its own scalar in frontend/scripts/wcl-json-scalars.mjs.' \
-            "lint + unit tests + build in the refresh run: $VERIFY_OUTCOME.")
+            'Read the SDL diff for a field the app selects that WCL renamed, removed or made nullable, and for a JSON field that needs its own scalar in frontend/scripts/wcl-json-scalars.mjs.')
           if [ -n "$(gh pr list --head "$REFRESH_BRANCH" --state open --json number --jq '.[].number')" ]; then
             echo "Updated the open pull request for $REFRESH_BRANCH."
           elif ! gh pr create --base main --head "$REFRESH_BRANCH" \
               --title 'Refresh the WCL schema and generated operation types' --body "$body"; then
             echo "::error::WCL's schema changed and $REFRESH_BRANCH carries the refresh, but this job cannot open its pull request. Grant the app pull-requests: write, or open the PR from that branch by hand."
-            exit 1
-          fi
-          if [ "$VERIFY_OUTCOME" != 'success' ]; then
-            echo "::error::The refreshed schema does not build: see the checked step above and fix it on $REFRESH_BRANCH."
             exit 1
           fi
