@@ -12,7 +12,7 @@ import {
 } from './wcl-queries';
 import type {
   CombatantInfoQuery, CombatantInfoQueryVariables,
-  EventDataType, EventsQuery, EventsQueryVariables,
+  EventDataType, EventsQuery, EventsQueryVariables, HostilityType,
   PlayerDetailsQuery, PlayerDetailsQueryVariables,
   RankingsQuery, RankingsQueryVariables,
   ReportFightsQuery, ReportQuery, ReportQueryVariables,
@@ -79,15 +79,15 @@ export class WclApiService {
   }
 
   async getAllEvents(
-    code: string, fightId: number, dataType: string,
+    code: string, fightId: number, dataType: EventDataType,
     startTime: number, endTime: number, sourceId?: number,
-    includeResources = false, hostilityType?: 'Friendlies' | 'Enemies',
+    includeResources = false, hostilityType?: HostilityType,
   ): Promise<WclEvent[]> {
     const events: WclEvent[] = [];
     let currentStart = startTime;
     for (;;) {
       const vars: EventsQueryVariables = {
-        code, fightIDs: [fightId], dataType: dataType as EventDataType, startTime: currentStart, endTime,
+        code, fightIDs: [fightId], dataType, startTime: currentStart, endTime,
       };
       if (sourceId != null) vars.sourceID = sourceId;
       if (includeResources) vars.includeResources = true;

@@ -11,7 +11,7 @@ import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
   filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap,
 } from './wcl-mappers';
-import type { WclExpansion, IngestEncounter } from './models/wcl.models';
+import type { IngestEncounter } from './models/wcl.models';
 
 // A genuinely live raid has many real parses for any of these; a beta/PTR/test zone has none.
 const PROBE_SPECS = ['FireMage', 'RetributionPaladin', 'FuryWarrior'];
@@ -50,8 +50,7 @@ export async function getEncounters(client: WclQueryClient, specWcl: SpecWclMap)
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
   // Fail the run rather than ingest nothing: an empty expansion tree would silently protect no encounter and publish an empty summary.
   if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
-  // The ingest models tolerate the absent `frozen`/`zones` the schema declares non-null, so the generated envelope is restated as them.
-  const expansions = data.worldData.expansions as WclExpansion[];
+  const expansions = data.worldData.expansions;
   const candidates = filterEncounters(expansions);
   const protectedIds = protectedEncounterIds(expansions);
 

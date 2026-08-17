@@ -29,7 +29,7 @@ import {
   type SignatureRanking, type SignedFile, type IngestStamp,
 } from './signature';
 import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from './spec-report';
-import type { IngestEncounter, WclGameClass } from './models/wcl.models';
+import type { IngestEncounter } from './models/wcl.models';
 
 const TOP_N = 10;
 // Matches the depth the transforms over-fetch to, so a parse that backfills a private top parse is part of the skip key.
@@ -123,8 +123,7 @@ export class IngestOrchestratorService {
 
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
     const classesData = await client.query<ClassesQuery>(CLASSES_Q);
-    // The ingest models tolerate the absent `specs` the schema declares as a nullable list, so the generated envelope is restated as them.
-    const metas = mapClassesToSpecMeta((classesData.gameData?.classes ?? []) as WclGameClass[]);
+    const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
       if (rulebook.ok) {
