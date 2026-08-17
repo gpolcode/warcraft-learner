@@ -27,19 +27,18 @@ function findField(types, typeName, fieldName) {
 export function nameJsonFieldScalars(introspection) {
   const types = introspection.__schema.types;
   const jsonScalar = types.find(entry => entry.kind === 'SCALAR' && entry.name === JSON_SCALAR);
-  if (!jsonScalar) throw new Error(`The WCL schema declares no ${JSON_SCALAR} scalar; update JSON_FIELD_SCALARS.`);
 
   for (const [coordinate, scalarName] of Object.entries(JSON_FIELD_SCALARS)) {
     const [typeName, fieldName] = coordinate.split('.');
     const named = namedTypeRef(findField(types, typeName, fieldName).type);
     if (named.name !== JSON_SCALAR) {
-      throw new Error(`${coordinate} is ${named.name}, not ${JSON_SCALAR}; update JSON_FIELD_SCALARS and codegen.yml.`);
+      throw new Error(`${coordinate} is ${named.name}, not ${JSON_SCALAR}; update JSON_FIELD_SCALARS and the scalars map in scripts/codegen.mjs.`);
     }
     named.name = scalarName;
     types.push({
       ...jsonScalar,
       name: scalarName,
-      description: `The \`${coordinate}\` payload. codegen.yml maps this scalar to the app model that reads it.`,
+      description: `The \`${coordinate}\` payload. scripts/codegen.mjs maps this scalar to the app model that reads it.`,
     });
   }
   return introspection;

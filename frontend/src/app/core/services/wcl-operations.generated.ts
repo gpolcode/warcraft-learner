@@ -3,73 +3,40 @@ type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import { WclEventData, PlayerDetailsBlob, WclRankingsBlob, WclTableBlob } from '../models/wcl.models';
-/** The type of events or tables to examine. */
 export type EventDataType =
-  /** All Events */
   | 'All'
-  /** Buffs. */
   | 'Buffs'
-  /** Casts. */
   | 'Casts'
-  /** Combatant info events (includes gear). */
   | 'CombatantInfo'
-  /** Damage done. */
   | 'DamageDone'
-  /** Damage taken. */
   | 'DamageTaken'
-  /** Deaths. */
   | 'Deaths'
-  /** Debuffs. */
   | 'Debuffs'
-  /** Dispels. */
   | 'Dispels'
-  /** Healing done. */
   | 'Healing'
-  /** Interrupts. */
   | 'Interrupts'
-  /** Resources. */
   | 'Resources'
-  /** Summons */
   | 'Summons'
-  /** Threat. */
   | 'Threat';
 
-/** Whether or not to fetch information for friendlies or enemies. */
 export type HostilityType =
-  /** Fetch information for enemies. */
   | 'Enemies'
-  /** Fetch information for friendlies. */
   | 'Friendlies';
 
-/** The type of table to examine. */
 export type TableDataType =
-  /** Buffs. */
   | 'Buffs'
-  /** Casts. */
   | 'Casts'
-  /** Damage done. */
   | 'DamageDone'
-  /** Damage taken. */
   | 'DamageTaken'
-  /** Deaths. */
   | 'Deaths'
-  /** Debuffs. */
   | 'Debuffs'
-  /** Dispels. */
   | 'Dispels'
-  /** Healing done. */
   | 'Healing'
-  /** Interrupts. */
   | 'Interrupts'
-  /** Resources. */
   | 'Resources'
-  /** Summary Overview */
   | 'Summary'
-  /** Summons */
   | 'Summons'
-  /** Survivability (death info across multiple pulls). */
   | 'Survivability'
-  /** Threat. */
   | 'Threat';
 
 export type ReportQueryVariables = Exact<{

@@ -3,7 +3,7 @@ import { writeFile, readFile } from 'node:fs/promises';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
 
 const SDL_HEADER = `# Introspected from the WCL v2 API by npm run schema:pull, then post-processed by scripts/wcl-json-scalars.mjs:
-# the JSON fields the app selects each carry their own scalar here so codegen.yml can type them as app models.
+# the JSON fields the app selects each carry their own scalar here so scripts/codegen.mjs can type them as app models.
 `;
 
 const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
@@ -31,7 +31,7 @@ const { access_token: token } = await post(TOKEN_URL, { 'Content-Type': 'applica
 }).toString());
 
 const { data, errors } = await post(API_URL, { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-  JSON.stringify({ query: getIntrospectionQuery({ descriptions: true }) }));
+  JSON.stringify({ query: getIntrospectionQuery({ descriptions: false }) }));
 if (errors) throw new Error(`introspection failed: ${JSON.stringify(errors)}`);
 
 await writeFile(SDL_TARGET, `${SDL_HEADER}${printSchema(buildClientSchema(nameJsonFieldScalars(data)))}\n`);
