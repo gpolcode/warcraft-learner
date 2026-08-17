@@ -1,8 +1,8 @@
 /** Factories for the WCL responses a `*TransformService` reads: the ranked top parses, the report behind each one, and the ability map. */
 import { WclAbility, WclRawAbility } from '../../app/core/models/wcl.models';
 
-export interface FixtureActor { id: number; name: string; subType: string; server: string }
-export interface FixtureEnemy { id: number; name: string; gameID: number }
+interface FixtureActor { id: number; name: string; subType: string; server: string }
+interface FixtureEnemy { id: number; name: string; gameID: number }
 
 export interface FixtureReport {
   title: string;
