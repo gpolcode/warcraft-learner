@@ -51,7 +51,7 @@ Deliver: the shell (zero domain services) or leaf (inputs/outputs only), copy pe
 
 ## UI rules (hard)
 
-- **Styling is Angular Material + Tailwind utilities over `frontend/src/styles.scss`** - the one stylesheet, holding the design tokens and the `badge-*` / `fill-*` / `seg-*` / `icon-*` / `chip-onplan` classes.
+- **Styling is Angular Material + Tailwind utilities over `frontend/src/styles.scss`** - the one stylesheet, holding the design tokens and the `badge-*` / `fill-*` / `icon-*` / `chip-onplan` classes.
 - **Templates and `styles.scss` reach a color through a token** - a Tailwind arbitrary value (`text-[var(--success)]`) or a `badge-*` class.
 - **`computed()` exposes semantic state only**; the template maps that state to a class.
 - **All formatting goes through Angular pipes** (`FormatDurationPipe`, `FormatDamagePipe`, `DecimalPipe`, `FormatSpecPipe`).

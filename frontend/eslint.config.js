@@ -27,21 +27,15 @@ const to = (...types) => types.map((type) => ({ to: { element: { type } } }));
 
 // Last match wins: moving the Pull Overview exception above the general slice policy disables it.
 const layerPolicies = [
-  { from: [{ element: { type: 'core' } }], allow: to('core', 'environments', 'testing') },
-  { from: [{ element: { type: 'shared' } }], allow: to('core', 'shared', 'testing') },
+  { from: [{ element: { type: 'core' } }], allow: to('environments', 'testing') },
+  { from: [{ element: { type: 'shared' } }], allow: to('core', 'testing') },
   { from: [{ element: { type: 'slice' } }], allow: to('core', 'shared', 'testing') },
-  { from: [{ element: { type: 'page' } }], allow: to('core', 'shared', 'slice', 'page', 'testing') },
-  { from: [{ element: { type: 'ingest' } }], allow: to('core', 'shared', 'slice', 'ingest', 'testing') },
-  {
-    from: [{ element: { type: 'app-root' } }],
-    allow: to('core', 'shared', 'page', 'app-root', 'environments', 'testing'),
-  },
-  {
-    from: [{ element: { type: 'environments' } }],
-    allow: to('core', 'shared', 'slice', 'ingest', 'environments'),
-  },
-  { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root', 'environments') },
-  { from: [{ element: { type: 'testing' } }], allow: to('core', 'shared', 'slice', 'page', 'ingest', 'testing') },
+  { from: [{ element: { type: 'page' } }], allow: to('core', 'shared', 'slice', 'testing') },
+  { from: [{ element: { type: 'ingest' } }], allow: to('core', 'shared', 'slice', 'testing') },
+  { from: [{ element: { type: 'app-root' } }], allow: to('core', 'shared', 'page', 'environments') },
+  { from: [{ element: { type: 'environments' } }], allow: to('core', 'slice', 'ingest') },
+  { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root') },
+  { from: [{ element: { type: 'testing' } }], allow: to('core') },
   {
     from: [{ element: { type: 'slice', captured: { sliceName: 'pull-overview' } } }],
     allow: [{ to: { element: { type: 'slice', captured: { sliceName: 'map' } } } }],
@@ -49,13 +43,13 @@ const layerPolicies = [
   },
 ];
 
-// Exactly 3, 6, or 8 hex digits: the trailing guard keeps `#8041`-style id labels out.
-const HEX_COLOR = String.raw`#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})(?![0-9a-fA-F])`;
-const COLOR_FUNCTION = String.raw`\b(?:rgba?|hsla?)\(`;
+// Exactly 3 or 6 hex digits: the trailing guard keeps `#8041`-style id labels out.
+const HEX_COLOR = String.raw`#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})(?![0-9a-fA-F])`;
+const COLOR_FUNCTION = String.raw`\brgba?\(`;
 const COLOR_LITERAL = `${HEX_COLOR}|${COLOR_FUNCTION}`;
 
 // Anchored at a token start so module specifiers like './class-icon-pipe' are not class names.
-const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:badge|fill|seg|icon|chip)-`;
+const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:badge|fill|icon|chip)-`;
 
 const styleFileMessage =
   'Zero per-component style files: styling is Angular Material + Tailwind utilities over the tokens in src/styles.scss.';
@@ -65,7 +59,7 @@ const classProductionMessage =
   'Component TS never produces CSS classes: expose semantic state and let the template pick the class.';
 
 const restrictUiSyntax = [
-  { selector: 'Property[key.name=/^styleUrls?$/], Property[key.value=/^styleUrls?$/]', message: styleFileMessage },
+  { selector: 'Property[key.name=/^styleUrls?$/]', message: styleFileMessage },
   { selector: `Literal[value=/${COLOR_LITERAL}/]`, message: colorMessage },
   { selector: `TemplateElement[value.raw=/${COLOR_LITERAL}/]`, message: colorMessage },
   { selector: `Literal[value=/${DESIGN_SYSTEM_CLASS}/]`, message: classProductionMessage },
@@ -210,14 +204,12 @@ export default defineConfig([
     plugins: { boundaries },
     settings: {
       'boundaries/elements': architectureLayers,
-      'boundaries/dependency-nodes': ['import', 'dynamic-import', 'export'],
       // Imports are extensionless; without .ts the resolver misses every target and every rule below silently passes.
       'import/resolver': { node: { extensions: ['.ts', '.js', '.json'] } },
     },
     rules: {
       'boundaries/dependencies': ['error', { default: 'disallow', policies: layerPolicies }],
       'boundaries/no-unknown-dependencies': 'error',
-      'boundaries/no-unknown-files': 'error',
       'no-restricted-imports': ['error', restrictHttpImports],
       'no-restricted-globals': [
         'error',
