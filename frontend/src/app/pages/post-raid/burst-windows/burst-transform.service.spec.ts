@@ -465,19 +465,6 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
   });
 
-  it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {
-    const backfillWcl = {
-      ...wclFake,
-      getRankings: async () => ({ rankings: parseRankings(11) }),
-      getReport: reportsByCode({ abilities: reportAbilities, privateCode: 'r5' }),
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: backfillWcl, files: filesFake }) });
-    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
-    expect(bench.ok).toBe(true);
-    // 11 candidates, one private: the 11th backfills the skipped parse to a full 10.
-    if (bench.ok) expect(bench.value.sample_count).toBe(10);
-  });
-
   it('returns missing when the spec rulebook has no cooldowns', async () => {
     TestBed.configureTestingModule({
       providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),

@@ -5,7 +5,7 @@ import { NorthernSkyTransformService, cooldownCastTimes } from './northern-sky-t
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
 import { cast } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
-import { abilityLookup, parseRankings, parseReport, reportsByCode } from '../../../../testing/builders/wcl-fixtures';
+import { abilityLookup, parseRankings, reportsByCode } from '../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../testing/api-fakes';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 
@@ -63,25 +63,6 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
     ]);
   });
 
-  it('backfills to the next parse when the #1 log is unfetchable', async () => {
-    const backfill = {
-      ...wclFake,
-      // r1 has no P1 actor, so its parse is dropped and P2's log is used instead.
-      getReport: async (code: string) => (code === 'r1'
-        ? parseReport({ playerId: 99, playerName: 'Other', fightId: 1 })
-        : parseReport({ playerId: 20, playerName: 'P2', fightId: 2 })),
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: backfill, files: filesFake }) });
-    const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1);
-    expect(bench.ok).toBe(true);
-    if (!bench.ok) return;
-    expect(bench.value.abilities).toEqual([
-      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: `icon_${SHADOW_BLADES}`, kind: 'cooldown', cast_times_s: [5] },
-      { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, kind: 'cooldown', cast_times_s: [44] },
-      { spell_id: EVASION, name: 'Evasion', icon: `icon_${EVASION}`, kind: 'defensive', cast_times_s: [66] },
-    ]);
-  });
-
   it('returns missing when the spec rulebook has no cooldowns or defensives', async () => {
     TestBed.configureTestingModule({
       providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
@@ -94,11 +75,5 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
       providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => missing('Not yet ingested.') } }),
     });
     expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
-  });
-
-  it('returns a load error when a WCL fetch throws', async () => {
-    const throwing = { ...wclFake, getRankings: async () => { throw new Error('WCL down'); } };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: throwing, files: filesFake }) });
-    expect((await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).ok).toBe(false);
   });
 });

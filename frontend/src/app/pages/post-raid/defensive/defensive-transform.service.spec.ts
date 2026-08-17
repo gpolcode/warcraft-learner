@@ -306,19 +306,6 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[700]).toEqual({ icon: 'hit', name: 'Boss Hit' });
   });
 
-  it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {
-    const backfillWcl = {
-      ...wclFake,
-      getRankings: async () => ({ rankings: parseRankings(11) }),
-      getReport: reportsByCode({ ...reportShape, privateCode: 'r5' }),
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: backfillWcl, files: filesFake }) });
-    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
-    // 11 candidates, one private: the 11th backfills the skipped parse to a full 10.
-    expect(bench.ok).toBe(true);
-    if (bench.ok) expect(bench.value.sample_count).toBe(10);
-  });
-
   it('reports missing when the spec has no rulebook defensives', async () => {
     TestBed.configureTestingModule({
       providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok({ spec: 'X', defensives: [] }) } }),
@@ -326,13 +313,5 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(false);
     if (!bench.ok) expect(bench.error.kind).toBe('missing');
-  });
-
-  it('surfaces a WCL failure as an error, not a silent null bench', async () => {
-    const failingWcl = { ...wclFake, getRankings: async () => { throw new Error('WCL exploded'); } };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: failingWcl, files: filesFake }) });
-    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
-    expect(bench.ok).toBe(false);
-    if (!bench.ok) expect(bench.error).toMatchObject({ kind: 'permanent', id: 'defensive.bench' });
   });
 });

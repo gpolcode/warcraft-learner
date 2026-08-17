@@ -267,12 +267,6 @@ const filesFake = {
 };
 
 describe('RotationTransformService (live, in-browser)', () => {
-  // Full sample size the transform caps at (TOP_PARSE_COUNT in the service).
-  const FULL_SAMPLE_COUNT = 10;
-  // One private candidate over-fetched past, plus the full sample: 11 candidates in.
-  const CANDIDATE_COUNT = FULL_SAMPLE_COUNT + 1;
-  const PRIVATE_CODE = 'r5';
-
   it('computes a rotation bench from the top parses', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
@@ -287,56 +281,6 @@ describe('RotationTransformService (live, in-browser)', () => {
       expect(bench.ability_icons[SHADOW_BLADES]).toEqual({ icon: 'sb', name: 'Shadow Blades' });
       expect(bench.major_cooldowns).toHaveLength(1);
     }
-  });
-
-  it('benches nothing from a pool one parse short of the floor, so one player\'s habit never sets the bar', async () => {
-    const thinWcl = { ...wclFake, getRankings: async () => ({ rankings: parseRankings(MIN_SAMPLE_COUNT - 1) }) };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: thinWcl, files: filesFake }) });
-    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error.kind).toBe('missing');
-  });
-
-  it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {
-    const backfillWcl = {
-      ...wclFake,
-      getRankings: async () => ({ rankings: parseRankings(CANDIDATE_COUNT) }),
-      getReport: reportsByCode({ ...reportShape, privateCode: PRIVATE_CODE }),
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: backfillWcl, files: filesFake }) });
-    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
-    expect(result.ok).toBe(true);
-    // 11 candidates, one private: the 11th backfills the skipped parse to a full 10.
-    if (result.ok) expect(result.value.sample_count).toBe(FULL_SAMPLE_COUNT);
-  });
-
-  it('samples the partition it was handed, so the slice reads the parses the signature was taken over', async () => {
-    const RESOLVED_PARTITION = 2;
-    const asked: (number | null | undefined)[] = [];
-    const partitionWcl = {
-      ...wclFake,
-      getRankings: async (_spec: string, _encounterId: number, partition?: number | null) => {
-        asked.push(partition);
-        return { rankings: parseRankings(2) };
-      },
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: partitionWcl, files: filesFake }) });
-    await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1, RESOLVED_PARTITION);
-    expect(asked).toEqual([RESOLVED_PARTITION]);
-  });
-
-  it('leaves the partition unset when the orchestrator resolved none, which is WCL\'s own default', async () => {
-    const asked: (number | null | undefined)[] = [];
-    const partitionWcl = {
-      ...wclFake,
-      getRankings: async (_spec: string, _encounterId: number, partition?: number | null) => {
-        asked.push(partition);
-        return { rankings: [] };
-      },
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: partitionWcl, files: filesFake }) });
-    await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
-    expect(asked).toEqual([undefined]);
   });
 
   it('propagates a missing error when the spec has no rulebook cooldowns', async () => {

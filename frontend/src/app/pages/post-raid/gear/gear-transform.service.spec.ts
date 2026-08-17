@@ -283,20 +283,6 @@ describe('GearTransformService (live, in-browser)', () => {
     if (bench.ok) expect(bench.value.talent_builds.every(build => (build.diff ?? []).length === 0)).toBe(true);
   });
 
-  it('backfills past a private (unfetchable) top parse to keep the sample count full', async () => {
-    const backfillWcl = {
-      ...wclFake,
-      getRankings: async () => ({ rankings: parseRankings(11) }),
-      getReport: reportsByCode({ privateCode: 'r5' }),
-      getCombatantInfo: async () => [combatantInfo(10)],
-    };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: backfillWcl, talents: talentDataFake }) });
-    const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
-    // 11 candidates, one private: the 11th backfills the skipped parse to a full 10.
-    expect(bench.ok).toBe(true);
-    if (bench.ok) expect(bench.value.sample_count).toBe(10);
-  });
-
   it('bakes the same-named raider sitting on the ranked realm, not the first name match', async () => {
     const TWIN_NAME = 'P1';
     const DECOY_ID = 10;
@@ -322,13 +308,5 @@ describe('GearTransformService (live, in-browser)', () => {
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
     expect(bench.value.talent_builds[0]).toMatchObject({ key: `v3:${RANKED_TALENT_ENTRY}.1`, source_id: RANKED_ID });
-  });
-
-  it('is a missing error when there are no rankings', async () => {
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: { getRankings: async () => ({ rankings: [] }) }, talents: talentDataFake }),
-    });
-    expect(await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(missing('Not yet ingested.'));
   });
 });

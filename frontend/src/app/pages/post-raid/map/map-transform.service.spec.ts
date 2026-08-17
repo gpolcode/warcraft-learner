@@ -1,8 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { HttpErrorResponse } from '@angular/common/http';
 import { WclEvent } from '../../../core/models/wcl.models';
-import { missing, transient } from '../../../core/result';
 import {
   MapTransformService,
   posActorId, collectPositionSamples, resampleTimeline, resamplePlayerTimeline, buildParsePositions, selectBossAndEnemies,
@@ -302,8 +300,6 @@ describe('MapTransformService.getBench', () => {
   const BOSS_ACTOR_ID = 10;
   const BOSS_GAME_ID = 100;
   const EXPECTED_FETCH_COUNT = 2;          // player casts + enemy casts, nothing else
-  const SERVER_UNREACHABLE_STATUS = 503;   // a 5xx maps to `transient` in the taxonomy
-  const BENCH_ERROR_ID = 'map.bench';      // repro id a permanent bench failure carries
 
   const report = parseReport({
     playerId: PLAYER_ACTOR_ID, fightId: FIGHT_ID, endTimeMs: SIX_SEC_MS, encounterId: ENCOUNTER_ID,
@@ -311,11 +307,9 @@ describe('MapTransformService.getBench', () => {
   });
 
   /** `onFetch` records each position-event fetch so the fetch-shape assertion still sees every call. */
-  function serviceWith(
-    over: { getRankings?: () => Promise<unknown>; onFetch?: (call: RecordedFetch) => void } = {},
-  ): MapTransformService {
+  function serviceWith(over: { onFetch?: (call: RecordedFetch) => void } = {}): MapTransformService {
     const wclFake = {
-      getRankings: over.getRankings ?? (async () => ({ rankings: parseRankings(1) })),
+      getRankings: async () => ({ rankings: parseRankings(1) }),
       getReport: async () => report,
       getAllEvents: async (
         _code: string, _fightId: number, dataType: string, _start: number, _end: number,
@@ -337,28 +331,5 @@ describe('MapTransformService.getBench', () => {
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ACTOR_ID, includeResources: true, hostilityType: undefined });
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: undefined, includeResources: true, hostilityType: 'Enemies' });
     expect(calls.some(call => call.dataType === 'DamageDone')).toBe(false);
-  });
-
-  it('reports an encounter with no top parses as a missing bench', async () => {
-    const result = await serviceWith({ getRankings: async () => ({ rankings: [] }) }).getBench(SPEC, ENCOUNTER_ID);
-    expect(result).toEqual(missing('No top parses for this encounter.'));
-  });
-
-  it('surfaces a transient WCL outage as an err instead of a silent empty bench', async () => {
-    const result = await serviceWith({
-      getRankings: async () => { throw new HttpErrorResponse({ status: SERVER_UNREACHABLE_STATUS }); },
-    }).getBench(SPEC, ENCOUNTER_ID);
-    expect(result).toEqual(transient('WCL is unreachable right now.'));
-  });
-
-  it('surfaces an unexpected WCL failure as a permanent err tagged for repro', async () => {
-    const result = await serviceWith({
-      getRankings: async () => { throw new Error('boom'); },
-    }).getBench(SPEC, ENCOUNTER_ID);
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error.kind).toBe('permanent');
-      if (result.error.kind === 'permanent') expect(result.error.id).toBe(BENCH_ERROR_ID);
-    }
   });
 });
