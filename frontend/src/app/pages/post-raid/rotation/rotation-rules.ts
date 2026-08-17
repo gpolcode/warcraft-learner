@@ -2,13 +2,13 @@
 export type {
   Severity, RuleBand, BenchedRule, RuleJudging, RuleStream, RuleSample,
 } from './rotation-rules/engine-core';
-export type { CastTimes, RuleContext, RuleInputs } from './rotation-rules/rule-context';
+export type { RuleContext } from './rotation-rules/rule-context';
 
-export { buildCastTimes, buildRuleContext } from './rotation-rules/rule-context';
+export { buildRuleContext } from './rotation-rules/rule-context';
 export {
   MIN_MEASURED_PARSES, RULE_TYPE_LABEL,
   rulesNeed, judgeableRules, ruleJudging, sampleRule, ruleBand, benchedRules,
-  evaluateCondition, ruleApplicable, evaluateRules, ruleLabel, rulesFollowed,
+  ruleApplicable, evaluateRules, ruleLabel, rulesFollowed,
 } from './rotation-rules/engine';
 
 export { evaluateCastWithoutPrior } from './rotation-rules/kinds/cast-without-prior';

@@ -49,7 +49,7 @@ export interface RuleJudging {
 }
 
 /** Whether the parse contributes one value per occurrence or exactly one value for the whole pull. */
-export type RulePooling = 'instance' | 'parse';
+type RulePooling = 'instance' | 'parse';
 
 export function outOfBand(value: number, lo: number, hi: number, judging: RuleJudging): boolean {
   if (judging.twoSided) return value < lo || value > hi;

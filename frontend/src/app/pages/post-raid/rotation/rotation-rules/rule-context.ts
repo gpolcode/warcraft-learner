@@ -13,7 +13,7 @@ const RESOURCE_ACTOR_TARGET = 2;
 
 export type CastTimes = Record<number, number[]>;
 
-export function buildCastTimes(casts: TimedEvent[]): CastTimes {
+function buildCastTimes(casts: TimedEvent[]): CastTimes {
   const castTimes: CastTimes = {};
   for (const cast of casts) {
     if (cast.type === 'cast' && cast.abilityGameID) {

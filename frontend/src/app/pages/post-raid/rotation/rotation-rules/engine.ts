@@ -113,7 +113,7 @@ export function benchedRules(
   );
 }
 
-export function evaluateCondition(
+function evaluateCondition(
   cond: RuleCondition, ctx: RuleContext, band: RuleBand | null, severity: Severity, remedy?: string,
 ): AnalysisFinding | null {
   return specFor(cond).evaluate(cond, ctx, band, ruleJudging(cond), severity, remedy);
