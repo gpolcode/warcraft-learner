@@ -101,6 +101,9 @@ export interface WclCombatantInfo {
   talentTree?: WclTalentNode[];
 }
 
+// One `events.data` payload serves both readers: a CombatantInfo row is an event row, and WCL returns them through the same field.
+export type WclEventData = (WclEvent & WclCombatantInfo)[];
+
 /** One `playerDetails` role entry (dps / healers / tanks / unknown). */
 export interface PlayerDetailEntry {
   id: number;

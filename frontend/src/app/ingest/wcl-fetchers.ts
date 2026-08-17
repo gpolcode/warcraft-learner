@@ -6,7 +6,7 @@ import { ENCOUNTERS_Q, RANKINGS_Q } from '../core/services/wcl-queries';
 import type {
   EncountersQuery, RankingsQuery, RankingsQueryVariables,
 } from '../core/services/wcl-operations.generated';
-import { MYTHIC_DIFFICULTY, type ParseRanking, type WclRankingsBlob } from '../core/models/wcl.models';
+import { MYTHIC_DIFFICULTY, type ParseRanking } from '../core/models/wcl.models';
 import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
   filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap,
@@ -51,7 +51,7 @@ export async function getEncounters(client: WclQueryClient, specWcl: SpecWclMap)
   // Fail the run rather than ingest nothing: an empty expansion tree would silently protect no encounter and publish an empty summary.
   if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
   // The ingest models tolerate the absent `frozen`/`zones` the schema declares non-null, so the generated envelope is restated as them.
-  const expansions = data.worldData.expansions as unknown as WclExpansion[];
+  const expansions = data.worldData.expansions as WclExpansion[];
   const candidates = filterEncounters(expansions);
   const protectedIds = protectedEncounterIds(expansions);
 
@@ -88,8 +88,7 @@ export async function getRankingsLite(
     const variables: RankingsQueryVariables = { encounterID: encounterId, className, specName, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) variables.partition = partition;
     const data = await client.query<RankingsQuery>(RANKINGS_Q, variables);
-    const blob = data.worldData?.encounter?.characterRankings as WclRankingsBlob | null | undefined;
-    return toParseRankings(unwrapRankings(blob), count);
+    return toParseRankings(unwrapRankings(data.worldData?.encounter?.characterRankings), count);
   });
   return rows;
 }

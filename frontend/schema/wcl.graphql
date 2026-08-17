@@ -1,3 +1,5 @@
+# Introspected from the WCL v2 API by npm run schema:pull, then post-processed by scripts/wcl-json-scalars.mjs:
+# the JSON fields the app selects each carry their own scalar here so codegen.yml can type them as app models.
 type ArchonViewModels {
   user: JSON
   userFromDesktopClientToken(desktopClientToken: String!): JSON
@@ -879,7 +881,7 @@ type Encounter {
     Optional. The soulbind ID to filter to if viewing Shadowlands rankings.
     """
     soulbindID: Int = 0
-  ): JSON
+  ): RankingsJson
 
   """
   Fight rankings information for a zone. This data is not considered frozen, and it can change without notice. Use at your own risk.
@@ -2545,7 +2547,7 @@ type Report {
     Optional. Whether or not to include detailed combatant info such as gear in the results.
     """
     includeCombatantInfo: Boolean = false
-  ): JSON
+  ): PlayerDetailsJson
 
   """A list of all characters that ranked on kills in the report."""
   rankedCharacters: [Character]
@@ -2715,7 +2717,7 @@ type Report {
     Optional. The number of deaths after which all subsequent events should be ignored.
     """
     wipeCutoff: Int = 0
-  ): JSON
+  ): TableJson
 
   """A title for the report."""
   title: String!
@@ -2958,7 +2960,7 @@ type ReportDungeonPullNPC {
 """The ReportEventPaginator represents a paginated list of report events."""
 type ReportEventPaginator {
   """The list of events obtained."""
-  data: JSON
+  data: EventDataJson
 
   """
   A timestamp to pass in as the start time when fetching the next page of data.
@@ -3864,3 +3866,23 @@ type Query {
   reportComponentData: ReportComponentData
   systemReportComponentData: ReportComponentData
 }
+
+"""
+The `Report.playerDetails` payload. codegen.yml maps this scalar to the app model that reads it.
+"""
+scalar PlayerDetailsJson
+
+"""
+The `Report.table` payload. codegen.yml maps this scalar to the app model that reads it.
+"""
+scalar TableJson
+
+"""
+The `Encounter.characterRankings` payload. codegen.yml maps this scalar to the app model that reads it.
+"""
+scalar RankingsJson
+
+"""
+The `ReportEventPaginator.data` payload. codegen.yml maps this scalar to the app model that reads it.
+"""
+scalar EventDataJson

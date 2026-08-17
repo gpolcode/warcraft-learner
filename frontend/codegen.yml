@@ -11,5 +11,13 @@ generates:
     config:
       skipTypename: true
       enumsAsTypes: true
+      # One entry per scalar scripts/wcl-json-scalars.mjs splits out of WCL's opaque JSON, so each payload arrives as the model that reads it.
       scalars:
-        JSON: unknown
+        # Selecting a field still typed as WCL's shared JSON scalar is a compile error at the read site: split it out first.
+        JSON: never
+        PlayerDetailsJson: ../models/wcl.models#PlayerDetailsBlob
+        TableJson: ../models/wcl.models#WclTableBlob
+        RankingsJson: ../models/wcl.models#WclRankingsBlob
+        EventDataJson: ../models/wcl.models#WclEventData
+      # Fails the run on a selected scalar with no mapping above, rather than typing it `any`.
+      strictScalars: true

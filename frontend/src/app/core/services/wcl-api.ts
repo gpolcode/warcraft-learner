@@ -3,7 +3,7 @@ import { WclAuthService } from './wcl-auth';
 import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import {
   WclReport, WclEvent,
-  PlayerDetailGroups, PlayerDetailsBlob, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
+  PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
   MYTHIC_DIFFICULTY,
 } from '../models/wcl.models';
 import {
@@ -21,7 +21,7 @@ import type {
 } from './wcl-operations.generated';
 import { SpecMetaService } from './spec-meta';
 
-// WCL declares every selected field nullable and hands playerDetails/table/characterRankings/event rows back as opaque JSON, so each read restates the generated envelope as the app model its callers consume.
+// WCL declares every selected field nullable, so the report reads restate the generated envelope as the non-null app model their callers consume.
 @Injectable({ providedIn: 'root' })
 export class WclApiService {
   private readonly auth = inject(WclAuthService);
@@ -29,7 +29,7 @@ export class WclApiService {
   private readonly specMeta = inject(SpecMetaService);
 
   // A 401 refreshes the token and retries once, so an early-rejected token (early expiry, rotated secret) recovers in place.
-  async query<TData = unknown>(gqlString: string, variables: object = {}): Promise<TData> {
+  async query<TData>(gqlString: string, variables: object = {}): Promise<TData> {
     const token = await this.auth.getToken();
     try {
       return await this.transport.query<TData>(gqlString, variables, token);
@@ -50,7 +50,7 @@ export class WclApiService {
     const report = result.reportData?.report;
     // WCL returns report: null for a code it won't serve (missing, private, expired) with no GraphQL error.
     if (!report) throw this.reportUnavailable(code);
-    return report as unknown as WclReport;
+    return report as WclReport;
   }
 
   /** Fights-only read of a report - the live-sync poll's new-pull probe. */
@@ -60,15 +60,14 @@ export class WclApiService {
     const report = result.reportData?.report;
     // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!report) throw this.reportUnavailable(code);
-    return (report.fights ?? []) as unknown as WclReport['fights'];
+    return (report.fights ?? []) as WclReport['fights'];
   }
 
   /** Raw `playerDetails` groups (dps / healers / tanks / unknown). Consumers map to spec. */
   async getPlayerDetails(code: string, fightId: number): Promise<PlayerDetailGroups> {
     const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
     const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
-    const blob = result.reportData?.report?.playerDetails as PlayerDetailsBlob | null | undefined;
-    const playerDetails = blob?.data?.playerDetails;
+    const playerDetails = result.reportData?.report?.playerDetails?.data?.playerDetails;
     // Same unserved-report case as getReport; fail typed rather than into a TypeError.
     if (!playerDetails) throw this.reportUnavailable(code);
     return playerDetails;
@@ -100,7 +99,7 @@ export class WclApiService {
       // Same unserved-report case as getReport; fail typed rather than into a TypeError.
       if (!page) throw this.reportUnavailable(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
-      for (const event of (page.data as WclEvent[] | null) ?? []) events.push(event);
+      for (const event of page.data ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
       currentStart = page.nextPageTimestamp;
     }
@@ -114,14 +113,14 @@ export class WclApiService {
     const report = result.reportData?.report;
     // Same unserved-report case as getReport; fail typed rather than folding null into a success [].
     if (!report) throw this.reportUnavailable(code);
-    return (report.events?.data as WclCombatantInfo[] | null | undefined) ?? [];
+    return report.events?.data ?? [];
   }
 
   // Consumers pick their player's `data.entries` row by actor id and derive DPS from `total` over the fight duration.
   async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
     const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
     const result = await this.query<TableQuery>(TABLE_Q, vars);
-    return (result.reportData?.report?.table as WclTableBlob | null | undefined) ?? null;
+    return result.reportData?.report?.table ?? null;
   }
 
   // WCL has no `Resurrects` data type, so this scans `All` with a server-side `type` filter (only matches come back).
@@ -134,7 +133,7 @@ export class WclApiService {
       const page = result.reportData?.report?.events;
       // Same unserved-report case as getReport; fail typed rather than into a TypeError.
       if (!page) throw this.reportUnavailable(code);
-      for (const event of (page.data as WclEvent[] | null) ?? []) events.push(event);
+      for (const event of page.data ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
       currentStart = page.nextPageTimestamp;
     }
@@ -167,6 +166,6 @@ export class WclApiService {
     const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) vars.partition = partition;
     const result = await this.query<RankingsQuery>(RANKINGS_Q, vars);
-    return (result.worldData?.encounter?.characterRankings as WclRankingsBlob | null | undefined) ?? null;
+    return result.worldData?.encounter?.characterRankings ?? null;
   }
 }

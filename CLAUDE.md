@@ -34,7 +34,7 @@ frontend/        # the entire Angular 22 app
   scripts/       # ingest-server.js + ingest-headless.mjs + introspect-wcl.mjs - plain Node, zero ingestion logic
   e2e/           # Playwright happy-path suite (one WCL analysis per run)
   public/data/specs/  # static ingested data - not tracked on main; lives on gh-pages
-.github/workflows/  # deploy-pages, ingest-parses (hourly), test, e2e
+.github/workflows/  # deploy-pages, ingest-parses (hourly), wcl-schema-refresh (weekly), test, e2e
 .claude/agents/   # rulebook-author.md - the isolated per-spec authoring worker
 .claude/skills/   # on-demand skills (see the router below)
 ```
@@ -49,7 +49,7 @@ frontend/        # the entire Angular 22 app
 | `npm run e2e` | Playwright e2e suite over both pages (`npm run data:pull` first) |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run codegen` | Regenerate the WCL operation types from the committed `frontend/schema/wcl.graphql` (offline) |
-| `npm run schema:pull` | Re-introspect the WCL v2 schema into `frontend/schema/wcl.graphql` |
+| `npm run schema:pull` | Re-introspect the WCL v2 schema into `frontend/schema/wcl.graphql` (the weekly `wcl-schema-refresh` workflow does this too, and PRs the drift) |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `npm run start:ingest` | Interactive ingestion: the file server + `ng serve --configuration ingest` |
 | `npm run ingest` | Headless ingestion (CI entry) |

@@ -2,6 +2,11 @@
 
 import { getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
 import { writeFile, readFile } from 'node:fs/promises';
+import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
+
+const SDL_HEADER = `# Introspected from the WCL v2 API by npm run schema:pull, then post-processed by scripts/wcl-json-scalars.mjs:
+# the JSON fields the app selects each carry their own scalar here so codegen.yml can type them as app models.
+`;
 
 const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 const API_URL = 'https://www.warcraftlogs.com/api/v2/client';
@@ -31,5 +36,5 @@ const { data, errors } = await post(API_URL, { 'Content-Type': 'application/json
   JSON.stringify({ query: getIntrospectionQuery({ descriptions: true }) }));
 if (errors) throw new Error(`introspection failed: ${JSON.stringify(errors)}`);
 
-await writeFile(SDL_TARGET, `${printSchema(buildClientSchema(data))}\n`);
+await writeFile(SDL_TARGET, `${SDL_HEADER}${printSchema(buildClientSchema(nameJsonFieldScalars(data)))}\n`);
 console.log(`Wrote ${SDL_TARGET.pathname}`);

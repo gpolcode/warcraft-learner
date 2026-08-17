@@ -1,7 +1,8 @@
 /** Internal type. DO NOT USE DIRECTLY. */
-type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+type Exact<T extends object> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+import { WclEventData, PlayerDetailsBlob, WclRankingsBlob, WclTableBlob } from '../models/wcl.models';
 /** The type of events or tables to examine. */
 export type EventDataType =
   /** All Events */
@@ -91,7 +92,7 @@ export type PlayerDetailsQueryVariables = Exact<{
 }>;
 
 
-export type PlayerDetailsQuery = { reportData: { report: { playerDetails: unknown } | null } | null };
+export type PlayerDetailsQuery = { reportData: { report: { playerDetails: PlayerDetailsBlob | null } | null } | null };
 
 export type EventsQueryVariables = Exact<{
   code: string;
@@ -105,7 +106,7 @@ export type EventsQueryVariables = Exact<{
 }>;
 
 
-export type EventsQuery = { reportData: { report: { events: { data: unknown, nextPageTimestamp: number | null } | null } | null } | null };
+export type EventsQuery = { reportData: { report: { events: { data: WclEventData | null, nextPageTimestamp: number | null } | null } | null } | null };
 
 export type TableQueryVariables = Exact<{
   code: string;
@@ -114,7 +115,7 @@ export type TableQueryVariables = Exact<{
 }>;
 
 
-export type TableQuery = { reportData: { report: { table: unknown } | null } | null };
+export type TableQuery = { reportData: { report: { table: WclTableBlob | null } | null } | null };
 
 export type ResurrectsQueryVariables = Exact<{
   code: string;
@@ -125,7 +126,7 @@ export type ResurrectsQueryVariables = Exact<{
 }>;
 
 
-export type ResurrectsQuery = { reportData: { report: { events: { data: unknown, nextPageTimestamp: number | null } | null } | null } | null };
+export type ResurrectsQuery = { reportData: { report: { events: { data: WclEventData | null, nextPageTimestamp: number | null } | null } | null } | null };
 
 export type RankingsQueryVariables = Exact<{
   encounterID: number;
@@ -136,7 +137,7 @@ export type RankingsQueryVariables = Exact<{
 }>;
 
 
-export type RankingsQuery = { worldData: { encounter: { characterRankings: unknown } | null } | null };
+export type RankingsQuery = { worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null };
 
 export type CombatantInfoQueryVariables = Exact<{
   code: string;
@@ -145,7 +146,7 @@ export type CombatantInfoQueryVariables = Exact<{
 }>;
 
 
-export type CombatantInfoQuery = { reportData: { report: { events: { data: unknown } | null } | null } | null };
+export type CombatantInfoQuery = { reportData: { report: { events: { data: WclEventData | null } | null } | null } | null };
 
 export type RateLimitQueryVariables = Exact<{ [key: string]: never; }>;
 

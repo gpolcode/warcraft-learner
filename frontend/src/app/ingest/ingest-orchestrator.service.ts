@@ -67,7 +67,7 @@ class ApiWclClient implements WclQueryClient {
 
   constructor(private readonly wclApi: WclApiService) {}
 
-  query<T = unknown>(gql: string, variables?: object): Promise<T> {
+  query<T>(gql: string, variables?: object): Promise<T> {
     // These reads are marked uncached (see wclCachingHeaders), so the budget gate sees fresh data.
     return this.wclApi.query<T>(gql, (variables ?? {}));
   }
@@ -124,7 +124,7 @@ export class IngestOrchestratorService {
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
     const classesData = await client.query<ClassesQuery>(CLASSES_Q);
     // The ingest models tolerate the absent `specs` the schema declares as a nullable list, so the generated envelope is restated as them.
-    const metas = mapClassesToSpecMeta((classesData.gameData?.classes ?? []) as unknown as WclGameClass[]);
+    const metas = mapClassesToSpecMeta((classesData.gameData?.classes ?? []) as WclGameClass[]);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
       if (rulebook.ok) {
