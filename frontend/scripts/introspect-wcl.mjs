@@ -1,21 +1,13 @@
 import { getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
-import { writeFile, readFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
+import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from '../src/environments/wcl-public-client.ts';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
 
 const SDL_HEADER = `# Introspected from the WCL v2 API by npm run schema:pull, then post-processed by scripts/wcl-json-scalars.mjs:
 # the JSON fields the app selects each carry their own scalar here so scripts/codegen.mjs can type them as app models.
 `;
 
-const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
-const API_URL = 'https://www.warcraftlogs.com/api/v2/client';
-const CLIENT_SOURCE = new URL('../src/environments/wcl-public-client.ts', import.meta.url);
 const SDL_TARGET = new URL('../schema/wcl.graphql', import.meta.url);
-
-function readCredential(source, name) {
-  const match = new RegExp(`${name} = '([^']+)'`).exec(source);
-  if (!match) throw new Error(`${name} not found in wcl-public-client.ts`);
-  return match[1];
-}
 
 async function post(url, headers, body) {
   const response = await fetch(url, { method: 'POST', headers, body });
@@ -23,14 +15,16 @@ async function post(url, headers, body) {
   return response.json();
 }
 
-const clientSource = await readFile(CLIENT_SOURCE, 'utf8');
-const { access_token: token } = await post(TOKEN_URL, { 'Content-Type': 'application/x-www-form-urlencoded' }, new URLSearchParams({
-  grant_type: 'client_credentials',
-  client_id: readCredential(clientSource, 'WCL_PUBLIC_CLIENT_ID'),
-  client_secret: readCredential(clientSource, 'WCL_PUBLIC_CLIENT_SECRET'),
-}).toString());
+const { access_token: token } = await post('https://www.warcraftlogs.com/oauth/token',
+  { 'Content-Type': 'application/x-www-form-urlencoded' },
+  new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: WCL_PUBLIC_CLIENT_ID,
+    client_secret: WCL_PUBLIC_CLIENT_SECRET,
+  }).toString());
 
-const { data, errors } = await post(API_URL, { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+const { data, errors } = await post('https://www.warcraftlogs.com/api/v2/client',
+  { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
   JSON.stringify({ query: getIntrospectionQuery({ descriptions: false }) }));
 if (errors) throw new Error(`introspection failed: ${JSON.stringify(errors)}`);
 
