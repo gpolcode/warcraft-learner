@@ -2,6 +2,7 @@ import { codegen } from '@graphql-codegen/core';
 import * as typescriptOperations from '@graphql-codegen/typescript-operations';
 import { gqlPluckFromCodeString } from '@graphql-tools/graphql-tag-pluck';
 import { buildSchema, lexicographicSortSchema, parse, printSchema } from 'graphql';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
@@ -22,6 +23,11 @@ const CONFIG = {
     EventDataJson: '../models/wcl.models#WclEventData',
   },
 };
+
+if (!existsSync(SDL)) {
+  console.error('schema/wcl.graphql missing - run npm run schema:pull first');
+  process.exit(1);
+}
 
 const plucked = await gqlPluckFromCodeString(DOCUMENTS, await readFile(DOCUMENTS, 'utf8'));
 

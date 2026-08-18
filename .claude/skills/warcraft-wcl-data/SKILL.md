@@ -9,24 +9,25 @@ description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model
 
 ## Query types are generated
 
-Every operation lives as a named, `gql`-tagged document in `core/services/wcl-queries.ts`; `npm run codegen` validates it against the committed SDL (`frontend/schema/wcl.graphql`) and writes `core/services/wcl-operations.generated.ts`, which the WCL layer uses for every response envelope and every set of query variables. No hand-written type in that layer falls back to `unknown` or `any`.
+Every operation lives as a named, `gql`-tagged document in `core/services/wcl-queries.ts`; `npm run codegen` validates it against the local SDL (`frontend/schema/wcl.graphql`) and writes `core/services/wcl-operations.generated.ts`, which the WCL layer uses for every response envelope and every set of query variables. Only that generated file is tracked; the SDL it reads is a gitignored local artifact, so a fresh clone runs `npm run schema:pull` once before `codegen` works (without the file, codegen exits on `schema/wcl.graphql missing - run npm run schema:pull first`).
 
-WCL declares each payload field (`playerDetails`, `table`, `characterRankings`, event rows) as one shared opaque `JSON` scalar, which a single codegen mapping could only point at one type. So `npm run schema:pull` post-processes the introspected schema through `scripts/wcl-json-scalars.mjs`: every field listed in its `JSON_FIELD_SCALARS` gets its own scalar in the committed SDL (`PlayerDetailsJson`, `TableJson`, `RankingsJson`, `EventDataJson`), and the `scalars` map in `scripts/codegen.mjs` points each scalar at the model in `core/models/wcl.models.ts` that reads it. `strictScalars` fails codegen on any scalar the SDL declares and that map omits, so a payload can never quietly become `any`.
+WCL declares each payload field (`playerDetails`, `table`, `characterRankings`, event rows) as one shared opaque `JSON` scalar, which a single codegen mapping could only point at one type. So `npm run schema:pull` post-processes the introspected schema through `scripts/wcl-json-scalars.mjs`: every field listed in its `JSON_FIELD_SCALARS` gets its own scalar in the local SDL (`PlayerDetailsJson`, `TableJson`, `RankingsJson`, `EventDataJson`), and the `scalars` map in `scripts/codegen.mjs` points each scalar at the model in `core/models/wcl.models.ts` that reads it. `strictScalars` fails codegen on any scalar the SDL declares and that map omits, so a payload can never quietly become `any`.
 
 **Selecting a JSON field the app does not read yet** takes three edits: its `Type.field` coordinate in `JSON_FIELD_SCALARS`, that scalar's model in the `scalars` map in `scripts/codegen.mjs`, then `npm run schema:pull`.
 
 ### Schema and generated-type lifecycle
 
-Refreshing the schema is a manual dev task, not a pipeline. Wanting a WCL field the committed SDL does not carry, run `npm run schema:pull` from `frontend/`: it re-introspects live WCL into `schema/wcl.graphql` and then runs `codegen` over it. Commit both the refreshed SDL and the regenerated `wcl-operations.generated.ts`, and read the SDL diff for a field the app already selects that WCL renamed, removed or made nullable. Nothing else refreshes the SDL, so it drifts from live WCL until someone runs the command.
+Refreshing the schema is a manual dev task, not a pipeline. Wanting a WCL field the local SDL does not carry, run `npm run schema:pull` from `frontend/`: it re-introspects live WCL into `schema/wcl.graphql` and then runs `codegen` over it. **Commit only the regenerated `wcl-operations.generated.ts`** - the SDL stays out of the repo. Read the codegen output for a field the app already selects that WCL renamed, removed or made nullable. Nothing else refreshes the SDL, so each clone's copy drifts from live WCL until someone runs the command.
 
 The pull needs no setup: `scripts/introspect-wcl.mjs` imports the embedded public client pair from `src/environments/wcl-public-client.ts`, so there is no env var and no secret. Its post-processing is a pure function of the introspection payload, so two runs against an unchanged WCL produce an identical file.
 
-CI verifies only that the committed types match the committed SDL - `npm run codegen` reads the checked-in `schema/wcl.graphql` and never touches the network.
+**CI never runs codegen and never sees the SDL.** Drift between `wcl-queries.ts` and `wcl-operations.generated.ts` is caught at generation time, on the dev's machine, and nowhere else: edit a query, run `npm run codegen`, commit the regenerated types with it.
 
 | Signal | What it caught | What to do |
 |---|---|---|
-| CI's "Check generated GraphQL types are in sync" step fails | `wcl-operations.generated.ts` does not match the committed SDL and queries (a query edited without regenerating) | `npm run codegen`, commit the result |
+| `npm run codegen` fails `Cannot query field` | a query in `wcl-queries.ts` selects something the SDL does not have | fix the query, or `npm run schema:pull` if WCL added the field since the last pull |
 | `npm run codegen` fails `Unknown scalar type` | the SDL declares a scalar the `scalars` map in `scripts/codegen.mjs` does not name | map it there, to the model that reads it |
+| `npm run codegen` exits `schema/wcl.graphql missing` | the clone has never pulled the SDL | `npm run schema:pull` |
 | `npm run schema:pull` throws `is not in the WCL schema` or `is not JSON` | WCL moved or retyped a field `JSON_FIELD_SCALARS` maps | point `JSON_FIELD_SCALARS` and the `scalars` map in `scripts/codegen.mjs` at the field's new coordinate |
 
 ## Browser auth model (intentional embedded secret)
