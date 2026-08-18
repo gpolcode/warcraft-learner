@@ -4,7 +4,7 @@ import { CharacterGear, ParseRanking } from '../../../core/models/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
 import { logWarn } from '../../../core/log';
 import { Result } from '../../../core/result';
-import { TRINKET_SLOTS, decodeHtmlEntities, extractGear, selectCombatantInfo } from './gear-extract';
+import { GameNames, TRINKET_SLOTS, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
 import { talentKeyFromTree } from '../../../shared/gear/talent-key';
 import { buildTalentDiff } from '../../../shared/gear/gear-comparison';
 import { TalentDataService } from '../../../core/services/talent-data';
@@ -133,14 +133,6 @@ export function aggregateEnchants(parses: ParseGear[]): EncounterGearStats['ench
   return enchants;
 }
 
-function fillMissingNames(
-  items: { id: number; name: string }[], prefix: 'i' | 'e', names: Record<string, { id: number; name: string }>,
-): void {
-  for (const item of items) {
-    if (!item.name && item.id) item.name = decodeHtmlEntities(names[`${prefix}${item.id}`]?.name ?? '');
-  }
-}
-
 export function aggregateParseGear(parses: ParseGear[]): EncounterGearStats {
   return {
     talent_builds: aggregateTalents(parses),
@@ -190,8 +182,8 @@ export class GearTransformService implements DataSource<GearBench> {
 
     const { trinkets, enchants } = extractGear(event.gear);
     const names = await this.resolveGameNames(ranking, trinkets, enchants);
-    fillMissingNames(trinkets, 'i', names);
-    fillMissingNames(enchants, 'e', names);
+    fillGameNames(trinkets, 'i', names);
+    fillGameNames(enchants, 'e', names);
 
     const characterGear: CharacterGear = {
       talent_key: talentKeyFromTree(event.talentTree), trinkets, enchants,
@@ -202,7 +194,7 @@ export class GearTransformService implements DataSource<GearBench> {
   // A failed name lookup leaves the ids intact, so the parse still benches with blank names.
   private async resolveGameNames(
     ranking: ParseRanking, trinkets: { id: number }[], enchants: { id: number }[],
-  ): Promise<Record<string, { id: number; name: string }>> {
+  ): Promise<GameNames> {
     const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
     const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
     try {

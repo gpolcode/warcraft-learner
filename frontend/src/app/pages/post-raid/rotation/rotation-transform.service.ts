@@ -3,8 +3,8 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
-import { mean, median, deviation, quantile } from 'd3-array';
-import { round, getOrInsert } from '../../../shared/analysis/analysis-math';
+import { mean, deviation, quantile } from 'd3-array';
+import { round, getOrInsert, avgOr, stddevOr, medianOr, castGaps } from '../../../shared/analysis/analysis-math';
 import {
   HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets, detectHoldWindows,
 } from '../../../shared/analysis/hold-targets';
@@ -110,30 +110,6 @@ function benchUsesPerMin(entries: CdSummary[]): UsesPerMin {
   };
 }
 
-
-function avgOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(mean(values) ?? 0) : fallback;
-}
-
-function stddevOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(deviation(values) ?? 0) : fallback;
-}
-
-function medianOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(median(values) ?? 0) : fallback;
-}
-
-function castGaps(entries: CdSummary[]): number[] {
-  const gaps: number[] = [];
-  for (const entry of entries) {
-    let prev: number | undefined;
-    for (const timeS of entry.cast_times_s) {
-      if (prev != null) gaps.push(timeS - prev);
-      prev = timeS;
-    }
-  }
-  return gaps;
-}
 
 export function buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
   const firstCasts = entries.map(entry => entry.first_cast_s).filter((value): value is number => value != null);

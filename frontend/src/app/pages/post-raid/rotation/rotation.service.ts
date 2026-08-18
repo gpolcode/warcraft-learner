@@ -393,8 +393,12 @@ function holdsOf(cdBench: PerCdBenchmark | undefined): CdPlanRow['holds'] {
     .map(([idx, target]) => ({ castIndex: Number(idx), targetS: target.target_s }));
 }
 
+type CdPlanUsage = Pick<
+  CdPlanRow, 'firstCastS' | 'typicalUses' | 'usedSampleCount' | 'sampleCount' | 'usesPerMin' | 'bloodlust' | 'bloodlustPct'
+>;
+
 // First cast and uses/min are user-only stats; gate them on the same use-share majority the analysis uses.
-function cdPlanUsageOf(cdBench: PerCdBenchmark | undefined): Omit<CdPlanRow, 'name' | 'spellId' | 'icon' | 'holds' | 'rule'> {
+function cdPlanUsageOf(cdBench: PerCdBenchmark | undefined): CdPlanUsage {
   if (!cdBench) return { firstCastS: null, typicalUses: null, usedSampleCount: 0, sampleCount: 0, usesPerMin: null, bloodlust: false, bloodlustPct: null };
   const usedByMajority = usedShare(cdBench) >= MIN_USE_SHARE_FRAC;
   const alignedWithBl = cdBench.bl_pct >= BL_CONSENSUS_PCT;

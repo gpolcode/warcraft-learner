@@ -5,8 +5,8 @@ import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
 import { Result, missing } from '../../../core/result';
-import { mean, median, deviation } from 'd3-array';
-import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
+import { mean, deviation } from 'd3-array';
+import { round, groupByTime, getOrInsert, avgOr, stddevOr, medianOr, castGaps } from '../../../shared/analysis/analysis-math';
 import { HoldWindow, buildHoldTargets, detectHoldWindows } from '../../../shared/analysis/hold-targets';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 import { TimedEvent, abilityIcons, normalizeAbilityId, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
@@ -20,18 +20,6 @@ const MEMBER_MAJORITY_FRAC = 0.5;
 const CLUSTER_MERGE_S = 20;
 const ABILITY_BREAKDOWN_TOP_N = 6;
 const NO_DEFENSIVE_BENCH_MESSAGE = 'Not yet ingested.';
-
-function avgOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(mean(values) ?? 0) : fallback;
-}
-
-function stddevOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(deviation(values) ?? 0) : fallback;
-}
-
-function medianOr<T>(values: number[], fallback: T): number | T {
-  return values.length ? round(median(values) ?? 0) : fallback;
-}
 
 export function defensiveSpellIds(defensives: RulebookDefensive[]): Record<string, number> {
   const map: Record<string, number> = {};
@@ -250,24 +238,11 @@ export function clusterDefensiveWindows(windows: ParseDefWindow[], sampleCount: 
   return result.sort((a, b) => a.time_s - b.time_s);
 }
 
-function castGaps(summaries: ParseDefensiveSummary[]): number[] {
-  const gaps: number[] = [];
-  for (const summary of summaries) {
-    let prev: number | undefined;
-    for (const timeS of summary.cast_times_s) {
-      if (prev != null) gaps.push(timeS - prev);
-      prev = timeS;
-    }
-  }
-  return gaps;
-}
-
 function usesPerMinStats(summaries: ParseDefensiveSummary[]): PerDefensiveBenchmark['uses_per_min'] {
   const perMin = summaries
     .filter(summary => summary.fight_duration_s > 0 && summary.uses > 0)
     .map(summary => round(summary.uses / summary.fight_duration_s * 60, 3));
-  if (!perMin.length) return { avg: 0, stddev: 0 };
-  return { avg: round(mean(perMin) ?? 0, 3), stddev: round(deviation(perMin) ?? 0, 3) };
+  return { avg: avgOr(perMin, 0, 3), stddev: stddevOr(perMin, 0, 3) };
 }
 
 // `summaries` is users-only; `totalParses` is every sampled parse, so sample_count and used_sample_count drive the runtime use-share gate.

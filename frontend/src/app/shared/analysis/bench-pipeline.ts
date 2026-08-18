@@ -48,7 +48,8 @@ export async function benchFromTopParses<TParse, TBench>(
     if (!rankings.length) return missing(slice.noRankingsMessage);
 
     const payload = await collectParses(wclApi, slice, rankings, limits.sampleTarget);
-    if (payload.parses.length < limits.minSamples) return missing(limits.tooFewMessage(payload.parses.length));
+    const accepted = payload.parses.length;
+    if (accepted < limits.minSamples) return missing(slice.tooFewParsesMessage?.(accepted) ?? slice.noRankingsMessage);
 
     return ok(await slice.bench(payload));
   } catch (cause) {
@@ -61,7 +62,6 @@ interface SliceLimits {
   poolCount: number;
   sampleTarget: number;
   minSamples: number;
-  tooFewMessage: (accepted: number) => string;
 }
 
 function sliceLimits<TParse, TBench>(slice: BenchSlice<TParse, TBench>): SliceLimits {
@@ -69,7 +69,6 @@ function sliceLimits<TParse, TBench>(slice: BenchSlice<TParse, TBench>): SliceLi
     poolCount: slice.candidatePoolCount ?? CANDIDATE_POOL_COUNT,
     sampleTarget: slice.sampleTarget ?? TOP_PARSE_COUNT,
     minSamples: slice.minSamples ?? MIN_SAMPLE_COUNT,
-    tooFewMessage: accepted => slice.tooFewParsesMessage?.(accepted) ?? slice.noRankingsMessage,
   };
 }
 

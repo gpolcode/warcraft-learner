@@ -6,7 +6,7 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { logWarn } from '../../../core/log';
 import { Result, ok, permanent } from '../../../core/result';
 import { toLoadError } from '../../../core/http-load-error';
-import { decodeHtmlEntities, extractGear, selectCombatantInfo } from './gear-extract';
+import { GameNames, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
 import { talentKeyFromTree } from '../../../shared/gear/talent-key';
 import {
   GearStatus,
@@ -42,15 +42,6 @@ export function emptyGearView(): GearComparisonView {
   };
 }
 
-type GameNames = Record<string, { id: number; name: string }>;
-
-// `prefix` is the alias letter `buildGearNamesQuery` keys the batch by (`i` items, `e` enchants); any other letter resolves nothing.
-function nameFromLookup(items: { id: number; name: string }[], names: GameNames, prefix: string): void {
-  for (const item of items) {
-    if (!item.name && item.id) item.name = decodeHtmlEntities(names[`${prefix}${item.id}`]?.name ?? '');
-  }
-}
-
 // A log with no combatant info is a usable-looking 200 OK, so it is a permanent error, not a placeholder the caller silently discards.
 export function buildCharacterGear(
   event: WclCombatantInfo | null,
@@ -62,8 +53,8 @@ export function buildCharacterGear(
   const { trinkets, enchants } = extractGear(event.gear);
   const talent_key = talentKeyFromTree(event.talentTree);
 
-  nameFromLookup(trinkets, names, 'i');
-  nameFromLookup(enchants, names, 'e');
+  fillGameNames(trinkets, 'i', names);
+  fillGameNames(enchants, 'e', names);
 
   return ok({ talent_key, trinkets, enchants });
 }

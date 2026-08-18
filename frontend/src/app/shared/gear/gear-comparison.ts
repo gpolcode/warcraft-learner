@@ -62,9 +62,8 @@ function enchantLabel(enchant: { id: number; name: string } | undefined): string
   return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
 }
 
-function enchantRowFor(
-  name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined, playerUsagePct: number | null,
-): EnchantRow | null {
+function enchantRowFor(name: string, player: PlayerEnchant | undefined, slotTop: TopEnchant[]): EnchantRow | null {
+  const top = slotTop[0];
   const topName = enchantLabel(top);
   if (!player) {
     if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
@@ -77,7 +76,7 @@ function enchantRowFor(
       note: `${top.pct}% run this` };
   }
   if (top) {
-    return { slotName: name, status: 'info', name: playerName, topPct: playerUsagePct,
+    return { slotName: name, status: 'info', name: playerName, topPct: slotTop.find(e => e.id === player.id)?.pct ?? null,
       note: `${top.pct}% run ${topName}` };
   }
   return { slotName: name, status: 'ok', name: playerName, topPct: null, note: null };
@@ -94,11 +93,7 @@ export function buildEnchantRows(gear: CharacterGear, stats: EncounterGearStats 
 
   return [...slots]
     .sort((a, b) => a - b)
-    .map(slot => {
-      const player = playerEnch.find(e => e.slot === slot);
-      const playerUsagePct = player ? topEnch[slot]?.find(e => e.id === player.id)?.pct ?? null : null;
-      return enchantRowFor(slotName(slot), player, topEnch[slot]?.[0], playerUsagePct);
-    })
+    .map(slot => enchantRowFor(slotName(slot), playerEnch.find(e => e.slot === slot), topEnch[slot] ?? []))
     .filter(row => row !== null);
 }
 
