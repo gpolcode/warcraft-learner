@@ -225,7 +225,7 @@ export default defineConfig([
       ],
       'no-restricted-syntax': ['error', ...restrictUiSyntax],
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
-      complexity: ['error', { max: 16 }],
+      complexity: ['error', { max: 10 }],
       'max-depth': ['error', { max: 3 }],
     },
   },

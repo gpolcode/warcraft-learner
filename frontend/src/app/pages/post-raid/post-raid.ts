@@ -101,6 +101,11 @@ export function visiblePlayersOf(
   return fp?.length ? players.filter(p => fp.includes(p.id)) : players;
 }
 
+function targetFightId(fights: WclFight[], requestedId: number | null): number | null {
+  const requested = requestedId != null ? fights.find(f => f.id === requestedId) : undefined;
+  return (requested ?? fights[fights.length - 1])?.id ?? null;
+}
+
 export type LivePollAction = 'none' | 'skip' | 'analyze';
 
 /** 'analyze' also covers an unfinished selection, so a failed resolve retries on the next tick. */
@@ -337,10 +342,7 @@ export class PostRaidComponent {
       if (!this.reportRun.isCurrent(run)) return;
       this._applyReport(report);
 
-      const requestedId = extractFightId(rawInput);
-      const requestedFight = requestedId != null ? this.fights().find(f => f.id === requestedId) : undefined;
-      const targetFight = requestedFight ?? this.fights()[this.fights().length - 1];
-      this.fightControl.setValue(targetFight?.id ?? null);
+      this.fightControl.setValue(targetFightId(this.fights(), extractFightId(rawInput)));
       // Without this a zero-pull log is a successful load that looks like nothing happened.
       if (!this.fights().length) this.notice.set('No boss pulls found in this report.');
       this._applyAutoPlayer();
@@ -384,13 +386,7 @@ export class PostRaidComponent {
 
       const latest = this.fights()[this.fights().length - 1];
       if (!latest) { this.liveCapture.setStatus('No boss pulls found.'); return; }
-      // A poll that lands a pull clears the zero-pull notice from the initial empty load.
-      this.notice.set('');
-
-      const currentName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
-      const visible = visiblePlayersOf(this.fights(), this.players(), latest.id);
-      this.fightControl.setValue(latest.id);
-      this.playerControl.setValue(pickLivePlayerId(visible, currentName));
+      this._selectLatestPull(latest);
       await this.resolveSelection();
       if (this._pollSuperseded(code)) return;
       this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} - ${latest.name}`);
@@ -401,6 +397,15 @@ export class PostRaidComponent {
       // Overwrite the in-flight "Checking..." status so the strip stops claiming a live check.
       this.liveCapture.setStatus('Live sync error, retrying on the next check.');
     }
+  }
+
+  private _selectLatestPull(latest: WclFight): void {
+    // A poll that lands a pull clears the zero-pull notice from the initial empty load.
+    this.notice.set('');
+    const currentName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
+    const visible = visiblePlayersOf(this.fights(), this.players(), latest.id);
+    this.fightControl.setValue(latest.id);
+    this.playerControl.setValue(pickLivePlayerId(visible, currentName));
   }
 
   private _pollSuperseded(code: string): boolean {
