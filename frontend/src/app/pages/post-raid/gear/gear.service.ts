@@ -42,10 +42,19 @@ export function emptyGearView(): GearComparisonView {
   };
 }
 
+type GameNames = Record<string, { id: number; name: string }>;
+
+// `prefix` is the alias letter `buildGearNamesQuery` keys the batch by (`i` items, `e` enchants); any other letter resolves nothing.
+function nameFromLookup(items: { id: number; name: string }[], names: GameNames, prefix: string): void {
+  for (const item of items) {
+    if (!item.name && item.id) item.name = decodeHtmlEntities(names[`${prefix}${item.id}`]?.name ?? '');
+  }
+}
+
 // A log with no combatant info is a usable-looking 200 OK, so it is a permanent error, not a placeholder the caller silently discards.
 export function buildCharacterGear(
   event: WclCombatantInfo | null,
-  names: Record<string, { id: number; name: string }>,
+  names: GameNames,
 ): Result<CharacterGear> {
   if (!event?.gear?.length) {
     return permanent('No combatant info in this log.', 'gear.combatant-info');
@@ -53,12 +62,8 @@ export function buildCharacterGear(
   const { trinkets, enchants } = extractGear(event.gear);
   const talent_key = talentKeyFromTree(event.talentTree);
 
-  for (const trinket of trinkets) {
-    if (!trinket.name && trinket.id) trinket.name = decodeHtmlEntities(names[`i${trinket.id}`]?.name ?? '');
-  }
-  for (const enchant of enchants) {
-    if (!enchant.name && enchant.id) enchant.name = decodeHtmlEntities(names[`e${enchant.id}`]?.name ?? '');
-  }
+  nameFromLookup(trinkets, names, 'i');
+  nameFromLookup(enchants, names, 'e');
 
   return ok({ talent_key, trinkets, enchants });
 }
@@ -130,7 +135,7 @@ export class GearFeatureService {
   ): Promise<Result<CharacterGear>> {
     try {
       const event = selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
-      let names: Record<string, { id: number; name: string }> = {};
+      let names: GameNames = {};
       if (event?.gear?.length) {
         const { trinkets, enchants } = extractGear(event.gear);
         const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
