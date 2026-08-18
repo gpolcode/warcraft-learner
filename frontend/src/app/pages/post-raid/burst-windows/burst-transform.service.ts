@@ -48,7 +48,7 @@ export interface ParseWindow {
   window_damage: number;
   active_cds: string[];
   ability_breakdown: { spell_id: number; damage: number; casts: number; is_passive: boolean }[];
-  /** Index of the parse this window came from, so clustering counts DISTINCT parses (stamped once the parse is accepted). */
+  /** Index of the parse this window came from, so clustering counts DISTINCT parses. */
   parse_index: number;
 }
 

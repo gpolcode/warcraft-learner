@@ -12,7 +12,7 @@ interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbili
 
 // Scan this far down the ranking to skip private/unfetchable logs before giving up.
 const CANDIDATE_POOL_COUNT = 10;
-// One real log keeps each cooldown's cast spacing intact, so the export is the best usable parse alone (#1, then backfill).
+// One real log keeps each cooldown's cast spacing intact, so the export never blends parses.
 const EXPORTED_PARSE_COUNT = 1;
 const NO_EXPORT_MESSAGE = 'Not yet ingested.';
 
@@ -57,7 +57,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
     });
   }
 
-  // A parse that cast none of the exported abilities is no schedule at all, so the pool backfills past it.
+  // A parse that cast none of the exported abilities is no schedule at all, never an empty export.
   private async parseCastTimes(
     { ranking, fight, player }: BenchParse, abilities: ExportAbility[],
   ): Promise<NorthernSkyAbility[] | null> {

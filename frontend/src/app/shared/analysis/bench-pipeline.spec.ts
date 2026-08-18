@@ -24,7 +24,6 @@ function wclFake(
   } as unknown as WclApiService;
 }
 
-/** The slice under composition bakes the report code of every accepted parse, so acceptance order and backfill are both readable off the bench. */
 interface CodeBench { encounterName: string; codes: string[] }
 
 function codeSlice(over: Partial<BenchSlice<string, CodeBench>> = {}): BenchSlice<string, CodeBench> {

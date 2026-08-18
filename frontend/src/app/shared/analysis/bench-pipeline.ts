@@ -1,4 +1,3 @@
-/** The one top-parse benching pipeline every slice benches through: rank, resolve each candidate's report/fight/actor, backfill past unfetchable parses, and hand the slice its own per-parse work and payload assembly. */
 import { WclApiService } from '../../core/services/wcl-api';
 import { ParseRanking, WclFight, WclReport } from '../../core/models/wcl.models';
 import { logWarn } from '../../core/log';
@@ -7,11 +6,10 @@ import { toLoadError } from '../../core/http-load-error';
 import { ReportActor, findParseActor, toParseRankings, unwrapRankings } from './wcl-projections';
 
 const TOP_PARSE_COUNT = 10;
-// Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one; the sample target caps actual fetches at TOP_PARSE_COUNT.
+// Over-fetch so a private/unfetchable top parse can be backfilled by the next-best one.
 const CANDIDATE_POOL_COUNT = TOP_PARSE_COUNT * 2;
 const MIN_SAMPLE_COUNT = 1;
 
-/** One candidate parse, resolved before the slice's own fetches. */
 export interface BenchParse {
   ranking: ParseRanking;
   report: WclReport;
@@ -19,26 +17,20 @@ export interface BenchParse {
   player: ReportActor;
 }
 
-/** The accepted parses, in acceptance order, plus the encounter name the first of them named. */
 interface BenchPayload<TParse> {
   encounterName: string;
   parses: TParse[];
 }
 
 export interface BenchSlice<TParse, TBench> {
-  /** logWarn source prefix: the slice's service class name. */
   logSource: string;
-  /** Repro id a permanent bench failure carries, e.g. `burst.bench`. */
   errorId: string;
   candidatePoolCount?: number;
-  /** Accepted parses to stop sampling at. */
   sampleTarget?: number;
-  /** Fewest accepted parses that still bench. */
   minSamples?: number;
   noRankingsMessage: string;
-  /** Defaults to `noRankingsMessage`. */
   tooFewParsesMessage?: (accepted: number) => string;
-  /** The slice's per-parse fetch and pure aggregation; null drops the parse so the next candidate backfills it. */
+  /** Returning null drops the parse so the next candidate backfills it. */
   parse: (parse: BenchParse) => Promise<TParse | null>;
   bench: (payload: BenchPayload<TParse>) => Promise<TBench> | TBench;
 }
@@ -75,7 +67,7 @@ export async function benchFromTopParses<TParse, TBench>(
   }
 }
 
-// A parse the report cannot serve (private, expired) or cannot bind to its ranked actor is dropped, never fatal: the pool backfills it.
+// An unfetchable or unbindable report drops the parse, never the bench.
 async function parseCandidate<TParse, TBench>(
   wclApi: WclApiService, slice: BenchSlice<TParse, TBench>, ranking: ParseRanking,
 ): Promise<{ parse: TParse; encounterName: string } | null> {

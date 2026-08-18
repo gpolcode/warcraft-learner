@@ -1,4 +1,3 @@
-/** Factories for the WCL responses a `*TransformService` reads: the ranked top parses, the report behind each one, and the ability map. */
 import { WclAbility, WclRawAbility } from '../../app/core/models/wcl.models';
 
 interface FixtureActor { id: number; name: string; subType: string; server: string }
@@ -32,7 +31,6 @@ const DEFAULT_ENCOUNTER_ID = 1;
 const DEFAULT_FIGHT_END_MS = 300_000;
 const ACTOR_ID_PER_PARSE = 10;
 
-/** One report holding one fight and the ranked player's actor row; `masterData` defaults to a bare player with no enemies or abilities. */
 export function parseReport(over: ReportOverrides = {}): FixtureReport {
   const playerId = over.playerId ?? DEFAULT_PLAYER_ID;
   const playerName = over.playerName ?? DEFAULT_PLAYER_NAME;
@@ -61,7 +59,6 @@ export interface FixtureRanking {
   report: { code: string; fightID: number };
 }
 
-/** Ranked parse `index`: player `P{index}` on fight `index` of report `r{index}`, the identity {@link reportsByCode} decodes. */
 export function rankingRow(index: number, over: { name?: string; server?: string } = {}): FixtureRanking {
   return {
     name: over.name ?? `P${index}`,
@@ -76,7 +73,7 @@ export function parseRankings(count: number): FixtureRanking[] {
 
 const PRIVATE_REPORT_ERROR = 'You do not have permission to view this report.';
 
-/** A `getReport` over the codes {@link parseRankings} mints: `r{n}` answers with fight n and actor `P{n}` at id n*10. */
+/** Decodes the codes {@link rankingRow} mints, so the two must change together. */
 export function reportsByCode(
   over: ReportOverrides & { privateCode?: string } = {},
 ): (code: string) => Promise<FixtureReport> {
@@ -90,7 +87,6 @@ export function reportsByCode(
   };
 }
 
-/** A `getAbilities` over the raw id-keyed `gameData.ability` map; an id absent from `named` answers with a synthetic icon + name. */
 export function abilityLookup(
   named: Record<number, { icon: string; name: string }> = {},
 ): (ids: number[]) => Promise<Record<number, WclRawAbility>> {
