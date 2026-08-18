@@ -48,7 +48,7 @@ async function isZoneLive(client: WclQueryClient, zoneEncounters: IngestEncounte
 // The probe runs once per zone here, not per spec, so beta/PTR/test zones cost a handful of queries total.
 export async function getEncounters(client: WclQueryClient, specWcl: SpecWclMap): Promise<CurrentContent> {
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
-  // Fail the run rather than ingest nothing: an empty expansion tree would silently protect no encounter and publish an empty summary.
+  // An empty expansion tree would silently protect no encounter and publish an empty summary.
   if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
   const expansions = data.worldData.expansions;
   const candidates = filterEncounters(expansions);

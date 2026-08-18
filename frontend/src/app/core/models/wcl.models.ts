@@ -101,7 +101,7 @@ export interface WclCombatantInfo {
   talentTree?: WclTalentNode[];
 }
 
-// One `events.data` payload serves both readers: a CombatantInfo row is an event row, and WCL returns them through the same field.
+// CombatantInfo rows come back through the same `events.data` field as ordinary events, so one type has to cover both.
 export type WclEventData = (WclEvent & WclCombatantInfo)[];
 
 /** One `playerDetails` role entry (dps / healers / tanks / unknown). */
@@ -113,7 +113,6 @@ interface PlayerDetailEntry {
 }
 export type PlayerDetailGroups = Record<string, PlayerDetailEntry[]>;
 
-// WCL types `playerDetails` as an opaque JSON scalar, so the role groups sitting under `data` are described here rather than by the schema.
 export interface PlayerDetailsBlob { data?: { playerDetails?: PlayerDetailGroups } }
 
 export interface WclRawRanking {

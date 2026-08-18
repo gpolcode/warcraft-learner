@@ -1,5 +1,4 @@
-
-// The identity tag marks these documents for GraphQL Code Generator; untagging one silently drops its generated types.
+// Untagging one of these documents silently drops it from the generated types.
 const gql = (document: TemplateStringsArray): string => document.join('');
 
 export const REPORT_Q = gql`

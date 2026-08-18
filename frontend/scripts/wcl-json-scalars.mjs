@@ -23,7 +23,6 @@ function findField(types, typeName, fieldName) {
   return field;
 }
 
-/** Must stay a pure function of the payload: any nondeterminism here makes schema:pull irreproducible. */
 export function nameJsonFieldScalars(introspection) {
   const types = introspection.__schema.types;
   const jsonScalar = types.find(entry => entry.kind === 'SCALAR' && entry.name === JSON_SCALAR);

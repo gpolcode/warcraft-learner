@@ -20,9 +20,7 @@ data/tmp/
 # bound. See CLAUDE.md and the ingest/deploy workflows.
 frontend/public/data/specs/
 
-# The introspected WCL v2 SDL is a local artifact for browsing available fields:
-# `npm run schema:pull` (from frontend/) writes it. Only the types that same run
-# generates are tracked. See CLAUDE.md.
+# Committing this snapshot of live WCL would park a churning third-party file in git history.
 frontend/schema/
 
 # Scratch checkouts an agent works in; the branch it commits to carries the work.

@@ -21,7 +21,7 @@ import type {
 } from './wcl-operations.generated';
 import { SpecMetaService } from './spec-meta';
 
-// WCL declares every selected field nullable, so the report reads restate the generated envelope as the non-null app model their callers consume.
+// WCL declares every selected field nullable, so these reads narrow the generated envelope once instead of pushing null into every consumer.
 @Injectable({ providedIn: 'root' })
 export class WclApiService {
   private readonly auth = inject(WclAuthService);

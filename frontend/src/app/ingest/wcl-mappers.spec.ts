@@ -7,7 +7,6 @@ import type { IngestEncounter } from './models/wcl.models';
 
 type WclZone = NonNullable<NonNullable<NonNullable<WclExpansions[number]>['zones']>[number]>;
 
-// `partitions`/`encounters` default to the null WCL sends for an empty list, and `frozen` to the field it omits on some zones.
 function zone(over: Partial<WclZone> & Pick<WclZone, 'id' | 'name'>): WclZone {
   return { frozen: false, partitions: null, encounters: null, ...over };
 }

@@ -17,7 +17,7 @@ const CONFIG = {
   enumsAsTypes: true,
   strictScalars: true,
   scalars: {
-    // strictScalars fails on every schema scalar missing from this map, JSON included, and `never` makes selecting a still-shared JSON field a compile error at the read site.
+    // `never` makes selecting a still-shared JSON field a compile error at the read site.
     JSON: 'never',
     PlayerDetailsJson: '../models/wcl.models#PlayerDetailsBlob',
     TableJson: '../models/wcl.models#WclTableBlob',
