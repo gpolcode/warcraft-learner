@@ -32,13 +32,13 @@ export function nameJsonFieldScalars(introspection) {
     const [typeName, fieldName] = coordinate.split('.');
     const named = namedTypeRef(findField(types, typeName, fieldName).type);
     if (named.name !== JSON_SCALAR) {
-      throw new Error(`${coordinate} is ${named.name}, not ${JSON_SCALAR}; update JSON_FIELD_SCALARS and the scalars map in scripts/codegen.mjs.`);
+      throw new Error(`${coordinate} is ${named.name}, not ${JSON_SCALAR}; update JSON_FIELD_SCALARS and the scalars map in scripts/schema-pull.mjs.`);
     }
     named.name = scalarName;
     types.push({
       ...jsonScalar,
       name: scalarName,
-      description: `The \`${coordinate}\` payload. scripts/codegen.mjs maps this scalar to the app model that reads it.`,
+      description: `The \`${coordinate}\` payload. scripts/schema-pull.mjs maps this scalar to the app model that reads it.`,
     });
   }
   return introspection;

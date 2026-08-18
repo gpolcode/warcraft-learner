@@ -15,8 +15,7 @@
     "lint": "ng lint && eslint scripts e2e playwright.config.ts",
     "knip": "knip",
     "data:pull": "git -C .. fetch origin gh-pages && rm -rf public/data/specs && git -C .. archive origin/gh-pages data/specs | tar -x -C public",
-    "codegen": "node scripts/codegen.mjs",
-    "schema:pull": "node scripts/introspect-wcl.mjs && npm run codegen"
+    "schema:pull": "node scripts/schema-pull.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
