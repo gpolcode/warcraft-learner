@@ -238,11 +238,11 @@ describe('computePlayerDefensiveWindows', () => {
 
 describe('defensiveDetailRows', () => {
   it('labels an ability whose spell id is missing from the ability map with a placeholder and empty icon', () => {
-    // 900 is intentionally absent from the ability map, so the guarded lookup must not throw.
-    const breakdown = [{ spell_id: 900, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }];
+    // 9001 is intentionally absent from the ability map, so the guarded lookup must not throw.
+    const breakdown = [{ spell_id: 9001, avg_damage: 600, min_damage: 400, max_damage: 800, count: 5 }];
     const rows = defensiveDetailRows(breakdown, null, {});
     assert.exists(rows[0]);
-    expect(rows[0].label).toBe('Ability #900');
+    expect(rows[0].label).toBe('Ability #9001');
     assert.exists(rows[0]);
     expect(rows[0].icon).toBe('');
   });
