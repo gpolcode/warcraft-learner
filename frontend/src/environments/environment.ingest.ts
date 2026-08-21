@@ -1,6 +1,5 @@
 /** Ingest environment: run `npm run start:ingest` first so the signature-skip check has the current published data to compare against. */
 import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
-import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { DATA_FILE_TRANSPORT } from '../app/core/services/data-file-transport';
 import { RETRY_MAX_ATTEMPTS } from '../app/core/transport/retry-transient.interceptor';
@@ -26,8 +25,6 @@ export const environment = {
   /** Unused in ingest mode: every data-file read goes through the file server. */
   dataBaseHref: '',
   ingest: true,
-  wclClientId: WCL_PUBLIC_CLIENT_ID,
-  wclClientSecret: WCL_PUBLIC_CLIENT_SECRET,
 };
 
 export const environmentProviders: (Provider | EnvironmentProviders)[] = [
