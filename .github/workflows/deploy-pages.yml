@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
   schedule:
     - cron: '40 5 * * *'
   workflow_dispatch:
@@ -33,7 +33,6 @@ jobs:
       github.event_name == 'push'
       || github.event_name == 'workflow_dispatch'
       || (github.event_name == 'pull_request'
-      && github.event.action != 'closed'
       && github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     permissions:
@@ -128,16 +127,14 @@ jobs:
           folder: pages-root
           clean: false
 
-  # The cron is the backstop: a pull_request:closed run can lose the gh-pages concurrency
-  # queue and be cancelled before it reaps its own preview.
-  # needs: publish keeps a manual run from having two jobs push gh-pages at once.
+  # needs: publish keeps a dispatch run from having two jobs push gh-pages at once;
+  # !cancelled() still runs this on schedule, where build and publish are skipped.
   cleanup-previews:
     needs: publish
     if: >-
       !cancelled()
       && (github.event_name == 'schedule'
-      || github.event_name == 'workflow_dispatch'
-      || (github.event_name == 'pull_request' && github.event.action == 'closed'))
+      || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: read
