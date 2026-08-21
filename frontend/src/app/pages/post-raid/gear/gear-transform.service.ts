@@ -7,7 +7,7 @@ import { Result } from '../../../core/result';
 import { GameNames, TRINKET_SLOTS, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
 import { talentKeyFromTree } from '../../../shared/gear/talent-key';
 import { buildTalentDiff } from '../../../shared/gear/gear-comparison';
-import { TalentDataService } from '../../../core/services/talent-data';
+import { TalentDataService } from '../../../core/transport/talent-data';
 import { SpecTalents } from '../../../core/models/talent.models';
 import { getOrInsert } from '../../../shared/analysis/analysis-math';
 import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';

@@ -4,7 +4,7 @@ import pLimit from 'p-limit';
 import { NgHttpCachingService } from 'ng-http-caching';
 import { WclApiService } from '../core/services/wcl-api';
 import { DataFileApiService } from '../core/services/data-file-api';
-import { HttpWclTransport } from '../core/services/http-wcl-transport';
+import { HttpWclTransport } from '../core/transport/http-wcl-transport';
 import { SpecMetaService } from '../core/services/spec-meta';
 import { logWarn } from '../core/log';
 import { type LoadError } from '../core/result';

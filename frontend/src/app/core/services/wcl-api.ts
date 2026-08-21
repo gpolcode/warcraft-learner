@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { WclAuthService } from './wcl-auth';
+import { WclAuthService } from '../transport/wcl-auth';
 import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import {
   WclReport, WclEvent,

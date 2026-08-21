@@ -210,7 +210,6 @@ export default defineConfig([
     rules: {
       'boundaries/dependencies': ['error', { default: 'disallow', policies: layerPolicies }],
       'boundaries/no-unknown-dependencies': 'error',
-      'no-restricted-imports': ['error', restrictHttpImports],
       'no-restricted-globals': [
         'error',
         {
@@ -228,6 +227,12 @@ export default defineConfig([
       complexity: ['error', { max: 10 }],
       'max-depth': ['error', { max: 3 }],
     },
+  },
+  {
+    // Every transport/ folder is a chokepoint, so narrowing this to one of them re-bans the other's HttpClient.
+    files: ['src/**/*.ts'],
+    ignores: ['src/app/**/transport/**'],
+    rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {
     files: functionalCoreFiles,
