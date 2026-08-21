@@ -26,7 +26,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
       getAllEvents: async (_c: string, _f: number, dataType: string) => {
         if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
         if (dataType === 'Casts') return [];
-        return [damageTaken(BOSS_HIT_SPELL_ID, 32, 1150)]; // DamageTaken inside window
+        return [damageTaken(BOSS_HIT_SPELL_ID, 32, 1150)]; // t=32 falls inside the 30-35 buff window
       },
     };
     const service = serviceWith(ok(fullBench()), wcl);

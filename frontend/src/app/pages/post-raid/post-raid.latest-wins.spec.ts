@@ -163,8 +163,8 @@ describe('PostRaidComponent loadReport latest-wins', () => {
     const fights = vm['fights'] as () => WclFight[];
     const spec = vm['spec'] as () => string;
 
-    const loadA = loadReport(vm, CODE_A); // parks on getReport(A)
-    const loadB = loadReport(vm, CODE_B); // parks on getReport(B)
+    const loadA = loadReport(vm, CODE_A);
+    const loadB = loadReport(vm, CODE_B);
 
     // B's report resolves first and advances to its still-pending spec resolve.
     await api.settleReport(CODE_B, reportB);
