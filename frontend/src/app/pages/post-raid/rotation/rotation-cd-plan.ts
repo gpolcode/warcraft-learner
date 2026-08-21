@@ -15,7 +15,7 @@ export class RotationCdPlanComponent {
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
 
-  protected readonly title = 'Cooldown plan';
+  protected readonly heading = 'Cooldown plan';
   protected readonly subtitle = 'Offensive cooldown usage across top parses.';
 
   readonly busyChange = output<boolean>();

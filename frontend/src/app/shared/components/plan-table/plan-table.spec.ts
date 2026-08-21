@@ -11,7 +11,7 @@ function row(overrides: Partial<PlanTableRow> = {}): PlanTableRow {
 
 const state = (inputs: Record<string, unknown>): string => {
   const { vm } = mountVm(PlanTableComponent, {
-    title: 'Cooldown plan', subtitle: 'Offensive cooldown usage across top parses.',
+    heading: 'Cooldown plan', subtitle: 'Offensive cooldown usage across top parses.',
     rows: [row()], available: true, error: null, ...inputs,
   });
   return (vm['state'] as () => string)();

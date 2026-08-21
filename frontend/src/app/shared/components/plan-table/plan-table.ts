@@ -27,7 +27,7 @@ type PlanTableState = 'unavailable' | 'rows' | 'empty';
   templateUrl: './plan-table.html',
 })
 export class PlanTableComponent {
-  readonly title = input.required<string>();
+  readonly heading = input.required<string>();
   readonly subtitle = input.required<string>();
   readonly rows = input.required<PlanTableRow[]>();
   readonly available = input.required<boolean>();
