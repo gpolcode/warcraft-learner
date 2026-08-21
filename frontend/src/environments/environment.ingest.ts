@@ -1,4 +1,4 @@
-/** Ingest environment: run `npm run data:pull` first so the signature-skip check has the current published data to compare against. */
+/** Run `npm run data:pull` first: the signature-skip check compares against the published data. */
 import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
 import { withEnvironment } from './base-environment';
 import { liveDataSourceProviders } from './live-data-sources';

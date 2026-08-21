@@ -1,4 +1,4 @@
-/** Live slice bindings for the dev and ingest environments; the `*TransformService` imports live here and never in `environment.ts`, so a production build tree-shakes the transforms out of the bundle. */
+/** Never import from `environment.ts`: these `*TransformService` references must stay out of the production graph. */
 import { Provider } from '@angular/core';
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { BURST_DATA_SOURCE } from '../app/pages/post-raid/burst-windows/burst-data-source';

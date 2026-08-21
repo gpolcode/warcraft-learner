@@ -1,4 +1,3 @@
-/** Production environment: binds every `*_DATA_SOURCE` token to a generic `FileDataSource` that reads the ingested, tailored static file. */
 import { Provider } from '@angular/core';
 import { withEnvironment } from './base-environment';
 import { provideFileDataSource } from '../app/core/data-source/provide-data-source';
@@ -12,7 +11,7 @@ import { NORTHERN_SKY_DATA_SOURCE } from '../app/pages/post-raid/northern-sky/no
 /** `dataBaseHref` must stay a sibling of every environment folder (`main/`, `pr-N/`), which `.github/workflows/deploy-pages.yml` derives each build's `--base-href` from. */
 export const environment = withEnvironment({ dataBaseHref: '/data/specs/' });
 
-/** This file imports only the slice tokens (never a `*TransformService`), so the transforms are absent from the eager production graph and tree-shaken from the bundle. */
+/** Never import a `*TransformService` here or it joins the eager production bundle. */
 export const environmentProviders: Provider[] = [
   provideFileDataSource(BURST_DATA_SOURCE, 'burst'),
   provideFileDataSource(ROTATION_DATA_SOURCE, 'rotation'),
