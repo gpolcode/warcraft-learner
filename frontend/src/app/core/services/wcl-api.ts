@@ -16,7 +16,7 @@ import type {
   PlayerDetailsQuery, PlayerDetailsQueryVariables,
   RankingsQuery, RankingsQueryVariables,
   ReportFightsQuery, ReportQuery, ReportQueryVariables,
-  ResurrectsQueryVariables,
+  ResurrectsQuery, ResurrectsQueryVariables,
   TableQuery, TableQueryVariables,
 } from './wcl-operations.generated';
 import { SpecMetaService } from './spec-meta';
@@ -84,7 +84,7 @@ export class WclApiService {
     const events: WclEvent[] = [];
     let currentStart = vars.startTime;
     for (;;) {
-      const result = await this.query<EventsQuery>(gqlString, { ...vars, startTime: currentStart });
+      const result = await this.query<EventsQuery | ResurrectsQuery>(gqlString, { ...vars, startTime: currentStart });
       const page = result.reportData?.report?.events;
       if (!page) throw this.reportUnavailable(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.

@@ -99,14 +99,13 @@ export function findParseActor(actors: ReportActor[] | undefined, ranking: Parse
   return onlyOnRealm !== undefined && ambiguous === undefined ? onlyOnRealm : null;
 }
 
-/** A card can reference an id the ability map never resolved; emit a labelled placeholder and warn so a bug report can reproduce it. */
+/** WCL can leave an ability unnamed and a bench can miss the id outright; both render as a labelled placeholder, and only the missing id is worth a warning. */
 export function resolveAbility(
   abilities: Record<number, { icon: string; name: string }>, id: number, source: string,
 ): { icon: string; name: string } {
   const ability = abilities[id];
-  if (ability) return ability;
-  logWarn(`${source}: ability id missing from ability map`, id);
-  return { icon: '', name: `Ability #${id}` };
+  if (!ability) logWarn(`${source}: ability id missing from ability map`, id);
+  return { icon: ability?.icon ?? '', name: ability?.name ?? `Ability #${id}` };
 }
 
 /** Header chips for a window: each spell id with its baked icon + name. */
