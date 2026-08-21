@@ -1,17 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { GameIconComponent } from '../../../shared/components/game-icon/game-icon';
-import { CollapsibleTextComponent } from '../../../shared/components/collapsible-text/collapsible-text';
-import { LoadStateComponent } from '../../../shared/components/load-state/load-state';
-import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
+import { PlanTableComponent } from '../../../shared/components/plan-table/plan-table';
 import { loadResource } from '../../../shared/state/load-resource';
 import { DefensiveFeatureService, DefensivePlanRow } from './defensive.service';
 
-// Defensives never align with Bloodlust, so that tag is omitted.
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensive-plan',
-  imports: [DecimalPipe, GameIconComponent, CollapsibleTextComponent, LoadStateComponent, FormatDurationPipe],
+  imports: [PlanTableComponent],
   templateUrl: './defensive-plan.html',
 })
 export class DefensivePlanComponent {
