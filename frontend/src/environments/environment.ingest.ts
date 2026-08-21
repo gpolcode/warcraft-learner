@@ -4,8 +4,8 @@ import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-cli
 import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
 import { DATA_FILE_TRANSPORT } from '../app/core/services/data-file-transport';
 import { RETRY_MAX_ATTEMPTS } from '../app/core/transport/retry-transient.interceptor';
-import { IngestHttpDataFileTransport } from '../app/ingest/ingest-data-file-transport';
-import { IngestOrchestratorService } from '../app/ingest/ingest-orchestrator.service';
+import { IngestHttpDataFileTransport } from '../app/ingest/transport/ingest-data-file-transport';
+import { IngestOrchestratorService } from '../app/ingest/shell/ingest-orchestrator.service';
 import { BURST_DATA_SOURCE } from '../app/pages/post-raid/burst-windows/burst-data-source';
 import { BurstTransformService } from '../app/pages/post-raid/burst-windows/burst-transform.service';
 import { ROTATION_DATA_SOURCE } from '../app/pages/post-raid/rotation/rotation-data-source';

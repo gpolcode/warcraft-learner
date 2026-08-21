@@ -5,7 +5,7 @@ import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookCooldown } from '../../../core/models/rulebook.models';
 import { logWarn } from '../../../core/log';
 import { Result, ok, permanent } from '../../../core/result';
-import { toLoadError } from '../../../core/http-load-error';
+import { toLoadError } from '../../../core/transport/http-load-error';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import {
   isOutlierAbove, isOutlierBeyond, isOutlierBelow, castEfficiencyPct,

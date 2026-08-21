@@ -35,11 +35,11 @@ import { ClassIconPipe } from '../../shared/pipes/class-icon-pipe';
 import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { LatestRun } from '../../shared/latest-run';
-import { CardDeck, CardEntry } from '../../shared/card-deck';
+import { CardDeck, CardEntry } from '../../shared/state/card-deck';
 import { SelectionStore } from '../../core/services/selection-store';
 import { logWarn } from '../../core/log';
 import { Result, permanent } from '../../core/result';
-import { toLoadError } from '../../core/http-load-error';
+import { toLoadError } from '../../core/transport/http-load-error';
 import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 
 export function extractCode(url: string): string {

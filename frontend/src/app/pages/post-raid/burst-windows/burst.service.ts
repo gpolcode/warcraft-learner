@@ -6,7 +6,7 @@ import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/w
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 import { Result, ok } from '../../../core/result';
-import { toLoadError } from '../../../core/http-load-error';
+import { toLoadError } from '../../../core/transport/http-load-error';
 import { TimedEvent, normalizeAbilityId, relativeS, resolveAbility, windowSpells, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { BURST_DATA_SOURCE } from './burst-data-source';
 

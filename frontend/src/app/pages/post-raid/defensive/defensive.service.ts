@@ -9,7 +9,7 @@ import { ComparisonWindow, WindowStatus, RangeRow } from '../../../core/models/w
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { logWarn } from '../../../core/log';
 import { Result, ok } from '../../../core/result';
-import { toLoadError } from '../../../core/http-load-error';
+import { toLoadError } from '../../../core/transport/http-load-error';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 import {

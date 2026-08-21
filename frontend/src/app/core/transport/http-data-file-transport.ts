@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../services/data-file-transport';
 import { logWarn } from '../log';
 import { Result, ok } from '../result';
-import { toLoadError } from '../http-load-error';
+import { toLoadError } from './http-load-error';
 import { environment } from '../../../environments/environment';
 
 const BROWSER_READONLY = 'DataFileApiService is read-only in the browser';

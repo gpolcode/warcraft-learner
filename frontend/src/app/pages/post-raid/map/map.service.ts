@@ -5,7 +5,7 @@ import { WclEvent, WclFight } from '../../../core/models/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../core/models/positioning.models';
 import { logWarn } from '../../../core/log';
 import { Result, LoadError, permanent } from '../../../core/result';
-import { toLoadError } from '../../../core/http-load-error';
+import { toLoadError } from '../../../core/transport/http-load-error';
 import { TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
