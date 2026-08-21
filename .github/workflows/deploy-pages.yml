@@ -9,8 +9,7 @@ on:
     - cron: '40 5 * * *'
   workflow_dispatch:
 
-# The gh-pages push authenticates with the app token minted per job, so the default token
-# never needs repo write.
+# gh-pages pushes use the per-job app token, so the default token never needs repo write.
 permissions:
   contents: read
 
@@ -25,9 +24,7 @@ env:
   TARGET_FOLDER: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
 
 jobs:
-  # Runs untrusted PR head code (npm ci lifecycle scripts + the PR's own build config), so it
-  # holds NO write credential: no app token, and persist-credentials:false keeps even the
-  # read-only GITHUB_TOKEN out of .git/config. The static output reaches publish as an artifact.
+  # Runs untrusted PR head code, so no write credential here; persist-credentials:false keeps even the read-only token out of .git/config.
   build:
     if: >-
       github.event_name == 'push'
@@ -50,8 +47,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      # Ships the shell only: the site reads the one shared data/specs/ copy at the gh-pages
-      # root via the absolute dataBaseHref.
+      # Shell only: the site reads the shared data/specs/ copy at the gh-pages root via the absolute dataBaseHref.
       - name: Build the site
         run: |
           set -euo pipefail
@@ -66,8 +62,7 @@ jobs:
           include-hidden-files: true
           retention-days: 1
 
-  # Runs NO PR-authored code - only the deploy action over the already-built artifacts - so it
-  # is the only job that holds the write-scoped app token.
+  # Runs no PR-authored code, so it alone holds the write-scoped app token.
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -82,8 +77,7 @@ jobs:
           client-id: ${{ secrets.INGEST_APP_CLIENT_ID }}
           private-key: ${{ secrets.INGEST_APP_PRIVATE_KEY }}
 
-      # The deploy action builds its worktree from this checkout and pushes with the persisted
-      # app token. Safe here because this job never checks out PR code.
+      # The deploy action pushes with this checkout's persisted app token; safe because this job never checks out PR code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
@@ -115,8 +109,7 @@ jobs:
           target-folder: ${{ env.TARGET_FOLDER }}
           clean: false
 
-      # This one deploys to the gh-pages root, where clean:true would delete every entry the
-      # folder does not carry: data/specs/, main/, and every preview.
+      # Deploys to the gh-pages root, where clean:true would delete data/specs/, main/, and every preview.
       - name: Publish the root redirect to gh-pages
         if: env.TARGET_FOLDER == 'main'
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
@@ -127,8 +120,7 @@ jobs:
           folder: pages-root
           clean: false
 
-  # needs: publish keeps a dispatch run from having two jobs push gh-pages at once;
-  # !cancelled() still runs this on schedule, where build and publish are skipped.
+  # needs serializes a dispatch run's two pushes; !cancelled() still runs this on schedule, where build and publish skip.
   cleanup-previews:
     needs: publish
     if: >-
