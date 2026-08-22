@@ -117,6 +117,8 @@ export interface WclRawRanking {
   name?: string;
   server?: { name?: string };
   report?: { code?: string; fightID?: number };
+  /** Pull start, epoch MILLISECONDS (not the seconds the rest of the app uses). */
+  startTime?: number;
 }
 
 // Either a JSON blob (string) or an already-parsed object; consumers unwrap both forms (see `unwrapRankings`).

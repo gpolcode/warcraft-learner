@@ -118,13 +118,13 @@ export class IngestOrchestratorService {
     console.log('Resolving current raids...');
     const discovery = await this.discoverContent(client, specWcl);
     if (!discovery) return;
-    const { encounters, protectedIds, zone, reset } = discovery;
-    console.log(zone
-      ? `Current raid: ${zone.name} (${encounters.length} encounters)${reset ? ' - NEW TIER, resetting the dataset' : ''}`
+    const { encounters, protectedIds, zones, reset } = discovery;
+    console.log(zones.length
+      ? `Current raids: ${zones.map(raid => raid.zone_name).join(', ')} (${encounters.length} encounters)${reset ? ' - raid set changed, resetting the dataset' : ''}`
       : 'No current raid on record and none detected; leaving the existing data alone.');
     if (reset) await this.resetStaleSpecData(protectedIds);
     await this.refreshIndices(encounters);
-    if (zone) await this.dataFile.writeCurrentRaid({ zone_id: zone.id, zone_name: zone.name });
+    if (zones.length) await this.dataFile.writeCurrentRaids(zones);
 
     const specs = await this.orderedSpecsFromDisk();
     if (!specs.length) {
@@ -163,11 +163,11 @@ export class IngestOrchestratorService {
 
   /** Null means the budget stopped the run at discovery and the summary is already published. */
   private async discoverContent(client: ApiWclClient, specWcl: SpecWclMap): Promise<CurrentContent | null> {
-    const stored = await this.dataFile.getCurrentRaid();
-    // A read failure must not read as "no record": that would re-probe from the newest zone and reset the dataset.
-    if (!stored.ok) throw new Error(`Cannot read the recorded raid: ${stored.error.message}`);
+    const stored = await this.dataFile.getCurrentRaids();
+    // A read failure must not read as "no record": every recorded raid would re-probe, and a quiet one would be retired and pruned.
+    if (!stored.ok) throw new Error(`Cannot read the recorded raids: ${stored.error.message}`);
     try {
-      return await getEncounters(client, specWcl, stored.value?.zone_id ?? null);
+      return await getEncounters(client, specWcl, stored.value.map(raid => raid.zone_id), Date.now());
     } catch (err) {
       const budgetSummary = discoveryBudgetSummary(err);
       if (!budgetSummary) throw err;
@@ -177,7 +177,7 @@ export class IngestOrchestratorService {
     }
   }
 
-  /** Runs before spec selection so a tier flip resets every spec in one pass - resetting only the selected specs would leave them at zero data and permanently re-selected while a new tier waits for its first parses. */
+  /** Runs before spec selection so a raid change resets every spec in one pass - resetting only the selected specs would leave them at zero data and permanently re-selected while a new raid waits for its first parses. */
   private async resetStaleSpecData(protectedIds: Set<number>): Promise<void> {
     if (protectedIds.size === 0) {
       logWarn('resetStaleSpecData', 'empty protected set - skipping the reset (likely a transient WCL failure)');

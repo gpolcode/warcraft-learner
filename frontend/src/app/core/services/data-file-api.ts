@@ -34,10 +34,8 @@ export class DataFileApiService {
   }
 
   /** A missing file is the no-record state a dataset predating this record starts from, not an error. */
-  async getCurrentRaid(): Promise<Result<CurrentRaid | null>> {
-    const result = await this.io.readJson<CurrentRaid>('current-raid.json');
-    if (result.ok) return result;
-    return result.error.kind === 'missing' ? ok(null) : result;
+  async getCurrentRaids(): Promise<Result<CurrentRaid[]>> {
+    return foldMissingToEmpty(await this.io.readJson<CurrentRaid[]>('current-raids.json'));
   }
 
   async getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
@@ -56,8 +54,8 @@ export class DataFileApiService {
     return this.io.writeJson(`${spec}/encounters.json`, entries);
   }
 
-  writeCurrentRaid(raid: CurrentRaid): Promise<void> {
-    return this.io.writeJson('current-raid.json', raid);
+  writeCurrentRaids(raids: CurrentRaid[]): Promise<void> {
+    return this.io.writeJson('current-raids.json', raids);
   }
 
   writeSpecs(entries: SpecEntry[]): Promise<void> {
