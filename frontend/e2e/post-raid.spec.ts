@@ -3,7 +3,6 @@ import {
   findingRows, shows, showsEntity, showsFindingRows, showsOnPlan, CD_CHIP, CLOCK, DAMAGE, PERCENT, RATIO,
 } from './support';
 
-// An explicit fight: this raid tier is too new for any log's last pull to land on a bench-complete kill.
 const REPORT_URL = 'https://www.warcraftlogs.com/reports/vPMYzQGCZ2qxtFAB?fight=40';
 const PLAYER_NAME = 'Cheeklord';
 // Mirrors POST_RAID_KEY in core/services/selection-store.ts.
