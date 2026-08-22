@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readIngestState, nextIngestState, prunedIngestState, type SpecIngestState } from './ingest-state';
-import { type IngestStamp } from './signature';
+import { type IngestStamp } from './stamp';
 
 const NEKZALI = 3470;
 const ENTOMBED_SENTINELS = 3445;

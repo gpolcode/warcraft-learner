@@ -16,7 +16,8 @@ import {
 } from '../current-raids';
 import { INGEST_VERSION } from '../ingest-version';
 import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs } from '../ordering';
-import { signatureAfterFetch, stampSignature, stampBurstFile, type IngestStamp } from '../signature';
+import { signatureAfterFetch } from '../signature';
+import { stampSignature, stampBurstFile, type IngestStamp } from '../stamp';
 import { type SpecIngestState } from '../ingest-state';
 import {
   benchSkipDecision, pruneRetiredEncounters, readSpecDataset, readSpecFreshness, rebuildIndices, recordSpecPass,

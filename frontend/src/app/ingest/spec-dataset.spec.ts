@@ -3,7 +3,7 @@ import { DataFileApiService } from '../core/services/data-file-api';
 import { type Result, ok, missing, transient } from '../core/result';
 import type { EncounterEntry, SpecEntry } from '../core/models/encounter.models';
 import { INGEST_VERSION } from './ingest-version';
-import { encounterSkipKey, parseKey, type SignatureRanking } from './signature';
+import { encounterSkipKey, type SignatureRanking } from './signature';
 import type { IngestEncounter } from './models/wcl.models';
 import {
   BENCH_SLICE, benchSkipDecision, encounterIndexEntries, pruneRetiredEncounters,
@@ -226,51 +226,20 @@ describe('readSpecFreshness', () => {
 describe('benchSkipDecision', () => {
   const VERSION = String(INGEST_VERSION);
   const TOP_N = 10;
-  const PRIVATE_RANK = 1;
   const ranking = (index: number): SignatureRanking => ({ report_code: `report${index}`, fight_id: index });
-  const ROWS = [PRIVATE_RANK, 2, 3].map(ranking);
-  const PRIVATE_PARSE = parseKey(ranking(PRIVATE_RANK));
-  const skipDecision = (files: MemoryFiles, rows = ROWS) =>
-    benchSkipDecision(files.api, SPEC, NEKZALI, { rows, version: VERSION, topN: TOP_N });
+  const ROWS = [1, 2, 3].map(ranking);
+  const SIGNATURE = encounterSkipKey(ROWS, new Set(), VERSION, TOP_N);
+  const decisionFor = (files: MemoryFiles) =>
+    benchSkipDecision(files.api, SPEC, NEKZALI, { rows: ROWS, version: VERSION, topN: TOP_N });
 
-  it('skips the encounter when the stored bench carries the signature of the current parses', async () => {
-    const signature = encounterSkipKey(ROWS, new Set(), VERSION, TOP_N);
-    const files = new MemoryFiles({ [benchPath(SPEC, NEKZALI)]: bench({ source_signature: signature }) });
+  it('decides off the stamp on the bench file of that encounter', async () => {
+    const files = new MemoryFiles({ [benchPath(SPEC, NEKZALI)]: bench({ source_signature: SIGNATURE }) });
 
-    expect(await skipDecision(files)).toEqual({ skip: true, signature });
+    expect(await decisionFor(files)).toEqual({ skip: true, signature: SIGNATURE });
   });
 
-  it('ingests an encounter that has no bench yet', async () => {
-    const files = new MemoryFiles();
-
-    const decision = await skipDecision(files);
-
-    expect(decision.skip).toBe(false);
-    expect(decision.signature).toBe(encounterSkipKey(ROWS, new Set(), VERSION, TOP_N));
-  });
-
-  it('ingests an encounter whose parse set gained a parse', async () => {
-    const files = new MemoryFiles({
-      [benchPath(SPEC, NEKZALI)]: bench({ source_signature: encounterSkipKey(ROWS, new Set(), VERSION, TOP_N) }),
-    });
-
-    expect((await skipDecision(files, [...ROWS, ranking(4)])).skip).toBe(false);
-  });
-
-  it('skips a bench built without a parse it recorded as inaccessible', async () => {
-    const signature = encounterSkipKey(ROWS, new Set([PRIVATE_PARSE]), VERSION, TOP_N);
-    const files = new MemoryFiles({
-      [benchPath(SPEC, NEKZALI)]: bench({ source_signature: signature, inaccessible_parses: [PRIVATE_PARSE] }),
-    });
-
-    expect((await skipDecision(files)).skip).toBe(true);
-  });
-
-  it('ingests a bench carrying that same signature without the inaccessible parse recorded', async () => {
-    const signature = encounterSkipKey(ROWS, new Set([PRIVATE_PARSE]), VERSION, TOP_N);
-    const files = new MemoryFiles({ [benchPath(SPEC, NEKZALI)]: bench({ source_signature: signature }) });
-
-    expect((await skipDecision(files)).skip).toBe(false);
+  it('decides off no stamp when the encounter has no bench yet', async () => {
+    expect(await decisionFor(new MemoryFiles())).toEqual({ skip: false, signature: SIGNATURE });
   });
 });
 

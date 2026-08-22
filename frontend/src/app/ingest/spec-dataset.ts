@@ -2,10 +2,11 @@
 import { DataFileApiService } from '../core/services/data-file-api';
 import { logWarn } from '../core/log';
 import type { EncounterEntry, SpecEntry } from '../core/models/encounter.models';
-import { readStoredMetadata, signatureMatches, type StampedFile } from '../core/data-source/metadata/stored-metadata';
 import { INGEST_VERSION } from './ingest-version';
 import { nextIngestState, prunedIngestState, readIngestState, type SpecIngestState } from './ingest-state';
-import { encounterSkipKey, type IngestStamp, type SignatureRanking } from './signature';
+import {
+  readStamp, skipDecision, type EncounterParses, type IngestStamp, type SkipDecision, type StampedFile,
+} from './stamp';
 import type { IngestEncounter } from './models/wcl.models';
 
 /** The one slice whose file carries the encounter signature and the sample count, so it alone lists what a spec has benched. */
@@ -31,11 +32,6 @@ interface SpecFreshness {
   // Worst version but most recent write: "still on v23", "last ingested 3h ago".
   version: number | null;
   ingestedAtS: number | null;
-}
-
-interface BenchSkipDecision {
-  skip: boolean;
-  signature: string;
 }
 
 export interface SpecPass {
@@ -78,7 +74,7 @@ export async function readSpecFreshness(dataFile: DataFileApiService, spec: stri
   const { benchedIds, checkedIds, state } = await readSpecDataset(dataFile, spec);
   const stamps = await Promise.all(benchedIds.map(async encounterId => {
     const bench = await dataFile.getSlice<StampedFile>(spec, encounterId, BENCH_SLICE);
-    return readStoredMetadata(bench.ok ? bench.value : null);
+    return readStamp(bench.ok ? bench.value : null);
   }));
   const versions = stamps.map(stamp => stamp.version);
   const times = stamps.map(stamp => stamp.ingestedAtS);
@@ -98,13 +94,10 @@ export async function readSpecFreshness(dataFile: DataFileApiService, spec: stri
 }
 
 export async function benchSkipDecision(
-  dataFile: DataFileApiService, spec: string, encounterId: number,
-  parses: { rows: SignatureRanking[]; version: string; topN: number },
-): Promise<BenchSkipDecision> {
+  dataFile: DataFileApiService, spec: string, encounterId: number, parses: EncounterParses,
+): Promise<SkipDecision> {
   const stored = await dataFile.getSlice<StampedFile>(spec, encounterId, BENCH_SLICE);
-  const existing = readStoredMetadata(stored.ok ? stored.value : null);
-  const signature = encounterSkipKey(parses.rows, existing.inaccessibleParses, parses.version, parses.topN);
-  return { skip: signatureMatches(existing.signature, signature), signature };
+  return skipDecision(stored.ok ? stored.value : null, parses);
 }
 
 /** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
