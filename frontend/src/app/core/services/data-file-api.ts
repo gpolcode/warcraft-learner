@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Rulebook } from '../models/rulebook.models';
-import { EncounterEntry, SpecEntry } from '../models/encounter.models';
+import { CurrentRaid, EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { SpecMeta } from '../models/spec-meta.models';
 import { EncounterPositions } from '../models/positioning.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
@@ -33,6 +33,13 @@ export class DataFileApiService {
     return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
   }
 
+  /** Missing is the legitimate no-memory state (a dataset written before the raid was ever recorded), so it reads as null rather than an error. */
+  async getCurrentRaid(): Promise<Result<CurrentRaid | null>> {
+    const result = await this.io.readJson<CurrentRaid>('current-raid.json');
+    if (result.ok) return result;
+    return result.error.kind === 'missing' ? ok(null) : result;
+  }
+
   async getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
     return foldMissingToEmpty(await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`));
   }
@@ -47,6 +54,10 @@ export class DataFileApiService {
 
   writeEncounters(spec: string, entries: EncounterEntry[]): Promise<void> {
     return this.io.writeJson(`${spec}/encounters.json`, entries);
+  }
+
+  writeCurrentRaid(raid: CurrentRaid): Promise<void> {
+    return this.io.writeJson('current-raid.json', raid);
   }
 
   writeSpecs(entries: SpecEntry[]): Promise<void> {

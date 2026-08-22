@@ -9,7 +9,7 @@ import type {
 import { MYTHIC_DIFFICULTY, type ParseRanking } from '../core/models/wcl.models';
 import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import {
-  filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap,
+  filterEncounters, groupEncountersByZone, protectedEncounterIds, type SpecWclMap, type WclExpansions,
 } from './wcl-mappers';
 import type { IngestEncounter } from './models/wcl.models';
 
@@ -25,9 +25,12 @@ const NORMAL_DIFFICULTY = 3;
 const PROBE_DIFFICULTIES = [MYTHIC_DIFFICULTY, HEROIC_DIFFICULTY, NORMAL_DIFFICULTY];
 
 export interface CurrentContent {
-  // Confirmed live by the rankings probe.
+  /** The raid the run ingests and indexes; empty leaves the dataset untouched. */
   encounters: IngestEncounter[];
   protectedIds: Set<number>;
+  zone: { id: number; name: string } | null;
+  /** True only when a strictly newer raid took over, which is the one transition allowed to delete the previous tier. */
+  reset: boolean;
 }
 
 // BudgetExceeded propagates (a clean stop); other per-spec probe errors are logged as zero so one flaky spec can't sink a live zone.
@@ -58,23 +61,50 @@ async function isZoneLive(client: WclQueryClient, zoneEncounters: IngestEncounte
   return false;
 }
 
-// Zones are probed newest-first and the FIRST live one is the whole current content: the previous tier keeps real rankings after a new raid opens, so keeping every live zone would never phase it out.
-export async function getEncounters(client: WclQueryClient, specWcl: SpecWclMap): Promise<CurrentContent> {
+// Only a zone NEWER than the recorded raid can take over, and the recorded one is trusted without a probe: a probe answers from live WCL every run, so re-deciding the raid from scratch lets one failed probe read as a tier flip and delete the dataset.
+async function findNewerLiveZone(
+  client: WclQueryClient, zonesNewestFirst: IngestEncounter[][], specWcl: SpecWclMap, storedZoneId: number | null,
+): Promise<IngestEncounter[] | null> {
+  for (const zoneEncounters of zonesNewestFirst) {
+    const zoneId = zoneEncounters[0]?.zoneId ?? 0;
+    if (storedZoneId != null && zoneId <= storedZoneId) return null;
+    if (await isZoneLive(client, zoneEncounters, specWcl)) return zoneEncounters;
+    logWarn('getEncounters', `zone "${zoneEncounters[0]?.zone}" dropped as non-live (no real rankings) - skipping ${zoneEncounters.length} encounter(s)`);
+  }
+  return null;
+}
+
+function contentFor(expansions: WclExpansions, encounters: IngestEncounter[], reset: boolean): CurrentContent {
+  const first = encounters[0];
+  return {
+    encounters,
+    protectedIds: protectedEncounterIds(expansions, first?.zoneId ?? null),
+    zone: first ? { id: first.zoneId, name: first.zone } : null,
+    reset,
+  };
+}
+
+/** `storedZoneId` is the raid the dataset already holds; passing null (no record yet) re-probes from the newest zone and resets. */
+export async function getEncounters(
+  client: WclQueryClient, specWcl: SpecWclMap, storedZoneId: number | null,
+): Promise<CurrentContent> {
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
   // An empty expansion tree would silently protect no encounter and publish an empty summary.
   if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
   const expansions = data.worldData.expansions;
-  const candidates = filterEncounters(expansions);
+  const byZone = groupEncountersByZone(filterEncounters(expansions));
+  const zonesNewestFirst = [...byZone.values()].sort((a, b) => (b[0]?.zoneId ?? 0) - (a[0]?.zoneId ?? 0));
 
-  const zonesNewestFirst = [...groupEncountersByZone(candidates).values()]
-    .sort((a, b) => (b[0]?.zoneId ?? 0) - (a[0]?.zoneId ?? 0));
-  for (const zoneEncounters of zonesNewestFirst) {
-    if (await isZoneLive(client, zoneEncounters, specWcl)) {
-      return { encounters: zoneEncounters, protectedIds: protectedEncounterIds(expansions, zoneEncounters[0]?.zoneId ?? null) };
-    }
-    logWarn('getEncounters', `zone "${zoneEncounters[0]?.zone}" dropped as non-live (no real rankings) - skipping ${zoneEncounters.length} encounter(s)`);
+  const newer = await findNewerLiveZone(client, zonesNewestFirst, specWcl, storedZoneId);
+  if (newer) return contentFor(expansions, newer, true);
+
+  // No newer raid: keep benching the recorded one, so a run that merely failed to confirm it changes nothing.
+  const stored = storedZoneId != null ? byZone.get(storedZoneId) : undefined;
+  if (stored) return contentFor(expansions, stored, false);
+  if (storedZoneId != null) {
+    logWarn('getEncounters', `recorded raid zone ${storedZoneId} is gone from the current expansion - leaving the dataset untouched`);
   }
-  return { encounters: [], protectedIds: protectedEncounterIds(expansions, null) };
+  return { encounters: [], protectedIds: protectedEncounterIds(expansions, null), zone: null, reset: false };
 }
 
 /** Newest-first, since a fresh patch's partition carries the current parses; it reports which one answered because the signature, the transforms and the liveness probe have to read the same one, and a patch rolling the default over to a still-empty partition is where they would otherwise diverge. */

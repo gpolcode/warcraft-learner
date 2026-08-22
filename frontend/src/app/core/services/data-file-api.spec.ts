@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from './data-file-api';
 import { DATA_FILE_TRANSPORT, DataFileTransport } from './data-file-transport';
-import { EncounterEntry, SpecEntry } from '../models/encounter.models';
+import { CurrentRaid, EncounterEntry, SpecEntry } from '../models/encounter.models';
 import { SpecMeta } from '../models/spec-meta.models';
 import { Result, ok, missing, transient } from '../result';
 
@@ -92,6 +92,20 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(outage).getSpecs()).toEqual(transient('WCL is unreachable right now.'));
   });
 
+  it('reads the recorded raid at current-raid.json, folding a missing file to ok(null) but propagating a transient error', async () => {
+    const raid: CurrentRaid = { zone_id: 53, zone_name: 'The Venomous Abyss' };
+    const present = new RecordingTransport(ok(raid));
+    expect(await withTransport(present).getCurrentRaid()).toEqual(ok(raid));
+    expect(present.reads).toEqual(['current-raid.json']);
+
+    // Null is the no-record state that lets discovery adopt a raid; a real failure must not read as one.
+    const fresh = new RecordingTransport(missing('Not yet ingested.'));
+    expect(await withTransport(fresh).getCurrentRaid()).toEqual(ok(null));
+
+    const outage = new RecordingTransport(transient('WCL is unreachable right now.'));
+    expect(await withTransport(outage).getCurrentRaid()).toEqual(transient('WCL is unreachable right now.'));
+  });
+
   it('reads a spec encounter index at {spec}/encounters.json, folding a missing file to ok([])', async () => {
     const encounters: EncounterEntry[] = [{ id: ENCOUNTER_ID, name: 'Boss', sample_count: 5 }];
     const present = new RecordingTransport(ok(encounters));
@@ -133,6 +147,13 @@ describe('DataFileApiService writes and listing', () => {
     const data = { computed: true };
     await withTransport(transport).writeSlice(SPEC, ENCOUNTER_ID, SLICE, data);
     expect(transport.writes).toEqual([['SubtletyRogue/burst/3176.json', data]]);
+  });
+
+  it('writes the recorded raid to current-raid.json', async () => {
+    const transport = new RecordingTransport();
+    const raid: CurrentRaid = { zone_id: 53, zone_name: 'The Venomous Abyss' };
+    await withTransport(transport).writeCurrentRaid(raid);
+    expect(transport.writes).toEqual([['current-raid.json', raid]]);
   });
 
   it('writes the spec manifest to index.json', async () => {

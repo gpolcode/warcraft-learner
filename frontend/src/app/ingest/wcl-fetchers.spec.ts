@@ -65,8 +65,11 @@ describe('getEncounters', () => {
   }
 
   it('makes the newest live raid zone the whole current content, past the Complete Raid aggregate and an older zone that still has rankings', async () => {
-    const { encounters, protectedIds } = await getEncounters(contentClient(), SPEC_WCL);
+    const { encounters, protectedIds, zone, reset } = await getEncounters(contentClient(), SPEC_WCL, null);
     expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
+    expect(zone).toEqual({ id: 50, name: 'Sporefall' });
+    // No raid on record: adopting one is the transition that clears whatever the dataset held.
+    expect(reset).toBe(true);
     // Zones at or above the live zone's id stay protected; the phased-out zone 46 (and the older M+ zone) do not.
     expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3191, 3591]);
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('getEncounters'), expect.stringContaining('Dummy Dome'));
@@ -74,7 +77,7 @@ describe('getEncounters', () => {
 
   it('probes newest zone first and stops at the first live one, leaving older zones unqueried', async () => {
     const probeCounter = { count: 0 };
-    await getEncounters(contentClient({}, probeCounter), SPEC_WCL);
+    await getEncounters(contentClient({}, probeCounter), SPEC_WCL, null);
     // Zone 52 has no rankings, so all 3 probe specs run all 3 difficulties (9); zone 50 early-exits on its first Mythic probe (1); zone 46 is never probed.
     expect(probeCounter.count).toBe(10);
   });
@@ -91,7 +94,7 @@ describe('getEncounters', () => {
         return { worldData: { encounter: { name: 'First Boss', characterRankings: { rankings: difficulty === HEROIC_DIFFICULTY ? ranks(10) : [] } } } };
       },
     });
-    const { encounters } = await getEncounters(client, SPEC_WCL);
+    const { encounters } = await getEncounters(client, SPEC_WCL, null);
     expect(encounters.map(encounter => encounter.id)).toEqual([9100]);
     expect(difficultiesTried).toEqual([MYTHIC_DIFFICULTY, HEROIC_DIFFICULTY]);
   });
@@ -103,14 +106,63 @@ describe('getEncounters', () => {
         return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: [] } } } };
       },
     });
-    const { encounters, protectedIds } = await getEncounters(client, SPEC_WCL);
+    const { encounters, protectedIds } = await getEncounters(client, SPEC_WCL, null);
     expect(encounters).toHaveLength(0);
     expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3176, 3177, 3191, 3591, 112526]);
   });
 
+  describe('with a raid already on record', () => {
+    const RECORDED = 50;
+
+    it('keeps benching it without probing it, so a run that cannot confirm it changes nothing', async () => {
+      const probed: number[] = [];
+      const client = fakeClient({
+        query: (gql, vars) => {
+          if (gql.includes('expansions')) return { worldData: { expansions } };
+          probed.push((vars as { encounterID: number }).encounterID);
+          return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: [] } } } };
+        },
+      });
+      const { encounters, zone, reset } = await getEncounters(client, SPEC_WCL, RECORDED);
+      expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
+      expect(zone).toEqual({ id: RECORDED, name: 'Sporefall' });
+      expect(reset).toBe(false);
+      // Only the one newer zone is probed; the recorded raid and everything older are taken on trust.
+      expect([...new Set(probed)]).toEqual([3591]);
+    });
+
+    it('never reopens an older zone even when the recorded raid goes quiet (boundary: equal id is not newer)', async () => {
+      // Zone 46 is live here, but it is older than the record, so it can never take over.
+      const client = contentClient({
+        query: (gql, vars) => {
+          if (gql.includes('expansions')) return { worldData: { expansions } };
+          const encounterID = (vars as { encounterID: number }).encounterID;
+          return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: ranks(encounterID === 3176 ? 10 : 0) } } } };
+        },
+      });
+      const { encounters, reset } = await getEncounters(client, SPEC_WCL, RECORDED);
+      expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
+      expect(reset).toBe(false);
+    });
+
+    it('hands over to a strictly newer live zone and flags the reset', async () => {
+      const { encounters, zone, reset } = await getEncounters(contentClient(), SPEC_WCL, 46);
+      expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
+      expect(zone).toEqual({ id: 50, name: 'Sporefall' });
+      expect(reset).toBe(true);
+    });
+
+    it('leaves the dataset untouched when the recorded raid is gone from the expansion', async () => {
+      const { encounters, zone, reset } = await getEncounters(contentClient(), SPEC_WCL, 9999);
+      expect(encounters).toHaveLength(0);
+      expect(zone).toBeNull();
+      expect(reset).toBe(false);
+    });
+  });
+
   it('propagates a BudgetExceededError raised while probing', async () => {
     const client = contentClient({ assertBudget: () => { throw new BudgetExceededError('low'); } });
-    await expect(getEncounters(client, SPEC_WCL)).rejects.toThrow(BudgetExceededError);
+    await expect(getEncounters(client, SPEC_WCL, null)).rejects.toThrow(BudgetExceededError);
   });
 
   it('drops a zone whose only parses are privacy-anonymized (the "Dummy Dome" case)', async () => {
@@ -125,7 +177,7 @@ describe('getEncounters', () => {
         return { worldData: { encounter: { name: 'Sinister Single', characterRankings: { rankings: anonymized } } } };
       },
     });
-    const { encounters } = await getEncounters(client, SPEC_WCL);
+    const { encounters } = await getEncounters(client, SPEC_WCL, null);
     expect(encounters).toHaveLength(0);
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('getEncounters'), expect.stringContaining('Dummy Dome'));
   });
@@ -143,7 +195,7 @@ describe('getEncounters', () => {
         return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings } } } };
       },
     });
-    const { encounters } = await getEncounters(client, SPEC_WCL);
+    const { encounters } = await getEncounters(client, SPEC_WCL, null);
     expect(encounters).toHaveLength(0);
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('getEncounters'), expect.stringContaining('Thin Raid'));
   });
