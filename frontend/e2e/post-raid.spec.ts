@@ -3,8 +3,8 @@ import {
   findingRows, shows, showsEntity, showsFindingRows, showsOnPlan, CD_CHIP, CLOCK, DAMAGE, PERCENT, RATIO,
 } from './support';
 
-const REPORT_URL = 'https://www.warcraftlogs.com/reports/vPMYzQGCZ2qxtFAB?fight=40';
-const PLAYER_NAME = 'Cheeklord';
+const REPORT_URL = 'https://www.warcraftlogs.com/reports/fGDk8PmvBzdhtQga?fight=last';
+const PLAYER_NAME = 'Ragoptt';
 // Mirrors POST_RAID_KEY in core/services/selection-store.ts.
 const STICKY_PLAYER_KEY = 'wl.sel.postRaid';
 
@@ -41,7 +41,7 @@ test.afterAll(async () => {
   await page.close();
 });
 
-test('analyzing the report loads the requested pull and the sticky player', async () => {
+test('analyzing the report selects the last pull and the sticky player', async () => {
   const fight = page.getByRole('combobox', { name: 'Fight' });
   await expect(fight).toContainText("Nek'zali the Soulcoiler");
   await expect(fight).toContainText('Kill');
