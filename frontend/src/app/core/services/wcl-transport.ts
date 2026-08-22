@@ -14,10 +14,20 @@ export class WclTransportError extends Error {
 // 422 because a client-error status is never in the retryable set, so `toLoadError` classifies it `permanent`.
 export const WCL_UNUSABLE_STATUS = 422;
 
+/** One scope's failed fetches, keyed by report code; a query naming no report (rankings, rate limit) reports nothing here. */
+export interface FetchOutcomes {
+  // Only deterministic permission denials land here - a transient error must not stick a usable log as inaccessible.
+  inaccessibleCodes: ReadonlySet<string>;
+  // Permission denials included, so a stamp keys on the parses the scope actually got.
+  failedCodes: ReadonlySet<string>;
+}
+
 // An interface (not the concrete {@link HttpWclTransport}) so specs can fake it through the token.
 export interface WclTransport {
   /** Runs the GraphQL POST; caching is the query's own concern (`wclCachingHeaders`). Throws {@link WclTransportError} on failure. */
   query<TData>(gqlString: string, variables: object, token: string): Promise<TData>;
+  /** Returns what the fetches of `run` reported; two scopes must never overlap, or each takes the other's codes. */
+  withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }>;
 }
 
 export const WCL_TRANSPORT = new InjectionToken<WclTransport>('WCL_TRANSPORT');
