@@ -9,6 +9,8 @@ const BAR_TRACK = 'div.h-5';
 const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
 const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
 const DELTA_BADGE = 'span[class*="badge-"]';
+const CELL = '[role="listbox"] div.flex-col.shrink-0';
+const GAP_CELL = `${CELL}[aria-hidden="true"]`;
 
 function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): ComparisonWindow {
   return {
@@ -96,6 +98,26 @@ describe('WindowComparisonComponent chip selection', () => {
     dom.detectChanges();
 
     expect(selectedChip(dom)).toBe(1);
+  });
+
+  it('drops a manual pick when the windows input swaps, reopening on the worst of the new set', () => {
+    const MANUAL_PICK = 3;
+    const dom = render([
+      win({ playerPct: 40, topAvg: 100 }), // worst of this set, so the opening pick is 0
+      win({ playerPct: 90, topAvg: 100 }),
+      win({ playerPct: 85, topAvg: 100 }),
+      win({ playerPct: 95, topAvg: 100 }),
+    ]);
+    dom.queryAll(CHIP)[MANUAL_PICK]?.click();
+    dom.detectChanges();
+    expect(selectedChip(dom)).toBe(MANUAL_PICK);
+
+    // The shorter set has no index 3, so a pick that outlived its windows would blank the breakdown.
+    const WORST_OF_SWAPPED = 1;
+    dom.setInput('windows', [win({ playerPct: 95, topAvg: 100 }), win({ playerPct: 40, topAvg: 100 })]);
+
+    expect(selectedChip(dom)).toBe(WORST_OF_SWAPPED);
+    expect(dom.query(BAR_TRACK)).not.toBeNull();
   });
 });
 
@@ -213,6 +235,16 @@ describe('WindowComparisonComponent delta badge', () => {
     expect(dom.text()).toContain('not reached');
     expect(dom.query(DELTA_BADGE)).toBeNull();
   });
+
+  it('shows the top-parse damage, never the player\'s, for a bench-only window', () => {
+    const PLAYER_DAMAGE = 2_000_000;
+    const TOP_AVG_DAMAGE = 1_000_000;
+    const dom = render([win({ playerPct: PLAYER_DAMAGE, topAvg: TOP_AVG_DAMAGE }, 'info')]);
+
+    expect(dom.text()).toContain('1M');
+    expect(dom.text()).not.toContain('2M');
+    expect(dom.query(DELTA_BADGE)).toBeNull();
+  });
 });
 
 describe('WindowComparisonComponent detail rows', () => {
@@ -230,6 +262,41 @@ describe('WindowComparisonComponent detail rows', () => {
     expect(labels[0]).toContain('Big miss');
     expect(labels[1]).toContain('Small miss');
     expect(labels[2]).toContain('Ahead');
+  });
+
+  it('puts the most damage taken first when lower is better', () => {
+    const windows = [{
+      ...win({ playerPct: 100, topAvg: 100 }),
+      detailRows: [
+        detailRow('Middle hit', 1, 90, 100),
+        detailRow('Biggest hit', 2, 150, 100),
+        detailRow('Smallest hit', 3, 80, 100),
+      ],
+    }];
+
+    const labels = render(windows, { higherIsBetter: false }).textAll('wl-compact-ability-row');
+
+    expect(labels[0]).toContain('Biggest hit');
+    expect(labels[1]).toContain('Middle hit');
+    expect(labels[2]).toContain('Smallest hit');
+  });
+
+  it('ranks an unreached window\'s breakdown by top damage, biggest first, whichever direction is better', () => {
+    const SMALL_TOP_DAMAGE = 40_000;
+    const LARGE_TOP_DAMAGE = 900_000;
+    // No player value means the whole top-parse damage is the loss, so the order cannot come from a gap.
+    const windows = [{
+      ...win({}, 'muted'),
+      detailRows: [
+        detailRow('Small window', 1, null, SMALL_TOP_DAMAGE),
+        detailRow('Large window', 2, null, LARGE_TOP_DAMAGE),
+      ],
+    }];
+    const firstLabel = (inputs: Record<string, unknown>): string =>
+      render(windows, inputs).textAll('wl-compact-ability-row')[0] ?? '';
+
+    expect(firstLabel({ higherIsBetter: true })).toContain('Large window');
+    expect(firstLabel({ higherIsBetter: false })).toContain('Large window');
   });
 
   it('emits the active window index when the map button is used', () => {
@@ -259,5 +326,44 @@ describe('WindowComparisonComponent detail rows', () => {
     const dom = render(threeWindows());
     expect(dom.query('button[title="Open positioning map"]')).toBeNull();
     expect(dom.query('button[title="Watch clip"]')).toBeNull();
+  });
+});
+
+describe('WindowComparisonComponent pacing slots', () => {
+  // One dashed slot stands for this many seconds of pause between two windows.
+  const SLOT_SECONDS = 20;
+
+  const spanning = (timeStartS: number, timeEndS: number): ComparisonWindow =>
+    ({ ...win({}), timeStartS, timeEndS });
+
+  const slotsAfterPause = (pauseS: number): number =>
+    render([spanning(0, 0), spanning(pauseS, pauseS + 10)]).queryAll(GAP_CELL).length;
+
+  it('draws no slot for a pause shorter than one, and one slot at exactly one', () => {
+    expect(slotsAfterPause(SLOT_SECONDS - 1)).toBe(0);
+    expect(slotsAfterPause(SLOT_SECONDS)).toBe(1);
+  });
+
+  it('adds one more slot per further 20s of pause', () => {
+    expect(slotsAfterPause(2 * SLOT_SECONDS - 1)).toBe(1);
+    expect(slotsAfterPause(2 * SLOT_SECONDS)).toBe(2);
+    expect(slotsAfterPause(3 * SLOT_SECONDS)).toBe(3);
+  });
+
+  it('keeps adding slots through a long lull, with no cap', () => {
+    const LONG_LULL_SLOTS = 10;
+    expect(slotsAfterPause(LONG_LULL_SLOTS * SLOT_SECONDS)).toBe(LONG_LULL_SLOTS);
+  });
+
+  it('lays the slots between the two chips they separate, in fight order', () => {
+    const dom = render([spanning(0, 0), spanning(2 * SLOT_SECONDS, 2 * SLOT_SECONDS + 10)]);
+
+    const kinds = dom.queryAll(CELL).map(cell => cell.querySelector(CHIP) ? 'chip' : 'slot');
+
+    expect(kinds).toEqual(['chip', 'slot', 'slot', 'chip']);
+  });
+
+  it('renders an empty row when there are no windows', () => {
+    expect(render([]).queryAll(CELL)).toHaveLength(0);
   });
 });

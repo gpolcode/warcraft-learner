@@ -12,7 +12,7 @@ export function stubBenchTokens(
   }));
 }
 
-export function mapFeatureStub(): unknown {
+export function mapFeatureStub(overrides: Record<string, unknown> = {}): unknown {
   return {
     clear: () => undefined,
     loadBench: () => Promise.resolve(),
@@ -22,5 +22,6 @@ export function mapFeatureStub(): unknown {
     ready: () => false,
     open: signal(false),
     overlayLoading: signal(false),
+    ...overrides,
   };
 }

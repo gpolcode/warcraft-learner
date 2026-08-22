@@ -4,6 +4,8 @@ import { PlayerDetailGroups, WclReport } from '../../core/models/wcl.models';
 import { SelectionStore } from '../../core/services/selection-store';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { unsupportedEncounterNotice } from './post-raid';
+import { mapFeatureStub } from '../../../testing/page-stubs';
+import { MapFeatureService } from './map/map.service';
 import { fight } from './post-raid-harness';
 import { FIGHT_SELECT, PLAYER_SELECT, postRaidPage } from './post-raid-page';
 
@@ -196,12 +198,16 @@ describe('PostRaidComponent keystone fight', () => {
 
   function open() {
     const getPlayerDetails = vi.fn(() => Promise.resolve(groups));
-    const page = postRaidPage({ getReport: () => Promise.resolve(mixedReport()), getPlayerDetails });
-    return { getPlayerDetails, page };
+    const prepareMap = vi.fn(() => Promise.resolve());
+    const page = postRaidPage(
+      { getReport: () => Promise.resolve(mixedReport()), getPlayerDetails },
+      [{ provide: MapFeatureService, useValue: mapFeatureStub({ prepare: prepareMap }) }],
+    );
+    return { getPlayerDetails, prepareMap, page };
   }
 
   it('lists the keystone pull but opens on the raid pull the report also holds', async () => {
-    const { page } = open();
+    const { prepareMap, page } = open();
 
     page.submitReport(REPORT_CODE);
     await page.settled();
@@ -209,19 +215,22 @@ describe('PostRaidComponent keystone fight', () => {
     expect(page.options(FIGHT_SELECT).join(' ')).toContain(DUNGEON_FIGHT.name);
     expect(page.chosen(FIGHT_SELECT)).toContain(RAID_FIGHT.name);
     expect(page.text()).not.toContain(KEYSTONE_NOTICE);
+    expect(prepareMap).toHaveBeenCalled();
   });
 
   it('stops at the notice and fetches nothing when the keystone pull is selected', async () => {
-    const { getPlayerDetails, page } = open();
+    const { getPlayerDetails, prepareMap, page } = open();
     page.submitReport(REPORT_CODE);
     await page.settled();
     getPlayerDetails.mockClear();
+    prepareMap.mockClear();
 
     page.choose(FIGHT_SELECT, DUNGEON_FIGHT.name);
     await page.settled();
 
     expect(page.text()).toContain(KEYSTONE_NOTICE);
     expect(getPlayerDetails).not.toHaveBeenCalled();
+    expect(prepareMap).not.toHaveBeenCalled();
   });
 
   it('clears the notice when the selection moves back to the raid pull', async () => {
