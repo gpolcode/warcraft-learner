@@ -5,13 +5,6 @@ export interface SpecEntry {
   encounter_count: number;
 }
 
-export interface CurrentRaid {
-  zone_id: number;
-  zone_name: string;
-  /** First adoption, not last ingest. */
-  adopted_at_s: number;
-}
-
 export interface EncounterEntry {
   id: number;
   name: string;
