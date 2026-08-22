@@ -1,19 +1,19 @@
 // Accepts a `WclQueryClient` so tests can inject a fake; best-effort failures are logged via `logWarn`, never swallowed.
 
 import { logWarn } from '../core/log';
-import { countRecentParses, toRealRankings, unwrapRankings } from '../shared/analysis/wcl-projections';
+import { countRecentParses, toParseRankings, unwrapRankings } from '../shared/analysis/wcl-projections';
 import { ENCOUNTERS_Q, RANKINGS_Q } from '../core/services/wcl-queries';
 import type {
   EncountersQuery, RankingsQuery, RankingsQueryVariables,
 } from '../core/services/wcl-operations.generated';
-import { MYTHIC_DIFFICULTY, type WclRawRanking } from '../core/models/wcl.models';
+import { MYTHIC_DIFFICULTY, type ParseRanking } from '../core/models/wcl.models';
 import { BudgetExceededError, type WclQueryClient } from './wcl-client';
 import { filterEncounters, groupEncountersByZone, type SpecWclMap } from './wcl-mappers';
 import type { IngestEncounter } from './models/wcl.models';
 import type { CurrentRaid } from '../core/models/encounter.models';
 
-// One raid lockout: a raid being progressed posts parses every week, and having parses at all is what separates a current raid from a finished tier WCL still ranks.
-const ACTIVE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+// One raid lockout: a raid being progressed posts parses every week, and a finished tier WCL still ranks non-frozen posts none.
+const ACTIVE_WINDOW_S = 7 * 24 * 60 * 60;
 // A genuinely live raid has many real parses for any of these; a beta/PTR/test zone has none.
 const PROBE_SPECS = ['FireMage', 'RetributionPaladin', 'FuryWarrior'];
 // >=1 is unsafe: a single recent parse on a test boss would promote it; a raid being progressed clears this easily.
@@ -26,7 +26,7 @@ const NORMAL_DIFFICULTY = 3;
 const PROBE_DIFFICULTIES = [MYTHIC_DIFFICULTY, HEROIC_DIFFICULTY, NORMAL_DIFFICULTY];
 
 export interface CurrentContent {
-  /** Every current raid's encounters; empty leaves the dataset untouched. */
+  /** Empty leaves the dataset untouched. */
   encounters: IngestEncounter[];
   protectedIds: Set<number>;
   zones: CurrentRaid[];
@@ -36,11 +36,11 @@ export interface CurrentContent {
 
 // BudgetExceeded propagates (a clean stop); other per-spec probe errors are logged as zero so one flaky spec can't sink a live zone.
 async function probeRecentCount(
-  client: WclQueryClient, probeSpec: string, encounter: IngestEncounter, specWcl: SpecWclMap, difficulty: number, sinceMs: number,
+  client: WclQueryClient, probeSpec: string, encounter: IngestEncounter, specWcl: SpecWclMap, difficulty: number, sinceS: number,
 ): Promise<number> {
   try {
     const ranked = await getRankingsLite(client, probeSpec, encounter.id, specWcl, PROBE_COUNT, encounter.partitionIds, difficulty);
-    return countRecentParses(ranked, sinceMs);
+    return countRecentParses(ranked, sinceS);
   } catch (err) {
     if (err instanceof BudgetExceededError) throw err;
     logWarn(`getEncounters probe ${encounter.name} (${probeSpec})`, err);
@@ -49,7 +49,7 @@ async function probeRecentCount(
 }
 
 async function isZoneActive(
-  client: WclQueryClient, zoneEncounters: IngestEncounter[], specWcl: SpecWclMap, sinceMs: number,
+  client: WclQueryClient, zoneEncounters: IngestEncounter[], specWcl: SpecWclMap, sinceS: number,
 ): Promise<boolean> {
   const probeEncounter = zoneEncounters[0];
   if (!probeEncounter) return false;
@@ -57,30 +57,30 @@ async function isZoneActive(
   for (const probeSpec of PROBE_SPECS) {
     await client.assertBudget(PROBE_BUDGET_MARGIN);
     for (const difficulty of PROBE_DIFFICULTIES) {
-      recent += await probeRecentCount(client, probeSpec, probeEncounter, specWcl, difficulty, sinceMs);
+      recent += await probeRecentCount(client, probeSpec, probeEncounter, specWcl, difficulty, sinceS);
       if (recent >= ACTIVE_PARSES_THRESHOLD) return true;
     }
   }
   return false;
 }
 
-/** Recorded raids are never re-probed: a probe answers from live WCL every run, so re-deciding a raid it already holds lets one quiet week delete the dataset. */
+/** Only unrecorded zones are probed: a probe answers from live WCL every run, so re-deciding a recorded raid lets one quiet week retire it. */
 async function joiningZones(
-  client: WclQueryClient, byZone: Map<number, IngestEncounter[]>, recorded: Set<number>, specWcl: SpecWclMap, nowMs: number,
+  client: WclQueryClient, byZone: Map<number, IngestEncounter[]>, recorded: Set<number>, specWcl: SpecWclMap, nowS: number,
 ): Promise<IngestEncounter[][]> {
   const joined: IngestEncounter[][] = [];
   const unrecorded = [...byZone.entries()]
     .filter(([zoneId]) => !recorded.has(zoneId))
     .sort(([a], [b]) => b - a);
   for (const [, zoneEncounters] of unrecorded) {
-    if (await isZoneActive(client, zoneEncounters, specWcl, nowMs - ACTIVE_WINDOW_MS)) joined.push(zoneEncounters);
+    if (await isZoneActive(client, zoneEncounters, specWcl, nowS - ACTIVE_WINDOW_S)) joined.push(zoneEncounters);
   }
   return joined;
 }
 
-/** `recordedZoneIds` are the raids the dataset already holds; each stays current until WCL freezes or drops its zone. */
+/** Every recorded raid stays current until WCL freezes or drops its zone. */
 export async function getEncounters(
-  client: WclQueryClient, specWcl: SpecWclMap, recordedZoneIds: number[], nowMs: number,
+  client: WclQueryClient, specWcl: SpecWclMap, recordedZoneIds: number[], nowS: number,
 ): Promise<CurrentContent> {
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
   // An empty expansion tree would silently protect no encounter and publish an empty summary.
@@ -92,7 +92,7 @@ export async function getEncounters(
   for (const zoneId of recordedZoneIds.filter(id => !byZone.has(id))) {
     logWarn('getEncounters', `recorded raid zone ${zoneId} is frozen or gone - retiring it and pruning its data`);
   }
-  const joined = await joiningZones(client, byZone, recorded, specWcl, nowMs);
+  const joined = await joiningZones(client, byZone, recorded, specWcl, nowS);
 
   // Newest first so the encounter index leads with the freshest raid.
   const current = [...joined, ...kept.map(zoneId => byZone.get(zoneId) ?? [])]
@@ -119,7 +119,7 @@ export async function rankingsFromPartition<T>(
 
 export async function getRankingsLite(
   client: WclQueryClient, spec: string, encounterId: number, specWcl: SpecWclMap, count: number, partitionIds: number[], difficulty: number,
-): Promise<WclRawRanking[]> {
+): Promise<ParseRanking[]> {
   const mapping = specWcl[spec];
   if (!mapping) throw new Error(`Unknown spec: ${spec}`);
   const [className, specName] = mapping;
@@ -128,7 +128,7 @@ export async function getRankingsLite(
     const variables: RankingsQueryVariables = { encounterID: encounterId, className, specName, difficulty };
     if (partition != null) variables.partition = partition;
     const data = await client.query<RankingsQuery>(RANKINGS_Q, variables);
-    return toRealRankings(unwrapRankings(data.worldData?.encounter?.characterRankings), count);
+    return toParseRankings(unwrapRankings(data.worldData?.encounter?.characterRankings), count);
   });
   return rows;
 }

@@ -71,25 +71,21 @@ export function abilityIcons(
   return icons;
 }
 
-/** The top `count` rankings a real, named report backs; an anonymized or reportless row is not a parse anything can be read from. */
-export function toRealRankings(raw: WclRawRanking[], count: number): WclRawRanking[] {
+export function countRecentParses(rankings: ParseRanking[], sinceS: number): number {
+  return rankings.filter(ranking => ranking.started_at_s >= sinceS).length;
+}
+
+/** Stamps `started_at_s` so nothing past this point handles WCL's milliseconds; an undated row dates to the epoch, never to now. */
+export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
   return raw
     .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
-    .slice(0, count);
-}
-
-/** A zone whose top parses are all old is a finished tier rather than current content, which is the only thing separating the two on WCL. */
-export function countRecentParses(rankings: WclRawRanking[], sinceMs: number): number {
-  return rankings.filter(ranking => (ranking.startTime ?? 0) >= sinceMs).length;
-}
-
-export function toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
-  return toRealRankings(raw, count)
+    .slice(0, count)
     .map(ranking => ({
       player: ranking.name ?? '',
       server: ranking.server?.name ?? '',
       report_code: ranking.report?.code ?? '',
       fight_id: ranking.report?.fightID ?? 0,
+      started_at_s: ranking.startTime != null ? Math.floor(ranking.startTime / 1000) : 0,
     }));
 }
 

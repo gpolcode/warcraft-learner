@@ -164,10 +164,10 @@ export class IngestOrchestratorService {
   /** Null means the budget stopped the run at discovery and the summary is already published. */
   private async discoverContent(client: ApiWclClient, specWcl: SpecWclMap): Promise<CurrentContent | null> {
     const stored = await this.dataFile.getCurrentRaids();
-    // A read failure must not read as "no record": every recorded raid would re-probe, and a quiet one would be retired and pruned.
+    // Reading a failure as "no record" would retire every recorded raid and prune its data.
     if (!stored.ok) throw new Error(`Cannot read the recorded raids: ${stored.error.message}`);
     try {
-      return await getEncounters(client, specWcl, stored.value.map(raid => raid.zone_id), Date.now());
+      return await getEncounters(client, specWcl, stored.value.map(raid => raid.zone_id), nowS());
     } catch (err) {
       const budgetSummary = discoveryBudgetSummary(err);
       if (!budgetSummary) throw err;
@@ -177,7 +177,7 @@ export class IngestOrchestratorService {
     }
   }
 
-  /** Runs before spec selection so a raid change resets every spec in one pass - resetting only the selected specs would leave them at zero data and permanently re-selected while a new raid waits for its first parses. */
+  /** Runs before spec selection: resetting only the selected specs leaves them at zero data and permanently re-selected. */
   private async resetStaleSpecData(protectedIds: Set<number>): Promise<void> {
     if (protectedIds.size === 0) {
       logWarn('resetStaleSpecData', 'empty protected set - skipping the reset (likely a transient WCL failure)');

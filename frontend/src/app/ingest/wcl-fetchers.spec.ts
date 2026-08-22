@@ -27,17 +27,17 @@ function fakeClient(handlers: FakeHandlers): WclQueryClient {
   };
 }
 
-const NOW_MS = 1_760_000_000_000;
+const NOW_S = 1_760_000_000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// Build `count` non-anonymous ranking rows (each has a report, so toRealRankings keeps it), pulled `ageDays` ago.
+// WCL dates a ranking in milliseconds, so a fixture pull `ageDays` old is stamped in them too.
 const ranks = (count: number, ageDays = 1): WclRawRanking[] =>
   Array.from({ length: count }, (_unused, index) => ({
-    name: `P${index}`, report: { code: `r${index}`, fightID: index }, startTime: NOW_MS - ageDays * DAY_MS,
+    name: `P${index}`, report: { code: `r${index}`, fightID: index }, startTime: NOW_S * 1000 - ageDays * DAY_MS,
   }));
 
 describe('getEncounters', () => {
-  // The spy keeps the runner output clean and lets the retire test assert on the warning.
+  // The retire test asserts on the warning; the log spy only keeps the runner output clean.
   let warnSpy: MockInstance<typeof console.warn>;
   let logSpy: MockInstance<typeof console.log>;
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('getEncounters', () => {
 
   const finishedZone = { id: FINISHED, name: 'VS / DR / MQD', frozen: false, encounters: [{ id: 3176, name: 'Imperator' }, { id: 3177, name: 'Vorasius' }] };
 
-  // Modeled on the real Midnight worldData: two raids current at once, one finished tier still ranked, plus the zones the name filter drops.
+  // Modeled on the real Midnight worldData, which really does run two raids at once alongside a still-ranked finished tier.
   const expansions = [{
     id: 7, name: 'Midnight', zones: [
       finishedZone,
@@ -64,7 +64,6 @@ describe('getEncounters', () => {
   }];
 
   const STALE_DAYS = 30;
-  // Both current raids churn their boards; the finished tier's top parses are all a month old.
   const rankingsByEncounter: Record<number, WclRawRanking[]> = {
     3470: ranks(10), 3445: ranks(10), 3159: ranks(10), 3191: ranks(10), 112526: ranks(10),
     3176: ranks(10, STALE_DAYS), 3177: ranks(10, STALE_DAYS), 3591: [],
@@ -84,7 +83,7 @@ describe('getEncounters', () => {
 
   describe('with no raid on record', () => {
     it('adopts every raid being progressed right now, newest first, and leaves the finished tier behind', async () => {
-      const { encounters, protectedIds, zones, reset } = await getEncounters(contentClient(), SPEC_WCL, [], NOW_MS);
+      const { encounters, protectedIds, zones, reset } = await getEncounters(contentClient(), SPEC_WCL, [], NOW_S);
       expect(zones).toEqual([
         { zone_id: ABYSS, zone_name: 'The Venomous Abyss' },
         { zone_id: SPOREFALL, zone_name: 'Sporefall' },
@@ -101,7 +100,7 @@ describe('getEncounters', () => {
         const encounterID = (vars as { encounterID: number }).encounterID;
         return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: rankingsByEncounter[encounterID] ?? [] } } } };
       } });
-      const { encounters, zones, reset } = await getEncounters(client, SPEC_WCL, [], NOW_MS);
+      const { encounters, zones, reset } = await getEncounters(client, SPEC_WCL, [], NOW_S);
       expect(encounters).toHaveLength(0);
       expect(zones).toEqual([]);
       expect(reset).toBe(false);
@@ -119,14 +118,14 @@ describe('getEncounters', () => {
           return { worldData: { encounter: { name: 'First Boss', characterRankings: { rankings: difficulty === HEROIC_DIFFICULTY ? ranks(10) : [] } } } };
         },
       });
-      const { encounters } = await getEncounters(client, SPEC_WCL, [], NOW_MS);
+      const { encounters } = await getEncounters(client, SPEC_WCL, [], NOW_S);
       expect(encounters.map(encounter => encounter.id)).toEqual([9100]);
       expect(difficultiesTried).toEqual([MYTHIC_DIFFICULTY, HEROIC_DIFFICULTY]);
     });
 
     it('adopts nothing when a zone\'s only parses are privacy-anonymized (the "Dummy Dome" case)', async () => {
       const anonymized: WclRawRanking[] = Array.from({ length: 8 }, (_unused, index) => ({
-        name: `Character 13600${index}-1163300${index}`, report: { code: `r${index}`, fightID: index }, startTime: NOW_MS,
+        name: `Character 13600${index}-1163300${index}`, report: { code: `r${index}`, fightID: index }, startTime: NOW_S * 1000,
       }));
       const client = fakeClient({
         query: (gql) => {
@@ -136,7 +135,7 @@ describe('getEncounters', () => {
           return { worldData: { encounter: { name: 'Sinister Single', characterRankings: { rankings: anonymized } } } };
         },
       });
-      expect((await getEncounters(client, SPEC_WCL, [], NOW_MS)).encounters).toHaveLength(0);
+      expect((await getEncounters(client, SPEC_WCL, [], NOW_S)).encounters).toHaveLength(0);
     });
 
     it('adopts nothing from a zone that stays below the liveness threshold', async () => {
@@ -152,7 +151,7 @@ describe('getEncounters', () => {
           return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings } } } };
         },
       });
-      expect((await getEncounters(client, SPEC_WCL, [], NOW_MS)).encounters).toHaveLength(0);
+      expect((await getEncounters(client, SPEC_WCL, [], NOW_S)).encounters).toHaveLength(0);
     });
   });
 
@@ -160,16 +159,15 @@ describe('getEncounters', () => {
     it('keeps them without probing them, so a run that cannot confirm one changes nothing', async () => {
       const probed: number[] = [];
       const { encounters, zones, reset } = await getEncounters(
-        contentClient({}, probed), SPEC_WCL, [ABYSS, SPOREFALL], NOW_MS);
+        contentClient({}, probed), SPEC_WCL, [ABYSS, SPOREFALL], NOW_S);
       expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
       expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445, 3159]);
       expect(reset).toBe(false);
-      // Only the two unrecorded zones are probed; a recorded raid is taken on trust.
       expect([...new Set(probed)].sort((a, b) => a - b)).toEqual([3176, 3591]);
     });
 
     it('lets a second raid join an existing one instead of replacing it, protecting both', async () => {
-      const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [SPOREFALL], NOW_MS);
+      const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [SPOREFALL], NOW_S);
       expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
       expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);
       expect(reset).toBe(true);
@@ -178,7 +176,7 @@ describe('getEncounters', () => {
     it('retires a recorded raid WCL has frozen or dropped, and stops protecting its encounters', async () => {
       const RETIRED = 44;
       const { zones, protectedIds, reset } = await getEncounters(
-        contentClient(), SPEC_WCL, [ABYSS, SPOREFALL, RETIRED], NOW_MS);
+        contentClient(), SPEC_WCL, [ABYSS, SPOREFALL, RETIRED], NOW_S);
       expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
       expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);
       expect(reset).toBe(true);
@@ -187,7 +185,7 @@ describe('getEncounters', () => {
 
     it('propagates a BudgetExceededError raised while probing', async () => {
       const client = contentClient({ assertBudget: () => { throw new BudgetExceededError('low'); } });
-      await expect(getEncounters(client, SPEC_WCL, [], NOW_MS)).rejects.toThrow(BudgetExceededError);
+      await expect(getEncounters(client, SPEC_WCL, [], NOW_S)).rejects.toThrow(BudgetExceededError);
     });
   });
 });
@@ -211,7 +209,7 @@ describe('getRankingsLite', () => {
     expect(queried).toEqual([3, 2]);
     expect(ranked).toHaveLength(1);
     assert.exists(ranked[0]);
-    expect(ranked[0].name).toBe('A');
+    expect(ranked[0].player).toBe('A');
   });
 
   it('passes the caller\'s difficulty through to the rankings query', async () => {
@@ -232,7 +230,7 @@ describe('getRankingsLite', () => {
     });
     const ranked = await getRankingsLite(client, 'SubtletyRogue', 100, SPEC_WCL, 10, [], MYTHIC_DIFFICULTY);
     assert.exists(ranked[0]);
-    expect(ranked[0].name).toBe('A');
+    expect(ranked[0].player).toBe('A');
   });
 });
 

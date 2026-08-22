@@ -76,6 +76,7 @@ export interface ParseRanking {
   server: string;
   report_code: string;
   fight_id: number;
+  started_at_s: number;
 }
 
 export interface WclGearItem {
@@ -117,7 +118,6 @@ export interface WclRawRanking {
   name?: string;
   server?: { name?: string };
   report?: { code?: string; fightID?: number };
-  /** Pull start, epoch MILLISECONDS (not the seconds the rest of the app uses). */
   startTime?: number;
 }
 

@@ -5,7 +5,6 @@ export interface SpecEntry {
   encounter_count: number;
 }
 
-/** One raid the dataset benches. Recorded so a tier change is a one-time transition, never re-decided from a fresh probe each run. */
 export interface CurrentRaid {
   zone_id: number;
   zone_name: string;

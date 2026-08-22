@@ -33,7 +33,6 @@ export class DataFileApiService {
     return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
   }
 
-  /** A missing file is the no-record state a dataset predating this record starts from, not an error. */
   async getCurrentRaids(): Promise<Result<CurrentRaid[]>> {
     return foldMissingToEmpty(await this.io.readJson<CurrentRaid[]>('current-raids.json'));
   }

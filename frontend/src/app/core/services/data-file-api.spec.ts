@@ -98,7 +98,6 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(present).getCurrentRaids()).toEqual(ok(raids));
     expect(present.reads).toEqual(['current-raids.json']);
 
-    // A real read failure must not read as the no-record state.
     const fresh = new RecordingTransport(missing('Not yet ingested.'));
     expect(await withTransport(fresh).getCurrentRaids()).toEqual(ok([]));
 
