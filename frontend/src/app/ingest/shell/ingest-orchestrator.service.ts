@@ -9,7 +9,6 @@ import { SpecMetaService } from '../../core/services/spec-meta';
 import { logWarn } from '../../core/log';
 import { type LoadError } from '../../core/result';
 import { resolveTopParses } from '../../shared/analysis/top-parse-selection';
-import type { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
 import type { TopParseSelection } from '../../core/models/wcl.models';
 import { RATE_LIMIT_Q, CLASSES_Q } from '../../core/services/wcl-queries';
 import type { ClassesQuery, RateLimitQuery } from '../../core/services/wcl-operations.generated';
@@ -18,14 +17,12 @@ import { getEncounters } from '../wcl-fetchers';
 import { mapClassesToSpecMeta, parseRaidNames } from '../wcl-mappers';
 import { type WclQueryClient, BudgetExceededError } from '../wcl-client';
 import { INGEST_VERSION } from '../ingest-version';
-import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs, type SpecOrderEntry } from '../ordering';
+import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs } from '../ordering';
+import { signatureAfterFetch, stampSignature, stampBurstFile, type IngestStamp } from '../signature';
+import { type SpecIngestState } from '../ingest-state';
 import {
-  encounterSkipKey, signatureAfterFetch, stampSignature, stampBurstFile, type IngestStamp,
-} from '../signature';
-import { readStoredMetadata, signatureMatches, type StampedFile } from '../../core/data-source/metadata/stored-metadata';
-import {
-  readIngestState, nextIngestState, prunedIngestState, encounterIdsFromFiles, type SpecIngestState,
-} from '../ingest-state';
+  benchSkipDecision, pruneRetiredEncounters, readSpecDataset, readSpecFreshness, rebuildIndices, recordSpecPass,
+} from '../spec-dataset';
 import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from '../spec-report';
 import type { IngestEncounter } from '../models/wcl.models';
 
@@ -55,13 +52,6 @@ function nowS(): number {
 
 function publishSummary(summary: IngestRunSummary): void {
   (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
-}
-
-/** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
-export function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntry[]): EncounterEntry[] {
-  if (!current.length) return onDisk;
-  const samplesById = new Map(onDisk.map(entry => [entry.id, entry.sample_count]));
-  return current.map(encounter => ({ id: encounter.id, name: encounter.name, sample_count: samplesById.get(encounter.id) ?? 0 }));
 }
 
 class ApiWclClient implements WclQueryClient {
@@ -126,7 +116,7 @@ export class IngestOrchestratorService {
     const { encounters, protectedIds } = await getEncounters(client, raidNames);
     console.log(`${encounters.length} encounters`);
     await this.pruneRetiredRaids(protectedIds);
-    await this.refreshIndices(encounters);
+    await rebuildIndices(this.dataFile, encounters);
 
     const specs = await this.orderedSpecsFromDisk();
     if (!specs.length) {
@@ -161,25 +151,11 @@ export class IngestOrchestratorService {
     console.log(`Resolved ${metas.length} specs from WCL`);
   }
 
-
-
-  /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
   private async pruneRetiredRaids(protectedIds: Set<number>): Promise<void> {
-    // An unset CURRENT_RAIDS names no raid, which must not read as "prune everything".
-    if (protectedIds.size === 0) return;
-    for (const spec of await this.dataFile.listSpecs()) {
-      const pruned = await this.pruneStaleEncounters(spec, protectedIds);
-      if (pruned.length) console.log(`  [${spec}] pruned ${pruned.length} stale encounter(s): ${pruned.join(', ')}`);
-      await this.pruneIngestState(spec, protectedIds);
+    const sliceFiles = this.slices.map(slice => slice.file);
+    for (const { spec, encounterIds } of await pruneRetiredEncounters(this.dataFile, sliceFiles, protectedIds)) {
+      console.log(`  [${spec}] pruned ${encounterIds.length} stale encounter(s): ${encounterIds.join(', ')}`);
     }
-  }
-
-  /** Every run, so samples ingested for a spec that is not selected again still surface in its index. */
-  private async refreshIndices(encounters: IngestEncounter[]): Promise<void> {
-    for (const spec of await this.dataFile.listSpecs()) {
-      await this.rebuildEncountersIndex(spec, encounters);
-    }
-    await this.rebuildSpecIndex();
   }
 
   private async ingestEachSpec(
@@ -233,41 +209,20 @@ export class IngestOrchestratorService {
     }
     if (!withRulebook.length) return [];
 
-    const orderInputs = await Promise.all(withRulebook.map(async spec => {
-      const benched = await this.benchedIds(spec);
-      const state = await this.loadIngestState(spec);
-      const emptyIds = state?.empty_encounter_ids ?? [];
-      const stamps = await Promise.all(benched.map(async id => {
-        const slice = await this.dataFile.getSlice<StampedFile>(spec, id, 'burst');
-        return readStoredMetadata(slice.ok ? slice.value : null);
-      }));
-      const versions = stamps.map(stamp => stamp.version);
-      if (state) versions.push(state.ingest_version);
-      const storedVersions = versions.filter((stored): stored is number => stored !== null);
-      const storedTimes = stamps
-        .map(stamp => stamp.ingestedAtS)
-        .filter((stored): stored is number => stored !== null);
-      if (state) storedTimes.push(state.ingested_at_s);
-      const entry: SpecOrderEntry = {
-        spec,
-        checkedCount: new Set([...benched, ...emptyIds]).size,
-        onCurrentVersion: versions.length > 0 && versions.every(stored => stored === INGEST_VERSION),
-      };
-      // Worst version but most recent write: "still on v23", "last ingested 3h ago".
-      const displayVersion = storedVersions.length ? Math.min(...storedVersions) : null;
-      const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
-      return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
-    }));
+    const freshness = new Map(await Promise.all(withRulebook.map(async spec =>
+      [spec, await readSpecFreshness(this.dataFile, spec)] as const)));
     const prioritySpecs = parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
-    const { ordered, selected } = specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
-    const displayBySpec = new Map(orderInputs.map(input => [input.entry.spec, input] as const));
+    const { ordered, selected } = specsForRun(
+      [...freshness].map(([spec, fresh]) => ({ spec, checkedCount: fresh.checkedCount, onCurrentVersion: fresh.onCurrentVersion })),
+      prioritySpecs,
+    );
     const selectedSpecs = new Set(selected);
     const rows: SpecReportRow[] = ordered.map(spec => ({
       spec,
-      version: displayBySpec.get(spec)?.displayVersion ?? null,
-      ingestedAtS: displayBySpec.get(spec)?.displayIngestedAtS ?? null,
-      checkedCount: displayBySpec.get(spec)?.entry.checkedCount ?? 0,
-      emptyCount: displayBySpec.get(spec)?.emptyCount ?? 0,
+      version: freshness.get(spec)?.version ?? null,
+      ingestedAtS: freshness.get(spec)?.ingestedAtS ?? null,
+      checkedCount: freshness.get(spec)?.checkedCount ?? 0,
+      emptyCount: freshness.get(spec)?.emptyCount ?? 0,
       selected: selectedSpecs.has(spec),
     }));
     console.log(
@@ -284,8 +239,7 @@ export class IngestOrchestratorService {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
-    const previousState = await this.loadIngestState(spec);
-    const checkedIds = new Set([...await this.benchedIds(spec), ...previousState?.empty_encounter_ids ?? []]);
+    const { state: previousState, checkedIds } = await readSpecDataset(this.dataFile, spec);
     const emptyThisPass: number[] = [];
 
     try {
@@ -299,15 +253,14 @@ export class IngestOrchestratorService {
           continue;
         }
 
-        const existingResult = await this.dataFile.getSlice<StampedFile>(spec, encounter.id, 'burst');
-        const existing = readStoredMetadata(existingResult.ok ? existingResult.value : null);
-        const skipKey = encounterSkipKey(selection.rows, existing.inaccessibleParses, version, TOP_N);
-        if (signatureMatches(existing.signature, skipKey)) {
-          console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
+        const { skip, signature } = await benchSkipDecision(
+          this.dataFile, spec, encounter.id, { rows: selection.rows, version, topN: TOP_N });
+        if (skip) {
+          console.log(`  [${encounter.name}] unchanged (signature ${signature}), skipped`);
           continue;
         }
 
-        console.log(`  [${encounter.name}] computing slices (signature ${skipKey})...`);
+        console.log(`  [${encounter.name}] computing slices (signature ${signature})...`);
         let outcome: EncounterOutcome;
         try {
           outcome = await this.ingestEncounter(spec, encounter, version, selection);
@@ -332,30 +285,12 @@ export class IngestOrchestratorService {
     return false;
   }
 
-  private benchedIds(spec: string): Promise<number[]> {
-    return this.dataFile.listSliceFiles(spec, 'burst').then(encounterIdsFromFiles);
-  }
-
-  private async loadIngestState(spec: string): Promise<SpecIngestState | null> {
-    const stored = await this.dataFile.getIngestState(spec);
-    return stored.ok ? readIngestState(stored.value) : null;
-  }
-
-  private async pruneIngestState(spec: string, protectedIds: Set<number>): Promise<void> {
-    const pruned = prunedIngestState(await this.loadIngestState(spec), protectedIds);
-    if (pruned) await this.dataFile.writeIngestState(spec, pruned);
-  }
-
-  /** Re-lists the benched ids rather than tracking this pass's writes, so a mark still clears after a run that died between writing a bench and updating the marker. */
-  private async finishSpec(
+  private finishSpec(
     spec: string, encounters: IngestEncounter[],
     previous: SpecIngestState | null, emptyThisPass: readonly number[],
   ): Promise<void> {
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
-    const benched = new Set(await this.benchedIds(spec));
-    await this.dataFile.writeIngestState(spec, nextIngestState(previous, emptyThisPass, benched, stamp));
-    await this.rebuildEncountersIndex(spec, encounters);
-    await this.rebuildSpecIndex();
+    return recordSpecPass(this.dataFile, spec, { previous, emptyIds: emptyThisPass, encounters, stamp });
   }
 
   /** Compute every slice first, THEN stamp + write: the signature is known only after every transform has fetched. */
@@ -398,47 +333,5 @@ export class IngestOrchestratorService {
     if (burst.ok) return 'benched';
     // Marking a transient or permanent failure empty would defeat the retry `stampBurstFile` leaves open.
     return burst.error.kind === 'missing' ? 'empty' : 'failed';
-  }
-
-  private async rebuildEncountersIndex(spec: string, current: IngestEncounter[]): Promise<void> {
-    const onDisk: EncounterEntry[] = [];
-    for (const encId of await this.benchedIds(spec)) {
-      const bench = await this.dataFile.getSlice<{ encounter_id?: number; encounter_name?: string; sample_count?: number }>(spec, encId, 'burst');
-      if (!bench.ok) continue;
-      onDisk.push({
-        id: bench.value.encounter_id ?? encId,
-        name: bench.value.encounter_name ?? String(encId),
-        sample_count: bench.value.sample_count ?? 0,
-      });
-    }
-    await this.dataFile.writeEncounters(spec, encounterIndexEntries(current, onDisk));
-  }
-
-  private async rebuildSpecIndex(): Promise<void> {
-    const specs = await this.dataFile.listSpecs();
-    const entries: SpecEntry[] = [];
-    for (const spec of specs.sort()) {
-      const encounters = await this.dataFile.getEncounters(spec);
-      // Zero-sample encounters count: gating on benched data would hide every spec while a new raid waits for its first Mythic parses.
-      const count = encounters.ok ? encounters.value.length : 0;
-      if (count > 0) entries.push({ spec, encounter_count: count });
-    }
-    await this.dataFile.writeSpecs(entries);
-  }
-
-  private async pruneStaleEncounters(spec: string, protectedIds: Set<number>): Promise<number[]> {
-    const removed: number[] = [];
-    for (const encId of await this.benchedIds(spec)) {
-      if (protectedIds.has(encId)) continue;
-      for (const { file: slice } of this.slices) {
-        try {
-          await this.dataFile.removeSlice(spec, encId, slice);
-        } catch (err) {
-          logWarn(`pruneStaleEncounters ${spec}/${encId}/${slice}`, err);
-        }
-      }
-      removed.push(encId);
-    }
-    return removed;
   }
 }

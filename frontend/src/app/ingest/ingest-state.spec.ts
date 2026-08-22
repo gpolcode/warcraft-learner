@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  readIngestState, nextIngestState, prunedIngestState, encounterIdsFromFiles,
-  type SpecIngestState,
-} from './ingest-state';
+import { readIngestState, nextIngestState, prunedIngestState, type SpecIngestState } from './ingest-state';
 import { type IngestStamp } from './signature';
 
 const NEKZALI = 3470;
@@ -97,23 +94,5 @@ describe('prunedIngestState', () => {
     const pruned = prunedIngestState(previous, new Set([NEKZALI]));
     expect(pruned?.ingest_version).toBe(EARLIER.version);
     expect(pruned?.ingested_at_s).toBe(EARLIER.ingestedAtS);
-  });
-});
-
-describe('encounterIdsFromFiles', () => {
-  // "10.json" sorts before "9.json" lexicographically; these ids pin the numeric order.
-  const LOW_ID = 9;
-  const HIGH_ID = 10;
-
-  it('reads ids in numeric order', () => {
-    expect(encounterIdsFromFiles([`${HIGH_ID}.json`, `${LOW_ID}.json`])).toEqual([LOW_ID, HIGH_ID]);
-  });
-
-  it('reads an encounter id from a bench filename', () => {
-    expect(encounterIdsFromFiles([`${NEKZALI}.json`])).toEqual([NEKZALI]);
-  });
-
-  it('skips a crashed temp write, a non-numeric name, and a non-json file', () => {
-    expect(encounterIdsFromFiles([`${NEKZALI}.json.7.0.tmp`, 'rulebook.json', '.gitkeep'])).toEqual([]);
   });
 });

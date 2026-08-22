@@ -45,12 +45,3 @@ export function prunedIngestState(
   if (kept.length === previous.empty_encounter_ids.length) return null;
   return { ...previous, empty_encounter_ids: kept };
 }
-
-/** The file server's crashed temp writes are named `<id>.json.<pid>.<n>.tmp`, so only an exact `.json` name is an encounter. */
-export function encounterIdsFromFiles(files: readonly string[]): number[] {
-  return files
-    .filter(file => file.endsWith('.json'))
-    .map(file => parseInt(file))
-    .filter(id => Number.isFinite(id))
-    .sort((a, b) => a - b);
-}
