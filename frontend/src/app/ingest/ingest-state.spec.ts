@@ -101,7 +101,7 @@ describe('prunedIngestState', () => {
 });
 
 describe('encounterIdsFromFiles', () => {
-  // Lexicographic order puts "10.json" before "9.json"; these pin the numeric order the callers rely on.
+  // "10.json" sorts before "9.json" lexicographically; these ids pin the numeric order.
   const LOW_ID = 9;
   const HIGH_ID = 10;
 

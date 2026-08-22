@@ -111,7 +111,6 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('ranks a spec whose checked encounters are all empty with the specs that have data', () => {
-    // The empty spec carries no bench, so only the marker keeps it out of the never-checked group.
     const order = orderSpecsByVersion(
       [
         entry({ spec: 'Benched', onCurrentVersion: true }),

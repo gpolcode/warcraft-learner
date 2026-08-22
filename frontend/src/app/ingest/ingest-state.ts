@@ -1,4 +1,3 @@
-// On disk a never-checked encounter and one WCL has no Mythic parses for look identical (no burst file); this marker separates them so the second stops outranking the specs that need refreshing.
 import * as z from '../core/zod-mini';
 import { type IngestStamp } from './signature';
 
@@ -14,7 +13,7 @@ const INGEST_STATE_SCHEMA = z.looseObject({
   empty_encounter_ids: z.array(z.number()),
 });
 
-/** A malformed marker reads as no marker: the spec loop that reads it has no per-spec catch, so throwing there would abort the whole run. */
+/** The spec loop that reads this has no per-spec catch, so a throw here aborts the whole run. */
 export function readIngestState(parsed: unknown): SpecIngestState | null {
   const file = INGEST_STATE_SCHEMA.safeParse(parsed);
   if (!file.success) return null;
@@ -22,7 +21,6 @@ export function readIngestState(parsed: unknown): SpecIngestState | null {
   return { ingest_version, ingested_at_s, empty_encounter_ids };
 }
 
-/** `benchedIds` comes from re-listing the burst directory, so a mark clears itself even when an earlier run died between writing a bench and updating the marker. */
 export function nextIngestState(
   previous: SpecIngestState | null,
   emptyThisPass: readonly number[],
@@ -37,7 +35,7 @@ export function nextIngestState(
   };
 }
 
-/** Null means nothing to write, so the prune pass never restamps a marker it did not change and the report's age column keeps naming the real last check. */
+/** Null when nothing changed: writing anyway restamps every marker each run and the age column stops naming the real last check. */
 export function prunedIngestState(
   previous: SpecIngestState | null,
   keepIds: ReadonlySet<number>,

@@ -347,7 +347,7 @@ export class IngestOrchestratorService {
     if (pruned) await this.dataFile.writeIngestState(spec, pruned);
   }
 
-  /** Writing the marker on the budget path too is what lets a repeatedly stopped spec advance past the prefix it already checked. */
+  /** Re-lists the benched ids rather than tracking this pass's writes, so a mark still clears after a run that died between writing a bench and updating the marker. */
   private async finishSpec(
     spec: string, encounters: IngestEncounter[],
     previous: SpecIngestState | null, emptyThisPass: readonly number[],
@@ -404,7 +404,7 @@ export class IngestOrchestratorService {
 
     await Promise.all(writes);
     if (burst.ok) return 'benched';
-    // A transient or permanent burst failure is not an empty encounter: marking it would push its spec out of the never-checked group and defeat the retry `stampBurstFile` leaves open.
+    // Marking a transient or permanent failure empty would defeat the retry `stampBurstFile` leaves open.
     return burst.error.kind === 'missing' ? 'empty' : 'failed';
   }
 
