@@ -1,8 +1,7 @@
-/** Stubs the services and slice tokens a page shell needs before its template will render. */
 import { InjectionToken, Provider, signal } from '@angular/core';
 import { Result, missing } from '../app/core/result';
 
-/** Callers pass their own `*_DATA_SOURCE` tokens: only the page layer may name a slice. */
+/** Callers pass their own `*_DATA_SOURCE` tokens, since only the page layer may name a slice. */
 export function stubBenchTokens(
   tokens: readonly InjectionToken<unknown>[],
   bench: Result<never> = missing('Not yet ingested.'),
@@ -13,7 +12,6 @@ export function stubBenchTokens(
   }));
 }
 
-/** The surface both page templates read through the embedded map panel; the map has its own specs. */
 export function mapFeatureStub(): unknown {
   return {
     clear: () => undefined,

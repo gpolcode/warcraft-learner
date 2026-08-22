@@ -26,7 +26,6 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
 const render = (windows: ComparisonWindow[], inputs: Record<string, unknown> = {}): MountedDom =>
   mountDom(WindowComparisonComponent, { windows, ...inputs });
 
-/** The chip a raider sees highlighted, read the way a screen reader reads it. */
 function selectedChip(dom: MountedDom): number {
   return dom.queryAll(CHIP).findIndex(chip => chip.getAttribute('aria-selected') === 'true');
 }
@@ -155,7 +154,7 @@ describe('WindowComparisonComponent damage bar', () => {
       win({ topAvg: 90, topMax: 120, playerPct: MAX_PLAYER_PCT }),
     ]);
 
-    // Window 1 (ratio 1.8) is the worst against its own top avg, so it opens: 180 of a 300 scale.
+    // Window 1 has the worst ratio against its own top avg, so it opens: 180 of a 300 scale.
     expect(dom.query(PLAYER_FILL)?.style.width).toBe('60%');
 
     dom.queryAll(CHIP)[1]?.click();

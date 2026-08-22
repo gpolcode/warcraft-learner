@@ -1,4 +1,3 @@
-/** Renders the post-raid page for real, so its specs paste into the same field and read the same selects a raider does. */
 import { assert } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Provider } from '@angular/core';
@@ -17,7 +16,7 @@ import { MapFeatureService } from './map/map.service';
 import { PostRaidComponent } from './post-raid';
 import { postRaidProviders } from './post-raid-harness';
 
-// Every slice the page shell mounts a card for; a card cannot construct without its data source.
+// A card cannot construct without its data source, so every slice the shell mounts one for is listed here.
 const SLICE_TOKENS = [
   BURST_DATA_SOURCE, ROTATION_DATA_SOURCE, DEFENSIVE_DATA_SOURCE,
   GEAR_DATA_SOURCE, MAP_DATA_SOURCE, NORTHERN_SKY_DATA_SOURCE,
@@ -27,31 +26,26 @@ export const FIGHT_SELECT = 0;
 export const PLAYER_SELECT = 1;
 
 export interface PostRaidPage {
-  /** Types into the report field and presses Enter, which is how a raider starts a load. */
   submitReport(text: string): void;
-  /** Fires a real paste on the real input, honouring the caret and any selected range. */
   paste(text: string, opts?: { value?: string; start?: number; end?: number }): void;
   reportValue(): string;
   options(index: number): string[];
   choose(index: number, optionText: string): void;
-  /** The label the closed select shows, which is what names the current fight or player on screen. */
   chosen(index: number): string;
   text(): string;
-  /** Drains the page's pending loads and re-renders, so a read after it sees the settled screen. */
   settled(): Promise<void>;
 }
 
-/** `extraProviders` land last, so a test can override a harness default (a real store, recording slice tokens). */
+/** `extraProviders` land last, so a test can override a harness default. */
 export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): PostRaidPage {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     imports: [PostRaidComponent],
     providers: [
       ...postRaidProviders(wclApi),
-      // The real service, after the harness fake so it wins: the live controls in the page header read its full surface.
+      // After the harness fake so it wins: the header's live controls read a surface the fake does not carry.
       LiveCaptureFeatureService,
       { provide: MapFeatureService, useValue: mapFeatureStub() },
-      // Feeds the class/spec icons behind the player select; the page never reads a data file itself.
       { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(ok([])) } },
       ...stubBenchTokens(SLICE_TOKENS),
       ...extraProviders,
@@ -84,7 +78,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     return select;
   };
 
-  // Driven by hand rather than through a Material harness, which would await a stability the parked fetches never reach.
+  // Not a Material harness: it awaits a stability the parked fetches never reach.
   const openOptions = (index: number): HTMLElement[] => {
     const select = selectAt(index);
     const trigger = select.querySelector<HTMLElement>('.mat-mdc-select-trigger');

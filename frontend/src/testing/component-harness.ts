@@ -1,4 +1,3 @@
-/** Harness for testing signal view-models; deliberately does NOT call `detectChanges()`, so lifecycle hooks (`ngOnInit`/`ngOnChanges`) - where components do their network I/O - never run. */
 import { Type, provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
@@ -8,6 +7,7 @@ export interface MountedVm<T> {
   setInput: (name: string, value: unknown) => void;
 }
 
+/** Never calls `detectChanges()`, so the lifecycle hooks where components do their network I/O never run. */
 export function mountVm<T>(
   type: Type<T>,
   inputs: Record<string, unknown> = {},
@@ -26,23 +26,17 @@ export function mountVm<T>(
 }
 
 export interface MountedDom {
-  /** Whitespace-collapsed text of the whole host, for asserting on rendered copy. */
   text: () => string;
-  /** First match, or null when the branch under test renders nothing. */
   query: (selector: string) => HTMLElement | null;
   queryAll: (selector: string) => HTMLElement[];
-  /** Whitespace-collapsed text of each match, the usual shape for asserting on a list of rows or chips. */
   textAll: (selector: string) => string[];
-  /** Dispatches a real event and re-renders, so a click reaches the same handler the browser would. */
   dispatch: (target: HTMLElement, event: Event) => void;
   click: (selector: string) => void;
   setInput: (name: string, value: unknown) => void;
-  /** Collects everything the named output emits; the array fills as the test drives the DOM. */
   on: (name: string) => unknown[];
   detectChanges: () => void;
 }
 
-/** Renders a component and reads it back through the DOM, which is the seam its consumers actually see. */
 export function mountDom<T>(
   type: Type<T>,
   inputs: Record<string, unknown> = {},
@@ -58,7 +52,7 @@ export function mountDom<T>(
   fixture.detectChanges();
   const host = fixture.nativeElement as HTMLElement;
   const clean = (el: Element): string => el.textContent.replace(/\s+/g, ' ').trim();
-  // Unscoped selectors match against the whole document, so a structural one like `div > div:last-child` can bind to a TestBed wrapper outside the component and return the wrong node.
+  // `querySelector` matches a selector against the whole document, so an unscoped `div > div:last-child` can bind to a TestBed wrapper outside the component.
   const scoped = (selector: string): string => selector.startsWith(':scope') ? selector : `:scope ${selector}`;
   const query = (selector: string): HTMLElement | null => host.querySelector(scoped(selector));
   return {
@@ -86,7 +80,6 @@ export function mountDom<T>(
   };
 }
 
-// A status badge reaches the DOM only as its class, so this reads the semantic half back out.
 const BADGE_CLASS = /^badge-(\w+)$/;
 
 export function badgeStatus(el: HTMLElement | null): string | null {

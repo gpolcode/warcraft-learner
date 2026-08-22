@@ -18,7 +18,6 @@ function staticSelection(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS): Parti
   };
 }
 
-/** Walks the page the way a raider does: class, then spec, then encounter. */
 async function pickThrough(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS) {
   const page = preFightPage(staticSelection(encounters));
   await page.settled();

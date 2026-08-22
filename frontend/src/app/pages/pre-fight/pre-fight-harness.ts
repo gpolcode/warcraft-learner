@@ -1,4 +1,3 @@
-/** Renders the pre-fight page for real, so its specs drive the same selects and read the same cards a raider does. */
 import { assert } from 'vitest';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -19,7 +18,7 @@ import { MapFeatureService } from '../post-raid/map/map.service';
 import { EncounterSelectionService } from './encounter-selection.service';
 import { PreFightComponent } from './pre-fight';
 
-// Every slice the page shell mounts a card for; a card cannot construct without its data source.
+// A card cannot construct without its data source, so every slice the shell mounts one for is listed here.
 const SLICE_TOKENS = [
   BURST_DATA_SOURCE, ROTATION_DATA_SOURCE, DEFENSIVE_DATA_SOURCE,
   GEAR_DATA_SOURCE, MAP_DATA_SOURCE, NORTHERN_SKY_DATA_SOURCE,
@@ -46,7 +45,7 @@ export const SPEC_INDEX: SpecEntry[] = [
   { spec: FROST_MAGE, encounter_count: 2 },
 ];
 
-/** The order the three selects render in; the later two appear only once their gate opens. */
+/** An index is addressable only once its gate opens: no spec select before a class, no encounter select before a spec. */
 export const CLASS_SELECT = 0;
 export const SPEC_SELECT = 1;
 export const ENCOUNTER_SELECT = 2;
@@ -54,11 +53,10 @@ export const ENCOUNTER_SELECT = 2;
 export interface PreFightPage {
   readonly fixture: ComponentFixture<PreFightComponent>;
   selectCount(): number;
-  /** Opens the select, reads its option labels, and closes it again. */
   options(index: number): string[];
   choose(index: number, optionText: string): void;
   text(): string;
-  /** Present only while `selectedEncId()` holds, so it doubles as the encounter-gated card check. */
+  /** The export card renders only while `selectedEncId()` holds, so its presence is the gate. */
   cardsShown(): boolean;
   settled(): Promise<void>;
   render(): void;
@@ -80,7 +78,7 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
         },
       },
       { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(ok(SPEC_META)) } },
-      // The gear card's feature service injects this at construction; a benched-missing page never calls it.
+      // Injected at construction by the gear card, never called on a benched-missing page.
       { provide: WclApiService, useValue: {} },
       ...stubBenchTokens(SLICE_TOKENS),
     ] as never[],
@@ -93,7 +91,7 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
   const clean = (el: Element): string => el.textContent.replace(/\s+/g, ' ').trim();
   const render = (): void => { fixture.detectChanges(); };
 
-  // The page holds a pending task while encounters load, so `whenStable()` deadlocks on a parked read; these drive the overlay by hand instead.
+  // Driven by hand: the page holds a pending task while encounters load, so `whenStable()` deadlocks on a parked read.
   const selectAt = (index: number): HTMLElement => {
     const select = host().querySelectorAll<HTMLElement>('mat-select')[index];
     assert.exists(select);
@@ -137,7 +135,6 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
   };
 }
 
-/** An `EncounterSelectionService` whose encounter reads are held open, so a test decides the order two specs resolve in. */
 export class ParkedEncounterSelection {
   private readonly resolvers = new Map<string, (result: Result<EncounterEntry[]>) => void>();
 

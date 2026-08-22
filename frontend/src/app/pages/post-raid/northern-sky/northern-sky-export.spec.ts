@@ -25,7 +25,6 @@ const POPULATED_ABILITIES = [ability(SHADOW_BLADES, 'cooldown'), ability(EVASION
 
 interface Mounted {
   readonly dom: MountedDom;
-  /** Every note handed to the clipboard, so a copy is asserted by what it would paste. */
   readonly copies: string[];
 }
 
