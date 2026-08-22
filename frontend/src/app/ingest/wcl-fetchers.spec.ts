@@ -4,7 +4,6 @@ import type { WclQueryClient } from './wcl-client';
 
 const ABYSS = 53, SPOREFALL = 50;
 
-// Modeled on the real Midnight worldData: a frozen copy of the current raid shares its name, and last tier is still listed unfrozen.
 const expansions = [{
   id: 7, name: 'Midnight', zones: [
     { id: 46, name: 'VS / DR / MQD', frozen: false, encounters: [{ id: 3176, name: 'Imperator' }] },
@@ -17,7 +16,7 @@ const expansions = [{
 function fakeClient(response: unknown = { worldData: { expansions } }): WclQueryClient {
   return {
     async query() { return response as never; },
-    async assertBudget() { /* the raid list costs one query, so the budget never gates it */ },
+    async assertBudget() { /* no-op */ },
   };
 }
 

@@ -48,7 +48,7 @@ function publishSummary(summary: IngestRunSummary): void {
   (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
 }
 
-/** The index lists the current zone's encounters even at zero samples (they must stay selectable while a new raid waits for parses); an empty `current` (no live zone resolved) keeps the on-disk entries so one bad discovery never blanks the UI. */
+/** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
 export function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntry[]): EncounterEntry[] {
   if (!current.length) return onDisk;
   const samplesById = new Map(onDisk.map(entry => [entry.id, entry.sample_count]));
@@ -154,8 +154,9 @@ export class IngestOrchestratorService {
 
 
 
-  /** Runs before spec selection: pruning only the selected specs leaves them at zero data and permanently re-selected. */
+  /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
   private async pruneRetiredRaids(protectedIds: Set<number>): Promise<void> {
+    // An unset CURRENT_RAIDS names no raid, which must not read as "prune everything".
     if (protectedIds.size === 0) return;
     for (const spec of await this.dataFile.listSpecs()) {
       const pruned = await this.pruneStaleEncounters(spec, protectedIds);

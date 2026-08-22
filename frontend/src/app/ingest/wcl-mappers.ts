@@ -1,5 +1,3 @@
-// Ranking selection is the shared `toParseRankings` (shared/analysis/wcl-projections.ts).
-
 import { logWarn } from '../core/log';
 import type { ClassesQuery, EncountersQuery } from '../core/services/wcl-operations.generated';
 import type { IngestEncounter } from './models/wcl.models';
@@ -31,7 +29,6 @@ export function mapClassesToSpecMeta(classes: WclGameClasses): SpecMeta[] {
   return metas;
 }
 
-/** Blank input yields no raid, which the caller reads as "prune nothing" rather than "prune everything". */
 export function parseRaidNames(raw: string | null | undefined): string[] {
   return (raw ?? '').split(',').map(name => name.trim()).filter(name => name.length > 0);
 }
@@ -40,7 +37,7 @@ type WclZone = NonNullable<NonNullable<NonNullable<WclExpansions[number]>['zones
 
 const zoneKey = (name: string): string => name.trim().toLowerCase();
 
-/** WCL keeps a frozen copy of a raid under the same name, and its encounter ids differ, so the newest unfrozen zone is the one being logged. */
+/** WCL keeps a frozen copy of a raid under the same name, with different encounter ids. */
 function currentZoneNamed(expansions: WclExpansions, name: string): WclZone | null {
   const matches = (expansions[0]?.zones ?? [])
     // WCL omits `frozen` on some zones though the schema declares it non-null, so an absent one has to read as not-frozen.
@@ -48,7 +45,6 @@ function currentZoneNamed(expansions: WclExpansions, name: string): WclZone | nu
   return matches.sort((a, b) => (b?.id ?? 0) - (a?.id ?? 0))[0] ?? null;
 }
 
-/** In the order the raids were named; a name WCL has no current zone for is warned about and contributes none. */
 export function encountersForRaids(expansions: WclExpansions, raidNames: string[]): IngestEncounter[] {
   const result: IngestEncounter[] = [];
   for (const name of raidNames) {

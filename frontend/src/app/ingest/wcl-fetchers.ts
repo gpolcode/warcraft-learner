@@ -5,13 +5,10 @@ import { encountersForRaids } from './wcl-mappers';
 import type { IngestEncounter } from './models/wcl.models';
 
 export interface CurrentContent {
-  /** Empty leaves the dataset untouched. */
   encounters: IngestEncounter[];
-  /** Everything outside this set is pruned, so an empty one has to mean "prune nothing". */
   protectedIds: Set<number>;
 }
 
-/** The named raids are the whole current content; anything else on disk is last tier. */
 export async function getEncounters(client: WclQueryClient, raidNames: string[]): Promise<CurrentContent> {
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
   // An empty expansion tree would resolve no encounter and prune every spec's data.

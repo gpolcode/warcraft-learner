@@ -57,8 +57,7 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # CURRENT_RAIDS (repo variable) names the raids to bench, comma separated, exactly as WCL spells the zone
-      # (e.g. "The Venomous Abyss"). Anything outside it is pruned each run; unset means ingest nothing and prune nothing.
+      # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
       # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see ordering.ts parsePrioritySpecs).
       - name: Run parse ingestion
         working-directory: frontend
