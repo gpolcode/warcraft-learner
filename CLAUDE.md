@@ -64,6 +64,7 @@ Load the matching skill(s) **before** you start that step. The `warcraft-*` skil
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
 | Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |
+| Writing or changing a `*.spec.ts`, or working test-first | **tdd** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the self-review checklist applies) |
 | Verifying a change runs / manual end-to-end check | run the relevant command from the Commands table above |
 
