@@ -28,6 +28,10 @@ import {
   stampSignature, stampBurstFile, readInaccessibleParses,
   type SignatureRanking, type SignedFile, type IngestStamp,
 } from '../signature';
+import {
+  readIngestState, nextIngestState, prunedIngestState, encounterIdsFromFiles, type SpecIngestState,
+} from '../ingest-state';
+import { encounterIndexEntries } from '../encounter-index';
 import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from '../spec-report';
 import type { IngestEncounter } from '../models/wcl.models';
 
@@ -39,6 +43,14 @@ const SLICE_CONCURRENCY = 3;
 
 // The skip check reads only `burst`'s source_signature, stamped only when every slice of the encounter produced data.
 const SLICES = ['burst', 'rotation', 'defensive', 'gear', 'northern-sky'] as const;
+
+type EncounterOutcome = 'benched' | 'empty' | 'failed';
+
+const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
+  benched: 'done',
+  empty: 'no parses to bench',
+  failed: 'bench load failed, retried next run',
+};
 
 /** Published on `globalThis.__INGEST_DONE__` - the headless harness's exit signal. */
 export interface IngestRunSummary {
@@ -59,13 +71,6 @@ function publishSummary(summary: IngestRunSummary): void {
 export function discoveryBudgetSummary(err: unknown): IngestRunSummary | null {
   if (err instanceof BudgetExceededError) return { succeeded: [], failed: [], budgetStopped: true };
   return null;
-}
-
-/** The index lists the current zone's encounters even at zero samples (they must stay selectable while a new raid waits for parses); an empty `current` (no live zone resolved) keeps the on-disk entries so one bad discovery never blanks the UI. */
-export function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntry[]): EncounterEntry[] {
-  if (!current.length) return onDisk;
-  const samplesById = new Map(onDisk.map(entry => [entry.id, entry.sample_count]));
-  return current.map(encounter => ({ id: encounter.id, name: encounter.name, sample_count: samplesById.get(encounter.id) ?? 0 }));
 }
 
 class ApiWclClient implements WclQueryClient {
@@ -196,6 +201,7 @@ export class IngestOrchestratorService {
     for (const spec of await this.dataFile.listSpecs()) {
       const pruned = await this.pruneStaleEncounters(spec, protectedIds);
       if (pruned.length) console.log(`  [${spec}] pruned ${pruned.length} stale encounter(s): ${pruned.join(', ')}`);
+      await this.pruneIngestState(spec, protectedIds);
       await this.rebuildEncountersIndex(spec, encounters);
     }
     await this.rebuildSpecIndex();
@@ -253,26 +259,29 @@ export class IngestOrchestratorService {
     if (!withRulebook.length) return [];
 
     const orderInputs = await Promise.all(withRulebook.map(async spec => {
-      const burstFiles = (await this.dataFile.listSliceFiles(spec, 'burst'))
-        .filter(file => file.endsWith('.json'));
-      const stamps = await Promise.all(burstFiles.map(async file => {
-        const slice = await this.dataFile.getSlice<SignedFile>(spec, parseInt(file), 'burst');
+      const benched = await this.benchedIds(spec);
+      const state = await this.loadIngestState(spec);
+      const emptyIds = state?.empty_encounter_ids ?? [];
+      const stamps = await Promise.all(benched.map(async id => {
+        const slice = await this.dataFile.getSlice<SignedFile>(spec, id, 'burst');
         return slice.ok ? slice.value : null;
       }));
       const versions = stamps.map(file => (file ? readStoredVersion(file) : null));
+      if (state) versions.push(state.ingest_version);
       const storedVersions = versions.filter((stored): stored is number => stored !== null);
       const storedTimes = stamps
         .map(file => (file ? readStoredIngestedAt(file) : null))
         .filter((stored): stored is number => stored !== null);
+      if (state) storedTimes.push(state.ingested_at_s);
       const entry: SpecOrderEntry = {
         spec,
-        dataCount: burstFiles.length,
-        onCurrentVersion: burstFiles.length > 0 && versions.every(stored => stored === INGEST_VERSION),
+        checkedCount: new Set([...benched, ...emptyIds]).size,
+        onCurrentVersion: versions.length > 0 && versions.every(stored => stored === INGEST_VERSION),
       };
       // Worst version but most recent write: "still on v23", "last ingested 3h ago".
       const displayVersion = storedVersions.length ? Math.min(...storedVersions) : null;
       const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
-      return { entry, displayVersion, displayIngestedAtS };
+      return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
     }));
     const prioritySpecs = parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
     const { ordered, selected } = specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
@@ -282,6 +291,7 @@ export class IngestOrchestratorService {
       spec,
       version: displayBySpec.get(spec)?.displayVersion ?? null,
       ingestedAtS: displayBySpec.get(spec)?.displayIngestedAtS ?? null,
+      emptyCount: displayBySpec.get(spec)?.emptyCount ?? 0,
       selected: selectedSpecs.has(spec),
     }));
     console.log(
@@ -297,21 +307,19 @@ export class IngestOrchestratorService {
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
 
-    // Feeds the missing-first order - a file-server-only signal, zero WCL budget.
-    const presentIds = new Set(
-      (await this.dataFile.listSliceFiles(spec, 'burst'))
-        .filter(file => file.endsWith('.json'))
-        .map(file => parseInt(file))
-        .filter(id => Number.isFinite(id)),
-    );
+    // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
+    const previousState = await this.loadIngestState(spec);
+    const checkedIds = new Set([...await this.benchedIds(spec), ...previousState?.empty_encounter_ids ?? []]);
+    const emptyThisPass: number[] = [];
 
     try {
-      for (const encounter of orderEncountersByMissingFirst(encounters, presentIds)) {
+      for (const encounter of orderEncountersByMissingFirst(encounters, checkedIds)) {
         await client.assertBudget(POINTS_MARGIN);
 
         const { rows: poolRows, partition } = await this.rankingPool(spec, encounter);
         if (!poolRows.length) {
           console.log(`  [${encounter.name}] no rankings, skipped`);
+          emptyThisPass.push(encounter.id);
           continue;
         }
 
@@ -324,28 +332,54 @@ export class IngestOrchestratorService {
         }
 
         console.log(`  [${encounter.name}] computing slices (signature ${skipKey})...`);
+        let outcome: EncounterOutcome;
         try {
-          const wrote = await this.ingestEncounter(spec, encounter, version, poolRows, partition);
-          console.log(`  [${encounter.name}] ${wrote ? 'done' : 'no slice data produced'}`);
+          outcome = await this.ingestEncounter(spec, encounter, version, poolRows, partition);
         } finally {
           // Drop this encounter's cached reports/events before the next one to bound memory.
           this.wclCache.clearCache();
         }
+        if (outcome === 'empty') emptyThisPass.push(encounter.id);
+        console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
       }
     } catch (err) {
       if (err instanceof BudgetExceededError) {
         console.log(`\n[budget] Stopping cleanly: ${err.message}`);
-        await this.rebuildEncountersIndex(spec, encounters);
-        await this.rebuildSpecIndex();
+        await this.finishSpec(spec, encounters, previousState, emptyThisPass);
         return true;
       }
       throw err;
     }
 
-    await this.rebuildEncountersIndex(spec, encounters);
-    await this.rebuildSpecIndex();
+    await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  private benchedIds(spec: string): Promise<number[]> {
+    return this.dataFile.listSliceFiles(spec, 'burst').then(encounterIdsFromFiles);
+  }
+
+  private async loadIngestState(spec: string): Promise<SpecIngestState | null> {
+    const stored = await this.dataFile.getIngestState(spec);
+    return stored.ok ? readIngestState(stored.value) : null;
+  }
+
+  private async pruneIngestState(spec: string, protectedIds: Set<number>): Promise<void> {
+    const pruned = prunedIngestState(await this.loadIngestState(spec), protectedIds);
+    if (pruned) await this.dataFile.writeIngestState(spec, pruned);
+  }
+
+  /** Writing the marker on the budget path too is what lets a repeatedly stopped spec advance past the prefix it already checked. */
+  private async finishSpec(
+    spec: string, encounters: IngestEncounter[],
+    previous: SpecIngestState | null, emptyThisPass: readonly number[],
+  ): Promise<void> {
+    const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
+    const benched = new Set(await this.benchedIds(spec));
+    await this.dataFile.writeIngestState(spec, nextIngestState(previous, emptyThisPass, benched, stamp));
+    await this.rebuildEncountersIndex(spec, encounters);
+    await this.rebuildSpecIndex();
   }
 
   /** Resolves the partition here, once, so the signature and every slice below read the same parses. */
@@ -359,7 +393,7 @@ export class IngestOrchestratorService {
   /** Compute all five slices first, THEN stamp + write: the signature is known only after every transform has fetched. */
   private async ingestEncounter(
     spec: string, encounter: IngestEncounter, version: string, poolRows: SignatureRanking[], partition: number | null,
-  ): Promise<boolean> {
+  ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(SLICE_CONCURRENCY);
 
@@ -383,51 +417,43 @@ export class IngestOrchestratorService {
         ? `    [${encounter.name}] ${slice}: no data, skipped`
         : `    [${encounter.name}] ${slice}: ${error.kind} (${error.message}), skipped`;
 
-    let wroteAny = false;
     const writes: Promise<unknown>[] = [];
     if (burst.ok) {
       const stamped = stampBurstFile(
         burst.value, signature, stamp, inaccessibleParses, [burst, rotation, defensive, gear, map, northernSky],
       );
       writes.push(this.dataFile.writeSlice(spec, encId, 'burst', stamped));
-      wroteAny = true;
     } else { console.log(skipNote('burst', burst.error)); }
     if (rotation.ok) {
       writes.push(this.dataFile.writeSlice(spec, encId, 'rotation', stampSignature(rotation.value, signature, stamp)));
-      wroteAny = true;
     } else { console.log(skipNote('rotation', rotation.error)); }
     if (defensive.ok) {
       writes.push(this.dataFile.writeSlice(spec, encId, 'defensive', stampSignature(defensive.value, signature, stamp)));
-      wroteAny = true;
     } else { console.log(skipNote('defensive', defensive.error)); }
     if (gear.ok) {
       writes.push(this.dataFile.writeSlice(spec, encId, 'gear', stampSignature(gear.value, signature, stamp)));
-      wroteAny = true;
     } else { console.log(skipNote('gear', gear.error)); }
     if (map.ok) {
       writes.push(this.dataFile.writePositions(spec, encId, stampSignature(map.value, signature, stamp)));
     } else { console.log(skipNote('positions', map.error)); }
     if (northernSky.ok) {
       writes.push(this.dataFile.writeSlice(spec, encId, 'northern-sky', stampSignature(northernSky.value, signature, stamp)));
-      wroteAny = true;
     } else { console.log(skipNote('northern-sky', northernSky.error)); }
 
     await Promise.all(writes);
-    return wroteAny;
+    if (burst.ok) return 'benched';
+    // A transient or permanent burst failure is not an empty encounter: marking it would push its spec out of the never-checked group and defeat the retry `stampBurstFile` leaves open.
+    return burst.error.kind === 'missing' ? 'empty' : 'failed';
   }
 
   private async rebuildEncountersIndex(spec: string, current: IngestEncounter[]): Promise<void> {
-    const files = await this.dataFile.listSliceFiles(spec, 'burst');
     const onDisk: EncounterEntry[] = [];
-    for (const file of files.sort()) {
-      if (!file.endsWith('.json')) continue;
-      const encId = parseInt(file);
-      if (!Number.isFinite(encId)) continue;
+    for (const encId of await this.benchedIds(spec)) {
       const bench = await this.dataFile.getSlice<{ encounter_id?: number; encounter_name?: string; sample_count?: number }>(spec, encId, 'burst');
       if (!bench.ok) continue;
       onDisk.push({
         id: bench.value.encounter_id ?? encId,
-        name: bench.value.encounter_name ?? file,
+        name: bench.value.encounter_name ?? String(encId),
         sample_count: bench.value.sample_count ?? 0,
       });
     }
@@ -453,11 +479,8 @@ export class IngestOrchestratorService {
       return [];
     }
     const removed: number[] = [];
-    const files = await this.dataFile.listSliceFiles(spec, 'burst');
-    for (const file of files) {
-      if (!file.endsWith('.json')) continue;
-      const encId = parseInt(file);
-      if (!Number.isFinite(encId) || protectedIds.has(encId)) continue;
+    for (const encId of await this.benchedIds(spec)) {
+      if (protectedIds.has(encId)) continue;
       for (const slice of [...SLICES, 'positions']) {
         try {
           await this.dataFile.removeSlice(spec, encId, slice);
@@ -467,6 +490,6 @@ export class IngestOrchestratorService {
       }
       removed.push(encId);
     }
-    return removed.sort((a, b) => a - b);
+    return removed;
   }
 }
