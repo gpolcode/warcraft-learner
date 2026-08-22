@@ -167,7 +167,7 @@ export class IngestOrchestratorService {
     // Reading a failure as "no record" would retire every recorded raid and prune its data.
     if (!stored.ok) throw new Error(`Cannot read the recorded raids: ${stored.error.message}`);
     try {
-      return await getEncounters(client, specWcl, stored.value.map(raid => raid.zone_id), nowS());
+      return await getEncounters(client, specWcl, stored.value, nowS());
     } catch (err) {
       const budgetSummary = discoveryBudgetSummary(err);
       if (!budgetSummary) throw err;

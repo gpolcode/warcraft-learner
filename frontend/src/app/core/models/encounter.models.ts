@@ -8,6 +8,8 @@ export interface SpecEntry {
 export interface CurrentRaid {
   zone_id: number;
   zone_name: string;
+  /** First adoption, not last ingest: a newcomer keeps the raids adopted alongside it and retires the rest. */
+  adopted_at_s: number;
 }
 
 export interface EncounterEntry {

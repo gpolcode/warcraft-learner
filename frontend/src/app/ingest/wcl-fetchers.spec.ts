@@ -4,6 +4,7 @@ import { BudgetExceededError } from './wcl-client';
 import type { WclQueryClient } from './wcl-client';
 import type { SpecWclMap } from './wcl-mappers';
 import { MYTHIC_DIFFICULTY, type WclRawRanking } from '../core/models/wcl.models';
+import type { CurrentRaid } from '../core/models/encounter.models';
 
 const SPEC_WCL: SpecWclMap = {
   FireMage: ['Mage', 'Fire'],
@@ -28,7 +29,8 @@ function fakeClient(handlers: FakeHandlers): WclQueryClient {
 }
 
 const NOW_S = 1_760_000_000;
-const DAY_MS = 24 * 60 * 60 * 1000;
+const DAY_S = 24 * 60 * 60;
+const DAY_MS = DAY_S * 1000;
 
 // WCL dates a ranking in milliseconds, so a fixture pull `ageDays` old is stamped in them too.
 const ranks = (count: number, ageDays = 1): WclRawRanking[] =>
@@ -37,14 +39,10 @@ const ranks = (count: number, ageDays = 1): WclRawRanking[] =>
   }));
 
 describe('getEncounters', () => {
-  // The retire test asserts on the warning; the log spy only keeps the runner output clean.
+  // The retire tests assert on the warning; the spy also keeps the runner output clean.
   let warnSpy: MockInstance<typeof console.warn>;
-  let logSpy: MockInstance<typeof console.log>;
-  beforeEach(() => {
-    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-  });
-  afterEach(() => { warnSpy.mockRestore(); logSpy.mockRestore(); });
+  beforeEach(() => { warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined); });
+  afterEach(() => { warnSpy.mockRestore(); });
 
   const ABYSS = 53, SPOREFALL = 50, DUMMY = 52, FINISHED = 46;
 
@@ -81,29 +79,38 @@ describe('getEncounters', () => {
     });
   }
 
+  const raid = (zoneId: number, zoneName: string, adoptedAtS = NOW_S): CurrentRaid =>
+    ({ zone_id: zoneId, zone_name: zoneName, adopted_at_s: adoptedAtS });
+
   describe('with no raid on record', () => {
-    it('adopts every raid being progressed right now, newest first, and leaves the finished tier behind', async () => {
+    it('adopts only the newest live raid, leaving the tiers behind it that WCL still ranks non-frozen', async () => {
       const { encounters, protectedIds, zones, reset } = await getEncounters(contentClient(), SPEC_WCL, [], NOW_S);
-      expect(zones).toEqual([
-        { zone_id: ABYSS, zone_name: 'The Venomous Abyss' },
-        { zone_id: SPOREFALL, zone_name: 'Sporefall' },
-      ]);
-      expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445, 3159]);
-      expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);
+      expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss')]);
+      expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445]);
+      expect([...protectedIds].sort((a, b) => a - b)).toEqual([3445, 3470]);
       expect(reset).toBe(true);
     });
 
-    it('never adopts a finished tier, however many real parses it still ranks (boundary: same count, only older)', async () => {
-      const onlyFinished = [{ id: 7, name: 'Midnight', zones: [finishedZone] }];
-      const client = contentClient({ query: (gql, vars) => {
-        if (gql.includes('expansions')) return { worldData: { expansions: onlyFinished } };
-        const encounterID = (vars as { encounterID: number }).encounterID;
-        return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: rankingsByEncounter[encounterID] ?? [] } } } };
-      } });
-      const { encounters, zones, reset } = await getEncounters(client, SPEC_WCL, [], NOW_S);
-      expect(encounters).toHaveLength(0);
-      expect(zones).toEqual([]);
-      expect(reset).toBe(false);
+    it('stops at the newest live raid, never reaching the tiers below it', async () => {
+      const probed: number[] = [];
+      await getEncounters(contentClient({}, probed), SPEC_WCL, [], NOW_S);
+      expect([...new Set(probed)]).toEqual([3470]);
+    });
+
+    it('passes over a newer zone nobody is raiding and takes the live one below it', async () => {
+      const zones = [
+        { id: 61, name: 'Not Open Yet', frozen: false, encounters: [{ id: 9200, name: 'Unraided' }] },
+        { id: 60, name: 'New Raid', frozen: false, encounters: [{ id: 9100, name: 'First Boss' }] },
+      ];
+      const client = fakeClient({
+        query: (gql, vars) => {
+          if (gql.includes('expansions')) return { worldData: { expansions: [{ id: 7, name: 'Midnight', zones }] } };
+          const encounterID = (vars as { encounterID: number }).encounterID;
+          return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: encounterID === 9100 ? ranks(10) : [] } } } };
+        },
+      });
+      const { zones: current } = await getEncounters(client, SPEC_WCL, [], NOW_S);
+      expect(current.map(entry => entry.zone_id)).toEqual([60]);
     });
 
     it('detects a just-opened raid with Heroic parses but no Mythic kills yet', async () => {
@@ -138,49 +145,63 @@ describe('getEncounters', () => {
       expect((await getEncounters(client, SPEC_WCL, [], NOW_S)).encounters).toHaveLength(0);
     });
 
-    it('adopts nothing from a zone that stays below the liveness threshold', async () => {
+    it('adopts nothing from a zone whose parses are all older than a lockout', async () => {
       const client = fakeClient({
-        query: (gql, vars) => {
+        query: (gql) => {
           if (gql.includes('expansions')) {
-            return { worldData: { expansions: [{ id: 7, name: 'Midnight', zones: [{ id: 60, name: 'Thin Raid', frozen: false, encounters: [{ id: 9001, name: 'Boss' }] }] }] } };
+            return { worldData: { expansions: [{ id: 7, name: 'Midnight', zones: [{ id: 60, name: 'Quiet Raid', frozen: false, encounters: [{ id: 9001, name: 'Boss' }] }] }] } };
           }
-          // Only the first probe spec returns parses, and just 2 at Mythic alone - below the threshold of 3.
-          const className = (vars as { className: string }).className;
-          const difficulty = (vars as { difficulty: number }).difficulty;
-          const rankings = className === 'Mage' && difficulty === MYTHIC_DIFFICULTY ? ranks(2) : [];
-          return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings } } } };
+          return { worldData: { encounter: { name: 'Boss', characterRankings: { rankings: ranks(10, STALE_DAYS) } } } };
         },
       });
       expect((await getEncounters(client, SPEC_WCL, [], NOW_S)).encounters).toHaveLength(0);
     });
   });
 
-  describe('with raids already on record', () => {
-    it('keeps them without probing them, so a run that cannot confirm one changes nothing', async () => {
+  describe('with a raid already on record', () => {
+    it('keeps it without probing anything at or below it, so no run re-decides a raid the dataset holds', async () => {
       const probed: number[] = [];
       const { encounters, zones, reset } = await getEncounters(
-        contentClient({}, probed), SPEC_WCL, [ABYSS, SPOREFALL], NOW_S);
-      expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
-      expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445, 3159]);
+        contentClient({}, probed), SPEC_WCL, [raid(ABYSS, 'The Venomous Abyss')], NOW_S);
+      expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss')]);
+      expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445]);
       expect(reset).toBe(false);
-      expect([...new Set(probed)].sort((a, b) => a - b)).toEqual([3176, 3591]);
+      // No zone sits above the record, so the run spends nothing on the probe at all.
+      expect(probed).toEqual([]);
     });
 
-    it('lets a second raid join an existing one instead of replacing it, protecting both', async () => {
-      const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [SPOREFALL], NOW_S);
-      expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
+    it('lets a raid released alongside it join, keeping both', async () => {
+      const DAYS_OLD = 3;
+      const sameWave = raid(SPOREFALL, 'Sporefall', NOW_S - DAYS_OLD * DAY_S);
+      const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [sameWave], NOW_S);
+      expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss'), sameWave]);
       expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);
       expect(reset).toBe(true);
+    });
+
+    it('retires a raid from an earlier release wave when a new one takes over (boundary: inside the wave is kept)', async () => {
+      const lastTier = raid(SPOREFALL, 'Sporefall', NOW_S - 31 * DAY_S);
+      const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [lastTier], NOW_S);
+      expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss')]);
+      expect([...protectedIds].sort((a, b) => a - b)).toEqual([3445, 3470]);
+      expect(reset).toBe(true);
+    });
+
+    it('keeps an old raid while nothing new ships, so age alone never retires one', async () => {
+      const ancient = raid(ABYSS, 'The Venomous Abyss', NOW_S - 400 * DAY_S);
+      const { zones, reset } = await getEncounters(contentClient(), SPEC_WCL, [ancient], NOW_S);
+      expect(zones).toEqual([ancient]);
+      expect(reset).toBe(false);
     });
 
     it('retires a recorded raid WCL has frozen or dropped, and stops protecting its encounters', async () => {
       const RETIRED = 44;
       const { zones, protectedIds, reset } = await getEncounters(
-        contentClient(), SPEC_WCL, [ABYSS, SPOREFALL, RETIRED], NOW_S);
-      expect(zones.map(raid => raid.zone_id)).toEqual([ABYSS, SPOREFALL]);
-      expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);
+        contentClient(), SPEC_WCL, [raid(ABYSS, 'The Venomous Abyss'), raid(RETIRED, 'Manaforge Omega')], NOW_S);
+      expect(zones.map(entry => entry.zone_id)).toEqual([ABYSS]);
+      expect([...protectedIds].sort((a, b) => a - b)).toEqual([3445, 3470]);
       expect(reset).toBe(true);
-      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('getEncounters'), expect.stringContaining(String(RETIRED)));
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('getEncounters'), expect.stringContaining('Manaforge Omega'));
     });
 
     it('propagates a BudgetExceededError raised while probing', async () => {

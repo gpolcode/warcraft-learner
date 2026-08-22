@@ -12,8 +12,10 @@ import { filterEncounters, groupEncountersByZone, type SpecWclMap } from './wcl-
 import type { IngestEncounter } from './models/wcl.models';
 import type { CurrentRaid } from '../core/models/encounter.models';
 
-// One raid lockout: a raid being progressed posts parses every week, and a finished tier WCL still ranks non-frozen posts none.
+// One raid lockout: a raid being progressed posts parses every week, and a beta/PTR/test zone posts none.
 const ACTIVE_WINDOW_S = 7 * 24 * 60 * 60;
+// Raids shipped together land within days; the previous tier was adopted a patch cycle ago, so a newcomer retires it.
+const RELEASE_WAVE_S = 30 * 24 * 60 * 60;
 // A genuinely live raid has many real parses for any of these; a beta/PTR/test zone has none.
 const PROBE_SPECS = ['FireMage', 'RetributionPaladin', 'FuryWarrior'];
 // >=1 is unsafe: a single recent parse on a test boss would promote it; a raid being progressed clears this easily.
@@ -64,45 +66,58 @@ async function isZoneActive(
   return false;
 }
 
-/** Only unrecorded zones are probed: a probe answers from live WCL every run, so re-deciding a recorded raid lets one quiet week retire it. */
-async function joiningZones(
-  client: WclQueryClient, byZone: Map<number, IngestEncounter[]>, recorded: Set<number>, specWcl: SpecWclMap, nowS: number,
+/** Older zones are never probed: WCL leaves a finished tier non-frozen, and its newest partition makes even that tier's parses look current, so only the zone ordering separates it from a new raid. */
+async function adoptableZones(
+  client: WclQueryClient, byZone: Map<number, IngestEncounter[]>, watermark: number | null, specWcl: SpecWclMap, nowS: number,
 ): Promise<IngestEncounter[][]> {
-  const joined: IngestEncounter[][] = [];
-  const unrecorded = [...byZone.entries()]
-    .filter(([zoneId]) => !recorded.has(zoneId))
+  const adopted: IngestEncounter[][] = [];
+  const newer = [...byZone.entries()]
+    .filter(([zoneId]) => watermark == null || zoneId > watermark)
     .sort(([a], [b]) => b - a);
-  for (const [, zoneEncounters] of unrecorded) {
-    if (await isZoneActive(client, zoneEncounters, specWcl, nowS - ACTIVE_WINDOW_S)) joined.push(zoneEncounters);
+  for (const [, zoneEncounters] of newer) {
+    if (!await isZoneActive(client, zoneEncounters, specWcl, nowS - ACTIVE_WINDOW_S)) continue;
+    adopted.push(zoneEncounters);
+    // Without a watermark every zone reads as new, so anything past the newest live one would be the tiers behind it.
+    if (watermark == null) break;
   }
-  return joined;
+  return adopted;
 }
 
-/** Every recorded raid stays current until WCL freezes or drops its zone. */
+function raidOf(zoneEncounters: IngestEncounter[], adoptedAtS: number): CurrentRaid {
+  return { zone_id: zoneEncounters[0]?.zoneId ?? 0, zone_name: zoneEncounters[0]?.zone ?? '', adopted_at_s: adoptedAtS };
+}
+
+/** Every recorded raid stays current until WCL freezes its zone or a raid from a later release wave takes over. */
 export async function getEncounters(
-  client: WclQueryClient, specWcl: SpecWclMap, recordedZoneIds: number[], nowS: number,
+  client: WclQueryClient, specWcl: SpecWclMap, recorded: CurrentRaid[], nowS: number,
 ): Promise<CurrentContent> {
   const data = await client.query<EncountersQuery>(ENCOUNTERS_Q);
   // An empty expansion tree would silently protect no encounter and publish an empty summary.
   if (!data.worldData?.expansions) throw new Error('WCL returned no worldData.expansions.');
   const byZone = groupEncountersByZone(filterEncounters(data.worldData.expansions));
 
-  const recorded = new Set(recordedZoneIds);
-  const kept = recordedZoneIds.filter(zoneId => byZone.has(zoneId));
-  for (const zoneId of recordedZoneIds.filter(id => !byZone.has(id))) {
-    logWarn('getEncounters', `recorded raid zone ${zoneId} is frozen or gone - retiring it and pruning its data`);
+  const live = recorded.filter(raid => byZone.has(raid.zone_id));
+  for (const raid of recorded.filter(entry => !byZone.has(entry.zone_id))) {
+    logWarn('getEncounters', `recorded raid "${raid.zone_name}" (zone ${raid.zone_id}) is frozen or gone - retiring it and pruning its data`);
   }
-  const joined = await joiningZones(client, byZone, recorded, specWcl, nowS);
+  const watermark = live.length ? Math.max(...live.map(raid => raid.zone_id)) : null;
+  const adopted = await adoptableZones(client, byZone, watermark, specWcl, nowS);
 
-  // Newest first so the encounter index leads with the freshest raid.
-  const current = [...joined, ...kept.map(zoneId => byZone.get(zoneId) ?? [])]
-    .sort((a, b) => (b[0]?.zoneId ?? 0) - (a[0]?.zoneId ?? 0));
-  const encounters = current.flat();
+  const kept = adopted.length
+    ? live.filter(raid => raid.adopted_at_s > nowS - RELEASE_WAVE_S)
+    : live;
+  for (const raid of live.filter(entry => !kept.includes(entry))) {
+    logWarn('getEncounters', `recorded raid "${raid.zone_name}" belongs to an earlier release wave - retiring it and pruning its data`);
+  }
+
+  const zones = [...adopted.map(zoneEncounters => raidOf(zoneEncounters, nowS)), ...kept]
+    .sort((a, b) => b.zone_id - a.zone_id);
+  const encounters = zones.flatMap(raid => byZone.get(raid.zone_id) ?? []);
   return {
     encounters,
     protectedIds: new Set(encounters.map(encounter => encounter.id)),
-    zones: current.map(zoneEncounters => ({ zone_id: zoneEncounters[0]?.zoneId ?? 0, zone_name: zoneEncounters[0]?.zone ?? '' })),
-    reset: joined.length > 0 || kept.length !== recordedZoneIds.length,
+    zones,
+    reset: adopted.length > 0 || kept.length !== recorded.length,
   };
 }
 

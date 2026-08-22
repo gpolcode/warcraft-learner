@@ -93,7 +93,7 @@ describe('DataFileApiService reads', () => {
   });
 
   it('reads the recorded raids at current-raids.json, folding a missing file to ok([]) but propagating a transient error', async () => {
-    const raids: CurrentRaid[] = [{ zone_id: 53, zone_name: 'The Venomous Abyss' }, { zone_id: 50, zone_name: 'Sporefall' }];
+    const raids: CurrentRaid[] = [{ zone_id: 53, zone_name: 'The Venomous Abyss', adopted_at_s: 1 }];
     const present = new RecordingTransport(ok(raids));
     expect(await withTransport(present).getCurrentRaids()).toEqual(ok(raids));
     expect(present.reads).toEqual(['current-raids.json']);
@@ -150,7 +150,7 @@ describe('DataFileApiService writes and listing', () => {
 
   it('writes the recorded raids to current-raids.json', async () => {
     const transport = new RecordingTransport();
-    const raids: CurrentRaid[] = [{ zone_id: 53, zone_name: 'The Venomous Abyss' }];
+    const raids: CurrentRaid[] = [{ zone_id: 53, zone_name: 'The Venomous Abyss', adopted_at_s: 1 }];
     await withTransport(transport).writeCurrentRaids(raids);
     expect(transport.writes).toEqual([['current-raids.json', raids]]);
   });
