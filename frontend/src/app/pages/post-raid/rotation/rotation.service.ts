@@ -15,14 +15,12 @@ import {
   CadenceVoice, cadencePlanUsage, checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,
 } from '../../../shared/analysis/cast-cadence';
 import { CAT_LABEL } from '../../../shared/components/finding-table/finding-table.utils';
-import { TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { AbilityIcons, TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import {
   buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
 } from './rotation-rules';
 import { detectBloodlust } from './rotation-bloodlust';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
-
-export type AbilityIcons = Record<number, { icon: string; name: string }>;
 
 export interface RotationFindingRow {
   severity: 'critical' | 'warning' | 'info';
