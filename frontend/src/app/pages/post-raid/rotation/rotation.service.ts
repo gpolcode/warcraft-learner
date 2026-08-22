@@ -183,7 +183,6 @@ export function analyzeOneCooldown(
   const { expected, floor } = benchExpectedUses(fightDurS, cdBench.uses_per_min);
 
   const issues: AnalysisFinding[] = [];
-  // A situational cd most parses skip has a noisy expected count and a meaningless avg_first_cast_s, so flagging it would punish the player for correctly matching the parses.
   if (usedByMajority(cdBench)) {
     const lost = checkLostUses(ROTATION_VOICE, cdName, actual, expected, floor, fightDurS);
     if (lost) issues.push(lost);
@@ -337,7 +336,6 @@ type CdPlanUsage = Pick<
   CdPlanRow, 'firstCastS' | 'typicalUses' | 'usedSampleCount' | 'sampleCount' | 'usesPerMin' | 'bloodlust' | 'bloodlustPct'
 >;
 
-// Uses/min is a user-only stat; gate it on the same use-share majority the analysis uses.
 function cdPlanUsageOf(cdBench: PerCdBenchmark | undefined): CdPlanUsage {
   const usage = cadencePlanUsage(cdBench);
   if (!cdBench) return { ...usage, usesPerMin: null, bloodlust: false, bloodlustPct: null };

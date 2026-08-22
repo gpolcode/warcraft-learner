@@ -1,4 +1,3 @@
-/** The comparison-window view: benched top-parse windows paired with the player's own, for every slice that renders `wl-window-comparison`. */
 import { BurstWindow, PlayerBurstWindow } from '../../core/models/analysis.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from '../../core/models/window-comparison.models';
@@ -56,7 +55,7 @@ function windowBreakdown(
   return { window_damage: Math.round(winTotal), ability_breakdown };
 }
 
-/** One entry per top window, in that order: `buildWindowView` pairs them by index, so filtering this output shifts every window's damage. */
+/** `buildWindowView` pairs these by index, so filtering this output shifts every window's damage. */
 export function playerWindowDamage(
   topWindows: BurstWindow[],
   damageEvents: TimedEvent[],

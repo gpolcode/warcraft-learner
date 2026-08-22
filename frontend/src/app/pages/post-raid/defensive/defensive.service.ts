@@ -132,7 +132,6 @@ export function analyzeOneDefensive(
   const castTimesS = defensive.cast_times_s ?? [];
 
   const issues: AnalysisFinding[] = [];
-  // A situational defensive most parses skip has a noisy expected count, so flagging it without majority use is a false positive.
   if (usedByMajority(defBench)) {
     const lost = checkLostUses(DEFENSIVE_VOICE, name, uses, expected, floor, fightDurS);
     if (lost) issues.push(lost);
