@@ -1,7 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { WclApiService } from '../../../core/services/wcl-api';
 import { Result, ok, missing } from '../../../core/result';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { sliceService } from '../../../../testing/service-harness';
