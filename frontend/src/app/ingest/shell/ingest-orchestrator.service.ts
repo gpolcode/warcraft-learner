@@ -10,12 +10,10 @@ import { logWarn } from '../../core/log';
 import { type LoadError } from '../../core/result';
 import { resolveTopParses } from '../../shared/analysis/top-parse-selection';
 import type { TopParseSelection } from '../../core/models/wcl.models';
-import { RATE_LIMIT_Q, CLASSES_Q } from '../../core/services/wcl-queries';
-import type { ClassesQuery, RateLimitQuery } from '../../core/services/wcl-operations.generated';
 import { sliceRegistry, type SliceDescriptor } from './slice-registry';
-import { getEncounters } from '../wcl-fetchers';
-import { mapClassesToSpecMeta, parseRaidNames } from '../wcl-mappers';
-import { type WclQueryClient, BudgetExceededError } from '../wcl-client';
+import {
+  assertPointsBudget, BudgetExceededError, discoverCurrentRaids, discoverSpecMetas, parseRaidNames,
+} from '../current-raids';
 import { INGEST_VERSION } from '../ingest-version';
 import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs } from '../ordering';
 import { signatureAfterFetch, stampSignature, stampBurstFile, type IngestStamp } from '../signature';
@@ -54,32 +52,6 @@ function publishSummary(summary: IngestRunSummary): void {
   (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
 }
 
-class ApiWclClient implements WclQueryClient {
-  private _limitPerHour: number | null = null;
-  private _pointsSpentThisHour = 0;
-
-  constructor(private readonly wclApi: WclApiService) {}
-
-  query<T>(gql: string, variables?: object): Promise<T> {
-    // These reads are marked uncached (see wclCachingHeaders), so the budget gate sees fresh data.
-    return this.wclApi.query<T>(gql, (variables ?? {}));
-  }
-
-  async assertBudget(margin: number): Promise<void> {
-    const data = await this.query<RateLimitQuery>(RATE_LIMIT_Q);
-    const rateLimit = data.rateLimitData;
-    if (rateLimit) {
-      this._limitPerHour = rateLimit.limitPerHour;
-      this._pointsSpentThisHour = rateLimit.pointsSpentThisHour;
-    }
-    if (this._limitPerHour == null) return; // unknown - don't block
-    const remaining = this._limitPerHour - this._pointsSpentThisHour;
-    if (remaining < margin) {
-      throw new BudgetExceededError(`WCL budget low: ${remaining} of ${this._limitPerHour} remaining (need ${margin})`);
-    }
-  }
-}
-
 @Injectable({ providedIn: 'root' })
 export class IngestOrchestratorService {
   private readonly wclApi = inject(WclApiService);
@@ -102,17 +74,16 @@ export class IngestOrchestratorService {
 
   private async ingestAll(): Promise<void> {
     console.log('warcraft-learner - Parse Ingestion');
-    const client = new ApiWclClient(this.wclApi);
     const version = String(INGEST_VERSION);
     console.log(`Ingest version: ${version}`);
 
-    await this.resolveSpecMetas(client);
+    await this.resolveSpecMetas();
 
     const raidNames = parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
     console.log(raidNames.length
       ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
       : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
-    const { encounters, protectedIds } = await getEncounters(client, raidNames);
+    const { encounters, protectedIds } = await discoverCurrentRaids(this.wclApi, raidNames);
     console.log(`${encounters.length} encounters`);
     await this.pruneRetiredRaids(protectedIds);
     await rebuildIndices(this.dataFile, encounters);
@@ -124,15 +95,14 @@ export class IngestOrchestratorService {
       return;
     }
 
-    const summary = await this.ingestEachSpec(client, specs, encounters, version);
+    const summary = await this.ingestEachSpec(specs, encounters, version);
     this.printRunSummary(summary, specs.length);
     publishSummary(summary);
   }
 
-  private async resolveSpecMetas(client: ApiWclClient): Promise<void> {
+  private async resolveSpecMetas(): Promise<void> {
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
-    const classesData = await client.query<ClassesQuery>(CLASSES_Q);
-    const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
+    const metas = await discoverSpecMetas(this.wclApi);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
       if (rulebook.ok) {
@@ -158,8 +128,7 @@ export class IngestOrchestratorService {
   }
 
   private async ingestEachSpec(
-    client: ApiWclClient, specs: string[],
-    encounters: IngestEncounter[], version: string,
+    specs: string[], encounters: IngestEncounter[], version: string,
   ): Promise<IngestRunSummary> {
     // Isolate each spec so one throw drops only that spec, not the whole run.
     const succeeded: string[] = [];
@@ -167,7 +136,7 @@ export class IngestOrchestratorService {
     let budgetStopped = false;
     for (const spec of specs) {
       try {
-        const budgetExhausted = await this.ingestSpec(client, spec, encounters, version);
+        const budgetExhausted = await this.ingestSpec(spec, encounters, version);
         succeeded.push(spec);
         if (budgetExhausted) { budgetStopped = true; break; }
       } catch (err) {
@@ -232,8 +201,7 @@ export class IngestOrchestratorService {
 
   /** Returns true when the run stopped on the WCL budget (remaining specs resume next run). */
   private async ingestSpec(
-    client: ApiWclClient, spec: string,
-    encounters: IngestEncounter[], version: string,
+    spec: string, encounters: IngestEncounter[], version: string,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
 
@@ -243,7 +211,7 @@ export class IngestOrchestratorService {
 
     try {
       for (const encounter of orderEncountersByMissingFirst(encounters, checkedIds)) {
-        await client.assertBudget(POINTS_MARGIN);
+        await assertPointsBudget(this.wclApi, POINTS_MARGIN);
 
         const selection = await resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
         if (!selection.rows.length) {
