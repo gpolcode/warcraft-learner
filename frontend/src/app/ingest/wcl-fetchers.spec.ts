@@ -39,7 +39,6 @@ const ranks = (count: number, ageDays = 1): WclRawRanking[] =>
   }));
 
 describe('getEncounters', () => {
-  // The retire tests assert on the warning; the spy also keeps the runner output clean.
   let warnSpy: MockInstance<typeof console.warn>;
   beforeEach(() => { warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined); });
   afterEach(() => { warnSpy.mockRestore(); });
@@ -166,13 +165,12 @@ describe('getEncounters', () => {
       expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss')]);
       expect(encounters.map(encounter => encounter.id)).toEqual([3470, 3445]);
       expect(reset).toBe(false);
-      // No zone sits above the record, so the run spends nothing on the probe at all.
       expect(probed).toEqual([]);
     });
 
-    it('lets a raid released alongside it join, keeping both', async () => {
-      const DAYS_OLD = 3;
-      const sameWave = raid(SPOREFALL, 'Sporefall', NOW_S - DAYS_OLD * DAY_S);
+    it('keeps a raid staggered a week earlier in the same release when the next one opens', async () => {
+      const STAGGER_DAYS = 7;
+      const sameWave = raid(SPOREFALL, 'Sporefall', NOW_S - STAGGER_DAYS * DAY_S);
       const { zones, protectedIds, reset } = await getEncounters(contentClient(), SPEC_WCL, [sameWave], NOW_S);
       expect(zones).toEqual([raid(ABYSS, 'The Venomous Abyss'), sameWave]);
       expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3445, 3470]);

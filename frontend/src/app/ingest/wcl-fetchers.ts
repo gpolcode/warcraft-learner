@@ -14,7 +14,7 @@ import type { CurrentRaid } from '../core/models/encounter.models';
 
 // One raid lockout: a raid being progressed posts parses every week, and a beta/PTR/test zone posts none.
 const ACTIVE_WINDOW_S = 7 * 24 * 60 * 60;
-// Raids shipped together land within days; the previous tier was adopted a patch cycle ago, so a newcomer retires it.
+// A patch cycle: raids shipped together land within days of each other, the previous tier a cycle earlier.
 const RELEASE_WAVE_S = 30 * 24 * 60 * 60;
 // A genuinely live raid has many real parses for any of these; a beta/PTR/test zone has none.
 const PROBE_SPECS = ['FireMage', 'RetributionPaladin', 'FuryWarrior'];
@@ -66,7 +66,7 @@ async function isZoneActive(
   return false;
 }
 
-/** Older zones are never probed: WCL leaves a finished tier non-frozen, and its newest partition makes even that tier's parses look current, so only the zone ordering separates it from a new raid. */
+/** Older zones are never probed: a finished tier stays non-frozen and its newest partition makes even its parses look current, so only the ordering separates it from a new raid. */
 async function adoptableZones(
   client: WclQueryClient, byZone: Map<number, IngestEncounter[]>, watermark: number | null, specWcl: SpecWclMap, nowS: number,
 ): Promise<IngestEncounter[][]> {
@@ -77,7 +77,7 @@ async function adoptableZones(
   for (const [, zoneEncounters] of newer) {
     if (!await isZoneActive(client, zoneEncounters, specWcl, nowS - ACTIVE_WINDOW_S)) continue;
     adopted.push(zoneEncounters);
-    // Without a watermark every zone reads as new, so anything past the newest live one would be the tiers behind it.
+    // Without a watermark, anything past the newest live zone is the tiers behind it.
     if (watermark == null) break;
   }
   return adopted;
