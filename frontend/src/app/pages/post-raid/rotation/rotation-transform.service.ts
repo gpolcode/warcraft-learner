@@ -3,13 +3,15 @@ import { WclApiService } from '../../../core/services/wcl-api';
 import { DataFileApiService } from '../../../core/services/data-file-api';
 import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark, UsesPerMin } from '../../../core/models/encounter.models';
-import { mean, deviation, quantile } from 'd3-array';
-import { round, getOrInsert, avgOr, stddevOr, medianOr, castGaps } from '../../../shared/analysis/analysis-math';
+import { mean, deviation, group, quantile } from 'd3-array';
+import {
+  round, avgOr, stddevOr, medianOr, castGaps, castEfficiencyPct, closestToZero,
+} from '../../../shared/analysis/analysis-math';
 import {
   HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets, detectHoldWindows,
 } from '../../../shared/analysis/hold-targets';
 import { TimedEvent, abilityIcons, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { BenchParse, benchFromTopParses, benchHeader } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result, missing } from '../../../core/result';
 import {
@@ -64,9 +66,7 @@ export function summarizeCooldownCasts(
         .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
         .map(timeS => timeS - blTimeS);
       blAligned = windowOffsets.length > 0;
-      if (windowOffsets.length) {
-        blOffsetS = round(windowOffsets.reduce((best, offset) => (Math.abs(offset) < Math.abs(best) ? offset : best)));
-      }
+      if (windowOffsets.length) blOffsetS = round(closestToZero(windowOffsets));
     }
 
     const holdWindows = detectHoldWindows(castTimesS, cooldown.cooldown);
@@ -148,7 +148,7 @@ export function computeEfficiencyThresholds(
   for (const { gapListS, durationS } of parses) {
     if (gapListS.length && durationS > 0) {
       const downtimeS = gapListS.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
-      efficiencies.push(round(Math.max(0, (1 - downtimeS / durationS) * 100)));
+      efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
     }
   }
   return {
@@ -162,12 +162,7 @@ export function aggregateCdBenchmarks(
   perParse: CdSummary[][], cooldowns: RulebookCooldown[],
 ): Record<string, PerCdBenchmark> {
   const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown]));
-  const byCd = new Map<string, CdSummary[]>();
-  for (const summaries of perParse) {
-    for (const summary of summaries) {
-      getOrInsert(byCd, summary.name, () => []).push(summary);
-    }
-  }
+  const byCd = group(perParse.flat(), summary => summary.name);
   const result: Record<string, PerCdBenchmark> = {};
   for (const [name, entries] of byCd.entries()) {
     result[name] = buildCdBenchmark(entries, cdSecondsByName.get(name) ?? 90);
@@ -203,10 +198,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const rulebookResult = await this.dataFiles.getRulebook(spec);
     if (!rulebookResult.ok) return rulebookResult;
     const rulebook = rulebookResult.value;
-    const cooldowns = rulebook.major_cooldowns ?? [];
+    const cooldowns = rulebook.major_cooldowns;
     if (!cooldowns.length) return missing('No rulebook cooldowns for this spec.');
-    const defensives = rulebook.defensives ?? [];
-    const judgeable = judgeableRules(rulebook.rules ?? []);
+    const defensives = rulebook.defensives;
+    const judgeable = judgeableRules(rulebook.rules);
 
     return benchFromTopParses(this.wclApi, { spec, encounterId, partition }, {
       logSource: 'RotationTransformService',
@@ -221,10 +216,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
 
         const cd_spell_ids = rotationCdSpellIds(cooldowns, defensives);
         return {
-          spec,
-          encounter_id: encounterId,
-          encounter_name: encounterName,
-          sample_count: parses.length,
+          ...benchHeader(spec, encounterId, encounterName, parses.length),
           downtime_threshold_s: downtimeThresholdS,
           top_avg_efficiency: topAvgEfficiency,
           top_efficiency_stddev: topEfficiencyStddev,

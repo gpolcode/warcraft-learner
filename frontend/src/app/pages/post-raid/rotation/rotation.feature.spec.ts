@@ -1,16 +1,15 @@
 import { assert, describe, it, expect } from 'vitest';
-import { TestBed } from '@angular/core/testing';
-import { WclApiService } from '../../../core/services/wcl-api';
 import { WclTransportError } from '../../../core/services/wcl-transport';
-import { Result, ok, missing, transient } from '../../../core/result';
+import { Result, ok, missing } from '../../../core/result';
 import { RulebookRule, CastWithoutPriorCondition } from '../../../core/models/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';
 import { cast, applyBuff, applyDebuff, removeDebuff } from '../../../../testing/builders/events';
+import { wclReport } from '../../../../testing/builders/wcl-fixtures';
 import { WclEvent } from '../../../core/models/wcl.models';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
-import { DataSource } from '../../../core/data-source/data-source';
+import { sliceService } from '../../../../testing/service-harness';
 import { BenchedRule, RuleBand } from './rotation-rules';
 import { RotationFeatureService } from './rotation.service';
 import { bench, cdBench } from './rotation-harness';
@@ -33,12 +32,12 @@ const SECRET_TECH_NEEDS_DANCE: CastWithoutPriorCondition = {
   required_spell_id: SHADOW_DANCE, required_spell_name: 'Shadow Dance',
 };
 
+const FIGHT_END_MS = 120_000;
+const REPORT = wclReport({ endTimeMs: FIGHT_END_MS, actors: [] });
+
 // Resolves a valid (empty) player log, so a test's outcome is driven by the bench Result rather than an incidental transport throw.
 const WORKING_WCL = {
-  getReport: async () => ({
-    title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }],
-    masterData: { actors: [], abilities: [] },
-  }),
+  getReport: async () => REPORT,
   getAllEvents: async () => [],
 };
 
@@ -46,14 +45,7 @@ const WORKING_WCL = {
 const WCL_UNAVAILABLE_STATUS = 503;
 
 function withSource(bench: Result<RotationBench>, wcl: unknown = WORKING_WCL): RotationFeatureService {
-  const source: DataSource<RotationBench> = { getBench: () => Promise.resolve(bench) };
-  TestBed.configureTestingModule({
-    providers: [
-      { provide: ROTATION_DATA_SOURCE, useValue: source },
-      { provide: WclApiService, useValue: wcl as WclApiService },
-    ],
-  });
-  return TestBed.inject(RotationFeatureService);
+  return sliceService(ROTATION_DATA_SOURCE, RotationFeatureService, bench, wcl);
 }
 
 describe('RotationFeatureService', () => {
@@ -68,31 +60,34 @@ describe('RotationFeatureService', () => {
     const failingWcl = { getReport: async () => { throw new WclTransportError('WCL down', WCL_UNAVAILABLE_STATUS); } };
     const service = withSource(ok(bench()), failingWcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(result).toEqual(transient('WCL is unreachable right now.'));
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.kind).toBe('transient');
   });
 
   it('evaluates the rotation rules baked into the bench', async () => {
     const wcl = {
-      getReport: async () => ({ title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } }),
+      getReport: async () => REPORT,
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
     };
-    const rule: RulebookRule = { severity: 'critical', condition: SECRET_TECH_NEEDS_DANCE };
+    const rule: RulebookRule = {
+      type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
+      condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.',
+    };
     const service = withSource(ok(bench({ rules: [benched(rule)] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     expect(result.ok).toBe(true);
     if (result.ok) {
       // The sparse cast fixture also yields a separate cast-efficiency row, so assert on the rule row rather than the count.
-      const ruleRows = result.value.ruleRows.filter(row => row.what === 'Secret Technique without Shadow Dance');
+      const ruleRows = result.value.ruleRows.filter(row => row.what === 'Secret Technique inside Shadow Dance');
       expect(ruleRows).toHaveLength(1);
     }
   });
 
   it('computes player findings from the player log', async () => {
     const wcl = {
-      getReport: async () => ({
-        title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }],
-        masterData: { actors: [], abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }] },
+      getReport: async () => wclReport({
+        endTimeMs: FIGHT_END_MS, actors: [], abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }],
       }),
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_BLADES, 6)] : [applyBuff(BLOODLUST, 6)],
@@ -126,15 +121,16 @@ describe('RotationFeatureService', () => {
 });
 
 describe('RotationFeatureService fetch shape', () => {
-  const REPORT = { title: 't', fights: [{ id: 1, name: 'Boss', startTime: 0, endTime: 120_000 }], masterData: { actors: [], abilities: [] } };
   const PLAYER_ID = 10;
   const dotUptime: RulebookRule = {
-    severity: 'warning',
+    type: 'rotation', severity: 'warning', description: 'Keep Rupture up on the boss',
     condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
+    action: 'Refresh it inside its pandemic window.',
   };
   const aoeSwitch: RulebookRule = {
-    severity: 'warning',
+    type: 'aoe_switch', severity: 'warning', description: 'Black Powder only into a pack',
     condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' },
+    action: 'Save it for the count the field cleaves at.',
   };
 
   function recording(events: WclEvent[] = []) {

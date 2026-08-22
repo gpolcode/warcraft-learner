@@ -1,21 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { provideZonelessChangeDetection, signal } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
-import { EMPTY } from 'rxjs';
-import { PlayerDetailGroups, WclFight, WclReport } from '../../core/models/wcl.models';
-import { WclApiService } from '../../core/services/wcl-api';
+import { PlayerDetailGroups, WclReport } from '../../core/models/wcl.models';
 import { SelectionStore } from '../../core/services/selection-store';
-import { LiveReportSyncService } from '../../core/services/live-report-sync';
+import { wclReport } from '../../../testing/builders/wcl-fixtures';
+import { unsupportedEncounterNotice } from './post-raid';
+import { mapFeatureStub } from '../../../testing/page-stubs';
 import { MapFeatureService } from './map/map.service';
-import { LiveCaptureFeatureService } from './live/live-capture.service';
-import { PostRaidComponent, unsupportedEncounterNotice } from './post-raid';
-import { fight, postRaidProviders } from './post-raid-harness';
+import { fight } from './post-raid-harness';
+import { FIGHT_SELECT, PLAYER_SELECT, postRaidPage } from './post-raid-page';
+
+const REPORT_CODE = 'grBQ3vTHXAtPa4JK'; // a valid 16-character report code
+const REPORT_URL = `https://www.warcraftlogs.com/reports/${REPORT_CODE}`;
+const BOSS_ENCOUNTER_ID = 3176;
 
 describe('PostRaidComponent sticky player name', () => {
-  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';                         // a valid 16-character report code
-  const BOSS_ENCOUNTER_ID = 3176;
-  const ABSENT_STICKY_NAME = 'Ghost';                            // a sticky character not present in the loaded report
+  const ABSENT_STICKY_NAME = 'Ghost';                                     // a sticky character absent from the loaded report
   const FALLBACK_PLAYER = { id: 1, name: 'Anya', spec: 'SubtletyRogue' }; // alphabetically first -> the auto-select fallback
   const PICKED_PLAYER = { id: 2, name: 'Bram', spec: 'FrostMage' };       // the player the user explicitly switches to
 
@@ -27,82 +26,59 @@ describe('PostRaidComponent sticky player name', () => {
   };
 
   function report(): WclReport {
-    return {
-      title: 'Test', startTime: 0,
+    return wclReport({
       fights: [fight({
         id: 10, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 0, endTime: 10_000, kill: true,
         friendlyPlayers: [FALLBACK_PLAYER.id, PICKED_PLAYER.id],
       })],
-      masterData: {
-        actors: [FALLBACK_PLAYER, PICKED_PLAYER].map(p => ({ id: p.id, name: p.name, subType: p.spec, server: '' })),
-        enemies: [], abilities: [],
-      },
-    };
-  }
-
-  const noop = (): void => undefined;
-
-  function mount(): { component: PostRaidComponent & Record<string, unknown>; store: SelectionStore } {
-    const wclApi = {
-      getReport: () => Promise.resolve(report()),
-      getReportFights: () => Promise.resolve(report().fights),
-      getPlayerDetails: () => Promise.resolve(groups),
-    } as unknown as WclApiService;
-    const mapFeature = { clear: noop, prepare: () => Promise.resolve() } as unknown as MapFeatureService;
-    const liveCapture = { liveEnabled: signal(false), clear: noop, prepare: noop, setStatus: noop } as unknown as LiveCaptureFeatureService;
-    const liveSync = { pollTriggers: () => EMPTY } as unknown as LiveReportSyncService;
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        PostRaidComponent,
-        { provide: WclApiService, useValue: wclApi },
-        { provide: MapFeatureService, useValue: mapFeature },
-        { provide: LiveCaptureFeatureService, useValue: liveCapture },
-        { provide: LiveReportSyncService, useValue: liveSync },
-      ],
+      actors: [FALLBACK_PLAYER, PICKED_PLAYER].map(p => ({ id: p.id, name: p.name, subType: p.spec, server: '' })),
     });
-    return {
-      component: TestBed.inject(PostRaidComponent) as PostRaidComponent & Record<string, unknown>,
-      store: TestBed.inject(SelectionStore),
-    };
   }
 
-  async function loadReport(component: Record<string, unknown>): Promise<void> {
-    (component['reportControl'] as FormControl<string>).setValue(REPORT_CODE);
-    await (component['loadReport'] as () => Promise<void>)();
-  }
+  // The real store, after the harness fake so it wins: these tests assert on what the page persisted.
+  const open = () => postRaidPage({
+    getReport: () => Promise.resolve(report()),
+    getReportFights: () => Promise.resolve(report().fights),
+    getPlayerDetails: () => Promise.resolve(groups),
+  }, [SelectionStore]);
 
   beforeEach(() => { localStorage.clear(); });
 
   it('keeps the sticky name when a loaded report auto-selects a fallback player instead', async () => {
-    const { component, store } = mount();
+    const page = open();
+    const store = TestBed.inject(SelectionStore);
     store.savePostRaid({ playerName: ABSENT_STICKY_NAME });
 
-    await loadReport(component);
+    page.submitReport(REPORT_CODE);
+    await page.settled();
 
     // The sticky character is absent, so the page auto-selects the alphabetical fallback...
-    expect((component['selectedPlayerId'] as () => number | null)()).toBe(FALLBACK_PLAYER.id);
+    expect(page.chosen(PLAYER_SELECT)).toBe(FALLBACK_PLAYER.name);
     // ...but that automatic pick must not overwrite the sticky name the user chose earlier.
     expect(store.loadPostRaid()?.playerName).toBe(ABSENT_STICKY_NAME);
   });
 
   it('persists the player name when the user explicitly picks one', async () => {
-    const { component, store } = mount();
+    const page = open();
+    const store = TestBed.inject(SelectionStore);
     store.savePostRaid({ playerName: ABSENT_STICKY_NAME });
-    await loadReport(component);
+    page.submitReport(REPORT_CODE);
+    await page.settled();
 
-    (component['playerControl']).setValue(PICKED_PLAYER.id);
-    await (component['onPlayerChange'])();
+    page.choose(PLAYER_SELECT, PICKED_PLAYER.name);
+    await page.settled();
 
+    expect(page.chosen(PLAYER_SELECT)).toBe(PICKED_PLAYER.name);
     expect(store.loadPostRaid()?.playerName).toBe(PICKED_PLAYER.name);
   });
 });
 
 describe('PostRaidComponent fight selection from URL', () => {
-  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
-  const BOSS_ENCOUNTER_ID = 3176;
   const EARLIER_FIGHT_ID = 10;
   const LATEST_FIGHT_ID = 12;
+  // Distinct durations so each pull reads differently in the closed select.
+  const EARLIER_LABEL = '0:10';
+  const LATEST_LABEL = '0:20';
   const PLAYER = { id: 1, name: 'Anya', spec: 'SubtletyRogue' };
 
   const groups: PlayerDetailGroups = {
@@ -110,214 +86,165 @@ describe('PostRaidComponent fight selection from URL', () => {
   };
 
   function report(): WclReport {
-    return {
-      title: 'Test', startTime: 0,
+    return wclReport({
       fights: [
         fight({ id: EARLIER_FIGHT_ID, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 0, endTime: 10_000, friendlyPlayers: [PLAYER.id] }),
-        fight({ id: LATEST_FIGHT_ID, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 20_000, endTime: 30_000, friendlyPlayers: [PLAYER.id] }),
+        fight({ id: LATEST_FIGHT_ID, name: 'Boss', encounterID: BOSS_ENCOUNTER_ID, startTime: 20_000, endTime: 40_000, friendlyPlayers: [PLAYER.id] }),
       ],
-      masterData: { actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }], enemies: [], abilities: [] },
-    };
-  }
-
-  const noop = (): void => undefined;
-
-  function mount(): PostRaidComponent & Record<string, unknown> {
-    const wclApi = {
-      getReport: () => Promise.resolve(report()),
-      getReportFights: () => Promise.resolve(report().fights),
-      getPlayerDetails: () => Promise.resolve(groups),
-    } as unknown as WclApiService;
-    const mapFeature = { clear: noop, prepare: () => Promise.resolve() } as unknown as MapFeatureService;
-    const liveCapture = { liveEnabled: signal(false), clear: noop, prepare: noop, setStatus: noop } as unknown as LiveCaptureFeatureService;
-    const liveSync = { pollTriggers: () => EMPTY } as unknown as LiveReportSyncService;
-    TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        PostRaidComponent,
-        { provide: WclApiService, useValue: wclApi },
-        { provide: MapFeatureService, useValue: mapFeature },
-        { provide: LiveCaptureFeatureService, useValue: liveCapture },
-        { provide: LiveReportSyncService, useValue: liveSync },
-      ],
+      actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }],
     });
-    return TestBed.inject(PostRaidComponent) as PostRaidComponent & Record<string, unknown>;
   }
 
-  async function loadReport(component: Record<string, unknown>, input: string): Promise<void> {
-    (component['reportControl'] as FormControl<string>).setValue(input);
-    await (component['loadReport'] as () => Promise<void>)();
-  }
-
-  beforeEach(() => { localStorage.clear(); });
+  const open = () => postRaidPage({
+    getReport: () => Promise.resolve(report()),
+    getReportFights: () => Promise.resolve(report().fights),
+    getPlayerDetails: () => Promise.resolve(groups),
+  });
 
   it('selects the fight named in the pasted URL instead of the latest pull', async () => {
-    const component = mount();
-    await loadReport(component, `https://www.warcraftlogs.com/reports/${REPORT_CODE}#fight=${EARLIER_FIGHT_ID}`);
-    expect((component['selectedFightId'] as () => number | null)()).toBe(EARLIER_FIGHT_ID);
+    const page = open();
+
+    page.submitReport(`${REPORT_URL}#fight=${EARLIER_FIGHT_ID}`);
+    await page.settled();
+
+    expect(page.chosen(FIGHT_SELECT)).toContain(EARLIER_LABEL);
   });
 
   it('falls back to the latest pull when the URL names no fight', async () => {
-    const component = mount();
-    await loadReport(component, `https://www.warcraftlogs.com/reports/${REPORT_CODE}`);
-    expect((component['selectedFightId'] as () => number | null)()).toBe(LATEST_FIGHT_ID);
+    const page = open();
+
+    page.submitReport(REPORT_URL);
+    await page.settled();
+
+    expect(page.chosen(FIGHT_SELECT)).toContain(LATEST_LABEL);
   });
 
   it('falls back to the latest pull when the URL names a fight not in the report', async () => {
-    const component = mount();
-    await loadReport(component, `https://www.warcraftlogs.com/reports/${REPORT_CODE}#fight=999`);
-    expect((component['selectedFightId'] as () => number | null)()).toBe(LATEST_FIGHT_ID);
+    const page = open();
+
+    page.submitReport(`${REPORT_URL}#fight=999`);
+    await page.settled();
+
+    expect(page.chosen(FIGHT_SELECT)).toContain(LATEST_LABEL);
   });
 });
 
 describe('PostRaidComponent paste', () => {
-  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
-  const PASTED_URL = `https://www.warcraftlogs.com/reports/${REPORT_CODE}`;
-
-  interface PasteHandle {
-    reportControl: FormControl<string>;
-    onPaste: (event: ClipboardEvent, input: HTMLInputElement) => void;
-  }
-
-  function setup(): { getReport: ReturnType<typeof vi.fn>; vm: PasteHandle } {
-    // Parks on the fetch: these tests assert what loadReport reads, not what it does with the report.
+  // Parks on the fetch: these tests assert what the paste handler reads, not what the load does with the report.
+  function open() {
     const getReport = vi.fn(() => new Promise<WclReport>(() => undefined));
-    TestBed.configureTestingModule({
-      providers: [...postRaidProviders({ getReport })],
-    });
-    return { getReport, vm: TestBed.inject(PostRaidComponent) as unknown as PasteHandle };
-  }
-
-  function paste(vm: PasteHandle, text: string, value = '', start = value.length, end = start): void {
-    const input = { value, selectionStart: start, selectionEnd: end } as HTMLInputElement;
-    const event = { clipboardData: { getData: () => text }, preventDefault: vi.fn() } as unknown as ClipboardEvent;
-    vm.onPaste(event, input);
+    return { getReport, page: postRaidPage({ getReport }) };
   }
 
   it('loads the pasted report in the same tick, with no deferral', () => {
-    const { getReport, vm } = setup();
+    const { getReport, page } = open();
 
-    paste(vm, PASTED_URL);
+    page.paste(REPORT_URL);
 
-    // No wait: loadReport reads the control before its first await, which is the whole point here.
+    // No wait: the load reads the field before its first await, which is the whole point here.
     expect(getReport).toHaveBeenCalledWith(REPORT_CODE);
-    expect(vm.reportControl.value).toBe(PASTED_URL);
+    expect(page.reportValue()).toBe(REPORT_URL);
   });
 
   it('inserts at the caret rather than replacing what the field already holds', () => {
-    const { vm } = setup();
+    const { page } = open();
     const HEAD = 'https://www.warcraftlogs.com/reports/';
 
-    paste(vm, REPORT_CODE, HEAD);
+    page.paste(REPORT_CODE, { value: HEAD });
 
-    expect(vm.reportControl.value).toBe(PASTED_URL);
+    expect(page.reportValue()).toBe(REPORT_URL);
   });
 
   it('replaces the selected range, so a select-all paste loads the new report', () => {
-    const { getReport, vm } = setup();
+    const { getReport, page } = open();
     const STALE_URL = 'https://www.warcraftlogs.com/reports/aaaaaaaaaaaaaaaa';
 
-    paste(vm, PASTED_URL, STALE_URL, 0, STALE_URL.length);
+    page.paste(REPORT_URL, { value: STALE_URL, start: 0, end: STALE_URL.length });
 
-    expect(vm.reportControl.value).toBe(PASTED_URL);
+    expect(page.reportValue()).toBe(REPORT_URL);
     expect(getReport).toHaveBeenCalledWith(REPORT_CODE);
   });
 
   it('leaves a paste carrying no text to the browser', () => {
-    const { getReport, vm } = setup();
+    const { getReport, page } = open();
 
-    paste(vm, '', PASTED_URL);
+    page.paste('', { value: REPORT_URL });
 
     expect(getReport).not.toHaveBeenCalled();
-    expect(vm.reportControl.value).toBe('');
   });
 });
 
 describe('PostRaidComponent keystone fight', () => {
-  const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
   const RAID_MYTHIC_DIFFICULTY = 5;
   const MYTHIC_PLUS_DIFFICULTY = 10;
-  const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: 3176, difficulty: RAID_MYTHIC_DIFFICULTY };
+  const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: BOSS_ENCOUNTER_ID, difficulty: RAID_MYTHIC_DIFFICULTY };
   const DUNGEON_FIGHT = { id: 2, name: 'Nexus-Point Xenas', encounterID: 112526, difficulty: MYTHIC_PLUS_DIFFICULTY };
   const PLAYER = { id: 1, name: 'Anya', spec: 'Rogue' };
-  const EXPECTED_SPEC = 'SubtletyRogue';
+  const KEYSTONE_NOTICE = unsupportedEncounterNotice(DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty);
 
   const groups: PlayerDetailGroups = {
     dps: [{ id: PLAYER.id, type: 'Rogue', name: PLAYER.name, specs: [{ spec: 'Subtlety' }] }],
   };
 
   function mixedReport(): WclReport {
-    return {
-      title: 'Mixed night', startTime: 0,
+    return wclReport({
       fights: [
         fight({ ...DUNGEON_FIGHT, startTime: 0, endTime: 10_000, kill: true, friendlyPlayers: [PLAYER.id] }),
         fight({ ...RAID_FIGHT, startTime: 20_000, endTime: 30_000, kill: true, friendlyPlayers: [PLAYER.id] }),
       ],
-      masterData: {
-        actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }],
-        enemies: [], abilities: [],
-      },
-    };
-  }
-
-  function mount(): { vm: Record<string, unknown>; prepareMap: ReturnType<typeof vi.fn>; getPlayerDetails: ReturnType<typeof vi.fn> } {
-    const getPlayerDetails = vi.fn(() => Promise.resolve(groups));
-    const wclApi = { getReport: () => Promise.resolve(mixedReport()), getPlayerDetails } as unknown as WclApiService;
-    const prepareMap = vi.fn(() => Promise.resolve());
-    TestBed.configureTestingModule({
-      providers: [
-        ...postRaidProviders(wclApi, prepareMap),
-      ],
+      actors: [{ id: PLAYER.id, name: PLAYER.name, subType: PLAYER.spec, server: '' }],
     });
-    return { vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown>, prepareMap, getPlayerDetails };
   }
 
-  async function selectFight(vm: Record<string, unknown>, fightId: number): Promise<void> {
-    (vm['fightControl'] as FormControl<number | null>).setValue(fightId);
-    await (vm['onFightChange'] as () => Promise<void>)();
+  function open() {
+    const getPlayerDetails = vi.fn(() => Promise.resolve(groups));
+    const prepareMap = vi.fn(() => Promise.resolve());
+    const page = postRaidPage(
+      { getReport: () => Promise.resolve(mixedReport()), getPlayerDetails },
+      [{ provide: MapFeatureService, useValue: mapFeatureStub({ prepare: prepareMap }) }],
+    );
+    return { getPlayerDetails, prepareMap, page };
   }
 
-  async function load(vm: Record<string, unknown>): Promise<void> {
-    (vm['reportControl'] as FormControl<string>).setValue(REPORT_CODE);
-    await (vm['loadReport'] as () => Promise<void>)();
-  }
+  it('lists the keystone pull but opens on the raid pull the report also holds', async () => {
+    const { prepareMap, page } = open();
 
-  it('lists the keystone fight and analyzes the raid pull the report also holds', async () => {
-    const { vm, prepareMap } = mount();
+    page.submitReport(REPORT_CODE);
+    await page.settled();
 
-    await load(vm);
-
-    expect((vm['fights'] as () => WclFight[])().map(f => f.id)).toEqual([DUNGEON_FIGHT.id, RAID_FIGHT.id]);
-    expect((vm['selectedFightId'] as () => number | null)()).toBe(RAID_FIGHT.id);
-    expect((vm['spec'] as () => string)()).toBe(EXPECTED_SPEC);
-    expect((vm['notice'] as () => string)()).toBe('');
+    expect(page.options(FIGHT_SELECT).join(' ')).toContain(DUNGEON_FIGHT.name);
+    expect(page.chosen(FIGHT_SELECT)).toContain(RAID_FIGHT.name);
+    expect(page.text()).not.toContain(KEYSTONE_NOTICE);
     expect(prepareMap).toHaveBeenCalled();
   });
 
-  it('stops at the notice and fetches nothing when the keystone fight is selected', async () => {
-    const { vm, prepareMap, getPlayerDetails } = mount();
-    await load(vm);
-    prepareMap.mockClear();
+  it('stops at the notice and fetches nothing when the keystone pull is selected', async () => {
+    const { getPlayerDetails, prepareMap, page } = open();
+    page.submitReport(REPORT_CODE);
+    await page.settled();
     getPlayerDetails.mockClear();
+    prepareMap.mockClear();
 
-    await selectFight(vm, DUNGEON_FIGHT.id);
+    page.choose(FIGHT_SELECT, DUNGEON_FIGHT.name);
+    await page.settled();
 
-    expect((vm['notice'] as () => string)()).toBe(unsupportedEncounterNotice(DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty));
-    expect((vm['spec'] as () => string)()).toBe('');
-    expect((vm['ready'] as () => boolean)()).toBe(false);
+    expect(page.text()).toContain(KEYSTONE_NOTICE);
     expect(getPlayerDetails).not.toHaveBeenCalled();
     expect(prepareMap).not.toHaveBeenCalled();
-    expect((vm['loadingAnalysis'] as () => boolean)()).toBe(false);
   });
 
   it('clears the notice when the selection moves back to the raid pull', async () => {
-    const { vm } = mount();
-    await load(vm);
-    await selectFight(vm, DUNGEON_FIGHT.id);
+    const { page } = open();
+    page.submitReport(REPORT_CODE);
+    await page.settled();
+    page.choose(FIGHT_SELECT, DUNGEON_FIGHT.name);
+    await page.settled();
+    expect(page.text()).toContain(KEYSTONE_NOTICE);
 
-    await selectFight(vm, RAID_FIGHT.id);
+    page.choose(FIGHT_SELECT, RAID_FIGHT.name);
+    await page.settled();
 
-    expect((vm['notice'] as () => string)()).toBe('');
-    expect((vm['spec'] as () => string)()).toBe(EXPECTED_SPEC);
+    expect(page.text()).not.toContain(KEYSTONE_NOTICE);
+    expect(page.chosen(FIGHT_SELECT)).toContain(RAID_FIGHT.name);
   });
 });

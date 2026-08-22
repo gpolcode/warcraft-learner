@@ -33,6 +33,8 @@ export class DataFileApiService {
     return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
   }
 
+
+
   async getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
     return foldMissingToEmpty(await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`));
   }
@@ -57,6 +59,8 @@ export class DataFileApiService {
   writeEncounters(spec: string, entries: EncounterEntry[]): Promise<void> {
     return this.io.writeJson(`${spec}/encounters.json`, entries);
   }
+
+
 
   writeSpecs(entries: SpecEntry[]): Promise<void> {
     return this.io.writeJson('index.json', entries);

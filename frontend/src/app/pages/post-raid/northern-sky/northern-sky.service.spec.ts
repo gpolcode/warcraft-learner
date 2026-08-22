@@ -1,27 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { TestBed } from '@angular/core/testing';
 import { ok, missing } from '../../../core/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
-import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
+import { sliceService } from '../../../../testing/service-harness';
+import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';
 import {
   NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
   toggleExclusion, toggleAllExclusion, isPanelOpen,
 } from './northern-sky.service';
-
-const ENCOUNTER_ID = 3009;
-
-function bench(over: Partial<NorthernSkyBench> = {}): NorthernSkyBench {
-  return {
-    spec: 'SubtletyRogue', encounter_id: ENCOUNTER_ID, encounter_name: 'Boss',
-    abilities: [], ...over,
-  };
-}
+import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from './northern-sky-harness';
 
 function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_s: number[]): NorthernSkyAbility {
   return { spell_id, name: `n${spell_id}`, icon: '', kind, cast_times_s };
 }
 
-const HEADER = `EncounterID:${ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
+const HEADER = `EncounterID:${NORTHERN_SKY_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
 
 describe('buildNorthernSkyNote', () => {
   it('emits the Mythic header alone when nothing is selected', () => {
@@ -143,17 +135,12 @@ describe('isPanelOpen', () => {
 describe('NorthernSkyFeatureService', () => {
   it('returns the bench from its data source', async () => {
     const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] }] });
-    TestBed.configureTestingModule({
-      providers: [{ provide: NORTHERN_SKY_DATA_SOURCE, useValue: { getBench: async () => ok(model) } }],
-    });
-    const result = await TestBed.inject(NorthernSkyFeatureService).getExport('SubtletyRogue', ENCOUNTER_ID);
-    expect(result).toEqual(ok(model));
+    const service = sliceService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, ok(model));
+    expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(ok(model));
   });
 
   it('propagates a missing bench so the export waiting state shows', async () => {
-    TestBed.configureTestingModule({
-      providers: [{ provide: NORTHERN_SKY_DATA_SOURCE, useValue: { getBench: async () => missing('Not yet ingested.') } }],
-    });
-    expect(await TestBed.inject(NorthernSkyFeatureService).getExport('SubtletyRogue', ENCOUNTER_ID)).toEqual(missing('Not yet ingested.'));
+    const service = sliceService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, missing('Not yet ingested.'));
+    expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(missing('Not yet ingested.'));
   });
 });

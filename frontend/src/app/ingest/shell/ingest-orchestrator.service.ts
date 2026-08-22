@@ -12,26 +12,20 @@ import { toParseRankings, unwrapRankings } from '../../shared/analysis/wcl-proje
 import type { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
 import { RATE_LIMIT_Q, CLASSES_Q } from '../../core/services/wcl-queries';
 import type { ClassesQuery, RateLimitQuery } from '../../core/services/wcl-operations.generated';
-import { BurstTransformService } from '../../pages/post-raid/burst-windows/burst-transform.service';
-import { RotationTransformService } from '../../pages/post-raid/rotation/rotation-transform.service';
-import { DefensiveTransformService } from '../../pages/post-raid/defensive/defensive-transform.service';
-import { GearTransformService } from '../../pages/post-raid/gear/gear-transform.service';
-import { MapTransformService } from '../../pages/post-raid/map/map-transform.service';
-import { NorthernSkyTransformService } from '../../pages/post-raid/northern-sky/northern-sky-transform.service';
-import { getEncounters, rankingsFromPartition, type CurrentContent } from '../wcl-fetchers';
-import { mapClassesToSpecMeta, specWclFromMetas, type SpecWclMap } from '../wcl-mappers';
+import { sliceRegistry, type SliceDescriptor } from './slice-registry';
+import { getEncounters, rankingsFromPartition } from '../wcl-fetchers';
+import { mapClassesToSpecMeta, parseRaidNames } from '../wcl-mappers';
 import { type WclQueryClient, BudgetExceededError } from '../wcl-client';
 import { INGEST_VERSION } from '../ingest-version';
 import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs, type SpecOrderEntry } from '../ordering';
 import {
-  encounterSkipKey, signatureAfterFetch, readStoredSignature, readStoredVersion, readStoredIngestedAt, signatureMatches,
-  stampSignature, stampBurstFile, readInaccessibleParses,
-  type SignatureRanking, type SignedFile, type IngestStamp,
+  encounterSkipKey, signatureAfterFetch, stampSignature, stampBurstFile,
+  type SignatureRanking, type IngestStamp,
 } from '../signature';
+import { readStoredMetadata, signatureMatches, type StampedFile } from '../../core/data-source/metadata/stored-metadata';
 import {
   readIngestState, nextIngestState, prunedIngestState, encounterIdsFromFiles, type SpecIngestState,
 } from '../ingest-state';
-import { encounterIndexEntries } from '../encounter-index';
 import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from '../spec-report';
 import type { IngestEncounter } from '../models/wcl.models';
 
@@ -40,9 +34,6 @@ const TOP_N = 10;
 const SIGNATURE_POOL_COUNT = TOP_N * 2;
 const POINTS_MARGIN = 500;
 const SLICE_CONCURRENCY = 3;
-
-// The skip check reads only `burst`'s source_signature, stamped only when every slice of the encounter produced data.
-const SLICES = ['burst', 'rotation', 'defensive', 'gear', 'northern-sky'] as const;
 
 type EncounterOutcome = 'benched' | 'empty' | 'failed';
 
@@ -68,9 +59,11 @@ function publishSummary(summary: IngestRunSummary): void {
   (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
 }
 
-export function discoveryBudgetSummary(err: unknown): IngestRunSummary | null {
-  if (err instanceof BudgetExceededError) return { succeeded: [], failed: [], budgetStopped: true };
-  return null;
+/** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
+export function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntry[]): EncounterEntry[] {
+  if (!current.length) return onDisk;
+  const samplesById = new Map(onDisk.map(entry => [entry.id, entry.sample_count]));
+  return current.map(encounter => ({ id: encounter.id, name: encounter.name, sample_count: samplesById.get(encounter.id) ?? 0 }));
 }
 
 class ApiWclClient implements WclQueryClient {
@@ -107,14 +100,7 @@ export class IngestOrchestratorService {
   // The orchestrator needs the transport's inaccessible-code drain, which is ingest-only surface.
   private readonly wclTransport = inject(HttpWclTransport);
   private readonly wclCache = inject(NgHttpCachingService);
-  private readonly transforms = {
-    burst: inject(BurstTransformService),
-    rotation: inject(RotationTransformService),
-    defensive: inject(DefensiveTransformService),
-    gear: inject(GearTransformService),
-    map: inject(MapTransformService),
-    northernSky: inject(NorthernSkyTransformService),
-  };
+  private readonly slices = sliceRegistry();
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -133,16 +119,16 @@ export class IngestOrchestratorService {
     const version = String(INGEST_VERSION);
     console.log(`Ingest version: ${version}`);
 
-    const specWcl = await this.resolveSpecMetas(client);
+    await this.resolveSpecMetas(client);
 
-    console.log('Resolving current raids...');
-    const discovery = await this.discoverContent(client, specWcl);
-    if (!discovery) return;
-    const { encounters, protectedIds } = discovery;
-    console.log(encounters.length
-      ? `Current raid: ${encounters[0]?.zone} (${encounters.length} encounters)`
-      : 'No live raid zone found; keeping the existing data.');
-    await this.resetStaleSpecData(encounters, protectedIds);
+    const raidNames = parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
+    console.log(raidNames.length
+      ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
+      : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
+    const { encounters, protectedIds } = await getEncounters(client, raidNames);
+    console.log(`${encounters.length} encounters`);
+    await this.pruneRetiredRaids(protectedIds);
+    await this.refreshIndices(encounters);
 
     const specs = await this.orderedSpecsFromDisk();
     if (!specs.length) {
@@ -156,7 +142,7 @@ export class IngestOrchestratorService {
     publishSummary(summary);
   }
 
-  private async resolveSpecMetas(client: ApiWclClient): Promise<SpecWclMap> {
+  private async resolveSpecMetas(client: ApiWclClient): Promise<void> {
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
     const classesData = await client.query<ClassesQuery>(CLASSES_Q);
     const metas = mapClassesToSpecMeta(classesData.gameData?.classes ?? []);
@@ -172,36 +158,27 @@ export class IngestOrchestratorService {
         meta.specIcon = '';
       }
     }
-    const specWcl: SpecWclMap = specWclFromMetas(metas);
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);
-    return specWcl;
   }
 
-  /** Null means the budget stopped the run at discovery and the summary is already published. */
-  private async discoverContent(client: ApiWclClient, specWcl: SpecWclMap): Promise<CurrentContent | null> {
-    try {
-      return await getEncounters(client, specWcl);
-    } catch (err) {
-      const budgetSummary = discoveryBudgetSummary(err);
-      if (!budgetSummary) throw err;
-      console.log(`\n[budget] Stopping cleanly at discovery: ${err instanceof Error ? err.message : String(err)}`);
-      publishSummary(budgetSummary);
-      return null;
-    }
-  }
 
-  /** Runs before spec selection so a tier flip resets every spec in one pass - resetting only the selected specs would leave them at zero data and permanently re-selected while a new tier waits for its first parses. */
-  private async resetStaleSpecData(encounters: IngestEncounter[], protectedIds: Set<number>): Promise<void> {
-    if (protectedIds.size === 0) {
-      logWarn('resetStaleSpecData', 'empty protected set - skipping the reset (likely a transient WCL failure)');
-      return;
-    }
+
+  /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
+  private async pruneRetiredRaids(protectedIds: Set<number>): Promise<void> {
+    // An unset CURRENT_RAIDS names no raid, which must not read as "prune everything".
+    if (protectedIds.size === 0) return;
     for (const spec of await this.dataFile.listSpecs()) {
       const pruned = await this.pruneStaleEncounters(spec, protectedIds);
       if (pruned.length) console.log(`  [${spec}] pruned ${pruned.length} stale encounter(s): ${pruned.join(', ')}`);
       await this.pruneIngestState(spec, protectedIds);
+    }
+  }
+
+  /** Every run, so samples ingested for a spec that is not selected again still surface in its index. */
+  private async refreshIndices(encounters: IngestEncounter[]): Promise<void> {
+    for (const spec of await this.dataFile.listSpecs()) {
       await this.rebuildEncountersIndex(spec, encounters);
     }
     await this.rebuildSpecIndex();
@@ -263,14 +240,14 @@ export class IngestOrchestratorService {
       const state = await this.loadIngestState(spec);
       const emptyIds = state?.empty_encounter_ids ?? [];
       const stamps = await Promise.all(benched.map(async id => {
-        const slice = await this.dataFile.getSlice<SignedFile>(spec, id, 'burst');
-        return slice.ok ? slice.value : null;
+        const slice = await this.dataFile.getSlice<StampedFile>(spec, id, 'burst');
+        return readStoredMetadata(slice.ok ? slice.value : null);
       }));
-      const versions = stamps.map(file => (file ? readStoredVersion(file) : null));
+      const versions = stamps.map(stamp => stamp.version);
       if (state) versions.push(state.ingest_version);
       const storedVersions = versions.filter((stored): stored is number => stored !== null);
       const storedTimes = stamps
-        .map(file => (file ? readStoredIngestedAt(file) : null))
+        .map(stamp => stamp.ingestedAtS)
         .filter((stored): stored is number => stored !== null);
       if (state) storedTimes.push(state.ingested_at_s);
       const entry: SpecOrderEntry = {
@@ -323,10 +300,10 @@ export class IngestOrchestratorService {
           continue;
         }
 
-        const existingResult = await this.dataFile.getSlice<SignedFile>(spec, encounter.id, 'burst');
-        const existing = existingResult.ok ? existingResult.value : null;
-        const skipKey = encounterSkipKey(poolRows, readInaccessibleParses(existing), version, TOP_N);
-        if (signatureMatches(readStoredSignature(existing), skipKey)) {
+        const existingResult = await this.dataFile.getSlice<StampedFile>(spec, encounter.id, 'burst');
+        const existing = readStoredMetadata(existingResult.ok ? existingResult.value : null);
+        const skipKey = encounterSkipKey(poolRows, existing.inaccessibleParses, version, TOP_N);
+        if (signatureMatches(existing.signature, skipKey)) {
           console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
           continue;
         }
@@ -390,20 +367,17 @@ export class IngestOrchestratorService {
     });
   }
 
-  /** Compute all five slices first, THEN stamp + write: the signature is known only after every transform has fetched. */
+  /** Compute every slice first, THEN stamp + write: the signature is known only after every transform has fetched. */
   private async ingestEncounter(
     spec: string, encounter: IngestEncounter, version: string, poolRows: SignatureRanking[], partition: number | null,
   ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(SLICE_CONCURRENCY);
-
-    const [burst, rotation, defensive, gear, map, northernSky] = await Promise.all([
-      limit(() => this.transforms.burst.getBench(spec, encId, partition)),
-      limit(() => this.transforms.rotation.getBench(spec, encId, partition)),
-      limit(() => this.transforms.defensive.getBench(spec, encId, partition)),
-      limit(() => this.transforms.gear.getBench(spec, encId, partition)),
-      limit(() => this.transforms.map.getBench(spec, encId, partition)),
-      limit(() => this.transforms.northernSky.getBench(spec, encId, partition)),
+    const [burstSlice, ...siblings] = this.slices;
+    const bench = (slice: SliceDescriptor) => limit(() => slice.transform.getBench(spec, encId, partition));
+    const [burst, rest] = await Promise.all([
+      bench(burstSlice),
+      Promise.all(siblings.map(async slice => ({ slice, result: await bench(slice) }))),
     ]);
 
     const inaccessibleCodes = new Set(this.wclTransport.takeInaccessibleCodes());
@@ -417,28 +391,16 @@ export class IngestOrchestratorService {
         ? `    [${encounter.name}] ${slice}: no data, skipped`
         : `    [${encounter.name}] ${slice}: ${error.kind} (${error.message}), skipped`;
 
-    const writes: Promise<unknown>[] = [];
+    const writes: Promise<void>[] = [];
     if (burst.ok) {
-      const stamped = stampBurstFile(
-        burst.value, signature, stamp, inaccessibleParses, [burst, rotation, defensive, gear, map, northernSky],
-      );
-      writes.push(this.dataFile.writeSlice(spec, encId, 'burst', stamped));
-    } else { console.log(skipNote('burst', burst.error)); }
-    if (rotation.ok) {
-      writes.push(this.dataFile.writeSlice(spec, encId, 'rotation', stampSignature(rotation.value, signature, stamp)));
-    } else { console.log(skipNote('rotation', rotation.error)); }
-    if (defensive.ok) {
-      writes.push(this.dataFile.writeSlice(spec, encId, 'defensive', stampSignature(defensive.value, signature, stamp)));
-    } else { console.log(skipNote('defensive', defensive.error)); }
-    if (gear.ok) {
-      writes.push(this.dataFile.writeSlice(spec, encId, 'gear', stampSignature(gear.value, signature, stamp)));
-    } else { console.log(skipNote('gear', gear.error)); }
-    if (map.ok) {
-      writes.push(this.dataFile.writePositions(spec, encId, stampSignature(map.value, signature, stamp)));
-    } else { console.log(skipNote('positions', map.error)); }
-    if (northernSky.ok) {
-      writes.push(this.dataFile.writeSlice(spec, encId, 'northern-sky', stampSignature(northernSky.value, signature, stamp)));
-    } else { console.log(skipNote('northern-sky', northernSky.error)); }
+      const all = [burst, ...rest.map(entry => entry.result)];
+      writes.push(burstSlice.write(spec, encId, stampBurstFile(burst.value, signature, stamp, inaccessibleParses, all)));
+    } else { console.log(skipNote(burstSlice.file, burst.error)); }
+    for (const { slice, result } of rest) {
+      if (result.ok) {
+        writes.push(slice.write(spec, encId, stampSignature(result.value, signature, stamp)));
+      } else { console.log(skipNote(slice.file, result.error)); }
+    }
 
     await Promise.all(writes);
     if (burst.ok) return 'benched';
@@ -472,16 +434,11 @@ export class IngestOrchestratorService {
     await this.dataFile.writeSpecs(entries);
   }
 
-  /** An empty protected set (a transient worldData failure) never deletes anything. */
   private async pruneStaleEncounters(spec: string, protectedIds: Set<number>): Promise<number[]> {
-    if (protectedIds.size === 0) {
-      logWarn('pruneStaleEncounters', 'empty protected set - skipping prune (likely a transient WCL failure)');
-      return [];
-    }
     const removed: number[] = [];
     for (const encId of await this.benchedIds(spec)) {
       if (protectedIds.has(encId)) continue;
-      for (const slice of [...SLICES, 'positions']) {
+      for (const { file: slice } of this.slices) {
         try {
           await this.dataFile.removeSlice(spec, encId, slice);
         } catch (err) {

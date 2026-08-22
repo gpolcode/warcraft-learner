@@ -22,6 +22,17 @@ interface BenchPayload<TParse> {
   parses: TParse[];
 }
 
+interface BenchHeader {
+  spec: string;
+  encounter_id: number;
+  encounter_name: string;
+  sample_count: number;
+}
+
+export function benchHeader(spec: string, encounterId: number, encounterName: string, sampleCount: number): BenchHeader {
+  return { spec, encounter_id: encounterId, encounter_name: encounterName, sample_count: sampleCount };
+}
+
 export interface BenchSlice<TParse, TBench> {
   logSource: string;
   errorId: string;
@@ -44,7 +55,7 @@ export async function benchFromTopParses<TParse, TBench>(
   try {
     const limits = sliceLimits(slice);
     const rankings = toParseRankings(
-      unwrapRankings(await wclApi.getRankings(spec, encounterId, partition)), limits.poolCount);
+      unwrapRankings(await wclApi.getRankings(spec, encounterId, partition ?? null)), limits.poolCount);
     if (!rankings.length) return missing(slice.noRankingsMessage);
 
     const payload = await collectParses(wclApi, slice, rankings, limits.sampleTarget);

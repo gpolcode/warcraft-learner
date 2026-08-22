@@ -9,12 +9,12 @@ description: warcraft-learner Warcraft Logs (WCL) integration quirks, auth model
 
 ## Browser auth model (intentional embedded secret)
 
-The browser authenticates to WCL with the **client-credentials** grant against `/api/v2/client`, using a client id + secret **hardcoded in `src/environments/wcl-public-client.ts`** (surfaced through each environment file's `wclClientId`/`wclClientSecret`, read by `core/services/wcl-auth.ts` - and therefore shipped, public, in the static JS bundle). This is a deliberate trade-off, not a leak to fix:
+The browser authenticates to WCL with the **client-credentials** grant against `/api/v2/client`, using a client id + secret **hardcoded in `src/app/core/transport/wcl-public-client.ts`** (read directly by its neighbour `core/transport/wcl-auth.ts` - and therefore shipped, public, in the static JS bundle). This is a deliberate trade-off, not a leak to fix:
 
 - The token only reads the same **public** WCL report data the app always read; there is no private data behind it and no user-specific budget to lose. The app never required user-scoped access.
 - The **only** risk is someone extracting the secret and draining the app's shared hourly rate-limit budget. Mitigation is manual: regenerate the secret at `warcraftlogs.com/api/clients/` and redeploy. WCL exposes **no API to rotate a client secret**, so this cannot be automated.
 - There is **no login UI, callback route, or PKCE flow**: `WclAuthService.getToken()` fetches and caches the token silently. A client token has no current user, so users always supply a report code or character name.
-- **Ingestion authenticates the same way**: the ingest environment carries the same embedded pair, so the hourly CI ingest, local ingest runs, and the deployed app all share one WCL client and its hourly rate-limit budget (the orchestrator's budget gate keeps ingest from draining it). To ingest on a dedicated client's budget, edit the pair in `environment.ingest.ts` locally - never commit a private pair.
+- **Ingestion authenticates the same way**: it reads the same module, so the hourly CI ingest, local ingest runs, and the deployed app all share one WCL client and its hourly rate-limit budget (the orchestrator's budget gate keeps ingest from draining it). To ingest on a dedicated client's budget, edit the pair in `wcl-public-client.ts` locally - never commit a private pair.
 
 ## WCL API quirks
 
@@ -29,6 +29,9 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 | **Weapon slots are 15/16 (since Midnight)** | Gear array has 17 entries (0-16). Weapons at index 15 (MH) and 16 (OH). Index 14 is Back/Cloak. |
 | **Trinket slots are 12 and 13** | Confirmed from `encounterRankings` responses. |
 | **`permanentEnchant` is a string** | Numeric ID returned as string. `permanentEnchantName` is never populated. Enchant names resolved via `gameData.enchant(id)` in the gear transform service. |
+| **The partition decides which parses you see** | Without one WCL answers from its default, whose top parses can be months old. Query partitions newest-first (`rankingsFromPartition`). |
+| **A raid zone can have a frozen twin** | WCL keeps a frozen copy of a zone under the same name, carrying different encounter ids. Match unfrozen zones only. |
+| **Nothing marks a zone as the current raid** | A finished tier stays unfrozen and ranked, and each patch gives it a fresh partition, so even its top parses look recent. The raids to bench are named in the `CURRENT_RAIDS` repo variable. |
 | **Two incompatible talent formats** | `characterRankings` -> old format (`{talentID, points}` list) -> `v1:` key. `encounterRankings` -> Midnight format (nested `nodeId` dict) -> `v2:` key. ID spaces are incompatible; cannot compare directly. |
 | **Resolving the talent key** | Both the bench and the analyzed player's `v2:` talent key come from each parse's CombatantInfo `talentTree` (the nested `nodeID` dict, via `talentKeyFromTree` in `gear-extract.ts`), so they are the same format and compare directly. |
 | **`server.region` may be a string** | In `characterRankings` JSON blob, `server.region` is sometimes `"EU"` (string) rather than `{slug: "eu"}`. Handle both forms. |

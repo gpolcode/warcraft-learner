@@ -1,4 +1,5 @@
 /** Ported from `positioning-core` so the map components import no domain service - only this slice-local module + `MapFeatureService`. */
+import { bisector } from 'd3-array';
 import { EncounterPositions, ParsePositions, PlayerPosRow, PosRow, ReferenceSelector } from '../../../core/models/positioning.models';
 import { ActorTimeline, PosSample, FACING_OFFSET_RAD } from './map.service';
 
@@ -13,8 +14,6 @@ export interface RelPos {
   right: number;
   /** Distance from the reference, yards. */
   dist: number;
-  /** Clock angle around the reference, degrees (0 = directly in front). */
-  angleDeg: number;
   /** The map this relative frame sits on; a trail draws no segment where it changes. */
   mapID?: number;
 }
@@ -52,6 +51,8 @@ function interpolateBracket(before: PosSample, after: PosSample, t: number): Pos
   };
 }
 
+const sampleBisector = bisector((sample: PosSample) => sample.t);
+
 /** Returns null when `t` is more than `tolerance` seconds past either end of the timeline. */
 export function positionAt(timeline: ActorTimeline | undefined, t: number, tolerance = 3): PosSample | null {
   const samples = timeline?.samples ?? [];
@@ -59,14 +60,12 @@ export function positionAt(timeline: ActorTimeline | undefined, t: number, toler
   if (!first) return null;
   if (t <= first.t) return t < first.t - tolerance ? null : { ...first, t };
 
-  // Walk to the first sample at or past `t`; `before` trails one behind, so the pair brackets `t`.
-  let before = first;
-  for (const after of samples) {
-    if (after.t < t) { before = after; continue; }
-    return interpolateBracket(before, after, t);
-  }
-  // Every sample lies before `t`, so `before` is the timeline's last one.
-  return t > before.t + tolerance ? null : { ...before, t };
+  // `left` lands on the first sample at or past `t`, so its predecessor is the bracket's lower bound.
+  const index = sampleBisector.left(samples, t);
+  const before = samples[index - 1] ?? first;
+  const after = samples[index];
+  if (!after) return t > before.t + tolerance ? null : { ...before, t };
+  return interpolateBracket(before, after, t);
 }
 
 /** When the reference has no facing, world axes are used (forward = +y). */
@@ -78,8 +77,7 @@ export function toReferenceLocal(player: PosSample, ref: PosSample, t = 0): RelP
   const fwd = dx * cos + dy * sin;
   const right = dx * sin - dy * cos;
   const dist = Math.hypot(dx, dy);
-  const angleDeg = (Math.atan2(right, fwd) * 180) / Math.PI;
-  return { t, fwd, right, dist, angleDeg, mapID: player.mapID };
+  return { t, fwd, right, dist, mapID: player.mapID };
 }
 
 export function rowsToTimeline(id: number, rows: PosRow[]): ActorTimeline {

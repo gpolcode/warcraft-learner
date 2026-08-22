@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { WclApiService } from '../../core/services/wcl-api';
 import { WclTransportError } from '../../core/services/wcl-transport';
 import { ok, missing, transient } from '../../core/result';
-import { FixtureRanking, parseRankings, parseReport, reportsByCode } from '../../../testing/builders/wcl-fixtures';
+import { FixtureRanking, parseRankings, wclReport, reportsByCode } from '../../../testing/builders/wcl-fixtures';
 import { BenchSlice, benchFromTopParses } from './bench-pipeline';
 
 const SPEC = 'SubtletyRogue';
@@ -84,7 +84,7 @@ describe('benchFromTopParses', () => {
     const ANONYMOUS_CODE = 'r1';
     const reports = reportsByCode();
     const wcl = wclFake({
-      getReport: async (code: string) => (code === ANONYMOUS_CODE ? parseReport({ actors: [] }) : reports(code)),
+      getReport: async (code: string) => (code === ANONYMOUS_CODE ? wclReport({ actors: [] }) : reports(code)),
     });
     const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok({ encounterName: BOSS_NAME, codes: ['r2'] }));
@@ -96,7 +96,7 @@ describe('benchFromTopParses', () => {
     const UNRANKED_FIGHT_ID = 99;
     const reports = reportsByCode();
     const wcl = wclFake({
-      getReport: async (code: string) => (code === OTHER_FIGHT_CODE ? parseReport({ fightId: UNRANKED_FIGHT_ID }) : reports(code)),
+      getReport: async (code: string) => (code === OTHER_FIGHT_CODE ? wclReport({ fightId: UNRANKED_FIGHT_ID }) : reports(code)),
     });
     const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok({ encounterName: BOSS_NAME, codes: ['r2'] }));
@@ -139,15 +139,15 @@ describe('benchFromTopParses', () => {
 
   it('samples the partition it was handed', async () => {
     const RESOLVED_PARTITION = 2;
-    const asked: (number | null | undefined)[] = [];
+    const asked: (number | null)[] = [];
     const wcl = {
-      getRankings: async (_spec: string, _encounterId: number, partition?: number | null) => {
+      getRankings: async (_spec: string, _encounterId: number, partition: number | null) => {
         asked.push(partition);
         return { rankings: [] };
       },
     } as unknown as WclApiService;
     await benchFromTopParses(wcl, { ...QUERY, partition: RESOLVED_PARTITION }, codeSlice());
     await benchFromTopParses(wcl, QUERY, codeSlice());
-    expect(asked).toEqual([RESOLVED_PARTITION, undefined]);
+    expect(asked).toEqual([RESOLVED_PARTITION, null]);
   });
 });
