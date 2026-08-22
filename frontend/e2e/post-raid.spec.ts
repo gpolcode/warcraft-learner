@@ -122,11 +122,8 @@ test('a rule row expands into a chip strip of the instances behind its count', a
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {
   const offensives = page.locator('wl-finding-table').filter({ hasText: 'Offensive cooldowns vs top parses.' });
-  // This spec has no cooldown bench for this encounter yet, so the card can legitimately carry nothing to show.
-  if (await offensives.count()) {
-    await showsEntity(offensives);
-    await showsFindingRows(offensives, CD_CHIP);
-  }
+  await showsEntity(offensives);
+  await showsFindingRows(offensives, CD_CHIP);
 });
 
 test('burst windows compare the player damage against the top-parse windows', async () => {
