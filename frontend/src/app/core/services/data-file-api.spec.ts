@@ -98,7 +98,7 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(present).getCurrentRaid()).toEqual(ok(raid));
     expect(present.reads).toEqual(['current-raid.json']);
 
-    // Null is the no-record state that lets discovery adopt a raid; a real failure must not read as one.
+    // A real read failure must not read as the no-record state.
     const fresh = new RecordingTransport(missing('Not yet ingested.'));
     expect(await withTransport(fresh).getCurrentRaid()).toEqual(ok(null));
 

@@ -5,7 +5,7 @@ export interface SpecEntry {
   encounter_count: number;
 }
 
-/** The raid the dataset is benching. Stored so a tier flip is an explicit, one-time transition rather than a fresh guess each run. */
+/** Recorded so a tier flip is a one-time transition, never re-decided from a fresh probe each run. */
 export interface CurrentRaid {
   zone_id: number;
   zone_name: string;

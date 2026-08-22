@@ -25,11 +25,11 @@ const NORMAL_DIFFICULTY = 3;
 const PROBE_DIFFICULTIES = [MYTHIC_DIFFICULTY, HEROIC_DIFFICULTY, NORMAL_DIFFICULTY];
 
 export interface CurrentContent {
-  /** The raid the run ingests and indexes; empty leaves the dataset untouched. */
+  /** Empty leaves the dataset untouched. */
   encounters: IngestEncounter[];
   protectedIds: Set<number>;
   zone: { id: number; name: string } | null;
-  /** True only when a strictly newer raid took over, which is the one transition allowed to delete the previous tier. */
+  /** The one transition allowed to delete the previous tier. */
   reset: boolean;
 }
 
@@ -61,7 +61,7 @@ async function isZoneLive(client: WclQueryClient, zoneEncounters: IngestEncounte
   return false;
 }
 
-// Only a zone NEWER than the recorded raid can take over, and the recorded one is trusted without a probe: a probe answers from live WCL every run, so re-deciding the raid from scratch lets one failed probe read as a tier flip and delete the dataset.
+// A probe answers from live WCL every run, so re-deciding the raid from scratch lets one failed probe read as a tier flip and delete the dataset.
 async function findNewerLiveZone(
   client: WclQueryClient, zonesNewestFirst: IngestEncounter[][], specWcl: SpecWclMap, storedZoneId: number | null,
 ): Promise<IngestEncounter[] | null> {
@@ -84,7 +84,7 @@ function contentFor(expansions: WclExpansions, encounters: IngestEncounter[], re
   };
 }
 
-/** `storedZoneId` is the raid the dataset already holds; passing null (no record yet) re-probes from the newest zone and resets. */
+/** A null `storedZoneId` re-probes from the newest zone and resets the dataset. */
 export async function getEncounters(
   client: WclQueryClient, specWcl: SpecWclMap, storedZoneId: number | null,
 ): Promise<CurrentContent> {
@@ -98,7 +98,6 @@ export async function getEncounters(
   const newer = await findNewerLiveZone(client, zonesNewestFirst, specWcl, storedZoneId);
   if (newer) return contentFor(expansions, newer, true);
 
-  // No newer raid: keep benching the recorded one, so a run that merely failed to confirm it changes nothing.
   const stored = storedZoneId != null ? byZone.get(storedZoneId) : undefined;
   if (stored) return contentFor(expansions, stored, false);
   if (storedZoneId != null) {

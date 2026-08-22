@@ -68,7 +68,6 @@ describe('getEncounters', () => {
     const { encounters, protectedIds, zone, reset } = await getEncounters(contentClient(), SPEC_WCL, null);
     expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
     expect(zone).toEqual({ id: 50, name: 'Sporefall' });
-    // No raid on record: adopting one is the transition that clears whatever the dataset held.
     expect(reset).toBe(true);
     // Zones at or above the live zone's id stay protected; the phased-out zone 46 (and the older M+ zone) do not.
     expect([...protectedIds].sort((a, b) => a - b)).toEqual([3159, 3191, 3591]);
@@ -127,12 +126,12 @@ describe('getEncounters', () => {
       expect(encounters.map(encounter => encounter.id)).toEqual([3159]);
       expect(zone).toEqual({ id: RECORDED, name: 'Sporefall' });
       expect(reset).toBe(false);
-      // Only the one newer zone is probed; the recorded raid and everything older are taken on trust.
+      // 3591 is the only zone newer than the record; nothing older is probed.
       expect([...new Set(probed)]).toEqual([3591]);
     });
 
     it('never reopens an older zone even when the recorded raid goes quiet (boundary: equal id is not newer)', async () => {
-      // Zone 46 is live here, but it is older than the record, so it can never take over.
+      // 3176 makes the older zone 46 live - drop it and the test passes even if older zones could take over.
       const client = contentClient({
         query: (gql, vars) => {
           if (gql.includes('expansions')) return { worldData: { expansions } };

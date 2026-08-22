@@ -164,7 +164,7 @@ export class IngestOrchestratorService {
   /** Null means the budget stopped the run at discovery and the summary is already published. */
   private async discoverContent(client: ApiWclClient, specWcl: SpecWclMap): Promise<CurrentContent | null> {
     const stored = await this.dataFile.getCurrentRaid();
-    // A read failure must not read as "no raid on record": that would re-probe from the newest zone and could reset the dataset.
+    // A read failure must not read as "no record": that would re-probe from the newest zone and reset the dataset.
     if (!stored.ok) throw new Error(`Cannot read the recorded raid: ${stored.error.message}`);
     try {
       return await getEncounters(client, specWcl, stored.value?.zone_id ?? null);

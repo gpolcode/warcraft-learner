@@ -33,7 +33,7 @@ export class DataFileApiService {
     return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
   }
 
-  /** Missing is the legitimate no-memory state (a dataset written before the raid was ever recorded), so it reads as null rather than an error. */
+  /** A missing file is the no-record state a dataset predating this record starts from, not an error. */
   async getCurrentRaid(): Promise<Result<CurrentRaid | null>> {
     const result = await this.io.readJson<CurrentRaid>('current-raid.json');
     if (result.ok) return result;
