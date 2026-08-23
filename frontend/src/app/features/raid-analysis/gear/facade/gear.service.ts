@@ -6,7 +6,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api';
 import { logWarn } from '../../../../core/observability/log';
 import { Result, ok, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
-import { GameNames, extractGear, fillGameNames, selectCombatantInfo } from '../domain/gear-extract';
+import { GearExtractService, GameNames, extractGear, fillGameNames } from '../domain/gear-extract';
 import { talentKeyFromTree } from '../../../../domain/gear/talent-key';
 import {
   GearStatus,
@@ -99,6 +99,7 @@ export function buildBenchGearView(stats: EncounterGearStats): GearComparisonVie
 
 @Injectable({ providedIn: 'root' })
 export class GearFeatureService {
+  private readonly gearExtract = inject(GearExtractService);
   private readonly source = inject(GEAR_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
@@ -125,7 +126,7 @@ export class GearFeatureService {
     reportCode: string, fightId: number, playerId: number,
   ): Promise<Result<CharacterGear>> {
     try {
-      const event = selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
+      const event = this.gearExtract.selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
       let names: GameNames = {};
       if (event?.gear?.length) {
         const { trinkets, enchants } = extractGear(event.gear);

@@ -1,3 +1,17 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class MapDrawService {
+  readonly positionAt = positionAt;
+  readonly toReferenceLocal = toReferenceLocal;
+  readonly rowsToTimeline = rowsToTimeline;
+  readonly playerRowsToTimeline = playerRowsToTimeline;
+  readonly buildParseTimelines = buildParseTimelines;
+  readonly parsePointsAt = parsePointsAt;
+  readonly parseTrailsOf = parseTrailsOf;
+  readonly buildTrail = buildTrail;
+}
+
 /** Ported from `positioning-core` so the map components import no domain service - only this slice-local module + `MapFeatureService`. */
 import { bisector } from 'd3-array';
 import { EncounterPositions, ParsePositions, PlayerPosRow, PosRow, ReferenceSelector } from '../../../../domain/encounter/positioning.models';

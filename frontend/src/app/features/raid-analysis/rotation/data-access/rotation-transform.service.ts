@@ -14,10 +14,8 @@ import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/w
 import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { Result } from '../../../../core/http/result';
-import {
-  BenchedRule, RuleSample, MIN_MEASURED_PARSES, buildRuleContext, sampleRule, ruleBand, judgeableRules, rulesNeed,
-} from '../domain/rotation-rules';
-import { detectBloodlust } from '../domain/rotation-bloodlust';
+import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES, ruleBand } from '../domain/rotation-rules';
+import { RotationBloodlustService } from '../domain/rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
 
 
@@ -163,6 +161,8 @@ interface RotationPlan {
 
 @Injectable({ providedIn: 'root' })
 export class RotationTransformService implements DataSource<RotationBench> {
+  private readonly bloodlust = inject(RotationBloodlustService);
+  private readonly ruleEngine = inject(RotationRuleEngineService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -182,7 +182,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
           ? {
             cooldowns: rulebook.major_cooldowns,
             defensives: rulebook.defensives,
-            judgeable: judgeableRules(rulebook.rules),
+            judgeable: this.ruleEngine.judgeableRules(rulebook.rules),
           }
           : null,
         missingMessage: 'No rulebook cooldowns for this spec.',
@@ -211,21 +211,21 @@ export class RotationTransformService implements DataSource<RotationBench> {
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
       // Same shape and cost as the runtime fetch: raid-wide, so only for a spec that reads enemy auras.
-      rulesNeed(rules, 'enemyAuras')
+      this.ruleEngine.rulesNeed(rules, 'enemyAuras')
         ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
         : Promise.resolve([]),
       // Target health rides on the damage rows, and only the resource-bearing form carries it.
-      rulesNeed(rules, 'damage')
+      this.ruleEngine.rulesNeed(rules, 'damage')
         ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id,
-          rulesNeed(rules, 'targetHealth'))
+          this.ruleEngine.rulesNeed(rules, 'targetHealth'))
         : Promise.resolve([]),
     ]);
 
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
-    const blTimeS = detectBloodlust(buffsTimed);
-    const ruleCtx = buildRuleContext({
+    const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
+    const ruleCtx = this.ruleEngine.buildRuleContext({
       casts: castsTimed, buffs: buffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
       debuffs: this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
       fightDurationS: fightDurS,
@@ -234,7 +234,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       summaries: summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
       gapListS: castGapListS(castsTimed),
       durationS: fightDurS,
-      ruleSamples: rules.map(rule => (rule.condition ? sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
+      ruleSamples: rules.map(rule => (rule.condition ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
     };
   }
 }

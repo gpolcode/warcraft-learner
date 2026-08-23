@@ -4,7 +4,7 @@ import { CharacterGear, ParseRanking, TopParseSelection } from '../../../../core
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
 import { logWarn } from '../../../../core/observability/log';
 import { Result } from '../../../../core/http/result';
-import { GameNames, TRINKET_SLOTS, extractGear, fillGameNames, selectCombatantInfo } from '../domain/gear-extract';
+import { GearExtractService, GameNames, TRINKET_SLOTS } from '../domain/gear-extract';
 import { TalentKeyService } from '../../../../domain/gear/talent-key';
 import { buildTalentDiff } from '../../../../domain/gear/gear-comparison';
 import { TalentDataService } from '../../../../core/http/talent-data';
@@ -146,6 +146,7 @@ export function withTalentDiffs(
 
 @Injectable({ providedIn: 'root' })
 export class GearTransformService implements DataSource<GearBench> {
+  private readonly gearExtract = inject(GearExtractService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly talentKey = inject(TalentKeyService);
   private readonly wclApi = inject(WclApiService);
@@ -169,13 +170,13 @@ export class GearTransformService implements DataSource<GearBench> {
   }
 
   private async fetchParseGear({ ranking, fight, player }: BenchParse): Promise<ParseGear | null> {
-    const event = selectCombatantInfo(await this.wclApi.getCombatantInfo(ranking.report_code, fight.id, player.id), player.id);
+    const event = this.gearExtract.selectCombatantInfo(await this.wclApi.getCombatantInfo(ranking.report_code, fight.id, player.id), player.id);
     if (!event?.gear?.length) return null;
 
-    const { trinkets, enchants } = extractGear(event.gear);
+    const { trinkets, enchants } = this.gearExtract.extractGear(event.gear);
     const names = await this.resolveGameNames(ranking, trinkets, enchants);
-    fillGameNames(trinkets, 'i', names);
-    fillGameNames(enchants, 'e', names);
+    this.gearExtract.fillGameNames(trinkets, 'i', names);
+    this.gearExtract.fillGameNames(enchants, 'e', names);
 
     const characterGear: CharacterGear = {
       talent_key: this.talentKey.talentKeyFromTree(event.talentTree), trinkets, enchants,

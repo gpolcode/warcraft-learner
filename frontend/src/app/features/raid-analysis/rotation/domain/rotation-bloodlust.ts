@@ -1,5 +1,12 @@
+import { Injectable } from '@angular/core';
 import { TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { buildAuraWindows } from '../../../../domain/analysis/aura-windows';
+
+@Injectable({ providedIn: 'root' })
+export class RotationBloodlustService {
+  readonly detectBloodlust = detectBloodlust;
+}
+
 
 /** Bloodlust / Heroism / Time Warp and equivalents. */
 const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);

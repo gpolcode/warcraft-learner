@@ -1,4 +1,15 @@
+import { Injectable } from '@angular/core';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
+
+@Injectable({ providedIn: 'root' })
+export class GearExtractService {
+  readonly selectCombatantInfo = selectCombatantInfo;
+  readonly iconFile = iconFile;
+  readonly decodeHtmlEntities = decodeHtmlEntities;
+  readonly fillGameNames = fillGameNames;
+  readonly extractGear = extractGear;
+}
+
 
 // WCL keys the CombatantInfo event by sourceID; falls back to the first event when there is no exact match.
 export function selectCombatantInfo(

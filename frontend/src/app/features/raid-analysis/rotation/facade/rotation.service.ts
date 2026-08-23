@@ -16,9 +16,7 @@ import {
 import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-table.utils';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
-import {
-  buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
-} from '../domain/rotation-rules';
+import { RotationRuleEngineService, RULE_TYPE_LABEL } from '../domain/rotation-rules';
 import { detectBloodlust } from '../domain/rotation-bloodlust';
 import { ROTATION_DATA_SOURCE, RotationBench } from '../data-access/rotation-data-source';
 
@@ -369,6 +367,7 @@ export function buildCdPlan(
 
 @Injectable({ providedIn: 'root' })
 export class RotationFeatureService {
+  private readonly ruleEngine = inject(RotationRuleEngineService);
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
@@ -394,19 +393,19 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
-    const rules = benchedRules(bench.rules);
+    const rules = this.ruleEngine.benchedRules(bench.rules);
     const conditions = rules.map(entry => entry.rule);
     const [casts, buffs, enemyAuras, damage] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       // Unnarrowable, so it costs several raid-wide pages: `Enemies` plus a sourceID returns nothing, and WCL offers no other source filter here.
-      rulesNeed(conditions, 'enemyAuras')
+      this.ruleEngine.rulesNeed(conditions, 'enemyAuras')
         ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
         : Promise.resolve([]),
       // Target health rides on the damage rows, and only the resource-bearing form carries it.
-      rulesNeed(conditions, 'damage')
+      this.ruleEngine.rulesNeed(conditions, 'damage')
         ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId,
-          rulesNeed(conditions, 'targetHealth'))
+          this.ruleEngine.rulesNeed(conditions, 'targetHealth'))
         : Promise.resolve([]),
     ]);
     const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
@@ -417,16 +416,16 @@ export class RotationFeatureService {
       fightDurationS, castEvents: castsTimed, buffEvents: buffsTimed,
       cooldowns: bench.major_cooldowns, bench,
     });
-    const ruleCtx = buildRuleContext({
+    const ruleCtx = this.ruleEngine.buildRuleContext({
       casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
       fightDurationS,
     });
-    const ruleFindings = evaluateRules(rules, ruleCtx);
+    const ruleFindings = this.ruleEngine.evaluateRules(rules, ruleCtx);
     const findings = [...offensiveFindings, ...ruleFindings];
     sortBySeverity(findings);
     const { ruleRows, offensiveRows, onPlan } =
       bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-    const ruleOnPlan = rulesFollowed(rules, ruleCtx);
+    const ruleOnPlan = this.ruleEngine.rulesFollowed(rules, ruleCtx);
     return { ruleRows, ruleOnPlan, offensiveRows, onPlan };
   }
 

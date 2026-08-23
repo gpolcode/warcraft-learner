@@ -10,10 +10,7 @@ import { ReferenceSelector } from '../../../../domain/encounter/positioning.mode
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { LoadStateComponent, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { MapFeatureService, listReferenceEnemies } from '../facade/map.service';
-import {
-  RelPos, ParseTimelines, buildParseTimelines, buildTrail, positionAt, toReferenceLocal,
-  parsePointsAt, parseTrailsOf,
-} from '../domain/map-draw';
+import { MapDrawService, RelPos, ParseTimelines } from '../domain/map-draw';
 
 const STEP_S = 0.5;
 /** Clamped per frame so a backgrounded-then-resumed tab does not jump the scrubber by the whole elapsed gap. */
@@ -26,6 +23,7 @@ const MAX_FRAME_DT_S = 0.1;
   templateUrl: './map-canvas.html',
 })
 export class MapCanvasComponent {
+  private readonly mapDraw = inject(MapDrawService);
   private readonly map = inject(MapFeatureService);
 
   protected readonly positions = this.map.positions;
@@ -62,11 +60,11 @@ export class MapCanvasComponent {
   /** Scaling every stored row into a sample is the expensive step, so caching it here keeps playback cheap: each frame just interpolates the cached timelines. */
   private readonly parseTimelines = computed<ParseTimelines[]>(() => {
     const positions = this.positions();
-    return positions ? buildParseTimelines(positions, this.selector()) : [];
+    return positions ? this.mapDraw.buildParseTimelines(positions, this.selector()) : [];
   });
 
   private readonly benchTrails = computed(() =>
-    parseTrailsOf(this.parseTimelines(), this.anchorTime(), this.preS(), this.postS(), STEP_S));
+    this.mapDraw.parseTrailsOf(this.parseTimelines(), this.anchorTime(), this.preS(), this.postS(), STEP_S));
 
   private readonly liveRefId = computed(() => {
     const live = this.live();
@@ -79,13 +77,13 @@ export class MapCanvasComponent {
     const live = this.live();
     const refId = this.liveRefId();
     if (!live || refId == null) return [];
-    return buildTrail(live.playerId, refId, live.timelines, this.anchorTime(), this.preS(), this.postS(), STEP_S);
+    return this.mapDraw.buildTrail(live.playerId, refId, live.timelines, this.anchorTime(), this.preS(), this.postS(), STEP_S);
   });
 
   protected readonly readout = computed<Readout | null>(() => {
     if (!this.positions()) return null;
     const t = this.scrubT();
-    const points = parsePointsAt(this.parseTimelines(), t);
+    const points = this.mapDraw.parsePointsAt(this.parseTimelines(), t);
     let centroid: { fwd: number; right: number } | null = null;
     if (points.length) {
       centroid = {
@@ -152,11 +150,11 @@ export class MapCanvasComponent {
     const live = this.live();
     const refId = this.liveRefId();
     if (!live || refId == null) return null;
-    const ref = positionAt(live.timelines.get(refId), t);
-    const player = positionAt(live.timelines.get(live.playerId), t);
+    const ref = this.mapDraw.positionAt(live.timelines.get(refId), t);
+    const player = this.mapDraw.positionAt(live.timelines.get(live.playerId), t);
     if (!ref || !player) return null;
     if (ref.mapID != null && player.mapID != null && ref.mapID !== player.mapID) return null;
-    return toReferenceLocal(player, ref, t);
+    return this.mapDraw.toReferenceLocal(player, ref, t);
   }
 
   private draw(canvas: HTMLCanvasElement): void {
@@ -174,7 +172,7 @@ export class MapCanvasComponent {
     drawRangeRings(frame);
     drawReference(frame);
     drawBenchTrails(frame, benchTrails);
-    drawBenchNow(frame, parsePointsAt(this.parseTimelines(), this.scrubT()), read);
+    drawBenchNow(frame, this.mapDraw.parsePointsAt(this.parseTimelines(), this.scrubT()), read);
     drawLive(frame, liveTrail, read);
   }
 }
