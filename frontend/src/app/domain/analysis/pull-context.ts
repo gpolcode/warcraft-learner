@@ -11,7 +11,6 @@ export class PullContextService {
   readonly analyzePull = analyzePull;
 }
 
-
 export interface PullContext {
   report: WclReport;
   fight: WclFight;

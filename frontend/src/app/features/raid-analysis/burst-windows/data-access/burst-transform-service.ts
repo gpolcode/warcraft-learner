@@ -12,7 +12,6 @@ import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/be
 import { DataSource } from '../../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
-
 const CLUSTER_MIN_FRAC = 0.4;
 const MEMBER_MAJORITY_FRAC = 0.5;
 const CLUSTER_MERGE_S = 15;

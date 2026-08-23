@@ -13,7 +13,6 @@ export class CurrentRaidsService {
   readonly assertPointsBudget = assertPointsBudget;
 }
 
-
 interface CurrentRaids {
   encounters: IngestEncounter[];
   protectedIds: Set<number>;

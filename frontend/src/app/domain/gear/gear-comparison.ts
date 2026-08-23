@@ -19,7 +19,6 @@ export class GearComparisonService {
   readonly buildBenchTrinketRows = buildBenchTrinketRows;
 }
 
-
 export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
 
 /** A slot counts as consensus-enchanted, and an un-enchanted one warns, at this top-parse share. */

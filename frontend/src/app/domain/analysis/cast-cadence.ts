@@ -3,7 +3,6 @@ import { CadenceBenchmark } from '../encounter/encounter.models';
 import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove } from './analysis-math';
 import { HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets } from './hold-targets';
 
-
 /** Rows are users-only; `totalParses` carries the non-users. */
 export interface CadenceEntry {
   cast_times_s: number[];

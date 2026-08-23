@@ -1,4 +1,3 @@
-
 /** Generic, cross-slice analysis math + formatting helpers that several slices import instead of re-declaring. */
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';

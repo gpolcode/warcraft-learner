@@ -7,7 +7,6 @@ export class TalentKeyService {
   readonly parseTalentKey = parseTalentKey;
 }
 
-
 export interface TalentPick {
   entryId: number;
   rank: number;

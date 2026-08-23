@@ -254,7 +254,6 @@ const sampleFight = { id: 1, encounterID: 3144, startTime: 0, endTime: 10_000, n
 
 const PLAYER_ACTOR_ID = 5;
 
-
 describe('MapFeatureService deferred overlay', () => {
   function setup(): { service: MapFeatureService; api: RecordingWclApi } {
     const api = new RecordingWclApi();

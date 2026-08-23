@@ -15,7 +15,6 @@ export class BenchPipelineService {
   readonly benchFromTopParses = benchFromTopParses;
 }
 
-
 const TOP_PARSE_COUNT = 10;
 const MIN_SAMPLE_COUNT = 1;
 

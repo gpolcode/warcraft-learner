@@ -43,13 +43,11 @@ export type ReportQueryVariables = Exact<{
   code: string;
 }>;
 
-
 export type ReportQuery = { reportData: { report: { title: string, startTime: number, fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null } | null> | null, masterData: { actors: Array<{ id: number | null, name: string | null, subType: string | null, server: string | null } | null> | null, enemies: Array<{ id: number | null, name: string | null, gameID: number | null } | null> | null, abilities: Array<{ gameID: number | null, name: string | null, icon: string | null } | null> | null } | null } | null } | null };
 
 export type ReportFightsQueryVariables = Exact<{
   code: string;
 }>;
-
 
 export type ReportFightsQuery = { reportData: { report: { fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null } | null> | null } | null } | null };
 
@@ -57,7 +55,6 @@ export type PlayerDetailsQueryVariables = Exact<{
   code: string;
   fightIDs: Array<number | null | undefined> | number;
 }>;
-
 
 export type PlayerDetailsQuery = { reportData: { report: { playerDetails: PlayerDetailsBlob | null } | null } | null };
 
@@ -72,7 +69,6 @@ export type EventsQueryVariables = Exact<{
   hostilityType?: HostilityType | null | undefined;
 }>;
 
-
 export type EventsQuery = { reportData: { report: { events: { data: WclEventData | null, nextPageTimestamp: number | null } | null } | null } | null };
 
 export type TableQueryVariables = Exact<{
@@ -80,7 +76,6 @@ export type TableQueryVariables = Exact<{
   fightIDs: Array<number | null | undefined> | number;
   dataType?: TableDataType | null | undefined;
 }>;
-
 
 export type TableQuery = { reportData: { report: { table: WclTableBlob | null } | null } | null };
 
@@ -92,7 +87,6 @@ export type ResurrectsQueryVariables = Exact<{
   endTime?: number | null | undefined;
 }>;
 
-
 export type ResurrectsQuery = { reportData: { report: { events: { data: WclEventData | null, nextPageTimestamp: number | null } | null } | null } | null };
 
 export type RankingsQueryVariables = Exact<{
@@ -103,7 +97,6 @@ export type RankingsQueryVariables = Exact<{
   difficulty: number;
 }>;
 
-
 export type RankingsQuery = { worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null };
 
 export type CombatantInfoQueryVariables = Exact<{
@@ -112,20 +105,16 @@ export type CombatantInfoQueryVariables = Exact<{
   sourceID?: number | null | undefined;
 }>;
 
-
 export type CombatantInfoQuery = { reportData: { report: { events: { data: WclEventData | null } | null } | null } | null };
 
 export type RateLimitQueryVariables = Exact<{ [key: string]: never; }>;
-
 
 export type RateLimitQuery = { rateLimitData: { limitPerHour: number, pointsSpentThisHour: number } | null };
 
 export type ClassesQueryVariables = Exact<{ [key: string]: never; }>;
 
-
 export type ClassesQuery = { gameData: { classes: Array<{ name: string, slug: string, specs: Array<{ name: string, slug: string } | null> | null } | null> | null } | null };
 
 export type EncountersQueryVariables = Exact<{ [key: string]: never; }>;
-
 
 export type EncountersQuery = { worldData: { expansions: Array<{ zones: Array<{ id: number, name: string, frozen: boolean, partitions: Array<{ id: number } | null> | null, encounters: Array<{ id: number, name: string } | null> | null } | null> | null } | null> | null } | null };

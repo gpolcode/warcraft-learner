@@ -3,7 +3,6 @@ import { ClipAnchor } from '../capture/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
 import { AbilityIcons, TimedEvent, normalizeAbilityId, resolveAbility, windowSpells } from './wcl-projections';
 
-
 function eventDamage(event: TimedEvent): number {
   return (event.amount ?? 0) + (event.absorbed ?? 0);
 }

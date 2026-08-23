@@ -3,7 +3,6 @@ import { round, fmtClock } from './analysis-math';
 import { CdHoldTargets } from '../encounter/encounter.models';
 import { AnalysisFinding } from './analysis.models';
 
-
 /** A gap beyond this past the expected on-cooldown time counts as a deliberate hold. */
 const HOLD_THRESHOLD_S = 8.0;
 /** A hold target surfaces only when a MAJORITY of sampled parses hold at that index. */

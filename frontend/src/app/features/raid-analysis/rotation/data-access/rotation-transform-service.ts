@@ -18,7 +18,6 @@ import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES
 import { RotationBloodlustService } from '../domain/rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
 
-
 /** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
 const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
 /** BL window: a CD counts as aligned if cast 30s before to 55s after BL start. */

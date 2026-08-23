@@ -98,7 +98,6 @@ describe('DataFileApiService reads', () => {
     expect(await withTransport(outage).getSpecs()).toEqual(transient('WCL is unreachable right now.'));
   });
 
-
   it('reads a spec encounter index at {spec}/encounters.json, folding a missing file to ok([])', async () => {
     const encounters: EncounterEntry[] = [{ id: ENCOUNTER_ID, name: 'Boss', sample_count: 5 }];
     const present = new RecordingTransport(ok(encounters));

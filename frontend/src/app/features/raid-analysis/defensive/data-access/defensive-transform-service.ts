@@ -16,7 +16,6 @@ import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/be
 import { DataSource } from '../../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
-
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;
 const CLUSTER_MERGE_S = 20;

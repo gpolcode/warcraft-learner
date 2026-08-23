@@ -132,8 +132,6 @@ export class IngestOrchestratorService {
     console.log(`Resolved ${metas.length} specs from WCL`);
   }
 
-
-
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
   private async pruneRetiredRaids(protectedIds: Set<number>): Promise<void> {
     // An unset CURRENT_RAIDS names no raid, which must not read as "prune everything".

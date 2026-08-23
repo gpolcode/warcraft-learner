@@ -10,7 +10,6 @@ export class IngestStateService {
   readonly encounterIdsFromFiles = encounterIdsFromFiles;
 }
 
-
 export interface SpecIngestState {
   ingest_version: number;
   ingested_at_s: number;

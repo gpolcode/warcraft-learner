@@ -125,6 +125,7 @@ export default defineConfig([
         'error',
         { allow: [{ from: 'package', name: 'HttpErrorResponse', package: '@angular/common' }] },
       ],
+      'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0 }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
       'local/path-conventions': 'error',
@@ -257,6 +258,7 @@ export default defineConfig([
     },
     rules: {
       'no-console': 'off',
+      'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0 }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
     },
@@ -280,6 +282,7 @@ export default defineConfig([
       '@angular-eslint/template/prefer-built-in-pipes': 'error',
       '@angular-eslint/template/prefer-contextual-for-variables': 'error',
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
+      'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0 }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
       'local/path-conventions': 'error',

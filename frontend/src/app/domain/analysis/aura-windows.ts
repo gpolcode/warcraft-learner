@@ -13,7 +13,6 @@ export class AuraWindowsService {
   readonly auraUptimePct = auraUptimePct;
 }
 
-
 /** Fight-relative seconds; an open end means the aura outlived the fight. */
 export type AuraWindows = Map<number, [number, number | null][]>;
 

@@ -10,7 +10,6 @@ export class GearExtractService {
   readonly extractGear = extractGear;
 }
 
-
 // WCL keys the CombatantInfo event by sourceID; falls back to the first event when there is no exact match.
 export function selectCombatantInfo(
   events: WclCombatantInfo[], playerId: number,
