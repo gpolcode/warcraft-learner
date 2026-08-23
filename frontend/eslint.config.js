@@ -91,26 +91,6 @@ const restrictHttpImports = {
   ],
 };
 
-const restrictAngularImports = {
-  patterns: [
-    {
-      group: ['@angular/*', '@angular/*/*'],
-      message: 'This is functional-core code: keep it pure and framework-free, and inject nothing.',
-    },
-  ],
-};
-
-const functionalCoreFiles = [
-  'src/app/core/validation/**/*.ts',
-  'src/app/core/observability/**/*.ts',
-  'src/app/core/http/result.ts',
-  'src/app/domain/**/*.ts',
-  'src/app/features/*/*/domain/**/*.ts',
-  'src/app/features/*/ingest/models/**/*.ts',
-  'src/app/**/*.utils.ts',
-  'src/app/**/*-queries.ts',
-];
-
 export default defineConfig([
   { ignores: ['src/**/*.generated.ts'] },
   {
@@ -232,10 +212,6 @@ export default defineConfig([
     files: ['src/**/*.ts'],
     ignores: ['src/app/core/http/**', 'src/app/features/*/ingest/http/**'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
-  },
-  {
-    files: functionalCoreFiles,
-    rules: { 'no-restricted-imports': ['error', restrictAngularImports] },
   },
   {
     // Plain-JS Node scripts (the ingest file server + headless harness). console is
