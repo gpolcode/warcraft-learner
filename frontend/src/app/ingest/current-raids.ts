@@ -1,5 +1,6 @@
 import { logWarn } from '../core/log';
-import type { WclApiService, WclExpansions, WclGameClasses } from '../core/services/wcl-api';
+import type { WclApiService } from '../core/services/wcl-api';
+import type { WclClass, WclExpansion, WclZone } from '../core/models/wcl.models';
 import type { SpecMeta } from '../core/models/spec-meta.models';
 import type { IngestEncounter } from './models/wcl.models';
 
@@ -38,19 +39,16 @@ export async function assertPointsBudget(wclApi: WclApiService, margin: number):
   }
 }
 
-type WclZone = NonNullable<NonNullable<NonNullable<WclExpansions[number]>['zones']>[number]>;
-
 const zoneKey = (name: string): string => name.trim().toLowerCase();
 
 /** WCL keeps a frozen copy of a raid under the same name, with different encounter ids. */
-function currentZoneNamed(expansions: WclExpansions, name: string): WclZone | null {
+function currentZoneNamed(expansions: WclExpansion[], name: string): WclZone | null {
   const matches = (expansions[0]?.zones ?? [])
-    // WCL omits `frozen` on some zones though the schema declares it non-null, so an absent one has to read as not-frozen.
-    .filter(zone => zone && !zone.frozen && zoneKey(zone.name) === zoneKey(name));
-  return matches.sort((a, b) => (b?.id ?? 0) - (a?.id ?? 0))[0] ?? null;
+    .filter(zone => !zone.frozen && zoneKey(zone.name) === zoneKey(name));
+  return matches.sort((a, b) => b.id - a.id)[0] ?? null;
 }
 
-function encountersForRaids(expansions: WclExpansions, raidNames: string[]): IngestEncounter[] {
+function encountersForRaids(expansions: WclExpansion[], raidNames: string[]): IngestEncounter[] {
   const result: IngestEncounter[] = [];
   for (const name of raidNames) {
     const zone = currentZoneNamed(expansions, name);
@@ -58,25 +56,20 @@ function encountersForRaids(expansions: WclExpansions, raidNames: string[]): Ing
       logWarn('encountersForRaids', `no current WCL zone named "${name}" - check the CURRENT_RAIDS variable`);
       continue;
     }
-    const partitionIds = (zone.partitions ?? [])
-      .filter(partition => partition !== null)
-      .map(partition => partition.id)
-      .sort((a, b) => b - a);
+    const partitionIds = (zone.partitions ?? []).map(partition => partition.id).sort((a, b) => b - a);
     for (const encounter of (zone.encounters ?? [])) {
-      if (encounter) result.push({ id: encounter.id, name: encounter.name, zone: zone.name, zoneId: zone.id, partitionIds });
+      result.push({ id: encounter.id, name: encounter.name, zone: zone.name, zoneId: zone.id, partitionIds });
     }
   }
   return result;
 }
 
 /** The folder key is `spec.slug + class.slug` (e.g. 'SubtletyRogue'). */
-function mapClassesToSpecMeta(classes: WclGameClasses): SpecMeta[] {
+function mapClassesToSpecMeta(classes: WclClass[]): SpecMeta[] {
   const metas: SpecMeta[] = [];
   for (const cls of classes) {
-    if (!cls) continue;
     const classIcon = `class_${cls.slug.toLowerCase()}`;
     for (const spec of cls.specs ?? []) {
-      if (!spec) continue;
       const folder = `${spec.slug}${cls.slug}`;
       metas.push({
         spec: folder,

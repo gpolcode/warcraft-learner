@@ -4,6 +4,7 @@ import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-tra
 import {
   WclReport, WclEvent,
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
+  WclClass, WclExpansion,
   MYTHIC_DIFFICULTY,
 } from '../models/wcl.models';
 import {
@@ -26,8 +27,6 @@ import type {
 import { SpecMetaService } from './spec-meta';
 
 type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
-export type WclGameClasses = NonNullable<NonNullable<ClassesQuery['gameData']>['classes']>;
-export type WclExpansions = NonNullable<NonNullable<EncountersQuery['worldData']>['expansions']>;
 
 // WCL declares every selected field nullable, so these reads narrow the generated envelope once instead of pushing null into every consumer.
 @Injectable({ providedIn: 'root' })
@@ -172,14 +171,14 @@ export class WclApiService {
     return result.rateLimitData;
   }
 
-  async getPlayableClasses(): Promise<WclGameClasses> {
+  async getPlayableClasses(): Promise<WclClass[]> {
     const result = await this.query<ClassesQuery>(CLASSES_Q);
-    return result.gameData?.classes ?? [];
+    return (result.gameData?.classes ?? []) as WclClass[];
   }
 
   /** null when WCL serves no expansion tree: collapsing that to [] would silently read as "no current raid". */
-  async getZoneTree(): Promise<WclExpansions | null> {
+  async getZoneTree(): Promise<WclExpansion[] | null> {
     const result = await this.query<EncountersQuery>(ENCOUNTERS_Q);
-    return result.worldData?.expansions ?? null;
+    return (result.worldData?.expansions ?? null) as WclExpansion[] | null;
   }
 }

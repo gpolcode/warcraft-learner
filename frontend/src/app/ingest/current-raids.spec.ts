@@ -1,20 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import type { WclApiService, WclExpansions, WclGameClasses } from '../core/services/wcl-api';
+import type { WclApiService } from '../core/services/wcl-api';
+import type { WclClass, WclExpansion, WclZone } from '../core/models/wcl.models';
 import {
   assertPointsBudget, BudgetExceededError, discoverCurrentRaids, discoverSpecMetas, parseRaidNames,
 } from './current-raids';
 
-type WclZone = NonNullable<NonNullable<NonNullable<WclExpansions[number]>['zones']>[number]>;
 type PointsBudget = Awaited<ReturnType<WclApiService['getPointsBudget']>>;
 
 function zone(over: Partial<WclZone> & Pick<WclZone, 'id' | 'name'>): WclZone {
-  return { frozen: false, partitions: null, encounters: null, ...over };
+  return { frozen: false, ...over };
 }
 
 const ABYSS = 53, FROZEN_ABYSS = 54, SPOREFALL = 50;
 const NEKZALI = 3470, SENTINELS = 3445, ROTMIRE = 3159;
 
-const expansions: WclExpansions = [
+const expansions: WclExpansion[] = [
   {
     zones: [
       zone({ id: 46, name: 'VS / DR / MQD', encounters: [{ id: 3176, name: 'Imperator' }] }),
@@ -26,7 +26,7 @@ const expansions: WclExpansions = [
   { zones: [zone({ id: 44, name: 'Manaforge Omega', encounters: [{ id: 3129, name: 'Old' }] })] },
 ];
 
-const classes: WclGameClasses = [
+const classes: WclClass[] = [
   { name: 'Rogue', slug: 'Rogue', specs: [
     { name: 'Assassination', slug: 'Assassination' },
     { name: 'Subtlety', slug: 'Subtlety' },
@@ -39,10 +39,10 @@ const classes: WclGameClasses = [
   ] },
 ];
 
-const wclWithZoneTree = (tree: WclExpansions | null): WclApiService =>
+const wclWithZoneTree = (tree: WclExpansion[] | null): WclApiService =>
   ({ getZoneTree: async () => tree }) as unknown as WclApiService;
 
-const wclWithClasses = (playable: WclGameClasses): WclApiService =>
+const wclWithClasses = (playable: WclClass[]): WclApiService =>
   ({ getPlayableClasses: async () => playable }) as unknown as WclApiService;
 
 const wclWithBudget = (budget: PointsBudget): WclApiService =>
