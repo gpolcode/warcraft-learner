@@ -15,11 +15,11 @@ const architectureLayers = [
   { type: 'testing', pattern: 'src/testing', partialMatch: false },
   { type: 'environments', pattern: 'src/environments', partialMatch: false },
   { type: 'domain', pattern: 'src/app/domain', partialMatch: false },
-  { type: 'ingest', pattern: 'src/app/ingest', partialMatch: false },
   { type: 'core', pattern: 'src/app/core', partialMatch: false },
   { type: 'shared', pattern: 'src/app/shared', partialMatch: false },
-  { type: 'slice', pattern: 'src/app/pages/post-raid/*', partialMatch: false, capture: ['sliceName'] },
-  { type: 'page', pattern: 'src/app/pages/*', partialMatch: false },
+  { type: 'ingest', pattern: 'src/app/features/*/ingest', partialMatch: false },
+  { type: 'pages', pattern: 'src/app/features/*/pages', partialMatch: false },
+  { type: 'slice', pattern: 'src/app/features/*/*', partialMatch: false, capture: ['featureName', 'sliceName'] },
   { type: 'app-root', pattern: 'src/app', partialMatch: false },
   { type: 'bootstrap', pattern: 'src', partialMatch: false },
 ];
@@ -32,9 +32,9 @@ const layerPolicies = [
   { from: [{ element: { type: 'core' } }], allow: to('domain', 'environments', 'testing') },
   { from: [{ element: { type: 'shared' } }], allow: to('domain', 'core', 'testing') },
   { from: [{ element: { type: 'slice' } }], allow: to('domain', 'core', 'shared', 'testing') },
-  { from: [{ element: { type: 'page' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
+  { from: [{ element: { type: 'pages' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
   { from: [{ element: { type: 'ingest' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
-  { from: [{ element: { type: 'app-root' } }], allow: to('core', 'shared', 'page', 'environments') },
+  { from: [{ element: { type: 'app-root' } }], allow: to('core', 'shared', 'pages', 'environments') },
   { from: [{ element: { type: 'environments' } }], allow: to('core', 'slice', 'ingest') },
   { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root') },
   { from: [{ element: { type: 'testing' } }], allow: to('domain', 'core') },
@@ -105,11 +105,8 @@ const functionalCoreFiles = [
   'src/app/core/observability/**/*.ts',
   'src/app/core/http/result.ts',
   'src/app/domain/**/*.ts',
-  'src/app/shared/*.ts',
-  'src/app/ingest/*.ts',
-  'src/app/ingest/models/**/*.ts',
-  // A slice's own folder holds its Angular components and services; only its subfolders are pure math.
-  'src/app/pages/post-raid/*/*/**/*.ts',
+  'src/app/features/*/*/domain/**/*.ts',
+  'src/app/features/*/ingest/models/**/*.ts',
   'src/app/**/*.utils.ts',
   'src/app/**/*-queries.ts',
 ];
@@ -231,9 +228,9 @@ export default defineConfig([
     },
   },
   {
-    // Every transport/ folder is a chokepoint, so narrowing this to one of them re-bans the other's HttpClient.
+    // Every http/ folder is a chokepoint, so narrowing this to one of them re-bans the other's HttpClient.
     files: ['src/**/*.ts'],
-    ignores: ['src/app/core/http/**', 'src/app/**/transport/**'],
+    ignores: ['src/app/core/http/**', 'src/app/features/*/ingest/http/**'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {
