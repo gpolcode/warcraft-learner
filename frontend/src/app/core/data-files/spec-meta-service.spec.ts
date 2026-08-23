@@ -3,10 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { computed } from '@angular/core';
 import { DataFileApiService } from './data-file-api-service';
 import { Result, Results } from '../http/result';
-import {
-  SpecMetaService, SpecMeta,
-  buildUniverse, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
-} from './spec-meta-service';
+import { SpecMetaService, SpecMeta } from './spec-meta-service';
+
+const specMeta = Object.create(SpecMetaService.prototype) as SpecMetaService;
 
 // The spec universe is hydrated at runtime from the WCL-derived spec-meta.json, so these tests seed fixed specs.
 const SUBTLETY = {
@@ -19,7 +18,7 @@ const FROST_MAGE = {
   classLabel: 'Mage', specLabel: 'Frost', classIcon: 'class_mage', specIcon: 'spell_frost_frostbolt02',
 };
 
-const UNIVERSE = buildUniverse([SUBTLETY]);
+const UNIVERSE = specMeta.buildUniverse([SUBTLETY]);
 
 function serviceWith(getSpecMeta: () => Promise<Result<SpecMeta[]>>): SpecMetaService {
   TestBed.resetTestingModule();
@@ -69,50 +68,50 @@ describe('SpecMetaService', () => {
 
 describe('specMetaOf', () => {
   it('resolves the WCL className/specName the rankings query needs', () => {
-    expect(specMetaOf(UNIVERSE, 'SubtletyRogue')).toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
+    expect(specMeta.specMetaOf(UNIVERSE, 'SubtletyRogue')).toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
   });
 
   it('returns undefined for empty or unknown specs', () => {
-    expect(specMetaOf(UNIVERSE, '')).toBeUndefined();
-    expect(specMetaOf(UNIVERSE, null)).toBeUndefined();
-    expect(specMetaOf(UNIVERSE, 'Bogus')).toBeUndefined();
+    expect(specMeta.specMetaOf(UNIVERSE, '')).toBeUndefined();
+    expect(specMeta.specMetaOf(UNIVERSE, null)).toBeUndefined();
+    expect(specMeta.specMetaOf(UNIVERSE, 'Bogus')).toBeUndefined();
   });
 });
 
 describe('classList', () => {
   it('lists one entry per class with its label and icon', () => {
-    expect(classList(UNIVERSE)).toEqual([{ className: 'Rogue', classLabel: 'Rogue', classIcon: 'class_rogue' }]);
+    expect(specMeta['classListOf'](UNIVERSE)).toEqual([{ className: 'Rogue', classLabel: 'Rogue', classIcon: 'class_rogue' }]);
   });
 });
 
 describe('specsForClass', () => {
   it('returns the available specs for a class', () => {
-    expect(specsForClass(UNIVERSE, 'Rogue', ['SubtletyRogue']).map(meta => meta.spec)).toEqual(['SubtletyRogue']);
+    expect(specMeta['specsForClassOf'](UNIVERSE, 'Rogue', ['SubtletyRogue']).map(meta => meta.spec)).toEqual(['SubtletyRogue']);
   });
 
   it('ignores unknown or off-class folder keys', () => {
-    expect(specsForClass(UNIVERSE, 'Rogue', ['Bogus'])).toEqual([]);
-    expect(specsForClass(UNIVERSE, 'Mage', ['SubtletyRogue'])).toEqual([]);
+    expect(specMeta['specsForClassOf'](UNIVERSE, 'Rogue', ['Bogus'])).toEqual([]);
+    expect(specMeta['specsForClassOf'](UNIVERSE, 'Mage', ['SubtletyRogue'])).toEqual([]);
   });
 });
 
 describe('classIconUrl', () => {
   it('builds a class icon URL', () => {
-    expect(classIconUrl(UNIVERSE, 'Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
+    expect(specMeta['classIconUrlOf'](UNIVERSE, 'Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
   });
 
   it('returns empty for an unknown or missing class name', () => {
-    expect(classIconUrl(UNIVERSE, '')).toBe('');
-    expect(classIconUrl(UNIVERSE, 'Unknown')).toBe('');
+    expect(specMeta['classIconUrlOf'](UNIVERSE, '')).toBe('');
+    expect(specMeta['classIconUrlOf'](UNIVERSE, 'Unknown')).toBe('');
   });
 });
 
 describe('specIconUrl', () => {
   it('builds a spec icon URL from the baked stem', () => {
-    expect(specIconUrl(UNIVERSE, 'SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg');
+    expect(specMeta['specIconUrlOf'](UNIVERSE, 'SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg');
   });
 
   it('returns empty for an unknown spec', () => {
-    expect(specIconUrl(UNIVERSE, 'Bogus')).toBe('');
+    expect(specMeta['specIconUrlOf'](UNIVERSE, 'Bogus')).toBe('');
   });
 });

@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { type Result } from '../../../../core/http/result';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
@@ -20,19 +20,24 @@ type SliceRegistry = readonly [SliceDescriptor, ...SliceDescriptor[]];
 
 export const BENCH_SLICE = 'burst';
 
-// Burst leads: only its file carries the encounter signature, stamped only when every slice behind it produced data.
-export function sliceRegistry(): SliceRegistry {
-  const dataFile = inject(DataFileApiService);
-  const bench = (file: string, transform: SliceDescriptor['transform']): SliceDescriptor => ({
-    file, transform,
-    write: (spec, encId, data) => dataFile.writeSlice(spec, encId, file, data),
-  });
-  return [
-    bench(BENCH_SLICE, inject(BurstTransformService)),
-    bench('rotation', inject(RotationTransformService)),
-    bench('defensive', inject(DefensiveTransformService)),
-    bench('gear', inject(GearTransformService)),
-    bench('positions', inject(MapTransformService)),
-    bench('northern-sky', inject(NorthernSkyTransformService)),
+@Injectable({ providedIn: 'root' })
+export class SliceRegistryService {
+  private readonly dataFile = inject(DataFileApiService);
+
+  private bench(file: string, transform: SliceDescriptor['transform']): SliceDescriptor {
+    return {
+      file, transform,
+      write: (spec, encId, data) => this.dataFile.writeSlice(spec, encId, file, data),
+    };
+  }
+
+  // Burst leads: only its file carries the encounter signature, stamped only when every slice behind it produced data.
+  readonly slices: SliceRegistry = [
+    this.bench(BENCH_SLICE, inject(BurstTransformService)),
+    this.bench('rotation', inject(RotationTransformService)),
+    this.bench('defensive', inject(DefensiveTransformService)),
+    this.bench('gear', inject(GearTransformService)),
+    this.bench('positions', inject(MapTransformService)),
+    this.bench('northern-sky', inject(NorthernSkyTransformService)),
   ];
 }

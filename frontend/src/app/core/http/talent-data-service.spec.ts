@@ -3,7 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Results } from './result';
-import { TalentDataService, indexTalentTrees } from './talent-data-service';
+import { TalentDataService } from './talent-data-service';
+
+// Pure tree indexing only: the prototype instance skips the HttpClient wiring the indexing never touches.
+const talentData = Object.create(TalentDataService.prototype) as TalentDataService;
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
 const DUMP_REPRO_ID = 'talent-data.dump';
@@ -32,7 +35,7 @@ function setup(): { service: TalentDataService; httpMock: HttpTestingController 
 
 describe('indexTalentTrees', () => {
   it('keys each spec by {SpecName}{ClassName} across every node bucket', () => {
-    const bySpec = indexTalentTrees([SUBTLETY_TREE]);
+    const bySpec = talentData['indexTalentTrees']([SUBTLETY_TREE]);
     expect([...bySpec.keys()]).toEqual(['SubtletyRogue']);
     const subtletyTalents = bySpec.get('SubtletyRogue');
     assert.exists(subtletyTalents);
@@ -41,7 +44,7 @@ describe('indexTalentTrees', () => {
   });
 
   it('carries a hero-tree pick with no spell id and skips an entry with no id', () => {
-    const talents = indexTalentTrees([SUBTLETY_TREE]).get('SubtletyRogue');
+    const talents = talentData['indexTalentTrees']([SUBTLETY_TREE]).get('SubtletyRogue');
     assert.exists(talents);
     expect(talents[44]).toEqual({ name: 'Trickster', icon: '' });
     expect(Object.keys(talents)).toEqual(['11', '22', '23', '33', '44']);

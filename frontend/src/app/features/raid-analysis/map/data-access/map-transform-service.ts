@@ -7,11 +7,9 @@ import { ParsePositions, PlayerPosRow, PosRow } from '../../../../domain/encount
 import { Result } from '../../../../core/http/result';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
-import { posActorId } from '../domain/map-positions';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { MapData } from './map-data-source';
-
-export { posActorId } from '../domain/map-positions';
+import { MapDrawService } from '../domain/map-draw-service';
 
 /** Fixed resample cadence, seconds (mirrors ingest `POSITIONS_INTERVAL_S`). */
 const POSITIONS_INTERVAL_S = 1.5;
@@ -58,6 +56,7 @@ export interface ParsePositionInput {
 
 @Injectable({ providedIn: 'root' })
 export class MapTransformService implements DataSource<MapData> {
+  private readonly mapDraw = inject(MapDrawService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -111,7 +110,7 @@ export class MapTransformService implements DataSource<MapData> {
   protected collectPositionSamples(events: TimedEvent[]): Map<number, RawPosSample[]> {
     const byActor = new Map<number, RawPosSample[]>();
     for (const event of events) {
-      const actorId = posActorId(event);
+      const actorId = this.mapDraw.posActorId(event);
       if (actorId == null || event.x == null || event.y == null) continue;
       let samples = byActor.get(actorId);
       if (!samples) { samples = []; byActor.set(actorId, samples); }

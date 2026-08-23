@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class MapDrawService {
+  /** The actor a resource-bearing event's flattened position describes (1 = source, 2 = target). */
+  posActorId(event: WclEvent): number | null {
+    if (typeof event.x !== 'number' || typeof event.y !== 'number') return null;
+    return event.resourceActor === 2 ? event.targetID ?? null : event.sourceID ?? null;
+  }
 
   /** Shortest signed angular difference b - a, radians, in (-pi, pi]. */
   private angleDelta(a: number, b: number): number {
@@ -149,6 +154,7 @@ export class MapDrawService {
 import { bisector } from 'd3-array';
 import { EncounterPositions, ParsePositions, PlayerPosRow, PosRow, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { ActorTimeline, PosSample, FACING_OFFSET_RAD } from '../facade/map-feature-service';
+import { WclEvent } from '../../../../core/wcl/wcl.models';
 
 const RAW_TO_YARDS = 1 / 100;
 const FACING_TO_RAD = 1 / 1000;

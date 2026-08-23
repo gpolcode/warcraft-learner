@@ -1,7 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
-import { MapTransformService, posActorId, RawPosSample, EnemyMeta } from './map-transform-service';
+import { MapTransformService, RawPosSample, EnemyMeta } from './map-transform-service';
+import { MapDrawService } from '../domain/map-draw-service';
 import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { parseRankings, wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
@@ -15,6 +16,7 @@ TestBed.configureTestingModule({ providers: [
   { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
 ] });
 const svc = TestBed.inject(MapTransformService);
+const mapDraw = TestBed.inject(MapDrawService);
 TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
@@ -39,11 +41,11 @@ describe('posActorId', () => {
     { name: 'target when resourceActor 2 without a sourceID', e: { ts: 0, target: 9, resourceActor: 2, x: 1, y: 1 }, expected: 9 },
     { name: 'null when resourceActor 2 has no targetID', e: { ts: 0, source: 3, resourceActor: 2, x: 1, y: 1 }, expected: null },
   ])('$name', ({ e, expected }) => {
-    expect(posActorId(resEvent(e))).toBe(expected);
+    expect(mapDraw.posActorId(resEvent(e))).toBe(expected);
   });
 
   it('is null without a position', () => {
-    expect(posActorId({ type: 'cast', timestamp: 0, abilityGameID: 1, sourceID: 3 })).toBeNull();
+    expect(mapDraw.posActorId({ type: 'cast', timestamp: 0, abilityGameID: 1, sourceID: 3 })).toBeNull();
   });
 });
 

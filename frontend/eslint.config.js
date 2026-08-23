@@ -7,12 +7,14 @@ import boundaries from 'eslint-plugin-boundaries';
 import singleLineComment from './eslint-rules/single-line-comment.js';
 import bannedCharacters from './eslint-rules/banned-characters.js';
 import pathConventions from './eslint-rules/path-conventions.js';
+import noFunctionAliasMembers from './eslint-rules/no-function-alias-members.js';
 
 const local = {
   rules: {
     'single-line-comment': singleLineComment,
     'banned-characters': bannedCharacters,
     'path-conventions': pathConventions,
+    'no-function-alias-members': noFunctionAliasMembers,
   },
 };
 
@@ -129,6 +131,7 @@ export default defineConfig([
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
       'local/path-conventions': 'error',
+      'local/no-function-alias-members': 'error',
     },
   },
   {
@@ -219,6 +222,36 @@ export default defineConfig([
     files: ['src/**/*.ts'],
     ignores: ['src/app/core/http/**', 'src/app/features/*/ingest/http/**'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
+  },
+  {
+    // The ignores are the sanctioned function shapes: Angular provide/interceptor factories, the math utils plain code shares, spec support.
+    // restrictUiSyntax is restated because this block's no-restricted-syntax entry replaces the earlier block's for these files.
+    files: ['src/app/**/*.ts'],
+    ignores: [
+      'src/app/**/*.spec.ts',
+      'src/app/**/*-harness.ts',
+      'src/app/**/rule-fixtures.ts',
+      'src/app/features/raid-analysis/pages/post-raid/post-raid-page.ts',
+      'src/app/domain/analysis/analysis-math.ts',
+      'src/app/core/http/http-providers.ts',
+      'src/app/core/http/retry-transient-interceptor.ts',
+      'src/app/core/wcl/wcl-caching.ts',
+      'src/app/core/data-source/provide-data-source.ts',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        ...restrictUiSyntax,
+        {
+          selector: 'ExportNamedDeclaration > FunctionDeclaration',
+          message: 'Behavior lives as methods on an @Injectable service; only the files in this block\'s ignores export functions.',
+        },
+        {
+          selector: 'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > ArrowFunctionExpression',
+          message: 'Behavior lives as methods on an @Injectable service; only the files in this block\'s ignores export functions.',
+        },
+      ],
+    },
   },
   {
     // import type compiles away, so no domain code can reach a shared or core bundle.

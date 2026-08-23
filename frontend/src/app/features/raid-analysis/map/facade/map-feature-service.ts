@@ -6,9 +6,9 @@ import { EncounterPositions, ReferenceSelector } from '../../../../domain/encoun
 import { Result, LoadError, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
-import { posActorId } from '../domain/map-positions';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
 import { LoggerService } from '../../../../core/observability/logger-service';
+import { MapDrawService } from '../domain/map-draw-service';
 
 /** WoW's `facing` zero-point does not align with our forward axis; empirically a -90 degree offset puts "behind the boss" below the reference. */
 export const FACING_OFFSET_RAD = -Math.PI / 2;
@@ -74,6 +74,7 @@ export interface LiveOverlayInput {
 
 @Injectable({ providedIn: 'root' })
 export class MapFeatureService {
+  private readonly mapDraw = inject(MapDrawService);
   private readonly logger = inject(LoggerService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(MAP_DATA_SOURCE);
@@ -218,7 +219,7 @@ export class MapFeatureService {
   protected buildActorTimelines(events: TimedEvent[]): Map<number, ActorTimeline> {
     const byActor = new Map<number, PosSample[]>();
     for (const event of events) {
-      const id = posActorId(event);
+      const id = this.mapDraw.posActorId(event);
       if (id == null || event.x == null || event.y == null) continue;
       let samples = byActor.get(id);
       if (!samples) { samples = []; byActor.set(id, samples); }

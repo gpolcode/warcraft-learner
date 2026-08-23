@@ -11,7 +11,7 @@ import { type LoadError } from '../../../../core/http/result';
 import { TopParseSelectionService } from '../../../../domain/analysis/top-parse-selection-service';
 import type { EncounterEntry, SpecEntry } from '../../../../domain/encounter/encounter.models';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
-import { sliceRegistry, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
+import { SliceRegistryService, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../domain/current-raids-service';
 import { INGEST_VERSION } from '../domain/ingest-version';
 import { IngestOrderingService, type SpecOrderEntry } from '../domain/ingest-ordering-service';
@@ -71,7 +71,7 @@ export class IngestOrchestratorService {
   private readonly specMeta = inject(SpecMetaService);
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
-  private readonly slices = sliceRegistry();
+  private readonly slices = inject(SliceRegistryService).slices;
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {

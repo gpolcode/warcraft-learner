@@ -14,7 +14,7 @@ This file is the always-on **router**: the few rules that apply on every turn, t
 
 ## Architecture at a glance
 
-One `raid-analysis` feature holding both pages, per-use-case **vertical slices** (rotation / burst / defensive / gear / map / live) typed inside as `components/ data-access/ facade/ domain/`, over the layers `domain/` (cross-slice business services), `core/` (system foundation) and `shared/` (reusable UI). Math lives in pure-function modules whose `@Injectable` service is how the shell resolves them; exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration, living inside the feature it bakes data for, driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
+One `raid-analysis` feature holding both pages, per-use-case **vertical slices** (rotation / burst / defensive / gear / map / live) typed inside as `components/ data-access/ facade/ domain/`, over the layers `domain/` (cross-slice business services), `core/` (system foundation) and `shared/` (reusable UI). Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration, living inside the feature it bakes data for, driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
 
 ```
 INGEST (browser, ingest env)                RUNTIME (browser, Angular)

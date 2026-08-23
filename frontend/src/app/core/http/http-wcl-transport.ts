@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { FetchOutcomes, WclTransport, WclTransportError, WCL_API_URL, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
-import { wclCachingHeaders } from '../wcl/wcl-caching';
+import { WclCaching } from '../wcl/wcl-caching';
 
 interface GraphQLResponse<TData> {
   data?: TData;
@@ -38,7 +38,7 @@ export class HttpWclTransport implements WclTransport {
   }
 
   async query<TData>(gqlString: string, variables: object, token: string): Promise<TData> {
-    const headers: Record<string, string> = { Authorization: `Bearer ${token}`, ...wclCachingHeaders(gqlString) };
+    const headers: Record<string, string> = { Authorization: `Bearer ${token}`, ...WclCaching.headersFor(gqlString) };
     const code = (variables as { code?: string }).code;
     let body: GraphQLResponse<TData>;
     try {

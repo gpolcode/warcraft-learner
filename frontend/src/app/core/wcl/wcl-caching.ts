@@ -11,11 +11,15 @@ export const WCL_LIVE_CACHE_MS = 10_000;
 const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
 
-/** The single place caching is decided, from the query alone - so nothing else branches on live/ingest state. */
-export function wclCachingHeaders(query: string): Record<string, string> {
-  if (UNCACHED_QUERIES.has(query)) return { [NgHttpCachingHeaders.DISALLOW_CACHE]: '1' };
-  if (VOLATILE_QUERIES.has(query)) return { [NgHttpCachingHeaders.LIFETIME]: String(WCL_LIVE_CACHE_MS) };
-  return {};
+export class WclCaching {
+  private constructor() {}
+
+  /** The single place caching is decided, from the query alone - so nothing else branches on live/ingest state. */
+  static headersFor(query: string): Record<string, string> {
+    if (UNCACHED_QUERIES.has(query)) return { [NgHttpCachingHeaders.DISALLOW_CACHE]: '1' };
+    if (VOLATILE_QUERIES.has(query)) return { [NgHttpCachingHeaders.LIFETIME]: String(WCL_LIVE_CACHE_MS) };
+    return {};
+  }
 }
 
 // Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache.
