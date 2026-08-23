@@ -3,7 +3,7 @@ import { Signal, WritableSignal } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { Subscription } from 'rxjs';
-import { WclFight, WclPlayer, WclReport } from '../../core/models/wcl.models';
+import { WclFight, WclPlayer, WclReport } from '../../core/wcl/wcl.models';
 import { deferred } from '../../../testing/deferred';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { LiveCaptureFeatureService } from './live/live-capture.service';

@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { Result, ok, missing } from '../../../core/result';
+import { Result, ok, missing } from '../../../core/http/result';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { sliceService } from '../../../../testing/service-harness';
 import {

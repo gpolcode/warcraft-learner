@@ -1,9 +1,9 @@
 /** Clips are session-scoped: a resolved clip is memoized in memory and nothing is written to disk. */
 import { Injectable, computed, signal } from '@angular/core';
 import type { EncodedVideoPacketSource as PacketSource } from 'mediabunny';
-import { WclFight } from '../../../core/models/wcl.models';
+import { WclFight } from '../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
-import { logWarn } from '../../../core/log';
+import { logWarn } from '../../../core/observability/log';
 
 // All wall-clock fields are unix-epoch milliseconds, so `report.startTime + fight.startTime` maps directly onto a segment.
 

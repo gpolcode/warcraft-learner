@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
-import { TopParseSelection } from '../../../core/models/wcl.models';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { DataFileApiService } from '../../../core/data-files/data-file-api';
+import { TopParseSelection } from '../../../core/wcl/wcl.models';
 import { RulebookDefensive } from '../../../core/models/rulebook.models';
 import { BurstWindow } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
-import { Result } from '../../../core/result';
+import { Result } from '../../../core/http/result';
 import { mean, deviation, extent, group, mode } from 'd3-array';
 import { round, groupByTime, getOrInsert, avgOr, medianOr } from '../../../shared/analysis/analysis-math';
 import { HoldWindow, detectHoldWindows } from '../../../shared/analysis/hold-targets';

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Signal, WritableSignal } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
-import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../../core/models/wcl.models';
+import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../../core/wcl/wcl.models';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { PostRaidComponent, unsupportedEncounterNotice } from './post-raid';
 import { ParkedWclApi, fight, loadReport, parkedWclApi, player, postRaidProviders } from './post-raid-harness';

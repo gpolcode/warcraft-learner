@@ -2,7 +2,7 @@ import { assert, describe, it, expect, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { missing, transient } from '../result';
+import { missing, transient } from './result';
 import { TalentDataService, indexTalentTrees } from './talent-data';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';

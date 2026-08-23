@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { WowheadTooltipsService } from '../../../core/services/wowhead-tooltips';
+import { WowheadTooltipsService } from '../../../core/wowhead/wowhead-tooltips';
 
 export type GameIconKind = 'spell' | 'item';
 

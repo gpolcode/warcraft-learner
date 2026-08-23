@@ -1,6 +1,6 @@
 // A second declaration of these stamped field names drifts from the files already on disk.
-import * as z from '../core/zod-mini';
-import { type Result } from '../core/result';
+import * as z from '../core/validation/zod-mini';
+import { type Result } from '../core/http/result';
 import { INGEST_VERSION } from './ingest-version';
 import { encounterSkipKey, type SignatureRanking } from './signature';
 

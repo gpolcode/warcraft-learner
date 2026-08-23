@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from '@angu
 import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { WclFight } from '../../../core/models/wcl.models';
+import { WclFight } from '../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
 import { MapAnchor } from '../map/map.service';
 import { loadResource } from '../../../shared/state/load-resource';

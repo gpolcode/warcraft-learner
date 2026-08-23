@@ -5,7 +5,7 @@ import { DefensiveFeatureService } from './defensive.service';
 import { applyBuff, removeBuff, damageTaken } from '../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
 import { wclReport } from '../../../../testing/builders/wcl-fixtures';
-import { Result, ok, missing } from '../../../core/result';
+import { Result, ok, missing } from '../../../core/http/result';
 import { BOSS_HIT_SPELL_ID, WINDOW_REF_GAME_ID, fullBench } from './defensive-harness';
 
 function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown> = {}): DefensiveFeatureService {

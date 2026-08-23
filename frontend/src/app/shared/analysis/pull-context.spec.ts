@@ -1,8 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
-import { WclApiService } from '../../core/services/wcl-api';
-import { WclTransportError } from '../../core/services/wcl-transport';
-import { ok, transient } from '../../core/result';
-import { WclReport } from '../../core/models/wcl.models';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import { WclTransportError } from '../../core/wcl/wcl-transport';
+import { ok, transient } from '../../core/http/result';
+import { WclReport } from '../../core/wcl/wcl.models';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { PullContext, PullRef, analyzePull } from './pull-context';
 

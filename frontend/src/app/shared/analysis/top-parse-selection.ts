@@ -1,6 +1,6 @@
 /** Resolves which top parses an encounter is benched from, once, so the ingest signature and every slice read the same pool. */
-import { WclApiService } from '../../core/services/wcl-api';
-import { TopParseSelection } from '../../core/models/wcl.models';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { toParseRankings, unwrapRankings } from './wcl-projections';
 
 // Over-fetch past the sampled top parses so a private or unfetchable one is backfilled by the next-best.

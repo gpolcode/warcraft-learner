@@ -1,4 +1,4 @@
-import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/wcl/wcl.models';
 
 // WCL keys the CombatantInfo event by sourceID; falls back to the first event when there is no exact match.
 export function selectCombatantInfo(

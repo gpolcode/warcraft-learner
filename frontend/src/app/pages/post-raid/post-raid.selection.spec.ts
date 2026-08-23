@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { PlayerDetailGroups, WclReport } from '../../core/models/wcl.models';
-import { SelectionStore } from '../../core/services/selection-store';
+import { PlayerDetailGroups, WclReport } from '../../core/wcl/wcl.models';
+import { SelectionStore } from '../../core/state/selection-store';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { unsupportedEncounterNotice } from './post-raid';
 import { mapFeatureStub } from '../../../testing/page-stubs';

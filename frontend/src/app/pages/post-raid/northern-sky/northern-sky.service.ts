@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Result } from '../../../core/result';
+import { Result } from '../../../core/http/result';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 
 const MYTHIC_DIFFICULTY = 'Mythic';

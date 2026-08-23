@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { RulebookCooldown } from '../../../core/models/rulebook.models';
 import { SHADOW_BLADES, BLOODLUST } from '../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../testing/builders/events';
-import { WclEvent } from '../../../core/models/wcl.models';
+import { WclEvent } from '../../../core/wcl/wcl.models';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { RotationBench } from './rotation-data-source';
 import { detectBloodlust } from './rotation-bloodlust';

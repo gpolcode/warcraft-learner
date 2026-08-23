@@ -11,9 +11,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { WclApiService } from '../../core/services/wcl-api';
-import { LiveReportSyncService, POLL_INTERVAL_S } from '../../core/services/live-report-sync';
-import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY } from '../../core/models/wcl.models';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import { LiveReportSyncService, POLL_INTERVAL_S } from '../../core/wcl/live-report-sync';
+import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY } from '../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../core/models/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -36,10 +36,10 @@ import { BossIconPipe } from '../../shared/pipes/boss-icon-pipe';
 import { ArtIconComponent } from '../../shared/components/art-icon/art-icon';
 import { LatestRun } from '../../shared/latest-run';
 import { CardDeck, CardEntry } from '../../shared/state/card-deck';
-import { SelectionStore } from '../../core/services/selection-store';
-import { logWarn } from '../../core/log';
-import { Result, permanent } from '../../core/result';
-import { toLoadError } from '../../core/transport/http-load-error';
+import { SelectionStore } from '../../core/state/selection-store';
+import { logWarn } from '../../core/observability/log';
+import { Result, permanent } from '../../core/http/result';
+import { toLoadError } from '../../core/http/http-load-error';
 import { LoadStateComponent, RenderableLoadError } from '../../shared/components/load-state/load-state';
 
 export function extractCode(url: string): string {

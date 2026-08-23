@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
+import { WclApiService } from '../../../core/wcl/wcl-api';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
 } from '../../../core/models/analysis.models';
 import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
 import { ComparisonWindow, WindowStatus } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
-import { logWarn } from '../../../core/log';
-import { Result, ok } from '../../../core/result';
+import { logWarn } from '../../../core/observability/log';
+import { Result, ok } from '../../../core/http/result';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 import { benchExpectedUses, sortBySeverity } from '../../../shared/analysis/analysis-math';

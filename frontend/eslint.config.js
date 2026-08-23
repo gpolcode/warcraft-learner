@@ -99,7 +99,9 @@ const restrictAngularImports = {
 };
 
 const functionalCoreFiles = [
-  'src/app/core/*.ts',
+  'src/app/core/validation/**/*.ts',
+  'src/app/core/observability/**/*.ts',
+  'src/app/core/http/result.ts',
   'src/app/core/models/**/*.ts',
   'src/app/shared/*.ts',
   'src/app/shared/analysis/**/*.ts',
@@ -231,7 +233,7 @@ export default defineConfig([
   {
     // Every transport/ folder is a chokepoint, so narrowing this to one of them re-bans the other's HttpClient.
     files: ['src/**/*.ts'],
-    ignores: ['src/app/**/transport/**'],
+    ignores: ['src/app/core/http/**', 'src/app/**/transport/**'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {

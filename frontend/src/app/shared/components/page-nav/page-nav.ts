@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavStateStore } from '../../../core/services/nav-state-store';
+import { NavStateStore } from '../../../core/state/nav-state-store';
 
 const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
 const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new`;

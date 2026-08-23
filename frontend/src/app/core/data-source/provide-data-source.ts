@@ -1,5 +1,5 @@
 import { InjectionToken, Provider, Type, inject } from '@angular/core';
-import { DataFileApiService } from '../services/data-file-api';
+import { DataFileApiService } from '../data-files/data-file-api';
 import { DataSource } from './data-source';
 import { FileDataSource } from './file-data-source';
 

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ok, Result, transient } from '../../../core/result';
+import { ok, Result, transient } from '../../../core/http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
-import { SelectionStore } from '../../../core/services/selection-store';
+import { SelectionStore } from '../../../core/state/selection-store';
 import { NorthernSkyExportComponent } from './northern-sky-export';
 import { NorthernSkyFeatureService } from './northern-sky.service';
 import { NorthernSkyAbility, NorthernSkyBench } from './northern-sky-data-source';

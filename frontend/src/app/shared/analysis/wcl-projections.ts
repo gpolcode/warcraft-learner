@@ -1,8 +1,8 @@
 /** Generic, cross-slice WCL-response projections and window view-row builders, kept here so each slice imports one implementation. No Angular / IO. */
-import * as z from '../../core/zod-mini';
-import { logWarn } from '../../core/log';
-import { parseJson } from '../../core/json';
-import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../../core/models/wcl.models';
+import * as z from '../../core/validation/zod-mini';
+import { logWarn } from '../../core/observability/log';
+import { parseJson } from '../../core/validation/json';
+import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../../core/wcl/wcl.models';
 import { WindowSpell } from '../../core/models/window-comparison.models';
 
 /** Copies of one NPC share a targetID, so identity needs the instance too; an event naming no target folds into a single bucket. */

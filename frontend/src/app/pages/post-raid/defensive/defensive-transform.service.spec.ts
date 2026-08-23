@@ -14,7 +14,7 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../testing
 import { provideApiFakes } from '../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../testing/spell-ids';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { ok } from '../../../core/result';
+import { ok } from '../../../core/http/result';
 import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */

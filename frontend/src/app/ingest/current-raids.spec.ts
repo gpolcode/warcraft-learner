@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { WclApiService } from '../core/services/wcl-api';
-import type { WclClass, WclExpansion, WclZone } from '../core/models/wcl.models';
+import type { WclApiService } from '../core/wcl/wcl-api';
+import type { WclClass, WclExpansion, WclZone } from '../core/wcl/wcl.models';
 import {
   assertPointsBudget, BudgetExceededError, discoverCurrentRaids, discoverSpecMetas, parseRaidNames,
 } from './current-raids';

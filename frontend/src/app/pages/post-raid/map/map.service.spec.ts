@@ -1,8 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclEvent, WclFight } from '../../../core/models/wcl.models';
+import { WclEvent, WclFight } from '../../../core/wcl/wcl.models';
 import { EncounterPositions } from '../../../core/models/positioning.models';
-import { Result, ok, missing, transient } from '../../../core/result';
+import { Result, ok, missing, transient } from '../../../core/http/result';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
 import { sliceService } from '../../../../testing/service-harness';

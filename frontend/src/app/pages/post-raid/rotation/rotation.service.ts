@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
+import { WclApiService } from '../../../core/wcl/wcl-api';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { RulebookCooldown } from '../../../core/models/rulebook.models';
-import { logWarn } from '../../../core/log';
-import { Result, ok } from '../../../core/result';
+import { logWarn } from '../../../core/observability/log';
+import { Result, ok } from '../../../core/http/result';
 import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,

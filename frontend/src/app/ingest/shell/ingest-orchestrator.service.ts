@@ -2,15 +2,15 @@
 import { Injectable, inject } from '@angular/core';
 import pLimit from 'p-limit';
 import { NgHttpCachingService } from 'ng-http-caching';
-import { WclApiService } from '../../core/services/wcl-api';
-import { DataFileApiService } from '../../core/services/data-file-api';
-import { WCL_TRANSPORT } from '../../core/services/wcl-transport';
-import { SpecMetaService } from '../../core/services/spec-meta';
-import { logWarn } from '../../core/log';
-import { type LoadError } from '../../core/result';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import { DataFileApiService } from '../../core/data-files/data-file-api';
+import { WCL_TRANSPORT } from '../../core/wcl/wcl-transport';
+import { SpecMetaService } from '../../core/data-files/spec-meta';
+import { logWarn } from '../../core/observability/log';
+import { type LoadError } from '../../core/http/result';
 import { resolveTopParses } from '../../shared/analysis/top-parse-selection';
 import type { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
-import type { TopParseSelection } from '../../core/models/wcl.models';
+import type { TopParseSelection } from '../../core/wcl/wcl.models';
 import { sliceRegistry, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
 import {
   assertPointsBudget, BudgetExceededError, discoverCurrentRaids, discoverSpecMetas, parseRaidNames,

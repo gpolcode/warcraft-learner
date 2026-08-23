@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { WclApiService } from '../../core/services/wcl-api';
+import { WclApiService } from '../../core/wcl/wcl-api';
 import { FixtureRanking, parseRankings } from '../../../testing/builders/wcl-fixtures';
 import { resolveTopParses } from './top-parse-selection';
 

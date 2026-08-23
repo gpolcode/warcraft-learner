@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/wcl/wcl.models';
 import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 import { sliceService } from '../../../../testing/service-harness';
-import { Result, ok, permanent, missing } from '../../../core/result';
+import { Result, ok, permanent, missing } from '../../../core/http/result';
 import {
   GearFeatureService, benchToStats, buildGearView, buildBenchGearView,
   buildCharacterGear, emptyGearView,

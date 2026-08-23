@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
-import { Result, ok } from '../../core/result';
+import { Result, ok } from '../../core/http/result';
 import {
   CLASS_SELECT, ENCOUNTER_SELECT, FROST_MAGE, SPEC_INDEX, SPEC_SELECT, SUBTLETY_ROGUE,
   ParkedEncounterSelection, preFightPage,

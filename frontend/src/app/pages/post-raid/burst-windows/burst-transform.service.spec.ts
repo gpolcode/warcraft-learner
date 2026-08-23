@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclEvent } from '../../../core/models/wcl.models';
-import { ok, missing } from '../../../core/result';
+import { WclEvent } from '../../../core/wcl/wcl.models';
+import { ok, missing } from '../../../core/http/result';
 import {
   BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, ParseWindow,
   BurstDetectorTuning, DEFAULT_BURST_TUNING,

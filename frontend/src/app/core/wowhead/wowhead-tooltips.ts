@@ -1,7 +1,7 @@
 /** Injects the Wowhead tooltip scripts on first use, keeping them off pages with no spell/item links. */
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
-import { logWarn } from '../log';
+import { logWarn } from '../observability/log';
 
 const CONFIG_SRC = 'wh-tooltips-config.js';
 const TOOLTIPS_SRC = 'https://wow.zamimg.com/js/tooltips.js';

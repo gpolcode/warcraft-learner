@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
+import { WclCombatantInfo, WclGearItem } from '../../../core/wcl/wcl.models';
 import { TRINKET_SLOTS, iconFile, decodeHtmlEntities, extractGear, selectCombatantInfo } from './gear-extract';
 
 // Trinket slots are the WCL quirk indices 12/13; an enchant can sit on any slot - 15 is Main Hand.

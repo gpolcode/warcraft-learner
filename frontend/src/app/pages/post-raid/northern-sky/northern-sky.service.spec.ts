@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ok, missing } from '../../../core/result';
+import { ok, missing } from '../../../core/http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
 import { sliceService } from '../../../../testing/service-harness';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';

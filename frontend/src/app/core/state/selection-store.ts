@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import * as z from '../zod-mini';
-import { logWarn } from '../log';
-import { parseJson } from '../json';
+import * as z from '../validation/zod-mini';
+import { logWarn } from '../observability/log';
+import { parseJson } from '../validation/json';
 
 // Only the player NAME is kept: WCL actor ids are per-report (not stable across pulls or logs).
 const POST_RAID_SCHEMA = z.object({ playerName: z.nullable(z.string()) });

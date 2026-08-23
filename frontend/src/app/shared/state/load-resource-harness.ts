@@ -1,7 +1,7 @@
 import { assert, vi } from 'vitest';
 import { OutputEmitterRef, WritableSignal, provideZonelessChangeDetection, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Result } from '../../core/result';
+import { Result } from '../../core/http/result';
 import { Deferred, deferred } from '../../../testing/deferred';
 import { LoadResource, loadResource } from './load-resource';
 

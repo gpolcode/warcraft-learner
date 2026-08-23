@@ -2,8 +2,8 @@
 import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
 import { withEnvironment } from './base-environment';
 import { liveDataSourceProviders } from './live-data-sources';
-import { DATA_FILE_TRANSPORT } from '../app/core/services/data-file-transport';
-import { RETRY_MAX_ATTEMPTS } from '../app/core/transport/retry-transient.interceptor';
+import { DATA_FILE_TRANSPORT } from '../app/core/data-files/data-file-transport';
+import { RETRY_MAX_ATTEMPTS } from '../app/core/http/retry-transient.interceptor';
 import { IngestHttpDataFileTransport } from '../app/ingest/transport/ingest-data-file-transport';
 import { IngestOrchestratorService } from '../app/ingest/shell/ingest-orchestrator.service';
 

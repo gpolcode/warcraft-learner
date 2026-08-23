@@ -1,7 +1,7 @@
 import {
   RulebookRule, RuleCondition, RuleSeverity, CastWithoutPriorCondition, HoldCooldownForAnchorCondition,
 } from '../../../../core/models/rulebook.models';
-import { WclEvent } from '../../../../core/models/wcl.models';
+import { WclEvent } from '../../../../core/wcl/wcl.models';
 import { AnalysisFinding } from '../../../../core/models/analysis.models';
 import { withRelativeS } from '../../../../shared/analysis/wcl-projections';
 import { BenchedRule, RuleBand, RuleJudging } from './engine-core';

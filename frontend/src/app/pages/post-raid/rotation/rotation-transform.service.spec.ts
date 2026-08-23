@@ -11,7 +11,7 @@ import { cast, applyBuff } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../testing/api-fakes';
-import { ok, missing } from '../../../core/result';
+import { ok, missing } from '../../../core/http/result';
 import { withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { RulebookRule } from '../../../core/models/rulebook.models';
 import { RuleSample } from './rotation-rules';

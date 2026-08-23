@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Rulebook } from '../models/rulebook.models';
 import { EncounterEntry, SpecEntry } from '../models/encounter.models';
-import { SpecMeta } from '../models/spec-meta.models';
+import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
-import { Result, ok } from '../result';
+import { Result, ok } from '../http/result';
 
 // A manifest with no file yet is the legitimate empty fresh-tier state; a real read failure must propagate so the UI surfaces it instead of a silently empty list.
 function foldMissingToEmpty<T>(result: Result<T[]>): Result<T[]> {

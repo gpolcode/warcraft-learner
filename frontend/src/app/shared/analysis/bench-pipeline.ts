@@ -1,10 +1,10 @@
-import { WclApiService } from '../../core/services/wcl-api';
-import type { DataFileApiService } from '../../core/services/data-file-api';
-import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core/models/wcl.models';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import type { DataFileApiService } from '../../core/data-files/data-file-api';
+import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { Rulebook } from '../../core/models/rulebook.models';
-import { logWarn } from '../../core/log';
-import { Result, ok, missing } from '../../core/result';
-import { toLoadError } from '../../core/transport/http-load-error';
+import { logWarn } from '../../core/observability/log';
+import { Result, ok, missing } from '../../core/http/result';
+import { toLoadError } from '../../core/http/http-load-error';
 import { ReportActor, abilityIcons, findParseActor } from './wcl-projections';
 import { resolveTopParses } from './top-parse-selection';
 

@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { Result } from '../result';
+import { Result } from '../http/result';
 
 // Paths are relative to the `data/specs/` root (e.g. `SubtletyRogue/burst/3176.json`).
 export interface DataFileTransport {

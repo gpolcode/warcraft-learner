@@ -1,5 +1,5 @@
 import { InjectionToken, Provider, signal } from '@angular/core';
-import { Result, missing } from '../app/core/result';
+import { Result, missing } from '../app/core/http/result';
 
 /** Callers pass their own `*_DATA_SOURCE` tokens, since only the page layer may name a slice. */
 export function stubBenchTokens(

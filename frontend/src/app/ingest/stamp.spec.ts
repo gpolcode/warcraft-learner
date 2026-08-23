@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ok, missing, transient, permanent, type Result } from '../core/result';
+import { ok, missing, transient, permanent, type Result } from '../core/http/result';
 import { INGEST_VERSION } from './ingest-version';
 import { encounterSkipKey, type SignatureRanking } from './signature';
 import { isFutureVersion, readFileStamp, skipDecision, stampBurstFile, stampSignature, type IngestStamp } from './stamp';

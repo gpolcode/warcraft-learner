@@ -3,7 +3,7 @@ import {
   abilityIcons, findParseActor, normalizeAbilityId, toParseRankings, unwrapRankings, windowSpells,
 } from './wcl-projections';
 import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../testing/spell-ids';
-import { ParseRanking } from '../../core/models/wcl.models';
+import { ParseRanking } from '../../core/wcl/wcl.models';
 
 // A raw ranking row as WCL surfaces it in the characterRankings blob.
 const rankingRow = (name: string, code: string, fightID: number) => ({ name, report: { code, fightID } });

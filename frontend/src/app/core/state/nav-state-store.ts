@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { logWarn } from '../log';
+import { logWarn } from '../observability/log';
 
 const NAV_COLLAPSED_KEY = 'wl.nav.collapsed';
 

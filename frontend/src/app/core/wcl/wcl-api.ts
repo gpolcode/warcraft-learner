@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { WclAuthService } from '../transport/wcl-auth';
+import { WclAuthService } from '../http/wcl-auth';
 import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import {
   WclReport, WclEvent,
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
   WclClass, WclExpansion,
   MYTHIC_DIFFICULTY,
-} from '../models/wcl.models';
+} from './wcl.models';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
   COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
@@ -24,7 +24,7 @@ import type {
   ResurrectsQuery, ResurrectsQueryVariables,
   TableQuery, TableQueryVariables,
 } from './wcl-operations.generated';
-import { SpecMetaService } from './spec-meta';
+import { SpecMetaService } from '../data-files/spec-meta';
 
 type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
 

@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { PlayerDetailGroups, WclReport } from '../../core/models/wcl.models';
+import { PlayerDetailGroups, WclReport } from '../../core/wcl/wcl.models';
 import {
   specOf, extractCode, extractFightId, isValidReportCode, buildFights, buildPlayers, visiblePlayersOf, pickLivePlayerId,
   livePollActionOf, isUnsupportedDifficulty, unsupportedEncounterNotice,

@@ -1,6 +1,6 @@
 import { OutputEmitterRef, Signal, computed, linkedSignal, resource } from '@angular/core';
-import { Result } from '../../core/result';
-import { logWarn } from '../../core/log';
+import { Result } from '../../core/http/result';
+import { logWarn } from '../../core/observability/log';
 import { RenderableLoadError } from '../components/load-state/load-state';
 
 export interface LoadResourceConfig<P, T> {

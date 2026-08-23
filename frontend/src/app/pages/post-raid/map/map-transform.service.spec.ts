@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclEvent } from '../../../core/models/wcl.models';
+import { WclEvent } from '../../../core/wcl/wcl.models';
 import {
   MapTransformService,
   posActorId, collectPositionSamples, resampleTimeline, resamplePlayerTimeline, buildParsePositions, selectBossAndEnemies,

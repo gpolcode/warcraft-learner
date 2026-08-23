@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { IngestHttpDataFileTransport } from './ingest-data-file-transport';
 import { INGEST_VERSION } from '../ingest-version';
-import { ok, missing } from '../../core/result';
+import { ok, missing } from '../../core/http/result';
 
 // Spelled out rather than imported, so moving the transport off this URL fails the assertions.
 const INGEST_SERVER_URL = 'http://localhost:3000';

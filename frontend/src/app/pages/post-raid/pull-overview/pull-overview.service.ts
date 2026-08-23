@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import * as z from '../../../core/zod-mini';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { WclFight, WclReport, WclTableBlob } from '../../../core/models/wcl.models';
-import { logWarn } from '../../../core/log';
-import { parseJson } from '../../../core/json';
-import { Result, ok, permanent } from '../../../core/result';
-import { toLoadError } from '../../../core/transport/http-load-error';
+import * as z from '../../../core/validation/zod-mini';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { WclFight, WclReport, WclTableBlob } from '../../../core/wcl/wcl.models';
+import { logWarn } from '../../../core/observability/log';
+import { parseJson } from '../../../core/validation/json';
+import { Result, ok, permanent } from '../../../core/http/result';
+import { toLoadError } from '../../../core/http/http-load-error';
 import { TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
 
 type PullResult = 'kill' | 'wipe';

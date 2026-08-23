@@ -1,8 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SpecTalents } from '../../../core/models/talent.models';
-import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/models/wcl.models';
-import { ok, missing, transient } from '../../../core/result';
+import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/wcl/wcl.models';
+import { ok, missing, transient } from '../../../core/http/result';
 import {
   GearTransformService, toParseGear, aggregateParseGear, ParseGear, withTalentDiffs,
   aggregateTalents, aggregateTrinkets, aggregateEnchants,

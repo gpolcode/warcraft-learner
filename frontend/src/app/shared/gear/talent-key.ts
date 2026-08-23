@@ -1,4 +1,4 @@
-import { WclTalentNode } from '../../core/models/wcl.models';
+import { WclTalentNode } from '../../core/wcl/wcl.models';
 
 export interface TalentPick {
   entryId: number;

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
-import { TopParseSelection } from '../../../core/models/wcl.models';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { DataFileApiService } from '../../../core/data-files/data-file-api';
+import { TopParseSelection } from '../../../core/wcl/wcl.models';
 import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
 import { PerCdBenchmark } from '../../../core/models/encounter.models';
 import { group, quantile } from 'd3-array';
@@ -13,7 +13,7 @@ import { buildCadenceBenchmark } from '../../../shared/analysis/cast-cadence';
 import { TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../shared/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
-import { Result } from '../../../core/result';
+import { Result } from '../../../core/http/result';
 import {
   BenchedRule, RuleSample, MIN_MEASURED_PARSES, buildRuleContext, sampleRule, ruleBand, judgeableRules, rulesNeed,
 } from './rotation-rules';

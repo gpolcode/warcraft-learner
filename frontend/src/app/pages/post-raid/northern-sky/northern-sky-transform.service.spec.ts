@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ok, missing } from '../../../core/result';
+import { ok, missing } from '../../../core/http/result';
 import { NorthernSkyTransformService, cooldownCastTimes } from './northern-sky-transform.service';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../testing/spell-ids';
 import { cast } from '../../../../testing/builders/events';

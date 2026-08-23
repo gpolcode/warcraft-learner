@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../core/models/wcl.models';
-import { ok, permanent } from '../../../core/result';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../core/wcl/wcl.models';
+import { ok, permanent } from '../../../core/http/result';
 import {
   PullOverviewFeatureService,
   dpsFromTable, abilityNameMap, buildDeathRows, wipeTimeS,

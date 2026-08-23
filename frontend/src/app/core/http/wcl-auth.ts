@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import * as z from '../zod-mini';
-import { WclTransportError } from '../services/wcl-transport';
+import * as z from '../validation/zod-mini';
+import { WclTransportError } from '../wcl/wcl-transport';
 import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
 
 const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';

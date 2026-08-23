@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SpecTalents } from '../models/talent.models';
-import { Result, ok, missing } from '../result';
+import { Result, ok, missing } from './result';
 import { toLoadError } from './http-load-error';
-import { logWarn } from '../log';
+import { logWarn } from '../observability/log';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
 // subTreeNodes carries the hero-tree pick.

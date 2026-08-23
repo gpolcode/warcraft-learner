@@ -3,8 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from './data-file-api';
 import { DATA_FILE_TRANSPORT, DataFileTransport } from './data-file-transport';
 import { EncounterEntry, SpecEntry } from '../models/encounter.models';
-import { SpecMeta } from '../models/spec-meta.models';
-import { Result, ok, missing, transient } from '../result';
+import { SpecMeta } from './spec-meta.models';
+import { Result, ok, missing, transient } from '../http/result';
 
 // These tests pin the exact relative paths the service owns: a drift silently 404s every runtime read or writes ingested data to the wrong place.
 const SPEC = 'SubtletyRogue';

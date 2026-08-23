@@ -6,7 +6,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanelComponent } from '../../../shared/components/flyover-panel/flyover-panel';
 import { GameIconComponent } from '../../../shared/components/game-icon/game-icon';
 import { LoadStateComponent } from '../../../shared/components/load-state/load-state';
-import { SelectionStore } from '../../../core/services/selection-store';
+import { SelectionStore } from '../../../core/state/selection-store';
 import { loadResource } from '../../../shared/state/load-resource';
 import { NorthernSkyBench } from './northern-sky-data-source';
 import {

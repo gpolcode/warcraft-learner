@@ -1,11 +1,11 @@
 // Self-containment exception (blessed by CLAUDE.md): this slice MAY import the cross-slice `shared/gear/gear-comparison.ts`.
 import { Injectable, inject } from '@angular/core';
-import { CharacterGear, WclCombatantInfo } from '../../../core/models/wcl.models';
+import { CharacterGear, WclCombatantInfo } from '../../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../../../core/models/encounter.models';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { logWarn } from '../../../core/log';
-import { Result, ok, permanent } from '../../../core/result';
-import { toLoadError } from '../../../core/transport/http-load-error';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { logWarn } from '../../../core/observability/log';
+import { Result, ok, permanent } from '../../../core/http/result';
+import { toLoadError } from '../../../core/http/http-load-error';
 import { GameNames, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
 import { talentKeyFromTree } from '../../../shared/gear/talent-key';
 import {

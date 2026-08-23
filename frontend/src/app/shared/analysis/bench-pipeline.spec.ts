@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { WclApiService } from '../../core/services/wcl-api';
-import type { DataFileApiService } from '../../core/services/data-file-api';
-import { WclTransportError } from '../../core/services/wcl-transport';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import type { DataFileApiService } from '../../core/data-files/data-file-api';
+import { WclTransportError } from '../../core/wcl/wcl-transport';
 import { Rulebook } from '../../core/models/rulebook.models';
-import { Result, ok, missing, transient } from '../../core/result';
-import { TopParseSelection } from '../../core/models/wcl.models';
+import { Result, ok, missing, transient } from '../../core/http/result';
+import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../testing/spell-ids';
 import { rulebook } from '../../../testing/builders/rulebook';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../testing/builders/wcl-fixtures';

@@ -1,4 +1,4 @@
-import * as z from '../core/zod-mini';
+import * as z from '../core/validation/zod-mini';
 import { type IngestStamp } from './stamp';
 
 export interface SpecIngestState {

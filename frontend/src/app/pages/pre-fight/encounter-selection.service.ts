@@ -1,8 +1,8 @@
 /** Pre-fight spec + encounter discovery shell over the data-file indices. */
 import { Injectable, inject } from '@angular/core';
-import { DataFileApiService } from '../../core/services/data-file-api';
+import { DataFileApiService } from '../../core/data-files/data-file-api';
 import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
-import { Result } from '../../core/result';
+import { Result } from '../../core/http/result';
 
 @Injectable({ providedIn: 'root' })
 export class EncounterSelectionService {

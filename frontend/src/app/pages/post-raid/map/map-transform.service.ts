@@ -1,10 +1,10 @@
 /** Boss pick: the boss is the actor with the highest observed `maxHitPoints`; this can differ from ingest when an add briefly out-HPs the boss in a snapshot. */
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { DataFileApiService } from '../../../core/services/data-file-api';
-import { TopParseSelection, WclEvent, WclFight } from '../../../core/models/wcl.models';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { DataFileApiService } from '../../../core/data-files/data-file-api';
+import { TopParseSelection, WclEvent, WclFight } from '../../../core/wcl/wcl.models';
 import { ParsePositions, PlayerPosRow, PosRow } from '../../../core/models/positioning.models';
-import { Result } from '../../../core/result';
+import { Result } from '../../../core/http/result';
 import { TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
 import { posActorId } from './map-positions';

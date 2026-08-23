@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
+import { WclApiService } from '../../../core/wcl/wcl-api';
 import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
 import { WindowStatus } from '../../../core/models/window-comparison.models';
 import { ClipAnchor } from '../../../core/models/capture.models';
-import { Result, ok } from '../../../core/result';
+import { Result, ok } from '../../../core/http/result';
 import { AbilityIcons, TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../shared/analysis/window-view';
 import { PullContext, PullRef, analyzePull } from '../../../shared/analysis/pull-context';

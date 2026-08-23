@@ -1,11 +1,11 @@
 /** The positioning math is owned here as pure fns rather than shared, so the slice stays self-contained. */
 import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@angular/core';
-import { WclApiService } from '../../../core/services/wcl-api';
-import { WclEvent, WclFight } from '../../../core/models/wcl.models';
+import { WclApiService } from '../../../core/wcl/wcl-api';
+import { WclEvent, WclFight } from '../../../core/wcl/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../core/models/positioning.models';
-import { logWarn } from '../../../core/log';
-import { Result, LoadError, permanent } from '../../../core/result';
-import { toLoadError } from '../../../core/transport/http-load-error';
+import { logWarn } from '../../../core/observability/log';
+import { Result, LoadError, permanent } from '../../../core/http/result';
+import { toLoadError } from '../../../core/http/http-load-error';
 import { TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';

@@ -1,12 +1,12 @@
 import { assert, describe, it, expect } from 'vitest';
-import { Result, ok, missing } from '../../../core/result';
+import { Result, ok, missing } from '../../../core/http/result';
 import { RulebookRule, CastWithoutPriorCondition } from '../../../core/models/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';
 import { cast, applyBuff, applyDebuff, removeDebuff } from '../../../../testing/builders/events';
 import { wclReport } from '../../../../testing/builders/wcl-fixtures';
-import { WclEvent } from '../../../core/models/wcl.models';
+import { WclEvent } from '../../../core/wcl/wcl.models';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { sliceService } from '../../../../testing/service-harness';
 import { BenchedRule, RuleBand } from './rotation-rules';

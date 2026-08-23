@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ok, transient } from '../../core/result';
+import { ok, transient } from '../../core/http/result';
 import { whenStable } from '../../../testing/when-stable';
 import {
   FIRST_PARAMS, FIRST_VALUE, LOAD_CONTEXT, OUTAGE_MESSAGE, SECOND_PARAMS, SECOND_VALUE, drain, harness, spyOnConsoleWarn,

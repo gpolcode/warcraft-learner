@@ -9,7 +9,7 @@ import {
 } from './gear-comparison';
 import { SpecTalents } from '../../core/models/talent.models';
 import { EncounterGearStats } from '../../core/models/encounter.models';
-import { CharacterGear } from '../../core/models/wcl.models';
+import { CharacterGear } from '../../core/wcl/wcl.models';
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {
   return { talent_builds: [], trinkets: {}, enchants: {}, ...partial };

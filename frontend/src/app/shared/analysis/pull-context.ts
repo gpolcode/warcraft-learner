@@ -1,8 +1,8 @@
-import { WclApiService } from '../../core/services/wcl-api';
-import { WclFight, WclReport } from '../../core/models/wcl.models';
-import { logWarn } from '../../core/log';
-import { Result, ok } from '../../core/result';
-import { toLoadError } from '../../core/transport/http-load-error';
+import { WclApiService } from '../../core/wcl/wcl-api';
+import { WclFight, WclReport } from '../../core/wcl/wcl.models';
+import { logWarn } from '../../core/observability/log';
+import { Result, ok } from '../../core/http/result';
+import { toLoadError } from '../../core/http/http-load-error';
 import { relativeS } from './wcl-projections';
 
 export interface PullContext {
