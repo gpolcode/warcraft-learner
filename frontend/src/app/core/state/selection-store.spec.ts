@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { PostRaidSelection, PreFightSelection, SelectionStore } from './selection-store';
+
+// A fresh instance per call keeps the cross-instance persistence assertions meaningful.
+const freshStore = () => TestBed.runInInjectionContext(() => new SelectionStore());
 
 // Mirror POST_RAID_KEY / PRE_FIGHT_KEY in the source; stored selections outlive deploys, so changing a key orphans every visitor's saved state.
 const POST_RAID_STORAGE_KEY = 'wl.sel.postRaid';
@@ -26,22 +30,22 @@ describe('SelectionStore', () => {
   });
 
   it('persists the post-raid selection under its stable key and re-loads it', () => {
-    new SelectionStore().savePostRaid(POST_RAID_SELECTION);
+    freshStore().savePostRaid(POST_RAID_SELECTION);
 
     expect(localStorage.getItem(POST_RAID_STORAGE_KEY)).toBe(JSON.stringify(POST_RAID_SELECTION));
     // A fresh instance proves the selection lives in localStorage, not on the object.
-    expect(new SelectionStore().loadPostRaid()).toEqual(POST_RAID_SELECTION);
+    expect(freshStore().loadPostRaid()).toEqual(POST_RAID_SELECTION);
   });
 
   it('persists the pre-fight selection under its stable key and re-loads it', () => {
-    new SelectionStore().savePreFight(PRE_FIGHT_SELECTION);
+    freshStore().savePreFight(PRE_FIGHT_SELECTION);
 
     expect(localStorage.getItem(PRE_FIGHT_STORAGE_KEY)).toBe(JSON.stringify(PRE_FIGHT_SELECTION));
-    expect(new SelectionStore().loadPreFight()).toEqual(PRE_FIGHT_SELECTION);
+    expect(freshStore().loadPreFight()).toEqual(PRE_FIGHT_SELECTION);
   });
 
   it('returns null when nothing has been stored yet', () => {
-    const store = new SelectionStore();
+    const store = freshStore();
 
     expect(store.loadPostRaid()).toBeNull();
     expect(store.loadPreFight()).toBeNull();
@@ -53,7 +57,7 @@ describe('SelectionStore', () => {
       throw new Error(STORAGE_FAILURE);
     });
 
-    expect(() => { new SelectionStore().savePostRaid(POST_RAID_SELECTION); }).not.toThrow();
+    expect(() => { freshStore().savePostRaid(POST_RAID_SELECTION); }).not.toThrow();
     expect(warn).toHaveBeenCalled();
   });
 
@@ -62,7 +66,7 @@ describe('SelectionStore', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error(STORAGE_FAILURE);
     });
-    const store = new SelectionStore();
+    const store = freshStore();
 
     expect(() => store.loadPostRaid()).not.toThrow();
     expect(store.loadPostRaid()).toBeNull();

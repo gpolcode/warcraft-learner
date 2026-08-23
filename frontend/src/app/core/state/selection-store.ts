@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import * as z from '../validation/zod-mini';
-import { logWarn } from '../observability/log';
-import { parseJson } from '../validation/json';
+import { LoggerService } from '../observability/log';
+import { JsonCodecService } from '../validation/json';
 
 // Only the player NAME is kept: WCL actor ids are per-report (not stable across pulls or logs).
 const POST_RAID_SCHEMA = z.object({ playerName: z.nullable(z.string()) });
@@ -21,6 +21,8 @@ const NORTHERN_SKY_KEY = 'wl.sel.northernSky';
 // There are no URL query params by design, so sticky state lives only in localStorage.
 @Injectable({ providedIn: 'root' })
 export class SelectionStore {
+  private readonly jsonCodec = inject(JsonCodecService);
+  private readonly logger = inject(LoggerService);
   savePostRaid(value: PostRaidSelection): void {
     this._save(POST_RAID_KEY, value, 'SelectionStore.savePostRaid');
   }
@@ -49,7 +51,7 @@ export class SelectionStore {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (err) {
-      logWarn(context, err);
+      this.logger.logWarn(context, err);
     }
   }
 
@@ -57,9 +59,9 @@ export class SelectionStore {
     try {
       const stored = localStorage.getItem(key);
       if (!stored) return null;
-      return parseJson(schema, stored, context);
+      return this.jsonCodec.parseJson(schema, stored, context);
     } catch (err) {
-      logWarn(context, err);
+      this.logger.logWarn(context, err);
       return null;
     }
   }

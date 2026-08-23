@@ -1,3 +1,11 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class IngestSignatureService {
+  readonly encounterSkipKey = encounterSkipKey;
+  readonly signatureAfterFetch = signatureAfterFetch;
+}
+
 // A tailored file is fresh when the ingest version AND the exact top-parse set that produced it are unchanged, folded into one short hash.
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';

@@ -1,5 +1,15 @@
+import { Injectable } from '@angular/core';
 import * as z from '../../../../core/validation/zod-mini';
 import { type IngestStamp } from './stamp';
+
+@Injectable({ providedIn: 'root' })
+export class IngestStateService {
+  readonly readIngestState = readIngestState;
+  readonly nextIngestState = nextIngestState;
+  readonly prunedIngestState = prunedIngestState;
+  readonly encounterIdsFromFiles = encounterIdsFromFiles;
+}
+
 
 export interface SpecIngestState {
   ingest_version: number;

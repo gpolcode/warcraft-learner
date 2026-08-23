@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { SpecTalents } from '../../domain/gear/talent.models';
 import { Result, ok, missing } from './result';
 import { toLoadError } from './http-load-error';
-import { logWarn } from '../observability/log';
+import { LoggerService } from '../observability/log';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
 // subTreeNodes carries the hero-tree pick.
@@ -42,6 +42,7 @@ export function indexTalentTrees(trees: RaidbotsTree[]): Map<string, SpecTalents
 
 @Injectable({ providedIn: 'root' })
 export class TalentDataService {
+  private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
 
   async getTalents(spec: string): Promise<Result<SpecTalents>> {
@@ -50,7 +51,7 @@ export class TalentDataService {
       const talents = indexTalentTrees(trees).get(spec);
       return talents ? ok(talents) : missing('No talent data for this spec.');
     } catch (cause) {
-      logWarn('TalentDataService dump fetch', cause);
+      this.logger.logWarn('TalentDataService dump fetch', cause);
       return toLoadError(cause, 'talent-data.dump');
     }
   }

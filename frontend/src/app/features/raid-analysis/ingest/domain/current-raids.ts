@@ -1,8 +1,18 @@
+import { Injectable } from '@angular/core';
 import { logWarn } from '../../../../core/observability/log';
 import type { WclApiService } from '../../../../core/wcl/wcl-api';
 import type { WclClass, WclExpansion, WclZone } from '../../../../core/wcl/wcl.models';
 import type { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import type { IngestEncounter } from '../models/wcl.models';
+
+@Injectable({ providedIn: 'root' })
+export class CurrentRaidsService {
+  readonly parseRaidNames = parseRaidNames;
+  readonly discoverCurrentRaids = discoverCurrentRaids;
+  readonly discoverSpecMetas = discoverSpecMetas;
+  readonly assertPointsBudget = assertPointsBudget;
+}
+
 
 interface CurrentRaids {
   encounters: IngestEncounter[];

@@ -1,3 +1,13 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class IngestOrderingService {
+  readonly parsePrioritySpecs = parsePrioritySpecs;
+  readonly orderSpecsByVersion = orderSpecsByVersion;
+  readonly specsForRun = specsForRun;
+  readonly orderEncountersByMissingFirst = orderEncountersByMissingFirst;
+}
+
 // Each run is bounded by the WCL hourly point budget, so these pure helpers order work to fix the most out-of-date data first.
 
 /** Cap on how many specs one run ingests, so a single run stays within the WCL point budget. */

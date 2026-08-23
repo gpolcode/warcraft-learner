@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import * as z from '../../../../core/validation/zod-mini';
 import { WclApiService } from '../../../../core/wcl/wcl-api';
 import { WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
-import { logWarn } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/log';
 import { parseJson } from '../../../../core/validation/json';
 import { Result, ok, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
@@ -98,6 +98,7 @@ export function buildDeathRows(
 
 @Injectable({ providedIn: 'root' })
 export class PullOverviewFeatureService {
+  private readonly logger = inject(LoggerService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
 
@@ -136,7 +137,7 @@ export class PullOverviewFeatureService {
         outcomeTimeS,
       });
     } catch (cause) {
-      logWarn('PullOverviewFeatureService.loadView', cause);
+      this.logger.logWarn('PullOverviewFeatureService.loadView', cause);
       return toLoadError(cause, 'pull-overview.view');
     }
   }

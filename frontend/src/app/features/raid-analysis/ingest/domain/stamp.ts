@@ -1,3 +1,14 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class IngestStampService {
+  readonly stampSignature = stampSignature;
+  readonly stampBurstFile = stampBurstFile;
+  readonly readFileStamp = readFileStamp;
+  readonly skipDecision = skipDecision;
+  readonly isFutureVersion = isFutureVersion;
+}
+
 // A second declaration of these stamped field names drifts from the files already on disk.
 import * as z from '../../../../core/validation/zod-mini';
 import { type Result } from '../../../../core/http/result';

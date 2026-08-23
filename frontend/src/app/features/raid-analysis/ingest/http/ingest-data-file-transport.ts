@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../../../../core/data-files/data-file-transport';
 import { Result, ok, permanent } from '../../../../core/http/result';
-import { logWarn } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/log';
 import { toLoadError } from '../../../../core/http/http-load-error';
-import { isFutureVersion } from '../domain/stamp';
+import { IngestStampService } from '../domain/stamp';
 
 /** The file server (scripts/ingest-server.js) is dumb file ops; all ingestion semantics stay on this side. */
 const INGEST_SERVER_URL = 'http://localhost:3000';
@@ -20,6 +20,8 @@ function fileUrl(relPath: string): string {
 /** The server returns an exact 404 for an absent file - the `missing` signal. */
 @Injectable({ providedIn: 'root' })
 export class IngestHttpDataFileTransport implements DataFileTransport {
+  private readonly logger = inject(LoggerService);
+  private readonly stamp = inject(IngestStampService);
   private readonly http = inject(HttpClient);
 
   async readJson<T>(relPath: string): Promise<Result<T>> {
@@ -30,12 +32,12 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
       const result = toLoadError(cause, `data-file.${relPath}`);
       // An un-ingested file is the orchestrator's normal case, so only real failures log.
       if (!result.ok && result.error.kind !== 'missing') {
-        logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
+        this.logger.logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
       }
       return result;
     }
     // A newer-versioned file has a shape this build does not know; fail it rather than cast the drifted JSON to T.
-    if (isFutureVersion(parsed)) {
+    if (this.stamp.isFutureVersion(parsed)) {
       return permanent('Data file is from a newer ingest version.', `data-file.version.${relPath}`);
     }
     return ok(parsed as T);

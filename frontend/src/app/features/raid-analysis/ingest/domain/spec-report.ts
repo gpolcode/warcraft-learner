@@ -1,3 +1,10 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class SpecReportService {
+  readonly formatSpecReport = formatSpecReport;
+}
+
 export interface SpecReportRow {
   spec: string;
   version: number | null;

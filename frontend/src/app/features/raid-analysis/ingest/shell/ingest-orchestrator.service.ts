@@ -6,25 +6,19 @@ import { WclApiService } from '../../../../core/wcl/wcl-api';
 import { DataFileApiService } from '../../../../core/data-files/data-file-api';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { SpecMetaService } from '../../../../core/data-files/spec-meta';
-import { logWarn } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/log';
 import { type LoadError } from '../../../../core/http/result';
 import { TopParseSelectionService } from '../../../../domain/analysis/top-parse-selection';
 import type { EncounterEntry, SpecEntry } from '../../../../domain/encounter/encounter.models';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { sliceRegistry, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
-import {
-  assertPointsBudget, BudgetExceededError, discoverCurrentRaids, discoverSpecMetas, parseRaidNames,
-} from '../domain/current-raids';
+import { CurrentRaidsService, BudgetExceededError } from '../domain/current-raids';
 import { INGEST_VERSION } from '../domain/ingest-version';
-import { specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs, type SpecOrderEntry } from '../domain/ordering';
-import { signatureAfterFetch } from '../domain/signature';
-import {
-  readFileStamp, skipDecision, stampSignature, stampBurstFile, type IngestStamp,
-} from '../domain/stamp';
-import {
-  readIngestState, nextIngestState, prunedIngestState, encounterIdsFromFiles, type SpecIngestState,
-} from '../domain/ingest-state';
-import { formatSpecReport, SELECTED_MARKER, type SpecReportRow } from '../domain/spec-report';
+import { IngestOrderingService, type SpecOrderEntry } from '../domain/ordering';
+import { IngestSignatureService } from '../domain/signature';
+import { IngestStampService, type IngestStamp } from '../domain/stamp';
+import { IngestStateService, type SpecIngestState } from '../domain/ingest-state';
+import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../domain/spec-report';
 import type { IngestEncounter } from '../models/wcl.models';
 
 const TOP_N = 10;
@@ -64,6 +58,13 @@ function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntr
 
 @Injectable({ providedIn: 'root' })
 export class IngestOrchestratorService {
+  private readonly currentRaids = inject(CurrentRaidsService);
+  private readonly ingestState = inject(IngestStateService);
+  private readonly logger = inject(LoggerService);
+  private readonly ordering = inject(IngestOrderingService);
+  private readonly signature = inject(IngestSignatureService);
+  private readonly specReport = inject(SpecReportService);
+  private readonly stamp = inject(IngestStampService);
   private readonly topParseSelection = inject(TopParseSelectionService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFile = inject(DataFileApiService);
@@ -90,11 +91,11 @@ export class IngestOrchestratorService {
 
     await this.resolveSpecMetas();
 
-    const raidNames = parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
+    const raidNames = this.currentRaids.parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
     console.log(raidNames.length
       ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
       : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
-    const { encounters, protectedIds } = await discoverCurrentRaids(this.wclApi, raidNames);
+    const { encounters, protectedIds } = await this.currentRaids.discoverCurrentRaids(this.wclApi, raidNames);
     console.log(`${encounters.length} encounters`);
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
@@ -113,7 +114,7 @@ export class IngestOrchestratorService {
 
   private async resolveSpecMetas(): Promise<void> {
     // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
-    const metas = await discoverSpecMetas(this.wclApi);
+    const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
       if (rulebook.ok) {
@@ -121,7 +122,7 @@ export class IngestOrchestratorService {
       } else {
         // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
         if (rulebook.error.kind === 'permanent') {
-          logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
+          this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
         }
         meta.specIcon = '';
       }
@@ -165,7 +166,7 @@ export class IngestOrchestratorService {
         succeeded.push(spec);
         if (budgetExhausted) { budgetStopped = true; break; }
       } catch (err) {
-        logWarn(`ingest: spec ${spec} aborted, continuing with the remaining specs`, err);
+        this.logger.logWarn(`ingest: spec ${spec} aborted, continuing with the remaining specs`, err);
         failed.push({ spec, message: err instanceof Error ? err.message : String(err) });
       }
     }
@@ -197,7 +198,7 @@ export class IngestOrchestratorService {
         withRulebook.push(spec);
       } else if (rulebook.error.kind === 'permanent') {
         // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
-        logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
+        this.logger.logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
       }
     }
     if (!withRulebook.length) return [];
@@ -208,7 +209,7 @@ export class IngestOrchestratorService {
       const emptyIds = state?.empty_encounter_ids ?? [];
       const stamps = await Promise.all(benched.map(async id => {
         const slice = await this.dataFile.getSlice(spec, id, BENCH_SLICE);
-        return readFileStamp(slice.ok ? slice.value : null);
+        return this.stamp.readFileStamp(slice.ok ? slice.value : null);
       }));
       const versions = stamps.map(stamp => stamp.version);
       if (state) versions.push(state.ingest_version);
@@ -227,8 +228,8 @@ export class IngestOrchestratorService {
       const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
       return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
     }));
-    const prioritySpecs = parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
-    const { ordered, selected } = specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
+    const prioritySpecs = this.ordering.parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
+    const { ordered, selected } = this.ordering.specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
     const displayBySpec = new Map(orderInputs.map(input => [input.entry.spec, input] as const));
     const selectedSpecs = new Set(selected);
     const rows: SpecReportRow[] = ordered.map(spec => ({
@@ -240,7 +241,7 @@ export class IngestOrchestratorService {
       selected: selectedSpecs.has(spec),
     }));
     console.log(
-      `Specs (never checked first, then oldest version, ${SELECTED_MARKER} = ingested this run):\n${formatSpecReport(rows, nowS())}`,
+      `Specs (never checked first, then oldest version, ${SELECTED_MARKER} = ingested this run):\n${this.specReport.formatSpecReport(rows, nowS())}`,
     );
     return selected;
   }
@@ -257,8 +258,8 @@ export class IngestOrchestratorService {
     const emptyThisPass: number[] = [];
 
     try {
-      for (const encounter of orderEncountersByMissingFirst(encounters, checkedIds)) {
-        await assertPointsBudget(this.wclApi, POINTS_MARGIN);
+      for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
+        await this.currentRaids.assertPointsBudget(this.wclApi, POINTS_MARGIN);
 
         const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
         if (!selection.length) {
@@ -268,7 +269,7 @@ export class IngestOrchestratorService {
         }
 
         const existing = await this.dataFile.getSlice(spec, encounter.id, BENCH_SLICE);
-        const { skip, signature: skipKey } = skipDecision(
+        const { skip, signature: skipKey } = this.stamp.skipDecision(
           existing.ok ? existing.value : null, selection, version, TOP_N);
         if (skip) {
           console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
@@ -301,16 +302,16 @@ export class IngestOrchestratorService {
   }
 
   private benchedIds(spec: string): Promise<number[]> {
-    return this.dataFile.listSliceFiles(spec, BENCH_SLICE).then(encounterIdsFromFiles);
+    return this.dataFile.listSliceFiles(spec, BENCH_SLICE).then(this.ingestState.encounterIdsFromFiles);
   }
 
   private async loadIngestState(spec: string): Promise<SpecIngestState | null> {
     const stored = await this.dataFile.getIngestState(spec);
-    return stored.ok ? readIngestState(stored.value) : null;
+    return stored.ok ? this.ingestState.readIngestState(stored.value) : null;
   }
 
   private async pruneIngestState(spec: string, protectedIds: Set<number>): Promise<void> {
-    const pruned = prunedIngestState(await this.loadIngestState(spec), protectedIds);
+    const pruned = this.ingestState.prunedIngestState(await this.loadIngestState(spec), protectedIds);
     if (pruned) await this.dataFile.writeIngestState(spec, pruned);
   }
 
@@ -321,7 +322,7 @@ export class IngestOrchestratorService {
   ): Promise<void> {
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
     const benched = new Set(await this.benchedIds(spec));
-    await this.dataFile.writeIngestState(spec, nextIngestState(previous, emptyThisPass, benched, stamp));
+    await this.dataFile.writeIngestState(spec, this.ingestState.nextIngestState(previous, emptyThisPass, benched, stamp));
     await this.rebuildEncountersIndex(spec, encounters);
     await this.rebuildSpecIndex();
   }
@@ -339,7 +340,7 @@ export class IngestOrchestratorService {
       Promise.all(siblings.map(async slice => ({ slice, result: await bench(slice) }))),
     ]));
 
-    const { signature, inaccessibleParses } = signatureAfterFetch(
+    const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
       selection, outcomes.inaccessibleCodes, outcomes.failedCodes, version, TOP_N);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
@@ -352,11 +353,11 @@ export class IngestOrchestratorService {
     const writes: Promise<void>[] = [];
     if (burst.ok) {
       const all = [burst, ...rest.map(entry => entry.result)];
-      writes.push(burstSlice.write(spec, encId, stampBurstFile(burst.value, signature, stamp, inaccessibleParses, all)));
+      writes.push(burstSlice.write(spec, encId, this.stamp.stampBurstFile(burst.value, signature, stamp, inaccessibleParses, all)));
     } else { console.log(skipNote(burstSlice.file, burst.error)); }
     for (const { slice, result } of rest) {
       if (result.ok) {
-        writes.push(slice.write(spec, encId, stampSignature(result.value, signature, stamp)));
+        writes.push(slice.write(spec, encId, this.stamp.stampSignature(result.value, signature, stamp)));
       } else { console.log(skipNote(slice.file, result.error)); }
     }
 
@@ -400,7 +401,7 @@ export class IngestOrchestratorService {
         try {
           await this.dataFile.removeSlice(spec, encId, slice);
         } catch (err) {
-          logWarn(`pruneStaleEncounters ${spec}/${encId}/${slice}`, err);
+          this.logger.logWarn(`pruneStaleEncounters ${spec}/${encId}/${slice}`, err);
         }
       }
       removed.push(encId);
