@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { CastOutsideBuffCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast, buffWindow, removeBuff } from '../../../../../../../testing/builders/events';
 import {
-  DANCE_START_S, DANCE_END_S, FIELD_NEVER, band, judged, ruleCtx,
+  DANCE_START_S, DANCE_END_S, FIELD_NEVER, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { ruleApplicable, sampleRule } from '../engine';
-import { evaluateCastOutsideBuff as rawCastOutsideBuff } from './cast-outside-buff';
+import { CastOutsideBuffKind } from './cast-outside-buff';
 
-const evaluateCastOutsideBuff = judged(rawCastOutsideBuff);
+const kind = TestBed.inject(CastOutsideBuffKind);
+const evaluateCastOutsideBuff = judged(kind);
 
 describe('evaluateCastOutsideBuff', () => {
   const insideDance: CastOutsideBuffCondition = {
@@ -34,7 +35,7 @@ describe('evaluateCastOutsideBuff', () => {
   });
 
   it('is not applicable when the judged spell was never cast', () => {
-    expect(ruleApplicable(insideDance, ruleCtx([], { buffs: dance }))).toBe(false);
+    expect(kind.applicable(insideDance, ruleCtx([], { buffs: dance }))).toBe(false);
   });
 
   it('reads an opener cast inside a buff pre-cast before the pull as inside it', () => {
@@ -80,7 +81,7 @@ describe('sampleRule', () => {
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, DANCE_START_S + 2), cast(SECRET_TECHNIQUE, DANCE_END_S + 5)],
       { buffs: buffWindow(SHADOW_DANCE, DANCE_START_S, DANCE_END_S) });
     const HALF_OFF_SIDE = 0.5;
-    expect(sampleRule(insideDance, ctx).values).toEqual([HALF_OFF_SIDE]);
+    expect(sampleRule(kind, insideDance, ctx).values).toEqual([HALF_OFF_SIDE]);
   });
 });
 

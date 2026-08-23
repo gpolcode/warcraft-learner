@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { AuraUptimeBelowCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { RUPTURE } from '../../../../../../../testing/spell-ids';
 import { applyBuff, removeBuff, applyDebuff, removeDebuff } from '../../../../../../../testing/builders/events';
-import { RULE_FIGHT_END_S, band, judged, ruleCtx } from '../rule-fixtures';
-import { ruleApplicable, sampleRule } from '../engine';
-import { evaluateAuraUptimeBelow as rawAuraUptimeBelow } from './aura-uptime-below';
+import {
+ RULE_FIGHT_END_S, band, judged, ruleCtx, sampleRule,
+} from '../rule-fixtures';
+import { AuraUptimeBelowKind } from './aura-uptime-below';
 
-const evaluateAuraUptimeBelow = judged(rawAuraUptimeBelow);
+const kind = TestBed.inject(AuraUptimeBelowKind);
+const evaluateAuraUptimeBelow = judged(kind);
 
 describe('evaluateAuraUptimeBelow', () => {
   const RUPTURE_MIN_PCT = 90;  // what the field holds, supplied as a measured band
@@ -28,7 +31,7 @@ describe('evaluateAuraUptimeBelow', () => {
 
   it('stays silent on zero uptime, which reads as a build that skips the aura', () => {
     expect(evaluateAuraUptimeBelow(ruptureUptime, ruleCtx([]), band(RUPTURE_MIN_PCT), 'warning')).toBeNull();
-    expect(ruleApplicable(ruptureUptime, ruleCtx([]))).toBe(false);
+    expect(kind.applicable(ruptureUptime, ruleCtx([]))).toBe(false);
   });
 
   it('reads the self stream when on is "self"', () => {
@@ -50,7 +53,7 @@ describe('evaluateAuraUptimeBelow', () => {
     const ctx = ruleCtx([], { debuffs: [removeDebuff(RUPTURE, PRE_PULL_REMOVE_S)] });
     expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, band(RUPTURE_MIN_PCT), 'warning')?.measured?.value)
       .toBe(`17 / ${RUPTURE_MIN_PCT}`);
-    expect(ruleApplicable(ruptureUptime, ctx)).toBe(true);
+    expect(kind.applicable(ruptureUptime, ctx)).toBe(true);
   });
 });
 
@@ -71,7 +74,7 @@ describe('sampleRule', () => {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
-    expect(sampleRule(uptime, ctx).values).toEqual([50]);
+    expect(sampleRule(kind, uptime, ctx).values).toEqual([50]);
   });
 });
 

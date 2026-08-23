@@ -1,14 +1,15 @@
 import { assert, describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { CastWithoutPriorCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {
-  PAIR_WINDOW_S, SECRET_TECH_NEEDS_DANCE, band, judged, ruleCtx,
+  PAIR_WINDOW_S, SECRET_TECH_NEEDS_DANCE, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { ruleLabel, sampleRule } from '../engine';
-import { evaluateCastWithoutPrior as rawCastWithoutPrior } from './cast-without-prior';
+import { CastWithoutPriorKind } from './cast-without-prior';
 
-const evaluateCastWithoutPrior = judged(rawCastWithoutPrior);
+const kind = TestBed.inject(CastWithoutPriorKind);
+const evaluateCastWithoutPrior = judged(kind);
 
 describe('rule engine', () => {
   it('flags Secret Technique cast with no Shadow Dance in window', () => {
@@ -58,7 +59,7 @@ describe('rule engine', () => {
 
 describe('ruleLabel', () => {
   it('describes a paired-cast rule as "<spell> with <required>"', () => {
-    expect(ruleLabel(SECRET_TECH_NEEDS_DANCE)).toBe('Secret Technique with Shadow Dance');
+    expect(kind.label(SECRET_TECH_NEEDS_DANCE)).toBe('Secret Technique with Shadow Dance');
   });
 });
 
@@ -69,11 +70,11 @@ describe('sampleRule', () => {
       cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 10 + TIGHT_LEAD_S),
       cast(SHADOW_DANCE, 40), cast(SECRET_TECHNIQUE, 40 + LOOSE_LEAD_S),
     ]);
-    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ctx).values).toEqual([TIGHT_LEAD_S, LOOSE_LEAD_S]);
+    expect(sampleRule(kind, SECRET_TECH_NEEDS_DANCE, ctx).values).toEqual([TIGHT_LEAD_S, LOOSE_LEAD_S]);
   });
 
   it('measures no lead for an unpaired cast, but still reports it as an instance the parse judged', () => {
-    expect(sampleRule(SECRET_TECH_NEEDS_DANCE, ruleCtx([cast(SECRET_TECHNIQUE, 10)])))
+    expect(sampleRule(kind, SECRET_TECH_NEEDS_DANCE, ruleCtx([cast(SECRET_TECHNIQUE, 10)])))
       .toEqual({ values: [], unmeasuredOut: 1 });
   });
 });

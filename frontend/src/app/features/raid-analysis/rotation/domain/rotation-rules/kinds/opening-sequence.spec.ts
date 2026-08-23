@@ -1,12 +1,15 @@
 import { assert, describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { OpeningSequenceCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, EVISCERATE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';
-import { evaluateRules, ruleApplicable, rulesFollowed } from '../engine';
-import { evaluateOpeningSequence as rawOpeningSequence } from './opening-sequence';
+import { OpeningSequenceKind } from './opening-sequence';
+import { RotationRuleEngineService } from '../../rotation-rules';
 
-const evaluateOpeningSequence = judged(rawOpeningSequence);
+const kind = TestBed.inject(OpeningSequenceKind);
+const engine = TestBed.inject(RotationRuleEngineService);
+const evaluateOpeningSequence = judged(kind);
 
 describe('rule evaluator boundaries', () => {
   it('accepts an opener step landing exactly on hi', () => {
@@ -58,15 +61,15 @@ describe('evaluateOpeningSequence', () => {
   it('is judged on neither side of a pull with none of the sequence spells', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1)]);
     const rule = ruleFor(opener);
-    expect(ruleApplicable(opener, ctx)).toBe(false);
-    expect(evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)).toEqual([]);
-    expect(rulesFollowed([benched(rule, band(OPENER_WINDOW_S))], ctx)).toEqual([]);
+    expect(kind.applicable(opener, ctx)).toBe(false);
+    expect(engine.evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)).toEqual([]);
+    expect(engine.rulesFollowed([benched(rule, band(OPENER_WINDOW_S))], ctx)).toEqual([]);
   });
 
   it('still flags a first step landing past the window, which is why the gate reads casts and not progress', () => {
     const ctx = ruleCtx([cast(EVISCERATE, 1), cast(SHADOW_BLADES, 30)]);
     const rule = ruleFor(opener);
-    const finding = evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0];
+    const finding = engine.evaluateRules([benched(rule, band(OPENER_WINDOW_S))], ctx)[0];
     assert.exists(finding);
     expect(finding.measured?.value).toBe('0 / 3');
   });

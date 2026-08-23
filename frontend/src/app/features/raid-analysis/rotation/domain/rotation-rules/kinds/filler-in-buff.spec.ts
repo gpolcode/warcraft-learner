@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { FillerInBuffCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { WRATH, STARFIRE, ECLIPSE_SOLAR, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, buffWindow } from '../../../../../../../testing/builders/events';
-import { band, judged, ruleCtx } from '../rule-fixtures';
-import { ruleApplicable, ruleLabel, sampleRule } from '../engine';
-import { evaluateFillerInBuff as rawFillerInBuff } from './filler-in-buff';
+import {
+ band, judged, ruleCtx, sampleRule,
+} from '../rule-fixtures';
+import { FillerInBuffKind } from './filler-in-buff';
 
-const evaluateFillerInBuff = judged(rawFillerInBuff);
+const kind = TestBed.inject(FillerInBuffKind);
+const evaluateFillerInBuff = judged(kind);
 
 describe('evaluateFillerInBuff', () => {
   // Fight-relative seconds for an Eclipse (Solar) window long enough to hold several fillers.
@@ -53,16 +56,16 @@ describe('evaluateFillerInBuff', () => {
   });
 
   it('is not applicable when the pull never filled inside the buff', () => {
-    expect(ruleApplicable(wrathInSolar, ruleCtx([cast(WRATH, 5)], { buffs: solar }))).toBe(false);
+    expect(kind.applicable(wrathInSolar, ruleCtx([cast(WRATH, 5)], { buffs: solar }))).toBe(false);
   });
 
   it('excludes the cast that enters the state, which shares the applybuff timestamp but was cast outside it', () => {
     // The Starfire that grants Solar lands on the same millisecond as the buff, and it was not cast under it.
     const entering = ruleCtx([cast(STARFIRE, SOLAR_START_S)], { buffs: solar });
-    expect(ruleApplicable(wrathInSolar, entering)).toBe(false);
+    expect(kind.applicable(wrathInSolar, entering)).toBe(false);
     // The removal millisecond stays inside: a cast that consumes the state was made under it.
     const closing = ruleCtx([cast(STARFIRE, SOLAR_END_S)], { buffs: solar });
-    expect(ruleApplicable(wrathInSolar, closing)).toBe(true);
+    expect(kind.applicable(wrathInSolar, closing)).toBe(true);
   });
 
   it('drops casts made in a state that suspends the choice, so a burst window is not a violation', () => {
@@ -87,14 +90,14 @@ describe('evaluateFillerInBuff', () => {
     };
     const buffs = [...solar, ...buffWindow(SHADOW_DANCE, SOLAR_START_S, SOLAR_END_S)];
     const ctx = ruleCtx([cast(WRATH, 12), cast(STARFIRE, 16)], { buffs });
-    expect(ruleApplicable(suspendedThroughout, ctx)).toBe(false);
-    expect(sampleRule(suspendedThroughout, ctx).values).toEqual([]);
+    expect(kind.applicable(suspendedThroughout, ctx)).toBe(false);
+    expect(sampleRule(kind, suspendedThroughout, ctx).values).toEqual([]);
   });
 
   it('samples the share the pull ran, and nothing when it never filled inside the buff', () => {
     const ctx = ruleCtx([cast(WRATH, 12), cast(WRATH, 14), cast(STARFIRE, 16), cast(STARFIRE, 18)], { buffs: solar });
-    expect(sampleRule(wrathInSolar, ctx).values).toEqual([0.5]);
-    expect(sampleRule(wrathInSolar, ruleCtx([], { buffs: solar })).values).toEqual([]);
+    expect(sampleRule(kind, wrathInSolar, ctx).values).toEqual([0.5]);
+    expect(sampleRule(kind, wrathInSolar, ruleCtx([], { buffs: solar })).values).toEqual([]);
   });
 
   it('a lower field floor forgives a share a tighter one would flag', () => {
@@ -110,7 +113,7 @@ describe('evaluateFillerInBuff', () => {
   });
 
   it('labels the rule as "<filler> in <buff>"', () => {
-    expect(ruleLabel(wrathInSolar)).toBe('Wrath in Eclipse (Solar)');
+    expect(kind.label(wrathInSolar)).toBe('Wrath in Eclipse (Solar)');
   });
 });
 

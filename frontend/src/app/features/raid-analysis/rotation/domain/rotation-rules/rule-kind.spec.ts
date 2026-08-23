@@ -2,12 +2,13 @@ import { assert, describe, it, expect } from 'vitest';
 import { CastAtTargetCountCondition, ResourceAtCastCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../testing/builders/events';
+import { TestBed } from '@angular/core/testing';
 import { COMBO_POINT_TYPE, MAX_COMBO_POINTS, band, judged, ruleCtx } from './rule-fixtures';
-import { evaluateCastAtTargetCount as rawCastAtTargetCount } from './kinds/cast-at-target-count';
-import { evaluateResourceAtCast as rawResourceAtCast } from './kinds/resource-at-cast';
+import { CastAtTargetCountKind } from './kinds/cast-at-target-count';
+import { ResourceAtCastKind } from './kinds/resource-at-cast';
 
-const evaluateCastAtTargetCount = judged(rawCastAtTargetCount);
-const evaluateResourceAtCast = judged(rawResourceAtCast);
+const evaluateCastAtTargetCount = judged(TestBed.inject(CastAtTargetCountKind));
+const evaluateResourceAtCast = judged(TestBed.inject(ResourceAtCastKind));
 
 describe('occurrence strips', () => {
   it('caps a finding at MAX_OCCURRENCES, keeping chronological order', () => {

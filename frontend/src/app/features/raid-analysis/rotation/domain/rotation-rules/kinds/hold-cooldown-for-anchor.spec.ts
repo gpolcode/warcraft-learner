@@ -1,13 +1,14 @@
 import { assert, describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { SHADOW_BLADES, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {
-  HOLD_WINDOW_S, HOLD_DANCE_FOR_BLADES, band, judged, ruleCtx,
+  HOLD_WINDOW_S, HOLD_DANCE_FOR_BLADES, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { ruleLabel, sampleRule } from '../engine';
-import { evaluateHoldForAnchor as rawHoldForAnchor } from './hold-cooldown-for-anchor';
+import { HoldCooldownForAnchorKind } from './hold-cooldown-for-anchor';
 
-const evaluateHoldForAnchor = judged(rawHoldForAnchor);
+const kind = TestBed.inject(HoldCooldownForAnchorKind);
+const evaluateHoldForAnchor = judged(kind);
 
 describe('rule engine', () => {
   it('flags Shadow Dance spent in the hold window before Shadow Blades', () => {
@@ -39,7 +40,7 @@ describe('rule engine', () => {
 
 describe('ruleLabel', () => {
   it('describes a hold rule as "<spells> held for <anchor>"', () => {
-    expect(ruleLabel(HOLD_DANCE_FOR_BLADES)).toBe('Shadow Dance held for Shadow Blades');
+    expect(kind.label(HOLD_DANCE_FOR_BLADES)).toBe('Shadow Dance held for Shadow Blades');
   });
 });
 
@@ -49,7 +50,7 @@ describe('sampleRule', () => {
     const ctx = ruleCtx([
       cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 90), cast(SHADOW_BLADES, 90 + CLEAR_GAP_S),
     ]);
-    expect(sampleRule(HOLD_DANCE_FOR_BLADES, ctx).values).toEqual([CLEAR_GAP_S]);
+    expect(sampleRule(kind, HOLD_DANCE_FOR_BLADES, ctx).values).toEqual([CLEAR_GAP_S]);
   });
 });
 

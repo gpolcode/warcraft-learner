@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { FillerBelowHealthCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { EXECUTE, SLAM, SHADOW_BLADES_DAMAGE } from '../../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../../testing/builders/events';
-import { band, judged, ruleCtx } from '../rule-fixtures';
-import { ruleApplicable, ruleLabel, sampleRule } from '../engine';
-import { evaluateFillerBelowHealth as rawFillerBelowHealth } from './filler-below-health';
+import {
+ band, judged, ruleCtx, sampleRule,
+} from '../rule-fixtures';
+import { FillerBelowHealthKind } from './filler-below-health';
 
-const evaluateFillerBelowHealth = judged(rawFillerBelowHealth);
+const kind = TestBed.inject(FillerBelowHealthKind);
+const evaluateFillerBelowHealth = judged(kind);
 
 describe('evaluateFillerBelowHealth', () => {
   const EXECUTE_PCT = 20;
@@ -41,7 +44,7 @@ describe('evaluateFillerBelowHealth', () => {
   it('ignores fillers cast above the threshold, which the rule says nothing about', () => {
     const ctx = ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] });
     expect(evaluateFillerBelowHealth(executeBelow, ctx, fieldFloor, 'warning')).toBeNull();
-    expect(ruleApplicable(executeBelow, ctx)).toBe(false);
+    expect(kind.applicable(executeBelow, ctx)).toBe(false);
   });
 
   it('reads the health of the enemy the cast named, not whichever enemy was hit last', () => {
@@ -50,29 +53,29 @@ describe('evaluateFillerBelowHealth', () => {
     const ctx = ruleCtx([cast(SLAM, HIT_S + 1, { target: BOSS })], {
       damage: [hitAt(HIT_S, HEALTHY_PCT, BOSS), hitAt(HIT_S + 0.5, EXECUTE_RANGE_PCT, DYING_ADD)],
     });
-    expect(ruleApplicable(executeBelow, ctx)).toBe(false);
+    expect(kind.applicable(executeBelow, ctx)).toBe(false);
   });
 
   it('is not applicable on a pull with no health reading to place the casts', () => {
-    expect(ruleApplicable(executeBelow, ruleCtx([cast(SLAM, HIT_S)]))).toBe(false);
+    expect(kind.applicable(executeBelow, ruleCtx([cast(SLAM, HIT_S)]))).toBe(false);
   });
 
   it('reads the newest snapshot at or before the cast, so a stale row does not outrank a fresh one', () => {
     const ctx = ruleCtx([cast(SLAM, HIT_S + 1)],
       { damage: [hitAt(HIT_S + 0.5, EXECUTE_RANGE_PCT), hitAt(HIT_S, HEALTHY_PCT)] });
-    expect(ruleApplicable(executeBelow, ctx)).toBe(true);
+    expect(kind.applicable(executeBelow, ctx)).toBe(true);
   });
 
   it('ignores a snapshot older than the sample window, since health falls fast in execute range', () => {
     const STALE_S = 3;
     const ctx = ruleCtx([cast(SLAM, HIT_S + STALE_S)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
-    expect(ruleApplicable(executeBelow, ctx)).toBe(false);
+    expect(kind.applicable(executeBelow, ctx)).toBe(false);
   });
 
   it('samples the share the pull converted, and nothing when it never reached the threshold', () => {
     const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(SLAM, HIT_S + 1)], { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
-    expect(sampleRule(executeBelow, ctx).values).toEqual([0.5]);
-    expect(sampleRule(executeBelow, ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] })).values).toEqual([]);
+    expect(sampleRule(kind, executeBelow, ctx).values).toEqual([0.5]);
+    expect(sampleRule(kind, executeBelow, ruleCtx([cast(SLAM, HIT_S + 0.5)], { damage: [hitAt(HIT_S, HEALTHY_PCT)] })).values).toEqual([]);
   });
 
   it('leaves a coached share over the field\'s own high end alone, since converting more often is not a mistake', () => {
@@ -81,7 +84,7 @@ describe('evaluateFillerBelowHealth', () => {
   });
 
   it('labels the rule as "<spell> under <pct>% health"', () => {
-    expect(ruleLabel(executeBelow)).toBe('Execute under 20% health');
+    expect(kind.label(executeBelow)).toBe('Execute under 20% health');
   });
 });
 

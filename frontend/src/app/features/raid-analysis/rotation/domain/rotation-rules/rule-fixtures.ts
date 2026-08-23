@@ -3,18 +3,21 @@ import {
 } from '../../../../../domain/rulebook/rulebook.models';
 import { WclEvent } from '../../../../../core/wcl/wcl.models';
 import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
-import { withRelativeS } from '../../../../../domain/analysis/wcl-projections';
-import { BenchedRule, RuleBand, RuleJudging } from './engine-core';
-import { RuleContext, buildRuleContext } from './rule-context';
-import { ruleJudging } from './engine';
+import { TestBed } from '@angular/core/testing';
+import { WclProjectionsService } from '../../../../../domain/analysis/wcl-projections';
+import { BenchedRule, RuleBand, RuleKind, RuleSample } from './rule-kind';
+import { RuleContext, RuleContextService } from './rule-context';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../testing/spell-ids';
 
-/** Each evaluator is called with the judging its own kind declares, so a spec can never assert against a side the table does not use. */
-export function judged<C extends RuleCondition>(
-  evaluate: (c: C, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: RuleSeverity, remedy?: string) => AnalysisFinding | null,
-) {
-  return (c: C, ctx: RuleContext, band: RuleBand, severity: RuleSeverity, remedy?: string) =>
-    evaluate(c, ctx, band, ruleJudging(c), severity, remedy);
+/** Each kind is called with the judging it declares itself, so a spec can never assert against a side the kind does not use. */
+export function judged<C extends RuleCondition>(kind: RuleKind<C>) {
+  return (c: C, ctx: RuleContext, band: RuleBand, severity: RuleSeverity, remedy?: string): AnalysisFinding | null =>
+    kind.evaluate(c, ctx, band, kind.judging(c), severity, remedy);
+}
+
+/** The engine's sampling contract read off one kind, so sampling specs stay at the kind's own altitude. */
+export function sampleRule<C extends RuleCondition>(kind: RuleKind<C>, cond: C, ctx: RuleContext): RuleSample {
+  return { values: kind.sample(cond, ctx), unmeasuredOut: kind.unmeasured(cond, ctx) };
 }
 
 // Zero tolerance keeps the fixture arithmetic exact; hi defaults to lo for the one-sided kinds this factory feeds most often.
@@ -39,11 +42,12 @@ export function benched(rule: RulebookRule, ruleBandValue: RuleBand | null = ban
 export const RULE_FIGHT_END_S = 120;
 interface RuleCtxOverrides { buffs: WclEvent[]; debuffs: WclEvent[]; damage: WclEvent[]; fightDurationS: number }
 export function ruleCtx(casts: WclEvent[], over: Partial<RuleCtxOverrides> = {}): RuleContext {
-  return buildRuleContext({
-    casts: withRelativeS(casts, 0),
-    buffs: withRelativeS(over.buffs ?? [], 0),
-    debuffs: withRelativeS(over.debuffs ?? [], 0),
-    damage: withRelativeS(over.damage ?? [], 0),
+  const projections = TestBed.inject(WclProjectionsService);
+  return TestBed.inject(RuleContextService).buildRuleContext({
+    casts: projections.withRelativeS(casts, 0),
+    buffs: projections.withRelativeS(over.buffs ?? [], 0),
+    debuffs: projections.withRelativeS(over.debuffs ?? [], 0),
+    damage: projections.withRelativeS(over.damage ?? [], 0),
     fightDurationS: over.fightDurationS ?? RULE_FIGHT_END_S,
   });
 }

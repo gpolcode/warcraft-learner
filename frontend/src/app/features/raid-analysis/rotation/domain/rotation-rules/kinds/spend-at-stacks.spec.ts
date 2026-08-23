@@ -1,12 +1,17 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { SpendAtStacksCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { LIGHTNING_BOLT, MAELSTROM_WEAPON, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, applyBuff, removeBuff, applyBuffStack, buffWindow } from '../../../../../../../testing/builders/events';
-import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';
-import { evaluateRules, ruleApplicable, ruleLabel, rulesFollowed, sampleRule } from '../engine';
-import { evaluateSpendAtStacks as rawSpendAtStacks } from './spend-at-stacks';
+import {
+ band, benched, judged, ruleCtx, ruleFor, sampleRule,
+} from '../rule-fixtures';
+import { SpendAtStacksKind } from './spend-at-stacks';
+import { RotationRuleEngineService } from '../../rotation-rules';
 
-const evaluateSpendAtStacks = judged(rawSpendAtStacks);
+const kind = TestBed.inject(SpendAtStacksKind);
+const engine = TestBed.inject(RotationRuleEngineService);
+const evaluateSpendAtStacks = judged(kind);
 
 describe('evaluateSpendAtStacks', () => {
   // What the field holds before spending, supplied as a measured band.
@@ -46,7 +51,7 @@ describe('evaluateSpendAtStacks', () => {
     ];
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, SPEND_AT_S)], { buffs });
     // Reading the post-consumption value would see 0 here and flag every spend in the log.
-    expect(sampleRule(spendAtStacks, ctx).values).toEqual([STACKS_HELD]);
+    expect(sampleRule(kind, spendAtStacks, ctx).values).toEqual([STACKS_HELD]);
   });
 
   it('inverts for bound "max", flagging a generator pressed while the buff is nearly capped', () => {
@@ -71,7 +76,7 @@ describe('evaluateSpendAtStacks', () => {
   });
 
   it('is not applicable on a build where the buff never appeared', () => {
-    expect(ruleApplicable(spendAtStacks, ruleCtx([cast(LIGHTNING_BOLT, 4)]))).toBe(false);
+    expect(kind.applicable(spendAtStacks, ruleCtx([cast(LIGHTNING_BOLT, 4)]))).toBe(false);
   });
 
   it('is not applicable when every cast falls before the buff\'s first recorded trace, so nothing is measurable', () => {
@@ -79,9 +84,9 @@ describe('evaluateSpendAtStacks', () => {
     const buffs = [removeBuff(MAELSTROM_WEAPON, PRE_PULL_DROP_S)];
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, PRE_PULL_DROP_S - 1)], { buffs });
     const rule = ruleFor(spendAtStacks, { description: 'spend at stacks' });
-    expect(ruleApplicable(spendAtStacks, ctx)).toBe(false);
-    expect(evaluateRules([benched(rule)], ctx)).toEqual([]);
-    expect(rulesFollowed([benched(rule)], ctx)).toEqual([]);
+    expect(kind.applicable(spendAtStacks, ctx)).toBe(false);
+    expect(engine.evaluateRules([benched(rule)], ctx)).toEqual([]);
+    expect(engine.rulesFollowed([benched(rule)], ctx)).toEqual([]);
   });
 
   it('does not flag an opener spent under a buff already up at pull, but still flags a genuine low-stack spend later', () => {
@@ -100,14 +105,14 @@ describe('evaluateSpendAtStacks', () => {
 
   it('samples every spend\'s own stack count, so the field-wide pool - not a per-parse reduction - finds the floor', () => {
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3)), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(sampleRule(spendAtStacks, ctx).values).toEqual([3, 9]);
-    expect(sampleRule(spendAtStacks, ruleCtx([], { buffs: climbing })).values).toEqual([]);
+    expect(sampleRule(kind, spendAtStacks, ctx).values).toEqual([3, 9]);
+    expect(sampleRule(kind, spendAtStacks, ruleCtx([], { buffs: climbing })).values).toEqual([]);
   });
 
   it('samples a cast made before the first stack landed as zero, not as unmeasured', () => {
     const BEFORE_FIRST_STACK_S = 0.5;
     const ctx = ruleCtx([cast(LIGHTNING_BOLT, BEFORE_FIRST_STACK_S), cast(LIGHTNING_BOLT, holding(9))], { buffs: climbing });
-    expect(sampleRule(spendAtStacks, ctx).values).toEqual([0, 9]);
+    expect(sampleRule(kind, spendAtStacks, ctx).values).toEqual([0, 9]);
   });
 
   it('flags a spend below the field floor and passes one exactly on it', () => {
@@ -135,7 +140,7 @@ describe('evaluateSpendAtStacks', () => {
   });
 
   it('labels the rule as "<spender> at <buff>"', () => {
-    expect(ruleLabel(spendAtStacks)).toBe('Lightning Bolt at Maelstrom Weapon');
+    expect(kind.label(spendAtStacks)).toBe('Lightning Bolt at Maelstrom Weapon');
   });
 
   it('flags the far side: a spender held to the buff\'s own cap, over the field\'s own ceiling', () => {

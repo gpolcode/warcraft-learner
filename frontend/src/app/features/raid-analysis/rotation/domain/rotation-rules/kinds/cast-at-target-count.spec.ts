@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { CastAtTargetCountCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { BLACK_POWDER, EVISCERATE, RUPTURE } from '../../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../../testing/builders/events';
 import { band, judged, ruleCtx } from '../rule-fixtures';
-import { evaluateCastAtTargetCount as rawCastAtTargetCount } from './cast-at-target-count';
+import { CastAtTargetCountKind } from './cast-at-target-count';
 
-const evaluateCastAtTargetCount = judged(rawCastAtTargetCount);
+const kind = TestBed.inject(CastAtTargetCountKind);
+const evaluateCastAtTargetCount = judged(kind);
 
 describe('evaluateCastAtTargetCount', () => {
   const MIN_AOE_TARGETS = 3;

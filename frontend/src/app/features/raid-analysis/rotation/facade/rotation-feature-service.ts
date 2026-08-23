@@ -17,6 +17,7 @@ import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-t
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
 import { RotationRuleEngineService, RULE_TYPE_LABEL } from '../domain/rotation-rules';
+import { RuleContextService } from '../domain/rotation-rules/rule-context';
 import { detectBloodlust } from '../domain/rotation-bloodlust';
 import { ROTATION_DATA_SOURCE, RotationBench } from '../data-access/rotation-data-source';
 
@@ -368,6 +369,7 @@ export function buildCdPlan(
 @Injectable({ providedIn: 'root' })
 export class RotationFeatureService {
   private readonly ruleEngine = inject(RotationRuleEngineService);
+  private readonly ruleContexts = inject(RuleContextService);
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
@@ -416,7 +418,7 @@ export class RotationFeatureService {
       fightDurationS, castEvents: castsTimed, buffEvents: buffsTimed,
       cooldowns: bench.major_cooldowns, bench,
     });
-    const ruleCtx = this.ruleEngine.buildRuleContext({
+    const ruleCtx = this.ruleContexts.buildRuleContext({
       casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
       fightDurationS,
     });

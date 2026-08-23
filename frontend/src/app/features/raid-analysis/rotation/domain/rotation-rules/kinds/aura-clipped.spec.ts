@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { AuraClippedCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { MOONFIRE, MOONFIRE_DOT, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, applyDebuff, refreshDebuff, buffWindow } from '../../../../../../../testing/builders/events';
-import { band, judged, ruleCtx } from '../rule-fixtures';
-import { ruleApplicable, ruleLabel, sampleRule } from '../engine';
-import { evaluateAuraClipped as rawAuraClipped } from './aura-clipped';
+import {
+ band, judged, ruleCtx, sampleRule,
+} from '../rule-fixtures';
+import { AuraClippedKind } from './aura-clipped';
 
-const evaluateAuraClipped = judged(rawAuraClipped);
+const kind = TestBed.inject(AuraClippedKind);
+const evaluateAuraClipped = judged(kind);
 
 describe('evaluateAuraClipped', () => {
   // Where the field refreshes: it lets the dot run this long before re-applying.
@@ -41,19 +44,19 @@ describe('evaluateAuraClipped', () => {
   it('ignores a refresh no cast produced, since most refreshes in a log are procs', () => {
     const ctx = ruleCtx([], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
     expect(evaluateAuraClipped(moonfireClipped, ctx, band(FIELD_ELAPSED_S), 'warning')).toBeNull();
-    expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
+    expect(kind.applicable(moonfireClipped, ctx)).toBe(false);
   });
 
   it('ignores a bare refresh with no known prior application, since the true elapsed time is unknown', () => {
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S)], { debuffs: [refreshDebuff(MOONFIRE_DOT, APPLY_AT_S)] });
     expect(evaluateAuraClipped(moonfireClipped, ctx, band(FIELD_ELAPSED_S), 'warning')).toBeNull();
-    expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
+    expect(kind.applicable(moonfireClipped, ctx)).toBe(false);
   });
 
   it('ignores a cast that came after the refresh, which cannot have caused it', () => {
     const LATER_S = 0.1;
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATER_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
-    expect(ruleApplicable(moonfireClipped, ctx)).toBe(false);
+    expect(kind.applicable(moonfireClipped, ctx)).toBe(false);
   });
 
   it('drops a refresh made in a state that suspends the rule', () => {
@@ -64,8 +67,8 @@ describe('evaluateAuraClipped', () => {
       debuffs: reapplied(CLIPPED_ELAPSED_S),
       buffs: buffWindow(SHADOW_DANCE, APPLY_AT_S, APPLY_AT_S + 10),
     });
-    expect(ruleApplicable(suspended, ctx)).toBe(false);
-    expect(ruleApplicable(moonfireClipped, ctx)).toBe(true);
+    expect(kind.applicable(suspended, ctx)).toBe(false);
+    expect(kind.applicable(moonfireClipped, ctx)).toBe(true);
   });
 
   it('keeps each enemy on its own clock, so a second target is not measured against the first', () => {
@@ -77,7 +80,7 @@ describe('evaluateAuraClipped', () => {
     ];
     const ctx = ruleCtx([cast(MOONFIRE, SECOND_APPLY_S + CLIPPED_ELAPSED_S)], { debuffs });
     // Its own clock reads 4s; measured against the first enemy's application it would read 14s.
-    expect(sampleRule(moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S]);
+    expect(sampleRule(kind, moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S]);
   });
 
   it('samples the earliest and latest the pull re-applied, and nothing when it never did', () => {
@@ -89,12 +92,12 @@ describe('evaluateAuraClipped', () => {
     const ctx = ruleCtx([
       cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S), cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATE_ELAPSED_S),
     ], { debuffs });
-    expect(sampleRule(moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S, LATE_ELAPSED_S]);
-    expect(sampleRule(moonfireClipped, ruleCtx([])).values).toEqual([]);
+    expect(sampleRule(kind, moonfireClipped, ctx).values).toEqual([CLIPPED_ELAPSED_S, LATE_ELAPSED_S]);
+    expect(sampleRule(kind, moonfireClipped, ruleCtx([])).values).toEqual([]);
   });
 
   it('labels the rule as "<aura> clipped"', () => {
-    expect(ruleLabel(moonfireClipped)).toBe('Moonfire clipped');
+    expect(kind.label(moonfireClipped)).toBe('Moonfire clipped');
   });
 });
 

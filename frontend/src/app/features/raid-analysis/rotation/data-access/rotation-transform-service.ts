@@ -14,7 +14,8 @@ import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/w
 import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { Result } from '../../../../core/http/result';
-import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES, ruleBand } from '../domain/rotation-rules';
+import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES } from '../domain/rotation-rules';
+import { RuleContextService } from '../domain/rotation-rules/rule-context';
 import { RotationBloodlustService } from '../domain/rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
 
@@ -143,15 +144,6 @@ interface ParseRotation {
   ruleSamples: ParseRuleSamples;
 }
 
-export function benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
-  return rules.map((rule, i) => ({
-    rule,
-    ...(rule.condition
-      ? ruleBand(rule.condition, perParse.map(samples => samples[i] ?? { values: [], unmeasuredOut: 0 }))
-      : { band: null, sample_count: 0 }),
-  }));
-}
-
 interface RotationPlan {
   cooldowns: RulebookCooldown[];
   defensives: RulebookDefensive[];
@@ -162,6 +154,7 @@ interface RotationPlan {
 export class RotationTransformService implements DataSource<RotationBench> {
   private readonly bloodlust = inject(RotationBloodlustService);
   private readonly ruleEngine = inject(RotationRuleEngineService);
+  private readonly ruleContexts = inject(RuleContextService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -196,11 +189,20 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          rules: benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
+          rules: this.benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
+  }
+
+  protected benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
+    return rules.map((rule, i) => ({
+      rule,
+      ...(rule.condition
+        ? this.ruleEngine.ruleBand(rule.condition, perParse.map(samples => samples[i] ?? { values: [], unmeasuredOut: 0 }))
+        : { band: null, sample_count: 0 }),
+    }));
   }
 
   private async parseRotation(
@@ -224,7 +226,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
     const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
-    const ruleCtx = this.ruleEngine.buildRuleContext({
+    const ruleCtx = this.ruleContexts.buildRuleContext({
       casts: castsTimed, buffs: buffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
       debuffs: this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
       fightDurationS: fightDurS,

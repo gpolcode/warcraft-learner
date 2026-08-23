@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { ResourceAtCastCondition } from '../../../../../../domain/rulebook/rulebook.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {
   COMBO_POINT_TYPE, MAX_COMBO_POINTS, band, judged, ruleCtx,
 } from '../rule-fixtures';
-import { ruleApplicable } from '../engine';
-import { evaluateResourceAtCast as rawResourceAtCast } from './resource-at-cast';
+import { ResourceAtCastKind } from './resource-at-cast';
 
-const evaluateResourceAtCast = judged(rawResourceAtCast);
+const kind = TestBed.inject(ResourceAtCastKind);
+const evaluateResourceAtCast = judged(kind);
 
 describe('evaluateResourceAtCast', () => {
   const RESOURCE_FLOOR = 1;  // the field spends at a full pool, measured as a share of cap
@@ -70,14 +71,14 @@ describe('evaluateResourceAtCast', () => {
 
   it('is not applicable when the casts carry no resource snapshot', () => {
     expect(evaluateResourceAtCast(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]), band(RESOURCE_FLOOR), 'warning')).toBeNull();
-    expect(ruleApplicable(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]))).toBe(false);
+    expect(kind.applicable(finisherAtMax, ruleCtx([cast(EVISCERATE, 10)]))).toBe(false);
   });
 
   it('ignores a pool the event flattened from the target rather than the caster', () => {
     const RESOURCE_ACTOR_TARGET = 2;
     const ctx = ruleCtx([{ ...atCombo(10, 1), resourceActor: RESOURCE_ACTOR_TARGET }]);
     expect(evaluateResourceAtCast(finisherAtMax, ctx, band(RESOURCE_FLOOR), 'warning')).toBeNull();
-    expect(ruleApplicable(finisherAtMax, ctx)).toBe(false);
+    expect(kind.applicable(finisherAtMax, ctx)).toBe(false);
   });
 
   // Only a cast that spends the pool reports it, so every overcap rule judges a cast carrying no snapshot of its own.
@@ -110,21 +111,21 @@ describe('evaluateResourceAtCast', () => {
       const atCap = cast(EVISCERATE, SPENT_AT_S,
         { resources: [{ amount: MAX_COMBO_POINTS, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] });
       const ctx = ruleCtx([atCap, cast(BLACK_POWDER, SPENT_AT_S + PAST_WINDOW_S)]);
-      expect(ruleApplicable(noOvercap, ctx)).toBe(false);
+      expect(kind.applicable(noOvercap, ctx)).toBe(false);
     });
 
     it('reads nothing from a neighbour that only follows it, which cannot describe the cast', () => {
       const atCap = cast(EVISCERATE, SPENT_AT_S,
         { resources: [{ amount: MAX_COMBO_POINTS, max: MAX_COMBO_POINTS, type: COMBO_POINT_TYPE }] });
       const ctx = ruleCtx([cast(BLACK_POWDER, SPENT_AT_S - 1), atCap]);
-      expect(ruleApplicable(noOvercap, ctx)).toBe(false);
+      expect(kind.applicable(noOvercap, ctx)).toBe(false);
     });
 
     it('reads nothing from a neighbour reporting a different pool', () => {
       const ENERGY_TYPE = 3;
       const energyCast = cast(EVISCERATE, SPENT_AT_S, { resources: [{ amount: 100, max: 100, type: ENERGY_TYPE }] });
       const ctx = ruleCtx([energyCast, cast(BLACK_POWDER, SPENT_AT_S + 1)]);
-      expect(ruleApplicable(noOvercap, ctx)).toBe(false);
+      expect(kind.applicable(noOvercap, ctx)).toBe(false);
     });
   });
 

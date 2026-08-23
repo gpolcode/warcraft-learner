@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import {
   RotationTransformService,
   summarizeCooldownCasts, castGapListS,
-  buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks, benchRules,
+  buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks,
   CdSummary, ParseRuleSamples,
 } from './rotation-transform-service';
 import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
@@ -150,6 +150,11 @@ describe('aggregateCdBenchmarks', () => {
   });
 });
 
+const transform = () => {
+  TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: {} }) });
+  return TestBed.inject(RotationTransformService);
+};
+
 describe('benchRules', () => {
   const sample = (values: number[], unmeasuredOut = 0): RuleSample => ({ values, unmeasuredOut });
   const dotUptime = (): RulebookRule => ({
@@ -167,7 +172,7 @@ describe('benchRules', () => {
       [sample([40]), sample([]), sample([])],
       [sample([50]), sample([]), sample([])],
     ];
-    const benched = benchRules([ruleA, ruleB, ruleC], perParse);
+    const benched = transform()['benchRules']([ruleA, ruleB, ruleC], perParse);
 
     // Rule A: every one of the 5 parses contributed its own instance.
     assert.exists(benched[0]);
@@ -192,7 +197,7 @@ describe('benchRules', () => {
 
   it('returns a null band, with no contributing parses, for a rule index with no samples anywhere', () => {
     const perParse: ParseRuleSamples[] = [[sample([])], [sample([])], [sample([])], [sample([])], [sample([])]];
-    const [entry] = benchRules([ruleA], perParse);
+    const [entry] = transform()['benchRules']([ruleA], perParse);
     assert.exists(entry);
     expect(entry.band).toBeNull();
     assert.exists(entry);
