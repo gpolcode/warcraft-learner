@@ -161,7 +161,6 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   await shows(gear, 'Gear vs top parses.');
   const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Your build');
-  // Unanchored: the label's own text node has a leading space, and the player's build appends a "your build" badge.
   await shows(talents, /Most common build/);
   await shows(talents, PERCENT);
   await shows(talents, 'of top parsers');
