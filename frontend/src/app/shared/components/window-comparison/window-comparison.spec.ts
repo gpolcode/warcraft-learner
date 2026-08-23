@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WindowComparison } from './window-comparison';
-import { ComparisonWindow, WindowStatus, RangeRow } from '../../../domain/analysis/window-comparison.models';
+import type { ComparisonWindow, WindowStatus, RangeRow } from '../../../domain/analysis/window-comparison.models';
 import { badgeStatus, mountDom, MountedDom } from '../../../../testing/component-harness';
 
 const CHIP = 'button[role="option"]';

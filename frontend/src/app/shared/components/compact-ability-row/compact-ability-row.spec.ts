@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
-import { RangeRow } from '../../../domain/analysis/window-comparison.models';
+import type { RangeRow } from '../../../domain/analysis/window-comparison.models';
 import { badgeStatus, mountDom } from '../../../../testing/component-harness';
 
 function row(overrides: Partial<RangeRow>): RangeRow {

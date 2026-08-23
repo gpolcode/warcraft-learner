@@ -214,6 +214,24 @@ export default defineConfig([
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {
+    // import type compiles away, so no domain code can reach a shared or core bundle.
+    files: ['src/app/shared/**/*.ts', 'src/app/core/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/domain/**'],
+              allowTypeImports: true,
+              message: 'Shared and core render or type domain shapes but never run domain logic: import type only.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Plain-JS Node scripts (the ingest file server + headless harness). console is
     // their user-facing logging, so it stays allowed; plain JS keeps core `no-undef`,
     // so the Node globals they use are declared here.
