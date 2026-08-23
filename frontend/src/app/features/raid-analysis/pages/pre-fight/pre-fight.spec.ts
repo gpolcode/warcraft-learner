@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { EncounterEntry, SpecEntry } from '../../../../domain/encounter/encounter.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import {
   CLASS_SELECT, ENCOUNTER_SELECT, FROST_MAGE, SPEC_INDEX, SPEC_SELECT, SUBTLETY_ROGUE,
   ParkedEncounterSelection, preFightPage,
@@ -13,8 +13,8 @@ const ROGUE_ENCOUNTERS = [BOSS_A, BOSS_B];
 
 function staticSelection(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS): Partial<ParkedEncounterSelection> {
   return {
-    getSpecs: (): Promise<Result<SpecEntry[]>> => Promise.resolve(ok(SPEC_INDEX)),
-    getEncounters: (): Promise<Result<EncounterEntry[]>> => Promise.resolve(ok(encounters)),
+    getSpecs: (): Promise<Result<SpecEntry[]>> => Promise.resolve(Results.ok(SPEC_INDEX)),
+    getEncounters: (): Promise<Result<EncounterEntry[]>> => Promise.resolve(Results.ok(encounters)),
   };
 }
 

@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
-import { ok, missing } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { BurstTransformService, ParseWindow, BurstDetectorTuning, DEFAULT_BURST_TUNING } from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
@@ -408,7 +408,7 @@ const wclFake = {
   getAbilities: abilityLookup(),
 };
 const filesFake = {
-  getRulebook: async () => ok(rulebook({
+  getRulebook: async () => Results.ok(rulebook({
     spec: 'SubtletyRogue',
     cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
   })),
@@ -433,9 +433,9 @@ describe('BurstTransformService (live, in-browser)', () => {
 
   it('returns missing when the spec rulebook has no cooldowns', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
+      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
     });
     expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(missing('Not yet ingested.'));
+      .toEqual(Results.missing('Not yet ingested.'));
   });
 });

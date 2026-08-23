@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DataFileTransport } from '../data-files/data-file-transport';
 import { HttpDataFileTransport } from './http-data-file-transport';
-import { ok, missing, transient } from './result';
+import { Results } from './result';
 
 const REL_PATH = 'SubtletyRogue/burst/3176.json';
 const SLICE_BODY = { encounter_id: 3176, sample_count: 5 };
@@ -36,7 +36,7 @@ describe('HttpDataFileTransport', () => {
     vi.restoreAllMocks();
   });
 
-  it('GETs the relative path under the data base and returns ok(body)', async () => {
+  it('GETs the relative path under the data base and returns Results.ok(body)', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.readJson<typeof SLICE_BODY>(REL_PATH);
@@ -44,7 +44,7 @@ describe('HttpDataFileTransport', () => {
     expect(req.request.method).toBe('GET');
     req.flush(SLICE_BODY);
 
-    expect(await pending).toEqual(ok(SLICE_BODY));
+    expect(await pending).toEqual(Results.ok(SLICE_BODY));
   });
 
   it('resolves missing and logs a warning when the file is missing (404)', async () => {
@@ -56,7 +56,7 @@ describe('HttpDataFileTransport', () => {
       .expectOne(request => request.url.endsWith(`data/specs/${REL_PATH}`))
       .flush('Not found', { status: NOT_FOUND_STATUS, statusText: 'Not Found' });
 
-    expect(await pending).toEqual(missing(MISSING_MESSAGE));
+    expect(await pending).toEqual(Results.missing(MISSING_MESSAGE));
     expect(warn).toHaveBeenCalled();
   });
 
@@ -70,7 +70,7 @@ describe('HttpDataFileTransport', () => {
       .flush('Server error', { status: SERVER_ERROR_STATUS, statusText: 'Internal Server Error' });
 
     const result = await pending;
-    expect(result).toEqual(transient(TRANSIENT_MESSAGE));
+    expect(result).toEqual(Results.transient(TRANSIENT_MESSAGE));
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe('transient');
     expect(warn).toHaveBeenCalled();

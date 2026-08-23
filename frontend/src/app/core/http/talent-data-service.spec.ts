@@ -2,7 +2,7 @@ import { assert, describe, it, expect, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { missing, transient } from './result';
+import { Results } from './result';
 import { TalentDataService, indexTalentTrees } from './talent-data-service';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
@@ -64,14 +64,14 @@ describe('TalentDataService', () => {
     const { service, httpMock } = setup();
     const pending = service.getTalents('BalanceDruid');
     httpMock.expectOne(DUMP_URL).flush([SUBTLETY_TREE]);
-    expect(await pending).toEqual(missing('No talent data for this spec.'));
+    expect(await pending).toEqual(Results.missing('No talent data for this spec.'));
   });
 
   it('is transient when the dump is unreachable', async () => {
     const { service, httpMock } = setup();
     const failed = service.getTalents('SubtletyRogue');
     httpMock.expectOne(DUMP_URL).error(new ProgressEvent('error'));
-    expect(await failed).toEqual(transient('WCL is unreachable right now.'));
+    expect(await failed).toEqual(Results.transient('WCL is unreachable right now.'));
   });
 
   it('is permanent when Raidbots refuses the dump', async () => {

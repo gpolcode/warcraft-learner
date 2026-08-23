@@ -3,7 +3,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/analysis.models';
 import { WindowStatus } from '../../../../domain/analysis/window-comparison.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { WindowView, WindowViewAdapter } from '../../../../domain/analysis/window-view';
 import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
@@ -62,7 +62,7 @@ export class BurstFeatureService {
   async loadBenchView(spec: string, encounterId: number): Promise<Result<BurstView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return ok(this.benchOnlyView(bench.value));
+    return Results.ok(this.benchOnlyView(bench.value));
   }
 
   /** Higher player damage is better, so falling short of the top-parse range is the problem. */

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ok, Result, transient } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { mountDom, MountedDom } from '../../../../../testing/component-harness';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { NorthernSkyExport } from './northern-sky-export';
@@ -52,7 +52,7 @@ async function mount(
 
 describe('NorthernSkyExport export availability', () => {
   it('waits, with no error banner, when the bench carries no abilities', async () => {
-    const { dom } = await mount(async () => ok(bench()));
+    const { dom } = await mount(async () => Results.ok(bench()));
 
     expect(dom.query('wl-load-state')).not.toBeNull();
     expect(dom.query(EXPORT_BUTTON)).toBeNull();
@@ -60,7 +60,7 @@ describe('NorthernSkyExport export availability', () => {
   });
 
   it('offers the export button once the bench carries at least one ability', async () => {
-    const { dom } = await mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })));
+    const { dom } = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })));
 
     expect(dom.query('wl-load-state')).toBeNull();
     expect(dom.query(EXPORT_BUTTON)).not.toBeNull();
@@ -69,7 +69,7 @@ describe('NorthernSkyExport export availability', () => {
 
   it('shows the load error instead of the export button when the bench fails to load', async () => {
     const MESSAGE = 'WCL is unreachable right now.';
-    const { dom } = await mount(async () => transient(MESSAGE));
+    const { dom } = await mount(async () => Results.transient(MESSAGE));
 
     expect(dom.query(EXPORT_BUTTON)).toBeNull();
     expect(dom.text()).toContain(MESSAGE);
@@ -78,7 +78,7 @@ describe('NorthernSkyExport export availability', () => {
 
 describe('NorthernSkyExport copy', () => {
   const openPanel = async (copySucceeds = true): Promise<Mounted> => {
-    const mounted = await mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })), copySucceeds);
+    const mounted = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })), copySucceeds);
     mounted.dom.click(EXPORT_BUTTON);
     return mounted;
   };

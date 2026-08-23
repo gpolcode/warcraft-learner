@@ -9,22 +9,26 @@ export type LoadError =
   | { readonly kind: 'transient'; readonly message: string }
   | { readonly kind: 'permanent'; readonly message: string; readonly id: string; readonly context?: unknown };
 
-export function ok<T>(value: T): Result<T, never> {
-  return { ok: true, value };
-}
+export class Results {
+  private constructor() {}
 
-function err<E>(error: E): Result<never, E> {
-  return { ok: false, error };
-}
+  static ok<T>(value: T): Result<T, never> {
+    return { ok: true, value };
+  }
 
-export function missing(message: string): Result<never> {
-  return err({ kind: 'missing', message });
-}
+  private static err<E>(error: E): Result<never, E> {
+    return { ok: false, error };
+  }
 
-export function transient(message: string): Result<never> {
-  return err({ kind: 'transient', message });
-}
+  static missing(message: string): Result<never> {
+    return Results.err({ kind: 'missing', message });
+  }
 
-export function permanent(message: string, id: string, context?: unknown): Result<never> {
-  return err({ kind: 'permanent', message, id, context });
+  static transient(message: string): Result<never> {
+    return Results.err({ kind: 'transient', message });
+  }
+
+  static permanent(message: string, id: string, context?: unknown): Result<never> {
+    return Results.err({ kind: 'permanent', message, id, context });
+  }
 }

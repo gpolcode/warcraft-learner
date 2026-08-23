@@ -7,7 +7,7 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../../test
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
-import { ok } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
@@ -253,7 +253,7 @@ const wclFake = {
   getAbilities: abilityLookup({ 700: { icon: 'hit', name: 'Boss Hit' }, [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } }),
 };
 const filesFake = {
-  getRulebook: async () => ok(rulebook({ defensives: [CLOAK] })),
+  getRulebook: async () => Results.ok(rulebook({ defensives: [CLOAK] })),
 };
 
 describe('DefensiveTransformService (live, in-browser)', () => {
@@ -273,7 +273,7 @@ describe('DefensiveTransformService (live, in-browser)', () => {
 
   it('reports missing when the spec has no rulebook defensives', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok({ spec: 'X', defensives: [] }) } }),
+      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok({ spec: 'X', defensives: [] }) } }),
     });
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(false);

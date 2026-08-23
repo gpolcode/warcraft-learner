@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../data-files/data-file-transport';
 import { LoggerService } from '../observability/log';
-import { Result, ok } from './result';
-import { toLoadError } from './http-load-error';
+import { Result, Results } from './result';
+import { HttpLoadErrors } from './http-load-error';
 import { environment } from '../../../environments/environment';
 
 const BROWSER_READONLY = 'DataFileApiService is read-only in the browser';
@@ -18,10 +18,10 @@ export class HttpDataFileTransport implements DataFileTransport {
 
   async readJson<T>(relPath: string): Promise<Result<T>> {
     try {
-      return ok(await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`)));
+      return Results.ok(await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`)));
     } catch (cause) {
       this.logger.logWarn(`HttpDataFileTransport.readJson ${relPath}`, cause);
-      return toLoadError(cause, `data-file.${relPath}`);
+      return HttpLoadErrors.toLoadError(cause, `data-file.${relPath}`);
     }
   }
 

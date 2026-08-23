@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../../../../core/data-files/data-file-transport';
-import { Result, ok, permanent } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { LoggerService } from '../../../../core/observability/log';
-import { toLoadError } from '../../../../core/http/http-load-error';
+import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { IngestStampService } from '../domain/stamp';
 
 /** The file server (scripts/ingest-server.js) is dumb file ops; all ingestion semantics stay on this side. */
@@ -29,7 +29,7 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
     try {
       parsed = await firstValueFrom(this.http.get<unknown>(fileUrl(relPath)));
     } catch (cause) {
-      const result = toLoadError(cause, `data-file.${relPath}`);
+      const result = HttpLoadErrors.toLoadError(cause, `data-file.${relPath}`);
       // An un-ingested file is the orchestrator's normal case, so only real failures log.
       if (!result.ok && result.error.kind !== 'missing') {
         this.logger.logWarn(`IngestHttpDataFileTransport.readJson ${relPath}`, cause);
@@ -38,9 +38,9 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
     }
     // A newer-versioned file has a shape this build does not know; fail it rather than cast the drifted JSON to T.
     if (this.stamp.isFutureVersion(parsed)) {
-      return permanent('Data file is from a newer ingest version.', `data-file.version.${relPath}`);
+      return Results.permanent('Data file is from a newer ingest version.', `data-file.version.${relPath}`);
     }
-    return ok(parsed as T);
+    return Results.ok(parsed as T);
   }
 
   async writeJson(relPath: string, data: unknown): Promise<void> {

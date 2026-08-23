@@ -3,7 +3,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../../domain/analysis/analysis.models';
 import { PerCdBenchmark } from '../../../../domain/encounter/encounter.models';
 import { RulebookCooldown } from '../../../../domain/rulebook/rulebook.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
@@ -183,7 +183,7 @@ export class RotationFeatureService {
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons) });
+    return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons) });
   }
 
   protected checkBloodlustAlignment(

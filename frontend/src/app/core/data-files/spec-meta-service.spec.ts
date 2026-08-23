@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { computed } from '@angular/core';
 import { DataFileApiService } from './data-file-api-service';
-import { Result, ok, transient } from '../http/result';
+import { Result, Results } from '../http/result';
 import {
   SpecMetaService, SpecMeta,
   buildUniverse, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
@@ -31,7 +31,7 @@ function serviceWith(getSpecMeta: () => Promise<Result<SpecMeta[]>>): SpecMetaSe
 
 describe('SpecMetaService', () => {
   it('hydrates itself from the data file on first injection', async () => {
-    const service = serviceWith(async () => ok([SUBTLETY]));
+    const service = serviceWith(async () => Results.ok([SUBTLETY]));
     await expect(service.resolve('SubtletyRogue')).resolves.toMatchObject({ className: 'Rogue', specName: 'Subtlety' });
   });
 
@@ -48,17 +48,17 @@ describe('SpecMetaService', () => {
   });
 
   it('resolves undefined for an unknown spec once hydrated', async () => {
-    const service = serviceWith(async () => ok([SUBTLETY]));
+    const service = serviceWith(async () => Results.ok([SUBTLETY]));
     await expect(service.resolve('Bogus')).resolves.toBeUndefined();
   });
 
   it('hydrates the empty universe on a failed fetch, so resolve still settles', async () => {
-    const service = serviceWith(async () => transient('spec-meta.json unreachable'));
+    const service = serviceWith(async () => Results.transient('spec-meta.json unreachable'));
     await expect(service.resolve('SubtletyRogue')).resolves.toBeUndefined();
   });
 
   it('recomputes a computed created before a later hydration replaces the universe', async () => {
-    const service = serviceWith(async () => ok([SUBTLETY]));
+    const service = serviceWith(async () => Results.ok([SUBTLETY]));
     await service.resolve('');
     const classCount = computed(() => service.classList().length);
     expect(classCount()).toBe(1);

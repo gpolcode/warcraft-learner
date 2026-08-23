@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EncounterEntry, SpecEntry } from '../../../../domain/encounter/encounter.models';
 import { SpecMeta } from '../../../../core/data-files/spec-meta.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { mapFeatureStub, stubBenchTokens } from '../../../../../testing/page-stubs';
 import { BURST_DATA_SOURCE } from '../../burst-windows/data-access/burst-data-source';
 import { ROTATION_DATA_SOURCE } from '../../rotation/data-access/rotation-data-source';
@@ -77,7 +77,7 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
           loadNorthernSky: () => null, saveNorthernSky: () => undefined,
         },
       },
-      { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(ok(SPEC_META)) } },
+      { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(Results.ok(SPEC_META)) } },
       // Injected at construction by the gear card, never called on a benched-missing page.
       { provide: WclApiService, useValue: {} },
       ...stubBenchTokens(SLICE_TOKENS),
@@ -139,7 +139,7 @@ export class ParkedEncounterSelection {
   private readonly resolvers = new Map<string, (result: Result<EncounterEntry[]>) => void>();
 
   getSpecs(): Promise<Result<SpecEntry[]>> {
-    return Promise.resolve(ok(SPEC_INDEX));
+    return Promise.resolve(Results.ok(SPEC_INDEX));
   }
 
   getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
@@ -149,6 +149,6 @@ export class ParkedEncounterSelection {
   settle(spec: string, encounters: EncounterEntry[]): void {
     const resolve = this.resolvers.get(spec);
     assert.exists(resolve);
-    resolve(ok(encounters));
+    resolve(Results.ok(encounters));
   }
 }

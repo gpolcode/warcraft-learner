@@ -3,12 +3,12 @@ import type { Rulebook } from '../../domain/rulebook/rulebook.models';
 import type { EncounterEntry, SpecEntry } from '../../domain/encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
-import { Result, ok } from '../http/result';
+import { Result, Results } from '../http/result';
 
 // A manifest with no file yet is the legitimate empty fresh-tier state; a real read failure must propagate so the UI surfaces it instead of a silently empty list.
 function foldMissingToEmpty<T>(result: Result<T[]>): Result<T[]> {
   if (result.ok) return result;
-  return result.error.kind === 'missing' ? ok([]) : result;
+  return result.error.kind === 'missing' ? Results.ok([]) : result;
 }
 
 // Delegates IO to an injected DataFileTransport so one API serves both runtimes: the browser binds an HTTP read-only transport, Node ingestion an fs read+write one.

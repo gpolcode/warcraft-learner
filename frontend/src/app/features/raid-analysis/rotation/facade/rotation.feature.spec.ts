@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { Result, ok, missing } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { RulebookRule, CastWithoutPriorCondition } from '../../../../domain/rulebook/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
@@ -47,22 +47,22 @@ function withSource(bench: Result<RotationBench>, wcl: unknown = WORKING_WCL): R
 describe('RotationFeatureService', () => {
   it('surfaces a missing bench so the offensives waiting state shows', async () => {
     // A working WCL fake proves the missing comes from the bench read, not a player-log failure.
-    const service = withSource(missing('Not yet ingested.'));
+    const service = withSource(Results.missing('Not yet ingested.'));
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
-    expect(result).toEqual(missing('Not yet ingested.'));
+    expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
   it('wires the shared pull context with the empty offensives view and the rotation repro id', async () => {
     const UNLOGGED_FIGHT_ID = 99;
     const FAILING_CODE = 'boom';
     // TestBed configures once per test, so one service with one refused report code covers both branches.
-    const service = withSource(ok(bench()), {
+    const service = withSource(Results.ok(bench()), {
       ...WORKING_WCL,
       getReport: async (code: string) => { if (code === FAILING_CODE) throw new Error('WCL down'); return REPORT; },
     });
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(ok({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }));
+    expect(onMissingFight).toEqual(Results.ok({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);
     expect(onFailure.ok).toBe(false);
@@ -79,7 +79,7 @@ describe('RotationFeatureService', () => {
       type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
       condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.',
     };
-    const service = withSource(ok(bench({ rules: [benched(rule)] })), wcl);
+    const service = withSource(Results.ok(bench({ rules: [benched(rule)] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -98,14 +98,14 @@ describe('RotationFeatureService', () => {
         dataType === 'Casts' ? [cast(SHADOW_BLADES, 6)] : [applyBuff(BLOODLUST, 6)],
     };
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1 } }) } });
-    const service = withSource(ok(single), wcl);
+    const service = withSource(Results.ok(single), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.onPlan).toEqual([{ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb' }]);
   });
 
   it('returns bench-only plan rows for the pre-fight view', async () => {
-    const service = withSource(ok(bench({
+    const service = withSource(Results.ok(bench({
       per_cd_benchmarks: { 'Shadow Blades': cdBench() },
     })));
     const result = await service.loadPlanView('SubtletyRogue', 1);
@@ -120,8 +120,8 @@ describe('RotationFeatureService', () => {
   });
 
   it('propagates a missing bench so the pre-fight plan waiting state shows', async () => {
-    const service = withSource(missing('Not yet ingested.'));
-    expect(await service.loadPlanView('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
+    const service = withSource(Results.missing('Not yet ingested.'));
+    expect(await service.loadPlanView('SubtletyRogue', 1)).toEqual(Results.missing('Not yet ingested.'));
   });
 });
 
@@ -159,20 +159,20 @@ describe('RotationFeatureService fetch shape', () => {
 
   it('requests player casts with resources on, which resource_at_cast depends on', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(Results.ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ID, includeResources: true, hostilityType: undefined });
   });
 
   it('skips the enemy-aura and damage fetches when no rule reads them', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(Results.ok(bench()), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls.some(call => call.dataType === 'Debuffs')).toBe(false);
     expect(calls.some(call => call.dataType === 'DamageDone')).toBe(false);
   });
 
   it('fetches enemy auras with Enemies hostility and no source, the only shape WCL answers', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench({ rules: [benched(dotUptime)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(Results.ok(bench({ rules: [benched(dotUptime)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'Debuffs', sourceId: undefined, includeResources: false, hostilityType: 'Enemies' });
   });
 
@@ -184,7 +184,7 @@ describe('RotationFeatureService fetch shape', () => {
       { ...removeDebuff(RUPTURE, 40), sourceID: OTHER_RAIDER },
     ];
     const { api } = recording(raidWide);
-    const result = await withSource(ok(bench({ rules: [benched(dotUptime, band(UPTIME_BAR_PCT))] })), api)
+    const result = await withSource(Results.ok(bench({ rules: [benched(dotUptime, band(UPTIME_BAR_PCT))] })), api)
       .loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.ruleRows.some(row => row.what?.includes('Rupture'))).toBe(false);
@@ -192,7 +192,7 @@ describe('RotationFeatureService fetch shape', () => {
 
   it('fetches the player damage only when a target-count rule needs it', async () => {
     const { calls, api } = recording();
-    await withSource(ok(bench({ rules: [benched(aoeSwitch)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    await withSource(Results.ok(bench({ rules: [benched(aoeSwitch)] })), api).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: false, hostilityType: undefined });
   });
 });

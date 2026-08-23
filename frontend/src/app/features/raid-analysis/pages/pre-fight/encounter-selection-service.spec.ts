@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { EncounterEntry } from '../../../../domain/encounter/encounter.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { EncounterSelectionService } from './encounter-selection-service';
 
 const SPEC = 'SubtletyRogue';
@@ -20,6 +20,6 @@ function serviceWith(encounters: Result<EncounterEntry[]>): EncounterSelectionSe
 
 describe('EncounterSelectionService', () => {
   it('returns every listed encounter, including a zero-sample one still waiting for parses', async () => {
-    expect(await serviceWith(ok([BENCHED, WAITING])).getEncounters(SPEC)).toEqual(ok([BENCHED, WAITING]));
+    expect(await serviceWith(Results.ok([BENCHED, WAITING])).getEncounters(SPEC)).toEqual(Results.ok([BENCHED, WAITING]));
   });
 });

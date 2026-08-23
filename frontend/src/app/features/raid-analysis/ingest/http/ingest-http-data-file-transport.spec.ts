@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { IngestHttpDataFileTransport } from './ingest-http-data-file-transport';
 import { INGEST_VERSION } from '../domain/ingest-version';
-import { ok, missing } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 
 // Spelled out rather than imported, so moving the transport off this URL fails the assertions.
 const INGEST_SERVER_URL = 'http://localhost:3000';
@@ -33,7 +33,7 @@ describe('IngestHttpDataFileTransport', () => {
     vi.restoreAllMocks();
   });
 
-  it('GETs the server-rooted file path and returns ok(body)', async () => {
+  it('GETs the server-rooted file path and returns Results.ok(body)', async () => {
     const { transport, httpMock } = setup();
 
     const pending = transport.readJson<typeof SLICE_BODY>(REL_PATH);
@@ -41,7 +41,7 @@ describe('IngestHttpDataFileTransport', () => {
     expect(req.request.method).toBe('GET');
     req.flush(SLICE_BODY);
 
-    expect(await pending).toEqual(ok(SLICE_BODY));
+    expect(await pending).toEqual(Results.ok(SLICE_BODY));
   });
 
   it('resolves missing on an exact 404 - the un-ingested signal', async () => {
@@ -52,7 +52,7 @@ describe('IngestHttpDataFileTransport', () => {
       .expectOne(`${INGEST_SERVER_URL}/api/data/${SERVER_FILE_PATH}`)
       .flush({ error: 'not found' }, { status: NOT_FOUND_STATUS, statusText: 'Not Found' });
 
-    expect(await pending).toEqual(missing(MISSING_MESSAGE));
+    expect(await pending).toEqual(Results.missing(MISSING_MESSAGE));
   });
 
   it('fails a file stamped with a future ingest version as permanent', async () => {

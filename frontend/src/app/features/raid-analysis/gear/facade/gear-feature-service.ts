@@ -3,8 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { CharacterGear, WclCombatantInfo } from '../../../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
-import { Result, ok, permanent } from '../../../../core/http/result';
-import { toLoadError } from '../../../../core/http/http-load-error';
+import { Result, Results } from '../../../../core/http/result';
+import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { GearExtractService, GameNames } from '../domain/gear-extract';
 import { GearStatus, EnchantRow, TrinketRow, TalentBuildRow, BenchEnchantRow, BenchTrinketRow } from '../../../../domain/gear/gear-comparison';
 import { GEAR_DATA_SOURCE, GearBench } from '../data-access/gear-data-source';
@@ -45,13 +45,13 @@ export class GearFeatureService {
     if (!bench.ok) return bench;
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId);
     if (!playerGear.ok) return playerGear;
-    return ok(this.buildGearView(playerGear.value, this.benchToStats(bench.value)));
+    return Results.ok(this.buildGearView(playerGear.value, this.benchToStats(bench.value)));
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return ok(this.buildBenchGearView(this.benchToStats(bench.value)));
+    return Results.ok(this.buildBenchGearView(this.benchToStats(bench.value)));
   }
 
   // A WCL fetch failure becomes a mapped LoadError, never a silent fallback.
@@ -74,7 +74,7 @@ export class GearFeatureService {
       return this.buildCharacterGear(event, names);
     } catch (cause) {
       this.logger.logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, cause);
-      return toLoadError(cause, 'gear.player-view');
+      return HttpLoadErrors.toLoadError(cause, 'gear.player-view');
     }
   }
 
@@ -93,7 +93,7 @@ export class GearFeatureService {
     names: GameNames,
   ): Result<CharacterGear> {
     if (!event?.gear?.length) {
-      return permanent('No combatant info in this log.', 'gear.combatant-info');
+      return Results.permanent('No combatant info in this log.', 'gear.combatant-info');
     }
     const { trinkets, enchants } = this.gearExtract.extractGear(event.gear);
     const talent_key = this.talentKeys.talentKeyFromTree(event.talentTree);
@@ -101,7 +101,7 @@ export class GearFeatureService {
     this.gearExtract.fillGameNames(trinkets, 'i', names);
     this.gearExtract.fillGameNames(enchants, 'e', names);
 
-    return ok({ talent_key, trinkets, enchants });
+    return Results.ok({ talent_key, trinkets, enchants });
   }
 
   protected benchToStats(bench: GearBench): EncounterGearStats {

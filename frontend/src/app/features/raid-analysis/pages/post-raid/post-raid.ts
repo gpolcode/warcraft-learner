@@ -37,8 +37,8 @@ import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { LatestRun } from './latest-run';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { Result, permanent } from '../../../../core/http/result';
-import { toLoadError } from '../../../../core/http/http-load-error';
+import { Result, Results } from '../../../../core/http/result';
+import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { LoggerService } from '../../../../core/observability/log';
 
@@ -246,7 +246,7 @@ export class PostRaid {
       await this.resolveSelection();
     } catch (err) {
       this.logger.logWarn('PostRaid.loadReport', err);
-      if (this.reportRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.load-report'));
+      if (this.reportRun.isCurrent(run)) this._showError(HttpLoadErrors.toLoadError(err, 'post-raid.load-report'));
     } finally {
       if (this.reportRun.isCurrent(run)) this.loadingReport.set(false);
     }
@@ -288,7 +288,7 @@ export class PostRaid {
     } catch (err) {
       this.logger.logWarn('PostRaid._pollOnce', err);
       if (this._pollSuperseded(code)) return;
-      this._showError(toLoadError(err, 'post-raid.poll'));
+      this._showError(HttpLoadErrors.toLoadError(err, 'post-raid.poll'));
       // Overwrite the in-flight "Checking..." status so the strip stops claiming a live check.
       this.liveCapture.setStatus('Live sync error, retrying on the next check.');
     }
@@ -352,7 +352,7 @@ export class PostRaid {
       }
     } catch (err) {
       this.logger.logWarn('PostRaid.resolveSelection', err);
-      if (this.selectionRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.resolve-selection'));
+      if (this.selectionRun.isCurrent(run)) this._showError(HttpLoadErrors.toLoadError(err, 'post-raid.resolve-selection'));
     } finally {
       if (this.selectionRun.isCurrent(run)) this.loadingAnalysis.set(false);
     }
@@ -371,7 +371,7 @@ export class PostRaid {
     this.playerDetailGroups.set(groups);
     const spec = this.specOf(groups, playerId);
     // Unmappable spec is a semantic dead end, not retriable: permanent, not transient.
-    if (!spec) { this._showError(permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return null; }
+    if (!spec) { this._showError(Results.permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return null; }
     return spec;
   }
 

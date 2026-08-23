@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ok, missing, transient, permanent, type Result } from '../../../../core/http/result';
+import { type Result, Results } from '../../../../core/http/result';
 import { INGEST_VERSION } from './ingest-version';
 import { type SignatureRanking, IngestSignatureService } from './signature';
 import { type IngestStamp, IngestStampService } from './stamp';
@@ -23,7 +23,7 @@ const DATA = { spec: 'SubtletyRogue', encounter_id: 3470 };
 const NO_INACCESSIBLE: string[] = [];
 
 // Only .ok and .error.kind matter to the stamp, so the ok payload is a placeholder.
-const OK: Result<unknown> = ok('slice');
+const OK: Result<unknown> = Results.ok('slice');
 const ALL_OK: Result<unknown>[] = [OK, OK, OK, OK, OK];
 const withSibling = (sibling: Result<unknown>): Result<unknown>[] => [OK, sibling, OK, OK, OK];
 const nextRun = (file: unknown): { skip: boolean; signature: string } => stamps.skipDecision(file, ROWS, VERSION, TOP_N);
@@ -42,7 +42,7 @@ describe('write then read', () => {
   });
 
   it('still skips when a sibling slice is legitimately empty (missing is not a failure)', () => {
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(missing('No top parses')));
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.missing('No top parses')));
 
     expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
@@ -54,13 +54,13 @@ describe('write then read', () => {
   });
 
   it('ingests an encounter whose burst a transiently failed slice left unstamped', () => {
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(transient('WCL request failed')));
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.transient('WCL request failed')));
 
     expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
 
   it('ingests an encounter whose burst a permanently failed slice left unstamped', () => {
-    const failed = withSibling(permanent('bad shape', 'burst.bench'));
+    const failed = withSibling(Results.permanent('bad shape', 'burst.bench'));
     const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, failed);
 
     expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
@@ -98,7 +98,7 @@ describe('write then read', () => {
   it('reads the ingest version and stamp time back off either writer, stamped or not', () => {
     const tailored = stamps.stampSignature(DATA, SIGNATURE, STAMP);
     const unstamped = stamps.stampBurstFile(
-      DATA, SIGNATURE, STAMP, [PRIVATE_PARSE], withSibling(transient('WCL request failed')));
+      DATA, SIGNATURE, STAMP, [PRIVATE_PARSE], withSibling(Results.transient('WCL request failed')));
 
     for (const file of [tailored, unstamped]) {
       expect(stamps.readFileStamp(file)).toEqual({ version: INGEST_VERSION, ingestedAtS: INGESTED_AT_S });

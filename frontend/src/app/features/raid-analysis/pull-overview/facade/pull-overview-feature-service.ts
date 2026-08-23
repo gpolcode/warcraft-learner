@@ -3,8 +3,8 @@ import * as z from '../../../../core/validation/zod-mini';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
 import { LoggerService } from '../../../../core/observability/log';
-import { Result, ok, permanent } from '../../../../core/http/result';
-import { toLoadError } from '../../../../core/http/http-load-error';
+import { Result, Results } from '../../../../core/http/result';
+import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { JsonCodecService } from '../../../../core/validation/json';
 
@@ -66,7 +66,7 @@ export class PullOverviewFeatureService {
         outcomeTimeS = this.wipeTimeS(deathEventsTimed, this.wclProjections.withRelativeS(resurrects, fight.startTime), fight.duration_s);
       }
 
-      return ok({
+      return Results.ok({
         attempt: fight.attempt,
         result,
         durationS: fight.duration_s,
@@ -77,7 +77,7 @@ export class PullOverviewFeatureService {
       });
     } catch (cause) {
       this.logger.logWarn('PullOverviewFeatureService.loadView', cause);
-      return toLoadError(cause, 'pull-overview.view');
+      return HttpLoadErrors.toLoadError(cause, 'pull-overview.view');
     }
   }
 
@@ -112,11 +112,11 @@ export class PullOverviewFeatureService {
   protected dpsFromTable(
     blob: WclTableBlob | null, playerId: number, durationS: number,
   ): Result<number> {
-    if (durationS <= 0) return ok(0);
+    if (durationS <= 0) return Results.ok(0);
     const entries = this.tableEntries(blob);
-    if (!entries) return permanent('Damage table missing for this pull.', 'pull-overview.damage-table');
+    if (!entries) return Results.permanent('Damage table missing for this pull.', 'pull-overview.damage-table');
     const entry = entries.find(row => row.id === playerId);
-    return ok(entry ? entry.total / durationS : 0);
+    return Results.ok(entry ? entry.total / durationS : 0);
   }
 
   protected abilityNameMap(report: WclReport): Map<number, string> {

@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { WclFight, WclReport } from '../../core/wcl/wcl.models';
-import { Result, ok } from '../../core/http/result';
-import { toLoadError } from '../../core/http/http-load-error';
+import { Result, Results } from '../../core/http/result';
+import { HttpLoadErrors } from '../../core/http/http-load-error';
 import { LoggerService } from '../../core/observability/log';
 import { WclProjectionsService } from './wcl-projections';
 
@@ -19,11 +19,11 @@ export class PullContextService {
       const report = await wclApi.getReport(reportCode);
       const fight = report.fights.find(entry => entry.id === fightId);
       // A selected fight may legitimately not be in the report yet during a live sync: not a failure.
-      if (!fight) return ok(slice.emptyView());
-      return ok(await slice.analyze({ report, fight, fightDurationS: this.projections.relativeS(fight.endTime, fight.startTime) }));
+      if (!fight) return Results.ok(slice.emptyView());
+      return Results.ok(await slice.analyze({ report, fight, fightDurationS: this.projections.relativeS(fight.endTime, fight.startTime) }));
     } catch (cause) {
       this.logger.logWarn(`${slice.logSource} ${reportCode}:${fightId}`, cause);
-      return toLoadError(cause, slice.errorId);
+      return HttpLoadErrors.toLoadError(cause, slice.errorId);
     }
   }
 }

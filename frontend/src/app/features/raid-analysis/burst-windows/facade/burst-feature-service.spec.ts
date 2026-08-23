@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/analysis.models';
-import { Result, ok, missing } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { BURST_DATA_SOURCE, BurstBench } from '../data-access/burst-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
 import { BurstFeatureService } from './burst-feature-service';
@@ -180,17 +180,17 @@ const benchFixture: BurstBench = {
 
 describe('BurstFeatureService', () => {
   it('propagates the data-source error when the bench read fails', async () => {
-    const result = await withBench(missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
-    expect(result).toEqual(missing('Not yet ingested.'));
+    const result = await withBench(Results.missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
+    expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
   it('returns an ok bench view when the bench file exists', async () => {
-    const result = await withBench(ok(benchFixture)).loadBenchView('SubtletyRogue', 1);
+    const result = await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
   });
 
   it('bench-only: shows the top windows with no player overlay (neutral info status)', async () => {
-    const result = await withBench(ok(benchFixture)).loadBenchView('SubtletyRogue', 1);
+    const result = await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.windows).toHaveLength(1);
@@ -202,7 +202,7 @@ describe('BurstFeatureService', () => {
   });
 
   it('player view: fetches the log and compares the player damage against the bench', async () => {
-    const result = await withBench(ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
+    const result = await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.windows).toHaveLength(1);
@@ -216,7 +216,7 @@ describe('BurstFeatureService', () => {
     const MISSING_FIGHT_ID = 999;
     const FAILING_CODE = 'boom';
     // TestBed configures once per test, so one service with one refused report code covers both branches.
-    const service = withBench(ok(benchFixture), {
+    const service = withBench(Results.ok(benchFixture), {
       ...wclFake,
       getReport: async (code: string) => { if (code === FAILING_CODE) throw new Error('WCL down'); return wclFake.getReport(); },
     });

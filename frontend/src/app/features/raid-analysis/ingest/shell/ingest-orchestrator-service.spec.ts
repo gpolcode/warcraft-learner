@@ -6,7 +6,7 @@ import { BENCH_SLICE } from './slice-registry';
 import { DATA_FILE_TRANSPORT, type DataFileTransport } from '../../../../core/data-files/data-file-transport';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WCL_TRANSPORT, type WclTransport } from '../../../../core/wcl/wcl-transport';
-import { ok, missing, type Result } from '../../../../core/http/result';
+import { type Result, Results } from '../../../../core/http/result';
 import { BurstTransformService } from '../../burst-windows/data-access/burst-transform-service';
 import { RotationTransformService } from '../../rotation/data-access/rotation-transform-service';
 import { DefensiveTransformService } from '../../defensive/data-access/defensive-transform-service';
@@ -60,7 +60,7 @@ function fakeDisk(seed: Record<string, unknown>, undeletable = new Set<string>()
   return {
     files,
     readJson: async <T>(path: string): Promise<Result<T>> =>
-      files.has(path) ? ok(files.get(path) as T) : missing(`${path} is not ingested`),
+      files.has(path) ? Results.ok(files.get(path) as T) : Results.missing(`${path} is not ingested`),
     writeJson: async (path: string, data: unknown) => { files.set(path, data); },
     remove: async (path: string) => {
       if (undeletable.has(path)) throw new Error(`the file server refused to delete ${path}`);
@@ -95,7 +95,7 @@ const TRANSFORMS = [
 
 const stubTransform = {
   getBench: async (_spec: string, encId: number) =>
-    ok({ encounter_id: encId, encounter_name: bossName(encId), sample_count: FRESH_SAMPLES }),
+    Results.ok({ encounter_id: encId, encounter_name: bossName(encId), sample_count: FRESH_SAMPLES }),
 };
 
 const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {

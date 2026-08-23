@@ -3,8 +3,8 @@ import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@a
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
-import { Result, LoadError, permanent } from '../../../../core/http/result';
-import { toLoadError } from '../../../../core/http/http-load-error';
+import { Result, LoadError, Results } from '../../../../core/http/result';
+import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { posActorId } from '../domain/map-positions';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
@@ -170,7 +170,7 @@ export class MapFeatureService {
 
   // The overlay loaded with no position samples for the player: surface as permanent, not a still-loading map.
   private _reportMissingPlayerPositions(): void {
-    const failure = permanent('No position data for you in this pull.', 'map.no-player-positions');
+    const failure = Results.permanent('No position data for you in this pull.', 'map.no-player-positions');
     if (!failure.ok && failure.error.kind === 'permanent') {
       this.logger.logWarn(failure.error.id, failure.error.context);
       this.error.set(failure.error);
@@ -192,7 +192,7 @@ export class MapFeatureService {
       this.overlayLoaded = true;
     } catch (cause) {
       // Surface a failed overlay read instead of a silently empty map.
-      const result = toLoadError(cause, 'map.overlay');
+      const result = HttpLoadErrors.toLoadError(cause, 'map.overlay');
       this.logger.logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, cause);
       this.live.set(null);
       this.error.set(!result.ok && result.error.kind !== 'missing' ? result.error : null);

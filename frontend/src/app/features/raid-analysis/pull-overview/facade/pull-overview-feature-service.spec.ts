@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
-import { ok, permanent } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { PullOverviewFeatureService } from './pull-overview-feature-service';
 import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
@@ -24,7 +24,7 @@ const KILLER_ID = 88;
 const ABSENT_PLAYER_ID = 77; // a player with no row in the damage table (e.g. a healer)
 
 // A null/failed damage table blob is a permanent load failure, not a measured 0.
-const MISSING_TABLE_ERROR = permanent('Damage table missing for this pull.', 'pull-overview.damage-table');
+const MISSING_TABLE_ERROR = Results.permanent('Damage table missing for this pull.', 'pull-overview.damage-table');
 
 const OVERWHELMING_BLAST = 214001;
 const FROST_BOMB = 198002;
@@ -70,11 +70,11 @@ describe('dpsFromTable', () => {
   const blob = { data: { entries: [{ id: OTHER_PLAYER, total: 999 }, { id: PLAYER_ID, total: PLAYER_TOTAL }] } };
 
   it('divides the player entry total by the pull length', () => {
-    expect(svc['dpsFromTable'](blob, PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
+    expect(svc['dpsFromTable'](blob, PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(EXPECTED_DPS));
   });
 
   it('parses a JSON-string blob the same as an object blob', () => {
-    expect(svc['dpsFromTable'](JSON.stringify(blob), PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
+    expect(svc['dpsFromTable'](JSON.stringify(blob), PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(EXPECTED_DPS));
   });
 
   it('reports a null blob as a failed load, so the player never shows a bogus measured 0', () => {
@@ -90,11 +90,11 @@ describe('dpsFromTable', () => {
   });
 
   it('reports a real 0 for a player absent from a valid table (a healer with no damage entry)', () => {
-    expect(svc['dpsFromTable'](blob, ABSENT_PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(0));
+    expect(svc['dpsFromTable'](blob, ABSENT_PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(0));
   });
 
   it('reports a real 0 for a zero-length pull - an empty pull measures no damage, not a failure', () => {
-    expect(svc['dpsFromTable'](blob, PLAYER_ID, 0)).toEqual(ok(0));
+    expect(svc['dpsFromTable'](blob, PLAYER_ID, 0)).toEqual(Results.ok(0));
   });
 });
 

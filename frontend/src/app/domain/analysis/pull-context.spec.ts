@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { WclTransportError } from '../../core/wcl/wcl-transport';
-import { ok, transient } from '../../core/http/result';
+import { Results } from '../../core/http/result';
 import { WclReport } from '../../core/wcl/wcl.models';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
 import { PullContext, PullRef, PullContextService } from './pull-context';
@@ -39,7 +39,7 @@ describe('analyzePull', () => {
     const result = await pullContext.analyzePull(wclFake(), PULL, viewSlice({
       analyze: async context => { seen.push(context); return ANALYZED_VIEW; },
     }));
-    expect(result).toEqual(ok(ANALYZED_VIEW));
+    expect(result).toEqual(Results.ok(ANALYZED_VIEW));
     const [context] = seen;
     assert.exists(context);
     expect(context.report).toBe(REPORT);
@@ -53,14 +53,14 @@ describe('analyzePull', () => {
     const result = await pullContext.analyzePull(wclFake(), { ...PULL, fightId: UNLOGGED_FIGHT_ID }, viewSlice({
       analyze: async () => { analyzed = true; return ANALYZED_VIEW; },
     }));
-    expect(result).toEqual(ok(EMPTY_VIEW));
+    expect(result).toEqual(Results.ok(EMPTY_VIEW));
     expect(analyzed).toBe(false);
   });
 
   it('surfaces a WCL outage as transient, so the slice reports an outage rather than a repro id', async () => {
     const SERVER_UNREACHABLE_STATUS = 503;
     const wcl = wclFake(async () => { throw new WclTransportError('WCL down', SERVER_UNREACHABLE_STATUS); });
-    expect(await pullContext.analyzePull(wcl, PULL, viewSlice())).toEqual(transient('WCL is unreachable right now.'));
+    expect(await pullContext.analyzePull(wcl, PULL, viewSlice())).toEqual(Results.transient('WCL is unreachable right now.'));
   });
 
   it('tags an unclassified report failure with the slice repro id instead of an empty view', async () => {

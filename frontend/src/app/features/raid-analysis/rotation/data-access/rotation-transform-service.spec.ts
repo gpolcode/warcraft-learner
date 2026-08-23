@@ -6,7 +6,7 @@ import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
-import { ok, missing } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { RulebookRule } from '../../../../domain/rulebook/rulebook.models';
 import { RuleSample } from '../domain/rotation-rules';
@@ -231,7 +231,7 @@ const wclFake = {
   getAbilities: abilityLookup({ [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } }),
 };
 const filesFake = {
-  getRulebook: async () => ok(rulebook({
+  getRulebook: async () => Results.ok(rulebook({
     cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
   })),
 };
@@ -256,9 +256,9 @@ describe('RotationTransformService (live, in-browser)', () => {
   it('propagates a missing error when the spec has no rulebook cooldowns', async () => {
     // A rulebook with no cooldowns is nothing to analyze - the transform reports missing.
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok(rulebook()) } }),
+      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook()) } }),
     });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(missing('No rulebook cooldowns for this spec.'));
+      .toEqual(Results.missing('No rulebook cooldowns for this spec.'));
   });
 });

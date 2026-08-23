@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
 import { GEAR_DATA_SOURCE, GearBench } from '../data-access/gear-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
-import { Result, ok, permanent, missing } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { GearFeatureService } from './gear-feature-service';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
@@ -56,7 +56,7 @@ describe('benchToStats', () => {
 describe('buildCharacterGear', () => {
   it('is a permanent error when the log has no combatant info', () => {
     expect(svc['buildCharacterGear'](null, {}))
-      .toEqual(permanent('No combatant info in this log.', 'gear.combatant-info'));
+      .toEqual(Results.permanent('No combatant info in this log.', 'gear.combatant-info'));
   });
 
   it('builds the gear fingerprint when the event carries gear', () => {
@@ -136,7 +136,7 @@ function configure(bench: Result<GearBench>, gear: CharacterGear | null): GearFe
 
 describe('GearFeatureService', () => {
   it('loadBenchView builds the bench-only view', async () => {
-    const result = await configure(ok(benchWith()), null).loadBenchView('SubtletyRogue', 1);
+    const result = await configure(Results.ok(benchWith()), null).loadBenchView('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.comparison).toBe(false);
@@ -144,8 +144,8 @@ describe('GearFeatureService', () => {
   });
 
   it('loadBenchView propagates a missing bench unchanged', async () => {
-    const result = await configure(missing('Not yet ingested.'), null).loadBenchView('SubtletyRogue', 1);
-    expect(result).toEqual(missing('Not yet ingested.'));
+    const result = await configure(Results.missing('Not yet ingested.'), null).loadBenchView('SubtletyRogue', 1);
+    expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
   it('loadComparisonView merges fetched player gear with the bench', async () => {
@@ -154,7 +154,7 @@ describe('GearFeatureService', () => {
       trinkets: [{ slot: 12, id: 100, name: 'A' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
-    const result = await configure(ok(benchWith()), player).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+    const result = await configure(Results.ok(benchWith()), player).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.comparison).toBe(true);
@@ -162,12 +162,12 @@ describe('GearFeatureService', () => {
   });
 
   it('loadComparisonView surfaces a permanent error when the player has no combatant info', async () => {
-    const result = await configure(ok(benchWith()), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
-    expect(result).toEqual(permanent('No combatant info in this log.', 'gear.combatant-info'));
+    const result = await configure(Results.ok(benchWith()), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+    expect(result).toEqual(Results.permanent('No combatant info in this log.', 'gear.combatant-info'));
   });
 
   it('loadComparisonView propagates a missing bench before fetching player gear', async () => {
-    const result = await configure(missing('Not yet ingested.'), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
-    expect(result).toEqual(missing('Not yet ingested.'));
+    const result = await configure(Results.missing('Not yet ingested.'), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+    expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 });

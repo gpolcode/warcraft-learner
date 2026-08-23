@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ok, missing } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { NorthernSkyTransformService } from './northern-sky-transform-service';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
 import { cast } from '../../../../../testing/builders/events';
@@ -49,7 +49,7 @@ const wclFake = {
   getAbilities: abilityLookup(),
 };
 const filesFake = {
-  getRulebook: async () => ok(rulebook({
+  getRulebook: async () => Results.ok(rulebook({
     spec: 'SubtletyRogue',
     cooldowns: [
       { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 },
@@ -76,8 +76,8 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
 
   it('returns missing when the spec rulebook has no cooldowns or defensives', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
+      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
     });
-    expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
+    expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(Results.missing('Not yet ingested.'));
   });
 });

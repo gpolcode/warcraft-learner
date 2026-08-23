@@ -3,8 +3,8 @@ import { WclApiService } from '../../core/wcl/wcl-api-service';
 import type { DataFileApiService } from '../../core/data-files/data-file-api-service';
 import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { Rulebook } from '../rulebook/rulebook.models';
-import { Result, ok, missing } from '../../core/http/result';
-import { toLoadError } from '../../core/http/http-load-error';
+import { Result, Results } from '../../core/http/result';
+import { HttpLoadErrors } from '../../core/http/http-load-error';
 import { ReportActor } from './wcl-projections';
 import { LoggerService } from '../../core/observability/log';
 import { WclProjectionsService } from './wcl-projections';
@@ -34,25 +34,25 @@ export class BenchPipelineService {
       const limits = this.sliceLimits(slice);
       const selection = query.selection ?? await this.topParses.resolveTopParses(wclApi, spec, encounterId);
       const rankings = slice.candidatePoolCount ? selection.slice(0, slice.candidatePoolCount) : selection;
-      if (!rankings.length) return missing(slice.noRankingsMessage);
+      if (!rankings.length) return Results.missing(slice.noRankingsMessage);
 
       const payload = await this.collectParses(wclApi, slice, planned.value, rankings, limits.sampleTarget);
       const accepted = payload.parses.length;
-      if (accepted < limits.minSamples) return missing(slice.tooFewParsesMessage?.(accepted) ?? slice.noRankingsMessage);
+      if (accepted < limits.minSamples) return Results.missing(slice.tooFewParsesMessage?.(accepted) ?? slice.noRankingsMessage);
 
-      return ok(await this.benchEnvelope(wclApi, slice, planned.value, { spec, encounterId }, payload));
+      return Results.ok(await this.benchEnvelope(wclApi, slice, planned.value, { spec, encounterId }, payload));
     } catch (cause) {
       this.logger.logWarn(`${slice.logSource}.getBench ${spec}:${encounterId}`, cause);
-      return toLoadError(cause, slice.errorId);
+      return HttpLoadErrors.toLoadError(cause, slice.errorId);
     }
   }
 
   private async benchPlan<TPlan>(step: BenchRulebookStep<TPlan> | undefined, spec: string): Promise<Result<TPlan>> {
-    if (!step) return ok(undefined as TPlan);
+    if (!step) return Results.ok(undefined as TPlan);
     const rulebook = await step.dataFiles.getRulebook(spec);
     if (!rulebook.ok) return rulebook;
     const plan = step.plan(rulebook.value);
-    return plan === null ? missing(step.missingMessage) : ok(plan);
+    return plan === null ? Results.missing(step.missingMessage) : Results.ok(plan);
   }
 
   private async benchEnvelope<TParse, TBench, TPlan>(

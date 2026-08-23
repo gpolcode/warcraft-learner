@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SpecTalents } from '../../../../domain/gear/talent.models';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
-import { ok, missing, transient } from '../../../../core/http/result';
+import { Results } from '../../../../core/http/result';
 import { GearTransformService, ParseGear } from './gear-transform-service';
 import { TalentKeyService } from '../../../../domain/gear/talent-key';
 import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
@@ -208,7 +208,7 @@ describe('withTalentDiffs', () => {
   ];
 
   it('bakes each alt build\'s diff against the most common build, leaving the most common one empty', () => {
-    const out = svc['withTalentDiffs'](builds(), ok(talents));
+    const out = svc['withTalentDiffs'](builds(), Results.ok(talents));
     assert.exists(out[0]);
     expect(out[0].diff).toEqual([]);
     assert.exists(out[1]);
@@ -219,8 +219,8 @@ describe('withTalentDiffs', () => {
   });
 
   it('leaves builds untouched whether the spec has no dump entry or the dump failed to load', () => {
-    expect(svc['withTalentDiffs'](builds(), missing('No talent data for this spec.'))).toEqual(builds());
-    expect(svc['withTalentDiffs'](builds(), transient('WCL outage'))).toEqual(builds());
+    expect(svc['withTalentDiffs'](builds(), Results.missing('No talent data for this spec.'))).toEqual(builds());
+    expect(svc['withTalentDiffs'](builds(), Results.transient('WCL outage'))).toEqual(builds());
   });
 });
 
@@ -240,7 +240,7 @@ const wclFake = {
   getGameNames: async () => ({ e8041: { id: 8041, name: 'Soph' } }),
 };
 
-const talentDataFake = { getTalents: async () => missing('No talent data for this spec.') };
+const talentDataFake = { getTalents: async () => Results.missing('No talent data for this spec.') };
 
 describe('GearTransformService (live, in-browser)', () => {
   it('computes a gear bench aggregated from the top parses', async () => {
@@ -272,7 +272,7 @@ describe('GearTransformService (live, in-browser)', () => {
       }],
     };
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: splitBuildWcl, talents: { getTalents: async () => ok(talents) } }),
+      providers: provideApiFakes({ wcl: splitBuildWcl, talents: { getTalents: async () => Results.ok(talents) } }),
     });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);

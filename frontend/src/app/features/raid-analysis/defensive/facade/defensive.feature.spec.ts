@@ -5,7 +5,7 @@ import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, damageTaken } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { Result, ok, missing } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { BOSS_HIT_SPELL_ID, WINDOW_REF_GAME_ID, fullBench } from './defensive-harness';
 
 function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown> = {}): DefensiveFeatureService {
@@ -14,9 +14,9 @@ function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown>
 
 describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
   it('propagates a non-ok bench unchanged (missing drives the waiting state)', async () => {
-    const service = serviceWith(missing('Not yet ingested.'));
+    const service = serviceWith(Results.missing('Not yet ingested.'));
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
-    expect(result).toEqual(missing('Not yet ingested.'));
+    expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
   it('computes player findings + windows from the player log', async () => {
@@ -29,7 +29,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
         return [damageTaken(BOSS_HIT_SPELL_ID, 32, 1150)]; // t=32 falls inside the 30-35 buff window
       },
     };
-    const service = serviceWith(ok(fullBench()), wcl);
+    const service = serviceWith(Results.ok(fullBench()), wcl);
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -48,7 +48,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const wcl = { getReport: async () => report, getAllEvents: async () => [] };
     // ability_icons intentionally omits CLOAK_OF_SHADOWS even though cd_spell_ids still references it.
     const bench = { ...fullBench(), ability_icons: {} };
-    const service = serviceWith(ok(bench), wcl);
+    const service = serviceWith(Results.ok(bench), wcl);
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value.iconByName).toEqual({ 'Cloak of Shadows': '' });
@@ -58,7 +58,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const UNLOGGED_FIGHT_ID = 99;
     const FAILING_CODE = 'boom';
     // TestBed configures once per test, so one service with one refused report code covers both branches.
-    const service = serviceWith(ok(fullBench()), {
+    const service = serviceWith(Results.ok(fullBench()), {
       getReport: async (code: string) => {
         if (code === FAILING_CODE) throw new Error('WCL down');
         return wclReport({ fights: [], actors: [] });
@@ -67,7 +67,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     });
 
     const onMissingFight = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(ok({
+    expect(onMissingFight).toEqual(Results.ok({
       findings: [], spellIdsByName: { 'Cloak of Shadows': CLOAK_OF_SHADOWS }, iconByName: {},
       windows: [], anchors: [], clipAnchors: [],
     }));
@@ -80,7 +80,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
 
 describe('DefensiveFeatureService.loadPlan (pre-fight)', () => {
   it('returns the bench-only plan rows', async () => {
-    const service = serviceWith(ok(fullBench()));
+    const service = serviceWith(Results.ok(fullBench()));
     const result = await service.loadPlan('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -90,7 +90,7 @@ describe('DefensiveFeatureService.loadPlan (pre-fight)', () => {
   });
 
   it('propagates a missing bench so the pre-fight plan waiting state shows', async () => {
-    const service = serviceWith(missing('Not yet ingested.'));
-    expect(await service.loadPlan('SubtletyRogue', 1)).toEqual(missing('Not yet ingested.'));
+    const service = serviceWith(Results.missing('Not yet ingested.'));
+    expect(await service.loadPlan('SubtletyRogue', 1)).toEqual(Results.missing('Not yet ingested.'));
   });
 });

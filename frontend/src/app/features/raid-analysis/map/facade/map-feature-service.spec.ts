@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { EncounterPositions } from '../../../../domain/encounter/positioning.models';
-import { Result, ok, missing, transient } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { sliceService } from '../../../../../testing/service-harness';
@@ -174,17 +174,17 @@ const sampleData: EncounterPositions = {
 
 describe('MapFeatureService', () => {
   it('loads the bench through the data source and exposes it as a signal', async () => {
-    const { service, calls } = withResult(ok(sampleData));
+    const { service, calls } = withResult(Results.ok(sampleData));
     const result = await service.loadBench('SubtletyRogue', 3144);
     expect(calls).toEqual([['SubtletyRogue', 3144]]);
-    expect(result).toEqual(ok(sampleData));
+    expect(result).toEqual(Results.ok(sampleData));
     expect(service.positions()).toBe(sampleData);
     expect(service.error()).toBeNull();
     expect(service.ready()).toBe(true);
   });
 
   it('is not ready and stays error-free when the bench is missing', async () => {
-    const { service } = withResult(missing('Not yet ingested.'));
+    const { service } = withResult(Results.missing('Not yet ingested.'));
     await service.loadBench('SubtletyRogue', 3144);
     expect(service.positions()).toBeNull();
     expect(service.live()).toBeNull();
@@ -194,7 +194,7 @@ describe('MapFeatureService', () => {
   });
 
   it('surfaces a transient bench failure as an error rather than a silent empty map', async () => {
-    const outage = transient('WCL outage');
+    const outage = Results.transient('WCL outage');
     const { service } = withResult(outage);
     const result = await service.loadBench('SubtletyRogue', 3144);
     expect(result).toEqual(outage);
@@ -204,7 +204,7 @@ describe('MapFeatureService', () => {
   });
 
   it('openAt sets the panel state and opens it', () => {
-    const { service } = withResult(ok(sampleData));
+    const { service } = withResult(Results.ok(sampleData));
     service.openAt({ timeS: 42, reference: { kind: 'enemy', gameId: 200 } });
     expect(service.open()).toBe(true);
     expect(service.anchorTime()).toBe(42);
@@ -212,13 +212,13 @@ describe('MapFeatureService', () => {
   });
 
   it('openAt defaults the reference to the boss', () => {
-    const { service } = withResult(ok(sampleData));
+    const { service } = withResult(Results.ok(sampleData));
     service.openAt({ timeS: 5 });
     expect(service.reference()).toEqual({ kind: 'boss' });
   });
 
   it('close hides the panel but keeps the loaded bench', async () => {
-    const { service } = withResult(ok(sampleData));
+    const { service } = withResult(Results.ok(sampleData));
     await service.loadBench('SubtletyRogue', 3144);
     service.openAt({ timeS: 1 });
     service.close();
@@ -227,7 +227,7 @@ describe('MapFeatureService', () => {
   });
 
   it('clear drops everything', async () => {
-    const { service } = withResult(ok(sampleData));
+    const { service } = withResult(Results.ok(sampleData));
     await service.loadBench('SubtletyRogue', 3144);
     service.openAt({ timeS: 1 });
     service.clear();
@@ -266,7 +266,7 @@ const PLAYER_ACTOR_ID = 5;
 describe('MapFeatureService deferred overlay', () => {
   function setup(): { service: MapFeatureService; api: RecordingWclApi } {
     const api = new RecordingWclApi();
-    return { service: sliceService(MAP_DATA_SOURCE, MapFeatureService, ok(sampleData), api), api };
+    return { service: sliceService(MAP_DATA_SOURCE, MapFeatureService, Results.ok(sampleData), api), api };
   }
 
   it('prepare loads the bench but defers the event fetch until the panel opens', async () => {
@@ -345,8 +345,8 @@ describe('MapFeatureService deferred overlay', () => {
     const stale: { resolve?: () => void } = {};
     const source: DataSource<MapData> = {
       getBench: (_spec, enc) => enc === STALE_ENCOUNTER
-        ? new Promise<Result<MapData>>(res => { stale.resolve = () => { res(ok(staleData)); }; })
-        : Promise.resolve(ok(latestData)),
+        ? new Promise<Result<MapData>>(res => { stale.resolve = () => { res(Results.ok(staleData)); }; })
+        : Promise.resolve(Results.ok(latestData)),
     };
     TestBed.configureTestingModule({ providers: [{ provide: MAP_DATA_SOURCE, useValue: source }] });
     const service = TestBed.inject(MapFeatureService);
@@ -369,7 +369,7 @@ describe('MapFeatureService deferred overlay', () => {
     const throwingApi = {
       getAllEvents: () => Promise.reject(new Error('overlay boom')),
     };
-    const service = sliceService(MAP_DATA_SOURCE, MapFeatureService, ok(sampleData), throwingApi);
+    const service = sliceService(MAP_DATA_SOURCE, MapFeatureService, Results.ok(sampleData), throwingApi);
     await service.prepare('code', sampleFight, PLAYER_ACTOR_ID, 'SubtletyRogue', []);
     service.openAt({ timeS: 1 });
     await whenStable();

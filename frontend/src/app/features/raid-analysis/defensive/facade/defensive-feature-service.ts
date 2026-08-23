@@ -6,7 +6,7 @@ import {
 import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.models';
 import { ComparisonWindow, WindowStatus } from '../../../../domain/analysis/window-comparison.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { benchExpectedUses, sortBySeverity } from '../../../../domain/analysis/analysis-math';
 import { CadenceVoice } from '../../../../domain/analysis/cast-cadence';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
@@ -151,7 +151,7 @@ export class DefensiveFeatureService {
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return ok({ rows: this.buildDefensivePlanRows(bench.value) });
+    return Results.ok({ rows: this.buildDefensivePlanRows(bench.value) });
   }
 
   // Falls back to point casts (zero span) when there is no self-buff; never invents a rulebook-duration span.

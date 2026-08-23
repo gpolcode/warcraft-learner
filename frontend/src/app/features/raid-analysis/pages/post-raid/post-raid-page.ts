@@ -10,7 +10,7 @@ import { MAP_DATA_SOURCE } from '../../map/data-access/map-data-source';
 import { NORTHERN_SKY_DATA_SOURCE } from '../../northern-sky/data-access/northern-sky-data-source';
 import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { SpecMeta } from '../../../../core/data-files/spec-meta.models';
-import { Result, ok } from '../../../../core/http/result';
+import { Result, Results } from '../../../../core/http/result';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { PostRaid } from './post-raid';
@@ -46,7 +46,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
       // After the harness fake so it wins: the header's live controls read a surface the fake does not carry.
       LiveCaptureFeatureService,
       { provide: MapFeatureService, useValue: mapFeatureStub() },
-      { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(ok([])) } },
+      { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(Results.ok([])) } },
       ...stubBenchTokens(SLICE_TOKENS),
       ...extraProviders,
     ] as never[],
