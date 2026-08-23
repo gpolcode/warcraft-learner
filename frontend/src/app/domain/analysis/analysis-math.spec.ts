@@ -2,7 +2,7 @@ import {
   round, getOrInsert, groupByTime, isOutlierAbove, isOutlierBeyond, isOutlierBelow,
   castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from './analysis-math';
-import { AnalysisFinding } from '../../core/models/analysis.models';
+import { AnalysisFinding } from './analysis.models';
 
 describe('round', () => {
   it('rounds to one decimal by default', () => {

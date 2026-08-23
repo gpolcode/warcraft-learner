@@ -7,7 +7,7 @@ import { cast } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../testing/api-fakes';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AuraUptimeBelowCondition } from '../../../../../core/models/rulebook.models';
+import { AuraUptimeBelowCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { RUPTURE } from '../../../../../../testing/spell-ids';
 import { applyBuff, removeBuff, applyDebuff, removeDebuff } from '../../../../../../testing/builders/events';
 import { RULE_FIGHT_END_S, band, judged, ruleCtx } from '../rule-fixtures';

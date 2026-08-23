@@ -1,4 +1,4 @@
-import { PerCdBenchmark } from '../../../core/models/encounter.models';
+import { PerCdBenchmark } from '../../../domain/encounter/encounter.models';
 import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 import { RotationBench } from './rotation-data-source';
 

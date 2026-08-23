@@ -2,21 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
-} from '../../../core/models/analysis.models';
-import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
-import { ComparisonWindow, WindowStatus } from '../../../core/models/window-comparison.models';
-import { ClipAnchor } from '../../../core/models/capture.models';
+} from '../../../domain/analysis/analysis.models';
+import { PerDefensiveBenchmark } from '../../../domain/encounter/encounter.models';
+import { ComparisonWindow, WindowStatus } from '../../../domain/analysis/window-comparison.models';
+import { ClipAnchor } from '../../../domain/capture/capture.models';
 import { logWarn } from '../../../core/observability/log';
 import { Result, ok } from '../../../core/http/result';
-import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
-import { buildAuraWindows } from '../../../shared/analysis/aura-windows';
-import { benchExpectedUses, sortBySeverity } from '../../../shared/analysis/analysis-math';
+import { holdSuggestionFindings } from '../../../domain/analysis/hold-targets';
+import { buildAuraWindows } from '../../../domain/analysis/aura-windows';
+import { benchExpectedUses, sortBySeverity } from '../../../domain/analysis/analysis-math';
 import {
   CadenceVoice, cadencePlanUsage, checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,
-} from '../../../shared/analysis/cast-cadence';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../shared/analysis/window-view';
-import { PullContext, PullRef, analyzePull } from '../../../shared/analysis/pull-context';
+} from '../../../domain/analysis/cast-cadence';
+import { AbilityIcons, TimedEvent, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../domain/analysis/window-view';
+import { PullContext, PullRef, analyzePull } from '../../../domain/analysis/pull-context';
 import {
   DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensivePlanMeta,
 } from './defensive-data-source';

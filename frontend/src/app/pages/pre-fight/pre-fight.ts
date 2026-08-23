@@ -5,7 +5,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/mat
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { SelectionStore } from '../../core/state/selection-store';
-import { SpecEntry, EncounterEntry } from '../../core/models/encounter.models';
+import { SpecEntry, EncounterEntry } from '../../domain/encounter/encounter.models';
 import { LoadError } from '../../core/http/result';
 import { logWarn } from '../../core/observability/log';
 import { EncounterSelectionService } from './encounter-selection.service';

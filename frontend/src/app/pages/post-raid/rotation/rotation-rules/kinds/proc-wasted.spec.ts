@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ProcWastedCondition } from '../../../../../core/models/rulebook.models';
+import { ProcWastedCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../testing/spell-ids';
 import { cast, applyBuff, buffWindow } from '../../../../../../testing/builders/events';
 import {

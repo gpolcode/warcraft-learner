@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ResourceAtCastCondition } from '../../../../../core/models/rulebook.models';
+import { ResourceAtCastCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../testing/builders/events';
 import {

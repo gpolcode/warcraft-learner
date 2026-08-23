@@ -2,11 +2,11 @@
 import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { WclEvent, WclFight } from '../../../core/wcl/wcl.models';
-import { EncounterPositions, ReferenceSelector } from '../../../core/models/positioning.models';
+import { EncounterPositions, ReferenceSelector } from '../../../domain/encounter/positioning.models';
 import { logWarn } from '../../../core/observability/log';
 import { Result, LoadError, permanent } from '../../../core/http/result';
 import { toLoadError } from '../../../core/http/http-load-error';
-import { TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { posActorId } from './map-positions';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 

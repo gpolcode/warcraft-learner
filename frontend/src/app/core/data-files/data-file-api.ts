@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Rulebook } from '../models/rulebook.models';
-import { EncounterEntry, SpecEntry } from '../models/encounter.models';
+import { Rulebook } from '../../domain/rulebook/rulebook.models';
+import { EncounterEntry, SpecEntry } from '../../domain/encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
 import { Result, ok } from '../http/result';

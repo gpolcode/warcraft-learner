@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { OpeningSequenceCondition } from '../../../../../core/models/rulebook.models';
+import { OpeningSequenceCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, EVISCERATE } from '../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../testing/builders/events';
 import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';

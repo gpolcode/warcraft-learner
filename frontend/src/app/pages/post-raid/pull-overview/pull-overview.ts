@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { WclFight } from '../../../core/wcl/wcl.models';
-import { ClipAnchor } from '../../../core/models/capture.models';
+import { ClipAnchor } from '../../../domain/capture/capture.models';
 import { MapAnchor } from '../map/map.service';
 import { loadResource } from '../../../shared/state/load-resource';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';

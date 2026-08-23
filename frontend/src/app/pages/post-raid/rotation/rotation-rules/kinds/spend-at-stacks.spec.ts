@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SpendAtStacksCondition } from '../../../../../core/models/rulebook.models';
+import { SpendAtStacksCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { LIGHTNING_BOLT, MAELSTROM_WEAPON, SHADOW_DANCE } from '../../../../../../testing/spell-ids';
 import { cast, applyBuff, removeBuff, applyBuffStack, buffWindow } from '../../../../../../testing/builders/events';
 import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';

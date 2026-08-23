@@ -1,13 +1,13 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { SpecTalents } from '../../../core/models/talent.models';
+import { SpecTalents } from '../../../domain/gear/talent.models';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../core/wcl/wcl.models';
 import { ok, missing, transient } from '../../../core/http/result';
 import {
   GearTransformService, toParseGear, aggregateParseGear, ParseGear, withTalentDiffs,
   aggregateTalents, aggregateTrinkets, aggregateEnchants,
 } from './gear-transform.service';
-import { talentKeyFromTree, parseTalentKey } from '../../../shared/gear/talent-key';
+import { talentKeyFromTree, parseTalentKey } from '../../../domain/gear/talent-key';
 import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../testing/api-fakes';
 

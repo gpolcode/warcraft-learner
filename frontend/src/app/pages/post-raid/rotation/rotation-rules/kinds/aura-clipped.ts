@@ -1,8 +1,8 @@
 import { median } from 'd3-array';
-import { round } from '../../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../../core/models/analysis.models';
-import { AuraClippedCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
-import { AuraSpan, AuraSpansByTarget } from '../../../../../shared/analysis/aura-windows';
+import { round } from '../../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analysis/analysis.models';
+import { AuraClippedCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
+import { AuraSpan, AuraSpansByTarget } from '../../../../../domain/analysis/aura-windows';
 import { RuleContext, suspendedAt } from '../rule-context';
 import {
   KindSpec, RuleBand, RuleJudging, SECONDS,

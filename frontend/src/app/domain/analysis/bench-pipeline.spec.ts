@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { WclApiService } from '../../core/wcl/wcl-api';
 import type { DataFileApiService } from '../../core/data-files/data-file-api';
 import { WclTransportError } from '../../core/wcl/wcl-transport';
-import { Rulebook } from '../../core/models/rulebook.models';
+import { Rulebook } from '../rulebook/rulebook.models';
 import { Result, ok, missing, transient } from '../../core/http/result';
 import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../testing/spell-ids';

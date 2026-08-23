@@ -6,7 +6,7 @@ import {
   posActorId, collectPositionSamples, resampleTimeline, resamplePlayerTimeline, buildParsePositions, selectBossAndEnemies,
   RawPosSample, EnemyMeta,
 } from './map-transform.service';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { parseRankings, wclReport } from '../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../testing/api-fakes';
 

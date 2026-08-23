@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { Result, ok, missing } from '../../../core/http/result';
-import { RulebookRule, CastWithoutPriorCondition } from '../../../core/models/rulebook.models';
+import { RulebookRule, CastWithoutPriorCondition } from '../../../domain/rulebook/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../testing/spell-ids';

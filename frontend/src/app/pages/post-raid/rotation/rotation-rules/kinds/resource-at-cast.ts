@@ -1,5 +1,5 @@
-import { AnalysisFinding } from '../../../../../core/models/analysis.models';
-import { ResourceAtCastCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
+import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
+import { ResourceAtCastCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
 import { RESOURCE_ACTOR_SOURCE, ResourceRow, RuleContext } from '../rule-context';
 import { KindSpec, PERCENT, RuleBand, RuleJudging, rawCountScale, withBand } from '../engine-core';
 import { evaluateBoundedPerCast } from '../bounded-per-cast';

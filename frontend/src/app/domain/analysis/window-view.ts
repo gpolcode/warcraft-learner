@@ -1,6 +1,6 @@
-import { BurstWindow, PlayerBurstWindow } from '../../core/models/analysis.models';
-import { ClipAnchor } from '../../core/models/capture.models';
-import { ComparisonWindow, RangeRow, WindowStatus } from '../../core/models/window-comparison.models';
+import { BurstWindow, PlayerBurstWindow } from './analysis.models';
+import { ClipAnchor } from '../capture/capture.models';
+import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
 import { AbilityIcons, TimedEvent, normalizeAbilityId, resolveAbility, windowSpells } from './wcl-projections';
 
 function eventDamage(event: TimedEvent): number {

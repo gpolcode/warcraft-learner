@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../core/data-source/data-source';
-import { PerCdBenchmark } from '../../../core/models/encounter.models';
-import { RulebookCooldown } from '../../../core/models/rulebook.models';
-import { BenchHeader } from '../../../shared/analysis/bench-pipeline';
+import { PerCdBenchmark } from '../../../domain/encounter/encounter.models';
+import { RulebookCooldown } from '../../../domain/rulebook/rulebook.models';
+import { BenchHeader } from '../../../domain/analysis/bench-pipeline';
 import { BenchedRule } from './rotation-rules';
 
 export interface RotationBench extends BenchHeader {

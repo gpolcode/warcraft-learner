@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { ClipAnchor } from '../../../core/models/capture.models';
+import { ClipAnchor } from '../../../domain/capture/capture.models';
 import {
   bucketFindings, FindingRow, FindingTableComponent, onPlanFromEntries, rowsFromEntries,
 } from '../../../shared/components/finding-table/finding-table';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CadenceBenchmark } from '../../core/models/encounter.models';
+import { CadenceBenchmark } from '../encounter/encounter.models';
 import {
   CadenceEntry, CadenceVoice, buildCadenceBenchmark, cadencePlanUsage,
   checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,

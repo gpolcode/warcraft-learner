@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AuraClippedCondition } from '../../../../../core/models/rulebook.models';
+import { AuraClippedCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { MOONFIRE, MOONFIRE_DOT, SHADOW_DANCE } from '../../../../../../testing/spell-ids';
 import { cast, applyDebuff, refreshDebuff, buffWindow } from '../../../../../../testing/builders/events';
 import { band, judged, ruleCtx } from '../rule-fixtures';

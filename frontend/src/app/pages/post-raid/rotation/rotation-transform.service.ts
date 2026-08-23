@@ -2,16 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { DataFileApiService } from '../../../core/data-files/data-file-api';
 import { TopParseSelection } from '../../../core/wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../core/models/rulebook.models';
-import { PerCdBenchmark } from '../../../core/models/encounter.models';
+import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../domain/rulebook/rulebook.models';
+import { PerCdBenchmark } from '../../../domain/encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
   round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
-} from '../../../shared/analysis/analysis-math';
-import { HoldWindow, detectHoldWindows } from '../../../shared/analysis/hold-targets';
-import { buildCadenceBenchmark } from '../../../shared/analysis/cast-cadence';
-import { TimedEvent, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../shared/analysis/bench-pipeline';
+} from '../../../domain/analysis/analysis-math';
+import { HoldWindow, detectHoldWindows } from '../../../domain/analysis/hold-targets';
+import { buildCadenceBenchmark } from '../../../domain/analysis/cast-cadence';
+import { TimedEvent, relativeS, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { Result } from '../../../core/http/result';
 import {

@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { EncounterPositions } from '../../../core/models/positioning.models';
+import { EncounterPositions } from '../../../domain/encounter/positioning.models';
 import { ActorTimeline } from './map.service';
 import {
   positionAt, toReferenceLocal, rowsToTimeline, playerRowsToTimeline,

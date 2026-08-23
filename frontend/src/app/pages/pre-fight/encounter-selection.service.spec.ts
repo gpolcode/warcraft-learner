@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DataFileApiService } from '../../core/data-files/data-file-api';
-import { EncounterEntry } from '../../core/models/encounter.models';
+import { EncounterEntry } from '../../domain/encounter/encounter.models';
 import { Result, ok } from '../../core/http/result';
 import { EncounterSelectionService } from './encounter-selection.service';
 

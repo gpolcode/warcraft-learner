@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { WindowComparisonComponent } from '../../../shared/components/window-comparison/window-comparison';
 import { LoadStateComponent } from '../../../shared/components/load-state/load-state';
-import { ClipAnchor } from '../../../core/models/capture.models';
+import { ClipAnchor } from '../../../domain/capture/capture.models';
 import { loadResource } from '../../../shared/state/load-resource';
 import { BurstFeatureService, BurstMapAnchor } from './burst.service';
 

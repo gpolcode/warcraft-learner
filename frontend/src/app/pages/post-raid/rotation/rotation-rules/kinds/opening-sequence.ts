@@ -1,6 +1,6 @@
-import { round } from '../../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../../core/models/analysis.models';
-import { OpeningSequenceCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
+import { round } from '../../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analysis/analysis.models';
+import { OpeningSequenceCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
 import { RuleContext, castCount } from '../rule-context';
 import { KindSpec, RuleBand, RuleJudging, SECONDS, bandLimits, withBand } from '../engine-core';
 

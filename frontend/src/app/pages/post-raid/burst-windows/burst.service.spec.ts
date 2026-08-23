@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
+import { BurstWindow, PlayerBurstWindow } from '../../../domain/analysis/analysis.models';
 import { Result, ok, missing } from '../../../core/http/result';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { sliceService } from '../../../../testing/service-harness';
@@ -10,7 +10,7 @@ import {
 import { wclReport } from '../../../../testing/builders/wcl-fixtures';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../testing/spell-ids';
 import { cast, damage } from '../../../../testing/builders/events';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;

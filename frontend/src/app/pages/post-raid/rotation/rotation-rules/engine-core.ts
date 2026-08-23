@@ -1,6 +1,6 @@
-import { round } from '../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../core/models/analysis.models';
-import { RulebookRule, RuleCondition, RuleSeverity } from '../../../../core/models/rulebook.models';
+import { round } from '../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../domain/analysis/analysis.models';
+import { RulebookRule, RuleCondition, RuleSeverity } from '../../../../domain/rulebook/rulebook.models';
 import { RuleContext } from './rule-context';
 
 /** Cap on a finding's occurrence strip - a fight can carry far more casts than a chip row should render. */

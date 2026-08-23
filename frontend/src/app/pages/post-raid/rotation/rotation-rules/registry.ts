@@ -1,4 +1,4 @@
-import { RuleCondition } from '../../../../core/models/rulebook.models';
+import { RuleCondition } from '../../../../domain/rulebook/rulebook.models';
 import { KindSpec } from './engine-core';
 import { CAST_WITHOUT_PRIOR_KIND } from './kinds/cast-without-prior';
 import { HOLD_COOLDOWN_FOR_ANCHOR_KIND } from './kinds/hold-cooldown-for-anchor';

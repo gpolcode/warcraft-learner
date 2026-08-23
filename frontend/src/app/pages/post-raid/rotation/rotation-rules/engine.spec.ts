@@ -3,7 +3,7 @@ import {
   RulebookRule, RuleSeverity,
   CastWithoutPriorCondition, AuraUptimeBelowCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, SpendAtStacksCondition,
-} from '../../../../core/models/rulebook.models';
+} from '../../../../domain/rulebook/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
   LIGHTNING_BOLT, MAELSTROM_WEAPON,

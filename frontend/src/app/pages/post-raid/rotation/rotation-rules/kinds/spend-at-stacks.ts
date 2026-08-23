@@ -1,6 +1,6 @@
-import { AnalysisFinding } from '../../../../../core/models/analysis.models';
-import { SpendAtStacksCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
-import { stacksAt } from '../../../../../shared/analysis/aura-windows';
+import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
+import { SpendAtStacksCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
+import { stacksAt } from '../../../../../domain/analysis/aura-windows';
 import { RuleContext, suspendedAt } from '../rule-context';
 import {
   KindSpec, RuleBand, RuleJudging, Scale, WHOLE_STEPS, rawCountScale, withBand,

@@ -1,6 +1,6 @@
-import { round } from '../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../core/models/analysis.models';
-import { RuleSeverity } from '../../../../core/models/rulebook.models';
+import { round } from '../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../domain/analysis/analysis.models';
+import { RuleSeverity } from '../../../../domain/rulebook/rulebook.models';
 import { PERCENT, RuleBand, RuleJudging, bandLimits, outOfBand, sampleOccurrences } from './engine-core';
 
 /** Shared by both filler kinds so the two can only differ in their gate. */

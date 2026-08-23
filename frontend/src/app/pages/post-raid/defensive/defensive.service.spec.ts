@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
-import { PlayerDefensive } from '../../../core/models/analysis.models';
-import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
+import { PlayerDefensive } from '../../../domain/analysis/analysis.models';
+import { PerDefensiveBenchmark } from '../../../domain/encounter/encounter.models';
 import {
   analyzeDefensives, analyzeDefensiveFindings,
   buildDefensiveUsageWindows, analyzeOneDefensive,

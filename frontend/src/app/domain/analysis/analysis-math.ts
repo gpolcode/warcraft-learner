@@ -1,6 +1,6 @@
 /** Generic, cross-slice analysis math + formatting helpers that several slices import instead of re-declaring. */
 import { deviation, least, mean, median, pairs } from 'd3-array';
-import { AnalysisFinding } from '../../core/models/analysis.models';
+import { AnalysisFinding } from './analysis.models';
 
 /** Round to `decimals` places (default 1). d3-array has no rounding helper. */
 export function round(value: number, decimals = 1): number {

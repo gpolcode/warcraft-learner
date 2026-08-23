@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { AnalysisFinding } from '../../../core/models/analysis.models';
+import { AnalysisFinding } from '../../../domain/analysis/analysis.models';
 import { SHADOW_BLADES, SECRET_TECHNIQUE, VANISH } from '../../../../testing/spell-ids';
 import {
   bucketRotationFindings,

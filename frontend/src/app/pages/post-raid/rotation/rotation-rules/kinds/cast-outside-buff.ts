@@ -1,7 +1,7 @@
-import { round } from '../../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../../core/models/analysis.models';
-import { CastOutsideBuffCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
-import { auraUpAt } from '../../../../../shared/analysis/aura-windows';
+import { round } from '../../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analysis/analysis.models';
+import { CastOutsideBuffCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
+import { auraUpAt } from '../../../../../domain/analysis/aura-windows';
 import { RuleContext, castCount } from '../rule-context';
 import {
   KindSpec, PERCENT, RuleBand, RuleJudging,

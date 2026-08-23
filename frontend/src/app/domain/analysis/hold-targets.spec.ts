@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import {
   HOLD_BAND_MIN_S, HoldWindowSource, buildHoldTargets, detectHoldWindows, holdSuggestionFindings,
 } from './hold-targets';
-import { CdHoldTargets } from '../../core/models/encounter.models';
+import { CdHoldTargets } from '../encounter/encounter.models';
 
 describe('detectHoldWindows', () => {
   const EFFECTIVE_CD_S = 90;

@@ -1,5 +1,5 @@
-import { AnalysisFinding } from '../../../../../core/models/analysis.models';
-import { CastAtTargetCountCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
+import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
+import { CastAtTargetCountCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
 import { DamageRow, RuleContext } from '../rule-context';
 import { KindSpec, RuleBand, RuleJudging, WHOLE_STEPS, withBand } from '../engine-core';
 import { evaluateBoundedPerCast } from '../bounded-per-cast';

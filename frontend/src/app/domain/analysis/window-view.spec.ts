@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
-import { BurstWindow, PlayerBurstWindow } from '../../core/models/analysis.models';
-import { RangeRow } from '../../core/models/window-comparison.models';
+import { BurstWindow, PlayerBurstWindow } from './analysis.models';
+import { RangeRow } from './window-comparison.models';
 import { AbilityIcons, withRelativeS } from './wcl-projections';
 import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from './window-view';
 import { cast, damage } from '../../../testing/builders/events';

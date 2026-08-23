@@ -2,13 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { DataFileApiService } from '../../../core/data-files/data-file-api';
 import { TopParseSelection } from '../../../core/wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive } from '../../../core/models/rulebook.models';
-import { BurstWindow } from '../../../core/models/analysis.models';
+import { RulebookCooldown, RulebookDefensive } from '../../../domain/rulebook/rulebook.models';
+import { BurstWindow } from '../../../domain/analysis/analysis.models';
 import { Result } from '../../../core/http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
-import { round, groupByTime, getOrInsert } from '../../../shared/analysis/analysis-math';
-import { TimedEvent, normalizeAbilityId, relativeS, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../shared/analysis/bench-pipeline';
+import { round, groupByTime, getOrInsert } from '../../../domain/analysis/analysis-math';
+import { TimedEvent, normalizeAbilityId, relativeS, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 

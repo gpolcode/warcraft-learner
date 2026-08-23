@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { detectBloodlust } from './rotation-bloodlust';
 import { BLOODLUST } from '../../../../testing/spell-ids';
 import { applyBuff, removeBuff } from '../../../../testing/builders/events';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed = withRelativeS;

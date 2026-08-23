@@ -1,6 +1,6 @@
 import { quantile } from 'd3-array';
-import { AnalysisFinding } from '../../../../core/models/analysis.models';
-import { RulebookRule, RuleCondition, RuleSeverity } from '../../../../core/models/rulebook.models';
+import { AnalysisFinding } from '../../../../domain/analysis/analysis.models';
+import { RulebookRule, RuleCondition, RuleSeverity } from '../../../../domain/rulebook/rulebook.models';
 import { RuleContext } from './rule-context';
 import {
   BenchedRule, RuleBand, RuleDomain, RuleJudging, RuleSample, RuleStream, outOfBand,

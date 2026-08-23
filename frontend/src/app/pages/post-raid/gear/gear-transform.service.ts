@@ -1,16 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { CharacterGear, ParseRanking, TopParseSelection } from '../../../core/wcl/wcl.models';
-import { EncounterGearStats } from '../../../core/models/encounter.models';
+import { EncounterGearStats } from '../../../domain/encounter/encounter.models';
 import { logWarn } from '../../../core/observability/log';
 import { Result } from '../../../core/http/result';
 import { GameNames, TRINKET_SLOTS, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
-import { talentKeyFromTree } from '../../../shared/gear/talent-key';
-import { buildTalentDiff } from '../../../shared/gear/gear-comparison';
+import { talentKeyFromTree } from '../../../domain/gear/talent-key';
+import { buildTalentDiff } from '../../../domain/gear/gear-comparison';
 import { TalentDataService } from '../../../core/http/talent-data';
-import { SpecTalents } from '../../../core/models/talent.models';
-import { getOrInsert } from '../../../shared/analysis/analysis-math';
-import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { SpecTalents } from '../../../domain/gear/talent.models';
+import { getOrInsert } from '../../../domain/analysis/analysis-math';
+import { BenchParse, benchFromTopParses } from '../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { GearBench } from './gear-data-source';
 

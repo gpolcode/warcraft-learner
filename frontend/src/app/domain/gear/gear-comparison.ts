@@ -1,6 +1,6 @@
 import { CharacterGear } from '../../core/wcl/wcl.models';
-import { EncounterGearStats } from '../../core/models/encounter.models';
-import { SpecTalents, TalentEntry, TalentDiff } from '../../core/models/talent.models';
+import { EncounterGearStats } from '../encounter/encounter.models';
+import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick, parseTalentKey } from './talent-key';
 
 export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';

@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { CastWithoutPriorCondition } from '../../../../../core/models/rulebook.models';
+import { CastWithoutPriorCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../testing/builders/events';
 import {

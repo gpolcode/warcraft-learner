@@ -1,9 +1,9 @@
-import { getOrInsert } from '../../../../shared/analysis/analysis-math';
-import { TimedEvent, targetKey } from '../../../../shared/analysis/wcl-projections';
+import { getOrInsert } from '../../../../domain/analysis/analysis-math';
+import { TimedEvent, targetKey } from '../../../../domain/analysis/wcl-projections';
 import {
   AuraWindows, AuraSpansByTarget, StackTimeline,
   buildAuraWindows, buildStackTimeline, buildAuraSpansByTarget, auraUpAt,
-} from '../../../../shared/analysis/aura-windows';
+} from '../../../../domain/analysis/aura-windows';
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster. */
 export const RESOURCE_ACTOR_SOURCE = 1;

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mountVm } from '../../../../testing/component-harness';
 import { FindingOccurrencesComponent } from './finding-occurrences';
-import type { FindingOccurrence } from '../../../core/models/analysis.models';
+import type { FindingOccurrence } from '../../../domain/analysis/analysis.models';
 
 function occ(over: Partial<FindingOccurrence> = {}): FindingOccurrence {
   return { ok: true, label: 'x', detail: 'detail', ...over };

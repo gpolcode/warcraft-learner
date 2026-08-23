@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { DataFileApiService } from '../../../core/data-files/data-file-api';
 import { TopParseSelection } from '../../../core/wcl/wcl.models';
-import { Rulebook } from '../../../core/models/rulebook.models';
+import { Rulebook } from '../../../domain/rulebook/rulebook.models';
 import { Result } from '../../../core/http/result';
-import { round } from '../../../shared/analysis/analysis-math';
-import { TimedEvent, abilityIcons, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses } from '../../../shared/analysis/bench-pipeline';
+import { round } from '../../../domain/analysis/analysis-math';
+import { TimedEvent, abilityIcons, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { BenchParse, benchFromTopParses } from '../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 

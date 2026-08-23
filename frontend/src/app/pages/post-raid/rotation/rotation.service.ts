@@ -1,21 +1,21 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
-import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
-import { PerCdBenchmark } from '../../../core/models/encounter.models';
-import { RulebookCooldown } from '../../../core/models/rulebook.models';
+import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../domain/analysis/analysis.models';
+import { PerCdBenchmark } from '../../../domain/encounter/encounter.models';
+import { RulebookCooldown } from '../../../domain/rulebook/rulebook.models';
 import { logWarn } from '../../../core/observability/log';
 import { Result, ok } from '../../../core/http/result';
-import { holdSuggestionFindings } from '../../../shared/analysis/hold-targets';
+import { holdSuggestionFindings } from '../../../domain/analysis/hold-targets';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
-} from '../../../shared/analysis/analysis-math';
+} from '../../../domain/analysis/analysis-math';
 import {
   CadenceVoice, cadencePlanUsage, checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,
-} from '../../../shared/analysis/cast-cadence';
+} from '../../../domain/analysis/cast-cadence';
 import { CAT_LABEL } from '../../../shared/components/finding-table/finding-table.utils';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { PullContext, PullRef, analyzePull } from '../../../shared/analysis/pull-context';
+import { AbilityIcons, TimedEvent, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { PullContext, PullRef, analyzePull } from '../../../domain/analysis/pull-context';
 import {
   buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
 } from './rotation-rules';

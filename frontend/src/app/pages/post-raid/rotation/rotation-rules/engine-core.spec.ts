@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { CastAtTargetCountCondition, ResourceAtCastCondition } from '../../../../core/models/rulebook.models';
+import { CastAtTargetCountCondition, ResourceAtCastCondition } from '../../../../domain/rulebook/rulebook.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../testing/builders/events';
 import { COMBO_POINT_TYPE, MAX_COMBO_POINTS, band, judged, ruleCtx } from './rule-fixtures';

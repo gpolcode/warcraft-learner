@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CastOutsideBuffCondition } from '../../../../../core/models/rulebook.models';
+import { CastOutsideBuffCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../testing/spell-ids';
 import { cast, buffWindow, removeBuff } from '../../../../../../testing/builders/events';
 import {

@@ -6,7 +6,7 @@ import { logWarn } from '../../../core/observability/log';
 import { parseJson } from '../../../core/validation/json';
 import { Result, ok, permanent } from '../../../core/http/result';
 import { toLoadError } from '../../../core/http/http-load-error';
-import { TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { TimedEvent, withRelativeS } from '../../../domain/analysis/wcl-projections';
 
 type PullResult = 'kill' | 'wipe';
 

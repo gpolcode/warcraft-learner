@@ -6,7 +6,7 @@ import { CompactAbilityRowComponent } from '../compact-ability-row/compact-abili
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../pipes/format-damage-pipe';
 import { SignedPercentPipe } from '../../pipes/signed-percent-pipe';
-import { RangeRow, ComparisonWindow } from '../../../core/models/window-comparison.models';
+import { RangeRow, ComparisonWindow } from '../../../domain/analysis/window-comparison.models';
 
 type TimelineCell =
   | { readonly kind: 'window'; readonly index: number; readonly window: ComparisonWindow }

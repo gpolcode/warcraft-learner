@@ -1,7 +1,7 @@
 import { deviation, median, rollup } from 'd3-array';
 import { round, fmtClock } from './analysis-math';
-import { CdHoldTargets } from '../../core/models/encounter.models';
-import { AnalysisFinding } from '../../core/models/analysis.models';
+import { CdHoldTargets } from '../encounter/encounter.models';
+import { AnalysisFinding } from './analysis.models';
 
 /** A gap beyond this past the expected on-cooldown time counts as a deliberate hold. */
 const HOLD_THRESHOLD_S = 8.0;

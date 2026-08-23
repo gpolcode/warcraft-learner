@@ -14,7 +14,7 @@ import { MatCardModule } from '@angular/material/card';
 import { WclApiService } from '../../core/wcl/wcl-api';
 import { LiveReportSyncService, POLL_INTERVAL_S } from '../../core/wcl/live-report-sync';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY } from '../../core/wcl/wcl.models';
-import { ClipAnchor } from '../../core/models/capture.models';
+import { ClipAnchor } from '../../domain/capture/capture.models';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../shared/components/bench-empty-banner/bench-empty-banner';
 import { PullOverviewComponent } from './pull-overview/pull-overview';

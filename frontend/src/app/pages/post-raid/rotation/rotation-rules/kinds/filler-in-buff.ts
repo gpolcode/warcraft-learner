@@ -1,6 +1,6 @@
-import { AnalysisFinding } from '../../../../../core/models/analysis.models';
-import { FillerInBuffCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
-import { auraAlreadyUpAt } from '../../../../../shared/analysis/aura-windows';
+import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
+import { FillerInBuffCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
+import { auraAlreadyUpAt } from '../../../../../domain/analysis/aura-windows';
 import { RuleContext, suspendedAt } from '../rule-context';
 import { KindSpec, PERCENT, RuleBand, RuleJudging, bandLimits, withBand } from '../engine-core';
 import { FillerSplit, fillerFinding, fillerOccurrences, fillerShare, splitFillers } from '../filler-choice';

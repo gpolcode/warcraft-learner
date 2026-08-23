@@ -1,6 +1,6 @@
-import { round } from '../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../core/models/analysis.models';
-import { RuleSeverity } from '../../../../core/models/rulebook.models';
+import { round } from '../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../domain/analysis/analysis.models';
+import { RuleSeverity } from '../../../../domain/rulebook/rulebook.models';
 import {
   RuleBand, RuleJudging, Scale,
   bandLimits, exceedsTolerance, outOfBand, sampleOccurrences,

@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../../core/wcl/wcl-api';
-import { BurstWindow, PlayerBurstWindow } from '../../../core/models/analysis.models';
-import { WindowStatus } from '../../../core/models/window-comparison.models';
-import { ClipAnchor } from '../../../core/models/capture.models';
+import { BurstWindow, PlayerBurstWindow } from '../../../domain/analysis/analysis.models';
+import { WindowStatus } from '../../../domain/analysis/window-comparison.models';
+import { ClipAnchor } from '../../../domain/capture/capture.models';
 import { Result, ok } from '../../../core/http/result';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../shared/analysis/wcl-projections';
-import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../shared/analysis/window-view';
-import { PullContext, PullRef, analyzePull } from '../../../shared/analysis/pull-context';
+import { AbilityIcons, TimedEvent, withRelativeS } from '../../../domain/analysis/wcl-projections';
+import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../domain/analysis/window-view';
+import { PullContext, PullRef, analyzePull } from '../../../domain/analysis/pull-context';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 
 export interface BurstMapAnchor {

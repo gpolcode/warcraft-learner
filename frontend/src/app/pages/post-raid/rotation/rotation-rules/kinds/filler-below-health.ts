@@ -1,6 +1,6 @@
-import { AnalysisFinding } from '../../../../../core/models/analysis.models';
-import { FillerBelowHealthCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
-import { TimedEvent, targetKey } from '../../../../../shared/analysis/wcl-projections';
+import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
+import { FillerBelowHealthCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
+import { TimedEvent, targetKey } from '../../../../../domain/analysis/wcl-projections';
 import { HealthRow, RuleContext, suspendedAt } from '../rule-context';
 import { KindSpec, PERCENT, RuleBand, RuleJudging, bandLimits, withBand } from '../engine-core';
 import { FillerSplit, fillerFinding, fillerOccurrences, fillerShare, splitFillers } from '../filler-choice';

@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../core/data-source/data-source';
-import { BurstWindow } from '../../../core/models/analysis.models';
-import { BenchHeader } from '../../../shared/analysis/bench-pipeline';
+import { BurstWindow } from '../../../domain/analysis/analysis.models';
+import { BenchHeader } from '../../../domain/analysis/bench-pipeline';
 
 export interface BurstBench extends BenchHeader {
   windows: BurstWindow[];

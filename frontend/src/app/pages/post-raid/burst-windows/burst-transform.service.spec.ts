@@ -10,7 +10,7 @@ import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
   RUPTURE, VANISH, SECRET_TECHNIQUE, SHADOW_DANCE,
 } from '../../../../testing/spell-ids';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { cast, damage } from '../../../../testing/builders/events';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../testing/builders/wcl-fixtures';

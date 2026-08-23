@@ -1,13 +1,13 @@
 // Self-containment exception (blessed by CLAUDE.md): this slice MAY import the cross-slice `shared/gear/gear-comparison.ts`.
 import { Injectable, inject } from '@angular/core';
 import { CharacterGear, WclCombatantInfo } from '../../../core/wcl/wcl.models';
-import { EncounterGearStats } from '../../../core/models/encounter.models';
+import { EncounterGearStats } from '../../../domain/encounter/encounter.models';
 import { WclApiService } from '../../../core/wcl/wcl-api';
 import { logWarn } from '../../../core/observability/log';
 import { Result, ok, permanent } from '../../../core/http/result';
 import { toLoadError } from '../../../core/http/http-load-error';
 import { GameNames, extractGear, fillGameNames, selectCombatantInfo } from './gear-extract';
-import { talentKeyFromTree } from '../../../shared/gear/talent-key';
+import { talentKeyFromTree } from '../../../domain/gear/talent-key';
 import {
   GearStatus,
   buildEnchantRows, enchantStatusOf, EnchantRow,
@@ -15,7 +15,7 @@ import {
   buildTalentBuilds, talentStatusOf, TalentBuildRow,
   buildBenchEnchantRows, BenchEnchantRow,
   buildBenchTrinketRows, BenchTrinketRow,
-} from '../../../shared/gear/gear-comparison';
+} from '../../../domain/gear/gear-comparison';
 import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 
 export interface GearComparisonView {

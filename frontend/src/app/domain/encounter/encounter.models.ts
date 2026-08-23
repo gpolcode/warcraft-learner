@@ -1,4 +1,4 @@
-import { TalentDiff } from './talent.models';
+import { TalentDiff } from '../gear/talent.models';
 
 export interface SpecEntry {
   spec: string;

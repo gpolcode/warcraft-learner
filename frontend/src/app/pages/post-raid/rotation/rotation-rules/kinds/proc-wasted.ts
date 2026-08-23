@@ -1,6 +1,6 @@
-import { round } from '../../../../../shared/analysis/analysis-math';
-import { AnalysisFinding, FindingOccurrence } from '../../../../../core/models/analysis.models';
-import { ProcWastedCondition, RuleSeverity } from '../../../../../core/models/rulebook.models';
+import { round } from '../../../../../domain/analysis/analysis-math';
+import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analysis/analysis.models';
+import { ProcWastedCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
 import { RuleContext } from '../rule-context';
 import {
   KindSpec, PERCENT, RuleBand, RuleJudging,

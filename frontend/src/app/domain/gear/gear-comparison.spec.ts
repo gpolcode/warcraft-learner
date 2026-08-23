@@ -7,8 +7,8 @@ import {
   buildTalentDiff,
   talentStatusOf,
 } from './gear-comparison';
-import { SpecTalents } from '../../core/models/talent.models';
-import { EncounterGearStats } from '../../core/models/encounter.models';
+import { SpecTalents } from './talent.models';
+import { EncounterGearStats } from '../encounter/encounter.models';
 import { CharacterGear } from '../../core/wcl/wcl.models';
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {

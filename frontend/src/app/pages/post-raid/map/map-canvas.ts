@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { ReferenceSelector } from '../../../core/models/positioning.models';
+import { ReferenceSelector } from '../../../domain/encounter/positioning.models';
 import { FormatDurationPipe } from '../../../shared/pipes/format-duration-pipe';
 import { LoadStateComponent, RenderableLoadError } from '../../../shared/components/load-state/load-state';
 import { MapFeatureService, listReferenceEnemies } from './map.service';

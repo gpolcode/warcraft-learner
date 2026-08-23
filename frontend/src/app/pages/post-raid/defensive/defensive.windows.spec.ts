@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../../../core/models/analysis.models';
+import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../../../domain/analysis/analysis.models';
 import {
   computePlayerDefensiveWindows,
   defensiveWindowStatus, defensiveMapAnchor, defensiveClipAnchor, defensiveFindingClipAnchor, buildDefensiveWindows,

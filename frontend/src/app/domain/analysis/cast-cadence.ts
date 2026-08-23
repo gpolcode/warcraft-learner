@@ -1,5 +1,5 @@
-import { AnalysisFinding } from '../../core/models/analysis.models';
-import { CadenceBenchmark } from '../../core/models/encounter.models';
+import { AnalysisFinding } from './analysis.models';
+import { CadenceBenchmark } from '../encounter/encounter.models';
 import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove } from './analysis-math';
 import { HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets } from './hold-targets';
 

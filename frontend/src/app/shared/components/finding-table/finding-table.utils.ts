@@ -1,4 +1,4 @@
-import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../core/models/analysis.models';
+import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../domain/analysis/analysis.models';
 import { logWarn } from '../../../core/observability/log';
 
 export const UNKNOWN_COOLDOWN_LABEL = 'Unknown cooldown';

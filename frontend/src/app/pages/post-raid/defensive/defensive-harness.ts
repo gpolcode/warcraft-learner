@@ -1,6 +1,6 @@
-import { PerDefensiveBenchmark } from '../../../core/models/encounter.models';
+import { PerDefensiveBenchmark } from '../../../domain/encounter/encounter.models';
 import { CLOAK_OF_SHADOWS } from '../../../../testing/spell-ids';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { DefensiveBench } from './defensive-data-source';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */

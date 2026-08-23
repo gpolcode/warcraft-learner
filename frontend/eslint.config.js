@@ -14,6 +14,7 @@ const local = {
 const architectureLayers = [
   { type: 'testing', pattern: 'src/testing', partialMatch: false },
   { type: 'environments', pattern: 'src/environments', partialMatch: false },
+  { type: 'domain', pattern: 'src/app/domain', partialMatch: false },
   { type: 'ingest', pattern: 'src/app/ingest', partialMatch: false },
   { type: 'core', pattern: 'src/app/core', partialMatch: false },
   { type: 'shared', pattern: 'src/app/shared', partialMatch: false },
@@ -27,15 +28,16 @@ const to = (...types) => types.map((type) => ({ to: { element: { type } } }));
 
 // Last match wins: moving the Pull Overview exception above the general slice policy disables it.
 const layerPolicies = [
-  { from: [{ element: { type: 'core' } }], allow: to('environments', 'testing') },
-  { from: [{ element: { type: 'shared' } }], allow: to('core', 'testing') },
-  { from: [{ element: { type: 'slice' } }], allow: to('core', 'shared', 'testing') },
-  { from: [{ element: { type: 'page' } }], allow: to('core', 'shared', 'slice', 'testing') },
-  { from: [{ element: { type: 'ingest' } }], allow: to('core', 'shared', 'slice', 'testing') },
+  { from: [{ element: { type: 'domain' } }], allow: to('core', 'testing') },
+  { from: [{ element: { type: 'core' } }], allow: to('domain', 'environments', 'testing') },
+  { from: [{ element: { type: 'shared' } }], allow: to('domain', 'core', 'testing') },
+  { from: [{ element: { type: 'slice' } }], allow: to('domain', 'core', 'shared', 'testing') },
+  { from: [{ element: { type: 'page' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
+  { from: [{ element: { type: 'ingest' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
   { from: [{ element: { type: 'app-root' } }], allow: to('core', 'shared', 'page', 'environments') },
   { from: [{ element: { type: 'environments' } }], allow: to('core', 'slice', 'ingest') },
   { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root') },
-  { from: [{ element: { type: 'testing' } }], allow: to('core') },
+  { from: [{ element: { type: 'testing' } }], allow: to('domain', 'core') },
   {
     from: [{ element: { type: 'slice', captured: { sliceName: 'pull-overview' } } }],
     allow: [{ to: { element: { type: 'slice', captured: { sliceName: 'map' } } } }],
@@ -102,10 +104,8 @@ const functionalCoreFiles = [
   'src/app/core/validation/**/*.ts',
   'src/app/core/observability/**/*.ts',
   'src/app/core/http/result.ts',
-  'src/app/core/models/**/*.ts',
+  'src/app/domain/**/*.ts',
   'src/app/shared/*.ts',
-  'src/app/shared/analysis/**/*.ts',
-  'src/app/shared/gear/**/*.ts',
   'src/app/ingest/*.ts',
   'src/app/ingest/models/**/*.ts',
   // A slice's own folder holds its Angular components and services; only its subfolders are pure math.

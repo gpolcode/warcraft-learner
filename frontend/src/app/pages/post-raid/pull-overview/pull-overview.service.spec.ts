@@ -7,7 +7,7 @@ import {
   PullOverviewFeatureService,
   dpsFromTable, abilityNameMap, buildDeathRows, wipeTimeS,
 } from './pull-overview.service';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { wclReport } from '../../../../testing/builders/wcl-fixtures';
 
 const PLAYER_ID = 5;

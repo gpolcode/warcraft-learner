@@ -1,7 +1,7 @@
 import { assert } from 'vitest';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
+import { EncounterEntry, SpecEntry } from '../../domain/encounter/encounter.models';
 import { SpecMeta } from '../../core/data-files/spec-meta.models';
 import { Result, ok } from '../../core/http/result';
 import { mapFeatureStub, stubBenchTokens } from '../../../testing/page-stubs';

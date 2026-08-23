@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { GameIconComponent } from '../game-icon/game-icon';
 import { FormatDamagePipe } from '../../pipes/format-damage-pipe';
-import { RangeRow } from '../../../core/models/window-comparison.models';
+import { RangeRow } from '../../../domain/analysis/window-comparison.models';
 
 export type RowStatus = 'success' | 'warning' | 'critical' | 'muted';
 

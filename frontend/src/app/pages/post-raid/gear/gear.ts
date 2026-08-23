@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { GameIconComponent } from '../../../shared/components/game-icon/game-icon';
 import { CollapsibleTextComponent } from '../../../shared/components/collapsible-text/collapsible-text';
 import { LoadStateComponent } from '../../../shared/components/load-state/load-state';
-import { slotName, statusIcon } from '../../../shared/gear/gear-comparison';
+import { slotName, statusIcon } from '../../../domain/gear/gear-comparison';
 import { loadResource } from '../../../shared/state/load-resource';
 import { GearFeatureService, emptyGearView } from './gear.service';
 

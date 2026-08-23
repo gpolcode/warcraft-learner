@@ -8,8 +8,8 @@ import { WCL_TRANSPORT } from '../../core/wcl/wcl-transport';
 import { SpecMetaService } from '../../core/data-files/spec-meta';
 import { logWarn } from '../../core/observability/log';
 import { type LoadError } from '../../core/http/result';
-import { resolveTopParses } from '../../shared/analysis/top-parse-selection';
-import type { EncounterEntry, SpecEntry } from '../../core/models/encounter.models';
+import { resolveTopParses } from '../../domain/analysis/top-parse-selection';
+import type { EncounterEntry, SpecEntry } from '../../domain/encounter/encounter.models';
 import type { TopParseSelection } from '../../core/wcl/wcl.models';
 import { sliceRegistry, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
 import {

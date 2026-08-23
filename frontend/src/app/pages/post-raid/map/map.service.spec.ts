@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent, WclFight } from '../../../core/wcl/wcl.models';
-import { EncounterPositions } from '../../../core/models/positioning.models';
+import { EncounterPositions } from '../../../domain/encounter/positioning.models';
 import { Result, ok, missing, transient } from '../../../core/http/result';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 import { DataSource } from '../../../core/data-source/data-source';
@@ -10,7 +10,7 @@ import {
   MapFeatureService, buildActorTimelines, listReferenceEnemies, buildLiveOverlay, resolveLiveReference,
   FACING_OFFSET_RAD,
 } from './map.service';
-import { withRelativeS } from '../../../shared/analysis/wcl-projections';
+import { withRelativeS } from '../../../domain/analysis/wcl-projections';
 import { whenStable } from '../../../../testing/when-stable';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
