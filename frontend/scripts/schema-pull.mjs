@@ -55,5 +55,5 @@ const output = await codegen({
   pluginMap: { 'typescript-operations': typescriptOperations },
 });
 
-await writeFile(TARGET, output.replace(/\n{3,}/g, '\n\n').replace(/^\n+/, ''));
+await writeFile(TARGET, output.replace(/\n{3,}/g, '\n\n').replace(/^\n+/, '').replace(/\n+$/, '\n'));
 console.log(`Wrote ${SDL} and ${TARGET}`);

@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         <span class="text-sm">{{ message() }}</span>
       }
     </div>
-  `,
+`,
 })
 export class LoadingSpinner {
   readonly message = input<string>('');

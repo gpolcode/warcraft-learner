@@ -15,4 +15,3 @@ export function provideFileDataSource<T>(token: InjectionToken<DataSource<T>>, s
 export function provideLiveDataSource<T>(token: InjectionToken<DataSource<T>>, liveImpl: Type<DataSource<T>>): Provider {
   return { provide: token, useExisting: liveImpl };
 }
-
