@@ -6,9 +6,14 @@ import angular from 'angular-eslint';
 import boundaries from 'eslint-plugin-boundaries';
 import singleLineComment from './eslint-rules/single-line-comment.js';
 import bannedCharacters from './eslint-rules/banned-characters.js';
+import pathConventions from './eslint-rules/path-conventions.js';
 
 const local = {
-  rules: { 'single-line-comment': singleLineComment, 'banned-characters': bannedCharacters },
+  rules: {
+    'single-line-comment': singleLineComment,
+    'banned-characters': bannedCharacters,
+    'path-conventions': pathConventions,
+  },
 };
 
 const architectureLayers = [
@@ -122,6 +127,7 @@ export default defineConfig([
       ],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
+      'local/path-conventions': 'error',
     },
   },
   {
@@ -276,6 +282,7 @@ export default defineConfig([
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
+      'local/path-conventions': 'error',
     },
   },
 ]);
