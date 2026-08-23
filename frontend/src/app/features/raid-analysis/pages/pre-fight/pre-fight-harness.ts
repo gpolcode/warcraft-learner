@@ -16,7 +16,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { EncounterSelectionService } from './encounter-selection-service';
-import { PreFightComponent } from './pre-fight';
+import { PreFight } from './pre-fight';
 
 // A card cannot construct without its data source, so every slice the shell mounts one for is listed here.
 const SLICE_TOKENS = [
@@ -51,7 +51,7 @@ export const SPEC_SELECT = 1;
 export const ENCOUNTER_SELECT = 2;
 
 export interface PreFightPage {
-  readonly fixture: ComponentFixture<PreFightComponent>;
+  readonly fixture: ComponentFixture<PreFight>;
   selectCount(): number;
   options(index: number): string[];
   choose(index: number, optionText: string): void;
@@ -65,7 +65,7 @@ export interface PreFightPage {
 export function preFightPage(encounterSelection: Partial<EncounterSelectionService>): PreFightPage {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
-    imports: [PreFightComponent],
+    imports: [PreFight],
     providers: [
       provideZonelessChangeDetection(),
       { provide: EncounterSelectionService, useValue: encounterSelection as EncounterSelectionService },
@@ -84,7 +84,7 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
     ] as never[],
   });
 
-  const fixture = TestBed.createComponent(PreFightComponent);
+  const fixture = TestBed.createComponent(PreFight);
   fixture.detectChanges();
 
   const host = (): HTMLElement => fixture.nativeElement as HTMLElement;

@@ -7,7 +7,7 @@ import { WclFight, WclPlayer, WclReport } from '../../../../core/wcl/wcl.models'
 import { deferred } from '../../../../../testing/deferred';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
-import { PostRaidComponent } from './post-raid';
+import { PostRaid } from './post-raid';
 import { fight, player, postRaidProviders } from './post-raid-harness';
 
 interface PollHandle {
@@ -22,7 +22,7 @@ interface PollHandle {
   loadError: Signal<unknown>;
 }
 
-describe('PostRaidComponent live-sync poll', () => {
+describe('PostRaid live-sync poll', () => {
   const REPORT_A = 'report-a';
   const REPORT_B = 'report-b';
   const SELECTED_PULL_ID = 11;
@@ -45,7 +45,7 @@ describe('PostRaidComponent live-sync poll', () => {
       providers: [...postRaidProviders(wcl), LiveCaptureFeatureService],
     });
     // Construct viewless (the shell template needs feature data-source tokens this harness omits) and drive _pollOnce directly.
-    const comp = TestBed.runInInjectionContext(() => new PostRaidComponent()) as unknown as PollHandle & { _pollingSub: Subscription };
+    const comp = TestBed.runInInjectionContext(() => new PostRaid()) as unknown as PollHandle & { _pollingSub: Subscription };
     comp._pollingSub.unsubscribe();
     const liveCapture = TestBed.inject(LiveCaptureFeatureService);
     return { comp, wcl, liveCapture };

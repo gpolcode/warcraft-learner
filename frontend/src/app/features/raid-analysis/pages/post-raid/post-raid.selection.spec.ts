@@ -13,7 +13,7 @@ const REPORT_CODE = 'grBQ3vTHXAtPa4JK'; // a valid 16-character report code
 const REPORT_URL = `https://www.warcraftlogs.com/reports/${REPORT_CODE}`;
 const BOSS_ENCOUNTER_ID = 3176;
 
-describe('PostRaidComponent sticky player name', () => {
+describe('PostRaid sticky player name', () => {
   const ABSENT_STICKY_NAME = 'Ghost';                                     // a sticky character absent from the loaded report
   const FALLBACK_PLAYER = { id: 1, name: 'Anya', spec: 'SubtletyRogue' }; // alphabetically first -> the auto-select fallback
   const PICKED_PLAYER = { id: 2, name: 'Bram', spec: 'FrostMage' };       // the player the user explicitly switches to
@@ -73,7 +73,7 @@ describe('PostRaidComponent sticky player name', () => {
   });
 });
 
-describe('PostRaidComponent fight selection from URL', () => {
+describe('PostRaid fight selection from URL', () => {
   const EARLIER_FIGHT_ID = 10;
   const LATEST_FIGHT_ID = 12;
   // Distinct durations so each pull reads differently in the closed select.
@@ -129,7 +129,7 @@ describe('PostRaidComponent fight selection from URL', () => {
   });
 });
 
-describe('PostRaidComponent paste', () => {
+describe('PostRaid paste', () => {
   // Parks on the fetch: these tests assert what the paste handler reads, not what the load does with the report.
   function open() {
     const getReport = vi.fn(() => new Promise<WclReport>(() => undefined));
@@ -174,7 +174,7 @@ describe('PostRaidComponent paste', () => {
   });
 });
 
-describe('PostRaidComponent keystone fight', () => {
+describe('PostRaid keystone fight', () => {
   const RAID_MYTHIC_DIFFICULTY = 5;
   const MYTHIC_PLUS_DIFFICULTY = 10;
   const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: BOSS_ENCOUNTER_ID, difficulty: RAID_MYTHIC_DIFFICULTY };

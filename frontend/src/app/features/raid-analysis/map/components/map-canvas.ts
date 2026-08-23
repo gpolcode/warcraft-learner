@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
-import { LoadStateComponent, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
+import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { MapFeatureService, listReferenceEnemies } from '../facade/map-feature-service';
 import { MapDrawService, RelPos, ParseTimelines } from '../domain/map-draw';
 
@@ -19,10 +19,10 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadStateComponent],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadState],
   templateUrl: './map-canvas.html',
 })
-export class MapCanvasComponent {
+export class MapCanvas {
   private readonly mapDraw = inject(MapDrawService);
   private readonly map = inject(MapFeatureService);
 

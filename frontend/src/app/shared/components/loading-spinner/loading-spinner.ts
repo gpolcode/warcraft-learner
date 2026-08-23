@@ -14,6 +14,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     </div>
   `,
 })
-export class LoadingSpinnerComponent {
+export class LoadingSpinner {
   readonly message = input<string>('');
 }

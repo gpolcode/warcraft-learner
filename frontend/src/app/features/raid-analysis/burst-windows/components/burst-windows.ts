@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { WindowComparisonComponent } from '../../../../shared/components/window-comparison/window-comparison';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { WindowComparison } from '../../../../shared/components/window-comparison/window-comparison';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { BurstFeatureService, BurstMapAnchor } from '../facade/burst-feature-service';
@@ -8,10 +8,10 @@ import { BurstFeatureService, BurstMapAnchor } from '../facade/burst-feature-ser
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-burst-windows',
-  imports: [WindowComparisonComponent, LoadStateComponent],
+  imports: [WindowComparison, LoadState],
   templateUrl: './burst-windows.html',
 })
-export class BurstWindowsComponent {
+export class BurstWindows {
   private readonly burst = inject(BurstFeatureService);
 
   readonly spec = input.required<string>();

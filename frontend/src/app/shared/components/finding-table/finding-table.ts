@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { GameIconComponent } from '../game-icon/game-icon';
-import { CollapsibleTextComponent } from '../collapsible-text/collapsible-text';
-import { FindingOccurrencesComponent } from './finding-occurrences';
+import { GameIcon } from '../game-icon/game-icon';
+import { CollapsibleText } from '../collapsible-text/collapsible-text';
+import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from './finding-table.utils';
 
@@ -17,12 +17,12 @@ export { rowsFromEntries, onPlanFromEntries, bucketFindings } from './finding-ta
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIconComponent, CollapsibleTextComponent, FindingOccurrencesComponent,
+    MatIconModule, MatButtonModule, GameIcon, CollapsibleText, FindingOccurrences,
     FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',
 })
-export class FindingTableComponent {
+export class FindingTable {
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
   readonly rows = input.required<FindingRow[]>();

@@ -15,32 +15,32 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { LiveReportSyncService, POLL_INTERVAL_S } from '../../../../core/wcl/live-report-sync-service';
 import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
-import { BenchEmptyBannerComponent } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
-import { PullOverviewComponent } from '../../pull-overview/components/pull-overview';
-import { RotationComponent } from '../../rotation/components/rotation';
-import { BurstWindowsComponent } from '../../burst-windows/components/burst-windows';
-import { DefensiveComponent } from '../../defensive/components/defensive';
+import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
+import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { PullOverview } from '../../pull-overview/components/pull-overview';
+import { Rotation } from '../../rotation/components/rotation';
+import { BurstWindows } from '../../burst-windows/components/burst-windows';
+import { Defensive } from '../../defensive/components/defensive';
 import { DefensiveMapAnchor } from '../../defensive/facade/defensive-feature-service';
-import { GearComponent } from '../../gear/components/gear';
-import { MapPanelComponent } from '../../map/components/map-panel';
+import { Gear } from '../../gear/components/gear';
+import { MapPanel } from '../../map/components/map-panel';
 import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
-import { LiveControlsComponent } from '../../live/components/live-controls';
-import { ClipPanelComponent } from '../../live/components/clip-panel';
+import { LiveControls } from '../../live/components/live-controls';
+import { ClipPanel } from '../../live/components/clip-panel';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { FormatSpecPipe } from '../../../../shared/pipes/format-spec-pipe';
 import { SpecIconPipe } from '../../../../shared/pipes/spec-icon-pipe';
 import { ClassIconPipe } from '../../../../shared/pipes/class-icon-pipe';
 import { BossIconPipe } from '../../../../shared/pipes/boss-icon-pipe';
-import { ArtIconComponent } from '../../../../shared/components/art-icon/art-icon';
+import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { LatestRun } from './latest-run';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { logWarn } from '../../../../core/observability/log';
 import { Result, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
-import { LoadStateComponent, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
+import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 
 export function extractCode(url: string): string {
   const m = /\/reports\/([a-zA-Z0-9]+)/.exec(url);
@@ -171,15 +171,15 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent, PullOverviewComponent, RotationComponent, BurstWindowsComponent,
-    DefensiveComponent, GearComponent, MapPanelComponent, LiveControlsComponent, ClipPanelComponent,
+    LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
+    Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './post-raid.html',
 })
-export class PostRaidComponent {
+export class PostRaid {
   private readonly wclApi = inject(WclApiService);
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
@@ -350,7 +350,7 @@ export class PostRaidComponent {
       this.reportCode.set(code);
       await this.resolveSelection();
     } catch (err) {
-      logWarn('PostRaidComponent.loadReport', err);
+      logWarn('PostRaid.loadReport', err);
       if (this.reportRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.load-report'));
     } finally {
       if (this.reportRun.isCurrent(run)) this.loadingReport.set(false);
@@ -391,7 +391,7 @@ export class PostRaidComponent {
       if (this._pollSuperseded(code)) return;
       this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} - ${latest.name}`);
     } catch (err) {
-      logWarn('PostRaidComponent._pollOnce', err);
+      logWarn('PostRaid._pollOnce', err);
       if (this._pollSuperseded(code)) return;
       this._showError(toLoadError(err, 'post-raid.poll'));
       // Overwrite the in-flight "Checking..." status so the strip stops claiming a live check.
@@ -456,7 +456,7 @@ export class PostRaidComponent {
         this.liveCapture.prepare(this.reportCode(), this.reportStartTime(), fight);
       }
     } catch (err) {
-      logWarn('PostRaidComponent.resolveSelection', err);
+      logWarn('PostRaid.resolveSelection', err);
       if (this.selectionRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.resolve-selection'));
     } finally {
       if (this.selectionRun.isCurrent(run)) this.loadingAnalysis.set(false);

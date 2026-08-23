@@ -37,7 +37,7 @@ const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
   templateUrl: './page-nav.html',
   host: { class: 'flex flex-col h-[100dvh]' },
 })
-export class PageNavComponent {
+export class PageNav {
   protected readonly githubUrl = GITHUB_URL;
   protected readonly newIssueUrl = NEW_ISSUE_URL;
   private readonly breakpoints = inject(BreakpointObserver);

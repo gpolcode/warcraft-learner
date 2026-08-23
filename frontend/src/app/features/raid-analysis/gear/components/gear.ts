@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { GameIconComponent } from '../../../../shared/components/game-icon/game-icon';
-import { CollapsibleTextComponent } from '../../../../shared/components/collapsible-text/collapsible-text';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
+import { CollapsibleText } from '../../../../shared/components/collapsible-text/collapsible-text';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { GearComparisonService } from '../../../../domain/gear/gear-comparison';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { GearFeatureService, emptyGearView } from '../facade/gear-feature-service';
@@ -10,10 +10,10 @@ import { GearFeatureService, emptyGearView } from '../facade/gear-feature-servic
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatIconModule, GameIconComponent, CollapsibleTextComponent, LoadStateComponent],
+  imports: [MatIconModule, GameIcon, CollapsibleText, LoadState],
   templateUrl: './gear.html',
 })
-export class GearComponent {
+export class Gear {
   private readonly gearComparison = inject(GearComparisonService);
   private readonly gear = inject(GearFeatureService);
 

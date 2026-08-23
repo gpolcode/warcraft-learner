@@ -3,7 +3,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { ok, Result, transient } from '../../../../core/http/result';
 import { mountDom, MountedDom } from '../../../../../testing/component-harness';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { NorthernSkyExportComponent } from './northern-sky-export';
+import { NorthernSkyExport } from './northern-sky-export';
 import { NorthernSkyFeatureService } from '../facade/northern-sky-feature-service';
 import { NorthernSkyAbility, NorthernSkyBench } from '../data-access/northern-sky-data-source';
 import { SHADOW_BLADES, EVASION } from '../../../../../testing/spell-ids';
@@ -39,7 +39,7 @@ async function mount(
     copy: (text: string) => { copies.push(text); return copySucceeds; },
   } as unknown as Clipboard;
 
-  const dom = mountDom(NorthernSkyExportComponent, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
+  const dom = mountDom(NorthernSkyExport, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
     { provide: NorthernSkyFeatureService, useValue: feature },
     { provide: SelectionStore, useValue: selection },
     { provide: Clipboard, useValue: clipboard },
@@ -49,7 +49,7 @@ async function mount(
   return { dom, copies };
 }
 
-describe('NorthernSkyExportComponent export availability', () => {
+describe('NorthernSkyExport export availability', () => {
   it('waits, with no error banner, when the bench carries no abilities', async () => {
     const { dom } = await mount(async () => ok(bench()));
 
@@ -75,7 +75,7 @@ describe('NorthernSkyExportComponent export availability', () => {
   });
 });
 
-describe('NorthernSkyExportComponent copy', () => {
+describe('NorthernSkyExport copy', () => {
   const openPanel = async (copySucceeds = true): Promise<Mounted> => {
     const mounted = await mount(async () => ok(bench({ abilities: POPULATED_ABILITIES })), copySucceeds);
     mounted.dom.click(EXPORT_BUTTON);

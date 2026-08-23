@@ -3,9 +3,9 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FlyoverPanelComponent } from '../../../../shared/components/flyover-panel/flyover-panel';
-import { GameIconComponent } from '../../../../shared/components/game-icon/game-icon';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { FlyoverPanel } from '../../../../shared/components/flyover-panel/flyover-panel';
+import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { NorthernSkyBench } from '../data-access/northern-sky-data-source';
@@ -17,10 +17,10 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [MatButtonModule, MatIconModule, MatCheckboxModule, FlyoverPanelComponent, GameIconComponent, LoadStateComponent],
+  imports: [MatButtonModule, MatIconModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
 })
-export class NorthernSkyExportComponent {
+export class NorthernSkyExport {
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly selection = inject(SelectionStore);
   private readonly clipboard = inject(Clipboard);

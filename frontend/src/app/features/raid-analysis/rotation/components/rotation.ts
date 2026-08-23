@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { FindingTableComponent, OnPlanChip } from '../../../../shared/components/finding-table/finding-table';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { FindingTable, OnPlanChip } from '../../../../shared/components/finding-table/finding-table';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { loadResource } from '../../../../shared/state/load-resource';
 import {
   RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
@@ -9,10 +9,10 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-rotation',
-  imports: [FindingTableComponent, LoadStateComponent],
+  imports: [FindingTable, LoadState],
   templateUrl: './rotation.html',
 })
-export class RotationComponent {
+export class Rotation {
   private readonly rotation = inject(RotationFeatureService);
 
   readonly spec = input.required<string>();

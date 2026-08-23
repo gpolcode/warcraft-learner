@@ -12,7 +12,7 @@ export type GameIconKind = 'spell' | 'item';
   imports: [NgOptimizedImage],
   templateUrl: './game-icon.html',
 })
-export class GameIconComponent {
+export class GameIcon {
   constructor() {
     // Load the tooltip enhancer on first render; afterNextRender is browser-only, so prerender skips it.
     const tooltips = inject(WowheadTooltipsService);

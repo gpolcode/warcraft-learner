@@ -9,7 +9,7 @@ import { LiveReportSyncService } from '../../../../core/wcl/live-report-sync-ser
 import { Deferred, deferred } from '../../../../../testing/deferred';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
-import { PostRaidComponent } from './post-raid';
+import { PostRaid } from './post-raid';
 
 export function fight(p: Partial<WclFight>): WclFight {
   return { id: 0, name: '', startTime: 0, endTime: 0, kill: false, encounterID: 0, attempt: 0, duration_s: 0, friendlyPlayers: [], fightPercentage: 0, ...p };
@@ -20,7 +20,7 @@ export function player(p: Partial<WclPlayer>): WclPlayer {
 export function postRaidProviders(wclApi: unknown, prepareMap = vi.fn(() => Promise.resolve())): unknown[] {
   return [
     provideZonelessChangeDetection(),
-    PostRaidComponent,
+    PostRaid,
     { provide: WclApiService, useValue: wclApi },
     { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: prepareMap, ready: () => false, openAt: vi.fn() } },
     { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },

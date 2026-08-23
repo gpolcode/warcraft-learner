@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
+import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { LiveCaptureFeatureService } from '../facade/live-capture-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-clip-player',
-  imports: [MatButtonModule, MatIconModule, LoadingSpinnerComponent],
+  imports: [MatButtonModule, MatIconModule, LoadingSpinner],
   templateUrl: './clip-player.html',
 })
-export class ClipPlayerComponent {
+export class ClipPlayer {
   protected readonly clip = inject(LiveCaptureFeatureService);
   private readonly player = viewChild<ElementRef<HTMLVideoElement>>('player');
 

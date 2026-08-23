@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../../../../core/wcl/wcl.models';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { PostRaidComponent, unsupportedEncounterNotice } from './post-raid';
+import { PostRaid, unsupportedEncounterNotice } from './post-raid';
 import { ParkedWclApi, fight, loadReport, parkedWclApi, player, postRaidProviders } from './post-raid-harness';
 
 interface SelectionHandle {
@@ -18,7 +18,7 @@ interface SelectionHandle {
   loadingAnalysis: Signal<boolean>;
 }
 
-describe('PostRaidComponent selection latest-wins', () => {
+describe('PostRaid selection latest-wins', () => {
   const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
   const BOSS_ENCOUNTER_ID = 3176;
   const KEYSTONE_ENCOUNTER_ID = 112526;
@@ -54,7 +54,7 @@ describe('PostRaidComponent selection latest-wins', () => {
   function setup(): { api: ParkedWclApi; vm: SelectionHandle } {
     const api = parkedWclApi();
     TestBed.configureTestingModule({ providers: [...postRaidProviders(api)] });
-    const vm = TestBed.inject(PostRaidComponent) as unknown as SelectionHandle;
+    const vm = TestBed.inject(PostRaid) as unknown as SelectionHandle;
     vm.reportCode.set(REPORT_CODE);
     vm.fights.set(pulls());
     vm.players.set([player({ id: PLAYER_ID, name: PLAYER_NAME })]);
@@ -130,7 +130,7 @@ describe('PostRaidComponent selection latest-wins', () => {
   });
 });
 
-describe('PostRaidComponent loadReport latest-wins', () => {
+describe('PostRaid loadReport latest-wins', () => {
   const CODE_A = 'aaaaaaaaaaaaaaaa'; // 16-char valid code for the slow, superseded load
   const CODE_B = 'bbbbbbbbbbbbbbbb'; // 16-char valid code for the newer, winning load
   const ENCOUNTER_ID = 3144;
@@ -152,7 +152,7 @@ describe('PostRaidComponent loadReport latest-wins', () => {
   function setup(): { api: ParkedWclApi; vm: Record<string, unknown> } {
     const api = parkedWclApi();
     TestBed.configureTestingModule({ providers: [...postRaidProviders(api)] });
-    return { api, vm: TestBed.inject(PostRaidComponent) as unknown as Record<string, unknown> };
+    return { api, vm: TestBed.inject(PostRaid) as unknown as Record<string, unknown> };
   }
 
   it('keeps the newer report and its spinner when a slower earlier load resolves late', async () => {

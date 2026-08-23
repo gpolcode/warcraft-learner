@@ -13,7 +13,7 @@ export type RenderableLoadError = Extract<LoadError, { kind: 'transient' | 'perm
   host: { class: 'block' },
   templateUrl: './load-state.html',
 })
-export class LoadStateComponent {
+export class LoadState {
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
   readonly caption = input<string>('Built from the top-parse bench.');

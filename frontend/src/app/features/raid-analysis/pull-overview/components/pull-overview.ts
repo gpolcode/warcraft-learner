@@ -8,18 +8,18 @@ import { MapAnchor } from '../../map/facade/map-feature-service';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../../../shared/pipes/format-damage-pipe';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { PullOverviewFeatureService } from '../facade/pull-overview-feature-service';
 
 // Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadStateComponent],
+  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadState],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })
-export class PullOverviewComponent {
+export class PullOverview {
   private readonly service = inject(PullOverviewFeatureService);
 
   readonly report = input.required<string>();

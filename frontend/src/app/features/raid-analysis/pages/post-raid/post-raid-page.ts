@@ -13,7 +13,7 @@ import { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import { Result, ok } from '../../../../core/http/result';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
-import { PostRaidComponent } from './post-raid';
+import { PostRaid } from './post-raid';
 import { postRaidProviders } from './post-raid-harness';
 
 // A card cannot construct without its data source, so every slice the shell mounts one for is listed here.
@@ -40,7 +40,7 @@ export interface PostRaidPage {
 export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): PostRaidPage {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
-    imports: [PostRaidComponent],
+    imports: [PostRaid],
     providers: [
       ...postRaidProviders(wclApi),
       // After the harness fake so it wins: the header's live controls read a surface the fake does not carry.
@@ -52,7 +52,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     ] as never[],
   });
 
-  const fixture = TestBed.createComponent(PostRaidComponent);
+  const fixture = TestBed.createComponent(PostRaid);
   fixture.detectChanges();
 
   const host = (): HTMLElement => fixture.nativeElement as HTMLElement;

@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FlyoverPanelComponent } from '../../../../shared/components/flyover-panel/flyover-panel';
+import { FlyoverPanel } from '../../../../shared/components/flyover-panel/flyover-panel';
 import { MapFeatureService } from '../facade/map-feature-service';
-import { MapCanvasComponent } from './map-canvas';
+import { MapCanvas } from './map-canvas';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-panel',
-  imports: [FlyoverPanelComponent, MapCanvasComponent],
+  imports: [FlyoverPanel, MapCanvas],
   templateUrl: './map-panel.html',
 })
-export class MapPanelComponent {
+export class MapPanel {
   protected readonly map = inject(MapFeatureService);
 }

@@ -9,7 +9,7 @@ import { LiveCaptureFeatureService } from '../facade/live-capture-feature-servic
   imports: [MatSlideToggleModule, MatProgressSpinnerModule],
   templateUrl: './live-controls.html',
 })
-export class LiveControlsComponent {
+export class LiveControls {
   protected readonly capture = inject(LiveCaptureFeatureService);
 
   protected onLiveToggle(checked: boolean): void {

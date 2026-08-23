@@ -31,7 +31,7 @@ async function pickThrough(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS) {
   return page;
 }
 
-describe('PreFightComponent encounter selection', () => {
+describe('PreFight encounter selection', () => {
   it('reveals the spec select only once a class is picked', async () => {
     const page = preFightPage(staticSelection());
     await page.settled();
@@ -62,7 +62,7 @@ describe('PreFightComponent encounter selection', () => {
   });
 });
 
-describe('PreFightComponent stale-encounter reset', () => {
+describe('PreFight stale-encounter reset', () => {
   it('closes the encounter-gated cards when the class changes', async () => {
     const page = await pickThrough();
     page.choose(ENCOUNTER_SELECT, BOSS_A.name);
@@ -102,7 +102,7 @@ describe('PreFightComponent stale-encounter reset', () => {
   });
 });
 
-describe('PreFightComponent encounter load latest-wins', () => {
+describe('PreFight encounter load latest-wins', () => {
   const SLOW_ENCOUNTER: EncounterEntry = { id: 3129, name: 'Boss Slow', sample_count: 9 };
   const NEWER_ENCOUNTER: EncounterEntry = { id: 3131, name: 'Boss Newer', sample_count: 4 };
   const LOADING_ENCOUNTERS = 'Loading encounters';

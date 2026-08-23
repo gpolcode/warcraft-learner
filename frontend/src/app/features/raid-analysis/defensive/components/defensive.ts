@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import {
-  bucketFindings, FindingRow, FindingTableComponent, onPlanFromEntries, rowsFromEntries,
+  bucketFindings, FindingRow, FindingTable, onPlanFromEntries, rowsFromEntries,
 } from '../../../../shared/components/finding-table/finding-table';
-import { WindowComparisonComponent } from '../../../../shared/components/window-comparison/window-comparison';
-import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
+import { WindowComparison } from '../../../../shared/components/window-comparison/window-comparison';
+import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from '../facade/defensive-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-defensive',
-  imports: [FindingTableComponent, WindowComparisonComponent, LoadStateComponent],
+  imports: [FindingTable, WindowComparison, LoadState],
   templateUrl: './defensive.html',
 })
-export class DefensiveComponent {
+export class Defensive {
   private readonly defensive = inject(DefensiveFeatureService);
 
   readonly spec = input.required<string>();

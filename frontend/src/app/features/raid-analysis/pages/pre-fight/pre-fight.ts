@@ -9,23 +9,23 @@ import { SpecEntry, EncounterEntry } from '../../../../domain/encounter/encounte
 import { LoadError } from '../../../../core/http/result';
 import { logWarn } from '../../../../core/observability/log';
 import { EncounterSelectionService } from './encounter-selection-service';
-import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
-import { BenchEmptyBannerComponent } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
-import { LoadStateComponent, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
-import { ArtIconComponent } from '../../../../shared/components/art-icon/art-icon';
+import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
+import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
+import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
 import { FormatSpecPipe } from '../../../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../../../shared/pipes/spec-icon-pipe';
 import { BossIconPipe } from '../../../../shared/pipes/boss-icon-pipe';
 import { SpecMetaService } from '../../../../core/data-files/spec-meta-service';
-import { RotationCdPlanComponent } from '../../rotation/components/rotation-cd-plan';
-import { DefensivePlanComponent } from '../../defensive/components/defensive-plan';
-import { BurstWindowsComponent } from '../../burst-windows/components/burst-windows';
-import { GearComponent } from '../../gear/components/gear';
-import { MapPanelComponent } from '../../map/components/map-panel';
+import { RotationCdPlan } from '../../rotation/components/rotation-cd-plan';
+import { DefensivePlan } from '../../defensive/components/defensive-plan';
+import { BurstWindows } from '../../burst-windows/components/burst-windows';
+import { Gear } from '../../gear/components/gear';
+import { MapPanel } from '../../map/components/map-panel';
 import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
-import { NorthernSkyExportComponent } from '../../northern-sky/components/northern-sky-export';
+import { NorthernSkyExport } from '../../northern-sky/components/northern-sky-export';
 
 export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
 
@@ -43,16 +43,16 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
-    LoadingSpinnerComponent, BenchEmptyBannerComponent, LoadStateComponent, ArtIconComponent,
+    LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
-    RotationCdPlanComponent, DefensivePlanComponent, BurstWindowsComponent,
-    GearComponent, MapPanelComponent, NorthernSkyExportComponent,
+    RotationCdPlan, DefensivePlan, BurstWindows,
+    Gear, MapPanel, NorthernSkyExport,
   ],
   // Provided per lazy page so form-field stays out of the initial bundle.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './pre-fight.html',
 })
-export class PreFightComponent implements OnInit {
+export class PreFight implements OnInit {
   private readonly encounterSelection = inject(EncounterSelectionService);
   private readonly mapFeature = inject(MapFeatureService);
   private readonly selectionStore = inject(SelectionStore);
