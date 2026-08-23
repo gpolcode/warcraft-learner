@@ -228,7 +228,6 @@ export default defineConfig([
     // restrictUiSyntax is restated because this block's no-restricted-syntax entry replaces the earlier block's for these files.
     files: ['src/app/**/*.ts'],
     ignores: [
-      'src/app/**/*.spec.ts',
       'src/app/**/*-harness.ts',
       'src/app/**/rule-fixtures.ts',
       'src/app/features/raid-analysis/pages/post-raid/post-raid-page.ts',
