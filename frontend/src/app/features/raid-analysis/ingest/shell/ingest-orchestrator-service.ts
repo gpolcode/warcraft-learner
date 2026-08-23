@@ -300,7 +300,7 @@ export class IngestOrchestratorService {
   }
 
   private benchedIds(spec: string): Promise<number[]> {
-    return this.dataFile.listSliceFiles(spec, BENCH_SLICE).then(this.ingestState.encounterIdsFromFiles);
+    return this.dataFile.listSliceFiles(spec, BENCH_SLICE).then(files => this.ingestState.encounterIdsFromFiles(files));
   }
 
   private async loadIngestState(spec: string): Promise<SpecIngestState | null> {

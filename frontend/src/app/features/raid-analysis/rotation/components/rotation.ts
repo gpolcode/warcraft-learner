@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { FindingTable, OnPlanChip } from '../../../../shared/components/finding-table/finding-table';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
-import { loadResource } from '../../../../shared/state/load-resource';
 import {
   RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
 } from '../facade/rotation-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,6 +13,7 @@ import {
   templateUrl: './rotation.html',
 })
 export class Rotation {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly rotation = inject(RotationFeatureService);
 
   readonly spec = input.required<string>();
@@ -24,7 +25,7 @@ export class Rotation {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({
       spec: this.spec(),
       encounterId: this.encounterId(),

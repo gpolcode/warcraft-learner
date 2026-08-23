@@ -3,11 +3,19 @@ import { ok, missing } from '../../../../core/http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
 import { sliceService } from '../../../../../testing/service-harness';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from '../data-access/northern-sky-data-source';
-import {
-  NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
-  toggleExclusion, toggleAllExclusion, isPanelOpen,
-} from './northern-sky-feature-service';
+import { NorthernSkyFeatureService } from './northern-sky-feature-service';
 import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from './northern-sky-harness';
+import { TestBed } from '@angular/core/testing';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: NORTHERN_SKY_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(NorthernSkyFeatureService);
+TestBed.resetTestingModule();
 
 function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_s: number[]): NorthernSkyAbility {
   return { spell_id, name: `n${spell_id}`, icon: '', kind, cast_times_s };
@@ -18,12 +26,12 @@ const HEADER = `EncounterID:${NORTHERN_SKY_ENCOUNTER_ID};Name:Boss;Difficulty:My
 describe('buildNorthernSkyNote', () => {
   it('emits the Mythic header alone when nothing is selected', () => {
     const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] }] });
-    expect(buildNorthernSkyNote(model, new Set())).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(model, new Set())).toBe(HEADER);
   });
 
   it('emits one line per cast time, tagged everyone, with no phase field', () => {
     const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10, 40] }] });
-    expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
+    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
       `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
       `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
@@ -35,7 +43,7 @@ describe('buildNorthernSkyNote', () => {
       { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [40] },
       { spell_id: SHADOW_DANCE, name: 'Evasion', icon: '', kind: 'defensive', cast_times_s: [10] },
     ] });
-    expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES, SHADOW_DANCE]))).toBe([
+    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES, SHADOW_DANCE]))).toBe([
       HEADER,
       `time:10;tag:everyone;spellid:${SHADOW_DANCE};text:Evasion`,
       `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
@@ -47,18 +55,18 @@ describe('buildNorthernSkyNote', () => {
       { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] },
       { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: '', kind: 'cooldown', cast_times_s: [20] },
     ] });
-    expect(buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
+    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
       `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
     ].join('\n'));
   });
 
   it('emits the header alone for a bench with no abilities', () => {
-    expect(buildNorthernSkyNote(bench(), new Set())).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(bench(), new Set())).toBe(HEADER);
   });
 
   it('emits no line for a selected ability that has no cast times', () => {
-    expect(buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
   });
 });
 
@@ -67,36 +75,36 @@ describe('abilitiesByKind', () => {
     const cd1 = ability(SHADOW_BLADES, 'cooldown', [10]);
     const def = ability(EVASION, 'defensive', [20]);
     const cd2 = ability(SHADOW_DANCE, 'cooldown', [30]);
-    expect(abilitiesByKind([cd1, def, cd2])).toEqual({ cooldowns: [cd1, cd2], defensives: [def] });
+    expect(svc.abilitiesByKind([cd1, def, cd2])).toEqual({ cooldowns: [cd1, cd2], defensives: [def] });
   });
 });
 
 describe('selectedIds', () => {
   it('includes every ability the user has not excluded (a new ability defaults on)', () => {
     const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
-    expect(selectedIds(abilities, new Set([SHADOW_DANCE]))).toEqual(new Set([SHADOW_BLADES]));
+    expect(svc.selectedIds(abilities, new Set([SHADOW_DANCE]))).toEqual(new Set([SHADOW_BLADES]));
   });
 });
 
 describe('isAllSelected', () => {
   const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
-  it('is true when nothing is excluded', () => { expect(isAllSelected(abilities, new Set())).toBe(true); });
-  it('is false when any ability is excluded', () => { expect(isAllSelected(abilities, new Set([SHADOW_DANCE]))).toBe(false); });
-  it('is false for an empty list', () => { expect(isAllSelected([], new Set())).toBe(false); });
+  it('is true when nothing is excluded', () => { expect(svc.isAllSelected(abilities, new Set())).toBe(true); });
+  it('is false when any ability is excluded', () => { expect(svc.isAllSelected(abilities, new Set([SHADOW_DANCE]))).toBe(false); });
+  it('is false for an empty list', () => { expect(svc.isAllSelected([], new Set())).toBe(false); });
 });
 
 describe('toggleExclusion', () => {
   it('unchecking adds the id to the exclusion set', () => {
-    expect(toggleExclusion(new Set(), SHADOW_BLADES, false)).toEqual(new Set([SHADOW_BLADES]));
+    expect(svc.toggleExclusion(new Set(), SHADOW_BLADES, false)).toEqual(new Set([SHADOW_BLADES]));
   });
 
   it('checking removes the id from the exclusion set', () => {
-    expect(toggleExclusion(new Set([SHADOW_BLADES]), SHADOW_BLADES, true)).toEqual(new Set());
+    expect(svc.toggleExclusion(new Set([SHADOW_BLADES]), SHADOW_BLADES, true)).toEqual(new Set());
   });
 
   it('does not mutate the input set', () => {
     const original = new Set([SHADOW_BLADES]);
-    toggleExclusion(original, SHADOW_DANCE, false);
+    svc.toggleExclusion(original, SHADOW_DANCE, false);
     expect(original).toEqual(new Set([SHADOW_BLADES]));
   });
 });
@@ -105,30 +113,30 @@ describe('toggleAllExclusion', () => {
   const abilities = [ability(SHADOW_BLADES, 'cooldown', [10]), ability(SHADOW_DANCE, 'cooldown', [20])];
 
   it('excludes every ability when all are currently selected', () => {
-    expect(toggleAllExclusion(abilities, new Set())).toEqual(new Set([SHADOW_BLADES, SHADOW_DANCE]));
+    expect(svc.toggleAllExclusion(abilities, new Set())).toEqual(new Set([SHADOW_BLADES, SHADOW_DANCE]));
   });
 
   it('clears all exclusions when some are currently deselected', () => {
-    expect(toggleAllExclusion(abilities, new Set([SHADOW_BLADES]))).toEqual(new Set());
+    expect(svc.toggleAllExclusion(abilities, new Set([SHADOW_BLADES]))).toEqual(new Set());
   });
 
   it('leaves persisted exclusions untouched over an empty ability list', () => {
     const excluded = new Set([SHADOW_BLADES, EVASION]);
-    expect(toggleAllExclusion([], excluded)).toEqual(excluded);
+    expect(svc.toggleAllExclusion([], excluded)).toEqual(excluded);
   });
 });
 
 describe('isPanelOpen', () => {
   it('is open once requested while the bench has abilities to export', () => {
-    expect(isPanelOpen(true, true)).toBe(true);
+    expect(svc.isPanelOpen(true, true)).toBe(true);
   });
 
   it('closes an already-open panel once the bench has nothing to export', () => {
-    expect(isPanelOpen(true, false)).toBe(false);
+    expect(svc.isPanelOpen(true, false)).toBe(false);
   });
 
   it('stays closed when not requested even if the bench has abilities', () => {
-    expect(isPanelOpen(false, true)).toBe(false);
+    expect(svc.isPanelOpen(false, true)).toBe(false);
   });
 });
 

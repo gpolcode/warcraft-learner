@@ -3,12 +3,20 @@ import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
 import { ok, permanent } from '../../../../core/http/result';
-import {
-  PullOverviewFeatureService,
-  dpsFromTable, abilityNameMap, buildDeathRows, wipeTimeS,
-} from './pull-overview-feature-service';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { PullOverviewFeatureService } from './pull-overview-feature-service';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(PullOverviewFeatureService);
+TestBed.resetTestingModule();
 
 const PLAYER_ID = 5;
 const OTHER_PLAYER = 9;
@@ -62,44 +70,44 @@ describe('dpsFromTable', () => {
   const blob = { data: { entries: [{ id: OTHER_PLAYER, total: 999 }, { id: PLAYER_ID, total: PLAYER_TOTAL }] } };
 
   it('divides the player entry total by the pull length', () => {
-    expect(dpsFromTable(blob, PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
+    expect(svc['dpsFromTable'](blob, PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
   });
 
   it('parses a JSON-string blob the same as an object blob', () => {
-    expect(dpsFromTable(JSON.stringify(blob), PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
+    expect(svc['dpsFromTable'](JSON.stringify(blob), PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(EXPECTED_DPS));
   });
 
   it('reports a null blob as a failed load, so the player never shows a bogus measured 0', () => {
-    expect(dpsFromTable(null, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['dpsFromTable'](null, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
   });
 
   it('reports an unparseable string blob as a failed load, not a measured 0', () => {
-    expect(dpsFromTable('{ not json', PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['dpsFromTable']('{ not json', PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
   });
 
   it('reports a valid-JSON blob without a data.entries array as a failed load, not a measured 0', () => {
-    expect(dpsFromTable({ data: {} }, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['dpsFromTable']({ data: {} }, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
   });
 
   it('reports a real 0 for a player absent from a valid table (a healer with no damage entry)', () => {
-    expect(dpsFromTable(blob, ABSENT_PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(0));
+    expect(svc['dpsFromTable'](blob, ABSENT_PLAYER_ID, FIGHT_DURATION_S)).toEqual(ok(0));
   });
 
   it('reports a real 0 for a zero-length pull - an empty pull measures no damage, not a failure', () => {
-    expect(dpsFromTable(blob, PLAYER_ID, 0)).toEqual(ok(0));
+    expect(svc['dpsFromTable'](blob, PLAYER_ID, 0)).toEqual(ok(0));
   });
 });
 
 describe('abilityNameMap', () => {
   it('keys ability names by game id', () => {
-    const names = abilityNameMap(report());
+    const names = svc['abilityNameMap'](report());
     expect(names.get(OVERWHELMING_BLAST)).toBe('Overwhelming Blast');
     expect(names.get(FROST_BOMB)).toBe('Frost Bomb');
   });
 });
 
 describe('buildDeathRows', () => {
-  const names = abilityNameMap(report());
+  const names = svc['abilityNameMap'](report());
 
   it('projects the player deaths oldest-first with 1-based index, relative time and ability', () => {
     const deaths = [
@@ -107,7 +115,7 @@ describe('buildDeathRows', () => {
       deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
       deathEvent(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST), // a raidmate - excluded
     ];
-    expect(buildDeathRows(withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
+    expect(svc['buildDeathRows'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
       { index: 1, timeS: DEATH_1_AT_S, ability: 'Overwhelming Blast' },
       { index: 2, timeS: DEATH_2_AT_S, ability: 'Frost Bomb' },
     ]);
@@ -115,7 +123,7 @@ describe('buildDeathRows', () => {
 
   it('leaves the ability empty when the death carried no killing ability', () => {
     const deaths = [deathEvent(PLAYER_ID, DEATH_1_AT_S, 0)];
-    expect(buildDeathRows(withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
+    expect(svc['buildDeathRows'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
       { index: 1, timeS: DEATH_1_AT_S, ability: '' },
     ]);
   });
@@ -129,7 +137,7 @@ describe('wipeTimeS', () => {
     const SPREAD_2_S = 100;
     const SPREAD_3_S = 200; // 49s+ gaps, no window - still the 3rd concurrent death
     const deaths = [deathEvent(1, SPREAD_1_S, 0), deathEvent(2, SPREAD_2_S, 0), deathEvent(3, SPREAD_3_S, 0)];
-    expect(wipeTimeS(withRelativeS(deaths, FIGHT_START_MS), withRelativeS(NO_REZ, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(SPREAD_3_S);
+    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS(NO_REZ, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(SPREAD_3_S);
   });
 
   it('drops a battle-rezzed player from the dead count, so the wipe waits for a later death', () => {
@@ -139,7 +147,7 @@ describe('wipeTimeS', () => {
     const P3_DEATH_S = 40; // only P2 + P3 down here (not a wipe)
     const P4_DEATH_S = 50; // P2 + P3 + P4 -> the wipe
     const deaths = [deathEvent(1, P1_DEATH_S, 0), deathEvent(2, P2_DEATH_S, 0), deathEvent(3, P3_DEATH_S, 0), deathEvent(4, P4_DEATH_S, 0)];
-    expect(wipeTimeS(withRelativeS(deaths, FIGHT_START_MS), withRelativeS([resEvent(1, P1_REZ_S)], FIGHT_START_MS), FIGHT_DURATION_S)).toBe(P4_DEATH_S);
+    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS([resEvent(1, P1_REZ_S)], FIGHT_START_MS), FIGHT_DURATION_S)).toBe(P4_DEATH_S);
   });
 
   it('falls back to the fight end when resurrects keep fewer than 3 down at once, or nobody dies', () => {
@@ -150,8 +158,8 @@ describe('wipeTimeS', () => {
     const C_DEATH_S = 40;
     const deaths = [deathEvent(1, A_DEATH_S, 0), deathEvent(2, B_DEATH_S, 0), deathEvent(3, C_DEATH_S, 0)];
     const rez = [resEvent(1, A_REZ_S), resEvent(2, B_REZ_S)];
-    expect(wipeTimeS(withRelativeS(deaths, FIGHT_START_MS), withRelativeS(rez, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
-    expect(wipeTimeS([], [], FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS(rez, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
+    expect(svc['wipeTimeS']([], [], FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
   });
 });
 

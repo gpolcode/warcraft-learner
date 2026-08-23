@@ -3,11 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import { PlayerDetailGroups, WclReport } from '../../../../core/wcl/wcl.models';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { unsupportedEncounterNotice } from './post-raid';
+import { PostRaid } from './post-raid';
 import { mapFeatureStub } from '../../../../../testing/page-stubs';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { fight } from './post-raid-harness';
 import { FIGHT_SELECT, PLAYER_SELECT, postRaidPage } from './post-raid-page';
+
+const svc = Object.create(PostRaid.prototype) as PostRaid;
 
 const REPORT_CODE = 'grBQ3vTHXAtPa4JK'; // a valid 16-character report code
 const REPORT_URL = `https://www.warcraftlogs.com/reports/${REPORT_CODE}`;
@@ -180,7 +182,7 @@ describe('PostRaid keystone fight', () => {
   const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: BOSS_ENCOUNTER_ID, difficulty: RAID_MYTHIC_DIFFICULTY };
   const DUNGEON_FIGHT = { id: 2, name: 'Nexus-Point Xenas', encounterID: 112526, difficulty: MYTHIC_PLUS_DIFFICULTY };
   const PLAYER = { id: 1, name: 'Anya', spec: 'Rogue' };
-  const KEYSTONE_NOTICE = unsupportedEncounterNotice(DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty);
+  const KEYSTONE_NOTICE = svc['unsupportedEncounterNotice'](DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty);
 
   const groups: PlayerDetailGroups = {
     dps: [{ id: PLAYER.id, type: 'Rogue', name: PLAYER.name, specs: [{ spec: 'Subtlety' }] }],

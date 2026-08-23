@@ -1,16 +1,20 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow } from './analysis.models';
 import { RangeRow } from './window-comparison.models';
-import { AbilityIcons, withRelativeS } from './wcl-projections';
-import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from './window-view';
+import { AbilityIcons, WclProjectionsService } from './wcl-projections';
+import { WindowView, WindowViewAdapter, WindowViewService } from './window-view';
 import { cast, damage } from '../../../testing/builders/events';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE,
   WCL_MELEE_EVENT_ABILITY_ID, WOW_AUTO_ATTACK_SPELL_ID, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
 } from '../../../testing/spell-ids';
+import { TestBed } from '@angular/core/testing';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+const windowView = TestBed.inject(WindowViewService);
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 function first<T>(items: readonly T[]): T {
   const [head] = items;
@@ -66,7 +70,7 @@ const VIEW_INPUT = {
 };
 
 function viewOf(over: Partial<typeof VIEW_INPUT> = {}): WindowView<ProbeAnchor> {
-  return buildWindowView({ ...VIEW_INPUT, ...over });
+  return windowView.buildWindowView({ ...VIEW_INPUT, ...over });
 }
 
 const detailRowsOf = (over: Partial<typeof VIEW_INPUT> = {}): RangeRow[] =>
@@ -211,20 +215,20 @@ const PET_MELEE_ID = -32, ENVIRONMENTAL_ID = -45;
 describe('playerWindowDamage', () => {
   it('sums amount and absorbed inside the window', () => {
     const ABSORBED = 100;
-    const out = playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT, { absorbed: ABSORBED })], 0));
+    const out = windowView.playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT, { absorbed: ABSORBED })], 0));
     expect(first(out).window_damage).toBe(BIG_HIT + ABSORBED);
   });
 
   it('counts a hit at the window start and excludes one at the window end', () => {
-    const atStart = playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, WINDOW_START_S, BIG_HIT)], 0));
+    const atStart = windowView.playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, WINDOW_START_S, BIG_HIT)], 0));
     expect(first(atStart).window_damage).toBe(BIG_HIT);
-    const atEnd = playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, WINDOW_END_S, BIG_HIT)], 0));
+    const atEnd = windowView.playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, WINDOW_END_S, BIG_HIT)], 0));
     expect(first(atEnd).window_damage).toBe(0);
   });
 
   it('drops pre-pull hits and zero-damage events', () => {
     const PRE_PULL_S = -1;
-    const out = playerWindowDamage([topWindow({ time_s: PRE_PULL_S })], timed([
+    const out = windowView.playerWindowDamage([topWindow({ time_s: PRE_PULL_S })], timed([
       damage(SHADOW_BLADES_DAMAGE, PRE_PULL_S, BIG_HIT),
       damage(SHADOW_BLADES_DAMAGE, HIT_S, 0),
     ], 0));
@@ -232,7 +236,7 @@ describe('playerWindowDamage', () => {
   });
 
   it('folds melee and synthetic ability ids onto the normalized spells the bench breakdown keys on', () => {
-    const out = playerWindowDamage([topWindow()], timed([
+    const out = windowView.playerWindowDamage([topWindow()], timed([
       damage(WCL_MELEE_EVENT_ABILITY_ID, HIT_S, BIG_HIT),
       damage(PET_MELEE_ID, HIT_S, SMALL_HIT),
       damage(ENVIRONMENTAL_ID, HIT_S, SMALL_HIT),
@@ -244,7 +248,7 @@ describe('playerWindowDamage', () => {
   });
 
   it('ranks the breakdown by damage, biggest first, and keeps every ability when uncapped', () => {
-    const out = playerWindowDamage([topWindow()], timed([
+    const out = windowView.playerWindowDamage([topWindow()], timed([
       damage(SHADOW_BLADES_DAMAGE, HIT_S, SMALL_HIT),
       damage(SHADOW_BLADES, HIT_S, BIG_HIT),
     ], 0));
@@ -255,7 +259,7 @@ describe('playerWindowDamage', () => {
 
   it('keeps only the biggest rows once a cap is set', () => {
     const KEPT = 1;
-    const out = playerWindowDamage([topWindow()], timed([
+    const out = windowView.playerWindowDamage([topWindow()], timed([
       damage(SHADOW_BLADES_DAMAGE, HIT_S, SMALL_HIT),
       damage(SHADOW_BLADES, HIT_S, BIG_HIT),
     ], 0), { maxAbilities: KEPT });
@@ -267,7 +271,7 @@ describe('playerWindowDamage', () => {
   it('counts casts by ability name, bridging a damage id to the cast id sharing that name', () => {
     const CAST_COUNT = 2;
     const names = new Map([[SHADOW_BLADES_DAMAGE, 'Shadow Blades'], [SHADOW_BLADES, 'Shadow Blades']]);
-    const out = playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT)], 0), {
+    const out = windowView.playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT)], 0), {
       attribution: {
         casts: timed([cast(SHADOW_BLADES, WINDOW_START_S + 1), cast(SHADOW_BLADES, HIT_S), cast(SHADOW_BLADES, WINDOW_END_S)], 0),
         nameOf: spellId => names.get(spellId) ?? '',
@@ -280,7 +284,7 @@ describe('playerWindowDamage', () => {
   });
 
   it('omits the cast count when the caller asks for no attribution', () => {
-    const out = playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT)], 0));
+    const out = windowView.playerWindowDamage([topWindow()], timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, BIG_HIT)], 0));
     const breakdown = first(out).ability_breakdown;
     assert.exists(breakdown);
     expect(first(breakdown)).toEqual({ spell_id: SHADOW_BLADES_DAMAGE, damage: BIG_HIT });

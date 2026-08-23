@@ -1,8 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
-import {
-  orderSpecsByVersion, specsForRun, orderEncountersByMissingFirst, parsePrioritySpecs, SPEC_LIMIT,
-  type SpecOrderEntry,
-} from './ordering';
+import { SPEC_LIMIT, type SpecOrderEntry, IngestOrderingService } from './ordering';
+import { TestBed } from '@angular/core/testing';
+
+const ordering = TestBed.inject(IngestOrderingService);
 
 const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry => ({
   checkedCount: 5,
@@ -12,7 +12,7 @@ const entry = (over: Partial<SpecOrderEntry> & { spec: string }): SpecOrderEntry
 
 describe('orderSpecsByVersion', () => {
   it('puts never-checked specs first, then old-version, then current-version', () => {
-    const order = orderSpecsByVersion([
+    const order = ordering.orderSpecsByVersion([
       entry({ spec: 'Current', onCurrentVersion: true }),
       entry({ spec: 'Empty', checkedCount: 0, onCurrentVersion: false }),
       entry({ spec: 'Old', onCurrentVersion: false }),
@@ -21,7 +21,7 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('keeps every old-version spec ahead of every current-version spec', () => {
-    const order = orderSpecsByVersion([
+    const order = ordering.orderSpecsByVersion([
       entry({ spec: 'CurrentZebra', onCurrentVersion: true }),
       entry({ spec: 'OldApple', onCurrentVersion: false }),
     ], []);
@@ -32,7 +32,7 @@ describe('orderSpecsByVersion', () => {
     // Keys are drawn per entry in input order; here Charlie < Bravo < Alpha.
     const keys = [0.1, 0.9, 0.5];
     let next = 0;
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [entry({ spec: 'Charlie' }), entry({ spec: 'Alpha' }), entry({ spec: 'Bravo' })],
       [],
       () => {
@@ -47,7 +47,7 @@ describe('orderSpecsByVersion', () => {
   it('with no priority spec, order comes from the shuffle alone', () => {
     const keys = [0.9, 0.1, 0.5]; // Outlaw, Subtlety, Assassination
     let next = 0;
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'SubtletyRogue' }), entry({ spec: 'AssassinationRogue' })],
       [],
       () => {
@@ -60,7 +60,7 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('pins the priority spec first within its bracket, ahead of the randomized rest', () => {
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [
         entry({ spec: 'OutlawRogue' }),
         entry({ spec: 'SubtletyRogue' }),
@@ -74,7 +74,7 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('does not pull the priority spec ahead of an earlier (emptier/older-version) bracket', () => {
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [
         entry({ spec: 'SubtletyRogue', onCurrentVersion: true }),
         entry({ spec: 'EmptySpec', checkedCount: 0, onCurrentVersion: false }),
@@ -88,30 +88,30 @@ describe('orderSpecsByVersion', () => {
   it('does not mutate the input', () => {
     const entries = [entry({ spec: 'B' }), entry({ spec: 'A' })];
     const snapshot = entries.map(item => item.spec);
-    orderSpecsByVersion(entries, []);
+    ordering.orderSpecsByVersion(entries, []);
     expect(entries.map(item => item.spec)).toEqual(snapshot);
   });
 
   it('returns an empty list for no specs', () => {
-    expect(orderSpecsByVersion([], [])).toEqual([]);
+    expect(ordering.orderSpecsByVersion([], [])).toEqual([]);
   });
 
   it('caps a run at SPEC_LIMIT specs, dropping the overflow', () => {
     // One more spec than the cap: specsForRun orders then slices, so the run never exceeds SPEC_LIMIT.
     const entries = Array.from({ length: SPEC_LIMIT + 1 }, (_, i) => entry({ spec: `Spec${i}` }));
-    expect(specsForRun(entries, []).selected).toHaveLength(SPEC_LIMIT);
+    expect(ordering.specsForRun(entries, []).selected).toHaveLength(SPEC_LIMIT);
   });
 
   it('reports every spec in the same order the cap was applied to, so the deferred ones are still logged', () => {
     const entries = Array.from({ length: SPEC_LIMIT + 3 }, (_, i) => entry({ spec: `Spec${i}` }));
-    const { ordered, selected } = specsForRun(entries, []);
+    const { ordered, selected } = ordering.specsForRun(entries, []);
     expect(ordered).toHaveLength(SPEC_LIMIT + 3);
     expect(ordered.slice(0, SPEC_LIMIT)).toEqual(selected);
     expect([...ordered].sort()).toEqual(entries.map(item => item.spec).sort());
   });
 
   it('ranks a spec whose checked encounters are all empty with the specs that have data', () => {
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [
         entry({ spec: 'Benched', onCurrentVersion: true }),
         entry({ spec: 'CheckedEmpty', checkedCount: 9, onCurrentVersion: true }),
@@ -125,7 +125,7 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('keeps a spec with nothing checked ahead of one with a single checked encounter', () => {
-    const order = orderSpecsByVersion([
+    const order = ordering.orderSpecsByVersion([
       entry({ spec: 'OneChecked', checkedCount: 1, onCurrentVersion: true }),
       entry({ spec: 'NoneChecked', checkedCount: 0, onCurrentVersion: true }),
     ], []);
@@ -133,7 +133,7 @@ describe('orderSpecsByVersion', () => {
   });
 
   it('pins a custom priority list in order, ahead of the randomized rest', () => {
-    const order = orderSpecsByVersion(
+    const order = ordering.orderSpecsByVersion(
       [entry({ spec: 'OutlawRogue' }), entry({ spec: 'ArmsWarrior' }), entry({ spec: 'SubtletyRogue' })],
       ['ArmsWarrior', 'SubtletyRogue'],
       () => 0,
@@ -144,23 +144,23 @@ describe('orderSpecsByVersion', () => {
 
 describe('parsePrioritySpecs', () => {
   it('splits a comma-separated list, trimming whitespace', () => {
-    expect(parsePrioritySpecs('SubtletyRogue, ArmsWarrior')).toEqual(['SubtletyRogue', 'ArmsWarrior']);
+    expect(ordering.parsePrioritySpecs('SubtletyRogue, ArmsWarrior')).toEqual(['SubtletyRogue', 'ArmsWarrior']);
   });
 
   it('falls back to no priority spec for missing input', () => {
-    expect(parsePrioritySpecs(undefined)).toEqual([]);
-    expect(parsePrioritySpecs(null)).toEqual([]);
-    expect(parsePrioritySpecs('')).toEqual([]);
+    expect(ordering.parsePrioritySpecs(undefined)).toEqual([]);
+    expect(ordering.parsePrioritySpecs(null)).toEqual([]);
+    expect(ordering.parsePrioritySpecs('')).toEqual([]);
   });
 
   it('falls back to no priority spec for a blank or malformed list', () => {
-    expect(parsePrioritySpecs('  , , ')).toEqual([]);
-    expect(parsePrioritySpecs('["SubtletyRogue"]')).toEqual([]);
-    expect(parsePrioritySpecs('SubtletyRogue;ArmsWarrior')).toEqual([]);
+    expect(ordering.parsePrioritySpecs('  , , ')).toEqual([]);
+    expect(ordering.parsePrioritySpecs('["SubtletyRogue"]')).toEqual([]);
+    expect(ordering.parsePrioritySpecs('SubtletyRogue;ArmsWarrior')).toEqual([]);
   });
 
   it('rejects the whole list when any single token is malformed', () => {
-    expect(parsePrioritySpecs('SubtletyRogue,Arms Warrior')).toEqual([]);
+    expect(ordering.parsePrioritySpecs('SubtletyRogue,Arms Warrior')).toEqual([]);
   });
 });
 
@@ -169,27 +169,27 @@ describe('orderEncountersByMissingFirst', () => {
 
   it('moves encounters missing an on-disk slice to the front', () => {
     const present = new Set([2, 4]);
-    expect(orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
+    expect(ordering.orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
       1, 3, 2, 4,
     ]);
   });
 
   it('preserves the original order within the missing and present groups (stable)', () => {
     const present = new Set([1]);
-    expect(orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
+    expect(ordering.orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
       2, 3, 4, 1,
     ]);
   });
 
   it('keeps the original order when nothing is present yet', () => {
-    expect(orderEncountersByMissingFirst(encounters, new Set()).map(item => item.id)).toEqual([
+    expect(ordering.orderEncountersByMissingFirst(encounters, new Set()).map(item => item.id)).toEqual([
       1, 2, 3, 4,
     ]);
   });
 
   it('keeps the original order when everything is present', () => {
     const present = new Set([1, 2, 3, 4]);
-    expect(orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
+    expect(ordering.orderEncountersByMissingFirst(encounters, present).map(item => item.id)).toEqual([
       1, 2, 3, 4,
     ]);
   });

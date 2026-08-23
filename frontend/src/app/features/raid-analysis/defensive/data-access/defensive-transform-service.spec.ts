@@ -1,24 +1,29 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import {
-  DefensiveTransformService,
-  defensivePlanMeta, summarizeDefensiveCasts,
-  findParseDefensiveWindows, clusterDefensiveWindows,
-  aggregateDefensiveBenchmarks,
-  windowDamageBreakdown, clusterDamageStats, clusterAbilityBreakdown,
-  ParseDefWindow, ParseDefensiveSummary,
-} from './defensive-transform-service';
+import { DefensiveTransformService, ParseDefWindow, ParseDefensiveSummary } from './defensive-transform-service';
 import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { ok } from '../../../../core/http/result';
-import { buildAuraWindows } from '../../../../domain/analysis/aura-windows';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+const auraWindows = TestBed.inject(AuraWindowsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(DefensiveTransformService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 // Enemy-side identifiers for the damage-taken fixtures (not player abilities, so local).
 const BOSS_HIT = 700;       // an enemy ability id the player takes damage from
@@ -33,7 +38,7 @@ const FIGHT_DUR_S = 300;  // standard fight length used across the per-parse sum
 
 describe('defensivePlanMeta', () => {
   it('carries metadata with nullable defaults', () => {
-    expect(defensivePlanMeta([{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }]))
+    expect(svc['defensivePlanMeta']([{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }]))
       .toEqual([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, usage_rule: null, talent_gated: false }]);
   });
 });
@@ -45,11 +50,11 @@ describe('summarizeDefensiveCasts', () => {
     const HELD_INDEX = 2;  // 1-based ordinal of the held (second) use
     // The second use lands SECOND_USE_S - (FIRST_USE_S + cooldown) past its reset, well over 8s.
     const EXPECTED_DELAY_S = SECOND_USE_S - (FIRST_USE_S + CLOAK.cooldown);
-    const windows = buildAuraWindows(timed([
+    const windows = auraWindows.buildAuraWindows(timed([
       applyBuff(CLOAK_OF_SHADOWS, FIRST_USE_S), removeBuff(CLOAK_OF_SHADOWS, FIRST_REMOVE_S),
       applyBuff(CLOAK_OF_SHADOWS, SECOND_USE_S), removeBuff(CLOAK_OF_SHADOWS, SECOND_REMOVE_S),
     ], 0));
-    const summaries = summarizeDefensiveCasts([CLOAK], windows, [], FIGHT_DUR_S);
+    const summaries = svc['summarizeDefensiveCasts']([CLOAK], windows, [], FIGHT_DUR_S);
     expect(summaries).toHaveLength(1);
     expect(summaries[0]).toMatchObject({ name: 'Cloak of Shadows', cast_times_s: [FIRST_USE_S, SECOND_USE_S], first_cast_s: FIRST_USE_S, cast_pattern: 'hold' });
     // cast_index is 1-based (the 2nd use), matching rotation + the runtime's -1 decode.
@@ -59,16 +64,16 @@ describe('summarizeDefensiveCasts', () => {
 
   it('falls back to explicit casts when no buff windows exist', () => {
     const CAST_S = 12;
-    const summaries = summarizeDefensiveCasts([CLOAK], new Map(), timed([cast(CLOAK_OF_SHADOWS, CAST_S)], 0), FIGHT_DUR_S);
+    const summaries = svc['summarizeDefensiveCasts']([CLOAK], new Map(), timed([cast(CLOAK_OF_SHADOWS, CAST_S)], 0), FIGHT_DUR_S);
     expect(summaries[0]).toMatchObject({ cast_times_s: [CAST_S], first_cast_s: CAST_S, cast_pattern: 'on_cooldown' });
   });
 });
 
 describe('findParseDefensiveWindows', () => {
   it('slices damage taken by the buff span (inclusive end, amount + absorbed) and picks the dominant enemy', () => {
-    const windows = buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0));
+    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0));
     const BOSS_ABSORB = 250;
-    const result = findParseDefensiveWindows(
+    const result = svc['findParseDefensiveWindows'](
       timed([
         damageTaken(BOSS_HIT, 12, 500, { source: BOSS_ACTOR, absorbed: BOSS_ABSORB }),
         damageTaken(ADD_HIT, 15, 200, { source: ADD_ACTOR }), // at the exact remove second: the inclusive end must count it
@@ -84,8 +89,8 @@ describe('findParseDefensiveWindows', () => {
   });
 
   it('runs an open buff to fight end (no rulebook duration)', () => {
-    const windows = buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10)], 0)); // no remove
-    const result = findParseDefensiveWindows(
+    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10)], 0)); // no remove
+    const result = svc['findParseDefensiveWindows'](
       timed([damageTaken(BOSS_HIT, 50, 400, { source: BOSS_ACTOR })], 0), 300, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
     );
     assert.exists(result[0]);
@@ -100,8 +105,8 @@ describe('findParseDefensiveWindows', () => {
     const HIT_DAMAGE = 500;
     const buffApply = { ...applyBuff(CLOAK_OF_SHADOWS, 0), timestamp: APPLY_MS };
     const hit = { ...damageTaken(BOSS_HIT, 0, HIT_DAMAGE, { source: BOSS_ACTOR }), timestamp: APPLY_MS };
-    const windows = buildAuraWindows(timed([buffApply], 0));
-    const result = findParseDefensiveWindows(timed([hit], 0), FIGHT_DUR_S, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
+    const windows = auraWindows.buildAuraWindows(timed([buffApply], 0));
+    const result = svc['findParseDefensiveWindows'](timed([hit], 0), FIGHT_DUR_S, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
     expect(result).toHaveLength(1);
     assert.exists(result[0]);
     expect(result[0].window_damage).toBe(HIT_DAMAGE);
@@ -115,21 +120,21 @@ describe('windowDamageBreakdown', () => {
     const hits: Hit[] = [
       [0, 500, BOSS_HIT, BOSS_ACTOR], [0, 200, ADD_HIT, ADD_ACTOR], [0, 100, BOSS_HIT, BOSS_ACTOR], [0, 999, 0, null],
     ];
-    expect(windowDamageBreakdown(hits)).toEqual([{ spell_id: BOSS_HIT, damage: 600 }, { spell_id: ADD_HIT, damage: 200 }]);
+    expect(svc['windowDamageBreakdown'](hits)).toEqual([{ spell_id: BOSS_HIT, damage: 600 }, { spell_id: ADD_HIT, damage: 200 }]);
   });
 
   it('keeps only the top 6 damage sources (boundary)', () => {
     const TOP_N = 6;
     const SOURCE_COUNT = 7; // one more than the cap
     const hits: Hit[] = Array.from({ length: SOURCE_COUNT }, (_, i) => [0, (i + 1) * 100, BOSS_HIT + i, BOSS_ACTOR]);
-    expect(windowDamageBreakdown(hits)).toHaveLength(TOP_N);
+    expect(svc['windowDamageBreakdown'](hits)).toHaveLength(TOP_N);
   });
 
   it('folds distinct synthetic ids that normalize together into one summed row', () => {
     const SYNTH_A = -3, SYNTH_B = -7;  // distinct negatives, both normalize to the synthetic catch-all
     const DMG_A = 300, DMG_B = 200;
     const hits: Hit[] = [[0, DMG_A, SYNTH_A, null], [0, DMG_B, SYNTH_B, null]];
-    expect(windowDamageBreakdown(hits)).toEqual([{ spell_id: WCL_SYNTHETIC_SOURCE_FALLBACK_ID, damage: DMG_A + DMG_B }]);
+    expect(svc['windowDamageBreakdown'](hits)).toEqual([{ spell_id: WCL_SYNTHETIC_SOURCE_FALLBACK_ID, damage: DMG_A + DMG_B }]);
   });
 });
 
@@ -137,7 +142,7 @@ describe('clusterDamageStats', () => {
   it('reports avg/stddev/min/max over the window damages, rounded', () => {
     const LOW = 700;
     const HIGH = 900;
-    expect(clusterDamageStats([LOW, HIGH])).toEqual({ dmg_avg: 800, dmg_stddev: Math.round(Math.sqrt(20000)), dmg_min: LOW, dmg_max: HIGH });
+    expect(svc['clusterDamageStats']([LOW, HIGH])).toEqual({ dmg_avg: 800, dmg_stddev: Math.round(Math.sqrt(20000)), dmg_min: LOW, dmg_max: HIGH });
   });
 });
 
@@ -148,7 +153,7 @@ describe('clusterAbilityBreakdown', () => {
   });
 
   it('keeps an ability present in a majority of parses with avg/min/max', () => {
-    const out = clusterAbilityBreakdown([
+    const out = svc['clusterAbilityBreakdown']([
       member([{ spell_id: BOSS_HIT, damage: 400 }], 0), member([{ spell_id: BOSS_HIT, damage: 600 }], 1),
     ]);
     expect(out).toHaveLength(1);
@@ -157,7 +162,7 @@ describe('clusterAbilityBreakdown', () => {
 
   it('drops an ability below the parse-majority share (boundary)', () => {
     // 1 of 3 parses carries ADD_HIT -> 0.33 < 0.5 majority -> dropped.
-    const out = clusterAbilityBreakdown([
+    const out = svc['clusterAbilityBreakdown']([
       member([{ spell_id: BOSS_HIT, damage: 500 }], 0), member([{ spell_id: BOSS_HIT, damage: 500 }], 1),
       member([{ spell_id: ADD_HIT, damage: 500 }], 2),
     ]);
@@ -166,7 +171,7 @@ describe('clusterAbilityBreakdown', () => {
 
   it('gates by DISTINCT parses, not window entries (1 of 4 does not surface)', () => {
     // 4 distinct parses share BOSS_HIT; only parse 0 carries ADD_HIT -> 0.25 < 0.5 majority -> dropped.
-    const out = clusterAbilityBreakdown([
+    const out = svc['clusterAbilityBreakdown']([
       member([{ spell_id: BOSS_HIT, damage: 500 }, { spell_id: ADD_HIT, damage: 100 }], 0),
       member([{ spell_id: BOSS_HIT, damage: 500 }], 1),
       member([{ spell_id: BOSS_HIT, damage: 500 }], 2),
@@ -180,7 +185,7 @@ describe('clusterAbilityBreakdown', () => {
     const FIRST_S = 400, SECOND_S = 300;  // one parse's two windows in the cluster
     const OTHER = 500;
     const EXPECTED_AVG = Math.round((FIRST_S + SECOND_S + OTHER) / 2);  // mean over 2 parses' summed damage
-    const out = clusterAbilityBreakdown([
+    const out = svc['clusterAbilityBreakdown']([
       member([{ spell_id: BOSS_HIT, damage: FIRST_S }], 0),
       member([{ spell_id: BOSS_HIT, damage: SECOND_S }], 0),
       member([{ spell_id: BOSS_HIT, damage: OTHER }], 1),
@@ -196,7 +201,7 @@ describe('clusterDefensiveWindows', () => {
   });
 
   it('emits a per-defensive cluster present in a majority of distinct parses, with majority ref enemy', () => {
-    const out = clusterDefensiveWindows([window(10, 0), window(11, 1)], 2);
+    const out = svc['clusterDefensiveWindows']([window(10, 0), window(11, 1)], 2);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ time_s: 10.5, defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, dmg_avg: 700, ref_game_id: BOSS_GAME_ID });
     assert.exists(out[0]);
@@ -205,14 +210,14 @@ describe('clusterDefensiveWindows', () => {
 
   it('keeps a window in exactly half the parses, drops one just below (majority boundary)', () => {
     const five = [window(10, 0), window(11, 1), window(10, 2), window(12, 3), window(11, 4)];
-    expect(clusterDefensiveWindows(five, 10)).toHaveLength(1);
+    expect(svc['clusterDefensiveWindows'](five, 10)).toHaveLength(1);
     const four = [window(10, 0), window(11, 1), window(10, 2), window(12, 3)];
-    expect(clusterDefensiveWindows(four, 10)).toHaveLength(0);
+    expect(svc['clusterDefensiveWindows'](four, 10)).toHaveLength(0);
   });
 
   it('surfaces a consensus window regardless of how little damage was taken', () => {
     const low = [window(10, 0), window(11, 1)];
-    expect(clusterDefensiveWindows(low, 2)).toHaveLength(1);
+    expect(svc['clusterDefensiveWindows'](low, 2)).toHaveLength(1);
   });
 });
 
@@ -223,7 +228,7 @@ describe('aggregateDefensiveBenchmarks', () => {
     const parseB: ParseDefensiveSummary[] = [{ name: 'Cloak of Shadows', cast_times_s: [FIRST_B_S], first_cast_s: FIRST_B_S, fight_duration_s: FIGHT_DUR_S, hold_windows: [], cast_pattern: 'on_cooldown' }];
     const parseC: ParseDefensiveSummary[] = []; // this parse never used Cloak
     const TOTAL_PARSES = 3, USERS = 2;
-    const out = aggregateDefensiveBenchmarks([parseA, parseB, parseC], [CLOAK]);
+    const out = svc['aggregateDefensiveBenchmarks']([parseA, parseB, parseC], [CLOAK]);
     assert.exists(out['Cloak of Shadows']);
     expect(out['Cloak of Shadows'].sample_count).toBe(TOTAL_PARSES);   // total
     assert.exists(out['Cloak of Shadows']);

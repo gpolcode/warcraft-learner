@@ -1,10 +1,10 @@
 import { assert, describe, it, expect } from 'vitest';
 import { EncounterPositions } from '../../../../domain/encounter/positioning.models';
 import { ActorTimeline } from '../facade/map-feature-service';
-import {
-  positionAt, toReferenceLocal, rowsToTimeline, playerRowsToTimeline,
-  buildParseTimelines, parsePointsAt, parseTrailsOf,
-} from './map-draw';
+import { MapDrawService } from './map-draw';
+import { TestBed } from '@angular/core/testing';
+
+const mapDraw = TestBed.inject(MapDrawService);
 
 const timeline = (samples: ActorTimeline['samples']): ActorTimeline => ({ id: 1, samples });
 
@@ -20,63 +20,63 @@ describe('positionAt', () => {
   ]);
 
   it('interpolates between samples', () => {
-    expect(positionAt(tl, 5)).toMatchObject({ x: 50, y: 0 });
+    expect(mapDraw.positionAt(tl, 5)).toMatchObject({ x: 50, y: 0 });
   });
 
   it('interpolates within a shared mapID', () => {
     const sameMap = timeline([{ t: 0, x: 0, y: 0, mapID: 5 }, { t: 10, x: 100, y: 0, mapID: 5 }]);
-    expect(positionAt(sameMap, 5)).toMatchObject({ x: 50, y: 0, mapID: 5 });
+    expect(mapDraw.positionAt(sameMap, 5)).toMatchObject({ x: 50, y: 0, mapID: 5 });
   });
 
   it('snaps to the near sample across a mapID change instead of blending void coordinates', () => {
     // t=4 sits below the 0..10 midpoint, so the pair straddling a map swap resolves to the `before` sample.
-    expect(positionAt(crossMap, 4)).toMatchObject({ x: 0, y: 0, facing: 1, mapID: 1 });
+    expect(mapDraw.positionAt(crossMap, 4)).toMatchObject({ x: 0, y: 0, facing: 1, mapID: 1 });
   });
 
   it('snaps to the far sample once past the midpoint of a mapID change', () => {
     // t=6 is past the midpoint and t=5 lands exactly on it; both take the `after` sample's map and coordinates.
-    expect(positionAt(crossMap, 6)).toMatchObject({ x: 100, y: 0, facing: 2, mapID: 2 });
-    expect(positionAt(crossMap, 5)).toMatchObject({ x: 100, mapID: 2 });
+    expect(mapDraw.positionAt(crossMap, 6)).toMatchObject({ x: 100, y: 0, facing: 2, mapID: 2 });
+    expect(mapDraw.positionAt(crossMap, 5)).toMatchObject({ x: 100, mapID: 2 });
   });
 
   it('clamps at the ends within tolerance', () => {
-    expect(positionAt(tl, -1)).toMatchObject({ x: 0 });
-    expect(positionAt(tl, 11)).toMatchObject({ x: 100 });
+    expect(mapDraw.positionAt(tl, -1)).toMatchObject({ x: 0 });
+    expect(mapDraw.positionAt(tl, 11)).toMatchObject({ x: 100 });
   });
 
   it('returns null beyond the tolerance window', () => {
-    expect(positionAt(tl, -10)).toBeNull();
-    expect(positionAt(tl, 20)).toBeNull();
+    expect(mapDraw.positionAt(tl, -10)).toBeNull();
+    expect(mapDraw.positionAt(tl, 20)).toBeNull();
   });
 
   it('returns null for an empty timeline', () => {
-    expect(positionAt(undefined, 1)).toBeNull();
-    expect(positionAt(timeline([]), 1)).toBeNull();
+    expect(mapDraw.positionAt(undefined, 1)).toBeNull();
+    expect(mapDraw.positionAt(timeline([]), 1)).toBeNull();
   });
 });
 
 describe('toReferenceLocal', () => {
   it('with the reference facing world-up, a point ahead is +fwd', () => {
     // ref facing default (Math.PI/2) + offset (-Math.PI/2) = 0 -> forward axis = +x.
-    const rel = toReferenceLocal({ t: 0, x: 5, y: 0 }, { t: 0, x: 0, y: 0 });
+    const rel = mapDraw.toReferenceLocal({ t: 0, x: 5, y: 0 }, { t: 0, x: 0, y: 0 });
     expect(rel.fwd).toBeCloseTo(5, 6);
     expect(rel.dist).toBeCloseTo(5, 6);
   });
 
   it('reports distance regardless of orientation', () => {
-    const rel = toReferenceLocal({ t: 0, x: 3, y: 4 }, { t: 0, x: 0, y: 0, facing: 1.2 });
+    const rel = mapDraw.toReferenceLocal({ t: 0, x: 3, y: 4 }, { t: 0, x: 0, y: 0, facing: 1.2 });
     expect(rel.dist).toBeCloseTo(5, 6);
   });
 
   it('carries the player sample mapID so a trail can break its line at a map swap', () => {
-    const rel = toReferenceLocal({ t: 0, x: 5, y: 0, mapID: 4 }, { t: 0, x: 0, y: 0, mapID: 4 });
+    const rel = mapDraw.toReferenceLocal({ t: 0, x: 5, y: 0, mapID: 4 }, { t: 0, x: 0, y: 0, mapID: 4 });
     expect(rel.mapID).toBe(4);
   });
 });
 
 describe('rowsToTimeline', () => {
   it('scales raw rows to yards and radians and passes null through', () => {
-    const tl = rowsToTimeline(7, [[1, 250, 500, 1000, 3], [2, 0, 0, null, null]]);
+    const tl = mapDraw.rowsToTimeline(7, [[1, 250, 500, 1000, 3], [2, 0, 0, null, null]]);
     expect(tl.id).toBe(7);
     expect(tl.samples[0]).toEqual({ t: 1, x: 2.5, y: 5, facing: 1, mapID: 3 });
     expect(tl.samples[1]).toEqual({ t: 2, x: 0, y: 0, facing: undefined, mapID: undefined });
@@ -85,7 +85,7 @@ describe('rowsToTimeline', () => {
 
 describe('playerRowsToTimeline', () => {
   it('scales [t, x, y, mapID] player rows to yards and leaves facing unset', () => {
-    const tl = playerRowsToTimeline(7, [[1, 250, 500, 3], [2, 0, 0, null]]);
+    const tl = mapDraw.playerRowsToTimeline(7, [[1, 250, 500, 3], [2, 0, 0, null]]);
     expect(tl.id).toBe(7);
     expect(tl.samples[0]).toEqual({ t: 1, x: 2.5, y: 5, mapID: 3 });
     assert.exists(tl.samples[0]);
@@ -108,7 +108,7 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
   };
 
   it('builds one player + reference timeline pair per parse, scaled to yards', () => {
-    const timelines = buildParseTimelines(positions, { kind: 'boss' });
+    const timelines = mapDraw.buildParseTimelines(positions, { kind: 'boss' });
     expect(timelines).toHaveLength(2);
     assert.exists(timelines[0]);
     assert.exists(timelines[0].player.samples[0]);
@@ -119,25 +119,25 @@ describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
   });
 
   it('skips a parse whose selected reference is absent', () => {
-    expect(buildParseTimelines(positions, { kind: 'enemy', gameId: 999 })).toHaveLength(0);
+    expect(mapDraw.buildParseTimelines(positions, { kind: 'enemy', gameId: 999 })).toHaveLength(0);
   });
 
   it('selects an enemy reference by gameId', () => {
-    const timelines = buildParseTimelines(positions, { kind: 'enemy', gameId: 100 });
-    expect(parsePointsAt(timelines, 0)).toHaveLength(2);
+    const timelines = mapDraw.buildParseTimelines(positions, { kind: 'enemy', gameId: 100 });
+    expect(mapDraw.parsePointsAt(timelines, 0)).toHaveLength(2);
   });
 
   it('resolves each prebuilt parse timeline to its relative point at the anchor time', () => {
-    const timelines = buildParseTimelines(positions, { kind: 'boss' });
-    const points = parsePointsAt(timelines, 3);
+    const timelines = mapDraw.buildParseTimelines(positions, { kind: 'boss' });
+    const points = mapDraw.parsePointsAt(timelines, 3);
     expect(points).toHaveLength(2);
     // player at 500 raw = 5 yd directly ahead of the facing-less boss at the origin.
     expect(points[0]).toMatchObject({ t: 3, fwd: 5, right: 0, dist: 5 });
   });
 
   it('builds each prebuilt parse timeline into a relative trail across the window', () => {
-    const timelines = buildParseTimelines(positions, { kind: 'boss' });
-    const trails = parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5);
+    const timelines = mapDraw.buildParseTimelines(positions, { kind: 'boss' });
+    const trails = mapDraw.parseTrailsOf(timelines, 3, 1.5, 1.5, 0.5);
     expect(trails).toHaveLength(2);
     assert.exists(trails[0]);
     expect(trails[0].map(p => p.t)).toEqual([1.5, 2, 2.5, 3, 3.5, 4, 4.5]);

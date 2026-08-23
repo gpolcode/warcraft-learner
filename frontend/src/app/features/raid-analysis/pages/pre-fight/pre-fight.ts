@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { SpecEntry, EncounterEntry } from '../../../../domain/encounter/encounter.models';
 import { LoadError } from '../../../../core/http/result';
-import { logWarn } from '../../../../core/observability/log';
 import { EncounterSelectionService } from './encounter-selection-service';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
@@ -26,6 +25,7 @@ import { Gear } from '../../gear/components/gear';
 import { MapPanel } from '../../map/components/map-panel';
 import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
 import { NorthernSkyExport } from '../../northern-sky/components/northern-sky-export';
+import { LoggerService } from '../../../../core/observability/log';
 
 export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
 
@@ -53,6 +53,7 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   templateUrl: './pre-fight.html',
 })
 export class PreFight implements OnInit {
+  private readonly logger = inject(LoggerService);
   private readonly encounterSelection = inject(EncounterSelectionService);
   private readonly mapFeature = inject(MapFeatureService);
   private readonly selectionStore = inject(SelectionStore);
@@ -178,7 +179,7 @@ export class PreFight implements OnInit {
         this.encControl.disable({ emitEvent: false });
       }
     } catch (cause) {
-      logWarn('encounterSelection.getEncounters', cause);
+      this.logger.logWarn('encounterSelection.getEncounters', cause);
     } finally {
       if (token === this.encounterToken) this.loadingEncounters.set(false);
       done();
@@ -186,7 +187,7 @@ export class PreFight implements OnInit {
   }
 
   private surfaceLoadError(error: LoadError): void {
-    if (error.kind === 'permanent') logWarn(error.id, error.context);
+    if (error.kind === 'permanent') this.logger.logWarn(error.id, error.context);
     this.error.set(error.kind === 'missing' ? null : error);
   }
 

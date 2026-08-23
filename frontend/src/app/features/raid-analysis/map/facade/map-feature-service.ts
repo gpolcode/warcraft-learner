@@ -3,12 +3,12 @@ import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@a
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
-import { logWarn } from '../../../../core/observability/log';
 import { Result, LoadError, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { posActorId } from '../domain/map-positions';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
+import { LoggerService } from '../../../../core/observability/log';
 
 /** WoW's `facing` zero-point does not align with our forward axis; empirically a -90 degree offset puts "behind the boss" below the reference. */
 export const FACING_OFFSET_RAD = -Math.PI / 2;
@@ -60,54 +60,9 @@ export interface MapAnchor {
 
 const MAP_POINT_PAD_S = 5;
 
-/** With `includeResources: true` WCL flattens one actor's position onto each event, so each event yields one sample. */
-export function buildActorTimelines(events: TimedEvent[]): Map<number, ActorTimeline> {
-  const byActor = new Map<number, PosSample[]>();
-  for (const event of events) {
-    const id = posActorId(event);
-    if (id == null || event.x == null || event.y == null) continue;
-    let samples = byActor.get(id);
-    if (!samples) { samples = []; byActor.set(id, samples); }
-    samples.push({
-      t: event.atS,
-      x: event.x * RAW_TO_YARDS,
-      y: event.y * RAW_TO_YARDS,
-      facing: typeof event.facing === 'number' ? event.facing * FACING_TO_RAD : undefined,
-      mapID: typeof event.mapID === 'number' ? event.mapID : undefined,
-    });
-  }
-  const out = new Map<number, ActorTimeline>();
-  for (const [id, samples] of byActor) {
-    samples.sort((a, b) => a.t - b.t);
-    out.set(id, { id, samples });
-  }
-  return out;
-}
-
-export function listReferenceEnemies(positions: EncounterPositions): { gameId: number; name: string; isBoss: boolean }[] {
-  const map = new Map<number, { gameId: number; name: string; isBoss: boolean }>();
-  for (const parse of positions.parses) {
-    for (const enemy of parse.enemies) {
-      if (enemy.game_id == null) continue;
-      const current = map.get(enemy.game_id);
-      if (!current) map.set(enemy.game_id, { gameId: enemy.game_id, name: enemy.name, isBoss: enemy.is_boss });
-      else if (enemy.is_boss) current.isBoss = true;
-    }
-  }
-  return [...map.values()].sort((a, b) => (b.isBoss ? 1 : 0) - (a.isBoss ? 1 : 0));
-}
-
 export interface LiveReference {
   bossActorId: number | null;
   refActorByGameId: Map<number, number>;
-}
-
-export function resolveLiveReference(positions: EncounterPositions, enemies: MapEnemyActor[]): LiveReference {
-  const refActorByGameId = new Map<number, number>();
-  for (const enemy of enemies) refActorByGameId.set(enemy.gameID, enemy.id);
-  const bossGameId = listReferenceEnemies(positions).find(enemy => enemy.isBoss)?.gameId;
-  const bossActorId = bossGameId != null ? (refActorByGameId.get(bossGameId) ?? null) : null;
-  return { bossActorId, refActorByGameId };
 }
 
 export interface LiveOverlayInput {
@@ -117,16 +72,9 @@ export interface LiveOverlayInput {
   enemies: MapEnemyActor[];
 }
 
-export function buildLiveOverlay(input: LiveOverlayInput): MapLiveOverlay | null {
-  const { positions, events, playerId, enemies } = input;
-  const { bossActorId, refActorByGameId } = resolveLiveReference(positions, enemies);
-  const timelines = buildActorTimelines(events);
-  if (!timelines.get(playerId)?.samples.length) return null;
-  return { timelines, playerId, bossActorId, refActorByGameId };
-}
-
 @Injectable({ providedIn: 'root' })
 export class MapFeatureService {
+  private readonly logger = inject(LoggerService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(MAP_DATA_SOURCE);
   // Resolved lazily: only `prepare` needs WCL, so bench-only paths (/pre, tests) never pull in the WCL transport.
@@ -168,7 +116,7 @@ export class MapFeatureService {
       this.positions.set(result.value);
       this.error.set(null);
     } else {
-      if (result.error.kind === 'permanent') logWarn(result.error.id, result.error.context);
+      if (result.error.kind === 'permanent') this.logger.logWarn(result.error.id, result.error.context);
       this.positions.set(null);
       this.error.set(result.error.kind === 'missing' ? null : result.error);
     }
@@ -224,7 +172,7 @@ export class MapFeatureService {
   private _reportMissingPlayerPositions(): void {
     const failure = permanent('No position data for you in this pull.', 'map.no-player-positions');
     if (!failure.ok && failure.error.kind === 'permanent') {
-      logWarn(failure.error.id, failure.error.context);
+      this.logger.logWarn(failure.error.id, failure.error.context);
       this.error.set(failure.error);
     }
   }
@@ -237,7 +185,7 @@ export class MapFeatureService {
       const { reportCode, fight, playerId, positions, enemies } = pending;
       const events = await this.fetchLiveEvents(reportCode, fight, playerId);
       if (pending.seq !== this.prepareSeq) return; // a newer prepare superseded this deferred overlay
-      const overlay = buildLiveOverlay({ positions, events: this.wclProjections.withRelativeS(events, fight.startTime), playerId, enemies });
+      const overlay = this.buildLiveOverlay({ positions, events: this.wclProjections.withRelativeS(events, fight.startTime), playerId, enemies });
       this.live.set(overlay);
       if (overlay) this.error.set(null);
       else this._reportMissingPlayerPositions();
@@ -245,7 +193,7 @@ export class MapFeatureService {
     } catch (cause) {
       // Surface a failed overlay read instead of a silently empty map.
       const result = toLoadError(cause, 'map.overlay');
-      logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, cause);
+      this.logger.logWarn(`MapFeatureService.ensureLiveOverlay ${pending.reportCode}:${pending.fight.id}`, cause);
       this.live.set(null);
       this.error.set(!result.ok && result.error.kind !== 'missing' ? result.error : null);
     } finally {
@@ -264,5 +212,58 @@ export class MapFeatureService {
       wclApi.getAllEvents(reportCode, id, 'Casts', startTime, endTime, undefined, true, 'Enemies'),
     ]);
     return [...playerCasts, ...enemyCasts];
+  }
+
+  /** With `includeResources: true` WCL flattens one actor's position onto each event, so each event yields one sample. */
+  protected buildActorTimelines(events: TimedEvent[]): Map<number, ActorTimeline> {
+    const byActor = new Map<number, PosSample[]>();
+    for (const event of events) {
+      const id = posActorId(event);
+      if (id == null || event.x == null || event.y == null) continue;
+      let samples = byActor.get(id);
+      if (!samples) { samples = []; byActor.set(id, samples); }
+      samples.push({
+        t: event.atS,
+        x: event.x * RAW_TO_YARDS,
+        y: event.y * RAW_TO_YARDS,
+        facing: typeof event.facing === 'number' ? event.facing * FACING_TO_RAD : undefined,
+        mapID: typeof event.mapID === 'number' ? event.mapID : undefined,
+      });
+    }
+    const out = new Map<number, ActorTimeline>();
+    for (const [id, samples] of byActor) {
+      samples.sort((a, b) => a.t - b.t);
+      out.set(id, { id, samples });
+    }
+    return out;
+  }
+
+  listReferenceEnemies(positions: EncounterPositions): { gameId: number; name: string; isBoss: boolean }[] {
+    const map = new Map<number, { gameId: number; name: string; isBoss: boolean }>();
+    for (const parse of positions.parses) {
+      for (const enemy of parse.enemies) {
+        if (enemy.game_id == null) continue;
+        const current = map.get(enemy.game_id);
+        if (!current) map.set(enemy.game_id, { gameId: enemy.game_id, name: enemy.name, isBoss: enemy.is_boss });
+        else if (enemy.is_boss) current.isBoss = true;
+      }
+    }
+    return [...map.values()].sort((a, b) => (b.isBoss ? 1 : 0) - (a.isBoss ? 1 : 0));
+  }
+
+  protected resolveLiveReference(positions: EncounterPositions, enemies: MapEnemyActor[]): LiveReference {
+    const refActorByGameId = new Map<number, number>();
+    for (const enemy of enemies) refActorByGameId.set(enemy.gameID, enemy.id);
+    const bossGameId = this.listReferenceEnemies(positions).find(enemy => enemy.isBoss)?.gameId;
+    const bossActorId = bossGameId != null ? (refActorByGameId.get(bossGameId) ?? null) : null;
+    return { bossActorId, refActorByGameId };
+  }
+
+  protected buildLiveOverlay(input: LiveOverlayInput): MapLiveOverlay | null {
+    const { positions, events, playerId, enemies } = input;
+    const { bossActorId, refActorByGameId } = this.resolveLiveReference(positions, enemies);
+    const timelines = this.buildActorTimelines(events);
+    if (!timelines.get(playerId)?.samples.length) return null;
+    return { timelines, playerId, bossActorId, refActorByGameId };
   }
 }

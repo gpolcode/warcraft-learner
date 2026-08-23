@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../data-files/data-file-transport';
-import { logWarn } from '../observability/log';
+import { LoggerService } from '../observability/log';
 import { Result, ok } from './result';
 import { toLoadError } from './http-load-error';
 import { environment } from '../../../environments/environment';
@@ -11,6 +11,7 @@ const BROWSER_READONLY = 'DataFileApiService is read-only in the browser';
 
 @Injectable({ providedIn: 'root' })
 export class HttpDataFileTransport implements DataFileTransport {
+  private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
   // Deployed builds set an absolute `dataBaseHref` pointing at the single shared gh-pages-root data copy; empty (development) resolves relative to `document.baseURI`.
   private readonly base = new URL(environment.dataBaseHref || 'data/specs/', document.baseURI).href;
@@ -19,7 +20,7 @@ export class HttpDataFileTransport implements DataFileTransport {
     try {
       return ok(await firstValueFrom(this.http.get<T>(`${this.base}${relPath}`)));
     } catch (cause) {
-      logWarn(`HttpDataFileTransport.readJson ${relPath}`, cause);
+      this.logger.logWarn(`HttpDataFileTransport.readJson ${relPath}`, cause);
       return toLoadError(cause, `data-file.${relPath}`);
     }
   }

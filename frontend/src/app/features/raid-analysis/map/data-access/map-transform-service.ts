@@ -29,80 +29,7 @@ export interface RawPosSample {
   maxHp: number;
 }
 
-/** `maxHitPoints` is on the wire with `includeResources`; 0 when absent. */
-function eventMaxHp(event: TimedEvent): number {
-  return typeof event.maxHitPoints === 'number' ? event.maxHitPoints : 0;
-}
-
-export function collectPositionSamples(events: TimedEvent[]): Map<number, RawPosSample[]> {
-  const byActor = new Map<number, RawPosSample[]>();
-  for (const event of events) {
-    const actorId = posActorId(event);
-    if (actorId == null || event.x == null || event.y == null) continue;
-    let samples = byActor.get(actorId);
-    if (!samples) { samples = []; byActor.set(actorId, samples); }
-    samples.push({
-      t: event.atS,
-      x: event.x, y: event.y,
-      facing: typeof event.facing === 'number' ? event.facing : null,
-      mapID: typeof event.mapID === 'number' ? event.mapID : null,
-      maxHp: eventMaxHp(event),
-    });
-  }
-  for (const samples of byActor.values()) samples.sort((a, b) => a.t - b.t);
-  return byActor;
-}
-
 interface CadencePoint { t: number; x: number; y: number; nearest: RawPosSample; }
-
-function interpolateAt(
-  before: RawPosSample, after: RawPosSample | undefined, t: number,
-): { x: number; y: number; nearest: RawPosSample } {
-  if (!after || after.t <= before.t || t < before.t) return { x: before.x, y: before.y, nearest: before };
-  const fraction = Math.min(1, Math.max(0, (t - before.t) / (after.t - before.t)));
-  const nearest = fraction < 0.5 ? before : after;
-  // coords compare only within one mapID, so snap to the nearest sample rather than blend across a map swap
-  if (before.mapID !== after.mapID) return { x: nearest.x, y: nearest.y, nearest };
-  return {
-    x: before.x + (after.x - before.x) * fraction,
-    y: before.y + (after.y - before.y) * fraction,
-    nearest,
-  };
-}
-
-function resamplePoints(samples: RawPosSample[], durationS: number, intervalS: number): CadencePoint[] {
-  const firstSample = samples[0];
-  if (!firstSample) return [];
-  const first = firstSample.t;
-  const last = samples.reduce((latest, sample) => Math.max(latest, sample.t), first);
-  const out: CadencePoint[] = [];
-  // Cursor over the sample stream: `before` is the latest sample at or before `t`, `after` the next one (absent past the end).
-  const upcoming = samples.slice(1)[Symbol.iterator]();
-  const advance = (): RawPosSample | undefined => {
-    const next = upcoming.next();
-    return next.done ? undefined : next.value;
-  };
-  let before = firstSample;
-  let after = advance();
-  for (let t = 0; t <= durationS + 1e-6; t += intervalS) {
-    if (t < first - intervalS || t > last + intervalS) continue;
-    while (after !== undefined && after.t <= t) { before = after; after = advance(); }
-    const { x, y, nearest } = interpolateAt(before, after, t);
-    out.push({ t: Math.round(t * DECISECONDS_PER_S) / DECISECONDS_PER_S, x: Math.round(x), y: Math.round(y), nearest });
-  }
-  return out;
-}
-
-export function resampleTimeline(samples: RawPosSample[], durationS: number, intervalS: number): PosRow[] {
-  return resamplePoints(samples, durationS, intervalS).map(({ t, x, y, nearest }) => [
-    t, x, y, nearest.facing == null ? null : Math.round(nearest.facing), nearest.mapID,
-  ]);
-}
-
-/** Resample the player timeline to [t, x, y, mapID] rows. Only the reference frame reads facing, so player rows store none. */
-export function resamplePlayerTimeline(samples: RawPosSample[], durationS: number, intervalS: number): PlayerPosRow[] {
-  return resamplePoints(samples, durationS, intervalS).map(({ t, x, y, nearest }) => [t, x, y, nearest.mapID]);
-}
 
 export interface EnemyMeta { gameID: number | null; name: string; }
 
@@ -119,30 +46,6 @@ export interface SelectedEnemies {
   kept: EnemyCandidate[];
 }
 
-/** The `MIN_ENEMY_SAMPLES` floor is applied later on resampled rows, not here. */
-export function selectBossAndEnemies(
-  byActor: Map<number, RawPosSample[]>, playerId: number, enemyMetaById: Map<number, EnemyMeta>,
-): SelectedEnemies {
-  const enemies: EnemyCandidate[] = [];
-  for (const [actorId, samples] of byActor) {
-    if (actorId === playerId) continue;
-    const meta = enemyMetaById.get(actorId);
-    if (meta === undefined) continue;
-    const maxHp = samples.reduce((max, sample) => Math.max(max, sample.maxHp), 0);
-    enemies.push({ actorId, count: samples.length, maxHp, samples, meta });
-  }
-  enemies.sort((a, b) => b.count - a.count);
-  const bossEntry = enemies.reduce<EnemyCandidate | null>(
-    (best, enemy) => (enemy.maxHp > (best?.maxHp ?? -1) ? enemy : best), null);
-  const bossId = bossEntry?.actorId ?? null;
-  const kept = enemies.slice(0, MAX_TRACKED_ENEMIES);
-  if (bossId != null && !kept.some(enemy => enemy.actorId === bossId)) {
-    const boss = enemies.find(enemy => enemy.actorId === bossId);
-    if (boss) kept.push(boss);
-  }
-  return { bossId, kept };
-}
-
 export interface ParsePositionInput {
   reportCode: string;
   fightId: number;
@@ -151,29 +54,6 @@ export interface ParsePositionInput {
   enemyMetaById: Map<number, EnemyMeta>;
   posEvents: TimedEvent[];
   durationS: number;
-}
-
-/** Enemies are keyed by gameID so the frontend matches "the same boss/add" across parses. */
-export function buildParsePositions(input: ParsePositionInput): ParsePositions {
-  const { reportCode, fightId, playerName, playerId, enemyMetaById, posEvents, durationS } = input;
-  const byActor = collectPositionSamples(posEvents);
-  const playerSamples = byActor.get(playerId) ?? [];
-  const { bossId, kept } = selectBossAndEnemies(byActor, playerId, enemyMetaById);
-
-  return {
-    report_code: reportCode,
-    fight_id: fightId,
-    player_name: playerName,
-    duration_s: Math.round(durationS * DECISECONDS_PER_S) / DECISECONDS_PER_S,
-    interval_s: POSITIONS_INTERVAL_S,
-    player: resamplePlayerTimeline(playerSamples, durationS, POSITIONS_INTERVAL_S),
-    enemies: kept.map(enemy => ({
-      game_id: enemy.meta.gameID,
-      name: enemy.meta.name,
-      is_boss: enemy.actorId === bossId,
-      samples: resampleTimeline(enemy.samples, durationS, POSITIONS_INTERVAL_S),
-    })).filter(enemy => enemy.is_boss || enemy.samples.length >= MIN_ENEMY_SAMPLES),
-  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -200,7 +80,7 @@ export class MapTransformService implements DataSource<MapData> {
     );
     const posEvents = await this.fetchPositionEvents(ranking.report_code, fight, player.id);
 
-    return buildParsePositions({
+    return this.buildParsePositions({
       reportCode: ranking.report_code,
       fightId: fight.id,
       playerName: player.name,
@@ -221,5 +101,125 @@ export class MapTransformService implements DataSource<MapData> {
       this.wclApi.getAllEvents(reportCode, id, 'Casts', startTime, endTime, undefined, true, 'Enemies'),
     ]);
     return [...playerCasts, ...enemyCasts];
+  }
+
+  /** `maxHitPoints` is on the wire with `includeResources`; 0 when absent. */
+  private eventMaxHp(event: TimedEvent): number {
+    return typeof event.maxHitPoints === 'number' ? event.maxHitPoints : 0;
+  }
+
+  protected collectPositionSamples(events: TimedEvent[]): Map<number, RawPosSample[]> {
+    const byActor = new Map<number, RawPosSample[]>();
+    for (const event of events) {
+      const actorId = posActorId(event);
+      if (actorId == null || event.x == null || event.y == null) continue;
+      let samples = byActor.get(actorId);
+      if (!samples) { samples = []; byActor.set(actorId, samples); }
+      samples.push({
+        t: event.atS,
+        x: event.x, y: event.y,
+        facing: typeof event.facing === 'number' ? event.facing : null,
+        mapID: typeof event.mapID === 'number' ? event.mapID : null,
+        maxHp: this.eventMaxHp(event),
+      });
+    }
+    for (const samples of byActor.values()) samples.sort((a, b) => a.t - b.t);
+    return byActor;
+  }
+
+  private interpolateAt(
+    before: RawPosSample, after: RawPosSample | undefined, t: number,
+  ): { x: number; y: number; nearest: RawPosSample } {
+    if (!after || after.t <= before.t || t < before.t) return { x: before.x, y: before.y, nearest: before };
+    const fraction = Math.min(1, Math.max(0, (t - before.t) / (after.t - before.t)));
+    const nearest = fraction < 0.5 ? before : after;
+    // coords compare only within one mapID, so snap to the nearest sample rather than blend across a map swap
+    if (before.mapID !== after.mapID) return { x: nearest.x, y: nearest.y, nearest };
+    return {
+      x: before.x + (after.x - before.x) * fraction,
+      y: before.y + (after.y - before.y) * fraction,
+      nearest,
+    };
+  }
+
+  private resamplePoints(samples: RawPosSample[], durationS: number, intervalS: number): CadencePoint[] {
+    const firstSample = samples[0];
+    if (!firstSample) return [];
+    const first = firstSample.t;
+    const last = samples.reduce((latest, sample) => Math.max(latest, sample.t), first);
+    const out: CadencePoint[] = [];
+    // Cursor over the sample stream: `before` is the latest sample at or before `t`, `after` the next one (absent past the end).
+    const upcoming = samples.slice(1)[Symbol.iterator]();
+    const advance = (): RawPosSample | undefined => {
+      const next = upcoming.next();
+      return next.done ? undefined : next.value;
+    };
+    let before = firstSample;
+    let after = advance();
+    for (let t = 0; t <= durationS + 1e-6; t += intervalS) {
+      if (t < first - intervalS || t > last + intervalS) continue;
+      while (after !== undefined && after.t <= t) { before = after; after = advance(); }
+      const { x, y, nearest } = this.interpolateAt(before, after, t);
+      out.push({ t: Math.round(t * DECISECONDS_PER_S) / DECISECONDS_PER_S, x: Math.round(x), y: Math.round(y), nearest });
+    }
+    return out;
+  }
+
+  protected resampleTimeline(samples: RawPosSample[], durationS: number, intervalS: number): PosRow[] {
+    return this.resamplePoints(samples, durationS, intervalS).map(({ t, x, y, nearest }) => [
+      t, x, y, nearest.facing == null ? null : Math.round(nearest.facing), nearest.mapID,
+    ]);
+  }
+
+  /** Resample the player timeline to [t, x, y, mapID] rows. Only the reference frame reads facing, so player rows store none. */
+  protected resamplePlayerTimeline(samples: RawPosSample[], durationS: number, intervalS: number): PlayerPosRow[] {
+    return this.resamplePoints(samples, durationS, intervalS).map(({ t, x, y, nearest }) => [t, x, y, nearest.mapID]);
+  }
+
+  /** The `MIN_ENEMY_SAMPLES` floor is applied later on resampled rows, not here. */
+  protected selectBossAndEnemies(
+    byActor: Map<number, RawPosSample[]>, playerId: number, enemyMetaById: Map<number, EnemyMeta>,
+  ): SelectedEnemies {
+    const enemies: EnemyCandidate[] = [];
+    for (const [actorId, samples] of byActor) {
+      if (actorId === playerId) continue;
+      const meta = enemyMetaById.get(actorId);
+      if (meta === undefined) continue;
+      const maxHp = samples.reduce((max, sample) => Math.max(max, sample.maxHp), 0);
+      enemies.push({ actorId, count: samples.length, maxHp, samples, meta });
+    }
+    enemies.sort((a, b) => b.count - a.count);
+    const bossEntry = enemies.reduce<EnemyCandidate | null>(
+      (best, enemy) => (enemy.maxHp > (best?.maxHp ?? -1) ? enemy : best), null);
+    const bossId = bossEntry?.actorId ?? null;
+    const kept = enemies.slice(0, MAX_TRACKED_ENEMIES);
+    if (bossId != null && !kept.some(enemy => enemy.actorId === bossId)) {
+      const boss = enemies.find(enemy => enemy.actorId === bossId);
+      if (boss) kept.push(boss);
+    }
+    return { bossId, kept };
+  }
+
+  /** Enemies are keyed by gameID so the frontend matches "the same boss/add" across parses. */
+  protected buildParsePositions(input: ParsePositionInput): ParsePositions {
+    const { reportCode, fightId, playerName, playerId, enemyMetaById, posEvents, durationS } = input;
+    const byActor = this.collectPositionSamples(posEvents);
+    const playerSamples = byActor.get(playerId) ?? [];
+    const { bossId, kept } = this.selectBossAndEnemies(byActor, playerId, enemyMetaById);
+
+    return {
+      report_code: reportCode,
+      fight_id: fightId,
+      player_name: playerName,
+      duration_s: Math.round(durationS * DECISECONDS_PER_S) / DECISECONDS_PER_S,
+      interval_s: POSITIONS_INTERVAL_S,
+      player: this.resamplePlayerTimeline(playerSamples, durationS, POSITIONS_INTERVAL_S),
+      enemies: kept.map(enemy => ({
+        game_id: enemy.meta.gameID,
+        name: enemy.meta.name,
+        is_boss: enemy.actorId === bossId,
+        samples: this.resampleTimeline(enemy.samples, durationS, POSITIONS_INTERVAL_S),
+      })).filter(enemy => enemy.is_boss || enemy.samples.length >= MIN_ENEMY_SAMPLES),
+    };
   }
 }

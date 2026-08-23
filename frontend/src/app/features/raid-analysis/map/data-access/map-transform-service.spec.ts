@@ -1,17 +1,24 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
-import {
-  MapTransformService,
-  posActorId, collectPositionSamples, resampleTimeline, resamplePlayerTimeline, buildParsePositions, selectBossAndEnemies,
-  RawPosSample, EnemyMeta,
-} from './map-transform-service';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { MapTransformService, posActorId, RawPosSample, EnemyMeta } from './map-transform-service';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { parseRankings, wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(MapTransformService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 function resEvent(
   fields: { ts: number; source?: number; target?: number; resourceActor?: number; x: number; y: number; facing?: number; mapID?: number; maxHp?: number },
@@ -42,7 +49,7 @@ describe('posActorId', () => {
 
 describe('collectPositionSamples', () => {
   it('groups raw (unscaled) samples per actor and sorts by time, carrying maxHp', () => {
-    const byActor = collectPositionSamples(timed([
+    const byActor = svc['collectPositionSamples'](timed([
       resEvent({ ts: 2000, source: 1, x: 200, y: 100, maxHp: 5000 }),
       resEvent({ ts: 1000, source: 1, x: 100, y: 50, facing: 1500, mapID: 7, maxHp: 5000 }),
     ], 0));
@@ -57,7 +64,7 @@ describe('collectPositionSamples', () => {
 
 describe('resampleTimeline', () => {
   it('returns [] for no samples', () => {
-    expect(resampleTimeline([], 10, 1.5)).toEqual([]);
+    expect(svc['resampleTimeline']([], 10, 1.5)).toEqual([]);
   });
 
   it('linearly interpolates x/y within one mapID and picks the nearest facing', () => {
@@ -66,7 +73,7 @@ describe('resampleTimeline', () => {
       { t: 0, x: 0, y: 0, facing: 100, mapID: SHARED_MAP, maxHp: 0 },
       { t: 3, x: 300, y: 600, facing: 200, mapID: SHARED_MAP, maxHp: 0 },
     ];
-    const rows = resampleTimeline(samples, 3, 1.5);
+    const rows = svc['resampleTimeline'](samples, 3, 1.5);
     expect(rows.map(r => r[0])).toEqual([0, 1.5, 3]);
     // same mapID: midpoint interpolates x to 150, y to 300; facing/mapID from the nearer (>=0.5 -> after)
     expect(rows[1]).toEqual([1.5, 150, 300, 200, SHARED_MAP]);
@@ -79,7 +86,7 @@ describe('resampleTimeline', () => {
       { t: 0, x: 0, y: 0, facing: 100, mapID: NEAR_MAP, maxHp: 0 },
       { t: 3, x: 300, y: 600, facing: 200, mapID: FAR_MAP, maxHp: 0 },
     ];
-    const rows = resampleTimeline(samples, 3, 1.5);
+    const rows = svc['resampleTimeline'](samples, 3, 1.5);
     expect(rows.map(r => r[0])).toEqual([0, 1.5, 3]);
     // mapIDs differ: the midpoint (fraction 0.5 -> after) emits the far sample's own x/y/facing, never the blend (150, 300)
     expect(rows[1]).toEqual([1.5, 300, 600, 200, FAR_MAP]);
@@ -95,7 +102,7 @@ describe('resampleTimeline', () => {
       { t: 0, x: 0, y: 0, facing: 100, mapID: NEAR_MAP, maxHp: 0 },
       { t: 4, x: FAR_X, y: FAR_Y, facing: FAR_FACING, mapID: FAR_MAP, maxHp: 0 },
     ];
-    const rows = resampleTimeline(samples, 4, 1.5);
+    const rows = svc['resampleTimeline'](samples, 4, 1.5);
     // t=3 sits 3/4 toward the far sample (fraction 0.75 -> after): snap emits its verbatim x/y/facing/mapID, not the blend (300, 600)
     expect(rows.find(r => r[0] === 3)).toEqual([3, FAR_X, FAR_Y, FAR_FACING, FAR_MAP]);
   });
@@ -110,20 +117,20 @@ describe('resampleTimeline', () => {
       { t: 0, x: NEAR_X, y: NEAR_Y, facing: NEAR_FACING, mapID: NEAR_MAP, maxHp: 0 },
       { t: 4, x: 400, y: 800, facing: 250, mapID: FAR_MAP, maxHp: 0 },
     ];
-    const rows = resampleTimeline(samples, 4, 1.5);
+    const rows = svc['resampleTimeline'](samples, 4, 1.5);
     // t=1.5 sits 3/8 toward the far sample (fraction < 0.5 -> before): snap emits the near sample's verbatim x/y, not the blend (150, 300)
     expect(rows.find(r => r[0] === 1.5)).toEqual([1.5, NEAR_X, NEAR_Y, NEAR_FACING, NEAR_MAP]);
   });
 
   it('rounds coordinates and keeps null facing', () => {
-    const rows = resampleTimeline([{ t: 0, x: 12.6, y: -3.4, facing: null, mapID: null, maxHp: 0 }], 0, 1.5);
+    const rows = svc['resampleTimeline']([{ t: 0, x: 12.6, y: -3.4, facing: null, mapID: null, maxHp: 0 }], 0, 1.5);
     expect(rows).toEqual([[0, 13, -3, null, null]]);
   });
 });
 
 describe('resamplePlayerTimeline', () => {
   it('returns [] for no samples', () => {
-    expect(resamplePlayerTimeline([], 10, 1.5)).toEqual([]);
+    expect(svc['resamplePlayerTimeline']([], 10, 1.5)).toEqual([]);
   });
 
   it('emits [t, x, y, mapID] rows with no facing element, lerping within one mapID', () => {
@@ -132,7 +139,7 @@ describe('resamplePlayerTimeline', () => {
       { t: 0, x: 0, y: 0, facing: 100, mapID: SHARED_MAP, maxHp: 0 },
       { t: 3, x: 300, y: 600, facing: 200, mapID: SHARED_MAP, maxHp: 0 },
     ];
-    const rows = resamplePlayerTimeline(samples, 3, 1.5);
+    const rows = svc['resamplePlayerTimeline'](samples, 3, 1.5);
     expect(rows.map(r => r[0])).toEqual([0, 1.5, 3]);
     // same mapID: midpoint interpolates x to 150, y to 300; the sampled facing is dropped from the row
     expect(rows[1]).toEqual([1.5, 150, 300, SHARED_MAP]);
@@ -145,7 +152,7 @@ describe('resamplePlayerTimeline', () => {
       { t: 0, x: 0, y: 0, facing: 100, mapID: NEAR_MAP, maxHp: 0 },
       { t: 3, x: 300, y: 600, facing: 200, mapID: FAR_MAP, maxHp: 0 },
     ];
-    const rows = resamplePlayerTimeline(samples, 3, 1.5);
+    const rows = svc['resamplePlayerTimeline'](samples, 3, 1.5);
     // mapIDs differ: the midpoint (fraction 0.5 -> after) emits the far sample's own x/y, never the blend (150, 300)
     expect(rows[1]).toEqual([1.5, 300, 600, FAR_MAP]);
   });
@@ -178,7 +185,7 @@ describe('selectBossAndEnemies', () => {
     const HIGH_HP = 9000;
     // The add has more samples, but the boss out-HPs it.
     const byActor = actorMap([[BOSS_ID, 2, HIGH_HP], [11, 8, LOW_HP]]);
-    const { bossId, kept } = selectBossAndEnemies(byActor, PLAYER_ID, meta([BOSS_ID, 11]));
+    const { bossId, kept } = svc['selectBossAndEnemies'](byActor, PLAYER_ID, meta([BOSS_ID, 11]));
     expect(bossId).toBe(BOSS_ID);
     expect(kept.map(enemy => enemy.actorId).sort((a, b) => a - b)).toEqual([BOSS_ID, 11]);
   });
@@ -187,7 +194,7 @@ describe('selectBossAndEnemies', () => {
     const HP = 5000;
     const byActor = actorMap([[PLAYER_ID, 9, HP], [BOSS_ID, 3, HP], [99, 3, HP]]);
     // 99 has no meta entry, so it is not an enemy candidate.
-    const { kept } = selectBossAndEnemies(byActor, PLAYER_ID, meta([BOSS_ID]));
+    const { kept } = svc['selectBossAndEnemies'](byActor, PLAYER_ID, meta([BOSS_ID]));
     expect(kept.map(enemy => enemy.actorId)).toEqual([BOSS_ID]);
   });
 
@@ -201,7 +208,7 @@ describe('selectBossAndEnemies', () => {
       [14, 30, BASE_HP], [15, 20, BASE_HP], [CAPPED_OUT_ADD, 15, BASE_HP], [BOSS_OF_MANY, 10, BASE_HP + 1],
     ];
     const enemyIds = entries.map(([actorId]) => actorId);
-    const { bossId, kept } = selectBossAndEnemies(actorMap(entries), PLAYER_ID, meta(enemyIds));
+    const { bossId, kept } = svc['selectBossAndEnemies'](actorMap(entries), PLAYER_ID, meta(enemyIds));
     expect(bossId).toBe(BOSS_OF_MANY);
     // The cap takes the 5 most-sampled (11..15); the boss is appended past the cap; the extra add is dropped.
     expect(kept).toHaveLength(MAX_TRACKED_ENEMIES + 1);
@@ -219,13 +226,13 @@ describe('selectBossAndEnemies', () => {
       [13, 30, BASE_HP], [14, 20, BASE_HP], [LOW_SAMPLE_ADD, 5, BASE_HP],
     ];
     const enemyIds = entries.map(([actorId]) => actorId);
-    const { kept } = selectBossAndEnemies(actorMap(entries), PLAYER_ID, meta(enemyIds));
+    const { kept } = svc['selectBossAndEnemies'](actorMap(entries), PLAYER_ID, meta(enemyIds));
     expect(kept).toHaveLength(MAX_TRACKED_ENEMIES);
     expect(kept.some(enemy => enemy.actorId === LOW_SAMPLE_ADD)).toBe(false);
   });
 
   it('returns no boss when there are no enemy candidates', () => {
-    const { bossId, kept } = selectBossAndEnemies(actorMap([[PLAYER_ID, 5, 5000]]), PLAYER_ID, meta([]));
+    const { bossId, kept } = svc['selectBossAndEnemies'](actorMap([[PLAYER_ID, 5, 5000]]), PLAYER_ID, meta([]));
     expect(bossId).toBeNull();
     expect(kept).toEqual([]);
   });
@@ -253,7 +260,7 @@ describe('buildParsePositions', () => {
       resEvent({ ts: 4000, source: 11, x: 500, y: 0, maxHp: 1000 }),
       resEvent({ ts: 6000, source: 11, x: 500, y: 0, maxHp: 1000 }),
     ];
-    const parse = buildParsePositions({
+    const parse = svc['buildParsePositions']({
       reportCode: 'rep', fightId: 1, playerName: 'Me', playerId: 5,
       enemyMetaById: enemyMeta, posEvents: timed(events, 0), durationS: 6,
     });
@@ -279,7 +286,7 @@ describe('buildParsePositions', () => {
       // add: only 1 sample -> below MIN_ENEMY_SAMPLES
       resEvent({ ts: 0, source: 11, x: 9, y: 9, maxHp: 1000 }),
     ];
-    const parse = buildParsePositions({
+    const parse = svc['buildParsePositions']({
       reportCode: 'rep', fightId: 1, playerName: 'Me', playerId: 5,
       enemyMetaById: enemyMeta, posEvents: timed(events, 0), durationS: 1.5,
     });

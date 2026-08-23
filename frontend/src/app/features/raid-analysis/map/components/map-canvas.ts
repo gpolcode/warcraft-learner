@@ -9,7 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
-import { MapFeatureService, listReferenceEnemies } from '../facade/map-feature-service';
+import { MapFeatureService } from '../facade/map-feature-service';
 import { MapDrawService, RelPos, ParseTimelines } from '../domain/map-draw';
 
 const STEP_S = 0.5;
@@ -44,7 +44,7 @@ export class MapCanvas {
 
   protected readonly refEnemies = computed(() => {
     const positions = this.positions();
-    return positions ? listReferenceEnemies(positions) : [];
+    return positions ? this.map.listReferenceEnemies(positions) : [];
   });
 
   protected readonly refValue = computed(() => {

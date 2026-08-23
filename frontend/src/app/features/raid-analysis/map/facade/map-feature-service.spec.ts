@@ -6,15 +6,24 @@ import { Result, ok, missing, transient } from '../../../../core/http/result';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { sliceService } from '../../../../../testing/service-harness';
-import {
-  MapFeatureService, buildActorTimelines, listReferenceEnemies, buildLiveOverlay, resolveLiveReference,
-  FACING_OFFSET_RAD,
-} from './map-feature-service';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { MapFeatureService, FACING_OFFSET_RAD } from './map-feature-service';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { whenStable } from '../../../../../testing/when-stable';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: MAP_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(MapFeatureService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 function posEvent(
   fields: { ts: number; source?: number; target?: number; resourceActor?: number; x: number; y: number; facing?: number; mapID?: number },
@@ -28,19 +37,19 @@ function posEvent(
 
 describe('buildActorTimelines', () => {
   it('attributes the flattened position to the source by default (resourceActor 1)', () => {
-    const timelines = buildActorTimelines(timed([posEvent({ ts: 1000, source: 7, x: 200, y: 400 })], 0));
+    const timelines = svc['buildActorTimelines'](timed([posEvent({ ts: 1000, source: 7, x: 200, y: 400 })], 0));
     const tl = timelines.get(7);
     assert.exists(tl);
     expect(tl.samples).toEqual([{ t: 1, x: 2, y: 4, facing: undefined, mapID: undefined }]);
   });
 
   it('attributes the position to the target when resourceActor is 2', () => {
-    const timelines = buildActorTimelines(timed([posEvent({ ts: 0, source: 7, target: 9, resourceActor: 2, x: 100, y: 0 })], 0));
+    const timelines = svc['buildActorTimelines'](timed([posEvent({ ts: 0, source: 7, target: 9, resourceActor: 2, x: 100, y: 0 })], 0));
     expect([...timelines.keys()]).toEqual([9]);
   });
 
   it('scales x/y to yards and facing milliradians to radians, sorted by time', () => {
-    const timelines = buildActorTimelines(timed([
+    const timelines = svc['buildActorTimelines'](timed([
       posEvent({ ts: 3000, source: 1, x: 300, y: 0, facing: 1000 }),
       posEvent({ ts: 1000, source: 1, x: 100, y: 0, facing: 2000 }),
     ], 0));
@@ -53,7 +62,7 @@ describe('buildActorTimelines', () => {
 
   it('skips events without a position', () => {
     const noPos: WclEvent = { type: 'cast', timestamp: 0, abilityGameID: 1, sourceID: 5 };
-    expect(buildActorTimelines(timed([noPos], 0)).size).toBe(0);
+    expect(svc['buildActorTimelines'](timed([noPos], 0)).size).toBe(0);
   });
 });
 
@@ -73,7 +82,7 @@ describe('listReferenceEnemies', () => {
   };
 
   it('dedupes enemies by gameId and sorts the boss first', () => {
-    expect(listReferenceEnemies(positions)).toEqual([
+    expect(svc.listReferenceEnemies(positions)).toEqual([
       { gameId: 100, name: 'Boss', isBoss: true },
       { gameId: 200, name: 'Add', isBoss: false },
     ]);
@@ -89,7 +98,7 @@ describe('listReferenceEnemies', () => {
         { ...positions.parses[1], enemies: [{ game_id: 200, name: 'Add', is_boss: true, samples: [] }] },
       ],
     };
-    expect(listReferenceEnemies(mixed)).toEqual([{ gameId: 200, name: 'Add', isBoss: true }]);
+    expect(svc.listReferenceEnemies(mixed)).toEqual([{ gameId: 200, name: 'Add', isBoss: true }]);
   });
 });
 
@@ -102,7 +111,7 @@ describe('buildLiveOverlay', () => {
 
   it('maps the ingested boss gameId to the live actor id and keys enemies by gameId', () => {
     const events = timed([posEvent({ ts: 0, source: 5, x: 100, y: 0 })], 0);
-    const overlay = buildLiveOverlay({ positions, events, playerId: 5, enemies: [{ id: 42, name: 'Boss', gameID: 100 }] });
+    const overlay = svc['buildLiveOverlay']({ positions, events, playerId: 5, enemies: [{ id: 42, name: 'Boss', gameID: 100 }] });
     expect(overlay).not.toBeNull();
     assert.exists(overlay);
     expect(overlay.bossActorId).toBe(42);
@@ -114,7 +123,7 @@ describe('buildLiveOverlay', () => {
 
   it('returns null when the player has no position samples', () => {
     const events = timed([posEvent({ ts: 0, source: 99, x: 1, y: 1 })], 0);
-    expect(buildLiveOverlay({ positions, events, playerId: 5, enemies: [] })).toBeNull();
+    expect(svc['buildLiveOverlay']({ positions, events, playerId: 5, enemies: [] })).toBeNull();
   });
 });
 
@@ -129,14 +138,14 @@ describe('resolveLiveReference', () => {
   };
 
   it('maps the ingested boss gameId to this pull boss actor and keys all enemies by gameId', () => {
-    const ref = resolveLiveReference(positions, [{ id: 42, name: 'Boss', gameID: 100 }, { id: 7, name: 'Add', gameID: 200 }]);
+    const ref = svc['resolveLiveReference'](positions, [{ id: 42, name: 'Boss', gameID: 100 }, { id: 7, name: 'Add', gameID: 200 }]);
     expect(ref.bossActorId).toBe(42);
     expect(ref.refActorByGameId.get(100)).toBe(42);
     expect(ref.refActorByGameId.get(200)).toBe(7);
   });
 
   it('has a null boss actor when the live pull has no matching boss gameId', () => {
-    const ref = resolveLiveReference(positions, [{ id: 7, name: 'Add', gameID: 200 }]);
+    const ref = svc['resolveLiveReference'](positions, [{ id: 7, name: 'Add', gameID: 200 }]);
     expect(ref.bossActorId).toBeNull();
     expect(ref.refActorByGameId.get(200)).toBe(7);
   });

@@ -1,10 +1,12 @@
 import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.models';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { TestBed } from '@angular/core/testing';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { DefensiveBench } from '../data-access/defensive-data-source';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-export const timed = withRelativeS;
+export const timed: WclProjectionsService['withRelativeS'] = (events, fightStartMs) =>
+  TestBed.inject(WclProjectionsService).withRelativeS(events, fightStartMs);
 
 export const CLOAK_META = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, usage_rule: 'Use on big hits', talent_gated: false };
 

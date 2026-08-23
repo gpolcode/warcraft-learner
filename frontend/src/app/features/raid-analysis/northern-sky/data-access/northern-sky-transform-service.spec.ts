@@ -1,29 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ok, missing } from '../../../../core/http/result';
-import { NorthernSkyTransformService, cooldownCastTimes } from './northern-sky-transform-service';
+import { NorthernSkyTransformService } from './northern-sky-transform-service';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
 import { cast } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(NorthernSkyTransformService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 describe('cooldownCastTimes', () => {
   it('collects a cooldown\'s cast times in fight-relative seconds, sorted, ignoring other ids', () => {
     const casts = timed([cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)], 0);
-    expect(cooldownCastTimes(casts, SHADOW_BLADES)).toEqual([10, 30]);
+    expect(svc['cooldownCastTimes'](casts, SHADOW_BLADES)).toEqual([10, 30]);
   });
 
   it('rounds each cast time to one decimal', () => {
-    expect(cooldownCastTimes(timed([cast(SHADOW_BLADES, 3.612)], 0), SHADOW_BLADES)).toEqual([3.6]);
+    expect(svc['cooldownCastTimes'](timed([cast(SHADOW_BLADES, 3.612)], 0), SHADOW_BLADES)).toEqual([3.6]);
   });
 
   it('returns [] when the ability was never cast', () => {
-    expect(cooldownCastTimes(timed([cast(SHADOW_DANCE, 5)], 0), SHADOW_BLADES)).toEqual([]);
+    expect(svc['cooldownCastTimes'](timed([cast(SHADOW_DANCE, 5)], 0), SHADOW_BLADES)).toEqual([]);
   });
 });
 

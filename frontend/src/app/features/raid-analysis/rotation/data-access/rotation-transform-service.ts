@@ -8,8 +8,7 @@ import { group, quantile } from 'd3-array';
 import {
   round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
 } from '../../../../domain/analysis/analysis-math';
-import { HoldWindow, detectHoldWindows } from '../../../../domain/analysis/hold-targets';
-import { buildCadenceBenchmark } from '../../../../domain/analysis/cast-cadence';
+import { HoldWindow } from '../../../../domain/analysis/hold-targets';
 import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
@@ -18,6 +17,8 @@ import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES
 import { RuleContextService } from '../domain/rotation-rules/rule-context';
 import { RotationBloodlustService } from '../domain/rotation-bloodlust';
 import { RotationBench } from './rotation-data-source';
+import { HoldTargetsService } from '../../../../domain/analysis/hold-targets';
+import { CastCadenceService } from '../../../../domain/analysis/cast-cadence';
 
 /** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
 const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
@@ -40,100 +41,6 @@ export interface CdSummary {
   fight_duration_s: number;
 }
 
-export function summarizeCooldownCasts(
-  castEvents: TimedEvent[], cooldowns: RulebookCooldown[],
-  fightDurS: number, blTimeS: number | null,
-): CdSummary[] {
-  return cooldowns.map(cooldown => {
-    const castTimesS = castEvents
-      .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-      .map(cast => cast.atS)
-      .sort((a, b) => a - b);
-
-    let blAligned = false;
-    let blOffsetS: number | null = null;
-    if (blTimeS != null && castTimesS.length) {
-      const windowOffsets = castTimesS
-        .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
-        .map(timeS => timeS - blTimeS);
-      blAligned = windowOffsets.length > 0;
-      if (windowOffsets.length) blOffsetS = round(closestToZero(windowOffsets));
-    }
-
-    const holdWindows = detectHoldWindows(castTimesS, cooldown.cooldown);
-
-    return {
-      name: cooldown.name,
-      total_uses: castTimesS.length,
-      first_cast_s: castTimesS[0] != null ? round(castTimesS[0]) : null,
-      bl_aligned: blAligned,
-      bl_offset_s: blOffsetS,
-      cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
-      hold_windows: holdWindows,
-      cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-      fight_duration_s: fightDurS,
-    };
-  });
-}
-
-export function castGapListS(castEvents: TimedEvent[]): number[] {
-  const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
-  const gaps: number[] = [];
-  let prev: TimedEvent | undefined;
-  for (const event of completed) {
-    if (prev) gaps.push(round(event.atS - prev.atS, 3));
-    prev = event;
-  }
-  return gaps.sort((a, b) => a - b);
-}
-
-export function buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
-  const users = entries.filter(entry => entry.total_uses > 0);
-  const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
-  const blCount = entries.filter(entry => entry.bl_aligned).length;
-
-  return {
-    ...buildCadenceBenchmark(users, effectiveCd, entries.length),
-    avg_bl_offset_s: avgOr(blOffsets, null),
-    stddev_bl_offset_s: stddevOr(blOffsets, null),
-    bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
-  };
-}
-
-export function computeEfficiencyThresholds(
-  parses: { gapListS: number[]; durationS: number }[],
-): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
-  const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
-  let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
-  if (allGaps.length) {
-    downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
-  }
-  const efficiencies: number[] = [];
-  for (const { gapListS, durationS } of parses) {
-    if (gapListS.length && durationS > 0) {
-      const downtimeS = gapListS.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
-      efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
-    }
-  }
-  return {
-    downtimeThresholdS: round(downtimeThresholdS, 3),
-    topAvgEfficiency: avgOr(efficiencies, 0),
-    topEfficiencyStddev: stddevOr(efficiencies, 0),
-  };
-}
-
-export function aggregateCdBenchmarks(
-  perParse: CdSummary[][], cooldowns: RulebookCooldown[],
-): Record<string, PerCdBenchmark> {
-  const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown]));
-  const byCd = group(perParse.flat(), summary => summary.name);
-  const result: Record<string, PerCdBenchmark> = {};
-  for (const [name, entries] of byCd.entries()) {
-    result[name] = buildCdBenchmark(entries, cdSecondsByName.get(name) ?? 90);
-  }
-  return result;
-}
-
 /** One parse's contribution for each judged rule, index-aligned with the rules. */
 export type ParseRuleSamples = RuleSample[];
 
@@ -152,6 +59,8 @@ interface RotationPlan {
 
 @Injectable({ providedIn: 'root' })
 export class RotationTransformService implements DataSource<RotationBench> {
+  private readonly holdTargets = inject(HoldTargetsService);
+  private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
   private readonly ruleEngine = inject(RotationRuleEngineService);
   private readonly ruleContexts = inject(RuleContextService);
@@ -182,12 +91,12 @@ export class RotationTransformService implements DataSource<RotationBench> {
       iconSpellIds: bench => Object.values(bench.cd_spell_ids),
       parse: (parse, plan) => this.parseRotation(parse, plan.cooldowns, plan.judgeable),
       bench: ({ parses }, plan) => {
-        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = computeEfficiencyThresholds(parses);
+        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = this.computeEfficiencyThresholds(parses);
         return {
           downtime_threshold_s: downtimeThresholdS,
           top_avg_efficiency: topAvgEfficiency,
           top_efficiency_stddev: topEfficiencyStddev,
-          per_cd_benchmarks: aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
+          per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
           rules: this.benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
@@ -232,10 +141,104 @@ export class RotationTransformService implements DataSource<RotationBench> {
       fightDurationS: fightDurS,
     });
     return {
-      summaries: summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
-      gapListS: castGapListS(castsTimed),
+      summaries: this.summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
+      gapListS: this.castGapListS(castsTimed),
       durationS: fightDurS,
       ruleSamples: rules.map(rule => (rule.condition ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
     };
+  }
+
+  protected summarizeCooldownCasts(
+    castEvents: TimedEvent[], cooldowns: RulebookCooldown[],
+    fightDurS: number, blTimeS: number | null,
+  ): CdSummary[] {
+    return cooldowns.map(cooldown => {
+      const castTimesS = castEvents
+        .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
+        .map(cast => cast.atS)
+        .sort((a, b) => a - b);
+
+      let blAligned = false;
+      let blOffsetS: number | null = null;
+      if (blTimeS != null && castTimesS.length) {
+        const windowOffsets = castTimesS
+          .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
+          .map(timeS => timeS - blTimeS);
+        blAligned = windowOffsets.length > 0;
+        if (windowOffsets.length) blOffsetS = round(closestToZero(windowOffsets));
+      }
+
+      const holdWindows = this.holdTargets.detectHoldWindows(castTimesS, cooldown.cooldown);
+
+      return {
+        name: cooldown.name,
+        total_uses: castTimesS.length,
+        first_cast_s: castTimesS[0] != null ? round(castTimesS[0]) : null,
+        bl_aligned: blAligned,
+        bl_offset_s: blOffsetS,
+        cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
+        hold_windows: holdWindows,
+        cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
+        fight_duration_s: fightDurS,
+      };
+    });
+  }
+
+  protected castGapListS(castEvents: TimedEvent[]): number[] {
+    const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
+    const gaps: number[] = [];
+    let prev: TimedEvent | undefined;
+    for (const event of completed) {
+      if (prev) gaps.push(round(event.atS - prev.atS, 3));
+      prev = event;
+    }
+    return gaps.sort((a, b) => a - b);
+  }
+
+  protected buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
+    const users = entries.filter(entry => entry.total_uses > 0);
+    const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
+    const blCount = entries.filter(entry => entry.bl_aligned).length;
+
+    return {
+      ...this.castCadence.buildCadenceBenchmark(users, effectiveCd, entries.length),
+      avg_bl_offset_s: avgOr(blOffsets, null),
+      stddev_bl_offset_s: stddevOr(blOffsets, null),
+      bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
+    };
+  }
+
+  protected computeEfficiencyThresholds(
+    parses: { gapListS: number[]; durationS: number }[],
+  ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
+    const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
+    let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
+    if (allGaps.length) {
+      downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
+    }
+    const efficiencies: number[] = [];
+    for (const { gapListS, durationS } of parses) {
+      if (gapListS.length && durationS > 0) {
+        const downtimeS = gapListS.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
+        efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
+      }
+    }
+    return {
+      downtimeThresholdS: round(downtimeThresholdS, 3),
+      topAvgEfficiency: avgOr(efficiencies, 0),
+      topEfficiencyStddev: stddevOr(efficiencies, 0),
+    };
+  }
+
+  protected aggregateCdBenchmarks(
+    perParse: CdSummary[][], cooldowns: RulebookCooldown[],
+  ): Record<string, PerCdBenchmark> {
+    const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown]));
+    const byCd = group(perParse.flat(), summary => summary.name);
+    const result: Record<string, PerCdBenchmark> = {};
+    for (const [name, entries] of byCd.entries()) {
+      result[name] = this.buildCdBenchmark(entries, cdSecondsByName.get(name) ?? 90);
+    }
+    return result;
   }
 }

@@ -33,7 +33,8 @@ async function mount(
   copySucceeds = true,
 ): Promise<Mounted> {
   const copies: string[] = [];
-  const feature = { getExport } as unknown as NorthernSkyFeatureService;
+  // The prototype supplies the real panel and note methods; only the IO read is faked.
+  const feature = Object.assign(Object.create(NorthernSkyFeatureService.prototype) as NorthernSkyFeatureService, { getExport });
   const selection = { loadNorthernSky: () => null, saveNorthernSky: () => undefined } as unknown as SelectionStore;
   const clipboard = {
     copy: (text: string) => { copies.push(text); return copySucceeds; },

@@ -2,32 +2,40 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
 import { ok, missing } from '../../../../core/http/result';
-import {
-  BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, ParseWindow,
-  BurstDetectorTuning, DEFAULT_BURST_TUNING,
-} from './burst-transform-service';
+import { BurstTransformService, ParseWindow, BurstDetectorTuning, DEFAULT_BURST_TUNING } from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
   RUPTURE, VANISH, SECRET_TECHNIQUE, SHADOW_DANCE,
 } from '../../../../../testing/spell-ids';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { cast, damage } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(BurstTransformService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 interface ScanOverrides {
-  timings?: ReturnType<typeof cdTimings>;
+  timings?: ReturnType<BurstTransformService['cdTimings']>;
   casts?: WclEvent[];
   abilityNames?: Map<number, string>;
   tuning?: BurstDetectorTuning;
 }
 
 function scanWindows(damageEvents: WclEvent[], fightLenS: number, overrides: ScanOverrides = {}): ParseWindow[] {
-  return findParseWindows({
+  return svc['findParseWindows']({
     damage: timed(damageEvents, 0), fightLenS,
     timings: overrides.timings ?? [], casts: timed(overrides.casts ?? [], 0), abilityNames: overrides.abilityNames ?? new Map<number, string>(),
   }, overrides.tuning);
@@ -56,7 +64,7 @@ function burstAt(startS: number): WclEvent[] {
 
 describe('cdTimings', () => {
   it('collects per-cooldown cast times in fight-relative seconds (no duration read)', () => {
-    const timings = cdTimings(timed([cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(999, 5)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
+    const timings = svc['cdTimings'](timed([cast(SHADOW_BLADES, 30), cast(SHADOW_BLADES, 10), cast(999, 5)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     expect(timings).toEqual([{ name: 'Shadow Blades', castTimesS: [10, 30] }]);
   });
 });
@@ -204,7 +212,7 @@ describe('findParseWindows', () => {
 
   it('attributes a cooldown whose cast lands inside the window', () => {
     // Window is [10s, 14s); a Shadow Blades cast at 10s is inside.
-    const timings = cdTimings(timed([cast(SHADOW_BLADES, 10)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
+    const timings = svc['cdTimings'](timed([cast(SHADOW_BLADES, 10)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     const windows = scanWindows(burstAt(10), LONG_FIGHT_S, { timings, casts: [cast(SHADOW_BLADES, 10)] });
     assert.exists(windows[0]);
     expect(windows[0].active_cds).toEqual(['Shadow Blades']);
@@ -212,7 +220,7 @@ describe('findParseWindows', () => {
 
   it('does not attribute a cooldown cast on the half-open window end', () => {
     // A cast at 14s sits exactly on the window end -> not attributed.
-    const timings = cdTimings(timed([cast(SHADOW_BLADES, 14)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
+    const timings = svc['cdTimings'](timed([cast(SHADOW_BLADES, 14)], 0), [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     const windows = scanWindows(burstAt(10), LONG_FIGHT_S, { timings, casts: [cast(SHADOW_BLADES, 14)] });
     assert.exists(windows[0]);
     expect(windows[0].active_cds).toEqual([]);
@@ -298,7 +306,7 @@ describe('clusterParseWindows', () => {
       { ...window(11), window_length_s: 5, window_damage: 900 },
       { ...window(14), window_length_s: 9, window_damage: 700 },
     ];
-    const out = clusterParseWindows(members, 3);
+    const out = svc['clusterParseWindows'](members, 3);
     expect(out).toHaveLength(1);
     // time_s = median(10,11,14) = 11; window_length_s = mean(4,5,9) = 6; damages: mean 700, min 500, max 900, sample stddev 200.
     expect(out[0]).toMatchObject({
@@ -312,25 +320,25 @@ describe('clusterParseWindows', () => {
   // Consensus gate: survive only with at least max(2, CLUSTER_MIN_FRAC * sampleCount) member parses (floor 4 at sampleCount 10).
   it('keeps a cluster present in enough parses', () => {
     const four = [window(10), window(11), window(12), window(13)];
-    expect(clusterParseWindows(four, 10)).toHaveLength(1);
+    expect(svc['clusterParseWindows'](four, 10)).toHaveLength(1);
   });
 
   it('drops a cluster present in fewer parses than the consensus floor', () => {
     const three = [window(10), window(11), window(12)];
-    expect(clusterParseWindows(three, 10)).toHaveLength(0);
+    expect(svc['clusterParseWindows'](three, 10)).toHaveLength(0);
   });
 
   it('drops a single-parse cluster even when the sample fraction alone would keep it', () => {
     // sampleCount 2 -> the frac arm is 0.4*2 = 0.8, which 1 member would clear; the absolute max(2, ...) floor drops it.
-    expect(clusterParseWindows([window(10)], 2)).toHaveLength(0);
+    expect(svc['clusterParseWindows']([window(10)], 2)).toHaveLength(0);
   });
 
   it('marks a clustered ability passive only when every member never cast it', () => {
-    const allPassive = clusterParseWindows([window(10, true), window(11, true)], 2)[0];
+    const allPassive = svc['clusterParseWindows']([window(10, true), window(11, true)], 2)[0];
     assert.exists(allPassive);
     expect(allPassive.ability_breakdown[0]).toMatchObject({ is_passive: true });
     // One member did cast it -> the clustered ability is not passive.
-    const oneCast = clusterParseWindows([window(10, true), window(11, false)], 2)[0];
+    const oneCast = svc['clusterParseWindows']([window(10, true), window(11, false)], 2)[0];
     assert.exists(oneCast);
     expect(oneCast.ability_breakdown[0]).toMatchObject({ is_passive: false });
   });
@@ -343,7 +351,7 @@ describe('clusterParseWindows', () => {
     // sampleCount 6 -> consensus floor 2.4; the cluster has 3 windows but only 2 distinct parses, so it's dropped.
     const SAMPLE_COUNT = 6;
     const cluster = [window(10, false, PARSE_A), window(11, false, PARSE_A), window(12, false, PARSE_B)];
-    expect(clusterParseWindows(cluster, SAMPLE_COUNT)).toHaveLength(0);
+    expect(svc['clusterParseWindows'](cluster, SAMPLE_COUNT)).toHaveLength(0);
   });
 
   it('keeps each parse\'s biggest window when a parse contributes two to a cluster', () => {
@@ -355,7 +363,7 @@ describe('clusterParseWindows', () => {
     const small = { ...window(10, false, PARSE_A), window_damage: PARSE_A_SMALLER_DMG };
     const big = { ...window(11, false, PARSE_A), window_damage: PARSE_A_BIGGER_DMG };
     const other = { ...window(12, false, PARSE_B), window_damage: PARSE_B_DMG };
-    const out = clusterParseWindows([small, big, other], SAMPLE_COUNT);
+    const out = svc['clusterParseWindows']([small, big, other], SAMPLE_COUNT);
     expect(out).toHaveLength(1);
     assert.exists(out[0]);
     expect(out[0].dmg_avg).toBe(EXPECTED_AVG);
@@ -369,7 +377,7 @@ describe('clusterParseWindows', () => {
     const member = (parseIndex: number, abilities: ParseWindow['ability_breakdown'], cds: string[]): ParseWindow =>
       ({ ...window(10 + parseIndex, false, parseIndex), ability_breakdown: abilities, active_cds: cds });
     // MAIN + 'Shadow Blades' in all 4; HALF + 'Vanish' in exactly 2 (2 >= 0.5*4 -> kept); RARE in 1 (0.25 < 0.5 -> dropped).
-    const out = clusterParseWindows([
+    const out = svc['clusterParseWindows']([
       member(0, [main, half, rare], ['Shadow Blades', 'Vanish']),
       member(1, [main, half], ['Shadow Blades', 'Vanish']),
       member(2, [main], ['Shadow Blades']),

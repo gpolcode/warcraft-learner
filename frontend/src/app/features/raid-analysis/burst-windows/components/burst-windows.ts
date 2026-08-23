@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { WindowComparison } from '../../../../shared/components/window-comparison/window-comparison';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { loadResource } from '../../../../shared/state/load-resource';
 import { BurstFeatureService, BurstMapAnchor } from '../facade/burst-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,6 +12,7 @@ import { BurstFeatureService, BurstMapAnchor } from '../facade/burst-feature-ser
   templateUrl: './burst-windows.html',
 })
 export class BurstWindows {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly burst = inject(BurstFeatureService);
 
   readonly spec = input.required<string>();
@@ -27,7 +28,7 @@ export class BurstWindows {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({
       spec: this.spec(),
       encounterId: this.encounterId(),

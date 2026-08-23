@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { WclFight } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { MapAnchor } from '../../map/facade/map-feature-service';
-import { loadResource } from '../../../../shared/state/load-resource';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../../../shared/pipes/format-damage-pipe';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { PullOverviewFeatureService } from '../facade/pull-overview-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 // Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({
@@ -20,6 +20,7 @@ import { PullOverviewFeatureService } from '../facade/pull-overview-feature-serv
   host: { class: 'block' },
 })
 export class PullOverview {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly service = inject(PullOverviewFeatureService);
 
   readonly report = input.required<string>();
@@ -32,7 +33,7 @@ export class PullOverview {
   readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({ report: this.report(), player: this.player(), fight: this.fight() }),
     load: ({ report, player, fight }) => this.service.loadView(report, player, fight),
     context: 'pull-overview.loadView',

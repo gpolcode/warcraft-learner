@@ -9,7 +9,6 @@ import type { FindingRow, OnPlanChip } from './finding-table.utils';
 
 // Re-export so callers can import types + helpers from either this file or the utils module.
 export type { FindingRow, OnPlanChip } from './finding-table.utils';
-export { rowsFromEntries, onPlanFromEntries, bucketFindings } from './finding-table.utils';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

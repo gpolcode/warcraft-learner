@@ -3,9 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
 import { CollapsibleText } from '../../../../shared/components/collapsible-text/collapsible-text';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
-import { GearComparisonService } from '../../../../domain/gear/gear-comparison';
-import { loadResource } from '../../../../shared/state/load-resource';
-import { GearFeatureService, emptyGearView } from '../facade/gear-feature-service';
+import { GearComparisonService, GearStatus } from '../../../../domain/gear/gear-comparison';
+import { GearFeatureService } from '../facade/gear-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,6 +14,7 @@ import { GearFeatureService, emptyGearView } from '../facade/gear-feature-servic
   templateUrl: './gear.html',
 })
 export class Gear {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly gearComparison = inject(GearComparisonService);
   private readonly gear = inject(GearFeatureService);
 
@@ -26,7 +27,7 @@ export class Gear {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({
       spec: this.spec(),
       encounterId: this.encounterId(),
@@ -42,7 +43,7 @@ export class Gear {
     availableChange: this.availableChange,
   });
 
-  protected readonly view = computed(() => this.load.value() ?? emptyGearView());
+  protected readonly view = computed(() => this.load.value() ?? this.gear.emptyGearView());
   // available() is the load outcome, not a view flag: true only once an ok result lands.
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
@@ -51,6 +52,11 @@ export class Gear {
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
-  protected readonly slotName = this.gearComparison.slotName;
-  protected readonly statusIcon = this.gearComparison.statusIcon;
+  protected slotName(slot: number): string {
+    return this.gearComparison.slotName(slot);
+  }
+
+  protected statusIcon(status: GearStatus): string {
+    return this.gearComparison.statusIcon(status);
+  }
 }

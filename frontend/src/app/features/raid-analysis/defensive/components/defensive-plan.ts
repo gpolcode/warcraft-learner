@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { PlanTable } from '../../../../shared/components/plan-table/plan-table';
-import { loadResource } from '../../../../shared/state/load-resource';
 import { DefensiveFeatureService, DefensivePlanRow } from '../facade/defensive-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,6 +10,7 @@ import { DefensiveFeatureService, DefensivePlanRow } from '../facade/defensive-f
   templateUrl: './defensive-plan.html',
 })
 export class DefensivePlan {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly defensive = inject(DefensiveFeatureService);
 
   readonly spec = input.required<string>();
@@ -21,7 +22,7 @@ export class DefensivePlan {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({ spec: this.spec(), encounterId: this.encounterId() }),
     load: ({ spec, encounterId }) => this.defensive.loadPlan(spec, encounterId),
     context: 'defensive.loadPlan',

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import {
-  bucketFindings, FindingRow, FindingTable, onPlanFromEntries, rowsFromEntries,
+  FindingRow, FindingTable,
 } from '../../../../shared/components/finding-table/finding-table';
+import { FindingRowsService } from '../../../../shared/components/finding-table/finding-table.utils';
 import { WindowComparison } from '../../../../shared/components/window-comparison/window-comparison';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
-import { loadResource } from '../../../../shared/state/load-resource';
-import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from '../facade/defensive-feature-service';
+import { DefensiveFeatureService, DefensiveMapAnchor } from '../facade/defensive-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,6 +16,8 @@ import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor
   templateUrl: './defensive.html',
 })
 export class Defensive {
+  private readonly loadRes = inject(LoadResourceService);
+  private readonly rowBuilder = inject(FindingRowsService);
   private readonly defensive = inject(DefensiveFeatureService);
 
   readonly spec = input.required<string>();
@@ -34,7 +37,7 @@ export class Defensive {
   /** Whether the top-parse bench exists. The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({
       spec: this.spec(),
       encounterId: this.encounterId(),
@@ -59,14 +62,14 @@ export class Defensive {
     const view = this.load.value();
     const spellIds = view?.spellIdsByName ?? {};
     const icons = view?.iconByName ?? {};
-    return bucketFindings(view?.findings ?? [], {
+    return this.rowBuilder.bucketFindings(view?.findings ?? [], {
       spellId: name => spellIds[name] ?? null,
       icon: name => icons[name] ?? '',
     });
   });
 
-  protected readonly findingRows = computed<FindingRow[]>(() => rowsFromEntries(this.entries()));
-  protected readonly onPlan = computed(() => onPlanFromEntries(this.entries()));
+  protected readonly findingRows = computed<FindingRow[]>(() => this.rowBuilder.rowsFromEntries(this.entries()));
+  protected readonly onPlan = computed(() => this.rowBuilder.onPlanFromEntries(this.entries()));
 
   protected onOpenMap(index: number): void {
     const anchor = this.anchors()[index];
@@ -90,6 +93,6 @@ export class Defensive {
   /** A timed finding's clip button: a clip centered on that cast instant (roll on each side). */
   protected onFindingClip(row: FindingRow): void {
     if (row.timestampS == null) return;
-    this.openClip.emit(defensiveFindingClipAnchor(row.timestampS));
+    this.openClip.emit(this.defensive.defensiveFindingClipAnchor(row.timestampS));
   }
 }

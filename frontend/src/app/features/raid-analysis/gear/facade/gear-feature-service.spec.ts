@@ -3,10 +3,18 @@ import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/w
 import { GEAR_DATA_SOURCE, GearBench } from '../data-access/gear-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
 import { Result, ok, permanent, missing } from '../../../../core/http/result';
-import {
-  GearFeatureService, benchToStats, buildGearView, buildBenchGearView,
-  buildCharacterGear, emptyGearView,
-} from './gear-feature-service';
+import { GearFeatureService } from './gear-feature-service';
+import { TestBed } from '@angular/core/testing';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: GEAR_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(GearFeatureService);
+TestBed.resetTestingModule();
 
 const STANDARD_KEY = 'v3:11.1,22.1';
 
@@ -37,7 +45,7 @@ function toRawEvent(gear: CharacterGear): WclCombatantInfo {
 
 describe('benchToStats', () => {
   it('extracts the gear stats block from a bench', () => {
-    expect(benchToStats(benchWith())).toEqual({
+    expect(svc['benchToStats'](benchWith())).toEqual({
       talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
       trinkets: { 12: [{ id: 100, name: 'A', icon: 'inv_a', pct: 70 }] },
       enchants: { 15: [{ id: 8041, name: 'Sophic', pct: 90 }] },
@@ -47,7 +55,7 @@ describe('benchToStats', () => {
 
 describe('buildCharacterGear', () => {
   it('is a permanent error when the log has no combatant info', () => {
-    expect(buildCharacterGear(null, {}))
+    expect(svc['buildCharacterGear'](null, {}))
       .toEqual(permanent('No combatant info in this log.', 'gear.combatant-info'));
   });
 
@@ -57,7 +65,7 @@ describe('buildCharacterGear', () => {
       trinkets: [{ slot: 12, id: 100, name: 'A' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     });
-    const result = buildCharacterGear(event, {});
+    const result = svc['buildCharacterGear'](event, {});
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value).toMatchObject({ talent_key: STANDARD_KEY });
@@ -65,10 +73,10 @@ describe('buildCharacterGear', () => {
 });
 
 describe('buildBenchGearView', () => {
-  const stats = benchToStats(benchWith());
+  const stats = svc['benchToStats'](benchWith());
 
   it('comparison off, bench rows populated from the dedicated bench builders', () => {
-    const view = buildBenchGearView(stats);
+    const view = svc['buildBenchGearView'](stats);
     expect(view.comparison).toBe(false);
     expect(view.benchTrinketRows).toEqual([{ slotLabel: 'Trinket 1', id: 100, name: 'A', icon: 'inv_a', pct: 70 }]);
     expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic', pct: 90 }]);
@@ -80,7 +88,7 @@ describe('buildBenchGearView', () => {
 });
 
 describe('buildGearView', () => {
-  const stats = benchToStats(benchWith());
+  const stats = svc['benchToStats'](benchWith());
 
   it('comparison mode: player matching bench is on-plan (ok)', () => {
     const player: CharacterGear = {
@@ -88,7 +96,7 @@ describe('buildGearView', () => {
       trinkets: [{ slot: 12, id: 100, name: 'A' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
-    const view = buildGearView(player, stats);
+    const view = svc['buildGearView'](player, stats);
     expect(view.comparison).toBe(true);
     expect(view.talentStatus.status).toBe('ok');
     expect(view.trinketStatus).toBe('ok');
@@ -101,7 +109,7 @@ describe('buildGearView', () => {
       trinkets: [{ slot: 12, id: 100, name: 'A' }],
       enchants: [],
     };
-    const view = buildGearView(player, stats);
+    const view = svc['buildGearView'](player, stats);
     expect(view.enchantStatus).toBe('warn');
     expect(view.enchantRows.some(row => row.status === 'warn')).toBe(true);
   });
@@ -109,7 +117,7 @@ describe('buildGearView', () => {
 
 describe('emptyGearView', () => {
   it('is a bench-off placeholder with no rows', () => {
-    expect(emptyGearView()).toEqual({
+    expect(svc.emptyGearView()).toEqual({
       comparison: false,
       talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
       trinketRows: [], trinketStatus: 'ok', benchTrinketRows: [],

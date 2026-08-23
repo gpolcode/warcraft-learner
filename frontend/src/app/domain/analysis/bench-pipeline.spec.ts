@@ -8,8 +8,12 @@ import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../testing/spell-ids';
 import { rulebook } from '../../../testing/builders/rulebook';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../testing/builders/wcl-fixtures';
-import { AbilityIcons, toParseRankings } from './wcl-projections';
-import { BenchHeader, BenchSlice, benchFromTopParses, spellIdsByName } from './bench-pipeline';
+import { AbilityIcons, WclProjectionsService } from './wcl-projections';
+import { BenchHeader, BenchSlice, BenchPipelineService } from './bench-pipeline';
+import { TestBed } from '@angular/core/testing';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+const benchPipeline = TestBed.inject(BenchPipelineService);
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3144;
@@ -64,7 +68,7 @@ function benched(codes: string[]): CodeBench {
 describe('benchFromTopParses', () => {
   it('hands the slice every accepted parse in acceptance order, named by the first fight', async () => {
     const CANDIDATES = 2;
-    const result = await benchFromTopParses(wclFake({ rankings: parseRankings(CANDIDATES) }), QUERY, codeSlice());
+    const result = await benchPipeline.benchFromTopParses(wclFake({ rankings: parseRankings(CANDIDATES) }), QUERY, codeSlice());
     expect(result).toEqual(ok(benched(['r1', 'r2'])));
   });
 
@@ -75,7 +79,7 @@ describe('benchFromTopParses', () => {
     const wcl = wclFake({
       getReport: async (code: string) => { fetched.push(code); return reports(code); },
     });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok(benched(['r1', 'r2'])));
     expect(fetched).toEqual(['r1', 'r2']);
   });
@@ -84,7 +88,7 @@ describe('benchFromTopParses', () => {
     const TARGET = 2;
     const PRIVATE_CODE = 'r1';
     const wcl = wclFake({ getReport: reportsByCode({ privateCode: PRIVATE_CODE }) });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok(benched(['r2', 'r3'])));
   });
 
@@ -95,7 +99,7 @@ describe('benchFromTopParses', () => {
       sampleTarget: TARGET,
       parse: ({ ranking }) => Promise.resolve(ranking.report_code === REJECTED_CODE ? null : ranking.report_code),
     });
-    const result = await benchFromTopParses(wclFake(), QUERY, slice);
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, slice);
     expect(result).toEqual(ok(benched(['r1', 'r3'])));
   });
 
@@ -106,7 +110,7 @@ describe('benchFromTopParses', () => {
     const wcl = wclFake({
       getReport: async (code: string) => (code === ANONYMOUS_CODE ? wclReport({ actors: [] }) : reports(code)),
     });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok(benched(['r2'])));
   });
 
@@ -118,18 +122,18 @@ describe('benchFromTopParses', () => {
     const wcl = wclFake({
       getReport: async (code: string) => (code === OTHER_FIGHT_CODE ? wclReport({ fightId: UNRANKED_FIGHT_ID }) : reports(code)),
     });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice({ sampleTarget: TARGET }));
     expect(result).toEqual(ok(benched(['r2'])));
   });
 
   it('reports an empty ranking pool as missing, without touching a report', async () => {
-    const result = await benchFromTopParses(wclFake({ rankings: [] }), QUERY, codeSlice());
+    const result = await benchPipeline.benchFromTopParses(wclFake({ rankings: [] }), QUERY, codeSlice());
     expect(result).toEqual(missing(NO_RANKINGS_MESSAGE));
   });
 
   it('benches a pool that exactly meets the slice\'s floor', async () => {
     const FLOOR = 2;
-    const result = await benchFromTopParses(
+    const result = await benchPipeline.benchFromTopParses(
       wclFake({ rankings: parseRankings(FLOOR) }), QUERY, codeSlice({ minSamples: FLOOR }));
     expect(result).toEqual(ok(benched(['r1', 'r2'])));
   });
@@ -137,7 +141,7 @@ describe('benchFromTopParses', () => {
   it('reports a pool one parse short of the floor as missing, counting the usable parses', async () => {
     const FLOOR = 2;
     const USABLE = FLOOR - 1;
-    const result = await benchFromTopParses(
+    const result = await benchPipeline.benchFromTopParses(
       wclFake({ rankings: parseRankings(USABLE) }), QUERY, codeSlice({ minSamples: FLOOR }));
     expect(result).toEqual(missing(`${TOO_FEW_MESSAGE} (${USABLE})`));
   });
@@ -146,13 +150,13 @@ describe('benchFromTopParses', () => {
     const SERVER_UNREACHABLE_STATUS = 503;
     const outage = new WclTransportError(`WCL API error (${SERVER_UNREACHABLE_STATUS})`, SERVER_UNREACHABLE_STATUS);
     const wcl = wclFake({ getRankings: async () => { throw outage; } });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice());
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice());
     expect(result).toEqual(transient('WCL is unreachable right now.'));
   });
 
   it('tags a WCL failure with the slice\'s repro id instead of a silent empty bench', async () => {
     const wcl = wclFake({ getRankings: async () => { throw new Error('WCL exploded'); } });
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice());
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice());
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toMatchObject({ kind: 'permanent', id: BENCH_ERROR_ID });
   });
@@ -160,7 +164,7 @@ describe('benchFromTopParses', () => {
 
 describe('benchFromTopParses top-parse selection', () => {
   const POOL_SIZE = 3;
-  const HANDED_POOL: TopParseSelection = toParseRankings(parseRankings(POOL_SIZE), POOL_SIZE);
+  const HANDED_POOL: TopParseSelection = wclProjections.toParseRankings(parseRankings(POOL_SIZE), POOL_SIZE);
 
   it('benches the pool it was handed, leaving the rankings query to whoever resolved it', async () => {
     const asked: (number | null)[] = [];
@@ -168,7 +172,7 @@ describe('benchFromTopParses top-parse selection', () => {
       getRankings: async (_spec, _encounterId, partition) => { asked.push(partition); return { rankings: [] }; },
     });
 
-    const result = await benchFromTopParses(
+    const result = await benchPipeline.benchFromTopParses(
       wcl, { ...QUERY, selection: HANDED_POOL }, codeSlice({ sampleTarget: POOL_SIZE }));
 
     expect(result).toEqual(ok(benched(['r1', 'r2', 'r3'])));
@@ -179,7 +183,7 @@ describe('benchFromTopParses top-parse selection', () => {
     const SHALLOW_POOL = POOL_SIZE - 1;
     const slice = codeSlice({ sampleTarget: POOL_SIZE, candidatePoolCount: SHALLOW_POOL });
 
-    const result = await benchFromTopParses(wclFake(), { ...QUERY, selection: HANDED_POOL }, slice);
+    const result = await benchPipeline.benchFromTopParses(wclFake(), { ...QUERY, selection: HANDED_POOL }, slice);
 
     expect(result).toEqual(ok(benched(['r1', 'r2'])));
   });
@@ -190,7 +194,7 @@ describe('benchFromTopParses top-parse selection', () => {
       getRankings: async (_spec, _encounterId, partition) => { asked.push(partition); return { rankings: parseRankings(1) }; },
     });
 
-    const result = await benchFromTopParses(wcl, QUERY, codeSlice());
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, codeSlice());
 
     expect(result).toEqual(ok(benched(['r1'])));
     expect(asked).toEqual([null]);
@@ -210,7 +214,7 @@ describe('benchFromTopParses header', () => {
       parse: ({ ranking }) => Promise.resolve(ranking.report_code),
       bench: ({ parses }) => ({ codes: parses }),
     };
-    const result = await benchFromTopParses(wclFake(), QUERY, slice);
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, slice);
     expect(result).toEqual(ok({ spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, codes: ['r1'] }));
   });
 });
@@ -240,18 +244,18 @@ function planSlice(
 describe('benchFromTopParses rulebook step', () => {
   it('stops with the slice\'s own message when the rulebook plans nothing, before any WCL call', async () => {
     const wcl = wclFake({ getRankings: async () => { throw new Error('WCL must not be asked'); } });
-    const result = await benchFromTopParses(wcl, QUERY, planSlice(filesFake(ok(rulebook()))));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planSlice(filesFake(ok(rulebook()))));
     expect(result).toEqual(missing(NO_PLAN_MESSAGE));
   });
 
   it('propagates a failed rulebook read unchanged, so a spec with no data file reads as its own error', async () => {
     const NOT_INGESTED = 'Not yet ingested.';
-    const result = await benchFromTopParses(wclFake(), QUERY, planSlice(filesFake(missing(NOT_INGESTED))));
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planSlice(filesFake(missing(NOT_INGESTED))));
     expect(result).toEqual(missing(NOT_INGESTED));
   });
 
   it('hands the plan to every parse and to the bench callback', async () => {
-    const result = await benchFromTopParses(wclFake(), QUERY, planSlice(filesFake(ok(PLANNED_RULEBOOK))));
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planSlice(filesFake(ok(PLANNED_RULEBOOK))));
     expect(result).toEqual(ok({
       spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
       codes: [`${PLANNED_COOLDOWN}/r1`, `bench/${PLANNED_COOLDOWN}`],
@@ -279,7 +283,7 @@ describe('benchFromTopParses icon step', () => {
     const abilities = abilityLookup();
     const wcl = wclFake({ getAbilities: async (ids: number[]) => { asked.push(ids); return abilities(ids); } });
 
-    const result = await benchFromTopParses(wcl, QUERY, iconSlice());
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, iconSlice());
 
     expect(asked).toEqual([[SHADOW_BLADES, CLOAK_OF_SHADOWS]]);
     expect(result).toEqual(ok({
@@ -295,7 +299,7 @@ describe('benchFromTopParses icon step', () => {
 
 describe('spellIdsByName', () => {
   it('maps cooldown + defensive names to spell ids, skipping missing ids', () => {
-    expect(spellIdsByName([
+    expect(benchPipeline.spellIdsByName([
       { name: PLANNED_COOLDOWN, spell_id: SHADOW_BLADES },
       { name: 'NoId', spell_id: 0 },
       { name: 'Cloak', spell_id: CLOAK_OF_SHADOWS },

@@ -9,7 +9,7 @@ import {
 } from './wcl.models';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
-  COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q, buildGearNamesQuery, buildAbilityIconsQuery,
+  COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q,
   RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
 } from './wcl-queries';
 import type {
@@ -140,7 +140,7 @@ export class WclApiService {
   async getGameNames(itemIds: number[], enchantIds: number[]): Promise<Record<string, { id: number; name: string }>> {
     if (!itemIds.length && !enchantIds.length) return {};
     const result = await this.query<{ gameData: Record<string, { id: number; name: string }> | null }>(
-      buildGearNamesQuery(itemIds, enchantIds),
+      this.buildGearNamesQuery(itemIds, enchantIds),
     );
     return result.gameData ?? {};
   }
@@ -150,7 +150,7 @@ export class WclApiService {
     const unique = [...new Set(ids)].filter(id => id > 0);
     if (!unique.length) return {};
     const result = await this.query<{ gameData: Record<string, WclRawAbility | null> | null }>(
-      buildAbilityIconsQuery(unique),
+      this.buildAbilityIconsQuery(unique),
     );
     return result.gameData ?? {};
   }
@@ -180,5 +180,20 @@ export class WclApiService {
   async getZoneTree(): Promise<WclExpansion[] | null> {
     const result = await this.query<EncountersQuery>(ENCOUNTERS_Q);
     return (result.worldData?.expansions ?? null) as WclExpansion[] | null;
+  }
+
+  // Item aliases are prefixed `i`, enchant aliases `e` (bare numeric identifiers are not valid GraphQL field names).
+  private buildGearNamesQuery(itemIds: number[], enchantIds: number[]): string {
+    const fields = [
+      ...itemIds.map(id => `i${id}: item(id:${id}){id name}`),
+      ...enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`),
+    ].join(' ');
+    return `query{gameData{${fields}}}`;
+  }
+
+  // `gameData.ability(id)` returns `null` for a nonexistent id, so a bad (e.g. mistyped rulebook) id resolves to null rather than a wrong icon.
+  private buildAbilityIconsQuery(ids: number[]): string {
+    const fields = ids.map(id => `a${id}: ability(id:${id}){id name icon}`).join(' ');
+    return `query{gameData{${fields}}}`;
   }
 }

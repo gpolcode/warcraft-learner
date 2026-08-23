@@ -1,34 +1,40 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import {
-  RotationTransformService,
-  summarizeCooldownCasts, castGapListS,
-  buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks,
-  CdSummary, ParseRuleSamples,
-} from './rotation-transform-service';
+import { RotationTransformService, CdSummary, ParseRuleSamples } from './rotation-transform-service';
 import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { ok, missing } from '../../../../core/http/result';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
 import { RulebookRule } from '../../../../domain/rulebook/rulebook.models';
 import { RuleSample } from '../domain/rotation-rules';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(RotationTransformService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 describe('summarizeCooldownCasts', () => {
   const cooldowns = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
 
   it('counts casts, first cast, BL alignment and offset', () => {
-    const summaries = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 32)], 0), cooldowns, 200, 30);
+    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 32)], 0), cooldowns, 200, 30);
     expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_s: 32, bl_aligned: true, bl_offset_s: 2 });
   });
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
-    const summaries = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], 0), cooldowns, 200, null);
+    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], 0), cooldowns, 200, null);
     assert.exists(summaries[0]);
     expect(summaries[0].cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
@@ -38,7 +44,7 @@ describe('summarizeCooldownCasts', () => {
 
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
     // cast 2 held (0 -> 200, well past reset); cast 3 is on cooldown after it (200 -> 290).
-    const summaries = summarizeCooldownCasts(
+    const summaries = svc['summarizeCooldownCasts'](
       timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], 0), cooldowns, 400, null);
     assert.exists(summaries[0]);
     expect(summaries[0].hold_windows).toHaveLength(1);
@@ -49,10 +55,10 @@ describe('summarizeCooldownCasts', () => {
 
   it('does not flag a hold exactly at the threshold (strict)', () => {
     // prior 0 + cd 90 + 8s threshold = 98; a cast at 98 has delay exactly 8 -> not a hold.
-    const atBoundary = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], 0), cooldowns, 200, null);
+    const atBoundary = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], 0), cooldowns, 200, null);
     assert.exists(atBoundary[0]);
     expect(atBoundary[0].hold_windows).toHaveLength(0);
-    const past = summarizeCooldownCasts(timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], 0), cooldowns, 200, null);
+    const past = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], 0), cooldowns, 200, null);
     assert.exists(past[0]);
     expect(past[0].hold_windows).toHaveLength(1);
   });
@@ -60,7 +66,7 @@ describe('summarizeCooldownCasts', () => {
 
 describe('castGapListS', () => {
   it('returns sorted inter-cast gaps in seconds', () => {
-    expect(castGapListS(timed([cast(1, 0), cast(1, 3), cast(1, 1)], 0))).toEqual([1, 2]);
+    expect(svc['castGapListS'](timed([cast(1, 0), cast(1, 3), cast(1, 1)], 0))).toEqual([1, 2]);
   });
 });
 
@@ -70,7 +76,7 @@ describe('buildCdBenchmark', () => {
     cast_times_s: times, hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: dur,
   });
   it('rolls first cast, gaps, BL offset and uses/min across parses', () => {
-    const bench = buildCdBenchmark([
+    const bench = svc['buildCdBenchmark']([
       entry(5, 2, 120, 2, true, [5, 95]),
       entry(7, 2, 120, 4, true, [7, 97]),
     ], 90);
@@ -94,7 +100,7 @@ describe('buildCdBenchmark', () => {
       name: 'Shadow Blades', total_uses: 0, first_cast_s: null, bl_aligned: false, bl_offset_s: null,
       cast_times_s: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     };
-    const bench = buildCdBenchmark([usedParse, unusedParse], 90);
+    const bench = svc['buildCdBenchmark']([usedParse, unusedParse], 90);
     expect(bench.sample_count).toBe(TOTAL_PARSES);
     expect(bench.used_sample_count).toBe(USERS);
   });
@@ -107,12 +113,12 @@ describe('buildCdBenchmark', () => {
       cast_times_s: [], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     };
     // Folding the two unused parses in would drag the median from 3 down to 1 ([0, 0, 1, 3, 5]).
-    const bench = buildCdBenchmark([...usedEntries, unused, { ...unused }], 90);
+    const bench = svc['buildCdBenchmark']([...usedEntries, unused, { ...unused }], 90);
     expect(bench.median_uses).toBe(3);
   });
 
   it('leaves gap + BL fields null when not applicable', () => {
-    const bench = buildCdBenchmark([entry(5, 1, 120, null, false, [5])], 90);
+    const bench = svc['buildCdBenchmark']([entry(5, 1, 120, null, false, [5])], 90);
     expect(bench.avg_gap_s).toBeNull();
     expect(bench.avg_bl_offset_s).toBeNull();
     expect(bench.bl_pct).toBe(0);
@@ -121,7 +127,7 @@ describe('buildCdBenchmark', () => {
 
 describe('computeEfficiencyThresholds', () => {
   it('derives a p90 downtime floor and per-parse efficiency mean', () => {
-    const result = computeEfficiencyThresholds([{ gapListS: [0.5, 0.6, 0.7, 5], durationS: 100 }]);
+    const result = svc['computeEfficiencyThresholds']([{ gapListS: [0.5, 0.6, 0.7, 5], durationS: 100 }]);
     // d3 p90 quantile of [0.5,0.6,0.7,5]: 0.7 + 0.7*(5-0.7) = 3.71s.
     expect(result.downtimeThresholdS).toBe(3.71);
     // only the 5s gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
@@ -129,7 +135,7 @@ describe('computeEfficiencyThresholds', () => {
   });
 
   it('falls back to the default floor with no gaps', () => {
-    const result = computeEfficiencyThresholds([{ gapListS: [], durationS: 100 }]);
+    const result = svc['computeEfficiencyThresholds']([{ gapListS: [], durationS: 100 }]);
     expect(result.downtimeThresholdS).toBe(1.5);
     expect(result.topAvgEfficiency).toBe(0);
   });
@@ -141,7 +147,7 @@ describe('aggregateCdBenchmarks', () => {
       name, total_uses: 1, first_cast_s: 5, bl_aligned: false, bl_offset_s: null,
       cast_times_s: [5], hold_windows: [], cast_pattern: 'on_cooldown', fight_duration_s: 120,
     });
-    const result = aggregateCdBenchmarks(
+    const result = svc['aggregateCdBenchmarks'](
       [[summary('Shadow Blades')], [summary('Shadow Blades')]],
       [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }]);
     expect(Object.keys(result)).toEqual(['Shadow Blades']);

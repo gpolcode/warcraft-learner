@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
-import {
-  abilityIcons, findParseActor, normalizeAbilityId, toParseRankings, unwrapRankings, windowSpells,
-} from './wcl-projections';
+import { WclProjectionsService } from './wcl-projections';
 import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../testing/spell-ids';
 import { ParseRanking } from '../../core/wcl/wcl.models';
+import { TestBed } from '@angular/core/testing';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
 
 // A raw ranking row as WCL surfaces it in the characterRankings blob.
 const rankingRow = (name: string, code: string, fightID: number) => ({ name, report: { code, fightID } });
@@ -14,38 +15,38 @@ const AREA_52 = 'Area 52';
 describe('unwrapRankings', () => {
   it('parses the JSON blob string form and returns its rankings', () => {
     const blob = JSON.stringify({ rankings: [rankingRow('Keep', 'r1', 3)] });
-    expect(unwrapRankings(blob)).toEqual([rankingRow('Keep', 'r1', 3)]);
+    expect(wclProjections.unwrapRankings(blob)).toEqual([rankingRow('Keep', 'r1', 3)]);
   });
 
   it('reads the already-parsed object form directly', () => {
-    expect(unwrapRankings({ rankings: [rankingRow('Keep', 'r1', 3)] })).toEqual([rankingRow('Keep', 'r1', 3)]);
+    expect(wclProjections.unwrapRankings({ rankings: [rankingRow('Keep', 'r1', 3)] })).toEqual([rankingRow('Keep', 'r1', 3)]);
   });
 
   it('returns [] for a null / empty blob or a blob with no rankings key', () => {
-    expect(unwrapRankings(null)).toEqual([]);
-    expect(unwrapRankings(undefined)).toEqual([]);
-    expect(unwrapRankings('')).toEqual([]);
-    expect(unwrapRankings({})).toEqual([]);
+    expect(wclProjections.unwrapRankings(null)).toEqual([]);
+    expect(wclProjections.unwrapRankings(undefined)).toEqual([]);
+    expect(wclProjections.unwrapRankings('')).toEqual([]);
+    expect(wclProjections.unwrapRankings({})).toEqual([]);
   });
 
   it('returns [] without throwing for an unparseable string blob, warning for repro', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    expect(() => unwrapRankings('{ not json')).not.toThrow();
-    expect(unwrapRankings('{ not json')).toEqual([]);
+    expect(() => wclProjections.unwrapRankings('{ not json')).not.toThrow();
+    expect(wclProjections.unwrapRankings('{ not json')).toEqual([]);
     expect(warnSpy).toHaveBeenCalled();
     warnSpy.mockRestore();
   });
 
   it('composes with toParseRankings to yield fetchable parses', () => {
     const blob = JSON.stringify({ rankings: [rankingRow('Keep', 'r1', 3)] });
-    expect(toParseRankings(unwrapRankings(blob), 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r1', fight_id: 3 }]);
+    expect(wclProjections.toParseRankings(wclProjections.unwrapRankings(blob), 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r1', fight_id: 3 }]);
   });
 });
 
 describe('toParseRankings', () => {
   it('maps raw rankings to fetchable parses and caps at count', () => {
     const raw = [rankingRow('P1', 'r1', 1), rankingRow('P2', 'r2', 2), rankingRow('P3', 'r3', 3)];
-    expect(toParseRankings(raw, 2)).toEqual([
+    expect(wclProjections.toParseRankings(raw, 2)).toEqual([
       { player: 'P1', server: '', report_code: 'r1', fight_id: 1 },
       { player: 'P2', server: '', report_code: 'r2', fight_id: 2 },
     ]);
@@ -53,7 +54,7 @@ describe('toParseRankings', () => {
 
   it('carries the ranked character\'s realm, and an empty realm when the row omits it', () => {
     const raw = [{ ...rankingRow('P1', 'r1', 1), server: { name: TWISTING_NETHER } }, rankingRow('P2', 'r2', 2)];
-    expect(toParseRankings(raw, 10).map(ranking => ranking.server)).toEqual([TWISTING_NETHER, '']);
+    expect(wclProjections.toParseRankings(raw, 10).map(ranking => ranking.server)).toEqual([TWISTING_NETHER, '']);
   });
 
   it('drops anonymized "Character <id>-<id>" names and rows without a report code', () => {
@@ -62,7 +63,7 @@ describe('toParseRankings', () => {
       { name: 'NoReport', report: { fightID: 2 } }, // report code missing -> unfetchable
       rankingRow('Keep', 'r3', 3),
     ];
-    expect(toParseRankings(raw, 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r3', fight_id: 3 }]);
+    expect(wclProjections.toParseRankings(raw, 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r3', fight_id: 3 }]);
   });
 });
 
@@ -74,31 +75,31 @@ describe('findParseActor', () => {
 
   it('binds the one actor carrying the ranked name', () => {
     const actors = [actor(10, 'Other', AREA_52), actor(TWIN_ID, RANKED_NAME, TWISTING_NETHER)];
-    expect(findParseActor(actors, ranked(TWISTING_NETHER))?.id).toBe(TWIN_ID);
+    expect(wclProjections.findParseActor(actors, ranked(TWISTING_NETHER))?.id).toBe(TWIN_ID);
   });
 
   it('binds a lone name match even when its realm differs from the ranked realm', () => {
-    expect(findParseActor([actor(TWIN_ID, RANKED_NAME, TWISTING_NETHER)], ranked(AREA_52))?.id).toBe(TWIN_ID);
+    expect(wclProjections.findParseActor([actor(TWIN_ID, RANKED_NAME, TWISTING_NETHER)], ranked(AREA_52))?.id).toBe(TWIN_ID);
   });
 
   it('is null when no actor carries the ranked name, and for an absent actor list', () => {
-    expect(findParseActor([actor(10, 'Other', AREA_52)], ranked(AREA_52))).toBeNull();
-    expect(findParseActor(undefined, ranked(AREA_52))).toBeNull();
+    expect(wclProjections.findParseActor([actor(10, 'Other', AREA_52)], ranked(AREA_52))).toBeNull();
+    expect(wclProjections.findParseActor(undefined, ranked(AREA_52))).toBeNull();
   });
 
   it('separates two same-named raiders by realm, ignoring spacing and case', () => {
     const actors = [actor(10, RANKED_NAME, 'Twisting-Nether'), actor(TWIN_ID, RANKED_NAME, 'area 52')];
-    expect(findParseActor(actors, ranked(AREA_52))?.id).toBe(TWIN_ID);
+    expect(wclProjections.findParseActor(actors, ranked(AREA_52))?.id).toBe(TWIN_ID);
   });
 
   it('is null for two same-named raiders when the ranking carries no realm', () => {
     const actors = [actor(10, RANKED_NAME, TWISTING_NETHER), actor(TWIN_ID, RANKED_NAME, AREA_52)];
-    expect(findParseActor(actors, ranked(''))).toBeNull();
+    expect(wclProjections.findParseActor(actors, ranked(''))).toBeNull();
   });
 
   it('is null for two same-named raiders when neither sits on the ranked realm', () => {
     const actors = [actor(10, RANKED_NAME, TWISTING_NETHER), actor(TWIN_ID, RANKED_NAME, '')];
-    expect(findParseActor(actors, ranked(AREA_52))).toBeNull();
+    expect(wclProjections.findParseActor(actors, ranked(AREA_52))).toBeNull();
   });
 });
 
@@ -111,7 +112,7 @@ describe('abilityIcons', () => {
       [`a${SHADOW_BLADES}`]: { id: SHADOW_BLADES, name: 'Shadow Blades', icon: 'ability_sb.jpg' },
       [`a${CLOAK}`]: { id: CLOAK, name: 'Cloak of Shadows', icon: 'spell_cloak.JPG' },
     };
-    expect(abilityIcons(raw)).toEqual({
+    expect(wclProjections.abilityIcons(raw)).toEqual({
       [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' },
       [CLOAK]: { icon: 'spell_cloak', name: 'Cloak of Shadows' },
     });
@@ -119,18 +120,18 @@ describe('abilityIcons', () => {
 
   it('skips null entries (ids WCL could not resolve) and returns {} for an empty map', () => {
     const raw = { [`a${SHADOW_BLADES}`]: null };
-    expect(abilityIcons(raw)).toEqual({});
-    expect(abilityIcons({})).toEqual({});
+    expect(wclProjections.abilityIcons(raw)).toEqual({});
+    expect(wclProjections.abilityIcons({})).toEqual({});
   });
 
   it('leaves an icon with no .jpg extension untouched', () => {
     const raw = { [`a${SHADOW_BLADES}`]: { id: SHADOW_BLADES, name: 'Shadow Blades', icon: 'ability_sb' } };
-    expect(abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' } });
+    expect(wclProjections.abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: 'ability_sb', name: 'Shadow Blades' } });
   });
 
   it('projects a resolved entry with a null icon to an empty icon (name-only)', () => {
     const raw = { [`a${SHADOW_BLADES}`]: { id: SHADOW_BLADES, name: 'Shadow Blades', icon: null } };
-    expect(abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: '', name: 'Shadow Blades' } });
+    expect(wclProjections.abilityIcons(raw)).toEqual({ [SHADOW_BLADES]: { icon: '', name: 'Shadow Blades' } });
   });
 
 });
@@ -146,14 +147,14 @@ describe('windowSpells', () => {
   afterEach(() => { warnSpy.mockRestore(); });
 
   it('resolves a known id to its baked icon and name', () => {
-    expect(windowSpells([SHADOW_BLADES], abilities)).toEqual([
+    expect(wclProjections.windowSpells([SHADOW_BLADES], abilities)).toEqual([
       { id: SHADOW_BLADES, icon: 'ability_sb', name: 'Shadow Blades' },
     ]);
   });
 
   it('emits a labelled empty-icon placeholder for an unknown id without throwing', () => {
-    expect(() => windowSpells([UNKNOWN_SPELL_ID], abilities)).not.toThrow();
-    expect(windowSpells([UNKNOWN_SPELL_ID], abilities)).toEqual([
+    expect(() => wclProjections.windowSpells([UNKNOWN_SPELL_ID], abilities)).not.toThrow();
+    expect(wclProjections.windowSpells([UNKNOWN_SPELL_ID], abilities)).toEqual([
       { id: UNKNOWN_SPELL_ID, icon: '', name: `Ability #${UNKNOWN_SPELL_ID}` },
     ]);
   });
@@ -161,13 +162,13 @@ describe('windowSpells', () => {
   it('falls back to the placeholder label when the map resolved the id but WCL left it unnamed', () => {
     // WCL declares every ability field nullable, so a bench can carry a resolved id whose name never arrived.
     const unnamed = { [SHADOW_BLADES]: { icon: 'ability_sb', name: null as unknown as string } };
-    expect(windowSpells([SHADOW_BLADES], unnamed)).toEqual([
+    expect(wclProjections.windowSpells([SHADOW_BLADES], unnamed)).toEqual([
       { id: SHADOW_BLADES, icon: 'ability_sb', name: `Ability #${SHADOW_BLADES}` },
     ]);
   });
 
   it('warns with the missing id so a bug report can reproduce it', () => {
-    windowSpells([UNKNOWN_SPELL_ID], abilities);
+    wclProjections.windowSpells([UNKNOWN_SPELL_ID], abilities);
     // logWarn(context, id) lands as two console.warn args: '[warcraft-learner] <context>:', id.
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('windowSpells'), UNKNOWN_SPELL_ID);
   });
@@ -178,19 +179,19 @@ describe('normalizeAbilityId', () => {
     // Independent literals, not the SUT constants, so a drift in either wire value fails here.
     const WCL_MELEE_WIRE_ID = 1;
     const AUTO_ATTACK_GAME_SPELL_ID = 6603;
-    expect(normalizeAbilityId(WCL_MELEE_WIRE_ID)).toBe(AUTO_ATTACK_GAME_SPELL_ID);
+    expect(wclProjections.normalizeAbilityId(WCL_MELEE_WIRE_ID)).toBe(AUTO_ATTACK_GAME_SPELL_ID);
   });
 
   it('folds every negative (synthetic, sourceless) id onto the "I Don\'t Know" catch-all', () => {
     // -32 is the priest-log id that warned; any negative id WCL synthesizes maps the same way.
     const SHADOWFIEND_MELEE = -32;
     const ENVIRONMENTAL = -5;
-    expect(normalizeAbilityId(SHADOWFIEND_MELEE)).toBe(WCL_SYNTHETIC_SOURCE_FALLBACK_ID);
-    expect(normalizeAbilityId(ENVIRONMENTAL)).toBe(WCL_SYNTHETIC_SOURCE_FALLBACK_ID);
+    expect(wclProjections.normalizeAbilityId(SHADOWFIEND_MELEE)).toBe(WCL_SYNTHETIC_SOURCE_FALLBACK_ID);
+    expect(wclProjections.normalizeAbilityId(ENVIRONMENTAL)).toBe(WCL_SYNTHETIC_SOURCE_FALLBACK_ID);
   });
 
   it('passes other ability ids through unchanged', () => {
     const SHADOW_BLADES = 121471;
-    expect(normalizeAbilityId(SHADOW_BLADES)).toBe(SHADOW_BLADES);
+    expect(wclProjections.normalizeAbilityId(SHADOW_BLADES)).toBe(SHADOW_BLADES);
   });
 });

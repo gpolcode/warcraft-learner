@@ -3,13 +3,21 @@ import { TestBed } from '@angular/core/testing';
 import { SpecTalents } from '../../../../domain/gear/talent.models';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
 import { ok, missing, transient } from '../../../../core/http/result';
-import {
-  GearTransformService, toParseGear, aggregateParseGear, ParseGear, withTalentDiffs,
-  aggregateTalents, aggregateTrinkets, aggregateEnchants,
-} from './gear-transform-service';
-import { talentKeyFromTree, parseTalentKey } from '../../../../domain/gear/talent-key';
+import { GearTransformService, ParseGear } from './gear-transform-service';
+import { TalentKeyService } from '../../../../domain/gear/talent-key';
 import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const talentKeys = TestBed.inject(TalentKeyService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+] });
+const svc = TestBed.inject(GearTransformService);
+TestBed.resetTestingModule();
 
 // Per-slot caps mirrored from the transform service; the boundary tests build one more than the cap.
 const MAX_TALENT_BUILDS = 3;
@@ -23,28 +31,28 @@ const EXAMPLE_SOURCE_ID = 537;
 describe('talentKeyFromTree', () => {
   it('builds a v3: key of entry.rank pairs ordered by entry, ignoring the node', () => {
     // Two parses of one build can report a talent under different nodeIDs, so the node is left out.
-    expect(talentKeyFromTree([{ nodeID: 100001, id: 22, rank: 2 }, { nodeID: 90638, id: 11, rank: 1 }]))
+    expect(talentKeys.talentKeyFromTree([{ nodeID: 100001, id: 22, rank: 2 }, { nodeID: 90638, id: 11, rank: 1 }]))
       .toBe('v3:11.1,22.2');
-    expect(talentKeyFromTree(undefined)).toBe('');
+    expect(talentKeys.talentKeyFromTree(undefined)).toBe('');
   });
 
   it('defaults an absent rank to one point and drops nodes with no entry', () => {
-    expect(talentKeyFromTree([{ nodeID: 5, id: 50 }, { nodeID: 6 }])).toBe('v3:50.1');
+    expect(talentKeys.talentKeyFromTree([{ nodeID: 5, id: 50 }, { nodeID: 6 }])).toBe('v3:50.1');
   });
 
   it('round-trips through parseTalentKey', () => {
-    const key = talentKeyFromTree([{ nodeID: 5, id: 50, rank: 2 }]);
-    expect(parseTalentKey(key)).toEqual([{ entryId: 50, rank: 2 }]);
+    const key = talentKeys.talentKeyFromTree([{ nodeID: 5, id: 50, rank: 2 }]);
+    expect(talentKeys.parseTalentKey(key)).toEqual([{ entryId: 50, rank: 2 }]);
   });
 
   it('reads no picks from a key in any other format', () => {
-    expect(parseTalentKey('v2:90638,100001')).toEqual([]);
-    expect(parseTalentKey('')).toEqual([]);
+    expect(talentKeys.parseTalentKey('v2:90638,100001')).toEqual([]);
+    expect(talentKeys.parseTalentKey('')).toEqual([]);
   });
 
   it('gives one key when two parses report the same talents under different node ids', () => {
-    const a = talentKeyFromTree([{ nodeID: 10, id: 50, rank: 1 }, { nodeID: 20, id: 60, rank: 1 }]);
-    const b = talentKeyFromTree([{ nodeID: 99, id: 50, rank: 1 }, { nodeID: 88, id: 60, rank: 1 }]);
+    const a = talentKeys.talentKeyFromTree([{ nodeID: 10, id: 50, rank: 1 }, { nodeID: 20, id: 60, rank: 1 }]);
+    const b = talentKeys.talentKeyFromTree([{ nodeID: 99, id: 50, rank: 1 }, { nodeID: 88, id: 60, rank: 1 }]);
     expect(a).toBe(b);
   });
 });
@@ -58,7 +66,7 @@ describe('toParseGear', () => {
       trinkets: [{ slot: 12, id: 100, name: 'A', icon: 'inv_a' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
-    expect(toParseGear(gear, ranking, 537)).toEqual({
+    expect(svc['toParseGear'](gear, ranking, 537)).toEqual({
       talent_key: 'v3:10.1,20.1',
       trinkets: [{ slot: 12, id: 100, name: 'A', icon: 'inv_a' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
@@ -77,9 +85,9 @@ function gearParse(overrides: Partial<ParseGear>): ParseGear {
 
 describe('aggregateTalents', () => {
   it('ranks builds by frequency, tags the first-seen example, and is empty for no parses', () => {
-    expect(aggregateTalents([])).toEqual([]);
+    expect(svc['aggregateTalents']([])).toEqual([]);
 
-    const builds = aggregateTalents([
+    const builds = svc['aggregateTalents']([
       gearParse({ talent_key: 'v3:10.1', report_code: 'rep1', fight_id: 3, player_name: 'Ann', source_id: EXAMPLE_SOURCE_ID }),
       gearParse({ talent_key: 'v3:10.1', report_code: 'rep2', fight_id: 7, player_name: 'Bob', source_id: 99 }),
       gearParse({ talent_key: 'v3:11.1' }),
@@ -89,7 +97,7 @@ describe('aggregateTalents', () => {
   });
 
   it('keeps builds that fill the same slot with a different talent apart', () => {
-    const builds = aggregateTalents([
+    const builds = svc['aggregateTalents']([
       gearParse({ talent_key: 'v3:10.1' }),
       gearParse({ talent_key: 'v3:11.1' }),
     ]);
@@ -97,18 +105,18 @@ describe('aggregateTalents', () => {
   });
 
   it('ignores parses with no talent key', () => {
-    expect(aggregateTalents([gearParse({ talent_key: '' })])).toEqual([]);
+    expect(svc['aggregateTalents']([gearParse({ talent_key: '' })])).toEqual([]);
   });
 
   it('keeps at most MAX_TALENT_BUILDS distinct builds', () => {
     const parses = Array.from({ length: MAX_TALENT_BUILDS + 1 }, (_, i) => gearParse({ talent_key: `v3:${i}.1` }));
-    expect(aggregateTalents(parses)).toHaveLength(MAX_TALENT_BUILDS);
+    expect(svc['aggregateTalents'](parses)).toHaveLength(MAX_TALENT_BUILDS);
   });
 });
 
 describe('aggregateTrinkets', () => {
   it('buckets per slot 12/13 by frequency and ignores non-trinket slots and zero ids', () => {
-    const trinkets = aggregateTrinkets([
+    const trinkets = svc['aggregateTrinkets']([
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 200, name: 'B', icon: 'inv_b' }] }),
@@ -122,8 +130,8 @@ describe('aggregateTrinkets', () => {
   });
 
   it('drops a non-trinket slot and a zero-id trinket, and is empty for no parses', () => {
-    expect(aggregateTrinkets([])).toEqual({});
-    const trinkets = aggregateTrinkets([
+    expect(svc['aggregateTrinkets']([])).toEqual({});
+    const trinkets = svc['aggregateTrinkets']([
       gearParse({ trinkets: [{ slot: 5, id: 1, name: 'X', icon: 'x' }, { slot: TRINKET_1_SLOT, id: 0, name: '', icon: '' }] }),
     ]);
     expect(trinkets).toEqual({});
@@ -132,11 +140,11 @@ describe('aggregateTrinkets', () => {
   it('keeps at most MAX_TRINKETS_PER_SLOT trinkets in a slot', () => {
     const parses = Array.from({ length: MAX_TRINKETS_PER_SLOT + 1 }, (_, i) =>
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100 + i, name: `T${i}`, icon: `t${i}` }] }));
-    expect(aggregateTrinkets(parses)[TRINKET_1_SLOT]).toHaveLength(MAX_TRINKETS_PER_SLOT);
+    expect(svc['aggregateTrinkets'](parses)[TRINKET_1_SLOT]).toHaveLength(MAX_TRINKETS_PER_SLOT);
   });
 
   it('replaces a first-seen empty name (failed lookup) with a later real name, count unchanged', () => {
-    const trinkets = aggregateTrinkets([
+    const trinkets = svc['aggregateTrinkets']([
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: '', icon: 'inv_a' }] }),
       gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
     ]);
@@ -147,7 +155,7 @@ describe('aggregateTrinkets', () => {
 
 describe('aggregateEnchants', () => {
   it('buckets per slot by frequency and ignores zero ids', () => {
-    const enchants = aggregateEnchants([
+    const enchants = svc['aggregateEnchants']([
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 8041, name: 'Soph' }] }),
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 8041, name: 'Soph' }] }),
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 9000, name: 'Other' }] }),
@@ -160,17 +168,17 @@ describe('aggregateEnchants', () => {
   });
 
   it('is empty for no parses', () => {
-    expect(aggregateEnchants([])).toEqual({});
+    expect(svc['aggregateEnchants']([])).toEqual({});
   });
 
   it('keeps at most MAX_ENCHANTS_PER_SLOT enchants in a slot', () => {
     const parses = Array.from({ length: MAX_ENCHANTS_PER_SLOT + 1 }, (_, i) =>
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 8041 + i, name: `E${i}` }] }));
-    expect(aggregateEnchants(parses)[ENCHANT_SLOT]).toHaveLength(MAX_ENCHANTS_PER_SLOT);
+    expect(svc['aggregateEnchants'](parses)[ENCHANT_SLOT]).toHaveLength(MAX_ENCHANTS_PER_SLOT);
   });
 
   it('replaces a first-seen empty name (failed lookup) with a later real name, count unchanged', () => {
-    const enchants = aggregateEnchants([
+    const enchants = svc['aggregateEnchants']([
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 8041, name: '' }] }),
       gearParse({ enchants: [{ slot: ENCHANT_SLOT, id: 8041, name: 'Soph' }] }),
     ]);
@@ -184,10 +192,10 @@ describe('aggregateParseGear', () => {
     const parses = [
       gearParse({ talent_key: 'v3:10.1', trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }], enchants: [{ slot: ENCHANT_SLOT, id: 8041, name: 'Soph' }] }),
     ];
-    expect(aggregateParseGear(parses)).toEqual({
-      talent_builds: aggregateTalents(parses),
-      trinkets: aggregateTrinkets(parses),
-      enchants: aggregateEnchants(parses),
+    expect(svc['aggregateParseGear'](parses)).toEqual({
+      talent_builds: svc['aggregateTalents'](parses),
+      trinkets: svc['aggregateTrinkets'](parses),
+      enchants: svc['aggregateEnchants'](parses),
     });
   });
 });
@@ -200,7 +208,7 @@ describe('withTalentDiffs', () => {
   ];
 
   it('bakes each alt build\'s diff against the most common build, leaving the most common one empty', () => {
-    const out = withTalentDiffs(builds(), ok(talents));
+    const out = svc['withTalentDiffs'](builds(), ok(talents));
     assert.exists(out[0]);
     expect(out[0].diff).toEqual([]);
     assert.exists(out[1]);
@@ -211,8 +219,8 @@ describe('withTalentDiffs', () => {
   });
 
   it('leaves builds untouched whether the spec has no dump entry or the dump failed to load', () => {
-    expect(withTalentDiffs(builds(), missing('No talent data for this spec.'))).toEqual(builds());
-    expect(withTalentDiffs(builds(), transient('WCL outage'))).toEqual(builds());
+    expect(svc['withTalentDiffs'](builds(), missing('No talent data for this spec.'))).toEqual(builds());
+    expect(svc['withTalentDiffs'](builds(), transient('WCL outage'))).toEqual(builds());
   });
 });
 

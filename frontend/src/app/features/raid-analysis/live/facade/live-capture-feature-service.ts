@@ -1,9 +1,9 @@
 /** Clips are session-scoped: a resolved clip is memoized in memory and nothing is written to disk. */
-import { Injectable, computed, signal } from '@angular/core';
+import { inject, Injectable, computed, signal } from '@angular/core';
 import type { EncodedVideoPacketSource as PacketSource } from 'mediabunny';
 import { WclFight } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { logWarn } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/log';
 
 // All wall-clock fields are unix-epoch milliseconds, so `report.startTime + fight.startTime` maps directly onto a segment.
 
@@ -56,71 +56,9 @@ const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
 /** Grace period before a downloaded clip's object URL is revoked, so the browser can read the blob. */
 const DOWNLOAD_URL_TTL_MS = 10_000;
 
-export function absoluteWindowStart(reportStartTime: number, fightStartTime: number, timeS: number): number {
-  return reportStartTime + fightStartTime + timeS * 1000;
-}
-
-export function buildClipWindow(
-  reportStartTime: number, fightStartTime: number, window: ClipAnchor, roll: ClipRoll,
-): ClipWindow {
-  const absStart = absoluteWindowStart(reportStartTime, fightStartTime, window.timeS);
-  return {
-    fromMs: absStart - roll.preMs,
-    toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
-    key: window.key,
-  };
-}
-
-export function fullPullWindow(reportStartTime: number, fightStartTime: number, fightEndTime: number): ClipWindow {
-  return { fromMs: reportStartTime + fightStartTime, toMs: reportStartTime + fightEndTime, key: 'full-pull' };
-}
-
-/** Segments overlapping `[fromMs, toMs]`, sorted by start. Half-open on neither end (any touch counts). */
-export function selectSegments(segments: Segment[], window: ClipWindow): Segment[] {
-  return segments
-    .filter(segment => segment.end > window.fromMs && segment.start < window.toMs)
-    .sort((a, b) => a.start - b.start);
-}
-
-/** The remuxed timeline re-bases to 0 at the first segment's start; never negative. */
-export function segmentSeekOffset(window: ClipWindow, firstSegment: { start: number } | undefined): number {
-  if (!firstSegment) return 0;
-  return Math.max(0, (window.fromMs - firstSegment.start) / 1000);
-}
-
-/** The remuxed timeline is gapless, so a loop length from a wall-clock span shrinks by this much to end on the same footage. */
-export function interSegmentGapMs(segments: { start: number; end: number }[]): number {
-  let gaps = 0;
-  let prev: { start: number; end: number } | undefined;
-  for (const segment of segments) {
-    if (prev) gaps += Math.max(0, segment.start - prev.end);
-    prev = segment;
-  }
-  return gaps;
-}
-
-export function segmentsCover(segments: Segment[], fromMs: number, toMs: number): boolean {
-  return segments.some(segment => segment.end > fromMs && segment.start < toMs);
-}
-
-function mimeFor(profile: CaptureProfile): string {
-  const candidates = [`video/webm;codecs=${profile.codec}`, 'video/webm;codecs=vp8', 'video/webm'];
-  return candidates.find(candidate => MediaRecorder.isTypeSupported(candidate)) ?? 'video/webm';
-}
-
-/** The picker-cancel and permission-deny paths both reject with a `NotAllowedError`. */
-function isPickerDismissal(err: unknown): boolean {
-  return err instanceof DOMException && err.name === 'NotAllowedError';
-}
-
-// Insecure context or an unsupported browser leaves `getDisplayMedia` absent (the dom lib overpromises).
-function displayMediaSupported(): boolean {
-  const mediaDevices = navigator.mediaDevices as MediaDevices | undefined;
-  return typeof mediaDevices?.getDisplayMedia === 'function';
-}
-
 @Injectable({ providedIn: 'root' })
 export class LiveCaptureFeatureService {
+  private readonly logger = inject(LoggerService);
   // Live-sync on/off. Lives here because this is the only service that reads it.
   private readonly liveActive = signal(false);
 
@@ -156,7 +94,7 @@ export class LiveCaptureFeatureService {
 
   async startRecording(profile: CaptureProfile = DEFAULT_CAPTURE_PROFILE): Promise<void> {
     if (this.isCapturing() || this.isStarting()) return;
-    if (!displayMediaSupported()) {
+    if (!this.displayMediaSupported()) {
       this.captureError.set('screen recording is not available in this browser');
       return;
     }
@@ -170,7 +108,7 @@ export class LiveCaptureFeatureService {
       await track.applyConstraints({ width: { max: 1920 }, height: { max: profile.maxHeight }, frameRate: { max: profile.fps } });
       this.stream = stream;
       this.captureProfile.set(profile);
-      this.mimeType = mimeFor(profile);
+      this.mimeType = this.mimeFor(profile);
       this.sourceLabel.set(track.label || 'your screen');
       // Sharing stopped from the browser UI (or the window closed) ends capture cleanly.
       track.addEventListener('ended', () => { this.stopRecording(); });
@@ -180,8 +118,8 @@ export class LiveCaptureFeatureService {
       // Tear down any half-started capture (an unsupported recorder throws after the stream opens) so the toggle never sticks on "Recording".
       this._releaseCapture(stream);
       // A dismissed picker is benign; a real failure (unsupported codec, denied by policy) surfaces so the user learns why nothing records.
-      if (!isPickerDismissal(err)) this.captureError.set('recording could not start');
-      logWarn('LiveCaptureFeatureService.startRecording', err);
+      if (!this.isPickerDismissal(err)) this.captureError.set('recording could not start');
+      this.logger.logWarn('LiveCaptureFeatureService.startRecording', err);
     } finally {
       this.isStarting.set(false);
     }
@@ -208,7 +146,7 @@ export class LiveCaptureFeatureService {
     recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
     // A runtime encoder failure would otherwise stall the buffer silently: surface it and tear the recording down.
     recorder.onerror = event => {
-      logWarn('LiveCaptureFeatureService.cycleSegment', event);
+      this.logger.logWarn('LiveCaptureFeatureService.cycleSegment', event);
       this.captureError.set('recording stopped unexpectedly');
       this.stopRecording();
     };
@@ -235,7 +173,7 @@ export class LiveCaptureFeatureService {
     if (!ctx) return false;
     const fightFrom = ctx.reportStartTime + ctx.fight.startTime;
     const fightTo = ctx.reportStartTime + ctx.fight.endTime;
-    return segmentsCover(this.segments(), fightFrom, fightTo);
+    return this.segmentsCover(this.segments(), fightFrom, fightTo);
   });
 
   openClip(anchor: ClipAnchor): void {
@@ -247,7 +185,7 @@ export class LiveCaptureFeatureService {
     const ctx = this.ctx();
     this.preparing.set(ctx != null);
     if (!ctx) {
-      logWarn(`LiveCaptureFeatureService.openClip ${anchor.key}`, 'no correlation context (report not resolved)');
+      this.logger.logWarn(`LiveCaptureFeatureService.openClip ${anchor.key}`, 'no correlation context (report not resolved)');
       return;
     }
     void this.applyHandle(anchor, `${ctx.reportCode}:${ctx.fight.id}:${anchor.key}`, this.clipWindowFor(anchor, ctx));
@@ -264,7 +202,7 @@ export class LiveCaptureFeatureService {
   downloadFullPull(): void {
     const ctx = this.ctx();
     if (!ctx) return;
-    const segments = selectSegments(this.segments(), fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
+    const segments = this.selectSegments(this.segments(), this.fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
     void this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
   }
 
@@ -273,19 +211,19 @@ export class LiveCaptureFeatureService {
     this.downloadError.set(null);
     if (!blobs.length) {
       this.downloadError.set('Download failed.');
-      logWarn('LiveCaptureFeatureService.saveSegments', `no footage for ${filename}`);
+      this.logger.logWarn('LiveCaptureFeatureService.saveSegments', `no footage for ${filename}`);
       return;
     }
     try {
-      this.triggerDownload(await remuxSegments(blobs), filename);
+      this.triggerDownload(await this.remuxSegments(blobs), filename);
     } catch (err) {
       this.downloadError.set('Download failed.');
-      logWarn('LiveCaptureFeatureService.saveSegments', err);
+      this.logger.logWarn('LiveCaptureFeatureService.saveSegments', err);
     }
   }
 
   onPlaybackError(): void {
-    logWarn('LiveCaptureFeatureService.onPlaybackError', this.currentAnchor?.key ?? '');
+    this.logger.logWarn('LiveCaptureFeatureService.onPlaybackError', this.currentAnchor?.key ?? '');
     this.playbackFailed.set(true);
   }
 
@@ -307,7 +245,7 @@ export class LiveCaptureFeatureService {
     const { reportStartTime, fight } = ctx;
     // A window plays its exact span; a point-in-time cast gets pre/post roll for context.
     const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
-    return buildClipWindow(reportStartTime, fight.startTime, anchor, roll);
+    return this.buildClipWindow(reportStartTime, fight.startTime, anchor, roll);
   }
 
   /** A second open supersedes the first, so a slow remux must never overwrite the newer clip. */
@@ -321,7 +259,7 @@ export class LiveCaptureFeatureService {
     } catch (err) {
       this.resolved.delete(key);
       if (this.currentAnchor !== anchor) return;
-      logWarn(`LiveCaptureFeatureService.applyHandle ${anchor.key}`, err);
+      this.logger.logWarn(`LiveCaptureFeatureService.applyHandle ${anchor.key}`, err);
       this.playbackFailed.set(true);
     }
     this.preparing.set(false);
@@ -329,12 +267,12 @@ export class LiveCaptureFeatureService {
 
   /** The recorder-restart gaps are subtracted since the wall-clock span spans them but the remuxed timeline does not. */
   private async buildHandle(window: ClipWindow): Promise<ClipHandle | null> {
-    const segments = selectSegments(this.segments(), window);
+    const segments = this.selectSegments(this.segments(), window);
     if (!segments.length) return null;
-    const startOffsetS = segmentSeekOffset(window, segments[0]);
-    const loopSpanS = (window.toMs - window.fromMs - interSegmentGapMs(segments)) / 1000;
+    const startOffsetS = this.segmentSeekOffset(window, segments[0]);
+    const loopSpanS = (window.toMs - window.fromMs - this.interSegmentGapMs(segments)) / 1000;
     return {
-      blob: await remuxSegments(segments.map(segment => segment.blob)),
+      blob: await this.remuxSegments(segments.map(segment => segment.blob)),
       startOffsetS,
       endOffsetS: startOffsetS + Math.max(0, loopSpanS),
     };
@@ -349,40 +287,103 @@ export class LiveCaptureFeatureService {
     // Revoking synchronously can invalidate the URL before the browser reads the blob.
     setTimeout(() => { URL.revokeObjectURL(url); }, DOWNLOAD_URL_TTL_MS);
   }
-}
 
-/** Each segment is a self-contained WebM whose clusters restart at 0, so a plain blob concat repeats the header and timeline and players read only the first segment's ~SEG_MS. */
-async function remuxSegments(blobs: Blob[]): Promise<Blob> {
-  // A module-scope import would put the muxer in the landing bundle.
-  const {
-    BlobSource, BufferTarget, EncodedPacketSink, EncodedVideoPacketSource, Input, Output, WEBM, WebMOutputFormat,
-  } = await import('mediabunny');
-  const output = new Output({ format: new WebMOutputFormat(), target: new BufferTarget() });
-  let source: PacketSource | null = null;
-  // The decoder config only needs to ride the first packet; every segment shares one codec.
-  let firstMeta: Parameters<PacketSource['add']>[1];
-  let timeOffset = 0;
-  for (const blob of blobs) {
-    const track = await new Input({ formats: [WEBM], source: new BlobSource(blob) }).getPrimaryVideoTrack();
-    if (!track) continue;
-    if (!source) {
-      source = new EncodedVideoPacketSource((await track.getCodec()) ?? 'vp8');
-      output.addVideoTrack(source);
-      await output.start();
-      const config = await track.getDecoderConfig();
-      firstMeta = config ? { decoderConfig: config } : undefined;
-    }
-    let segmentEnd = 0;
-    for await (const packet of new EncodedPacketSink(track).packets()) {
-      await source.add(packet.clone({ timestamp: packet.timestamp + timeOffset }), firstMeta);
-      firstMeta = undefined;
-      segmentEnd = Math.max(segmentEnd, packet.timestamp + packet.duration);
-    }
-    timeOffset += segmentEnd;
+  protected absoluteWindowStart(reportStartTime: number, fightStartTime: number, timeS: number): number {
+    return reportStartTime + fightStartTime + timeS * 1000;
   }
-  if (!source) throw new Error('no decodable video track in the buffered segments');
-  await output.finalize();
-  const buffer = output.target.buffer;
-  if (!buffer) throw new Error('remux produced no output');
-  return new Blob([buffer], { type: 'video/webm' });
+
+  protected buildClipWindow(
+    reportStartTime: number, fightStartTime: number, window: ClipAnchor, roll: ClipRoll,
+  ): ClipWindow {
+    const absStart = this.absoluteWindowStart(reportStartTime, fightStartTime, window.timeS);
+    return {
+      fromMs: absStart - roll.preMs,
+      toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
+      key: window.key,
+    };
+  }
+
+  protected fullPullWindow(reportStartTime: number, fightStartTime: number, fightEndTime: number): ClipWindow {
+    return { fromMs: reportStartTime + fightStartTime, toMs: reportStartTime + fightEndTime, key: 'full-pull' };
+  }
+
+  /** Segments overlapping `[fromMs, toMs]`, sorted by start. Half-open on neither end (any touch counts). */
+  protected selectSegments(segments: Segment[], window: ClipWindow): Segment[] {
+    return segments
+      .filter(segment => segment.end > window.fromMs && segment.start < window.toMs)
+      .sort((a, b) => a.start - b.start);
+  }
+
+  /** The remuxed timeline re-bases to 0 at the first segment's start; never negative. */
+  protected segmentSeekOffset(window: ClipWindow, firstSegment: { start: number } | undefined): number {
+    if (!firstSegment) return 0;
+    return Math.max(0, (window.fromMs - firstSegment.start) / 1000);
+  }
+
+  /** The remuxed timeline is gapless, so a loop length from a wall-clock span shrinks by this much to end on the same footage. */
+  protected interSegmentGapMs(segments: { start: number; end: number }[]): number {
+    let gaps = 0;
+    let prev: { start: number; end: number } | undefined;
+    for (const segment of segments) {
+      if (prev) gaps += Math.max(0, segment.start - prev.end);
+      prev = segment;
+    }
+    return gaps;
+  }
+
+  protected segmentsCover(segments: Segment[], fromMs: number, toMs: number): boolean {
+    return segments.some(segment => segment.end > fromMs && segment.start < toMs);
+  }
+
+  private mimeFor(profile: CaptureProfile): string {
+    const candidates = [`video/webm;codecs=${profile.codec}`, 'video/webm;codecs=vp8', 'video/webm'];
+    return candidates.find(candidate => MediaRecorder.isTypeSupported(candidate)) ?? 'video/webm';
+  }
+
+  /** The picker-cancel and permission-deny paths both reject with a `NotAllowedError`. */
+  private isPickerDismissal(err: unknown): boolean {
+    return err instanceof DOMException && err.name === 'NotAllowedError';
+  }
+
+  // Insecure context or an unsupported browser leaves `getDisplayMedia` absent (the dom lib overpromises).
+  private displayMediaSupported(): boolean {
+    const mediaDevices = navigator.mediaDevices as MediaDevices | undefined;
+    return typeof mediaDevices?.getDisplayMedia === 'function';
+  }
+
+  /** Each segment is a self-contained WebM whose clusters restart at 0, so a plain blob concat repeats the header and timeline and players read only the first segment's ~SEG_MS. */
+  private async remuxSegments(blobs: Blob[]): Promise<Blob> {
+    // A module-scope import would put the muxer in the landing bundle.
+    const {
+      BlobSource, BufferTarget, EncodedPacketSink, EncodedVideoPacketSource, Input, Output, WEBM, WebMOutputFormat,
+    } = await import('mediabunny');
+    const output = new Output({ format: new WebMOutputFormat(), target: new BufferTarget() });
+    let source: PacketSource | null = null;
+    // The decoder config only needs to ride the first packet; every segment shares one codec.
+    let firstMeta: Parameters<PacketSource['add']>[1];
+    let timeOffset = 0;
+    for (const blob of blobs) {
+      const track = await new Input({ formats: [WEBM], source: new BlobSource(blob) }).getPrimaryVideoTrack();
+      if (!track) continue;
+      if (!source) {
+        source = new EncodedVideoPacketSource((await track.getCodec()) ?? 'vp8');
+        output.addVideoTrack(source);
+        await output.start();
+        const config = await track.getDecoderConfig();
+        firstMeta = config ? { decoderConfig: config } : undefined;
+      }
+      let segmentEnd = 0;
+      for await (const packet of new EncodedPacketSink(track).packets()) {
+        await source.add(packet.clone({ timestamp: packet.timestamp + timeOffset }), firstMeta);
+        firstMeta = undefined;
+        segmentEnd = Math.max(segmentEnd, packet.timestamp + packet.duration);
+      }
+      timeOffset += segmentEnd;
+    }
+    if (!source) throw new Error('no decodable video track in the buffered segments');
+    await output.finalize();
+    const buffer = output.target.buffer;
+    if (!buffer) throw new Error('remux produced no output');
+    return new Blob([buffer], { type: 'video/webm' });
+  }
 }

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
-import { TRINKET_SLOTS, iconFile, decodeHtmlEntities, extractGear, selectCombatantInfo } from './gear-extract';
+import { TRINKET_SLOTS, GearExtractService } from './gear-extract';
+import { TestBed } from '@angular/core/testing';
+
+const gearExtract = TestBed.inject(GearExtractService);
 
 // Trinket slots are the WCL quirk indices 12/13; an enchant can sit on any slot - 15 is Main Hand.
 const TRINKET_1_SLOT = 12;
@@ -21,28 +24,28 @@ describe('TRINKET_SLOTS', () => {
 
 describe('iconFile', () => {
   it('strips a trailing .jpg (case-insensitive)', () => {
-    expect(iconFile('inv_trinket.jpg')).toBe('inv_trinket');
-    expect(iconFile('inv_trinket.JPG')).toBe('inv_trinket');
+    expect(gearExtract.iconFile('inv_trinket.jpg')).toBe('inv_trinket');
+    expect(gearExtract.iconFile('inv_trinket.JPG')).toBe('inv_trinket');
   });
 
   it('returns empty for an absent icon and leaves a non-.jpg name untouched', () => {
-    expect(iconFile(undefined)).toBe('');
-    expect(iconFile('inv_trinket')).toBe('inv_trinket');
+    expect(gearExtract.iconFile(undefined)).toBe('');
+    expect(gearExtract.iconFile('inv_trinket')).toBe('inv_trinket');
   });
 });
 
 describe('decodeHtmlEntities', () => {
   it('decodes the five WCL gameData entities', () => {
-    expect(decodeHtmlEntities('A &amp; B &lt;x&gt; &quot;q&quot; &#39;s')).toBe('A & B <x> "q" \'s');
+    expect(gearExtract.decodeHtmlEntities('A &amp; B &lt;x&gt; &quot;q&quot; &#39;s')).toBe('A & B <x> "q" \'s');
   });
 
   it('leaves a string with no entities unchanged', () => {
-    expect(decodeHtmlEntities('Sophic Devotion')).toBe('Sophic Devotion');
+    expect(gearExtract.decodeHtmlEntities('Sophic Devotion')).toBe('Sophic Devotion');
   });
 
   it('decodes each entity once, so an escaped entity survives as text', () => {
-    expect(decodeHtmlEntities('&amp;lt;')).toBe('&lt;');
-    expect(decodeHtmlEntities('&amp;amp;')).toBe('&amp;');
+    expect(gearExtract.decodeHtmlEntities('&amp;lt;')).toBe('&lt;');
+    expect(gearExtract.decodeHtmlEntities('&amp;amp;')).toBe('&amp;');
   });
 });
 
@@ -53,7 +56,7 @@ describe('extractGear', () => {
     gear[TRINKET_2_SLOT] = { id: String(TRINKET_B_ID), name: 'Trinket B', icon: 'b.jpg' };
     gear[ENCHANTED_SLOT] = { id: 1, name: 'Wep', permanentEnchant: String(ENCHANT_ID) };
 
-    const { trinkets, enchants } = extractGear(gear);
+    const { trinkets, enchants } = gearExtract.extractGear(gear);
 
     expect(trinkets).toEqual([
       { slot: TRINKET_1_SLOT, id: TRINKET_A_ID, name: 'Trinket A', icon: 'a' },
@@ -66,22 +69,22 @@ describe('extractGear', () => {
     const gear = Array<WclGearItem>(16).fill({});
     gear[NON_TRINKET_SLOT] = { id: TRINKET_A_ID, name: 'Ring', icon: 'r.jpg' };
 
-    expect(extractGear(gear).trinkets).toEqual([]);
+    expect(gearExtract.extractGear(gear).trinkets).toEqual([]);
   });
 
   it('skips items with no id and returns empty for an absent gear array', () => {
     const gear = Array<WclGearItem>(16).fill({});
     gear[TRINKET_1_SLOT] = { name: 'No id', icon: 'x.jpg' };
 
-    expect(extractGear(gear).trinkets).toEqual([]);
-    expect(extractGear(undefined)).toEqual({ trinkets: [], enchants: [] });
+    expect(gearExtract.extractGear(gear).trinkets).toEqual([]);
+    expect(gearExtract.extractGear(undefined)).toEqual({ trinkets: [], enchants: [] });
   });
 
   it('skips an empty trinket slot (WCL id 0) so the downstream !player branch fires', () => {
     const gear = Array<WclGearItem>(16).fill({});
     gear[TRINKET_1_SLOT] = { id: EMPTY_SLOT_ID, name: '', icon: '' };
 
-    expect(extractGear(gear).trinkets).toEqual([]);
+    expect(gearExtract.extractGear(gear).trinkets).toEqual([]);
   });
 });
 
@@ -92,15 +95,15 @@ describe('selectCombatantInfo', () => {
 
   it('picks the event matching the player sourceID', () => {
     const events = [forPlayer(OTHER_ID), forPlayer(PLAYER_ID)];
-    expect(selectCombatantInfo(events, PLAYER_ID)).toBe(events[1]);
+    expect(gearExtract.selectCombatantInfo(events, PLAYER_ID)).toBe(events[1]);
   });
 
   it('falls back to the first event when none matches the player', () => {
     const events = [forPlayer(OTHER_ID)];
-    expect(selectCombatantInfo(events, PLAYER_ID)).toBe(events[0]);
+    expect(gearExtract.selectCombatantInfo(events, PLAYER_ID)).toBe(events[0]);
   });
 
   it('returns null for an empty events array', () => {
-    expect(selectCombatantInfo([], PLAYER_ID)).toBeNull();
+    expect(gearExtract.selectCombatantInfo([], PLAYER_ID)).toBeNull();
   });
 });

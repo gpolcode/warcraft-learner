@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { PlanTable } from '../../../../shared/components/plan-table/plan-table';
-import { loadResource } from '../../../../shared/state/load-resource';
 import { RotationFeatureService, CdPlanRow } from '../facade/rotation-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,6 +10,7 @@ import { RotationFeatureService, CdPlanRow } from '../facade/rotation-feature-se
   templateUrl: './rotation-cd-plan.html',
 })
 export class RotationCdPlan {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly rotation = inject(RotationFeatureService);
 
   readonly spec = input.required<string>();
@@ -21,7 +22,7 @@ export class RotationCdPlan {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({ spec: this.spec(), encounterId: this.encounterId() }),
     load: ({ spec, encounterId }) => this.rotation.loadPlanView(spec, encounterId),
     context: 'rotation.loadPlanView',

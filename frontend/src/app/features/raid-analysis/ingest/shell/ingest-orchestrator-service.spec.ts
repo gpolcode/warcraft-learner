@@ -13,8 +13,11 @@ import { DefensiveTransformService } from '../../defensive/data-access/defensive
 import { GearTransformService } from '../../gear/data-access/gear-transform-service';
 import { MapTransformService } from '../../map/data-access/map-transform-service';
 import { NorthernSkyTransformService } from '../../northern-sky/data-access/northern-sky-transform-service';
-import { encounterSkipKey } from '../domain/signature';
+import { IngestSignatureService } from '../domain/signature';
 import { INGEST_VERSION } from '../domain/ingest-version';
+
+const signatures = TestBed.inject(IngestSignatureService);
+TestBed.resetTestingModule();
 
 const SPEC = 'SubtletyRogue';
 const RAID = 'Manaforge Omega';
@@ -41,7 +44,7 @@ const RANKED = [TOP_PARSE, RUNNER_UP];
 const RERANKED = [TOP_PARSE, NEWCOMER];
 
 // Fewer rows than the orchestrator's top-N cap: past it, signatureOf stops matching the signature the run stamps.
-const signatureOf = (rows: RankedRow[]): string => encounterSkipKey(
+const signatureOf = (rows: RankedRow[]): string => signatures.encounterSkipKey(
   rows.map(row => ({ report_code: row.report.code, fight_id: row.report.fightID })),
   new Set(), String(INGEST_VERSION), rows.length);
 

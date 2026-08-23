@@ -37,121 +37,15 @@ import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { LatestRun } from './latest-run';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { logWarn } from '../../../../core/observability/log';
 import { Result, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
-
-export function extractCode(url: string): string {
-  const m = /\/reports\/([a-zA-Z0-9]+)/.exec(url);
-  return m?.[1] ?? url.trim();
-}
-
-export function extractFightId(url: string): number | null {
-  const m = /[#?&]fight=(\d+)/.exec(url);
-  const id = m ? Number(m[1]) : NaN;
-  return Number.isInteger(id) && id > 0 ? id : null;
-}
-
-// Validating before any network call keeps junk input (or a crawled ?report=garbage link) from wasting the shared rate-limit budget.
-export function isValidReportCode(code: string): boolean {
-  return /^[a-zA-Z0-9]{16}$/.test(code);
-}
+import { LoggerService } from '../../../../core/observability/log';
 
 const MYTHIC_PLUS_DIFFICULTY = 10;
 const RAID_DIFFICULTY_NAMES: Record<number, string> = { 3: 'Normal', 4: 'Heroic' };
 
-// WCL omits difficulty on some fights; a missing one is not evidence of a lower difficulty.
-export function isUnsupportedDifficulty(difficulty: number | null | undefined): boolean {
-  return difficulty != null && difficulty !== MYTHIC_DIFFICULTY;
-}
-
-export function unsupportedEncounterNotice(fightName: string, difficulty: number | null | undefined): string {
-  if (difficulty === MYTHIC_PLUS_DIFFICULTY) return `${fightName} is a Mythic+ boss. Pick a Mythic raid pull.`;
-  const label = RAID_DIFFICULTY_NAMES[difficulty ?? 0];
-  if (label) return `${fightName} is a ${label} pull. Pick a Mythic pull.`;
-  return `${fightName} was not pulled on Mythic. Pick a Mythic pull.`;
-}
-
-export function buildFights(fights: WclReport['fights'] = []): WclFight[] {
-  const bossAttempt: Record<number, number> = {};
-  return fights
-    .filter(f => (f.encounterID || 0) > 0)
-    .sort((a, b) => a.startTime - b.startTime)
-    .map(f => {
-      const eid = f.encounterID || 0;
-      bossAttempt[eid] = (bossAttempt[eid] ?? 0) + 1;
-      return { ...f, duration_s: Math.round((f.endTime - f.startTime) / 100) / 10, attempt: bossAttempt[eid] };
-    });
-}
-
-export function buildPlayers(actors: NonNullable<WclReport['masterData']>['actors'] = []): WclPlayer[] {
-  return actors
-    .map(a => ({ id: a.id, name: a.name, spec: a.subType || 'Unknown', server: a.server || '' }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export function visiblePlayersOf(
-  fights: WclFight[],
-  players: WclPlayer[],
-  selectedFightId: number | null | undefined,
-): WclPlayer[] {
-  const fight = fights.find(f => f.id === selectedFightId);
-  const fp = fight?.friendlyPlayers;
-  return fp?.length ? players.filter(p => fp.includes(p.id)) : players;
-}
-
-function targetFightId(fights: WclFight[], requestedId: number | null): number | null {
-  const requested = requestedId != null ? fights.find(f => f.id === requestedId) : undefined;
-  return (requested ?? fights[fights.length - 1])?.id ?? null;
-}
-
 export type LivePollAction = 'none' | 'skip' | 'analyze';
-
-/** 'analyze' also covers an unfinished selection, so a failed resolve retries on the next tick. */
-export function livePollActionOf(
-  fights: WclFight[],
-  selectedFightId: number | null | undefined,
-  analyzed: boolean,
-): LivePollAction {
-  const latest = fights[fights.length - 1];
-  if (!latest) return 'none';
-  return latest.id === selectedFightId && analyzed ? 'skip' : 'analyze';
-}
-
-// Keeps the currently selected player if visible in the new pull (matched by name, case-insensitively); else falls back to the first visible player.
-export function pickLivePlayerId(
-  visiblePlayers: WclPlayer[],
-  currentPlayerName: string | null,
-): number | null {
-  if (currentPlayerName) {
-    const sticky = visiblePlayers.find(
-      p => p.name.toLowerCase() === currentPlayerName.toLowerCase(),
-    );
-    if (sticky) return sticky.id;
-  }
-  return visiblePlayers[0]?.id ?? null;
-}
-
-// Keeps the Analyze button disabled - and no WCL request firing - until the input resolves to a usable report code.
-function reportCodeValidator(control: AbstractControl): ValidationErrors | null {
-  const value = ((control.value as string | null) ?? '').trim();
-  if (!value) return null; // empty is not an error (no red field); the button is disabled separately
-  return isValidReportCode(extractCode(value)) ? null : { invalidReportCode: true };
-}
-
-// Builds <spec><class> with spaces stripped (e.g. "Subtlety" + "Rogue" -> "SubtletyRogue"); '' when not found.
-export function specOf(groups: PlayerDetailGroups, playerId: number): string {
-  for (const role of ['dps', 'healers', 'tanks', 'unknown']) {
-    for (const player of (groups[role] ?? [])) {
-      if (player.id !== playerId) continue;
-      const className = player.type.replace(/ /g, '');
-      const spec = ((player.specs ?? [])[0]?.spec ?? '').replace(/ /g, '');
-      return spec && className ? spec + className : '';
-    }
-  }
-  return '';
-}
 
 type PostRaidCardId = 'pullOverview' | 'rotation' | 'burst' | 'defensive' | 'gear';
 
@@ -180,13 +74,14 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   templateUrl: './post-raid.html',
 })
 export class PostRaid {
+  private readonly logger = inject(LoggerService);
   private readonly wclApi = inject(WclApiService);
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly selectionStore = inject(SelectionStore);
 
-  protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [reportCodeValidator] });
+  protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [control => this.reportCodeValidator(control)] });
   protected readonly fightControl = new FormControl<number | null>(null);
   protected readonly playerControl = new FormControl<number | null>(null);
 
@@ -234,12 +129,12 @@ export class PostRaid {
   private readonly selectionRun = new LatestRun();
 
   protected readonly visiblePlayers = computed(() =>
-    visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
+    this.visiblePlayersOf(this.fights(), this.players(), this.selectedFightId()));
 
   protected readonly playerSpecs = computed(() => {
     const groups = this.playerDetailGroups();
     const result: Record<number, string> = {};
-    for (const player of this.visiblePlayers()) result[player.id] = specOf(groups, player.id);
+    for (const player of this.visiblePlayers()) result[player.id] = this.specOf(groups, player.id);
     return result;
   });
 
@@ -317,9 +212,9 @@ export class PostRaid {
     this.loadError.set(null);
     this.notice.set('');
     const rawInput = this.reportControl.value;
-    const code = extractCode(rawInput.trim());
+    const code = this.extractCode(rawInput.trim());
     // The Analyze button is already disabled while invalid; this guard also covers the Enter-key path.
-    if (!isValidReportCode(code)) {
+    if (!this.isValidReportCode(code)) {
       if (code) this.notice.set('Enter a valid Warcraft Logs report URL or 16-character report code.');
       return;
     }
@@ -342,7 +237,7 @@ export class PostRaid {
       if (!this.reportRun.isCurrent(run)) return;
       this._applyReport(report);
 
-      this.fightControl.setValue(targetFightId(this.fights(), extractFightId(rawInput)));
+      this.fightControl.setValue(this.targetFightId(this.fights(), this.extractFightId(rawInput)));
       // Without this a zero-pull log is a successful load that looks like nothing happened.
       if (!this.fights().length) this.notice.set('No boss pulls found in this report.');
       this._applyAutoPlayer();
@@ -350,7 +245,7 @@ export class PostRaid {
       this.reportCode.set(code);
       await this.resolveSelection();
     } catch (err) {
-      logWarn('PostRaid.loadReport', err);
+      this.logger.logWarn('PostRaid.loadReport', err);
       if (this.reportRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.load-report'));
     } finally {
       if (this.reportRun.isCurrent(run)) this.loadingReport.set(false);
@@ -358,8 +253,8 @@ export class PostRaid {
   }
 
   private _applyReport(report: WclReport): void {
-    this.fights.set(buildFights(report.fights));
-    this.players.set(buildPlayers(report.masterData?.actors));
+    this.fights.set(this.buildFights(report.fights));
+    this.players.set(this.buildPlayers(report.masterData?.actors));
     this.reportStartTime.set(report.startTime);
     this._enemies = report.masterData?.enemies ?? [];
   }
@@ -371,9 +266,9 @@ export class PostRaid {
     const code = this.reportCode();
     try {
       // Skipping the apply on an unchanged report keeps the rebuilt fight objects from retriggering the cards' own WCL fetches.
-      const probedFights = buildFights(await this.wclApi.getReportFights(code));
+      const probedFights = this.buildFights(await this.wclApi.getReportFights(code));
       if (this._pollSuperseded(code)) return;
-      const action = livePollActionOf(probedFights, this.selectedFightId(), this.ready());
+      const action = this.livePollActionOf(probedFights, this.selectedFightId(), this.ready());
       if (action === 'none') { this.liveCapture.setStatus('No boss pulls found.'); return; }
       if (action === 'skip') {
         this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()}, polling every ${POLL_INTERVAL_S}s`);
@@ -391,7 +286,7 @@ export class PostRaid {
       if (this._pollSuperseded(code)) return;
       this.liveCapture.setStatus(`Updated ${new Date().toLocaleTimeString()} - ${latest.name}`);
     } catch (err) {
-      logWarn('PostRaid._pollOnce', err);
+      this.logger.logWarn('PostRaid._pollOnce', err);
       if (this._pollSuperseded(code)) return;
       this._showError(toLoadError(err, 'post-raid.poll'));
       // Overwrite the in-flight "Checking..." status so the strip stops claiming a live check.
@@ -403,9 +298,9 @@ export class PostRaid {
     // A poll that lands a pull clears the zero-pull notice from the initial empty load.
     this.notice.set('');
     const currentName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
-    const visible = visiblePlayersOf(this.fights(), this.players(), latest.id);
+    const visible = this.visiblePlayersOf(this.fights(), this.players(), latest.id);
     this.fightControl.setValue(latest.id);
-    this.playerControl.setValue(pickLivePlayerId(visible, currentName));
+    this.playerControl.setValue(this.pickLivePlayerId(visible, currentName));
   }
 
   private _pollSuperseded(code: string): boolean {
@@ -456,7 +351,7 @@ export class PostRaid {
         this.liveCapture.prepare(this.reportCode(), this.reportStartTime(), fight);
       }
     } catch (err) {
-      logWarn('PostRaid.resolveSelection', err);
+      this.logger.logWarn('PostRaid.resolveSelection', err);
       if (this.selectionRun.isCurrent(run)) this._showError(toLoadError(err, 'post-raid.resolve-selection'));
     } finally {
       if (this.selectionRun.isCurrent(run)) this.loadingAnalysis.set(false);
@@ -464,8 +359,8 @@ export class PostRaid {
   }
 
   private _noticeUnsupported(fight: WclFight | undefined): boolean {
-    if (!isUnsupportedDifficulty(fight?.difficulty)) return false;
-    this.notice.set(unsupportedEncounterNotice(fight?.name ?? '', fight?.difficulty));
+    if (!this.isUnsupportedDifficulty(fight?.difficulty)) return false;
+    this.notice.set(this.unsupportedEncounterNotice(fight?.name ?? '', fight?.difficulty));
     return true;
   }
 
@@ -474,7 +369,7 @@ export class PostRaid {
     const groups = await this.wclApi.getPlayerDetails(this.reportCode(), fightId);
     if (!this.selectionRun.isCurrent(run)) return null;
     this.playerDetailGroups.set(groups);
-    const spec = specOf(groups, playerId);
+    const spec = this.specOf(groups, playerId);
     // Unmappable spec is a semantic dead end, not retriable: permanent, not transient.
     if (!spec) { this._showError(permanent('Could not resolve the selected player\'s spec.', 'post-raid.spec-resolve')); return null; }
     return spec;
@@ -483,12 +378,118 @@ export class PostRaid {
   private _applyAutoPlayer(): void {
     // Sticks to the saved player NAME, not actor id, since actor ids are not stable across reports.
     const stickyName = this.selectionStore.loadPostRaid()?.playerName ?? null;
-    this.playerControl.setValue(pickLivePlayerId(this.visiblePlayers(), stickyName));
+    this.playerControl.setValue(this.pickLivePlayerId(this.visiblePlayers(), stickyName));
   }
 
   private _persistPlayerName(): void {
     // Guard the write so an unresolved selection never overwrites the sticky name with null.
     const playerName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
     if (playerName) this.selectionStore.savePostRaid({ playerName });
+  }
+
+  protected extractCode(url: string): string {
+    const m = /\/reports\/([a-zA-Z0-9]+)/.exec(url);
+    return m?.[1] ?? url.trim();
+  }
+
+  protected extractFightId(url: string): number | null {
+    const m = /[#?&]fight=(\d+)/.exec(url);
+    const id = m ? Number(m[1]) : NaN;
+    return Number.isInteger(id) && id > 0 ? id : null;
+  }
+
+  // Validating before any network call keeps junk input (or a crawled ?report=garbage link) from wasting the shared rate-limit budget.
+  protected isValidReportCode(code: string): boolean {
+    return /^[a-zA-Z0-9]{16}$/.test(code);
+  }
+
+  // WCL omits difficulty on some fights; a missing one is not evidence of a lower difficulty.
+  protected isUnsupportedDifficulty(difficulty: number | null | undefined): boolean {
+    return difficulty != null && difficulty !== MYTHIC_DIFFICULTY;
+  }
+
+  protected unsupportedEncounterNotice(fightName: string, difficulty: number | null | undefined): string {
+    if (difficulty === MYTHIC_PLUS_DIFFICULTY) return `${fightName} is a Mythic+ boss. Pick a Mythic raid pull.`;
+    const label = RAID_DIFFICULTY_NAMES[difficulty ?? 0];
+    if (label) return `${fightName} is a ${label} pull. Pick a Mythic pull.`;
+    return `${fightName} was not pulled on Mythic. Pick a Mythic pull.`;
+  }
+
+  protected buildFights(fights: WclReport['fights'] = []): WclFight[] {
+    const bossAttempt: Record<number, number> = {};
+    return fights
+      .filter(f => (f.encounterID || 0) > 0)
+      .sort((a, b) => a.startTime - b.startTime)
+      .map(f => {
+        const eid = f.encounterID || 0;
+        bossAttempt[eid] = (bossAttempt[eid] ?? 0) + 1;
+        return { ...f, duration_s: Math.round((f.endTime - f.startTime) / 100) / 10, attempt: bossAttempt[eid] };
+      });
+  }
+
+  protected buildPlayers(actors: NonNullable<WclReport['masterData']>['actors'] = []): WclPlayer[] {
+    return actors
+      .map(a => ({ id: a.id, name: a.name, spec: a.subType || 'Unknown', server: a.server || '' }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  protected visiblePlayersOf(
+    fights: WclFight[],
+    players: WclPlayer[],
+    selectedFightId: number | null | undefined,
+  ): WclPlayer[] {
+    const fight = fights.find(f => f.id === selectedFightId);
+    const fp = fight?.friendlyPlayers;
+    return fp?.length ? players.filter(p => fp.includes(p.id)) : players;
+  }
+
+  private targetFightId(fights: WclFight[], requestedId: number | null): number | null {
+    const requested = requestedId != null ? fights.find(f => f.id === requestedId) : undefined;
+    return (requested ?? fights[fights.length - 1])?.id ?? null;
+  }
+
+  /** 'analyze' also covers an unfinished selection, so a failed resolve retries on the next tick. */
+  protected livePollActionOf(
+    fights: WclFight[],
+    selectedFightId: number | null | undefined,
+    analyzed: boolean,
+  ): LivePollAction {
+    const latest = fights[fights.length - 1];
+    if (!latest) return 'none';
+    return latest.id === selectedFightId && analyzed ? 'skip' : 'analyze';
+  }
+
+  // Keeps the currently selected player if visible in the new pull (matched by name, case-insensitively); else falls back to the first visible player.
+  protected pickLivePlayerId(
+    visiblePlayers: WclPlayer[],
+    currentPlayerName: string | null,
+  ): number | null {
+    if (currentPlayerName) {
+      const sticky = visiblePlayers.find(
+        p => p.name.toLowerCase() === currentPlayerName.toLowerCase(),
+      );
+      if (sticky) return sticky.id;
+    }
+    return visiblePlayers[0]?.id ?? null;
+  }
+
+  // Keeps the Analyze button disabled - and no WCL request firing - until the input resolves to a usable report code.
+  private reportCodeValidator(control: AbstractControl): ValidationErrors | null {
+    const value = ((control.value as string | null) ?? '').trim();
+    if (!value) return null; // empty is not an error (no red field); the button is disabled separately
+    return this.isValidReportCode(this.extractCode(value)) ? null : { invalidReportCode: true };
+  }
+
+  // Builds <spec><class> with spaces stripped (e.g. "Subtlety" + "Rogue" -> "SubtletyRogue"); '' when not found.
+  protected specOf(groups: PlayerDetailGroups, playerId: number): string {
+    for (const role of ['dps', 'healers', 'tanks', 'unknown']) {
+      for (const player of (groups[role] ?? [])) {
+        if (player.id !== playerId) continue;
+        const className = player.type.replace(/ /g, '');
+        const spec = ((player.specs ?? [])[0]?.spec ?? '').replace(/ /g, '');
+        return spec && className ? spec + className : '';
+      }
+    }
+    return '';
   }
 }

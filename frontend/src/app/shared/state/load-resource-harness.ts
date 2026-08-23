@@ -3,7 +3,7 @@ import { OutputEmitterRef, WritableSignal, provideZonelessChangeDetection, signa
 import { TestBed } from '@angular/core/testing';
 import { Result } from '../../core/http/result';
 import { Deferred, deferred } from '../../../testing/deferred';
-import { LoadResource, loadResource } from './load-resource';
+import { LoadResource, LoadResourceService } from './load-resource';
 
 export const LOAD_CONTEXT = 'feature.loadView';
 export const FIRST_PARAMS = 'first-selection';
@@ -43,7 +43,7 @@ export function harness(options: HarnessOptions = {}): Harness {
     const availableChange = new OutputEmitterRef<boolean>();
     busyChange.subscribe(value => busy.push(value));
     availableChange.subscribe(value => availability.push(value));
-    return loadResource<string, string>({
+    return TestBed.inject(LoadResourceService).loadResource<string, string>({
       params,
       load: selection => {
         started.push(selection);

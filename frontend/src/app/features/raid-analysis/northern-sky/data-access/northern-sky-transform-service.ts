@@ -18,21 +18,6 @@ const CANDIDATE_POOL_COUNT = 10;
 const EXPORTED_PARSE_COUNT = 1;
 const NO_EXPORT_MESSAGE = 'Not yet ingested.';
 
-function exportAbilities(rulebook: Rulebook): ExportAbility[] | null {
-  const abilities: ExportAbility[] = [
-    ...rulebook.major_cooldowns.map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
-    ...rulebook.defensives.map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
-  ].filter(ability => ability.spell_id);
-  return abilities.length ? abilities : null;
-}
-
-export function cooldownCastTimes(casts: TimedEvent[], spellId: number): number[] {
-  return casts
-    .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
-    .map(cast => round(cast.atS))
-    .sort((a, b) => a - b);
-}
-
 @Injectable({ providedIn: 'root' })
 export class NorthernSkyTransformService implements DataSource<NorthernSkyBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
@@ -48,7 +33,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       sampleTarget: EXPORTED_PARSE_COUNT,
       noRankingsMessage: NO_EXPORT_MESSAGE,
       header: 'identity',
-      rulebook: { dataFiles: this.dataFiles, plan: exportAbilities, missingMessage: NO_EXPORT_MESSAGE },
+      rulebook: { dataFiles: this.dataFiles, plan: rulebook => this.exportAbilities(rulebook), missingMessage: NO_EXPORT_MESSAGE },
       parse: (parse, abilities) => this.parseCastTimes(parse, abilities),
       bench: async ({ parses }) => {
         const built = parses[0] ?? [];
@@ -67,9 +52,24 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
     );
     const built: NorthernSkyAbility[] = [];
     for (const ability of abilities) {
-      const cast_times_s = cooldownCastTimes(casts, ability.spell_id);
+      const cast_times_s = this.cooldownCastTimes(casts, ability.spell_id);
       if (cast_times_s.length) built.push({ spell_id: ability.spell_id, name: ability.name, icon: '', kind: ability.kind, cast_times_s });
     }
     return built.length ? built : null;
+  }
+
+  private exportAbilities(rulebook: Rulebook): ExportAbility[] | null {
+    const abilities: ExportAbility[] = [
+      ...rulebook.major_cooldowns.map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
+      ...rulebook.defensives.map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
+    ].filter(ability => ability.spell_id);
+    return abilities.length ? abilities : null;
+  }
+
+  protected cooldownCastTimes(casts: TimedEvent[], spellId: number): number[] {
+    return casts
+      .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
+      .map(cast => round(cast.atS))
+      .sort((a, b) => a - b);
   }
 }

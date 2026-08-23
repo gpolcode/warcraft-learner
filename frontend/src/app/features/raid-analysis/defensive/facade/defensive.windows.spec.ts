@@ -1,13 +1,21 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../../../../domain/analysis/analysis.models';
-import {
-  computePlayerDefensiveWindows,
-  defensiveWindowStatus, defensiveMapAnchor, defensiveClipAnchor, defensiveFindingClipAnchor, buildDefensiveWindows,
-  playerCoveredWindow,
-} from './defensive-feature-service';
+import { DefensiveFeatureService } from './defensive-feature-service';
 import { damageTaken } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { BOSS_HIT_SPELL_ID, timed } from './defensive-harness';
+import { TestBed } from '@angular/core/testing';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+import { DEFENSIVE_DATA_SOURCE } from '../data-access/defensive-data-source';
+
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: DEFENSIVE_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(DefensiveFeatureService);
+TestBed.resetTestingModule();
 
 function first<T>(items: readonly T[]): T {
   const [head] = items;
@@ -25,7 +33,7 @@ describe('computePlayerDefensiveWindows', () => {
   it('sums the damage the player took in the window, with no cast count to report', () => {
     const AMOUNT = 400, ABSORBED = 150;
     const SECOND_SOURCE_ID = BOSS_HIT_SPELL_ID + 1, SECOND_HIT = 100;
-    const out = computePlayerDefensiveWindows(top, timed([
+    const out = svc['computePlayerDefensiveWindows'](top, timed([
       damageTaken(BOSS_HIT_SPELL_ID, WIN_START_S + 2, AMOUNT, { absorbed: ABSORBED }),
       damageTaken(SECOND_SOURCE_ID, WIN_START_S + 4, SECOND_HIT),
     ], 0));
@@ -41,7 +49,7 @@ describe('computePlayerDefensiveWindows', () => {
     const PER_SOURCE_DAMAGE = 100;
     const hits = Array.from({ length: SOURCE_COUNT }, (_, i) =>
       damageTaken(BOSS_HIT_SPELL_ID + i, WIN_START_S + 1, (i + 1) * PER_SOURCE_DAMAGE));
-    const breakdown = first(computePlayerDefensiveWindows(top, timed(hits, 0))).ability_breakdown;
+    const breakdown = first(svc['computePlayerDefensiveWindows'](top, timed(hits, 0))).ability_breakdown;
     assert.exists(breakdown);
     expect(breakdown).toHaveLength(KEPT_SOURCES);
     expect(first(breakdown).damage).toBe(SOURCE_COUNT * PER_SOURCE_DAMAGE);
@@ -69,7 +77,7 @@ describe('defensiveWindowStatus', () => {
     { name: 'above band, covered -> bad (used wrongly)', player: ABOVE_BAND, notReached: false, covered: true, status: 'bad', icon: 'error', note: 'defensive used wrongly' },
     { name: 'above band, not covered -> bad (needed, unused)', player: ABOVE_BAND, notReached: false, covered: false, status: 'bad', icon: 'error', note: 'defensive needed, unused' },
   ])('$name', ({ player, notReached, covered, status, icon, note }) => {
-    expect(defensiveWindowStatus(player, TOP_MAX, STDDEV, notReached, covered)).toEqual({ status, icon, note });
+    expect(svc['defensiveWindowStatus'](player, TOP_MAX, STDDEV, notReached, covered)).toEqual({ status, icon, note });
   });
 });
 
@@ -79,46 +87,46 @@ describe('playerCoveredWindow', () => {
     ({ name: 'Cloak of Shadows', uses: spans.length, windows: spans });
 
   it('is true when a player span overlaps the window plus slack', () => {
-    expect(playerCoveredWindow(window, withSpans([{ start_s: 33, end_s: 38 }]))).toBe(true);
+    expect(svc['playerCoveredWindow'](window, withSpans([{ start_s: 33, end_s: 38 }]))).toBe(true);
   });
 
   it('covers a span reaching the slack edge, not one just short of it', () => {
     // window [30,35], slack 3 -> covers [27,38]; a span ending at 27 reaches the edge.
-    expect(playerCoveredWindow(window, withSpans([{ start_s: 10, end_s: 27 }]))).toBe(true);
-    expect(playerCoveredWindow(window, withSpans([{ start_s: 10, end_s: 26 }]))).toBe(false);
+    expect(svc['playerCoveredWindow'](window, withSpans([{ start_s: 10, end_s: 27 }]))).toBe(true);
+    expect(svc['playerCoveredWindow'](window, withSpans([{ start_s: 10, end_s: 26 }]))).toBe(false);
   });
 
   it('is false with no player defensive', () => {
-    expect(playerCoveredWindow(window, undefined)).toBe(false);
+    expect(svc['playerCoveredWindow'](window, undefined)).toBe(false);
   });
 });
 
 describe('defensiveMapAnchor', () => {
   it('carries seek time and the dominant enemy game id', () => {
     const window = { time_s: 30, window_length_s: 5, defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, ref_game_id: 6666 } as BurstWindow;
-    expect(defensiveMapAnchor(window)).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
+    expect(svc['defensiveMapAnchor'](window)).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
   });
 
   it('falls back to a null ref when absent', () => {
     const window = { time_s: 5, window_length_s: 5 } as BurstWindow;
-    expect(defensiveMapAnchor(window)).toEqual({ timeS: 5, refGameId: null, windowLengthS: 5 });
+    expect(svc['defensiveMapAnchor'](window)).toEqual({ timeS: 5, refGameId: null, windowLengthS: 5 });
   });
 });
 
 describe('defensiveClipAnchor', () => {
   it('carries the window span and a stable indexed key', () => {
     const window = { time_s: 30, window_length_s: 5 } as BurstWindow;
-    expect(defensiveClipAnchor(window, 1)).toEqual({ timeS: 30, windowLengthS: 5, key: 'defensive-1' });
+    expect(svc['defensiveClipAnchor'](window, 1)).toEqual({ timeS: 30, windowLengthS: 5, key: 'defensive-1' });
   });
 });
 
 describe('defensiveFindingClipAnchor', () => {
   it('is a point anchor at the cast time, keyed by the exact second', () => {
-    expect(defensiveFindingClipAnchor(30.2)).toEqual({ timeS: 30.2, windowLengthS: 0, key: 'defensive-find-30.2' });
+    expect(svc.defensiveFindingClipAnchor(30.2)).toEqual({ timeS: 30.2, windowLengthS: 0, key: 'defensive-find-30.2' });
   });
 
   it('keeps two findings within the same second on distinct clip keys', () => {
-    expect(defensiveFindingClipAnchor(30.2).key).not.toBe(defensiveFindingClipAnchor(30.6).key);
+    expect(svc.defensiveFindingClipAnchor(30.2).key).not.toBe(svc.defensiveFindingClipAnchor(30.6).key);
   });
 });
 
@@ -138,7 +146,7 @@ describe('buildDefensiveWindows', () => {
     const player: PlayerBurstWindow[] = [{ window_damage: 1150, ability_breakdown: [{ spell_id: BOSS_HIT_SPELL_ID, damage: 700 }] }];
     // Covered the window (span 30-35); 1150 is within the band (max 1200 + stddev 100 = 1300) -> good, annotated covered.
     const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', uses: 1, windows: [{ start_s: 30, end_s: 35 }] }];
-    const { windows, anchors, clipAnchors } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: playerDef, fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows, anchors, clipAnchors } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: playerDef, fightDurationS: FIGHT_DURATION_S, abilities });
     const defensiveWindow = first(windows);
     expect(defensiveWindow.overview.playerPct).toBe(1150);
     expect(defensiveWindow.status).toBe('good');
@@ -151,7 +159,7 @@ describe('buildDefensiveWindows', () => {
 
   it('names the defensive as a plain label when the bench window has no spell id', () => {
     const unbakedWindow: BurstWindow = { ...window, spell_id: undefined };
-    const { windows } = buildDefensiveWindows({ topWindows: [unbakedWindow], playerWindows: [], playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [unbakedWindow], playerWindows: [], playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).spells).toEqual([]);
     expect(first(windows).labels).toContain('Cloak of Shadows');
   });
@@ -159,7 +167,7 @@ describe('buildDefensiveWindows', () => {
   it('marks an above-band window bad, annotated as needing an unused defensive', () => {
     // 1500 > band edge (max 1200 + stddev 100 = 1300); no covering defensive -> bad.
     const player: PlayerBurstWindow[] = [{ window_damage: 1500, ability_breakdown: [] }];
-    const { windows } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('bad');
     expect(first(windows).labels).toContain('defensive needed, unused');
   });
@@ -167,7 +175,7 @@ describe('buildDefensiveWindows', () => {
   it('keeps an uncovered within-band window good, annotated no defensive used', () => {
     // 900 is within the band; not pressing a defensive when damage stayed acceptable is not a miss.
     const player: PlayerBurstWindow[] = [{ window_damage: 900, ability_breakdown: [] }];
-    const { windows } = buildDefensiveWindows({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('good');
     expect(first(windows).labels).toContain('no defensive used');
   });

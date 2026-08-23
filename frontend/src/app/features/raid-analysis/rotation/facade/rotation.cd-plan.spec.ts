@@ -1,7 +1,19 @@
 import { assert, describe, it, expect } from 'vitest';
 import { SHADOW_BLADES, SECRET_TECHNIQUE, VANISH } from '../../../../../testing/spell-ids';
-import { buildCdPlan } from './rotation-feature-service';
+import { RotationFeatureService } from './rotation-feature-service';
 import { cdBench } from './rotation-harness';
+import { TestBed } from '@angular/core/testing';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+import { ROTATION_DATA_SOURCE } from '../data-access/rotation-data-source';
+
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: ROTATION_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(RotationFeatureService);
+TestBed.resetTestingModule();
 
 describe('buildCdPlan', () => {
   const abilities = { [VANISH]: { icon: 'vanish', name: 'Vanish' }, [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } };
@@ -14,7 +26,7 @@ describe('buildCdPlan', () => {
       'Shadow Blades': cdBench({ majority_hold: true, hold_targets: { '2': { target_s: 100, delay_s: 10, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } } }),
       'Vanish': cdBench({ avg_first_cast_s: 20 }),
     };
-    const plan = buildCdPlan(cooldowns, benchmarks, abilities);
+    const plan = svc['buildCdPlan'](cooldowns, benchmarks, abilities);
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
     assert.exists(plan[0]);
     expect(plan[0].holds).toEqual([{ castIndex: 2, targetS: 100 }]);
@@ -33,7 +45,7 @@ describe('buildCdPlan', () => {
       Aligned: cdBench({ bl_pct: 50 }),    // flag false, but data says aligned -> badge on (50 boundary)
       Unaligned: cdBench({ bl_pct: 49 }),  // flag true, but data says not -> badge off
     };
-    const plan = buildCdPlan(cooldowns, benchmarks, abilities);
+    const plan = svc['buildCdPlan'](cooldowns, benchmarks, abilities);
     const aligned = plan.find(p => p.name === 'Aligned');
     assert.exists(aligned);
     const unaligned = plan.find(p => p.name === 'Unaligned');
@@ -47,7 +59,7 @@ describe('buildCdPlan', () => {
   it('falls back to an empty icon for a cooldown whose spell id is not in the ability map', () => {
     // SECRET_TECHNIQUE is deliberately absent from `abilities`, so the guarded lookup must not throw.
     const UNMAPPED_SPELL_ID = SECRET_TECHNIQUE;
-    const plan = buildCdPlan([{ name: 'Unmapped', spell_id: UNMAPPED_SPELL_ID, cooldown: 60 }], {}, abilities);
+    const plan = svc['buildCdPlan']([{ name: 'Unmapped', spell_id: UNMAPPED_SPELL_ID, cooldown: 60 }], {}, abilities);
     assert.exists(plan[0]);
     expect(plan[0].spellId).toBe(UNMAPPED_SPELL_ID);
     assert.exists(plan[0]);
@@ -61,7 +73,7 @@ describe('buildCdPlan', () => {
       sample_count: TOTAL_SAMPLED, used_sample_count: 0, avg_first_cast_s: 0, median_uses: 0,
       uses_per_min: { avg: 0, stddev: 0 },
     });
-    const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
+    const plan = svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': unused }, abilities);
     assert.exists(plan[0]);
     expect(plan[0].firstCastS).toBeNull();
     assert.exists(plan[0]);
@@ -82,7 +94,7 @@ describe('buildCdPlan', () => {
     const MINORITY_USERS = 2;
     const MEDIAN_USES = 3;
     const rare = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, avg_first_cast_s: 20, median_uses: MEDIAN_USES });
-    const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
+    const plan = svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': rare }, abilities);
     assert.exists(plan[0]);
     expect(plan[0].firstCastS).toBeNull();
     assert.exists(plan[0]);
@@ -101,7 +113,7 @@ describe('buildCdPlan', () => {
     const FIRST_CAST_S = 8;
     const USES_PER_MIN = 1.2;
     const used = cdBench({ avg_first_cast_s: FIRST_CAST_S, uses_per_min: { avg: USES_PER_MIN, stddev: 0.1 } });
-    const plan = buildCdPlan([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
+    const plan = svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': used }, abilities);
     assert.exists(plan[0]);
     expect(plan[0].firstCastS).toBe(FIRST_CAST_S);
     assert.exists(plan[0]);

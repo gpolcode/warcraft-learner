@@ -3,17 +3,27 @@ import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/anal
 import { Result, ok, missing } from '../../../../core/http/result';
 import { BURST_DATA_SOURCE, BurstBench } from '../data-access/burst-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
-import {
-  BurstFeatureService,
-  burstWindowStatus, splitCommonCds, burstMapAnchor, burstClipAnchor, buildBurstView, findPlayerBurstWindows,
-} from './burst-feature-service';
+import { BurstFeatureService } from './burst-feature-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../testing/builders/events';
-import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { TestBed } from '@angular/core/testing';
+import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
+import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
+
+const wclProjections = TestBed.inject(WclProjectionsService);
+TestBed.resetTestingModule();
+TestBed.configureTestingModule({ providers: [
+  { provide: WCL_TRANSPORT, useValue: {} },
+  { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: BURST_DATA_SOURCE, useValue: {} },
+] });
+const svc = TestBed.inject(BurstFeatureService);
+TestBed.resetTestingModule();
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
-const timed = withRelativeS;
+const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 function first<T>(items: readonly T[]): T {
   const [head] = items;
@@ -32,38 +42,38 @@ describe('burstWindowStatus', () => {
     { name: 'at min band edge (700) -> warn, not bad (strict)', player: 700, notReached: false, status: 'warn', icon: 'warning_amber' },
     { name: 'at avg band edge (900) -> good, not warn (strict)', player: 900, notReached: false, status: 'good', icon: 'check_circle' },
   ])('$name', ({ player, notReached, status, icon }) => {
-    expect(burstWindowStatus(player, 1000, 800, 100, notReached)).toEqual({ status, icon });
+    expect(svc['burstWindowStatus'](player, 1000, 800, 100, notReached)).toEqual({ status, icon });
   });
 
   it('bench-only -> neutral info, overriding every other state', () => {
     // Even with no player data and "not reached", benchOnly forces the neutral info glyph.
-    expect(burstWindowStatus(null, 1000, 800, 100, true, true)).toEqual({ status: 'info', icon: 'insights' });
-    expect(burstWindowStatus(650, 1000, 800, 100, false, true)).toEqual({ status: 'info', icon: 'insights' });
+    expect(svc['burstWindowStatus'](null, 1000, 800, 100, true, true)).toEqual({ status: 'info', icon: 'insights' });
+    expect(svc['burstWindowStatus'](650, 1000, 800, 100, false, true)).toEqual({ status: 'info', icon: 'insights' });
   });
 });
 
 describe('splitCommonCds', () => {
   it('routes known names to spell ids and unknown names to labels', () => {
-    expect(splitCommonCds(['Shadow Blades', 'Mystery'], { 'Shadow Blades': SHADOW_BLADES }))
+    expect(svc['splitCommonCds'](['Shadow Blades', 'Mystery'], { 'Shadow Blades': SHADOW_BLADES }))
       .toEqual({ spellIds: [SHADOW_BLADES], labels: ['Mystery'] });
   });
 
   it('is empty for no cds', () => {
-    expect(splitCommonCds([], {})).toEqual({ spellIds: [], labels: [] });
+    expect(svc['splitCommonCds']([], {})).toEqual({ spellIds: [], labels: [] });
   });
 });
 
 describe('burstMapAnchor', () => {
   it('carries the window seek time', () => {
     const window = { time_s: 12, window_length_s: 18, common_cds: ['Shadow Blades', 'Mystery'] } as BurstWindow;
-    expect(burstMapAnchor(window)).toEqual({ timeS: 12, windowLengthS: 18 });
+    expect(svc['burstMapAnchor'](window)).toEqual({ timeS: 12, windowLengthS: 18 });
   });
 });
 
 describe('burstClipAnchor', () => {
   it('carries the window span and a stable indexed key', () => {
     const window = { time_s: 12, window_length_s: 18 } as BurstWindow;
-    expect(burstClipAnchor(window, 2)).toEqual({ timeS: 12, windowLengthS: 18, key: 'burst-2' });
+    expect(svc['burstClipAnchor'](window, 2)).toEqual({ timeS: 12, windowLengthS: 18, key: 'burst-2' });
   });
 });
 
@@ -81,7 +91,7 @@ describe('buildBurstView', () => {
     const player: PlayerBurstWindow[] = [
       { window_damage: 950, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] },
     ];
-    const view = buildBurstView([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
+    const view = svc['buildBurstView']([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(view.windows).toHaveLength(1);
     const burstWindow = first(view.windows);
     expect(burstWindow.overview.playerPct).toBe(950);
@@ -98,15 +108,15 @@ describe('buildBurstView', () => {
         { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 0, is_passive: true },
       ],
     };
-    const view = buildBurstView([passiveWindow], [], 300, {}, abilities, true);
+    const view = svc['buildBurstView']([passiveWindow], [], 300, {}, abilities, true);
     expect(first(first(view.windows).detailRows).passive).toBe(true);
     // The default (non-passive) bench ability stays passive=false.
-    const benchWindow = first(buildBurstView([window], [], 300, {}, abilities, true).windows);
+    const benchWindow = first(svc['buildBurstView']([window], [], 300, {}, abilities, true).windows);
     expect(first(benchWindow.detailRows).passive).toBe(false);
   });
 
   it('bench-only marks windows neutral info (no player overlay) instead of muted', () => {
-    const burstWindow = first(buildBurstView([window], [], Number.POSITIVE_INFINITY, {}, abilities, true).windows);
+    const burstWindow = first(svc['buildBurstView']([window], [], Number.POSITIVE_INFINITY, {}, abilities, true).windows);
     expect(burstWindow.status).toBe('info');
     expect(burstWindow.statusIcon).toBe('insights');
     expect(burstWindow.overview.playerPct).toBeNull();
@@ -120,7 +130,7 @@ describe('findPlayerBurstWindows', () => {
   const HIT_S = 12, CAST_S = 11, HIT_DAMAGE = 400, CAST_COUNT = 1;
 
   it('bridges the damage id to the cast id through the report ability names', () => {
-    const out = findPlayerBurstWindows(
+    const out = svc['findPlayerBurstWindows'](
       [window],
       timed([damage(SHADOW_BLADES_DAMAGE, HIT_S, HIT_DAMAGE)], 0),
       timed([cast(SHADOW_BLADES, CAST_S)], 0),
@@ -133,7 +143,7 @@ describe('findPlayerBurstWindows', () => {
   });
 
   it('stands an unnamed ability up under its own id, so its casts still count', () => {
-    const out = findPlayerBurstWindows(
+    const out = svc['findPlayerBurstWindows'](
       [window],
       timed([damage(SHADOW_BLADES, HIT_S, HIT_DAMAGE)], 0),
       timed([cast(SHADOW_BLADES, CAST_S)], 0),

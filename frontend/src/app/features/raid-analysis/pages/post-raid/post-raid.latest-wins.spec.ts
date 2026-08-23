@@ -4,8 +4,10 @@ import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../../../../core/wcl/wcl.models';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { PostRaid, unsupportedEncounterNotice } from './post-raid';
+import { PostRaid } from './post-raid';
 import { ParkedWclApi, fight, loadReport, parkedWclApi, player, postRaidProviders } from './post-raid-harness';
+
+const svc = Object.create(PostRaid.prototype) as PostRaid;
 
 interface SelectionHandle {
   onFightChange(): Promise<void>;
@@ -107,7 +109,7 @@ describe('PostRaid selection latest-wins', () => {
     api.settleDetails(EARLIER_PULL_ID, EARLIER_DETAILS);
     await earlier;
 
-    expect(vm.notice()).toBe(unsupportedEncounterNotice(KEYSTONE_PULL.name, MYTHIC_PLUS_DIFFICULTY));
+    expect(vm.notice()).toBe(svc['unsupportedEncounterNotice'](KEYSTONE_PULL.name, MYTHIC_PLUS_DIFFICULTY));
     expect(vm.spec()).toBe('');
     expect(vm.loadingAnalysis()).toBe(false);
   });

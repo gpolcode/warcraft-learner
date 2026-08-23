@@ -7,12 +7,9 @@ import { FlyoverPanel } from '../../../../shared/components/flyover-panel/flyove
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { loadResource } from '../../../../shared/state/load-resource';
 import { NorthernSkyBench } from '../data-access/northern-sky-data-source';
-import {
-  NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
-  toggleExclusion, toggleAllExclusion, isPanelOpen,
-} from '../facade/northern-sky-feature-service';
+import { NorthernSkyFeatureService } from '../facade/northern-sky-feature-service';
+import { LoadResourceService } from '../../../../shared/state/load-resource';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +18,7 @@ import {
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {
+  private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly selection = inject(SelectionStore);
   private readonly clipboard = inject(Clipboard);
@@ -30,7 +28,7 @@ export class NorthernSkyExport {
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
-  private readonly load = loadResource({
+  private readonly load = this.loadRes.loadResource({
     params: () => ({ spec: this.spec(), encounterId: this.encounterId() }),
     load: ({ spec, encounterId }) => this.feature.getExport(spec, encounterId),
     context: 'northernSky.getExport',
@@ -47,29 +45,29 @@ export class NorthernSkyExport {
   protected readonly error = this.load.error;
 
   protected readonly abilities = computed(() => this.bench()?.abilities ?? []);
-  private readonly grouped = computed(() => abilitiesByKind(this.abilities()));
+  private readonly grouped = computed(() => this.feature.abilitiesByKind(this.abilities()));
   protected readonly cooldowns = computed(() => this.grouped().cooldowns);
   protected readonly defensives = computed(() => this.grouped().defensives);
   protected readonly available = this.load.available;
-  protected readonly allSelected = computed(() => isAllSelected(this.abilities(), this.excluded()));
-  protected readonly panelOpen = computed(() => isPanelOpen(this.open(), this.available()));
+  protected readonly allSelected = computed(() => this.feature.isAllSelected(this.abilities(), this.excluded()));
+  protected readonly panelOpen = computed(() => this.feature.isPanelOpen(this.open(), this.available()));
 
   protected isSelected(spellId: number): boolean {
     return !this.excluded().has(spellId);
   }
 
   protected toggle(spellId: number, checked: boolean): void {
-    this.persist(toggleExclusion(this.excluded(), spellId, checked));
+    this.persist(this.feature.toggleExclusion(this.excluded(), spellId, checked));
   }
 
   protected toggleAll(): void {
-    this.persist(toggleAllExclusion(this.abilities(), this.excluded()));
+    this.persist(this.feature.toggleAllExclusion(this.abilities(), this.excluded()));
   }
 
   protected copyNote(): void {
     const bench = this.bench();
     if (!bench) return;
-    const succeeded = this.clipboard.copy(buildNorthernSkyNote(bench, selectedIds(this.abilities(), this.excluded())));
+    const succeeded = this.clipboard.copy(this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded())));
     this.copied.set(succeeded);
     this.copyFailed.set(!succeeded);
   }

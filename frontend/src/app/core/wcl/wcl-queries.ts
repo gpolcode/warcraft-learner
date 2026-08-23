@@ -60,21 +60,6 @@ query CombatantInfo($code:String!,$fightIDs:[Int]!,$sourceID:Int){
   }}
 }`;
 
-// Item aliases are prefixed `i`, enchant aliases `e` (bare numeric identifiers are not valid GraphQL field names).
-export function buildGearNamesQuery(itemIds: number[], enchantIds: number[]): string {
-  const fields = [
-    ...itemIds.map(id => `i${id}: item(id:${id}){id name}`),
-    ...enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`),
-  ].join(' ');
-  return `query{gameData{${fields}}}`;
-}
-
-// `gameData.ability(id)` returns `null` for a nonexistent id, so a bad (e.g. mistyped rulebook) id resolves to null rather than a wrong icon.
-export function buildAbilityIconsQuery(ids: number[]): string {
-  const fields = ids.map(id => `a${id}: ability(id:${id}){id name icon}`).join(' ');
-  return `query{gameData{${fields}}}`;
-}
-
 // The discovery reads' queries, issued only during ingestion.
 
 /** The WCL hourly point budget - the ingest orchestrator's budget gate. */
