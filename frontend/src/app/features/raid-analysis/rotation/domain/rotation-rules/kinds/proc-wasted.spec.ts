@@ -6,7 +6,7 @@ import { cast, applyBuff, buffWindow } from '../../../../../../../testing/builde
 import {
   DANCE_START_S, DANCE_END_S, FIELD_NEVER, RULE_FIGHT_END_S, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { ProcWastedKind } from './proc-wasted';
+import { ProcWastedKind } from './proc-wasted-kind';
 
 const kind = TestBed.inject(ProcWastedKind);
 const evaluateProcWasted = judged(kind);

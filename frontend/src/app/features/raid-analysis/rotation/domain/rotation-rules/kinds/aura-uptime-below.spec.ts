@@ -6,7 +6,7 @@ import { applyBuff, removeBuff, applyDebuff, removeDebuff } from '../../../../..
 import {
  RULE_FIGHT_END_S, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { AuraUptimeBelowKind } from './aura-uptime-below';
+import { AuraUptimeBelowKind } from './aura-uptime-below-kind';
 
 const kind = TestBed.inject(AuraUptimeBelowKind);
 const evaluateAuraUptimeBelow = judged(kind);

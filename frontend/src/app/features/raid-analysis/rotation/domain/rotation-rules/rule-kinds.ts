@@ -1,18 +1,18 @@
 import { InjectionToken, Type, inject } from '@angular/core';
 import { RuleCondition } from '../../../../../domain/rulebook/rulebook.models';
 import { RuleKind } from './rule-kind';
-import { CastWithoutPriorKind } from './kinds/cast-without-prior';
-import { HoldCooldownForAnchorKind } from './kinds/hold-cooldown-for-anchor';
-import { CastOutsideBuffKind } from './kinds/cast-outside-buff';
-import { AuraUptimeBelowKind } from './kinds/aura-uptime-below';
-import { OpeningSequenceKind } from './kinds/opening-sequence';
-import { CastAtTargetCountKind } from './kinds/cast-at-target-count';
-import { ResourceAtCastKind } from './kinds/resource-at-cast';
-import { ProcWastedKind } from './kinds/proc-wasted';
-import { FillerInBuffKind } from './kinds/filler-in-buff';
-import { SpendAtStacksKind } from './kinds/spend-at-stacks';
-import { AuraClippedKind } from './kinds/aura-clipped';
-import { FillerBelowHealthKind } from './kinds/filler-below-health';
+import { CastWithoutPriorKind } from './kinds/cast-without-prior-kind';
+import { HoldCooldownForAnchorKind } from './kinds/hold-cooldown-for-anchor-kind';
+import { CastOutsideBuffKind } from './kinds/cast-outside-buff-kind';
+import { AuraUptimeBelowKind } from './kinds/aura-uptime-below-kind';
+import { OpeningSequenceKind } from './kinds/opening-sequence-kind';
+import { CastAtTargetCountKind } from './kinds/cast-at-target-count-kind';
+import { ResourceAtCastKind } from './kinds/resource-at-cast-kind';
+import { ProcWastedKind } from './kinds/proc-wasted-kind';
+import { FillerInBuffKind } from './kinds/filler-in-buff-kind';
+import { SpendAtStacksKind } from './kinds/spend-at-stacks-kind';
+import { AuraClippedKind } from './kinds/aura-clipped-kind';
+import { FillerBelowHealthKind } from './kinds/filler-below-health-kind';
 
 /** Keyed by kind, so a new condition cannot compile until it declares a kind class here. */
 const KIND_CLASSES: { [K in RuleCondition['kind']]: Type<RuleKind<Extract<RuleCondition, { kind: K }>>> } = {

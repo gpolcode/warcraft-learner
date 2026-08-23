@@ -20,7 +20,7 @@ export class TopParseSelectionService {
 /** Resolves which top parses an encounter is benched from, once, so the ingest signature and every slice read the same pool. */
 import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { TopParseSelection } from '../../core/wcl/wcl.models';
-import { WclProjectionsService } from './wcl-projections';
+import { WclProjectionsService } from './wcl-projections-service';
 
 // Over-fetch past the sampled top parses so a private or unfetchable one is backfilled by the next-best.
 const CANDIDATE_POOL_DEPTH = 20;

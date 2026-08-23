@@ -5,12 +5,12 @@ import { EncounterGearStats } from '../../../../domain/encounter/encounter.model
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
-import { GearExtractService, GameNames } from '../domain/gear-extract';
-import { GearStatus, EnchantRow, TrinketRow, TalentBuildRow, BenchEnchantRow, BenchTrinketRow } from '../../../../domain/gear/gear-comparison';
+import { GearExtractService, GameNames } from '../domain/gear-extract-service';
+import { GearStatus, EnchantRow, TrinketRow, TalentBuildRow, BenchEnchantRow, BenchTrinketRow } from '../../../../domain/gear/gear-comparison-service';
 import { GEAR_DATA_SOURCE, GearBench } from '../data-access/gear-data-source';
-import { LoggerService } from '../../../../core/observability/log';
-import { TalentKeyService } from '../../../../domain/gear/talent-key';
-import { GearComparisonService } from '../../../../domain/gear/gear-comparison';
+import { LoggerService } from '../../../../core/observability/logger-service';
+import { TalentKeyService } from '../../../../domain/gear/talent-key-service';
+import { GearComparisonService } from '../../../../domain/gear/gear-comparison-service';
 
 export interface GearComparisonView {
   comparison: boolean;

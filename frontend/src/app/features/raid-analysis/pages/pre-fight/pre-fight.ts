@@ -25,7 +25,7 @@ import { Gear } from '../../gear/components/gear';
 import { MapPanel } from '../../map/components/map-panel';
 import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
 import { NorthernSkyExport } from '../../northern-sky/components/northern-sky-export';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 
 export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
 

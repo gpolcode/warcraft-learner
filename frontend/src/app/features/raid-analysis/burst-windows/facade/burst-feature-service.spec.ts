@@ -7,7 +7,7 @@ import { BurstFeatureService } from './burst-feature-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../testing/builders/events';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';

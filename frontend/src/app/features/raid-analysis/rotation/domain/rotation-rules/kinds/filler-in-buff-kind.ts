@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../../../../domain/analysis/analysis.models';
 import { FillerInBuffCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { RuleContext } from '../rule-context';
+import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
-import { FillerKind, FillerSplit } from '../filler-choice';
+import { FillerKind, FillerSplit } from '../filler-kind';
 
 @Injectable({ providedIn: 'root' })
 export class FillerInBuffKind extends FillerKind<FillerInBuffCondition> {

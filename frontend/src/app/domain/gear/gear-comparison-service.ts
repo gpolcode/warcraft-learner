@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { CharacterGear } from '../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
-import { TalentPick } from './talent-key';
-import { TalentKeyService } from './talent-key';
+import { TalentPick } from './talent-key-service';
+import { TalentKeyService } from './talent-key-service';
 
 @Injectable({ providedIn: 'root' })
 export class GearComparisonService {

@@ -8,18 +8,18 @@ import { ComparisonWindow, WindowStatus } from '../../../../domain/analysis/wind
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { Result, Results } from '../../../../core/http/result';
 import { benchExpectedUses, sortBySeverity } from '../../../../domain/analysis/analysis-math';
-import { CadenceVoice } from '../../../../domain/analysis/cast-cadence';
-import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { WindowView, WindowViewAdapter } from '../../../../domain/analysis/window-view';
-import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
+import { CadenceVoice } from '../../../../domain/analysis/cast-cadence-service';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { WindowView, WindowViewAdapter } from '../../../../domain/analysis/window-view-service';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context-service';
 import {
   DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensivePlanMeta,
 } from '../data-access/defensive-data-source';
-import { LoggerService } from '../../../../core/observability/log';
-import { HoldTargetsService } from '../../../../domain/analysis/hold-targets';
-import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
-import { CastCadenceService } from '../../../../domain/analysis/cast-cadence';
-import { WindowViewService } from '../../../../domain/analysis/window-view';
+import { LoggerService } from '../../../../core/observability/logger-service';
+import { HoldTargetsService } from '../../../../domain/analysis/hold-targets-service';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows-service';
+import { CastCadenceService } from '../../../../domain/analysis/cast-cadence-service';
+import { WindowViewService } from '../../../../domain/analysis/window-view-service';
 
 export interface DefensiveMapAnchor {
   timeS: number;

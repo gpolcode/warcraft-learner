@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CadenceBenchmark } from '../encounter/encounter.models';
-import { CadenceEntry, CadenceVoice, CastCadenceService } from './cast-cadence';
+import { CadenceEntry, CadenceVoice, CastCadenceService } from './cast-cadence-service';
 import { TestBed } from '@angular/core/testing';
 
 const castCadence = TestBed.inject(CastCadenceService);

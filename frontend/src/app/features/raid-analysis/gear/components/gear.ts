@@ -3,9 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
 import { CollapsibleText } from '../../../../shared/components/collapsible-text/collapsible-text';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
-import { GearComparisonService, GearStatus } from '../../../../domain/gear/gear-comparison';
+import { GearComparisonService, GearStatus } from '../../../../domain/gear/gear-comparison-service';
 import { GearFeatureService } from '../facade/gear-feature-service';
-import { LoadResourceService } from '../../../../shared/state/load-resource';
+import { LoadResourceService } from '../../../../shared/state/load-resource-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

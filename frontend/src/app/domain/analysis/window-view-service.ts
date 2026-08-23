@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { BurstWindow, PlayerBurstWindow } from './analysis.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
-import { AbilityIcons, TimedEvent } from './wcl-projections';
-import { WclProjectionsService } from './wcl-projections';
+import { AbilityIcons, TimedEvent } from './wcl-projections-service';
+import { WclProjectionsService } from './wcl-projections-service';
 
 @Injectable({ providedIn: 'root' })
 export class WindowViewService {

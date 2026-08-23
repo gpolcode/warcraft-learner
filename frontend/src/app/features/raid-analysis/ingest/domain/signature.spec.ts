@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { type SignatureRanking, IngestSignatureService } from './signature';
+import { type SignatureRanking, IngestSignatureService } from './ingest-signature-service';
 import { TestBed } from '@angular/core/testing';
 
 const signatures = TestBed.inject(IngestSignatureService);

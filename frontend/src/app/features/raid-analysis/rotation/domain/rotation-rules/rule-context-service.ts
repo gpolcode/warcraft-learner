@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { getOrInsert } from '../../../../../domain/analysis/analysis-math';
-import { WclProjectionsService, TimedEvent } from '../../../../../domain/analysis/wcl-projections';
-import { AuraWindowsService, AuraWindows, AuraSpansByTarget, StackTimeline } from '../../../../../domain/analysis/aura-windows';
+import { WclProjectionsService, TimedEvent } from '../../../../../domain/analysis/wcl-projections-service';
+import { AuraWindowsService, AuraWindows, AuraSpansByTarget, StackTimeline } from '../../../../../domain/analysis/aura-windows-service';
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster. */
 export const RESOURCE_ACTOR_SOURCE = 1;

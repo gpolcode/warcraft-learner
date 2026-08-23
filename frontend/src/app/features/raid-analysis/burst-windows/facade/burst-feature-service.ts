@@ -4,11 +4,11 @@ import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/anal
 import { WindowStatus } from '../../../../domain/analysis/window-comparison.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { Result, Results } from '../../../../core/http/result';
-import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { WindowView, WindowViewAdapter } from '../../../../domain/analysis/window-view';
-import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { WindowView, WindowViewAdapter } from '../../../../domain/analysis/window-view-service';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context-service';
 import { BURST_DATA_SOURCE, BurstBench } from '../data-access/burst-data-source';
-import { WindowViewService } from '../../../../domain/analysis/window-view';
+import { WindowViewService } from '../../../../domain/analysis/window-view-service';
 
 export interface BurstMapAnchor {
   timeS: number;

@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { SPEC_LIMIT, type SpecOrderEntry, IngestOrderingService } from './ordering';
+import { SPEC_LIMIT, type SpecOrderEntry, IngestOrderingService } from './ingest-ordering-service';
 import { TestBed } from '@angular/core/testing';
 
 const ordering = TestBed.inject(IngestOrderingService);

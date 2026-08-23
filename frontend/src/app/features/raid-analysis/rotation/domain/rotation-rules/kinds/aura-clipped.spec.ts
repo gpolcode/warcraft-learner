@@ -6,7 +6,7 @@ import { cast, applyDebuff, refreshDebuff, buffWindow } from '../../../../../../
 import {
  band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { AuraClippedKind } from './aura-clipped';
+import { AuraClippedKind } from './aura-clipped-kind';
 
 const kind = TestBed.inject(AuraClippedKind);
 const evaluateAuraClipped = judged(kind);

@@ -2,8 +2,8 @@ import { inject } from '@angular/core';
 import { round } from '../../../../../domain/analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analysis/analysis.models';
 import { RulebookRule, RuleCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
-import { AuraWindowsService } from '../../../../../domain/analysis/aura-windows';
-import { RuleContext } from './rule-context';
+import { AuraWindowsService } from '../../../../../domain/analysis/aura-windows-service';
+import { RuleContext } from './rule-context-service';
 
 /** Cap on a finding's occurrence strip - a fight can carry far more casts than a chip row should render. */
 const MAX_OCCURRENCES = 24;

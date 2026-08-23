@@ -55,8 +55,8 @@ export class IngestStampService {
 import * as z from '../../../../core/validation/zod-mini';
 import { type Result } from '../../../../core/http/result';
 import { INGEST_VERSION } from './ingest-version';
-import { type SignatureRanking } from './signature';
-import { IngestSignatureService } from './signature';
+import { type SignatureRanking } from './ingest-signature-service';
+import { IngestSignatureService } from './ingest-signature-service';
 
 interface StampedFile {
   source_signature?: string;

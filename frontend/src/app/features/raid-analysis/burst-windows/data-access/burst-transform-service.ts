@@ -7,8 +7,8 @@ import { BurstWindow } from '../../../../domain/analysis/analysis.models';
 import { Result } from '../../../../core/http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../../domain/analysis/analysis-math';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 

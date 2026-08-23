@@ -88,8 +88,8 @@ export class WclProjectionsService {
 import * as z from '../../core/validation/zod-mini';
 import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../../core/wcl/wcl.models';
 import { WindowSpell } from './window-comparison.models';
-import { JsonCodecService } from '../../core/validation/json';
-import { LoggerService } from '../../core/observability/log';
+import { JsonCodecService } from '../../core/validation/json-codec-service';
+import { LoggerService } from '../../core/observability/logger-service';
 
 export type TimedEvent = WclEvent & { atS: number };
 

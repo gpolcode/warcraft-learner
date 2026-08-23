@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../../../../core/data-files/data-file-transport';
 import { Result, Results } from '../../../../core/http/result';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
-import { IngestStampService } from '../domain/stamp';
+import { IngestStampService } from '../domain/ingest-stamp-service';
 
 /** The file server (scripts/ingest-server.js) is dumb file ops; all ingestion semantics stay on this side. */
 const INGEST_SERVER_URL = 'http://localhost:3000';

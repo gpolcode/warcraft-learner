@@ -1,8 +1,8 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow } from './analysis.models';
 import { RangeRow } from './window-comparison.models';
-import { AbilityIcons, WclProjectionsService } from './wcl-projections';
-import { WindowView, WindowViewAdapter, WindowViewService } from './window-view';
+import { AbilityIcons, WclProjectionsService } from './wcl-projections-service';
+import { WindowView, WindowViewAdapter, WindowViewService } from './window-view-service';
 import { cast, damage } from '../../../testing/builders/events';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE,

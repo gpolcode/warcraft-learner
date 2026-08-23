@@ -4,7 +4,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
 import { Results } from '../../../../core/http/result';
 import { PullOverviewFeatureService } from './pull-overview-feature-service';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';

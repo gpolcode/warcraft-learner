@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import * as z from './zod-mini';
-import { LoggerService } from '../observability/log';
+import { LoggerService } from '../observability/logger-service';
 
 @Injectable({ providedIn: 'root' })
 export class JsonCodecService {

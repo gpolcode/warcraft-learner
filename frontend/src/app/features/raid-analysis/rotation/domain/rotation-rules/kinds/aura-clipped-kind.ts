@@ -3,8 +3,8 @@ import { median } from 'd3-array';
 import { round } from '../../../../../../domain/analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../../../../domain/analysis/analysis.models';
 import { AuraClippedCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { AuraSpan, AuraSpansByTarget } from '../../../../../../domain/analysis/aura-windows';
-import { RuleContext } from '../rule-context';
+import { AuraSpan, AuraSpansByTarget } from '../../../../../../domain/analysis/aura-windows-service';
+import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';
 
 /** A re-application this soon AFTER a cast is that cast landing: measured deltas run 0-28ms, so this covers projectile flight without reaching the next proc. */

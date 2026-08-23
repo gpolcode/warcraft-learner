@@ -40,7 +40,7 @@ import { SelectionStore } from '../../../../core/state/selection-store';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 
 const MYTHIC_PLUS_DIFFICULTY = 10;
 const RAID_DIFFICULTY_NAMES: Record<number, string> = { 3: 'Normal', 4: 'Heroic' };

@@ -9,7 +9,7 @@ import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pip
 import { FormatDamagePipe } from '../../../../shared/pipes/format-damage-pipe';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { PullOverviewFeatureService } from '../facade/pull-overview-feature-service';
-import { LoadResourceService } from '../../../../shared/state/load-resource';
+import { LoadResourceService } from '../../../../shared/state/load-resource-service';
 
 // Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({

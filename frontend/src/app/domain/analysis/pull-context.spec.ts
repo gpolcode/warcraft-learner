@@ -4,7 +4,7 @@ import { WclTransportError } from '../../core/wcl/wcl-transport';
 import { Results } from '../../core/http/result';
 import { WclReport } from '../../core/wcl/wcl.models';
 import { wclReport } from '../../../testing/builders/wcl-fixtures';
-import { PullContext, PullRef, PullContextService } from './pull-context';
+import { PullContext, PullRef, PullContextService } from './pull-context-service';
 import { TestBed } from '@angular/core/testing';
 
 const pullContext = TestBed.inject(PullContextService);

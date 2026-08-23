@@ -5,7 +5,7 @@ import { cast } from '../../../../../../../testing/builders/events';
 import {
   HOLD_WINDOW_S, HOLD_DANCE_FOR_BLADES, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { HoldCooldownForAnchorKind } from './hold-cooldown-for-anchor';
+import { HoldCooldownForAnchorKind } from './hold-cooldown-for-anchor-kind';
 
 const kind = TestBed.inject(HoldCooldownForAnchorKind);
 const evaluateHoldForAnchor = judged(kind);

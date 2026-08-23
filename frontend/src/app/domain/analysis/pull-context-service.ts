@@ -3,8 +3,8 @@ import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { Result, Results } from '../../core/http/result';
 import { HttpLoadErrors } from '../../core/http/http-load-error';
-import { LoggerService } from '../../core/observability/log';
-import { WclProjectionsService } from './wcl-projections';
+import { LoggerService } from '../../core/observability/logger-service';
+import { WclProjectionsService } from './wcl-projections-service';
 
 @Injectable({ providedIn: 'root' })
 export class PullContextService {

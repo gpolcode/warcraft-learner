@@ -10,7 +10,7 @@ import { ReferenceSelector } from '../../../../domain/encounter/positioning.mode
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { MapFeatureService } from '../facade/map-feature-service';
-import { MapDrawService, RelPos, ParseTimelines } from '../domain/map-draw';
+import { MapDrawService, RelPos, ParseTimelines } from '../domain/map-draw-service';
 
 const STEP_S = 0.5;
 /** Clamped per frame so a backgrounded-then-resumed tab does not jump the scrubber by the whole elapsed gap. */

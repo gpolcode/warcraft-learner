@@ -6,7 +6,7 @@ import { cast, buffWindow } from '../../../../../../../testing/builders/events';
 import {
  band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { FillerInBuffKind } from './filler-in-buff';
+import { FillerInBuffKind } from './filler-in-buff-kind';
 
 const kind = TestBed.inject(FillerInBuffKind);
 const evaluateFillerInBuff = judged(kind);

@@ -3,20 +3,20 @@ import {
   RulebookRule, RuleSeverity,
   CastWithoutPriorCondition, AuraUptimeBelowCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, SpendAtStacksCondition,
-} from '../../../../../domain/rulebook/rulebook.models';
+} from '../../../../domain/rulebook/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
   LIGHTNING_BOLT, MAELSTROM_WEAPON,
-} from '../../../../../../testing/spell-ids';
-import { cast } from '../../../../../../testing/builders/events';
+} from '../../../../../testing/spell-ids';
+import { cast } from '../../../../../testing/builders/events';
 import {
   COMBO_POINT_TYPE, FIELD_NEVER, HOLD_WINDOW_S,
   HOLD_DANCE_FOR_BLADES, SECRET_TECH_NEEDS_DANCE,
   band, benched, ruleCtx, ruleFor,
-} from './rule-fixtures';
+} from './rotation-rules/rule-fixtures';
 import { TestBed } from '@angular/core/testing';
-import { BenchedRule, RuleSample, RuleStream } from './rule-kind';
-import { RotationRuleEngineService } from '../rotation-rules';
+import { BenchedRule, RuleSample, RuleStream } from './rotation-rules/rule-kind';
+import { RotationRuleEngineService } from './rotation-rule-engine-service';
 
 const engine = TestBed.inject(RotationRuleEngineService);
 

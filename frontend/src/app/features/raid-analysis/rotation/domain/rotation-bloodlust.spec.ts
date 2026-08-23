@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { RotationBloodlustService } from './rotation-bloodlust';
+import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { BLOODLUST } from '../../../../../testing/spell-ids';
 import { applyBuff, removeBuff } from '../../../../../testing/builders/events';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { TestBed } from '@angular/core/testing';
 
 const bloodlust = TestBed.inject(RotationBloodlustService);

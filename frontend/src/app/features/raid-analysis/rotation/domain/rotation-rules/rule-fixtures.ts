@@ -4,9 +4,9 @@ import {
 import { WclEvent } from '../../../../../core/wcl/wcl.models';
 import { AnalysisFinding } from '../../../../../domain/analysis/analysis.models';
 import { TestBed } from '@angular/core/testing';
-import { WclProjectionsService } from '../../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../../domain/analysis/wcl-projections-service';
 import { BenchedRule, RuleBand, RuleKind, RuleSample } from './rule-kind';
-import { RuleContext, RuleContextService } from './rule-context';
+import { RuleContext, RuleContextService } from './rule-context-service';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../testing/spell-ids';
 
 /** Each kind is called with the judging it declares itself, so a spec can never assert against a side the kind does not use. */

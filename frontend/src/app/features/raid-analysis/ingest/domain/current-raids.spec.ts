@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import type { WclClass, WclExpansion, WclZone } from '../../../../core/wcl/wcl.models';
-import { BudgetExceededError, CurrentRaidsService } from './current-raids';
+import { BudgetExceededError, CurrentRaidsService } from './current-raids-service';
 import { TestBed } from '@angular/core/testing';
 
 const currentRaids = TestBed.inject(CurrentRaidsService);

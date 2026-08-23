@@ -3,7 +3,7 @@ import { inject, Injectable, computed, signal } from '@angular/core';
 import type { EncodedVideoPacketSource as PacketSource } from 'mediabunny';
 import { WclFight } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 
 // All wall-clock fields are unix-epoch milliseconds, so `report.startTime + fight.startTime` maps directly onto a segment.
 

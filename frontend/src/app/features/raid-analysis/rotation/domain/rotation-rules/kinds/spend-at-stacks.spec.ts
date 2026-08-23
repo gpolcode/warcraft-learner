@@ -6,8 +6,8 @@ import { cast, applyBuff, removeBuff, applyBuffStack, buffWindow } from '../../.
 import {
  band, benched, judged, ruleCtx, ruleFor, sampleRule,
 } from '../rule-fixtures';
-import { SpendAtStacksKind } from './spend-at-stacks';
-import { RotationRuleEngineService } from '../../rotation-rules';
+import { SpendAtStacksKind } from './spend-at-stacks-kind';
+import { RotationRuleEngineService } from '../../rotation-rule-engine-service';
 
 const kind = TestBed.inject(SpendAtStacksKind);
 const engine = TestBed.inject(RotationRuleEngineService);

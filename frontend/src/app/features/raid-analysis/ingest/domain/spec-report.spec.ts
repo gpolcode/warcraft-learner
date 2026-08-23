@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SELECTED_MARKER, type SpecReportRow, SpecReportService } from './spec-report';
+import { SELECTED_MARKER, type SpecReportRow, SpecReportService } from './spec-report-service';
 import { TestBed } from '@angular/core/testing';
 
 const specReports = TestBed.inject(SpecReportService);

@@ -1,7 +1,7 @@
 import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.models';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { DefensiveBench } from '../data-access/defensive-data-source';
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */

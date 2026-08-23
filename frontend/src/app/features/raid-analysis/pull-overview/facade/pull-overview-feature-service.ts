@@ -2,11 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import * as z from '../../../../core/validation/zod-mini';
 import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { JsonCodecService } from '../../../../core/validation/json';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { JsonCodecService } from '../../../../core/validation/json-codec-service';
 
 type PullResult = 'kill' | 'wipe';
 

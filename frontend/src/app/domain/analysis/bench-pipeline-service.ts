@@ -5,10 +5,10 @@ import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core
 import { Rulebook } from '../rulebook/rulebook.models';
 import { Result, Results } from '../../core/http/result';
 import { HttpLoadErrors } from '../../core/http/http-load-error';
-import { ReportActor } from './wcl-projections';
-import { LoggerService } from '../../core/observability/log';
-import { WclProjectionsService } from './wcl-projections';
-import { TopParseSelectionService } from './top-parse-selection';
+import { ReportActor } from './wcl-projections-service';
+import { LoggerService } from '../../core/observability/logger-service';
+import { WclProjectionsService } from './wcl-projections-service';
+import { TopParseSelectionService } from './top-parse-selection-service';
 
 @Injectable({ providedIn: 'root' })
 export class BenchPipelineService {

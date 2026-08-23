@@ -2,8 +2,8 @@ import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { PerCdBenchmark } from '../../../../domain/encounter/encounter.models';
 import { RulebookCooldown } from '../../../../domain/rulebook/rulebook.models';
-import { BenchHeader } from '../../../../domain/analysis/bench-pipeline';
-import { BenchedRule } from '../domain/rotation-rules';
+import { BenchHeader } from '../../../../domain/analysis/bench-pipeline-service';
+import { BenchedRule } from '../domain/rotation-rule-engine-service';
 
 export interface RotationBench extends BenchHeader {
   downtime_threshold_s: number;

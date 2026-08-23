@@ -6,7 +6,7 @@ import { cast, damage } from '../../../../../../../testing/builders/events';
 import {
  band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { FillerBelowHealthKind } from './filler-below-health';
+import { FillerBelowHealthKind } from './filler-below-health-kind';
 
 const kind = TestBed.inject(FillerBelowHealthKind);
 const evaluateFillerBelowHealth = judged(kind);

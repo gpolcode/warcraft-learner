@@ -8,17 +8,17 @@ import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../../domain/analysis/analysis-math';
-import { CadenceVoice } from '../../../../domain/analysis/cast-cadence';
-import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-table.utils';
-import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
-import { RotationRuleEngineService, RULE_TYPE_LABEL } from '../domain/rotation-rules';
-import { RuleContextService } from '../domain/rotation-rules/rule-context';
+import { CadenceVoice } from '../../../../domain/analysis/cast-cadence-service';
+import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-rows-service';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context-service';
+import { RotationRuleEngineService, RULE_TYPE_LABEL } from '../domain/rotation-rule-engine-service';
+import { RuleContextService } from '../domain/rotation-rules/rule-context-service';
 import { ROTATION_DATA_SOURCE, RotationBench } from '../data-access/rotation-data-source';
-import { LoggerService } from '../../../../core/observability/log';
-import { HoldTargetsService } from '../../../../domain/analysis/hold-targets';
-import { CastCadenceService } from '../../../../domain/analysis/cast-cadence';
-import { RotationBloodlustService } from '../domain/rotation-bloodlust';
+import { LoggerService } from '../../../../core/observability/logger-service';
+import { HoldTargetsService } from '../../../../domain/analysis/hold-targets-service';
+import { CastCadenceService } from '../../../../domain/analysis/cast-cadence-service';
+import { RotationBloodlustService } from '../domain/rotation-bloodlust-service';
 
 export interface RotationFindingRow {
   severity: 'critical' | 'warning' | 'info';

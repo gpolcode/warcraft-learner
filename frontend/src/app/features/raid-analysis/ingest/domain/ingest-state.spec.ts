@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { type SpecIngestState, IngestStateService } from './ingest-state';
-import { type IngestStamp } from './stamp';
+import { type SpecIngestState, IngestStateService } from './ingest-state-service';
+import { type IngestStamp } from './ingest-stamp-service';
 import { TestBed } from '@angular/core/testing';
 
 const ingestState = TestBed.inject(IngestStateService);

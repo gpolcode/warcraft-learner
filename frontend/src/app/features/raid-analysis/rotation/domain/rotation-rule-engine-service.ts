@@ -7,7 +7,7 @@ import {
   RuleKind, RuleBand, RuleDomain, RuleJudging, RuleSample, RuleStream, BenchedRule,
 } from './rotation-rules/rule-kind';
 import { RULE_KINDS } from './rotation-rules/rule-kinds';
-import { RuleContext } from './rotation-rules/rule-context';
+import { RuleContext } from './rotation-rules/rule-context-service';
 
 export type { RuleBand, BenchedRule, RuleSample } from './rotation-rules/rule-kind';
 

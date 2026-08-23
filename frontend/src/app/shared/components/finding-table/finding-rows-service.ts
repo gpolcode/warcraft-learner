@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import type { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../domain/analysis/analysis.models';
-import { LoggerService } from '../../../core/observability/log';
+import { LoggerService } from '../../../core/observability/logger-service';
 
 @Injectable({ providedIn: 'root' })
 export class FindingRowsService {

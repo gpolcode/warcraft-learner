@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { EncounterPositions } from '../../../../domain/encounter/positioning.models';
 import { ActorTimeline } from '../facade/map-feature-service';
-import { MapDrawService } from './map-draw';
+import { MapDrawService } from './map-draw-service';
 import { TestBed } from '@angular/core/testing';
 
 const mapDraw = TestBed.inject(MapDrawService);

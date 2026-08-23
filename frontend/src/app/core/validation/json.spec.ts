@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import * as z from './zod-mini';
-import { JsonCodecService } from './json';
+import { JsonCodecService } from './json-codec-service';
 import { TestBed } from '@angular/core/testing';
 
 const json = TestBed.inject(JsonCodecService);

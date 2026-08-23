@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
+import { TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows-service';
 
 @Injectable({ providedIn: 'root' })
 export class RotationBloodlustService {

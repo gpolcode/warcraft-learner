@@ -9,7 +9,7 @@ import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { NorthernSkyBench } from '../data-access/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../facade/northern-sky-feature-service';
-import { LoadResourceService } from '../../../../shared/state/load-resource';
+import { LoadResourceService } from '../../../../shared/state/load-resource-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -13,7 +13,7 @@ import { DefensiveTransformService } from '../../defensive/data-access/defensive
 import { GearTransformService } from '../../gear/data-access/gear-transform-service';
 import { MapTransformService } from '../../map/data-access/map-transform-service';
 import { NorthernSkyTransformService } from '../../northern-sky/data-access/northern-sky-transform-service';
-import { IngestSignatureService } from '../domain/signature';
+import { IngestSignatureService } from '../domain/ingest-signature-service';
 import { INGEST_VERSION } from '../domain/ingest-version';
 
 const signatures = TestBed.inject(IngestSignatureService);

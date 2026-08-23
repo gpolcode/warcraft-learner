@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { DataFileTransport } from '../data-files/data-file-transport';
-import { LoggerService } from '../observability/log';
+import { LoggerService } from '../observability/logger-service';
 import { Result, Results } from './result';
 import { HttpLoadErrors } from './http-load-error';
 import { environment } from '../../../environments/environment';

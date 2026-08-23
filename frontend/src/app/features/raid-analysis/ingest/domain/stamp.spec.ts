@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { type Result, Results } from '../../../../core/http/result';
 import { INGEST_VERSION } from './ingest-version';
-import { type SignatureRanking, IngestSignatureService } from './signature';
-import { type IngestStamp, IngestStampService } from './stamp';
+import { type SignatureRanking, IngestSignatureService } from './ingest-signature-service';
+import { type IngestStamp, IngestStampService } from './ingest-stamp-service';
 import { TestBed } from '@angular/core/testing';
 
 const signatures = TestBed.inject(IngestSignatureService);

@@ -3,7 +3,7 @@ import { WindowComparison } from '../../../../shared/components/window-compariso
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { BurstFeatureService, BurstMapAnchor } from '../facade/burst-feature-service';
-import { LoadResourceService } from '../../../../shared/state/load-resource';
+import { LoadResourceService } from '../../../../shared/state/load-resource-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

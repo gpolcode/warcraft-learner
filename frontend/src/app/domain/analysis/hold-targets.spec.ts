@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { HOLD_BAND_MIN_S, HoldWindowSource, HoldTargetsService } from './hold-targets';
+import { HOLD_BAND_MIN_S, HoldWindowSource, HoldTargetsService } from './hold-targets-service';
 import { CdHoldTargets } from '../encounter/encounter.models';
 import { TestBed } from '@angular/core/testing';
 

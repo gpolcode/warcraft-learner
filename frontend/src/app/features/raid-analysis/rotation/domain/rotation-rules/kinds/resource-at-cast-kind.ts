@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../../../../domain/analysis/analysis.models';
 import { ResourceAtCastCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { RESOURCE_ACTOR_SOURCE, ResourceRow, RuleContext } from '../rule-context';
+import { RESOURCE_ACTOR_SOURCE, ResourceRow, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
-import { BoundedPerCastKind } from '../bounded-per-cast';
+import { BoundedPerCastKind } from '../bounded-per-cast-kind';
 
 /** Only a cast that touches a pool reports it, so a cast that spends nothing reads a neighbour's snapshot back this far. */
 const RESOURCE_SAMPLE_WINDOW_S = 6;

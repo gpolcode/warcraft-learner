@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { AnalysisFinding } from '../../../../../../domain/analysis/analysis.models';
 import { FillerBelowHealthCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { TimedEvent } from '../../../../../../domain/analysis/wcl-projections';
-import { HealthRow, RuleContext } from '../rule-context';
+import { TimedEvent } from '../../../../../../domain/analysis/wcl-projections-service';
+import { HealthRow, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
-import { FillerKind, FillerSplit } from '../filler-choice';
-import { WclProjectionsService } from '../../../../../../domain/analysis/wcl-projections';
+import { FillerKind, FillerSplit } from '../filler-kind';
+import { WclProjectionsService } from '../../../../../../domain/analysis/wcl-projections-service';
 
 /** Health is sampled on hits rather than casts, and falls fast in execute range, so a cast reads back only this far. */
 const HEALTH_SAMPLE_WINDOW_S = 2;

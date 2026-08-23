@@ -2,7 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { BurstWindow } from '../../../../domain/analysis/analysis.models';
 import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.models';
-import { BenchHeader } from '../../../../domain/analysis/bench-pipeline';
+import { BenchHeader } from '../../../../domain/analysis/bench-pipeline-service';
 
 export interface DefensivePlanMeta {
   name: string;

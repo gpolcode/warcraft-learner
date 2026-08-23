@@ -9,7 +9,7 @@ import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
 import { ROTATION_DATA_SOURCE, RotationBench } from '../data-access/rotation-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
-import { BenchedRule, RuleBand } from '../domain/rotation-rules';
+import { BenchedRule, RuleBand } from '../domain/rotation-rule-engine-service';
 import { RotationFeatureService } from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
 

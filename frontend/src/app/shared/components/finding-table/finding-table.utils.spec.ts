@@ -1,5 +1,5 @@
 import { assert, describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
-import { FindingEntry, UNKNOWN_COOLDOWN_LABEL, FindingRowsService } from './finding-table.utils';
+import { FindingEntry, UNKNOWN_COOLDOWN_LABEL, FindingRowsService } from './finding-rows-service';
 import type { AnalysisFinding } from '../../../domain/analysis/analysis.models';
 import { SHADOW_BLADES, VANISH } from '../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';

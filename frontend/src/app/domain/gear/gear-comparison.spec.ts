@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { GearComparisonService } from './gear-comparison';
+import { GearComparisonService } from './gear-comparison-service';
 import { SpecTalents } from './talent.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { CharacterGear } from '../../core/wcl/wcl.models';

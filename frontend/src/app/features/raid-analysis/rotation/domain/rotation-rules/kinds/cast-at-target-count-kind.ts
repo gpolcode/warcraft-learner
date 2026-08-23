@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../../../../domain/analysis/analysis.models';
 import { CastAtTargetCountCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { DamageRow, RuleContext } from '../rule-context';
+import { DamageRow, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
-import { BoundedPerCastKind } from '../bounded-per-cast';
+import { BoundedPerCastKind } from '../bounded-per-cast-kind';
 
 /** Enemies damaged this soon after a cast count as engaged for it; an AoE ability lands well inside a GCD or two. */
 const TARGET_COUNT_WINDOW_S = 3;

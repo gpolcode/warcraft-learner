@@ -4,7 +4,7 @@ import { CastAtTargetCountCondition } from '../../../../../../domain/rulebook/ru
 import { BLACK_POWDER, EVISCERATE, RUPTURE } from '../../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../../testing/builders/events';
 import { band, judged, ruleCtx } from '../rule-fixtures';
-import { CastAtTargetCountKind } from './cast-at-target-count';
+import { CastAtTargetCountKind } from './cast-at-target-count-kind';
 
 const kind = TestBed.inject(CastAtTargetCountKind);
 const evaluateCastAtTargetCount = judged(kind);

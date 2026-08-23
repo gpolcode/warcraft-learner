@@ -8,14 +8,14 @@ import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.mo
 import { Result } from '../../../../core/http/result';
 import { mean, deviation, extent, group, mode } from 'd3-array';
 import { round, groupByTime, getOrInsert, avgOr, medianOr } from '../../../../domain/analysis/analysis-math';
-import { HoldWindow } from '../../../../domain/analysis/hold-targets';
-import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
+import { HoldWindow } from '../../../../domain/analysis/hold-targets-service';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows-service';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
-import { HoldTargetsService } from '../../../../domain/analysis/hold-targets';
-import { CastCadenceService } from '../../../../domain/analysis/cast-cadence';
+import { HoldTargetsService } from '../../../../domain/analysis/hold-targets-service';
+import { CastCadenceService } from '../../../../domain/analysis/cast-cadence-service';
 
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;

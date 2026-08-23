@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
-import { TRINKET_SLOTS, GearExtractService } from './gear-extract';
+import { TRINKET_SLOTS, GearExtractService } from './gear-extract-service';
 import { TestBed } from '@angular/core/testing';
 
 const gearExtract = TestBed.inject(GearExtractService);

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
-import { WclProjectionsService } from './wcl-projections';
+import { WclProjectionsService } from './wcl-projections-service';
 import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../testing/spell-ids';
 import { ParseRanking } from '../../core/wcl/wcl.models';
 import { TestBed } from '@angular/core/testing';

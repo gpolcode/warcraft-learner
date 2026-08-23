@@ -6,7 +6,7 @@ import { cast } from '../../../../../../../testing/builders/events';
 import {
   PAIR_WINDOW_S, SECRET_TECH_NEEDS_DANCE, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { CastWithoutPriorKind } from './cast-without-prior';
+import { CastWithoutPriorKind } from './cast-without-prior-kind';
 
 const kind = TestBed.inject(CastWithoutPriorKind);
 const evaluateCastWithoutPrior = judged(kind);

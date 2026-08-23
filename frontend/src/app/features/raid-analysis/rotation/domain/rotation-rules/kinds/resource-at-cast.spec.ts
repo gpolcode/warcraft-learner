@@ -6,7 +6,7 @@ import { cast } from '../../../../../../../testing/builders/events';
 import {
   COMBO_POINT_TYPE, MAX_COMBO_POINTS, band, judged, ruleCtx,
 } from '../rule-fixtures';
-import { ResourceAtCastKind } from './resource-at-cast';
+import { ResourceAtCastKind } from './resource-at-cast-kind';
 
 const kind = TestBed.inject(ResourceAtCastKind);
 const evaluateResourceAtCast = judged(kind);

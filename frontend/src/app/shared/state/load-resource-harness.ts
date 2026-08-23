@@ -3,7 +3,7 @@ import { OutputEmitterRef, WritableSignal, provideZonelessChangeDetection, signa
 import { TestBed } from '@angular/core/testing';
 import { Result } from '../../core/http/result';
 import { Deferred, deferred } from '../../../testing/deferred';
-import { LoadResource, LoadResourceService } from './load-resource';
+import { LoadResource, LoadResourceService } from './load-resource-service';
 
 export const LOAD_CONTEXT = 'feature.loadView';
 export const FIRST_PARAMS = 'first-selection';

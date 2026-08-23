@@ -7,9 +7,9 @@ import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { Results } from '../../../../core/http/result';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { RulebookRule } from '../../../../domain/rulebook/rulebook.models';
-import { RuleSample } from '../domain/rotation-rules';
+import { RuleSample } from '../domain/rotation-rule-engine-service';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
 

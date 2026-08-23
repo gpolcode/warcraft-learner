@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { FixtureRanking, parseRankings } from '../../../testing/builders/wcl-fixtures';
-import { TopParseSelectionService } from './top-parse-selection';
+import { TopParseSelectionService } from './top-parse-selection-service';
 import { TestBed } from '@angular/core/testing';
 
 const topParses = TestBed.inject(TopParseSelectionService);

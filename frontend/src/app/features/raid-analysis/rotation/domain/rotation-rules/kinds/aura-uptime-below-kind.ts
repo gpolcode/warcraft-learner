@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { round } from '../../../../../../domain/analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../../../../domain/analysis/analysis.models';
 import { AuraUptimeBelowCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { AuraWindows } from '../../../../../../domain/analysis/aura-windows';
-import { RuleContext } from '../rule-context';
+import { AuraWindows } from '../../../../../../domain/analysis/aura-windows-service';
+import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';
 
 /** Longest gaps in a merged coverage timeline, since those - not uniform drift - are what a maintain miss usually is. */

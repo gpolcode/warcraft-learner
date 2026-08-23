@@ -6,9 +6,9 @@ import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { Results } from '../../../../core/http/result';
-import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows-service';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
 

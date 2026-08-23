@@ -1,7 +1,7 @@
 import { inject, Injectable, OutputEmitterRef, Signal, computed, linkedSignal, resource } from '@angular/core';
 import { Result } from '../../core/http/result';
 import { RenderableLoadError } from '../components/load-state/load-state';
-import { LoggerService } from '../../core/observability/log';
+import { LoggerService } from '../../core/observability/logger-service';
 
 @Injectable({ providedIn: 'root' })
 export class LoadResourceService {

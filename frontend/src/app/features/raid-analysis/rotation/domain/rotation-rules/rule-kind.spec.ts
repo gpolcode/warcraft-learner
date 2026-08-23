@@ -4,8 +4,8 @@ import { BLACK_POWDER, EVISCERATE } from '../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../testing/builders/events';
 import { TestBed } from '@angular/core/testing';
 import { COMBO_POINT_TYPE, MAX_COMBO_POINTS, band, judged, ruleCtx } from './rule-fixtures';
-import { CastAtTargetCountKind } from './kinds/cast-at-target-count';
-import { ResourceAtCastKind } from './kinds/resource-at-cast';
+import { CastAtTargetCountKind } from './kinds/cast-at-target-count-kind';
+import { ResourceAtCastKind } from './kinds/resource-at-cast-kind';
 
 const evaluateCastAtTargetCount = judged(TestBed.inject(CastAtTargetCountKind));
 const evaluateResourceAtCast = judged(TestBed.inject(ResourceAtCastKind));

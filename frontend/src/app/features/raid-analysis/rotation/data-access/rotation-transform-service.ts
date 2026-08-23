@@ -8,17 +8,17 @@ import { group, quantile } from 'd3-array';
 import {
   round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
 } from '../../../../domain/analysis/analysis-math';
-import { HoldWindow } from '../../../../domain/analysis/hold-targets';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
+import { HoldWindow } from '../../../../domain/analysis/hold-targets-service';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { Result } from '../../../../core/http/result';
-import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES } from '../domain/rotation-rules';
-import { RuleContextService } from '../domain/rotation-rules/rule-context';
-import { RotationBloodlustService } from '../domain/rotation-bloodlust';
+import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES } from '../domain/rotation-rule-engine-service';
+import { RuleContextService } from '../domain/rotation-rules/rule-context-service';
+import { RotationBloodlustService } from '../domain/rotation-bloodlust-service';
 import { RotationBench } from './rotation-data-source';
-import { HoldTargetsService } from '../../../../domain/analysis/hold-targets';
-import { CastCadenceService } from '../../../../domain/analysis/cast-cadence';
+import { HoldTargetsService } from '../../../../domain/analysis/hold-targets-service';
+import { CastCadenceService } from '../../../../domain/analysis/cast-cadence-service';
 
 /** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
 const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;

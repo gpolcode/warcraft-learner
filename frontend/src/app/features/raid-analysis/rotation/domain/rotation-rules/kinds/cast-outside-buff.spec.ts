@@ -6,7 +6,7 @@ import { cast, buffWindow, removeBuff } from '../../../../../../../testing/build
 import {
   DANCE_START_S, DANCE_END_S, FIELD_NEVER, band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
-import { CastOutsideBuffKind } from './cast-outside-buff';
+import { CastOutsideBuffKind } from './cast-outside-buff-kind';
 
 const kind = TestBed.inject(CastOutsideBuffKind);
 const evaluateCastOutsideBuff = judged(kind);

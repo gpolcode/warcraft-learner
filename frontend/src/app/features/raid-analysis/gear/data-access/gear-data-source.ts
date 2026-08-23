@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
-import { BenchHeader } from '../../../../domain/analysis/bench-pipeline';
+import { BenchHeader } from '../../../../domain/analysis/bench-pipeline-service';
 
 export interface GearBench extends BenchHeader {
   talent_builds: EncounterGearStats['talent_builds'];

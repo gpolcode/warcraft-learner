@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { round } from '../../../../../../domain/analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../../../../domain/analysis/analysis.models';
 import { CastWithoutPriorCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { CastTimes, RuleContext } from '../rule-context';
+import { CastTimes, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';
 
 @Injectable({ providedIn: 'root' })

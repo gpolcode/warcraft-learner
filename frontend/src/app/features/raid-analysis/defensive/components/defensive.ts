@@ -3,11 +3,11 @@ import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import {
   FindingRow, FindingTable,
 } from '../../../../shared/components/finding-table/finding-table';
-import { FindingRowsService } from '../../../../shared/components/finding-table/finding-table.utils';
+import { FindingRowsService } from '../../../../shared/components/finding-table/finding-rows-service';
 import { WindowComparison } from '../../../../shared/components/window-comparison/window-comparison';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { DefensiveFeatureService, DefensiveMapAnchor } from '../facade/defensive-feature-service';
-import { LoadResourceService } from '../../../../shared/state/load-resource';
+import { LoadResourceService } from '../../../../shared/state/load-resource-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

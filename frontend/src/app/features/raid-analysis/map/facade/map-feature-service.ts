@@ -5,10 +5,10 @@ import { WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { Result, LoadError, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
 import { posActorId } from '../domain/map-positions';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 
 /** WoW's `facing` zero-point does not align with our forward axis; empirically a -90 degree offset puts "behind the boss" below the reference. */
 export const FACING_OFFSET_RAD = -Math.PI / 2;

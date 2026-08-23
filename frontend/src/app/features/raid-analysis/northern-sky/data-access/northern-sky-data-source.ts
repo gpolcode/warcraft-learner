@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../../../../core/data-source/data-source';
-import { BenchIdentity } from '../../../../domain/analysis/bench-pipeline';
+import { BenchIdentity } from '../../../../domain/analysis/bench-pipeline-service';
 
 export interface NorthernSkyAbility {
   spell_id: number;

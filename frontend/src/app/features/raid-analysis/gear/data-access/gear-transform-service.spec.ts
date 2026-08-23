@@ -4,7 +4,7 @@ import { SpecTalents } from '../../../../domain/gear/talent.models';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../../../../core/wcl/wcl.models';
 import { Results } from '../../../../core/http/result';
 import { GearTransformService, ParseGear } from './gear-transform-service';
-import { TalentKeyService } from '../../../../domain/gear/talent-key';
+import { TalentKeyService } from '../../../../domain/gear/talent-key-service';
 import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';

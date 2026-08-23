@@ -3,7 +3,7 @@ import type { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import type { WclClass, WclExpansion, WclZone } from '../../../../core/wcl/wcl.models';
 import type { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import type { IngestEncounter } from '../models/wcl.models';
-import { LoggerService } from '../../../../core/observability/log';
+import { LoggerService } from '../../../../core/observability/logger-service';
 
 @Injectable({ providedIn: 'root' })
 export class CurrentRaidsService {

@@ -7,7 +7,7 @@ import { cast } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';
 

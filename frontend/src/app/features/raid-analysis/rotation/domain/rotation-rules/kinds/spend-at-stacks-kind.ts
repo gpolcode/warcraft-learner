@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../../../../domain/analysis/analysis.models';
 import { SpendAtStacksCondition, RuleSeverity } from '../../../../../../domain/rulebook/rulebook.models';
-import { RuleContext } from '../rule-context';
+import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream, Scale } from '../rule-kind';
-import { BoundedPerCastKind } from '../bounded-per-cast';
+import { BoundedPerCastKind } from '../bounded-per-cast-kind';
 
 @Injectable({ providedIn: 'root' })
 export class SpendAtStacksKind extends BoundedPerCastKind<SpendAtStacksCondition> {

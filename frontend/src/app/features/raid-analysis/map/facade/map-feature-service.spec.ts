@@ -7,7 +7,7 @@ import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { sliceService } from '../../../../../testing/service-harness';
 import { MapFeatureService, FACING_OFFSET_RAD } from './map-feature-service';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { whenStable } from '../../../../../testing/when-stable';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../../../../core/data-files/data-file-transport';

@@ -4,8 +4,8 @@ import { OpeningSequenceCondition } from '../../../../../../domain/rulebook/rule
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, EVISCERATE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';
-import { OpeningSequenceKind } from './opening-sequence';
-import { RotationRuleEngineService } from '../../rotation-rules';
+import { OpeningSequenceKind } from './opening-sequence-kind';
+import { RotationRuleEngineService } from '../../rotation-rule-engine-service';
 
 const kind = TestBed.inject(OpeningSequenceKind);
 const engine = TestBed.inject(RotationRuleEngineService);

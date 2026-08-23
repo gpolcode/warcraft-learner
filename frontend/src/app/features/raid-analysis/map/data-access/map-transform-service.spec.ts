@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../../../../core/wcl/wcl.models';
 import { MapTransformService, posActorId, RawPosSample, EnemyMeta } from './map-transform-service';
-import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService } from '../../../../domain/analysis/wcl-projections-service';
 import { parseRankings, wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';

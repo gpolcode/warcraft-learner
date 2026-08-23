@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { AnalysisFinding } from './analysis.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
 import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove } from './analysis-math';
-import { HoldWindow, HOLD_CONSENSUS_FRAC } from './hold-targets';
-import { HoldTargetsService } from './hold-targets';
+import { HoldWindow, HOLD_CONSENSUS_FRAC } from './hold-targets-service';
+import { HoldTargetsService } from './hold-targets-service';
 
 @Injectable({ providedIn: 'root' })
 export class CastCadenceService {

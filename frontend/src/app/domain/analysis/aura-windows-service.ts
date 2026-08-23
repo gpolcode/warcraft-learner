@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { getOrInsert } from './analysis-math';
-import { TimedEvent } from './wcl-projections';
-import { WclProjectionsService } from './wcl-projections';
+import { TimedEvent } from './wcl-projections-service';
+import { WclProjectionsService } from './wcl-projections-service';
 
 @Injectable({ providedIn: 'root' })
 export class AuraWindowsService {

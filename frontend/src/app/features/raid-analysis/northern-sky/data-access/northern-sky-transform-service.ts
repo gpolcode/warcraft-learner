@@ -5,8 +5,8 @@ import { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { Rulebook } from '../../../../domain/rulebook/rulebook.models';
 import { Result } from '../../../../core/http/result';
 import { round } from '../../../../domain/analysis/analysis-math';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 

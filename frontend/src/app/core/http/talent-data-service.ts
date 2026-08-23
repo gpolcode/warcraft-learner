@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import type { SpecTalents } from '../../domain/gear/talent.models';
 import { Result, Results } from './result';
 import { HttpLoadErrors } from './http-load-error';
-import { LoggerService } from '../observability/log';
+import { LoggerService } from '../observability/logger-service';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
 // subTreeNodes carries the hero-tree pick.

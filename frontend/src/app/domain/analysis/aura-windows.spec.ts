@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { AuraWindowsService } from './aura-windows';
-import { WclProjectionsService } from './wcl-projections';
+import { AuraWindowsService } from './aura-windows-service';
+import { WclProjectionsService } from './wcl-projections-service';
 import {
   applyBuff, removeBuff, applyBuffStack, applyDebuff, removeDebuff, refreshDebuff,
 } from '../../../testing/builders/events';

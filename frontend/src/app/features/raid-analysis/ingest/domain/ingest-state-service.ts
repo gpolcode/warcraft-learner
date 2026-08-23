@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as z from '../../../../core/validation/zod-mini';
-import { type IngestStamp } from './stamp';
+import { type IngestStamp } from './ingest-stamp-service';
 
 @Injectable({ providedIn: 'root' })
 export class IngestStateService {

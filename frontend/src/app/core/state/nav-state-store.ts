@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LoggerService } from '../observability/log';
+import { LoggerService } from '../observability/logger-service';
 
 const NAV_COLLAPSED_KEY = 'wl.nav.collapsed';
 

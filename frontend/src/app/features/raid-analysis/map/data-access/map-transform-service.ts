@@ -5,8 +5,8 @@ import { DataFileApiService } from '../../../../core/data-files/data-file-api-se
 import { TopParseSelection, WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { ParsePositions, PlayerPosRow, PosRow } from '../../../../domain/encounter/positioning.models';
 import { Result } from '../../../../core/http/result';
-import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
-import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline-service';
 import { posActorId } from '../domain/map-positions';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { MapData } from './map-data-source';

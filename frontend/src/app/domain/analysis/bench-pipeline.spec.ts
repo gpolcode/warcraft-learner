@@ -8,8 +8,8 @@ import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../testing/spell-ids';
 import { rulebook } from '../../../testing/builders/rulebook';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../testing/builders/wcl-fixtures';
-import { AbilityIcons, WclProjectionsService } from './wcl-projections';
-import { BenchHeader, BenchSlice, BenchPipelineService } from './bench-pipeline';
+import { AbilityIcons, WclProjectionsService } from './wcl-projections-service';
+import { BenchHeader, BenchSlice, BenchPipelineService } from './bench-pipeline-service';
 import { TestBed } from '@angular/core/testing';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
