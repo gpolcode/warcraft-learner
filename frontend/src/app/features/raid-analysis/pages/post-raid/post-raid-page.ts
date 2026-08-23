@@ -8,7 +8,7 @@ import { DEFENSIVE_DATA_SOURCE } from '../../defensive/data-access/defensive-dat
 import { GEAR_DATA_SOURCE } from '../../gear/data-access/gear-data-source';
 import { MAP_DATA_SOURCE } from '../../map/data-access/map-data-source';
 import { NORTHERN_SKY_DATA_SOURCE } from '../../northern-sky/data-access/northern-sky-data-source';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import { Result, ok } from '../../../../core/http/result';
 import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';

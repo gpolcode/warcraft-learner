@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline } from '../../../../domain/analysis/analysis.models';
 import { PerCdBenchmark } from '../../../../domain/encounter/encounter.models';
 import { RulebookCooldown } from '../../../../domain/rulebook/rulebook.models';

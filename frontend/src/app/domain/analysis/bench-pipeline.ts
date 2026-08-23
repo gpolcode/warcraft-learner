@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { WclApiService } from '../../core/wcl/wcl-api';
-import type { DataFileApiService } from '../../core/data-files/data-file-api';
+import { WclApiService } from '../../core/wcl/wcl-api-service';
+import type { DataFileApiService } from '../../core/data-files/data-file-api-service';
 import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { Rulebook } from '../rulebook/rulebook.models';
 import { logWarn } from '../../core/observability/log';

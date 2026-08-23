@@ -1,7 +1,7 @@
 import { assert, describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
-import { WowheadTooltipsService } from './wowhead-tooltips';
+import { WowheadTooltipsService } from './wowhead-tooltips-service';
 
 const CONFIG_SRC = 'wh-tooltips-config.js';
 const TOOLTIPS_SRC = 'https://wow.zamimg.com/js/tooltips.js';

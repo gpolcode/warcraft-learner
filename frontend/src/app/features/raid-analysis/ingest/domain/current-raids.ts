@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { logWarn } from '../../../../core/observability/log';
-import type { WclApiService } from '../../../../core/wcl/wcl-api';
+import type { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import type { WclClass, WclExpansion, WclZone } from '../../../../core/wcl/wcl.models';
 import type { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import type { IngestEncounter } from '../models/wcl.models';

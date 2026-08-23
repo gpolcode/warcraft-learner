@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../../../../domain/rulebook/rulebook.models';
 import { PerCdBenchmark } from '../../../../domain/encounter/encounter.models';

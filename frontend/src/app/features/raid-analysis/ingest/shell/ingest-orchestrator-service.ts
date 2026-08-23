@@ -2,10 +2,10 @@
 import { Injectable, inject } from '@angular/core';
 import pLimit from 'p-limit';
 import { NgHttpCachingService } from 'ng-http-caching';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
-import { SpecMetaService } from '../../../../core/data-files/spec-meta';
+import { SpecMetaService } from '../../../../core/data-files/spec-meta-service';
 import { LoggerService } from '../../../../core/observability/log';
 import { type LoadError } from '../../../../core/http/result';
 import { TopParseSelectionService } from '../../../../domain/analysis/top-parse-selection';

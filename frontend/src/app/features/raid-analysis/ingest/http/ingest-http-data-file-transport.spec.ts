@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { IngestHttpDataFileTransport } from './ingest-data-file-transport';
+import { IngestHttpDataFileTransport } from './ingest-http-data-file-transport';
 import { INGEST_VERSION } from '../domain/ingest-version';
 import { ok, missing } from '../../../../core/http/result';
 

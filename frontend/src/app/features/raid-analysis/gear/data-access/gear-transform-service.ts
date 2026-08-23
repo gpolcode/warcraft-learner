@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { CharacterGear, ParseRanking, TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
 import { logWarn } from '../../../../core/observability/log';
@@ -7,7 +7,7 @@ import { Result } from '../../../../core/http/result';
 import { GearExtractService, GameNames, TRINKET_SLOTS } from '../domain/gear-extract';
 import { TalentKeyService } from '../../../../domain/gear/talent-key';
 import { buildTalentDiff } from '../../../../domain/gear/gear-comparison';
-import { TalentDataService } from '../../../../core/http/talent-data';
+import { TalentDataService } from '../../../../core/http/talent-data-service';
 import { SpecTalents } from '../../../../domain/gear/talent.models';
 import { getOrInsert } from '../../../../domain/analysis/analysis-math';
 import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { WclApiService } from '../../core/wcl/wcl-api';
-import type { DataFileApiService } from '../../core/data-files/data-file-api';
+import { WclApiService } from '../../core/wcl/wcl-api-service';
+import type { DataFileApiService } from '../../core/data-files/data-file-api-service';
 import { WclTransportError } from '../../core/wcl/wcl-transport';
 import { Rulebook } from '../rulebook/rulebook.models';
 import { Result, ok, missing, transient } from '../../core/http/result';

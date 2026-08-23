@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { computed } from '@angular/core';
-import { DataFileApiService } from './data-file-api';
+import { DataFileApiService } from './data-file-api-service';
 import { Result, ok, transient } from '../http/result';
 import {
   SpecMetaService, SpecMeta,
   buildUniverse, classList, specsForClass, specMetaOf, classIconUrl, specIconUrl,
-} from './spec-meta';
+} from './spec-meta-service';
 
 // The spec universe is hydrated at runtime from the WCL-derived spec-meta.json, so these tests seed fixed specs.
 const SUBTLETY = {

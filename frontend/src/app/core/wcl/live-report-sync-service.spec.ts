@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { Subscription, exhaustMap, timer } from 'rxjs';
-import { LiveReportSyncService, POLL_INTERVAL_S } from './live-report-sync';
+import { LiveReportSyncService, POLL_INTERVAL_S } from './live-report-sync-service';
 
 /** vi's fake timers and Date.now() are ms-only; this is the one conversion point. */
 const ms = (s: number) => s * 1000;

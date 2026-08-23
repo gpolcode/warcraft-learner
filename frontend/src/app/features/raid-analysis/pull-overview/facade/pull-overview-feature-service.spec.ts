@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
 import { ok, permanent } from '../../../../core/http/result';
 import {

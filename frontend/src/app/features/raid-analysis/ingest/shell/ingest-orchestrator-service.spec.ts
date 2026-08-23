@@ -4,7 +4,7 @@ import { NgHttpCachingService } from 'ng-http-caching';
 import { IngestOrchestratorService } from './ingest-orchestrator-service';
 import { BENCH_SLICE } from './slice-registry';
 import { DATA_FILE_TRANSPORT, type DataFileTransport } from '../../../../core/data-files/data-file-transport';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WCL_TRANSPORT, type WclTransport } from '../../../../core/wcl/wcl-transport';
 import { ok, missing, type Result } from '../../../../core/http/result';
 import { BurstTransformService } from '../../burst-windows/data-access/burst-transform-service';

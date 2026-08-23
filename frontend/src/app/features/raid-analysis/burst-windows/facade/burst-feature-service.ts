@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/analysis.models';
 import { WindowStatus } from '../../../../domain/analysis/window-comparison.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';

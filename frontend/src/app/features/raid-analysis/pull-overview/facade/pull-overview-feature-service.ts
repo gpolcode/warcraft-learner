@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import * as z from '../../../../core/validation/zod-mini';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclFight, WclReport, WclTableBlob } from '../../../../core/wcl/wcl.models';
 import { LoggerService } from '../../../../core/observability/log';
 import { parseJson } from '../../../../core/validation/json';

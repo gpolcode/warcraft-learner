@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { WclAuthService } from '../http/wcl-auth';
+import { WclAuthService } from '../http/wcl-auth-service';
 import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import {
   WclReport, WclEvent,
@@ -24,7 +24,7 @@ import type {
   ResurrectsQuery, ResurrectsQueryVariables,
   TableQuery, TableQueryVariables,
 } from './wcl-operations.generated';
-import { SpecMetaService } from '../data-files/spec-meta';
+import { SpecMetaService } from '../data-files/spec-meta-service';
 
 type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
 

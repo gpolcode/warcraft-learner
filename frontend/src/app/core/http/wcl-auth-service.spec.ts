@@ -2,7 +2,7 @@ import { assert, describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { WclAuthService } from './wcl-auth';
+import { WclAuthService } from './wcl-auth-service';
 
 /** The client-credentials token endpoint the service posts to (mirrors TOKEN_URL in the source). */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';

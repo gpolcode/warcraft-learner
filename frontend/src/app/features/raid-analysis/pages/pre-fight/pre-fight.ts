@@ -18,7 +18,7 @@ import { FormatSpecPipe } from '../../../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../../../shared/pipes/spec-icon-pipe';
 import { BossIconPipe } from '../../../../shared/pipes/boss-icon-pipe';
-import { SpecMetaService } from '../../../../core/data-files/spec-meta';
+import { SpecMetaService } from '../../../../core/data-files/spec-meta-service';
 import { RotationCdPlanComponent } from '../../rotation/components/rotation-cd-plan';
 import { DefensivePlanComponent } from '../../defensive/components/defensive-plan';
 import { BurstWindowsComponent } from '../../burst-windows/components/burst-windows';

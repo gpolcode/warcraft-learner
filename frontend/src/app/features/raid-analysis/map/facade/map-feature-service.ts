@@ -1,6 +1,6 @@
 /** The positioning math is owned here as pure fns rather than shared, so the slice stays self-contained. */
 import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { EncounterPositions, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { logWarn } from '../../../../core/observability/log';

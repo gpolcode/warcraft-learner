@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { missing, transient } from './result';
-import { TalentDataService, indexTalentTrees } from './talent-data';
+import { TalentDataService, indexTalentTrees } from './talent-data-service';
 
 const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
 const DUMP_REPRO_ID = 'talent-data.dump';

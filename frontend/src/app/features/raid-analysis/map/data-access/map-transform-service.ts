@@ -1,7 +1,7 @@
 /** Boss pick: the boss is the actor with the highest observed `maxHitPoints`; this can differ from ingest when an add briefly out-HPs the boss in a snapshot. */
 import { Injectable, inject } from '@angular/core';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { TopParseSelection, WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { ParsePositions, PlayerPosRow, PosRow } from '../../../../domain/encounter/positioning.models';
 import { Result } from '../../../../core/http/result';

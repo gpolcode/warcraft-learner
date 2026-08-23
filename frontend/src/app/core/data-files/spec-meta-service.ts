@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { DataFileApiService } from './data-file-api';
+import { DataFileApiService } from './data-file-api-service';
 import type { SpecMeta } from './spec-meta.models';
 
 export type { SpecMeta };

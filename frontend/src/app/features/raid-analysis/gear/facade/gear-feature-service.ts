@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { CharacterGear, WclCombatantInfo } from '../../../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { logWarn } from '../../../../core/observability/log';
 import { Result, ok, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';

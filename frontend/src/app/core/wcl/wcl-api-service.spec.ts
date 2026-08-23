@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { WclApiService } from './wcl-api';
-import { WclAuthService } from '../http/wcl-auth';
-import { DataFileApiService } from '../data-files/data-file-api';
+import { WclApiService } from './wcl-api-service';
+import { WclAuthService } from '../http/wcl-auth-service';
+import { DataFileApiService } from '../data-files/data-file-api-service';
 import { ok } from '../http/result';
 import { WclCombatantInfo, MYTHIC_DIFFICULTY } from './wcl.models';
 import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';

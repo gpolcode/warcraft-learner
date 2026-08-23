@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { WclApiService } from '../../core/wcl/wcl-api';
+import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { WclTransportError } from '../../core/wcl/wcl-transport';
 import { ok, transient } from '../../core/http/result';
 import { WclReport } from '../../core/wcl/wcl.models';

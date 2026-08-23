@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { DataFileApiService } from './data-file-api';
+import { DataFileApiService } from './data-file-api-service';
 import { DATA_FILE_TRANSPORT, DataFileTransport } from './data-file-transport';
 import { EncounterEntry, SpecEntry } from '../../domain/encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';

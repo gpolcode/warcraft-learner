@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
 import { type Result } from '../../../../core/http/result';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { BurstTransformService } from '../../burst-windows/data-access/burst-transform-service';

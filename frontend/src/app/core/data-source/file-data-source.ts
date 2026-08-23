@@ -1,4 +1,4 @@
-import { DataFileApiService } from '../data-files/data-file-api';
+import { DataFileApiService } from '../data-files/data-file-api-service';
 import { DataSource } from './data-source';
 import { Result } from '../http/result';
 

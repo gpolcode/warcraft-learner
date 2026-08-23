@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WclApiService } from '../../core/wcl/wcl-api';
+import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { logWarn } from '../../core/observability/log';
 import { Result, ok } from '../../core/http/result';

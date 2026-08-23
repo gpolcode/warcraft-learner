@@ -6,7 +6,7 @@ export class TopParseSelectionService {
 }
 
 /** Resolves which top parses an encounter is benched from, once, so the ingest signature and every slice read the same pool. */
-import { WclApiService } from '../../core/wcl/wcl-api';
+import { WclApiService } from '../../core/wcl/wcl-api-service';
 import { TopParseSelection } from '../../core/wcl/wcl.models';
 import { toParseRankings, unwrapRankings } from './wcl-projections';
 

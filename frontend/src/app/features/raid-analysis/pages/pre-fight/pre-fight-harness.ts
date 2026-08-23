@@ -11,8 +11,8 @@ import { DEFENSIVE_DATA_SOURCE } from '../../defensive/data-access/defensive-dat
 import { GEAR_DATA_SOURCE } from '../../gear/data-access/gear-data-source';
 import { MAP_DATA_SOURCE } from '../../map/data-access/map-data-source';
 import { NORTHERN_SKY_DATA_SOURCE } from '../../northern-sky/data-access/northern-sky-data-source';
-import { DataFileApiService } from '../../../../core/data-files/data-file-api';
-import { WclApiService } from '../../../../core/wcl/wcl-api';
+import { DataFileApiService } from '../../../../core/data-files/data-file-api-service';
+import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { EncounterSelectionService } from './encounter-selection-service';
