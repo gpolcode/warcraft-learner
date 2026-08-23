@@ -35,8 +35,8 @@ const STATUS_ICONS: Record<GearStatus, string> = {
   ok: 'check_circle', warn: 'warning', info: 'info', unknown: 'help_outline',
 };
 
-export function slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
-export function statusIcon(status: GearStatus): string { return STATUS_ICONS[status]; }
+function slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
+function statusIcon(status: GearStatus): string { return STATUS_ICONS[status]; }
 
 export interface EnchantRow {
   slotName: string;

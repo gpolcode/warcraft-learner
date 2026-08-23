@@ -43,7 +43,7 @@ Deliver: the shell (zero domain services) or leaf (inputs/outputs only), copy pe
 
 - **Exactly two pass-through API services at runtime** - `WclApiService` and `DataFileApiService`. Bytes in, typed bytes out.
 - **Services are self-contained**: inject only the two API services (or the slice `*DataSource` token), domain services, and `LoggerService`; import models and their own file-local math. Each facade owns its math as named, pure, total functions colocated in its own file or in the slice's `domain/` modules.
-- **Every domain and slice-math module exposes an `@Injectable` service** whose readonly members are the module's functions - the shell resolves math through `inject()`; sibling plain modules and specs import the functions directly.
+- **A domain or slice-math module the shell consumes exposes an `@Injectable` service** whose readonly members are the module's functions - the shell resolves math through `inject()`; sibling plain modules and specs import the functions directly. A module no shell class calls carries no service, and a function reachable only through its service stays unexported - knip flags both.
 - **`*DataSource` interface + `*_DATA_SOURCE` InjectionToken** - the only swap point between production (`*DataFileService`) and development/ingest (`*TransformService`).
 - **`*FeatureService`** - the runtime shell, one per feature component, in the slice's `facade/`. Injects its token + the cached `WclApiService` + domain services, calls pure functions, exposes signals. No arithmetic.
 - **Feature components inject exactly one service**: their `*FeatureService`.

@@ -163,7 +163,7 @@ export function parseTrailsOf(
   return trails;
 }
 
-export function buildTrail(
+function buildTrail(
   actorId: number, refId: number, timelines: Map<number, ActorTimeline>,
   tCast: number, pre: number, post: number, step: number,
 ): RelPos[] {

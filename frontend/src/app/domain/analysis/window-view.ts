@@ -1,14 +1,7 @@
-import { Injectable } from '@angular/core';
 import { BurstWindow, PlayerBurstWindow } from './analysis.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
 import { AbilityIcons, TimedEvent, normalizeAbilityId, resolveAbility, windowSpells } from './wcl-projections';
-
-@Injectable({ providedIn: 'root' })
-export class WindowViewService {
-  readonly playerWindowDamage = playerWindowDamage;
-  readonly buildWindowView = buildWindowView;
-}
 
 
 function eventDamage(event: TimedEvent): number {

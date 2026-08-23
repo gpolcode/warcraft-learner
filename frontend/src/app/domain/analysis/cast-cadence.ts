@@ -1,19 +1,7 @@
-import { Injectable } from '@angular/core';
 import { AnalysisFinding } from './analysis.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
 import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove } from './analysis-math';
 import { HoldWindow, HOLD_CONSENSUS_FRAC, buildHoldTargets } from './hold-targets';
-
-@Injectable({ providedIn: 'root' })
-export class CastCadenceService {
-  readonly buildCadenceBenchmark = buildCadenceBenchmark;
-  readonly usedByMajority = usedByMajority;
-  readonly checkLostUses = checkLostUses;
-  readonly checkFirstCastDelay = checkFirstCastDelay;
-  readonly checkGaps = checkGaps;
-  readonly holdsOf = holdsOf;
-  readonly cadencePlanUsage = cadencePlanUsage;
-}
 
 
 /** Rows are users-only; `totalParses` carries the non-users. */

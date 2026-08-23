@@ -1,9 +1,3 @@
-import { Injectable } from '@angular/core';
-
-@Injectable({ providedIn: 'root' })
-export class MapPositionsService {
-  readonly posActorId = posActorId;
-}
 
 /** Shared between the map transform service and the map feature service so both import one copy instead of duplicating the projection. */
 import { WclEvent } from '../../../../core/wcl/wcl.models';

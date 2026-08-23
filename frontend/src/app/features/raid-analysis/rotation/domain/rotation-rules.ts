@@ -7,11 +7,7 @@ import {
 
 export type { RuleBand, BenchedRule, RuleSample } from './rotation-rules/engine-core';
 
-export { buildRuleContext } from './rotation-rules/rule-context';
-export {
-  MIN_MEASURED_PARSES, RULE_TYPE_LABEL,
-  rulesNeed, judgeableRules, sampleRule, ruleBand, benchedRules, evaluateRules, rulesFollowed,
-} from './rotation-rules/engine';
+export { MIN_MEASURED_PARSES, RULE_TYPE_LABEL, ruleBand } from './rotation-rules/engine';
 
 @Injectable({ providedIn: 'root' })
 export class RotationRuleEngineService {
