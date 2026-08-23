@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { WclFight, WclPlayer, WclReport } from '../../../../core/wcl/wcl.models';
 import { deferred } from '../../../../../testing/deferred';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { LiveCaptureFeatureService } from '../../live/facade/live-capture.service';
+import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
 import { PostRaidComponent } from './post-raid';
 import { fight, player, postRaidProviders } from './post-raid-harness';
 

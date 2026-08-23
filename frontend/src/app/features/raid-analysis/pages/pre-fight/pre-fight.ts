@@ -8,7 +8,7 @@ import { SelectionStore } from '../../../../core/state/selection-store';
 import { SpecEntry, EncounterEntry } from '../../../../domain/encounter/encounter.models';
 import { LoadError } from '../../../../core/http/result';
 import { logWarn } from '../../../../core/observability/log';
-import { EncounterSelectionService } from './encounter-selection.service';
+import { EncounterSelectionService } from './encounter-selection-service';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBannerComponent } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
 import { LoadStateComponent, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
@@ -24,7 +24,7 @@ import { DefensivePlanComponent } from '../../defensive/components/defensive-pla
 import { BurstWindowsComponent } from '../../burst-windows/components/burst-windows';
 import { GearComponent } from '../../gear/components/gear';
 import { MapPanelComponent } from '../../map/components/map-panel';
-import { MapFeatureService, MapAnchor } from '../../map/facade/map.service';
+import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
 import { NorthernSkyExportComponent } from '../../northern-sky/components/northern-sky-export';
 
 export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';

@@ -6,7 +6,7 @@ import { ok, permanent } from '../../../../core/http/result';
 import {
   PullOverviewFeatureService,
   dpsFromTable, abilityNameMap, buildDeathRows, wipeTimeS,
-} from './pull-overview.service';
+} from './pull-overview-feature-service';
 import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 

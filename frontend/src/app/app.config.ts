@@ -12,7 +12,7 @@ import { HttpWclTransport } from './core/http/http-wcl-transport';
 import { provideWclCaching } from './core/wcl/wcl-caching';
 import { DATA_FILE_TRANSPORT } from './core/data-files/data-file-transport';
 import { HttpDataFileTransport } from './core/http/http-data-file-transport';
-import { provideAppHttp } from './core/http/http.providers';
+import { provideAppHttp } from './core/http/http-providers';
 import { environmentProviders } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {

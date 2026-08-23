@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { SHADOW_BLADES, SECRET_TECHNIQUE, VANISH } from '../../../../../testing/spell-ids';
-import { buildCdPlan } from './rotation.service';
+import { buildCdPlan } from './rotation-feature-service';
 import { cdBench } from './rotation-harness';
 
 describe('buildCdPlan', () => {

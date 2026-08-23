@@ -7,7 +7,7 @@ import {
   aggregateDefensiveBenchmarks,
   windowDamageBreakdown, clusterDamageStats, clusterAbilityBreakdown,
   ParseDefWindow, ParseDefensiveSummary,
-} from './defensive-transform.service';
+} from './defensive-transform-service';
 import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';

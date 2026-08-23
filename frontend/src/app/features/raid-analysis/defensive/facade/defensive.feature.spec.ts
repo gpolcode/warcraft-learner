@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { DEFENSIVE_DATA_SOURCE, DefensiveBench } from '../data-access/defensive-data-source';
 import { sliceService } from '../../../../../testing/service-harness';
-import { DefensiveFeatureService } from './defensive.service';
+import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, damageTaken } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';

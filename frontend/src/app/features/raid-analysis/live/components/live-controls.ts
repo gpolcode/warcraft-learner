@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { LiveCaptureFeatureService } from '../facade/live-capture.service';
+import { LiveCaptureFeatureService } from '../facade/live-capture-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

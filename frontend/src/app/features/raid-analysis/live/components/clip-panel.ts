@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FlyoverPanelComponent } from '../../../../shared/components/flyover-panel/flyover-panel';
-import { LiveCaptureFeatureService } from '../facade/live-capture.service';
+import { LiveCaptureFeatureService } from '../facade/live-capture-feature-service';
 import { ClipPlayerComponent } from './clip-player';
 
 @Component({

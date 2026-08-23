@@ -21,11 +21,11 @@ import { PullOverviewComponent } from '../../pull-overview/components/pull-overv
 import { RotationComponent } from '../../rotation/components/rotation';
 import { BurstWindowsComponent } from '../../burst-windows/components/burst-windows';
 import { DefensiveComponent } from '../../defensive/components/defensive';
-import { DefensiveMapAnchor } from '../../defensive/facade/defensive.service';
+import { DefensiveMapAnchor } from '../../defensive/facade/defensive-feature-service';
 import { GearComponent } from '../../gear/components/gear';
 import { MapPanelComponent } from '../../map/components/map-panel';
-import { MapFeatureService, MapAnchor } from '../../map/facade/map.service';
-import { LiveCaptureFeatureService } from '../../live/facade/live-capture.service';
+import { MapFeatureService, MapAnchor } from '../../map/facade/map-feature-service';
+import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
 import { LiveControlsComponent } from '../../live/components/live-controls';
 import { ClipPanelComponent } from '../../live/components/clip-panel';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';

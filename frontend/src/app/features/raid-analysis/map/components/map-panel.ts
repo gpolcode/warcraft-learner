@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FlyoverPanelComponent } from '../../../../shared/components/flyover-panel/flyover-panel';
-import { MapFeatureService } from '../facade/map.service';
+import { MapFeatureService } from '../facade/map-feature-service';
 import { MapCanvasComponent } from './map-canvas';
 
 @Component({

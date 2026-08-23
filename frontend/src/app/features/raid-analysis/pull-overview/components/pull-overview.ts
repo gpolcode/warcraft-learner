@@ -4,12 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { WclFight } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
-import { MapAnchor } from '../../map/facade/map.service';
+import { MapAnchor } from '../../map/facade/map-feature-service';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { FormatDamagePipe } from '../../../../shared/pipes/format-damage-pipe';
 import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
-import { PullOverviewFeatureService } from '../facade/pull-overview.service';
+import { PullOverviewFeatureService } from '../facade/pull-overview-feature-service';
 
 // Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({

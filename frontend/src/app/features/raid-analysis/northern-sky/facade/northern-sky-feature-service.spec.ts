@@ -6,7 +6,7 @@ import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from '../data-access/nor
 import {
   NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
   toggleExclusion, toggleAllExclusion, isPanelOpen,
-} from './northern-sky.service';
+} from './northern-sky-feature-service';
 import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from './northern-sky-harness';
 
 function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_s: number[]): NorthernSkyAbility {

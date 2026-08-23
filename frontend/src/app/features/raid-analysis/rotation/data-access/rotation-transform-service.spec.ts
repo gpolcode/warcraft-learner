@@ -5,7 +5,7 @@ import {
   summarizeCooldownCasts, castGapListS,
   buildCdBenchmark, computeEfficiencyThresholds, aggregateCdBenchmarks, benchRules,
   CdSummary, ParseRuleSamples,
-} from './rotation-transform.service';
+} from './rotation-transform-service';
 import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';

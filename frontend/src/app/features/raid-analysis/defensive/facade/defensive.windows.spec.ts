@@ -4,7 +4,7 @@ import {
   computePlayerDefensiveWindows,
   defensiveWindowStatus, defensiveMapAnchor, defensiveClipAnchor, defensiveFindingClipAnchor, buildDefensiveWindows,
   playerCoveredWindow,
-} from './defensive.service';
+} from './defensive-feature-service';
 import { damageTaken } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { BOSS_HIT_SPELL_ID, timed } from './defensive-harness';

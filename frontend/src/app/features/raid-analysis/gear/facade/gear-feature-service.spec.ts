@@ -6,7 +6,7 @@ import { Result, ok, permanent, missing } from '../../../../core/http/result';
 import {
   GearFeatureService, benchToStats, buildGearView, buildBenchGearView,
   buildCharacterGear, emptyGearView,
-} from './gear.service';
+} from './gear-feature-service';
 
 const STANDARD_KEY = 'v3:11.1,22.1';
 

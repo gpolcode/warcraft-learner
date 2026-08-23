@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { EncounterPositions } from '../../../../domain/encounter/positioning.models';
-import { ActorTimeline } from '../facade/map.service';
+import { ActorTimeline } from '../facade/map-feature-service';
 import {
   positionAt, toReferenceLocal, rowsToTimeline, playerRowsToTimeline,
   buildParseTimelines, parsePointsAt, parseTrailsOf,

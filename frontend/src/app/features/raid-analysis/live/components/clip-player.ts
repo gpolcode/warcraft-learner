@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inj
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
-import { LiveCaptureFeatureService } from '../facade/live-capture.service';
+import { LiveCaptureFeatureService } from '../facade/live-capture-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

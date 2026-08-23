@@ -2,12 +2,12 @@ import { inject } from '@angular/core';
 import { DataFileApiService } from '../../../../core/data-files/data-file-api';
 import { type Result } from '../../../../core/http/result';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
-import { BurstTransformService } from '../../burst-windows/data-access/burst-transform.service';
-import { RotationTransformService } from '../../rotation/data-access/rotation-transform.service';
-import { DefensiveTransformService } from '../../defensive/data-access/defensive-transform.service';
-import { GearTransformService } from '../../gear/data-access/gear-transform.service';
-import { MapTransformService } from '../../map/data-access/map-transform.service';
-import { NorthernSkyTransformService } from '../../northern-sky/data-access/northern-sky-transform.service';
+import { BurstTransformService } from '../../burst-windows/data-access/burst-transform-service';
+import { RotationTransformService } from '../../rotation/data-access/rotation-transform-service';
+import { DefensiveTransformService } from '../../defensive/data-access/defensive-transform-service';
+import { GearTransformService } from '../../gear/data-access/gear-transform-service';
+import { MapTransformService } from '../../map/data-access/map-transform-service';
+import { NorthernSkyTransformService } from '../../northern-sky/data-access/northern-sky-transform-service';
 
 export interface SliceDescriptor {
   readonly file: string;

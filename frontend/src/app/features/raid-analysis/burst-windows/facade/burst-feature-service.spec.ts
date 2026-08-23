@@ -6,7 +6,7 @@ import { sliceService } from '../../../../../testing/service-harness';
 import {
   BurstFeatureService,
   burstWindowStatus, splitCommonCds, burstMapAnchor, burstClipAnchor, buildBurstView, findPlayerBurstWindows,
-} from './burst.service';
+} from './burst-feature-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../testing/builders/events';

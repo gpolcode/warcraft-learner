@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ClipRoll, ClipWindow, Segment,
   absoluteWindowStart, buildClipWindow, fullPullWindow, interSegmentGapMs, segmentSeekOffset, segmentsCover, selectSegments,
-} from './live-capture.service';
+} from './live-capture-feature-service';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 
 const REPORT_START_MS = 1_700_000_000_000;

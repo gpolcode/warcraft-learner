@@ -9,7 +9,7 @@ import { sliceService } from '../../../../../testing/service-harness';
 import {
   MapFeatureService, buildActorTimelines, listReferenceEnemies, buildLiveOverlay, resolveLiveReference,
   FACING_OFFSET_RAD,
-} from './map.service';
+} from './map-feature-service';
 import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
 import { whenStable } from '../../../../../testing/when-stable';
 

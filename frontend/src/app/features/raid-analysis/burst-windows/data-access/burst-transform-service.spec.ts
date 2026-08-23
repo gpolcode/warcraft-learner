@@ -5,7 +5,7 @@ import { ok, missing } from '../../../../core/http/result';
 import {
   BurstTransformService, cdTimings, findParseWindows, clusterParseWindows, ParseWindow,
   BurstDetectorTuning, DEFAULT_BURST_TUNING,
-} from './burst-transform.service';
+} from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
   RUPTURE, VANISH, SECRET_TECHNIQUE, SHADOW_DANCE,

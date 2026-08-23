@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { buildDefensivePlanRows } from './defensive.service';
+import { buildDefensivePlanRows } from './defensive-feature-service';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { CLOAK_META, benchWith, defBench } from './defensive-harness';
 

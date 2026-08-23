@@ -6,7 +6,7 @@ import { ok, missing, transient } from '../../../../core/http/result';
 import {
   GearTransformService, toParseGear, aggregateParseGear, ParseGear, withTalentDiffs,
   aggregateTalents, aggregateTrinkets, aggregateEnchants,
-} from './gear-transform.service';
+} from './gear-transform-service';
 import { talentKeyFromTree, parseTalentKey } from '../../../../domain/gear/talent-key';
 import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';

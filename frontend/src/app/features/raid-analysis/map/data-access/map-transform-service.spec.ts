@@ -5,7 +5,7 @@ import {
   MapTransformService,
   posActorId, collectPositionSamples, resampleTimeline, resamplePlayerTimeline, buildParsePositions, selectBossAndEnemies,
   RawPosSample, EnemyMeta,
-} from './map-transform.service';
+} from './map-transform-service';
 import { withRelativeS } from '../../../../domain/analysis/wcl-projections';
 import { parseRankings, wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';

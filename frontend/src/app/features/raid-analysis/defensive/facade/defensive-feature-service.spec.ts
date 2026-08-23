@@ -4,7 +4,7 @@ import { PerDefensiveBenchmark } from '../../../../domain/encounter/encounter.mo
 import {
   analyzeDefensives, analyzeDefensiveFindings,
   buildDefensiveUsageWindows, analyzeOneDefensive,
-} from './defensive.service';
+} from './defensive-feature-service';
 import { applyBuff, removeBuff, cast } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { CLOAK_META, defBench, timed } from './defensive-harness';

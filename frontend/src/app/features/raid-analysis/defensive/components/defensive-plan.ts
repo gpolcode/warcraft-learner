@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { PlanTableComponent } from '../../../../shared/components/plan-table/plan-table';
 import { loadResource } from '../../../../shared/state/load-resource';
-import { DefensiveFeatureService, DefensivePlanRow } from '../facade/defensive.service';
+import { DefensiveFeatureService, DefensivePlanRow } from '../facade/defensive-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

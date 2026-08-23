@@ -6,7 +6,7 @@ import {
 import { WindowComparisonComponent } from '../../../../shared/components/window-comparison/window-comparison';
 import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
 import { loadResource } from '../../../../shared/state/load-resource';
-import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from '../facade/defensive.service';
+import { DefensiveFeatureService, DefensiveMapAnchor, defensiveFindingClipAnchor } from '../facade/defensive-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

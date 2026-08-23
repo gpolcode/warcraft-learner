@@ -3,9 +3,9 @@ import { EnvironmentProviders, Provider, inject, provideAppInitializer } from '@
 import { withEnvironment } from './base-environment';
 import { liveDataSourceProviders } from './live-data-sources';
 import { DATA_FILE_TRANSPORT } from '../app/core/data-files/data-file-transport';
-import { RETRY_MAX_ATTEMPTS } from '../app/core/http/retry-transient.interceptor';
+import { RETRY_MAX_ATTEMPTS } from '../app/core/http/retry-transient-interceptor';
 import { IngestHttpDataFileTransport } from '../app/features/raid-analysis/ingest/http/ingest-data-file-transport';
-import { IngestOrchestratorService } from '../app/features/raid-analysis/ingest/shell/ingest-orchestrator.service';
+import { IngestOrchestratorService } from '../app/features/raid-analysis/ingest/shell/ingest-orchestrator-service';
 
 // Why 3: see RETRY_MAX_ATTEMPTS - unattended runs must ride out longer blips.
 const INGEST_RETRY_MAX_ATTEMPTS = 3;

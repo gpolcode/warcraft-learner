@@ -15,7 +15,7 @@ export class MapDrawService {
 /** Ported from `positioning-core` so the map components import no domain service - only this slice-local module + `MapFeatureService`. */
 import { bisector } from 'd3-array';
 import { EncounterPositions, ParsePositions, PlayerPosRow, PosRow, ReferenceSelector } from '../../../../domain/encounter/positioning.models';
-import { ActorTimeline, PosSample, FACING_OFFSET_RAD } from '../facade/map.service';
+import { ActorTimeline, PosSample, FACING_OFFSET_RAD } from '../facade/map-feature-service';
 
 const RAW_TO_YARDS = 1 / 100;
 const FACING_TO_RAD = 1 / 1000;

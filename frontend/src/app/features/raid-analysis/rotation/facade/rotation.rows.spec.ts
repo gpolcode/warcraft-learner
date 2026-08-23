@@ -4,7 +4,7 @@ import { SHADOW_BLADES, SECRET_TECHNIQUE, VANISH } from '../../../../../testing/
 import {
   bucketRotationFindings,
   partitionRotationFindings, buildRuleRows, buildOffensiveRows, buildOnPlanChips,
-} from './rotation.service';
+} from './rotation-feature-service';
 
 describe('bucketRotationFindings', () => {
   const abilities = { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [VANISH]: { icon: 'vanish', name: 'Vanish' } };

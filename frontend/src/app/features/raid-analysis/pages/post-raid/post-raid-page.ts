@@ -11,8 +11,8 @@ import { NORTHERN_SKY_DATA_SOURCE } from '../../northern-sky/data-access/norther
 import { DataFileApiService } from '../../../../core/data-files/data-file-api';
 import { SpecMeta } from '../../../../core/data-files/spec-meta.models';
 import { Result, ok } from '../../../../core/http/result';
-import { LiveCaptureFeatureService } from '../../live/facade/live-capture.service';
-import { MapFeatureService } from '../../map/facade/map.service';
+import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
+import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { PostRaidComponent } from './post-raid';
 import { postRaidProviders } from './post-raid-harness';
 

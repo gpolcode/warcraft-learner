@@ -5,7 +5,7 @@ import { SelectionStore } from '../../../../core/state/selection-store';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { unsupportedEncounterNotice } from './post-raid';
 import { mapFeatureStub } from '../../../../../testing/page-stubs';
-import { MapFeatureService } from '../../map/facade/map.service';
+import { MapFeatureService } from '../../map/facade/map-feature-service';
 import { fight } from './post-raid-harness';
 import { FIGHT_SELECT, PLAYER_SELECT, postRaidPage } from './post-raid-page';
 

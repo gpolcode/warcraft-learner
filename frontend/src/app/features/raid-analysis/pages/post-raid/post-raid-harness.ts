@@ -7,8 +7,8 @@ import { WclApiService } from '../../../../core/wcl/wcl-api';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { LiveReportSyncService } from '../../../../core/wcl/live-report-sync';
 import { Deferred, deferred } from '../../../../../testing/deferred';
-import { MapFeatureService } from '../../map/facade/map.service';
-import { LiveCaptureFeatureService } from '../../live/facade/live-capture.service';
+import { MapFeatureService } from '../../map/facade/map-feature-service';
+import { LiveCaptureFeatureService } from '../../live/facade/live-capture-feature-service';
 import { PostRaidComponent } from './post-raid';
 
 export function fight(p: Partial<WclFight>): WclFight {

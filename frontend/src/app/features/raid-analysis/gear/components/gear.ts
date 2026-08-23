@@ -5,7 +5,7 @@ import { CollapsibleTextComponent } from '../../../../shared/components/collapsi
 import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
 import { GearComparisonService } from '../../../../domain/gear/gear-comparison';
 import { loadResource } from '../../../../shared/state/load-resource';
-import { GearFeatureService, emptyGearView } from '../facade/gear.service';
+import { GearFeatureService, emptyGearView } from '../facade/gear-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

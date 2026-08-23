@@ -4,7 +4,7 @@ import { LoadStateComponent } from '../../../../shared/components/load-state/loa
 import { loadResource } from '../../../../shared/state/load-resource';
 import {
   RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
-} from '../facade/rotation.service';
+} from '../facade/rotation-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

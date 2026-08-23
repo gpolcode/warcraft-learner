@@ -4,7 +4,7 @@ import { ok, Result, transient } from '../../../../core/http/result';
 import { mountDom, MountedDom } from '../../../../../testing/component-harness';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { NorthernSkyExportComponent } from './northern-sky-export';
-import { NorthernSkyFeatureService } from '../facade/northern-sky.service';
+import { NorthernSkyFeatureService } from '../facade/northern-sky-feature-service';
 import { NorthernSkyAbility, NorthernSkyBench } from '../data-access/northern-sky-data-source';
 import { SHADOW_BLADES, EVASION } from '../../../../../testing/spell-ids';
 import { whenStable } from '../../../../../testing/when-stable';

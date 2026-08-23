@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClient, HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
-import { retryTransientInterceptor } from './retry-transient.interceptor';
+import { retryTransientInterceptor } from './retry-transient-interceptor';
 
 // The backoff is a real RxJS timer, so the retry is driven by advancing fake timers.
 const URL = '/data/specs/index.json';

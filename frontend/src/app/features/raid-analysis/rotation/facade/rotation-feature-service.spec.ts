@@ -9,7 +9,7 @@ import { detectBloodlust } from '../domain/rotation-bloodlust';
 import {
   analyzeRotationFindings, RotationScanInput, checkBloodlustAlignment,
   checkCastEfficiency, analyzeOneCooldown,
-} from './rotation.service';
+} from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
 
 // Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.

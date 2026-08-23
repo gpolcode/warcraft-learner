@@ -12,7 +12,7 @@ import { NorthernSkyBench } from '../data-access/northern-sky-data-source';
 import {
   NorthernSkyFeatureService, buildNorthernSkyNote, abilitiesByKind, selectedIds, isAllSelected,
   toggleExclusion, toggleAllExclusion, isPanelOpen,
-} from '../facade/northern-sky.service';
+} from '../facade/northern-sky-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -14,8 +14,8 @@ import { NORTHERN_SKY_DATA_SOURCE } from '../../northern-sky/data-access/norther
 import { DataFileApiService } from '../../../../core/data-files/data-file-api';
 import { WclApiService } from '../../../../core/wcl/wcl-api';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { MapFeatureService } from '../../map/facade/map.service';
-import { EncounterSelectionService } from './encounter-selection.service';
+import { MapFeatureService } from '../../map/facade/map-feature-service';
+import { EncounterSelectionService } from './encounter-selection-service';
 import { PreFightComponent } from './pre-fight';
 
 // A card cannot construct without its data source, so every slice the shell mounts one for is listed here.
