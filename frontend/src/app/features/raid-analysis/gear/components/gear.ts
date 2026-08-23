@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { GameIconComponent } from '../../../../shared/components/game-icon/game-icon';
 import { CollapsibleTextComponent } from '../../../../shared/components/collapsible-text/collapsible-text';
 import { LoadStateComponent } from '../../../../shared/components/load-state/load-state';
-import { slotName, statusIcon } from '../../../../domain/gear/gear-comparison';
+import { GearComparisonService } from '../../../../domain/gear/gear-comparison';
 import { loadResource } from '../../../../shared/state/load-resource';
 import { GearFeatureService, emptyGearView } from '../facade/gear.service';
 
@@ -14,6 +14,7 @@ import { GearFeatureService, emptyGearView } from '../facade/gear.service';
   templateUrl: './gear.html',
 })
 export class GearComponent {
+  private readonly gearComparison = inject(GearComparisonService);
   private readonly gear = inject(GearFeatureService);
 
   readonly spec = input.required<string>();
@@ -50,6 +51,6 @@ export class GearComponent {
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
-  protected readonly slotName = slotName;
-  protected readonly statusIcon = statusIcon;
+  protected readonly slotName = this.gearComparison.slotName;
+  protected readonly statusIcon = this.gearComparison.statusIcon;
 }

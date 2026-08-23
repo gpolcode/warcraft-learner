@@ -1,7 +1,16 @@
+import { Injectable } from '@angular/core';
 import { deviation, median, rollup } from 'd3-array';
 import { round, fmtClock } from './analysis-math';
 import { CdHoldTargets } from '../encounter/encounter.models';
 import { AnalysisFinding } from './analysis.models';
+
+@Injectable({ providedIn: 'root' })
+export class HoldTargetsService {
+  readonly detectHoldWindows = detectHoldWindows;
+  readonly buildHoldTargets = buildHoldTargets;
+  readonly holdSuggestionFindings = holdSuggestionFindings;
+}
+
 
 /** A gap beyond this past the expected on-cooldown time counts as a deliberate hold. */
 const HOLD_THRESHOLD_S = 8.0;

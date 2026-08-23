@@ -5,8 +5,8 @@ import { DataFileApiService } from '../../../../core/data-files/data-file-api';
 import { TopParseSelection, WclEvent, WclFight } from '../../../../core/wcl/wcl.models';
 import { ParsePositions, PlayerPosRow, PosRow } from '../../../../domain/encounter/positioning.models';
 import { Result } from '../../../../core/http/result';
-import { TimedEvent, relativeS, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { posActorId } from '../domain/map-positions';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { MapData } from './map-data-source';
@@ -178,11 +178,13 @@ export function buildParsePositions(input: ParsePositionInput): ParsePositions {
 
 @Injectable({ providedIn: 'root' })
 export class MapTransformService implements DataSource<MapData> {
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<MapData>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'MapTransformService',
       errorId: 'map.bench',
       noRankingsMessage: 'No top parses for this encounter.',
@@ -204,8 +206,8 @@ export class MapTransformService implements DataSource<MapData> {
       playerName: player.name,
       playerId: player.id,
       enemyMetaById,
-      posEvents: withRelativeS(posEvents, fight.startTime),
-      durationS: relativeS(fight.endTime, fight.startTime),
+      posEvents: this.wclProjections.withRelativeS(posEvents, fight.startTime),
+      durationS: this.wclProjections.relativeS(fight.endTime, fight.startTime),
     });
   }
 

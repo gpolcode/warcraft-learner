@@ -1,3 +1,19 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class WclProjectionsService {
+  readonly targetKey = targetKey;
+  readonly relativeS = relativeS;
+  readonly withRelativeS = withRelativeS;
+  readonly normalizeAbilityId = normalizeAbilityId;
+  readonly unwrapRankings = unwrapRankings;
+  readonly abilityIcons = abilityIcons;
+  readonly toParseRankings = toParseRankings;
+  readonly findParseActor = findParseActor;
+  readonly resolveAbility = resolveAbility;
+  readonly windowSpells = windowSpells;
+}
+
 /** Generic, cross-slice WCL-response projections and window view-row builders, kept here so each slice imports one implementation. No Angular / IO. */
 import * as z from '../../core/validation/zod-mini';
 import { logWarn } from '../../core/observability/log';

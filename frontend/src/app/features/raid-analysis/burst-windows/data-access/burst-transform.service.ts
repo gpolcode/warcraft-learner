@@ -7,8 +7,8 @@ import { BurstWindow } from '../../../../domain/analysis/analysis.models';
 import { Result } from '../../../../core/http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
 import { round, groupByTime, getOrInsert } from '../../../../domain/analysis/analysis-math';
-import { TimedEvent, normalizeAbilityId, relativeS, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent, normalizeAbilityId } from '../../../../domain/analysis/wcl-projections';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { BurstBench } from './burst-data-source';
 
@@ -305,11 +305,13 @@ interface BurstPlan {
 
 @Injectable({ providedIn: 'root' })
 export class BurstTransformService implements DataSource<BurstBench> {
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'BurstTransformService',
       errorId: 'burst.bench',
       noRankingsMessage: 'Not yet ingested.',
@@ -330,7 +332,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
           (windows, parseIndex) => windows.map(window => ({ ...window, parse_index: parseIndex })));
         return {
           windows: clusterParseWindows(allWindows, parses.length),
-          cd_spell_ids: spellIdsByName([...plan.cooldowns, ...plan.defensives]),
+          cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
@@ -346,9 +348,9 @@ export class BurstTransformService implements DataSource<BurstBench> {
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
     ]);
 
-    const castsTimed = withRelativeS(casts, fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
     return findParseWindows({
-      damage: withRelativeS(damage, fight.startTime), fightLenS: relativeS(fight.endTime, fight.startTime),
+      damage: this.wclProjections.withRelativeS(damage, fight.startTime), fightLenS: this.wclProjections.relativeS(fight.endTime, fight.startTime),
       timings: cdTimings(castsTimed, cooldowns), casts: castsTimed, abilityNames,
     });
   }

@@ -10,8 +10,8 @@ import {
 } from '../../../../domain/analysis/analysis-math';
 import { HoldWindow, detectHoldWindows } from '../../../../domain/analysis/hold-targets';
 import { buildCadenceBenchmark } from '../../../../domain/analysis/cast-cadence';
-import { TimedEvent, relativeS, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { Result } from '../../../../core/http/result';
 import {
@@ -163,11 +163,13 @@ interface RotationPlan {
 
 @Injectable({ providedIn: 'root' })
 export class RotationTransformService implements DataSource<RotationBench> {
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
       minSamples: MIN_PARSE_COUNT,
@@ -196,7 +198,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
           per_cd_benchmarks: aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
           rules: benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
-          cd_spell_ids: spellIdsByName([...plan.cooldowns, ...plan.defensives]),
+          cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
@@ -219,13 +221,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
         : Promise.resolve([]),
     ]);
 
-    const fightDurS = relativeS(fight.endTime, fight.startTime);
-    const castsTimed = withRelativeS(casts, fight.startTime);
-    const buffsTimed = withRelativeS(buffs, fight.startTime);
+    const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
+    const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
     const blTimeS = detectBloodlust(buffsTimed);
     const ruleCtx = buildRuleContext({
-      casts: castsTimed, buffs: buffsTimed, damage: withRelativeS(damage, fight.startTime),
-      debuffs: withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
+      casts: castsTimed, buffs: buffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
+      debuffs: this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
       fightDurationS: fightDurS,
     });
     return {

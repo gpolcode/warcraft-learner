@@ -8,7 +8,7 @@ import { WCL_TRANSPORT } from '../../../../core/wcl/wcl-transport';
 import { SpecMetaService } from '../../../../core/data-files/spec-meta';
 import { logWarn } from '../../../../core/observability/log';
 import { type LoadError } from '../../../../core/http/result';
-import { resolveTopParses } from '../../../../domain/analysis/top-parse-selection';
+import { TopParseSelectionService } from '../../../../domain/analysis/top-parse-selection';
 import type { EncounterEntry, SpecEntry } from '../../../../domain/encounter/encounter.models';
 import type { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { sliceRegistry, BENCH_SLICE, type SliceDescriptor } from './slice-registry';
@@ -64,6 +64,7 @@ function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntr
 
 @Injectable({ providedIn: 'root' })
 export class IngestOrchestratorService {
+  private readonly topParseSelection = inject(TopParseSelectionService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFile = inject(DataFileApiService);
   private readonly specMeta = inject(SpecMetaService);
@@ -259,7 +260,7 @@ export class IngestOrchestratorService {
       for (const encounter of orderEncountersByMissingFirst(encounters, checkedIds)) {
         await assertPointsBudget(this.wclApi, POINTS_MARGIN);
 
-        const selection = await resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
+        const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
         if (!selection.length) {
           console.log(`  [${encounter.name}] no rankings, skipped`);
           emptyThisPass.push(encounter.id);

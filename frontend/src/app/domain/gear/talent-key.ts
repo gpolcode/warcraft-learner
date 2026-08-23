@@ -1,4 +1,12 @@
+import { Injectable } from '@angular/core';
 import { WclTalentNode } from '../../core/wcl/wcl.models';
+
+@Injectable({ providedIn: 'root' })
+export class TalentKeyService {
+  readonly talentKeyFromTree = talentKeyFromTree;
+  readonly parseTalentKey = parseTalentKey;
+}
+
 
 export interface TalentPick {
   entryId: number;

@@ -6,7 +6,7 @@ import { logWarn } from '../../../../core/observability/log';
 import { parseJson } from '../../../../core/validation/json';
 import { Result, ok, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
-import { TimedEvent, withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 
 type PullResult = 'kill' | 'wipe';
 
@@ -98,6 +98,7 @@ export function buildDeathRows(
 
 @Injectable({ providedIn: 'root' })
 export class PullOverviewFeatureService {
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
 
   async loadView(
@@ -117,12 +118,12 @@ export class PullOverviewFeatureService {
       const dps = dpsFromTable(table, playerId, fight.duration_s);
       if (!dps.ok) return dps;
 
-      const deathEventsTimed = withRelativeS(deathEvents, fight.startTime);
+      const deathEventsTimed = this.wclProjections.withRelativeS(deathEvents, fight.startTime);
       const deaths = buildDeathRows(deathEventsTimed, playerId, names);
       let outcomeTimeS = fight.duration_s;
       if (result === 'wipe') {
         const resurrects = await this.wclApi.getResurrects(reportCode, fight.id, fight.startTime, fight.endTime);
-        outcomeTimeS = wipeTimeS(deathEventsTimed, withRelativeS(resurrects, fight.startTime), fight.duration_s);
+        outcomeTimeS = wipeTimeS(deathEventsTimed, this.wclProjections.withRelativeS(resurrects, fight.startTime), fight.duration_s);
       }
 
       return ok({

@@ -14,8 +14,8 @@ import {
   CadenceVoice, cadencePlanUsage, checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,
 } from '../../../../domain/analysis/cast-cadence';
 import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-table.utils';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { PullContext, PullRef, analyzePull } from '../../../../domain/analysis/pull-context';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
 import {
   buildRuleContext, evaluateRules, rulesFollowed, rulesNeed, benchedRules, RULE_TYPE_LABEL,
 } from '../domain/rotation-rules';
@@ -369,6 +369,8 @@ export function buildCdPlan(
 
 @Injectable({ providedIn: 'root' })
 export class RotationFeatureService {
+  private readonly pullContext = inject(PullContextService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
@@ -379,7 +381,7 @@ export class RotationFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId };
-    return analyzePull(this.wclApi, pull, {
+    return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
       emptyView: () => ({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }),
@@ -407,16 +409,16 @@ export class RotationFeatureService {
           rulesNeed(conditions, 'targetHealth'))
         : Promise.resolve([]),
     ]);
-    const castsTimed = withRelativeS(casts, fight.startTime);
-    const buffsTimed = withRelativeS(buffs, fight.startTime);
-    const debuffsTimed = withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
+    const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
+    const debuffsTimed = this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), fight.startTime);
 
     const offensiveFindings = analyzeRotationFindings({
       fightDurationS, castEvents: castsTimed, buffEvents: buffsTimed,
       cooldowns: bench.major_cooldowns, bench,
     });
     const ruleCtx = buildRuleContext({
-      casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: withRelativeS(damage, fight.startTime),
+      casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
       fightDurationS,
     });
     const ruleFindings = evaluateRules(rules, ruleCtx);

@@ -4,9 +4,9 @@ import { BurstWindow, PlayerBurstWindow } from '../../../../domain/analysis/anal
 import { WindowStatus } from '../../../../domain/analysis/window-comparison.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { Result, ok } from '../../../../core/http/result';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../../domain/analysis/window-view';
-import { PullContext, PullRef, analyzePull } from '../../../../domain/analysis/pull-context';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
 import { BURST_DATA_SOURCE, BurstBench } from '../data-access/burst-data-source';
 
 export interface BurstMapAnchor {
@@ -97,6 +97,8 @@ export function findPlayerBurstWindows(
 
 @Injectable({ providedIn: 'root' })
 export class BurstFeatureService {
+  private readonly pullContext = inject(PullContextService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(BURST_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
@@ -107,7 +109,7 @@ export class BurstFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId };
-    return analyzePull(this.wclApi, pull, {
+    return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
       emptyView: () => benchOnlyView(bench.value),
@@ -129,7 +131,7 @@ export class BurstFeatureService {
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
     ]);
     const playerWindows = findPlayerBurstWindows(
-      bench.windows, withRelativeS(damage, fight.startTime), withRelativeS(casts, fight.startTime), abilityNames,
+      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(casts, fight.startTime), abilityNames,
     );
     return buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
   }

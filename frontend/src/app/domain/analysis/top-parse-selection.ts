@@ -1,3 +1,10 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class TopParseSelectionService {
+  readonly resolveTopParses = resolveTopParses;
+}
+
 /** Resolves which top parses an encounter is benched from, once, so the ingest signature and every slice read the same pool. */
 import { WclApiService } from '../../core/wcl/wcl-api';
 import { TopParseSelection } from '../../core/wcl/wcl.models';

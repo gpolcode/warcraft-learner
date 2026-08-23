@@ -6,7 +6,7 @@ import { EncounterPositions, ReferenceSelector } from '../../../../domain/encoun
 import { logWarn } from '../../../../core/observability/log';
 import { Result, LoadError, permanent } from '../../../../core/http/result';
 import { toLoadError } from '../../../../core/http/http-load-error';
-import { TimedEvent, withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { posActorId } from '../domain/map-positions';
 import { MAP_DATA_SOURCE, MapData } from '../data-access/map-data-source';
 
@@ -127,6 +127,7 @@ export function buildLiveOverlay(input: LiveOverlayInput): MapLiveOverlay | null
 
 @Injectable({ providedIn: 'root' })
 export class MapFeatureService {
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(MAP_DATA_SOURCE);
   // Resolved lazily: only `prepare` needs WCL, so bench-only paths (/pre, tests) never pull in the WCL transport.
   private readonly injector = inject(Injector);
@@ -236,7 +237,7 @@ export class MapFeatureService {
       const { reportCode, fight, playerId, positions, enemies } = pending;
       const events = await this.fetchLiveEvents(reportCode, fight, playerId);
       if (pending.seq !== this.prepareSeq) return; // a newer prepare superseded this deferred overlay
-      const overlay = buildLiveOverlay({ positions, events: withRelativeS(events, fight.startTime), playerId, enemies });
+      const overlay = buildLiveOverlay({ positions, events: this.wclProjections.withRelativeS(events, fight.startTime), playerId, enemies });
       this.live.set(overlay);
       if (overlay) this.error.set(null);
       else this._reportMissingPlayerPositions();

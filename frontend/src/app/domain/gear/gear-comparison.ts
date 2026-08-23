@@ -1,7 +1,24 @@
+import { Injectable } from '@angular/core';
 import { CharacterGear } from '../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick, parseTalentKey } from './talent-key';
+
+@Injectable({ providedIn: 'root' })
+export class GearComparisonService {
+  readonly slotName = slotName;
+  readonly statusIcon = statusIcon;
+  readonly buildEnchantRows = buildEnchantRows;
+  readonly enchantStatusOf = enchantStatusOf;
+  readonly buildTalentBuilds = buildTalentBuilds;
+  readonly buildTalentDiff = buildTalentDiff;
+  readonly talentStatusOf = talentStatusOf;
+  readonly buildTrinketRows = buildTrinketRows;
+  readonly trinketStatusOf = trinketStatusOf;
+  readonly buildBenchEnchantRows = buildBenchEnchantRows;
+  readonly buildBenchTrinketRows = buildBenchTrinketRows;
+}
+
 
 export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
 

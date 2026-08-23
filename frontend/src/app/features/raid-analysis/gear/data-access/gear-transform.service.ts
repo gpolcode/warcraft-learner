@@ -5,12 +5,12 @@ import { EncounterGearStats } from '../../../../domain/encounter/encounter.model
 import { logWarn } from '../../../../core/observability/log';
 import { Result } from '../../../../core/http/result';
 import { GameNames, TRINKET_SLOTS, extractGear, fillGameNames, selectCombatantInfo } from '../domain/gear-extract';
-import { talentKeyFromTree } from '../../../../domain/gear/talent-key';
+import { TalentKeyService } from '../../../../domain/gear/talent-key';
 import { buildTalentDiff } from '../../../../domain/gear/gear-comparison';
 import { TalentDataService } from '../../../../core/http/talent-data';
 import { SpecTalents } from '../../../../domain/gear/talent.models';
 import { getOrInsert } from '../../../../domain/analysis/analysis-math';
-import { BenchParse, benchFromTopParses } from '../../../../domain/analysis/bench-pipeline';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { GearBench } from './gear-data-source';
 
@@ -146,11 +146,13 @@ export function withTalentDiffs(
 
 @Injectable({ providedIn: 'root' })
 export class GearTransformService implements DataSource<GearBench> {
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly talentKey = inject(TalentKeyService);
   private readonly wclApi = inject(WclApiService);
   private readonly talentData = inject(TalentDataService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<GearBench>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'GearTransformService',
       errorId: 'gear.bench',
       noRankingsMessage: 'Not yet ingested.',
@@ -176,7 +178,7 @@ export class GearTransformService implements DataSource<GearBench> {
     fillGameNames(enchants, 'e', names);
 
     const characterGear: CharacterGear = {
-      talent_key: talentKeyFromTree(event.talentTree), trinkets, enchants,
+      talent_key: this.talentKey.talentKeyFromTree(event.talentTree), trinkets, enchants,
     };
     return toParseGear(characterGear, ranking, player.id);
   }

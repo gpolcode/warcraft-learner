@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { WclApiService } from '../../core/wcl/wcl-api';
 import type { DataFileApiService } from '../../core/data-files/data-file-api';
 import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../../core/wcl/wcl.models';
@@ -7,6 +8,13 @@ import { Result, ok, missing } from '../../core/http/result';
 import { toLoadError } from '../../core/http/http-load-error';
 import { ReportActor, abilityIcons, findParseActor } from './wcl-projections';
 import { resolveTopParses } from './top-parse-selection';
+
+@Injectable({ providedIn: 'root' })
+export class BenchPipelineService {
+  readonly spellIdsByName = spellIdsByName;
+  readonly benchFromTopParses = benchFromTopParses;
+}
+
 
 const TOP_PARSE_COUNT = 10;
 const MIN_SAMPLE_COUNT = 1;

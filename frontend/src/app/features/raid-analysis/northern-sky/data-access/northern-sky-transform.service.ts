@@ -5,8 +5,8 @@ import { TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { Rulebook } from '../../../../domain/rulebook/rulebook.models';
 import { Result } from '../../../../core/http/result';
 import { round } from '../../../../domain/analysis/analysis-math';
-import { TimedEvent, abilityIcons, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses } from '../../../../domain/analysis/bench-pipeline';
+import { WclProjectionsService, TimedEvent } from '../../../../domain/analysis/wcl-projections';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 
@@ -35,11 +35,13 @@ export function cooldownCastTimes(casts: TimedEvent[], spellId: number): number[
 
 @Injectable({ providedIn: 'root' })
 export class NorthernSkyTransformService implements DataSource<NorthernSkyBench> {
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<NorthernSkyBench>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'NorthernSkyTransformService',
       errorId: 'northern-sky.bench',
       candidatePoolCount: CANDIDATE_POOL_COUNT,
@@ -50,7 +52,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       parse: (parse, abilities) => this.parseCastTimes(parse, abilities),
       bench: async ({ parses }) => {
         const built = parses[0] ?? [];
-        const icons = abilityIcons(await this.wclApi.getAbilities(built.map(entry => entry.spell_id)));
+        const icons = this.wclProjections.abilityIcons(await this.wclApi.getAbilities(built.map(entry => entry.spell_id)));
         return { abilities: built.map(entry => ({ ...entry, icon: icons[entry.spell_id]?.icon ?? '' })) };
       },
     });
@@ -60,7 +62,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   private async parseCastTimes(
     { ranking, fight, player }: BenchParse, abilities: ExportAbility[],
   ): Promise<NorthernSkyAbility[] | null> {
-    const casts = withRelativeS(
+    const casts = this.wclProjections.withRelativeS(
       await this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id), fight.startTime,
     );
     const built: NorthernSkyAbility[] = [];

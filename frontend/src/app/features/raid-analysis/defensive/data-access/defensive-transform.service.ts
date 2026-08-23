@@ -10,9 +10,9 @@ import { mean, deviation, extent, group, mode } from 'd3-array';
 import { round, groupByTime, getOrInsert, avgOr, medianOr } from '../../../../domain/analysis/analysis-math';
 import { HoldWindow, detectHoldWindows } from '../../../../domain/analysis/hold-targets';
 import { buildCadenceBenchmark } from '../../../../domain/analysis/cast-cadence';
-import { buildAuraWindows } from '../../../../domain/analysis/aura-windows';
-import { TimedEvent, normalizeAbilityId, relativeS, withRelativeS } from '../../../../domain/analysis/wcl-projections';
-import { BenchParse, benchFromTopParses, spellIdsByName } from '../../../../domain/analysis/bench-pipeline';
+import { AuraWindowsService } from '../../../../domain/analysis/aura-windows';
+import { WclProjectionsService, TimedEvent, normalizeAbilityId } from '../../../../domain/analysis/wcl-projections';
+import { BenchPipelineService, BenchParse } from '../../../../domain/analysis/bench-pipeline';
 import { DataSource } from '../../../../core/data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 
@@ -248,11 +248,14 @@ export function aggregateDefensiveBenchmarks(
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveTransformService implements DataSource<DefensiveBench> {
+  private readonly auraWindows = inject(AuraWindowsService);
+  private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<DefensiveBench>> {
-    return benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'DefensiveTransformService',
       errorId: 'defensive.bench',
       noRankingsMessage: NO_DEFENSIVE_BENCH_MESSAGE,
@@ -273,7 +276,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           per_defensive_benchmarks: aggregateDefensiveBenchmarks(parses.map(parse => parse.summaries), defensives),
           defensive_windows: clusterDefensiveWindows(allWindows, parses.length),
           defensives: defensivePlanMeta(defensives),
-          cd_spell_ids: spellIdsByName(defensives),
+          cd_spell_ids: this.benchPipeline.spellIdsByName(defensives),
         };
       },
     });
@@ -291,11 +294,11 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageTaken', fight.startTime, fight.endTime, player.id),
     ]);
 
-    const fightDurationS = relativeS(fight.endTime, fight.startTime);
-    const buffWindows = buildAuraWindows(withRelativeS(buffs, fight.startTime));
+    const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
+    const buffWindows = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
     return {
-      windows: findParseDefensiveWindows(withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId),
-      summaries: summarizeDefensiveCasts(defensives, buffWindows, withRelativeS(casts, fight.startTime), fightDurationS),
+      windows: findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId),
+      summaries: summarizeDefensiveCasts(defensives, buffWindows, this.wclProjections.withRelativeS(casts, fight.startTime), fightDurationS),
     };
   }
 }

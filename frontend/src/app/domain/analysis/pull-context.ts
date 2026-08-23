@@ -1,9 +1,16 @@
+import { Injectable } from '@angular/core';
 import { WclApiService } from '../../core/wcl/wcl-api';
 import { WclFight, WclReport } from '../../core/wcl/wcl.models';
 import { logWarn } from '../../core/observability/log';
 import { Result, ok } from '../../core/http/result';
 import { toLoadError } from '../../core/http/http-load-error';
 import { relativeS } from './wcl-projections';
+
+@Injectable({ providedIn: 'root' })
+export class PullContextService {
+  readonly analyzePull = analyzePull;
+}
+
 
 export interface PullContext {
   report: WclReport;

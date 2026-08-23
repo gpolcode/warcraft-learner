@@ -14,9 +14,9 @@ import { benchExpectedUses, sortBySeverity } from '../../../../domain/analysis/a
 import {
   CadenceVoice, cadencePlanUsage, checkFirstCastDelay, checkGaps, checkLostUses, holdsOf, usedByMajority,
 } from '../../../../domain/analysis/cast-cadence';
-import { AbilityIcons, TimedEvent, withRelativeS } from '../../../../domain/analysis/wcl-projections';
+import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections';
 import { WindowView, WindowViewAdapter, buildWindowView, playerWindowDamage } from '../../../../domain/analysis/window-view';
-import { PullContext, PullRef, analyzePull } from '../../../../domain/analysis/pull-context';
+import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context';
 import {
   DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensivePlanMeta,
 } from '../data-access/defensive-data-source';
@@ -278,6 +278,8 @@ export function buildDefensivePlanRows(bench: DefensiveBench | null): DefensiveP
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
+  private readonly pullContext = inject(PullContextService);
+  private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
 
@@ -293,7 +295,7 @@ export class DefensiveFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId };
-    return analyzePull(this.wclApi, pull, {
+    return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
       emptyView: () => ({ findings: [], spellIdsByName: bench.value.cd_spell_ids, iconByName: {}, windows: [], anchors: [], clipAnchors: [] }),
@@ -313,9 +315,9 @@ export class DefensiveFeatureService {
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
     ]);
 
-    const dtEventsTimed = withRelativeS(dtEvents, fight.startTime);
+    const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
     const playerDefensives = analyzeDefensives(
-      bench.defensives, withRelativeS(casts, fight.startTime), withRelativeS(buffs, fight.startTime), fightDurationS,
+      bench.defensives, this.wclProjections.withRelativeS(casts, fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
     );
     const findings = bench.defensives.length && playerDefensives.length
       ? analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, fightDurationS)

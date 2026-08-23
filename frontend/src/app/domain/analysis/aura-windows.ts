@@ -1,5 +1,18 @@
+import { Injectable } from '@angular/core';
 import { getOrInsert } from './analysis-math';
 import { TimedEvent, targetKey } from './wcl-projections';
+
+@Injectable({ providedIn: 'root' })
+export class AuraWindowsService {
+  readonly buildAuraWindows = buildAuraWindows;
+  readonly auraUpAt = auraUpAt;
+  readonly auraAlreadyUpAt = auraAlreadyUpAt;
+  readonly buildStackTimeline = buildStackTimeline;
+  readonly stacksAt = stacksAt;
+  readonly buildAuraSpansByTarget = buildAuraSpansByTarget;
+  readonly auraUptimePct = auraUptimePct;
+}
+
 
 /** Fight-relative seconds; an open end means the aura outlived the fight. */
 export type AuraWindows = Map<number, [number, number | null][]>;

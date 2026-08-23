@@ -1,3 +1,24 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class AnalysisMathService {
+  readonly round = round;
+  readonly avgOr = avgOr;
+  readonly stddevOr = stddevOr;
+  readonly medianOr = medianOr;
+  readonly castGaps = castGaps;
+  readonly getOrInsert = getOrInsert;
+  readonly groupByTime = groupByTime;
+  readonly isOutlierAbove = isOutlierAbove;
+  readonly isOutlierBeyond = isOutlierBeyond;
+  readonly isOutlierBelow = isOutlierBelow;
+  readonly castEfficiencyPct = castEfficiencyPct;
+  readonly closestToZero = closestToZero;
+  readonly benchExpectedUses = benchExpectedUses;
+  readonly fmtClock = fmtClock;
+  readonly sortBySeverity = sortBySeverity;
+}
+
 /** Generic, cross-slice analysis math + formatting helpers that several slices import instead of re-declaring. */
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';
