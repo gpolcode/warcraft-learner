@@ -6,63 +6,84 @@
       "name": "Recklessness",
       "spell_id": 1719,
       "cooldown": 90,
-      "duration": 12,
-      "align_with_bloodlust": false,
-      "usage_rule": "Send it on cooldown and lean on Rampage while it runs, since Recklessness slashes its rage cost and turns Bloodthirst and Raging Blow into Bloodbath and Crushing Blow."
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown and spam Rampage inside it, since Rampage costs far less here and Bloodbath and Crushing Blow take over your normal buttons.",
+      "id_note": "1719 is both the cast and the self aura in the sampled parses."
     },
     {
       "name": "Avatar",
       "spell_id": 107574,
       "cooldown": 90,
-      "duration": 20,
-      "align_with_bloodlust": false,
-      "usage_rule": "Macro it to Recklessness, since Anger Management shortens both and they line up on their own.",
-      "id_note": "107574 was not pressed in the sampled parses, which are Slayer builds; it is castable per its tooltip and the guide names it as the Mountain Thane cooldown.",
+      "opener_priority": 2,
+      "usage_rule": "Macro it to Recklessness and press both together, since Anger Management keeps their cooldowns in step.",
+      "id_note": "107574 is castable per its tooltip but was not pressed in the sampled parses, which all ran Slayer. Mountain Thane build.",
       "talent_gated": true
     },
     {
       "name": "Bladestorm",
       "spell_id": 446035,
       "cooldown": 90,
-      "duration": 6,
-      "align_with_bloodlust": false,
-      "usage_rule": "Open it while Enraged and right after a Rampage, and bank it for the next Recklessness window when Recklessness is close to ready.",
-      "id_note": "The guide links Bladestorm(spell=227847), but 446035 is the id recorded for every sampled parse's casts and its own self aura; the table gives both a 90s base cooldown.",
+      "opener_priority": 3,
+      "usage_rule": "Rampage your rage down first, then Bladestorm inside Recklessness, and only delay it when adds are seconds away.",
+      "id_note": "446035 is the Fury Bladestorm cast id, cast in 5/5 sampled parses; the guide links 227847, a same-name row not seen in casts. Slayer only.",
       "talent_gated": true
     },
     {
       "name": "Odyn's Fury",
       "spell_id": 385060,
       "cooldown": 45,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press it on cooldown for the free Enrage, and as Mountain Thane fire it before you open the rest of your cooldowns so the window stays uncluttered.",
-      "id_note": "385060 is the cast id in all five sampled parses; 385059 is the tooltip row carrying the 45s base cooldown.",
+      "usage_rule": "Press it on cooldown for the free Enrage, and lead with it when a pack is up.",
+      "id_note": "385060 is the observed cast id; the 45s base cooldown sits on same-name row 385059, which the guide links.",
+      "talent_gated": true
+    },
+    {
+      "name": "Champion's Spear",
+      "spell_id": 376079,
+      "cooldown": 90,
+      "usage_rule": "Throw it into a stacked pack to chain them in place, and reactivate it when you want the leap.",
+      "id_note": "376079 resolved by name lookup and verified against WCL game data; not pressed in the sampled parses. Class tree talent.",
+      "talent_gated": true
+    },
+    {
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "usage_rule": "Drink it on the pull with Recklessness and hero, and hold the second for adds, a burst phase, or Execute range.",
+      "id_note": "One of the two combat potions the field runs; flagged talent_gated so a player on the other potion is not treated as never using it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "usage_rule": "Drink it on the pull with Recklessness and hero, and time the second so its buff finishes before the fight ends.",
+      "id_note": "One of the two combat potions the field runs; flagged talent_gated so a player on the other potion is not treated as never using it.",
       "talent_gated": true
     }
   ],
   "defensives": [
     {
-      "name": "Rallying Cry",
-      "spell_id": 97462,
-      "cooldown": 180,
-      "duration": 10,
-      "usage_rule": "Call it just before a raid-wide hit so the whole group gains the temporary health."
-    },
-    {
       "name": "Enraged Regeneration",
       "spell_id": 184364,
       "cooldown": 120,
       "duration": 8,
-      "usage_rule": "Press it when you are taking sustained damage; it heals you over the window and boosts the healing you receive.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+      "usage_rule": "Pop it just before a big hit lands and keep Bloodthirst rolling for the extra healing."
     },
     {
-      "name": "Bitter Immunity",
-      "spell_id": 383762,
+      "name": "Rallying Cry",
+      "spell_id": 97462,
       "cooldown": 180,
-      "usage_rule": "Use it to clear a damage-over-time effect and heal a chunk of your health back instantly.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "duration": 10,
+      "usage_rule": "Call it right before raid damage lands so the extra health soaks the hit.",
+      "id_note": "97462 is the cast id; 97463 is the same-name self aura."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "usage_rule": "Shout on the pack right before their damage window to cut what they hit you for.",
+      "id_note": "1160 is the only Demoralizing Shout id in the table and appears in logs as the enemy debuff.",
       "talent_gated": true
     },
     {
@@ -70,78 +91,40 @@
       "spell_id": 23920,
       "cooldown": 25,
       "duration": 5,
-      "usage_rule": "Turn it on for a targeted cast or a magic hit you can time, and take the reduced magic damage on everything else."
+      "usage_rule": "Raise it into a spell aimed at you to bounce it back and cut the magic damage you take.",
+      "id_note": "23920 is the cast id; 385391 is the same-name self aura."
     },
     {
       "name": "Impending Victory",
       "spell_id": 202168,
       "cooldown": 25,
-      "usage_rule": "Spend a global on it for a quick self-heal when you dip low between damage events.",
-      "talent_gated": true
-    },
-    {
-      "name": "Ignore Pain",
-      "spell_id": 1277297,
-      "cooldown": 20,
-      "duration": 12,
-      "usage_rule": "Drop the absorb before a predictable hit rather than sitting on rage you would rather spend on Rampage.",
-      "id_note": "1277297 is the 20s cooldown, 12s duration row; 190456 shares the name with a 1s cooldown. Neither was pressed in the sampled parses.",
+      "usage_rule": "Weave it in after you take a hit for a quick 30% heal when you have rage to spare.",
       "talent_gated": true
     }
   ],
   "rules": [
     {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Charge into Recklessness and Rampage",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [100, 1719, 184367],
+        "spell_names": ["Charge", "Recklessness", "Rampage"]
+      },
+      "action": "Charge on the pull, hit Recklessness in the same window, then Rampage to trigger Enrage."
+    },
+    {
       "type": "rotation",
       "severity": "critical",
-      "description": "Keep Enrage up between Rampage casts",
+      "description": "Keep Enrage up all fight",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 184362,
         "aura_spell_name": "Enrage",
         "on": "self"
       },
-      "action": "Cast Rampage as Enrage is about to expire so it never drops."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Rampage at high rage, not the instant it is castable",
-      "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 184367,
-        "spell_name": "Rampage",
-        "resource_type": 1,
-        "resource_name": "rage",
-        "bound": "min"
-      },
-      "action": "Weave Bloodthirst and Raging Blow in and hold Rampage for a near-full rage bar or an expiring Enrage."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Rampage fills the rotation during Recklessness",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 184367,
-        "spell_name": "Rampage",
-        "alternative_spell_ids": [
-          335096,
-          335097
-        ],
-        "alternative_spell_names": [
-          "Bloodbath",
-          "Crushing Blow"
-        ],
-        "buff_spell_id": 1719,
-        "buff_spell_name": "Recklessness",
-        "except_buff_spell_ids": [
-          383873
-        ],
-        "except_buff_spell_names": [
-          "Hack and Slash"
-        ]
-      },
-      "action": "Press Rampage between your Bloodbath casts while Recklessness is up, since its rage cost is cut there."
+      "action": "Cast Rampage the moment Enrage is about to fall off instead of pooling rage through it."
     },
     {
       "type": "rotation",
@@ -151,74 +134,36 @@
         "kind": "proc_wasted",
         "buff_spell_id": 52437,
         "buff_spell_name": "Sudden Death",
-        "spend_spell_ids": [
-          5308
-        ],
-        "spend_spell_names": [
-          "Execute"
-        ]
+        "spend_spell_ids": [5308],
+        "spend_spell_names": ["Execute"]
       },
-      "action": "Fire Execute as soon as Sudden Death lights up, at any boss health."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Execute takes over your fillers in execute range",
-      "condition": {
-        "kind": "filler_below_health",
-        "spell_id": 5308,
-        "spell_name": "Execute",
-        "alternative_spell_ids": [
-          23881,
-          85288,
-          190411
-        ],
-        "alternative_spell_names": [
-          "Bloodthirst",
-          "Raging Blow",
-          "Whirlwind"
-        ],
-        "health_pct": 20,
-        "except_buff_spell_ids": [
-          1719
-        ],
-        "except_buff_spell_names": [
-          "Recklessness"
-        ]
-      },
-      "action": "Send Execute ahead of Bloodthirst and Raging Blow once the boss falls into execute range."
-    },
-    {
-      "type": "cd_hold",
-      "severity": "warning",
-      "description": "Hold Bladestorm when Recklessness is nearly ready",
-      "condition": {
-        "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [
-          446035
-        ],
-        "spell_names": [
-          "Bladestorm"
-        ],
-        "anchor_spell_id": 1719,
-        "anchor_spell_name": "Recklessness"
-      },
-      "action": "Bank Bladestorm and open it inside the Recklessness window instead of just before it."
+      "action": "Fire Execute while the proc is up, at any target health, since that cast is free."
     },
     {
       "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Avatar goes out with Recklessness",
+      "description": "Bladestorm inside Recklessness",
       "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 107574,
-        "spell_name": "Avatar",
-        "required_spell_id": 1719,
-        "required_spell_name": "Recklessness",
-        "position": "either"
+        "kind": "cast_outside_buff",
+        "spell_id": 446035,
+        "spell_name": "Bladestorm",
+        "buff_spell_id": 1719,
+        "buff_spell_name": "Recklessness",
+        "require": "inside"
       },
-      "action": "Macro Avatar to Recklessness so Anger Management keeps the two windows stacked."
+      "action": "Hold Bladestorm for your Recklessness window unless the boss is about to die."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Battle Shout up before the pull",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 6673,
+        "aura_spell_name": "Battle Shout",
+        "on": "self"
+      },
+      "action": "Cast Battle Shout before the pull and put it straight back up if it ever drops."
     }
-  ],
-  "source_summary": "Fury has a flat damage profile, so Recklessness, Avatar or Bladestorm, and Odyn's Fury all go out close to on cooldown; the guide says not to delay them by more than 10-15% of their cooldown unless the wait buys extra targets or is your last use of the fight. Recklessness slashes Rampage's cost and swaps Bloodthirst and Raging Blow for Bloodbath and Crushing Blow, so Rampage fills most of the window, while Avatar is macroed to it and Bladestorm is banked when Recklessness is close. Everything outside cooldowns serves Enrage: pool rage, refresh Enrage with Rampage before it drops, spend Hack and Slash resets on Raging Blow, and dump Sudden Death procs into Execute."
+  ]
 }

@@ -6,201 +6,112 @@
       "name": "Invoke Niuzao, the Black Ox",
       "spell_id": 132578,
       "cooldown": 120,
-      "duration": 25,
-      "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Summon him on cooldown once you know the fight lasts another 25 seconds, then cram as many Blackout Kick and Breath of Fire casts as you can into the window.",
-      "id_note": "132578 is both the cast and the self aura seen in 5/5 parses."
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown whenever the fight will last another 25 seconds, then chain Blackout Kick and Breath of Fire inside it and spend each Blackout Combo on Tiger Palm rather than Keg Smash."
     },
     {
       "name": "Exploding Keg",
       "spell_id": 325153,
       "cooldown": 60,
-      "align_with_bloodlust": false,
       "opener_priority": 2,
-      "usage_rule": "Send it when Keg Smash is below a full charge, with Rushing Jade Wind already ticking, and follow it with the Keg Smash its reset hands you."
-    },
-    {
-      "name": "Chi Burst",
-      "spell_id": 123986,
-      "cooldown": 30,
-      "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Cast it on cooldown, and open with it from maximum range while you run in to your target.",
-      "talent_gated": true
-    },
-    {
-      "name": "Black Ox Brew",
-      "spell_id": 115399,
-      "cooldown": 120,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press it only once both Purifying Brew charges and your Celestial Brew or Celestial Infusion are down and your Energy is low, then spend a brew straight away.",
+      "usage_rule": "Throw it on cooldown with Rushing Jade Wind already rolling, then cash in the Keg Smash reset it gives you.",
       "talent_gated": true
     },
     {
       "name": "Touch of Death",
       "spell_id": 322109,
       "cooldown": 180,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "usage_rule": "Snipe it the moment an enemy drops below your own maximum health, and pop Fortifying Brew first to raise that threshold.",
+      "usage_rule": "Fire it the moment the target's health drops below your own maximum, or below 15% if you took Improved Touch of Death."
+    },
+    {
+      "name": "Chi Burst",
+      "spell_id": 123986,
+      "cooldown": 30,
+      "usage_rule": "Cast it on cooldown, and open with it from maximum range while you close the gap to your target.",
+      "talent_gated": true
+    },
+    {
+      "name": "Black Ox Brew",
+      "spell_id": 115399,
+      "cooldown": 120,
+      "usage_rule": "Chug it only when both Purifying Brew charges and Celestial Infusion are down and your Energy is low, then spend a Purifying Brew charge straight away.",
       "talent_gated": true
     }
   ],
   "defensives": [
     {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Press it ahead of a big damage window rather than at low health, since Keg Smash and Tiger Palm cut its cooldown roughly in half.",
+      "id_note": "115203 is the cast id; the self aura the logs carry is 120954."
+    },
+    {
       "name": "Purifying Brew",
       "spell_id": 119582,
       "cooldown": 20,
-      "usage_rule": "Spend a charge right after a damage spike, and never leave both charges sitting ready."
+      "usage_rule": "Drink a charge right after a big hit lands, and never leave both charges sitting full."
     },
     {
       "name": "Celestial Infusion",
       "spell_id": 1241059,
       "cooldown": 90,
       "duration": 16,
-      "usage_rule": "Press it into steady incoming damage to keep the absorb rolling, and as Master of Harmony spend it often to cash in stored vitality for damage."
+      "usage_rule": "Spend a charge often to keep the absorb rolling, keeping one in reserve when a known spike is close."
     },
     {
       "name": "Celestial Brew",
       "spell_id": 322507,
       "cooldown": 90,
       "duration": 8,
-      "usage_rule": "Take it into spiky damage and time it onto the big hit, because the whole shield is spent in 8 seconds.",
-      "id_note": "Not pressed in the sampled parses; the field runs Celestial Infusion in its slot.",
+      "usage_rule": "Take it over Celestial Infusion against spiky damage and save it for the hits that need a full absorb.",
+      "id_note": "Choice node against Celestial Infusion; no casts in the sampled parses, which all played Celestial Infusion (1241059).",
       "talent_gated": true
-    },
-    {
-      "name": "Fortifying Brew",
-      "spell_id": 115203,
-      "cooldown": 360,
-      "duration": 15,
-      "usage_rule": "Use it before your health gets dangerous, since Keg Smash and Tiger Palm cut its 6 minute cooldown roughly in half.",
-      "id_note": "115203 is the cast id; 120954 is the self aura in the parses."
     },
     {
       "name": "Expel Harm",
       "spell_id": 322101,
       "cooldown": 15,
-      "usage_rule": "Press it to sweep up your Healing Spheres when you need self healing, and leave them alone while Niuzao's Resolve is turning them into a steady stream.",
-      "id_note": "Table base_cd_s is 15s; the guide text calls it a 5 second cooldown."
-    },
-    {
-      "name": "Dampen Harm",
-      "spell_id": 122278,
-      "cooldown": 120,
-      "duration": 10,
-      "usage_rule": "Press it before a run of large hits, because it cuts the biggest ones hardest.",
-      "id_note": "122278 is the castable id; 175395 shares the name and neither was observed in the parses.",
-      "talent_gated": true
-    },
-    {
-      "name": "Diffuse Magic",
-      "spell_id": 122783,
-      "cooldown": 90,
-      "duration": 6,
-      "usage_rule": "Press it into heavy magic damage to cut it and throw harmful effects back at their caster.",
-      "talent_gated": true
-    },
-    {
-      "name": "Zen Meditation",
-      "spell_id": 115176,
-      "cooldown": 300,
-      "duration": 8,
-      "usage_rule": "Channel it through a scripted magic burst you can stand still for, since a melee hit ends it early."
+      "usage_rule": "Press it to sweep up your Healing Spheres when your health dips.",
+      "id_note": "Ability table gives a 15s base cooldown; the guide prose says 5s."
     }
   ],
   "rules": [
     {
       "type": "rotation",
       "severity": "critical",
-      "description": "Keep Shuffle up at all times",
+      "description": "Shuffle up for the whole fight",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 215479,
         "aura_spell_name": "Shuffle",
         "on": "self"
       },
-      "action": "Chain Keg Smash and Blackout Kick on cooldown so it never lapses, because staggered damage keeps landing after it falls off."
+      "action": "Chain Blackout Kick and Keg Smash so Shuffle keeps refreshing."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Keep Breath of Fire burning on your target",
+      "description": "Breath of Fire kept up on the boss",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 123725,
         "aura_spell_name": "Breath of Fire",
         "on": "target"
       },
-      "action": "Refresh it every cooldown and use the Keg Smash resets from Sal'salabim's Strength to keep Charred Passions on your Blackout Kicks."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Spend Empty Barrel on a free Keg Smash",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 1265307,
-        "buff_spell_name": "Empty Barrel",
-        "spend_spell_ids": [
-          121253
-        ],
-        "spend_spell_names": [
-          "Keg Smash"
-        ]
-      },
-      "action": "Fire the free Keg Smash as soon as the barrel appears, and hold your brews until it is gone."
+      "action": "Recast Breath of Fire as soon as Keg Smash resets it."
     },
     {
       "type": "opener",
       "severity": "info",
-      "description": "Open Keg Smash to Blackout Kick, then Niuzao",
+      "description": "Keg Smash and Blackout Kick lead the opener",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [
-          121253,
-          205523,
-          115181,
-          132578
-        ],
-        "spell_names": [
-          "Keg Smash",
-          "Blackout Kick",
-          "Breath of Fire",
-          "Invoke Niuzao, the Black Ox"
-        ]
+        "spell_ids": [121253, 205523, 115181, 132578],
+        "spell_names": ["Keg Smash", "Blackout Kick", "Breath of Fire", "Invoke Niuzao, the Black Ox"]
       },
-      "action": "Build Shuffle with Keg Smash and Blackout Kick first, take Breath of Fire for Charred Passions, and summon Niuzao on the next free global."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Follow Black Ox Brew with Purifying Brew",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 115399,
-        "spell_name": "Black Ox Brew",
-        "required_spell_id": 119582,
-        "required_spell_name": "Purifying Brew",
-        "position": "after"
-      },
-      "action": "Spend a Purifying Brew charge immediately afterwards so the recharge starts again."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Save Energy for Keg Smash before Tiger Palm",
-      "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 100780,
-        "spell_name": "Tiger Palm",
-        "resource_type": 3,
-        "resource_name": "energy",
-        "bound": "min"
-      },
-      "action": "Bank enough Energy for the next Keg Smash and dump the rest into Tiger Palm only when you are near capping or consuming Blackout Combo."
+      "action": "Lead with Keg Smash into Blackout Kick, follow with Breath of Fire, and summon Niuzao once those are out."
     }
-  ],
-  "source_summary": "Brewmaster presses Blackout Kick and Keg Smash on cooldown to hold Shuffle at full uptime, then fills the gaps with Breath of Fire, Tiger Palm and its cooldowns. Invoke Niuzao and Exploding Keg go out on cooldown rather than being stacked together, with Exploding Keg feeding an extra Keg Smash and Niuzao paying out for every Blackout Kick and Breath of Fire inside its 25 second window. Purifying Brew, Celestial Infusion and Fortifying Brew are spent freely because Keg Smash and Tiger Palm cut every Brew cooldown roughly in half."
+  ]
 }

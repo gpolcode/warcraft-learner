@@ -3,74 +3,68 @@
   "spec_icon": "spell_nature_starfall",
   "major_cooldowns": [
     {
-      "name": "Lunar Eclipse",
-      "spell_id": 1233272,
-      "cooldown": 32,
-      "duration": 15,
-      "align_with_bloodlust": false,
-      "opener_priority": 1,
-      "usage_rule": "Enter Eclipse with a nearly full Astral Power bar and enough banked procs to dump every Ascendant Eclipses stack inside 4 GCDs, and never sit on 2 charges.",
-      "id_note": "The in-game button is Eclipse (1239669); logs record the cast as Lunar Eclipse 1233272 or Solar Eclipse 1233346, and only 1233272 appears in the sampled parses."
-    },
-    {
-      "name": "Fury of Elune",
-      "spell_id": 202770,
-      "cooldown": 60,
-      "duration": 8,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Press it on the GCD before Force of Nature or lined up with your Eclipse entry and Incarnation, and never hold it far enough to lose a cast."
-    },
-    {
-      "name": "Force of Nature",
-      "spell_id": 205636,
-      "cooldown": 60,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Press it while you are out of an Eclipse and your next button is Eclipse or Celestial Alignment/Incarnation, and hold it up to 15 seconds with Control of the Dream rather than breaking the lineup.",
-      "id_note": "205636 is the 60s summon; 205644 shares the name on an 8s cooldown. Not cast in the sampled parses, which all ran Elune's Chosen.",
-      "talent_gated": true
-    },
-    {
       "name": "Incarnation: Chosen of Elune",
       "spell_id": 102560,
-      "cooldown": 180,
-      "duration": 20,
-      "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Send it right after Force of Nature, or when Lunar Eclipse will not reach 2 charges during the window, and open it with an instant Starfire to spend Ascendant Fires.",
+      "cooldown": 120,
+      "opener_priority": 2,
+      "usage_rule": "Press it on the GCD after Fury of Elune together with your on-use trinket, and fill the window with Starfire and Starsurge instead of dots.",
+      "id_note": "102560 is cast and self aura in 5/5 sampled parses. Table base_cd_s is 180, but the guide states a two minute recharge for the Celestial Alignment / Incarnation node and says it banks two charges, so 120 is used. talent_gated because it is the choice-node alternative to Celestial Alignment.",
       "talent_gated": true
     },
     {
       "name": "Celestial Alignment",
       "spell_id": 194223,
-      "cooldown": 180,
-      "duration": 15,
-      "align_with_bloodlust": false,
-      "opener_priority": 3,
-      "usage_rule": "Press it outside an Eclipse right after Force of Nature or with Fury of Elune ready, and hold a charge for a mechanic only while you are not sitting on 2 charges.",
-      "id_note": "194223 is castable per its tooltip but was not pressed in the sampled parses, which all ran Incarnation: Chosen of Elune.",
+      "cooldown": 120,
+      "usage_rule": "Press it on the GCD after Fury of Elune or Force of Nature, and hold a charge for an incoming mechanic as long as you are not sitting on two.",
+      "id_note": "Not cast in the sampled parses, which all took Incarnation: Chosen of Elune; castable per its tooltip. Table base_cd_s is 180 while the guide states a two minute recharge.",
+      "talent_gated": true
+    },
+    {
+      "name": "Fury of Elune",
+      "spell_id": 202770,
+      "cooldown": 60,
+      "opener_priority": 1,
+      "usage_rule": "Send it on the GCD before Incarnation or Eclipse, or straight off cooldown when you are playing Lunation.",
+      "id_note": "202770 is the cast id seen in 5/5 parses (74 casts); 211545 and 394111 share the name and are never cast."
+    },
+    {
+      "name": "Lunar Eclipse",
+      "spell_id": 1233272,
+      "cooldown": 32,
+      "usage_rule": "Enter it on the GCD after Fury of Elune with Astral Power pooled, and never sit on two charges.",
+      "id_note": "1233272 is the Eclipse cast observed in 5/5 parses; Solar Eclipse is the separate cast id 1233346 sharing the same charges, and the generic Eclipse talent id 1239669 never appears as a cast."
+    },
+    {
+      "name": "Force of Nature",
+      "spell_id": 205636,
+      "cooldown": 60,
+      "usage_rule": "Cast it only when Eclipse or Incarnation is ready and open that window on the next GCD, since its value is the 12% damage amp while the treants are out.",
+      "id_note": "Keeper of the Grove talent, castable per its tooltip but not cast in the sampled parses, which all played Elune's Chosen.",
       "talent_gated": true
     },
     {
       "name": "Convoke the Spirits",
       "spell_id": 391528,
       "cooldown": 120,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "usage_rule": "Channel it below 40 Astral Power inside Celestial Alignment or Incarnation with Force of Nature active and Moonfire already on every target.",
-      "id_note": "391528 is the id the guide links; 323764 shares the name, and neither was cast in the sampled parses.",
+      "usage_rule": "Channel it inside your Force of Nature or Celestial Alignment window at as little Astral Power as possible so its free Starsurges do not overcap you.",
+      "id_note": "Castable per its tooltip but not cast in the sampled parses; the guide lists it as an opt-in cooldown talent.",
       "talent_gated": true
     },
     {
       "name": "Wild Mushroom",
       "spell_id": 88747,
       "cooldown": 30,
-      "duration": 10,
-      "align_with_bloodlust": false,
-      "usage_rule": "Drop it inside an Eclipse, or whenever its 3 charges would fill up before your next Celestial Alignment or Incarnation.",
-      "id_note": "88747 is the 30s 3-charge cast; 88751 shares the name as a passive. Not cast in the sampled parses.",
+      "usage_rule": "Press it in AoE to generate Astral Power while you are moving, and leave it out of single-target fights.",
+      "id_note": "Castable per its tooltip but not cast in the sampled parses; the guide describes it as an opt-in AoE button.",
+      "talent_gated": true
+    },
+    {
+      "name": "Empowering Venom",
+      "spell_id": 1293316,
+      "cooldown": 120,
+      "opener_priority": 3,
+      "usage_rule": "Pop your on-use trinket in the same GCD window as Incarnation or Celestial Alignment.",
+      "id_note": "On-use trinket cast in 5/5 sampled parses (22 casts); the guide names the trinket slot generically through Inscrutable Quantum Device (330323). talent_gated so players in a different trinket are not flagged for zero casts.",
       "talent_gated": true
     }
   ],
@@ -80,162 +74,111 @@
       "spell_id": 22812,
       "cooldown": 60,
       "duration": 8,
-      "usage_rule": "Press it for any predictable raid damage; it is off the global so it never costs you a cast."
+      "usage_rule": "Press it ahead of predictable raid damage; it also stops hits from pushing back your casts."
     },
     {
-      "name": "Survival Instincts",
-      "spell_id": 61336,
-      "cooldown": 180,
-      "duration": 6,
-      "usage_rule": "Save it for the single biggest hit you expect to eat, since the window is very short.",
-      "id_note": "Castable per its tooltip but not pressed in the sampled parses."
-    },
-    {
-      "name": "Renewal",
-      "spell_id": 108238,
-      "cooldown": 90,
-      "usage_rule": "Press it the moment you drop low for an instant chunk of your health back.",
-      "id_note": "108238 is the long-standing cast id; 283762 shares the name. Neither was pressed in the sampled parses.",
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Shift to Bear Form and press it to heal yourself back up when a hit leaves you low.",
+      "id_note": "Requires Bear Form; cast in 1/5 sampled parses with the self aura seen in 5/5. Class-tree talent that not every build takes.",
       "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
-      "severity": "info",
-      "description": "Open with Moonfire, Sunfire, Eclipse, Incarnation",
+      "severity": "warning",
+      "description": "Open with dots, Fury of Elune, then Incarnation",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [8921, 93402, 1233272, 102560],
-        "spell_names": ["Moonfire", "Sunfire", "Lunar Eclipse", "Incarnation: Chosen of Elune"]
+        "spell_ids": [93402, 202770, 102560, 78674],
+        "spell_names": ["Sunfire", "Fury of Elune", "Incarnation: Chosen of Elune", "Starsurge"]
       },
-      "action": "Pre-cast your builder, apply both dots, enter Eclipse to start its cooldown, then send Incarnation."
+      "action": "Get your dots down first, send Fury of Elune, then press Incarnation on the next GCD and dump Astral Power with Starsurge."
     },
     {
-      "type": "rotation",
+      "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Keep Sunfire up on your target",
+      "description": "Incarnation on the GCD after Fury of Elune",
       "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 164815,
-        "aura_spell_name": "Sunfire",
-        "on": "target"
+        "kind": "cast_without_prior",
+        "spell_id": 102560,
+        "spell_name": "Incarnation: Chosen of Elune",
+        "required_spell_id": 202770,
+        "required_spell_name": "Fury of Elune",
+        "position": "before"
       },
-      "action": "Refresh Sunfire inside its pandemic window, and reapply it the moment the pull is gathered."
+      "action": "Line Fury of Elune up so it goes out on the GCD before you press Incarnation."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Keep Moonfire ticking on every target",
+      "description": "Enter Lunar Eclipse with Astral Power banked",
       "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 164812,
-        "aura_spell_name": "Moonfire",
-        "on": "target"
+        "kind": "resource_at_cast",
+        "spell_id": 1233272,
+        "spell_name": "Lunar Eclipse",
+        "resource_type": 8,
+        "resource_name": "astral power",
+        "bound": "min"
       },
-      "action": "Spread Moonfire while the tank gathers and refresh it inside pandemic to keep Shooting Stars feeding."
+      "action": "Build Astral Power before you press it so the window opens with Starsurges ready to fire."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Starfire is your builder in Lunar Eclipse",
+      "description": "Starfire is your filler inside Eclipse",
       "condition": {
         "kind": "filler_in_buff",
         "spell_id": 194153,
         "spell_name": "Starfire",
         "alternative_spell_ids": [190984],
         "alternative_spell_names": ["Wrath"],
-        "buff_spell_id": 48518,
-        "buff_spell_name": "Eclipse (Lunar)",
-        "except_buff_spell_ids": [102560],
-        "except_buff_spell_names": ["Incarnation: Chosen of Elune"]
-      },
-      "action": "Generate with Starfire while Lunar Eclipse is up and save Wrath for Solar windows."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Wrath is your builder in Solar Eclipse",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 190984,
-        "spell_name": "Wrath",
-        "alternative_spell_ids": [194153],
-        "alternative_spell_names": ["Starfire"],
-        "buff_spell_id": 48517,
-        "buff_spell_name": "Eclipse (Solar)",
+        "buff_spell_id": 1301768,
+        "buff_spell_name": "Akil'zon's Clarity",
         "except_buff_spell_ids": [102560, 1263363],
         "except_buff_spell_names": ["Incarnation: Chosen of Elune", "Ascendant Fires"]
       },
-      "action": "Generate with Wrath while Solar Eclipse is up and keep Starfire for Lunar and for instant casts."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Overlap Eclipse with Fury of Elune",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 1233272,
-        "spell_name": "Lunar Eclipse",
-        "required_spell_id": 202770,
-        "required_spell_name": "Fury of Elune",
-        "position": "either"
-      },
-      "action": "Enter Eclipse in the same window as Fury of Elune, and hold either one only when it costs you no use."
+      "action": "Press Starfire, not Wrath, while you are inside an Eclipse."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend Touch the Cosmos on Starfall or Starsurge",
+      "description": "Keep Moonfire on the boss",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 164812,
+        "aura_spell_name": "Moonfire",
+        "on": "target"
+      },
+      "action": "Reapply Moonfire before it drops, and top it up on the way into your cooldown window rather than inside it."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Sunfire on the boss",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 164815,
+        "aura_spell_name": "Sunfire",
+        "on": "target"
+      },
+      "action": "Reapply Sunfire before it drops, and top it up on the way into your cooldown window rather than inside it."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Spend Touch the Cosmos on Starsurge or Starfall",
       "condition": {
         "kind": "proc_wasted",
         "buff_spell_id": 450360,
         "buff_spell_name": "Touch the Cosmos",
-        "spend_spell_ids": [191034, 78674],
-        "spend_spell_names": ["Starfall", "Starsurge"]
+        "spend_spell_ids": [78674, 191034],
+        "spend_spell_names": ["Starsurge", "Starfall"]
       },
-      "action": "Dump the free cast into Starfall, even in single target, or into Starsurge when you need to move."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Spend Starweaver's Weft on Starsurge",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 393944,
-        "buff_spell_name": "Starweaver's Weft",
-        "spend_spell_ids": [78674],
-        "spend_spell_names": ["Starsurge"]
-      },
-      "action": "Bank the proc into your next Eclipse entry, but fire the free Starsurge before it expires."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Spend Starweaver's Warp on Starfall",
-      "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 393942,
-        "buff_spell_name": "Starweaver's Warp",
-        "spend_spell_ids": [191034],
-        "spend_spell_names": ["Starfall"]
-      },
-      "action": "Bank the proc into your next Eclipse entry, but fire the free Starfall before it expires."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Never cap Astral Power with Starfire",
-      "condition": {
-        "kind": "resource_at_cast",
-        "spell_id": 194153,
-        "spell_name": "Starfire",
-        "resource_type": 8,
-        "resource_name": "astral power",
-        "bound": "max"
-      },
-      "action": "Spend with Starsurge or Starfall before another builder wastes Astral Power, and use the instant spenders while you move."
+      "action": "Fire the free Starfall or Starsurge before the proc expires, and only hold it into a cooldown window when you will not munch it."
     }
-  ],
-  "source_summary": "Balance treats Eclipse as a damage cooldown: press it with as much Astral Power as you can hold, never sit on 2 charges, and overlap every window with Force of Nature as Keeper of the Grove or Fury of Elune as Elune's Chosen. Celestial Alignment and Incarnation: Chosen of Elune follow a Force of Nature cast and are the windows where you spend hardest, opening with an instant Starfire to consume Ascendant Fires. Moonfire and Sunfire stay up on everything to feed Shooting Stars, and free Starfall and Starsurge procs get banked into an Eclipse entry rather than wasted."
+  ]
 }

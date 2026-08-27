@@ -6,27 +6,49 @@
       "name": "Soul Immolation",
       "spell_id": 1241937,
       "cooldown": 60,
-      "duration": 5,
-      "align_with_bloodlust": false,
-      "usage_rule": "Cast Soul Immolation outside Void Metamorphosis whenever one is not already active, waiting a global after it fades so an Undying Embers reignite is not wasted.",
-      "id_note": "1241937 is both the cast and the self aura in the sampled parses; the same-name 1242475 was never observed."
-    },
-    {
-      "name": "The Hunt",
-      "spell_id": 1246167,
-      "cooldown": 90,
-      "align_with_bloodlust": false,
-      "usage_rule": "Hold The Hunt on pull to huggle it into your first Void Metamorphosis on single target, then press it on cooldown, smuggling it into the form only when it already lines up.",
-      "id_note": "1246167 is the Devourer version the guide links; same-name 370965 is the older Demon Hunter cast. Neither appeared in the sampled parses, which all ran caster builds without the melee package. Void-Scarred upgrades this button into Predator's Wake (1259431) inside Void Metamorphosis.",
-      "talent_gated": true
+      "opener_priority": 1,
+      "usage_rule": "Keep one running outside Void Metamorphosis, use it inside the form only at 20 Fury or less on your way out, and wait a global after it fades for an Undying Embers reignite.",
+      "id_note": "1241937 is the cast id seen in all five parses; the twin 1242475 was never observed."
     },
     {
       "name": "Voidblade",
       "spell_id": 1245412,
       "cooldown": 30,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press Voidblade in the globals right before you transform so the Hungering Slash it hands you upgrades into Reaper's Toll, and enter Void Metamorphosis without it rather than delay the form.",
-      "id_note": "1245412 is the castable Voidblade per its tooltip; the melee package was not taken in any sampled parse, so no casts were seen. Inside Void Metamorphosis Void-Scarred replaces this button with Pierce the Veil (1245483).",
+      "opener_priority": 2,
+      "usage_rule": "Hold it until Void Metamorphosis is ready and press it right before you enter so your Hungering Slash proc upgrades into Reaper's Toll, but never delay the form waiting on it.",
+      "id_note": "1245412 is the id the guide links; the twin 1245414 also shows as a cast in the parses. Entering Void Metamorphosis resets this cooldown and swaps the button to Pierce the Veil, so raw cast counts run under the 30s base.",
+      "talent_gated": true
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 1246167,
+      "cooldown": 90,
+      "opener_priority": 3,
+      "usage_rule": "Hold it on the pull to smuggle into your first Void Metamorphosis, then press it on cooldown except when Void Metamorphosis is a few globals out.",
+      "id_note": "1246167 is the Devourer cast id observed in all five parses; 370965 is the older shared The Hunt cast id.",
+      "talent_gated": true
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "opener_priority": 4,
+      "usage_rule": "Drink it in the same global that you enter Void Metamorphosis, and take the second one in the last 30 seconds of the fight."
+    },
+    {
+      "name": "Pierce the Veil",
+      "spell_id": 1245483,
+      "cooldown": 30,
+      "opener_priority": 5,
+      "usage_rule": "Voidblade becomes this inside Void Metamorphosis, so fire it early in the window while the Hungering Slash proc is down to trigger its Voidsurge.",
+      "talent_gated": true
+    },
+    {
+      "name": "Predator's Wake",
+      "spell_id": 1259431,
+      "cooldown": 90,
+      "opener_priority": 6,
+      "usage_rule": "The Hunt becomes this inside Void Metamorphosis, so press it once per window while the Hungering Slash proc is down to land its Voidsurge.",
       "talent_gated": true
     }
   ],
@@ -36,57 +58,81 @@
       "spell_id": 198589,
       "cooldown": 60,
       "duration": 10,
-      "usage_rule": "Press Blur for melee and physical spikes you cannot step out of.",
-      "id_note": "198589 is the cast; same-name 212800 is the self aura."
+      "usage_rule": "Press it just ahead of a hit you know is coming, since the damage reduction only covers 10 seconds.",
+      "id_note": "198589 is the cast id; 212800 is the aura the logs carry."
     },
     {
       "name": "Darkness",
       "spell_id": 196718,
       "cooldown": 300,
       "duration": 8,
-      "usage_rule": "Drop Darkness on the group ahead of a known raid-wide damage event."
+      "usage_rule": "Drop it on top of your group for a raid-wide damage window, since the avoidance only helps players standing inside it.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
-      "type": "rotation",
+      "type": "opener",
       "severity": "warning",
-      "description": "Soul Immolation only outside Void Metamorphosis",
+      "description": "Open with Reap and Void Ray, then Voidblade into The Hunt",
       "condition": {
-        "kind": "cast_outside_buff",
-        "spell_id": 1241937,
-        "spell_name": "Soul Immolation",
-        "buff_spell_id": 1217607,
-        "buff_spell_name": "Void Metamorphosis",
-        "require": "outside"
+        "kind": "opening_sequence",
+        "spell_ids": [1226019, 473728, 1245412, 1246167, 1245483],
+        "spell_names": ["Reap", "Void Ray", "Voidblade", "The Hunt", "Pierce the Veil"]
       },
-      "action": "Refresh Soul Immolation between Void Metamorphosis windows, not during one."
+      "action": "Start Soul Immolation two seconds before the pull, build into Void Ray, then Voidblade and hit Void Metamorphosis during The Hunt's charge."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Void Ray over Devour inside Void Metamorphosis",
+      "description": "Spend every Soulburst proc on Consume or Devour",
       "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 473728,
-        "spell_name": "Void Ray",
-        "alternative_spell_ids": [
-          1217610
-        ],
-        "alternative_spell_names": [
-          "Devour"
-        ],
+        "kind": "proc_wasted",
+        "buff_spell_id": 1297433,
+        "buff_spell_name": "Soulburst",
+        "spend_spell_ids": [473662, 1217610],
+        "spend_spell_names": ["Consume", "Devour"]
+      },
+      "action": "Fire Consume, or Devour inside Void Metamorphosis, the moment Soulburst procs and ahead of Cull."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Moment of Craving on Reap or Cull",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 1238495,
+        "buff_spell_name": "Moment of Craving",
+        "spend_spell_ids": [1226019, 1245453],
+        "spend_spell_names": ["Reap", "Cull"]
+      },
+      "action": "Follow a full Void Ray channel with Reap, or Cull inside Void Metamorphosis, before the buff runs out."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Drop Reap once you are on multiple targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1226019,
+        "spell_name": "Reap",
+        "bound": "max"
+      },
+      "action": "Save your fragments for Eradicate at 10 souls instead of feeding them to Reap."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Potion of Recklessness inside Void Metamorphosis",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1236994,
+        "spell_name": "Potion of Recklessness",
         "buff_spell_id": 1217607,
         "buff_spell_name": "Void Metamorphosis",
-        "except_buff_spell_ids": [
-          1239524
-        ],
-        "except_buff_spell_names": [
-          "Eradicate"
-        ]
+        "require": "inside"
       },
-      "action": "Press Void Ray as soon as it comes up in the form, since it costs no Fury and pauses your drain."
+      "action": "Drink it in the same global you enter Void Metamorphosis, or in the last 30 seconds of the fight."
     }
-  ],
-  "source_summary": "Devourer has no timed burst button: Void Metamorphosis unlocks at 50 collected Soul Fragments, so every decision is about reaching the form sooner and packing it with Void Ray, Collapsing Star and the melee combo. Soul Immolation is kept rolling only outside the form, The Hunt and Voidblade are smuggled in just before you transform so their procs upgrade inside it, and souls left on the ground carry progress into the next window. Void-Scarred cycles through as many short windows as possible, while Annihilator extends one window to fit at least five Collapsing Star casts."
+  ]
 }

@@ -6,63 +6,49 @@
       "name": "Thunder Focus Tea",
       "spell_id": 116680,
       "cooldown": 30,
-      "align_with_bloodlust": false,
-      "usage_rule": "Send it on cooldown, spending the empower on Renewing Mist for the Haste buff or on Rising Sun Kick to cut its cooldown, and hold one of the two Master of Harmony charges for the next damage event.",
-      "id_note": "116680 is the cast id, seen in 5/5 sampled parses; the same id also shows as a short self aura."
-    },
-    {
-      "name": "Celestial Conduit",
-      "spell_id": 443028,
-      "cooldown": 90,
-      "duration": 4,
-      "align_with_bloodlust": false,
-      "usage_rule": "Channel it into heavy group damage and only press it again to summon the Celestials early when you will not lose casts to the cooldown acceleration.",
-      "talent_gated": true
+      "usage_rule": "Hold a Renewing Mist charge for it and empower that cast for the 10 second extension plus the Haste infusion; with Conduit of the Celestials press it on cooldown to keep Heart of the Jade Serpent cycling, and with Master of Harmony keep one of its two charges for a damage window without capping both."
     },
     {
       "name": "Invoke Yu'lon, the Jade Serpent",
       "spell_id": 322118,
       "cooldown": 120,
-      "duration": 25,
-      "align_with_bloodlust": false,
-      "usage_rule": "Send her ahead of the damage and chain Enveloping Mist on different allies, then follow with Vivify to cash in Invigorating Mists.",
-      "id_note": "Gift of the Celestials halves this to 60s at half duration; 120s is the table's base cooldown.",
+      "usage_rule": "Send her out ahead of the damage and chain Enveloping Mists on different injured allies, then follow with Vivify to cash in Invigorating Mists; Gift of the Celestials trades her window down to 12 seconds for a 1 minute cooldown.",
       "talent_gated": true
     },
     {
       "name": "Invoke Chi-Ji, the Red Crane",
       "spell_id": 325197,
       "cooldown": 120,
-      "duration": 25,
-      "align_with_bloodlust": false,
-      "usage_rule": "Press him before a damage window and stay in melee, weaving instant Enveloping Mist on injured allies while stacking Teachings of the Monastery before each Blackout Kick.",
-      "id_note": "Gift of the Celestials halves this to 60s at half duration; 120s is the table's base cooldown.",
+      "usage_rule": "Call him when you can stay in melee and press Rising Sun Kick, Blackout Kick and Spinning Crane Kick nonstop, weaving instant Enveloping Mists onto injured allies between them.",
+      "id_note": "325197 is castable per its tooltip but was not pressed in the sampled parses; all five played Invoke Yu'lon instead.",
+      "talent_gated": true
+    },
+    {
+      "name": "Celestial Conduit",
+      "spell_id": 443028,
+      "cooldown": 90,
+      "usage_rule": "Channel it into heavy group damage, recast it for Unity Within only when the group is badly hurt and Rushing Wind Kick just went on cooldown, and spend the 8 seconds of Heart of the Jade Serpent that follows on Renewing Mist and Rushing Wind Kick.",
       "talent_gated": true
     },
     {
       "name": "Life Cocoon",
       "spell_id": 116849,
       "cooldown": 120,
-      "duration": 12,
-      "align_with_bloodlust": false,
-      "usage_rule": "Throw it on an ally taking sustained heavy damage or already low, where the absorb is worth the most, and use it to solo soak.",
-      "id_note": "Chrysalis shortens this to 75s; 120s is the table's base cooldown."
+      "usage_rule": "Wrap a tank or a dying ally before the hit lands, or use it to solo soak a mechanic; Chrysalis brings it back every 75 seconds."
     },
     {
       "name": "Revival",
       "spell_id": 115310,
       "cooldown": 180,
-      "align_with_bloodlust": false,
-      "usage_rule": "Hold it for a raid-wide spike where the instant heal and the mass dispel both land, remembering it heals first and dispels second.",
-      "id_note": "Uplifted Spirits shortens this to 150s; 180s is the table's base cooldown.",
+      "usage_rule": "Fire it as an instant raid-wide save or on a moment that needs a mass dispel, and remember it heals first and dispels second.",
+      "id_note": "Uplifted Spirits cuts this to 150 seconds; 180 is the untalented base from the ability table.",
       "talent_gated": true
     },
     {
       "name": "Restoral",
       "spell_id": 388615,
       "cooldown": 180,
-      "align_with_bloodlust": false,
-      "usage_rule": "Take it over Revival when a raid-wide Magic dispel would be dangerous and press it for the same emergency spikes.",
+      "usage_rule": "Take it over Revival when mass dispelling Magic would kill the raid, and use it as the same emergency group heal.",
       "talent_gated": true
     }
   ],
@@ -72,16 +58,15 @@
       "spell_id": 115203,
       "cooldown": 360,
       "duration": 15,
-      "usage_rule": "Press it before a big hit lands on you to pad your health pool and blunt the damage.",
-      "id_note": "115203 is the cast id; 120954 shares the name and is the self aura."
+      "usage_rule": "Press it before a hit you know is coming at you, since it is your largest personal reduction."
     },
     {
       "name": "Dampen Harm",
       "spell_id": 122278,
       "cooldown": 120,
       "duration": 10,
-      "usage_rule": "Save it for burst damage on you, since it cuts the biggest hits the hardest.",
-      "id_note": "122278 and 175395 share this name and neither was pressed in the sampled parses; 122278 matches the 10s duration tooltip, 175395 lists a 90s cooldown.",
+      "usage_rule": "Use it against big single hits, which it cuts hardest.",
+      "id_note": "Name-verified against WCL game data; not pressed in the sampled parses.",
       "talent_gated": true
     },
     {
@@ -89,45 +74,54 @@
       "spell_id": 122783,
       "cooldown": 90,
       "duration": 6,
-      "usage_rule": "Press it into magic damage aimed at you and let it send the effect back.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "usage_rule": "Pop it for magic burst and to send the magic debuffs on you back to their caster.",
+      "id_note": "Name-verified against WCL game data; not pressed in the sampled parses.",
       "talent_gated": true
     },
     {
-      "name": "Zen Meditation",
-      "spell_id": 115176,
-      "cooldown": 300,
-      "duration": 8,
-      "usage_rule": "Channel it through a heavy incoming hit when you have nothing you must cast.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Cover a predictable burst on yourself with it and push the absorbed damage back into your target.",
+      "id_note": "122470 is the castable id and 124280 is the mirrored damage; seen only as an enemy aura in 1 of 5 parses.",
       "talent_gated": true
-    },
-    {
-      "name": "Expel Harm",
-      "spell_id": 322101,
-      "cooldown": 15,
-      "usage_rule": "Top yourself off with it when you are the one taking chip damage.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
     }
   ],
   "rules": [
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Enveloping Mist on every Strength of the Black Ox",
+      "description": "Enveloping Mist chains inside Invoke Yu'lon",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 443112,
-        "buff_spell_name": "Strength of the Black Ox",
-        "spend_spell_ids": [124682],
-        "spend_spell_names": ["Enveloping Mist"]
+        "kind": "filler_in_buff",
+        "spell_id": 124682,
+        "spell_name": "Enveloping Mist",
+        "alternative_spell_ids": [116670],
+        "alternative_spell_names": ["Vivify"],
+        "buff_spell_id": 322118,
+        "buff_spell_name": "Invoke Yu'lon, the Jade Serpent",
+        "except_buff_spell_ids": [392883],
+        "except_buff_spell_names": ["Vivacious Vivification"]
       },
-      "action": "Fire the proc off with Enveloping Mist on an ally who is taking damage or about to."
+      "action": "Chain Enveloping Mist onto different injured allies while Yu'lon is out, and save Vivify for once those mists are rolling."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Drink Mana Tea before stacks cap",
+      "description": "Keep Secret Infusion Haste up with Thunder Focus Tea",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 388497,
+        "aura_spell_name": "Secret Infusion",
+        "on": "self"
+      },
+      "action": "Spend Thunder Focus Tea on a saved Renewing Mist charge so the Haste infusion keeps rolling."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Save the Mana Tea channel for banked stacks",
       "condition": {
         "kind": "spend_at_stacks",
         "spell_id": 115294,
@@ -137,51 +131,7 @@
         "bound": "min",
         "max_stacks": 20
       },
-      "action": "Chug it in downtime once your stacks are near the cap so no mana you spend is wasted."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Enveloping Mist over Vivify inside Yu'lon",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 124682,
-        "spell_name": "Enveloping Mist",
-        "alternative_spell_ids": [116670, 399491],
-        "alternative_spell_names": ["Vivify", "Sheilun's Gift"],
-        "buff_spell_id": 322118,
-        "buff_spell_name": "Invoke Yu'lon, the Jade Serpent",
-        "except_buff_spell_ids": [392883],
-        "except_buff_spell_names": ["Vivacious Vivification"]
-      },
-      "action": "Chain Enveloping Mist on different allies in her window, then cash them in with Vivify."
-    },
-    {
-      "type": "rotation",
-      "severity": "info",
-      "description": "Tiger Palm before each Blackout Kick",
-      "condition": {
-        "kind": "cast_without_prior",
-        "spell_id": 100784,
-        "spell_name": "Blackout Kick",
-        "required_spell_id": 100780,
-        "required_spell_name": "Tiger Palm",
-        "position": "before"
-      },
-      "action": "Land a Tiger Palm first so Teachings of the Monastery adds hits and reset chances."
-    },
-    {
-      "type": "aoe_switch",
-      "severity": "warning",
-      "description": "Spinning Crane Kick on stacked packs",
-      "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 101546,
-        "spell_name": "Spinning Crane Kick",
-        "bound": "min"
-      },
-      "action": "Swap your melee filler to Spinning Crane Kick once the pack is stacked up."
+      "action": "Bank your stacks and take the Mana Tea channel in downtime before they sit at the cap."
     }
-  ],
-  "source_summary": "Mistweaver runs on short cooldowns and procs rather than a fixed rotation: Thunder Focus Tea is pressed constantly to feed Heart of the Jade Serpent cooldown acceleration, while Invoke Yu'lon or Invoke Chi-Ji, Celestial Conduit, Revival and Life Cocoon cover the planned damage. Yu'lon windows are spent chaining Enveloping Mist into Vivify for Invigorating Mists, and Chi-Ji windows are spent in melee turning Blackout Kick and Rising Sun Kick into Gust of Mists healing. Mana Tea stacks and Strength of the Black Ox and Spiritfont procs are held for real damage events and never allowed to cap."
+  ]
 }

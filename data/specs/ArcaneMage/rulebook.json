@@ -3,33 +3,53 @@
   "spec_icon": "spell_holy_magicalsentry",
   "major_cooldowns": [
     {
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "opener_priority": 1,
+      "usage_rule": "Pre-pot before the pull with your other long buffs, then drink the next one as soon as Arcane Surge is ready again.",
+      "id_note": "1236616 is the drink cast seen in all 5 sampled parses; 1230869 is the crafted item row with no casts."
+    },
+    {
       "name": "Arcane Surge",
       "spell_id": 365350,
       "cooldown": 90,
-      "duration": 15,
-      "align_with_bloodlust": true,
-      "opener_priority": 1,
-      "usage_rule": "Pre-cast it just before the pull and then send it on cooldown with Touch of the Magi, holding it only the few seconds it takes to reach an add wave or a vulnerability window.",
-      "id_note": "365350 is the cast id; 365362 is the self buff and 453326 is the Arcane Phoenix version."
+      "opener_priority": 2,
+      "usage_rule": "Press it on cooldown or into an add wave, then chain Arcane Barrage the moment Arcane Soul appears as its buff ends.",
+      "id_note": "Cast id 365350; 365362 is the self buff and 453326 the Arcane Phoenix copy."
     },
     {
       "name": "Time Warp",
       "spell_id": 80353,
       "cooldown": 300,
-      "duration": 40,
-      "align_with_bloodlust": false,
-      "opener_priority": 2,
-      "usage_rule": "Coordinate it with your group, then cast it straight after your opening Arcane Surge so the whole burst window runs inside it."
+      "opener_priority": 3,
+      "usage_rule": "Coordinate it with your group, and send it right after Arcane Surge in the opener when the call is yours.",
+      "talent_gated": true,
+      "id_note": "Marked talent_gated so a raid where another class provides lust does not read as a missed cast."
     },
     {
       "name": "Touch of the Magi",
       "spell_id": 321507,
       "cooldown": 45,
-      "duration": 12,
-      "align_with_bloodlust": true,
-      "opener_priority": 3,
-      "usage_rule": "Drop it on the toughest enemy that will live all 12 seconds while an Arcane Barrage or Prismatic Bolt is mid-air, and never sit on it more than a few seconds.",
-      "id_note": "321507 is the 45s cast; 210824 is the enemy debuff and 210833 was not observed."
+      "opener_priority": 4,
+      "usage_rule": "Fire it off the global while an Arcane Barrage or Prismatic Bolt is mid-air, pair every second one with Arcane Surge, and put it on the enemy that will survive all 12 seconds.",
+      "id_note": "Cast id 321507; 210824 is the enemy debuff the log carries."
+    },
+    {
+      "name": "Presence of Mind",
+      "spell_id": 205025,
+      "cooldown": 45,
+      "usage_rule": "Press it after an Arcane Barrage when you have no Arcane Charges and Arcane Orb, Arcane Pulse and Touch of the Magi are all down.",
+      "talent_gated": true,
+      "id_note": "Cast id 205025; not pressed in the sampled parses but castable per its tooltip, and the guide keeps it out of the priority list."
+    },
+    {
+      "name": "Evocation",
+      "spell_id": 12051,
+      "cooldown": 45,
+      "usage_rule": "Channel it only when you are out of mana with Arcane Surge and Touch of the Magi both down and Surge more than 10 seconds away, and cancel it once you are back near full.",
+      "talent_gated": true,
+      "id_note": "Cast id 12051; no casts in the sampled parses, so talent_gated keeps zero casts from reading as an error on a season where mana is a non-issue."
     }
   ],
   "defensives": [
@@ -37,68 +57,51 @@
       "name": "Prismatic Barrier",
       "spell_id": 235450,
       "cooldown": 30,
-      "usage_rule": "Keep it up at all times and recast it the moment it breaks, since it only costs half a second of casting.",
-      "id_note": "235450 is both the observed cast and the self aura."
+      "duration": 60,
+      "usage_rule": "Have it on before the pull and refresh it on cooldown, the cast only costs half a second."
     },
     {
       "name": "Alter Time",
       "spell_id": 342245,
       "cooldown": 60,
-      "usage_rule": "Press it before a big hit to snap back to your starting health, or double tap it to return to where you stood for free mobility.",
-      "id_note": "342245 is the 60s cast; 342246 is the aura and 342247 is the return cast."
-    },
-    {
-      "name": "Greater Invisibility",
-      "spell_id": 110959,
-      "cooldown": 120,
-      "duration": 20,
-      "usage_rule": "Fade out of a hit you cannot heal through and to shed threat when you pull ahead of the tank.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+      "duration": 10,
+      "usage_rule": "Press it before a big hit to snap back to that health, or double tap it to reset your position after a mechanic.",
+      "id_note": "342245 starts it, 342247 is the second tap that returns you, 342246 is the self buff."
     },
     {
       "name": "Mirror Image",
       "spell_id": 55342,
       "cooldown": 120,
       "duration": 15,
-      "usage_rule": "Cast it before the pull to zero out your threat, or hold it for a heavy hit if you would rather use it defensively.",
+      "usage_rule": "Save it for damage you have to stand in, or send it before the pull instead when you need the threat drop.",
       "talent_gated": true,
-      "id_note": "55342 is the observed cast; 321686 shares the name and was not observed."
+      "id_note": "Cast id 55342; 321686 shares the name and was not observed."
     },
     {
-      "name": "Ice Block",
-      "spell_id": 45438,
+      "name": "Ice Cold",
+      "spell_id": 414658,
       "cooldown": 240,
-      "duration": 10,
-      "usage_rule": "Save it for a lethal hit or a mechanic you cannot survive any other way, then cancel it early to get back to casting.",
-      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+      "duration": 6,
+      "usage_rule": "Hold it for a hit you cannot avoid, it cuts all damage you take by 70% for six seconds.",
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Open Arcane Surge, Missiles, Barrage, Touch",
+      "description": "Open Arcane Surge into Barrage, then Touch of the Magi",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [
-          365350,
-          5143,
-          44425,
-          321507
-        ],
-        "spell_names": [
-          "Arcane Surge",
-          "Arcane Missiles",
-          "Arcane Barrage",
-          "Touch of the Magi"
-        ]
+        "spell_ids": [365350, 44425, 321507],
+        "spell_names": ["Arcane Surge", "Arcane Barrage", "Touch of the Magi"]
       },
-      "action": "Pre-cast Arcane Surge, then Arcane Missiles into Arcane Barrage, and land Touch of the Magi while the Barrage is still flying."
+      "action": "Open with Arcane Surge, send Arcane Barrage, and drop Touch of the Magi while the Barrage is mid-air."
     },
     {
       "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Touch of the Magi with Arcane Barrage mid-air",
+      "description": "Touch of the Magi right after Arcane Barrage",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 321507,
@@ -107,46 +110,59 @@
         "required_spell_name": "Arcane Barrage",
         "position": "before"
       },
-      "action": "Queue Touch of the Magi the instant Arcane Barrage leaves your hands so the travelling damage lands inside the debuff."
+      "action": "Fire Touch of the Magi off the global right after an Arcane Barrage so the bolt lands inside it."
     },
     {
       "type": "cd_hold",
-      "severity": "info",
-      "description": "Pair every second Touch with Arcane Surge",
+      "severity": "warning",
+      "description": "Pair Touch of the Magi with Arcane Surge",
       "condition": {
         "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [
-          321507
-        ],
-        "spell_names": [
-          "Touch of the Magi"
-        ],
+        "spell_ids": [321507],
+        "spell_names": ["Touch of the Magi"],
         "anchor_spell_id": 365350,
         "anchor_spell_name": "Arcane Surge"
       },
-      "action": "Save Touch of the Magi when Arcane Surge is nearly ready so both go out together, and spend the off-cycle Touch immediately."
+      "action": "Hold Touch of the Magi when Arcane Surge is close to ready so the two go out together."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Arcane Missiles on every Clearcasting",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 5143,
+        "spell_name": "Arcane Missiles",
+        "alternative_spell_ids": [30451],
+        "alternative_spell_names": ["Arcane Blast"],
+        "buff_spell_id": 263725,
+        "buff_spell_name": "Clearcasting",
+        "except_buff_spell_ids": [451038],
+        "except_buff_spell_names": ["Arcane Soul"]
+      },
+      "action": "Spend Clearcasting on Arcane Missiles instead of hard casting Arcane Blast."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Spend the Prismatic Bolt proc before it expires",
+      "description": "Arcane Barrage every global during Arcane Soul",
       "condition": {
-        "kind": "proc_wasted",
-        "buff_spell_id": 1295942,
-        "buff_spell_name": "Prismatic Bolt!",
-        "spend_spell_ids": [
-          1295924
-        ],
-        "spend_spell_names": [
-          "Prismatic Bolt"
-        ]
+        "kind": "filler_in_buff",
+        "spell_id": 44425,
+        "spell_name": "Arcane Barrage",
+        "alternative_spell_ids": [30451],
+        "alternative_spell_names": ["Arcane Blast"],
+        "buff_spell_id": 451038,
+        "buff_spell_name": "Arcane Soul",
+        "except_buff_spell_ids": [263725],
+        "except_buff_spell_names": ["Clearcasting"]
       },
-      "action": "Fire Prismatic Bolt as soon as it lights up, since it does not stack and a second proc is lost."
+      "action": "Chain Arcane Barrage through the whole Arcane Soul window instead of filling with Arcane Blast."
     },
     {
       "type": "rotation",
-      "severity": "info",
-      "description": "Arcane Barrage at full Arcane Charges",
+      "severity": "warning",
+      "description": "Spend Arcane Barrage at full Arcane Charges",
       "condition": {
         "kind": "resource_at_cast",
         "spell_id": 44425,
@@ -155,20 +171,53 @@
         "resource_name": "arcane charges",
         "bound": "min"
       },
-      "action": "Build to full Arcane Charges with Arcane Blast or Arcane Orb before you Barrage, outside the Arcane Soul window."
+      "action": "Cap your Arcane Charges with Arcane Blast or Arcane Orb before you send Arcane Barrage."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Bank Arcane Salvo stacks before Arcane Barrage",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 44425,
+        "spell_name": "Arcane Barrage",
+        "buff_spell_id": 1242974,
+        "buff_spell_name": "Arcane Salvo",
+        "bound": "min",
+        "max_stacks": 25,
+        "except_buff_spell_ids": [451038],
+        "except_buff_spell_names": ["Arcane Soul"]
+      },
+      "action": "Stack Arcane Salvo with Arcane Missiles before you dump Arcane Barrage."
     },
     {
       "type": "rotation",
       "severity": "info",
-      "description": "Arcane Intellect up for the whole pull",
+      "description": "Prismatic Bolt with Cumulative Power stacked",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 1295924,
+        "spell_name": "Prismatic Bolt",
+        "buff_spell_id": 1296930,
+        "buff_spell_name": "Cumulative Power",
+        "bound": "min",
+        "max_stacks": 8,
+        "except_buff_spell_ids": [451038],
+        "except_buff_spell_names": ["Arcane Soul"]
+      },
+      "action": "Channel Arcane Missiles to stack Cumulative Power before you fire Prismatic Bolt."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Arcane Intellect up",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 1459,
         "aura_spell_name": "Arcane Intellect",
         "on": "self"
       },
-      "action": "Rebuff Arcane Intellect before the pull and again after any death or battle resurrection."
+      "action": "Cast Arcane Intellect before you pull and refresh it any time it drops."
     }
-  ],
-  "source_summary": "Arcane runs on two short cooldowns: Arcane Surge every 90 seconds and Touch of the Magi every 45, with the Touch that lines up with Surge saved for it and the off-cycle Touch spent straight away. Cast Touch while an Arcane Barrage or Prismatic Bolt is still mid-air so the travelling damage lands inside it, and open by pre-casting Arcane Surge into Time Warp before Missiles, Barrage and Touch. Between cooldowns you spend Clearcasting on Arcane Missiles, dump Arcane Salvo with Arcane Barrage at full Arcane Charges, chain Barrage through Arcane Soul, and fire Prismatic Bolt on sight because it does not stack."
+  ]
 }
