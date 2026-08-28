@@ -143,10 +143,10 @@ export abstract class RuleKind<C extends RuleCondition> {
     span: (lo, hi) => lo === hi ? `${Math.round(lo * 100)}%` : `${Math.round(lo * 100)}-${Math.round(hi * 100)}%`,
   };
 
-  /** A share already carried in percentage points rather than as a fraction. */
+  /** A share already carried in percentage points rather than as a fraction. Whole points are too coarse: a maintain target and the uptime that missed it can be a fraction of a point apart. */
   protected readonly PERCENT_POINTS: Scale = {
-    quantize: Math.round, format: value => `${Math.round(value)}%`,
-    span: (lo, hi) => lo === hi ? `${Math.round(lo)}%` : `${Math.round(lo)}-${Math.round(hi)}%`,
+    quantize: value => round(value, 1), format: value => `${round(value, 1)}%`,
+    span: (lo, hi) => lo === hi ? `${round(lo, 1)}%` : `${round(lo, 1)}-${round(hi, 1)}%`,
   };
 
   protected readonly SECONDS: Scale = {

@@ -12,6 +12,9 @@ const MAX_UPTIME_GAPS = 3;
 /** Below this, a gap is travel time or event-ordering noise rather than a missed refresh - and would render as a nonsensical "0s" chip anyway. */
 const MIN_UPTIME_GAP_S = 1;
 
+/** Tracks PERCENT_POINTS: printing fewer digits than judged the row is what makes a flagged uptime read as equal to its own target. */
+const UPTIME_DECIMALS = 1;
+
 @Injectable({ providedIn: 'root' })
 export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
   readonly kind = 'aura_uptime_below';
@@ -92,7 +95,7 @@ export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
       severity, category: 'rule_violation',
       label: `${cond.aura_spell_name} uptime`,
       message: `${cond.aura_spell_name} was up ${this.PERCENT_POINTS.format(pct)} of the fight. Aim for ${this.PERCENT_POINTS.format(lo)} or more.`,
-      measured: { value: `${pct} / ${lo}`, unit: '% uptime' },
+      measured: { value: `${pct.toFixed(UPTIME_DECIMALS)} / ${lo.toFixed(UPTIME_DECIMALS)}`, unit: '% uptime' },
       details: remedy ? { remedy } : undefined,
       occurrences: gaps.map(([start, end]): FindingOccurrence => ({
         atS: round(start, 3), ok: false, label: `${round(end - start, 0)}s`,
