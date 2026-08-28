@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanel } from '../../../../shared/components/flyover-panel/flyover-panel';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
@@ -14,7 +13,7 @@ import { LoadResourceService } from '../../../../shared/state/load-resource-serv
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [MatButtonModule, MatIconModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
+  imports: [MatButtonModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {

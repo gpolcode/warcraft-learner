@@ -34,7 +34,7 @@ test('selecting class, spec, and encounter loads that spec\'s plan', async () =>
 
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
-  await shows(card, 'Top-parse cooldown timings as a Northern Sky note.');
+  await shows(card, 'Top-parse cooldown timings as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export' }).click();
   const panel = page.locator('wl-flyover-panel');

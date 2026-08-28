@@ -22,7 +22,7 @@ const SECONDS = /[+-]?\d+(\.\d+)?s/;
 const MEASURE = new RegExp([RATIO, PERCENT, CLOCK, SECONDS].map(r => r.source).join('|'));
 
 /** Mirrors CAT_LABEL in shared/components/finding-table/finding-table.utils.ts. */
-export const CD_CHIP = /\b(lost cast|held|BL miss|downtime|hold)\b/;
+export const CD_CHIP = /\b(lost cast|held|Bloodlust|downtime|hold)\b/;
 
 /** Asserts at least one named ability/gear row renders with a real icon + name, regardless of which one the bench ranks first. */
 export async function showsEntity(scope: Locator): Promise<void> {

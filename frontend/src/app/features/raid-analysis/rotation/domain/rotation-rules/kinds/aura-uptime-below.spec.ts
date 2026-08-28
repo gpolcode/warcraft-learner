@@ -58,13 +58,31 @@ describe('evaluateAuraUptimeBelow', () => {
 });
 
 describe('rule evaluator boundaries', () => {
+  const exactly: AuraUptimeBelowCondition = {
+    kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+  };
+
   it('passes uptime exactly at the measured bar (strict below)', () => {
     const HALF_UPTIME_PCT = 50;
-    const exactly: AuraUptimeBelowCondition = {
-      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
-    };
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
     expect(evaluateAuraUptimeBelow(exactly, ctx, band(HALF_UPTIME_PCT), 'warning')).toBeNull();
+  });
+
+  it('passes uptime that prints as its own target, so no row can read "98 / 98"', () => {
+    // Up 0-117.4s of the 120s fight: 97.83%, which prints as 98 - the same as a 98.4 floor.
+    const UP_UNTIL_S = 117.4;
+    const FLOOR_PRINTING_98_PCT = 98.4;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, UP_UNTIL_S)] });
+    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FLOOR_PRINTING_98_PCT), 'warning')).toBeNull();
+  });
+
+  it('flags the first uptime that prints a point below its target', () => {
+    // Up 0-116.9s of the 120s fight: 97.42%, which prints as 97 against the same 98 floor.
+    const UP_UNTIL_S = 116.9;
+    const FLOOR_PRINTING_98_PCT = 98.4;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, UP_UNTIL_S)] });
+    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FLOOR_PRINTING_98_PCT), 'warning')?.measured)
+      .toEqual({ value: '97 / 98', unit: '% uptime' });
   });
 });
 

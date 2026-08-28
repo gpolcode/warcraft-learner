@@ -18,6 +18,7 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
     timeEndS: 10,
     spells: [],
     labels: [],
+    note: '',
     status,
     statusIcon: 'check_circle',
     overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overview },
@@ -244,6 +245,48 @@ describe('WindowComparison delta badge', () => {
     expect(dom.text()).toContain('1M');
     expect(dom.text()).not.toContain('2M');
     expect(dom.query(DELTA_BADGE)).toBeNull();
+  });
+});
+
+describe('WindowComparison vocabulary', () => {
+  const CHIP_TEXT = 'Cloak of Shadows';
+  const NOTE = 'no defensive used';
+
+  it('names the measured quantity, the chip strip, and the range bar for the offensive card by default', () => {
+    const text = render([{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT] }]).text();
+
+    expect(text).toContain('burst');
+    expect(text).toContain('Recommended cooldowns');
+    expect(text).toContain('Damage vs top range');
+  });
+
+  it('takes the card\'s own wording, so a damage-taken window never reads as burst', () => {
+    const inputs = {
+      metricLabel: 'damage taken',
+      chipsLabel: 'Recommended defensive',
+      rangeLabel: 'Damage taken vs top range',
+    };
+    const text = render([{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT] }], inputs).text();
+
+    expect(text).toContain('damage taken');
+    expect(text).not.toContain('burst');
+    expect(text).toContain('Recommended defensive');
+    expect(text).toContain('Damage taken vs top range');
+  });
+
+  it('sets the window note apart from the recommended cooldowns, so a verdict never reads as advice', () => {
+    const windows = [{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT], note: NOTE }];
+
+    const chipStrip = render(windows, { chipsLabel: 'Recommended defensive' }).text();
+
+    expect(chipStrip).toContain('What you did');
+    // Both strips render, so the note being present is not itself proof it left the chip strip.
+    expect(chipStrip.indexOf(CHIP_TEXT)).toBeLessThan(chipStrip.indexOf('What you did'));
+    expect(chipStrip.indexOf('What you did')).toBeLessThan(chipStrip.indexOf(NOTE));
+  });
+
+  it('renders no note strip for a window that carries none', () => {
+    expect(render([win({ playerPct: 90, topAvg: 100 })]).text()).not.toContain('What you did');
   });
 });
 

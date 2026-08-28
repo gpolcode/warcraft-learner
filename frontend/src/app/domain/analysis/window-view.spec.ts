@@ -132,7 +132,7 @@ describe('buildWindowView', () => {
     expect(first(windows).labels).toEqual(['Trinket']);
   });
 
-  it('appends a status note after the adapter labels', () => {
+  it('carries the status note apart from the adapter labels, so a verdict never joins the recommended cooldowns', () => {
     const NOTE = 'probe note';
     const { windows } = viewOf({
       adapter: probeAdapter({
@@ -140,10 +140,11 @@ describe('buildWindowView', () => {
         status: () => ({ ...PROBE_STATUS, note: NOTE }),
       }),
     });
-    expect(first(windows).labels).toEqual(['Trinket', NOTE]);
+    expect(first(windows).labels).toEqual(['Trinket']);
+    expect(first(windows).note).toBe(NOTE);
   });
 
-  it('appends nothing when the status carries an empty note', () => {
+  it('carries an empty note when the status states none', () => {
     const { windows } = viewOf({
       adapter: probeAdapter({
         chips: () => ({ spellIds: [], labels: ['Trinket'] }),
@@ -151,6 +152,11 @@ describe('buildWindowView', () => {
       }),
     });
     expect(first(windows).labels).toEqual(['Trinket']);
+    expect(first(windows).note).toBe('');
+  });
+
+  it('carries an empty note when the status omits one entirely', () => {
+    expect(first(viewOf().windows).note).toBe('');
   });
 
   it('collects one map anchor and one index-keyed clip anchor per window', () => {

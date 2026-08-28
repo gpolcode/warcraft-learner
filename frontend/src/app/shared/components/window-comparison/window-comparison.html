@@ -79,7 +79,7 @@
           </span>
         </div>
         <div class="flex flex-col shrink-0">
-          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">burst</span>
+          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">{{ metricLabel() }}</span>
           @if (!activeIsMuted()) {
             <span class="text-[13px] font-semibold tabular-nums text-[var(--text)]">{{ w.overview.playerPct | formatDamage }}</span>
           } @else if (activeIsBenchOnly()) {
@@ -112,7 +112,7 @@
       </div>
       @if (w.spells.length || w.labels.length) {
         <div class="mt-2.5">
-          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Recommended cooldowns</span>
+          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">{{ chipsLabel() }}</span>
           <div class="flex flex-wrap items-center gap-2">
             @for (spell of w.spells; track spell.id) {
               <span class="chip-onplan">
@@ -127,12 +127,20 @@
           </div>
         </div>
       }
+      @if (w.note) {
+        <div class="mt-2.5">
+          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">What you did</span>
+          <span class="chip-onplan">
+            <span class="text-[13px] text-[var(--muted)]">{{ w.note }}</span>
+          </span>
+        </div>
+      }
     </div>
 
     <!-- Damage-spread bar, hidden for bench-only (pre-fight) windows that have no player to compare against. -->
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
-        <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">Damage vs top range</span>
+        <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">{{ rangeLabel() }}</span>
         <div class="relative h-5 rounded bg-[var(--bg)]" aria-hidden="true">
           @if (overviewPlayerWidthPct() !== null) {
             <div [class]="'absolute inset-y-0 left-0 rounded opacity-[0.65] ' + fillBg"

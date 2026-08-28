@@ -32,6 +32,10 @@ export class WindowComparison {
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
+  // The card supplies its own vocabulary: a defensive window measures damage taken, not burst.
+  readonly metricLabel = input<string>('burst');
+  readonly chipsLabel = input<string>('Recommended cooldowns');
+  readonly rangeLabel = input<string>('Damage vs top range');
   readonly openMap = output<number>();
   readonly openClip = output<number>();
 

@@ -80,9 +80,11 @@ export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
     cond: AuraUptimeBelowCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: RuleSeverity, remedy?: string,
   ): AnalysisFinding | null {
     const { lo, hi } = this.bandLimits(this.PERCENT_POINTS, band);
-    const pct = this.uptimePct(cond, ctx);
+    const rawPct = this.uptimePct(cond, ctx);
+    // Judged on the printed number, so a flagged uptime never reads as equal to the target beside it.
+    const pct = this.PERCENT_POINTS.quantize(rawPct);
     // Zero uptime reads as a build that skips the aura rather than a mistake, which the app does not guess at.
-    if (pct <= 0 || !this.outOfBand(pct, lo, hi, judging)) return null;
+    if (rawPct <= 0 || !this.outOfBand(pct, lo, hi, judging)) return null;
     const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
     const merged = this.mergedUpSpans(windows, cond.aura_spell_id, ctx.fightDurationS);
     const gaps = this.uptimeGaps(merged, ctx.fightDurationS);
@@ -90,7 +92,7 @@ export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
       severity, category: 'rule_violation',
       label: `${cond.aura_spell_name} uptime`,
       message: `${cond.aura_spell_name} was up ${this.PERCENT_POINTS.format(pct)} of the fight. Aim for ${this.PERCENT_POINTS.format(lo)} or more.`,
-      measured: { value: `${Math.round(pct)} / ${Math.round(lo)}`, unit: '% uptime' },
+      measured: { value: `${pct} / ${lo}`, unit: '% uptime' },
       details: remedy ? { remedy } : undefined,
       occurrences: gaps.map(([start, end]): FindingOccurrence => ({
         atS: round(start, 3), ok: false, label: `${round(end - start, 0)}s`,

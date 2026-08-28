@@ -198,7 +198,7 @@ export class RotationFeatureService {
     if (!blAligned && wantsBL) {
       findings.push({ severity: 'critical', category: 'cooldown_alignment', cd_name: cdName,
         timestamp_s: firstCastS,
-        measured: { value: 'missed', unit: 'BL' },
+        measured: { value: 'missed', unit: 'Bloodlust' },
         message: `${cdName} missed Bloodlust. Bloodlust started at ${fmtClock(blTimeS)}, ${cdName} at ${fmtClock(firstCastS)}.`,
         details: { remedy: `Align ${cdName} with Bloodlust.` }, occurrences: [] });
     } else if (blAligned && cdBench.avg_bl_offset_s != null && cdBench.stddev_bl_offset_s != null) {
@@ -210,7 +210,7 @@ export class RotationFeatureService {
         const judgedCastS = inWindow[offsets.indexOf(playerOffset)];
         findings.push({ severity: 'warning', category: 'cooldown_alignment', cd_name: cdName,
           timestamp_s: judgedCastS,
-          measured: { value: dir, unit: 'in BL' },
+          measured: { value: dir, unit: 'in Bloodlust' },
           message: `${cdName} was ${dir} inside the Bloodlust window.`,
           details: { remedy: `Tighten ${cdName} to the Bloodlust window.` }, occurrences: [] });
       }
@@ -281,7 +281,7 @@ export class RotationFeatureService {
     issues.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
     const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets);
 
-    const blNote = bl.blAligned && wantsBL ? ', BL-aligned' : '';
+    const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
     const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);
     return { success, scan: { issues, holds, blAligned: bl.blAligned } };
   }

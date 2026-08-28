@@ -150,7 +150,7 @@ describe('buildDefensiveWindows', () => {
     const defensiveWindow = first(windows);
     expect(defensiveWindow.overview.playerPct).toBe(1150);
     expect(defensiveWindow.status).toBe('good');
-    expect(defensiveWindow.labels).toContain('covered');
+    expect(defensiveWindow.note).toBe('covered');
     expect(defensiveWindow.spells).toEqual([{ id: CLOAK_OF_SHADOWS, icon: 'cloak', name: 'Cloak of Shadows' }]);
     expect(first(defensiveWindow.detailRows)).toMatchObject({ spellId: BOSS_HIT_SPELL_ID, label: 'Boss Hit', icon: 'hit', playerPct: 700, topAvg: 600 });
     expect(anchors[0]).toEqual({ timeS: 30, refGameId: 6666, windowLengthS: 5 });
@@ -161,7 +161,7 @@ describe('buildDefensiveWindows', () => {
     const unbakedWindow: BurstWindow = { ...window, spell_id: undefined };
     const { windows } = svc['buildDefensiveWindows']({ topWindows: [unbakedWindow], playerWindows: [], playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).spells).toEqual([]);
-    expect(first(windows).labels).toContain('Cloak of Shadows');
+    expect(first(windows).labels).toEqual(['Cloak of Shadows']);
   });
 
   it('marks an above-band window bad, annotated as needing an unused defensive', () => {
@@ -169,7 +169,7 @@ describe('buildDefensiveWindows', () => {
     const player: PlayerBurstWindow[] = [{ window_damage: 1500, ability_breakdown: [] }];
     const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('bad');
-    expect(first(windows).labels).toContain('defensive needed, unused');
+    expect(first(windows).note).toBe('defensive needed, unused');
   });
 
   it('keeps an uncovered within-band window good, annotated no defensive used', () => {
@@ -177,6 +177,6 @@ describe('buildDefensiveWindows', () => {
     const player: PlayerBurstWindow[] = [{ window_damage: 900, ability_breakdown: [] }];
     const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('good');
-    expect(first(windows).labels).toContain('no defensive used');
+    expect(first(windows).note).toBe('no defensive used');
   });
 });

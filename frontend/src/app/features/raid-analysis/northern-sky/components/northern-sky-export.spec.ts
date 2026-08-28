@@ -14,7 +14,7 @@ const CAST_TIMES_S = [10, 30];
 const EXPORT_BUTTON = 'button[mat-stroked-button]';
 const COPY_BUTTON = 'button[mat-flat-button]';
 const CHECKBOX = 'mat-checkbox input[type="checkbox"]';
-const COPIED_MESSAGE = 'Copied to clipboard.';
+const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
 const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 
 function ability(spellId: number, kind: NorthernSkyAbility['kind']): NorthernSkyAbility {
