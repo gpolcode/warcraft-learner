@@ -104,12 +104,7 @@ flattens it is a failed run.
   `proc_wasted` is where this bites: if the proc's application count dwarfs its spend abilities'
   cast counts, the buff is a lasting state (an execute window, a stacking tracker), not a consumed
   proc. `aura_uptime_below` deserves the same look: if top parses let the aura drop for long
-  stretches, it is situational, not a maintenance rule. **`filler_below_health` is the worst
-  offender and starts guilty**: guides say the execute ability replaces the filler, but it is
-  resource or cooldown gated, so the ordinary filler still carries most execute-range casts.
-  Measured shares for that rule shape have run 3% to 20% across five specs, meaning it accuses
-  nearly every correct player. Write one only where the execute ability plainly dominates; put
-  execute-phase advice in a `usage_rule` otherwise.
+  stretches, it is situational, not a maintenance rule.
 - **Never take a spell id from a schema `examples` block.** Those are illustrative and go stale; an
   id copied out of one can be a real id for a different ability. Every id comes from the prepared
   table.
