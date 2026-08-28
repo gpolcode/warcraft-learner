@@ -1,0 +1,178 @@
+{
+  "spec": "PreservationEvoker",
+  "spec_icon": "classicon_evoker_preservation",
+  "major_cooldowns": [
+    {
+      "name": "Dream Breath",
+      "spell_id": 355936,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it just after you consume your Echo buffs so it does not eat them, keep one charge on cooldown as Flameshaper, and save the second charge plus its guaranteed Merithra's Blessing proc for dangerous damage.",
+      "id_note": "355936 is the cast id; 355941 is the heal-over-time aura and 376788 is the echoed version."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 357208,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast it at rank 3 whenever it is up for the AoE damage and the party healing it carries.",
+      "id_note": "357208 is the cast id; 357209 is the enemy damage-over-time aura."
+    },
+    {
+      "name": "Stasis (Store)",
+      "spell_id": 370537,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Store one Temporal Anomaly and at least one Dream Breath ahead of time, then release the pack right before planned damage.",
+      "id_note": "370537 is the store cast; 370564 is the release cast and 370562 the aura.",
+      "talent_gated": true
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "As Chronowarden combine it with Stasis so your stored empowers land inside the Temporal Burst haste window."
+    },
+    {
+      "name": "Dream Flight",
+      "spell_id": 359816,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fly it through the stacked group as often as the fight allows, and remember the absorb on you disappears the moment you land.",
+      "id_note": "359816 is the cast id; 362361 and 363502 are its auras.",
+      "talent_gated": true
+    },
+    {
+      "name": "Rewind",
+      "spell_id": 363534,
+      "cooldown": 240,
+      "align_with_bloodlust": false,
+      "usage_rule": "Plan it for the fight's most dangerous moment and press it right after the damage lands, since it heals from the last 5 seconds of damage taken."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press it before you eat a heavy hit so you keep casting through it."
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Cast it just before known AoE damage to soften it for you and your group."
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Put it on whoever is about to take a spike, and use it often because the cooldown is short."
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "usage_rule": "Press it to strip a dispellable debuff or bleed and heal the target, and store three in Stasis when the group needs a mass cleanse.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "No Emerald Blossom at capped Twin Echoes",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 355913,
+        "spell_name": "Emerald Blossom",
+        "buff_spell_id": 1242759,
+        "buff_spell_name": "Twin Echoes",
+        "bound": "max",
+        "max_stacks": 2,
+        "except_buff_spell_ids": [
+          1242747
+        ],
+        "except_buff_spell_names": [
+          "Inner Flame"
+        ]
+      },
+      "action": "Press Echo at two Twin Echoes stacks, and only add Emerald Blossom there inside an Inner Flame window."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Essence Burst spent on Echo or Emerald Blossom",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 369299,
+        "buff_spell_name": "Essence Burst",
+        "spend_spell_ids": [
+          364343,
+          355913
+        ],
+        "spend_spell_names": [
+          "Echo",
+          "Emerald Blossom"
+        ]
+      },
+      "action": "Dump each Essence Burst into Echo or Emerald Blossom before it falls off."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Merithra's Blessing consumes your Echo buffs",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1256581,
+        "spell_name": "Merithra's Blessing",
+        "required_spell_id": 364343,
+        "required_spell_name": "Echo",
+        "position": "before"
+      },
+      "action": "Ramp Echo buffs out first, then press Merithra's Blessing so it copies to every Echo target."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Keep Reversion coverage rolling",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 367364,
+        "aura_spell_name": "Reversion",
+        "on": "self"
+      },
+      "action": "Consume your Echo buffs with Merithra's Blessing or Reversion to keep the heal-over-time and Grace Period on the group."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Blessing of the Bronze up every pull",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 381748,
+        "aura_spell_name": "Blessing of the Bronze",
+        "on": "self"
+      },
+      "action": "Cast Blessing of the Bronze before every pull."
+    },
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Source of Magic on another healer",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 369459,
+        "aura_spell_name": "Source of Magic",
+        "on": "self"
+      },
+      "action": "Put Source of Magic on your highest-HPS healing ally before the pull."
+    }
+  ],
+  "source_summary": "Preservation ramps Echo buffs with Temporal Anomaly and Echo, then consumes them on planned damage with Merithra's Blessing, Dream Breath or Verdant Embrace. Stasis banks a Temporal Anomaly plus a Dream Breath for a scheduled burst, Tip the Scales feeds it Temporal Burst haste as Chronowarden, and Dream Flight and Rewind cover the fight's biggest hits with Rewind fired just after the damage lands. Pre-plan every cooldown instead of saving it just in case, and spend mana on the damage patterns that matter rather than dumping Temporal Anomaly through Bloodlust."
+}

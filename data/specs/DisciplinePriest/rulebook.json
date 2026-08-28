@@ -1,0 +1,119 @@
+{
+  "spec": "DisciplinePriest",
+  "spec_icon": "spell_holy_powerwordshield",
+  "major_cooldowns": [
+    {
+      "name": "Evangelism",
+      "spell_id": 472433,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Start your ramp 8 seconds before the damage lands and chain the two instant Power Word: Radiance casts it grants."
+    },
+    {
+      "name": "Ultimate Penitence",
+      "spell_id": 421453,
+      "cooldown": 240,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "usage_rule": "Save it for a heavy damage window away from Evangelism, leading with Mind Blast as Voidweaver and spell queuing Void Shield just before the cast ends."
+    },
+    {
+      "name": "Mindbender",
+      "spell_id": 123040,
+      "cooldown": 60,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Send it while your Atonements are out so its damage converts into healing.",
+      "id_note": "Two live Mindbender ids share the name: 123040 (12s tooltip, the Discipline pet) and 200174 (10s). Neither was cast in the sampled parses and the guide never names the pet; Shadowfiend appears only as self aura 1280172 with no cast id in the table.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press it when your own health drops so you can keep casting through the damage."
+    },
+    {
+      "name": "Pain Suppression",
+      "spell_id": 33206,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Drop it on an ally taking heavy damage when you have no healing cooldown available."
+    },
+    {
+      "name": "Power Word: Barrier",
+      "spell_id": 62618,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Place it under the stacked group for a heavy area damage window.",
+      "id_note": "Not cast in the sampled parses but castable per its tooltip."
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Press it to shed threat and cut the damage you take while you reposition."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Shadow Word: Pain on your enemies",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 589,
+        "aura_spell_name": "Shadow Word: Pain",
+        "on": "target"
+      },
+      "action": "Refresh Shadow Word: Pain as it nears expiry and spread it with offensive Penance."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Bank Power Word: Radiance charges for Evangelism",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [194509],
+        "spell_names": ["Power Word: Radiance"],
+        "anchor_spell_id": 472433,
+        "anchor_spell_name": "Evangelism"
+      },
+      "action": "Spend spare charges on mini-ramps but keep two banked as Evangelism comes up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shadow Word: Death replaces Smite in execute",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 32379,
+        "spell_name": "Shadow Word: Death",
+        "alternative_spell_ids": [585],
+        "alternative_spell_names": ["Smite"],
+        "health_pct": 20
+      },
+      "action": "Swap your Smite filler to Shadow Word: Death once the target is in execute."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Power Word: Shield at high Weal and Woe stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 17,
+        "spell_name": "Power Word: Shield",
+        "buff_spell_id": 390787,
+        "buff_spell_name": "Weal and Woe",
+        "bound": "min",
+        "max_stacks": 7
+      },
+      "action": "Let Weal and Woe stack up before you shield, and cut shield casts when mana is low."
+    }
+  ],
+  "source_summary": "Discipline is a ramping healer: apply Atonement ahead of a known damage window, then convert damage casts into healing. Evangelism is the main ramp on a 90 second timer, casting a free Power Word: Radiance and making the next two instant, so bank Radiance charges for it and save Ultimate Penitence for a separate heavy damage window. Between ramps keep Shadow Word: Pain up, press Mind Blast, Penance and Void Shield on cooldown, shield at high Weal and Woe stacks, and fill with Smite."
+}

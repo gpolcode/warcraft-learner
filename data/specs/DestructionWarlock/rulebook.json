@@ -1,0 +1,180 @@
+{
+  "spec": "DestructionWarlock",
+  "spec_icon": "spell_shadow_rainoffire",
+  "major_cooldowns": [
+    {
+      "name": "Summon Infernal",
+      "spell_id": 1122,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Send it on the pull together with your potion, trinkets and racial, and delay it only when the delay costs you no uses."
+    },
+    {
+      "name": "Malevolence",
+      "spell_id": 442726,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Have Wither on every target and shards banked before you press it, then dump every shard into Chaos Bolt or Rain of Fire before the window ends.",
+      "id_note": "442726 is the id seen in casts; 430014 and 446285 share the name and were not observed.",
+      "talent_gated": true
+    },
+    {
+      "name": "Havoc",
+      "spell_id": 80240,
+      "cooldown": 30,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "Stick it on the less important target that will survive the full 15 seconds, and press Summon Infernal first whenever both are ready."
+    },
+    {
+      "name": "Soul Fire",
+      "spell_id": 6353,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "Precast it just before the pull and then press it every time it comes back while you are below 4 shards.",
+      "talent_gated": true
+    },
+    {
+      "name": "Cataclysm",
+      "spell_id": 152108,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Blanket Immolate or Wither across the pack with it, and lead into Malevolence off the fresh dots.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; the guide and the APL both call for it.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press it into heavy incoming magic damage; it also keeps your casts from being interrupted."
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Shield yourself just before a predictable hit, and keep enough health to pay for it.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "usage_rule": "Use it to heal yourself for a chunk while the target is feared off you.",
+      "talent_gated": true
+    },
+    {
+      "name": "Healthstone",
+      "spell_id": 6262,
+      "cooldown": 60,
+      "usage_rule": "Pop it when your health drops and a healer cannot reach you in time.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Open with Summon Infernal then Conflagrate",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          1122,
+          17962
+        ],
+        "spell_names": [
+          "Summon Infernal",
+          "Conflagrate"
+        ]
+      },
+      "action": "Send Summon Infernal with your trinkets on the pull, then Conflagrate for shards and Backdraft."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Immolate up on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 157736,
+        "aura_spell_name": "Immolate",
+        "on": "target"
+      },
+      "action": "Refresh Immolate on your main target before it falls off."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Never overcap Soul Shards on Incinerate",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 29722,
+        "spell_name": "Incinerate",
+        "resource_type": 7,
+        "resource_name": "soul shards",
+        "bound": "max"
+      },
+      "action": "Dump a shard into Chaos Bolt or Shadowburn before you generate another."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Do not press Conflagrate at capped Backdraft",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 17962,
+        "spell_name": "Conflagrate",
+        "buff_spell_id": 117828,
+        "buff_spell_name": "Backdraft",
+        "bound": "max",
+        "max_stacks": 2
+      },
+      "action": "Spend your Backdraft stacks on Chaos Bolt or Incinerate before you send Conflagrate again."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Rain of Fire only on bigger packs",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 5740,
+        "spell_name": "Rain of Fire",
+        "bound": "min"
+      },
+      "action": "Spend your shards on Chaos Bolt against a few targets and switch to Rain of Fire once the pack grows."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shadowburn takes over in execute",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 17877,
+        "spell_name": "Shadowburn",
+        "alternative_spell_ids": [
+          116858
+        ],
+        "alternative_spell_names": [
+          "Chaos Bolt"
+        ],
+        "health_pct": 20,
+        "except_buff_spell_ids": [
+          442726,
+          432795
+        ],
+        "except_buff_spell_names": [
+          "Malevolence",
+          "Demonic Art: Pit Lord"
+        ]
+      },
+      "action": "Point your shard dumps at Shadowburn instead of Chaos Bolt once the target is in execute range."
+    }
+  ],
+  "source_summary": "Destruction generates Soul Shards with Incinerate and Conflagrate and spends them on Chaos Bolt, Shadowburn or Rain of Fire while keeping Immolate or Wither rolling on the target. Summon Infernal is the two-minute anchor and goes out on the pull with potion, trinkets and racials, with Havoc for cleave and Malevolence for stacking Wither layered on top of it. The guides stress never overcapping shards, spending Backdraft stacks on Chaos Bolt, and dumping every shard you can inside the cooldown windows."
+}

@@ -1,0 +1,175 @@
+{
+  "spec": "ProtectionPaladin",
+  "spec_icon": "ability_paladin_shieldofthetemplar",
+  "major_cooldowns": [
+    {
+      "name": "Sentinel",
+      "spell_id": 389539,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Press Sentinel once Divine Toll is ten seconds or less from ready so Divine Toll and the free Hammer of Light land inside the window.",
+      "id_note": "389539 is cast in 5/5 sampled parses and is also the self aura; it is the talent that replaces Avenging Wrath in the build the field plays.",
+      "talent_gated": true
+    },
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "Send it right after Avenger's Shield on the pull, and time later casts so Divine Toll is within ten seconds of ready.",
+      "id_note": "31884 is not observed in the sampled parses because the field plays Sentinel; 292266 shares the name and is also castable per tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Divine Toll",
+      "spell_id": 375576,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Fire it inside Sentinel with Holy Power empty, then spend the Hammer of Light it hands you on the next global.",
+      "id_note": "375576 is the cast id seen in 5/5 parses; 1248644 and 1248652 share the name and are passives."
+    },
+    {
+      "name": "Sacred Weapon",
+      "spell_id": 432472,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "On Lightsmith, re-arm it outside Avenging Wrath whenever the weapon buff is down or under six seconds left.",
+      "id_note": "Not observed in the sampled parses, which all play Templar; the APL calls this armament through holy_armaments.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ardent Defender",
+      "spell_id": 31850,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press it on the pull if you tank first, then keep cycling it to smooth damage intake and hold it only briefly for a known spike."
+    },
+    {
+      "name": "Guardian of Ancient Kings",
+      "spell_id": 86659,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Save your biggest damage reduction for the most dangerous damage window of the pull.",
+      "id_note": "86659 and 212641 share the name and both appear as casts in the sampled parses; 86659 is the Protection cast id."
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Rotate it into the recurring hits that land between your longer defensives.",
+      "id_note": "Not pressed in the sampled parses but castable per tooltip; 403876 shares the name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Holy Bulwark",
+      "spell_id": 432459,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "On Lightsmith, drop a charge as Avenging Wrath comes up and never sit on both charges.",
+      "id_note": "Not observed in the sampled parses, which all play Templar; the APL calls this armament through holy_armaments.",
+      "talent_gated": true
+    },
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Bubble as the emergency out when a hit or a debuff would otherwise kill you."
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "usage_rule": "Full heal yourself when you are about to die and no healer cooldown is coming.",
+      "id_note": "633 is the cast id seen in the sampled parses; 283630 and 471195 share the name."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shield of the Righteous stays up",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 132403,
+        "aura_spell_name": "Shield of the Righteous",
+        "on": "self"
+      },
+      "action": "Chain your Shield of the Righteous spends so the buff refreshes before it drops."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Avenger's Shield into Sentinel and Divine Toll",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [31935, 389539, 375576],
+        "spell_names": ["Avenger's Shield", "Sentinel", "Divine Toll"]
+      },
+      "action": "Pull with Avenger's Shield, then Sentinel, then Divine Toll into the free Hammer of Light."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Divine Toll inside Sentinel",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "buff_spell_id": 389539,
+        "buff_spell_name": "Sentinel",
+        "require": "inside"
+      },
+      "action": "Press Sentinel with Divine Toll ten seconds or less from ready, then send Divine Toll inside the window."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Judgment on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 197277,
+        "aura_spell_name": "Judgment",
+        "on": "target"
+      },
+      "action": "Land Judgment on cooldown so the debuff is up for Hammer of Light and your spenders."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "No Blessed Hammer at Holy Power cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 204019,
+        "spell_name": "Blessed Hammer",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "max"
+      },
+      "action": "Spend Holy Power on Shield of the Righteous before you press Blessed Hammer again."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Divine Toll at low Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "max"
+      },
+      "action": "Empty your Holy Power into Shield of the Righteous before you send Divine Toll."
+    }
+  ],
+  "source_summary": "Protection Paladin builds Holy Power with Judgment and Blessed Hammer and spends it on Shield of the Righteous, keeping that mitigation buff rolling and never sitting at cap. Sentinel, or Avenging Wrath in the alternate build, is the damage window and is fired when Divine Toll is ten seconds or less from ready so Divine Toll and the free Hammer of Light land inside it. Ardent Defender cycles constantly to smooth intake, while Guardian of Ancient Kings, Divine Shield, and Lay on Hands are held for the dangerous windows."
+}

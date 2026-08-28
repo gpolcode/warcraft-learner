@@ -1,0 +1,92 @@
+{
+  "spec": "DevourerDemonHunter",
+  "spec_icon": "classicon_demonhunter_void",
+  "major_cooldowns": [
+    {
+      "name": "Soul Immolation",
+      "spell_id": 1241937,
+      "cooldown": 60,
+      "duration": 5,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast Soul Immolation outside Void Metamorphosis whenever one is not already active, waiting a global after it fades so an Undying Embers reignite is not wasted.",
+      "id_note": "1241937 is both the cast and the self aura in the sampled parses; the same-name 1242475 was never observed."
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 1246167,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "usage_rule": "Hold The Hunt on pull to huggle it into your first Void Metamorphosis on single target, then press it on cooldown, smuggling it into the form only when it already lines up.",
+      "id_note": "1246167 is the Devourer version the guide links; same-name 370965 is the older Demon Hunter cast. Neither appeared in the sampled parses, which all ran caster builds without the melee package. Void-Scarred upgrades this button into Predator's Wake (1259431) inside Void Metamorphosis.",
+      "talent_gated": true
+    },
+    {
+      "name": "Voidblade",
+      "spell_id": 1245412,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press Voidblade in the globals right before you transform so the Hungering Slash it hands you upgrades into Reaper's Toll, and enter Void Metamorphosis without it rather than delay the form.",
+      "id_note": "1245412 is the castable Voidblade per its tooltip; the melee package was not taken in any sampled parse, so no casts were seen. Inside Void Metamorphosis Void-Scarred replaces this button with Pierce the Veil (1245483).",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press Blur for melee and physical spikes you cannot step out of.",
+      "id_note": "198589 is the cast; same-name 212800 is the self aura."
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop Darkness on the group ahead of a known raid-wide damage event."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Soul Immolation only outside Void Metamorphosis",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1241937,
+        "spell_name": "Soul Immolation",
+        "buff_spell_id": 1217607,
+        "buff_spell_name": "Void Metamorphosis",
+        "require": "outside"
+      },
+      "action": "Refresh Soul Immolation between Void Metamorphosis windows, not during one."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Void Ray over Devour inside Void Metamorphosis",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 473728,
+        "spell_name": "Void Ray",
+        "alternative_spell_ids": [
+          1217610
+        ],
+        "alternative_spell_names": [
+          "Devour"
+        ],
+        "buff_spell_id": 1217607,
+        "buff_spell_name": "Void Metamorphosis",
+        "except_buff_spell_ids": [
+          1239524
+        ],
+        "except_buff_spell_names": [
+          "Eradicate"
+        ]
+      },
+      "action": "Press Void Ray as soon as it comes up in the form, since it costs no Fury and pauses your drain."
+    }
+  ],
+  "source_summary": "Devourer has no timed burst button: Void Metamorphosis unlocks at 50 collected Soul Fragments, so every decision is about reaching the form sooner and packing it with Void Ray, Collapsing Star and the melee combo. Soul Immolation is kept rolling only outside the form, The Hunt and Voidblade are smuggled in just before you transform so their procs upgrade inside it, and souls left on the ground carry progress into the next window. Void-Scarred cycles through as many short windows as possible, while Annihilator extends one window to fit at least five Collapsing Star casts."
+}

@@ -1,0 +1,161 @@
+{
+  "spec": "UnholyDeathKnight",
+  "spec_icon": "spell_deathknight_unholypresence",
+  "major_cooldowns": [
+    {
+      "name": "Army of the Dead",
+      "spell_id": 42650,
+      "cooldown": 90,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown and press Dark Transformation with it so Commander of the Dead buffs every pet it summons.",
+      "id_note": "42650 is the cast id and also reads as a self aura in the sampled parses."
+    },
+    {
+      "name": "Dark Transformation",
+      "spell_id": 1233448,
+      "cooldown": 45,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Macro this off-global button into Army of the Dead, use it once more between Army casts, and line it up with add spawns when you run Outnumber.",
+      "id_note": "1233448 is the cast id; the 15s buff logs as 1235391."
+    },
+    {
+      "name": "Putrefy",
+      "spell_id": 1247378,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Bank your charges for Dark Transformation windows, hold it when Soul Reaper comes back up in the next 15 seconds, and stop pressing it by hand below 35% target health where Soul Reaper spends the charges for you.",
+      "id_note": "Guide calls the effective gap about 15s between uses across charges; table base_cd_s is 30."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Pop it into incoming magic damage to soak the hit and convert it into runic power.",
+      "id_note": "48707 is the cast id; 444741 is a same-name aura."
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use it for heavy physical hits and when you need the stun immunity."
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Turn it on to shrug off charm, fear, and sleep effects and to heal yourself with Death Coil."
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Drop it under the group for a big magic soak on a raid-wide hit.",
+      "id_note": "51052 is the cast id; 145629 is the same-name aura."
+    },
+    {
+      "name": "Sacrificial Pact",
+      "spell_id": 327574,
+      "cooldown": 120,
+      "usage_rule": "Sacrifice your ghoul for an emergency heal when no other button is available.",
+      "id_note": "327574 is the Death Knight cast id, not pressed in the sampled parses; 175900 shares the name."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Outbreak into Army and Dark Transformation",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [77575, 85948, 42650, 1233448, 1247378],
+        "spell_names": ["Outbreak", "Festering Strike", "Army of the Dead", "Dark Transformation", "Putrefy"]
+      },
+      "action": "Start with Outbreak and Festering Strike, then send Army of the Dead into Dark Transformation and follow with Putrefy."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Army of the Dead synced with Dark Transformation",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 42650,
+        "spell_name": "Army of the Dead",
+        "required_spell_id": 1233448,
+        "required_spell_name": "Dark Transformation",
+        "position": "either"
+      },
+      "action": "Macro Dark Transformation into Army of the Dead so Commander of the Dead buffs the whole army."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Sudden Doom procs on Death Coil",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 81340,
+        "buff_spell_name": "Sudden Doom",
+        "spend_spell_ids": [47541, 1242174],
+        "spend_spell_names": ["Death Coil", "Necrotic Coil"]
+      },
+      "action": "Fire Death Coil the moment the proc lights up, or Necrotic Coil inside Forbidden Knowledge."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Virulent Plague up on the boss",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 191587,
+        "aura_spell_name": "Virulent Plague",
+        "on": "target"
+      },
+      "action": "Recast Outbreak the moment the disease falls off."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Scourge Strike while you hold Lesser Ghoul stacks",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 55090,
+        "spell_name": "Scourge Strike",
+        "alternative_spell_ids": [85948],
+        "alternative_spell_names": ["Festering Strike"],
+        "buff_spell_id": 1254252,
+        "buff_spell_name": "Lesser Ghoul",
+        "except_buff_spell_ids": [458123],
+        "except_buff_spell_names": ["Festering Scythe"]
+      },
+      "action": "Spend your stacks with Scourge Strike and go back to Festering Strike only when you are empty."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Necrotic Coil during Forbidden Knowledge",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 1242174,
+        "spell_name": "Necrotic Coil",
+        "alternative_spell_ids": [47541],
+        "alternative_spell_names": ["Death Coil"],
+        "buff_spell_id": 1242223,
+        "buff_spell_name": "Forbidden Knowledge",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Dump your runic power into Necrotic Coil while Forbidden Knowledge is up."
+    }
+  ],
+  "source_summary": "Unholy is a burst spec that lives on cooldown setup: Army of the Dead and Dark Transformation go out together so Commander of the Dead buffs every pet, and Putrefy charges are banked for those Dark Transformation windows. Between windows you keep Virulent Plague up with Outbreak, spend Sudden Doom procs on Death Coil the instant they appear, and alternate Festering Strike and Scourge Strike so Lesser Ghoul stacks are always there to spend. Forbidden Knowledge swaps your runic power spender to Necrotic Coil, and below 35% health Soul Reaper takes over your Putrefy charges."
+}

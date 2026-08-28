@@ -1,0 +1,190 @@
+{
+  "spec": "MarksmanshipHunter",
+  "spec_icon": "ability_hunter_focusedaim",
+  "major_cooldowns": [
+    {
+      "name": "Trueshot",
+      "spell_id": 288613,
+      "cooldown": 120,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Send it on cooldown with your potion, on-use trinket and racial, and hold only the last one of the fight until Bullseye is at 30 stacks.",
+      "id_note": "288613 is the cast and self aura seen in all sampled parses."
+    },
+    {
+      "name": "Volley",
+      "spell_id": 260243,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Cast it on cooldown, and in the opener send it right after your two Explosive Shots so Trueshot follows it.",
+      "id_note": "260243 is the cast id; 260247 and 273225 share the name and were not observed."
+    },
+    {
+      "name": "Explosive Shot",
+      "spell_id": 212431,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Cast it on cooldown and follow it immediately with the Unstable Trigger second cast, putting that one on a different target in AoE so the 4-set reduces your cooldowns twice.",
+      "id_note": "212431 is the cast id and the enemy dot; 212680 shares the name and was not observed."
+    },
+    {
+      "name": "Moonlight Chakram",
+      "spell_id": 1264949,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Sentinel only: spend the single charge Trueshot hands you before Trueshot expires, slotting it into a global where it does not push back another priority.",
+      "id_note": "1264949 is the cast id; 1264946 is the self aura and 1264902 is the id the guide links. Once per Trueshot, so the 120s cooldown is Trueshot's.",
+      "talent_gated": true
+    },
+    {
+      "name": "Wailing Arrow",
+      "spell_id": 392060,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Dark Ranger only: fire the single shot Trueshot hands you on cooldown, and in AoE take it only while Black Arrow is not ready.",
+      "id_note": "Neither 392060 nor 392058 was observed; the sampled parses are all Sentinel. 392060 is the id the guide links. Once per Trueshot, so the 120s cooldown is Trueshot's.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Save it for a hit you cannot otherwise survive, since you cannot attack while it is up."
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "usage_rule": "Press it to top yourself off right after unavoidable damage instead of sitting low.",
+      "id_note": "109304 is the cast seen in 4/5 parses; 128594 shares the name and was not observed."
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Pop it into predictable raid damage; the window is short, so time it to the hit rather than the cast bar."
+    },
+    {
+      "name": "Roar of Sacrifice",
+      "spell_id": 53480,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Put it on yourself or on the raider about to eat a big hit to cut that damage.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; talent node in the hunter tree.",
+      "talent_gated": true
+    },
+    {
+      "name": "Feign Death",
+      "spell_id": 5384,
+      "cooldown": 30,
+      "usage_rule": "Drop combat with it to shed threat or to clear a mechanic that is targeting you.",
+      "id_note": "5384 and 35571 share the name and neither was pressed in the sampled parses; 5384 is the long-standing cast id."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Spend every Precise Shots proc before it falls off",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 260242,
+        "buff_spell_name": "Precise Shots",
+        "spend_spell_ids": [
+          185358,
+          257620,
+          53351,
+          466930,
+          466932
+        ],
+        "spend_spell_names": [
+          "Arcane Shot",
+          "Multi-Shot",
+          "Kill Shot",
+          "Black Arrow",
+          "Black Arrow"
+        ]
+      },
+      "action": "Follow every Aimed Shot with Arcane Shot, or with Multi-Shot in AoE."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Aimed Shot, Explosive Shot, Volley, Trueshot",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          19434,
+          212431,
+          260243,
+          288613,
+          257044
+        ],
+        "spell_names": [
+          "Aimed Shot",
+          "Explosive Shot",
+          "Volley",
+          "Trueshot",
+          "Rapid Fire"
+        ]
+      },
+      "action": "Precast Aimed Shot 2.5 seconds before the pull, then send Explosive Shot twice, Volley, and Trueshot with your potion and trinket before Rapid Fire."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Hunter's Mark on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 257284,
+        "aura_spell_name": "Hunter's Mark",
+        "on": "target"
+      },
+      "action": "Mark your primary target before the pull and reapply it whenever it drops."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Kill Shot replaces Arcane Shot in execute range",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 53351,
+        "spell_name": "Kill Shot",
+        "alternative_spell_ids": [
+          185358
+        ],
+        "alternative_spell_names": [
+          "Arcane Shot"
+        ],
+        "health_pct": 20
+      },
+      "action": "Spend Precise Shots with Kill Shot once the target is in execute range."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Fire the second Explosive Shot on Unstable Trigger",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 1301778,
+        "buff_spell_name": "Unstable Trigger",
+        "spend_spell_ids": [
+          212431
+        ],
+        "spend_spell_names": [
+          "Explosive Shot"
+        ]
+      },
+      "action": "Send Explosive Shot again straight away, on a second target when you are in AoE."
+    }
+  ],
+  "source_summary": "Marksmanship has one real cooldown, Trueshot: send it on cooldown with your potion, on-use trinket and racial, and hold only the last one of the fight for 30 stacks of Bullseye. Explosive Shot and Volley go out on cooldown around it, and activating Trueshot hands you one Moonlight Chakram as Sentinel or one Wailing Arrow as Dark Ranger to slot into a global where it costs nothing. Everything else is the core loop: Aimed Shot and Rapid Fire on cooldown, every Precise Shots proc spent, and Steady Shot filling any global that would otherwise be dead."
+}

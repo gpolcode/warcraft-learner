@@ -1,0 +1,188 @@
+{
+  "spec": "HolyPaladin",
+  "spec_icon": "spell_holy_holybolt",
+  "major_cooldowns": [
+    {
+      "name": "Divine Toll",
+      "spell_id": 375576,
+      "cooldown": 60,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it close to on cooldown at 2 or fewer Holy Power, on an ally when you need healing and on an enemy when you want damage.",
+      "id_note": "375576 is the observed cast id (43 casts across 5/5 parses)."
+    },
+    {
+      "name": "Avenging Wrath",
+      "spell_id": 31884,
+      "cooldown": 120,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use it on cooldown whenever the group needs a healing boost, and spend the instant Holy Lights from Hand of Divinity before their 20 second window ends.",
+      "id_note": "31884 is the observed cast and self-aura id; the guide's 384376 has no cooldown on its tooltip and is the talent version. Sanctified Wrath extends the window to 30s."
+    },
+    {
+      "name": "Aura Mastery",
+      "spell_id": 31821,
+      "cooldown": 180,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Take the time your raid leader assigns, and with Ringing of the Heavens fire it while people are already injured and Beacon of Virtue is running."
+    },
+    {
+      "name": "Avenging Crusader",
+      "spell_id": 216331,
+      "cooldown": 60,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "usage_rule": "When you take it over Avenging Wrath, press it on cooldown and fill the window with Hammer of Wrath and Crusader Strike in melee.",
+      "id_note": "NOT observed in the sampled parses, but the guide lists it as a talent option and a replacement for Avenging Wrath.",
+      "talent_gated": true
+    },
+    {
+      "name": "Holy Prism",
+      "spell_id": 114165,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "usage_rule": "If you take it over Divine Toll, cast it on an enemy for the most healing and only at 2 or fewer Holy Power.",
+      "id_note": "NOT observed in the sampled parses; the guide presents it as the alternative talent to Divine Toll.",
+      "talent_gated": true
+    },
+    {
+      "name": "Holy Bulwark",
+      "spell_id": 432459,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "As Lightsmith press it on cooldown at 2 or fewer Holy Power, on yourself so the extra shield from Solidarity lands on a tank.",
+      "id_note": "432459 is the castable armament id with 2 charges; 432800 is the applied buff. Not observed in the sampled parses, which ran no Lightsmith build.",
+      "talent_gated": true
+    },
+    {
+      "name": "Sacred Weapon",
+      "spell_id": 432472,
+      "cooldown": 60,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "As Lightsmith press it on cooldown at 2 or fewer Holy Power, on yourself so the copy goes to another healer.",
+      "id_note": "Not observed in the sampled parses, which ran no Lightsmith build; castable per its tooltip with 2 charges.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Divine Shield",
+      "spell_id": 642,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Pop it to save yourself from a mistake, to take your own health bar out of the healing check, or to immune damage transferred by Blessing of Sacrifice."
+    },
+    {
+      "name": "Blessing of Protection",
+      "spell_id": 1022,
+      "cooldown": 300,
+      "duration": 10,
+      "usage_rule": "Put it on an ally to immune physical damage or strip a physical debuff, and keep it off the tank unless they ask for it because it drops their aggro.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+    },
+    {
+      "name": "Blessing of Sacrifice",
+      "spell_id": 6940,
+      "cooldown": 120,
+      "usage_rule": "Use it often on whoever is taking heavy damage and watch your own health, since the transferred damage cannot be reduced by Divine Protection."
+    },
+    {
+      "name": "Divine Protection",
+      "spell_id": 498,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press it into predictable damage on yourself; it does nothing against damage transferred to you by Blessing of Sacrifice.",
+      "id_note": "498 is the observed cast id; 403876 shares the name and was not observed."
+    },
+    {
+      "name": "Lay on Hands",
+      "spell_id": 633,
+      "cooldown": 600,
+      "usage_rule": "Save it for a life-or-death moment on yourself or an ally, and remember it transfers nothing to your Beacons.",
+      "id_note": "633 is the observed cast id; 283630 and 471195 share the name and were not observed."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Do not press Holy Shock at capped Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 20473,
+        "spell_name": "Holy Shock",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "max"
+      },
+      "action": "Spend Holy Power on a spender before you press Holy Shock again."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Divine Toll goes out at low Holy Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "resource_type": 9,
+        "resource_name": "holy power",
+        "bound": "max"
+      },
+      "action": "Spend down first so the Holy Power Divine Toll generates is not wasted."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend every Infusion of Light proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 54149,
+        "buff_spell_name": "Infusion of Light",
+        "spend_spell_ids": [
+          19750,
+          275773,
+          82326
+        ],
+        "spend_spell_names": [
+          "Flash of Light",
+          "Judgment",
+          "Holy Light"
+        ]
+      },
+      "action": "Spend the proc on Flash of Light, or on Judgment when nobody needs the heal, before casting another Holy Shock."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Aura Mastery inside a Beacon of Virtue window",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 31821,
+        "spell_name": "Aura Mastery",
+        "buff_spell_id": 200025,
+        "buff_spell_name": "Beacon of Virtue",
+        "require": "inside"
+      },
+      "action": "Press Beacon of Virtue first, then fire Aura Mastery into that window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Divine Toll inside a Beacon of Virtue window",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 375576,
+        "spell_name": "Divine Toll",
+        "buff_spell_id": 200025,
+        "buff_spell_name": "Beacon of Virtue",
+        "require": "inside"
+      },
+      "action": "Press Beacon of Virtue first, then send Divine Toll into that window."
+    }
+  ],
+  "source_summary": "Holy Paladin is a priority spec built on generating and spending Holy Power, so Divine Toll and Avenging Wrath go out close to on cooldown rather than being saved for a rainy day. Divine Toll, Holy Prism and the Lightsmith armaments are only pressed at 2 or fewer Holy Power so the Holy Power they hand you is not wasted, and in raid both Divine Toll and Aura Mastery are lined up with an active Beacon of Virtue. Infusion of Light procs are spent on Flash of Light before more Holy Shocks are cast, with Holy Light kept as the mana-gated fallback and Avenging Wrath's Hand of Divinity Holy Lights used inside its window."
+}

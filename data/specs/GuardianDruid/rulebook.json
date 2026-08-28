@@ -1,0 +1,209 @@
+{
+  "spec": "GuardianDruid",
+  "spec_icon": "ability_racial_bearform",
+  "major_cooldowns": [
+    {
+      "name": "Lunar Beam",
+      "spell_id": 204066,
+      "cooldown": 60,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Drop it just before Incarnation or Berserk and pack as many Maul or Raze casts as you can into the window, which also heals you hard enough to count as a defensive.",
+      "id_note": "204066 is the cast and self buff seen in 5/5 parses; 1270292 is the enemy-side aura and 204069/414613 are unplayed nodes with the same name."
+    },
+    {
+      "name": "Incarnation: Guardian of Ursoc",
+      "spell_id": 102558,
+      "cooldown": 180,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it inside Lunar Beam and chain Thrash and Mangle for the whole window, spending rage on Raze, Maul or Ironfur so you never sit capped."
+    },
+    {
+      "name": "Berserk",
+      "spell_id": 106951,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it inside Lunar Beam once Thrash is on cooldown and chain Thrash and Mangle while spending rage to stay off the cap.",
+      "id_note": "106951 is the castable 3 minute Berserk; 26662 shares the name and is a passive node. Not seen in the sampled parses because the field takes Incarnation.",
+      "talent_gated": true
+    },
+    {
+      "name": "Red Moon",
+      "spell_id": 1252871,
+      "cooldown": 30,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Cast it whenever Mangle is off cooldown and its dot is not already ticking, then Mangle straight into it.",
+      "id_note": "1252871 is both the cast and the enemy dot in 5/5 parses; 1253582 shares the name and was not observed."
+    },
+    {
+      "name": "Sundering Roar",
+      "spell_id": 1253799,
+      "cooldown": 60,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it once Thrash is stacked high on the target and Thrash itself is on cooldown.",
+      "id_note": "1253799 is the castable tooltip id; 1253982 is the Thrash-linked passive. Neither was pressed in the sampled parses.",
+      "talent_gated": true
+    },
+    {
+      "name": "Heart of the Wild",
+      "spell_id": 1261867,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it in Cat Form for the Feral Frenzy bleed, or out of form when the group needs the Wild Growth instead.",
+      "id_note": "Castable per its tooltip but not pressed in the sampled parses.",
+      "talent_gated": true
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fire it in Bear Form on cooldown, and delay Red Moon a few seconds rather than casting it right in front of Convoke.",
+      "id_note": "391528 is the current talent cast; 323764 shares the name. Neither was pressed in the sampled parses.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Keep it rolling as often as you can in Bear Form to smooth steady damage, holding it only briefly for a known spike."
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save your 50% damage reduction for the most dangerous moments of the pull rather than pressing it on cooldown."
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press it as soon as your health dips low instead of banking it."
+    },
+    {
+      "name": "Rage of the Sleeper",
+      "spell_id": 200851,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press it through a stretch of heavy damage when Barkskin is already spent.",
+      "id_note": "Castable per its tooltip but not pressed in the sampled parses.",
+      "talent_gated": true
+    },
+    {
+      "name": "Bristling Fur",
+      "spell_id": 155835,
+      "cooldown": 40,
+      "duration": 8,
+      "usage_rule": "Press it when Mangle and Thrash are both on cooldown and your rage is low so incoming damage refills you for Ironfur.",
+      "id_note": "155835 carries the 40s tooltip cooldown; 204031 shares the name with a 30s tooltip. Neither was pressed in the sampled parses.",
+      "talent_gated": true
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "usage_rule": "Press it for an instant heal when Frenzied Regeneration alone will not cover the damage.",
+      "id_note": "108238 is the standard talent cast; 283762 shares the name. Neither was pressed in the sampled parses.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Moonfire up on your primary target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 164812,
+        "aura_spell_name": "Moonfire",
+        "on": "target"
+      },
+      "action": "Refresh Moonfire on your primary target as it runs out, and press it on every Galactic Guardian proc."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Thrash bleeding on your targets",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 192090,
+        "aura_spell_name": "Thrash",
+        "on": "target"
+      },
+      "action": "Cast Thrash on cooldown so the bleed never drops and its stacks stay high."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Incarnation paired with Lunar Beam",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 102558,
+        "spell_name": "Incarnation: Guardian of Ursoc",
+        "required_spell_id": 204066,
+        "required_spell_name": "Lunar Beam",
+        "position": "before"
+      },
+      "action": "Drop Lunar Beam first, then press Incarnation so both windows overlap."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Mangle over Swipe inside Incarnation",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 33917,
+        "spell_name": "Mangle",
+        "alternative_spell_ids": [213771],
+        "alternative_spell_names": ["Swipe"],
+        "buff_spell_id": 102558,
+        "buff_spell_name": "Incarnation: Guardian of Ursoc",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Chain Mangle inside Incarnation and only fall back to Swipe once nothing else is ready."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Raze spent from a high rage pool",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 400254,
+        "spell_name": "Raze",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Bank rage before you press Raze and stop draining it into Ironfur you do not need."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Red Moon into Mangle",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1252871,
+        "spell_name": "Red Moon",
+        "required_spell_id": 33917,
+        "required_spell_name": "Mangle",
+        "position": "after"
+      },
+      "action": "Cast Red Moon while Mangle is ready and follow it straight into Mangle."
+    }
+  ],
+  "source_summary": "Guardian keeps Moonfire and Thrash rolling and presses Mangle, Thrash and Red Moon on cooldown, spending rage on Raze or Maul for damage and on Ironfur only when a real hit is coming. Lunar Beam opens the burst window and Incarnation or Berserk goes off inside it, where Thrash, Mangle and rage spenders are chained as fast as the global cooldown allows. Barkskin is rotated constantly to smooth incoming damage while Survival Instincts is saved for the dangerous moments of an encounter."
+}

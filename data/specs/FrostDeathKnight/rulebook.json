@@ -1,0 +1,218 @@
+{
+  "spec": "FrostDeathKnight",
+  "spec_icon": "spell_deathknight_frostpresence",
+  "major_cooldowns": [
+    {
+      "name": "Empower Rune Weapon",
+      "spell_id": 47568,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Spend a charge as soon as you would sit on two, whenever you need Killing Machine, and to refill Runes just before Breath of Sindragosa.",
+      "id_note": "47568 is the cast seen in every sampled parse and carries 2 charges; 1231100 shares the name and was never cast."
+    },
+    {
+      "name": "Reaper's Mark",
+      "spell_id": 439843,
+      "cooldown": 45,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press Reaper's Mark on cooldown, on the same GCD as Pillar of Frost, and never onto a target that still carries a mark.",
+      "id_note": "439843 is the cast id; 434765 is the enemy debuff of the same name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Pillar of Frost",
+      "spell_id": 51271,
+      "cooldown": 45,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Send Pillar of Frost on cooldown and pull Reaper's Mark, Breath of Sindragosa, Frostwyrm's Fury, and your on-use trinket into the same window."
+    },
+    {
+      "name": "Breath of Sindragosa",
+      "spell_id": 1249658,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Start Breath of Sindragosa inside Pillar of Frost with a pooled bar of Runic Power, and stop dumping Frost Strike in the seconds before it comes up.",
+      "id_note": "1249658 is the cast and buff seen in every sampled parse; 155166 and 1234304 share the name and were never cast."
+    },
+    {
+      "name": "Frostwyrm's Fury",
+      "spell_id": 279302,
+      "cooldown": 90,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "Fire it right after Pillar of Frost to start the window, then spend the recall cast later in that same Pillar when Unholy Strength and Bonegrinder overlap.",
+      "id_note": "279302 is the initial cast; 1265384 is the Chosen of Frostbrood recall cast that shares the name, also seen in every parse."
+    },
+    {
+      "name": "Raise Dead",
+      "spell_id": 46585,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "usage_rule": "Summon the ghoul before the pull and re-summon it off cooldown so it is out during every Pillar of Frost.",
+      "id_note": "46585 is the 120s cast seen in every sampled parse; 46584 and 52150 share the name."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Eat incoming magic damage with it and take the Runic Power the absorbed hits give you.",
+      "id_note": "48707 is the cast and buff seen in every sampled parse; 444741 shares the name."
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press it for heavy physical damage or to shrug off a stun."
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Drop it on the raid for a scripted magic hit and stand inside it yourself.",
+      "id_note": "51052 is the cast id; 145629 is the aura of the same name."
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use it to break a fear, sleep, or charm and to leech health back from your own damage.",
+      "talent_gated": true
+    },
+    {
+      "name": "Sacrificial Pact",
+      "spell_id": 327574,
+      "cooldown": 120,
+      "usage_rule": "Blow up your ghoul for an emergency heal when it is not worth more alive.",
+      "id_note": "327574 is the death knight version; 175900 shares the name. Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Empower Rune Weapon, Pillar of Frost, Frostwyrm's Fury",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          47568,
+          51271,
+          279302
+        ],
+        "spell_names": [
+          "Empower Rune Weapon",
+          "Pillar of Frost",
+          "Frostwyrm's Fury"
+        ]
+      },
+      "action": "Lead with Empower Rune Weapon, then Pillar of Frost, then Frostwyrm's Fury inside that window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "critical",
+      "description": "Frostwyrm's Fury only inside Pillar of Frost",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 279302,
+        "spell_name": "Frostwyrm's Fury",
+        "buff_spell_id": 51271,
+        "buff_spell_name": "Pillar of Frost",
+        "require": "inside"
+      },
+      "action": "Press Pillar of Frost first, then fire Frostwyrm's Fury inside it so Chosen of Frostbrood is not thrown away."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Reaper's Mark on the same GCD as Pillar of Frost",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 439843,
+        "spell_name": "Reaper's Mark",
+        "required_spell_id": 51271,
+        "required_spell_name": "Pillar of Frost",
+        "position": "either"
+      },
+      "action": "Mark your target on the same GCD as Pillar of Frost so the Strength buff covers the Wave of Souls hits."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Breath of Sindragosa paired with Pillar of Frost",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1249658,
+        "spell_name": "Breath of Sindragosa",
+        "required_spell_id": 51271,
+        "required_spell_name": "Pillar of Frost",
+        "position": "either"
+      },
+      "action": "Hold Breath of Sindragosa until Pillar of Frost is going out, and pool Runic Power for it instead of dumping Frost Strike."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Obliterate on every Killing Machine",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 49020,
+        "spell_name": "Obliterate",
+        "alternative_spell_ids": [
+          49143,
+          49184,
+          194913
+        ],
+        "alternative_spell_names": [
+          "Frost Strike",
+          "Howling Blast",
+          "Glacial Advance"
+        ],
+        "buff_spell_id": 51124,
+        "buff_spell_name": "Killing Machine",
+        "except_buff_spell_ids": [
+          59052
+        ],
+        "except_buff_spell_names": [
+          "Rime"
+        ]
+      },
+      "action": "Spend Killing Machine on Obliterate, or on Frostscythe once the pack is up, before you reach for another filler."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Frostscythe replaces Obliterate in AoE",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 207230,
+        "spell_name": "Frostscythe",
+        "bound": "min"
+      },
+      "action": "Move your Killing Machine spender to Frostscythe from 2 targets and keep Obliterate for single target."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Glacial Advance replaces Frost Strike in AoE",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 194913,
+        "spell_name": "Glacial Advance",
+        "bound": "min"
+      },
+      "action": "Dump Runic Power with Glacial Advance from 3 targets and stay on Frost Strike at two."
+    }
+  ],
+  "source_summary": "Frost stacks its cooldowns into one window: Pillar of Frost goes out on cooldown with Reaper's Mark on the same GCD, Breath of Sindragosa starts inside it off a pooled bar, and Frostwyrm's Fury never fires without Pillar up. Empower Rune Weapon is spent freely to keep Killing Machine flowing rather than banked at two charges. Between cooldowns the rotation is proc management: Obliterate every Killing Machine, Howling Blast every Rime, and shift to Frostscythe and Glacial Advance as targets stack up."
+}

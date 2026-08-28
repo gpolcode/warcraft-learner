@@ -1,0 +1,180 @@
+{
+  "spec": "ProtectionWarrior",
+  "spec_icon": "ability_warrior_defensivestance",
+  "major_cooldowns": [
+    {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "Send Avatar on cooldown and keep spending rage, which pulls it back closer to every minute and shortens Thunder Clap."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it on cooldown for the Booming Voice rage while it cuts the damage everything it hits deals to you."
+    },
+    {
+      "name": "Shield Charge",
+      "spell_id": 385954,
+      "cooldown": 45,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "usage_rule": "Fire Shield Charge on cooldown for the burst; it stuns the target and hands you a Shield Block.",
+      "id_note": "385954 is the id seen in casts across all sampled parses; the guide links 385952, which is the row carrying the 45s tooltip cooldown."
+    },
+    {
+      "name": "Demolish",
+      "spell_id": 436358,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "On Colossus, fire Demolish as soon as Colossal Might is at 3 or more stacks and then straight back on cooldown.",
+      "id_note": "436358 is the cast row; 440884 and 440886 share the name and look like talent or passive rows.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Drop Ravager on cooldown and Thunder Clap under it so Rend is already ticking while it spins.",
+      "id_note": "228920 is the cast row; 156287 and 334934 share the name and carry no cooldown.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Keep Shield Block rolling through physical damage and refresh it before you sit on capped charges.",
+      "id_note": "2565 is the cast row; 132404 is the buff."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Reflect a telegraphed magic hit or a cast aimed at you.",
+      "id_note": "23920 is the cast row; 385391 is a buff row with the same name."
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "usage_rule": "Press it as soon as your health dips to heal a chunk straight back.",
+      "talent_gated": true
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "usage_rule": "Keep it on the pack you are tanking so everything in it hits you for less."
+    },
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use Shield Wall to smooth heavy damage intake instead of holding it for the end of the fight."
+    },
+    {
+      "name": "Last Stand",
+      "spell_id": 12975,
+      "cooldown": 180,
+      "usage_rule": "Pop Last Stand when your health is dropping fast and get a heal in before the extra health falls off.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Call Rallying Cry ahead of a raid-wide hit for the group health buffer.",
+      "id_note": "97462 is the cast row; 97463 is the buff."
+    },
+    {
+      "name": "Bitter Immunity",
+      "spell_id": 383762,
+      "cooldown": 180,
+      "usage_rule": "Use it to clear a bleed, poison, disease or curse and heal back some health at the same time.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Charge in, then Shield Slam into Thunder Clap",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [100, 23922, 6343],
+        "spell_names": ["Charge", "Shield Slam", "Thunder Clap"]
+      },
+      "action": "Charge into combat at the pull, then lead with Shield Slam and follow with Thunder Clap."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Rend on the target with Thunder Clap",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 388539,
+        "aura_spell_name": "Rend",
+        "on": "target"
+      },
+      "action": "Press Thunder Clap on cooldown so Rend never falls off what you are tanking."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Shield Block rolling",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 132404,
+        "aura_spell_name": "Shield Block",
+        "on": "self"
+      },
+      "action": "Spend a Shield Block charge before the buff runs out so it never gaps."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Spend Revenge! procs instead of Thunder Clap",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 6572,
+        "spell_name": "Revenge",
+        "alternative_spell_ids": [6343],
+        "alternative_spell_names": ["Thunder Clap"],
+        "buff_spell_id": 5302,
+        "buff_spell_name": "Revenge!",
+        "except_buff_spell_ids": [435615, 386478],
+        "except_buff_spell_names": ["Thunder Blast", "Violent Outburst"]
+      },
+      "action": "Cash in the free Revenge as soon as it procs and hold Thunder Clap for the next global."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Ignore Pain dumps the rage that would cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 190456,
+        "spell_name": "Ignore Pain",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Dump Ignore Pain when rage is about to cap, not as a filler while Shield Slam and Revenge still need it."
+    }
+  ],
+  "source_summary": "Protection Warrior cycles Avatar, Demoralizing Shout and Shield Charge on cooldown and spends rage hard so those cooldowns come back faster. Shield Slam and Thunder Clap drive every global, Revenge eats the procs and spare rage, and Ignore Pain soaks whatever would otherwise cap. Defensives smooth damage rather than sit banked: Shield Block stays rolling and Shield Wall, Last Stand and Rallying Cry cover the spikes."
+}

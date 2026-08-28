@@ -1,0 +1,101 @@
+{
+  "spec": "BeastMasteryHunter",
+  "spec_icon": "ability_hunter_bestialdiscipline",
+  "major_cooldowns": [
+    {
+      "name": "Bestial Wrath",
+      "spell_id": 19574,
+      "cooldown": 90,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown with a Barbed Shot on the global before it, two Kill Command charges banked and your pet already on your priority target, and only hold it when the pack will die within 12 seconds.",
+      "id_note": "Ids 186254 and 1246860 share this name; 19574 is the cast id seen in all sampled parses. Base cooldown 90s per the ability table; the guide only calls it short."
+    },
+    {
+      "name": "Berserking",
+      "spell_id": 26297,
+      "cooldown": 180,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press your stat racial in the same global as Bestial Wrath, together with your potion and any stat trinket.",
+      "id_note": "Troll racial, so most players will show zero casts; the guide names Blood Fury (20572), Ancestral Call (274738) and Fireblood (265221) as the same-role alternatives.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Save it for a hit that would otherwise kill you, and accept that you cannot attack while it holds."
+    },
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press it into every telegraphed raid hit; the cooldown is short enough that sitting on it wastes it."
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "usage_rule": "Use it once you have taken a chunk of damage, before the next hit lands, and it tops your pet up too."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Barbed Shot into Bestial Wrath",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [217200, 19574, 34026],
+        "spell_names": ["Barbed Shot", "Bestial Wrath", "Kill Command"]
+      },
+      "action": "Lead with two Barbed Shots, press Bestial Wrath once your pet has reached the target, then spend Kill Command."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Barbed Shot in the global before Bestial Wrath",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 19574,
+        "spell_name": "Bestial Wrath",
+        "required_spell_id": 217200,
+        "required_spell_name": "Barbed Shot",
+        "position": "before"
+      },
+      "action": "Spend a Barbed Shot on the global before Bestial Wrath instead of carrying capped charges into the window."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Save your stat racial for Bestial Wrath",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [26297, 20572, 274738, 265221],
+        "spell_names": ["Berserking", "Blood Fury", "Ancestral Call", "Fireblood"],
+        "anchor_spell_id": 19574,
+        "anchor_spell_name": "Bestial Wrath"
+      },
+      "action": "Macro your stat racial to Bestial Wrath so it is live before the initial hit lands, and line your potion up with it."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Wild Thrash is for packs, not single target",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1264359,
+        "spell_name": "Wild Thrash",
+        "bound": "min"
+      },
+      "action": "Keep Wild Thrash for multi-target, where it turns on Beast Cleave, and press Cobra Shot on a lone target."
+    }
+  ],
+  "source_summary": "Beast Mastery is built entirely around Bestial Wrath: send it on cooldown, weave a Barbed Shot into the global before it, and walk in with two Kill Command charges so the window is packed with buffed Kill Commands. Stat racials, potions and stat trinkets are macroed into the same press so they are live before the initial hit, while pure damage trinkets just go on cooldown. Wild Thrash joins the priority once several enemies are up and Beast Cleave should already be running before Bestial Wrath in AoE; otherwise Cobra Shot is the filler."
+}

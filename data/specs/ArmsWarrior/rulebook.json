@@ -1,0 +1,223 @@
+{
+  "spec": "ArmsWarrior",
+  "spec_icon": "ability_warrior_savageblow",
+  "major_cooldowns": [
+    {
+      "name": "Colossus Smash",
+      "spell_id": 167105,
+      "cooldown": 45,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Send it on cooldown and pack Bladestorm, Ravager or Demolish into the 10 second debuff, since delaying it desyncs every other cooldown.",
+      "id_note": "167105 is the cast id; 208086 is the aura id used by the rules."
+    },
+    {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 90,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Press it shortly before or together with Colossus Smash and fire on-use stat trinkets in the same window."
+    },
+    {
+      "name": "Bladestorm",
+      "spell_id": 446035,
+      "cooldown": 90,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Cast it inside Colossus Smash after topping up Imminent Demise with an Execute, and take the next window rather than sitting on it when its own cooldown reduction breaks alignment.",
+      "id_note": "Three ids share this name; 446035 is the one seen in casts and as the self aura, 227847 is the id the guide text links.",
+      "talent_gated": true
+    },
+    {
+      "name": "Sweeping Strikes",
+      "spell_id": 260708,
+      "cooldown": 30,
+      "duration": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "On two or more targets press it while Colossus Smash is still on cooldown so it covers the whole burst window."
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "duration": 12,
+      "align_with_bloodlust": false,
+      "usage_rule": "Drop it just before Colossus Smash so its ticks land inside the debuff.",
+      "id_note": "Not observed in the sampled parses, which all ran Slayer; 228920 is the castable id and 156287 is the talent node.",
+      "talent_gated": true
+    },
+    {
+      "name": "Demolish",
+      "spell_id": 436358,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "usage_rule": "Channel it inside Colossus Smash once Colossal Might hits 10 stacks, or delay it to the last seconds of the debuff to bank extra stacks.",
+      "id_note": "Not observed in the sampled parses, which all ran Slayer; 436358 carries the 30s cooldown, 440884 has no cooldown.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use it into melee and physical damage, where the parry chance turns most incoming swings away."
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Call it just before raid-wide spike damage to give the whole group extra health.",
+      "id_note": "97462 is the cast id; 97463 is the aura."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Press it right before a targeted magic hit lands to send that cast back at its caster.",
+      "id_note": "23920 is the cast id; 385391 is a second aura id under the same name."
+    },
+    {
+      "name": "Ignore Pain",
+      "spell_id": 1277297,
+      "cooldown": 20,
+      "duration": 12,
+      "usage_rule": "Spend spare rage on the absorb ahead of predictable damage instead of letting rage cap.",
+      "id_note": "Two Ignore Pain ids; 1277297 carries the 20s cooldown and 12s absorb, 190456 shows a 1s cooldown.",
+      "talent_gated": true
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "usage_rule": "Press it for a quick self-heal between damage events when you are missing health.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Bitter Immunity",
+      "spell_id": 383762,
+      "cooldown": 180,
+      "usage_rule": "Use it to clear a magic, curse, disease or poison effect and heal a chunk of health back.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Charge into Avatar and Colossus Smash",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [100, 107574, 167105],
+        "spell_names": ["Charge", "Avatar", "Colossus Smash"]
+      },
+      "action": "Charge in at the pull, then press Avatar just before Colossus Smash and dump the rest inside that window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Avatar with Colossus Smash",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 107574,
+        "spell_name": "Avatar",
+        "required_spell_id": 167105,
+        "required_spell_name": "Colossus Smash",
+        "position": "after"
+      },
+      "action": "Press Avatar shortly before Colossus Smash so the two windows overlap."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Bladestorm inside Colossus Smash",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 446035,
+        "spell_name": "Bladestorm",
+        "buff_spell_id": 208086,
+        "buff_spell_name": "Colossus Smash",
+        "require": "inside"
+      },
+      "action": "Wait for the Colossus Smash debuff to land before you start Bladestorm."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Demolish inside Colossus Smash",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 436358,
+        "spell_name": "Demolish",
+        "buff_spell_id": 208086,
+        "buff_spell_name": "Colossus Smash",
+        "require": "inside"
+      },
+      "action": "Channel Demolish inside Colossus Smash at 10 stacks of Colossal Might, or in the debuff's last seconds to bank more."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Rend bleeding on the target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 388539,
+        "aura_spell_name": "Rend",
+        "on": "target"
+      },
+      "action": "Refresh Rend with Cleave before it falls off, and top it up as Colossus Smash comes back."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Sudden Death procs with Execute",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 52437,
+        "buff_spell_name": "Sudden Death",
+        "spend_spell_ids": [281000],
+        "spend_spell_names": ["Execute"]
+      },
+      "action": "Fire Execute while the proc is up, and press it straight away once it reaches two stacks."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute takes over from Slam in execute range",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [1464],
+        "alternative_spell_names": ["Slam"],
+        "health_pct": 20
+      },
+      "action": "Drop Slam and pour your rage into Execute once the target is in execute range."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Bladestorm at full Imminent Demise stacks",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 446035,
+        "spell_name": "Bladestorm",
+        "buff_spell_id": 445606,
+        "buff_spell_name": "Imminent Demise",
+        "bound": "min",
+        "max_stacks": 3
+      },
+      "action": "Squeeze an Execute in immediately before Bladestorm to reach 3 stacks of Imminent Demise."
+    }
+  ],
+  "source_summary": "Arms runs its cooldowns on cooldown around Colossus Smash: Avatar goes shortly before or with it, and Bladestorm, Ravager or Demolish are packed into the 10 second debuff. Anger Management keeps Colossus Smash and Avatar aligned most of the time, so cooldowns are only delayed for an incoming add pack or a damage phase, never long enough to lose a use. Between windows the spec keeps Rend bleeding, spends Sudden Death procs with Execute, and swaps Slam out for Execute once the target is in execute range."
+}

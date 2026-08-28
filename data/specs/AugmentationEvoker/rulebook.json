@@ -1,0 +1,209 @@
+{
+  "spec": "AugmentationEvoker",
+  "spec_icon": "classicon_evoker_augmentation",
+  "major_cooldowns": [
+    {
+      "name": "Ebon Might",
+      "spell_id": 395152,
+      "cooldown": 30,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Recast it with no more than 3-4 seconds left, extend it with Eruption and your empowers, and as Chronowarden recast it right after Time Skip to chase a Double-time crit.",
+      "id_note": "395152 is the cast id; 395296 is the matching self aura used by the uptime rule."
+    },
+    {
+      "name": "Breath of Eons",
+      "spell_id": 403631,
+      "cooldown": 120,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Send it roughly on cooldown along a short, safe flight path, and shift it slightly so the 10-second Temporal Wounds window covers your buffed allies' burst.",
+      "id_note": "403631 is the cast id seen in 4 of 5 parses; 442204 shares the name and appears in one parse."
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Press it off the GCD and spend it on a Max Rank Fire Breath, and as Chronowarden with Time Skip cancel the buff with a macro when no empower is ready so its cooldown starts."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 357208,
+      "cooldown": 30,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Cast it inside Ebon Might at Max Rank for extra Leaping Flames projectiles, or at Rank 1 when Upheaval is off cooldown or Ebon Might has under 4-5 seconds left.",
+      "id_note": "357208 is the cast id; 357209 and 1283719 are the enemy dot auras."
+    },
+    {
+      "name": "Upheaval",
+      "spell_id": 396286,
+      "cooldown": 40,
+      "align_with_bloodlust": false,
+      "opener_priority": 5,
+      "usage_rule": "Cast it inside Ebon Might at Rank 1 in single target, and uprank it only when the wider radius catches more enemies.",
+      "id_note": "The guide cites 408092, but 396286 is the id observed in casts; 431620 is the Reverberations enemy aura."
+    },
+    {
+      "name": "Time Skip",
+      "spell_id": 404977,
+      "cooldown": 180,
+      "duration": 2,
+      "align_with_bloodlust": false,
+      "opener_priority": 6,
+      "usage_rule": "Channel it in the opener right after your first Fire Breath and Upheaval, then on cooldown when it takes the full duration off Fire Breath, Upheaval, Prescience, and Breath of Eons.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 8,
+      "usage_rule": "Press it just before a heavy hit lands rather than after your health is already low."
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use it ahead of a raid-wide hit so you and the allies stacked with you take less damage."
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "usage_rule": "Press it for a quick self top-up when a healer cannot reach you."
+    },
+    {
+      "name": "Verdant Embrace",
+      "spell_id": 360995,
+      "cooldown": 24,
+      "usage_rule": "Cast it in a lull to heal yourself or a struggling ally instead of spending a rotational global.",
+      "id_note": "360995 is the castable id; 361195 shares the name and shows as a zero-cast entry."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Ebon Might up through your rotation",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 395296,
+        "aura_spell_name": "Ebon Might",
+        "on": "self"
+      },
+      "action": "Recast Ebon Might with no more than 3-4 seconds left, and extend it with Eruption, Fire Breath, and Upheaval."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Ebon Might, Prescience, Breath of Eons, empowers",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [395152, 409311, 403631, 370553, 357208, 396286],
+        "spell_names": [
+          "Ebon Might",
+          "Prescience",
+          "Breath of Eons",
+          "Tip the Scales",
+          "Fire Breath",
+          "Upheaval"
+        ]
+      },
+      "action": "Cast Ebon Might the moment combat starts, then two Prescience, Breath of Eons, and Tip the Scales into a Max Rank Fire Breath and Upheaval."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Fire Breath only while Ebon Might is up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 357208,
+        "spell_name": "Fire Breath",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Hold Fire Breath until Ebon Might is active so Sands of Time extends the buff."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Upheaval only while Ebon Might is up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 396286,
+        "spell_name": "Upheaval",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Wait for Ebon Might before you empower Upheaval, and build Essence while the buff is down."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Eruption only while Ebon Might is up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 395160,
+        "spell_name": "Eruption",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Bank Essence while Ebon Might is down and dump Eruption once it is up, unless Essence Burst is about to expire."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Essence Burst before casting Prescience",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 409311,
+        "spell_name": "Prescience",
+        "buff_spell_id": 392268,
+        "buff_spell_name": "Essence Burst",
+        "bound": "max",
+        "max_stacks": 2
+      },
+      "action": "Fire an Eruption to clear Essence Burst before you press Prescience."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Tip the Scales into Max Rank Fire Breath",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 370553,
+        "spell_name": "Tip the Scales",
+        "required_spell_id": 357208,
+        "required_spell_name": "Fire Breath",
+        "position": "after"
+      },
+      "action": "Spend Tip the Scales on a Max Rank Fire Breath right after you press it, or on Upheaval when you need the radius."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Time Skip after your Fire Breath and Upheaval",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 404977,
+        "spell_name": "Time Skip",
+        "required_spell_id": 396286,
+        "required_spell_name": "Upheaval",
+        "position": "before"
+      },
+      "action": "Send your empowers first, then channel Time Skip so it takes the full duration off their cooldowns."
+    }
+  ],
+  "source_summary": "Augmentation's whole cooldown plan hangs off Ebon Might: recast it with 3-4 seconds left and spend Eruption, Fire Breath, and Upheaval inside it so Sands of Time extends the buff, holding those casts while it is down. Breath of Eons goes out roughly on cooldown on a short, safe flight path, nudged onto allies' burst windows, while Tip the Scales feeds a Max Rank Fire Breath for Leaping Flames value. Time Skip, when talented, is channelled after the opener's empowers and then on cooldown once Fire Breath, Upheaval, Prescience, and Breath of Eons are all down."
+}

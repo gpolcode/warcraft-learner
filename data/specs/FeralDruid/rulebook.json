@@ -1,0 +1,271 @@
+{
+  "spec": "FeralDruid",
+  "spec_icon": "ability_druid_catform",
+  "major_cooldowns": [
+    {
+      "name": "Tiger's Fury",
+      "spell_id": 5217,
+      "cooldown": 30,
+      "duration": 10,
+      "align_with_bloodlust": false,
+      "opener_priority": 1,
+      "usage_rule": "Spend down to low energy before it comes off cooldown, then press it to snapshot Rake and Rip and to open the window for Berserk and Convoke the Spirits."
+    },
+    {
+      "name": "Berserk",
+      "spell_id": 106951,
+      "cooldown": 180,
+      "duration": 15,
+      "align_with_bloodlust": false,
+      "opener_priority": 2,
+      "usage_rule": "Press it only with Tiger's Fury already active, then keep generating so the overflow combo points convert into extra finishers, and as Druid of the Claw work Swipe into the window for Claw Rampage procs.",
+      "id_note": "Cast id 106951, seen in 5/5 parses; ids 26662 and 343216 share the name and are talent or passive nodes."
+    },
+    {
+      "name": "Incarnation: Avatar of Ashamane",
+      "spell_id": 102543,
+      "cooldown": 180,
+      "duration": 20,
+      "align_with_bloodlust": false,
+      "usage_rule": "Use it exactly like Berserk inside Tiger's Fury, and spend the free in-combat Prowl on a stealth Rake for the snapshot.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; replaces Berserk 106951 when talented.",
+      "talent_gated": true
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "duration": 4,
+      "align_with_bloodlust": false,
+      "opener_priority": 3,
+      "usage_rule": "Fire it with Tiger's Fury and Berserk up, all your dots already applied, and straight after a finisher so no combo points are wasted.",
+      "id_note": "Cast id 391528, seen in 5/5 parses; 323764 shares the name and was not observed as a cast."
+    },
+    {
+      "name": "Feral Frenzy",
+      "spell_id": 274837,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "opener_priority": 4,
+      "usage_rule": "Press it at 2 or fewer combo points, or 4 or fewer inside Berserk, and line it up with Tiger's Fury so the bleed is snapshotted.",
+      "id_note": "Cast id 274837; 274838 is the matching enemy bleed aura."
+    },
+    {
+      "name": "Frantic Frenzy",
+      "spell_id": 1243807,
+      "cooldown": 45,
+      "duration": 6,
+      "align_with_bloodlust": false,
+      "usage_rule": "Press it with Tiger's Fury up on two or more targets, or at low combo points in single target, and delay Tiger's Fury up to 2 seconds when that lines the two up.",
+      "id_note": "Replaces Feral Frenzy when talented; 1243807 is the castable id per its tooltip and was not pressed in the sampled parses, 1244023 is the matching bleed.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press it into any predictable raid hit; it costs no global and works in Cat Form, so it never interrupts your rotation."
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save it for the hits you cannot avoid, and pair it with Barkskin when a mechanic would otherwise kill you."
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Shift to Bear Form and press it after you have already taken the damage, then shift straight back to Cat Form."
+    },
+    {
+      "name": "Renewal",
+      "spell_id": 108238,
+      "cooldown": 90,
+      "usage_rule": "Press it for an instant chunk of health without leaving Cat Form or dropping a global on Regrowth.",
+      "id_note": "108238 and 283762 share the name; neither was pressed in the sampled parses, both castable per tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open stealth Rake into Berserk, Rip and Convoke",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [1822, 106951, 1079, 391528],
+        "spell_names": ["Rake", "Berserk", "Rip", "Convoke the Spirits"]
+      },
+      "action": "Rake from Prowl, build to 5 combo points at low energy, then send Berserk with Tiger's Fury before Rip and Convoke."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Berserk only with Tiger's Fury up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 106951,
+        "spell_name": "Berserk",
+        "buff_spell_id": 5217,
+        "buff_spell_name": "Tiger's Fury",
+        "require": "inside"
+      },
+      "action": "Press Tiger's Fury first so the whole Berserk window is buffed."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Convoke the Spirits only with Tiger's Fury up",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 391528,
+        "spell_name": "Convoke the Spirits",
+        "buff_spell_id": 5217,
+        "buff_spell_name": "Tiger's Fury",
+        "require": "inside"
+      },
+      "action": "Hold Convoke until Tiger's Fury is running and fire it right after a finisher."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Ferocious Bite only at full combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 22568,
+        "spell_name": "Ferocious Bite",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Keep generating until you are capped and let Rip take the finisher when it needs refreshing."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Bite at full energy for the damage bonus",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 22568,
+        "spell_name": "Ferocious Bite",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "min"
+      },
+      "action": "Pool to 50 energy before biting so it spends the extra 25 energy for double damage."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Rip on the target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 1079,
+        "aura_spell_name": "Rip",
+        "on": "target"
+      },
+      "action": "Refresh Rip at 5 combo points as it enters pandemic, and reapply it under Tiger's Fury."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Rake on the target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 155722,
+        "aura_spell_name": "Rake",
+        "on": "target"
+      },
+      "action": "Reapply Rake as it enters pandemic, preferably with Tiger's Fury up for the snapshot."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Refresh Rake in pandemic, not early",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 155722,
+        "aura_spell_name": "Rake",
+        "cast_spell_id": 1822,
+        "cast_spell_name": "Rake",
+        "on": "target",
+        "except_buff_spell_ids": [5217, 5215],
+        "except_buff_spell_names": ["Tiger's Fury", "Prowl"]
+      },
+      "action": "Let Rake run into its pandemic window before refreshing, and only clip it early when Tiger's Fury or stealth upgrades the snapshot."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Tiger's Fury at low energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 5217,
+        "spell_name": "Tiger's Fury",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "max"
+      },
+      "action": "Dump your energy into Shred in the seconds before Tiger's Fury comes off cooldown."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Chomp at low energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 1244258,
+        "spell_name": "Chomp",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "max"
+      },
+      "action": "Spend down to as little energy as you can as Chomp comes off cooldown."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Bite on every Apex Predator's Craving proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 391882,
+        "buff_spell_name": "Apex Predator's Craving",
+        "spend_spell_ids": [22568],
+        "spend_spell_names": ["Ferocious Bite"]
+      },
+      "action": "Fire Ferocious Bite the moment the proc lights up, ahead of everything else."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Primal Wrath instead of Rip on several targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 285381,
+        "spell_name": "Primal Wrath",
+        "bound": "min"
+      },
+      "action": "Spend your finisher on Primal Wrath once extra targets are up and Rip is missing or in pandemic."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Swipe as your builder on several targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 106785,
+        "spell_name": "Swipe",
+        "bound": "min"
+      },
+      "action": "Swap your builder from Shred to Swipe once extra targets are up, and use it on Clearcasting procs."
+    }
+  ],
+  "source_summary": "Feral stacks its cooldowns around Tiger's Fury: Berserk and Convoke the Spirits are pressed inside it, and Rake and Rip are applied under it so the bleeds carry the snapshot. Energy is the limiting resource, so dump it before Tiger's Fury and Chomp come back and spend at 5 combo points with 50 energy on Ferocious Bite. Rip, Rake and Apex Predator's Craving procs outrank every filler, with Primal Wrath and Swipe taking over as targets are added."
+}
