@@ -32,7 +32,6 @@ export class WindowComparison {
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
-  // Required: a shared default would hand one card's vocabulary to the other, and a defensive window measures damage taken, not burst.
   readonly metricLabel = input.required<string>();
   readonly chipsLabel = input.required<string>();
   readonly rangeLabel = input.required<string>();
