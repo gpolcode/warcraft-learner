@@ -12,7 +12,7 @@ const MAX_UPTIME_GAPS = 3;
 /** Below this, a gap is travel time or event-ordering noise rather than a missed refresh - and would render as a nonsensical "0s" chip anyway. */
 const MIN_UPTIME_GAP_S = 1;
 
-/** Tracks PERCENT_POINTS: printing fewer digits than judged the row is what makes a flagged uptime read as equal to its own target. */
+/** Tracks PERCENT_POINTS: whole points print a maintain target and the uptime that missed it as the same number. */
 const UPTIME_DECIMALS = 1;
 
 @Injectable({ providedIn: 'root' })
@@ -83,11 +83,9 @@ export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
     cond: AuraUptimeBelowCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: RuleSeverity, remedy?: string,
   ): AnalysisFinding | null {
     const { lo, hi } = this.bandLimits(this.PERCENT_POINTS, band);
-    const rawPct = this.uptimePct(cond, ctx);
-    // Judged on the printed number, so a flagged uptime never reads as equal to the target beside it.
-    const pct = this.PERCENT_POINTS.quantize(rawPct);
+    const pct = this.uptimePct(cond, ctx);
     // Zero uptime reads as a build that skips the aura rather than a mistake, which the app does not guess at.
-    if (rawPct <= 0 || !this.outOfBand(pct, lo, hi, judging)) return null;
+    if (pct <= 0 || !this.outOfBand(pct, lo, hi, judging)) return null;
     const windows = cond.on === 'target' ? ctx.targetAuras : ctx.selfAuras;
     const merged = this.mergedUpSpans(windows, cond.aura_spell_id, ctx.fightDurationS);
     const gaps = this.uptimeGaps(merged, ctx.fightDurationS);

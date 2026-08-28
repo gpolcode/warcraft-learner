@@ -139,8 +139,8 @@ export abstract class RuleKind<C extends RuleCondition> {
   };
 
   protected readonly PERCENT: Scale = {
-    quantize: value => Math.round(value * 100) / 100, format: value => `${Math.round(value * 100)}%`,
-    span: (lo, hi) => lo === hi ? `${Math.round(lo * 100)}%` : `${Math.round(lo * 100)}-${Math.round(hi * 100)}%`,
+    quantize: value => round(value * 100, 1) / 100, format: value => `${round(value * 100, 1)}%`,
+    span: (lo, hi) => lo === hi ? `${round(lo * 100, 1)}%` : `${round(lo * 100, 1)}-${round(hi * 100, 1)}%`,
   };
 
   /** A share already carried in percentage points rather than as a fraction. Whole points are too coarse: a maintain target and the uptime that missed it can be a fraction of a point apart. */

@@ -77,12 +77,12 @@ describe('rule evaluator boundaries', () => {
       .toEqual({ value: '97.8 / 98.4', unit: '% uptime' });
   });
 
-  it('passes an uptime the printed decimal cannot separate from its target', () => {
-    // Up 0-118.05s of the 120s fight: 98.375%, which prints as the 98.4 floor itself.
+  it('judges the measured uptime, not the printed one, so a miss finer than the decimal still flags', () => {
+    // Up 0-118.05s of the 120s fight: 98.375%, under a 98.4 floor by less than the printed decimal.
     const UP_UNTIL_S = 118.05;
     const FRACTIONAL_FLOOR_PCT = 98.4;
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, UP_UNTIL_S)] });
-    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FRACTIONAL_FLOOR_PCT), 'warning')).toBeNull();
+    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FRACTIONAL_FLOOR_PCT), 'warning')).not.toBeNull();
   });
 });
 

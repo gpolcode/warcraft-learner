@@ -240,8 +240,8 @@ export class RotationFeatureService {
     return {
       severity: 'warning', category: 'cast_efficiency',
       label: 'Low cast efficiency',
-      measured: { value: `${effPct.toFixed(1)}%`, unit: `top ${topE.toFixed(0)}%` },
-      message: `You were casting ${effPct.toFixed(1)}% of the fight, idle for ${totalDtS.toFixed(1)}s. Aim for ${topE.toFixed(0)}% or more.`,
+      measured: { value: `${effPct.toFixed(1)}%`, unit: `top ${topE.toFixed(1)}%` },
+      message: `You were casting ${effPct.toFixed(1)}% of the fight, idle for ${totalDtS.toFixed(1)}s. Aim for ${topE.toFixed(1)}% or more.`,
       details: { remedy: `Fill ${totalDtS.toFixed(1)}s of gaps.` }, occurrences: [] };
   }
 
