@@ -21,11 +21,13 @@
     <canvas #canvas class="block h-[420px] w-full"></canvas>
     <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-[10px]">
       @if (live()) { <span class="text-[var(--gold)]">◆ you</span> }
-      <span class="text-[var(--muted)]">● top parses</span>
+      <span class="text-[var(--muted)]">● top-parse players at this moment</span>
       <span class="text-[var(--accent)]">◯ top-parse centre</span>
       <span class="text-[var(--critical)]">▲ reference (facing up)</span>
     </div>
   </div>
+
+  <p class="mt-1.5 text-[10px] text-[var(--muted)]">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
   <div class="mt-2 flex items-center gap-2">
     <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
@@ -37,7 +39,7 @@
         [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
       <div class="mt-1 flex justify-between text-[10px] text-[var(--muted)]">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span>anchor {{ anchorTime() | formatDuration }}</span>
+        <span matTooltip="The moment this map opened at, either a death or the start of a window">anchor {{ anchorTime() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>

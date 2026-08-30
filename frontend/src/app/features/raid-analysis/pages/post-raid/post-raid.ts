@@ -17,6 +17,7 @@ import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY }
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { BenchmarkExplainer } from '../../../../shared/components/benchmark-explainer/benchmark-explainer';
 import { PullOverview } from '../../pull-overview/components/pull-overview';
 import { Rotation } from '../../rotation/components/rotation';
 import { BurstWindows } from '../../burst-windows/components/burst-windows';
@@ -66,7 +67,7 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
-    Defensive, Gear, MapPanel, LiveControls, ClipPanel,
+    Defensive, Gear, MapPanel, LiveControls, ClipPanel, BenchmarkExplainer,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.

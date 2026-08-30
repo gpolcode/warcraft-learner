@@ -12,17 +12,18 @@ export const CLOCK = /-?\d+:\d{2}/;
 export const PERCENT = /[+-]?\d+(\.\d+)?%/;
 export const RATIO = /\d+ \/ \d+/;
 
-/** Asserts the "Typical uses" cell (shared by defensive-plan and rotation-cd-plan) renders a value: number:'1.0-1' drops the fraction on a whole number, so a bare integer is a valid render, not a miss. */
+/** Asserts the "Typical uses" cell (shared by defensive-plan and rotation-cd-plan) renders a value and the sample it came from: number:'1.0-1' drops the fraction on a whole number, so a bare integer is a valid render, not a miss. */
 export async function showsTypicalUses(scope: Locator): Promise<void> {
   const cell = scope.locator('span').filter({ hasText: 'Typical uses' }).first();
-  await expect(cell.getByText(/^\d+(\.\d+)?$/).first()).toBeVisible();
+  await expect(cell.getByText(/^\d+(\.\d+)?x$/).first()).toBeVisible();
+  await expect(cell.getByText(/^used in \d+ of \d+ logs$/).first()).toBeVisible();
 }
 const SECONDS = /[+-]?\d+(\.\d+)?s/;
 
 const MEASURE = new RegExp([RATIO, PERCENT, CLOCK, SECONDS].map(r => r.source).join('|'));
 
-/** Mirrors CAT_LABEL in shared/components/finding-table/finding-table.utils.ts. */
-export const CD_CHIP = /\b(lost cast|held|Bloodlust|downtime|hold)\b/;
+/** Mirrors CAT_LABEL in shared/components/finding-table/finding-rows-service.ts. */
+export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
 
 /** Asserts at least one named ability/gear row renders with a real icon + name, regardless of which one the bench ranks first. */
 export async function showsEntity(scope: Locator): Promise<void> {

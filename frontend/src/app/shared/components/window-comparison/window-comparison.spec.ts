@@ -8,6 +8,7 @@ const LISTBOX = '[role="listbox"]';
 const BAR_TRACK = 'div.h-5';
 const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
 const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
+const LEGEND = 'div[class*="gap-x-3"]';
 const DELTA_BADGE = 'span[class*="badge-"]';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';
 const GAP_CELL = `${CELL}[aria-hidden="true"]`;
@@ -208,6 +209,19 @@ describe('WindowComparison damage bar', () => {
 
     expect(dom.query(BAR_TRACK)).not.toBeNull();
     expect(dom.query(PLAYER_FILL)).toBeNull();
+  });
+
+  it('names all three marks on the bar, so the fill and the blue box are readable', () => {
+    const dom = render([win({ playerPct: 60, topAvg: 50, topMin: 40, topMax: 80 })]);
+
+    expect(dom.textAll(`${LEGEND} > span`)).toEqual(['you', 'top range', 'top average']);
+  });
+
+  it('drops the legend with the bar for a bench-only window, which draws no player mark', () => {
+    const dom = render([win({ topAvg: 50, topMin: 40, topMax: 80 }, 'info')]);
+
+    expect(dom.query(BAR_TRACK)).toBeNull();
+    expect(dom.query(LEGEND)).toBeNull();
   });
 });
 

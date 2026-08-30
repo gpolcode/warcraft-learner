@@ -33,6 +33,14 @@ describe('FindingTable', () => {
     expect(vm.openIndex()).toBe(1);
   });
 
+  it('glosses each severity distinctly, so the icon colour is readable without a key', () => {
+    const { vm } = mountVm(FindingTable, { heading: 'Rules', rows });
+    const hints = vm['severityHints'] as Record<string, string>;
+
+    expect(hints['info']).toBe('A suggestion, not a mistake.');
+    expect(new Set(Object.values(hints)).size).toBe(3);
+  });
+
   it('closes the open row when rows swaps to a different pull or player', () => {
     const { vm, setInput } = mountVm(FindingTable, { heading: 'Rules', rows });
     vm.toggle(1);

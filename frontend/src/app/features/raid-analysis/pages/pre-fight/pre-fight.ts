@@ -10,6 +10,7 @@ import { LoadError } from '../../../../core/http/result';
 import { EncounterSelectionService } from './encounter-selection-service';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { BenchmarkExplainer } from '../../../../shared/components/benchmark-explainer/benchmark-explainer';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
@@ -46,7 +47,7 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,
-    Gear, MapPanel, NorthernSkyExport,
+    Gear, MapPanel, NorthernSkyExport, BenchmarkExplainer,
   ],
   // Provided per lazy page so form-field stays out of the initial bundle.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],

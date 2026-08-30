@@ -73,7 +73,7 @@ test('the cooldown plan lists first use, typical uses, and the holds', async () 
   await showsEntity(cooldownPlan);
   await shows(cooldownPlan, 'First use');
   await showsTypicalUses(cooldownPlan);
-  await shows(cooldownPlan, 'Holds');
+  await shows(cooldownPlan, 'Hold until');
   await shows(cooldownPlan, CLOCK);
 });
 
@@ -96,6 +96,18 @@ test('burst windows show the top-parse windows with their bench damage', async (
   await showsEntity(burstWindows);
 });
 
+test('a card subtitle opens the one shared benchmark explainer', async () => {
+  const panel = page.locator('wl-benchmark-explainer wl-flyover-panel');
+  await expect(panel).toBeHidden();
+
+  await page.getByRole('button', { name: 'top parses' }).first().click();
+
+  await expect(panel).toBeVisible();
+  await expect(panel).toContainText('10 highest ranked');
+  await page.getByRole('button', { name: 'Close the benchmark explainer' }).click();
+  await expect(panel).toBeHidden();
+});
+
 test('the positioning map opens anchored on the selected burst window', async () => {
   const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
   await expect(openMap).toBeVisible();
@@ -103,6 +115,6 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(page, /anchor -?\d+:\d{2}/);
-  await shows(page, '● top parses');
+  await shows(page, '● top-parse players at this moment');
   await page.getByRole('button', { name: 'Close map' }).click();
 });

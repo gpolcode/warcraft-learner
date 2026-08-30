@@ -5,6 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanel } from '../../../../shared/components/flyover-panel/flyover-panel';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
+import { BenchmarkSubtitle } from '../../../../shared/components/benchmark-explainer/benchmark-subtitle';
 import { SelectionStore } from '../../../../core/state/selection-store';
 import { NorthernSkyBench } from '../data-access/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../facade/northern-sky-feature-service';
@@ -13,7 +14,7 @@ import { LoadResourceService } from '../../../../shared/state/load-resource-serv
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [MatButtonModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
+  imports: [MatButtonModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState, BenchmarkSubtitle],
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {

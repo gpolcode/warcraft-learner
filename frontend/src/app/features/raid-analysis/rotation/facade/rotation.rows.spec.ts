@@ -28,7 +28,7 @@ describe('bucketRotationFindings', () => {
     assert.exists(out.ruleRows[0]);
     expect(out.ruleRows[0].what).toBe('Shadow Dance without Secret Technique');
     expect(out.offensiveRows).toHaveLength(1);
-    expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'held' });
+    expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'late' });
     expect(out.onPlan).toEqual([{ name: 'Vanish', spellId: VANISH, icon: 'vanish' }]);
   });
 });
@@ -61,10 +61,19 @@ describe('rotation finding partition and row builders', () => {
     expect(svc['buildRuleRows']([medium])[0]).toMatchObject({ severity: 'info', chip: 'pairing' });
   });
 
+  it('glosses a rule chip so its compressed label is decodable on hover', () => {
+    const paired: AnalysisFinding = { ...ruleFinding, rule_type: 'cooldown_pairing' };
+    expect(svc['buildRuleRows']([paired])[0]).toMatchObject({ chipHint: 'Two abilities your spec presses together' });
+  });
+
+  it('leaves a rule row with no rule type unglossed, so nothing renders an empty tooltip', () => {
+    expect(svc['buildRuleRows']([ruleFinding])[0]).toMatchObject({ chip: undefined, chipHint: undefined });
+  });
+
   it('builds offensive rows with resolved icon + chip per finding', () => {
     const rows = svc['buildOffensiveRows']({ 'Shadow Blades': { issues: [issueFinding], holds: [] } }, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'held', severity: 'warning' });
+    expect(rows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'late', severity: 'warning' });
   });
 
   it('keeps a critical issue finding critical in the offensive row', () => {
@@ -76,7 +85,7 @@ describe('rotation finding partition and row builders', () => {
   it('keeps an info-severity hold suggestion info in the offensive row, not warning', () => {
     const rows = svc['buildOffensiveRows']({ 'Shadow Blades': { issues: [], holds: [holdFinding] } }, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ severity: 'info', chip: 'hold' });
+    expect(rows[0]).toMatchObject({ severity: 'info', chip: 'hold until' });
   });
 
   it('builds an offensive row with an empty icon and the raw cd name when its spell id is missing from the ability map', () => {

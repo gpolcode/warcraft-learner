@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BenchmarkSubtitle } from '../benchmark-explainer/benchmark-subtitle';
 import { GameIcon } from '../game-icon/game-icon';
 import { CompactAbilityRow } from '../compact-ability-row/compact-ability-row';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
@@ -20,7 +22,10 @@ let nextInstanceSeq = 0;
   selector: 'wl-window-comparison',
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
-  imports: [MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow, FormatDurationPipe, FormatDamagePipe, SignedPercentPipe],
+  imports: [
+    MatIconModule, MatButtonModule, MatTooltipModule, GameIcon, CompactAbilityRow, BenchmarkSubtitle,
+    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
+  ],
   templateUrl: './window-comparison.html',
 })
 export class WindowComparison {

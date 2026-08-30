@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { BenchmarkSubtitle } from '../benchmark-explainer/benchmark-subtitle';
 import { LoadError } from '../../../core/http/result';
 
 /** The hard-error kinds this panel renders; a null error is the waiting (not-yet-ingested) state. */
@@ -9,7 +10,7 @@ export type RenderableLoadError = Extract<LoadError, { kind: 'transient' | 'perm
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-load-state',
-  imports: [MatIconModule],
+  imports: [MatIconModule, BenchmarkSubtitle],
   host: { class: 'block' },
   templateUrl: './load-state.html',
 })
