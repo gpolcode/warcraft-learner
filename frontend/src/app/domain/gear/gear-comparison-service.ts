@@ -22,12 +22,12 @@ export class GearComparisonService {
     if (!player) {
       if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
       return { slotName: name, status: 'warn', name: 'Not enchanted',
-        note: `Most top parses run ${topName}. Apply it.` };
+        note: `Most top raiders run ${topName}. Apply it.` };
     }
     const playerName = this.enchantLabel(player);
     if (top && player.id !== top.id) {
       return { slotName: name, status: 'info', name: playerName,
-        note: `Most top parses run ${topName}.` };
+        note: `Most top raiders run ${topName}.` };
     }
     return { slotName: name, status: 'ok', name: playerName, note: null };
   }

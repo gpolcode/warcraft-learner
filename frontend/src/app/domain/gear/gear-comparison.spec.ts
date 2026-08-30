@@ -271,7 +271,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
     );
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({
-      status: 'warn', name: 'Not enchanted', note: 'Most top parses run Sophic Devotion. Apply it.',
+      status: 'warn', name: 'Not enchanted', note: 'Most top raiders run Sophic Devotion. Apply it.',
     });
   });
 
@@ -297,7 +297,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
     expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top parses run Sophic Devotion.',
+      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run Sophic Devotion.',
     });
   });
 

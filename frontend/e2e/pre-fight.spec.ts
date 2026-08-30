@@ -65,7 +65,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(trinkets, 'Trinket 1');
   await shows(trinkets, PERCENT);
   const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
-  await shows(enchants, 'What most top parses run.');
+  await shows(enchants, 'What most top raiders run.');
 });
 
 test('the cooldown plan lists first use, typical uses, and the holds', async () => {
