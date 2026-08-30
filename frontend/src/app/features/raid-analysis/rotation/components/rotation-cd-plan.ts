@@ -17,7 +17,7 @@ export class RotationCdPlan {
   readonly encounterId = input.required<number>();
 
   protected readonly heading = 'Cooldown plan';
-  protected readonly subtitle = 'Offensive cooldown usage across top parses.';
+  protected readonly subtitle = 'Offensive cooldown usage across top logs.';
 
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();

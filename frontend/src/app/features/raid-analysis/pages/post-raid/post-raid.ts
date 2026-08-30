@@ -17,6 +17,7 @@ import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY }
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
+import { FirstRunStrip } from '../../../../shared/components/first-run-strip/first-run-strip';
 import { PullOverview } from '../../pull-overview/components/pull-overview';
 import { Rotation } from '../../rotation/components/rotation';
 import { BurstWindows } from '../../burst-windows/components/burst-windows';
@@ -36,7 +37,9 @@ import { BossIconPipe } from '../../../../shared/pipes/boss-icon-pipe';
 import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { LatestRun } from './latest-run';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
+import { FirstRunGate } from '../../../../shared/state/first-run-gate';
 import { SelectionStore } from '../../../../core/state/selection-store';
+import { FirstRunStore } from '../../../../core/state/first-run-store';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
@@ -65,7 +68,7 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
+    LoadingSpinner, BenchEmptyBanner, FirstRunStrip, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
@@ -80,6 +83,7 @@ export class PostRaid {
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly selectionStore = inject(SelectionStore);
+  protected readonly firstRun = new FirstRunGate(inject(FirstRunStore), 'postRaid');
 
   protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [control => this.reportCodeValidator(control)] });
   protected readonly fightControl = new FormControl<number | null>(null);
@@ -91,6 +95,7 @@ export class PostRaid {
       if (this.liveCapture.liveEnabled()) this.fightControl.disable();
       else this.fightControl.enable();
     });
+    effect(() => { this.firstRun.settleWhen(this.ready() && !this.loadingAnalysis() && !this.cardsBusy()); });
   }
 
   protected readonly loadingReport = signal(false);

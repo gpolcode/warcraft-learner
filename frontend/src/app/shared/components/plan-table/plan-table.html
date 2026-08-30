@@ -14,7 +14,10 @@
       <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] pl-[14px]">How to use</div>
     </div>
 
-    @for (row of rows(); track row.name) {
+    @for (row of orderedRows(); track row.name) {
+      @if ($index === unpickedFrom()) {
+        <div class="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-[11px] text-[var(--muted)]">Not picked in the sampled top logs (talent-dependent)</div>
+      }
       <div class="grid grid-cols-1 md:grid-cols-[1fr_190px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-[var(--border)]">
         <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
@@ -37,7 +40,7 @@
               <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
               @if (row.sampleCount) {
                 <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses != null ? (row.typicalUses | number:'1.0-1') : 'None' }}</span>
-                <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">{{ row.usedSampleCount }}/{{ row.sampleCount }} parses</span>
+                <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">{{ row.usedSampleCount }}/{{ row.sampleCount }} logs</span>
               } @else {
                 <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
               }

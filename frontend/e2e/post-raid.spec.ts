@@ -55,6 +55,7 @@ test('following the latest pull hands the fight selection to the live poll', asy
   const controls = page.locator('wl-live-controls');
   const follow = controls.getByRole('switch', { name: 'Follow latest pull' });
   const fight = page.getByRole('combobox', { name: 'Fight' });
+  await shows(controls, 're-analyzes as new pulls upload during a live log');
 
   await follow.click();
   await expect(follow).toBeChecked();
@@ -97,7 +98,7 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
 });
 
 test('rotation rules count the casts that broke each rulebook rule, and name the ones followed', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
+  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs the top Mythic logs for your spec.' });
   await shows(rotationRules, 'Rotation Rules');
   await showsFindingRows(rotationRules);
   // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
@@ -105,7 +106,7 @@ test('rotation rules count the casts that broke each rulebook rule, and name the
 });
 
 test('a rule row expands into a chip strip of the instances behind its count', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs top parses.' });
+  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs the top Mythic logs for your spec.' });
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
   const row = findingRows(rotationRules)
     .filter({ has: page.getByRole('button', { name: /instances/i }) }).first();
@@ -121,14 +122,14 @@ test('a rule row expands into a chip strip of the instances behind its count', a
 });
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {
-  const offensives = page.locator('wl-finding-table').filter({ hasText: 'Offensive cooldowns vs top parses.' });
+  const offensives = page.locator('wl-finding-table').filter({ hasText: 'Offensive cooldowns vs top logs.' });
   await showsEntity(offensives);
   await showsFindingRows(offensives, CD_CHIP);
 });
 
 test('burst windows compare the player damage against the top-parse windows', async () => {
   const burstWindows = page.locator('wl-burst-windows');
-  await shows(burstWindows, 'Damage in each burst window vs top parses.');
+  await shows(burstWindows, 'Damage in each burst window vs top logs.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
   await shows(burstWindows, 'burst');
@@ -146,11 +147,11 @@ test('burst windows compare the player damage against the top-parse windows', as
 
 test('defensives flag the mistimed cooldowns and benchmark the damage taken', async () => {
   const defensives = page.locator('wl-defensive');
-  await shows(defensives, 'Defensive cooldowns vs top parses.');
+  await shows(defensives, 'Defensive cooldowns vs top logs.');
   const table = defensives.locator('wl-finding-table');
   await showsFindingRows(table, CD_CHIP);
   await showsOnPlan(table);
-  await shows(defensives, 'Damage taken in top-parse defensive windows vs top parses.');
+  await shows(defensives, 'Damage taken in each defensive window vs top logs.');
   await shows(defensives, /\d+:\d{2} - \d+:\d{2}/);
   await shows(defensives, DAMAGE);
   await shows(defensives, PERCENT);
@@ -158,12 +159,12 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken', as
 
 test('gear lists the top-parse talent builds and how the alt build differs, plus trinkets and enchants', async () => {
   const gear = page.locator('wl-gear');
-  await shows(gear, 'Gear vs top parses.');
+  await shows(gear, 'Gear vs top logs.');
   const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Your build');
   await shows(talents, /Most common build/);
   await shows(talents, PERCENT);
-  await shows(talents, 'of top parsers');
+  await shows(talents, 'of top logs');
   // How many alt builds the bench carries moves with every refresh; a thin sample can leave zero.
   if (await talents.getByText(/Alt build \d+/).count()) {
     await shows(talents, /Alt build 1/);
@@ -190,7 +191,7 @@ test('the positioning map opens anchored on the death', async () => {
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(page, /anchor -?\d+:\d{2}/);
-  await shows(page, '● top parses');
+  await shows(page, '● top logs');
   // The gold marker renders only once the player's own trail has loaded.
   await expect(page.getByText('◆ you')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await page.getByRole('button', { name: 'Close map' }).click();

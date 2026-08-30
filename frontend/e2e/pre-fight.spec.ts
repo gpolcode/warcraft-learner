@@ -34,7 +34,7 @@ test('selecting class, spec, and encounter loads that spec\'s plan', async () =>
 
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
-  await shows(card, 'Top-parse cooldown timings as a note for the Northern Sky raid addon.');
+  await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export' }).click();
   const panel = page.locator('wl-flyover-panel');
@@ -50,11 +50,11 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
 
 test('gear shows the top-parse talent, trinket, and enchant consensus, and how the alt build differs', async () => {
   const gear = page.locator('wl-gear');
-  await shows(gear, 'Top-parse gear consensus.');
+  await shows(gear, 'Gear consensus across top logs.');
   const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Most common build');
   await shows(talents, PERCENT);
-  await shows(talents, 'of top parsers');
+  await shows(talents, 'of top logs');
   await shows(talents, 'Alt build 1');
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
@@ -88,7 +88,7 @@ test('the defensive plan lists the consensus defensives', async () => {
 
 test('burst windows show the top-parse windows with their bench damage', async () => {
   const burstWindows = page.locator('wl-burst-windows');
-  await shows(burstWindows, 'Damage in each burst window vs top parses.');
+  await shows(burstWindows, 'Damage in each burst window vs top logs.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
   await shows(burstWindows, 'burst');
@@ -103,6 +103,6 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(page, /anchor -?\d+:\d{2}/);
-  await shows(page, '● top parses');
+  await shows(page, '● top logs');
   await page.getByRole('button', { name: 'Close map' }).click();
 });
