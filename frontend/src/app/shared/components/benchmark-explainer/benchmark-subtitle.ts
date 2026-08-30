@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BenchmarkExplainerStore } from '../../state/benchmark-explainer-store';
 
-/** Both spellings the subtitles use; the word boundary keeps "top parsers", a measured-cell unit, out of the match. */
-const BENCHMARK_TERM = /top[- ]parses?\b/i;
+/** Every noun the subtitles use for the benchmark; the word boundary keeps "top parsers", a measured-cell unit, out of the match. */
+const BENCHMARK_TERM = /top[- ](?:parses?|(?:Mythic )?logs?|raiders?)\b/i;
 
 interface SubtitleParts {
   before: string;

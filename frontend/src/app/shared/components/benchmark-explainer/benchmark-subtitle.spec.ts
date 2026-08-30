@@ -21,6 +21,18 @@ describe('BenchmarkSubtitle', () => {
     expect(dom.query(TRIGGER)?.textContent).toBe('Top-parse');
   });
 
+  it('triggers on every noun the app names the benchmark by, not just "top parses"', () => {
+    const subtitles = [
+      { text: 'Damage in each burst window vs top logs.', term: 'top logs' },
+      { text: 'Rotation rules vs the top Mythic logs for your spec.', term: 'top Mythic logs' },
+      { text: 'How your defensives compare with top raiders.', term: 'top raiders' },
+    ];
+
+    for (const { text, term } of subtitles) {
+      expect(mountDom(BenchmarkSubtitle, { text }).query(TRIGGER)?.textContent).toBe(term);
+    }
+  });
+
   it('takes the first benchmark noun when a subtitle names it twice', () => {
     const dom = mountDom(BenchmarkSubtitle, { text: 'Damage taken in top-parse defensive windows vs top parses.' });
 
