@@ -4,14 +4,14 @@
   <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
     <div class="px-4 pt-3 pb-2">
       <div class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</div>
-      <div class="text-xs text-[var(--muted)] mt-0.5">{{ subtitle() }}</div>
+      <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
     </div>
 
     <!-- Column labels (desktop only; mobile uses inline labels per cell) -->
     <div class="hidden md:grid grid-cols-[1fr_190px_200px] gap-[14px] px-4 pb-1">
       <div></div>
-      <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] text-right">Plan</div>
-      <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] pl-[14px]">How to use</div>
+      <div class="section-label text-right">Plan</div>
+      <div class="section-label pl-[14px]">How to use</div>
     </div>
 
     @for (row of rows(); track row.name) {

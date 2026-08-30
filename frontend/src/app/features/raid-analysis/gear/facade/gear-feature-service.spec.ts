@@ -79,7 +79,7 @@ describe('buildBenchGearView', () => {
     const view = svc['buildBenchGearView'](stats);
     expect(view.comparison).toBe(false);
     expect(view.benchTrinketRows).toEqual([{ slotLabel: 'Trinket 1', id: 100, name: 'A', icon: 'inv_a', pct: 70 }]);
-    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic', pct: 90 }]);
+    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic' }]);
     expect(view.talentBuilds[0]).toMatchObject({ pct: 80, label: 'Most common build' });
     // The comparison rows stay empty in bench-only mode (no player to compare).
     expect(view.enchantRows).toEqual([]);

@@ -4,11 +4,11 @@
     <div class="md:col-span-2">
       <div class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</div>
       @if (subtitle()) {
-        <div class="text-xs text-[var(--muted)] mt-0.5">{{ subtitle() }}</div>
+        <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
       }
     </div>
-    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] tabular-nums text-right">Measured</div>
-    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] pl-[14px]">Fix</div>
+    <div class="hidden md:block section-label tabular-nums text-right">Measured</div>
+    <div class="hidden md:block section-label pl-[14px]">Fix</div>
     <div class="hidden md:block"></div>
   </div>
 
@@ -37,13 +37,13 @@
               @if (row.timestampS != null) {
                 <span class="text-[13px] text-[var(--accent)] tabular-nums">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button mat-icon-button title="Open positioning map" (click)="openMap.emit(row)">
-                    <mat-icon>my_location</mat-icon>
+                  <button type="button" class="chip-action" title="Open positioning map" (click)="openMap.emit(row)">
+                    <mat-icon class="icon-16">my_location</mat-icon>Map
                   </button>
                 }
                 @if (showClip()) {
-                  <button mat-icon-button title="Watch clip" (click)="openClip.emit(row)">
-                    <mat-icon>videocam</mat-icon>
+                  <button type="button" class="chip-action" title="Watch clip" (click)="openClip.emit(row)">
+                    <mat-icon class="icon-16">videocam</mat-icon>Clip
                   </button>
                 }
               }
@@ -113,7 +113,7 @@
 
   @if (onPlan().length) {
     <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-      <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5">On plan</span>
+      <span class="section-label mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
         <span class="chip-onplan">
           @if (c.spellId; as spellId) {

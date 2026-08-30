@@ -167,6 +167,7 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   // How many alt builds the bench carries moves with every refresh; a thin sample can leave zero.
   if (await talents.getByText(/Alt build \d+/).count()) {
     await shows(talents, /Alt build 1/);
+    await shows(talents, 'Compared with the most common build.');
     await shows(talents, 'Added');
     await shows(talents, 'Dropped');
     await showsEntity(talents);
@@ -184,7 +185,7 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
 test('the positioning map opens anchored on the death', async () => {
   test.setTimeout(MAP_READY_TIMEOUT_MS + SLACK_MS);
   // The first map button belongs to the pull overview's death row.
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
   await expect(openMap).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await openMap.click();
   await shows(page, 'Positioning');

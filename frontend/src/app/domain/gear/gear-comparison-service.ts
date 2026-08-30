@@ -17,24 +17,19 @@ export class GearComparisonService {
     return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
   }
 
-  private enchantRowFor(name: string, player: PlayerEnchant | undefined, slotTop: TopEnchant[]): EnchantRow | null {
-    const top = slotTop[0];
+  private enchantRowFor(name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined): EnchantRow | null {
     const topName = this.enchantLabel(top);
     if (!player) {
       if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
-      return { slotName: name, status: 'warn', name: 'Not enchanted', topPct: top.pct,
-        note: `Apply ${topName}` };
+      return { slotName: name, status: 'warn', name: 'Not enchanted',
+        note: `Most top parses run ${topName}. Apply it.` };
     }
     const playerName = this.enchantLabel(player);
-    if (player.id === top?.id) {
-      return { slotName: name, status: 'ok', name: playerName, topPct: top.pct,
-        note: `${top.pct}% run this` };
+    if (top && player.id !== top.id) {
+      return { slotName: name, status: 'info', name: playerName,
+        note: `Most top parses run ${topName}.` };
     }
-    if (top) {
-      return { slotName: name, status: 'info', name: playerName, topPct: slotTop.find(e => e.id === player.id)?.pct ?? null,
-        note: `${top.pct}% run ${topName}` };
-    }
-    return { slotName: name, status: 'ok', name: playerName, topPct: null, note: null };
+    return { slotName: name, status: 'ok', name: playerName, note: null };
   }
 
   /** Flags slots the player left un-enchanted that top parsers consider mandatory, and surfaces where the player differs from the consensus enchant. */
@@ -48,7 +43,7 @@ export class GearComparisonService {
 
     return [...slots]
       .sort((a, b) => a - b)
-      .map(slot => this.enchantRowFor(this.slotName(slot), playerEnch.find(e => e.slot === slot), topEnch[slot] ?? []))
+      .map(slot => this.enchantRowFor(this.slotName(slot), playerEnch.find(e => e.slot === slot), topEnch[slot]?.[0]))
       .filter(row => row !== null);
   }
 
@@ -237,7 +232,7 @@ export class GearComparisonService {
       .reduce<BenchEnchantRow[]>((acc, slot) => {
         const top = topEnch[slot]?.[0];
         if (top && top.pct >= ENCHANT_CONSENSUS_PCT) {
-          acc.push({ slotName: this.slotName(slot), name: top.name || `Enchant #${top.id}`, pct: top.pct });
+          acc.push({ slotName: this.slotName(slot), name: top.name || `Enchant #${top.id}` });
         }
         return acc;
       }, []);
@@ -274,8 +269,6 @@ export interface EnchantRow {
   slotName: string;
   status: GearStatus;
   name: string;
-  /** Usage % of the player's current enchant among top parsers, or null when absent/unknown. */
-  topPct: number | null;
   note: string | null;
 }
 
@@ -316,7 +309,6 @@ interface TalentSpend {
 export interface BenchEnchantRow {
   slotName: string;
   name: string;
-  pct: number;
 }
 
 export interface BenchTrinketRow {

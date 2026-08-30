@@ -25,8 +25,6 @@ describe('buildBenchEnchantRows', () => {
     expect(rows[0].name).toBe('Sophic Devotion');
     assert.exists(rows[0]);
     expect(rows[0].slotName).toBe('Main Hand');
-    assert.exists(rows[0]);
-    expect(rows[0].pct).toBe(80);
   });
 
   it('falls back to Enchant #id when the bench enchant name is empty', () => {
@@ -272,7 +270,9 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ status: 'warn', name: 'Not enchanted' });
+    expect(rows[0]).toMatchObject({
+      status: 'warn', name: 'Not enchanted', note: 'Most top parses run Sophic Devotion. Apply it.',
+    });
   });
 
   it('stays silent on an un-enchanted slot below the consensus share', () => {
@@ -288,7 +288,17 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion' });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null });
+  });
+
+  it('names the consensus enchant when the player runs a different one', () => {
+    const rows = gearComparison.buildEnchantRows(
+      gear({ enchants: [{ slot: 15, id: 8039, name: 'Burning Devotion' }] }),
+      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
+    );
+    expect(rows[0]).toMatchObject({
+      status: 'info', name: 'Burning Devotion', note: 'Most top parses run Sophic Devotion.',
+    });
   });
 
   it('returns an empty array when the player has no enchants and there is no bench data', () => {

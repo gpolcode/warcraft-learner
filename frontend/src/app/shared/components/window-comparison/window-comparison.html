@@ -4,7 +4,7 @@
     <div class="px-4 pt-3 pb-2">
       <div class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</div>
       @if (subtitle()) {
-        <div class="text-xs text-[var(--muted)] mt-0.5">{{ subtitle() }}</div>
+        <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
       }
     </div>
   }
@@ -99,20 +99,20 @@
         }
         <div class="ml-auto flex items-center gap-[7px] shrink-0">
           @if (showMap()) {
-            <button mat-icon-button title="Open positioning map" (click)="openMap.emit(activeIndex())">
-              <mat-icon>my_location</mat-icon>
+            <button type="button" class="chip-action" title="Open positioning map" (click)="openMap.emit(activeIndex())">
+              <mat-icon class="icon-16">my_location</mat-icon>Map
             </button>
           }
           @if (showClip()) {
-            <button mat-icon-button title="Watch clip" (click)="openClip.emit(activeIndex())">
-              <mat-icon>videocam</mat-icon>
+            <button type="button" class="chip-action" title="Watch clip" (click)="openClip.emit(activeIndex())">
+              <mat-icon class="icon-16">videocam</mat-icon>Clip
             </button>
           }
         </div>
       </div>
       @if (w.spells.length || w.labels.length) {
         <div class="mt-2.5">
-          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">{{ chipsLabel() }}</span>
+          <span class="block section-label mb-1.5">{{ chipsLabel() }}</span>
           <div class="flex flex-wrap items-center gap-2">
             @for (spell of w.spells; track spell.id) {
               <span class="chip-onplan">
@@ -129,7 +129,7 @@
       }
       @if (w.note) {
         <div class="mt-2.5">
-          <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">What you did</span>
+          <span class="block section-label mb-1.5">What you did</span>
           <span class="chip-onplan">
             <span class="text-[13px] text-[var(--muted)]">{{ w.note }}</span>
           </span>
@@ -140,7 +140,7 @@
     <!-- Damage-spread bar, hidden for bench-only (pre-fight) windows that have no player to compare against. -->
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
-        <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">{{ rangeLabel() }}</span>
+        <span class="block section-label mb-1.5">{{ rangeLabel() }}</span>
         <div class="relative h-5 rounded bg-[var(--bg)]" aria-hidden="true">
           @if (overviewPlayerWidthPct() !== null) {
             <div [class]="'absolute inset-y-0 left-0 rounded opacity-[0.65] ' + fillBg"
@@ -161,13 +161,13 @@
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
         <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_96px_90px] gap-x-[14px] items-center px-4 pb-1">
-          <span class="col-start-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
+          <span class="col-start-1 section-label">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
+            <span class="col-start-2 text-right section-label">casts</span>
           }
-          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
+          <span class="col-start-3 text-left section-label">top avg</span>
           @if (!activeIsMuted()) {
-            <span class="col-start-4 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
+            <span class="col-start-4 text-right section-label">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {

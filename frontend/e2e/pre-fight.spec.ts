@@ -56,6 +56,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(talents, PERCENT);
   await shows(talents, 'of top parsers');
   await shows(talents, 'Alt build 1');
+  await shows(talents, 'Compared with the most common build.');
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
   await showsEntity(talents);
@@ -64,7 +65,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(trinkets, 'Trinket 1');
   await shows(trinkets, PERCENT);
   const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
-  await expect(enchants).toContainText(PERCENT);
+  await shows(enchants, 'What most top parses run.');
 });
 
 test('the cooldown plan lists first use, typical uses, and the holds', async () => {
@@ -97,7 +98,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
   await shows(page, 'Positioning');
