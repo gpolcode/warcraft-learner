@@ -55,7 +55,7 @@ test('following the latest pull hands the fight selection to the live poll', asy
   const controls = page.locator('wl-live-controls');
   const follow = controls.getByRole('switch', { name: 'Follow latest pull' });
   const fight = page.getByRole('combobox', { name: 'Fight' });
-  await shows(controls, 're-analyzes as new pulls upload during a live log');
+  await shows(controls, 'Re-analyzes as new pulls upload during a live log.');
 
   await follow.click();
   await expect(follow).toBeChecked();

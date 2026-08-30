@@ -12,7 +12,7 @@ function row(overrides: Partial<PlanTableRow> = {}): PlanTableRow {
   };
 }
 
-const UNPICKED_DIVIDER = 'Not picked in the sampled top logs (talent-dependent)';
+const UNPICKED_DIVIDER = 'Not used in any sampled top log. Usually a different talent build.';
 const SAMPLED_LOGS = 10;
 const PICKED_BY = 8;
 const PICKED_BY_NONE = 0;
