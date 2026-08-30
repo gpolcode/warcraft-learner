@@ -105,7 +105,8 @@ export class WindowViewService {
         timeStartS: window.time_s,
         timeEndS: window.time_s + window.window_length_s,
         spells: this.projections.windowSpells(spellIds, abilities),
-        labels: note ? [...labels, note] : labels,
+        labels,
+        note: note ?? '',
         status,
         statusIcon: icon,
         overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
@@ -132,7 +133,7 @@ interface PlayerWindowOptions {
 interface WindowVerdict {
   status: WindowStatus;
   icon: string;
-  /** The builder appends this to the chip labels; chips() must not carry it too. */
+  /** The builder carries this as the window's own note; chips() must not carry it too. */
   note?: string;
 }
 

@@ -33,7 +33,7 @@ describe('evaluateFillerBelowHealth', () => {
     const ctx = ruleCtx([cast(EXECUTE, HIT_S + 0.5), cast(SLAM, HIT_S + 1), cast(SLAM, HIT_S + 1.5)],
       { damage: [hitAt(HIT_S, EXECUTE_RANGE_PCT)] });
     expect(evaluateFillerBelowHealth(executeBelow, ctx, fieldFloor, 'warning')?.measured)
-      .toEqual({ value: '33 / 95', unit: '% of fillers' });
+      .toEqual({ value: '33.3 / 95.0', unit: '% of fillers' });
   });
 
   it('passes a player converting every filler under the threshold', () => {

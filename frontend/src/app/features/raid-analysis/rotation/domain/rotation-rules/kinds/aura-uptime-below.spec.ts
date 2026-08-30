@@ -21,7 +21,7 @@ describe('evaluateAuraUptimeBelow', () => {
 
   it('flags uptime under the field\'s floor, measured against it', () => {
     const finding = evaluateAuraUptimeBelow(ruptureUptime, ruleCtx([], { debuffs: halfUptime }), band(RUPTURE_MIN_PCT), 'warning');
-    expect(finding?.measured).toEqual({ value: `50 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
+    expect(finding?.measured).toEqual({ value: `50.0 / ${RUPTURE_MIN_PCT}.0`, unit: '% uptime' });
   });
 
   it('passes uptime at or above the floor', () => {
@@ -37,7 +37,7 @@ describe('evaluateAuraUptimeBelow', () => {
   it('reads the self stream when on is "self"', () => {
     const selfAura: AuraUptimeBelowCondition = { ...ruptureUptime, on: 'self' };
     const ctx = ruleCtx([], { buffs: [applyBuff(RUPTURE, 0), removeBuff(RUPTURE, 60)] });
-    expect(evaluateAuraUptimeBelow(selfAura, ctx, band(RUPTURE_MIN_PCT), 'warning')?.measured?.value).toBe(`50 / ${RUPTURE_MIN_PCT}`);
+    expect(evaluateAuraUptimeBelow(selfAura, ctx, band(RUPTURE_MIN_PCT), 'warning')?.measured?.value).toBe(`50.0 / ${RUPTURE_MIN_PCT}.0`);
   });
 
   it('measures uptime over the whole fight, so a 30s dot on a 120s pull reads 25%', () => {
@@ -45,26 +45,44 @@ describe('evaluateAuraUptimeBelow', () => {
     const DOT_END_S = 30;
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, DOT_END_S)] });
     const finding = evaluateAuraUptimeBelow(ruptureUptime, ctx, band(RUPTURE_MIN_PCT), 'warning');
-    expect(finding?.measured).toEqual({ value: `25 / ${RUPTURE_MIN_PCT}`, unit: '% uptime' });
+    expect(finding?.measured).toEqual({ value: `25.0 / ${RUPTURE_MIN_PCT}.0`, unit: '% uptime' });
   });
 
   it('reads a debuff applied before the pull as up from fight start, since it arrives as a lone remove', () => {
-    const PRE_PULL_REMOVE_S = 20;  // fight runs 0..120s, so this back-fills to 20/120 = 17% uptime
+    const PRE_PULL_REMOVE_S = 20;  // fight runs 0..120s, so this back-fills to 20/120 = 16.7% uptime
     const ctx = ruleCtx([], { debuffs: [removeDebuff(RUPTURE, PRE_PULL_REMOVE_S)] });
     expect(evaluateAuraUptimeBelow(ruptureUptime, ctx, band(RUPTURE_MIN_PCT), 'warning')?.measured?.value)
-      .toBe(`17 / ${RUPTURE_MIN_PCT}`);
+      .toBe(`16.7 / ${RUPTURE_MIN_PCT}.0`);
     expect(kind.applicable(ruptureUptime, ctx)).toBe(true);
   });
 });
 
 describe('rule evaluator boundaries', () => {
+  const exactly: AuraUptimeBelowCondition = {
+    kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
+  };
+
   it('passes uptime exactly at the measured bar (strict below)', () => {
     const HALF_UPTIME_PCT = 50;
-    const exactly: AuraUptimeBelowCondition = {
-      kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
-    };
     const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, 60)] });
     expect(evaluateAuraUptimeBelow(exactly, ctx, band(HALF_UPTIME_PCT), 'warning')).toBeNull();
+  });
+
+  it('prints a fractional miss at the precision that judged it, never as two equal numbers', () => {
+    // Up 0-117.4s of the 120s fight: 97.83%, a real miss under a 98.4 floor that whole points would print as "98 / 98".
+    const UP_UNTIL_S = 117.4;
+    const FRACTIONAL_FLOOR_PCT = 98.4;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, UP_UNTIL_S)] });
+    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FRACTIONAL_FLOOR_PCT), 'warning')?.measured)
+      .toEqual({ value: '97.8 / 98.4', unit: '% uptime' });
+  });
+
+  it('judges the measured uptime, not the printed one, so a miss finer than the decimal still flags', () => {
+    // Up 0-118.05s of the 120s fight: 98.375%, under a 98.4 floor by less than the printed decimal.
+    const UP_UNTIL_S = 118.05;
+    const FRACTIONAL_FLOOR_PCT = 98.4;
+    const ctx = ruleCtx([], { debuffs: [applyDebuff(RUPTURE, 0), removeDebuff(RUPTURE, UP_UNTIL_S)] });
+    expect(evaluateAuraUptimeBelow(exactly, ctx, band(FRACTIONAL_FLOOR_PCT), 'warning')).not.toBeNull();
   });
 });
 
@@ -91,7 +109,7 @@ describe('occurrence strips', () => {
     const ctx = ruleCtx([], { debuffs });
     const RUPTURE_MIN_PCT = 80;
     const finding = evaluateAuraUptimeBelow(uptime, ctx, band(RUPTURE_MIN_PCT), 'warning');
-    expect(finding?.measured).toEqual({ value: '58 / 80', unit: '% uptime' });
+    expect(finding?.measured).toEqual({ value: '58.3 / 80.0', unit: '% uptime' });
     expect(finding?.timeline).toEqual({ segmentsS: [[0, 50], [70, 90]], fightDurationS: 120 });
     expect(finding?.occurrences).toEqual([
       { atS: 50, ok: false, label: '20s', detail: 'Rupture was down here for 20s.' },

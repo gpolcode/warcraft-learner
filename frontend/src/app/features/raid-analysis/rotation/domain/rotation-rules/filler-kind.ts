@@ -3,6 +3,9 @@ import { AnalysisFinding, FindingOccurrence } from '../../../../../domain/analys
 import { RuleCondition, RuleSeverity } from '../../../../../domain/rulebook/rulebook.models';
 import { RuleBand, RuleJudging, RuleKind } from './rule-kind';
 
+/** Tracks PERCENT: whole points print a filler target and the share that missed it as the same number. */
+const FILLER_DECIMALS = 1;
+
 /** Shared by both filler kinds so the two can only differ in their gate. */
 export interface FillerSplit {
   coached: number;
@@ -41,7 +44,7 @@ export abstract class FillerKind<C extends RuleCondition> extends RuleKind<C> {
       timestamp_s: split.firstAlternativeS == null ? undefined : round(split.firstAlternativeS, 3),
       label: `${spellName} ${where}`,
       message: `${spellName} was only ${this.PERCENT.format(share)} of your fillers ${where}. Aim for ${this.PERCENT.format(lo)} or more.`,
-      measured: { value: `${Math.round(share * 100)} / ${Math.round(lo * 100)}`, unit: '% of fillers' },
+      measured: { value: `${(share * 100).toFixed(FILLER_DECIMALS)} / ${(lo * 100).toFixed(FILLER_DECIMALS)}`, unit: '% of fillers' },
       details: remedy ? { remedy } : undefined,
       occurrences: [],
     };

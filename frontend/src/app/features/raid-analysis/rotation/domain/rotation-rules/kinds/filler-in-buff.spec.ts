@@ -32,7 +32,7 @@ describe('evaluateFillerInBuff', () => {
       cast(WRATH, 12), cast(STARFIRE, 14), cast(STARFIRE, 16), cast(STARFIRE, 18),
     ], { buffs: solar });
     expect(evaluateFillerInBuff(wrathInSolar, ctx, fieldFloor, 'warning')?.measured)
-      .toEqual({ value: '25 / 90', unit: '% of fillers' });
+      .toEqual({ value: '25.0 / 90.0', unit: '% of fillers' });
   });
 
   it('passes a player whose share matches the field', () => {

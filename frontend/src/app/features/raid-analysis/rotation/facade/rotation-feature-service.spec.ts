@@ -52,7 +52,7 @@ describe('analyzeRotationFindings', () => {
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success).toBeDefined();
     assert.exists(success);
-    expect(success.message).toContain('BL-aligned');
+    expect(success.message).toContain('aligned with Bloodlust');
   });
 
   it('flags a late opener', () => {
@@ -91,7 +91,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('BL-aligned');
+    expect(success?.message).toContain('aligned with Bloodlust');
   });
 
   it('drives BL-aligned coaching from a Bloodlust popped exactly at fight start (boundary)', () => {
@@ -100,7 +100,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     const buffs = [applyBuff(BLOODLUST, FIGHT_START_S)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('BL-aligned');
+    expect(success?.message).toContain('aligned with Bloodlust');
   });
 
   it('agrees with the ingest bench on the same buff stream, so neither path can diverge', () => {
@@ -111,7 +111,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('BL-aligned');
+    expect(success?.message).toContain('aligned with Bloodlust');
   });
 });
 
@@ -151,7 +151,7 @@ describe('checkBloodlustAlignment', () => {
     // cast at 100s is outside [-20, 65]; wantsBL true.
     const out = svc['checkBloodlustAlignment']('Shadow Blades', [100], cdBench(), BL_AT_S, true);
     expect(out.blAligned).toBe(false);
-    expect(out.findings[0]?.measured).toEqual({ value: 'missed', unit: 'BL' });
+    expect(out.findings[0]?.measured).toEqual({ value: 'missed', unit: 'Bloodlust' });
   });
 
   it('does not flag a miss when parsers do not align it', () => {
@@ -164,7 +164,7 @@ describe('checkBloodlustAlignment', () => {
     // avg_bl_offset 0, stddev 2 -> outlier beyond |offset| > 4. Cast at BL+5s -> offset 5.
     const out = svc['checkBloodlustAlignment']('Shadow Blades', [(BL_AT_S + 5)], cdBench(), BL_AT_S, true);
     expect(out.blAligned).toBe(true);
-    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in BL' });
+    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
   });
 
   it('does not flag an in-window offset exactly at the 2-sigma boundary (strict)', () => {
@@ -181,7 +181,7 @@ describe('checkBloodlustAlignment', () => {
     const out = svc['checkBloodlustAlignment'](
       'Shadow Blades', [EARLY_IN_BAND_S, LATE_JUDGED_S],
       cdBench({ avg_bl_offset_s: -8, stddev_bl_offset_s: 2 }), BL_AT_S, true);
-    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in BL' });
+    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
     expect(out.findings[0]?.timestamp_s).toBe(LATE_JUDGED_S);
   });
 
@@ -246,7 +246,7 @@ describe('analyzeOneCooldown', () => {
     // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
     const result = svc['analyzeOneCooldown'](cd, [6], single, 120, 6);
     expect(result?.scan.issues).toEqual([]);
-    expect(result?.success?.message).toContain('BL-aligned');
+    expect(result?.success?.message).toContain('aligned with Bloodlust');
   });
 
   it('reports an issue (no success) when the opener is late', () => {

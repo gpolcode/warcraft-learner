@@ -18,6 +18,7 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
     timeEndS: 10,
     spells: [],
     labels: [],
+    note: '',
     status,
     statusIcon: 'check_circle',
     overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overview },
@@ -25,8 +26,11 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
   };
 }
 
+// Wording distinct from either card's, so an assertion about a label proves it came from the input.
+const WORDING = { metricLabel: 'probe metric', chipsLabel: 'probe chips', rangeLabel: 'probe range' };
+
 const render = (windows: ComparisonWindow[], inputs: Record<string, unknown> = {}): MountedDom =>
-  mountDom(WindowComparison, { windows, ...inputs });
+  mountDom(WindowComparison, { windows, ...WORDING, ...inputs });
 
 function selectedChip(dom: MountedDom): number {
   return dom.queryAll(CHIP).findIndex(chip => chip.getAttribute('aria-selected') === 'true');
@@ -244,6 +248,41 @@ describe('WindowComparison delta badge', () => {
     expect(dom.text()).toContain('1M');
     expect(dom.text()).not.toContain('2M');
     expect(dom.query(DELTA_BADGE)).toBeNull();
+  });
+});
+
+describe('WindowComparison vocabulary', () => {
+  const CHIP_TEXT = 'Cloak of Shadows';
+  const NOTE = 'no defensive used';
+  const chipWindow = (over: Partial<ComparisonWindow> = {}): ComparisonWindow[] =>
+    [{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT], ...over }];
+
+  it('renders the metric, chip strip and range bar wording the card hands it', () => {
+    const defensive = {
+      metricLabel: 'damage taken',
+      chipsLabel: 'Recommended defensive',
+      rangeLabel: 'Damage taken vs top range',
+    };
+    const text = render(chipWindow(), defensive).text();
+
+    expect(text).toContain('damage taken');
+    expect(text).toContain('Recommended defensive');
+    expect(text).toContain('Damage taken vs top range');
+    // The offensive card's own wording, which a default on the shared component would leak into this one.
+    expect(text).not.toContain('burst');
+  });
+
+  it('sets the window note apart from the recommended cooldowns, so a verdict never reads as advice', () => {
+    const chipStrip = render(chipWindow({ note: NOTE })).text();
+
+    expect(chipStrip).toContain('What you did');
+    // Both strips render, so the note being present is not itself proof it left the chip strip.
+    expect(chipStrip.indexOf(CHIP_TEXT)).toBeLessThan(chipStrip.indexOf('What you did'));
+    expect(chipStrip.indexOf('What you did')).toBeLessThan(chipStrip.indexOf(NOTE));
+  });
+
+  it('renders no note strip for a window that carries none', () => {
+    expect(render([win({ playerPct: 90, topAvg: 100 })]).text()).not.toContain('What you did');
   });
 });
 

@@ -30,6 +30,8 @@ export interface ComparisonWindow {
   spells: WindowSpell[];
   /** Cooldown names with no spell id, rendered as plain text. */
   labels: string[];
+  /** What the player did in this window, kept out of `labels` so a verdict never renders as a recommended cooldown. Empty renders nothing. */
+  note: string;
   status: WindowStatus;
   statusIcon: string;
   overview: RangeRow;

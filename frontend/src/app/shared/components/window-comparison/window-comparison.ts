@@ -32,6 +32,9 @@ export class WindowComparison {
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
+  readonly metricLabel = input.required<string>();
+  readonly chipsLabel = input.required<string>();
+  readonly rangeLabel = input.required<string>();
   readonly openMap = output<number>();
   readonly openClip = output<number>();
 
