@@ -15,7 +15,7 @@
     </div>
 
     @for (row of rows(); track row.name) {
-      <div class="grid grid-cols-1 md:grid-cols-[1fr_190px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-[var(--border)]">
+      <div [class]="'grid grid-cols-1 md:grid-cols-[1fr_190px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px]' + ($first ? '' : ' border-t border-[var(--border)]')">
         <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
