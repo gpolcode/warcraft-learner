@@ -1,24 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-
-/** Which page the strip introduces: the post-raid analysis or the pre-fight plan. */
-export type FirstRunVariant = 'post' | 'pre';
 
 interface FirstRunCopy {
   headline: string;
   intro: string;
   steps: readonly { icon: string; label: string; detail: string }[];
 }
-
-const POST_RAID: FirstRunCopy = {
-  headline: 'What pasting a report gets you',
-  intro: 'Everything runs in your browser. Here is the whole flow:',
-  steps: [
-    { icon: 'content_paste', label: 'Paste a report', detail: 'A Warcraft Logs URL or code. Mythic raid pulls only.' },
-    { icon: 'query_stats', label: 'Your pull gets graded', detail: 'Against the top 10 logs for your spec.' },
-    { icon: 'checklist', label: 'Every flag names a fix', detail: 'What to change on the next pull.' },
-  ],
-};
 
 const PRE_FIGHT: FirstRunCopy = {
   headline: 'What the pre-fight plan gives you',
@@ -30,7 +17,6 @@ const PRE_FIGHT: FirstRunCopy = {
   ],
 };
 
-/** `variant` switches the headline and the three steps between the post-raid and pre-fight flow. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-first-run-strip',
@@ -39,7 +25,5 @@ const PRE_FIGHT: FirstRunCopy = {
   templateUrl: './first-run-strip.html',
 })
 export class FirstRunStrip {
-  readonly variant = input<FirstRunVariant>('post');
-
-  protected readonly copy = computed(() => this.variant() === 'pre' ? PRE_FIGHT : POST_RAID);
+  protected readonly copy = PRE_FIGHT;
 }

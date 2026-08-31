@@ -17,7 +17,6 @@ import { WclFight, WclPlayer, WclReport, PlayerDetailGroups, MYTHIC_DIFFICULTY }
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
-import { FirstRunStrip } from '../../../../shared/components/first-run-strip/first-run-strip';
 import { PullOverview } from '../../pull-overview/components/pull-overview';
 import { Rotation } from '../../rotation/components/rotation';
 import { BurstWindows } from '../../burst-windows/components/burst-windows';
@@ -68,7 +67,7 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatCardModule,
-    LoadingSpinner, BenchEmptyBanner, FirstRunStrip, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
+    LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
