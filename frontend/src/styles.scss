@@ -109,11 +109,18 @@ mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; 
 .badge-info     { color: var(--info); }
 .badge-muted    { color: var(--muted); }
 
-/* Card subtitle and in-card group label: shared so a call site never re-inlines the utilities and drifts out of step with the dozen others. */
+/* Card subtitle, group heading and in-card label: shared so a call site never re-inlines the utilities and drifts out of step with the dozen others. */
 .card-subtitle {
   font-size: 13px;
   line-height: 1.35;
   color: var(--muted-strong);
+}
+
+.section-heading {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
 }
 
 .section-label {
@@ -123,23 +130,8 @@ mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; 
   color: var(--muted-strong);
 }
 
-/* Row action trigger (map, clip): compact because these sit inside dense table rows, where a full-height Material button pushes the columns around. */
-.chip-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background-color: var(--surface-alt);
-  color: var(--muted-strong);
-  font-size: 12px;
-  line-height: 16px;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.chip-action:hover { color: var(--text); border-color: var(--accent); }
-.chip-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* Which row renders first under a group heading depends on the branch taken, so the heading's divider is dropped here rather than on a row's own class list. */
+.card-section > :first-child + * { border-top-width: 0; }
 
 /* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
 .chip-onplan {

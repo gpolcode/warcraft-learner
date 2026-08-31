@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { WclFight } from '../../../../core/wcl/wcl.models';
 import { ClipAnchor } from '../../../../domain/capture/capture.models';
 import { MapAnchor } from '../../map/facade/map-feature-service';
@@ -14,7 +15,7 @@ import { LoadResourceService } from '../../../../shared/state/load-resource-serv
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, FormatDurationPipe, FormatDamagePipe, LoadState],
+  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadState],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })

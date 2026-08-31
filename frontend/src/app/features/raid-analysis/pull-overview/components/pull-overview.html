@@ -8,19 +8,19 @@
 
     <!-- Pull time + boss % live in the stat column, not here. -->
     <div class="px-4 pt-3 pb-2">
-      <div class="text-[17px] font-semibold text-[var(--text)]">Pull overview</div>
+      <h2 class="text-[17px] font-semibold text-[var(--text)]">Pull overview</h2>
       <div class="card-subtitle mt-0.5">
         @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
         @else { Pull {{ v.attempt }} of this session. }
       </div>
     </div>
 
-    <!-- Body geometry (px-4 + trailing 200px column) mirrors the finding-table cards so the divider lines up. -->
-    <div class="px-4 border-t border-[var(--border)] md:grid md:grid-cols-[minmax(0,1fr)_200px]">
+    <!-- Body geometry (px-4 + trailing 200px column) mirrors the finding-table cards so the columns line up. -->
+    <div class="px-4 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
-      <div class="pt-3 pb-1.5">
+      <div class="card-section pt-5 pb-1.5">
         <!-- Indented past the 20px icon column (+ gap) so it aligns with the row text, like the gear card's Talents heading. -->
-        <div class="section-label mb-2 pl-[31px]">Deaths &amp; wipe</div>
+        <h3 class="section-heading mb-2 pl-[31px]">Deaths &amp; wipe</h3>
 
         @for (d of v.deaths; track d.index) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
@@ -32,15 +32,15 @@
               }
             </div>
             <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ d.timeS | formatDuration }}</span>
-            <div class="flex items-center gap-1.5 pr-2">
+            <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
-                <button type="button" class="chip-action" title="Open positioning map" (click)="onOpenMap(d.timeS)">
-                  <mat-icon class="icon-16">my_location</mat-icon>Map
+                <button mat-icon-button title="Open positioning map" (click)="onOpenMap(d.timeS)">
+                  <mat-icon>my_location</mat-icon>
                 </button>
               }
               @if (showClip()) {
-                <button type="button" class="chip-action" title="Watch clip" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
-                  <mat-icon class="icon-16">videocam</mat-icon>Clip
+                <button mat-icon-button title="Watch clip" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
+                  <mat-icon>videocam</mat-icon>
                 </button>
               }
             </div>
@@ -66,22 +66,22 @@
             </div>
           </div>
           <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ v.outcomeTimeS | formatDuration }}</span>
-          <div class="flex items-center gap-1.5 pr-2">
+          <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
-              <button type="button" class="chip-action" title="Open positioning map" (click)="onOpenMap(v.outcomeTimeS)">
-                <mat-icon class="icon-16">my_location</mat-icon>Map
+              <button mat-icon-button title="Open positioning map" (click)="onOpenMap(v.outcomeTimeS)">
+                <mat-icon>my_location</mat-icon>
               </button>
             }
             @if (showClip()) {
-              <button type="button" class="chip-action" title="Watch clip" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
-                <mat-icon class="icon-16">videocam</mat-icon>Clip
+              <button mat-icon-button title="Watch clip" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
+                <mat-icon>videocam</mat-icon>
               </button>
             }
           </div>
         </div>
       </div>
 
-      <div class="pt-3.5 pb-3.5 md:pt-3 border-t md:border-t-0 md:border-l border-[var(--border)] md:pl-4">
+      <div class="pt-3.5 pb-3.5 md:pt-5 border-t md:border-t-0 md:border-l border-[var(--border)] md:pl-4">
         <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
           <div>
             <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>

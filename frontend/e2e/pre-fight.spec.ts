@@ -51,7 +51,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
 test('gear shows the top-parse talent, trinket, and enchant consensus, and how the alt build differs', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Top-parse gear consensus.');
-  const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
+  const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Most common build');
   await shows(talents, PERCENT);
   await shows(talents, 'of top parsers');
@@ -60,11 +60,11 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
   await showsEntity(talents);
-  const trinkets = gear.locator('div.border-t').filter({ hasText: 'Trinkets' }).first();
+  const trinkets = gear.locator('div.card-section').filter({ hasText: 'Trinkets' }).first();
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
   await shows(trinkets, 'Trinket 1');
   await shows(trinkets, PERCENT);
-  const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
+  const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
   await shows(enchants, 'What most top raiders run.');
 });
 
@@ -98,7 +98,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
-  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
+  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
   await shows(page, 'Positioning');

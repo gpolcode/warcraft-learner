@@ -6,7 +6,7 @@
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
     <div class="md:col-span-2">
-      <div class="text-[17px] font-semibold text-[var(--text)]">Gear</div>
+      <h2 class="text-[17px] font-semibold text-[var(--text)]">Gear</h2>
       @if (view().comparison) {
         <div class="card-subtitle mt-0.5">Gear vs top parses.</div>
       } @else {
@@ -17,10 +17,10 @@
     <div class="hidden md:block section-label pl-[14px]">Fix</div>
   </div>
 
-  <div class="border-t border-[var(--border)]">
-    <div class="px-4 pt-3 pb-1 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
+  <div class="card-section">
+    <div class="px-4 pt-5 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
       <div></div>
-      <div class="section-label">Talents</div>
+      <h3 class="section-heading">Talents</h3>
       <div></div>
       <div></div>
     </div>
@@ -118,10 +118,10 @@
     }
   </div>
 
-  <div class="border-t border-[var(--border)]">
-    <div class="px-4 pt-3 pb-1 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
+  <div class="card-section">
+    <div class="px-4 pt-5 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
       <div></div>
-      <div class="section-label">Trinkets</div>
+      <h3 class="section-heading">Trinkets</h3>
       <div></div>
       <div></div>
     </div>
@@ -213,11 +213,11 @@
     }
   </div>
 
-  <div class="border-t border-[var(--border)]">
-    <div class="px-4 pt-3 pb-1 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
+  <div class="card-section">
+    <div class="px-4 pt-5 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
       <div></div>
       <div>
-        <div class="section-label">Enchants</div>
+        <h3 class="section-heading">Enchants</h3>
         @if (!view().comparison && view().benchEnchantRows.length) {
           <div class="text-[12px] text-[var(--muted)] mt-0.5">What most top raiders run.</div>
         }

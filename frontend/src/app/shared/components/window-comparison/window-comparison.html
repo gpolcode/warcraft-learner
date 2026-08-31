@@ -2,7 +2,7 @@
 
   @if (heading()) {
     <div class="px-4 pt-3 pb-2">
-      <div class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</div>
+      <h2 class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</h2>
       @if (subtitle()) {
         <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
       }
@@ -99,13 +99,13 @@
         }
         <div class="ml-auto flex items-center gap-[7px] shrink-0">
           @if (showMap()) {
-            <button type="button" class="chip-action" title="Open positioning map" (click)="openMap.emit(activeIndex())">
-              <mat-icon class="icon-16">my_location</mat-icon>Map
+            <button mat-icon-button title="Open positioning map" (click)="openMap.emit(activeIndex())">
+              <mat-icon>my_location</mat-icon>
             </button>
           }
           @if (showClip()) {
-            <button type="button" class="chip-action" title="Watch clip" (click)="openClip.emit(activeIndex())">
-              <mat-icon class="icon-16">videocam</mat-icon>Clip
+            <button mat-icon-button title="Watch clip" (click)="openClip.emit(activeIndex())">
+              <mat-icon>videocam</mat-icon>
             </button>
           }
         </div>
