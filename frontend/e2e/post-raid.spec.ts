@@ -181,18 +181,6 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
     .first()).toBeVisible();
 });
 
-test('a card subtitle opens the one shared benchmark explainer', async () => {
-  const panel = page.locator('wl-benchmark-explainer wl-flyover-panel');
-  await expect(panel).toBeHidden();
-
-  await page.getByRole('button', { name: 'top parses' }).first().click();
-
-  await expect(panel).toBeVisible();
-  await expect(panel).toContainText('10 highest ranked');
-  await page.getByRole('button', { name: 'Close the benchmark explainer' }).click();
-  await expect(panel).toBeHidden();
-});
-
 test('the positioning map opens anchored on the death', async () => {
   test.setTimeout(MAP_READY_TIMEOUT_MS + SLACK_MS);
   // The first map button belongs to the pull overview's death row.

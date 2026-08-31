@@ -96,18 +96,6 @@ test('burst windows show the top-parse windows with their bench damage', async (
   await showsEntity(burstWindows);
 });
 
-test('a card subtitle opens the one shared benchmark explainer', async () => {
-  const panel = page.locator('wl-benchmark-explainer wl-flyover-panel');
-  await expect(panel).toBeHidden();
-
-  await page.getByRole('button', { name: 'top parses' }).first().click();
-
-  await expect(panel).toBeVisible();
-  await expect(panel).toContainText('10 highest ranked');
-  await page.getByRole('button', { name: 'Close the benchmark explainer' }).click();
-  await expect(panel).toBeHidden();
-});
-
 test('the positioning map opens anchored on the selected burst window', async () => {
   const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
   await expect(openMap).toBeVisible();

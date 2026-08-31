@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, outp
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BenchmarkSubtitle } from '../benchmark-explainer/benchmark-subtitle';
 import { GameIcon } from '../game-icon/game-icon';
 import { CompactAbilityRow } from '../compact-ability-row/compact-ability-row';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
@@ -23,7 +22,7 @@ let nextInstanceSeq = 0;
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, MatTooltipModule, GameIcon, CompactAbilityRow, BenchmarkSubtitle,
+    MatIconModule, MatButtonModule, MatTooltipModule, GameIcon, CompactAbilityRow,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
   ],
   templateUrl: './window-comparison.html',

@@ -5,3 +5,9 @@ import { TestBed } from '@angular/core/testing';
 export function whenStable(): Promise<void> {
   return TestBed.inject(ApplicationRef).whenStable();
 }
+
+/** Resolves once a `@defer (on idle)` block has rendered: `whenStable` alone never reaches the idle callback the trigger waits on. */
+export async function whenDeferred(): Promise<void> {
+  await whenStable();
+  await new Promise(resolve => { setTimeout(resolve, 0); });
+}

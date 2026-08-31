@@ -1,6 +1,0 @@
-@let split = parts();
-@if (split.term) {
-  <span>{{ split.before }}</span><button type="button" class="cursor-help align-baseline underline decoration-dotted underline-offset-2 hover:text-[var(--text)]" matTooltip="About the benchmark" (click)="explainer.show()">{{ split.term }}</button><span>{{ split.after }}</span>
-} @else {
-  {{ split.before }}
-}

@@ -3,7 +3,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { GameIcon } from '../game-icon/game-icon';
-import { BenchmarkSubtitle } from '../benchmark-explainer/benchmark-subtitle';
 import { CollapsibleText } from '../collapsible-text/collapsible-text';
 import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
@@ -26,7 +25,7 @@ export type { FindingRow, OnPlanChip } from './finding-rows-service';
   host: { class: 'block' },
   imports: [
     MatIconModule, MatButtonModule, MatTooltipModule, GameIcon, CollapsibleText, FindingOccurrences,
-    FormatDurationPipe, BenchmarkSubtitle,
+    FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',
 })
