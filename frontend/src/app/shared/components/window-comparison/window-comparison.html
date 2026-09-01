@@ -98,13 +98,13 @@
         }
         <div class="ml-auto flex items-center gap-[7px] shrink-0">
           @if (showMap()) {
-            <button mat-stroked-button (click)="openMap.emit(activeIndex())">
+            <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
               <mat-icon>my_location</mat-icon>
               Show map
             </button>
           }
           @if (showClip()) {
-            <button mat-stroked-button (click)="openClip.emit(activeIndex())">
+            <button mat-stroked-button class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
               <mat-icon>videocam</mat-icon>
               Watch clip
             </button>

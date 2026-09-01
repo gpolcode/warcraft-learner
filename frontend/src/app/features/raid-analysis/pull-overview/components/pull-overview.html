@@ -33,13 +33,13 @@
             <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ d.timeS | formatDuration }}</span>
             <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
-                <button mat-stroked-button (click)="onOpenMap(d.timeS)">
+                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(d.timeS)">
                   <mat-icon>my_location</mat-icon>
                   Show map
                 </button>
               }
               @if (showClip()) {
-                <button mat-stroked-button (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
+                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
                   <mat-icon>videocam</mat-icon>
                   Watch clip
                 </button>
@@ -69,13 +69,13 @@
           <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
-              <button mat-stroked-button (click)="onOpenMap(v.outcomeTimeS)">
+              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(v.outcomeTimeS)">
                 <mat-icon>my_location</mat-icon>
                 Show map
               </button>
             }
             @if (showClip()) {
-              <button mat-stroked-button (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
+              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
                 <mat-icon>videocam</mat-icon>
                 Watch clip
               </button>
