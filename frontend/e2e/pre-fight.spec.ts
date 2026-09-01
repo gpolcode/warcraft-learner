@@ -89,7 +89,7 @@ test('the defensive plan lists the consensus defensives', async () => {
 
 test('burst windows show the top-parse windows with their bench damage', async () => {
   const burstWindows = page.locator('wl-burst-windows');
-  await shows(burstWindows, 'The short stretches where you deal your biggest damage, compared with the top logs.');
+  await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
   await shows(burstWindows, 'burst');
