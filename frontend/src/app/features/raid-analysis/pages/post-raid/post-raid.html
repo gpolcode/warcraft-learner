@@ -6,6 +6,7 @@
                (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
         <!-- Unconditional: `@if`-gating this leaves the field red with no message (MAT_ERROR misses a conditional child). -->
         <mat-error>Paste a Warcraft Logs report URL or a 16-character report code.</mat-error>
+        <mat-hint>Your Mythic pulls get graded against the top logs.</mat-hint>
       </mat-form-field>
 
       <wl-live-controls></wl-live-controls>

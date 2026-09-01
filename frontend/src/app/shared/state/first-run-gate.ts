@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { FirstRunPage, FirstRunStore } from '../../core/state/first-run-store';
 
-/** One page's first-run strip: shown until that page first puts a result on screen, then retired for good in this browser. */
+/** One page's first-run copy: shown until that page first puts a result on screen, then retired for good in this browser. */
 export class FirstRunGate {
   private readonly store: FirstRunStore;
   private readonly page: FirstRunPage;

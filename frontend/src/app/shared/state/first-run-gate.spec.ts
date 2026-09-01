@@ -23,7 +23,7 @@ describe('FirstRunGate', () => {
     expect(gate(true).gate.visible()).toBe(false);
   });
 
-  it('keeps the strip up while the page has no result on screen', () => {
+  it('keeps the caption up while the page has no result on screen', () => {
     const { store, gate: subject } = gate(false);
 
     subject.settleWhen(false);
@@ -32,7 +32,7 @@ describe('FirstRunGate', () => {
     expect(store.markDone).not.toHaveBeenCalled();
   });
 
-  it('retires the strip and writes the flag the first time a result lands', () => {
+  it('retires the caption and writes the flag the first time a result lands', () => {
     const { store, gate: subject } = gate(false);
 
     subject.settleWhen(true);

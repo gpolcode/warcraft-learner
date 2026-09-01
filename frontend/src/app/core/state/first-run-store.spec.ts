@@ -5,9 +5,8 @@ import { FirstRunStore } from './first-run-store';
 // A fresh instance per call keeps the cross-instance persistence assertions meaningful.
 const freshStore = () => TestBed.runInInjectionContext(() => new FirstRunStore());
 
-// Mirror KEYS in the source; the flag outlives deploys, so changing a key shows the strip again to every returning raider.
+// Mirror KEYS in the source; the flag outlives deploys, so changing a key shows the caption again to every returning raider.
 const POST_RAID_STORAGE_KEY = 'wl.firstRun.postRaid';
-const PRE_FIGHT_STORAGE_KEY = 'wl.firstRun.preFight';
 
 /** Stands in for a disabled, full, or otherwise unavailable localStorage. */
 const STORAGE_FAILURE = 'localStorage unavailable';
@@ -26,11 +25,8 @@ describe('FirstRunStore', () => {
     vi.restoreAllMocks();
   });
 
-  it('reports neither page as done before anything is stored', () => {
-    const store = freshStore();
-
-    expect(store.isDone('postRaid')).toBe(false);
-    expect(store.isDone('preFight')).toBe(false);
+  it('reports the page as not done before anything is stored', () => {
+    expect(freshStore().isDone('postRaid')).toBe(false);
   });
 
   it('marks a page done under its stable key, and a fresh instance reads it back', () => {
@@ -40,14 +36,7 @@ describe('FirstRunStore', () => {
     expect(freshStore().isDone('postRaid')).toBe(true);
   });
 
-  it('keeps the two pages on separate flags', () => {
-    freshStore().markDone('preFight');
-
-    expect(localStorage.getItem(PRE_FIGHT_STORAGE_KEY)).not.toBeNull();
-    expect(freshStore().isDone('postRaid')).toBe(false);
-  });
-
-  it('answers done when the storage read fails, so the strip never pins itself on', () => {
+  it('answers done when the storage read fails, so the caption never pins itself on', () => {
     const warn = spyOnWarn();
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error(STORAGE_FAILURE);

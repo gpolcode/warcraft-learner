@@ -42,6 +42,7 @@ test.afterAll(async () => {
 });
 
 test('analyzing the report selects the last pull and the sticky player', async () => {
+  await shows(page, 'Your Mythic pulls get graded against the top logs.');
   const fight = page.getByRole('combobox', { name: 'Fight' });
   await expect(fight).toContainText("Nek'zali the Soulcoiler");
   await expect(fight).toContainText('Kill');

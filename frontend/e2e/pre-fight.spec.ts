@@ -24,6 +24,7 @@ test.afterAll(async () => {
 });
 
 test('selecting class, spec, and encounter loads that spec\'s plan', async () => {
+  await shows(page, 'The plan top raiders run for any boss. No log of your own needed.');
   await expect(page.getByRole('combobox', { name: 'Class' })).toContainText('Warrior');
   await expect(page.getByRole('combobox', { name: 'Spec' })).toContainText('Arms');
   await expect(page.getByRole('combobox', { name: 'Encounter' })).toContainText("Nek'zali the Soulcoiler");

@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { LoggerService } from '../observability/logger-service';
 
-/** Which page's first-run strip a stored flag retires. */
-export type FirstRunPage = 'postRaid' | 'preFight';
+/** Which page's first-run copy a stored flag retires. */
+export type FirstRunPage = 'postRaid';
 
 const KEYS: Record<FirstRunPage, string> = {
   postRaid: 'wl.firstRun.postRaid',
-  preFight: 'wl.firstRun.preFight',
 };
 
 const DONE = 'done';
@@ -20,7 +19,7 @@ export class FirstRunStore {
       return localStorage.getItem(KEYS[page]) !== null;
     } catch (err) {
       this.logger.logWarn('FirstRunStore.isDone', err);
-      // Unreadable storage answers "done": flipping this to false pins the strip on every visit for anyone whose browser blocks site data.
+      // Unreadable storage answers "done": flipping this to false pins the caption on every visit for anyone whose browser blocks site data.
       return true;
     }
   }

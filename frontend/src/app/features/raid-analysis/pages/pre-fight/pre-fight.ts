@@ -5,17 +5,14 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/mat
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { FirstRunStore } from '../../../../core/state/first-run-store';
 import { SpecEntry, EncounterEntry } from '../../../../domain/encounter/encounter.models';
 import { LoadError } from '../../../../core/http/result';
 import { EncounterSelectionService } from './encounter-selection-service';
 import { LoadingSpinner } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { BenchEmptyBanner } from '../../../../shared/components/bench-empty-banner/bench-empty-banner';
-import { FirstRunStrip } from '../../../../shared/components/first-run-strip/first-run-strip';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
 import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
-import { FirstRunGate } from '../../../../shared/state/first-run-gate';
 import { FormatSpecPipe } from '../../../../shared/pipes/format-spec-pipe';
 import { ClassIconPipe } from '../../../../shared/pipes/class-icon-pipe';
 import { SpecIconPipe } from '../../../../shared/pipes/spec-icon-pipe';
@@ -46,7 +43,7 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   selector: 'wl-pre-fight',
   imports: [
     ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
-    LoadingSpinner, BenchEmptyBanner, FirstRunStrip, LoadState, ArtIcon,
+    LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,
     Gear, MapPanel, NorthernSkyExport,
@@ -62,7 +59,6 @@ export class PreFight implements OnInit {
   private readonly selectionStore = inject(SelectionStore);
   private readonly specMeta = inject(SpecMetaService);
   private readonly pendingTasks = inject(PendingTasks);
-  protected readonly firstRun = new FirstRunGate(inject(FirstRunStore), 'preFight');
 
   protected readonly classControl = new FormControl('', { nonNullable: true });
   protected readonly specControl = new FormControl<string>({ value: '', disabled: true }, { nonNullable: true });
@@ -104,7 +100,6 @@ export class PreFight implements OnInit {
     effect(() => {
       if (this.classes().length) this.classControl.enable({ emitEvent: false });
     });
-    effect(() => { this.firstRun.settleWhen(!!this.selectedEncId() && !this.cardsBusy()); });
   }
 
   ngOnInit(): void {

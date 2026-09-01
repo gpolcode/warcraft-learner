@@ -3,11 +3,9 @@
     <wl-load-state [error]="e" />
   }
 
-  @if (firstRun.visible()) {
-    <wl-first-run-strip></wl-first-run-strip>
-  }
-
   <mat-card appearance="outlined" class="p-4">
+    <p class="mb-3.5 text-[13px] text-[var(--muted)]">The plan top raiders run for any boss. No log of your own needed.</p>
+
     @if (loading()) {
       <wl-loading-spinner message="Loading specs…"></wl-loading-spinner>
     } @else if (specs().length === 0 || classes().length === 0) {
