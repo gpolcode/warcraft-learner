@@ -3,10 +3,14 @@
     <mat-slide-toggle [checked]="capture.liveEnabled()" (change)="onLiveToggle($event.checked)">
       Follow latest pull
     </mat-slide-toggle>
-    @if (capture.liveEnabled() && capture.status()) {
-      <span class="ml-auto flex items-center gap-2 text-[12.5px] text-[var(--muted)]">
-        <span class="h-[9px] w-[9px] rounded-full bg-[var(--accent)]"></span>{{ capture.status() }}
-      </span>
+    @if (capture.liveEnabled()) {
+      @if (capture.status()) {
+        <span class="ml-auto flex items-center gap-2 text-[12.5px] text-[var(--muted)]">
+          <span class="h-[9px] w-[9px] rounded-full bg-[var(--accent)]"></span>{{ capture.status() }}
+        </span>
+      }
+    } @else {
+      <span class="ml-auto text-[12.5px] text-[var(--muted)]">Re-analyzes as new pulls upload during a live log.</span>
     }
   </div>
 

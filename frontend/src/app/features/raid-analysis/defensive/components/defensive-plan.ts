@@ -17,7 +17,7 @@ export class DefensivePlan {
   readonly encounterId = input.required<number>();
 
   protected readonly heading = 'Defensive plan';
-  protected readonly subtitle = 'Defensive usage across top parses.';
+  protected readonly subtitle = 'Defensive usage across top logs.';
 
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();

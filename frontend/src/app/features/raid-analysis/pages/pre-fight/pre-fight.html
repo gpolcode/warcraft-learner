@@ -4,6 +4,8 @@
   }
 
   <mat-card appearance="outlined" class="p-4">
+    <p class="mb-3.5 text-[13px] text-[var(--muted)]">Pick a spec and a boss to see the plan top raiders run there.</p>
+
     @if (loading()) {
       <wl-loading-spinner message="Loading specs…"></wl-loading-spinner>
     } @else if (specs().length === 0 || classes().length === 0) {
