@@ -21,35 +21,33 @@ const local = {
 const architectureLayers = [
   { type: 'testing', pattern: 'src/testing', partialMatch: false },
   { type: 'environments', pattern: 'src/environments', partialMatch: false },
-  { type: 'domain', pattern: 'src/app/domain', partialMatch: false },
-  { type: 'core', pattern: 'src/app/core', partialMatch: false },
-  { type: 'shared', pattern: 'src/app/shared', partialMatch: false },
-  { type: 'ingest', pattern: 'src/app/features/*/ingest', partialMatch: false },
-  { type: 'pages', pattern: 'src/app/features/*/pages', partialMatch: false },
-  { type: 'slice', pattern: 'src/app/features/*/*', partialMatch: false, capture: ['featureName', 'sliceName'] },
-  { type: 'app-root', pattern: 'src/app', partialMatch: false },
+  { type: 'feature', pattern: 'src/app/domains/*/feature-*', partialMatch: false, capture: ['domain', 'feature'] },
+  { type: 'ui', pattern: 'src/app/domains/*/ui-*', partialMatch: false, capture: ['domain', 'ui'] },
+  { type: 'data', pattern: 'src/app/domains/*/data', partialMatch: false, capture: ['domain'] },
+  { type: 'util', pattern: 'src/app/domains/*/util-*', partialMatch: false, capture: ['domain', 'util'] },
+  { type: 'shell', pattern: 'src/app', partialMatch: false },
   { type: 'bootstrap', pattern: 'src', partialMatch: false },
 ];
 
 const to = (...types) => types.map((type) => ({ to: { element: { type } } }));
 
-// Last match wins: moving the Pull Overview exception above the general slice policy disables it.
+// A domain reaches its own modules and the shared domain's, never another domain's.
+const within = (...types) =>
+  types.flatMap((type) => [
+    { to: { element: { type, captured: { domain: '{{from.element.captured.domain}}' } } } },
+    { to: { element: { type, captured: { domain: 'shared' } } } },
+  ]);
+
+// Last match wins.
 const layerPolicies = [
-  { from: [{ element: { type: 'domain' } }], allow: to('core', 'testing') },
-  { from: [{ element: { type: 'core' } }], allow: to('domain', 'environments', 'testing') },
-  { from: [{ element: { type: 'shared' } }], allow: to('domain', 'core', 'testing') },
-  { from: [{ element: { type: 'slice' } }], allow: to('domain', 'core', 'shared', 'testing') },
-  { from: [{ element: { type: 'pages' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
-  { from: [{ element: { type: 'ingest' } }], allow: to('domain', 'core', 'shared', 'slice', 'testing') },
-  { from: [{ element: { type: 'app-root' } }], allow: to('core', 'shared', 'pages', 'environments') },
-  { from: [{ element: { type: 'environments' } }], allow: to('core', 'slice', 'ingest') },
-  { from: [{ element: { type: 'bootstrap' } }], allow: to('core', 'app-root') },
-  { from: [{ element: { type: 'testing' } }], allow: to('domain', 'core') },
-  {
-    from: [{ element: { type: 'slice', captured: { sliceName: 'pull-overview' } } }],
-    allow: [{ to: { element: { type: 'slice', captured: { sliceName: 'map' } } } }],
-    message: 'Pull Overview reads the Map slice anchor type its own cards emit.',
-  },
+  { from: [{ element: { type: 'feature' } }], allow: [...within('ui', 'data', 'util'), ...to('testing')] },
+  { from: [{ element: { type: 'ui' } }], allow: [...within('ui', 'data', 'util'), ...to('testing')] },
+  { from: [{ element: { type: 'data' } }], allow: [...within('data', 'util'), ...to('environments', 'testing')] },
+  { from: [{ element: { type: 'util' } }], allow: [...within('util'), ...to('testing')] },
+  { from: [{ element: { type: 'shell' } }], allow: to('feature', 'ui', 'data', 'util', 'environments', 'testing') },
+  { from: [{ element: { type: 'environments' } }], allow: to('feature', 'data', 'util') },
+  { from: [{ element: { type: 'bootstrap' } }], allow: to('shell', 'util') },
+  { from: [{ element: { type: 'testing' } }], allow: to('data', 'util') },
 ];
 
 // Exactly 3 or 6 hex digits: the trailing guard keeps `#8041`-style id labels out.
@@ -218,9 +216,9 @@ export default defineConfig([
     },
   },
   {
-    // Every http/ folder is a chokepoint, so narrowing this to one of them re-bans the other's HttpClient.
+    // Both http folders are chokepoints, so narrowing this to one of them re-bans the other's HttpClient.
     files: ['src/**/*.ts'],
-    ignores: ['src/app/core/http/**', 'src/app/features/*/ingest/http/**'],
+    ignores: ['src/app/domains/shared/util-http/**', 'src/app/domains/raid-analysis/data/http/**'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {
@@ -230,12 +228,12 @@ export default defineConfig([
     ignores: [
       'src/app/**/*-harness.ts',
       'src/app/**/rule-fixtures.ts',
-      'src/app/features/raid-analysis/pages/post-raid/post-raid-page.ts',
-      'src/app/domain/analysis/analysis-math.ts',
-      'src/app/core/http/http-providers.ts',
-      'src/app/core/http/retry-transient-interceptor.ts',
-      'src/app/core/wcl/wcl-caching.ts',
-      'src/app/core/data-source/provide-data-source.ts',
+      'src/app/post-raid/post-raid-page.ts',
+      'src/app/domains/raid-analysis/data/analysis/analysis-math.ts',
+      'src/app/domains/shared/util-http/http-providers.ts',
+      'src/app/domains/shared/util-http/retry-transient-interceptor.ts',
+      'src/app/domains/raid-analysis/data/wcl/wcl-caching.ts',
+      'src/app/domains/raid-analysis/data/data-source/provide-data-source.ts',
     ],
     rules: {
       'no-restricted-syntax': [
@@ -248,24 +246,6 @@ export default defineConfig([
         {
           selector: 'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > ArrowFunctionExpression',
           message: 'Behavior lives as methods on an @Injectable service; only the files in this block\'s ignores export functions.',
-        },
-      ],
-    },
-  },
-  {
-    // import type compiles away, so no domain code can reach a shared or core bundle.
-    files: ['src/app/shared/**/*.ts', 'src/app/core/**/*.ts'],
-    rules: {
-      '@typescript-eslint/no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/domain/**'],
-              allowTypeImports: true,
-              message: 'Shared and core render or type domain shapes but never run domain logic: import type only.',
-            },
-          ],
         },
       ],
     },

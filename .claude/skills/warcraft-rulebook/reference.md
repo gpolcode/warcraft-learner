@@ -10,7 +10,7 @@ Then check the sampled encounter has real parse volume on the current partition.
 
 ## WCL token and spec universe (Step 1)
 
-Get one WCL client-credentials token up front and reuse it for the whole session - one OAuth handshake, never one per spec or per dispatch. Credentials: the embedded public pair in `frontend/src/app/core/http/wcl-public-client.ts`. POST `grant_type=client_credentials` to `https://www.warcraftlogs.com/oauth/token`, then POST GraphQL to `https://www.warcraftlogs.com/api/v2/client` with `Authorization: ****** the spec universe live from WCL:
+Get one WCL client-credentials token up front and reuse it for the whole session - one OAuth handshake, never one per spec or per dispatch. Credentials: the embedded public pair in `frontend/src/app/domains/raid-analysis/data/http/wcl-public-client.ts`. POST `grant_type=client_credentials` to `https://www.warcraftlogs.com/oauth/token`, then POST GraphQL to `https://www.warcraftlogs.com/api/v2/client` with `Authorization: ****** the spec universe live from WCL:
 
 ```
 query { gameData { classes { name slug specs { name slug } } } }
@@ -162,7 +162,7 @@ git branch -D <temp-branch>
 
 Open the PR with **base `gh-pages`** (push to `gh-pages` directly only when the user explicitly says so). Once merged, the hourly ingest overlays `data/specs` from `gh-pages` before each run and rebuilds that spec's benches over its next passes; the site reads the same tree directly. The gh-pages writers publish tree-based single commits, so the file content persists across their force-pushes.
 
-**A publish is two PRs.** The skip check keys on `INGEST_VERSION` plus the top-parse set, never on the rulebook, so on a settled encounter the new file is overlaid and then skipped and the benches keep serving the old rules. Open a second PR against `main` bumping `INGEST_VERSION` (`frontend/src/app/features/raid-analysis/ingest/domain/ingest-version.ts`); one bump covers every spec in the run. Order does not matter, but the publish is not done until both land.
+**A publish is two PRs.** The skip check keys on `INGEST_VERSION` plus the top-parse set, never on the rulebook, so on a settled encounter the new file is overlaid and then skipped and the benches keep serving the old rules. Open a second PR against `main` bumping `INGEST_VERSION` (`frontend/src/app/domains/raid-analysis/data/ingest/ingest-version.ts`); one bump covers every spec in the run. Order does not matter, but the publish is not done until both land.
 
 The worktree commits on a **temp branch pushed to the publish branch's remote ref** because the publish branch name is often already checked out on `main` history and `git worktree add -b` fails outright on the collision. Pushing a temp branch to `refs/heads/<publish-branch>` sidesteps it; the local pointer is irrelevant since the PR reads the remote. Verify with `git log origin/<publish-branch> -1`, not the local ref - it still sits on `main` history and makes history-checking tooling report the repo's merge commits as yours.
 

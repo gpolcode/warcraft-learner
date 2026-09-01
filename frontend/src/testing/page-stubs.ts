@@ -1,7 +1,7 @@
 import { InjectionToken, Provider, signal } from '@angular/core';
-import { Result, Results } from '../app/core/http/result';
+import { Result, Results } from '../app/domains/shared/util-http/result';
 
-/** Callers pass their own `*_DATA_SOURCE` tokens, since only the page layer may name a slice. */
+/** Callers pass their own `*_DATA_SOURCE` tokens, since only the shell may name a feature. */
 export function stubBenchTokens(
   tokens: readonly InjectionToken<unknown>[],
   bench: Result<never> = Results.missing('Not yet ingested.'),

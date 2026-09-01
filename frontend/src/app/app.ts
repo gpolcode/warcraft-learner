@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { PageNav } from './shared/components/page-nav/page-nav';
+import { PageNav } from './page-nav/page-nav';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

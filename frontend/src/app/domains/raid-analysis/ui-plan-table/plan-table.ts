@@ -1,0 +1,47 @@
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { GameIcon } from '../ui-game-icon/game-icon';
+import { Collapsible } from '../../shared/ui-collapsible/collapsible';
+import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
+import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
+
+export interface PlanTableRow {
+  name: string;
+  spellId: number | null;
+  icon: string;
+  firstCastS: number | null;
+  typicalUses: number | null;
+  usedSampleCount: number;
+  sampleCount: number;
+  holds: { castIndex: number; targetS: number }[];
+  rule: string | null;
+  bloodlust?: boolean;
+}
+
+type PlanTableState = 'unavailable' | 'rows' | 'empty';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'wl-plan-table',
+  imports: [DecimalPipe, GameIcon, Collapsible, LoadState, FormatDurationPipe],
+  templateUrl: './plan-table.html',
+})
+export class PlanTable {
+  readonly heading = input.required<string>();
+  readonly subtitle = input.required<string>();
+  readonly rows = input.required<PlanTableRow[]>();
+  readonly available = input.required<boolean>();
+  readonly error = input.required<RenderableLoadError | null>();
+
+  protected readonly state = computed<PlanTableState>(() => {
+    if (this.error() || !this.available()) return 'unavailable';
+    return this.rows().length ? 'rows' : 'empty';
+  });
+
+  // A row the bench never saw is not the same as one the sampled logs skipped.
+  private readonly picked = computed(() => this.rows().filter(row => row.usedSampleCount > 0 || row.sampleCount === 0));
+  private readonly unpicked = computed(() => this.rows().filter(row => row.usedSampleCount === 0 && row.sampleCount > 0));
+
+  protected readonly orderedRows = computed(() => [...this.picked(), ...this.unpicked()]);
+  protected readonly unpickedFrom = computed(() => this.picked().length);
+}

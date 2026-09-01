@@ -1,7 +1,7 @@
 import { Provider } from '@angular/core';
-import { DataFileApiService } from '../app/core/data-files/data-file-api-service';
-import { TalentDataService } from '../app/core/http/talent-data-service';
-import { WclApiService } from '../app/core/wcl/wcl-api-service';
+import { DataFileApiService } from '../app/domains/raid-analysis/data/data-files/data-file-api-service';
+import { TalentDataService } from '../app/domains/raid-analysis/data/http/talent-data-service';
+import { WclApiService } from '../app/domains/raid-analysis/data/wcl/wcl-api-service';
 
 export function provideApiFakes(fakes: { wcl: unknown; files?: unknown; talents?: unknown }): Provider[] {
   return [

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { PostRaid } from './features/raid-analysis/pages/post-raid/post-raid';
+import { PostRaid } from './post-raid/post-raid';
 
 export const routes: Routes = [
   {
@@ -9,7 +9,7 @@ export const routes: Routes = [
   },
   {
     path: 'pre',
-    loadComponent: () => import('./features/raid-analysis/pages/pre-fight/pre-fight').then(m => m.PreFight),
+    loadComponent: () => import('./pre-fight/pre-fight').then(m => m.PreFight),
   },
   { path: '**', redirectTo: '' },
 ];

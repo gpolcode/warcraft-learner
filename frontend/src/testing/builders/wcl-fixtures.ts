@@ -1,4 +1,4 @@
-import { WclAbility, WclFight, WclRawAbility, WclReport } from '../../app/core/wcl/wcl.models';
+import { WclAbility, WclFight, WclRawAbility, WclReport } from '../../app/domains/raid-analysis/data/wcl/wcl.models';
 
 interface FixtureActor { id: number; name: string; subType: string; server: string }
 interface FixtureEnemy { id: number; name: string; gameID: number }
