@@ -1,5 +1,5 @@
 @if (error() || !available()) {
-  <wl-load-state heading="Burst Windows" subtitle="Damage in each burst window vs top logs." [error]="error()"></wl-load-state>
+  <wl-load-state heading="Burst Windows" subtitle="The short stretches where you deal your biggest damage, compared with the top logs." [error]="error()"></wl-load-state>
 } @else {
   <wl-window-comparison
     [windows]="windows()"
@@ -7,7 +7,7 @@
     [showMap]="showMap()"
     [showClip]="showClip()"
     heading="Burst Windows"
-    subtitle="Damage in each burst window vs top logs."
+    subtitle="The short stretches where you deal your biggest damage, compared with the top logs."
     metricLabel="burst"
     chipsLabel="Recommended cooldowns"
     rangeLabel="Damage vs top range"

@@ -39,8 +39,8 @@ describe('LoadState', () => {
     });
 
     it('renders the optional subtitle when provided', () => {
-      expect(render({ heading: 'Offensives', subtitle: 'Offensive cooldowns vs top logs.' }).text)
-        .toContain('Offensive cooldowns vs top logs.');
+      expect(render({ heading: 'Offensives', subtitle: 'How you used your damage cooldowns compared with the top logs.' }).text)
+        .toContain('How you used your damage cooldowns compared with the top logs.');
     });
 
     it('shows the default caption', () => {

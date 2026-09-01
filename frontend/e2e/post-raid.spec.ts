@@ -42,7 +42,7 @@ test.afterAll(async () => {
 });
 
 test('analyzing the report selects the last pull and the sticky player', async () => {
-  await shows(page, 'Your Mythic pulls get graded against the top logs.');
+  await shows(page, 'Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.');
   const fight = page.getByRole('combobox', { name: 'Fight' });
   await expect(fight).toContainText("Nek'zali the Soulcoiler");
   await expect(fight).toContainText('Kill');
@@ -99,7 +99,7 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
 });
 
 test('rotation rules count the casts that broke each rulebook rule, and name the ones followed', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs the top Mythic logs for your spec.' });
+  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
   await shows(rotationRules, 'Rotation Rules');
   await showsFindingRows(rotationRules);
   // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
@@ -107,7 +107,7 @@ test('rotation rules count the casts that broke each rulebook rule, and name the
 });
 
 test('a rule row expands into a chip strip of the instances behind its count', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs the top Mythic logs for your spec.' });
+  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
   const expandable = findingRows(rotationRules)
     .filter({ has: page.getByRole('button', { name: /instances/i }) });
@@ -127,14 +127,14 @@ test('a rule row expands into a chip strip of the instances behind its count', a
 });
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {
-  const offensives = page.locator('wl-finding-table').filter({ hasText: 'Offensive cooldowns vs top logs.' });
+  const offensives = page.locator('wl-finding-table').filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
   await showsEntity(offensives);
   await showsFindingRows(offensives, CD_CHIP);
 });
 
 test('burst windows compare the player damage against the top-parse windows', async () => {
   const burstWindows = page.locator('wl-burst-windows');
-  await shows(burstWindows, 'Damage in each burst window vs top logs.');
+  await shows(burstWindows, 'The short stretches where you deal your biggest damage, compared with the top logs.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
   await shows(burstWindows, 'burst');
@@ -152,7 +152,7 @@ test('burst windows compare the player damage against the top-parse windows', as
 
 test('defensives flag the mistimed cooldowns and benchmark the damage taken', async () => {
   const defensives = page.locator('wl-defensive');
-  await shows(defensives, 'Defensive cooldowns vs top logs.');
+  await shows(defensives, 'How you used your survival cooldowns compared with the top logs.');
   const table = defensives.locator('wl-finding-table');
   await showsFindingRows(table, CD_CHIP);
   await showsOnPlan(table);
