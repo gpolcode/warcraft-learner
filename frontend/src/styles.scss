@@ -109,6 +109,14 @@ mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; 
 .badge-info     { color: var(--info); }
 .badge-muted    { color: var(--muted); }
 
+/* In-row action buttons: Material's 40px default stretches a two-line data row. */
+.btn-compact {
+  @include mat.button-overrides((
+    outlined-container-height: 30px,
+    outlined-horizontal-padding: 10px,
+  ));
+}
+
 .card-subtitle {
   font-size: 13px;
   line-height: 1.35;
