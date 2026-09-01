@@ -74,9 +74,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
       minSamples: MIN_PARSE_COUNT,
-      noRankingsMessage: 'No top parses for this encounter.',
+      noRankingsMessage: 'No top logs for this encounter.',
       tooFewParsesMessage: usable =>
-        `Only ${usable} usable top parse(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
+        `Only ${usable} usable top log(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
       rulebook: {
         dataFiles: this.dataFiles,
         plan: (rulebook): RotationPlan | null => rulebook.major_cooldowns.length

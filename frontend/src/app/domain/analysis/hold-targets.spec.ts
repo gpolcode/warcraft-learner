@@ -93,7 +93,7 @@ describe('holdSuggestionFindings', () => {
   const HOLD_DELAY_S = 40;
   const HOLD_BAND_S = 5;          // tolerance half-width
   const TARGET_CLOCK_S = 130;     // display-only median clock target ("hold to 02:10")
-  const HELD_COUNT = 6;           // "6 of 10 top parses hold" copy
+  const HELD_COUNT = 6;           // "6 of 10 top raiders hold" copy
   const TOTAL_SAMPLED = 10;
   const PRIOR_CAST_S = 10;
   const BAND_EDGE_S = PRIOR_CAST_S + EFFECTIVE_CD_S + (HOLD_DELAY_S - HOLD_BAND_S);
@@ -118,7 +118,7 @@ describe('holdSuggestionFindings', () => {
   it('reports the cast clock and the consensus in the message', () => {
     const [finding] = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets);
     assert.exists(finding);
-    expect(finding.message).toContain(`${HELD_COUNT}/${TOTAL_SAMPLED} top parses hold to 02:10`);
+    expect(finding.message).toContain(`${HELD_COUNT} of ${TOTAL_SAMPLED} top raiders hold to 02:10`);
     assert.exists(finding);
     expect(finding.details?.cd_name).toBe(NAME);
   });

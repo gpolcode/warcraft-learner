@@ -66,8 +66,8 @@ export class MapTransformService implements DataSource<MapData> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'MapTransformService',
       errorId: 'map.bench',
-      noRankingsMessage: 'No top parses for this encounter.',
-      tooFewParsesMessage: () => 'No fetchable top parses for this encounter.',
+      noRankingsMessage: 'No top logs for this encounter.',
+      tooFewParsesMessage: () => 'No fetchable top logs for this encounter.',
       parse: parse => this.parsePositions(parse),
       bench: ({ parses }) => ({ interval_s: POSITIONS_INTERVAL_S, parses }),
     });

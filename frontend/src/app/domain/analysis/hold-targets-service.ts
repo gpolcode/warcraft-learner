@@ -74,7 +74,7 @@ export class HoldTargetsService {
           category: 'hold_suggestion',
           timestamp_s: castS,
           measured: { value: fmtClock(castS), unit: `top ${fmtClock(target.target_s)}` },
-          message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count}/${target.total_samples} top parses hold to ${fmtClock(target.target_s)}.`,
+          message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count} of ${target.total_samples} top raiders hold to ${fmtClock(target.target_s)}.`,
           details: { remedy: `Hold ${name} to ${fmtClock(target.target_s)}.`, cd_name: name },
           occurrences: [],
         });

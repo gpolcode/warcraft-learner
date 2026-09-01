@@ -34,17 +34,17 @@ describe('LoadState', () => {
     it('renders the heading and the waiting message with the schedule icon', () => {
       const { text, icon } = render({ heading: 'Offensives' });
       expect(text).toContain('Offensives');
-      expect(text).toContain('Waiting for top parses');
+      expect(text).toContain('Waiting for top logs');
       expect(icon).toBe('schedule');
     });
 
     it('renders the optional subtitle when provided', () => {
-      expect(render({ heading: 'Offensives', subtitle: 'Offensive cooldowns vs top parses.' }).text)
-        .toContain('Offensive cooldowns vs top parses.');
+      expect(render({ heading: 'Offensives', subtitle: 'How you used your damage cooldowns compared with the top logs.' }).text)
+        .toContain('How you used your damage cooldowns compared with the top logs.');
     });
 
     it('shows the default caption', () => {
-      expect(render({ heading: 'Defensives' }).text).toContain('Built from the top-parse bench.');
+      expect(render({ heading: 'Defensives' }).text).toContain('Built from the top logs for your spec.');
     });
   });
 
@@ -53,7 +53,7 @@ describe('LoadState', () => {
       const { text, icon } = render({ heading: 'Offensives', error: TRANSIENT_ERROR });
       expect(text).toContain(TRANSIENT_ERROR.message);
       expect(text).toContain('Retries on the next sync, or reselect the fight.');
-      expect(text).not.toContain('Waiting for top parses');
+      expect(text).not.toContain('Waiting for top logs');
       expect(icon).toBe('cloud_off');
     });
 
