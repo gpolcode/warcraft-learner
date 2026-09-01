@@ -81,8 +81,7 @@
     }
 
     @if (loadingReport() || loadingAnalysis() || (ready() && cardsBusy())) {
-      <wl-loading-spinner [message]="loadingMsg()"
-                          [caption]="firstRun.visible() ? 'First analysis takes about a minute. Everything runs in your browser.' : ''"></wl-loading-spinner>
+      <wl-loading-spinner [message]="loadingMsg()"></wl-loading-spinner>
     }
 
     <!-- @defer only splits the bundle; it never un-renders, so the @if owns visibility. -->

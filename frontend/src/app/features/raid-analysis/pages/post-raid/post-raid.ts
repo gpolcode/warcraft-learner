@@ -36,9 +36,7 @@ import { BossIconPipe } from '../../../../shared/pipes/boss-icon-pipe';
 import { ArtIcon } from '../../../../shared/components/art-icon/art-icon';
 import { LatestRun } from './latest-run';
 import { CardDeck, CardEntry } from '../../../../shared/state/card-deck';
-import { FirstRunGate } from '../../../../shared/state/first-run-gate';
 import { SelectionStore } from '../../../../core/state/selection-store';
-import { FirstRunStore } from '../../../../core/state/first-run-store';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
@@ -82,7 +80,6 @@ export class PostRaid {
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
   private readonly liveSync = inject(LiveReportSyncService);
   private readonly selectionStore = inject(SelectionStore);
-  protected readonly firstRun = new FirstRunGate(inject(FirstRunStore), 'postRaid');
 
   protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [control => this.reportCodeValidator(control)] });
   protected readonly fightControl = new FormControl<number | null>(null);
@@ -94,7 +91,6 @@ export class PostRaid {
       if (this.liveCapture.liveEnabled()) this.fightControl.disable();
       else this.fightControl.enable();
     });
-    effect(() => { this.firstRun.settleWhen(this.ready() && !this.loadingAnalysis() && !this.cardsBusy()); });
   }
 
   protected readonly loadingReport = signal(false);

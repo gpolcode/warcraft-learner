@@ -1,9 +1,0 @@
-<div class="flex flex-col items-center gap-3 p-12 text-[var(--muted)]">
-  <mat-spinner [diameter]="36"></mat-spinner>
-  @if (message()) {
-    <span class="text-sm">{{ message() }}</span>
-  }
-  @if (caption()) {
-    <span class="-mt-2 text-[11.5px] text-[var(--muted)]/70">{{ caption() }}</span>
-  }
-</div>
