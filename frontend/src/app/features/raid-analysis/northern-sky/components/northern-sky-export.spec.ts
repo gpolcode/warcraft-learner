@@ -14,6 +14,7 @@ const CAST_TIMES_S = [10, 30];
 const EXPORT_BUTTON = 'button[mat-stroked-button]';
 const COPY_BUTTON = 'button[mat-flat-button]';
 const CHECKBOX = 'mat-checkbox input[type="checkbox"]';
+const PANEL_INTRO = 'Pick the abilities you want timings for, copy the note, and paste it into your Northern Sky addon.';
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
 const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 
@@ -88,6 +89,12 @@ describe('NorthernSkyExport copy', () => {
 
     expect(dom.query(COPY_BUTTON)).not.toBeNull();
     expect(dom.queryAll(CHECKBOX)).toHaveLength(POPULATED_ABILITIES.length);
+  });
+
+  it('says what the export panel does under its heading', async () => {
+    const { dom } = await openPanel();
+
+    expect(dom.text()).toContain(PANEL_INTRO);
   });
 
   it('confirms the copy, and hands the clipboard a note naming every selected ability', async () => {

@@ -90,7 +90,7 @@
         </div>
         @if (!activeIsMuted() && overviewDelta() !== null) {
           <div class="flex flex-col shrink-0">
-            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top average</span>
+            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top raiders average</span>
             <span class="text-[13px] font-semibold tabular-nums"
               [class.badge-muted]="overviewDeltaStatus() === 'muted'"
               [class.badge-success]="overviewDeltaStatus() === 'better'"
@@ -153,6 +153,11 @@
             <div class="absolute inset-y-0 w-[2px] bg-[var(--info)]" [style.left.%]="overviewAvgLeftPct()"></div>
           }
         </div>
+        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[var(--muted)]">
+          <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>you</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-[var(--info)]/30 border border-[var(--info)]" aria-hidden="true"></span>top raiders, lowest to highest</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-[var(--info)]" aria-hidden="true"></span>top raiders average</span>
+        </div>
       </div>
     }
 
@@ -160,12 +165,12 @@
     @if (w.detailRows.length) {
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
-        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_96px_90px] gap-x-[14px] items-center px-4 pb-1">
+        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_132px_90px] gap-x-[14px] items-center px-4 pb-1">
           <span class="col-start-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
             <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
           }
-          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top avg</span>
+          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top raiders average</span>
           @if (!activeIsMuted()) {
             <span class="col-start-4 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
           }

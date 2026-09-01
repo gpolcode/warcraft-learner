@@ -1,11 +1,14 @@
 <!-- One markup, responsiveness (full-screen sheet on mobile, right drawer on desktop) via Tailwind utilities only. -->
 <div class="fixed inset-0 z-50 flex flex-col bg-[var(--bg)] md:inset-y-0 md:left-auto md:right-0 md:w-[460px] md:border-l md:border-[var(--border)] md:shadow-2xl">
-  <div class="flex items-center justify-between border-b border-[var(--border)] px-4 py-2">
-    <div class="flex items-center gap-2">
-      <span class="font-semibold">{{ heading() }}</span>
-      @if (loadingText()) {
-        <span class="text-[13px] text-[var(--muted)]">{{ loadingText() }}</span>
-      }
+  <div class="flex items-start justify-between gap-2 border-b border-[var(--border)] px-4 py-2">
+    <div class="min-w-0">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold">{{ heading() }}</span>
+        @if (loadingText()) {
+          <span class="text-[13px] text-[var(--muted)]">{{ loadingText() }}</span>
+        }
+      </div>
+      <p class="mt-0.5 text-xs text-[var(--muted)]">{{ intro() }}</p>
     </div>
     <button mat-icon-button [attr.aria-label]="closeLabel()" (click)="closed.emit()"><mat-icon>close</mat-icon></button>
   </div>

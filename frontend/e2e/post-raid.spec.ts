@@ -89,6 +89,8 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   const pullOverview = page.locator('wl-pull-overview');
   await shows(pullOverview, /Pull \d+ - kill\./);
   await shows(pullOverview, 'Your DPS');
+  await shows(pullOverview, 'Duration');
+  await shows(pullOverview, 'Deaths & result');
   await shows(pullOverview, DAMAGE);
   await shows(pullOverview, /Death \d+/);
   const deathRow = pullOverview.locator('div.grid', { hasText: /Death \d+/ }).first();
@@ -137,7 +139,7 @@ test('burst windows compare the player damage against the top-parse windows', as
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(burstWindows, 'burst');
+  await shows(burstWindows, 'damage');
   await shows(burstWindows, DAMAGE);
   await shows(burstWindows, PERCENT);
   await showsEntity(burstWindows);
@@ -195,7 +197,7 @@ test('the positioning map opens anchored on the death', async () => {
   await openMap.click();
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /anchor -?\d+:\d{2}/);
+  await shows(page, /opened at -?\d+:\d{2}/);
   await shows(page, '● top logs');
   // The gold marker renders only once the player's own trail has loaded.
   await expect(page.getByText('◆ you')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });

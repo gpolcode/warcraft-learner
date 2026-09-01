@@ -20,7 +20,10 @@ let nextInstanceSeq = 0;
   selector: 'wl-window-comparison',
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
-  imports: [MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow, FormatDurationPipe, FormatDamagePipe, SignedPercentPipe],
+  imports: [
+    MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow,
+    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
+  ],
   templateUrl: './window-comparison.html',
 })
 export class WindowComparison {

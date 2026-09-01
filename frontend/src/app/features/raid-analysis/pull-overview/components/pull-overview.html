@@ -20,7 +20,7 @@
 
       <div class="pt-3 pb-1.5">
         <!-- Indented past the 20px icon column (+ gap) so it aligns with the row text, like the gear card's Talents heading. -->
-        <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-2 pl-[31px]">Deaths &amp; wipe</div>
+        <div class="text-[10px] uppercase tracking-widest text-[var(--muted)] mb-2 pl-[31px]">Deaths &amp; result</div>
 
         @for (d of v.deaths; track d.index) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
@@ -89,7 +89,7 @@
           </div>
           <div class="flex gap-6">
             <div>
-              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Pull</div>
+              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Duration</div>
               <div class="font-mono text-[14px] text-[var(--accent)] tabular-nums">{{ v.durationS | formatDuration }}</div>
             </div>
             <div>
@@ -97,7 +97,7 @@
                 <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Result</div>
                 <div class="font-mono text-[14px] text-[var(--gold)]">Kill</div>
               } @else {
-                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss</div>
+                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss health</div>
                 <div class="font-mono text-[14px] text-[var(--text)] tabular-nums">{{ v.bossPercentage | number:'1.0-0' }}%</div>
               }
             </div>
