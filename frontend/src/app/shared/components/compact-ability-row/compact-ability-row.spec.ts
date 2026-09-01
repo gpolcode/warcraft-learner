@@ -101,7 +101,7 @@ describe('CompactAbilityRow casts badge', () => {
 
 describe('CompactAbilityRow label', () => {
   it('spells out the top-average label the narrow layout puts in front of the value', () => {
-    expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top average');
+    expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top raiders average');
   });
 
   it('names the ability, and shows the game icon only when the row carries a spell id', () => {

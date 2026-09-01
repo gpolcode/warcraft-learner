@@ -1,5 +1,5 @@
 <!-- Desktop grid tracks mirror window-comparison's + finding-table's column dividers. -->
-<div class="md:grid md:grid-cols-[minmax(0,1fr)_96px_96px_90px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
+<div class="md:grid md:grid-cols-[minmax(0,1fr)_96px_132px_90px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
 
   <div class="flex items-baseline gap-2 min-w-0 md:contents">
     <div class="flex-1 min-w-0 overflow-hidden md:col-start-1 md:row-start-1">
@@ -27,7 +27,7 @@
 
   <div class="flex items-baseline flex-wrap gap-x-1.5 gap-y-1 mt-1.5 md:mt-0 md:contents">
     <span class="shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-left tabular-nums text-xs text-[var(--muted)]">
-      <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top average </span>{{ row().topAvg | formatDamage }}
+      <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top raiders average </span>{{ row().topAvg | formatDamage }}
     </span>
 
     @if (showCasts() && !hidePlayer()) {
