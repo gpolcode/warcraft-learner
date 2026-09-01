@@ -38,7 +38,7 @@ export class PlanTable {
     return this.rows().length ? 'rows' : 'empty';
   });
 
-  // A row the bench never saw is not the same as one the sampled logs skipped, so it stays with the picked group.
+  // A row the bench never saw is not the same as one the sampled logs skipped.
   private readonly picked = computed(() => this.rows().filter(row => row.usedSampleCount > 0 || row.sampleCount === 0));
   private readonly unpicked = computed(() => this.rows().filter(row => row.usedSampleCount === 0 && row.sampleCount > 0));
 

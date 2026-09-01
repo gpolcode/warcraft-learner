@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { LoggerService } from '../observability/logger-service';
 
-/** Which page's first-run copy a stored flag retires. */
 export type FirstRunPage = 'postRaid';
 
 const KEYS: Record<FirstRunPage, string> = {

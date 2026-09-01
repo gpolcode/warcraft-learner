@@ -2,15 +2,14 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { WclReport } from '../../../../core/wcl/wcl.models';
 import { postRaidPage } from './post-raid-page';
 
-// Mirrors KEYS.postRaid in core/state/first-run-store.ts; a returning raider is identified by nothing else.
 const POST_RAID_FIRST_RUN_KEY = 'wl.firstRun.postRaid';
 
 const SPINNER_MESSAGE = 'Fetching report from Warcraft Logs…';
 const SPINNER_CAPTION = 'First analysis takes about a minute. Everything runs in your browser.';
 
-const REPORT_CODE = 'grBQ3vTHXAtPa4JK'; // a valid 16-character report code
+const REPORT_CODE = 'grBQ3vTHXAtPa4JK';
 
-// Parks on the fetch so the page stays on the spinner, the only place the caption renders.
+// The caption renders only on the spinner.
 const open = () => postRaidPage({ getReport: () => new Promise<WclReport>(() => undefined) });
 
 describe('PostRaid first-run caption', () => {

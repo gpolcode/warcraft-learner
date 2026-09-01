@@ -111,7 +111,7 @@ test('a rule row expands into a chip strip of the instances behind its count', a
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
   const expandable = findingRows(rotationRules)
     .filter({ has: page.getByRole('button', { name: /instances/i }) });
-  // A refresh can leave every rule verdict without judged instances, so zero expandable rows is a valid card state.
+  // A refresh can leave every rule verdict without judged instances.
   if (await expandable.count()) {
     const row = expandable.first();
     await row.getByRole('button', { name: 'Show instances' }).click();

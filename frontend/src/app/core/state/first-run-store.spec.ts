@@ -2,16 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FirstRunStore } from './first-run-store';
 
-// A fresh instance per call keeps the cross-instance persistence assertions meaningful.
 const freshStore = () => TestBed.runInInjectionContext(() => new FirstRunStore());
 
-// Mirror KEYS in the source; the flag outlives deploys, so changing a key shows the caption again to every returning raider.
 const POST_RAID_STORAGE_KEY = 'wl.firstRun.postRaid';
 
-/** Stands in for a disabled, full, or otherwise unavailable localStorage. */
 const STORAGE_FAILURE = 'localStorage unavailable';
 
-/** Captures the store's logWarn output and keeps it out of the test log. */
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }
