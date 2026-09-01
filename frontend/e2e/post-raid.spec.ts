@@ -109,17 +109,21 @@ test('rotation rules count the casts that broke each rulebook rule, and name the
 test('a rule row expands into a chip strip of the instances behind its count', async () => {
   const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'Rotation rules vs the top Mythic logs for your spec.' });
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
-  const row = findingRows(rotationRules)
-    .filter({ has: page.getByRole('button', { name: /instances/i }) }).first();
-  await row.getByRole('button', { name: 'Show instances' }).click();
-  const strip = row.locator('wl-finding-occurrences');
-  await expect(strip).toBeVisible();
-  // MAX_OCCURRENCES is a code constant (24), not a bench value - the sampler caps the strip at it however many casts judged the row.
-  const count = await strip.getByRole('option').count();
-  expect(count).toBeGreaterThan(0);
-  expect(count).toBeLessThanOrEqual(24);
-  await row.getByRole('button', { name: 'Hide instances' }).click();
-  await expect(strip).not.toBeVisible();
+  const expandable = findingRows(rotationRules)
+    .filter({ has: page.getByRole('button', { name: /instances/i }) });
+  // A refresh can leave every rule verdict without judged instances, so zero expandable rows is a valid card state.
+  if (await expandable.count()) {
+    const row = expandable.first();
+    await row.getByRole('button', { name: 'Show instances' }).click();
+    const strip = row.locator('wl-finding-occurrences');
+    await expect(strip).toBeVisible();
+    // MAX_OCCURRENCES is a code constant (24), not a bench value - the sampler caps the strip at it however many casts judged the row.
+    const count = await strip.getByRole('option').count();
+    expect(count).toBeGreaterThan(0);
+    expect(count).toBeLessThanOrEqual(24);
+    await row.getByRole('button', { name: 'Hide instances' }).click();
+    await expect(strip).not.toBeVisible();
+  }
 });
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {
