@@ -1,4 +1,5 @@
-<div #content [class]="expanded() ? '' : (mode() === 'chips' ? 'clamp-chip-rows' : 'line-clamp-2 md:line-clamp-none')"><ng-content /></div>
+<!-- 60px = two 26px chip rows + the 8px gap; any higher leaves a sliced third row peeking out. -->
+<div #content [class]="expanded() ? '' : (mode() === 'chips' ? 'max-h-[60px] overflow-hidden' : 'line-clamp-2 md:line-clamp-none')"><ng-content /></div>
 
 <!-- Rendering the toggle conditionally (vs. hiding it) avoids a display-utility clash between `hidden` and `inline-flex`. -->
 @if (overflowing()) {

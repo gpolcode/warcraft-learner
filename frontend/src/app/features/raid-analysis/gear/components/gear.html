@@ -17,7 +17,7 @@
     <div class="hidden md:block section-label pl-[14px]">Fix</div>
   </div>
 
-  <div class="card-section">
+  <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
       <h3 class="section-heading">Talents</h3>
       @if (view().comparison && view().talentBuilds.length) {
@@ -51,8 +51,8 @@
             <div class="text-[10px] opacity-60 mt-px tabular-nums">of top parsers</div>
           </div>
           <div class="text-right md:text-left text-[13px] text-[var(--muted)] leading-[1.45] md:border-l md:border-[var(--border)] md:pl-[7px]">
-            <a mat-stroked-button class="btn-compact" [href]="build.link" target="_blank" rel="noopener">
-              <mat-icon class="icon-18">arrow_forward</mat-icon>
+            <a mat-stroked-button [href]="build.link" target="_blank" rel="noopener">
+              <mat-icon>arrow_forward</mat-icon>
               Get talent code
             </a>
           </div>
@@ -128,7 +128,7 @@
     }
   </div>
 
-  <div class="card-section">
+  <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
       <h3 class="section-heading">Trinkets</h3>
       @if (view().comparison && view().trinketRows.length) {
@@ -225,7 +225,7 @@
     }
   </div>
 
-  <div class="card-section">
+  <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
       <h3 class="section-heading">Enchants</h3>
       @if (view().comparison && view().enchantRows.length) {

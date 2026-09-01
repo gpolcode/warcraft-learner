@@ -18,7 +18,7 @@
     <!-- Body geometry (px-4 + trailing 200px column) mirrors the finding-table cards so the columns line up. -->
     <div class="px-4 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
-      <div class="card-section pt-5 pb-1.5">
+      <div class="card-section pt-5 pb-1.5 [&>:first-child+*]:border-t-0">
         <h3 class="section-heading mb-2">Deaths &amp; wipe</h3>
 
         @for (d of v.deaths; track d.index) {
