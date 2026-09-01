@@ -168,10 +168,11 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   await shows(talents, /Most common build/);
   await shows(talents, PERCENT);
   await shows(talents, 'of top parsers');
+  await shows(talents, 'Get talent code');
   // How many alt builds the bench carries moves with every refresh; a thin sample can leave zero.
   if (await talents.getByText(/Alt build \d+/).count()) {
     await shows(talents, /Alt build 1/);
-    await shows(talents, 'Compared with the most common build.');
+    await shows(talents, 'The talents this build changes from the most common build.');
     await shows(talents, 'Added');
     await shows(talents, 'Dropped');
     await showsEntity(talents);

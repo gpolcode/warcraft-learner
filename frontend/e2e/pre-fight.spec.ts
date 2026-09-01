@@ -55,8 +55,9 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(talents, 'Most common build');
   await shows(talents, PERCENT);
   await shows(talents, 'of top parsers');
+  await shows(talents, 'Get talent code');
   await shows(talents, 'Alt build 1');
-  await shows(talents, 'Compared with the most common build.');
+  await shows(talents, 'The talents this build changes from the most common build.');
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
   await showsEntity(talents);
@@ -65,7 +66,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(trinkets, 'Trinket 1');
   await shows(trinkets, PERCENT);
   const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
-  await shows(enchants, 'What most top raiders run.');
+  await shows(enchants, 'What most top raiders use.');
 });
 
 test('the cooldown plan lists first use, typical uses, and the holds', async () => {

@@ -141,9 +141,8 @@ mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; 
   overflow: hidden;
 }
 
-/* The divider is dropped here rather than on a row's own class list, which the e2e row selectors key on. */
-.card-section > :first-child + *,
-.card-headed > :first-child + * { border-top-width: 0; }
+/* Every section row carries its own border-t, so this drops the one line that would cut a heading off from its rows. */
+.card-section > :first-child + * { border-top-width: 0; }
 
 /* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
 .chip-onplan {

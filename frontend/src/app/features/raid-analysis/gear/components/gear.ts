@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
 import { Collapsible } from '../../../../shared/components/collapsible/collapsible';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
@@ -11,7 +10,7 @@ import { LoadResourceService } from '../../../../shared/state/load-resource-serv
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatIconModule, MatButtonModule, GameIcon, Collapsible, LoadState],
+  imports: [MatIconModule, GameIcon, Collapsible, LoadState],
   templateUrl: './gear.html',
 })
 export class Gear {
