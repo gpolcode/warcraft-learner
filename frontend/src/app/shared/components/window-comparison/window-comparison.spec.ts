@@ -347,12 +347,12 @@ describe('WindowComparison detail rows', () => {
     const dom = render(threeWindows(), { showMap: true });
     const opened = dom.on('openMap');
 
-    actionButton(dom, 'Map')?.click();
+    actionButton(dom, 'Show map')?.click();
     expect(opened).toEqual([1]);
 
     dom.queryAll(CHIP)[2]?.click();
     dom.detectChanges();
-    actionButton(dom, 'Map')?.click();
+    actionButton(dom, 'Show map')?.click();
 
     expect(opened).toEqual([1, 2]);
   });
@@ -361,15 +361,15 @@ describe('WindowComparison detail rows', () => {
     const dom = render(threeWindows(), { showClip: true });
     const opened = dom.on('openClip');
 
-    actionButton(dom, 'Clip')?.click();
+    actionButton(dom, 'Watch clip')?.click();
 
     expect(opened).toEqual([1]);
   });
 
   it('hides the map and clip actions unless the page asks for them', () => {
     const dom = render(threeWindows());
-    expect(actionButton(dom, 'Map')).toBeUndefined();
-    expect(actionButton(dom, 'Clip')).toBeUndefined();
+    expect(actionButton(dom, 'Show map')).toBeUndefined();
+    expect(actionButton(dom, 'Watch clip')).toBeUndefined();
   });
 });
 

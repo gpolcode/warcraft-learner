@@ -37,7 +37,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   const card = page.locator('wl-northern-sky-export');
   await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
-  await card.getByRole('button', { name: 'Export' }).click();
+  await card.getByRole('button', { name: 'Export note' }).click();
   const panel = page.locator('wl-flyover-panel');
   await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
   await shows(panel, 'Cooldowns');
@@ -100,7 +100,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
-  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
+  const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
   await shows(page, 'Positioning');

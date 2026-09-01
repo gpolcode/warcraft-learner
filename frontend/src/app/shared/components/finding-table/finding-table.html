@@ -39,13 +39,13 @@
                 @if (showMap()) {
                   <button mat-stroked-button (click)="openMap.emit(row)">
                     <mat-icon>my_location</mat-icon>
-                    Map
+                    Show map
                   </button>
                 }
                 @if (showClip()) {
                   <button mat-stroked-button (click)="openClip.emit(row)">
                     <mat-icon>videocam</mat-icon>
-                    Clip
+                    Watch clip
                   </button>
                 }
               }

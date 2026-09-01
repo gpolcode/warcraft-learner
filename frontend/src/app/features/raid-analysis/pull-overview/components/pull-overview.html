@@ -35,13 +35,13 @@
               @if (showMap()) {
                 <button mat-stroked-button (click)="onOpenMap(d.timeS)">
                   <mat-icon>my_location</mat-icon>
-                  Map
+                  Show map
                 </button>
               }
               @if (showClip()) {
                 <button mat-stroked-button (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
                   <mat-icon>videocam</mat-icon>
-                  Clip
+                  Watch clip
                 </button>
               }
             </div>
@@ -71,13 +71,13 @@
             @if (showMap()) {
               <button mat-stroked-button (click)="onOpenMap(v.outcomeTimeS)">
                 <mat-icon>my_location</mat-icon>
-                Map
+                Show map
               </button>
             }
             @if (showClip()) {
               <button mat-stroked-button (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
                 <mat-icon>videocam</mat-icon>
-                Clip
+                Watch clip
               </button>
             }
           </div>

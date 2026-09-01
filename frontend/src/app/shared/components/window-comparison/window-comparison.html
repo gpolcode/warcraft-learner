@@ -69,9 +69,8 @@
       w.status === 'bad' ? 'bg-[var(--critical)]' :
       w.status === 'muted' ? 'bg-[var(--muted)]' : 'bg-[var(--info)]';
 
-    <!-- Two-tier header: only row 2's cast chips wrap, so row 1's metric cluster + action buttons never get pushed off-screen. -->
     <div class="px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
-      <div class="flex items-center gap-4 md:gap-[22px]">
+      <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-[22px]">
         <div class="flex flex-col shrink-0">
           <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">window</span>
           <span class="text-[13px] font-semibold tabular-nums text-[var(--text)] whitespace-nowrap">
@@ -101,13 +100,13 @@
           @if (showMap()) {
             <button mat-stroked-button (click)="openMap.emit(activeIndex())">
               <mat-icon>my_location</mat-icon>
-              Map
+              Show map
             </button>
           }
           @if (showClip()) {
             <button mat-stroked-button (click)="openClip.emit(activeIndex())">
               <mat-icon>videocam</mat-icon>
-              Clip
+              Watch clip
             </button>
           }
         </div>

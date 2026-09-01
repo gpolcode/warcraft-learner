@@ -192,7 +192,7 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
 test('the positioning map opens anchored on the death', async () => {
   test.setTimeout(MAP_READY_TIMEOUT_MS + SLACK_MS);
   // The first map button belongs to the pull overview's death row.
-  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
+  const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await openMap.click();
   await shows(page, 'Positioning');
