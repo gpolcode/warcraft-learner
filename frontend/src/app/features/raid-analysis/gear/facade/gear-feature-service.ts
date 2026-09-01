@@ -6,7 +6,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { Result, Results } from '../../../../core/http/result';
 import { HttpLoadErrors } from '../../../../core/http/http-load-error';
 import { GearExtractService, GameNames } from '../domain/gear-extract-service';
-import { GearStatus, EnchantRow, TrinketRow, TalentBuildRow, BenchEnchantRow, BenchTrinketRow } from '../../../../domain/gear/gear-comparison-service';
+import { GearStatus, EnchantRow, TalentBuildRow, BenchEnchantRow, TrinketSetRow } from '../../../../domain/gear/gear-comparison-service';
 import { GEAR_DATA_SOURCE, GearBench } from '../data-access/gear-data-source';
 import { LoggerService } from '../../../../core/observability/logger-service';
 import { TalentKeyService } from '../../../../domain/gear/talent-key-service';
@@ -18,9 +18,8 @@ export interface GearComparisonView {
   talentBuilds: TalentBuildRow[];
   talentStatus: { status: GearStatus; note: string };
 
-  trinketRows: TrinketRow[];
-  trinketStatus: GearStatus;
-  benchTrinketRows: BenchTrinketRow[];
+  trinketSets: TrinketSetRow[];
+  trinketStatus: { status: GearStatus; note: string };
 
   enchantRows: EnchantRow[];
   enchantStatus: GearStatus;
@@ -82,7 +81,7 @@ export class GearFeatureService {
     return {
       comparison: false,
       talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
-      trinketRows: [], trinketStatus: 'ok', benchTrinketRows: [],
+      trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
       enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
     };
   }
@@ -105,37 +104,35 @@ export class GearFeatureService {
   }
 
   protected benchToStats(bench: GearBench): EncounterGearStats {
-    return { talent_builds: bench.talent_builds, trinkets: bench.trinkets, enchants: bench.enchants };
+    return { talent_builds: bench.talent_builds, trinket_sets: bench.trinket_sets, enchants: bench.enchants };
   }
 
   // playerGear is never null: the card builds comparison rows only once the combatant-info gear is in hand.
   protected buildGearView(playerGear: CharacterGear, stats: EncounterGearStats): GearComparisonView {
     const playerKey = playerGear.talent_key ?? '';
+    const trinketKey = this.gearComparison.trinketSetKey(playerGear.trinkets ?? []);
     const enchantRows = this.gearComparison.buildEnchantRows(playerGear, stats);
-    const trinketRows = this.gearComparison.buildTrinketRows(playerGear, stats);
 
     return {
       comparison: true,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, playerKey),
       talentStatus: this.gearComparison.talentStatusOf(stats, playerKey),
-      trinketRows,
-      trinketStatus: this.gearComparison.trinketStatusOf(trinketRows),
-      benchTrinketRows: [],
+      trinketSets: this.gearComparison.buildTrinketSets(stats, trinketKey),
+      trinketStatus: this.gearComparison.trinketStatusOf(stats, trinketKey),
       enchantRows,
       enchantStatus: this.gearComparison.enchantStatusOf(enchantRows),
       benchEnchantRows: [],
     };
   }
 
-  // Uses the dedicated bench builders, so the comparison builders are never reached without a player.
+  // Uses the dedicated bench enchant builder, so the comparison builder is never reached without a player.
   protected buildBenchGearView(stats: EncounterGearStats): GearComparisonView {
     return {
       comparison: false,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, ''),
       talentStatus: this.gearComparison.talentStatusOf(stats, ''),
-      trinketRows: [],
-      trinketStatus: 'ok',
-      benchTrinketRows: this.gearComparison.buildBenchTrinketRows(stats),
+      trinketSets: this.gearComparison.buildTrinketSets(stats, ''),
+      trinketStatus: this.gearComparison.trinketStatusOf(stats, ''),
       enchantRows: [],
       enchantStatus: 'ok',
       benchEnchantRows: this.gearComparison.buildBenchEnchantRows(stats),

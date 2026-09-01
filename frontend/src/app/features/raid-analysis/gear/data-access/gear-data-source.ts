@@ -5,7 +5,7 @@ import { BenchHeader } from '../../../../domain/analysis/bench-pipeline-service'
 
 export interface GearBench extends BenchHeader {
   talent_builds: EncounterGearStats['talent_builds'];
-  trinkets: EncounterGearStats['trinkets'];
+  trinket_sets: EncounterGearStats['trinket_sets'];
   enchants: EncounterGearStats['enchants'];
 }
 

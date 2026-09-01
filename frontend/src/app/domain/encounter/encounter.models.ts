@@ -63,6 +63,6 @@ export type PerDefensiveBenchmark = CadenceBenchmark;
 
 export interface EncounterGearStats {
   talent_builds: { key: string; pct: number; report_code: string; fight_id: number; player_name: string; source_id: number; diff?: TalentDiff[] }[];
-  trinkets: Record<number, { id: number; name: string; icon: string; pct: number }[]>;
+  trinket_sets: { items: { id: number; name: string; icon: string }[]; pct: number }[];
   enchants: Record<number, { id: number; name: string; pct: number }[]>;
 }

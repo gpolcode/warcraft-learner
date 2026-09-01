@@ -19,9 +19,9 @@ TestBed.configureTestingModule({ providers: [
 const svc = TestBed.inject(GearTransformService);
 TestBed.resetTestingModule();
 
-// Per-slot caps mirrored from the transform service; the boundary tests build one more than the cap.
+// Caps mirrored from the transform service; the boundary tests build one more than the cap.
 const MAX_TALENT_BUILDS = 3;
-const MAX_TRINKETS_PER_SLOT = 5;
+const MAX_TRINKET_SETS = 3;
 const MAX_ENCHANTS_PER_SLOT = 3;
 const TRINKET_1_SLOT = 12;
 const TRINKET_2_SLOT = 13;
@@ -114,42 +114,51 @@ describe('aggregateTalents', () => {
   });
 });
 
-describe('aggregateTrinkets', () => {
-  it('buckets per slot 12/13 by frequency and ignores non-trinket slots and zero ids', () => {
-    const trinkets = svc['aggregateTrinkets']([
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 200, name: 'B', icon: 'inv_b' }] }),
-      gearParse({ trinkets: [{ slot: TRINKET_2_SLOT, id: 300, name: 'C', icon: 'inv_c' }] }),
+describe('aggregateTrinketSets', () => {
+  const GAZE = { id: 100, name: 'A', icon: 'inv_a' };
+  const PUZZLE_BOX = { id: 200, name: 'B', icon: 'inv_b' };
+  const OFF_META = { id: 300, name: 'C', icon: 'inv_c' };
+
+  const worn = (first: typeof GAZE, second?: typeof GAZE) => [
+    { slot: TRINKET_1_SLOT, ...first },
+    ...(second ? [{ slot: TRINKET_2_SLOT, ...second }] : []),
+  ];
+
+  it('ranks whole pairs by frequency, counting either slot order as one pair', () => {
+    const sets = svc['aggregateTrinketSets']([
+      gearParse({ trinkets: worn(GAZE, PUZZLE_BOX) }),
+      gearParse({ trinkets: worn(PUZZLE_BOX, GAZE) }),
+      gearParse({ trinkets: worn(GAZE, OFF_META) }),
+      gearParse({ trinkets: worn(OFF_META) }),
     ]);
-    expect(trinkets[TRINKET_1_SLOT]).toEqual([
-      { id: 100, name: 'A', icon: 'inv_a', pct: 50 },
-      { id: 200, name: 'B', icon: 'inv_b', pct: 25 },
+    expect(sets).toEqual([
+      { items: [GAZE, PUZZLE_BOX], pct: 50 },
+      { items: [GAZE, OFF_META], pct: 25 },
+      { items: [OFF_META], pct: 25 },
     ]);
-    expect(trinkets[TRINKET_2_SLOT]).toEqual([{ id: 300, name: 'C', icon: 'inv_c', pct: 25 }]);
   });
 
   it('drops a non-trinket slot and a zero-id trinket, and is empty for no parses', () => {
-    expect(svc['aggregateTrinkets']([])).toEqual({});
-    const trinkets = svc['aggregateTrinkets']([
+    expect(svc['aggregateTrinketSets']([])).toEqual([]);
+    const sets = svc['aggregateTrinketSets']([
       gearParse({ trinkets: [{ slot: 5, id: 1, name: 'X', icon: 'x' }, { slot: TRINKET_1_SLOT, id: 0, name: '', icon: '' }] }),
     ]);
-    expect(trinkets).toEqual({});
+    expect(sets).toEqual([]);
   });
 
-  it('keeps at most MAX_TRINKETS_PER_SLOT trinkets in a slot', () => {
-    const parses = Array.from({ length: MAX_TRINKETS_PER_SLOT + 1 }, (_, i) =>
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100 + i, name: `T${i}`, icon: `t${i}` }] }));
-    expect(svc['aggregateTrinkets'](parses)[TRINKET_1_SLOT]).toHaveLength(MAX_TRINKETS_PER_SLOT);
+  it('keeps at most MAX_TRINKET_SETS pairs', () => {
+    const parses = Array.from({ length: MAX_TRINKET_SETS + 1 }, (_, i) =>
+      gearParse({ trinkets: worn({ id: 100 + i, name: `T${i}`, icon: `t${i}` }) }));
+    expect(svc['aggregateTrinketSets'](parses)).toHaveLength(MAX_TRINKET_SETS);
   });
 
   it('replaces a first-seen empty name (failed lookup) with a later real name, count unchanged', () => {
-    const trinkets = svc['aggregateTrinkets']([
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: '', icon: 'inv_a' }] }),
-      gearParse({ trinkets: [{ slot: TRINKET_1_SLOT, id: 100, name: 'A', icon: 'inv_a' }] }),
+    const sets = svc['aggregateTrinketSets']([
+      gearParse({ trinkets: worn({ ...GAZE, name: '' }, PUZZLE_BOX) }),
+      gearParse({ trinkets: worn(GAZE, PUZZLE_BOX) }),
     ]);
-    // Both parses ran trinket 100, so pct 100 confirms the empty-name parse still counted.
-    expect(trinkets[TRINKET_1_SLOT]).toEqual([{ id: 100, name: 'A', icon: 'inv_a', pct: 100 }]);
+    // Both parses ran the same pair, so pct 100 confirms the empty-name parse still counted.
+    expect(sets).toEqual([{ items: [GAZE, PUZZLE_BOX], pct: 100 }]);
   });
 });
 
@@ -194,7 +203,7 @@ describe('aggregateParseGear', () => {
     ];
     expect(svc['aggregateParseGear'](parses)).toEqual({
       talent_builds: svc['aggregateTalents'](parses),
-      trinkets: svc['aggregateTrinkets'](parses),
+      trinket_sets: svc['aggregateTrinketSets'](parses),
       enchants: svc['aggregateEnchants'](parses),
     });
   });
@@ -253,7 +262,7 @@ describe('GearTransformService (live, in-browser)', () => {
     expect(bench.value.talent_builds[0]).toMatchObject({
       key: 'v3:650.1', pct: 100, report_code: 'r1', fight_id: 1, player_name: 'P1', source_id: 10,
     });
-    expect(bench.value.trinkets[12]).toEqual([{ id: 100, name: 'A', icon: 't', pct: 100 }]);
+    expect(bench.value.trinket_sets).toEqual([{ items: [{ id: 100, name: 'A', icon: 't' }], pct: 100 }]);
     expect(bench.value.enchants[15]).toEqual([{ id: 8041, name: 'Soph', pct: 100 }]);
   });
 

@@ -11,8 +11,6 @@ export class GearComparisonService {
 
   slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
 
-  statusIcon(status: GearStatus): string { return STATUS_ICONS[status]; }
-
   private enchantLabel(enchant: { id: number; name: string } | undefined): string {
     return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
   }
@@ -139,88 +137,34 @@ export class GearComparisonService {
     return { status: 'warn', note: `Off-meta build. ${topBuild.pct}% run the standard one.` };
   }
 
-  /** Overall usage of a trinket id among top parsers (summed across slots 12/13). */
-  private trinketUsagePct(stats: EncounterGearStats | null, id: number): number | null {
-    const topTrinkets = stats?.trinkets ?? {};
-    let sum = 0;
-    let found = false;
-    for (const slot of [12, 13]) {
-      const hit = (topTrinkets[slot] ?? []).find(trinket => trinket.id === id);
-      if (hit) {
-        sum += hit.pct;
-        found = true;
-      }
-    }
-    return found ? sum : null;
+  /** Sorted-id identity of a worn trinket combination, so two parses running the same trinkets in opposite slots share one key. */
+  trinketSetKey(trinkets: { id: number }[]): string {
+    return trinkets.map(trinket => trinket.id).sort((a, b) => a - b).join('-');
   }
 
-  /** Per-slot trinket comparison (slots 12, 13); recommendations come from `topTrinketPair`, each consumed by at most one slot, so the same item is never suggested for both. */
-  buildTrinketRows(gear: CharacterGear, stats: EncounterGearStats | null): TrinketRow[] {
-    const playerTrinkets = gear.trinkets ?? [];
-    const pair = this.topTrinketPair(stats);
-    const rows: TrinketRow[] = [];
-
-    // Hand each remaining (distinct) recommendation to a slot that needs one, consuming it once, so the two suggestions never collide.
-    const wornIds = new Set(playerTrinkets.map(trinket => trinket.id));
-    const remainingRecs = pair.filter(rec => !wornIds.has(rec.id));
-    let recIndex = 0;
-    const claimedRecIds = new Set<number>();
-
-    for (const slot of [12, 13]) {
-      const label = this.slotName(slot);
-      const player = playerTrinkets.find(trinket => trinket.slot === slot);
-
-      if (!player) {
-        const rec = remainingRecs[recIndex];
-        if (!rec) continue;
-        recIndex++;
-        rows.push({ slotLabel: label, id: rec.id, name: rec.name, icon: rec.icon,
-          status: 'info', topPct: rec.pct, note: `${rec.pct}% run this trinket` });
-        continue;
-      }
-
-      const matchedRec = pair.find(rec => rec.id === player.id && !claimedRecIds.has(rec.id));
-      if (matchedRec) {
-        // Claim the matched recommendation so a duplicate slot is compared against what remains.
-        claimedRecIds.add(matchedRec.id);
-        rows.push({ slotLabel: label, id: player.id, name: player.name, icon: player.icon ?? '',
-          status: 'ok', topPct: matchedRec.pct, note: null });
-        continue;
-      }
-
-      const rec = remainingRecs[recIndex];
-      if (rec) {
-        recIndex++;
-        rows.push({ slotLabel: label, id: player.id, name: player.name, icon: player.icon ?? '',
-          status: 'info', topPct: this.trinketUsagePct(stats, player.id),
-          note: `Switch to ${rec.name}. ${rec.pct}% of top raiders use it.` });
-      } else {
-        // No bench data / no distinct recommendation left; player item is acceptable.
-        rows.push({ slotLabel: label, id: player.id, name: player.name, icon: player.icon ?? '',
-          status: 'ok', topPct: null, note: null });
-      }
-    }
-    return rows;
+  /** The trinket combinations top parsers run, most common first. */
+  buildTrinketSets(stats: EncounterGearStats | null, playerKey: string): TrinketSetRow[] {
+    return (stats?.trinket_sets ?? []).map((set, i) => ({
+      pct: set.pct,
+      isPlayer: !!playerKey && this.trinketSetKey(set.items) === playerKey,
+      label: i === 0 ? 'Most common pair' : `Alt pair ${i}`,
+      items: set.items,
+    }));
   }
 
-  trinketStatusOf(rows: TrinketRow[]): GearStatus {
-    if (rows.some(r => r.status === 'warn')) return 'warn';
-    if (rows.some(r => r.status === 'info')) return 'info';
-    return 'ok';
-  }
-
-  /** The two distinct trinkets top parsers run, merged by id: no parse wears the same trinket in both slots, so slot-12 + slot-13 usage sums to the true "% running it" (40% + 30% = 70%). */
-  private topTrinketPair(stats: EncounterGearStats | null): RecommendedTrinket[] {
-    const topTrinkets = stats?.trinkets ?? {};
-    const byId = new Map<number, RecommendedTrinket>();
-    for (const slot of [12, 13]) {
-      for (const trinket of topTrinkets[slot] ?? []) {
-        const existing = byId.get(trinket.id);
-        if (existing) existing.pct += trinket.pct;
-        else byId.set(trinket.id, { id: trinket.id, name: trinket.name, icon: trinket.icon, pct: trinket.pct });
-      }
+  trinketStatusOf(stats: EncounterGearStats | null, playerKey: string): { status: GearStatus; note: string } {
+    const sets = stats?.trinket_sets ?? [];
+    const [topSet] = sets;
+    if (!topSet || !playerKey) return { status: 'unknown', note: 'No trinket data.' };
+    if (this.trinketSetKey(topSet.items) === playerKey) {
+      return { status: 'ok', note: 'Standard pair.' };
     }
-    return [...byId.values()].sort((a, b) => b.pct - a.pct).slice(0, 2);
+    const altIndex = sets.findIndex(set => this.trinketSetKey(set.items) === playerKey);
+    const altSet = altIndex > 0 ? sets[altIndex] : undefined;
+    if (altSet) {
+      return { status: 'info', note: `Alt pair ${altIndex}. ${altSet.pct}% run this pair.` };
+    }
+    return { status: 'warn', note: `Off-meta pair. ${topSet.pct}% run the standard one.` };
   }
 
   /** Shows the consensus enchant per slot for the boss-study view; omits slots below the top-parse consensus share. */
@@ -237,17 +181,6 @@ export class GearComparisonService {
         return acc;
       }, []);
   }
-
-  /** The two distinct most-used trinkets for the boss-study view (`topTrinketPair`, never the same twice). */
-  buildBenchTrinketRows(stats: EncounterGearStats | null): BenchTrinketRow[] {
-    return this.topTrinketPair(stats).map((trinket, index) => ({
-      slotLabel: index === 0 ? 'Trinket 1' : 'Trinket 2',
-      id: trinket.id,
-      name: trinket.name,
-      icon: trinket.icon,
-      pct: trinket.pct,
-    }));
-  }
 }
 
 export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
@@ -259,10 +192,6 @@ const SLOT_NAMES: Record<number, string> = {
   0:'Head', 1:'Neck', 2:'Shoulder', 3:'Shirt', 4:'Chest', 5:'Waist', 6:'Legs',
   7:'Feet', 8:'Wrists', 9:'Hands', 10:'Ring 1', 11:'Ring 2',
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
-};
-
-const STATUS_ICONS: Record<GearStatus, string> = {
-  ok: 'check_circle', warn: 'warning', info: 'info', unknown: 'help_outline',
 };
 
 export interface EnchantRow {
@@ -283,16 +212,11 @@ export interface TalentBuildRow {
   ranks: TalentDiff[];
 }
 
-export interface TrinketRow {
-  slotLabel: string;
-  /** Item id for wl-game-icon (player's item if they have one, else the top-parse item). */
-  id: number;
-  name: string;
-  icon: string;
-  status: GearStatus;
-  /** Usage % of the displayed item among top parsers, or null when unknown. */
-  topPct: number | null;
-  note: string | null;
+export interface TrinketSetRow {
+  pct: number;
+  isPlayer: boolean;
+  label: string;
+  items: { id: number; name: string; icon: string }[];
 }
 
 // The comparison builders below take a real `CharacterGear` (never null); the bench-only view uses the dedicated `buildBench*` builders instead, so a not-yet-loaded player never renders "Not enchanted".
@@ -309,19 +233,4 @@ interface TalentSpend {
 export interface BenchEnchantRow {
   slotName: string;
   name: string;
-}
-
-export interface BenchTrinketRow {
-  slotLabel: string;
-  id: number;
-  name: string;
-  icon: string;
-  pct: number;
-}
-
-interface RecommendedTrinket {
-  id: number;
-  name: string;
-  icon: string;
-  pct: number;
 }

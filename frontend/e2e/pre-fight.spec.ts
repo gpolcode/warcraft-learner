@@ -64,7 +64,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await showsEntity(talents);
   const trinkets = gear.locator('div.card-section').filter({ hasText: 'Trinkets' }).first();
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
-  await shows(trinkets, 'Trinket 1');
+  await shows(trinkets, 'Most common pair');
   await shows(trinkets, PERCENT);
   const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
   await shows(enchants, 'What most top raiders use.');

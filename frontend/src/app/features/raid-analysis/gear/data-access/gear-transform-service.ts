@@ -15,7 +15,7 @@ import { LoggerService } from '../../../../core/observability/logger-service';
 import { GearComparisonService } from '../../../../domain/gear/gear-comparison-service';
 
 const MAX_TALENT_BUILDS = 3;
-const MAX_TRINKETS_PER_SLOT = 5;
+const MAX_TRINKET_SETS = 3;
 const MAX_ENCHANTS_PER_SLOT = 3;
 
 // The parse identity rides along so each bench talent build can link back to an example parse running it.
@@ -27,14 +27,6 @@ export interface ParseGear {
   fight_id: number;
   player_name: string;
   source_id: number;
-}
-
-interface EquippedItem { slot: number; id: number; name: string; icon?: string }
-
-interface SlotTally {
-  countsBySlot: Map<number, Map<number, number>>;
-  names: Map<number, string>;
-  icons: Map<number, string>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -57,7 +49,7 @@ export class GearTransformService implements DataSource<GearBench> {
         const stats = this.aggregateParseGear(parses);
         return {
           talent_builds: this.withTalentDiffs(stats.talent_builds, await this.talentData.getTalents(spec)),
-          trinkets: stats.trinkets,
+          trinket_sets: stats.trinket_sets,
           enchants: stats.enchants,
         };
       },
@@ -138,47 +130,55 @@ export class GearTransformService implements DataSource<GearBench> {
         ({ key, pct: this.pct(count, total), report_code, fight_id, player_name, source_id, diff: [] }));
   }
 
-  private tallyBySlot(items: EquippedItem[]): SlotTally {
-    const tally: SlotTally = { countsBySlot: new Map(), names: new Map(), icons: new Map() };
-    for (const item of items) {
-      if (!item.id) continue;
-      const slotMap = getOrInsert(tally.countsBySlot, item.slot, () => new Map<number, number>());
-      slotMap.set(item.id, (slotMap.get(item.id) ?? 0) + 1);
-      // A parse whose name lookup failed stores '', which a later real name replaces.
-      if (!tally.names.get(item.id) && item.name) tally.names.set(item.id, item.name);
-      if (!tally.icons.has(item.id)) tally.icons.set(item.id, item.icon ?? '');
-    }
-    return tally;
-  }
-
-  private topIds(counter: Map<number, number>, limit: number): [number, number][] {
-    return [...counter.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit);
-  }
-
-  protected aggregateTrinkets(parses: ParseGear[]): EncounterGearStats['trinkets'] {
+  protected aggregateTrinketSets(parses: ParseGear[]): EncounterGearStats['trinket_sets'] {
     const total = parses.length;
-    const tally = this.tallyBySlot(parses.flatMap(parse => parse.trinkets.filter(
-      trinket => (TRINKET_SLOTS as readonly number[]).includes(trinket.slot))));
+    // The key holds only ids, so the items ride along or the ranked sets lose their names and icons.
+    interface SetAgg { count: number; items: { id: number; name: string; icon: string }[] }
+    const sets = new Map<string, SetAgg>();
 
-    const trinkets: EncounterGearStats['trinkets'] = {};
-    for (const slot of TRINKET_SLOTS) {
-      const counter = tally.countsBySlot.get(slot);
-      if (!counter?.size) continue;
-      trinkets[slot] = this.topIds(counter, MAX_TRINKETS_PER_SLOT).map(
-        ([id, count]) => ({ id, name: tally.names.get(id) ?? '', icon: tally.icons.get(id) ?? '', pct: this.pct(count, total) }));
+    for (const parse of parses) {
+      const worn = parse.trinkets
+        .filter(trinket => trinket.id && (TRINKET_SLOTS as readonly number[]).includes(trinket.slot))
+        .map(({ id, name, icon }) => ({ id, name, icon }))
+        .sort((a, b) => a.id - b.id);
+      if (!worn.length) continue;
+
+      const key = this.gearComparison.trinketSetKey(worn);
+      const existing = sets.get(key);
+      if (existing) {
+        existing.count += 1;
+        // A parse whose name lookup failed stores '', which a later real name replaces.
+        existing.items.forEach((item, i) => { item.name ||= worn[i]?.name ?? ''; });
+      } else {
+        sets.set(key, { count: 1, items: worn });
+      }
     }
-    return trinkets;
+
+    return [...sets.values()]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, MAX_TRINKET_SETS)
+      .map(({ count, items }) => ({ items, pct: this.pct(count, total) }));
   }
 
   protected aggregateEnchants(parses: ParseGear[]): EncounterGearStats['enchants'] {
     const total = parses.length;
-    const tally = this.tallyBySlot(parses.flatMap(parse => parse.enchants));
+    const countsBySlot = new Map<number, Map<number, number>>();
+    const names = new Map<number, string>();
+
+    for (const enchant of parses.flatMap(parse => parse.enchants)) {
+      if (!enchant.id) continue;
+      const counter = getOrInsert(countsBySlot, enchant.slot, () => new Map<number, number>());
+      counter.set(enchant.id, (counter.get(enchant.id) ?? 0) + 1);
+      // A parse whose name lookup failed stores '', which a later real name replaces.
+      if (!names.get(enchant.id) && enchant.name) names.set(enchant.id, enchant.name);
+    }
 
     const enchants: EncounterGearStats['enchants'] = {};
-    for (const [slot, counter] of [...tally.countsBySlot.entries()].sort((a, b) => a[0] - b[0])) {
-      if (!counter.size) continue;
-      enchants[slot] = this.topIds(counter, MAX_ENCHANTS_PER_SLOT).map(
-        ([id, count]) => ({ id, name: tally.names.get(id) ?? '', pct: this.pct(count, total) }));
+    for (const [slot, counter] of [...countsBySlot.entries()].sort((a, b) => a[0] - b[0])) {
+      enchants[slot] = [...counter.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, MAX_ENCHANTS_PER_SLOT)
+        .map(([id, count]) => ({ id, name: names.get(id) ?? '', pct: this.pct(count, total) }));
     }
     return enchants;
   }
@@ -186,7 +186,7 @@ export class GearTransformService implements DataSource<GearBench> {
   protected aggregateParseGear(parses: ParseGear[]): EncounterGearStats {
     return {
       talent_builds: this.aggregateTalents(parses),
-      trinkets: this.aggregateTrinkets(parses),
+      trinket_sets: this.aggregateTrinketSets(parses),
       enchants: this.aggregateEnchants(parses),
     };
   }
