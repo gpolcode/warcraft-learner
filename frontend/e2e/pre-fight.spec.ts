@@ -100,7 +100,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  const openMap = page.getByRole('button', { name: 'Map', exact: true }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
   await shows(page, 'Positioning');

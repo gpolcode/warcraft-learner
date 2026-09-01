@@ -36,6 +36,11 @@ function selectedChip(dom: MountedDom): number {
   return dom.queryAll(CHIP).findIndex(chip => chip.getAttribute('aria-selected') === 'true');
 }
 
+// The window chips are buttons too, so the action lookup excludes the listbox options.
+function actionButton(dom: MountedDom, label: string): HTMLElement | undefined {
+  return dom.queryAll('button:not([role="option"])').find(button => button.textContent.includes(label));
+}
+
 function pressKey(dom: MountedDom, key: string): void {
   const listbox = dom.query(LISTBOX);
   if (!listbox) throw new Error('no listbox rendered');
@@ -342,12 +347,12 @@ describe('WindowComparison detail rows', () => {
     const dom = render(threeWindows(), { showMap: true });
     const opened = dom.on('openMap');
 
-    dom.click('button[title="Open positioning map"]');
+    actionButton(dom, 'Map')?.click();
     expect(opened).toEqual([1]);
 
     dom.queryAll(CHIP)[2]?.click();
     dom.detectChanges();
-    dom.click('button[title="Open positioning map"]');
+    actionButton(dom, 'Map')?.click();
 
     expect(opened).toEqual([1, 2]);
   });
@@ -356,15 +361,15 @@ describe('WindowComparison detail rows', () => {
     const dom = render(threeWindows(), { showClip: true });
     const opened = dom.on('openClip');
 
-    dom.click('button[title="Watch clip"]');
+    actionButton(dom, 'Clip')?.click();
 
     expect(opened).toEqual([1]);
   });
 
   it('hides the map and clip actions unless the page asks for them', () => {
     const dom = render(threeWindows());
-    expect(dom.query('button[title="Open positioning map"]')).toBeNull();
-    expect(dom.query('button[title="Watch clip"]')).toBeNull();
+    expect(actionButton(dom, 'Map')).toBeUndefined();
+    expect(actionButton(dom, 'Clip')).toBeUndefined();
   });
 });
 

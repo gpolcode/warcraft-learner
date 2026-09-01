@@ -37,13 +37,15 @@
               @if (row.timestampS != null) {
                 <span class="text-[13px] text-[var(--accent)] tabular-nums">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button mat-icon-button title="Open positioning map" (click)="openMap.emit(row)">
+                  <button mat-stroked-button (click)="openMap.emit(row)">
                     <mat-icon>my_location</mat-icon>
+                    Map
                   </button>
                 }
                 @if (showClip()) {
-                  <button mat-icon-button title="Watch clip" (click)="openClip.emit(row)">
+                  <button mat-stroked-button (click)="openClip.emit(row)">
                     <mat-icon>videocam</mat-icon>
+                    Clip
                   </button>
                 }
               }
