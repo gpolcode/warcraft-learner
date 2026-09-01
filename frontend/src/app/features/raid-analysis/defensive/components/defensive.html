@@ -1,11 +1,11 @@
 @if (error() || !available()) {
-  <wl-load-state heading="Defensives" subtitle="Defensive cooldowns vs top parses." [error]="error()"></wl-load-state>
+  <wl-load-state heading="Defensives" subtitle="How you used your survival cooldowns compared with the top logs." [error]="error()"></wl-load-state>
 }
 @else {
   @if (findingRows().length || onPlan().length) {
     <wl-finding-table
       heading="Defensives"
-      subtitle="Defensive cooldowns vs top parses."
+      subtitle="How you used your survival cooldowns compared with the top logs."
       [rows]="findingRows()"
       [onPlan]="onPlan()"
       [showMap]="showMap()"
@@ -24,7 +24,7 @@
       [showMap]="showMap()"
       [showClip]="showClip()"
       heading="Defensive Windows"
-      subtitle="Damage taken in top-parse defensive windows vs top parses."
+      subtitle="Damage taken in each defensive window vs top logs."
       metricLabel="damage taken"
       chipsLabel="Defensives top raiders use here"
       rangeLabel="Damage taken vs top range"

@@ -16,6 +16,6 @@ export type RenderableLoadError = Extract<LoadError, { kind: 'transient' | 'perm
 export class LoadState {
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
-  readonly caption = input<string>('Built from the top-parse bench.');
+  readonly caption = input<string>('Built from the top logs for your spec.');
   readonly error = input<RenderableLoadError | null>(null);
 }

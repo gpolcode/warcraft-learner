@@ -57,7 +57,7 @@ describe('NorthernSkyExport export availability', () => {
 
     expect(dom.query('wl-load-state')).not.toBeNull();
     expect(dom.query(EXPORT_BUTTON)).toBeNull();
-    expect(dom.text()).toContain('Waiting for top parses');
+    expect(dom.text()).toContain('Waiting for top logs');
   });
 
   it('offers the export button once the bench carries at least one ability', async () => {
