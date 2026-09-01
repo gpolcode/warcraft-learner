@@ -45,9 +45,9 @@ describe('CompactAbilityRow gap', () => {
     expect(badgeStatus(render(row({ playerPct: 150, topAvg: 100 }), { higherIsBetter: false }).gap)).toBe('critical');
   });
 
-  it('reads "missed" rather than a number for an ability the player never used', () => {
+  it('reads "not used" rather than a number for an ability the player never used', () => {
     const { gap } = render(row({ playerPct: null, topAvg: 100 }));
-    expect(clean(gap)).toBe('missed');
+    expect(clean(gap)).toBe('not used');
     expect(badgeStatus(gap)).toBe('critical');
   });
 
@@ -100,6 +100,10 @@ describe('CompactAbilityRow casts badge', () => {
 });
 
 describe('CompactAbilityRow label', () => {
+  it('spells out the top-average label the narrow layout puts in front of the value', () => {
+    expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top raiders average');
+  });
+
   it('names the ability, and shows the game icon only when the row carries a spell id', () => {
     const LABEL = 'Shadow Blades';
     const SPELL_ID = 121471;

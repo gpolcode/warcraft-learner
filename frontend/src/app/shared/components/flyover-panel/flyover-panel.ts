@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class FlyoverPanel {
   readonly heading = input.required<string>();
+  readonly intro = input.required<string>();
   /** Muted status text beside the heading; empty renders nothing. */
   readonly loadingText = input<string>('');
   readonly closeLabel = input.required<string>();

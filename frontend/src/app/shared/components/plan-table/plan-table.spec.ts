@@ -62,12 +62,17 @@ describe('PlanTable', () => {
     });
 
     expect(dom.text()).toContain('1:05');
-    expect(dom.text()).toContain('8/10 logs');
+    expect(dom.text()).toContain('2x');
+    expect(dom.text()).toContain('used in 8 of 10 logs');
   });
 
   it('marks a bloodlust row so its window is visible in the plan', () => {
     expect(render({ rows: [row({ bloodlust: true })] }).text()).toContain('Bloodlust');
     expect(render({ rows: [row({ bloodlust: false })] }).text()).not.toContain('Bloodlust');
+  });
+
+  it('labels the hold column as the instruction it is, not a bare noun', () => {
+    expect(render({}).text()).toContain('Hold until');
   });
 
   it('drops the cooldowns no sampled log picked below the divider, whatever order they arrive in', () => {

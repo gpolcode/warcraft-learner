@@ -193,7 +193,7 @@ export class GearComparisonService {
         recIndex++;
         rows.push({ slotLabel: label, id: player.id, name: player.name, icon: player.icon ?? '',
           status: 'info', topPct: this.trinketUsagePct(stats, player.id),
-          note: `Switch to ${rec.name} (${rec.pct}%)` });
+          note: `Switch to ${rec.name}. ${rec.pct}% of top raiders use it.` });
       } else {
         // No bench data / no distinct recommendation left; player item is acceptable.
         rows.push({ slotLabel: label, id: player.id, name: player.name, icon: player.icon ?? '',

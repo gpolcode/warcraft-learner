@@ -27,6 +27,8 @@
     </div>
   </div>
 
+  <p class="mt-1.5 text-[10px] text-[var(--muted)]">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
+
   <div class="mt-2 flex items-center gap-2">
     <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
       <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
@@ -37,7 +39,7 @@
         [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
       <div class="mt-1 flex justify-between text-[10px] text-[var(--muted)]">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span>anchor {{ anchorTime() | formatDuration }}</span>
+        <span>opened at {{ anchorTime() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>

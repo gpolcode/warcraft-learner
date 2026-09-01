@@ -39,15 +39,19 @@
             <span class="flex flex-wrap items-baseline gap-1.5">
               <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
               @if (row.sampleCount) {
-                <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses != null ? (row.typicalUses | number:'1.0-1') : 'None' }}</span>
-                <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">{{ row.usedSampleCount }}/{{ row.sampleCount }} logs</span>
+                @if (row.typicalUses != null) {
+                  <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses | number:'1.0-1' }}x</span>
+                } @else {
+                  <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">None</span>
+                }
+                <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
               } @else {
                 <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
               }
             </span>
           </div>
           <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
-            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Holds</span>
+            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Hold until</span>
               @for (hold of row.holds; track hold.castIndex) {
                 <span class="font-mono text-[13px] text-[var(--accent)] bg-[var(--surface-alt)] border border-[var(--border)] rounded-[4px] px-1.5 py-px whitespace-nowrap tabular-nums">{{ hold.targetS | formatDuration }}</span>
               }

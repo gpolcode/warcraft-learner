@@ -131,6 +131,16 @@ describe('rowsFromEntries', () => {
     expect(rows[0].measured).toEqual({ value: '0 / 2', unit: 'cast(s)' });
   });
 
+  it('leaves the chip off a category that has no label, so no row shows an empty tag', () => {
+    const entry: FindingEntry = {
+      name: 'Shadow Blades', spellId: null, icon: '', hasIssue: true,
+      findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad', occurrences: [] }],
+    };
+    const rows = rowBuilder.rowsFromEntries([entry]);
+    assert.exists(rows[0]);
+    expect(rows[0].chip).toBeUndefined();
+  });
+
   it('skips entries with hasIssue=false', () => {
     expect(rowBuilder.rowsFromEntries([onPlanEntry])).toHaveLength(0);
   });

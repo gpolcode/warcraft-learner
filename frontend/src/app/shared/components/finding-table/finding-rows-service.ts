@@ -79,10 +79,10 @@ const UNKNOWN_COOLDOWN_CONTEXT = 'finding-table.unknown-cooldown';
 
 export const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
-  cooldown_delay: 'held',
+  cooldown_delay: 'late',
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',
-  hold_suggestion: 'hold',
+  hold_suggestion: 'hold until',
 };
 
 interface FindingMeasure {

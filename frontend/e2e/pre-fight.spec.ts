@@ -76,7 +76,7 @@ test('the cooldown plan lists first use, typical uses, and the holds', async () 
   await showsEntity(cooldownPlan);
   await shows(cooldownPlan, 'First use');
   await showsTypicalUses(cooldownPlan);
-  await shows(cooldownPlan, 'Holds');
+  await shows(cooldownPlan, 'Hold until');
   await shows(cooldownPlan, CLOCK);
 });
 
@@ -94,7 +94,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(burstWindows, 'burst');
+  await shows(burstWindows, 'damage');
   await shows(burstWindows, DAMAGE);
   await showsEntity(burstWindows);
 });
@@ -105,7 +105,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await openMap.click();
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /anchor -?\d+:\d{2}/);
+  await shows(page, /opened at -?\d+:\d{2}/);
   await shows(page, '● top logs');
   await page.getByRole('button', { name: 'Close map' }).click();
 });

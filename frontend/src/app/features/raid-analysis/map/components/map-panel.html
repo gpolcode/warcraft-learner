@@ -3,6 +3,7 @@
   @if (map.open()) {
     <wl-flyover-panel
       heading="Positioning"
+      intro="Replays where top raiders stood through the window this map opened at."
       [loadingText]="map.overlayLoading() ? 'Loading your trail...' : ''"
       closeLabel="Close map"
       (closed)="map.close()">
