@@ -31,7 +31,7 @@ export async function showsEntity(scope: Locator): Promise<void> {
 
 /** A bare `div.border-t` also matches the on-plan strip, the empty state, and the Fix cell itself, so a row is narrowed to a top-level band that owns a Fix. */
 export function findingRows(table: Locator): Locator {
-  return table.locator(':scope > div > div.border-t').filter({ has: table.page().locator('wl-collapsible-text') });
+  return table.locator(':scope > div > div.border-t').filter({ has: table.page().locator('wl-collapsible') });
 }
 
 /** Which findings a pull produces moves with every re-ingest of the bench, so a card is pinned by the shape of each row it drew, never by one named finding. */
@@ -47,7 +47,7 @@ export async function showsFindingRows(table: Locator, chip?: RegExp): Promise<v
     const row = rows.nth(i);
     if (chip) await expect(row.locator('span.rounded-sm')).toHaveText(chip);
     await expect(row).toHaveText(MEASURE);
-    await expect(row.locator('wl-collapsible-text')).not.toHaveText('');
+    await expect(row.locator('wl-collapsible')).not.toHaveText('');
   }
 }
 

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { GameIcon } from '../../../../shared/components/game-icon/game-icon';
-import { CollapsibleText } from '../../../../shared/components/collapsible-text/collapsible-text';
+import { Collapsible } from '../../../../shared/components/collapsible/collapsible';
 import { LoadState } from '../../../../shared/components/load-state/load-state';
 import { GearComparisonService, GearStatus } from '../../../../domain/gear/gear-comparison-service';
 import { GearFeatureService } from '../facade/gear-feature-service';
@@ -10,7 +11,7 @@ import { LoadResourceService } from '../../../../shared/state/load-resource-serv
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatIconModule, GameIcon, CollapsibleText, LoadState],
+  imports: [MatIconModule, MatButtonModule, GameIcon, Collapsible, LoadState],
   templateUrl: './gear.html',
 })
 export class Gear {

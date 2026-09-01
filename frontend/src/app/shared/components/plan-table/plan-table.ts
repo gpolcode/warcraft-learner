@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { GameIcon } from '../game-icon/game-icon';
-import { CollapsibleText } from '../collapsible-text/collapsible-text';
+import { Collapsible } from '../collapsible/collapsible';
 import { LoadState, RenderableLoadError } from '../load-state/load-state';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 
@@ -23,7 +23,7 @@ type PlanTableState = 'unavailable' | 'rows' | 'empty';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-plan-table',
-  imports: [DecimalPipe, GameIcon, CollapsibleText, LoadState, FormatDurationPipe],
+  imports: [DecimalPipe, GameIcon, Collapsible, LoadState, FormatDurationPipe],
   templateUrl: './plan-table.html',
 })
 export class PlanTable {

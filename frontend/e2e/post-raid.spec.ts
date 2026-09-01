@@ -176,7 +176,7 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
   const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
   // The enchant verdict moves with the bench: issue rows, the on-plan strip, or no data at all.
-  await expect(enchants.locator('wl-collapsible-text').first()
+  await expect(enchants.locator('wl-collapsible').first()
     .or(enchants.getByText('On plan').first())
     .or(enchants.getByText('No enchant data.').first())
     .first()).toBeVisible();
