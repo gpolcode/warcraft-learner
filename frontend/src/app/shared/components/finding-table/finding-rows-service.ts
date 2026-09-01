@@ -86,7 +86,6 @@ export const CAT_LABEL: Record<string, string> = {
   hold_suggestion: 'hold until',
 };
 
-/** What each chip means in full, shown on hover so a label compressed for regulars is still decodable once. */
 export const CAT_HINT: Record<string, string> = {
   lost_cooldown: 'The fight had room for more casts than you used',
   cooldown_delay: 'You cast it later than top raiders do',
@@ -109,7 +108,6 @@ export interface FindingRow {
   icon: string;
   timestampS?: number | null;
   chip?: string;
-  /** Hover gloss for `chip`; absent renders the chip with no tooltip. */
   chipHint?: string;
   what?: string;
   measured: FindingMeasure;

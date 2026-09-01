@@ -8,7 +8,6 @@ import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from './finding-rows-service';
 
-/** What each severity colour means, so the icon is decodable without a key on the card. */
 const SEVERITY_HINT: Record<FindingRow['severity'], string> = {
   critical: 'Costs the most. Fix this one first.',
   warning: 'Worth fixing once the critical rows are clean.',

@@ -20,7 +20,6 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
   aoe_switch: 'aoe',
 };
 
-/** What each rule chip means in full, shown on hover; matches the tone of `CAT_HINT`. */
 export const RULE_TYPE_HINT: Record<string, string> = {
   cooldown_pairing: 'Two abilities your spec presses together',
   cd_hold: 'A cooldown your spec saves for a moment in the fight',

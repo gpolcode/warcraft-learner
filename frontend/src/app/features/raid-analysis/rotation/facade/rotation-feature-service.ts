@@ -28,7 +28,6 @@ export interface RotationFindingRow {
   icon: string;
   timestampS?: number | null;
   chip?: string;
-  /** Hover gloss for `chip`; absent renders the chip with no tooltip. */
   chipHint?: string;
   what?: string;
   measured: { value: string; unit?: string };
