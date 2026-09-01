@@ -1,10 +1,11 @@
-<div #content class="md:line-clamp-none" [class.line-clamp-2]="!expanded()"><ng-content /></div>
+<!-- 60px = two 26px chip rows + the 8px gap; any higher leaves a sliced third row peeking out. -->
+<div #content [class]="expanded() ? '' : (mode() === 'chips' ? 'max-h-[60px] overflow-hidden' : 'line-clamp-2 md:line-clamp-none')"><ng-content /></div>
 
 <!-- Rendering the toggle conditionally (vs. hiding it) avoids a display-utility clash between `hidden` and `inline-flex`. -->
 @if (overflowing()) {
   <button
     type="button"
-    class="md:hidden mt-1.5 inline-flex items-center gap-0.5 text-[11.5px] text-[var(--accent)]"
+    [class]="'mt-1.5 inline-flex items-center gap-0.5 text-[11.5px] text-[var(--accent)] ' + (mode() === 'chips' ? '' : 'md:hidden')"
     [attr.aria-expanded]="expanded()"
     (click)="toggle()">
     {{ expanded() ? 'Show less' : 'Show more' }}

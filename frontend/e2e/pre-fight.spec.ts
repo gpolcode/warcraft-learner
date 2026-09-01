@@ -37,7 +37,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   const card = page.locator('wl-northern-sky-export');
   await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
-  await card.getByRole('button', { name: 'Export' }).click();
+  await card.getByRole('button', { name: 'Export note' }).click();
   const panel = page.locator('wl-flyover-panel');
   await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
   await shows(panel, 'Cooldowns');
@@ -52,20 +52,22 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
 test('gear shows the top-parse talent, trinket, and enchant consensus, and how the alt build differs', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Gear consensus across top logs.');
-  const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
+  const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Most common build');
   await shows(talents, PERCENT);
   await shows(talents, 'of top logs');
+  await shows(talents, 'Get talent code');
   await shows(talents, 'Alt build 1');
+  await shows(talents, 'The talents this build changes from the most common build.');
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
   await showsEntity(talents);
-  const trinkets = gear.locator('div.border-t').filter({ hasText: 'Trinkets' }).first();
+  const trinkets = gear.locator('div.card-section').filter({ hasText: 'Trinkets' }).first();
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
   await shows(trinkets, 'Trinket 1');
   await shows(trinkets, PERCENT);
-  const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
-  await expect(enchants).toContainText(PERCENT);
+  const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
+  await shows(enchants, 'What most top raiders use.');
 });
 
 test('the cooldown plan lists first use, typical uses, and the holds', async () => {
@@ -98,7 +100,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
   await shows(page, 'Positioning');

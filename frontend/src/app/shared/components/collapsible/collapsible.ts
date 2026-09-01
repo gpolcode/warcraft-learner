@@ -1,20 +1,23 @@
 import {
-  afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal, viewChild,
+  afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, signal, viewChild,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
-/** On mobile, clamps projected content to two lines behind a "Show more / Show less" toggle; unclamped at >=md. */
+type CollapsibleMode = 'prose' | 'chips';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'wl-collapsible-text',
+  selector: 'wl-collapsible',
   // Angular custom elements default to display:inline; block keeps the clamp + toggle stacked.
   host: { class: 'block' },
   imports: [MatIconModule],
-  templateUrl: './collapsible-text.html',
+  templateUrl: './collapsible.html',
 })
-export class CollapsibleText {
+export class Collapsible {
   private readonly destroyRef = inject(DestroyRef);
   private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
+
+  readonly mode = input<CollapsibleMode>('prose');
 
   protected readonly expanded = signal(false);
   protected readonly overflowing = signal(false);
@@ -22,18 +25,19 @@ export class CollapsibleText {
   constructor() {
     afterNextRender(() => {
       const el = this.content().nativeElement;
-      const measure = (): void => {
-        // Once expanded the clamp is off and scrollHeight === clientHeight, so keep the last collapsed reading.
-        if (this.expanded()) return;
-        this.overflowing.set(el.scrollHeight - el.clientHeight > 1);
-      };
-      measure();
+      this.measure(el);
       if (typeof ResizeObserver !== 'undefined') {
-        const observer = new ResizeObserver(measure);
+        const observer = new ResizeObserver(() => { this.measure(el); });
         observer.observe(el);
         this.destroyRef.onDestroy(() => { observer.disconnect(); });
       }
     });
+  }
+
+  // Once expanded the clamp is off and scrollHeight === clientHeight, so keep the last collapsed reading.
+  protected measure(el: HTMLElement): void {
+    if (this.expanded()) return;
+    this.overflowing.set(el.scrollHeight - el.clientHeight > 1);
   }
 
   protected toggle(): void {

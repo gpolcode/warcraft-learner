@@ -167,23 +167,25 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken', as
 test('gear lists the top-parse talent builds and how the alt build differs, plus trinkets and enchants', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Gear vs top logs.');
-  const talents = gear.locator('div.border-t').filter({ hasText: 'Talents' }).first();
+  const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
   await shows(talents, 'Your build');
   await shows(talents, /Most common build/);
   await shows(talents, PERCENT);
   await shows(talents, 'of top logs');
+  await shows(talents, 'Get talent code');
   // How many alt builds the bench carries moves with every refresh; a thin sample can leave zero.
   if (await talents.getByText(/Alt build \d+/).count()) {
     await shows(talents, /Alt build 1/);
+    await shows(talents, 'The talents this build changes from the most common build.');
     await shows(talents, 'Added');
     await shows(talents, 'Dropped');
     await showsEntity(talents);
   }
-  const trinkets = gear.locator('div.border-t').filter({ hasText: 'Trinkets' }).first();
+  const trinkets = gear.locator('div.card-section').filter({ hasText: 'Trinkets' }).first();
   await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
-  const enchants = gear.locator('div.border-t').filter({ hasText: 'Enchants' }).first();
+  const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
   // The enchant verdict moves with the bench: issue rows, the on-plan strip, or no data at all.
-  await expect(enchants.locator('wl-collapsible-text').first()
+  await expect(enchants.locator('wl-collapsible').first()
     .or(enchants.getByText('On plan').first())
     .or(enchants.getByText('No enchant data.').first())
     .first()).toBeVisible();
@@ -192,7 +194,7 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
 test('the positioning map opens anchored on the death', async () => {
   test.setTimeout(MAP_READY_TIMEOUT_MS + SLACK_MS);
   // The first map button belongs to the pull overview's death row.
-  const openMap = page.getByRole('button', { name: 'Open positioning map' }).first();
+  const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await openMap.click();
   await shows(page, 'Positioning');

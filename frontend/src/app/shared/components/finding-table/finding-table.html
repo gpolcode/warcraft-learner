@@ -2,13 +2,13 @@
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px_28px] md:gap-[14px] md:items-baseline">
     <div class="md:col-span-2">
-      <div class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</div>
+      <h2 class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</h2>
       @if (subtitle()) {
-        <div class="text-xs text-[var(--muted)] mt-0.5">{{ subtitle() }}</div>
+        <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
       }
     </div>
-    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] tabular-nums text-right">Measured</div>
-    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] pl-[14px]">Fix</div>
+    <div class="hidden md:block section-label tabular-nums text-right">Measured</div>
+    <div class="hidden md:block section-label pl-[14px]">Fix</div>
     <div class="hidden md:block"></div>
   </div>
 
@@ -37,13 +37,15 @@
               @if (row.timestampS != null) {
                 <span class="text-[13px] text-[var(--accent)] tabular-nums">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button mat-icon-button title="Open positioning map" (click)="openMap.emit(row)">
+                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(row)">
                     <mat-icon>my_location</mat-icon>
+                    Show map
                   </button>
                 }
                 @if (showClip()) {
-                  <button mat-icon-button title="Watch clip" (click)="openClip.emit(row)">
+                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(row)">
                     <mat-icon>videocam</mat-icon>
+                    Watch clip
                   </button>
                 }
               }
@@ -79,7 +81,7 @@
 
         <div class="col-start-2 md:col-auto text-[13px] text-[var(--muted)] leading-[1.45] border-t md:border-t-0 md:border-l border-[var(--border)] pt-2 md:pt-0 pl-0 md:pl-[14px]">
           <span class="md:hidden block font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Fix</span>
-          <wl-collapsible-text>{{ row.fix }}</wl-collapsible-text>
+          <wl-collapsible>{{ row.fix }}</wl-collapsible>
         </div>
 
         <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
@@ -113,7 +115,7 @@
 
   @if (onPlan().length) {
     <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-      <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5">On plan</span>
+      <span class="section-label mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
         <span class="chip-onplan">
           @if (c.spellId; as spellId) {
