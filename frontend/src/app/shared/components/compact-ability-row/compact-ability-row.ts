@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { GameIcon } from '../game-icon/game-icon';
 import { FormatDamagePipe } from '../../pipes/format-damage-pipe';
 import type { RangeRow } from '../../../domain/analysis/window-comparison.models';
@@ -8,7 +9,7 @@ export type RowStatus = 'success' | 'warning' | 'critical' | 'muted';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-compact-ability-row',
-  imports: [GameIcon, FormatDamagePipe],
+  imports: [MatTooltipModule, GameIcon, FormatDamagePipe],
   templateUrl: './compact-ability-row.html',
 })
 export class CompactAbilityRow {

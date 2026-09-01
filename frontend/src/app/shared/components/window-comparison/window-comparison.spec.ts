@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WindowComparison } from './window-comparison';
 import type { ComparisonWindow, WindowStatus, RangeRow } from '../../../domain/analysis/window-comparison.models';
-import { badgeStatus, mountDom, MountedDom } from '../../../../testing/component-harness';
+import { badgeStatus, glossOn, mountDom, MountedDom } from '../../../../testing/component-harness';
 
 const CHIP = 'button[role="option"]';
 const LISTBOX = '[role="listbox"]';
@@ -9,6 +9,7 @@ const BAR_TRACK = 'div.h-5';
 const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
 const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
 const LEGEND = 'div[class*="gap-x-3"]';
+const COLUMN_HEADERS = 'div.hidden.md\\:grid';
 const DELTA_BADGE = 'span[class*="badge-"]';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';
 const GAP_CELL = `${CELL}[aria-hidden="true"]`;
@@ -28,7 +29,9 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
 }
 
 // Wording distinct from either card's, so an assertion about a label proves it came from the input.
-const WORDING = { metricLabel: 'probe metric', chipsLabel: 'probe chips', rangeLabel: 'probe range' };
+const WORDING = {
+  metricLabel: 'probe metric', chipsLabel: 'probe chips', rangeLabel: 'probe range', windowHint: 'probe window hint',
+};
 
 const render = (windows: ComparisonWindow[], inputs: Record<string, unknown> = {}): MountedDom =>
   mountDom(WindowComparison, { windows, ...WORDING, ...inputs });
@@ -274,19 +277,41 @@ describe('WindowComparison vocabulary', () => {
   it('renders the metric, chip strip and range bar wording the card hands it', () => {
     const defensive = {
       metricLabel: 'damage taken',
-      chipsLabel: 'Recommended defensive',
+      chipsLabel: 'Defensives top raiders use here',
       rangeLabel: 'Damage taken vs top range',
     };
     const text = render(chipWindow(), defensive).text();
 
     expect(text).toContain('damage taken');
-    expect(text).toContain('Recommended defensive');
+    expect(text).toContain('Defensives top raiders use here');
     expect(text).toContain('Damage taken vs top range');
     // The offensive card's own wording, which a default on the shared component would leak into this one.
-    expect(text).not.toContain('burst');
+    expect(text).not.toContain('Cooldowns top raiders use here');
   });
 
-  it('sets the window note apart from the recommended cooldowns, so a verdict never reads as advice', () => {
+  it('defines "window" with the card\'s own hint, so the coined term is decodable on hover', () => {
+    const HINT = 'A stretch of the fight where top raiders use a defensive';
+
+    expect(glossOn(render(chipWindow(), { windowHint: HINT }), 'window')).toBe(HINT);
+  });
+
+  it('says what the range bar draws, so "top range" is decodable on hover', () => {
+    const dom = render([win({ playerPct: 60, topAvg: 50, topMin: 40, topMax: 80 })]);
+
+    expect(glossOn(dom, WORDING.rangeLabel))
+      .toBe('Where your damage sits between the lowest and the highest of the top raiders');
+  });
+
+  it('names each breakdown column in full words, so no header reads as a code', () => {
+    const windows = [{
+      ...win({ playerPct: 90, topAvg: 100 }),
+      detailRows: [{ label: 'Probe', icon: '', spellId: 1, playerPct: 90, topAvg: 100, topMin: null, topMax: null }],
+    }];
+
+    expect(render(windows).textAll(`${COLUMN_HEADERS} > span`)).toEqual(['ability', 'casts', 'top average', 'gap']);
+  });
+
+  it('sets the window note apart from the cooldown strip, so a verdict never reads as advice', () => {
     const chipStrip = render(chipWindow({ note: NOTE })).text();
 
     expect(chipStrip).toContain('What you did');

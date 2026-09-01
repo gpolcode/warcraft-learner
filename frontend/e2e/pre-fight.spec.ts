@@ -91,7 +91,7 @@ test('burst windows show the top-parse windows with their bench damage', async (
   await shows(burstWindows, 'Damage in each burst window vs top parses.');
   await shows(burstWindows, 'window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(burstWindows, 'burst');
+  await shows(burstWindows, 'damage');
   await shows(burstWindows, DAMAGE);
   await showsEntity(burstWindows);
 });

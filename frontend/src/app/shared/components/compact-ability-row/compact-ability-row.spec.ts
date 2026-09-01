@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
 import type { RangeRow } from '../../../domain/analysis/window-comparison.models';
-import { badgeStatus, mountDom } from '../../../../testing/component-harness';
+import { badgeStatus, glossOn, mountDom } from '../../../../testing/component-harness';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
@@ -45,9 +45,9 @@ describe('CompactAbilityRow gap', () => {
     expect(badgeStatus(render(row({ playerPct: 150, topAvg: 100 }), { higherIsBetter: false }).gap)).toBe('critical');
   });
 
-  it('reads "missed" rather than a number for an ability the player never used', () => {
+  it('reads "not used" rather than a number for an ability the player never used', () => {
     const { gap } = render(row({ playerPct: null, topAvg: 100 }));
-    expect(clean(gap)).toBe('missed');
+    expect(clean(gap)).toBe('not used');
     expect(badgeStatus(gap)).toBe('critical');
   });
 
@@ -90,6 +90,12 @@ describe('CompactAbilityRow casts badge', () => {
     expect(clean(render(row({ passive: true, playerCasts: 0, topCasts: 0 })).casts)).toBe('passive');
   });
 
+  it('glosses the passive tag, so a cell with no counts still says why', () => {
+    const { dom } = render(row({ passive: true, playerCasts: 0, topCasts: 0 }));
+
+    expect(glossOn(dom, 'passive')).toBe('You do not cast this one, so there is no count to compare');
+  });
+
   it('shows a count, not the passive tag, for an ordinary cast row', () => {
     expect(clean(render(row({ playerCasts: 2, topCasts: 3 })).casts)).toBe('2 / 3');
   });
@@ -100,6 +106,10 @@ describe('CompactAbilityRow casts badge', () => {
 });
 
 describe('CompactAbilityRow label', () => {
+  it('spells out the top-average label the narrow layout puts in front of the value', () => {
+    expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top average');
+  });
+
   it('names the ability, and shows the game icon only when the row carries a spell id', () => {
     const LABEL = 'Shadow Blades';
     const SPELL_ID = 121471;

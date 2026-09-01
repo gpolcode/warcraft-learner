@@ -80,6 +80,13 @@ export function mountDom<T>(
   };
 }
 
+/** The tooltip on the element whose text is `label`: a bound tooltip's message reaches the DOM only through the aria-describedby element, never the trigger. */
+export function glossOn(dom: MountedDom, label: string): string | null {
+  const trigger = dom.queryAll('[aria-describedby]').find(el => el.textContent.trim() === label);
+  const id = trigger?.getAttribute('aria-describedby');
+  return id ? document.getElementById(id)?.textContent ?? null : null;
+}
+
 const BADGE_CLASS = /^badge-(\w+)$/;
 
 export function badgeStatus(el: HTMLElement | null): string | null {

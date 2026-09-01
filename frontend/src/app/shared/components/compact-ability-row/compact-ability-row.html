@@ -17,7 +17,7 @@
             [class.badge-critical]="gapStatus() === 'critical'"
             [class.badge-muted]="gapStatus() === 'muted'">
         @if (row().playerPct == null) {
-          missed
+          not used
         } @else {
           {{ gapSign() }}{{ gapMagnitude() | formatDamage }}
         }
@@ -27,12 +27,12 @@
 
   <div class="flex items-baseline flex-wrap gap-x-1.5 gap-y-1 mt-1.5 md:mt-0 md:contents">
     <span class="shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-left tabular-nums text-xs text-[var(--muted)]">
-      <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top avg </span>{{ row().topAvg | formatDamage }}
+      <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top average </span>{{ row().topAvg | formatDamage }}
     </span>
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
-        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-xs rounded px-2 py-0.5 border border-current badge-muted">passive</span>
+        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-xs rounded px-2 py-0.5 border border-current badge-muted" matTooltip="You do not cast this one, so there is no count to compare">passive</span>
       } @else {
         <span class="md:hidden font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">Casts</span>
         <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center tabular-nums text-xs rounded px-2 py-0.5 border border-current"

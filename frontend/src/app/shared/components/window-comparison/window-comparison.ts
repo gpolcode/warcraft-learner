@@ -39,6 +39,7 @@ export class WindowComparison {
   readonly metricLabel = input.required<string>();
   readonly chipsLabel = input.required<string>();
   readonly rangeLabel = input.required<string>();
+  readonly windowHint = input.required<string>();
   readonly openMap = output<number>();
   readonly openClip = output<number>();
 

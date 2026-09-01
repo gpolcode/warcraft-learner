@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mountDom } from '../../../../testing/component-harness';
+import { glossOn, mountDom } from '../../../../testing/component-harness';
 import { PlanTable, PlanTableRow } from './plan-table';
 
 const HEADING = 'Cooldown plan';
@@ -67,6 +67,10 @@ describe('PlanTable', () => {
 
   it('labels the hold column as the instruction it is, not a bare noun', () => {
     expect(render({}).text()).toContain('Hold until');
+  });
+
+  it('says whose first use the plan time is, so it is not read as your own', () => {
+    expect(glossOn(render({}), 'First use')).toBe('When top raiders press it for the first time');
   });
 
   it('lists a hold target as a clock time, and shows none when a cooldown is never held', () => {
