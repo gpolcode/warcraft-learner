@@ -29,7 +29,7 @@ Deliver: the pure check in the slice's colocated functions, a `FindingOccurrence
 
 ### New rule-engine kind
 
-Deliver: the kind's class in `rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`rotation-rules/rule-kinds.ts`; the mapped type will not compile with one missing), per-instance `occurrences` on the finding, boundary-paired specs. The kind must also be declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`) - bump `INGEST_VERSION`.
+Deliver: the kind's class in `rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`rotation-rules/rule-kinds.ts`; the mapped type will not compile with one missing), per-instance `occurrences` on the finding, boundary-paired specs. The kind must also be declared in the rulebook schema (`.agents/skills/warcraft-rulebook/rulebook.schema.json`) - bump `INGEST_VERSION`.
 
 ### New vertical slice
 
@@ -94,7 +94,7 @@ Before committing, verify:
 - [ ] `npm test`, `npm run lint`, and `npm run build` pass
 - [ ] Templates reach every color through a token, and all formatting goes through pipes
 - [ ] Every fallible load returns `Result<T, LoadError>` and renders one `wl-load-state`
-- [ ] Every comment the diff adds passes the CLAUDE.md gate, audited one by one: it names the concrete mistake a reader makes without it, in one line - summaries, narration, restated code, and fixture descriptions are deleted, not kept
+- [ ] Every comment the diff adds passes the AGENTS.md gate, audited one by one: it names the concrete mistake a reader makes without it, in one line - summaries, narration, restated code, and fixture descriptions are deleted, not kept
 
 ## Verification
 

@@ -34,4 +34,4 @@ All user-facing copy - finding messages, remedies, card subtitles, empty states,
 - **Plain verbs, and address the player as `you` where it reads naturally.** `"You refreshed Rupture early 4 of 9 times."` Avoid filler verbs like `Deploy`, `leverage`, `utilize` - prefer `Use`, `Press`, `Hold`, `Spend`, `Wait for`, `Aim for`.
 - **"On plan" success states are quiet.** Use the neutral `.chip-onplan` tag (defined in `styles.scss`), not a green pill with a `check_circle`. A correct result should read as calm, not celebrated.
 
-> Note: the repo-wide ban on em-dashes/en-dashes/Unicode-minus (ASCII hyphen only) lives in the always-on `CLAUDE.md` because it governs every file and commit, not just user-facing copy. It applies here too.
+> Note: the repo-wide ban on em-dashes/en-dashes/Unicode-minus (ASCII hyphen only) lives in the always-on `AGENTS.md` because it governs every file and commit, not just user-facing copy. It applies here too.

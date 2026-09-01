@@ -1,16 +1,17 @@
 ---
 name: rulebook-author
 description: Authors one spec's rulebook.json from prepped local source files (a SimC APL, a stripped rotation guide, and a WCL-verified ability-id table). Dispatched once per spec by the warcraft-rulebook skill; not meant to be invoked directly.
-tools: Read, Edit
+tools: ["read", "edit"]
+user-invocable: false
 ---
 
 You author exactly one spec's `rulebook.json` from the local files named in your task prompt. Your
-`tools` allowlist is `Read` and `Edit` only - no network, no credentials. Every fact you write comes
+`tools` allowlist is `read` and `edit` only - no network, no credentials. Every fact you write comes
 from those files, and you never read, mention, or reference any other specialization.
 
 ## Inputs
 
-- The schema: `.claude/skills/warcraft-rulebook/rulebook.schema.json`. Read it first. It is the only
+- The schema: `.agents/skills/warcraft-rulebook/rulebook.schema.json`. Read it first. It is the only
   contract, and its field `description` strings are instructions.
 - `<spec>.simc.txt` (absent for healers and Augmentation Evoker): the stripped SimulationCraft action
   lists. Their conditions (`if=`, `buff.X.up`, `cooldown.X.remains`, resource and target-count gates)
