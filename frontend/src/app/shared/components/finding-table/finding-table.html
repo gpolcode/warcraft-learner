@@ -7,7 +7,7 @@
         <div class="text-xs text-[var(--muted)] mt-0.5">{{ subtitle() }}</div>
       }
     </div>
-    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] tabular-nums text-right" matTooltip="Your pull first, then the number it was judged against">Measured</div>
+    <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] tabular-nums text-right">Measured</div>
     <div class="hidden md:block text-[10px] uppercase tracking-widest text-[var(--muted)] pl-[14px]">Fix</div>
     <div class="hidden md:block"></div>
   </div>
@@ -17,7 +17,7 @@
       <div class="grid grid-cols-[20px_minmax(0,1fr)_28px] md:grid-cols-[20px_minmax(0,1fr)_96px_200px_28px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center">
 
         <div class="flex items-center justify-center self-start md:self-center">
-          <mat-icon class="icon-18" [matTooltip]="severityHints[row.severity]"
+          <mat-icon class="icon-18"
             [class.badge-critical]="row.severity === 'critical'"
             [class.badge-warning]="row.severity === 'warning'"
             [class.badge-info]="row.severity === 'info'">
@@ -53,13 +53,13 @@
             @if (row.chip) {
               @switch (row.severity) {
                 @case ('critical') {
-                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--critical)] bg-[var(--critical)]/10 border border-[var(--critical)]/25" [matTooltip]="row.chipHint ?? ''">{{ row.chip }}</span>
+                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--critical)] bg-[var(--critical)]/10 border border-[var(--critical)]/25">{{ row.chip }}</span>
                 }
                 @case ('info') {
-                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--info)] bg-[var(--info)]/10 border border-[var(--info)]/25" [matTooltip]="row.chipHint ?? ''">{{ row.chip }}</span>
+                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--info)] bg-[var(--info)]/10 border border-[var(--info)]/25">{{ row.chip }}</span>
                 }
                 @default {
-                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--warning)] bg-[var(--warning)]/10 border border-[var(--warning)]/25" [matTooltip]="row.chipHint ?? ''">{{ row.chip }}</span>
+                  <span class="text-[10px] rounded-sm px-[5px] tabular-nums text-[var(--warning)] bg-[var(--warning)]/10 border border-[var(--warning)]/25">{{ row.chip }}</span>
                 }
               }
             }
@@ -113,7 +113,7 @@
 
   @if (onPlan().length) {
     <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-      <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5" matTooltip="Rules and cooldowns you followed in this pull">On plan</span>
+      <span class="text-[10px] uppercase tracking-widest text-[var(--muted)] mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
         <span class="chip-onplan">
           @if (c.spellId; as spellId) {

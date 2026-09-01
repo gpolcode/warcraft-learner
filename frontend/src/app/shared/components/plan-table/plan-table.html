@@ -30,7 +30,7 @@
         <div class="flex flex-col items-start md:items-end gap-1.5">
           <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 md:flex-col md:items-end md:gap-1.5">
             <span class="flex items-baseline gap-1.5">
-              <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]" matTooltip="When top raiders press it for the first time">First use</span>
+              <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">First use</span>
               <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ row.firstCastS | formatDuration }}</span>
             </span>
             <span class="flex flex-wrap items-baseline gap-1.5">
@@ -48,7 +48,7 @@
             </span>
           </div>
           <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
-            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]" matTooltip="Wait and cast at these times so the cooldown lands where the fight needs it">Hold until</span>
+            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Hold until</span>
               @for (hold of row.holds; track hold.castIndex) {
                 <span class="font-mono text-[13px] text-[var(--accent)] bg-[var(--surface-alt)] border border-[var(--border)] rounded-[4px] px-1.5 py-px whitespace-nowrap tabular-nums">{{ hold.targetS | formatDuration }}</span>
               }

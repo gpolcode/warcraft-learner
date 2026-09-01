@@ -20,14 +20,6 @@ export const RULE_TYPE_LABEL: Record<string, string> = {
   aoe_switch: 'aoe',
 };
 
-export const RULE_TYPE_HINT: Record<string, string> = {
-  cooldown_pairing: 'Two abilities your spec presses together',
-  cd_hold: 'A cooldown your spec saves for a moment in the fight',
-  opener: 'The first casts of the pull',
-  rotation: 'A rule from your spec rulebook',
-  aoe_switch: 'What your spec presses once more targets are up',
-};
-
 /** The pool's edges. A percentile of observed instances IS an observed instance, so a limit is always reachable. */
 const BAND_LOW_Q = 0.1;
 const BAND_HIGH_Q = 0.9;

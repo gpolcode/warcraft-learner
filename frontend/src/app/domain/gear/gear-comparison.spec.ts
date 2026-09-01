@@ -177,7 +177,7 @@ describe('buildTrinketRows', () => {
     expect(rows[1]).toMatchObject({
       slotLabel: 'Trinket 2',
       status: 'info',
-      note: 'Switch to Gaze of the Alnseer. 80% of top raiders run it.',
+      note: 'Switch to Gaze of the Alnseer. 80% of top raiders use it.',
     });
   });
 
@@ -192,8 +192,8 @@ describe('buildTrinketRows', () => {
       }),
       benchStats,
     );
-    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 80% of top raiders run it.' });
-    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders run it." });
+    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 80% of top raiders use it.' });
+    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders use it." });
   });
 
   it('never recommends the same trinket for both slots when one item dominates', () => {
@@ -216,8 +216,8 @@ describe('buildTrinketRows', () => {
       dominantStats,
     );
     expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 70% of top raiders run it.' });
-    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 55% of top raiders run it." });
+    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 70% of top raiders use it.' });
+    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 55% of top raiders use it." });
   });
 
   it('suggests the remaining trinket when the player wears one recommendation in both slots', () => {
@@ -236,7 +236,7 @@ describe('buildTrinketRows', () => {
     expect(rows[1]).toMatchObject({
       slotLabel: 'Trinket 2',
       status: 'info',
-      note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders run it.",
+      note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders use it.",
     });
   });
 

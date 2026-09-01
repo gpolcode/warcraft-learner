@@ -61,13 +61,8 @@ describe('rotation finding partition and row builders', () => {
     expect(svc['buildRuleRows']([medium])[0]).toMatchObject({ severity: 'info', chip: 'pairing' });
   });
 
-  it('glosses a rule chip so its compressed label is decodable on hover', () => {
-    const paired: AnalysisFinding = { ...ruleFinding, rule_type: 'cooldown_pairing' };
-    expect(svc['buildRuleRows']([paired])[0]).toMatchObject({ chipHint: 'Two abilities your spec presses together' });
-  });
-
-  it('leaves a rule row with no rule type unglossed, so nothing renders an empty tooltip', () => {
-    expect(svc['buildRuleRows']([ruleFinding])[0]).toMatchObject({ chip: undefined, chipHint: undefined });
+  it('leaves a rule row with no rule type unchipped, so no row shows an empty tag', () => {
+    expect(svc['buildRuleRows']([ruleFinding])[0]).toMatchObject({ chip: undefined });
   });
 
   it('builds offensive rows with resolved icon + chip per finding', () => {

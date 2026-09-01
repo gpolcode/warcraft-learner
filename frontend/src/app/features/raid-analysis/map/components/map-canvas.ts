@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReferenceSelector } from '../../../../domain/encounter/positioning.models';
 import { FormatDurationPipe } from '../../../../shared/pipes/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../../../shared/components/load-state/load-state';
@@ -20,7 +19,7 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatTooltipModule, FormatDurationPipe, LoadState],
+  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadState],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvas {

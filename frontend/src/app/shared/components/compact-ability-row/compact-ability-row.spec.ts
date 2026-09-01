@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
 import type { RangeRow } from '../../../domain/analysis/window-comparison.models';
-import { badgeStatus, glossOn, mountDom } from '../../../../testing/component-harness';
+import { badgeStatus, mountDom } from '../../../../testing/component-harness';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
@@ -88,12 +88,6 @@ describe('CompactAbilityRow casts badge', () => {
 
   it('reads "passive" instead of a count for an ability that is never cast', () => {
     expect(clean(render(row({ passive: true, playerCasts: 0, topCasts: 0 })).casts)).toBe('passive');
-  });
-
-  it('glosses the passive tag, so a cell with no counts still says why', () => {
-    const { dom } = render(row({ passive: true, playerCasts: 0, topCasts: 0 }));
-
-    expect(glossOn(dom, 'passive')).toBe('You do not cast this one, so there is no count to compare');
   });
 
   it('shows a count, not the passive tag, for an ordinary cast row', () => {

@@ -102,7 +102,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await openMap.click();
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /anchor -?\d+:\d{2}/);
+  await shows(page, /opened at -?\d+:\d{2}/);
   await shows(page, '● top-parse players at this moment');
   await page.getByRole('button', { name: 'Close map' }).click();
 });

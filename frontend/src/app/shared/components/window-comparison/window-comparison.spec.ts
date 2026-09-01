@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WindowComparison } from './window-comparison';
 import type { ComparisonWindow, WindowStatus, RangeRow } from '../../../domain/analysis/window-comparison.models';
-import { badgeStatus, glossOn, mountDom, MountedDom } from '../../../../testing/component-harness';
+import { badgeStatus, mountDom, MountedDom } from '../../../../testing/component-harness';
 
 const CHIP = 'button[role="option"]';
 const LISTBOX = '[role="listbox"]';
@@ -217,7 +217,7 @@ describe('WindowComparison damage bar', () => {
   it('names all three marks on the bar, so the fill and the blue box are readable', () => {
     const dom = render([win({ playerPct: 60, topAvg: 50, topMin: 40, topMax: 80 })]);
 
-    expect(dom.textAll(`${LEGEND} > span`)).toEqual(['you', 'top range', 'top average']);
+    expect(dom.textAll(`${LEGEND} > span`)).toEqual(['you', 'top raiders, lowest to highest', 'top average']);
   });
 
   it('drops the legend with the bar for a bench-only window, which draws no player mark', () => {
@@ -271,8 +271,14 @@ describe('WindowComparison delta badge', () => {
 describe('WindowComparison vocabulary', () => {
   const CHIP_TEXT = 'Cloak of Shadows';
   const NOTE = 'no defensive used';
+  const TOP_AVERAGE_LINE = 'Top average is the average across the top-ranked Mythic logs for your spec on this boss.';
+  const CASTS_LINE = "Casts read yours first, then top raiders'.";
   const chipWindow = (over: Partial<ComparisonWindow> = {}): ComparisonWindow[] =>
     [{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT], ...over }];
+  const detailWindows = (status: WindowStatus = 'good'): ComparisonWindow[] => [{
+    ...win({ playerPct: 90, topAvg: 100 }, status),
+    detailRows: [{ label: 'Probe', icon: '', spellId: 1, playerPct: 90, topAvg: 100, topMin: null, topMax: null }],
+  }];
 
   it('renders the metric, chip strip and range bar wording the card hands it', () => {
     const defensive = {
@@ -289,26 +295,28 @@ describe('WindowComparison vocabulary', () => {
     expect(text).not.toContain('Cooldowns top raiders use here');
   });
 
-  it('defines "window" with the card\'s own hint, so the coined term is decodable on hover', () => {
+  it('prints the card\'s own definition of "window" beside the times, so the coined term needs no hover', () => {
     const HINT = 'A stretch of the fight where top raiders use a defensive';
 
-    expect(glossOn(render(chipWindow(), { windowHint: HINT }), 'window')).toBe(HINT);
-  });
-
-  it('says what the range bar draws, so "top range" is decodable on hover', () => {
-    const dom = render([win({ playerPct: 60, topAvg: 50, topMin: 40, topMax: 80 })]);
-
-    expect(glossOn(dom, WORDING.rangeLabel))
-      .toBe('Where your damage sits between the lowest and the highest of the top raiders');
+    expect(render(chipWindow(), { windowHint: HINT }).text()).toContain(HINT);
   });
 
   it('names each breakdown column in full words, so no header reads as a code', () => {
-    const windows = [{
-      ...win({ playerPct: 90, topAvg: 100 }),
-      detailRows: [{ label: 'Probe', icon: '', spellId: 1, playerPct: 90, topAvg: 100, topMin: null, topMax: null }],
-    }];
+    expect(render(detailWindows()).textAll(`${COLUMN_HEADERS} > span`)).toEqual(['ability', 'casts', 'top average', 'gap']);
+  });
 
-    expect(render(windows).textAll(`${COLUMN_HEADERS} > span`)).toEqual(['ability', 'casts', 'top average', 'gap']);
+  it('says who the top raiders are above the breakdown, and how a casts pair reads', () => {
+    const text = render(detailWindows()).text();
+
+    expect(text).toContain(TOP_AVERAGE_LINE);
+    expect(text).toContain(CASTS_LINE);
+  });
+
+  it('drops the casts sentence for a bench-only window, which has no player casts to order', () => {
+    const text = render(detailWindows('info')).text();
+
+    expect(text).toContain(TOP_AVERAGE_LINE);
+    expect(text).not.toContain(CASTS_LINE);
   });
 
   it('sets the window note apart from the cooldown strip, so a verdict never reads as advice', () => {

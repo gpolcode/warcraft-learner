@@ -9,10 +9,10 @@ import {
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../../../../domain/analysis/analysis-math';
 import { CadenceVoice } from '../../../../domain/analysis/cast-cadence-service';
-import { CAT_LABEL, CAT_HINT } from '../../../../shared/components/finding-table/finding-rows-service';
+import { CAT_LABEL } from '../../../../shared/components/finding-table/finding-rows-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../../../../domain/analysis/wcl-projections-service';
 import { PullContextService, PullContext, PullRef } from '../../../../domain/analysis/pull-context-service';
-import { RotationRuleEngineService, RULE_TYPE_LABEL, RULE_TYPE_HINT } from '../domain/rotation-rule-engine-service';
+import { RotationRuleEngineService, RULE_TYPE_LABEL } from '../domain/rotation-rule-engine-service';
 import { RuleContextService } from '../domain/rotation-rules/rule-context-service';
 import { ROTATION_DATA_SOURCE, RotationBench } from '../data-access/rotation-data-source';
 import { LoggerService } from '../../../../core/observability/logger-service';
@@ -28,7 +28,6 @@ export interface RotationFindingRow {
   icon: string;
   timestampS?: number | null;
   chip?: string;
-  chipHint?: string;
   what?: string;
   measured: { value: string; unit?: string };
   fix?: string;
@@ -352,7 +351,6 @@ export class RotationFeatureService {
       icon: '',
       what: finding.label,
       chip: finding.rule_type ? RULE_TYPE_LABEL[finding.rule_type] : undefined,
-      chipHint: finding.rule_type ? RULE_TYPE_HINT[finding.rule_type] : undefined,
       measured: finding.measured ?? { value: '-' },
       timestampS: finding.timestamp_s ?? null,
       fix: finding.details?.remedy,
@@ -377,7 +375,6 @@ export class RotationFeatureService {
           icon,
           timestampS: finding.timestamp_s ?? null,
           chip: CAT_LABEL[finding.category],
-          chipHint: CAT_HINT[finding.category],
           measured: finding.measured ?? { value: '-' },
           fix: finding.details?.remedy,
           occurrences: finding.occurrences,

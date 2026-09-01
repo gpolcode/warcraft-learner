@@ -39,7 +39,7 @@
         [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
       <div class="mt-1 flex justify-between text-[10px] text-[var(--muted)]">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span matTooltip="The moment this map opened at, either a death or the start of a window">anchor {{ anchorTime() | formatDuration }}</span>
+        <span>opened at {{ anchorTime() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>

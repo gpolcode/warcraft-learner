@@ -131,13 +131,7 @@ describe('rowsFromEntries', () => {
     expect(rows[0].measured).toEqual({ value: '0 / 2', unit: 'cast(s)' });
   });
 
-  it('carries the chip hint for a known category, so the chip is decodable on hover', () => {
-    const rows = rowBuilder.rowsFromEntries([issueEntry]);
-    assert.exists(rows[0]);
-    expect(rows[0].chipHint).toBe('The fight had room for more casts than you used');
-  });
-
-  it('leaves the chip hint unset for a category with no chip, so nothing renders an empty tooltip', () => {
+  it('leaves the chip off a category that has no label, so no row shows an empty tag', () => {
     const entry: FindingEntry = {
       name: 'Shadow Blades', spellId: null, icon: '', hasIssue: true,
       findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad', occurrences: [] }],
@@ -145,7 +139,6 @@ describe('rowsFromEntries', () => {
     const rows = rowBuilder.rowsFromEntries([entry]);
     assert.exists(rows[0]);
     expect(rows[0].chip).toBeUndefined();
-    expect(rows[0].chipHint).toBeUndefined();
   });
 
   it('skips entries with hasIssue=false', () => {

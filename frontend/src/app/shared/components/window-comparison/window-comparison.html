@@ -71,9 +71,10 @@
 
     <!-- Two-tier header: only row 2's cast chips wrap, so row 1's metric cluster + action buttons never get pushed off-screen. -->
     <div class="px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
+      <p class="mb-2 text-[11px] text-[var(--muted)]">{{ windowHint() }}</p>
       <div class="flex items-center gap-4 md:gap-[22px]">
         <div class="flex flex-col shrink-0">
-          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]" [matTooltip]="windowHint()">window</span>
+          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">window</span>
           <span class="text-[13px] font-semibold tabular-nums text-[var(--text)] whitespace-nowrap">
             {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
@@ -140,7 +141,7 @@
     <!-- Damage-spread bar, hidden for bench-only (pre-fight) windows that have no player to compare against. -->
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
-        <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5" matTooltip="Where your damage sits between the lowest and the highest of the top raiders">{{ rangeLabel() }}</span>
+        <span class="block text-[10px] uppercase tracking-widest text-[var(--muted)] mb-1.5">{{ rangeLabel() }}</span>
         <div class="relative h-5 rounded bg-[var(--bg)]" aria-hidden="true">
           @if (overviewPlayerWidthPct() !== null) {
             <div [class]="'absolute inset-y-0 left-0 rounded opacity-[0.65] ' + fillBg"
@@ -155,7 +156,7 @@
         </div>
         <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[var(--muted)]">
           <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>you</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-[var(--info)]/30 border border-[var(--info)]" aria-hidden="true"></span>top range</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-[var(--info)]/30 border border-[var(--info)]" aria-hidden="true"></span>top raiders, lowest to highest</span>
           <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-[var(--info)]" aria-hidden="true"></span>top average</span>
         </div>
       </div>
@@ -165,14 +166,20 @@
     @if (w.detailRows.length) {
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
       <div class="md:border-t border-[var(--border)] pt-2 pb-2">
+        <p class="px-4 pb-1.5 text-[10px] text-[var(--muted)]">
+          <span>Top average is the average across the top-ranked Mythic logs for your spec on this boss.</span>
+          @if (showCasts() && !activeIsMuted()) {
+            <span>Casts read yours first, then top raiders'.</span>
+          }
+        </p>
         <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_96px_90px] gap-x-[14px] items-center px-4 pb-1">
           <span class="col-start-1 text-[10px] uppercase tracking-widest text-[var(--muted)]">ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]" matTooltip="Your casts, then top raiders' casts">casts</span>
+            <span class="col-start-2 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">casts</span>
           }
-          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]" matTooltip="The average across the top-ranked Mythic logs for your spec on this boss">top average</span>
+          <span class="col-start-3 text-left text-[10px] uppercase tracking-widest text-[var(--muted)]">top average</span>
           @if (!activeIsMuted()) {
-            <span class="col-start-4 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]" matTooltip="How far your number sits from the top average">gap</span>
+            <span class="col-start-4 text-right text-[10px] uppercase tracking-widest text-[var(--muted)]">gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {

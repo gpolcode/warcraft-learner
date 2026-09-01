@@ -1,18 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { GameIcon } from '../game-icon/game-icon';
 import { CollapsibleText } from '../collapsible-text/collapsible-text';
 import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../pipes/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from './finding-rows-service';
-
-const SEVERITY_HINT: Record<FindingRow['severity'], string> = {
-  critical: 'Costs the most. Fix this one first.',
-  warning: 'Worth fixing once the critical rows are clean.',
-  info: 'A suggestion, not a mistake.',
-};
 
 // Re-export so callers can import types + helpers from either this file or the utils module.
 export type { FindingRow, OnPlanChip } from './finding-rows-service';
@@ -23,7 +16,7 @@ export type { FindingRow, OnPlanChip } from './finding-rows-service';
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, MatTooltipModule, GameIcon, CollapsibleText, FindingOccurrences,
+    MatIconModule, MatButtonModule, GameIcon, CollapsibleText, FindingOccurrences,
     FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',
@@ -37,8 +30,6 @@ export class FindingTable {
   readonly showClip = input<boolean>(false);
   readonly openMap = output<FindingRow>();
   readonly openClip = output<FindingRow>();
-
-  protected readonly severityHints = SEVERITY_HINT;
 
   // The table is reused across pull/player switches, so a stale open row must not survive a rows swap.
   readonly openIndex = linkedSignal<FindingRow[], number | null>({

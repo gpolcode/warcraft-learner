@@ -18,7 +18,6 @@ export class FindingRowsService {
           icon: entry.icon,
           timestampS: f.timestamp_s ?? null,
           chip: CAT_LABEL[f.category],
-          chipHint: CAT_HINT[f.category],
           measured: f.measured ?? { value: '-' },
           fix: f.details?.remedy,
           occurrences: f.occurrences,
@@ -86,14 +85,6 @@ export const CAT_LABEL: Record<string, string> = {
   hold_suggestion: 'hold until',
 };
 
-export const CAT_HINT: Record<string, string> = {
-  lost_cooldown: 'The fight had room for more casts than you used',
-  cooldown_delay: 'You cast it later than top raiders do',
-  cooldown_alignment: 'How this cooldown lined up with Bloodlust',
-  cast_efficiency: 'Stretches of the fight you spent casting nothing',
-  hold_suggestion: 'Top raiders sit on it and cast it at a set time',
-};
-
 interface FindingMeasure {
   value: string;
   unit?: string;
@@ -108,7 +99,6 @@ export interface FindingRow {
   icon: string;
   timestampS?: number | null;
   chip?: string;
-  chipHint?: string;
   what?: string;
   measured: FindingMeasure;
   fix?: string;
