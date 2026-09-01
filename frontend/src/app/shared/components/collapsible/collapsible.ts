@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 type CollapsibleMode = 'prose' | 'chips';
 
-/** Clamps projected content behind a "Show more / Show less" toggle: prose to two lines below md, chips to two chip rows at every width. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-collapsible',
