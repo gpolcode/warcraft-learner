@@ -8,7 +8,7 @@
     </div>
 
     <!-- Column labels (desktop only; mobile uses inline labels per cell) -->
-    <div class="hidden md:grid grid-cols-[1fr_190px_200px] gap-[14px] px-4 pb-1">
+    <div class="hidden md:grid grid-cols-[1fr_264px_200px] gap-[14px] px-4 pb-1">
       <div></div>
       <div class="section-label text-right">Plan</div>
       <div class="section-label pl-[14px]">How to use</div>
@@ -18,7 +18,7 @@
       @if ($index === unpickedFrom()) {
         <div class="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-[11px] text-[var(--muted)]">Not used in any sampled top log. Usually a different talent build.</div>
       }
-      <div class="grid grid-cols-1 md:grid-cols-[1fr_190px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-[var(--border)]">
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_264px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-[var(--border)]">
         <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
@@ -31,27 +31,23 @@
         </div>
 
         <div class="flex flex-col items-start md:items-end gap-1.5">
-          <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 md:flex-col md:items-end md:gap-1.5">
-            <span class="flex items-baseline gap-1.5">
-              <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">First use</span>
-              <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ row.firstCastS | formatDuration }}</span>
-            </span>
-            <span class="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 md:flex-col md:items-end">
-              <span class="flex items-baseline gap-1.5">
-                <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
-                @if (!row.sampleCount) {
-                  <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
-                } @else if (row.typicalUses != null) {
-                  <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses | number:'1.0-1' }}x</span>
-                } @else {
-                  <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">None</span>
-                }
-              </span>
-              @if (row.sampleCount) {
-                <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
-              }
-            </span>
-          </div>
+          <span class="flex items-baseline gap-1.5">
+            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">First use</span>
+            <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ row.firstCastS | formatDuration }}</span>
+          </span>
+          <span class="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 md:justify-end">
+            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
+            @if (!row.sampleCount) {
+              <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
+            } @else if (row.typicalUses != null) {
+              <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses | number:'1.0-1' }}x</span>
+            } @else {
+              <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">None</span>
+            }
+            @if (row.sampleCount) {
+              <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
+            }
+          </span>
           <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
             <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Hold until</span>
               @for (hold of row.holds; track hold.castIndex) {
