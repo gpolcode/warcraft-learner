@@ -3,11 +3,7 @@
 
   <div class="flex items-baseline gap-2 min-w-0 md:contents">
     <div class="flex-1 min-w-0 overflow-hidden md:col-start-1 md:row-start-1">
-      @if (row().spellId; as spellId) {
-        <wl-game-icon [id]="spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
-      } @else {
-        <span class="truncate text-sm">{{ row().label }}</span>
-      }
+      <wl-game-icon class="truncate" [id]="row().spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
     </div>
 
     @if (!hidePlayer()) {

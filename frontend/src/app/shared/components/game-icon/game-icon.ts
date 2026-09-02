@@ -4,7 +4,7 @@ import { WowheadTooltipsService } from '../../../core/wowhead/wowhead-tooltips-s
 
 export type GameIconKind = 'spell' | 'item';
 
-/** Renders a WoW spell or item as an icon + name linking to Wowhead; an empty icon or a failed image load falls back to name-only. */
+/** Renders a WoW spell or item as an icon + name linking to Wowhead; a missing id, an empty icon, or a failed image load falls back to name-only. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-game-icon',
@@ -23,7 +23,8 @@ export class GameIcon {
     });
   }
 
-  readonly id = input.required<number>();
+  /** Wowhead spell/item id; null or undefined renders name-only with no link. */
+  readonly id = input.required<number | null | undefined>();
   readonly kind = input<GameIconKind>('spell');
   readonly name = input.required<string>();
   /** Explicit icon filename; an empty string renders name-only (no art). */
@@ -38,5 +39,8 @@ export class GameIcon {
     return file ? `https://wow.zamimg.com/images/wow/icons/small/${file}.jpg` : null;
   });
 
-  protected readonly wowheadUrl = computed(() => `https://www.wowhead.com/${this.kind()}=${this.id()}`);
+  protected readonly wowheadUrl = computed(() => {
+    const id = this.id();
+    return id != null ? `https://www.wowhead.com/${this.kind()}=${id}` : null;
+  });
 }

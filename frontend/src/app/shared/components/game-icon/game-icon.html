@@ -1,5 +1,6 @@
+<!-- attr.href (not [href]) so a null id omits the attribute; an href-less anchor is inert and Wowhead's scanner skips it. -->
 <a
-  [href]="wowheadUrl()"
+  [attr.href]="wowheadUrl()"
   target="_blank"
   rel="noopener"
   class="inline-flex items-center gap-1.5 no-underline hover:brightness-125">
