@@ -36,17 +36,19 @@
               <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">First use</span>
               <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ row.firstCastS | formatDuration }}</span>
             </span>
-            <span class="flex flex-wrap items-baseline gap-1.5">
-              <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
-              @if (row.sampleCount) {
-                @if (row.typicalUses != null) {
+            <span class="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 md:flex-col md:items-end">
+              <span class="flex items-baseline gap-1.5">
+                <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
+                @if (!row.sampleCount) {
+                  <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
+                } @else if (row.typicalUses != null) {
                   <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses | number:'1.0-1' }}x</span>
                 } @else {
                   <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">None</span>
                 }
+              </span>
+              @if (row.sampleCount) {
                 <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
-              } @else {
-                <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
               }
             </span>
           </div>
