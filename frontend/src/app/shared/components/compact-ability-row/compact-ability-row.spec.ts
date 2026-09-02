@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
 import type { RangeRow } from '../../../domain/analysis/window-comparison.models';
 import { badgeStatus, mountDom } from '../../../../testing/component-harness';
+import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
@@ -104,14 +105,14 @@ describe('CompactAbilityRow label', () => {
     expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top raiders average');
   });
 
-  it('names the ability, and shows the game icon only when the row carries a spell id', () => {
+  it('names the ability through the game icon, with or without a spell id', () => {
     const LABEL = 'Shadow Blades';
-    const SPELL_ID = 121471;
-    const withIcon = render(row({ label: LABEL, spellId: SPELL_ID }));
-    expect(withIcon.dom.query('wl-game-icon')).not.toBeNull();
+    const withId = render(row({ label: LABEL, spellId: SHADOW_BLADES }));
+    expect(withId.dom.query('wl-game-icon a')?.getAttribute('href')).toContain(`=${SHADOW_BLADES}`);
 
-    const plain = render(row({ label: LABEL }));
-    expect(plain.dom.query('wl-game-icon')).toBeNull();
-    expect(plain.dom.text()).toContain(LABEL);
+    const noId = render(row({ label: LABEL }));
+    const link = noId.dom.query('wl-game-icon a');
+    expect(link?.getAttribute('href')).toBeNull();
+    expect(noId.dom.text()).toContain(LABEL);
   });
 });

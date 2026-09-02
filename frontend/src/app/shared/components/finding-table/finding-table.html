@@ -28,12 +28,7 @@
         <div class="min-w-0">
           <div class="flex items-center gap-[7px] flex-wrap">
             @if (row.name; as name) {
-              @if (row.spellId; as spellId) {
-                <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="name"></wl-game-icon>
-              } @else {
-                <span class="inline-block bg-[var(--surface-alt)] border border-dashed border-[var(--border)] rounded w-[19px] h-[19px] shrink-0"></span>
-                <span class="text-sm text-[var(--text)]">{{ name }}</span>
-              }
+              <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="name"></wl-game-icon>
               @if (row.timestampS != null) {
                 <span class="text-[13px] text-[var(--accent)] tabular-nums">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
@@ -118,12 +113,7 @@
       <span class="section-label mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
         <span class="chip-onplan">
-          @if (c.spellId; as spellId) {
-            <wl-game-icon [id]="spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
-          } @else {
-            <!-- No spell identity: a plain text chip, matching the gear card's chips. -->
-            <span class="text-[13px] text-[var(--muted)]">{{ c.name }}</span>
-          }
+          <wl-game-icon [id]="c.spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
         </span>
       }
     </div>
