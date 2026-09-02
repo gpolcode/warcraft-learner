@@ -14,11 +14,10 @@ export type GameIconKind = 'spell' | 'item';
 })
 export class GameIcon {
   constructor() {
-    // Load the tooltip enhancer on first render; afterNextRender is browser-only, so prerender skips it.
+    // afterNextRender is browser-only, so prerender skips it.
     const tooltips = inject(WowheadTooltipsService);
     afterNextRender(() => {
       tooltips.ensureLoaded();
-      // Re-scan so an icon rendered after the load-time scan still gets a tooltip.
       tooltips.refreshLinks();
     });
   }
@@ -30,7 +29,6 @@ export class GameIcon {
   /** Explicit icon filename; an empty string renders name-only (no art). */
   readonly icon = input.required<string>();
 
-  // Tracks the URL that last failed to load so the template hides it and degrades to name-only; a changed `icon` retries.
   protected readonly failedSrc = signal<string | null>(null);
 
   // WCL's master-data icons may already carry a `.jpg` extension; strip it first so the zamimg URL never doubles up.
