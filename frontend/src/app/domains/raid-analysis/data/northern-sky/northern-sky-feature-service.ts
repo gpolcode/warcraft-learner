@@ -1,10 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Result } from '../../../shared/util-http/result';
+import { round } from '../analysis/analysis-math';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
+import { NORTHERN_SKY_PHASES, NorthernSkyPhase } from './northern-sky-phases';
 
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
 const EVERYONE_TAG = 'everyone';
+// Northern Sky shortens this to the line's own `time` for a cast that early in its phase.
+const REMINDER_LEAD_S = 5;
+const PULL_PHASE: NorthernSkyPhase = { phase: 1, start_s: 0 };
 
 @Injectable({ providedIn: 'root' })
 export class NorthernSkyFeatureService {
@@ -16,15 +21,29 @@ export class NorthernSkyFeatureService {
 
   buildNorthernSkyNote(bench: NorthernSkyBench, selectedSpellIds: ReadonlySet<number>): string {
     const header = `EncounterID:${bench.encounter_id};Name:${bench.encounter_name};Difficulty:${MYTHIC_DIFFICULTY}`;
+    const phases = NORTHERN_SKY_PHASES[bench.encounter_id] ?? [];
     const lines: { time_s: number; text: string }[] = [];
     for (const ability of bench.abilities) {
       if (!selectedSpellIds.has(ability.spell_id)) continue;
       for (const time_s of ability.cast_times_s) {
-        lines.push({ time_s, text: `time:${time_s};tag:${EVERYONE_TAG};spellid:${ability.spell_id};text:${ability.name}` });
+        lines.push({ time_s, text: this.noteLine(ability.spell_id, time_s, this.phaseAt(phases, time_s)) });
       }
     }
     lines.sort((a, b) => a.time_s - b.time_s);
     return [header, ...lines.map(line => line.text)].join('\n');
+  }
+
+  // Northern Sky re-arms reminders per phase and drops the outgoing phase's unfired lines, so a pull-relative time goes silent at the first transition.
+  protected phaseAt(phases: readonly NorthernSkyPhase[], time_s: number): NorthernSkyPhase {
+    let current = PULL_PHASE;
+    for (const phase of phases) {
+      if (phase.start_s <= time_s && phase.start_s >= current.start_s) current = phase;
+    }
+    return current;
+  }
+
+  protected noteLine(spellId: number, time_s: number, phase: NorthernSkyPhase): string {
+    return `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${spellId};ph:${phase.phase};dur:${REMINDER_LEAD_S}`;
   }
 
   abilitiesByKind(abilities: NorthernSkyAbility[]): { cooldowns: NorthernSkyAbility[]; defensives: NorthernSkyAbility[] } {
