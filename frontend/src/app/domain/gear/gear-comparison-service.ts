@@ -9,7 +9,7 @@ import { TalentKeyService } from './talent-key-service';
 export class GearComparisonService {
   private readonly talentKeys = inject(TalentKeyService);
 
-  slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
+  private slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
 
   private enchantLabel(enchant: { id: number; name: string } | undefined): string {
     return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
@@ -137,12 +137,12 @@ export class GearComparisonService {
     return { status: 'warn', note: `Off-meta build. ${topBuild.pct}% run the standard one.` };
   }
 
-  /** Sorted-id identity of a worn trinket combination, so two parses running the same trinkets in opposite slots share one key. */
+  /** Sorted-id identity of a worn trinket combination, so two parses using the same trinkets in opposite slots share one key. */
   trinketSetKey(trinkets: { id: number }[]): string {
     return trinkets.map(trinket => trinket.id).sort((a, b) => a - b).join('-');
   }
 
-  /** The trinket combinations top parsers run, most common first. */
+  /** The trinket combinations top parsers use, most common first. */
   buildTrinketSets(stats: EncounterGearStats | null, playerKey: string): TrinketSetRow[] {
     return (stats?.trinket_sets ?? []).map((set, i) => ({
       pct: set.pct,
@@ -162,9 +162,9 @@ export class GearComparisonService {
     const altIndex = sets.findIndex(set => this.trinketSetKey(set.items) === playerKey);
     const altSet = altIndex > 0 ? sets[altIndex] : undefined;
     if (altSet) {
-      return { status: 'info', note: `Alt pair ${altIndex}. ${altSet.pct}% run this pair.` };
+      return { status: 'info', note: `Alt pair ${altIndex}. ${altSet.pct}% use this pair.` };
     }
-    return { status: 'warn', note: `Off-meta pair. ${topSet.pct}% run the standard one.` };
+    return { status: 'warn', note: `Off-meta pair. ${topSet.pct}% use the standard one.` };
   }
 
   /** Shows the consensus enchant per slot for the boss-study view; omits slots below the top-parse consensus share. */

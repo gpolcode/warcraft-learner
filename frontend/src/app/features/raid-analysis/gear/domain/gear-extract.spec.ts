@@ -80,7 +80,7 @@ describe('extractGear', () => {
     expect(gearExtract.extractGear(undefined)).toEqual({ trinkets: [], enchants: [] });
   });
 
-  it('skips an empty trinket slot (WCL id 0) so the downstream !player branch fires', () => {
+  it('skips an empty trinket slot (WCL id 0), so a bare slot never reaches the bench', () => {
     const gear = Array<WclGearItem>(16).fill({});
     gear[TRINKET_1_SLOT] = { id: EMPTY_SLOT_ID, name: '', icon: '' };
 

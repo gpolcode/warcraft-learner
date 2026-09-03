@@ -115,7 +115,7 @@ describe('buildGearView', () => {
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
     const view = svc['buildGearView'](player, stats);
-    expect(view.trinketStatus).toEqual({ status: 'warn', note: 'Off-meta pair. 70% run the standard one.' });
+    expect(view.trinketStatus).toEqual({ status: 'warn', note: 'Off-meta pair. 70% use the standard one.' });
     expect(view.trinketSets.some(row => row.isPlayer)).toBe(false);
   });
 

@@ -3,7 +3,7 @@ import { WclApiService } from '../../../../core/wcl/wcl-api-service';
 import { CharacterGear, ParseRanking, TopParseSelection } from '../../../../core/wcl/wcl.models';
 import { EncounterGearStats } from '../../../../domain/encounter/encounter.models';
 import { Result } from '../../../../core/http/result';
-import { GearExtractService, GameNames, TRINKET_SLOTS } from '../domain/gear-extract-service';
+import { GearExtractService, GameNames } from '../domain/gear-extract-service';
 import { TalentKeyService } from '../../../../domain/gear/talent-key-service';
 import { TalentDataService } from '../../../../core/http/talent-data-service';
 import { SpecTalents } from '../../../../domain/gear/talent.models';
@@ -138,7 +138,6 @@ export class GearTransformService implements DataSource<GearBench> {
 
     for (const parse of parses) {
       const worn = parse.trinkets
-        .filter(trinket => trinket.id && (TRINKET_SLOTS as readonly number[]).includes(trinket.slot))
         .map(({ id, name, icon }) => ({ id, name, icon }))
         .sort((a, b) => a.id - b.id);
       if (!worn.length) continue;

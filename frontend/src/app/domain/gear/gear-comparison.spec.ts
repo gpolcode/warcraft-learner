@@ -73,19 +73,13 @@ describe('buildBenchEnchantRows', () => {
 
 const GAZE = { id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze' };
 const PUZZLE_BOX = { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box' };
-const OFF_META = { id: 999999, name: 'Off Meta Trinket', icon: 'off' };
-
-function trinketSet(
-  items: { id: number; name: string; icon: string }[], pct: number,
-): EncounterGearStats['trinket_sets'][number] {
-  return { items, pct };
-}
+const VOLATILE = { id: 999999, name: 'Volatile Phoenix Fire', icon: 'phoenix' };
 
 const TRINKET_STATS = stats({
   trinket_sets: [
-    trinketSet([PUZZLE_BOX, GAZE], 50),
-    trinketSet([PUZZLE_BOX, OFF_META], 30),
-    trinketSet([GAZE, OFF_META], 15),
+    { items: [PUZZLE_BOX, GAZE], pct: 50 },
+    { items: [PUZZLE_BOX, VOLATILE], pct: 30 },
+    { items: [GAZE, VOLATILE], pct: 15 },
   ],
 });
 
@@ -111,16 +105,16 @@ describe('buildTrinketSets', () => {
     expect(rows[0].items).toEqual([PUZZLE_BOX, GAZE]);
   });
 
-  it('marks the row the player runs, whichever slot order they wear it in', () => {
+  it('marks the row the player uses, whichever slot order they wear it in', () => {
     const playerKey = gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
     expect(gearComparison.buildTrinketSets(TRINKET_STATS, playerKey).map(row => row.isPlayer))
       .toEqual([true, false, false]);
   });
 
   it('marks no row when the player key is empty or matches no bench pair', () => {
-    const offMetaKey = gearComparison.trinketSetKey([{ id: OFF_META.id }]);
+    const unbenchedKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
     expect(gearComparison.buildTrinketSets(TRINKET_STATS, '').some(row => row.isPlayer)).toBe(false);
-    expect(gearComparison.buildTrinketSets(TRINKET_STATS, offMetaKey).some(row => row.isPlayer)).toBe(false);
+    expect(gearComparison.buildTrinketSets(TRINKET_STATS, unbenchedKey).some(row => row.isPlayer)).toBe(false);
   });
 
   it('returns an empty array when stats or trinket sets are absent', () => {
@@ -137,15 +131,15 @@ describe('trinketStatusOf (a player pair matched against the top pairs)', () => 
   });
 
   it('marks a match to a lower-ranked top pair as a known alt, not standard', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: OFF_META.id }]);
+    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: VOLATILE.id }]);
     expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'info', note: 'Alt pair 1. 30% run this pair.' });
+      .toEqual({ status: 'info', note: 'Alt pair 1. 30% use this pair.' });
   });
 
   it('marks a pair matching none of the top pairs as off-meta', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: OFF_META.id }]);
+    const playerKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
     expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'warn', note: 'Off-meta pair. 50% run the standard one.' });
+      .toEqual({ status: 'warn', note: 'Off-meta pair. 50% use the standard one.' });
   });
 
   it('is unknown without a player pair or without bench pairs', () => {

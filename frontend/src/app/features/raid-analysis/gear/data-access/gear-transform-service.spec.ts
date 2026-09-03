@@ -117,7 +117,7 @@ describe('aggregateTalents', () => {
 describe('aggregateTrinketSets', () => {
   const GAZE = { id: 100, name: 'A', icon: 'inv_a' };
   const PUZZLE_BOX = { id: 200, name: 'B', icon: 'inv_b' };
-  const OFF_META = { id: 300, name: 'C', icon: 'inv_c' };
+  const VOLATILE = { id: 300, name: 'C', icon: 'inv_c' };
 
   const worn = (first: typeof GAZE, second?: typeof GAZE) => [
     { slot: TRINKET_1_SLOT, ...first },
@@ -128,22 +128,19 @@ describe('aggregateTrinketSets', () => {
     const sets = svc['aggregateTrinketSets']([
       gearParse({ trinkets: worn(GAZE, PUZZLE_BOX) }),
       gearParse({ trinkets: worn(PUZZLE_BOX, GAZE) }),
-      gearParse({ trinkets: worn(GAZE, OFF_META) }),
-      gearParse({ trinkets: worn(OFF_META) }),
+      gearParse({ trinkets: worn(GAZE, VOLATILE) }),
+      gearParse({ trinkets: worn(VOLATILE) }),
     ]);
     expect(sets).toEqual([
       { items: [GAZE, PUZZLE_BOX], pct: 50 },
-      { items: [GAZE, OFF_META], pct: 25 },
-      { items: [OFF_META], pct: 25 },
+      { items: [GAZE, VOLATILE], pct: 25 },
+      { items: [VOLATILE], pct: 25 },
     ]);
   });
 
-  it('drops a non-trinket slot and a zero-id trinket, and is empty for no parses', () => {
+  it('is empty for no parses, and skips a parse that wore no trinket', () => {
     expect(svc['aggregateTrinketSets']([])).toEqual([]);
-    const sets = svc['aggregateTrinketSets']([
-      gearParse({ trinkets: [{ slot: 5, id: 1, name: 'X', icon: 'x' }, { slot: TRINKET_1_SLOT, id: 0, name: '', icon: '' }] }),
-    ]);
-    expect(sets).toEqual([]);
+    expect(svc['aggregateTrinketSets']([gearParse({ trinkets: [] })])).toEqual([]);
   });
 
   it('keeps at most MAX_TRINKET_SETS pairs', () => {
